@@ -1,0 +1,7 @@
+{
+  "check": "wrong positive-control address must fail",
+  "manifest": "analysis\\padscan\\invalid-control-c15a48a2.json",
+  "exit_code": 1,
+  "stdout": "baseline-inc-0 raw matches 3 / 4 controls_pass=False\nEvidence: D:\\Decomp\\Bhunter\\analysis\\padscan\\run-b58d2cabd19d\\results.json\n",
+  "stderr": "Traceback (most recent call last):\n  File \"D:\\Decomp\\Bhunter\\tools\\padscan.py\", line 146, in <module>\n    if __name__=='__main__': main()\n                             ~~~~^^\n  File \"D:\\Decomp\\Bhunter\\tools\\padscan.py\", line 135, in main\n    if kind=='baseline' and not controls_pass: raise RuntimeError('Positive control failed in snapshot; do not interpret the scan')\n                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nRuntimeError: Positive control failed in snapshot; do not interpret the scan\n"
+}

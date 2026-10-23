@@ -1,0 +1,350 @@
+{
+  "schema_version": 1,
+  "updated": "2026-10-23",
+  "scope": "Starter implementation-variant ledger, not exhaustive binary inventory. Other observed regions remain unadmitted until catalogued.",
+  "plan": "RESTORATION_PLAN.md",
+  "reference_exe_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+  "records": [
+    {
+      "id": "00401000-functional-c",
+      "original_va": "00401000",
+      "function": "bh_mat34_multiply",
+      "role": "engine_candidate",
+      "provenance_confidence": "unknown ownership; behavior/layout inspected",
+      "source": "src/bh_math.c",
+      "implementation": "wip",
+      "integration": "linked_harness",
+      "target": "analysis/math/differential.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl; recovered float layouts",
+        "differential": "6000 finite cases per function across x87 PC24/53/64; see results",
+        "limits": [
+          "moderate dyadic finite fixtures; not full IEEE-754 coverage",
+          "not integrated into a source game target",
+          "PC24 bit differences; runtime precision contract unresolved"
+        ]
+      },
+      "evidence": [
+        "analysis/math/RECOVERY.md",
+        "analysis/math/differential-results.txt"
+      ]
+    },
+    {
+      "id": "004011a0-functional-c",
+      "original_va": "004011a0",
+      "function": "bh_vec3_cross",
+      "role": "engine_candidate",
+      "provenance_confidence": "unknown ownership; behavior/layout inspected",
+      "source": "src/bh_math.c",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "analysis/math/differential.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl; recovered float layouts",
+        "differential": "6000 finite cases per function across x87 PC24/53/64; see results",
+        "limits": [
+          "moderate dyadic finite fixtures; not full IEEE-754 coverage",
+          "not integrated into a source game target"
+        ]
+      },
+      "evidence": [
+        "analysis/math/RECOVERY.md",
+        "analysis/math/differential-results.txt"
+      ]
+    },
+    {
+      "id": "004011a0-matched-cpp",
+      "original_va": "004011a0",
+      "function": "bh_vec3_cross",
+      "role": "engine_candidate",
+      "provenance_confidence": "unknown historical ownership/source; raw body reproduced",
+      "source": "analysis/astra-review/matched_math.cpp",
+      "implementation": "bm",
+      "integration": "object_only",
+      "target": "analysis/astra-review/verify_fixed_math.py",
+      "game_admitted": false,
+      "validation": {
+        "byte_match": "raw; zero relocations masked; two clean combined builds",
+        "context": "combined and isolated forms verified",
+        "limits": [
+          "not linked into functional harness or game target",
+          "not proof of unique historical flags or original source"
+        ]
+      },
+      "evidence": [
+        "analysis/astra-review/FIXED_SETUP_FINDINGS.md",
+        "analysis/astra-review/latest-math-verification.json"
+      ]
+    },
+    {
+      "id": "004011f0-functional-c",
+      "original_va": "004011f0",
+      "function": "bh_vec3_normalize",
+      "role": "engine_candidate",
+      "provenance_confidence": "unknown ownership; behavior/layout inspected",
+      "source": "src/bh_math.c",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "analysis/math/differential.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl; recovered float layouts",
+        "differential": "6000 finite cases per function across x87 PC24/53/64; see results",
+        "limits": [
+          "moderate dyadic finite fixtures; not full IEEE-754 coverage",
+          "not integrated into a source game target"
+        ]
+      },
+      "evidence": [
+        "analysis/math/RECOVERY.md",
+        "analysis/math/differential-results.txt"
+      ]
+    },
+    {
+      "id": "00401270-functional-c",
+      "original_va": "00401270",
+      "function": "bh_vec3_normalize_to",
+      "role": "engine_candidate",
+      "provenance_confidence": "unknown ownership; behavior/layout inspected",
+      "source": "src/bh_math.c",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "analysis/math/differential.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl; recovered float layouts",
+        "differential": "6000 finite cases per function across x87 PC24/53/64; see results",
+        "limits": [
+          "moderate dyadic finite fixtures; not full IEEE-754 coverage",
+          "not integrated into a source game target"
+        ]
+      },
+      "evidence": [
+        "analysis/math/RECOVERY.md",
+        "analysis/math/differential-results.txt"
+      ]
+    },
+    {
+      "id": "004012e0-functional-c",
+      "original_va": "004012e0",
+      "function": "bh_mat34_transform_point",
+      "role": "engine_candidate",
+      "provenance_confidence": "unknown ownership; behavior/layout inspected",
+      "source": "src/bh_math.c",
+      "implementation": "wip",
+      "integration": "linked_harness",
+      "target": "analysis/math/differential.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl; recovered float layouts",
+        "differential": "6000 finite cases per function across x87 PC24/53/64; see results",
+        "limits": [
+          "moderate dyadic finite fixtures; not full IEEE-754 coverage",
+          "not integrated into a source game target",
+          "PC24 bit differences; runtime precision contract unresolved"
+        ]
+      },
+      "evidence": [
+        "analysis/math/RECOVERY.md",
+        "analysis/math/differential-results.txt"
+      ]
+    },
+    {
+      "id": "004012e0-matched-cpp",
+      "original_va": "004012e0",
+      "function": "bh_mat34_transform_point",
+      "role": "engine_candidate",
+      "provenance_confidence": "unknown historical ownership/source; raw body reproduced",
+      "source": "analysis/astra-review/matched_math.cpp",
+      "implementation": "bm",
+      "integration": "object_only",
+      "target": "analysis/astra-review/verify_fixed_math.py",
+      "game_admitted": false,
+      "validation": {
+        "byte_match": "raw; zero relocations masked; two clean combined builds",
+        "context": "combined and isolated forms verified",
+        "limits": [
+          "not linked into functional harness or game target",
+          "not proof of unique historical flags or original source"
+        ]
+      },
+      "evidence": [
+        "analysis/astra-review/FIXED_SETUP_FINDINGS.md",
+        "analysis/astra-review/latest-math-verification.json"
+      ]
+    },
+    {
+      "id": "00401360-functional-c",
+      "original_va": "00401360",
+      "function": "bh_mat34_transform_direction",
+      "role": "engine_candidate",
+      "provenance_confidence": "unknown ownership; behavior/layout inspected",
+      "source": "src/bh_math.c",
+      "implementation": "wip",
+      "integration": "linked_harness",
+      "target": "analysis/math/differential.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl; recovered float layouts",
+        "differential": "6000 finite cases per function across x87 PC24/53/64; see results",
+        "limits": [
+          "moderate dyadic finite fixtures; not full IEEE-754 coverage",
+          "not integrated into a source game target",
+          "PC24 bit differences; runtime precision contract unresolved"
+        ]
+      },
+      "evidence": [
+        "analysis/math/RECOVERY.md",
+        "analysis/math/differential-results.txt"
+      ]
+    },
+    {
+      "id": "00401360-matched-cpp",
+      "original_va": "00401360",
+      "function": "bh_mat34_transform_direction",
+      "role": "engine_candidate",
+      "provenance_confidence": "unknown historical ownership/source; raw body reproduced",
+      "source": "analysis/astra-review/matched_math.cpp",
+      "implementation": "bm",
+      "integration": "object_only",
+      "target": "analysis/astra-review/verify_fixed_math.py",
+      "game_admitted": false,
+      "validation": {
+        "byte_match": "raw; zero relocations masked; two clean combined builds",
+        "context": "combined TU required; isolated version differs",
+        "limits": [
+          "not linked into functional harness or game target",
+          "not proof of unique historical flags or original source"
+        ]
+      },
+      "evidence": [
+        "analysis/astra-review/FIXED_SETUP_FINDINGS.md",
+        "analysis/astra-review/latest-math-verification.json"
+      ]
+    },
+    {
+      "id": "004013d0-functional-c",
+      "original_va": "004013d0",
+      "function": "bh_mat34_inverse_transform_point",
+      "role": "engine_candidate",
+      "provenance_confidence": "unknown ownership; behavior/layout inspected",
+      "source": "src/bh_math.c",
+      "implementation": "wip",
+      "integration": "linked_harness",
+      "target": "analysis/math/differential.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl; recovered float layouts",
+        "differential": "6000 finite cases per function across x87 PC24/53/64; see results",
+        "limits": [
+          "moderate dyadic finite fixtures; not full IEEE-754 coverage",
+          "not integrated into a source game target",
+          "PC24 bit differences; runtime precision contract unresolved"
+        ]
+      },
+      "evidence": [
+        "analysis/math/RECOVERY.md",
+        "analysis/math/differential-results.txt"
+      ]
+    },
+    {
+      "id": "00401460-functional-c",
+      "original_va": "00401460",
+      "function": "bh_mat34_translate_world",
+      "role": "engine_candidate",
+      "provenance_confidence": "unknown ownership; behavior/layout inspected",
+      "source": "src/bh_math.c",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "analysis/math/differential.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl; recovered float layouts",
+        "differential": "6000 finite cases per function across x87 PC24/53/64; see results",
+        "limits": [
+          "moderate dyadic finite fixtures; not full IEEE-754 coverage",
+          "not integrated into a source game target"
+        ]
+      },
+      "evidence": [
+        "analysis/math/RECOVERY.md",
+        "analysis/math/differential-results.txt"
+      ]
+    },
+    {
+      "id": "00401460-matched-cpp",
+      "original_va": "00401460",
+      "function": "bh_mat34_translate_world",
+      "role": "engine_candidate",
+      "provenance_confidence": "unknown historical ownership/source; raw body reproduced",
+      "source": "analysis/astra-review/matched_math.cpp",
+      "implementation": "bm",
+      "integration": "object_only",
+      "target": "analysis/astra-review/verify_fixed_math.py",
+      "game_admitted": false,
+      "validation": {
+        "byte_match": "raw; zero relocations masked; two clean combined builds",
+        "context": "combined and isolated forms verified",
+        "limits": [
+          "not linked into functional harness or game target",
+          "not proof of unique historical flags or original source"
+        ]
+      },
+      "evidence": [
+        "analysis/astra-review/FIXED_SETUP_FINDINGS.md",
+        "analysis/astra-review/latest-math-verification.json"
+      ]
+    },
+    {
+      "id": "00401490-functional-c",
+      "original_va": "00401490",
+      "function": "bh_mat34_translate_local",
+      "role": "engine_candidate",
+      "provenance_confidence": "unknown ownership; behavior/layout inspected",
+      "source": "src/bh_math.c",
+      "implementation": "wip",
+      "integration": "linked_harness",
+      "target": "analysis/math/differential.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl; recovered float layouts",
+        "differential": "6000 finite cases per function across x87 PC24/53/64; see results",
+        "limits": [
+          "moderate dyadic finite fixtures; not full IEEE-754 coverage",
+          "not integrated into a source game target",
+          "PC24 bit differences; runtime precision contract unresolved"
+        ]
+      },
+      "evidence": [
+        "analysis/math/RECOVERY.md",
+        "analysis/math/differential-results.txt"
+      ]
+    },
+    {
+      "id": "00401a70-functional-c",
+      "original_va": "00401a70",
+      "function": "bh_mat34_inverse_rigid",
+      "role": "engine_candidate",
+      "provenance_confidence": "unknown ownership; behavior/layout inspected",
+      "source": "src/bh_math.c",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "analysis/math/differential.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl; recovered float layouts",
+        "differential": "6000 finite cases per function across x87 PC24/53/64; see results",
+        "limits": [
+          "moderate dyadic finite fixtures; not full IEEE-754 coverage",
+          "not integrated into a source game target"
+        ]
+      },
+      "evidence": [
+        "analysis/math/RECOVERY.md",
+        "analysis/math/differential-results.txt"
+      ]
+    }
+  ]
+}
