@@ -104,30 +104,16 @@ def bar(done, total):
 def render(summary):
     c = summary['counts']
     total = summary['total']
-    v = summary['variant_counts']
     return '\n'.join([
         START, '',
-        '**Restored and linked source functions:** ' + bar(summary['recovered'], total), '',
-        '| Mapped | Excluded runtime/helpers | Potential game/engine | Restored & linked | In progress | Not started |',
-        '|---:|---:|---:|---:|---:|---:|',
-        f'| {summary["mapped"]} | {summary["excluded"]} | {total} | {summary["recovered"]} | {c.get("wip", 0)} | {c.get("not_started", 0)} |', '',
-        f'**Remaining:** {summary["remaining"]} potential functions. '
-        f'Current linked implementations: {c.get("func", 0)} functional / {c.get("bm", 0)} byte-matched; '
-        f'{c.get("adapted_or_reused", 0)} other adapted/reused addresses.', '',
-        '**Admitted into a playable game target:** ' + bar(c.get('admitted', 0), total), '',
-        f'The denominator uses the **full {summary["mapped"]}-function role catalog**, '
-        'including unknown candidates, minus verified libraries, compiler helpers, imports and shared tails. '
-        'It is provisional: further classification may exclude more functions. '
-        '**Function count is not effort or playable-game completion.**', '',
-        f'The ledger tracks {summary["tracked"]} distinct eligible addresses across '
-        f'{summary["variants"]} implementation variants: '
-        f'{v.get("historical_or_superseded", 0)} historical/superseded and '
-        f'{v.get("comparison_only", 0)} object-only byte-match variants are kept separate. '
-        'Object-only matches do not replace linked functional evidence or add restored functions. '
-        f'{summary["support_implementations"]} source support implementations are counted separately.', '',
-        'Sources: [role catalog](META/m1/role-catalog.json), '
-        '[implementation ledger](META/function-status.json). '
-        'Milestones: [progress and blockers](META/PROGRESS.md).', '', END])
+        '**Source recovery:** ' + bar(summary['recovered'], total), '',
+        '| Restored & linked | In progress | Not started |',
+        '|---:|---:|---:|',
+        f'| {summary["recovered"]} | {c.get("wip", 0)} | {c.get("not_started", 0)} |', '',
+        f'{summary["mapped"]} mapped functions − {summary["excluded"]} verified runtime/helpers = '
+        f'{total} potential game/engine functions. Classification remains provisional.', '',
+        f'**Playable game target:** {c.get("admitted", 0)}/{total} functions admitted. '
+        'Function count is not effort or gameplay completion.', '', END])
 
 def main():
     ap=argparse.ArgumentParser(description=__doc__)
