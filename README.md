@@ -5,11 +5,11 @@ Restoring BHunter as a faithfully playable, source-built game on modern Windows.
 
 <!-- BHUNTER_STATUS_START -->
 
-**Source recovery:** `[#####-------------------]` **21.3% (155/727)**
+**Source recovery:** `[######------------------]` **25.0% (182/727)**
 
 | Restored & linked | In progress | Not started |
 |---:|---:|---:|
-| 155 | 5 | 567 |
+| 182 | 7 | 538 |
 
 887 mapped functions − 160 verified runtime/helpers = 727 potential game/engine functions. Classification remains provisional.
 
@@ -17,14 +17,17 @@ Restoring BHunter as a faithfully playable, source-built game on modern Windows.
 
 <!-- BHUNTER_STATUS_END -->
 
-**Latest iteration · 2026-10-24:** +31 recovered functions. Original camera,
-lighting, clipping and lit/unlit BSP traversal now render a textured static city
-scene through native Direct3D2: **146 textures · 1,798 polygons · 3,112 triangles**.
+**Latest iteration · 2026-10-24:** outer scene orchestration and world/resource
+bindings now drive real two-room native rendering, including portal traversal,
+cached-room changes and clip resets. Pickup construction, lifetime and drawing
+are linked with the scene scheduler.
 
-**Validation:** 132 translation units · 3,398,563 real-asset checks ·
-2,906,329 clean source checks · 66 missing-module link controls. No game launches.
+**Validation:** 163 translation units (production and test source files) ·
+3,399,450 real-asset checks · 2,906,962 clean source checks ·
+80 missing-module link controls. No game launches.
 
-**Next:** world/entity/script orchestration and player controls toward a playable slice.
+**Next:** scene callers and player/camera/resource initialization toward a playable
+slice. Full startup, block-script bindings and software rendering remain open.
 
 [Progress & blockers](META/PROGRESS.md) · [Build](BUILDING.md) ·
 [Restoration plan](RESTORATION_PLAN.md) · [Function ledger](META/function-status.json)

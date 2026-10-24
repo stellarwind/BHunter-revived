@@ -1,0 +1,21 @@
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+undefined4 __cdecl FUN_004558d0(float *param_1,float *param_2,float *param_3,float *param_4)
+
+{
+  BHVec3 local_18;
+  BHVec3 local_c;
+  
+  local_c.x = *param_1;
+  local_c.z = *param_3;
+  local_c.y = *param_2;
+  bh_mat34_transform_point((BHMat34 *)&DAT_004e3860,&local_c,&local_18);
+  if (local_18.z < DAT_0049175c) {
+    return 0;
+  }
+  *param_1 = local_18.x / local_18.z;
+  *param_2 = local_18.y / local_18.z;
+  *param_3 = local_18.z;
+  *param_4 = _DAT_004e9c38 / local_18.z;
+  return 1;
+}

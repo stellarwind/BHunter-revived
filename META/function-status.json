@@ -6719,6 +6719,2726 @@
         "META/m4/view-camera/original/0046e390.tsv",
         "META/m4/parallel-hour/validation.json"
       ]
+    },
+    {
+      "id": "0045aa60-functional-c",
+      "original_va": "0045aa60",
+      "function": "bh_model_instance_draw",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed full ordinary rendering owner; library provenance unresolved, medium confidence",
+      "source": "src/bh_model_instance.c",
+      "source_sha256": "512e7a495b5ff79823821923b5e111c880d1987d4e3ddf8fb7e89ef137f5c84e",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Explicit scattered-global context binding; x86 32-bit words/model layout; six double pose values and final float modulation",
+        "fixtures": "155 focused linked checks: double-coordinate culling, inclusive tangencies, retained state, analytic Ry/Rx/Rz matrix, unsigned grayscale/truncation, real unlit/directional/point owners and emitter errors",
+        "raw_byte_match": false,
+        "differential": false,
+        "source_scene": "Static real-level source snapshot and red/point presets call this owner and reproduce previous images byte-for-byte",
+        "limits": [
+          "PC53/nearest/masked only; huge-angle and original runtime precision transitions remain unvalidated",
+          "Explicit frame-wrap/numerical/context guards and native emitter adapter; complete software dispatch remains unfinished",
+          "World/entity draw 0045adf0, sprite dependencies and gameplay not restored"
+        ]
+      },
+      "evidence": [
+        "META/m4/model-instance/CONTRACT.md",
+        "META/m4/model-instance/review.json",
+        "META/m4/model-instance/validation.json",
+        "META/m4/model-instance/integration-real.json",
+        "META/m4/model-instance/clean/clean-checkout.json",
+        "META/m4/model-instance/scene-real.json"
+      ]
+    },
+    {
+      "id": "00455960-functional-c",
+      "original_va": "00455960",
+      "function": "bh_sprite_billboard_draw",
+      "role": "engine_candidate",
+      "provenance_confidence": "medium: full ordinary render owner reviewed; no verified library/CRT/EH/import/shared-tail classification",
+      "source": "src/bh_sprite_billboard.c",
+      "source_sha256": "47d4885a1662b94b3511ce5863c4996d66dd52f4139b700ffc7de7d242c8bd61",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Reviewed native x86 source layouts and explicit borrowed global bindings; see family contract",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "sprite-billboard": {
+            "scenario": "sprite-billboard",
+            "checks": 50,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "sprite-oriented": {
+            "scenario": "sprite-oriented",
+            "checks": 27,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "draw-resource": {
+            "scenario": "draw-resource",
+            "checks": 25,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "sprite-native": {
+            "scenario": "sprite-native",
+            "checks": 67,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "native_composition": "67 source-native checks verify real queues, per-vertex grayscale, actual Direct3D2 pixels, LOD blank control, software rejection",
+        "limits": [
+          "PC53/nearest/masked only; original PC24 edge fidelity and huge angles unvalidated",
+          "Explicit source descriptors and global bindings; actual entity/descriptor construction remains unfinished",
+          "Complete software primitive dispatch/rasterizers remain unrecovered; native adapters reject software"
+        ]
+      },
+      "evidence": [
+        "META/m4/sprite-billboard/CONTRACT.md",
+        "META/m4/sprite-world/owners.json",
+        "META/m4/sprite-world/validation.json",
+        "META/m4/sprite-world/integration-real.json",
+        "META/m4/sprite-world/clean/clean-checkout.json",
+        "META/m4/sprite-world/scene-real.json"
+      ]
+    },
+    {
+      "id": "00455f70-functional-c",
+      "original_va": "00455f70",
+      "function": "bh_sprite_oriented_ribbon",
+      "role": "engine_candidate",
+      "provenance_confidence": "medium: full ordinary render owner reviewed; no verified library/CRT/EH/import/shared-tail classification",
+      "source": "src/bh_sprite_oriented.c",
+      "source_sha256": "169cb33ab54b536bed3e3541db8375a9849c91a80c87e919f54a4898b432b77d",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Reviewed native x86 source layouts and explicit borrowed global bindings; see family contract",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "sprite-billboard": {
+            "scenario": "sprite-billboard",
+            "checks": 50,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "sprite-oriented": {
+            "scenario": "sprite-oriented",
+            "checks": 27,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "draw-resource": {
+            "scenario": "draw-resource",
+            "checks": 25,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "sprite-native": {
+            "scenario": "sprite-native",
+            "checks": 67,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "native_composition": "67 source-native checks verify real queues, per-vertex grayscale, actual Direct3D2 pixels, LOD blank control, software rejection",
+        "limits": [
+          "PC53/nearest/masked only; original PC24 edge fidelity and huge angles unvalidated",
+          "Explicit source descriptors and global bindings; actual entity/descriptor construction remains unfinished",
+          "Complete software primitive dispatch/rasterizers remain unrecovered; native adapters reject software"
+        ]
+      },
+      "evidence": [
+        "META/m4/sprite-oriented/CONTRACT.md",
+        "META/m4/sprite-world/owners.json",
+        "META/m4/sprite-world/validation.json",
+        "META/m4/sprite-world/integration-real.json",
+        "META/m4/sprite-world/clean/clean-checkout.json",
+        "META/m4/sprite-world/scene-real.json"
+      ]
+    },
+    {
+      "id": "004569b0-functional-c",
+      "original_va": "004569b0",
+      "function": "bh_sprite_oriented_draw",
+      "role": "engine_candidate",
+      "provenance_confidence": "medium: full ordinary render owner reviewed; no verified library/CRT/EH/import/shared-tail classification",
+      "source": "src/bh_sprite_oriented.c",
+      "source_sha256": "169cb33ab54b536bed3e3541db8375a9849c91a80c87e919f54a4898b432b77d",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Reviewed native x86 source layouts and explicit borrowed global bindings; see family contract",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "sprite-billboard": {
+            "scenario": "sprite-billboard",
+            "checks": 50,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "sprite-oriented": {
+            "scenario": "sprite-oriented",
+            "checks": 27,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "draw-resource": {
+            "scenario": "draw-resource",
+            "checks": 25,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "sprite-native": {
+            "scenario": "sprite-native",
+            "checks": 67,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "native_composition": "67 source-native checks verify real queues, per-vertex grayscale, actual Direct3D2 pixels, LOD blank control, software rejection",
+        "limits": [
+          "PC53/nearest/masked only; original PC24 edge fidelity and huge angles unvalidated",
+          "Explicit source descriptors and global bindings; actual entity/descriptor construction remains unfinished",
+          "Complete software primitive dispatch/rasterizers remain unrecovered; native adapters reject software"
+        ]
+      },
+      "evidence": [
+        "META/m4/sprite-oriented/CONTRACT.md",
+        "META/m4/sprite-world/owners.json",
+        "META/m4/sprite-world/validation.json",
+        "META/m4/sprite-world/integration-real.json",
+        "META/m4/sprite-world/clean/clean-checkout.json",
+        "META/m4/sprite-world/scene-real.json"
+      ]
+    },
+    {
+      "id": "0045adf0-functional-c",
+      "original_va": "0045adf0",
+      "function": "bh_draw_resource",
+      "role": "engine_candidate",
+      "provenance_confidence": "medium: full ordinary render owner reviewed; no verified library/CRT/EH/import/shared-tail classification",
+      "source": "META/m4/sprite-world/sources/c25e81cd1a9201006fad78fd08f417191f19a748ac048f2a68640a2f8dfa393b-bh_draw_resource.c.txt",
+      "source_sha256": "c25e81cd1a9201006fad78fd08f417191f19a748ac048f2a68640a2f8dfa393b",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Reviewed native x86 source layouts and explicit borrowed global bindings; see family contract",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "sprite-billboard": {
+            "scenario": "sprite-billboard",
+            "checks": 50,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "sprite-oriented": {
+            "scenario": "sprite-oriented",
+            "checks": 27,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "draw-resource": {
+            "scenario": "draw-resource",
+            "checks": 25,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "sprite-native": {
+            "scenario": "sprite-native",
+            "checks": 67,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "native_composition": "67 source-native checks verify real queues, per-vertex grayscale, actual Direct3D2 pixels, LOD blank control, software rejection",
+        "limits": [
+          "PC53/nearest/masked only; original PC24 edge fidelity and huge angles unvalidated",
+          "Explicit source descriptors and global bindings; actual entity/descriptor construction remains unfinished",
+          "Complete software primitive dispatch/rasterizers remain unrecovered; native adapters reject software"
+        ],
+        "superseded_by": "0045adf0-functional-c-queue-integration"
+      },
+      "evidence": [
+        "META/m4/draw-resource/CONTRACT.md",
+        "META/m4/sprite-world/owners.json",
+        "META/m4/sprite-world/validation.json",
+        "META/m4/sprite-world/integration-real.json",
+        "META/m4/sprite-world/clean/clean-checkout.json",
+        "META/m4/sprite-world/scene-real.json"
+      ],
+      "historical_variant": true,
+      "historical_source_path": "src/bh_draw_resource.c"
+    },
+    {
+      "id": "0046e430-native-branch-wip",
+      "original_va": "0046e430",
+      "function": "bh_native_attribute_emit",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed full native/software dispatcher; native per-vertex conversion bound to real queues; software original0046dda0 remains unfinished",
+      "source": "src/bh_native_attribute.c",
+      "source_sha256": "2f1199587abc2309451a2cd5fbbc889608467cf6b0354ecafc7e642452917aac",
+      "implementation": "wip",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": false,
+        "raw_byte_match": false,
+        "native_checks": 67,
+        "software": "Explicitly rejected without queue mutation; this partial adapter is excluded from recovered-function count"
+      },
+      "evidence": [
+        "META/m4/sprite-world/original/0046e430.tsv",
+        "META/m4/sprite-world/validation.json"
+      ]
+    },
+    {
+      "id": "0045adf0-functional-c-queue-integration",
+      "original_va": "0045adf0",
+      "function": "bh_draw_resource",
+      "role": "engine_candidate",
+      "provenance_confidence": "medium: full ordinary render owner reviewed; no verified library/CRT/EH/import/shared-tail classification",
+      "source": "src/bh_draw_resource.c",
+      "source_sha256": "d6eb1d65b14db4c0394051dd9090da6fa6cba008dac8728d687a1fcc26ab3ba6",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "raw_byte_match": false,
+        "differential": false,
+        "abi": "Same explicit borrowed native descriptors; enum tags renamed to BH_RESOURCE_TAG_* to compose queue and resource public headers without collisions",
+        "fixtures": "Current full integration exercises25 resource-owner fixtures, sprite native output and new queued/entity composition",
+        "limits": [
+          "PC53 profile; native adapters only, software original code remains unfinished",
+          "Source enum namespace edit is a new tested implementation variant; no earlier byte/source evidence transferred"
+        ]
+      },
+      "evidence": [
+        "META/m4/queued-resource/validation.json",
+        "META/m4/queued-resource/integration-real.json",
+        "META/m4/queued-resource/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004775f0-functional-c",
+      "original_va": "004775f0",
+      "function": "bh_draw_submit_execute",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed complete ordinary owner and actual callback installation/call sites; CRT/EH/import/shared-tail excluded; engine authorship remains unverified",
+      "source": "src/bh_draw_submit.c",
+      "source_sha256": "b2601bb927e089a1680d61f2bdc2e4c3cb423a840d9416ac6162409d5ceb59fd",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Reviewed original command/entity offsets and call order; explicit source handles replace borrowed original pointers; source outcomes extend void/next-link API",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "draw-submit": {
+            "scenario": "draw-submit",
+            "checks": 31,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "render-resources": {
+            "scenario": "render-resources",
+            "checks": 25,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-resource-draw": {
+            "scenario": "entity-resource-draw",
+            "checks": 31,
+            "failures": 0
+          },
+          "queued-resource-native": {
+            "scenario": "queued-resource-native",
+            "checks": 70,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "native_composition": "Real source entity slot, PU_9A model/resource owner and flare_yl image produce two resource calls plus billboard through actual queues, recovered draw owners and native pixels; absent model/image bindings produce blank control",
+        "limits": [
+          "PC53/nearest/masked moderate phases; original x87 PC24/exceptional FSIN behavior unvalidated",
+          "Entity draw method only;00441a00 construction/tick/query dependencies and00409f40 scheduling remain unfinished",
+          "No guessed entity refresh pointer installation, no recovered non-model tag constructor claim"
+        ]
+      },
+      "evidence": [
+        "META/m4/draw-submit/CONTRACT.md",
+        "META/m4/queued-resource/owners.json",
+        "META/m4/queued-resource/validation.json",
+        "META/m4/queued-resource/integration-real.json",
+        "META/m4/queued-resource/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00477640-functional-c",
+      "original_va": "00477640",
+      "function": "bh_draw_submit_billboard_execute",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed complete ordinary owner and actual callback installation/call sites; CRT/EH/import/shared-tail excluded; engine authorship remains unverified",
+      "source": "src/bh_draw_submit.c",
+      "source_sha256": "b2601bb927e089a1680d61f2bdc2e4c3cb423a840d9416ac6162409d5ceb59fd",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Reviewed original command/entity offsets and call order; explicit source handles replace borrowed original pointers; source outcomes extend void/next-link API",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "draw-submit": {
+            "scenario": "draw-submit",
+            "checks": 31,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "render-resources": {
+            "scenario": "render-resources",
+            "checks": 25,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-resource-draw": {
+            "scenario": "entity-resource-draw",
+            "checks": 31,
+            "failures": 0
+          },
+          "queued-resource-native": {
+            "scenario": "queued-resource-native",
+            "checks": 70,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "native_composition": "Real source entity slot, PU_9A model/resource owner and flare_yl image produce two resource calls plus billboard through actual queues, recovered draw owners and native pixels; absent model/image bindings produce blank control",
+        "limits": [
+          "PC53/nearest/masked moderate phases; original x87 PC24/exceptional FSIN behavior unvalidated",
+          "Entity draw method only;00441a00 construction/tick/query dependencies and00409f40 scheduling remain unfinished",
+          "No guessed entity refresh pointer installation, no recovered non-model tag constructor claim"
+        ]
+      },
+      "evidence": [
+        "META/m4/draw-submit/CONTRACT.md",
+        "META/m4/queued-resource/owners.json",
+        "META/m4/queued-resource/validation.json",
+        "META/m4/queued-resource/integration-real.json",
+        "META/m4/queued-resource/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00478170-functional-c",
+      "original_va": "00478170",
+      "function": "bh_draw_submit_resource",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed complete ordinary owner and actual callback installation/call sites; CRT/EH/import/shared-tail excluded; engine authorship remains unverified",
+      "source": "src/bh_draw_submit.c",
+      "source_sha256": "b2601bb927e089a1680d61f2bdc2e4c3cb423a840d9416ac6162409d5ceb59fd",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Reviewed original command/entity offsets and call order; explicit source handles replace borrowed original pointers; source outcomes extend void/next-link API",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "draw-submit": {
+            "scenario": "draw-submit",
+            "checks": 31,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "render-resources": {
+            "scenario": "render-resources",
+            "checks": 25,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-resource-draw": {
+            "scenario": "entity-resource-draw",
+            "checks": 31,
+            "failures": 0
+          },
+          "queued-resource-native": {
+            "scenario": "queued-resource-native",
+            "checks": 70,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "native_composition": "Real source entity slot, PU_9A model/resource owner and flare_yl image produce two resource calls plus billboard through actual queues, recovered draw owners and native pixels; absent model/image bindings produce blank control",
+        "limits": [
+          "PC53/nearest/masked moderate phases; original x87 PC24/exceptional FSIN behavior unvalidated",
+          "Entity draw method only;00441a00 construction/tick/query dependencies and00409f40 scheduling remain unfinished",
+          "No guessed entity refresh pointer installation, no recovered non-model tag constructor claim"
+        ]
+      },
+      "evidence": [
+        "META/m4/draw-submit/CONTRACT.md",
+        "META/m4/queued-resource/owners.json",
+        "META/m4/queued-resource/validation.json",
+        "META/m4/queued-resource/integration-real.json",
+        "META/m4/queued-resource/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004413b0-functional-c",
+      "original_va": "004413b0",
+      "function": "bh_entity_resource_draw_special",
+      "role": "game",
+      "provenance_confidence": "Game entity draw method installed by00441a00 for type9/variant0 at payload+e8, invoked by00409f40; high confidence role, no full constructor/traversal admission",
+      "source": "src/bh_entity_resource_draw.c",
+      "source_sha256": "f35c7984a31b438f6d6aa915e66575f4598e2368445e27af163ebf60c3d28969",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Reviewed original command/entity offsets and call order; explicit source handles replace borrowed original pointers; source outcomes extend void/next-link API",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "draw-submit": {
+            "scenario": "draw-submit",
+            "checks": 31,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "render-resources": {
+            "scenario": "render-resources",
+            "checks": 25,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-resource-draw": {
+            "scenario": "entity-resource-draw",
+            "checks": 31,
+            "failures": 0
+          },
+          "queued-resource-native": {
+            "scenario": "queued-resource-native",
+            "checks": 70,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "native_composition": "Real source entity slot, PU_9A model/resource owner and flare_yl image produce two resource calls plus billboard through actual queues, recovered draw owners and native pixels; absent model/image bindings produce blank control",
+        "limits": [
+          "PC53/nearest/masked moderate phases; original x87 PC24/exceptional FSIN behavior unvalidated",
+          "Entity draw method only;00441a00 construction/tick/query dependencies and00409f40 scheduling remain unfinished",
+          "No guessed entity refresh pointer installation, no recovered non-model tag constructor claim"
+        ]
+      },
+      "evidence": [
+        "META/m4/entity-resource-draw/CONTRACT.md",
+        "META/m4/queued-resource/owners.json",
+        "META/m4/queued-resource/validation.json",
+        "META/m4/queued-resource/integration-real.json",
+        "META/m4/queued-resource/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00441a00-functional-c",
+      "original_va": "00441a00",
+      "function": "bh_pickup_spawn",
+      "role": "game",
+      "provenance_confidence": "Reviewed owner boundary, callers and immutable body; CRT/compiler/import/tail excluded. High-confidence game role.",
+      "source": "src/bh_pickup.c",
+      "source_sha256": "be00366ba816c0e95a168b0386b022eb2ced476e0e1ddff6b57443605d688ed8",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl explicit source contexts; reviewed entity payload and 0x54 queue layout; PC53 nearest masked",
+        "raw_byte_match": false,
+        "differential": false,
+        "scope": "Pickup constructor and room/global registration.",
+        "fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 45,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 77,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 37,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "limits": [
+          "00454fc0 is a partial native rectangle adapter; software path remains WIP.",
+          "Explicit room/resource/render bindings and diagnostic one-room native fixture; full world/startup construction and source game remain incomplete.",
+          "No raw byte match or original differential claim; x87 PC24/exceptional timing behavior remains unvalidated."
+        ],
+        "review_regressions": [
+          "first label cutoff returns before second projection",
+          "unlinked portal ignores stale target",
+          "32-bit wrapped price total",
+          "missing selected draw callback rejected before allocation/random"
+        ]
+      },
+      "evidence": [
+        "META/m4/pickup/owners.json",
+        "META/m4/pickup/validation.json",
+        "META/m4/pickup/integration-real.json",
+        "META/m4/pickup/clean/clean-checkout.json",
+        "META/m4/pickup/link-map.txt",
+        "META/m4/pickup-lifecycle/review.json",
+        "META/m4/pickup-draw/REVIEW.md",
+        "META/m4/entity-schedule/REVIEW.md"
+      ]
+    },
+    {
+      "id": "004415a0-functional-c",
+      "original_va": "004415a0",
+      "function": "bh_pickup_tick",
+      "role": "game",
+      "provenance_confidence": "Reviewed owner boundary, callers and immutable body; CRT/compiler/import/tail excluded. High-confidence game role.",
+      "source": "src/bh_pickup.c",
+      "source_sha256": "be00366ba816c0e95a168b0386b022eb2ced476e0e1ddff6b57443605d688ed8",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl explicit source contexts; reviewed entity payload and 0x54 queue layout; PC53 nearest masked",
+        "raw_byte_match": false,
+        "differential": false,
+        "scope": "Pickup step, offer/query and lifetime behavior.",
+        "fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 45,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 77,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 37,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "limits": [
+          "00454fc0 is a partial native rectangle adapter; software path remains WIP.",
+          "Explicit room/resource/render bindings and diagnostic one-room native fixture; full world/startup construction and source game remain incomplete.",
+          "No raw byte match or original differential claim; x87 PC24/exceptional timing behavior remains unvalidated."
+        ],
+        "review_regressions": [
+          "first label cutoff returns before second projection",
+          "unlinked portal ignores stale target",
+          "32-bit wrapped price total",
+          "missing selected draw callback rejected before allocation/random"
+        ]
+      },
+      "evidence": [
+        "META/m4/pickup/owners.json",
+        "META/m4/pickup/validation.json",
+        "META/m4/pickup/integration-real.json",
+        "META/m4/pickup/clean/clean-checkout.json",
+        "META/m4/pickup/link-map.txt",
+        "META/m4/pickup-lifecycle/review.json",
+        "META/m4/pickup-draw/REVIEW.md",
+        "META/m4/entity-schedule/REVIEW.md"
+      ]
+    },
+    {
+      "id": "00441570-functional-c",
+      "original_va": "00441570",
+      "function": "bh_pickup_query",
+      "role": "game",
+      "provenance_confidence": "Reviewed owner boundary, callers and immutable body; CRT/compiler/import/tail excluded. High-confidence game role.",
+      "source": "src/bh_pickup.c",
+      "source_sha256": "be00366ba816c0e95a168b0386b022eb2ced476e0e1ddff6b57443605d688ed8",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl explicit source contexts; reviewed entity payload and 0x54 queue layout; PC53 nearest masked",
+        "raw_byte_match": false,
+        "differential": false,
+        "scope": "Pickup query event 20 transition.",
+        "fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 45,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 77,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 37,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "limits": [
+          "00454fc0 is a partial native rectangle adapter; software path remains WIP.",
+          "Explicit room/resource/render bindings and diagnostic one-room native fixture; full world/startup construction and source game remain incomplete.",
+          "No raw byte match or original differential claim; x87 PC24/exceptional timing behavior remains unvalidated."
+        ],
+        "review_regressions": [
+          "first label cutoff returns before second projection",
+          "unlinked portal ignores stale target",
+          "32-bit wrapped price total",
+          "missing selected draw callback rejected before allocation/random"
+        ]
+      },
+      "evidence": [
+        "META/m4/pickup/owners.json",
+        "META/m4/pickup/validation.json",
+        "META/m4/pickup/integration-real.json",
+        "META/m4/pickup/clean/clean-checkout.json",
+        "META/m4/pickup/link-map.txt",
+        "META/m4/pickup-lifecycle/review.json",
+        "META/m4/pickup-draw/REVIEW.md",
+        "META/m4/entity-schedule/REVIEW.md"
+      ]
+    },
+    {
+      "id": "004414d0-functional-c",
+      "original_va": "004414d0",
+      "function": "bh_pickup_cleanup",
+      "role": "game",
+      "provenance_confidence": "Reviewed owner boundary, callers and immutable body; CRT/compiler/import/tail excluded. High-confidence game role.",
+      "source": "src/bh_pickup.c",
+      "source_sha256": "be00366ba816c0e95a168b0386b022eb2ced476e0e1ddff6b57443605d688ed8",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl explicit source contexts; reviewed entity payload and 0x54 queue layout; PC53 nearest masked",
+        "raw_byte_match": false,
+        "differential": false,
+        "scope": "Pickup unlink and release callback.",
+        "fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 45,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 77,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 37,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "limits": [
+          "00454fc0 is a partial native rectangle adapter; software path remains WIP.",
+          "Explicit room/resource/render bindings and diagnostic one-room native fixture; full world/startup construction and source game remain incomplete.",
+          "No raw byte match or original differential claim; x87 PC24/exceptional timing behavior remains unvalidated."
+        ],
+        "review_regressions": [
+          "first label cutoff returns before second projection",
+          "unlinked portal ignores stale target",
+          "32-bit wrapped price total",
+          "missing selected draw callback rejected before allocation/random"
+        ]
+      },
+      "evidence": [
+        "META/m4/pickup/owners.json",
+        "META/m4/pickup/validation.json",
+        "META/m4/pickup/integration-real.json",
+        "META/m4/pickup/clean/clean-checkout.json",
+        "META/m4/pickup/link-map.txt",
+        "META/m4/pickup-lifecycle/review.json",
+        "META/m4/pickup-draw/REVIEW.md",
+        "META/m4/entity-schedule/REVIEW.md"
+      ]
+    },
+    {
+      "id": "004412f0-functional-c",
+      "original_va": "004412f0",
+      "function": "bh_pickup_draw",
+      "role": "game",
+      "provenance_confidence": "Reviewed owner boundary, callers and immutable body; CRT/compiler/import/tail excluded. High-confidence game role.",
+      "source": "src/bh_pickup_draw.c",
+      "source_sha256": "821a42f83673e67a1573f7f4b853fcb37615850d75bd536aec1ca12c755e9690",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl explicit source contexts; reviewed entity payload and 0x54 queue layout; PC53 nearest masked",
+        "raw_byte_match": false,
+        "differential": false,
+        "scope": "Default model, glow and quantity-label submission.",
+        "fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 45,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 77,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 37,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "limits": [
+          "00454fc0 is a partial native rectangle adapter; software path remains WIP.",
+          "Explicit room/resource/render bindings and diagnostic one-room native fixture; full world/startup construction and source game remain incomplete.",
+          "No raw byte match or original differential claim; x87 PC24/exceptional timing behavior remains unvalidated."
+        ],
+        "review_regressions": [
+          "first label cutoff returns before second projection",
+          "unlinked portal ignores stale target",
+          "32-bit wrapped price total",
+          "missing selected draw callback rejected before allocation/random"
+        ]
+      },
+      "evidence": [
+        "META/m4/pickup/owners.json",
+        "META/m4/pickup/validation.json",
+        "META/m4/pickup/integration-real.json",
+        "META/m4/pickup/clean/clean-checkout.json",
+        "META/m4/pickup/link-map.txt",
+        "META/m4/pickup-lifecycle/review.json",
+        "META/m4/pickup-draw/REVIEW.md",
+        "META/m4/entity-schedule/REVIEW.md"
+      ]
+    },
+    {
+      "id": "00440c40-functional-c",
+      "original_va": "00440c40",
+      "function": "bh_pickup_label",
+      "role": "game",
+      "provenance_confidence": "Reviewed owner boundary, callers and immutable body; CRT/compiler/import/tail excluded. High-confidence game role.",
+      "source": "src/bh_pickup_draw.c",
+      "source_sha256": "821a42f83673e67a1573f7f4b853fcb37615850d75bd536aec1ca12c755e9690",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl explicit source contexts; reviewed entity payload and 0x54 queue layout; PC53 nearest masked",
+        "raw_byte_match": false,
+        "differential": false,
+        "scope": "Two projected numeric/unit atlas label layers.",
+        "fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 45,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 77,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 37,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "limits": [
+          "00454fc0 is a partial native rectangle adapter; software path remains WIP.",
+          "Explicit room/resource/render bindings and diagnostic one-room native fixture; full world/startup construction and source game remain incomplete.",
+          "No raw byte match or original differential claim; x87 PC24/exceptional timing behavior remains unvalidated."
+        ],
+        "review_regressions": [
+          "first label cutoff returns before second projection",
+          "unlinked portal ignores stale target",
+          "32-bit wrapped price total",
+          "missing selected draw callback rejected before allocation/random"
+        ]
+      },
+      "evidence": [
+        "META/m4/pickup/owners.json",
+        "META/m4/pickup/validation.json",
+        "META/m4/pickup/integration-real.json",
+        "META/m4/pickup/clean/clean-checkout.json",
+        "META/m4/pickup/link-map.txt",
+        "META/m4/pickup-lifecycle/review.json",
+        "META/m4/pickup-draw/REVIEW.md",
+        "META/m4/entity-schedule/REVIEW.md"
+      ]
+    },
+    {
+      "id": "004558d0-functional-c",
+      "original_va": "004558d0",
+      "function": "bh_pickup_project",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed owner boundary, callers and immutable body; CRT/compiler/import/tail excluded. Engine authorship remains unverified.",
+      "source": "src/bh_pickup_draw.c",
+      "source_sha256": "821a42f83673e67a1573f7f4b853fcb37615850d75bd536aec1ca12c755e9690",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl explicit source contexts; reviewed entity payload and 0x54 queue layout; PC53 nearest masked",
+        "raw_byte_match": false,
+        "differential": false,
+        "scope": "Projected-camera point helper; engine provenance unverified.",
+        "fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 45,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 77,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 37,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "limits": [
+          "00454fc0 is a partial native rectangle adapter; software path remains WIP.",
+          "Explicit room/resource/render bindings and diagnostic one-room native fixture; full world/startup construction and source game remain incomplete.",
+          "No raw byte match or original differential claim; x87 PC24/exceptional timing behavior remains unvalidated."
+        ],
+        "review_regressions": [
+          "first label cutoff returns before second projection",
+          "unlinked portal ignores stale target",
+          "32-bit wrapped price total",
+          "missing selected draw callback rejected before allocation/random"
+        ]
+      },
+      "evidence": [
+        "META/m4/pickup/owners.json",
+        "META/m4/pickup/validation.json",
+        "META/m4/pickup/integration-real.json",
+        "META/m4/pickup/clean/clean-checkout.json",
+        "META/m4/pickup/link-map.txt",
+        "META/m4/pickup-lifecycle/review.json",
+        "META/m4/pickup-draw/REVIEW.md",
+        "META/m4/entity-schedule/REVIEW.md"
+      ]
+    },
+    {
+      "id": "00478f60-functional-c",
+      "original_va": "00478f60",
+      "function": "bh_pickup_rect_queue",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed owner boundary, callers and immutable body; CRT/compiler/import/tail excluded. Engine authorship remains unverified.",
+      "source": "src/bh_pickup_draw.c",
+      "source_sha256": "821a42f83673e67a1573f7f4b853fcb37615850d75bd536aec1ca12c755e9690",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl explicit source contexts; reviewed entity payload and 0x54 queue layout; PC53 nearest masked",
+        "raw_byte_match": false,
+        "differential": false,
+        "scope": "Queued rectangle producer and bucket insertion; engine provenance unverified.",
+        "fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 45,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 77,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 37,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "limits": [
+          "00454fc0 is a partial native rectangle adapter; software path remains WIP.",
+          "Explicit room/resource/render bindings and diagnostic one-room native fixture; full world/startup construction and source game remain incomplete.",
+          "No raw byte match or original differential claim; x87 PC24/exceptional timing behavior remains unvalidated."
+        ],
+        "review_regressions": [
+          "first label cutoff returns before second projection",
+          "unlinked portal ignores stale target",
+          "32-bit wrapped price total",
+          "missing selected draw callback rejected before allocation/random"
+        ]
+      },
+      "evidence": [
+        "META/m4/pickup/owners.json",
+        "META/m4/pickup/validation.json",
+        "META/m4/pickup/integration-real.json",
+        "META/m4/pickup/clean/clean-checkout.json",
+        "META/m4/pickup/link-map.txt",
+        "META/m4/pickup-lifecycle/review.json",
+        "META/m4/pickup-draw/REVIEW.md",
+        "META/m4/entity-schedule/REVIEW.md"
+      ]
+    },
+    {
+      "id": "004776c0-functional-c",
+      "original_va": "004776c0",
+      "function": "bh_pickup_rect_execute",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed owner boundary, callers and immutable body; CRT/compiler/import/tail excluded. Engine authorship remains unverified.",
+      "source": "src/bh_pickup_draw.c",
+      "source_sha256": "821a42f83673e67a1573f7f4b853fcb37615850d75bd536aec1ca12c755e9690",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl explicit source contexts; reviewed entity payload and 0x54 queue layout; PC53 nearest masked",
+        "raw_byte_match": false,
+        "differential": false,
+        "scope": "Complete queue callback; downstream rectangle renderer has native-only backend limit.",
+        "fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 45,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 77,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 37,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "limits": [
+          "00454fc0 is a partial native rectangle adapter; software path remains WIP.",
+          "Explicit room/resource/render bindings and diagnostic one-room native fixture; full world/startup construction and source game remain incomplete.",
+          "No raw byte match or original differential claim; x87 PC24/exceptional timing behavior remains unvalidated."
+        ],
+        "review_regressions": [
+          "first label cutoff returns before second projection",
+          "unlinked portal ignores stale target",
+          "32-bit wrapped price total",
+          "missing selected draw callback rejected before allocation/random"
+        ]
+      },
+      "evidence": [
+        "META/m4/pickup/owners.json",
+        "META/m4/pickup/validation.json",
+        "META/m4/pickup/integration-real.json",
+        "META/m4/pickup/clean/clean-checkout.json",
+        "META/m4/pickup/link-map.txt",
+        "META/m4/pickup-lifecycle/review.json",
+        "META/m4/pickup-draw/REVIEW.md",
+        "META/m4/entity-schedule/REVIEW.md"
+      ]
+    },
+    {
+      "id": "00454fc0-functional-c",
+      "original_va": "00454fc0",
+      "function": "bh_pickup_rect_draw",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed owner boundary, callers and immutable body; CRT/compiler/import/tail excluded. Engine authorship remains unverified.",
+      "source": "src/bh_pickup_draw.c",
+      "source_sha256": "821a42f83673e67a1573f7f4b853fcb37615850d75bd536aec1ca12c755e9690",
+      "implementation": "wip",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl explicit source contexts; reviewed entity payload and 0x54 queue layout; PC53 nearest masked",
+        "raw_byte_match": false,
+        "differential": false,
+        "scope": "Native geometry/clip/UV/shade adapter only; original software rasterization remains WIP.",
+        "fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 45,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 77,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 37,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "limits": [
+          "00454fc0 is a partial native rectangle adapter; software path remains WIP.",
+          "Explicit room/resource/render bindings and diagnostic one-room native fixture; full world/startup construction and source game remain incomplete.",
+          "No raw byte match or original differential claim; x87 PC24/exceptional timing behavior remains unvalidated."
+        ],
+        "review_regressions": [
+          "first label cutoff returns before second projection",
+          "unlinked portal ignores stale target",
+          "32-bit wrapped price total",
+          "missing selected draw callback rejected before allocation/random"
+        ]
+      },
+      "evidence": [
+        "META/m4/pickup/owners.json",
+        "META/m4/pickup/validation.json",
+        "META/m4/pickup/integration-real.json",
+        "META/m4/pickup/clean/clean-checkout.json",
+        "META/m4/pickup/link-map.txt",
+        "META/m4/pickup-lifecycle/review.json",
+        "META/m4/pickup-draw/REVIEW.md",
+        "META/m4/entity-schedule/REVIEW.md"
+      ]
+    },
+    {
+      "id": "00409f20-functional-c",
+      "original_va": "00409f20",
+      "function": "bh_entity_schedule_tick",
+      "role": "game",
+      "provenance_confidence": "Reviewed owner boundary, callers and immutable body; CRT/compiler/import/tail excluded. High-confidence game role.",
+      "source": "META/m4/pickup/sources/3fa9c9e70141ca460a647a074e8e677145a49a9b5905e8fef3ff76b43e4e730a-bh_entity_schedule.c.txt",
+      "source_sha256": "3fa9c9e70141ca460a647a074e8e677145a49a9b5905e8fef3ff76b43e4e730a",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl explicit source contexts; reviewed entity payload and 0x54 queue layout; PC53 nearest masked",
+        "raw_byte_match": false,
+        "differential": false,
+        "scope": "Thirty-frame room callback countdown.",
+        "fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 45,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 77,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 37,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "limits": [
+          "00454fc0 is a partial native rectangle adapter; software path remains WIP.",
+          "Explicit room/resource/render bindings and diagnostic one-room native fixture; full world/startup construction and source game remain incomplete.",
+          "No raw byte match or original differential claim; x87 PC24/exceptional timing behavior remains unvalidated."
+        ],
+        "review_regressions": [
+          "first label cutoff returns before second projection",
+          "unlinked portal ignores stale target",
+          "32-bit wrapped price total",
+          "missing selected draw callback rejected before allocation/random"
+        ],
+        "superseded_by": "00409f20-functional-c-scene-bindings"
+      },
+      "evidence": [
+        "META/m4/pickup/owners.json",
+        "META/m4/pickup/validation.json",
+        "META/m4/pickup/integration-real.json",
+        "META/m4/pickup/clean/clean-checkout.json",
+        "META/m4/pickup/link-map.txt",
+        "META/m4/pickup-lifecycle/review.json",
+        "META/m4/pickup-draw/REVIEW.md",
+        "META/m4/entity-schedule/REVIEW.md"
+      ],
+      "historical_source_path": "src/bh_entity_schedule.c",
+      "historical_variant": true
+    },
+    {
+      "id": "00409f40-functional-c",
+      "original_va": "00409f40",
+      "function": "bh_entity_schedule",
+      "role": "game",
+      "provenance_confidence": "Reviewed owner boundary, callers and immutable body; CRT/compiler/import/tail excluded. High-confidence game role.",
+      "source": "META/m4/pickup/sources/3fa9c9e70141ca460a647a074e8e677145a49a9b5905e8fef3ff76b43e4e730a-bh_entity_schedule.c.txt",
+      "source_sha256": "3fa9c9e70141ca460a647a074e8e677145a49a9b5905e8fef3ff76b43e4e730a",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl explicit source contexts; reviewed entity payload and 0x54 queue layout; PC53 nearest masked",
+        "raw_byte_match": false,
+        "differential": false,
+        "scope": "Resource, actor, pickup, linked-room and portal scheduling.",
+        "fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 45,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 77,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 37,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "limits": [
+          "00454fc0 is a partial native rectangle adapter; software path remains WIP.",
+          "Explicit room/resource/render bindings and diagnostic one-room native fixture; full world/startup construction and source game remain incomplete.",
+          "No raw byte match or original differential claim; x87 PC24/exceptional timing behavior remains unvalidated."
+        ],
+        "review_regressions": [
+          "first label cutoff returns before second projection",
+          "unlinked portal ignores stale target",
+          "32-bit wrapped price total",
+          "missing selected draw callback rejected before allocation/random"
+        ],
+        "superseded_by": "00409f40-functional-c-scene-bindings"
+      },
+      "evidence": [
+        "META/m4/pickup/owners.json",
+        "META/m4/pickup/validation.json",
+        "META/m4/pickup/integration-real.json",
+        "META/m4/pickup/clean/clean-checkout.json",
+        "META/m4/pickup/link-map.txt",
+        "META/m4/pickup-lifecycle/review.json",
+        "META/m4/pickup-draw/REVIEW.md",
+        "META/m4/entity-schedule/REVIEW.md"
+      ],
+      "historical_source_path": "src/bh_entity_schedule.c",
+      "historical_variant": true
+    },
+    {
+      "id": "00409530-functional-c",
+      "original_va": "00409530",
+      "function": "bh_entity_schedule_clip_portal",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed owner boundary, callers and immutable body; CRT/compiler/import/tail excluded. Engine authorship remains unverified.",
+      "source": "META/m4/pickup/sources/3fa9c9e70141ca460a647a074e8e677145a49a9b5905e8fef3ff76b43e4e730a-bh_entity_schedule.c.txt",
+      "source_sha256": "3fa9c9e70141ca460a647a074e8e677145a49a9b5905e8fef3ff76b43e4e730a",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl explicit source contexts; reviewed entity payload and 0x54 queue layout; PC53 nearest masked",
+        "raw_byte_match": false,
+        "differential": false,
+        "scope": "Portal-specific convex clipper composition; only mapped caller is the scheduler.",
+        "fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 45,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 77,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 37,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "limits": [
+          "00454fc0 is a partial native rectangle adapter; software path remains WIP.",
+          "Explicit room/resource/render bindings and diagnostic one-room native fixture; full world/startup construction and source game remain incomplete.",
+          "No raw byte match or original differential claim; x87 PC24/exceptional timing behavior remains unvalidated."
+        ],
+        "review_regressions": [
+          "first label cutoff returns before second projection",
+          "unlinked portal ignores stale target",
+          "32-bit wrapped price total",
+          "missing selected draw callback rejected before allocation/random"
+        ],
+        "superseded_by": "00409530-functional-c-scene-bindings"
+      },
+      "evidence": [
+        "META/m4/pickup/owners.json",
+        "META/m4/pickup/validation.json",
+        "META/m4/pickup/integration-real.json",
+        "META/m4/pickup/clean/clean-checkout.json",
+        "META/m4/pickup/link-map.txt",
+        "META/m4/pickup-lifecycle/review.json",
+        "META/m4/pickup-draw/REVIEW.md",
+        "META/m4/entity-schedule/REVIEW.md"
+      ],
+      "historical_source_path": "src/bh_entity_schedule.c",
+      "historical_variant": true
+    },
+    {
+      "id": "00478990-functional-c",
+      "original_va": "00478990",
+      "function": "bh_draw_controls_state",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed owner boundary, callers and immutable body; CRT/compiler/import/tail excluded. Engine authorship remains unverified.",
+      "source": "src/bh_draw_controls.c",
+      "source_sha256": "ca1ceb1702478ebf1aab124ea4ab2754285a7ca06df506a3279cbafd77c33755",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl explicit source contexts; reviewed entity payload and 0x54 queue layout; PC53 nearest masked",
+        "raw_byte_match": false,
+        "differential": false,
+        "scope": "Texture-mask command producer.",
+        "fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 45,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 77,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 37,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "limits": [
+          "00454fc0 is a partial native rectangle adapter; software path remains WIP.",
+          "Explicit room/resource/render bindings and diagnostic one-room native fixture; full world/startup construction and source game remain incomplete.",
+          "No raw byte match or original differential claim; x87 PC24/exceptional timing behavior remains unvalidated."
+        ],
+        "review_regressions": [
+          "first label cutoff returns before second projection",
+          "unlinked portal ignores stale target",
+          "32-bit wrapped price total",
+          "missing selected draw callback rejected before allocation/random"
+        ]
+      },
+      "evidence": [
+        "META/m4/pickup/owners.json",
+        "META/m4/pickup/validation.json",
+        "META/m4/pickup/integration-real.json",
+        "META/m4/pickup/clean/clean-checkout.json",
+        "META/m4/pickup/link-map.txt",
+        "META/m4/pickup-lifecycle/review.json",
+        "META/m4/pickup-draw/REVIEW.md",
+        "META/m4/entity-schedule/REVIEW.md"
+      ]
+    },
+    {
+      "id": "00478a70-functional-c",
+      "original_va": "00478a70",
+      "function": "bh_draw_controls_clip_rect",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed owner boundary, callers and immutable body; CRT/compiler/import/tail excluded. Engine authorship remains unverified.",
+      "source": "src/bh_draw_controls.c",
+      "source_sha256": "ca1ceb1702478ebf1aab124ea4ab2754285a7ca06df506a3279cbafd77c33755",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl explicit source contexts; reviewed entity payload and 0x54 queue layout; PC53 nearest masked",
+        "raw_byte_match": false,
+        "differential": false,
+        "scope": "Viewport rectangle command producer.",
+        "fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 45,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 77,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 37,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "limits": [
+          "00454fc0 is a partial native rectangle adapter; software path remains WIP.",
+          "Explicit room/resource/render bindings and diagnostic one-room native fixture; full world/startup construction and source game remain incomplete.",
+          "No raw byte match or original differential claim; x87 PC24/exceptional timing behavior remains unvalidated."
+        ],
+        "review_regressions": [
+          "first label cutoff returns before second projection",
+          "unlinked portal ignores stale target",
+          "32-bit wrapped price total",
+          "missing selected draw callback rejected before allocation/random"
+        ]
+      },
+      "evidence": [
+        "META/m4/pickup/owners.json",
+        "META/m4/pickup/validation.json",
+        "META/m4/pickup/integration-real.json",
+        "META/m4/pickup/clean/clean-checkout.json",
+        "META/m4/pickup/link-map.txt",
+        "META/m4/pickup-lifecycle/review.json",
+        "META/m4/pickup-draw/REVIEW.md",
+        "META/m4/entity-schedule/REVIEW.md"
+      ]
+    },
+    {
+      "id": "00458300-functional-c",
+      "original_va": "00458300",
+      "function": "bh_draw_controls_texture_mask",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed owner boundary, callers and immutable body; CRT/compiler/import/tail excluded. Engine authorship remains unverified.",
+      "source": "src/bh_draw_controls.c",
+      "source_sha256": "ca1ceb1702478ebf1aab124ea4ab2754285a7ca06df506a3279cbafd77c33755",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl explicit source contexts; reviewed entity payload and 0x54 queue layout; PC53 nearest masked",
+        "raw_byte_match": false,
+        "differential": false,
+        "scope": "Texture-mask propagation over explicit resource bindings.",
+        "fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 45,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 77,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 37,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "limits": [
+          "00454fc0 is a partial native rectangle adapter; software path remains WIP.",
+          "Explicit room/resource/render bindings and diagnostic one-room native fixture; full world/startup construction and source game remain incomplete.",
+          "No raw byte match or original differential claim; x87 PC24/exceptional timing behavior remains unvalidated."
+        ],
+        "review_regressions": [
+          "first label cutoff returns before second projection",
+          "unlinked portal ignores stale target",
+          "32-bit wrapped price total",
+          "missing selected draw callback rejected before allocation/random"
+        ]
+      },
+      "evidence": [
+        "META/m4/pickup/owners.json",
+        "META/m4/pickup/validation.json",
+        "META/m4/pickup/integration-real.json",
+        "META/m4/pickup/clean/clean-checkout.json",
+        "META/m4/pickup/link-map.txt",
+        "META/m4/pickup-lifecycle/review.json",
+        "META/m4/pickup-draw/REVIEW.md",
+        "META/m4/entity-schedule/REVIEW.md"
+      ]
+    },
+    {
+      "id": "00477f40-functional-c",
+      "original_va": "00477f40",
+      "function": "bh_draw_controls_execute",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed owner boundary, callers and immutable body; CRT/compiler/import/tail excluded. Engine authorship remains unverified.",
+      "source": "src/bh_draw_controls.c",
+      "source_sha256": "ca1ceb1702478ebf1aab124ea4ab2754285a7ca06df506a3279cbafd77c33755",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl explicit source contexts; reviewed entity payload and 0x54 queue layout; PC53 nearest masked",
+        "raw_byte_match": false,
+        "differential": false,
+        "scope": "Texture-mask queued callback branch.",
+        "fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 45,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 77,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 37,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "limits": [
+          "00454fc0 is a partial native rectangle adapter; software path remains WIP.",
+          "Explicit room/resource/render bindings and diagnostic one-room native fixture; full world/startup construction and source game remain incomplete.",
+          "No raw byte match or original differential claim; x87 PC24/exceptional timing behavior remains unvalidated."
+        ],
+        "review_regressions": [
+          "first label cutoff returns before second projection",
+          "unlinked portal ignores stale target",
+          "32-bit wrapped price total",
+          "missing selected draw callback rejected before allocation/random"
+        ]
+      },
+      "evidence": [
+        "META/m4/pickup/owners.json",
+        "META/m4/pickup/validation.json",
+        "META/m4/pickup/integration-real.json",
+        "META/m4/pickup/clean/clean-checkout.json",
+        "META/m4/pickup/link-map.txt",
+        "META/m4/pickup-lifecycle/review.json",
+        "META/m4/pickup-draw/REVIEW.md",
+        "META/m4/entity-schedule/REVIEW.md"
+      ]
+    },
+    {
+      "id": "00477e40-functional-c",
+      "original_va": "00477e40",
+      "function": "bh_draw_controls_execute",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed owner boundary, callers and immutable body; CRT/compiler/import/tail excluded. Engine authorship remains unverified.",
+      "source": "src/bh_draw_controls.c",
+      "source_sha256": "ca1ceb1702478ebf1aab124ea4ab2754285a7ca06df506a3279cbafd77c33755",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl explicit source contexts; reviewed entity payload and 0x54 queue layout; PC53 nearest masked",
+        "raw_byte_match": false,
+        "differential": false,
+        "scope": "Viewport rectangle callback branch and next-rectangle suppression.",
+        "fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 45,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 77,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 66,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 66,
+            "failures": 0
+          },
+          "draw-controls": {
+            "scenario": "draw-controls",
+            "checks": 37,
+            "failures": 0
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "limits": [
+          "00454fc0 is a partial native rectangle adapter; software path remains WIP.",
+          "Explicit room/resource/render bindings and diagnostic one-room native fixture; full world/startup construction and source game remain incomplete.",
+          "No raw byte match or original differential claim; x87 PC24/exceptional timing behavior remains unvalidated."
+        ],
+        "review_regressions": [
+          "first label cutoff returns before second projection",
+          "unlinked portal ignores stale target",
+          "32-bit wrapped price total",
+          "missing selected draw callback rejected before allocation/random"
+        ]
+      },
+      "evidence": [
+        "META/m4/pickup/owners.json",
+        "META/m4/pickup/validation.json",
+        "META/m4/pickup/integration-real.json",
+        "META/m4/pickup/clean/clean-checkout.json",
+        "META/m4/pickup/link-map.txt",
+        "META/m4/pickup-lifecycle/review.json",
+        "META/m4/pickup-draw/REVIEW.md",
+        "META/m4/entity-schedule/REVIEW.md"
+      ]
+    },
+    {
+      "id": "00409530-functional-c-scene-bindings",
+      "original_va": "00409530",
+      "function": "bh_entity_schedule_clip_portal",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed owner boundary, callers and immutable body; CRT/compiler/import/tail excluded. Engine authorship remains unverified.",
+      "source": "src/bh_entity_schedule.c",
+      "source_sha256": "5a83eb1e4de2711b529e80b528a81eecec8c4d28ac52e40db27a41d9ed0af576",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source contexts; actual player overlay position bound separately from render eye",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "scene-owner": {
+            "scenario": "scene-owner",
+            "checks": 22,
+            "failures": 0
+          },
+          "scene-bindings": {
+            "scenario": "scene-bindings",
+            "checks": 13,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "scene-owner-native": {
+            "scenario": "scene-owner-native",
+            "checks": 80,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 70,
+            "failures": 0
+          }
+        },
+        "clean_fixtures": {
+          "scene-owner": {
+            "scenario": "scene-owner",
+            "checks": 22,
+            "failures": 0
+          },
+          "scene-bindings": {
+            "scenario": "scene-bindings",
+            "checks": 13,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "scene-owner-native": {
+            "scenario": "scene-owner-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 70,
+            "failures": 0
+          }
+        },
+        "variant_scope": "Current whole translation unit and header context; prior variant evidence remains frozen.",
+        "limits": [
+          "Moderate finite PC53/nearest/masked source fixtures; x87 PC24/exceptional inputs and exact FP equivalence remain unvalidated.",
+          "The binding layer is a source adapter, not admission of full original world/resource/startup constructors.",
+          "Native fixture uses real two-room geometry and assets but unapplied block scripts/explicit unconfigured resource flags, separate main render-camera setup, and no gameplay.",
+          "Software rasterizers, full scene callers, actor/startup construction and playable source game remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/scene-owner/validation.json",
+        "META/m4/scene-owner/integration-real.json",
+        "META/m4/scene-owner/clean/clean-checkout.json",
+        "META/m4/scene-owner/link-map.txt",
+        "META/m4/entity-schedule/REVIEW.md"
+      ]
+    },
+    {
+      "id": "00409f20-functional-c-scene-bindings",
+      "original_va": "00409f20",
+      "function": "bh_entity_schedule_tick",
+      "role": "game",
+      "provenance_confidence": "Reviewed owner boundary, callers and immutable body; CRT/compiler/import/tail excluded. High-confidence game role.",
+      "source": "src/bh_entity_schedule.c",
+      "source_sha256": "5a83eb1e4de2711b529e80b528a81eecec8c4d28ac52e40db27a41d9ed0af576",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source contexts; actual player overlay position bound separately from render eye",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "scene-owner": {
+            "scenario": "scene-owner",
+            "checks": 22,
+            "failures": 0
+          },
+          "scene-bindings": {
+            "scenario": "scene-bindings",
+            "checks": 13,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "scene-owner-native": {
+            "scenario": "scene-owner-native",
+            "checks": 80,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 70,
+            "failures": 0
+          }
+        },
+        "clean_fixtures": {
+          "scene-owner": {
+            "scenario": "scene-owner",
+            "checks": 22,
+            "failures": 0
+          },
+          "scene-bindings": {
+            "scenario": "scene-bindings",
+            "checks": 13,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "scene-owner-native": {
+            "scenario": "scene-owner-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 70,
+            "failures": 0
+          }
+        },
+        "variant_scope": "Current whole translation unit and header context; prior variant evidence remains frozen.",
+        "limits": [
+          "Moderate finite PC53/nearest/masked source fixtures; x87 PC24/exceptional inputs and exact FP equivalence remain unvalidated.",
+          "The binding layer is a source adapter, not admission of full original world/resource/startup constructors.",
+          "Native fixture uses real two-room geometry and assets but unapplied block scripts/explicit unconfigured resource flags, separate main render-camera setup, and no gameplay.",
+          "Software rasterizers, full scene callers, actor/startup construction and playable source game remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/scene-owner/validation.json",
+        "META/m4/scene-owner/integration-real.json",
+        "META/m4/scene-owner/clean/clean-checkout.json",
+        "META/m4/scene-owner/link-map.txt",
+        "META/m4/entity-schedule/REVIEW.md"
+      ]
+    },
+    {
+      "id": "00409f40-functional-c-scene-bindings",
+      "original_va": "00409f40",
+      "function": "bh_entity_schedule",
+      "role": "game",
+      "provenance_confidence": "Reviewed owner boundary, callers and immutable body; CRT/compiler/import/tail excluded. High-confidence game role.",
+      "source": "src/bh_entity_schedule.c",
+      "source_sha256": "5a83eb1e4de2711b529e80b528a81eecec8c4d28ac52e40db27a41d9ed0af576",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source contexts; actual player overlay position bound separately from render eye",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "scene-owner": {
+            "scenario": "scene-owner",
+            "checks": 22,
+            "failures": 0
+          },
+          "scene-bindings": {
+            "scenario": "scene-bindings",
+            "checks": 13,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "scene-owner-native": {
+            "scenario": "scene-owner-native",
+            "checks": 80,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 70,
+            "failures": 0
+          }
+        },
+        "clean_fixtures": {
+          "scene-owner": {
+            "scenario": "scene-owner",
+            "checks": 22,
+            "failures": 0
+          },
+          "scene-bindings": {
+            "scenario": "scene-bindings",
+            "checks": 13,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "scene-owner-native": {
+            "scenario": "scene-owner-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 70,
+            "failures": 0
+          }
+        },
+        "variant_scope": "Current whole translation unit and header context; prior variant evidence remains frozen.",
+        "limits": [
+          "Moderate finite PC53/nearest/masked source fixtures; x87 PC24/exceptional inputs and exact FP equivalence remain unvalidated.",
+          "The binding layer is a source adapter, not admission of full original world/resource/startup constructors.",
+          "Native fixture uses real two-room geometry and assets but unapplied block scripts/explicit unconfigured resource flags, separate main render-camera setup, and no gameplay.",
+          "Software rasterizers, full scene callers, actor/startup construction and playable source game remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/scene-owner/validation.json",
+        "META/m4/scene-owner/integration-real.json",
+        "META/m4/scene-owner/clean/clean-checkout.json",
+        "META/m4/scene-owner/link-map.txt",
+        "META/m4/entity-schedule/REVIEW.md"
+      ]
+    },
+    {
+      "id": "00409130-functional-c",
+      "original_va": "00409130",
+      "function": "bh_scene_owner_step",
+      "role": "game",
+      "provenance_confidence": "High-confidence scene owner: original callers0041c860/00428f50, gate, pose projection, world locator and recursive game entity scheduler; CRT/import/compiler/shared-tail excluded.",
+      "source": "src/bh_scene_owner.c",
+      "source_sha256": "a63bc0976bf0185853edaaa6640e3a3dab428c4cc1579f76c1148fa0c1469edb",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl; float pose/FOV/depth and signed dimensions; explicit borrowed scene/scheduler bindings",
+        "raw_byte_match": false,
+        "differential": false,
+        "scope": "Complete scene gate, projected portal camera, inclusive cached room lookup/fallback, frame advance, recursive entity scheduling and queued full-target clip resets; explicit borrowed world/resource bindings.",
+        "fixtures": {
+          "scene-owner": {
+            "scenario": "scene-owner",
+            "checks": 22,
+            "failures": 0
+          },
+          "scene-bindings": {
+            "scenario": "scene-bindings",
+            "checks": 13,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "scene-owner-native": {
+            "scenario": "scene-owner-native",
+            "checks": 80,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 70,
+            "failures": 0
+          }
+        },
+        "clean_fixtures": {
+          "scene-owner": {
+            "scenario": "scene-owner",
+            "checks": 22,
+            "failures": 0
+          },
+          "scene-bindings": {
+            "scenario": "scene-bindings",
+            "checks": 13,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "scene-owner-native": {
+            "scenario": "scene-owner-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "entity-schedule": {
+            "scenario": "entity-schedule",
+            "checks": 70,
+            "failures": 0
+          }
+        },
+        "limits": [
+          "Moderate finite PC53/nearest/masked source fixtures; x87 PC24/exceptional inputs and exact FP equivalence remain unvalidated.",
+          "The binding layer is a source adapter, not admission of full original world/resource/startup constructors.",
+          "Native fixture uses real two-room geometry and assets but unapplied block scripts/explicit unconfigured resource flags, separate main render-camera setup, and no gameplay.",
+          "Software rasterizers, full scene callers, actor/startup construction and playable source game remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/scene-owner/owner.json",
+        "META/m4/scene-owner/owner-review.md",
+        "META/m4/scene-owner/validation.json",
+        "META/m4/scene-owner/integration-real.json",
+        "META/m4/scene-owner/clean/clean-checkout.json"
+      ]
     }
   ],
   "role_catalog": "META/m1/role-catalog.json",
@@ -8412,7 +11132,7 @@
     {
       "id": "bh_scene_snapshot-parallel-hour-adapter",
       "function": "bh_scene_snapshot",
-      "source": "src/bh_scene_snapshot.c",
+      "source": "META/m4/parallel-hour/sources/3929206cbe98f2942846d3056f146999e35d7085971c95bec6372b304682db37-bh_scene_snapshot.c.txt",
       "source_sha256": "3929206cbe98f2942846d3056f146999e35d7085971c95bec6372b304682db37",
       "role": "source_diagnostic_support",
       "implementation": "adapter",
@@ -8422,6 +11142,73 @@
       "contract": "Actual source unlit/lit BSP traversal and native pipeline over real level shell; static diagnostic camera/presets, no world/scripts/controls",
       "evidence": [
         "META/m4/parallel-hour/validation.json"
+      ],
+      "historical_variant": true,
+      "historical_source_path": "src/bh_scene_snapshot.c"
+    },
+    {
+      "id": "bh_scene_snapshot-resource-draw-adapter",
+      "function": "bh_scene_snapshot",
+      "source": "META/m4/sprite-world/sources/649ff9623450e8f59028ac259a6bab3fabba3c1e4755c09794c9c39f857d3270-bh_scene_snapshot.c.txt",
+      "source_sha256": "649ff9623450e8f59028ac259a6bab3fabba3c1e4755c09794c9c39f857d3270",
+      "role": "source_diagnostic_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Static shell placement loop now delegates to recovered recursive resource owner and model-instance source. Resource type/model/cache binding, camera and shell selection remain diagnostic; no entity installation/gameplay admission.",
+      "evidence": [
+        "META/m4/sprite-world/validation.json"
+      ],
+      "historical_variant": true,
+      "historical_source_path": "src/bh_scene_snapshot.c"
+    },
+    {
+      "id": "bh_render_resources-model-owner-adapter",
+      "function": "bh_render_resources_init/load_model/lookup/dispose",
+      "source": "src/bh_render_resources.c",
+      "source_sha256": "f4c20ce680121278d3812166c48c9b7137fc9cb0b098073ef1e16797d38d8a63",
+      "role": "source_lifetime_binding",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Own real loaded model/cache/instance/descriptor under stable slot handles; required render bindings and fresh initialization guards; no original function/constructor count credited",
+      "evidence": [
+        "META/m4/render-resources/CONTRACT.md",
+        "META/m4/queued-resource/validation.json"
+      ]
+    },
+    {
+      "id": "bh_scene_snapshot-queued-resource-adapter",
+      "function": "bh_scene_snapshot",
+      "source": "src/bh_scene_snapshot.c",
+      "source_sha256": "fee30d8b871f79195d8ace2cd0c1a85a67924204fc3344e422a61ad8725fdb2c",
+      "role": "source_diagnostic_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Static shell placement builds owned model resources, enqueues recovered commands and consumes actual callback/state chain. Shell selection and entity scheduling remain diagnostic/unrecovered.",
+      "evidence": [
+        "META/m4/queued-resource/validation.json"
+      ]
+    },
+    {
+      "id": "bh_scene_bindings-adapter",
+      "function": "bh_scene_bindings_init",
+      "source": "src/bh_scene_bindings.c",
+      "source_sha256": "e8c472472bc9f76f3d977ddb0e77a044682274b913fe04741b43caaf5804a3ef",
+      "role": "source_integration_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "contract": "Borrowed real world ring, constructor-assigned owner/sentinel, matched portal neighbors, validated resource handles and explicit entity heads/angles/flags; no original constructor count.",
+      "evidence": [
+        "META/m4/scene-bindings/validation.json",
+        "META/m4/scene-owner/validation.json",
+        "META/m4/scene-owner/clean/clean-checkout.json"
       ]
     }
   ],

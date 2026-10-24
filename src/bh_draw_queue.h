@@ -4,7 +4,7 @@
 #include "bh_math.h"
 /* Source semantic command selectors, not original executable function pointers.
    Primitive consumers/Direct3D submission remain separate unfinished owners. */
-typedef enum BHDrawKind {BH_DRAW_NOP,BH_DRAW_STATE,BH_DRAW_BILLBOARD,BH_DRAW_SEGMENT,BH_DRAW_ORIENTED} BHDrawKind;
+typedef enum BHDrawKind {BH_DRAW_NOP,BH_DRAW_STATE,BH_DRAW_BILLBOARD,BH_DRAW_SEGMENT,BH_DRAW_ORIENTED,BH_DRAW_MODEL_RESOURCE,BH_DRAW_RECT,BH_DRAW_TEXTURE_MASK,BH_DRAW_CLIP_RECT} BHDrawKind;
 typedef struct BHDrawCommand {
     unsigned long kind,resource,words[18],next;
 } BHDrawCommand;

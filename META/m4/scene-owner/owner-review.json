@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "address": "00409130",
+  "end_inclusive": "00409523",
+  "bytes": 1012,
+  "role": "game",
+  "role_confidence": "high",
+  "boundary_evidence": "Gate, camera projection, room lookup, frame advance, entity scheduler, and two draw clip commands form one complete owner; no CRT/compiler/import/shared-tail pattern",
+  "implementation": "func",
+  "source": ["src/bh_scene_owner.c", "src/bh_scene_owner.h"],
+  "dependency_bindings": [
+    "src/bh_scene_bindings.c",
+    "src/bh_route_query.c",
+    "src/bh_entity_schedule.c",
+    "src/bh_draw_controls.c",
+    "src/bh_math.c",
+    "src/bh_rotation.c",
+    "src/bh_main_camera.c"
+  ],
+  "original_evidence_sha256": {
+    "META/m4/scene-owner/original/00409130.c.txt": "77fb192c5c8c80db813b186b91513cd04d5e024fc5dd4bea4bf1aa76bb24ceb4",
+    "META/m4/scene-owner/original/00409130.tsv": "fcf8a21ae8611672b86017fee006d30668333ebc06bd6e22e9083deb64248021"
+  },
+  "original_constants": {
+    "00489440": "39 9d 52 a2 46 df 91 3f; double pi/180",
+    "00489288": "00 00 00 3f; binary32 0.5",
+    "0048c030": "12 binary32 floats, identity 3x4 matrix",
+    "0048c080": "three binary32 floats, 0 0 1"
+  },
+  "focused_validation": {
+    "target": "build/scene-owner/scene-owner.exe",
+    "toolchain": "VC5 SP3 CL 11.00.7022 /ML /O2 /G5 /Oi /Gy; VC5 LINK 5.00.7022",
+    "linked": true,
+    "checks": 22,
+    "failures": 0,
+    "scenario": "scene-owner",
+    "source_built_only": true,
+    "original_code_executed": false,
+    "game_launches": 0,
+    "tests_source_sha256": "933e0016ad76854128d3661f35546339fc1e0c0c059a2dbe8a5ef7bd24814852",
+    "owner_source_sha256": "a63bc0976bf0185853edaaa6640e3a3dab428c4cc1579f76c1148fa0c1469edb",
+    "executable_sha256": "0353bddda65597566b47b5f43c653ada8a8fef66f523b365639cda6394c7cb00"
+  },
+  "limits": [
+    "No raw-byte match claimed",
+    "Original exceptional and x87 24-bit camera arithmetic not validated",
+    "No game/menu/flight/combat automation executed"
+  ]
+}

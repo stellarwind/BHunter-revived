@@ -1,0 +1,55 @@
+{
+  "family": "pickup lifecycle",
+  "original_executable": "GAME_DATA/BHUNTER.EXE",
+  "addresses": [
+    {
+      "address": "00441a00",
+      "role": "game",
+      "boundary": "00441a00-00441b80",
+      "implementation": "src/bh_pickup.c:bh_pickup_spawn",
+      "confidence": "high"
+    },
+    {
+      "address": "004415a0",
+      "role": "game",
+      "boundary": "004415a0-004419f7",
+      "implementation": "src/bh_pickup.c:bh_pickup_tick",
+      "confidence": "high"
+    },
+    {
+      "address": "00441570",
+      "role": "game",
+      "boundary": "00441570-004415a0",
+      "implementation": "src/bh_pickup.c:bh_pickup_query",
+      "confidence": "high"
+    },
+    {
+      "address": "004414d0",
+      "role": "game callback and shared owning cleanup",
+      "boundary": "004414d0-00441567",
+      "implementation": "src/bh_pickup.c:bh_pickup_cleanup",
+      "confidence": "high"
+    }
+  ],
+  "boundary_evidence": "004414d0 is referenced by 00441570 query event 20. It unlinks both pickup lists and calls the recovered entity release. The other three are direct game callbacks/constructor using the same payload and resource table. Neither this family nor its outgoing entity pool, room locator or sound request is verified CRT/compiler support.",
+  "provenance": {
+    "constructor_tick_query": "META/m4/pickup/original, Ghidra decompile and disassembly",
+    "cleanup": "META/m4/pickup-lifecycle/004414d0.c.txt and 004414d0.tsv"
+  },
+  "contracts": [
+    "Pickup payload +ec..+120 is a typed 56-byte state; explicit source context follows at +124.",
+    "Room actor and pickup heads are explicit BHPickupRoom bindings, never cast into BHWorldGeometry at original room offsets.",
+    "Successful spawn consumes two shared VC5 CRT rand calls; resource fallback uses variant zero.",
+    "Room actors receive query event 3 for position and event 13 for pickup acceptance; outside actors use their stored position and event 13.",
+    "Tick decreases phase by 1/30 and increases rotation by 1/30, fades by 1/4, offers within squared distance strictly less than 36, and unlinks on depletion or timeout.",
+    "Event 20 replaces the step callback with cleanup and removes the query callback from the entity pool."
+  ],
+  "limits": [
+    "Resource table values are loaded at runtime and represented by an explicit borrowed table; no zero-filled original BSS data is mistaken for loaded resources.",
+    "Sound requests use the real recovered bh_sound_request when a BHSoundQueue is bound; audible output is outside this family.",
+    "The draw callback at entity +e8 is a separate renderer binding owned by the draw family.",
+    "A source generation check stops a callback that recycled the current pickup.",
+    "Exact constructor/tick constant bytes and decoded IEEE-754 values are in constants.json."
+  ],
+  "validation": "Current corrected source is compiled and linked in the 158-TU integration; final source checks and hashes: META/m4/pickup/validation.json. Constructor rejects a missing selected draw method before allocation/random consumption. Prior focused counts are scoped to their earlier variants."
+}

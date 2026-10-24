@@ -261,3 +261,48 @@ they do not reconstruct original level lighting. The native primitive adapter
 covers only the hardware branch; complete software dispatch/rasterizers, atlas
 glyph copy and playable world/entity/script/control orchestration remain open.
 These tests render source-built offscreen images and never launch the game.
+
+Model-instance owner audit: `python tools/check_model_instance.py` verifies
+complete 0045aa60, 155 focused checks, the 134-TU real/clean integration and 67
+missing-module link controls. The static scene now uses the recovered per-instance
+cull/transform/camera/light/BSP owner; default/red/point images remain identical
+to the preceding checkpoint. Recursive world/entity draw and sprite dependencies
+remain unfinished. Evidence is in `META/m4/model-instance/`.
+
+Sprite/resource audit: `python tools/check_sprite_world.py` verifies four complete
+owners (00455960, 00455f70, 004569b0, 0045adf0), 169 focused checks, 142 real
+translation units, real-data/clean builds and 71 missing-module controls. Native
+composition saves billboard/half/ribbon/LOD-blank bitmaps through actual Direct3D2;
+the static scene now uses the recursive resource dispatcher with identical pixels.
+Evidence: `META/m4/sprite-world/`. Complete software dispatch, render-resource
+construction and actual entity installation remain unfinished.
+
+Queued resource audit: `python tools/check_queued_resource.py` verifies complete
+004775f0/00477640/00478170/004413b0 plus an explicit model/cache lifetime adapter.
+The 149-TU target passes 3,399,044 real-data / 2,906,719 clean checks and 74
+missing-module controls. Its 157 focused checks exercise real queued entity
+model/glow output, blank missing-binding controls and stable owner lifetimes.
+The static scene uses queued callbacks/state headers with unchanged pixels.
+Evidence: `META/m4/queued-resource/`. Actual pickup construction and entity
+scheduling remain unfinished; no game execution is part of these checks.
+
+Pickup/scheduler audit: `python tools/check_pickup.py` verifies 17 complete
+owners and one explicit partial native rectangle adapter. The 158-TU source
+integration builds pickup construction, lifetime/query/cleanup, draw and label
+paths, texture-mask/clip commands and recursive room/entity scheduling against
+real definitions. The source-only offscreen native fixture uses real archive
+models/images and constructor callbacks; inactive room flags produce a blank
+control. Evidence: `META/m4/pickup/`. No automated gameplay or game launch is
+part of this checkpoint. The outer scene owner, startup/world/resource
+construction, actor constructors and software rasterization remain open.
+
+Outer scene audit: `python tools/check_scene_owner.py` verifies complete
+00409130 and three updated scheduler translation-unit variants, preserving
+older source snapshots. The 163-TU target passes 3,399,450 real-data and
+2,906,962 clean checks, with 80 missing-module link controls. Native two-room
+checks use actual world construction, matched portals and model-resource
+handles through the new outer owner; cache/gate/room-change, camera versus
+target clip extents and blank controls pass. The binding module is separately
+recorded as an adapter. Evidence: `META/m4/scene-owner/`. No original game
+code or gameplay is executed. Callers, full startup/resource metadata and
+software rendering remain open.

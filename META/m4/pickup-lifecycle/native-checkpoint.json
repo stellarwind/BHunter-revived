@@ -1,0 +1,27 @@
+{
+  "scenario": "pickup-native",
+  "source": "tests/pickup_native.c",
+  "target": "build/pickup-native-focus.exe",
+  "archive": "GAME_DATA/Bhunter.bin",
+  "checks": 77,
+  "failures": 0,
+  "original_code_required": false,
+  "gameplay_executed": false,
+  "path": "real source room locator and BHEntityPool spawn -> BHEntityScheduleRoom -> entity +e8 pickup bridge -> model/glow/label queue -> recovered model, billboard and rectangle consumers -> native Direct3D2 offscreen bitmap",
+  "controls": [
+    "active room submits at least two real PU_9A model draws, one flare_yl billboard and numeric clipbrd rectangles, yielding nonzero native pixels",
+    "room query flag cleared suppresses resources and pickup child traversal, yielding zero native pixels"
+  ],
+  "bitmaps": [
+    {
+      "path": "build/pickup-native/pickup-native-active.bmp",
+      "sha256": "94f817b94594a615698ac0e815c793e618425230598583466d2187d2033671d7"
+    },
+    {
+      "path": "build/pickup-native/pickup-native-inactive.bmp",
+      "sha256": "c1beb651d7ed8dff06dd1f136807146d63fb2a6f87106a30709d6dded74fcc3f"
+    }
+  ],
+  "limits": "The source checkpoint uses a one-room bounds fixture and pinned 96x96 diagnostic camera. It does not claim original game scene placement or gameplay acceptance.",
+  "current_integration": "META/m4/pickup/validation.json"
+}

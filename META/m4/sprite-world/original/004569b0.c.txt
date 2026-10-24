@@ -1,0 +1,113 @@
+
+void __cdecl FUN_004569b0(int param_1)
+
+{
+  float fVar1;
+  float *pfVar2;
+  int iVar3;
+  int iVar4;
+  float *pfVar5;
+  float *pfVar6;
+  
+  iVar3 = DAT_004edeac;
+  pfVar5 = (float *)&DAT_004e38e0;
+  iVar4 = DAT_004edeac;
+  if (DAT_004edeac != 0) {
+    do {
+      pfVar6 = (float *)pfVar5[0x10];
+      if (pfVar6 == (float *)0x0) break;
+      if ((DAT_0049175c <= pfVar5[2]) || (pfVar6[2] < DAT_0049175c)) {
+        if ((DAT_0049175c <= pfVar5[2]) && (pfVar6[2] < DAT_0049175c)) {
+          DAT_004edeac = iVar4 + 1;
+          pfVar6 = (float *)pfVar5[0x10];
+          pfVar2 = (float *)(&DAT_004e38e0 + iVar4 * 0x15);
+          *pfVar2 = ((DAT_0049175c - pfVar6[2]) * *pfVar5 + *pfVar6 * (pfVar5[2] - DAT_0049175c)) /
+                    (pfVar5[2] - pfVar6[2]);
+          fVar1 = pfVar5[0x10];
+          (&DAT_004e38e4)[iVar4 * 0x15] =
+               ((DAT_0049175c - *(float *)((int)fVar1 + 8)) * pfVar5[1] +
+               *(float *)((int)fVar1 + 4) * (pfVar5[2] - DAT_0049175c)) /
+               (pfVar5[2] - *(float *)((int)fVar1 + 8));
+          (&DAT_004e38e8)[iVar4 * 0x15] = DAT_0049175c;
+          fVar1 = pfVar5[0x10];
+          (&DAT_004e392c)[iVar4 * 0x15] =
+               ((DAT_0049175c - *(float *)((int)fVar1 + 8)) * pfVar5[0x13] +
+               (pfVar5[2] - DAT_0049175c) * *(float *)((int)fVar1 + 0x4c)) /
+               (pfVar5[2] - *(float *)((int)fVar1 + 8));
+          fVar1 = pfVar5[0x10];
+          (&DAT_004e3928)[iVar4 * 0x15] =
+               ((DAT_0049175c - *(float *)((int)fVar1 + 8)) * pfVar5[0x12] +
+               (pfVar5[2] - DAT_0049175c) * *(float *)((int)fVar1 + 0x48)) /
+               (pfVar5[2] - *(float *)((int)fVar1 + 8));
+          fVar1 = pfVar5[0x10];
+          (&DAT_004e3930)[iVar4 * 0x15] =
+               ((DAT_0049175c - *(float *)((int)fVar1 + 8)) * pfVar5[0x14] +
+               (pfVar5[2] - DAT_0049175c) * *(float *)((int)fVar1 + 0x50)) /
+               (pfVar5[2] - *(float *)((int)fVar1 + 8));
+          fVar1 = pfVar5[0x11];
+          (&DAT_004e3920)[iVar4 * 0x15] = 0;
+          (&DAT_004e3924)[iVar4 * 0x15] = fVar1;
+          (&DAT_004e391c)[iVar4 * 0x15] = pfVar5;
+          pfVar6 = (float *)pfVar5[0x10];
+          pfVar6[0xf] = 0.0;
+          *(float **)((&DAT_004e391c)[iVar4 * 0x15] + 0x40) = pfVar2;
+          for (pfVar5 = (float *)(&DAT_004e391c)[iVar4 * 0x15]; pfVar5 != (float *)0x0;
+              pfVar5 = (float *)pfVar5[0xf]) {
+            pfVar2 = pfVar5;
+          }
+          FUN_00455f70(pfVar2,param_1);
+          iVar4 = iVar3;
+          DAT_004edeac = iVar3;
+        }
+      }
+      else {
+        DAT_004edeac = iVar4 + 1;
+        pfVar6 = (float *)pfVar5[0x10];
+        (&DAT_004e38e0)[iVar4 * 0x15] =
+             ((DAT_0049175c - pfVar6[2]) * *pfVar5 + *pfVar6 * (pfVar5[2] - DAT_0049175c)) /
+             (pfVar5[2] - pfVar6[2]);
+        fVar1 = pfVar5[0x10];
+        (&DAT_004e38e4)[iVar4 * 0x15] =
+             ((DAT_0049175c - *(float *)((int)fVar1 + 8)) * pfVar5[1] +
+             *(float *)((int)fVar1 + 4) * (pfVar5[2] - DAT_0049175c)) /
+             (pfVar5[2] - *(float *)((int)fVar1 + 8));
+        (&DAT_004e38e8)[iVar4 * 0x15] = DAT_0049175c;
+        fVar1 = pfVar5[0x10];
+        (&DAT_004e392c)[iVar4 * 0x15] =
+             ((DAT_0049175c - *(float *)((int)fVar1 + 8)) * pfVar5[0x13] +
+             (pfVar5[2] - DAT_0049175c) * *(float *)((int)fVar1 + 0x4c)) /
+             (pfVar5[2] - *(float *)((int)fVar1 + 8));
+        fVar1 = pfVar5[0x10];
+        (&DAT_004e3928)[iVar4 * 0x15] =
+             ((DAT_0049175c - *(float *)((int)fVar1 + 8)) * pfVar5[0x12] +
+             (pfVar5[2] - DAT_0049175c) * *(float *)((int)fVar1 + 0x48)) /
+             (pfVar5[2] - *(float *)((int)fVar1 + 8));
+        fVar1 = pfVar5[0x10];
+        (&DAT_004e3930)[iVar4 * 0x15] =
+             ((DAT_0049175c - *(float *)((int)fVar1 + 8)) * pfVar5[0x14] +
+             (pfVar5[2] - DAT_0049175c) * *(float *)((int)fVar1 + 0x50)) /
+             (pfVar5[2] - *(float *)((int)fVar1 + 8));
+        fVar1 = pfVar5[0x11];
+        (&DAT_004e391c)[iVar4 * 0x15] = 0;
+        (&DAT_004e3924)[iVar4 * 0x15] = fVar1;
+        fVar1 = pfVar5[0x10];
+        (&DAT_004e3920)[iVar4 * 0x15] = fVar1;
+        *(undefined4 **)((int)fVar1 + 0x3c) = &DAT_004e38e0 + iVar4 * 0x15;
+        pfVar6 = (float *)pfVar5[0x10];
+        iVar4 = DAT_004edeac;
+      }
+      pfVar5 = pfVar6;
+    } while (pfVar6 != (float *)0x0);
+    if (((pfVar5 != (float *)0x0) && ((float *)pfVar5[0xf] != (float *)0x0)) &&
+       (pfVar6 = (float *)pfVar5[0xf], DAT_0049175c <= pfVar5[2])) {
+      do {
+        pfVar5 = pfVar6;
+        pfVar6 = (float *)pfVar5[0xf];
+      } while (pfVar6 != (float *)0x0);
+      FUN_00455f70(pfVar5,param_1);
+    }
+    DAT_004edeac = 0;
+  }
+  return;
+}
+

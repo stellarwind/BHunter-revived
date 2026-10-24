@@ -1,0 +1,43 @@
+{
+  "address": "00455960",
+  "boundary": "00455960-00455e31",
+  "bytes": 1234,
+  "instructions": 291,
+  "body_sha256": "75657f90bd81eef80d0129ddc261be0091c2140b7235840582a22ff22d942b48",
+  "original_exe_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+  "role": "engine_candidate",
+  "provenance_confidence": "medium: ordinary billboard geometry/UV/screen clip/primitive owner; no verified library attribution",
+  "boundary_review": "Saved complete 291-instruction contiguous body through RET; direct calls 004012e0 matrix transform, 00453300 screen clipper, 0046e390 primitive dispatcher and 0047de20 VC runtime __ftol; not a CRT, import, EH/compiler helper or shared tail",
+  "source": "src/bh_sprite_billboard.c",
+  "header": "src/bh_sprite_billboard.h",
+  "focused_test": "tests/sprite_billboard.c",
+  "implementation": "func",
+  "integration": "linked_harness",
+  "target": "bhunter-sprite-billboard.exe",
+  "focused_checks": 50,
+  "focused_failures": 0,
+  "original_code_executed": false,
+  "game_launches": 0,
+  "raw_constant_evidence": {
+    "00489ed0": "00000000, float 0",
+    "00489ee8": "0000803f, float 1",
+    "00489ef8": "0000003f, float 0.5",
+    "00489f10": "binary64 zero for angle fast path",
+    "00489f18": "00007fc3, float -255"
+  },
+  "key_instruction_anchors": [
+    "00455966-00455997: image and position arguments, camera projection transform",
+    "0045599c-00455ab7: depth, projected radius and screen-bound rejection",
+    "00455abd-00455bee: four reciprocal ring links and low-byte UV flag mapping",
+    "00455bee-00455dc9: angle-zero and rotated-corner branches",
+    "00455dc9-00455e22: real screen clip, ninth-float modulation, depth ring update and primitive dispatch"
+  ],
+  "limits": [
+    "Parent full integration and scene composition are pending; focused target is source-only",
+    "Full software 0046e390 dispatcher remains unfinished; emitter binding is explicit",
+    "Finite PC53/nearest/masked analytical checks, not original differential or byte-match evidence"
+  ],
+  "parent_integration": "linked_harness",
+  "parent_target": "build/m0/bhunter-integration.exe",
+  "parent_evidence": "META/m4/sprite-world/validation.json"
+}

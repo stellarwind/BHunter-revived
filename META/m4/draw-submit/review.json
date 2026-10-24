@@ -1,0 +1,45 @@
+{
+  "functions": [
+    {
+      "address": "004775f0",
+      "end_inclusive": "0047763f",
+      "size": 80,
+      "role": "engine_candidate",
+      "role_confidence": "medium",
+      "basis": "Stored callback pointer in 00478170; complete fixed-layout resource dispatch and next-link return; calls restored 0045adf0; not library/compiler/import/shared-tail code",
+      "implementation": "bh_draw_submit_execute"
+    },
+    {
+      "address": "00478170",
+      "end_inclusive": "00478256",
+      "size": 231,
+      "role": "engine_candidate",
+      "role_confidence": "medium",
+      "basis": "Called by game world/entity/effect owners; complete nine-bucket arena append with 004775f0 callback and resource payload; not library/compiler/import/shared-tail code",
+      "implementation": "bh_draw_submit_resource"
+    },
+    {
+      "address": "00477640",
+      "end_inclusive": "0047767e",
+      "size": 63,
+      "role": "engine_candidate",
+      "role_confidence": "medium",
+      "basis": "Stored by 00478280 draw producer; complete fixed-layout billboard dispatch, real 00455960 call and post-draw next-link return; not library/compiler/import/shared-tail code",
+      "implementation": "bh_draw_submit_billboard_execute"
+    }
+  ],
+  "original_exports": [
+    "original/004775f0.decompile.json",
+    "original/004775f0.disassembly.json",
+    "original/00478170.decompile.json",
+    "original/00478170.disassembly.json",
+    "original/00477640.decompile.json",
+    "original/00477640.disassembly.json"
+  ],
+  "limits": [
+    "Proprietary engine versus game authorship not established",
+    "Native source stores resource handles and requires explicit descriptor lookup",
+    "Original malformed pointer behavior is not reproduced",
+    "Runtime PC24 floating point transitions remain unverified"
+  ]
+}

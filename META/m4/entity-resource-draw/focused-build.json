@@ -1,0 +1,728 @@
+{
+  "target": "entity-resource-draw-test.exe",
+  "passed": true,
+  "commands": [
+    {
+      "label": "compile-bh_draw_queue",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:\\Decomp\\dx7sdk\\include",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/FoD:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_draw_queue.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_draw_queue.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_draw_queue.c\n"
+    },
+    {
+      "label": "compile-bh_draw_submit",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:\\Decomp\\dx7sdk\\include",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/FoD:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_draw_submit.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_draw_submit.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_draw_submit.c\n"
+    },
+    {
+      "label": "compile-bh_entity_resource_draw",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:\\Decomp\\dx7sdk\\include",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/FoD:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_entity_resource_draw.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_entity_resource_draw.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_entity_resource_draw.c\n"
+    },
+    {
+      "label": "compile-entity_resource_draw",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:\\Decomp\\dx7sdk\\include",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/DBH_ENTITY_RESOURCE_DRAW_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\entity_resource_draw.obj",
+        "D:\\Decomp\\Bhunter\\tests\\entity_resource_draw.c"
+      ],
+      "exit_code": 0,
+      "output": "entity_resource_draw.c\n"
+    },
+    {
+      "label": "link",
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/map:D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\entity-resource-draw.map",
+        "/out:D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\entity-resource-draw-test.exe",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_atlas_glyph.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_atlas_image.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_atlas_page.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_attribute_clipper.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_blocks.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_bsp.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_clipper.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_collision_model.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_collision_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_config.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_contact_effects.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_debris_response.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_draw_resource.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_entities.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_entity_collision.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_geometry.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_geometry_radius.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_light.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_light_config.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_light_eval.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_main_camera.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_matrix_inverse.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_model.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_model_draw.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_model_draw_lit.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_model_images.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_model_instance.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_model_path.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_native_attribute.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_native_primitive.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_navigation.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_network_codec.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_network_transport.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_paths.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_pcx.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_pcx_reader.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_physics_response.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_portals.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_position.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_render_guids.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_render_material.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_render_state.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_riff.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_rotation.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_round.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_route_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_scene.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_scene_view.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_screen_clipper.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_script_timer.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_segment_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_software_tables.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_sound_listener.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_sound_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_sound_tick.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_sprite_billboard.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_sprite_oriented.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_sweep.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_texture.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_texture_controls.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_texture_draw.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_texture_image.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_texture_policy.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_texture_tables.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_vfile.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_view_camera.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_view_cull.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_wave.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_world_geometry.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_world_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_draw_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_draw_submit.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_entity_resource_draw.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\entity_resource_draw.obj",
+        "D:\\Decomp\\dx7sdk\\lib\\ddraw.lib",
+        "kernel32.lib",
+        "dsound.lib",
+        "user32.lib",
+        "ole32.lib"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "label": "scenario",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\entity-resource-draw-test.exe"
+      ],
+      "exit_code": 0,
+      "output": "{\"scenario\":\"entity-resource-draw\",\"checks\":31,\"failures\":0}\n"
+    },
+    {
+      "label": "missing-owner",
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/out:D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\missing-owner.exe",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_atlas_glyph.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_atlas_image.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_atlas_page.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_attribute_clipper.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_blocks.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_bsp.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_clipper.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_collision_model.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_collision_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_config.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_contact_effects.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_debris_response.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_draw_resource.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_entities.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_entity_collision.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_geometry.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_geometry_radius.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_light.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_light_config.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_light_eval.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_main_camera.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_matrix_inverse.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_model.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_model_draw.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_model_draw_lit.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_model_images.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_model_instance.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_model_path.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_native_attribute.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_native_primitive.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_navigation.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_network_codec.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_network_transport.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_paths.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_pcx.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_pcx_reader.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_physics_response.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_portals.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_position.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_render_guids.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_render_material.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_render_state.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_riff.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_rotation.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_round.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_route_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_scene.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_scene_view.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_screen_clipper.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_script_timer.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_segment_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_software_tables.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_sound_listener.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_sound_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_sound_tick.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_sprite_billboard.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_sprite_oriented.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_sweep.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_texture.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_texture_controls.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_texture_draw.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_texture_image.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_texture_policy.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_texture_tables.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_vfile.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_view_camera.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_view_cull.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_wave.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_world_geometry.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_world_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_draw_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\bh_draw_submit.obj",
+        "D:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\entity_resource_draw.obj",
+        "D:\\Decomp\\dx7sdk\\lib\\ddraw.lib",
+        "kernel32.lib",
+        "dsound.lib",
+        "user32.lib",
+        "ole32.lib"
+      ],
+      "exit_code": 25,
+      "output": "entity_resource_draw.obj : error LNK2001: unresolved external symbol _bh_entity_resource_draw_special\nD:\\Decomp\\Bhunter\\build\\m4\\entity-resource-draw\\missing-owner.exe : fatal error LNK1120: 1 unresolved externals\n"
+    }
+  ],
+  "objects": {
+    "bh_atlas_glyph.obj": {
+      "origin": "build\\m0\\bh_atlas_glyph.obj",
+      "sha256": "19748237a2b1a25ce155560791ddab2e3c37675bdf95e7ce5e062d33d2ee58e8",
+      "source": "src/bh_atlas_glyph.c",
+      "source_sha256": "37baf1f1e7ba256b2b3279a2744cfe13e35c4c4897ddd38429bb8fb50ebe542c"
+    },
+    "bh_atlas_image.obj": {
+      "origin": "build\\m0\\bh_atlas_image.obj",
+      "sha256": "039393b3964b1560fb5659c2b6cdd885456cf1758d09aeee308e00b324e8a251",
+      "source": "src/bh_atlas_image.c",
+      "source_sha256": "626a715ed86d4fe833f4dbcd44ba1eb7f94e186240a6d6e90b423010eeddef0d"
+    },
+    "bh_atlas_page.obj": {
+      "origin": "build\\m0\\bh_atlas_page.obj",
+      "sha256": "de17f681bd8f68b45ace50a053ac046ebf878b7a74b9ed3c88849f6cd6e280e9",
+      "source": "src/bh_atlas_page.c",
+      "source_sha256": "4b3ec00facd20563aebfae4a7cf34576bc52eb6839ff969d6d0ebd087b6c49b7"
+    },
+    "bh_attribute_clipper.obj": {
+      "origin": "build\\m0\\bh_attribute_clipper.obj",
+      "sha256": "fb1bbfff2227ec0c7e5014909721c25f6f0280c50c6f0aefd2e838d855f9ca93",
+      "source": "src/bh_attribute_clipper.c",
+      "source_sha256": "fa2e5c378020c6a6f2c146f169838956b41e9c010858f675b03f28423ce6a622"
+    },
+    "bh_blocks.obj": {
+      "origin": "build\\m0\\bh_blocks.obj",
+      "sha256": "d0c949843210ae419352a84815c70d52023db12c672934dec8cd9c2996c8f0f1",
+      "source": "src/bh_blocks.c",
+      "source_sha256": "d3279666e06ca171c9844124222bb0ecf886e35850ff0b82181a1a4bf3723881"
+    },
+    "bh_bsp.obj": {
+      "origin": "build\\m0\\bh_bsp.obj",
+      "sha256": "c865f2277e26a24804afeef2d00b0419224728cefd9298ccbdb06ebd51e34f51",
+      "source": "src/bh_bsp.c",
+      "source_sha256": "712f5d421bb28635087fe8882b13e887c12893809a7b106ea4fa24275ab48fe5"
+    },
+    "bh_clipper.obj": {
+      "origin": "build\\m0\\bh_clipper.obj",
+      "sha256": "08c4cfc47c2c7d9eaacee2ecbb6a11e09ee8d5d6d789efee27ccbf5f6f269d78",
+      "source": "src/bh_clipper.c",
+      "source_sha256": "483fa81c86f0354167c12745f9e06841adce924e40f1dc68d9aca113adbe8c62"
+    },
+    "bh_collision_model.obj": {
+      "origin": "build\\m0\\bh_collision_model.obj",
+      "sha256": "1b1609e41eb80348b6055bd42f30534af5826283b58b4b1b6f0b5f1688696f9a",
+      "source": "src/bh_collision_model.c",
+      "source_sha256": "45d4f2fd56e41af59ec73ce2c936f83af6cc6e470a15d8c1a1ad717cb5caa6bd"
+    },
+    "bh_collision_query.obj": {
+      "origin": "build\\m0\\bh_collision_query.obj",
+      "sha256": "984bd9d8622dfbae1092a2dc13e5e4bedbb3bfed799471dbda90102133e57f92",
+      "source": "src/bh_collision_query.c",
+      "source_sha256": "1973040655dfb2f871dd6212bf44db3c5cf14057627ee23e26b08c798f907c8e"
+    },
+    "bh_config.obj": {
+      "origin": "build\\m0\\bh_config.obj",
+      "sha256": "696edd3f55a17253ed8513e18feee23e1a5d144abc8dd7085413f7c3c0ae43b4",
+      "source": "src/bh_config.c",
+      "source_sha256": "6081596cb764118e0441ce5d3e0cf897a6ce011ca2d7e9aaa81a6ab5ef58092e"
+    },
+    "bh_contact_effects.obj": {
+      "origin": "build\\m0\\bh_contact_effects.obj",
+      "sha256": "7efdf4c74f901fc9507f352b048dfb2c96f4612a91b65f06f9ef51fb6730d3ce",
+      "source": "src/bh_contact_effects.c",
+      "source_sha256": "78a1a77bea2540718d766aa138f63ff3cd63124ad1a2c8d7fe7c39cef5f6bc90"
+    },
+    "bh_debris_response.obj": {
+      "origin": "build\\m0\\bh_debris_response.obj",
+      "sha256": "543cec3aa25b7ee0b8427076692152c945de378fbbe5106c4ea3327e78df1842",
+      "source": "src/bh_debris_response.c",
+      "source_sha256": "3bfa049f333d1b18c34bd3f54f92c9966fb902171dc27e82aabea431b934960d"
+    },
+    "bh_draw_resource.obj": {
+      "origin": "build\\m0\\bh_draw_resource.obj",
+      "sha256": "1eca1ff06d64a593cbcbabfa707f67483491b766fbf7dfeebf925244bcea1b9d",
+      "source": "src/bh_draw_resource.c",
+      "source_sha256": "d6eb1d65b14db4c0394051dd9090da6fa6cba008dac8728d687a1fcc26ab3ba6"
+    },
+    "bh_entities.obj": {
+      "origin": "build\\m0\\bh_entities.obj",
+      "sha256": "7edf8ffe8a83c88ac9372d139db9ad48e9f5b65d05920b14ca416cca95be2e61",
+      "source": "src/bh_entities.c",
+      "source_sha256": "6fc5e54d88906a7922c149bb1ccc9851c2cbe701217e57d8e3c72646d81cb92a"
+    },
+    "bh_entity_collision.obj": {
+      "origin": "build\\m0\\bh_entity_collision.obj",
+      "sha256": "f256462e90ea8916fa87bcec75ac4b22b6dedeefb214cf47b7c2ecbd89f6d36a",
+      "source": "src/bh_entity_collision.c",
+      "source_sha256": "e9a381944a9f9ba6c47a139df7ce2036ee69f69b9579961b76dc75962631010e"
+    },
+    "bh_fp.obj": {
+      "origin": "build\\m0\\bh_fp.obj",
+      "sha256": "1caa6896e5651c6a0f3b094a4dbba63b908ae8c6053ca59af2f904d43d375981",
+      "source": "src/bh_fp.c",
+      "source_sha256": "cc8400a29fd082f96ffd9b483f490a44992717b25eac0cb32e2e108ba446f3f8"
+    },
+    "bh_geometry.obj": {
+      "origin": "build\\m0\\bh_geometry.obj",
+      "sha256": "f136ab9f9df01d5a3d8ab564513e342229b73006fce5cc46bca17d44d1388a20",
+      "source": "src/bh_geometry.c",
+      "source_sha256": "9a22644a9c0585cfe22a9c437576c627bf4e68fae5e9e6dabdc9099aa9fa0acf"
+    },
+    "bh_geometry_radius.obj": {
+      "origin": "build\\m0\\bh_geometry_radius.obj",
+      "sha256": "40614b9b16fa6dc2f0a17baa7e33fbebd61109c12372ea51772166e65821bbb5",
+      "source": "src/bh_geometry_radius.c",
+      "source_sha256": "38141602d0ef597f2926bf6b1064bb1a91ab54eb5812aa7791e4c46a735ecad7"
+    },
+    "bh_light.obj": {
+      "origin": "build\\m0\\bh_light.obj",
+      "sha256": "52f7ed23ae654609225b0438207a61ffb971c3688a5225229c09b39ba82138a0",
+      "source": "src/bh_light.c",
+      "source_sha256": "18f6f3d33fbce60b1f7ce97fe521f153a39ce7fd70253bbfbf164636ada1e201"
+    },
+    "bh_light_config.obj": {
+      "origin": "build\\m0\\bh_light_config.obj",
+      "sha256": "3dd92e4679b623bfaaf5fb55407788a7876def1002ebab11db1c4724bb49db20",
+      "source": "src/bh_light_config.c",
+      "source_sha256": "82101e7859c555fb65afd5ff44eed25400e91e3f704dc4c24ff566c6454c107c"
+    },
+    "bh_light_eval.obj": {
+      "origin": "build\\m0\\bh_light_eval.obj",
+      "sha256": "bb66835fc5700fb23eac4c851efb21bc348de7ccba7d7c80eed65400227e3224",
+      "source": "src/bh_light_eval.c",
+      "source_sha256": "866889a02b417d02f539cffd5ccc58e151f4549be616dc2272ec83b863f8f9a2"
+    },
+    "bh_main_camera.obj": {
+      "origin": "build\\m0\\bh_main_camera.obj",
+      "sha256": "ec2a3c0460bf9b0eedb67d72f0fd2554229c740d6cb1a8bb091e4745059a5f3c",
+      "source": "src/bh_main_camera.c",
+      "source_sha256": "aa546818ed08a52fd6c87fd498f5ef856470ae42fd5b3928c887be9ad2c2f24f"
+    },
+    "bh_math.obj": {
+      "origin": "build\\m0\\bh_math.obj",
+      "sha256": "d24a4154a18f9d16b4e9002821e92c26a3292ea6ea45a1b76cddec549118164f",
+      "source": "src/bh_math.c",
+      "source_sha256": "ce111e18659563a2c41a04b645295227aac6ead9fe9cc2e803ac45c726d6e9bc"
+    },
+    "bh_matrix_inverse.obj": {
+      "origin": "build\\m0\\bh_matrix_inverse.obj",
+      "sha256": "62d6b86c6ac14b166ebe156398957aa768f6ce220de6c56e343ee34850fcf0f5",
+      "source": "src/bh_matrix_inverse.c",
+      "source_sha256": "c5cd3ee6b4071fe4f49e55432c696299945c609486359eb0239a053a6a1ce5b7"
+    },
+    "bh_model.obj": {
+      "origin": "build\\m0\\bh_model.obj",
+      "sha256": "49b744cde8932df1bb1ce1f0559445d8ac90365f5239552fbaecb0a9b90a7780",
+      "source": "src/bh_model.c",
+      "source_sha256": "6bb470d3965025c41f1bfdce852dce7c7461cd503201991a250d485c507d87b2"
+    },
+    "bh_model_draw.obj": {
+      "origin": "build\\m0\\bh_model_draw.obj",
+      "sha256": "6abc04757d922c1bc892128ee270f2f3e7661ecba20ed87be12c7b8058cab089",
+      "source": "src/bh_model_draw.c",
+      "source_sha256": "0400b49e2abffeb857b0604002a5140bb878825935d41e2c8a3ec21208154f96"
+    },
+    "bh_model_draw_lit.obj": {
+      "origin": "build\\m0\\bh_model_draw_lit.obj",
+      "sha256": "e4300e9bdcd4f4f9b190055a149d751b91dc592ea402daecfda147dfd5363a78",
+      "source": "src/bh_model_draw_lit.c",
+      "source_sha256": "a3de4be851830b933e61984bf602f91a69bc87bde3029daeb6e8c2b94d1ac5f2"
+    },
+    "bh_model_images.obj": {
+      "origin": "build\\m0\\bh_model_images.obj",
+      "sha256": "284912258f058aa58cd5e31796cb6587ef774980f0376f63191b8853988c74bf",
+      "source": "src/bh_model_images.c",
+      "source_sha256": "7849ef6332ded6398a9f34a9dd53ca39d7c2c7927f84414e8cd01f9633dc0092"
+    },
+    "bh_model_instance.obj": {
+      "origin": "build\\m0\\bh_model_instance.obj",
+      "sha256": "79d799e9eb4d847ce68cd3dc7a4c981553f0e75944401c7857f65cec108164b6",
+      "source": "src/bh_model_instance.c",
+      "source_sha256": "512e7a495b5ff79823821923b5e111c880d1987d4e3ddf8fb7e89ef137f5c84e"
+    },
+    "bh_model_path.obj": {
+      "origin": "build\\m0\\bh_model_path.obj",
+      "sha256": "0e0792c80925c8d2123ba05d1db6b47fee7d2fe69d2c1d63fa739cae3366fc39",
+      "source": "src/bh_model_path.c",
+      "source_sha256": "f7791fe685289885c6d078ba7606ccacc2a85e87fd766362a00e89f480ed147a"
+    },
+    "bh_native_attribute.obj": {
+      "origin": "build\\m0\\bh_native_attribute.obj",
+      "sha256": "617261c868038e4f88f387c754d0fac991d7fccd4860b7ff5bbde168ee66d880",
+      "source": "src/bh_native_attribute.c",
+      "source_sha256": "2f1199587abc2309451a2cd5fbbc889608467cf6b0354ecafc7e642452917aac"
+    },
+    "bh_native_primitive.obj": {
+      "origin": "build\\m0\\bh_native_primitive.obj",
+      "sha256": "a3f6d03cd9d1627e3bbbd42c1404ac74a216fdfcffee94ed722ca666f78bda49",
+      "source": "src/bh_native_primitive.c",
+      "source_sha256": "fc22bb58fdfd456a206c7e54c02ce2afd82af28222ab7a89f11380ae3cdc1c69"
+    },
+    "bh_navigation.obj": {
+      "origin": "build\\m0\\bh_navigation.obj",
+      "sha256": "5130cb02aee5761fecb73d12a4756a51f735f82133abedec6c3b9be2adab5e0c",
+      "source": "src/bh_navigation.c",
+      "source_sha256": "23ecfe0859a8fb5d77e07b3919eb851e6f95ec2297b13c5f5d8e6d3d0ef78e05"
+    },
+    "bh_network_codec.obj": {
+      "origin": "build\\m0\\bh_network_codec.obj",
+      "sha256": "6a22e62419ad1a3d12aecb1d7e98b0c8e2589354da51461c8d0010fe8be653d8",
+      "source": "src/bh_network_codec.c",
+      "source_sha256": "eef9d8ea4750b1e14731f5c6b55f01d50b199645c2fe4bcf0d998a83b03ab3b9"
+    },
+    "bh_network_transport.obj": {
+      "origin": "build\\m0\\bh_network_transport.obj",
+      "sha256": "654dc3b7a127c1bc9d47866322cf92b9999348da46c751e6fc5293ca313afef7",
+      "source": "src/bh_network_transport.c",
+      "source_sha256": "57654b7ec0b21755f305cd681bccb970485ba49cb84e13ed58c6332a1f2bd10c"
+    },
+    "bh_paths.obj": {
+      "origin": "build\\m0\\bh_paths.obj",
+      "sha256": "b7ebe6b934880b5148f10f425f6b37ceb8edd557fa6c20d7f2751ff840bae7a2",
+      "source": "src/bh_paths.c",
+      "source_sha256": "0ce4a5312e27f1cec73425cea8a25b93677e9a619ec6aeb6c79f828c8293a977"
+    },
+    "bh_pcx.obj": {
+      "origin": "build\\m0\\bh_pcx.obj",
+      "sha256": "ff0bdb613c01a6f180672c1942d7741ae9b8301a2ee68f85e9d0976a0be6207a",
+      "source": "src/bh_pcx.c",
+      "source_sha256": "8250cba2a91c4be9b34c69343fd048ed0d193165f6c6ad96775667489cb4ca87"
+    },
+    "bh_pcx_reader.obj": {
+      "origin": "build\\m0\\bh_pcx_reader.obj",
+      "sha256": "21e407a67f05bd11cdfe4a78fdf06fe64108dcdc34fffb4de2e91d0bdac210a0",
+      "source": "src/bh_pcx_reader.c",
+      "source_sha256": "61362f0a0a322a63f54dfad78d807ffd8c8b7ea6e0bb02ae1c54016abb867116"
+    },
+    "bh_physics_response.obj": {
+      "origin": "build\\m0\\bh_physics_response.obj",
+      "sha256": "7d54d69fb21ec73b02a4f1dc4582e1ef6dd249fb925b494852f7bef49489aa54",
+      "source": "src/bh_physics_response.c",
+      "source_sha256": "273ba0f8cae1356e757558e88649d6a73f4f8d9fdde8b62027eb535e5556e382"
+    },
+    "bh_portals.obj": {
+      "origin": "build\\m0\\bh_portals.obj",
+      "sha256": "c5569140f3b462d22c78e5e451b5e2d395fb85cd4f142324f5c83df2d21721bf",
+      "source": "src/bh_portals.c",
+      "source_sha256": "e3dfd22a94b1edc401b1219d9aba390a7b12be22e6228160608531538db2b3e5"
+    },
+    "bh_position.obj": {
+      "origin": "build\\m0\\bh_position.obj",
+      "sha256": "ea93ad23d162c85b5d7a75ae01a924c39b70cdf10ceb81a5b13a37cac64b5923",
+      "source": "src/bh_position.c",
+      "source_sha256": "629dbd42143b6082dc025c4e82585106ae6df97e1a204363c1fde89d11d3b10c"
+    },
+    "bh_render_guids.obj": {
+      "origin": "build\\m0\\bh_render_guids.obj",
+      "sha256": "4f5e36e39babebc47b68836c6c55589a58e3cf8c34289df9509034fdabeeea6c",
+      "source": "src/bh_render_guids.c",
+      "source_sha256": "c6f27239846e737ac682a0756bb3096dd5b03c9e519ca1e939d4f710e061b396"
+    },
+    "bh_render_material.obj": {
+      "origin": "build\\m0\\bh_render_material.obj",
+      "sha256": "9294bb58b890e157faba6853c7afa6979adb2da18b0a7892283876aa4250c3f2",
+      "source": "src/bh_render_material.c",
+      "source_sha256": "ba08e6d118895790c9242bc9d656dcf70241ed3d9c2bd4d057e46ec24771f244"
+    },
+    "bh_render_state.obj": {
+      "origin": "build\\m0\\bh_render_state.obj",
+      "sha256": "d69a2ae685d93fdf8f57c219966eeadc3e4b18158a797191ee41f18d1d4737f9",
+      "source": "src/bh_render_state.c",
+      "source_sha256": "0058f8db4573a808a55756031200563d62b4504cbeb19d735667db73edf38c1f"
+    },
+    "bh_riff.obj": {
+      "origin": "build\\m0\\bh_riff.obj",
+      "sha256": "b38a553266aaf221a472f56b2bd46f6e09e3692afd1d707a0978805f3b40afd8",
+      "source": "src/bh_riff.c",
+      "source_sha256": "3b9064792eafd099d6c23c28202810e0dcff17e2c9b6d50f381c16d92ad95272"
+    },
+    "bh_rotation.obj": {
+      "origin": "build\\m0\\bh_rotation.obj",
+      "sha256": "26c8d384f2c57df2bc5a4e05d38036f58fec73cf8d27da6d656728c79bbff362",
+      "source": "src/bh_rotation.c",
+      "source_sha256": "9a288fba2368c54b0b1a743b907e468b8683d8f6ff101807423c78b44644dd12"
+    },
+    "bh_round.obj": {
+      "origin": "build\\m0\\bh_round.obj",
+      "sha256": "6b84400f51098f5131973e6a9c7f193599c69712fc9e0f6c0bf8fdea530cf591",
+      "source": "src/bh_round.c",
+      "source_sha256": "ff848010705702e25cf85f5ba1d9c30a024d1ea8bf93227240285b9c54fc8ef4"
+    },
+    "bh_route_query.obj": {
+      "origin": "build\\m0\\bh_route_query.obj",
+      "sha256": "60f513663af5d074cc2833328074c58594e53d6aa2f1a72f822c6f71fbdfd8d8",
+      "source": "src/bh_route_query.c",
+      "source_sha256": "f4960f8e58e1ea803422ae3a2ba787c2fa658b562d793a1f4c9b0716927ab074"
+    },
+    "bh_scene.obj": {
+      "origin": "build\\m0\\bh_scene.obj",
+      "sha256": "7f2ecc350a1dd823c12b091497825096aba1d7b7a8ddebb80c39c8dc3881eae7",
+      "source": "src/bh_scene.c",
+      "source_sha256": "8439df6593816139b4e5b60cb8e9c96283a66c8f18f5465ca1aeec3eee64e3e1"
+    },
+    "bh_scene_view.obj": {
+      "origin": "build\\m0\\bh_scene_view.obj",
+      "sha256": "7009824ca3ec33caab276a57e18c01bf84c1715d29ce94f4980a7a61d7690b9e",
+      "source": "src/bh_scene_view.c",
+      "source_sha256": "93c8bb4774f9c546edb3e99e7eec7609a556b737e6dfb2c306832e7fb81db107"
+    },
+    "bh_screen_clipper.obj": {
+      "origin": "build\\m0\\bh_screen_clipper.obj",
+      "sha256": "97634a96ca79f45208a4763c5915642b2e4cb34283da001b75e20e219b37da90",
+      "source": "src/bh_screen_clipper.c",
+      "source_sha256": "b3c386152abe386b75ca1d5649d8350b8258ba08f27ad59d3e042acbe111dd02"
+    },
+    "bh_script_timer.obj": {
+      "origin": "build\\m0\\bh_script_timer.obj",
+      "sha256": "42a8bc9f64dfbe68e9d65602e950cec636a978f2167e825cbb001e14d030e26f",
+      "source": "src/bh_script_timer.c",
+      "source_sha256": "7e2aa2cc600ef0e963178d46bc5976b04784c08d5f035f48fcd0f3b3c14229e1"
+    },
+    "bh_segment_query.obj": {
+      "origin": "build\\m0\\bh_segment_query.obj",
+      "sha256": "90edb1658ff9e791ab3d82b0a69ba50085267ad3f324bc3eda2b37997459eb73",
+      "source": "src/bh_segment_query.c",
+      "source_sha256": "bc8b01e7c1bba98f5c3df0ea845e3b4a7570b550435c389f7e6dde7bda4ccb35"
+    },
+    "bh_software_tables.obj": {
+      "origin": "build\\m0\\bh_software_tables.obj",
+      "sha256": "edd10d9c4dab31b163cd6fc81159e8e260544ace0036be56c019feb768b0243b",
+      "source": "src/bh_software_tables.c",
+      "source_sha256": "0a96f604ed8e37903cf1919b48be2ef003cdf54a854d32854cce2513d3de0b0c"
+    },
+    "bh_sound_listener.obj": {
+      "origin": "build\\m0\\bh_sound_listener.obj",
+      "sha256": "58edca5a8416d1d86ef9121bf9fcd40ba8bf5f12b1435cf7bdb389322b14bb94",
+      "source": "src/bh_sound_listener.c",
+      "source_sha256": "af7535b6408e0c24f0987e4c375b4d00d816497981c1a025933b7ccad569c6aa"
+    },
+    "bh_sound_queue.obj": {
+      "origin": "build\\m0\\bh_sound_queue.obj",
+      "sha256": "f4c71cf0e8e86d256fff914fe27da88d77acd5729fc4b645f279f21f74abd398",
+      "source": "src/bh_sound_queue.c",
+      "source_sha256": "9c6a9eddf5cb3332539153e7aa7418326c0ec9598a5a565f53d529ce706f61a5"
+    },
+    "bh_sound_tick.obj": {
+      "origin": "build\\m0\\bh_sound_tick.obj",
+      "sha256": "71074661487501066fce8f6fa7cb4f600e0ca0bd619d655020396bddd4ffcdb6",
+      "source": "src/bh_sound_tick.c",
+      "source_sha256": "c790edd015d07d33b56f9c154be2c035ab2e19ff4d2e9bbbe1d91dae0ec10ba5"
+    },
+    "bh_sprite_billboard.obj": {
+      "origin": "build\\m0\\bh_sprite_billboard.obj",
+      "sha256": "c5a531491003e3b7c742a704452a5c69aaf382596907da6527d1286624df7ada",
+      "source": "src/bh_sprite_billboard.c",
+      "source_sha256": "47d4885a1662b94b3511ce5863c4996d66dd52f4139b700ffc7de7d242c8bd61"
+    },
+    "bh_sprite_oriented.obj": {
+      "origin": "build\\m0\\bh_sprite_oriented.obj",
+      "sha256": "c16dfcadd6fdec1f9b3e8f9bd1a855645e83f914bb0798504b939891e0c409c3",
+      "source": "src/bh_sprite_oriented.c",
+      "source_sha256": "169cb33ab54b536bed3e3541db8375a9849c91a80c87e919f54a4898b432b77d"
+    },
+    "bh_sweep.obj": {
+      "origin": "build\\m0\\bh_sweep.obj",
+      "sha256": "4ecdca9370d396245c1690cb49db5e55f118f8ac4d5fc05a2ed482769d9578fb",
+      "source": "src/bh_sweep.c",
+      "source_sha256": "829392439f2e0886f45079d69f1e884730cfc1b9faaade22ab8872324fff751a"
+    },
+    "bh_texture.obj": {
+      "origin": "build\\m0\\bh_texture.obj",
+      "sha256": "0777f1499ed82de748dda629f119e79c7fc1145c00493e3a61ae4e8fc73ddbf8",
+      "source": "src/bh_texture.c",
+      "source_sha256": "50447fcc5a161060c743bafa66500f28d7b0cbfdd40e0b14486844d0339db0d2"
+    },
+    "bh_texture_controls.obj": {
+      "origin": "build\\m0\\bh_texture_controls.obj",
+      "sha256": "dd4fd3ae7611650702226d11665ed8dfa13cdb4d6eb3f7865680f21c6091ed71",
+      "source": "src/bh_texture_controls.c",
+      "source_sha256": "dc7193a5c83db543187868dcb0f0e62a2d396545f106b86560b46af485943d9a"
+    },
+    "bh_texture_draw.obj": {
+      "origin": "build\\m0\\bh_texture_draw.obj",
+      "sha256": "ad74bac55a23b40138a321c72196e884d76615941b69f869ff868bc86c463c13",
+      "source": "src/bh_texture_draw.c",
+      "source_sha256": "5878f7bfb976a8b7281561787a01e0d819e41002ba4bf7b46b4a6c885c43a61a"
+    },
+    "bh_texture_image.obj": {
+      "origin": "build\\m0\\bh_texture_image.obj",
+      "sha256": "72ba400ed0bc1d5c0f3b8e259fe924b1fe741f4806e962c143659d71b0d1bd71",
+      "source": "src/bh_texture_image.c",
+      "source_sha256": "b90f9e2e48c816af8a5cdbe476fef73fa4f399b31b6f42024ad24e5f68ed4690"
+    },
+    "bh_texture_policy.obj": {
+      "origin": "build\\m0\\bh_texture_policy.obj",
+      "sha256": "32443609992ca45c1e2dde900307f11d965238f719efc86cc14691ed8bda37c0",
+      "source": "src/bh_texture_policy.c",
+      "source_sha256": "03d1bcbbb0007f8954b79610f65c0cfefcbcf5c3d5cfc6c11e8301725a3f8061"
+    },
+    "bh_texture_tables.obj": {
+      "origin": "build\\m0\\bh_texture_tables.obj",
+      "sha256": "222f915d33fc47ab81e14843c142312be4947c0e165dac1c2c8caa80cd5e28fe",
+      "source": "src/bh_texture_tables.c",
+      "source_sha256": "0cc9d82eec6212b08a3bd016e18b319a73896dc35e9e191da2edaf7ddf1c60b7"
+    },
+    "bh_vfile.obj": {
+      "origin": "build\\m0\\bh_vfile.obj",
+      "sha256": "c425aec03cc844a6d6a32fc5e6e4c3364f8d96fa2b43cbf44abc7fd297c247df",
+      "source": "src/bh_vfile.c",
+      "source_sha256": "7a8187efa6bfcbdf7a626ff53c6d4133d47a37e2dcf65830985b5cee94bf78d0"
+    },
+    "bh_view_camera.obj": {
+      "origin": "build\\m0\\bh_view_camera.obj",
+      "sha256": "2dc0a71abace2f14d1aeb5a94bd92af2847d9175df122d30ba04434b17b17cf3",
+      "source": "src/bh_view_camera.c",
+      "source_sha256": "f7984e1bbdf672df12961840426d511844d9f3cef77ddea8370b34375a9042a7"
+    },
+    "bh_view_cull.obj": {
+      "origin": "build\\m0\\bh_view_cull.obj",
+      "sha256": "b68ccb1744e6b4654357411f495f6825af34dd019f7468212b60025a3b1bb8a9",
+      "source": "src/bh_view_cull.c",
+      "source_sha256": "bf2b02be5c3dfabebf93fe6b64daf6c0bbda5c452147ba8e554580e8fa3ad9a5"
+    },
+    "bh_wave.obj": {
+      "origin": "build\\m0\\bh_wave.obj",
+      "sha256": "b6fcf8575ffc08a2fb6302c09e9c4f3cdedc937249806df5c8bbb760dfdb5e44",
+      "source": "src/bh_wave.c",
+      "source_sha256": "16bf89dc8799e762bc8eb257c60841214ae4135d9e9b6702f8124ef97fdf7115"
+    },
+    "bh_world_geometry.obj": {
+      "origin": "build\\m0\\bh_world_geometry.obj",
+      "sha256": "3f5fafd5ef2143d9458d5029e35a059fc62dcfb6106568dfb0946086786a9d0f",
+      "source": "src/bh_world_geometry.c",
+      "source_sha256": "c1f81b5b6c07a278e65abe21717866342c89c7486ef7ca1fb0d0772a7c9a0ce0"
+    },
+    "bh_world_query.obj": {
+      "origin": "build\\m0\\bh_world_query.obj",
+      "sha256": "f83a394f35dba366bf0bb0854e734d4fe3584ab683d1ff985bab185c72acb61d",
+      "source": "src/bh_world_query.c",
+      "source_sha256": "26f0900748e1f0d7a6ecf072f1028ae305e703865cfa34765592ff0f3235fe48"
+    }
+  },
+  "original_code_required": false,
+  "game_launches": 0,
+  "scenario": {
+    "scenario": "entity-resource-draw",
+    "checks": 31,
+    "failures": 0
+  },
+  "sources": {
+    "src/bh_entity_resource_draw.c": "f35c7984a31b438f6d6aa915e66575f4598e2368445e27af163ebf60c3d28969",
+    "src/bh_entity_resource_draw.h": "cc8e3729e62d97d335871bcc65f278c3ddb6d2140052becf2da8b71e1ae0c73e",
+    "tests/entity_resource_draw.c": "1eece64c17b68875ebcc7e37184259a63331e6d11687224609207551df854774",
+    "src/bh_draw_queue.c": "0c697d2144ebb7453a37f65aa8f208d69512c3e4926e369cc7c37daee706707d",
+    "src/bh_draw_submit.c": "e78ad5cf239a254577bc0a8c52be4516f5382c7fd0b1bfa65c162ed747103500"
+  },
+  "executable_sha256": "e1cbdb741ae21f10e34ab336075d5103d7ea68c70039aa41574fca00fb9dd56e"
+}

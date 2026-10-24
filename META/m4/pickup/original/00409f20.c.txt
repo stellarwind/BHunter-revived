@@ -1,0 +1,14 @@
+
+void FUN_00409f20(int param_1)
+
+{
+  int iVar1;
+  
+  iVar1 = *(int *)(param_1 + 0x104) + -1;
+  *(int *)(param_1 + 0x104) = iVar1;
+  if (iVar1 == 0) {
+    *(code **)(param_1 + 0xcc) = FUN_0047d680;
+  }
+  return;
+}
+

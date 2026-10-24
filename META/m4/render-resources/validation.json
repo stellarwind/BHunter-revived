@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "classification": "source_adapter",
+  "recovered_original_function_claim": false,
+  "source": [
+    "src/bh_render_resources.c",
+    "src/bh_render_resources.h",
+    "tests/render_resources.c"
+  ],
+  "underlying_recovered_constructor": "00458140 bh_model_load",
+  "original_entity_mapping_fixture": "004474c0 PU_9A.BSP -> 004d19c4; 00441a00 type 9 variant 0 -> 004413b0",
+  "target": "build/m4/render-resources/render-resources-test.exe",
+  "compile": "pinned VC5 C /ML /O2 /G5 /Oi /Gy in real translation units",
+  "link": "stock VC5 LINK with real build/m0/bh_*.obj definitions and DirectDraw/DirectSound libraries",
+  "focused_result": {
+    "scenario": "render-resources",
+    "archive": "GAME_DATA/Bhunter.bin",
+    "checks": 22,
+    "failures": 0,
+    "original_code_required": false
+  },
+  "limits": [
+    "Earlier focused22-check candidate only; current guarded variant is validated separately by parent full integration and25 real-data checks",
+    "Original tag 1/2/3 construction and lifetimes remain unknown",
+    "No original entity callback or gameplay execution claimed"
+  ],
+  "historical_candidate_result": true,
+  "parent_current_variant_evidence": "META/m4/queued-resource/validation.json"
+}

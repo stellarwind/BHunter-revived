@@ -1,3 +1,20 @@
+int bh_scene_owner_checkpoint(unsigned long *count);
+int bh_scene_bindings_checkpoint(const char *archive,unsigned long *count);
+int bh_scene_owner_native_checkpoint(const char *archive,unsigned long *count);
+int bh_pickup_native_checkpoint(const char *archive,unsigned long *count);
+int bh_pickup_checkpoint(unsigned long *count);
+int bh_pickup_draw_checkpoint(unsigned long *count);
+int bh_entity_schedule_checkpoint(unsigned long *count);
+int bh_draw_controls_checkpoint(const char *archive,unsigned long *count);
+int bh_queued_resource_native_checkpoint(const char *archive,unsigned long *count);
+int bh_entity_resource_draw_checkpoint(unsigned long *count);
+int bh_render_resources_checkpoint(const char *archive,unsigned long *count);
+int bh_draw_submit_checkpoint(unsigned long *count);
+int bh_sprite_native_checkpoint(unsigned long *count);
+int bh_draw_resource_checkpoint(unsigned long *count);
+int bh_sprite_oriented_checkpoint(unsigned long *count);
+int bh_sprite_billboard_checkpoint(unsigned long *count);
+int bh_model_instance_checkpoint(unsigned long *count);
 #include <stdio.h>
 #include "../src/bh_fp.h"
 
@@ -78,6 +95,23 @@ int main(int argc, char **argv) {
     unsigned long world_query_checks=0;int world_query_failed;
     unsigned long waypoint_checks=0;int waypoint_failed;
     unsigned long segment_checks=0;int segment_failed;
+    unsigned long sprite_billboard_checks=0;int sprite_billboard_failed;
+    unsigned long sprite_oriented_checks=0;int sprite_oriented_failed;
+    unsigned long draw_resource_checks=0;int draw_resource_failed;
+    unsigned long sprite_native_checks=0;int sprite_native_failed;
+    unsigned long draw_submit_checks=0;int draw_submit_failed;
+    unsigned long render_resources_checks=0;int render_resources_failed;
+    unsigned long entity_resource_draw_checks=0;int entity_resource_draw_failed;
+    unsigned long scene_owner_checks=0;int scene_owner_failed;
+    unsigned long scene_bindings_checks=0;int scene_bindings_failed;
+    unsigned long scene_owner_native_checks=0;int scene_owner_native_failed;
+    unsigned long pickup_native_checks=0;int pickup_native_failed;
+    unsigned long pickup_checks=0;int pickup_failed;
+    unsigned long pickup_draw_checks=0;int pickup_draw_failed;
+    unsigned long entity_schedule_checks=0;int entity_schedule_failed;
+    unsigned long draw_controls_checks=0;int draw_controls_failed;
+    unsigned long queued_resource_native_checks=0;int queued_resource_native_failed;
+    unsigned long instance_checks=0;int instance_failed;
     unsigned long model_draw_checks=0;int model_draw_failed;
     unsigned long model_draw_lit_checks=0;int model_draw_lit_failed;
     unsigned long atlas_page_checks=0;int atlas_page_failed;
@@ -141,6 +175,23 @@ int main(int argc, char **argv) {
     world_query_failed=bh_world_query_checkpoint(&world_query_checks);
     waypoint_failed=bh_position_checkpoint(&waypoint_checks);
     segment_failed=bh_segment_query_checkpoint(&segment_checks);
+    sprite_billboard_failed=bh_sprite_billboard_checkpoint(&sprite_billboard_checks);
+    sprite_oriented_failed=bh_sprite_oriented_checkpoint(&sprite_oriented_checks);
+    draw_resource_failed=bh_draw_resource_checkpoint(&draw_resource_checks);
+    sprite_native_failed=bh_sprite_native_checkpoint(&sprite_native_checks);
+    draw_submit_failed=bh_draw_submit_checkpoint(&draw_submit_checks);
+    render_resources_failed=bh_render_resources_checkpoint(argc==2?argv[1]:NULL,&render_resources_checks);
+    entity_resource_draw_failed=bh_entity_resource_draw_checkpoint(&entity_resource_draw_checks);
+    queued_resource_native_failed=bh_queued_resource_native_checkpoint(argc==2?argv[1]:NULL,&queued_resource_native_checks);
+    scene_owner_failed=bh_scene_owner_checkpoint(&scene_owner_checks);
+    scene_bindings_failed=bh_scene_bindings_checkpoint(argc==2?argv[1]:NULL,&scene_bindings_checks);
+    scene_owner_native_failed=bh_scene_owner_native_checkpoint(argc==2?argv[1]:NULL,&scene_owner_native_checks);
+    pickup_native_failed=bh_pickup_native_checkpoint(argc==2?argv[1]:NULL,&pickup_native_checks);
+    pickup_failed=bh_pickup_checkpoint(&pickup_checks);
+    pickup_draw_failed=bh_pickup_draw_checkpoint(&pickup_draw_checks);
+    entity_schedule_failed=bh_entity_schedule_checkpoint(&entity_schedule_checks);
+    draw_controls_failed=bh_draw_controls_checkpoint(argc==2?argv[1]:NULL,&draw_controls_checks);
+    instance_failed=bh_model_instance_checkpoint(&instance_checks);
     model_draw_failed=bh_model_draw_checkpoint(&model_draw_checks);
     model_draw_lit_failed=bh_model_draw_lit_checkpoint(&model_draw_lit_checks);
     atlas_page_failed=bh_atlas_page_checkpoint(&atlas_page_checks);
@@ -189,7 +240,7 @@ int main(int argc, char **argv) {
     environment_failed=!bh_math_environment_supported();
     printf("{\"scenario\":\"m2-foundations\",\"checks\":%lu,\"failures\":%d,"
            "\"archive_entries\":%lu,\"original_code_required\":false}\n",
-           model_draw_checks+model_draw_lit_checks+atlas_page_checks+atlas_glyph_checks+model_draw_native_checks+attribute_clipper_checks+software_tables_checks+light_config_checks+geometry_radius_checks+view_cull_checks+atlas_image_checks+native_primitive_checks+texture_controls_checks+model_path_checks+texture_policy_checks+model_images_checks+main_camera_checks+light_eval_checks+render_state_checks+render_material_checks+screen_clipper_checks+light_checks+camera_checks+clipper_checks+inverse_checks+texture_draw_checks+model_checks+image_checks+texture_checks+sound_tick_checks+listener_checks+transport_checks+packet_checks+debris_checks+sound_queue_checks+draw_queue_checks+contact_effects_checks+physics_response_checks+entity_collision_checks+sweep_checks+collision_query_checks+checks+14+numeric_checks+config_checks+scene_checks+block_checks+entity_checks+wave_checks+pcx_checks+portal_checks+geometry_checks+world_checks+navigation_checks+route_checks+world_query_checks+waypoint_checks+segment_checks+collision_model_checks+riff_checks+pcx_reader_checks+script_timer_checks,model_draw_failed+model_draw_lit_failed+atlas_page_failed+atlas_glyph_failed+model_draw_native_failed+attribute_clipper_failed+software_tables_failed+light_config_failed+geometry_radius_failed+view_cull_failed+atlas_image_failed+native_primitive_failed+texture_controls_failed+model_path_failed+texture_policy_failed+model_images_failed+main_camera_failed+light_eval_failed+render_state_failed+render_material_failed+screen_clipper_failed+light_failed+camera_failed+clipper_failed+inverse_failed+texture_draw_failed+model_failed+image_failed+texture_failed+sound_tick_failed+listener_failed+transport_failed+packet_failed+debris_failed+sound_queue_failed+draw_queue_failed+contact_effects_failed+physics_response_failed+entity_collision_failed+sweep_failed+collision_query_failed+math_failed+vfile_failed+numeric_failed+environment_failed+config_failed+scene_failed+blocks_failed+entities_failed+wave_failed+pcx_failed+portals_failed+geometry_failed+world_failed+navigation_failed+route_failed+world_query_failed+waypoint_failed+segment_failed+collision_model_failed+riff_failed+pcx_reader_failed+script_timer_failed,entries);
+           scene_owner_checks+scene_bindings_checks+scene_owner_native_checks+pickup_native_checks+pickup_checks+pickup_draw_checks+entity_schedule_checks+draw_controls_checks+sprite_billboard_checks+sprite_oriented_checks+draw_resource_checks+sprite_native_checks+draw_submit_checks+render_resources_checks+entity_resource_draw_checks+queued_resource_native_checks+instance_checks+model_draw_checks+model_draw_lit_checks+atlas_page_checks+atlas_glyph_checks+model_draw_native_checks+attribute_clipper_checks+software_tables_checks+light_config_checks+geometry_radius_checks+view_cull_checks+atlas_image_checks+native_primitive_checks+texture_controls_checks+model_path_checks+texture_policy_checks+model_images_checks+main_camera_checks+light_eval_checks+render_state_checks+render_material_checks+screen_clipper_checks+light_checks+camera_checks+clipper_checks+inverse_checks+texture_draw_checks+model_checks+image_checks+texture_checks+sound_tick_checks+listener_checks+transport_checks+packet_checks+debris_checks+sound_queue_checks+draw_queue_checks+contact_effects_checks+physics_response_checks+entity_collision_checks+sweep_checks+collision_query_checks+checks+14+numeric_checks+config_checks+scene_checks+block_checks+entity_checks+wave_checks+pcx_checks+portal_checks+geometry_checks+world_checks+navigation_checks+route_checks+world_query_checks+waypoint_checks+segment_checks+collision_model_checks+riff_checks+pcx_reader_checks+script_timer_checks,scene_owner_failed+scene_bindings_failed+scene_owner_native_failed+pickup_native_failed+pickup_failed+pickup_draw_failed+entity_schedule_failed+draw_controls_failed+sprite_billboard_failed+sprite_oriented_failed+draw_resource_failed+sprite_native_failed+draw_submit_failed+render_resources_failed+entity_resource_draw_failed+queued_resource_native_failed+instance_failed+model_draw_failed+model_draw_lit_failed+atlas_page_failed+atlas_glyph_failed+model_draw_native_failed+attribute_clipper_failed+software_tables_failed+light_config_failed+geometry_radius_failed+view_cull_failed+atlas_image_failed+native_primitive_failed+texture_controls_failed+model_path_failed+texture_policy_failed+model_images_failed+main_camera_failed+light_eval_failed+render_state_failed+render_material_failed+screen_clipper_failed+light_failed+camera_failed+clipper_failed+inverse_failed+texture_draw_failed+model_failed+image_failed+texture_failed+sound_tick_failed+listener_failed+transport_failed+packet_failed+debris_failed+sound_queue_failed+draw_queue_failed+contact_effects_failed+physics_response_failed+entity_collision_failed+sweep_failed+collision_query_failed+math_failed+vfile_failed+numeric_failed+environment_failed+config_failed+scene_failed+blocks_failed+entities_failed+wave_failed+pcx_failed+portals_failed+geometry_failed+world_failed+navigation_failed+route_failed+world_query_failed+waypoint_failed+segment_failed+collision_model_failed+riff_failed+pcx_reader_failed+script_timer_failed,entries);
     bh_math_environment_leave(&environment);
-    return model_draw_failed || model_draw_lit_failed || atlas_page_failed || atlas_glyph_failed || model_draw_native_failed || attribute_clipper_failed || software_tables_failed || light_config_failed || geometry_radius_failed || view_cull_failed || atlas_image_failed || native_primitive_failed || texture_controls_failed || model_path_failed || texture_policy_failed || model_images_failed || main_camera_failed || light_eval_failed || render_state_failed || render_material_failed || screen_clipper_failed || light_failed || camera_failed || clipper_failed || inverse_failed || texture_draw_failed || model_failed || image_failed || texture_failed || sound_tick_failed || listener_failed || transport_failed || packet_failed || debris_failed || sound_queue_failed || draw_queue_failed || contact_effects_failed || physics_response_failed || entity_collision_failed || sweep_failed || collision_query_failed || math_failed || vfile_failed || numeric_failed || environment_failed || config_failed || scene_failed || blocks_failed ||entities_failed || wave_failed || pcx_failed || portals_failed || geometry_failed || world_failed || navigation_failed || route_failed || world_query_failed || waypoint_failed || segment_failed || collision_model_failed || riff_failed || pcx_reader_failed || script_timer_failed ? 1 : 0;
+    return scene_owner_failed || scene_bindings_failed || scene_owner_native_failed || pickup_native_failed || pickup_failed || pickup_draw_failed || entity_schedule_failed || draw_controls_failed || draw_submit_failed || render_resources_failed || entity_resource_draw_failed || queued_resource_native_failed || sprite_billboard_failed || sprite_oriented_failed || draw_resource_failed || sprite_native_failed || instance_failed || model_draw_failed || model_draw_lit_failed || atlas_page_failed || atlas_glyph_failed || model_draw_native_failed || attribute_clipper_failed || software_tables_failed || light_config_failed || geometry_radius_failed || view_cull_failed || atlas_image_failed || native_primitive_failed || texture_controls_failed || model_path_failed || texture_policy_failed || model_images_failed || main_camera_failed || light_eval_failed || render_state_failed || render_material_failed || screen_clipper_failed || light_failed || camera_failed || clipper_failed || inverse_failed || texture_draw_failed || model_failed || image_failed || texture_failed || sound_tick_failed || listener_failed || transport_failed || packet_failed || debris_failed || sound_queue_failed || draw_queue_failed || contact_effects_failed || physics_response_failed || entity_collision_failed || sweep_failed || collision_query_failed || math_failed || vfile_failed || numeric_failed || environment_failed || config_failed || scene_failed || blocks_failed ||entities_failed || wave_failed || pcx_failed || portals_failed || geometry_failed || world_failed || navigation_failed || route_failed || world_query_failed || waypoint_failed || segment_failed || collision_model_failed || riff_failed || pcx_reader_failed || script_timer_failed ? 1 : 0;
 }

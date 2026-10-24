@@ -23,6 +23,122 @@ Human playtesting offer, 2026-10-24: ask the user for a focused manual playtest 
 
 ## Working evidence
 
+M4 outer scene orchestration and world/resource bindings, 2026-10-24:
+**182/727 original functions now have admitted source variants** in a
+163-TU harness. Complete `00409130` restores the scene gate, portal projection,
+cached room bounds and exact/margin/fallback lookup, frame increment, recursive
+entity scheduling, and two queued full-target clip resets. Camera dimensions
+use truncated integer halves and clip bounds while preserving the draw target
+extent. The source binding adapter maps constructed world rings and containment
+sentinels separately from matched portal neighbors and validates resource handles.
+The scheduler now binds player overlay position separately from the render eye;
+three updated translation-unit variants retain their older tested snapshots.
+The build passes 3,399,450 real-data / 2,906,962 clean checks, including
+185 focused real-data checks and 80 missing-module link controls. Native pixels
+use real TEST.LEV placements 0/5797 and model 129 through source construction,
+portal recursion and real resource consumers. Cached/reacquired images match,
+a room change differs, and disabled world drawing produces a blank control.
+No original code or game launch. See `m4/scene-owner/validation.json` and
+`../tools/check_scene_owner.py`. The bindings are an adapter, not admission of
+full world/resource/startup construction or block-script initialization. Next
+frontier: scene callers `0041c860`/`00428f50`, player/camera construction and
+actual resource metadata. Full gameplay, software rendering and x87 PC24 remain
+unfinished.
+
+M4 pickup construction and entity scheduling, 2026-10-24:
+**181/727 original functions now have admitted source variants** in the
+158-TU linked harness. Seventeen complete owners cover `00441a00`, pickup
+lifetime/query/cleanup, default and numeric-label drawing, queue controls,
+portal clipping and recursive `00409f40` scheduling. `00454fc0` remains a
+partial native rectangle adapter; software rendering is unfinished. Source
+bindings preserve the actual entity `+e8` callback, room/global lists,
+post-callback traversal, linked inactive sentinel, frame suppression and
+portal clip recursion. Raw EXE constants correct both random constructor
+multipliers. Explicit unsigned multiplication preserves original 32-bit
+wrapped label totals. The real-archive native fixture constructs and schedules
+a pickup through actual source owners, renders model/glow/numeric rectangles,
+and verifies a blank inactive-room control. No original code or game launch.
+The corrected build passes 3,399,331 real-data and 2,906,922 clean checks,
+including 287 focused real-data checks and 78 missing-module controls.
+See `m4/pickup/validation.json`, `../tools/check_pickup.py` and the lifecycle,
+draw and scheduler reviews. Next frontier: outer scene owner `00409130`,
+actual world/resource bindings and actor construction. Source gameplay,
+non-model registries, software rasterizers and x87 PC24 remain incomplete.
+
+M4 queued consumers, resource lifetime and entity draw binding, 2026-10-24:
+**164/727 original functions now have admitted source variants**. Complete
+`004775f0`, `00477640`, `00478170` and `004413b0` recover both queued draw
+callbacks, resource submission and a game entity draw method. A separate
+source adapter owns loaded models/caches/instances/descriptors under stable
+handles; it does not add an original-function count. The 149-TU integration
+passes 3,399,044 real-data and 2,906,719 clean source checks, with 74 missing-
+module link controls. All four original references remain unchanged.
+
+The 157 focused real-data checks include exact command copies/bucket order,
+post-draw next-link mutation, owner initialization/allocation/lifetime guards,
+entity field/phase/angle/saturation behavior and real native output. A source
+entity slot submits two owned PU_9A model draws plus its real flare image;
+both callbacks execute through actual rendering owners/state/queues. Invalid
+resource/image bindings produce a blank native control. No gameplay or game
+execution occurred. Static level pixels remain identical with 1,798 polygons,
+3,112 triangles and 146 textures through the new queued/owned source path.
+Evidence: `m4/queued-resource/`; audit: `python tools/check_queued_resource.py`.
+
+Public resource enum tags now have a distinct namespace. Earlier functional
+source variants and their tests retain separate snapshots; the renamed variant
+has current linked evidence. The entity method belongs to payload +e8, not
+refresh +c8. Actual constructor 00441a00 and scene scheduling 00409f40 remain
+unfinished. Next review remaining pickup draw/tick/query dependencies 004412f0,
+004415a0 and 00441570; world-location owner 0040a8c0 is already recovered.
+Non-model descriptor constructors, full startup registries, software rendering
+and atlas glyph copy remain open. M4 has not passed.
+
+M4 sprite dependencies and recursive resource draw, 2026-10-24:
+**160/727 original functions now have admitted source variants**. Complete
+`00455960`, `00455f70`, `004569b0` and `0045adf0` recover billboard geometry,
+ribbon production, near-plane path clipping and four-tag resource recursion.
+The 142-TU integration passes 3,398,887 real-data checks and 2,906,653 clean
+source checks with 71 missing-module link controls. The 169 focused checks
+include actual native queues and offscreen Direct3D2 pixels for billboards,
+per-vertex ribbon modulation and an empty LOD negative control. All references
+remain unchanged; no original code or game execution occurred.
+
+The static real-level renderer now calls the recursive resource owner before
+the model-instance owner; its 1,798 polygons / 3,112 triangles / 146 textures and
+bitmap are unchanged. Disassembly review preserves LOD retained-double near
+comparison versus stored-float far/selection, unknown-tag no-op, path append
+links, ninth billboard scalar and ribbon miter precision. Evidence and source
+hashes: `m4/sprite-world/`; audit: `python tools/check_sprite_world.py`.
+
+The hardware branch adapter for `0046e430` is explicitly partial/WIP, rejects
+software use and is excluded from the four-function admission. Resource recursion
+is not entity traversal: shell selection, placement/descriptor/cache binding and
+level entity installation remain unfinished. Next review queue consumer
+`004775f0`, resource constructors/lifetimes and entity bindings. Software
+rasterizers and atlas glyph copy remain open; M4 is not complete.
+
+M4 model-instance draw owner, 2026-10-24: **156/727 original functions now
+have admitted source variants**. Complete `0045aa60` (899 bytes / 268 original
+instructions) is recovered as `bh_model_instance_draw` in `src/bh_model_instance.c`.
+The 134-TU integration passes 3,398,718 real-data and 2,906,484 clean source checks,
+including 155 focused owner checks and 67 missing-module link controls. The clean
+checkout has no original assets. Source/header hashes bind each tested variant;
+no matching evidence or original-code execution is claimed.
+
+The static real-level renderer now calls the recovered instance owner for sphere
+culling, float-stored translation/Y-X-Z rotations, model-camera composition,
+frame/color state and real lit/unlit traversal. Default, red and point-light
+snapshots remain byte-identical to the previous checkpoint: 1,798 polygons and
+3,112 triangles with 146 textures. Tests cover double-position boundary rejection,
+tangent acceptance, cull-state retention, an independent rotation-matrix oracle,
+modulation truncation, light dispatch and emitter failure. No game was launched.
+Evidence: `m4/model-instance/`; audit: `python tools/check_model_instance.py`.
+
+Next recover recursive world/entity draw owner `0045adf0` after its sprite owners
+`00455960`/`004569b0` and real entity binding contracts. Static shell selection,
+placement iteration and diagnostic lights remain adapters. Software dispatch and
+atlas glyph copy remain unfinished; M4 has not passed.
+
 M4 parallel restoration block, 2026-10-24: **155/727 original functions now
 have admitted source variants**, up 31 from 124. This block recovers 10,007
 original instructions in 31 complete functions; the count excludes the partial

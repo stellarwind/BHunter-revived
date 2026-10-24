@@ -1,0 +1,50 @@
+[
+  {
+    "address": "004775f0",
+    "function": "bh_draw_submit_execute",
+    "source": "src/bh_draw_submit.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Reviewed complete ordinary owner and actual callback installation/call sites; CRT/EH/import/shared-tail excluded; engine authorship remains unverified",
+    "original": "META/m4/queued-resource/original/004775f0.tsv",
+    "bytes": 80,
+    "instructions": 29,
+    "body_sha256": "6b4989ae070231ae5d4b786824058430af7a14e15cb689cfc263ab59b7210cc6",
+    "contract": "META/m4/draw-submit/CONTRACT.md"
+  },
+  {
+    "address": "00477640",
+    "function": "bh_draw_submit_billboard_execute",
+    "source": "src/bh_draw_submit.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Reviewed complete ordinary owner and actual callback installation/call sites; CRT/EH/import/shared-tail excluded; engine authorship remains unverified",
+    "original": "META/m4/queued-resource/original/00477640.tsv",
+    "bytes": 63,
+    "instructions": 28,
+    "body_sha256": "6f7395ab87c383da63ab085430af54d445c8a3c5ac894d9432a43d08902cfb76",
+    "contract": "META/m4/draw-submit/CONTRACT.md"
+  },
+  {
+    "address": "00478170",
+    "function": "bh_draw_submit_resource",
+    "source": "src/bh_draw_submit.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Reviewed complete ordinary owner and actual callback installation/call sites; CRT/EH/import/shared-tail excluded; engine authorship remains unverified",
+    "original": "META/m4/queued-resource/original/00478170.tsv",
+    "bytes": 231,
+    "instructions": 75,
+    "body_sha256": "836056960808ed5e76ffe21b026092f27d312d8efdd16d607e70988c8fae8e35",
+    "contract": "META/m4/draw-submit/CONTRACT.md"
+  },
+  {
+    "address": "004413b0",
+    "function": "bh_entity_resource_draw_special",
+    "source": "src/bh_entity_resource_draw.c",
+    "role": "game",
+    "provenance_confidence": "Game entity draw method installed by00441a00 for type9/variant0 at payload+e8, invoked by00409f40; high confidence role, no full constructor/traversal admission",
+    "original": "META/m4/queued-resource/original/004413b0.tsv",
+    "bytes": 276,
+    "instructions": 81,
+    "body_sha256": "f5ee4ae4f37a8582f9e1de883b3e661c552f24273ca803d9b216faa5aec48e77",
+    "contract": "META/m4/entity-resource-draw/CONTRACT.md"
+  }
+]

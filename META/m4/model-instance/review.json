@@ -1,0 +1,53 @@
+{
+  "address": "0045aa60",
+  "boundary": "0045aa60-0045ade2",
+  "body_bytes": 899,
+  "body_instructions": 268,
+  "body_sha256": "50fbdcfcbbbf9909fc9bd13f84498ea4696145d348e52f5c6b344743f4fd97e9",
+  "original_exe_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+  "role": "engine_candidate",
+  "provenance_confidence": "medium: ordinary model-instance renderer body with a reviewed contiguous RET boundary and actual model/matrix/lighting/BSP calls; historical engine authorship unresolved",
+  "boundary_review": "Full 0045aa60-0045ade2 instruction listing inspected; no verified CRT/library, import, EH/compiler helper or shared-tail ownership; direct caller 0045adf0 is a distinct recursive world/entity draw owner",
+  "calls": [
+    "00401490",
+    "004017e0",
+    "00401610",
+    "004019a0",
+    "0047de20",
+    "00401000",
+    "00451b80",
+    "00458470",
+    "00401a70",
+    "00401360",
+    "004012e0",
+    "00450980",
+    "00459510"
+  ],
+  "implementation": "func",
+  "source": "src/bh_model_instance.c",
+  "header": "src/bh_model_instance.h",
+  "integration": "linked_harness",
+  "object_check": "Pinned SP3 VC5 CL /c /ML /O2 /G5 /Oi /Gy succeeded on the real new translation unit; full linked admission is parent-owned",
+  "constants": {
+    "0048c030": "48 source bytes = 3x4 identity matrix (1,0,0,0; 0,1,0,0; 0,0,1,0)",
+    "00489f18": "00007fc3 = binary32 -255.0",
+    "00495e30": "12 source bytes are three binary32 zeros in the pinned image; retained as a borrowed global binding because the address is writable"
+  },
+  "key_instruction_anchors": [
+    "0045aa60-0045ac4d: six double-coordinate sphere/plane checks; the model transform is untouched on rejection",
+    "0045ac52-0045acb5: copy 0048c030 and apply float-stored local translation, Y, X, Z rotations",
+    "0045acba-0045acef: multiply final float opacity by -255, __ftol, subtract 0x10101 grayscale from 00491758, retain opacity at 0049177c",
+    "0045acff-0045ad4b: increment frame, compose camera/model matrix, build model camera, select unlit traversal",
+    "0045ad52-0045adb8: rigid inverse, optional directional transform/point-light prepare, lit traversal",
+    "0045adbd-0045add8: copy main camera view to 004e9448 after traversal"
+  ],
+  "limits": [
+    "Linked parent integration and clean source checkout pass; this is not linked-game admission",
+    "Original function has no error result; source adds finite/context guards and failure reporting",
+    "PC53/nearest/masked profile only; no raw-byte or original differential match claimed",
+    "Recursive world/entity owner 0045adf0 and software primitive dispatch remain unrecovered"
+  ],
+  "target": "build/m0/bhunter-integration.exe",
+  "source_sha256": "512e7a495b5ff79823821923b5e111c880d1987d4e3ddf8fb7e89ef137f5c84e",
+  "parent_validation": "validation.json"
+}

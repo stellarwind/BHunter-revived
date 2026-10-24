@@ -1,0 +1,56 @@
+"""Verify the pickup/scheduler source checkpoint; never executes original code."""
+import csv
+import hashlib
+import json
+import struct
+from pathlib import Path
+
+ROOT=Path(__file__).resolve().parents[1]
+FOLDER=ROOT/'META/m4/pickup'
+def read(p): return json.loads(p.read_text(encoding='utf-8-sig'))
+def sha(p): return hashlib.sha256(p.read_bytes()).hexdigest()
+def main():
+ v=read(FOLDER/'validation.json');owners=read(FOLDER/'owners.json')['owners']
+ real=read(FOLDER/'integration-real.json');cr=read(FOLDER/'clean/clean-checkout.json');clean=cr['result']
+ assert v['passed'] and real['passed'] and clean['passed']
+ assert not cr['original_assets_present'] and not cr['compiler_in_checkout']
+ for name,digest in v['sources'].items():
+  assert sha(ROOT/name)==digest,name
+  for b in (real,clean):
+   if name in b['sources']:assert b['sources'][name]==digest,name
+ for b,label in ((real,'real'),(clean,'clean')):
+  assert not b['original_code_required'] and not b['test']['failures']
+  assert b['test']==v[label+'_total']
+  assert sum(c['label'].startswith('compile-') for c in b['commands'])==v['translation_units']
+  controls=[val for key,val in b.items() if key.startswith('missing_')]
+  assert len(controls)==v['missing_module_controls'] and all('LNK2001' in val for val in controls)
+  for scenario,expected in v[label+'_focused'].items():
+   assert next(r for r in b['scenarios'] if r.get('scenario')==scenario)==expected
+ ledger=read(ROOT/'META/function-status.json')
+ exe=(ROOT/'GAME_DATA/BHUNTER.EXE').read_bytes();pe=struct.unpack_from('<I',exe,60)[0]
+ table=pe+24+struct.unpack_from('<H',exe,pe+20)[0]
+ sections=[struct.unpack_from('<IIII',exe,table+i*40+8) for i in range(struct.unpack_from('<H',exe,pe+6)[0])]
+ def original(va,size):
+  rva=va-0x400000
+  _,start,_,offset=next(s for s in sections if s[1]<=rva and rva+size<=s[1]+s[2])
+  return exe[offset+rva-start:offset+rva-start+size]
+ for o in owners:
+  rows=list(csv.DictReader((ROOT/o['original_tsv']).open(),delimiter='\t'));at=int(o['address'],16);body=bytearray()
+  for row in rows:
+   assert int(row['address'],16)==at
+   data=bytes.fromhex(row['bytes']);body.extend(data);at+=len(data)
+  assert len(rows)==o['instructions'] and len(body)==o['bytes']
+  assert hashlib.sha256(body).hexdigest()==o['body_sha256'] and original(int(o['address'],16),len(body))==body
+  record=next(r for r in ledger['records'] if r['id']==o['address']+'-functional-c')
+  assert record['source_sha256']==sha(ROOT/record['source']) and record['integration']=='linked_harness'
+  assert record['implementation']==('func' if o['complete'] else 'wip')
+  assert not record['game_admitted'] and not record['validation']['raw_byte_match']
+  for name in ('link-map.txt','clean/link-map.txt'):
+   assert ('_'+o['function']).encode() in (FOLDER/name).read_bytes()
+ for row in read(ROOT/'META/reference-manifest.json')['files']:
+  if row['root']=='repo':assert sha(ROOT/row['path'])==row['sha256'],row['path']
+ for name,digest in v['native_images'].items():
+  assert sha(FOLDER/name)==digest and (FOLDER/name).read_bytes()[:2]==b'BM'
+ assert not v['original_code_executed'] and v['game_launches']==0
+ print(json.dumps(dict(passed=True,complete_functions=sum(o['complete'] for o in owners),partial_functions=sum(not o['complete'] for o in owners),real_checks=real['test']['checks'],clean_checks=clean['test']['checks'],game_launches=0)))
+if __name__=='__main__':main()

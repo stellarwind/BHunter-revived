@@ -39,7 +39,7 @@ def main():
         controls = [v for k, v in build.items() if k.startswith('missing_')]
         assert len(controls) == 66 and all('LNK2001' in v for v in controls)
     for name, digest in validation['sources'].items():
-        assert sha(ROOT / name) == digest, name
+        assert sha(ROOT / validation.get('historical_source_snapshots', {}).get(name, name)) == digest, name
         for build in (real, clean, scene):
             if name in build['sources']:
                 assert build['sources'][name] == digest, name

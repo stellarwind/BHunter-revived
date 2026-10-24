@@ -1,0 +1,61 @@
+{
+  "scenario": "scene-owner-native",
+  "status": "passed",
+  "target": "build/scene-owner-native/scene-owner-native.exe",
+  "execution": {
+    "exit_code": 0,
+    "checks": 80,
+    "failures": 0,
+    "original_code_required": false,
+    "gameplay_executed": false
+  },
+  "fixture": {
+    "data": "GAME_DATA/Bhunter.bin: BSP/BLOCKS.TXT, TEST.LEV, original BSP model slot 129 and its textures",
+    "placements": [
+      0,
+      5797
+    ],
+    "grid": 10,
+    "grid_provenance": "Existing captured world_grids[129] in tests/world_geometry_cases.h",
+    "world_construction": "bh_geometry_model_init, bh_world_geometry_build, bh_portals_match",
+    "resource_construction": "bh_render_resources_load_model",
+    "portal": "Placement 0 local slot 0 points to placement 5797; reverse local slot 1 points to placement 0",
+    "script_status": "Block scripts remain unapplied; resource_flags=0 is an explicit unconfigured input, not a recovered script value"
+  },
+  "coverage": [
+    "00409130 source owner invokes real world locator and 00409f40 source portal scheduler",
+    "Repeated camera in placement 0 reuses cached room; moving to placement 5797 changes it",
+    "Mode 1 gate clears cache and does not advance frame or queue commands",
+    "After the gate, the source owner reacquires placement 0",
+    "Both room model resources and portal clip commands reach recovered queue consumers and native Direct3D2 rasterization",
+    "The final bucket 0 and bucket 3 target rectangles restore viewport, model, screen and attribute clip bounds",
+    "Disabling both worlds' query_flags produces zero model records and zero nonblack pixels"
+  ],
+  "build": {
+    "compiler": "Pinned VC5 SP3 CL.EXE with /ML /O2 /G5 /Oi /Gy and DirectX7 headers at DIRECT3D_VERSION=DIRECTDRAW_VERSION=0x0500",
+    "linker": "Stock VC5 LINK.EXE 5.00.7022",
+    "objects": "Source bh_*.obj from the existing M0 integration build, excluding the replaced scheduler object; newly compiled bh_scene_owner.obj, bh_scene_bindings.obj, bh_entity_schedule.obj and scene_owner_native.obj",
+    "libraries": [
+      "ddraw.lib",
+      "kernel32.lib",
+      "dsound.lib",
+      "user32.lib",
+      "ole32.lib"
+    ],
+    "working_directory": "build/scene-owner-native",
+    "command": "scene-owner-native.exe D:\\Decomp\\Bhunter\\GAME_DATA\\Bhunter.bin"
+  },
+  "images": {
+    "first_sha256": "0AC2DAD7C3073BFFD0D8F73A06C1B10456EDDDE5570637D4A35DE8F243B265E4",
+    "cached_sha256": "0AC2DAD7C3073BFFD0D8F73A06C1B10456EDDDE5570637D4A35DE8F243B265E4",
+    "second_sha256": "FDB32722A1EB204851F33C2D83E76B90CD33F34BBFD88F24DE750A88E026D79B",
+    "after_gate_sha256": "0AC2DAD7C3073BFFD0D8F73A06C1B10456EDDDE5570637D4A35DE8F243B265E4",
+    "blank_sha256": "F2B6B49FABF1238AF61ECB37214B4D3C83FFD2AB409DB20790F78B8ED8235C79"
+  },
+  "limits": [
+    "This bounded two-room offscreen fixture is a rendering checkpoint, not playable scene or script restoration",
+    "It uses native Direct3D2 and real archive assets but never launches or executes the original game"
+  ],
+  "current_integration": "META/m4/scene-owner/validation.json",
+  "variant_scope": "Focused candidate build evidence; final corrected source is separately compiled, linked and checked in current_integration."
+}

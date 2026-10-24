@@ -1,0 +1,32 @@
+{
+  "variant": "src/bh_scene_bindings.c",
+  "implementation": "adapter",
+  "original_function_admitted": false,
+  "purpose": "Bind constructed BHWorldGeometry placements and matched navigation neighbors to borrowed pickup rooms and entity scheduler rooms.",
+  "provenance": {
+    "004084a0": "Recovered world constructor sets +1c8 owner for portal-less placements; src/bh_world_geometry.c assigns BHWorldGeometry.owner.",
+    "00409f40": "Recovered scheduler consumes +124 linked successor, +1c8 active/sentinel, portal neighbor and room resource/list bindings; META/m4/entity-schedule/REVIEW.md.",
+    "00409130": "Game scene outer owner selects a world then calls 00409f40. Its owner and camera behavior are separately assigned; META/m4/scene-owner/original/00409130.c.txt.",
+    "role": "The binding module is a source adapter, not a recovered original constructor or an original function count. Original asset and executable references remain immutable."
+  },
+  "integration": {
+    "target": "build/scene-bindings/scene-bindings.exe",
+    "compiler": "Pinned VC5 SP3 CL /c /ML /O2 /G5 /Oi /Gy",
+    "linker": "Stock VC5 LINK 5.00.7022",
+    "real_definitions": "Linked with 81 source module objects from build/m0 plus own adapter and fixture objects; no FORCE or original code.",
+    "checks": 13,
+    "failures": 0,
+    "output": "{\"scenario\":\"scene-bindings\",\"checks\":13,\"failures\":0,\"original_code_required\":false}"
+  },
+  "validation_limits": [
+    "Focused test uses a two-room native fixture with an actual initialized source render-resource owner but no loaded model because neither fixture world requests drawing.",
+    "Real-archive placement and loaded handle exercise is assigned to the scene native integration fixture.",
+    "Resource flags and angles are explicit caller data; no unproven script or model metadata is inferred.",
+    "Borrowed entity heads and world/resource lifetimes must outlive scheduler use; queue draining precedes resource disposal."
+  ],
+  "sources_sha256": {
+    "src/bh_scene_bindings.c": "e8c472472bc9f76f3d977ddb0e77a044682274b913fe04741b43caaf5804a3ef",
+    "src/bh_scene_bindings.h": "fa837dba48840445b5f23baebb90f78b8e2ad59bfd40ed085f510378033f248f",
+    "tests/scene_bindings.c": "e5a2d4d4a130e381f0d418d08e3cef748b514d79b8491429e895ee7c616307ba"
+  }
+}

@@ -1,0 +1,34 @@
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void FUN_004413b0(int param_1)
+
+{
+  float *pfVar1;
+  float10 fVar2;
+  float fStack_c;
+  undefined4 uStack_8;
+  undefined4 uStack_4;
+  
+  pfVar1 = (float *)(param_1 + 0x3c);
+  fStack_c = *(float *)(param_1 + 0xc) - (float)_DAT_00489300;
+  uStack_8 = *(undefined4 *)(param_1 + 0x10);
+  uStack_4 = *(undefined4 *)(param_1 + 0x14);
+  *pfVar1 = *(float *)(param_1 + 0xfc) + *(float *)(param_1 + 0xfc);
+  fVar2 = (float10)_DAT_00489d80;
+  *(undefined4 *)(param_1 + 0x44) = 0;
+  fVar2 = (float10)fsin((float10)*(float *)(param_1 + 0xfc) * fVar2);
+  *(float *)(param_1 + 0x40) = (float)(fVar2 * (float10)_DAT_00489558);
+  FUN_00478170(3,*(undefined4 *)(param_1 + 0x114),&fStack_c,pfVar1,0x3eb33333);
+  fStack_c = fStack_c - (float)_DAT_00489438;
+  *pfVar1 = *(float *)(param_1 + 0xfc) * (float)_DAT_00489d98;
+  fVar2 = (float10)fsin((float10)*(float *)(param_1 + 0xfc) * (float10)_DAT_00489da0);
+  *(float *)(param_1 + 0x40) = (float)(fVar2 * (float10)_DAT_00489558);
+  FUN_00478170(3,*(undefined4 *)(param_1 + 0x114),&fStack_c,pfVar1,0x3eb33333);
+  fVar2 = (float10)fsin((float10)*(float *)(param_1 + 0xfc) * (float10)_DAT_00489d88);
+  FUN_00478280(3,DAT_004f00b0,(float *)(param_1 + 0xc),(float)(fVar2 - (float10)_DAT_00489d90),
+               (float)(fVar2 - (float10)_DAT_00489d90),0,0,
+               (float)((float10)_DAT_00489280 - fVar2 * (float10)_DAT_00489218));
+  return;
+}
+

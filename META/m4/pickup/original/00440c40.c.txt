@@ -1,0 +1,188 @@
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void __cdecl FUN_00440c40(int param_1,int param_2,int param_3)
+
+{
+  float fVar1;
+  float fVar2;
+  int iVar3;
+  int iVar4;
+  int iVar5;
+  float fVar6;
+  float fVar7;
+  int iVar8;
+  int iVar9;
+  int *piVar10;
+  float fVar11;
+  undefined4 uVar12;
+  undefined4 uVar13;
+  undefined4 uVar14;
+  float local_3c;
+  float local_38;
+  float local_34;
+  float local_30;
+  float local_2c;
+  float local_28;
+  float local_24;
+  int local_20 [8];
+  
+  local_3c = *(float *)(param_1 + 0xc);
+  local_38 = *(float *)(param_1 + 0x14);
+  local_34 = *(float *)(param_1 + 0x10) - (float)_DAT_00489d38;
+  iVar3 = FUN_004558d0(&local_3c,&local_34,&local_38,&local_30);
+  if (iVar3 != 0) {
+    local_38 = local_38 - _DAT_004892dc;
+    fVar1 = (float)DAT_004e2998 * local_30 * (float)_DAT_00489d40;
+    if (local_38 < DAT_0049175c - (float)_DAT_004894c0) {
+      local_38 = DAT_0049175c - (float)_DAT_004894c0;
+    }
+    if ((float)_DAT_00489220 <= local_38 * (float)_DAT_00489568) {
+      return;
+    }
+    fVar2 = (float)_DAT_00489220 - local_38 * (float)_DAT_00489568;
+    local_28 = fVar2;
+    if (*(int *)(param_1 + 0x100) == 0x15) {
+      FUN_00478f60(8,DAT_004f54e4,local_3c,local_34,fVar1 * _DAT_0048981c,fVar1 * _DAT_00489808,0,0,
+                   fVar2,0x3f350000,0x3e940000,0x3f390000,0x3db00000,local_38);
+    }
+    else {
+      iVar3 = 10000000;
+      iVar8 = 0;
+      iVar5 = 7;
+      piVar10 = local_20;
+      do {
+        iVar9 = param_2 / iVar3;
+        param_2 = param_2 - iVar3 * iVar9;
+        *piVar10 = iVar9;
+        if ((iVar8 < iVar5) && (iVar9 != 0)) {
+          iVar5 = iVar8;
+        }
+        piVar10 = piVar10 + 1;
+        iVar3 = iVar3 / 10;
+        iVar8 = iVar8 + 1;
+      } while (0 < iVar3);
+      local_2c = (float)(8 - iVar5);
+      local_3c = local_3c - (_DAT_0048984c - (float)(int)local_2c * _DAT_00489990) * fVar1;
+      fVar6 = fVar1 * _DAT_00489808;
+      FUN_00478f60(8,DAT_004f54e4,local_3c - fVar1 * _DAT_00489b88,local_34,fVar1 * _DAT_00489308,
+                   fVar6,0,0,fVar2,0x3da80000,0x3d900000,0x3f390000,0x3db00000,local_38);
+      local_3c = local_3c - fVar1 * _DAT_00489854;
+      if (iVar5 < 8) {
+        local_28 = fVar1 * _DAT_00489848;
+        piVar10 = local_20 + iVar5;
+        fVar7 = local_2c;
+        local_2c = fVar1 * _DAT_0048984c;
+        do {
+          FUN_00478f60(8,DAT_004f54e4,local_3c,local_34,local_2c,fVar6,0,0,fVar2,
+                       ((float)_DAT_00489280 - (float)*piVar10 * (float)_DAT_00489768) *
+                       (float)_DAT_00489310,0x3d600000,0x3dc80000,0x3db00000,local_38);
+          local_3c = local_3c - local_28;
+          piVar10 = piVar10 + 1;
+          fVar7 = (float)((int)fVar7 + -1);
+        } while (fVar7 != 0.0);
+      }
+    }
+  }
+  local_3c = *(float *)(param_1 + 0xc);
+  local_38 = *(float *)(param_1 + 0x14);
+  local_34 = *(float *)(param_1 + 0x10) - (float)_DAT_00489468;
+  iVar3 = FUN_004558d0(&local_3c,&local_34,&local_38,&local_30);
+  if (iVar3 != 0) {
+    local_38 = local_38 - _DAT_004892dc;
+    fVar1 = (float)DAT_004e2998 * local_30 * (float)_DAT_00489d40;
+    if (local_38 < DAT_0049175c - (float)_DAT_004894c0) {
+      local_38 = DAT_0049175c - (float)_DAT_004894c0;
+    }
+    if (local_38 * (float)_DAT_00489568 < (float)_DAT_00489220) {
+      fVar2 = (float)_DAT_00489220 - local_38 * (float)_DAT_00489568;
+      local_28 = *(float *)(param_1 + 0x100);
+      if (local_28 == 2.94273e-44) {
+        uVar14 = 0x3f390000;
+        uVar13 = 0x3e300000;
+        uVar12 = 0x3f070000;
+        fVar7 = fVar1 * _DAT_00489d48;
+        fVar11 = local_3c;
+        fVar6 = _DAT_00489808;
+      }
+      else {
+        iVar3 = 10000000;
+        iVar9 = 0;
+        iVar8 = 7;
+        piVar10 = local_20;
+        iVar5 = param_3;
+        do {
+          iVar4 = iVar5 / iVar3;
+          iVar5 = iVar5 - iVar3 * iVar4;
+          *piVar10 = iVar4;
+          if ((iVar9 < iVar8) && (iVar4 != 0)) {
+            iVar8 = iVar9;
+          }
+          piVar10 = piVar10 + 1;
+          iVar3 = iVar3 / 10;
+          iVar9 = iVar9 + 1;
+        } while (0 < iVar3);
+        fVar6 = (float)(8 - iVar8);
+        if (local_28 == 2.8026e-44) {
+          fVar7 = fVar1 * (float)_DAT_00489d50;
+        }
+        else if (param_3 == 1) {
+          fVar7 = fVar1 * (float)_DAT_00489d58;
+        }
+        else {
+          fVar7 = fVar1 * (float)_DAT_00489c18;
+        }
+        local_3c = (local_3c - (float)(int)fVar6 * fVar1 * _DAT_004893d8) - fVar7;
+        local_2c = fVar6;
+        if (iVar8 < 8) {
+          fVar7 = fVar1 * _DAT_00489808;
+          local_2c = fVar1 * _DAT_0048984c;
+          local_24 = fVar1 * _DAT_00489990;
+          local_28 = fVar1 * _DAT_00489848;
+          piVar10 = local_20 + iVar8;
+          do {
+            FUN_00478f60(8,DAT_004f54e4,local_3c - local_24,local_34,local_2c,fVar7,0,0,fVar2,
+                         ((float)_DAT_00489280 - (float)*piVar10 * (float)_DAT_00489768) *
+                         (float)_DAT_00489310,0x3d600000,0x3dc80000,0x3db00000,local_38);
+            local_3c = local_3c - local_28;
+            piVar10 = piVar10 + 1;
+            fVar6 = (float)((int)fVar6 + -1);
+          } while (fVar6 != 0.0);
+        }
+        fVar6 = _DAT_00489808;
+        if (*(int *)(param_1 + 0x100) == 0x14) {
+          FUN_00478f60(8,DAT_004f54e4,local_3c - fVar1 * _DAT_00489b88,local_34,
+                       fVar1 * _DAT_00489308,fVar1 * _DAT_00489808,0,0,fVar2,0x3b800000,0x3d900000,
+                       0x3f390000,0x3db00000,local_38);
+          local_3c = local_3c - fVar1 * _DAT_00489854;
+          uVar14 = 0x3f390000;
+          uVar13 = 0x3eb80000;
+          fVar7 = fVar1 * _DAT_00489d60;
+          uVar12 = 0x3e240000;
+          fVar11 = local_3c - fVar1 * (float)_DAT_00489d68;
+        }
+        else {
+          local_3c = local_3c - fVar1 * _DAT_00489bf0;
+          uVar14 = 0x3f510000;
+          if (param_3 == 1) {
+            uVar13 = 0x3e700000;
+            uVar12 = 0x3f310000;
+            fVar7 = fVar1 * _DAT_00489d70;
+            fVar11 = local_3c - fVar1 * (float)_DAT_00489d78;
+          }
+          else {
+            uVar13 = 0x3e9c0000;
+            uVar12 = 0x3f310000;
+            fVar7 = fVar1 * _DAT_00489cf0;
+            fVar11 = local_3c - fVar1 * _DAT_00489980;
+          }
+        }
+      }
+      FUN_00478f60(8,DAT_004f54e4,fVar11,local_34,fVar7,fVar1 * fVar6,0,0,fVar2,uVar12,uVar13,uVar14
+                   ,0x3db00000,local_38);
+      return;
+    }
+  }
+  return;
+}
+

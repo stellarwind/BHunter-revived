@@ -1,0 +1,8 @@
+[
+  {
+    "address": "00478170",
+    "code": "\r\nvoid __cdecl\r\nFUN_00478170(undefined4 param_1,undefined4 param_2,undefined4 *param_3,undefined4 *param_4,\r\n            undefined4 param_5)\r\n\r\n{\r\n  int iVar1;\r\n  undefined4 *puVar2;\r\n  int iVar3;\r\n  \r\n  iVar3 = 0;\r\n  if (DAT_004f54e8 < DAT_004f0038) {\r\n    switch(param_1) {\r\n    case 0:\r\n      iVar3 = 1;\r\n      break;\r\n    case 1:\r\n      iVar3 = 2;\r\n      break;\r\n    case 2:\r\n      iVar3 = 3;\r\n      break;\r\n    case 3:\r\n      iVar3 = 4;\r\n      break;\r\n    case 4:\r\n      iVar3 = 5;\r\n      break;\r\n    case 5:\r\n      iVar3 = 0;\r\n      break;\r\n    case 6:\r\n      iVar3 = 6;\r\n      break;\r\n    case 7:\r\n      iVar3 = 7;\r\n      break;\r\n    case 8:\r\n      iVar3 = 8;\r\n    }\r\n    puVar2 = (undefined4 *)(DAT_004f0044 + DAT_004f54e8 * 0x54);\r\n    iVar1 = DAT_004f0044 + iVar3 * 0x54;\r\n    DAT_004f54e8 = DAT_004f54e8 + 1;\r\n    puVar2[0x14] = *(undefined4 *)(*(int *)(DAT_004f0044 + 4 + iVar3 * 0x54) + 0x50);\r\n    *(undefined4 **)(*(int *)(iVar1 + 4) + 0x50) = puVar2;\r\n    *(undefined4 **)(iVar1 + 4) = puVar2;\r\n  }\r\n  else {\r\n    puVar2 = (undefined4 *)0x0;\r\n  }\r\n  if (puVar2 != (undefined4 *)0x0) {\r\n    *puVar2 = FUN_004775f0;\r\n    puVar2[1] = *param_3;\r\n    puVar2[2] = param_3[1];\r\n    puVar2[3] = param_3[2];\r\n    puVar2[4] = *param_4;\r\n    puVar2[5] = param_4[1];\r\n    puVar2[6] = param_4[2];\r\n    puVar2[8] = param_2;\r\n    puVar2[7] = param_5;\r\n  }\r\n  return;\r\n}\r\n\r\n",
+    "name": "FUN_00478170",
+    "signature": "undefined FUN_00478170(undefined4 param_1, undefined4 param_2, undefined4 * param_3, undefined4 * param_4, undefined4 param_5)"
+  }
+]

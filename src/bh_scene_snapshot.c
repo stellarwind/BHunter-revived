@@ -12,6 +12,10 @@
 #include "bh_model_draw.h"
 #include "bh_native_primitive.h"
 #include "bh_model_draw_lit.h"
+#include "bh_model_instance.h"
+#include "bh_draw_resource.h"
+#include "bh_draw_submit.h"
+#include "bh_render_resources.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -19,11 +23,11 @@
    script/entity construction, material fidelity or gameplay admission. */
 int main(int argc,char **argv) {
     BHBlockLibrary library;BHSceneLevel level;BHGeometry *geometry=NULL;unsigned char *shell=NULL;
-    BHSceneView view;BHTextureContext textures;int textures_live=0;BHModel **models=NULL;BHModelContext model_context;BHModelDrawCache *draw_caches=NULL;
+    BHSceneView view;BHTextureContext textures;int textures_live=0;BHModelContext model_context;BHRenderResources resources;unsigned long *handles=NULL;BHDrawQueue queue;BHDrawSubmitContext submit;
     BHMathEnvironment environment;BHVFile *file=NULL;
-    BHFaceInfo face;BHMat34 transform,model_camera;BHMainCamera main_camera;
-    BHViewCamera model_view;BHClipContext clip;BHModelDrawContext draw;BHNativePrimitive native;
-    BHLightConfig light_config;BHLightContext lights;BHLight point_light;BHModelDrawLitContext lit;BHMat34 model_inverse;BHVec3 center;
+    BHFaceInfo face;BHMainCamera main_camera;
+    BHClipContext clip;BHNativePrimitive native;BHModelInstanceContext instance;BHDrawResourceContext resource_draw;BHVec3 light_reference={0,0,0};
+    BHLightConfig light_config;BHLightContext lights;BHLight point_light;
     BHRenderMaterial native_material;BHRenderState native_state;
     BHVec3 camera={-60,-17,60};unsigned long i,j,k,initialized=0,faces=0,max_vertices=0,shells=0;
     double yaw=3.141592653589793,pitch=0,roll=0;
@@ -34,6 +38,7 @@ int main(int argc,char **argv) {
         yaw=atof(argv[6])*0.017453292519943295;pitch=atof(argv[7])*0.017453292519943295;roll=atof(argv[8])*0.017453292519943295;
     }
     if(argc==10){if(!_stricmp(argv[9],"red"))lighting_test=1;else if(!_stricmp(argv[9],"green"))lighting_test=2;else if(!_stricmp(argv[9],"point"))lighting_test=3;else return 2;}
+    memset(&resources,0,sizeof(resources));memset(&queue,0,sizeof(queue));
     memset(&view,0,sizeof(view));memset(&native_material,0,sizeof(native_material));memset(&main_camera,0,sizeof(main_camera));bh_blocks_init(&library,NULL);bh_scene_level_init(&level,NULL);
     fp=bh_math_environment_enter(&environment);if(!fp)goto done;
     memset(&lights,0,sizeof(lights));memset(&point_light,0,sizeof(point_light));memset(&light_config,0,sizeof(light_config));
@@ -69,12 +74,14 @@ int main(int argc,char **argv) {
     if(!bh_texture_formats(&textures))goto done;
     if(!bh_texture_set_path(&textures,"TEXTURES",2))goto done;
     if(!bh_model_context_init(&model_context,&textures,NULL) || !bh_model_path_set(&model_context,"BSP\\",BH_BSP_PREFIX_ONLY))goto done;
-    models=(BHModel **)calloc(library.count,sizeof(*models));if(!models)goto done;
-    draw_caches=(BHModelDrawCache *)calloc(library.count,sizeof(*draw_caches));if(!draw_caches)goto done;
-    /* Real recovered model/image owners replace the temporary material array.
-       The diagnostic draw loop consumes the owned model arrays directly. */
+    if(!bh_clip_init(&clip,view.projection.near_z,view.projection.far_z,view.projection.left,view.projection.right,view.projection.top,view.projection.bottom))goto done;
+    memset(&instance,0,sizeof(instance));instance.camera=&main_camera;instance.config=&view.projection;instance.clip=&clip;
+    instance.lights=&lights;instance.light_config=&light_config;instance.light_reference=&light_reference;instance.point_enabled=lighting_test==3;
+    instance.emit=bh_native_primitive_emit;instance.emit_user=&native;instance.texture_mask=0xffffffffUL;instance.base_color=0xff000000UL;
+    if(!bh_render_resources_init(&resources,&model_context,&instance,NULL))goto done;
+    handles=(unsigned long *)calloc(library.count,sizeof(*handles));if(!handles)goto done;
     for(i=0;i<library.count;++i)if(shell[i]) {
-        models[i]=bh_model_load(&model_context,library.blocks[i].name);if(!models[i] || !bh_model_draw_cache_init(draw_caches+i,models[i],NULL))goto done;
+        handles[i]=bh_render_resources_load_model(&resources,library.blocks[i].name);if(!handles[i])goto done;
     }
     /* Individual image failures are explicitly retained as NULL by the model
        owner. They are not a model-load error or a fabricated replacement. */
@@ -88,30 +95,36 @@ int main(int argc,char **argv) {
     if(!native_material.material || !native_material.handle || native_material.failures ||
         !bh_render_state_init(&native_state,&textures) || textures.error!=BH_TEXTURE_OK || !bh_scene_view_begin(&view))goto done;
     if(!bh_render_mode(&native_state,0))goto done;
+    memset(&resource_draw,0,sizeof(resource_draw));resource_draw.camera=&main_camera;resource_draw.config=&view.projection;
+    submit.draw=&resource_draw;submit.lookup=bh_render_resources_lookup;submit.lookup_user=&resources;
+    if(level.placement_count>65526 || !bh_draw_queue_init(&queue,level.placement_count+9,NULL))goto done;
     for(i=0;i<level.placement_count;++i) {
-        BHScenePlacement *placement=level.placements+i;
+        BHScenePlacement *placement=level.placements+i;BHVec3 position,angles;
         model=bh_blocks_find(&library,placement->name);if(model<0)goto done;
         /* This first view draws navigation shell models only. Non-shell
            placements include invisible sensor/script proxy meshes as well as
            visible props; their actual draw ownership remains unrecovered. */
         if(!shell[model])continue;++shells;
-        memset(&transform,0,sizeof(transform));transform.m[0][0]=transform.m[1][1]=transform.m[2][2]=1;
-        bh_mat34_translate_local((float)placement->x,(float)placement->y,(float)placement->z,&transform);
-        angle=(float)((placement->flags&3UL)*1.5707963267948966);bh_mat34_rotate_y(angle,&transform);
-        bh_mat34_multiply(&main_camera.view,&transform,&model_camera);
-        if(!bh_view_camera_build(&view.projection,&model_camera,&model_view) ||
-            !bh_clip_init(&clip,view.projection.near_z,view.projection.far_z,view.projection.left,view.projection.right,view.projection.top,view.projection.bottom))goto done;
-        memset(&native,0,sizeof(native));native.textures=&textures;native.near_z=view.projection.near_z;
-        if(!bh_model_draw_context_init(&draw,models[model],draw_caches+model,&model_view,&clip,i+1,0xffffffffUL,0xffffffffUL,bh_native_primitive_emit,&native))goto done;
-        if(lighting_test) {
-            bh_mat34_inverse_rigid(&transform,&model_inverse);lights.world_to_model=model_inverse;
-            center.x=transform.m[0][3];center.y=transform.m[1][3];center.z=transform.m[2][3];
-            if(!bh_light_prepare(&lights,&center,models[model]->radius) ||
-                !bh_model_draw_lit_context_init(&lit,&draw,&lights,&light_config,&model_inverse,lighting_test==3,1,0xff000000UL) ||
-                !bh_model_draw_lit(&lit,0,63))goto done;
-        } else if(!bh_model_draw_unlit(&draw,0,63))goto done;
-        faces+=draw.faces_marked;textured_faces+=draw.polygons_emitted;view.triangles+=native.vertices-native.polygons*2;
+        angle=(float)((placement->flags&3UL)*1.5707963267948966);
+        position.x=(float)placement->x;position.y=(float)placement->y;position.z=(float)placement->z;
+        angles.x=angle;angles.y=angles.z=0;
+        if(bh_draw_submit_resource(&queue,0,handles[model],&position,&angles,1)!=1)goto done;
     }
+    memset(&native,0,sizeof(native));native.textures=&textures;native.near_z=view.projection.near_z;
+    /* Static source checkpoint: real resource callbacks and state headers are
+       consumed in recovered bucket-chain order. Entity scheduling is separate. */
+    {unsigned long index=0,steps=0,next;
+        while(index!=BH_DRAW_END){BHDrawCommand *command;
+            if(index>=queue.count || ++steps>queue.count)goto done;command=queue.commands+index;next=command->next;
+            if(command->kind==BH_DRAW_MODEL_RESOURCE){if(!bh_draw_submit_execute(&submit,command,&next))goto done;}
+            else if(command->kind==BH_DRAW_STATE){if(!bh_render_mode(&native_state,command->words[0]))goto done;}
+            else if(command->kind!=BH_DRAW_NOP)goto done;
+            index=next;
+        }
+    }
+    view.triangles=native.vertices-native.polygons*2;
+    for(i=0;i<library.count;++i)if(handles[i]){const BHDrawResource *resource=bh_render_resources_lookup(handles[i],&resources);
+        faces+=resource->data.model.instance->faces_marked;textured_faces+=resource->data.model.instance->polygons_emitted;}
     if(!bh_render_mode(&native_state,0))goto done;
     if(!bh_scene_view_end(&view,argv[2]) || !view.triangles || !view.pixels)goto done;
     ok=1;
@@ -120,8 +133,7 @@ done:
         ok?"true":"false",library.count,level.placement_count,shells,faces,view.triangles,view.pixels,(long)view.error,library.unapplied_scripts,texture_count,textured_faces,
         camera.x,camera.y,camera.z,main_camera.inverse.m[0][2],main_camera.inverse.m[1][2],main_camera.inverse.m[2][2],lighting_test);
     for(i=0;i<initialized;++i)bh_geometry_dispose(geometry+i);free(geometry);
-    if(draw_caches){for(i=0;i<library.count;++i)bh_model_draw_cache_dispose(draw_caches+i);free(draw_caches);}
-    if(models){for(i=0;i<library.count;++i)bh_model_delete(&model_context,models[i]);free(models);}
+    bh_draw_queue_dispose(&queue);bh_render_resources_dispose(&resources);free(handles);
     bh_render_material_dispose(&native_material);
     if(textures_live)bh_texture_context_dispose(&textures);
     bh_scene_view_dispose(&view);free(shell);
