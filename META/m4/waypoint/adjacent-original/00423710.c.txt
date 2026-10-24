@@ -1,0 +1,30 @@
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void __cdecl FUN_00423710(undefined4 param_1,int param_2)
+
+{
+  uint uVar1;
+  undefined1 *puVar2;
+  uint uVar3;
+  uint *puVar4;
+  undefined1 *puVar5;
+  
+  puVar2 = DAT_004d1a74;
+  puVar5 = DAT_004d1a74 + -0x4d1490;
+  DAT_004d1490._0_2_ = CONCAT11((char)puVar5 + -8,(undefined1)DAT_004d1490);
+  for (uVar3 = -(int)puVar5 & 3; uVar3 != 0; uVar3 = uVar3 - 1) {
+    *DAT_004d1a74 = 0;
+    DAT_004d1a74 = DAT_004d1a74 + 1;
+  }
+  puVar4 = &DAT_004d1498;
+  _DAT_004d1494 = DAT_004d1490;
+  for (uVar3 = (uint)(puVar2 + -0x4d1495) >> 2; uVar3 != 0; uVar3 = uVar3 - 1) {
+    uVar1 = *puVar4;
+    puVar4 = puVar4 + 1;
+    _DAT_004d1494 = _DAT_004d1494 ^ uVar1;
+  }
+  FUN_00476d50(param_1,&DAT_004d1490,puVar5,param_2);
+  return;
+}
+

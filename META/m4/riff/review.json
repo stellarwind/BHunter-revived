@@ -1,0 +1,25 @@
+{
+  "owner": "src/bh_riff.c",
+  "target": "build/m0/bhunter-integration.exe",
+  "implementation": "wip",
+  "records": [
+    {
+      "id": "0047b830-wave-data-subset-c",
+      "address": "0047b830",
+      "boundary": "0047b830-0047b91f",
+      "role": "engine_candidate",
+      "provenance": "Ordinary mapped boundary; engine/game authorship unresolved; no verified CRT/import/shared tail assigned",
+      "body_sha256": "304e37970269e02b200aa85e08e5c966fd9c7715d4e8eb2203974bfc04216403",
+      "decompilation": "META/m2/media/readers/0047b830.c.txt",
+      "decompilation_sha256": "1c57bce602e729d6e6623bef6c4cc99decbb7ff6d138b3857f2c38d4d1553766",
+      "disposition": "selected_for_completion",
+      "resolved": [
+        "Complete bounded RIFF/all-output adapter exists"
+      ],
+      "remaining": [
+        "Restore original optional-output combinations, early success, duplicate/empty chunk behavior and partial failure outputs"
+      ]
+    }
+  ],
+  "dependencies": "Leaf: only pointer/chunk arithmetic over bounded caller data; original optional-output state machine retained"
+}

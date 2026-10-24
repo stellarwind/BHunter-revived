@@ -1,0 +1,495 @@
+{
+  "scope": "Static event producer and raw script inventory only",
+  "original_hashes": {
+    "GAME_DATA/BHUNTER.EXE": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+    "GAME_DATA/Bhunter.bin": "2393a661fd647ed6de3eee34c35c30812c44f3ee15b9d44244a63720804df581"
+  },
+  "script_opcode_table_address": "004456e4",
+  "script_opcode_targets": [
+    "00444408",
+    "00444511",
+    "0044463c",
+    "00444652",
+    "0044467b",
+    "004448e6",
+    "00444ae7",
+    "004447f6",
+    "00444ecb",
+    "00444d0e",
+    "00444c75",
+    "00444efe",
+    "00444a66",
+    "00444f9a",
+    "00445158",
+    "004454d1",
+    "0044442e",
+    "004450f9",
+    "00445488",
+    "0044447b",
+    "0044449b",
+    "00444f19",
+    "0044520c",
+    "004440db",
+    "00445397"
+  ],
+  "broadcast_opcode": 18,
+  "broadcast_branch": "00445488",
+  "event_type": 14,
+  "query_call": "004454c4",
+  "mission_consumer": "004225f0",
+  "event_id_source": "script entity +0x100, including placement slot substitution",
+  "broadcast_scripts": [
+    {
+      "name": "BSP\\CONTAIN2.TXT",
+      "sha256": "701eeab32a3c1a77b15a4699017d88a96b8bbec7ea8a904638bc11611726f546",
+      "broadcasts": [
+        {
+          "line": 17,
+          "text": "broadcast 0 death_msg"
+        }
+      ]
+    },
+    {
+      "name": "BSP\\RELAY.TXT",
+      "sha256": "252603385ac0cf6b46df9623f496c5a6a2f8a144e1f67890ed626470be00fce9",
+      "broadcasts": [
+        {
+          "line": 14,
+          "text": "broadcast 0 relay1"
+        },
+        {
+          "line": 15,
+          "text": "broadcast 0 relay2"
+        },
+        {
+          "line": 16,
+          "text": "broadcast 0 relay3"
+        },
+        {
+          "line": 17,
+          "text": "broadcast 0 relay4"
+        },
+        {
+          "line": 18,
+          "text": "broadcast 0 relay5"
+        },
+        {
+          "line": 19,
+          "text": "broadcast 0 relay6"
+        }
+      ]
+    },
+    {
+      "name": "BSP\\RELAY2.TXT",
+      "sha256": "b95dee6963eb8594add931c89bd536506ac248e28f8d84fd5e7c5527e4297369",
+      "broadcasts": [
+        {
+          "line": 16,
+          "text": "broadcast 0 relay1"
+        },
+        {
+          "line": 17,
+          "text": "broadcast 0 relay2"
+        },
+        {
+          "line": 18,
+          "text": "broadcast 0 relay3"
+        },
+        {
+          "line": 19,
+          "text": "broadcast 0 relay4"
+        },
+        {
+          "line": 20,
+          "text": "broadcast 0 relay5"
+        },
+        {
+          "line": 21,
+          "text": "broadcast 0 relay6"
+        }
+      ]
+    },
+    {
+      "name": "BSP\\RELAY3.TXT",
+      "sha256": "08aad945d871c5a7acb77ad20159fd317504fddf4f275d2874d2c2919737246a",
+      "broadcasts": [
+        {
+          "line": 17,
+          "text": "broadcast 0 relay1"
+        },
+        {
+          "line": 18,
+          "text": "broadcast 0 relay2"
+        },
+        {
+          "line": 19,
+          "text": "broadcast 0 relay3"
+        },
+        {
+          "line": 20,
+          "text": "broadcast 0 relay4"
+        },
+        {
+          "line": 21,
+          "text": "broadcast 0 relay5"
+        },
+        {
+          "line": 22,
+          "text": "broadcast 0 relay6"
+        }
+      ]
+    },
+    {
+      "name": "BSP\\RRELAY.TXT",
+      "sha256": "b13c2639dd01274410c9b4c820a6fab22170db830c7669e2c4d745cb6a90f5db",
+      "broadcasts": [
+        {
+          "line": 15,
+          "text": "broadcast broadcastrange relay1"
+        },
+        {
+          "line": 16,
+          "text": "broadcast broadcastrange relay2"
+        },
+        {
+          "line": 17,
+          "text": "broadcast broadcastrange relay3"
+        },
+        {
+          "line": 18,
+          "text": "broadcast broadcastrange relay4"
+        },
+        {
+          "line": 19,
+          "text": "broadcast broadcastrange relay5"
+        }
+      ]
+    },
+    {
+      "name": "BSP\\T_MINBL1.TXT",
+      "sha256": "dbc49ebf77dc36c83c91be475b209b1982ba4cdee79aa3934f13e8b41e29f522",
+      "broadcasts": [
+        {
+          "line": 16,
+          "text": "broadcast 0 death_msg"
+        }
+      ]
+    },
+    {
+      "name": "BSP\\T_MINBL2.TXT",
+      "sha256": "dbc49ebf77dc36c83c91be475b209b1982ba4cdee79aa3934f13e8b41e29f522",
+      "broadcasts": [
+        {
+          "line": 16,
+          "text": "broadcast 0 death_msg"
+        }
+      ]
+    },
+    {
+      "name": "BSP\\F_UPLINK.TXT",
+      "sha256": "f7a705451362da575f2de7e6af0f730e30d09711437b0e31fc1757f2b61b7e2b",
+      "broadcasts": [
+        {
+          "line": 15,
+          "text": "broadcast 0 death_msg"
+        }
+      ]
+    },
+    {
+      "name": "BSP\\GV_STAT.TXT",
+      "sha256": "2dde58afff9386ecd85b5d64fbe6648379c7a63d115d3d4dc11392eda102987a",
+      "broadcasts": [
+        {
+          "line": 22,
+          "text": "broadcast 0 death_msg"
+        }
+      ]
+    }
+  ],
+  "placement_candidates": [
+    {
+      "placement": 873,
+      "name": "GATE4.BSP",
+      "position": [
+        -667,
+        -42,
+        710
+      ],
+      "flags": 3,
+      "raw_signed_slots": [
+        2390,
+        2381,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "script": "BSP\\GATE4.TXT",
+      "script_sha256": "74b70d3c97394e59d360588ab6e6820141348c14095caf89c7954007ecfb5b0c",
+      "script_text": "grid 1\r\n\r\ndefine open_message 0\r\ndefine close_message 1\r\n\r\nWAITFOR 0 open_message\r\n  move 3 0 -4 0\r\n  sound gateopen.wav 1 1 100 3\r\n  blockvips off\r\n  blockprey off\r\nEND\r\n\r\nWAITFOR 0 close_message\r\n  blockvips on\r\n  blockprey on\r\n  move 1 0 12 0\r\n  sound gateopen.wav 1 1 100 1\r\n  timer2 1 1 1\r\n    sound gateslam.wav 0 1 100 0\r\n  end\r\nEND\r\n\r\n"
+    },
+    {
+      "placement": 877,
+      "name": "GATE4.BSP",
+      "position": [
+        -800,
+        -42,
+        193
+      ],
+      "flags": 2,
+      "raw_signed_slots": [
+        2390,
+        2381,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "script": "BSP\\GATE4.TXT",
+      "script_sha256": "74b70d3c97394e59d360588ab6e6820141348c14095caf89c7954007ecfb5b0c",
+      "script_text": "grid 1\r\n\r\ndefine open_message 0\r\ndefine close_message 1\r\n\r\nWAITFOR 0 open_message\r\n  move 3 0 -4 0\r\n  sound gateopen.wav 1 1 100 3\r\n  blockvips off\r\n  blockprey off\r\nEND\r\n\r\nWAITFOR 0 close_message\r\n  blockvips on\r\n  blockprey on\r\n  move 1 0 12 0\r\n  sound gateopen.wav 1 1 100 1\r\n  timer2 1 1 1\r\n    sound gateslam.wav 0 1 100 0\r\n  end\r\nEND\r\n\r\n"
+    },
+    {
+      "placement": 4939,
+      "name": "SENSOR2.BSP",
+      "position": [
+        -60,
+        -20,
+        60
+      ],
+      "flags": 2,
+      "raw_signed_slots": [
+        1,
+        0,
+        0,
+        2010,
+        3332,
+        0,
+        0,
+        0
+      ],
+      "script": "BSP\\SENSOR2.TXT",
+      "script_sha256": "4b28a5da7219a8ef2048eb7abba1b9ed56562044916edae31f5937d6ebe6361f",
+      "script_text": "collision off\r\nrender off\r\n\r\ndefine repeats 1\r\ndefine sensor_range 0\r\ndefine broadcast_range 120\r\ndefine broadcast_message 0\r\ndefine activate_msg 1001\r\n\r\nwaitfor 1 activate_msg\r\n  sensor repeats sensor_range broadcast_range broadcast_message\r\nend\r\n\r\n"
+    },
+    {
+      "placement": 5241,
+      "name": "GATE4.BSP",
+      "position": [
+        -1003,
+        -42,
+        500
+      ],
+      "flags": 3,
+      "raw_signed_slots": [
+        2390,
+        2381,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "script": "BSP\\GATE4.TXT",
+      "script_sha256": "74b70d3c97394e59d360588ab6e6820141348c14095caf89c7954007ecfb5b0c",
+      "script_text": "grid 1\r\n\r\ndefine open_message 0\r\ndefine close_message 1\r\n\r\nWAITFOR 0 open_message\r\n  move 3 0 -4 0\r\n  sound gateopen.wav 1 1 100 3\r\n  blockvips off\r\n  blockprey off\r\nEND\r\n\r\nWAITFOR 0 close_message\r\n  blockvips on\r\n  blockprey on\r\n  move 1 0 12 0\r\n  sound gateopen.wav 1 1 100 1\r\n  timer2 1 1 1\r\n    sound gateslam.wav 0 1 100 0\r\n  end\r\nEND\r\n\r\n"
+    },
+    {
+      "placement": 5243,
+      "name": "GATE4.BSP",
+      "position": [
+        -1040,
+        -42,
+        413
+      ],
+      "flags": 0,
+      "raw_signed_slots": [
+        2390,
+        2381,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "script": "BSP\\GATE4.TXT",
+      "script_sha256": "74b70d3c97394e59d360588ab6e6820141348c14095caf89c7954007ecfb5b0c",
+      "script_text": "grid 1\r\n\r\ndefine open_message 0\r\ndefine close_message 1\r\n\r\nWAITFOR 0 open_message\r\n  move 3 0 -4 0\r\n  sound gateopen.wav 1 1 100 3\r\n  blockvips off\r\n  blockprey off\r\nEND\r\n\r\nWAITFOR 0 close_message\r\n  blockvips on\r\n  blockprey on\r\n  move 1 0 12 0\r\n  sound gateopen.wav 1 1 100 1\r\n  timer2 1 1 1\r\n    sound gateslam.wav 0 1 100 0\r\n  end\r\nEND\r\n\r\n"
+    },
+    {
+      "placement": 5245,
+      "name": "GATE4.BSP",
+      "position": [
+        -1040,
+        -42,
+        247
+      ],
+      "flags": 0,
+      "raw_signed_slots": [
+        2390,
+        2381,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "script": "BSP\\GATE4.TXT",
+      "script_sha256": "74b70d3c97394e59d360588ab6e6820141348c14095caf89c7954007ecfb5b0c",
+      "script_text": "grid 1\r\n\r\ndefine open_message 0\r\ndefine close_message 1\r\n\r\nWAITFOR 0 open_message\r\n  move 3 0 -4 0\r\n  sound gateopen.wav 1 1 100 3\r\n  blockvips off\r\n  blockprey off\r\nEND\r\n\r\nWAITFOR 0 close_message\r\n  blockvips on\r\n  blockprey on\r\n  move 1 0 12 0\r\n  sound gateopen.wav 1 1 100 1\r\n  timer2 1 1 1\r\n    sound gateslam.wav 0 1 100 0\r\n  end\r\nEND\r\n\r\n"
+    },
+    {
+      "placement": 5278,
+      "name": "RELAY3.BSP",
+      "position": [
+        -520,
+        -40,
+        480
+      ],
+      "flags": 1,
+      "raw_signed_slots": [
+        2382,
+        2390,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3
+      ],
+      "script": "BSP\\RELAY3.TXT",
+      "script_sha256": "08aad945d871c5a7acb77ad20159fd317504fddf4f275d2874d2c2919737246a",
+      "script_text": "render off\r\ncollision off\r\n\r\ndefine trigger 9999\r\ndefine relay1 0\r\ndefine relay2 0\r\ndefine relay3 0\r\ndefine relay4 0\r\ndefine relay5 0\r\ndefine relay6 0\r\ndefine delay 1\r\n\r\nwaitfor 1 trigger\r\n  waitfor 1 trigger\r\n    waitfor 1 trigger\r\n     timer2 1 delay delay\r\n      broadcast 0 relay1\r\n      broadcast 0 relay2\r\n      broadcast 0 relay3\r\n      broadcast 0 relay4\r\n      broadcast 0 relay5\r\n      broadcast 0 relay6\r\n     end\r\n    end\r\n  end\r\nend\r\n\r\n"
+    },
+    {
+      "placement": 5279,
+      "name": "RELAY.BSP",
+      "position": [
+        -480,
+        -40,
+        480
+      ],
+      "flags": 1,
+      "raw_signed_slots": [
+        2390,
+        2391,
+        0,
+        0,
+        0,
+        0,
+        0,
+        6
+      ],
+      "script": "BSP\\RELAY.TXT",
+      "script_sha256": "252603385ac0cf6b46df9623f496c5a6a2f8a144e1f67890ed626470be00fce9",
+      "script_text": "render off\r\ncollision off\r\n\r\ndefine trigger 9999\r\ndefine relay1 0\r\ndefine relay2 0\r\ndefine relay3 0\r\ndefine relay4 0\r\ndefine relay5 0\r\ndefine relay6 0\r\ndefine delay 1\r\nwaitfor 1 trigger\r\n  timer2 1 delay delay\r\n    broadcast 0 relay1\r\n    broadcast 0 relay2\r\n    broadcast 0 relay3\r\n    broadcast 0 relay4\r\n    broadcast 0 relay5\r\n    broadcast 0 relay6\r\n  end\r\nend\r\n\r\n"
+    },
+    {
+      "placement": 5282,
+      "name": "RELAY.BSP",
+      "position": [
+        -450,
+        -40,
+        480
+      ],
+      "flags": 1,
+      "raw_signed_slots": [
+        2393,
+        2400,
+        0,
+        0,
+        0,
+        0,
+        0,
+        20
+      ],
+      "script": "BSP\\RELAY.TXT",
+      "script_sha256": "252603385ac0cf6b46df9623f496c5a6a2f8a144e1f67890ed626470be00fce9",
+      "script_text": "render off\r\ncollision off\r\n\r\ndefine trigger 9999\r\ndefine relay1 0\r\ndefine relay2 0\r\ndefine relay3 0\r\ndefine relay4 0\r\ndefine relay5 0\r\ndefine relay6 0\r\ndefine delay 1\r\nwaitfor 1 trigger\r\n  timer2 1 delay delay\r\n    broadcast 0 relay1\r\n    broadcast 0 relay2\r\n    broadcast 0 relay3\r\n    broadcast 0 relay4\r\n    broadcast 0 relay5\r\n    broadcast 0 relay6\r\n  end\r\nend\r\n\r\n"
+    },
+    {
+      "placement": 5649,
+      "name": "GATE4.BSP",
+      "position": [
+        -590,
+        -42,
+        357
+      ],
+      "flags": 2,
+      "raw_signed_slots": [
+        2390,
+        2381,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "script": "BSP\\GATE4.TXT",
+      "script_sha256": "74b70d3c97394e59d360588ab6e6820141348c14095caf89c7954007ecfb5b0c",
+      "script_text": "grid 1\r\n\r\ndefine open_message 0\r\ndefine close_message 1\r\n\r\nWAITFOR 0 open_message\r\n  move 3 0 -4 0\r\n  sound gateopen.wav 1 1 100 3\r\n  blockvips off\r\n  blockprey off\r\nEND\r\n\r\nWAITFOR 0 close_message\r\n  blockvips on\r\n  blockprey on\r\n  move 1 0 12 0\r\n  sound gateopen.wav 1 1 100 1\r\n  timer2 1 1 1\r\n    sound gateslam.wav 0 1 100 0\r\n  end\r\nEND\r\n\r\n"
+    },
+    {
+      "placement": 5651,
+      "name": "GATE4.BSP",
+      "position": [
+        -590,
+        -42,
+        544
+      ],
+      "flags": 2,
+      "raw_signed_slots": [
+        2390,
+        2381,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "script": "BSP\\GATE4.TXT",
+      "script_sha256": "74b70d3c97394e59d360588ab6e6820141348c14095caf89c7954007ecfb5b0c",
+      "script_text": "grid 1\r\n\r\ndefine open_message 0\r\ndefine close_message 1\r\n\r\nWAITFOR 0 open_message\r\n  move 3 0 -4 0\r\n  sound gateopen.wav 1 1 100 3\r\n  blockvips off\r\n  blockprey off\r\nEND\r\n\r\nWAITFOR 0 close_message\r\n  blockvips on\r\n  blockprey on\r\n  move 1 0 12 0\r\n  sound gateopen.wav 1 1 100 1\r\n  timer2 1 1 1\r\n    sound gateslam.wav 0 1 100 0\r\n  end\r\nEND\r\n\r\n"
+    }
+  ],
+  "placement_interpretation_limit": "Raw slot matches identify capture candidates; complete define/slot substitution and activation chains still require review",
+  "evidence_sha256": {
+    "META/m3/mission-review/004215c0.asm.txt": "774e602fb2539279775ff01090abf56500912fac10628eb539ac71806a665e02",
+    "META/m3/mission-review/004215c0.c.txt": "ab19870572d05649f1ae5047355063dec38632f6ed7eb4bf05ef94e2f1288f61",
+    "META/m3/mission-review/00422570.asm.txt": "1d4632cf8c5d2194d92b0a49f0de832504263401fac0bbce7783911c7a693e27",
+    "META/m3/mission-review/00422570.c.txt": "35e540cec765799a216acd2abfe4e611e8c326b2b1762c4d02eeb57783c6b6bc",
+    "META/m3/mission-review/00437a30.asm.txt": "326c0cebf05148393ac16ee01fd711ab0833911352cf4d38cc12615374bb9c23",
+    "META/m3/mission-review/00437a30.c.txt": "5c42ffbbd092582065f78b55a186510d5cd5cba3c6a820396553495d299af722",
+    "META/m3/mission-review/00437a80.asm.txt": "ffe89e0e001931c18cbf50da16ddaf9cffe38e84e89e0ebacd6b183acd3d173a",
+    "META/m3/mission-review/00437a80.c.txt": "c0c16dbd2f073cb2098fe59495d3fd820590e3068732ceafbfc5d615253aec5f",
+    "META/m3/mission-review/00437ab0.asm.txt": "5a32aca8887c37dcad300f1e0420aa34ec07b030a45e6df171881493325005f8",
+    "META/m3/mission-review/00437ab0.c.txt": "8e9254e790e526ff16bebbcd73ca0f8b3b21ec7d75e1af969a295706c4229d29",
+    "META/m3/mission-review/00442de0.asm.txt": "829ef436969f934467d367891f8fc7e459eda7e72b04622acbed1f88aeab4ea0",
+    "META/m3/mission-review/00442de0.c.txt": "c0e0dc2f5501b4b608d681c4c545e00a4d74adad0d7ea5cce548b1c30e26b2ae",
+    "META/m3/mission-review/00442ec0.asm.txt": "f203cf255903f244513a3af52a6506f2bf98e676f383e20706de0cf1bc2fa6b4",
+    "META/m3/mission-review/00442ec0.c.txt": "58b12dd63dde72ac80a73478c8949b224e2b0a9f62b93dc055d4a5af6be151b5",
+    "META/m3/mission-review/00443ff0-region.objdump.txt": "aa701248fc88b07e11e7ce472b81672fe4576108bcc228ee460e60ef8ffb6004",
+    "META/m3/mission-review/004457c0.asm.txt": "07e74252fa8a17dbb741e12b3c5eff8775180a8dac414f096d2b4739859f9bb3",
+    "META/m3/mission-review/004457c0.c.txt": "fd4003e78e6355d1d71230a1a22f8d4bc9627e2798aecc9d42b5d215d76e57a5",
+    "META/m3/mission-review/004474c0.asm.txt": "daee3939101624cee0b7b0af758947ea4ce659d77677587d0cf2616f01ae74d1",
+    "META/m3/mission-review/004474c0.c.txt": "ed43058c9c5b746a4d51b08b835b7e74bf079298bfce6aa26c7b90a0741acf46",
+    "META/m3/mission-review/assignment.json": "ddd9c44b46dddee7e6721bdf9e0f992393ab7c834c98a753cd74b75a3d3c0522",
+    "META/m3/mission-review/boundaries.tsv": "f52fc700f7350be3d95d2501f367ef78ce1e9a0984fbb1159fd9b95efa201d3b",
+    "META/m3/mission-review/code-pointers.tsv": "6a8660fbc62f36248e46a7f05af821605fd4e6b2b80eb1534ee2b552edd00eb2",
+    "META/m3/mission-review/control-flow.tsv": "9c8d221e8afaef6fe77cfd961431266c08a8da360cfdcf46a073aa5078a81ac3",
+    "META/m3/mission-review/references.tsv": "d430cc8737207a5140a0b7c0d5a935a1dfbca46660782e1812db96fcffdd8cf1",
+    "META/m3/mission-review/table-words.tsv": "c66d46e18792dcb65fbc0cfa2d9b40f52bd36dd88f2f960216cdbb3b6062291a"
+  },
+  "runtime_objectives_validated": false,
+  "game_source_admission": false,
+  "m3_complete": false
+}

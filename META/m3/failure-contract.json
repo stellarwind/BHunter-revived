@@ -1,0 +1,47 @@
+{
+  "scope": "Static scenario contract, not runtime failure/retry validation",
+  "original_exe_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+  "game_launches_this_block": 0,
+  "game_source_admission": false,
+  "runtime_failure_retry_captured": false,
+  "state_correction": {
+    "address": "004dfabc",
+    "legacy_probe_field": "failure_raw",
+    "meaning": "Ending/control state: event 0x956 writes 1; event 0x960 writes 2. Not a general failure flag."
+  },
+  "destruction_counter": {
+    "address": "004df6b4",
+    "entry_write": "004211a9",
+    "threshold_callbacks": 200,
+    "terminal_branch": "0042027a",
+    "mode1_state0": "original reset(0), inventory reset, return to menu",
+    "other_branch": "nearest of eight spawn table entries, reset and inventory reset"
+  },
+  "next_capture_requirements": [
+    "Actual destruction trigger and counter 1,75,95,200 without modifying player fields",
+    "Mode and ending state alongside terminal branch",
+    "Actual menu return and subsequent original episode selection/spawn to prove retry",
+    "Mission objective event type 0x0e and event ID; distinguish completion from destruction"
+  ],
+  "evidence_sha256": {
+    "META/m3/play-review/0041e850.c.txt": "0952290f33e3eb6e8e49c6b377c33d8ad39187bb83ceeff41f48691195340a32",
+    "META/m3/play-review/0041e850.asm.txt": "a23025bb2eafcc99bfab2f1f9e4fe516281fe472c90595640f033f3b845a7fc5",
+    "META/m3/play-review/00421740.c.txt": "6d038bb07239d0817131b90658a7f182abc23e4dda820d3cfc636a46c10ee840",
+    "META/m3/failure-review/0042027a.instructions.json": "a2f8ea75d7df6c87ccde9907fa10cfe4748ee3a41eb09754b584e89d6827b8bd",
+    "META/m3/failure-review/00421183.instructions.json": "c391bd2036a4152eb579092382628b1b85a00420d84242ea85b9cb79b1399c72",
+    "META/m3/failure-review/004225f0.asm.txt": "62cb06ada2ba6b94e40cdc99b485c1235cf18ad084fb8efa164fbd49e56e5f71",
+    "META/m3/failure-review/004225f0.c.txt": "8ca4a7027d2309d24b42af96f0d2d2d169b865bcbc770c6a9b2a8d553a653263",
+    "META/m3/failure-review/004225f0.decompile.json": "72148ba8e615b681ed4ef6a84077532a667ffe52a526490827867a4114029a7e",
+    "META/m3/failure-review/00422eb5.instructions.json": "7bfed9d123672f3ccd8eda30083eaf7e4e20f37b4a2ddfffbaf839c28b7d1766",
+    "META/m3/failure-review/00422fa6.instructions.json": "03a69b4a9640e0c3ca72705ed756de3d402b823a7906bcda54c5d7c200884047",
+    "META/m3/failure-review/00489220.memory.json": "5fd6263e96bbdf4605675d4f0a9398bef37cf11900adeba50475f3c6f1374f08",
+    "META/m3/failure-review/00489580.memory.json": "8a761c4fd692e288069ce7851e051099ad4e61228a11033f5a3c8d893fd8b84d",
+    "META/m3/failure-review/assignment.json": "77bebe051e11b03b06e77dc064d10c39f614a132fc7855d09a3a558d59ed00c3",
+    "META/m3/failure-review/boundaries.tsv": "f52fc700f7350be3d95d2501f367ef78ce1e9a0984fbb1159fd9b95efa201d3b",
+    "META/m3/failure-review/code-pointers.tsv": "6a8660fbc62f36248e46a7f05af821605fd4e6b2b80eb1534ee2b552edd00eb2",
+    "META/m3/failure-review/control-flow.tsv": "9c8d221e8afaef6fe77cfd961431266c08a8da360cfdcf46a073aa5078a81ac3",
+    "META/m3/failure-review/references.tsv": "04e10d8e8ad9138529bded3fb86007319c86139c36822fbe01f0feae31eebef3",
+    "META/m3/failure-review/state-xrefs.json": "f32ec013ee8a9ffd6d6d0a1922d6b9a2d8f17f32e60ff8f2f5c843fbf319ab3c",
+    "META/m3/failure-review/table-words.tsv": "c66d46e18792dcb65fbc0cfa2d9b40f52bd36dd88f2f960216cdbb3b6062291a"
+  }
+}

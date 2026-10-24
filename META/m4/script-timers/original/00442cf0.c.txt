@@ -1,0 +1,42 @@
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void FUN_00442cf0(int param_1)
+
+{
+  float fVar1;
+  bool bVar2;
+  uint uVar3;
+  int iVar4;
+  undefined4 uStack_28;
+  int iStack_24;
+  
+  iStack_24 = *(int *)(param_1 + 0xf0);
+  if (*(int *)(iStack_24 + 0x1c8) == 0) {
+    iVar4 = *(int *)(iStack_24 + 0x104);
+  }
+  else {
+    iVar4 = *(int *)(*(int *)(iStack_24 + 0x1c8) + 0x104);
+  }
+  if ((iVar4 != 0) &&
+     (fVar1 = *(float *)(param_1 + 0x114) - (float)_DAT_004891f8, bVar2 = fVar1 < _DAT_00489200,
+     *(float *)(param_1 + 0x114) = fVar1, bVar2)) {
+    iVar4 = *(int *)(param_1 + 0xe8);
+    uStack_28 = 8;
+    if ((iVar4 != 0) && (*(code **)(iVar4 + 0xd0) != (code *)0x0)) {
+      (**(code **)(iVar4 + 0xd0))(iVar4,&uStack_28);
+    }
+    fVar1 = *(float *)(param_1 + 0x114);
+    iVar4 = *(int *)(param_1 + 0xfc);
+    uVar3 = _rand();
+    *(float *)(param_1 + 0x114) =
+         (fVar1 - (float)(int)(uVar3 * (*(int *)(param_1 + 0x100) - iVar4)) * (float)_DAT_004892c8)
+         + (float)iVar4;
+    if ((*(int *)(param_1 + 0xf8) != 0) &&
+       (iVar4 = *(int *)(param_1 + 0xf8) + -1, *(int *)(param_1 + 0xf8) = iVar4, iVar4 == 0)) {
+      FUN_00477070(param_1);
+    }
+  }
+  return;
+}
+

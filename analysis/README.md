@@ -6,7 +6,7 @@ This directory retains curated sources, maps and small evidence records. Large g
 
 Supply your original English `GAME_DATA/BHUNTER.EXE` and `Bhunter.bin`. The tested EXE's SHA256 is `c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1`. No game executable or assets are distributed here.
 
-The current historical-comparison tools use local VC5 files under `D:/Decomp/MSCVC/MSVC5` and a prepared `analysis/toolchain-sp3/bin` directory. These paths are still local prerequisites, not a portable build installation. The versioned scripts document how the available original/SP3 files were copied into that ignored directory. Toolchain/bootstrap portability and a continuously linked source target belong to milestone M0.
+The current historical-comparison tools use local VC5 files under `D:/Decomp/MSCVC/MSVC5` and a prepared `analysis/toolchain-sp3/bin` directory. Historical scripts retain those pinned paths. M0 now supplies a source-only integration command with configurable dependency roots and a hash manifest; [BUILDING.md](../BUILDING.md) documents compiler preparation and clean-checkout verification. Proprietary tools remain local prerequisites.
 
 ## Comparison commands
 

@@ -4,6 +4,8 @@
 
 Created 2026-10-23. This is the project execution contract. Milestones complete only when their exit evidence is recorded in `META/PROGRESS.md`; estimates, compiled files and disassembly coverage do not count as completion.
 
+**Execution decision (user directive, 2026-10-24): skip M3 and proceed directly to M4 decompilation and source restoration.** M3 is skipped, not passed; its existing evidence is retained and its missing observations remain explicitly unvalidated. M3 completion is no longer a prerequisite for source recovery. All automatic-play plans are abandoned: no menu, tutorial, flight, combat or network gameplay automation, and no further pilot development. Any game execution is limited to a bounded startup test. User resumed implementation on 2026-10-24; M4 source restoration is active.
+
 ## 1. What we know, and what is still provisional
 
 | Evidence | Current position |
@@ -89,7 +91,7 @@ Final acceptance requires the game to build, launch and play without loading, ma
 
 ## 5. Milestones and exit gates
 
-Use the milestones as dependency gates, with small functional families chosen from the next observable checkpoint. Adjacent research can proceed when it removes a concrete blocker; broad decompilation does not replace the active gate. In particular, start M3 reference bring-up during M1/M2 when needed: measuring the original runtime's x87 state may be necessary to satisfy M2's numerical gate. Do not wait for M2 to finish before obtaining that evidence.
+Current sequence: M0/M1 initial frontier/M2 foundations → M4 source restoration → remaining source milestones. M3 is explicitly skipped by user direction. Choose small implementation families from the source-built checkpoint's dependency frontier. Resolve missing contracts through focused static review and source-built checks; retain unresolved fidelity questions as blockers. Do not reopen original gameplay capture as a prerequisite. All automated game execution is subject to the startup-only limit throughout this plan, including later milestone validation. Gameplay acceptance requirements remain unverified until evidence can be obtained within user-authorized methods; they do not authorize automatic play.
 
 ### M0 — Preserve the reference and make linking routine
 
@@ -115,15 +117,17 @@ Recover allocation/container contracts, archive/VFILE access, path/config handli
 
 **Exit:** foundations compile, link and execute together in the integration target; readers load representative real assets and diagnose invalid data. No unresolved or fabricated definitions. Functional variants can pass without byte matches.
 
-### M3 — Establish a playable original reference and capture behavior
+### M3 — Original reference/scenario capture — SKIPPED
 
-Diagnose portable source-path discovery against the documented `SourceDir` and copyright checksum behavior. Recover needed installation markers from the preserved disc image as source material. Keep any changes to an original reference launch isolated and reproducible; do not silently overwrite the oracle.
+Skipped by explicit user direction on 2026-10-24. This is not a completed or passed milestone. Retain existing startup, asset, event, target and navigation evidence with its original scope and provenance. No more automatic-play development, menu/tutorial/flight/combat/network replays or pursuit of M3's former scenario exit gate. The saved unvalidated portal controller is abandoned diagnostic work.
 
-Inventory actual original features, modes, controls, missions, save/config formats, rendering options, sound, music and networking. Inspect MDF/MDS tracks for CD audio and identify track numbering, loop/control behavior and availability. Capture deterministic input/seed/time traces where possible, plus observable startup, menu, loading, movement, collisions, objectives, failure/retry and shutdown scenarios. Screenshots alone are insufficient for simulation equivalence.
+Missing observations include combat hits/kill, objective completion, destruction/retry and broader timing, media and peer behavior. Carry those uncertainties into the relevant source-family contracts and later fidelity review; do not invent expected results or delete required features. Use existing evidence and static decompilation to proceed with source implementation. A bounded startup test is the maximum permitted game execution, not a routine prerequisite for each family.
 
-**Exit:** a documented runnable reference environment and scenario set exist. If a hardware/driver/media limitation prevents a scenario, record the blocker and the evidence still missing. Do not invent expected behavior or mark it validated.
+**Disposition:** skipped; no exit pass claimed; no dependency blocking M4.
 
 ### M4 — First source-driven playable slice
+
+**Next implementation phase.** Begin decompilation and source restoration now that M3 has been skipped. The first work block must select a concrete missing family on the startup → real scene dependency path, review its boundaries and dependency closure, and deliver source code in the owning module. Existing scene readers and entity containers are foundations; remaining world construction, scripts, navigation consumers and platform lifetimes must be recovered as needed. Do not replace this work with diagnostic controller development.
 
 Recover the narrow path from startup through archive/level loading to one actual playable scenario and orderly shutdown. Implement required entity ownership, scripting, simulation/update order, collision, camera, controls, rendering submission and audible feedback with real dependencies. Start with a smaller source-rendered scene as a diagnostic checkpoint if useful, but do not call that the playable-slice exit.
 
@@ -135,7 +139,7 @@ Choose a minimal faithful rendering/input/audio path that can support this check
 
 Extend by coherent dependency families: script commands, world streaming/activation, entities and AI, player movement, weapons/damage, collision, mission/objective logic, menus/HUD, audio events, persistence and configuration. Confirm actual original features before naming implementation tasks; do not infer features merely from a generic label.
 
-For each family, link immediately and rerun the slice plus relevant reference scenarios. Exercise all supplied playable content and significant branches, including retries, transitions, long sessions and repeated loads. Track both visible gameplay differences and hidden state/timing differences. Preserve original update order and random-number behavior where observable.
+For each family, link immediately and run relevant source-built unit/integration checks using real dependencies and existing captured fixtures. Do not rerun automated gameplay or reference scenarios. Track the supplied content and significant branches, including retries, transitions, long sessions and repeated loads, as acceptance requirements; mark unexercised gameplay explicitly unvalidated under the startup-only execution restriction. Preserve original update order and random-number behavior where established.
 
 **Exit:** all inventoried single-player content and features work from source with a documented scenario matrix. No silently unsupported script opcodes or missing behaviors; any remaining original-backed code is an explicit blocker for this gate. This can be a preview release while multiplayer work remains, not the final full-restoration declaration.
 
@@ -199,8 +203,13 @@ Compatibility check: the four-function 335-byte baseline remains exact in a copi
 
 Use it after real declarations/header/source context have been recovered and a function is already understood. Scan one bounded question with fixed flags and an exact positive control. Synthetic padding can demonstrate a compiler-context explanation; it does not recover historical declarations or establish functional fidelity. Do not promote a padded match into the main source unless its context is understood and integration/behavior are verified. A `func` implementation never needs a padscan win to ship.
 
-## 8. First execution block after this plan
+## 8. Next execution block — M4 decompilation and source restoration
 
-**Start M0, not another math sweep:** establish version control and a reproducible named compile/link/run target; record the compiler/linker split and preserve the matching verifier. Then enter M1 on the dependency closure of startup → VFILE/archive → one scene. Identify compiler helpers and provenance before assigning new decompilation families.
+M2's reviewed foundations are complete. M3 is skipped. Upon user resumption:
 
-This plan does not claim that those targets, the original playable reference, backend selection or a restored game already exist. Current evidence and the first open gates are recorded in `META/PROGRESS.md`.
+1. Inspect the current linked source target and select one missing function or small dependency family needed for source-built startup/scene construction. Name its owning source module and named integration target before coding.
+2. Review original boundaries, callers, ABI/layout, globals, callbacks and lifetimes. Exclude verified CRT/compiler helpers; record uncertain engine provenance without treating it as a reason to postpone required recovery.
+3. Recover maintainable source and real owning definitions. Compile the real translation unit, link the current target and execute focused source-built checks against established contracts and real asset fixtures.
+4. Record the exact implementation variant, integration and validation in `META/function-status.json` and `META/PROGRESS.md`. Missing dependencies stay explicit; listings, traces and standalone objects do not count as admitted recovery.
+
+The deliverable is integrated recovered source. No automatic pilot, gameplay replay or further M3 capture is part of this block. At most perform a bounded game startup test when relevant. No source-built playable game or M4 exit is claimed by this plan revision.

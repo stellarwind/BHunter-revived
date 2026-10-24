@@ -1,0 +1,50 @@
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+undefined4 __cdecl FUN_00407d90(undefined4 param_1,int param_2,int param_3,float *param_4)
+
+{
+  float fVar1;
+  float fVar2;
+  float fVar3;
+  undefined4 uVar4;
+  int iVar5;
+  int iVar6;
+  int *piVar7;
+  
+  iVar6 = 0;
+  fVar1 = (*(float *)(param_3 + 0x1b0) + *(float *)(param_3 + 0x1bc)) * (float)_DAT_00489280 -
+          (*(float *)(param_2 + 0x1b0) + *(float *)(param_2 + 0x1bc)) * (float)_DAT_00489280;
+  fVar3 = (*(float *)(param_3 + 0x1b4) + *(float *)(param_3 + 0x1c0)) * (float)_DAT_00489280 -
+          (*(float *)(param_2 + 0x1c0) + *(float *)(param_2 + 0x1b4)) * (float)_DAT_00489280;
+  fVar2 = (*(float *)(param_3 + 0x1c4) + *(float *)(param_3 + 0x1b8)) * (float)_DAT_00489280 -
+          (*(float *)(param_2 + 0x1c4) + *(float *)(param_2 + 0x1b8)) * (float)_DAT_00489280;
+  fVar1 = SQRT(fVar2 * fVar2 + fVar3 * fVar3 + fVar1 * fVar1);
+  if (*(int *)(param_3 + 0x108) < DAT_004df264) {
+    *param_4 = fVar1;
+    return *(undefined4 *)(param_3 + 0x108);
+  }
+  iVar5 = 0;
+  piVar7 = (int *)(param_3 + 0x204);
+  do {
+    if (*piVar7 != 0) {
+      if (*piVar7 != param_2) {
+        if (iVar6 == 0) {
+          *(undefined4 *)(param_3 + 0x110) = param_1;
+        }
+        else {
+          *(undefined4 *)(param_3 + 0x10c) = param_1;
+        }
+        uVar4 = FUN_00407d90(param_1,param_3,*(int *)(param_3 + 0x204 + iVar5 * 0x3c),param_4);
+        *param_4 = *param_4 + fVar1;
+        return uVar4;
+      }
+      iVar6 = iVar6 + 1;
+    }
+    iVar5 = iVar5 + 1;
+    piVar7 = piVar7 + 0xf;
+  } while (iVar5 < 6);
+  *param_4 = 0.0;
+  return param_1;
+}
+

@@ -1,0 +1,19 @@
+
+undefined4 __cdecl FUN_0047ce50(undefined4 *param_1)
+
+{
+  undefined4 uVar1;
+  
+  if (param_1[6] == 0) {
+    if (param_1[1] == 0) {
+      uVar1 = _fclose((int *)*param_1);
+      param_1[7] = DAT_004f9604;
+      DAT_004f9604 = param_1;
+      return uVar1;
+    }
+    param_1[7] = DAT_004f9604;
+    DAT_004f9604 = param_1;
+  }
+  return 0;
+}
+

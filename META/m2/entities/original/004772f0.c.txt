@@ -1,0 +1,21 @@
+
+void FUN_004772f0(void)
+
+{
+  int iVar1;
+  int iVar2;
+  
+  if (DAT_004dfab4 == 0) {
+    DAT_004dfab4 = 0;
+    iVar2 = DAT_004f0014;
+    while (iVar2 != 0) {
+      iVar1 = *(int *)(iVar2 + 0xe0);
+      (**(code **)(iVar2 + 0xcc))(iVar2);
+      iVar2 = iVar1;
+    }
+    return;
+  }
+  (**(code **)(DAT_004dfab8 + 0xcc))(DAT_004dfab8);
+  return;
+}
+

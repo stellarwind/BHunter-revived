@@ -1,0 +1,362 @@
+{
+  "schema_version": 1,
+  "target": "bhunter-integration.exe",
+  "original_code_required": false,
+  "host": "Windows-10-10.0.19044-SP0",
+  "python": "3.15.0 (tags/v3.15.0:d220409, Oct  9 2026, 11:55:56) [MSC v.1951 64 bit (AMD64)]",
+  "commands": [
+    {
+      "label": "compile-bh_math",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\m0\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_math.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_math.c\n"
+    },
+    {
+      "label": "compile-bh_fp",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\m0\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_fp.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_fp.c\n"
+    },
+    {
+      "label": "compile-bh_vfile",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\m0\\bh_vfile.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_vfile.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_vfile.c\n"
+    },
+    {
+      "label": "compile-integration",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/Dmain=bh_math_checkpoint",
+        "/FoD:\\Decomp\\Bhunter\\build\\m0\\integration.obj",
+        "D:\\Decomp\\Bhunter\\tests\\integration.c"
+      ],
+      "exit_code": 0,
+      "output": "integration.c\n"
+    },
+    {
+      "label": "compile-vfile",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\m0\\vfile_tests.obj",
+        "D:\\Decomp\\Bhunter\\tests\\vfile.c"
+      ],
+      "exit_code": 0,
+      "output": "vfile.c\n"
+    },
+    {
+      "label": "compile-checkpoint",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\m0\\checkpoint.obj",
+        "D:\\Decomp\\Bhunter\\tests\\checkpoint.c"
+      ],
+      "exit_code": 0,
+      "output": "checkpoint.c\n"
+    },
+    {
+      "label": "compile-math_cases",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\m0\\math_cases.obj",
+        "D:\\Decomp\\Bhunter\\tests\\math_cases.c"
+      ],
+      "exit_code": 0,
+      "output": "math_cases.c\n"
+    },
+    {
+      "label": "compile-math_numeric",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\m0\\math_numeric.obj",
+        "D:\\Decomp\\Bhunter\\tests\\math_numeric.c"
+      ],
+      "exit_code": 0,
+      "output": "math_numeric.c\n"
+    },
+    {
+      "label": "compile-bh_config",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\m0\\bh_config.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_config.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_config.c\n"
+    },
+    {
+      "label": "compile-bh_paths",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\m0\\bh_paths.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_paths.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_paths.c\n"
+    },
+    {
+      "label": "compile-config",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\m0\\config_tests.obj",
+        "D:\\Decomp\\Bhunter\\tests\\config.c"
+      ],
+      "exit_code": 0,
+      "output": "config.c\n"
+    },
+    {
+      "label": "compile-bh_scene",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\m0\\bh_scene.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_scene.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_scene.c\n"
+    },
+    {
+      "label": "compile-scene",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\m0\\scene_tests.obj",
+        "D:\\Decomp\\Bhunter\\tests\\scene.c"
+      ],
+      "exit_code": 0,
+      "output": "scene.c\n"
+    },
+    {
+      "label": "compile-bh_bsp",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\m0\\bh_bsp.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_bsp.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_bsp.c\n"
+    },
+    {
+      "label": "compile-bh_blocks",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\m0\\bh_blocks.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_blocks.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_blocks.c\n"
+    },
+    {
+      "label": "compile-blocks",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\m0\\blocks_tests.obj",
+        "D:\\Decomp\\Bhunter\\tests\\blocks.c"
+      ],
+      "exit_code": 0,
+      "output": "blocks.c\n"
+    },
+    {
+      "label": "link",
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/verbose",
+        "/map:D:\\Decomp\\Bhunter\\build\\m0\\bhunter-integration.map",
+        "/out:D:\\Decomp\\Bhunter\\build\\m0\\bhunter-integration.exe",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_vfile.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\integration.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\vfile_tests.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\checkpoint.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\math_cases.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\math_numeric.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_config.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_paths.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\config_tests.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_scene.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\scene_tests.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_bsp.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_blocks.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\blocks_tests.obj",
+        "kernel32.lib"
+      ],
+      "exit_code": 0,
+      "output": "\nStart Pass1\nProcessed /DEFAULTLIB:LIBC\nProcessed /DEFAULTLIB:OLDNAMES\n\nSearching Libraries\n    Searching D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\lib\\kernel32.lib:\n      Found __imp__GetCurrentDirectoryA@8\n        Referenced in bh_paths.obj\n        Referenced in config_tests.obj\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__GetWindowsDirectoryA@8\n        Referenced in bh_paths.obj\n        Referenced in config_tests.obj\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__SetFileAttributesA@8\n        Referenced in config_tests.obj\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__GetFileAttributesA@4\n        Referenced in config_tests.obj\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__VirtualFree@12\n        Referenced in scene_tests.obj\n        Referenced in blocks_tests.obj\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__VirtualProtect@16\n        Referenced in scene_tests.obj\n        Referenced in blocks_tests.obj\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__VirtualAlloc@16\n        Referenced in scene_tests.obj\n        Referenced in blocks_tests.obj\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__GetSystemInfo@4\n        Referenced in scene_tests.obj\n        Referenced in blocks_tests.obj\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __IMPORT_DESCRIPTOR_KERNEL32\n        Referenced in kernel32.lib(KERNEL32.dll)\n        Referenced in kernel32.lib(KERNEL32.dll)\n        Referenced in kernel32.lib(KERNEL32.dll)\n        Referenced in kernel32.lib(KERNEL32.dll)\n        Referenced in kernel32.lib(KERNEL32.dll)\n        Referenced in kernel32.lib(KERNEL32.dll)\n        Referenced in kernel32.lib(KERNEL32.dll)\n        Referenced in kernel32.lib(KERNEL32.dll)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __NULL_IMPORT_DESCRIPTOR\n        Referenced in kernel32.lib(KERNEL32.dll)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found \u007fKERNEL32_NULL_THUNK_DATA\n        Referenced in kernel32.lib(KERNEL32.dll)\n        Loaded kernel32.lib(KERNEL32.dll)\n    Searching D:\\Decomp\\MSCVC\\MSVC5\\SP3_EXTRACTED\\VS97_SP3\\all\\vc\\lib\\LIBC.lib:\n      Found __fltused\n        Referenced in blocks_tests.obj\n        Referenced in math_cases.obj\n        Referenced in math_numeric.obj\n        Referenced in scene_tests.obj\n        Referenced in bh_bsp.obj\n        Referenced in bh_math.obj\n        Referenced in bh_vfile.obj\n        Referenced in integration.obj\n        Referenced in vfile_tests.obj\n        Loaded LIBC.lib(fpinit.obj)\n      Found __control87\n        Referenced in bh_fp.obj\n        Referenced in math_cases.obj\n        Referenced in math_numeric.obj\n        Referenced in blocks_tests.obj\n        Loaded LIBC.lib(ieee87.obj)\n      Found _free\n        Referenced in scene_tests.obj\n        Referenced in bh_bsp.obj\n        Referenced in bh_blocks.obj\n        Referenced in blocks_tests.obj\n        Referenced in bh_vfile.obj\n        Referenced in bh_config.obj\n        Referenced in config_tests.obj\n        Referenced in bh_scene.obj\n        Loaded LIBC.lib(free.obj)\n      Found _fclose\n        Referenced in scene_tests.obj\n        Referenced in blocks_tests.obj\n        Referenced in bh_vfile.obj\n        Referenced in vfile_tests.obj\n        Referenced in bh_config.obj\n        Referenced in config_tests.obj\n        Loaded LIBC.lib(fclose.obj)\n      Found _memchr\n        Referenced in bh_bsp.obj\n        Referenced in bh_vfile.obj\n        Referenced in bh_config.obj\n        Referenced in bh_scene.obj\n        Referenced in scene_tests.obj\n        Loaded LIBC.lib(memchr.obj)\n      Found _malloc\n        Referenced in scene_tests.obj\n        Referenced in bh_bsp.obj\n        Referenced in bh_blocks.obj\n        Referenced in blocks_tests.obj\n        Referenced in bh_vfile.obj\n        Referenced in bh_config.obj\n        Referenced in config_tests.obj\n        Referenced in bh_scene.obj\n        Loaded LIBC.lib(malloc.obj)\n      Found _fread\n        Referenced in scene_tests.obj\n        Referenced in blocks_tests.obj\n        Referenced in bh_vfile.obj\n        Referenced in vfile_tests.obj\n        Referenced in bh_config.obj\n        Referenced in config_tests.obj\n        Loaded LIBC.lib(fread.obj)\n      Found _ftell\n        Referenced in bh_vfile.obj\n        Referenced in bh_config.obj\n        Loaded LIBC.lib(ftell.obj)\n      Found _fseek\n        Referenced in blocks_tests.obj\n        Referenced in bh_vfile.obj\n        Referenced in vfile_tests.obj\n        Referenced in bh_config.obj\n        Referenced in scene_tests.obj\n        Loaded LIBC.lib(fseek.obj)\n      Found _fopen\n        Referenced in scene_tests.obj\n        Referenced in blocks_tests.obj\n        Referenced in bh_vfile.obj\n        Referenced in vfile_tests.obj\n        Referenced in bh_config.obj\n        Referenced in config_tests.obj\n        Loaded LIBC.lib(fopen.obj)\n      Found __stricmp\n        Referenced in bh_blocks.obj\n        Referenced in blocks_tests.obj\n        Referenced in bh_vfile.obj\n        Referenced in vfile_tests.obj\n        Referenced in bh_config.obj\n        Referenced in scene_tests.obj\n        Loaded LIBC.lib(stricmp.obj)\n      Found _fflush\n        Referenced in bh_vfile.obj\n        Loaded LIBC.lib(fflush.obj)\n      Found __iob\n        Referenced in bh_vfile.obj\n        Loaded LIBC.lib(_file.obj)\n      Found _printf\n        Referenced in math_numeric.obj\n        Referenced in config_tests.obj\n        Referenced in scene_tests.obj\n        Referenced in blocks_tests.obj\n        Referenced in bh_vfile.obj\n        Referenced in integration.obj\n        Referenced in vfile_tests.obj\n        Referenced in checkpoint.obj\n        Loaded LIBC.lib(printf.obj)\n      Found _fgets\n        Referenced in bh_vfile.obj\n        Referenced in vfile_tests.obj\n        Loaded LIBC.lib(fgets.obj)\n      Found _remove\n        Referenced in vfile_tests.obj\n        Referenced in config_tests.obj\n        Referenced in scene_tests.obj\n        Referenced in blocks_tests.obj\n        Loaded LIBC.lib(unlink.obj)\n      Found _fwrite\n        Referenced in blocks_tests.obj\n        Referenced in vfile_tests.obj\n        Referenced in bh_config.obj\n        Referenced in config_tests.obj\n        Referenced in scene_tests.obj\n        Loaded LIBC.lib(fwrite.obj)\n      Found _strcspn\n        Referenced in vfile_tests.obj\n        Loaded LIBC.lib(strcspn.obj)\n      Found _strrchr\n        Referenced in vfile_tests.obj\n        Loaded LIBC.lib(strrchr.obj)\n      Found __chkstk\n        Referenced in vfile_tests.obj\n        Loaded LIBC.lib(chkstk.obj)\n      Found _ldexp\n        Referenced in math_numeric.obj\n        Loaded LIBC.lib(ldexp.obj)\n      Found _errno\n        Referenced in bh_config.obj\n        Referenced in LIBC.lib(ftell.obj)\n        Referenced in LIBC.lib(fseek.obj)\n        Loaded LIBC.lib(crt0dat.obj)\n      Found _sprintf\n        Referenced in config_tests.obj\n        Referenced in blocks_tests.obj\n        Loaded LIBC.lib(sprintf.obj)\n      Found __rmdir\n        Referenced in config_tests.obj\n        Referenced in blocks_tests.obj\n        Loaded LIBC.lib(rmdir.obj)\n      Found __mkdir\n        Referenced in config_tests.obj\n        Referenced in blocks_tests.obj\n        Loaded LIBC.lib(mkdir.obj)\n      Found _calloc\n        Referenced in scene_tests.obj\n        Referenced in LIBC.lib(_file.obj)\n        Loaded LIBC.lib(calloc.obj)\n      Found __finite\n        Referenced in bh_bsp.obj\n        Loaded LIBC.lib(ieeemisc.obj)\n      Found _mainCRTStartup\n        Loaded LIBC.lib(crt0.obj)\n      Found __setdefaultprecision\n        Referenced in LIBC.lib(fpinit.obj)\n        Referenced in LIBC.lib(ieee87.obj)\n        Loaded LIBC.lib(fp8.obj)\n      Found __ms_p5_mp_test_fdiv\n        Referenced in LIBC.lib(fpinit.obj)\n        Loaded LIBC.lib(testfdiv.obj)\n      Found __positive\n        Referenced in LIBC.lib(fpinit.obj)\n        Loaded LIBC.lib(cvt.obj)\n      Found __cfltcvt_tab\n        Referenced in LIBC.lib(fpinit.obj)\n        Loaded LIBC.lib(cmiscdat.obj)\n      Found __pxcptinfoptrs\n        Referenced in LIBC.lib(ieee87.obj)\n        Loaded LIBC.lib(winxfltr.obj)\n      Found __crtheap\n        Referenced in LIBC.lib(free.obj)\n        Referenced in LIBC.lib(malloc.obj)\n        Referenced in LIBC.lib(calloc.obj)\n        Loaded LIBC.lib(heapinit.obj)\n      Found ___sbh_free_block\n        Referenced in LIBC.lib(free.obj)\n        Loaded LIBC.lib(sbheap.obj)\n      Found __close\n        Referenced in LIBC.lib(fclose.obj)\n        Loaded LIBC.lib(close.obj)\n      Found __freebuf\n        Referenced in LIBC.lib(fclose.obj)\n        Loaded LIBC.lib(_freebuf.obj)\n      Found __newmode\n        Referenced in LIBC.lib(malloc.obj)\n        Referenced in LIBC.lib(calloc.obj)\n        Loaded LIBC.lib(_newmode.obj)\n      Found __callnewh\n        Referenced in LIBC.lib(malloc.obj)\n        Referenced in LIBC.lib(calloc.obj)\n        Loaded LIBC.lib(handler.obj)\n      Found __filbuf\n        Referenced in LIBC.lib(fread.obj)\n        Referenced in LIBC.lib(fgets.obj)\n        Loaded LIBC.lib(_filbuf.obj)\n      Found __read\n        Referenced in LIBC.lib(fread.obj)\n        Referenced in LIBC.lib(_filbuf.obj)\n        Loaded LIBC.lib(read.obj)\n      Found ___pioinfo\n        Referenced in LIBC.lib(read.obj)\n        Referenced in LIBC.lib(ftell.obj)\n        Referenced in LIBC.lib(_file.obj)\n        Referenced in LIBC.lib(close.obj)\n        Referenced in LIBC.lib(_filbuf.obj)\n        Loaded LIBC.lib(ioinit.obj)\n      Found __lseek\n        Referenced in LIBC.lib(ftell.obj)\n        Referenced in LIBC.lib(fseek.obj)\n        Referenced in LIBC.lib(read.obj)\n        Loaded LIBC.lib(lseek.obj)\n      Found __openfile\n        Referenced in LIBC.lib(fopen.obj)\n        Loaded LIBC.lib(_open.obj)\n      Found __getstream\n        Referenced in LIBC.lib(fopen.obj)\n        Loaded LIBC.lib(stream.obj)\n      Found ___lc_handle\n        Referenced in LIBC.lib(stricmp.obj)\n        Loaded LIBC.lib(nlsdata2.obj)\n      Found _tolower\n        Referenced in LIBC.lib(stricmp.obj)\n        Referenced in LIBC.lib(cvt.obj)\n        Loaded LIBC.lib(tolower.obj)\n      Found __commit\n        Referenced in LIBC.lib(fflush.obj)\n        Loaded LIBC.lib(commit.obj)\n      Found __write\n        Referenced in LIBC.lib(fflush.obj)\n        Referenced in LIBC.lib(fwrite.obj)\n        Loaded LIBC.lib(write.obj)\n      Found __fcloseall\n        Referenced in LIBC.lib(_file.obj)\n        Loaded LIBC.lib(closeall.obj)\n      Found __ftbuf\n        Referenced in LIBC.lib(printf.obj)\n        Loaded LIBC.lib(_sftbuf.obj)\n      Found __output\n        Referenced in LIBC.lib(printf.obj)\n        Referenced in LIBC.lib(sprintf.obj)\n        Loaded LIBC.lib(output.obj)\n      Found __dosmaperr\n        Referenced in LIBC.lib(read.obj)\n        Referenced in LIBC.lib(lseek.obj)\n        Referenced in LIBC.lib(write.obj)\n        Referenced in LIBC.lib(unlink.obj)\n        Referenced in LIBC.lib(rmdir.obj)\n        Referenced in LIBC.lib(mkdir.obj)\n        Referenced in LIBC.lib(close.obj)\n        Loaded LIBC.lib(dosmap.obj)\n      Found __flsbuf\n        Referenced in LIBC.lib(fwrite.obj)\n        Referenced in LIBC.lib(sprintf.obj)\n        Referenced in LIBC.lib(output.obj)\n        Loaded LIBC.lib(_flsbuf.obj)\n      Found __set_exp\n        Referenced in LIBC.lib(ldexp.obj)\n        Referenced in LIBC.lib(ieeemisc.obj)\n        Loaded LIBC.lib(util.obj)\n      Found __except2\n        Referenced in LIBC.lib(ldexp.obj)\n        Referenced in LIBC.lib(ieeemisc.obj)\n        Loaded LIBC.lib(fpexcept.obj)\n      Found __ctrlfp\n        Referenced in LIBC.lib(ldexp.obj)\n        Referenced in LIBC.lib(ieeemisc.obj)\n        Referenced in LIBC.lib(fpexcept.obj)\n        Loaded LIBC.lib(fpctrl.obj)\n      Found ___xc_a\n        Referenced in LIBC.lib(crt0dat.obj)\n        Loaded LIBC.lib(crt0init.obj)\nProcessed /DEFAULTLIB:kernel32.lib\n Processed /DISALLOWLIB:libcd.lib\n Processed /DISALLOWLIB:libcmt.lib\n Processed /DISALLOWLIB:libcmtd.lib\n Processed /DISALLOWLIB:msvcrt.lib\n Processed /DISALLOWLIB:msvcrtd.lib\n      Found __setenvp\n        Referenced in LIBC.lib(crt0.obj)\n        Loaded LIBC.lib(stdenvp.obj)\n      Found __setargv\n        Referenced in LIBC.lib(crt0.obj)\n        Loaded LIBC.lib(stdargv.obj)\n      Found ___crtGetEnvironmentStringsA\n        Referenced in LIBC.lib(crt0.obj)\n        Loaded LIBC.lib(aw_env.obj)\n      Found ___initmbctable\n        Referenced in LIBC.lib(crt0.obj)\n        Loaded LIBC.lib(mbctype.obj)\n      Found __except_list\n        Referenced in LIBC.lib(crt0.obj)\n        Loaded LIBC.lib(exsup.obj)\n      Found __except_handler3\n        Referenced in LIBC.lib(crt0.obj)\n        Loaded LIBC.lib(exsup3.obj)\n      Found __NMSG_WRITE\n        Referenced in LIBC.lib(crt0.obj)\n        Loaded LIBC.lib(crt0msg.obj)\n      Found ___decimal_point\n        Referenced in LIBC.lib(cvt.obj)\n        Loaded LIBC.lib(nlsdata1.obj)\n      Found __pctype\n        Referenced in LIBC.lib(cvt.obj)\n        Referenced in LIBC.lib(tolower.obj)\n        Referenced in LIBC.lib(output.obj)\n        Loaded LIBC.lib(ctype.obj)\n      Found __isctype\n        Referenced in LIBC.lib(cvt.obj)\n        Referenced in LIBC.lib(tolower.obj)\n        Loaded LIBC.lib(isctype.obj)\n      Found __atoflt\n        Referenced in LIBC.lib(cvt.obj)\n        Loaded LIBC.lib(intrncvt.obj)\n      Found __fptostr\n        Referenced in LIBC.lib(cvt.obj)\n        Loaded LIBC.lib(_fptostr.obj)\n      Found __fltout\n        Referenced in LIBC.lib(cvt.obj)\n        Loaded LIBC.lib(cfout.obj)\n      Found _memmove\n        Referenced in LIBC.lib(cvt.obj)\n        Loaded LIBC.lib(memmove.obj)\n      Found __fptrap\n        Referenced in LIBC.lib(cmiscdat.obj)\n        Loaded LIBC.lib(crt0fp.obj)\n      Found __free_osfhnd\n        Referenced in LIBC.lib(close.obj)\n        Loaded LIBC.lib(osfinfo.obj)\n      Found __getbuf\n        Referenced in LIBC.lib(_filbuf.obj)\n        Referenced in LIBC.lib(_flsbuf.obj)\n        Loaded LIBC.lib(_getbuf.obj)\n      Found __sopen\n        Referenced in LIBC.lib(_open.obj)\n        Loaded LIBC.lib(open.obj)\n      Found __commode\n        Referenced in LIBC.lib(_open.obj)\n        Loaded LIBC.lib(ncommode.obj)\n      Found ___crtLCMapStringA\n        Referenced in LIBC.lib(tolower.obj)\n        Referenced in LIBC.lib(mbctype.obj)\n        Loaded LIBC.lib(aw_map.obj)\n      Found __isatty\n        Referenced in LIBC.lib(_sftbuf.obj)\n        Referenced in LIBC.lib(_flsbuf.obj)\n        Loaded LIBC.lib(isatty.obj)\n      Found _wctomb\n        Referenced in LIBC.lib(output.obj)\n        Loaded LIBC.lib(wctomb.obj)\n      Found __aulldiv\n        Referenced in LIBC.lib(output.obj)\n        Loaded LIBC.lib(ulldiv.obj)\n      Found __aullrem\n        Referenced in LIBC.lib(output.obj)\n        Loaded LIBC.lib(ullrem.obj)\n      Found __matherr\n        Referenced in LIBC.lib(fpexcept.obj)\n        Loaded LIBC.lib(matherr.obj)\n      Found _wcslen\n        Referenced in LIBC.lib(aw_env.obj)\n        Loaded LIBC.lib(wcslen.obj)\n      Found ___crtGetStringTypeA\n        Referenced in LIBC.lib(mbctype.obj)\n        Referenced in LIBC.lib(isctype.obj)\n        Loaded LIBC.lib(aw_str.obj)\n      Found ___crtMessageBoxA\n        Referenced in LIBC.lib(crt0msg.obj)\n        Loaded LIBC.lib(crtmbox.obj)\n      Found _strncpy\n        Referenced in LIBC.lib(crt0msg.obj)\n        Referenced in LIBC.lib(aw_map.obj)\n        Loaded LIBC.lib(strncpy.obj)\n      Found ___addl\n        Referenced in LIBC.lib(intrncvt.obj)\n        Loaded LIBC.lib(mantold.obj)\n      Found ___strgtold12\n        Referenced in LIBC.lib(intrncvt.obj)\n        Loaded LIBC.lib(strgtold.obj)\n      Found _$I10_OUTPUT\n        Referenced in LIBC.lib(cfout.obj)\n        Loaded LIBC.lib(x10fout.obj)\n      Found __chsize\n        Referenced in LIBC.lib(open.obj)\n        Loaded LIBC.lib(chsize.obj)\n      Found __fmode\n        Referenced in LIBC.lib(open.obj)\n        Loaded LIBC.lib(txtmode.obj)\n      Found ___multtenpow12\n        Referenced in LIBC.lib(strgtold.obj)\n        Referenced in LIBC.lib(x10fout.obj)\n        Loaded LIBC.lib(tenpow.obj)\n      Found __setmode\n        Referenced in LIBC.lib(chsize.obj)\n        Loaded LIBC.lib(setmode.obj)\n      Found __pow10neg\n        Referenced in LIBC.lib(tenpow.obj)\n        Loaded LIBC.lib(constpow.obj)\n    Searching D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\lib\\OLDNAMES.lib:\n    Searching D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\lib\\kernel32.lib:\n      Found __imp__HeapFree@12\n        Referenced in LIBC.lib(free.obj)\n        Referenced in LIBC.lib(sbheap.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__HeapAlloc@12\n        Referenced in LIBC.lib(malloc.obj)\n        Referenced in LIBC.lib(calloc.obj)\n        Referenced in LIBC.lib(sbheap.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__GetLastError@0\n        Referenced in LIBC.lib(osfinfo.obj)\n        Referenced in LIBC.lib(open.obj)\n        Referenced in LIBC.lib(chsize.obj)\n        Referenced in LIBC.lib(read.obj)\n        Referenced in LIBC.lib(lseek.obj)\n        Referenced in LIBC.lib(commit.obj)\n        Referenced in LIBC.lib(write.obj)\n        Referenced in LIBC.lib(unlink.obj)\n        Referenced in LIBC.lib(rmdir.obj)\n        Referenced in LIBC.lib(mkdir.obj)\n        Referenced in LIBC.lib(close.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__DeleteFileA@4\n        Referenced in LIBC.lib(unlink.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__ExitProcess@4\n        Referenced in LIBC.lib(crt0dat.obj)\n        Referenced in LIBC.lib(crt0.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__TerminateProcess@8\n        Referenced in LIBC.lib(crt0dat.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__GetCurrentProcess@0\n        Referenced in LIBC.lib(crt0dat.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__RemoveDirectoryA@4\n        Referenced in LIBC.lib(rmdir.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__CreateDirectoryA@8\n        Referenced in LIBC.lib(mkdir.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__GetCommandLineA@0\n        Referenced in LIBC.lib(crt0.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__GetVersion@0\n        Referenced in LIBC.lib(crt0.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__GetProcAddress@8\n        Referenced in LIBC.lib(testfdiv.obj)\n        Referenced in LIBC.lib(crtmbox.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__GetModuleHandleA@4\n        Referenced in LIBC.lib(testfdiv.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__UnhandledExceptionFilter@4\n        Referenced in LIBC.lib(winxfltr.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__HeapDestroy@4\n        Referenced in LIBC.lib(heapinit.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__HeapCreate@12\n        Referenced in LIBC.lib(heapinit.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__CloseHandle@4\n        Referenced in LIBC.lib(close.obj)\n        Referenced in LIBC.lib(open.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__ReadFile@20\n        Referenced in LIBC.lib(read.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__SetHandleCount@4\n        Referenced in LIBC.lib(ioinit.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__GetStdHandle@4\n        Referenced in LIBC.lib(ioinit.obj)\n        Referenced in LIBC.lib(crt0msg.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__GetFileType@4\n        Referenced in LIBC.lib(ioinit.obj)\n        Referenced in LIBC.lib(osfinfo.obj)\n        Referenced in LIBC.lib(open.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__GetStartupInfoA@4\n        Referenced in LIBC.lib(ioinit.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__SetFilePointer@16\n        Referenced in LIBC.lib(lseek.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__FlushFileBuffers@4\n        Referenced in LIBC.lib(commit.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__WriteFile@20\n        Referenced in LIBC.lib(write.obj)\n        Referenced in LIBC.lib(crt0msg.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__RaiseException@16\n        Referenced in LIBC.lib(fpexcept.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__GetModuleFileNameA@12\n        Referenced in LIBC.lib(stdargv.obj)\n        Referenced in LIBC.lib(crt0msg.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__FreeEnvironmentStringsA@4\n        Referenced in LIBC.lib(aw_env.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__MultiByteToWideChar@24\n        Referenced in LIBC.lib(aw_env.obj)\n        Referenced in LIBC.lib(aw_map.obj)\n        Referenced in LIBC.lib(aw_str.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__FreeEnvironmentStringsW@4\n        Referenced in LIBC.lib(aw_env.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__GetEnvironmentStrings@0\n        Referenced in LIBC.lib(aw_env.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__GetEnvironmentStringsW@0\n        Referenced in LIBC.lib(aw_env.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__WideCharToMultiByte@32\n        Referenced in LIBC.lib(aw_env.obj)\n        Referenced in LIBC.lib(aw_map.obj)\n        Referenced in LIBC.lib(wctomb.obj)\n        Referenced in LIBC.lib(aw_str.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__GetCPInfo@8\n        Referenced in LIBC.lib(mbctype.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__GetACP@0\n        Referenced in LIBC.lib(mbctype.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__GetOEMCP@0\n        Referenced in LIBC.lib(mbctype.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found _RtlUnwind@16\n        Referenced in LIBC.lib(exsup.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__SetStdHandle@8\n        Referenced in LIBC.lib(osfinfo.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__CreateFileA@28\n        Referenced in LIBC.lib(open.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__LCMapStringA@24\n        Referenced in LIBC.lib(aw_map.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__LCMapStringW@24\n        Referenced in LIBC.lib(aw_map.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__GetStringTypeA@20\n        Referenced in LIBC.lib(aw_str.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__GetStringTypeW@16\n        Referenced in LIBC.lib(aw_str.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__LoadLibraryA@4\n        Referenced in LIBC.lib(crtmbox.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n      Found __imp__SetEndOfFile@4\n        Referenced in LIBC.lib(chsize.obj)\n        Loaded kernel32.lib(KERNEL32.dll)\n\nDone Searching Libraries\n\nEnd Pass1\n\n    Discarded _SetEndOfFile@4 from kernel32.lib(KERNEL32.dll)\n    Discarded _LoadLibraryA@4 from kernel32.lib(KERNEL32.dll)\n    Discarded _GetStringTypeW@16 from kernel32.lib(KERNEL32.dll)\n    Discarded _GetStringTypeA@20 from kernel32.lib(KERNEL32.dll)\n    Discarded _LCMapStringW@24 from kernel32.lib(KERNEL32.dll)\n    Discarded _LCMapStringA@24 from kernel32.lib(KERNEL32.dll)\n    Discarded _CreateFileA@28 from kernel32.lib(KERNEL32.dll)\n    Discarded _SetStdHandle@8 from kernel32.lib(KERNEL32.dll)\n    Discarded _GetOEMCP@0 from kernel32.lib(KERNEL32.dll)\n    Discarded _GetACP@0 from kernel32.lib(KERNEL32.dll)\n    Discarded _GetCPInfo@8 from kernel32.lib(KERNEL32.dll)\n    Discarded _WideCharToMultiByte@32 from kernel32.lib(KERNEL32.dll)\n    Discarded _GetEnvironmentStringsW@0 from kernel32.lib(KERNEL32.dll)\n    Discarded _GetEnvironmentStrings@0 from kernel32.lib(KERNEL32.dll)\n    Discarded _FreeEnvironmentStringsW@4 from kernel32.lib(KERNEL32.dll)\n    Discarded _MultiByteToWideChar@24 from kernel32.lib(KERNEL32.dll)\n    Discarded _FreeEnvironmentStringsA@4 from kernel32.lib(KERNEL32.dll)\n    Discarded _GetModuleFileNameA@12 from kernel32.lib(KERNEL32.dll)\n    Discarded _RaiseException@16 from kernel32.lib(KERNEL32.dll)\n    Discarded _WriteFile@20 from kernel32.lib(KERNEL32.dll)\n    Discarded _FlushFileBuffers@4 from kernel32.lib(KERNEL32.dll)\n    Discarded _SetFilePointer@16 from kernel32.lib(KERNEL32.dll)\n    Discarded _GetStartupInfoA@4 from kernel32.lib(KERNEL32.dll)\n    Discarded _GetFileType@4 from kernel32.lib(KERNEL32.dll)\n    Discarded _GetStdHandle@4 from kernel32.lib(KERNEL32.dll)\n    Discarded _SetHandleCount@4 from kernel32.lib(KERNEL32.dll)\n    Discarded _ReadFile@20 from kernel32.lib(KERNEL32.dll)\n    Discarded _CloseHandle@4 from kernel32.lib(KERNEL32.dll)\n    Discarded _HeapCreate@12 from kernel32.lib(KERNEL32.dll)\n    Discarded _HeapDestroy@4 from kernel32.lib(KERNEL32.dll)\n    Discarded _UnhandledExceptionFilter@4 from kernel32.lib(KERNEL32.dll)\n    Discarded _GetModuleHandleA@4 from kernel32.lib(KERNEL32.dll)\n    Discarded _GetProcAddress@8 from kernel32.lib(KERNEL32.dll)\n    Discarded _GetVersion@0 from kernel32.lib(KERNEL32.dll)\n    Discarded _GetCommandLineA@0 from kernel32.lib(KERNEL32.dll)\n    Discarded _CreateDirectoryA@8 from kernel32.lib(KERNEL32.dll)\n    Discarded _RemoveDirectoryA@4 from kernel32.lib(KERNEL32.dll)\n    Discarded _GetCurrentProcess@0 from kernel32.lib(KERNEL32.dll)\n    Discarded _TerminateProcess@8 from kernel32.lib(KERNEL32.dll)\n    Discarded _ExitProcess@4 from kernel32.lib(KERNEL32.dll)\n    Discarded _DeleteFileA@4 from kernel32.lib(KERNEL32.dll)\n    Discarded _GetLastError@0 from kernel32.lib(KERNEL32.dll)\n    Discarded _HeapAlloc@12 from kernel32.lib(KERNEL32.dll)\n    Discarded _HeapFree@12 from kernel32.lib(KERNEL32.dll)\n    Discarded ___STRINGTOLD from LIBC.lib(strgtold.obj)\n    Discarded ___crtGetStringTypeW from LIBC.lib(aw_str.obj)\n    Discarded _wcslen from LIBC.lib(wcslen.obj)\n    Discarded _wcsncnt from LIBC.lib(aw_map.obj)\n    Discarded ___crtLCMapStringW from LIBC.lib(aw_map.obj)\n    Discarded __open from LIBC.lib(open.obj)\n    Discarded __open_osfhandle from LIBC.lib(osfinfo.obj)\n    Discarded __atoldbl from LIBC.lib(intrncvt.obj)\n    Discarded __ld12told from LIBC.lib(intrncvt.obj)\n    Discarded __GET_RTERRMSG from LIBC.lib(crt0msg.obj)\n    Discarded __getmbcp from LIBC.lib(mbctype.obj)\n    Discarded ___crtGetEnvironmentStringsW from LIBC.lib(aw_env.obj)\n    Discarded __except1 from LIBC.lib(fpexcept.obj)\n    Discarded __handle_qnan1 from LIBC.lib(fpexcept.obj)\n    Discarded __set_bexp from LIBC.lib(util.obj)\n    Discarded __add_exp from LIBC.lib(util.obj)\n    Discarded __get_exp from LIBC.lib(util.obj)\n    Discarded __tolower from LIBC.lib(tolower.obj)\n    Discarded __ioterm from LIBC.lib(ioinit.obj)\n    Discarded \"int (__cdecl*__cdecl _query_new_handler(void))(unsigned int)\" (?_query_new_handler@@YAP6AHI@ZXZ) from LIBC.lib(handler.obj)\n    Discarded \"int (__cdecl*__cdecl _set_new_handler(int (__cdecl*)(unsigned int)))(unsigned int)\" (?_set_new_handler@@YAP6AHI@ZP6AHI@Z@Z) from LIBC.lib(handler.obj)\n    Discarded ___sbh_heap_check from LIBC.lib(sbheap.obj)\n    Discarded ___sbh_resize_block from LIBC.lib(sbheap.obj)\n    Discarded __set_sbh_threshold from LIBC.lib(sbheap.obj)\n    Discarded __get_sbh_threshold from LIBC.lib(sbheap.obj)\n    Discarded __heap_term from LIBC.lib(heapinit.obj)\n    Discarded __fpclass from LIBC.lib(ieeemisc.obj)\n    Discarded __isnan from LIBC.lib(ieeemisc.obj)\n    Discarded __nextafter from LIBC.lib(ieeemisc.obj)\n    Discarded __logb from LIBC.lib(ieeemisc.obj)\n    Discarded __scalb from LIBC.lib(ieeemisc.obj)\n    Discarded __chgsign from LIBC.lib(ieeemisc.obj)\n    Discarded __c_exit from LIBC.lib(crt0dat.obj)\n    Discarded __cexit from LIBC.lib(crt0dat.obj)\n    Discarded __unlink from LIBC.lib(unlink.obj)\n    Discarded __fpreset from LIBC.lib(ieee87.obj)\n    Discarded ___setfflag from LIBC.lib(fpinit.obj)\n    Discarded _GetSystemInfo@4 from kernel32.lib(KERNEL32.dll)\n    Discarded _VirtualAlloc@16 from kernel32.lib(KERNEL32.dll)\n    Discarded _VirtualProtect@16 from kernel32.lib(KERNEL32.dll)\n    Discarded _VirtualFree@12 from kernel32.lib(KERNEL32.dll)\n    Discarded _GetFileAttributesA@4 from kernel32.lib(KERNEL32.dll)\n    Discarded _SetFileAttributesA@8 from kernel32.lib(KERNEL32.dll)\n    Discarded _GetWindowsDirectoryA@8 from kernel32.lib(KERNEL32.dll)\n    Discarded _GetCurrentDirectoryA@8 from kernel32.lib(KERNEL32.dll)\n    Discarded _bh_math_ulp from math_cases.obj\n\n    Selected symbol:\n        \".text\" from blocks_tests.obj\n    Replaced symbol(s):\n        \".text\" from math_numeric.obj\n\n    Selected symbol:\n        \".text\" from bh_config.obj\n    Replaced symbol(s):\n        \".text\" from bh_blocks.obj\n        \".text\" from bh_scene.obj\n        \".text\" from bh_bsp.obj\n\n    Selected symbol:\n        \".text\" from bh_config.obj\n    Replaced symbol(s):\n        \".text\" from bh_blocks.obj\n        \".text\" from bh_bsp.obj\n        \".text\" from bh_scene.obj\n\n    Selected symbol:\n        \".text\" from blocks_tests.obj\n    Replaced symbol(s):\n        \".text\" from scene_tests.obj\n        \".text\" from bh_bsp.obj\n        \".text\" from config_tests.obj\n\n    Selected symbol:\n        \".text\" from blocks_tests.obj\n    Replaced symbol(s):\n        \".text\" from scene_tests.obj\n        \".text\" from config_tests.obj\n        \".text\" from vfile_tests.obj\n\n    Selected symbol:\n        \".text\" from bh_scene.obj\n    Replaced symbol(s):\n        \".text\" from vfile_tests.obj\n        \".text\" from bh_vfile.obj\n\n    Selected symbol:\n        \".text\" from blocks_tests.obj\n    Replaced symbol(s):\n        \".text\" from scene_tests.obj\n\n    Selected symbol:\n        \".text\" from blocks_tests.obj\n    Replaced symbol(s):\n        \".text\" from config_tests.obj\n        \".text\" from scene_tests.obj\n        \".text\" from vfile_tests.obj\n\n    ICF total savings: 848 bytes\n\nStart Pass2\n     blocks_tests.obj\n     bh_blocks.obj\n     bh_bsp.obj\n     scene_tests.obj\n     bh_scene.obj\n     config_tests.obj\n     bh_paths.obj\n     bh_config.obj\n     math_numeric.obj\n     math_cases.obj\n     checkpoint.obj\n     vfile_tests.obj\n     integration.obj\n     bh_vfile.obj\n     bh_fp.obj\n     bh_math.obj\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     kernel32.lib(KERNEL32.dll)\n     LIBC.lib(constpow.obj)\n     LIBC.lib(setmode.obj)\n     LIBC.lib(tenpow.obj)\n     LIBC.lib(txtmode.obj)\n     LIBC.lib(chsize.obj)\n     LIBC.lib(x10fout.obj)\n     LIBC.lib(strgtold.obj)\n     LIBC.lib(mantold.obj)\n     LIBC.lib(strncpy.obj)\n     LIBC.lib(crtmbox.obj)\n     LIBC.lib(aw_str.obj)\n     LIBC.lib(wcslen.obj)\n     LIBC.lib(matherr.obj)\n     LIBC.lib(ullrem.obj)\n     LIBC.lib(ulldiv.obj)\n     LIBC.lib(wctomb.obj)\n     LIBC.lib(isatty.obj)\n     LIBC.lib(aw_map.obj)\n     LIBC.lib(ncommode.obj)\n     LIBC.lib(open.obj)\n     LIBC.lib(_getbuf.obj)\n     LIBC.lib(osfinfo.obj)\n     LIBC.lib(crt0fp.obj)\n     LIBC.lib(memmove.obj)\n     LIBC.lib(cfout.obj)\n     LIBC.lib(_fptostr.obj)\n     LIBC.lib(intrncvt.obj)\n     LIBC.lib(isctype.obj)\n     LIBC.lib(ctype.obj)\n     LIBC.lib(nlsdata1.obj)\n     LIBC.lib(crt0msg.obj)\n     LIBC.lib(exsup3.obj)\n     LIBC.lib(exsup.obj)\n     LIBC.lib(mbctype.obj)\n     LIBC.lib(aw_env.obj)\n     LIBC.lib(stdargv.obj)\n     LIBC.lib(stdenvp.obj)\n     LIBC.lib(crt0init.obj)\n     LIBC.lib(fpctrl.obj)\n     LIBC.lib(fpexcept.obj)\n     LIBC.lib(util.obj)\n     LIBC.lib(_flsbuf.obj)\n     LIBC.lib(dosmap.obj)\n     LIBC.lib(output.obj)\n     LIBC.lib(_sftbuf.obj)\n     LIBC.lib(closeall.obj)\n     LIBC.lib(write.obj)\n     LIBC.lib(commit.obj)\n     LIBC.lib(tolower.obj)\n     LIBC.lib(nlsdata2.obj)\n     LIBC.lib(stream.obj)\n     LIBC.lib(_open.obj)\n     LIBC.lib(lseek.obj)\n     LIBC.lib(ioinit.obj)\n     LIBC.lib(read.obj)\n     LIBC.lib(_filbuf.obj)\n     LIBC.lib(handler.obj)\n     LIBC.lib(_newmode.obj)\n     LIBC.lib(_freebuf.obj)\n     LIBC.lib(close.obj)\n     LIBC.lib(sbheap.obj)\n     LIBC.lib(heapinit.obj)\n     LIBC.lib(winxfltr.obj)\n     LIBC.lib(cmiscdat.obj)\n     LIBC.lib(cvt.obj)\n     LIBC.lib(testfdiv.obj)\n     LIBC.lib(fp8.obj)\n     LIBC.lib(crt0.obj)\n     LIBC.lib(ieeemisc.obj)\n     LIBC.lib(calloc.obj)\n     LIBC.lib(mkdir.obj)\n     LIBC.lib(rmdir.obj)\n     LIBC.lib(sprintf.obj)\n     LIBC.lib(crt0dat.obj)\n     LIBC.lib(ldexp.obj)\n     LIBC.lib(chkstk.obj)\n     LIBC.lib(strrchr.obj)\n     LIBC.lib(strcspn.obj)\n     LIBC.lib(fwrite.obj)\n     LIBC.lib(unlink.obj)\n     LIBC.lib(fgets.obj)\n     LIBC.lib(printf.obj)\n     LIBC.lib(_file.obj)\n     LIBC.lib(fflush.obj)\n     LIBC.lib(stricmp.obj)\n     LIBC.lib(fopen.obj)\n     LIBC.lib(fseek.obj)\n     LIBC.lib(ftell.obj)\n     LIBC.lib(fread.obj)\n     LIBC.lib(malloc.obj)\n     LIBC.lib(memchr.obj)\n     LIBC.lib(fclose.obj)\n     LIBC.lib(free.obj)\n     LIBC.lib(ieee87.obj)\n     LIBC.lib(fpinit.obj)\nEnd Pass2\n"
+    },
+    {
+      "label": "scenario",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\build\\m0\\bhunter-integration.exe",
+        "D:\\Decomp\\Bhunter\\GAME_DATA\\Bhunter.bin"
+      ],
+      "exit_code": 1,
+      "output": "{\"scenario\":\"m0-source-math\",\"checks\":14,\"failures\":0,\"original_code_required\":false}\n{\"scenario\":\"math-numerical\",\"checks\":28302,\"failures\":0,\"golden_cases\":4032,\"profile\":\"x87-PC53-nearest-masked\",\"original_code_required\":false}\nVFILE:EXTERNAL :vopen(bhvf_alpha.dat,rb)\nVFILE:EMBEDDED :vopen(bhvf_alpha.dat,rb)\nVFILE:PRELOADED:vopen(bhvf_alpha.dat,rb)\n{\"scenario\":\"vfile-real-assets\",\"entries\":1229,\"payload_bytes\":12839409,\"preload_payload_bytes\":1168813,\"classes\":[505,459,203,60,1,1]}\n{\"scenario\":\"vfile\",\"checks\":20461,\"failures\":0,\"original_code_required\":false}\n{\"scenario\":\"config-container-path\",\"checks\":2508,\"failures\":0,\"original_code_required\":false}\n{\"scenario\":\"scene-real-assets\",\"backend\":\"embedded\",\"placements\":5815,\"links\":543,\"route_nodes\":283,\"route_cells\":80089}\n{\"scenario\":\"scene-real-assets\",\"backend\":\"preloaded\",\"placements\":5815,\"links\":543,\"route_nodes\":283,\"route_cells\":80089}\n{\"scenario\":\"scene-real-assets\",\"backend\":\"loose\",\"placements\":5815,\"links\":543,\"route_nodes\":283,\"route_cells\":80089}\n{\"scenario\":\"scene-readers\",\"checks\":259927,\"failures\":0,\"original_code_required\":false}\nFIRST BSP bounds BSP\\CARTIT00.BSP nodes=128 root=4050f604 expected=4050f604\nFAIL BSP line 107: all derived collision bounds match independent Python binary32 controls\nFAIL BSP line 107: all derived collision bounds match independent Python binary32 controls\nFAIL BSP line 107: all derived collision bounds match independent Python binary32 controls\nFAIL BSP line 107: all derived collision bounds match independent Python binary32 controls\nFAIL BSP line 107: all derived collision bounds match independent Python binary32 controls\nFAIL BSP line 107: all derived collision bounds match independent Python binary32 controls\nFAIL BSP line 107: all derived collision bounds match independent Python binary32 controls\nFAIL BSP line 107: all derived collision bounds match independent Python binary32 controls\nFAIL BSP line 107: all derived collision bounds match independent Python binary32 controls\nFAIL BSP line 107: all derived collision bounds match independent Python binary32 controls\nFAIL BSP line 107: all derived collision bounds match independent Python binary32 controls\nFAIL BSP line 107: all derived collision bounds match independent Python binary32 controls\n{\"scenario\":\"blocks-real-assets\",\"bsp_files\":505,\"backend_decodes\":1515,\"registry_models\":454,\"unapplied_scripts\":202,\"resolved_placements\":5815}\n{\"scenario\":\"bsp-block-data\",\"checks\":26087,\"failures\":921,\"original_code_required\":false}\n{\"scenario\":\"m2-foundations\",\"checks\":337299,\"failures\":1,\"archive_entries\":1229,\"original_code_required\":false}\n"
+    }
+  ],
+  "passed": false,
+  "environment": {
+    "INCLUDE": "D:\\Decomp\\MSCVC\\MSVC5\\SP3_EXTRACTED\\VS97_SP3\\all\\vc\\include;D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\include",
+    "LIB": "D:\\Decomp\\MSCVC\\MSVC5\\SP3_EXTRACTED\\VS97_SP3\\all\\vc\\lib;D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\lib"
+  },
+  "dependency_manifest_sha256": "21ff5211555a44bd8e14b0f0286c16ffbe9c7a18629afa1033dd364c76573c06",
+  "sources": {
+    "src/bh_math.c": "ce111e18659563a2c41a04b645295227aac6ead9fe9cc2e803ac45c726d6e9bc",
+    "src/bh_math.h": "9ebaf91c16011277e1e2f9a9c3791b3ea1245dafa3e096d918422378d6065a9d",
+    "src/bh_fp.c": "cc8400a29fd082f96ffd9b483f490a44992717b25eac0cb32e2e108ba446f3f8",
+    "src/bh_fp.h": "f4565fc55c52d3582181db98d3199f6c8f9b665ffd227ab715ce7a03ab4e818d",
+    "src/bh_vfile.c": "7a8187efa6bfcbdf7a626ff53c6d4133d47a37e2dcf65830985b5cee94bf78d0",
+    "src/bh_vfile.h": "7867198f05fbfa5a4b3ae2a003245e8ff7faaea72e1194852d32b18a0ecae7ba",
+    "src/bh_config.c": "6081596cb764118e0441ce5d3e0cf897a6ce011ca2d7e9aaa81a6ab5ef58092e",
+    "src/bh_config.h": "a82e0abf34974bec247852e225904afe4821fe83d01e1e21f2d53e0b18f70dfc",
+    "src/bh_config_defaults.h": "492d14e242d011967eda0601cf98432ea26c821c9ebebca37c52bcb348688cfb",
+    "src/bh_paths.c": "0ce4a5312e27f1cec73425cea8a25b93677e9a619ec6aeb6c79f828c8293a977",
+    "src/bh_paths.h": "f5b49007ba7ed969612fbffa724b9a803aa4966249b803fd2137a555dbc03bdb",
+    "src/bh_scene.c": "8439df6593816139b4e5b60cb8e9c96283a66c8f18f5465ca1aeec3eee64e3e1",
+    "src/bh_scene.h": "0f999ccc243aeace1bba1b8008beb836760dd7c940adaec9ac53042213a6a48c",
+    "src/bh_bsp.c": "cc809550a2c905857839d9c89117b7f48a94975a7f067e221b634f9bf28e77ec",
+    "src/bh_bsp.h": "9c0c019f20d7496268212f9f18e2a58c96406bf05e7352cc553d71847b5fb263",
+    "src/bh_blocks.c": "d3279666e06ca171c9844124222bb0ecf886e35850ff0b82181a1a4bf3723881",
+    "src/bh_blocks.h": "a84569dcb145da56f83783cd65ab9c96c01e7e1413e79487492e9ea9d349d638",
+    "tests/blocks.c": "29ea598e1fd1d8624031a5603b50b5781e9a3de78fd5d14ea48ec51b6741879f",
+    "tests/bsp_manifest.h": "e1deb9990542d45ac3eb542dcc38159509780731a827f04778b94944811e6641",
+    "tests/block_names.h": "fc1d8777692e338a24e5612c645bdc9afe9b0d3c1f387f1dc5f406d9be73342d",
+    "tests/scene.c": "188af4318d63cc8272f7415ea2d78bb869f7cb1f2225404a4da8f0a5e46be056",
+    "tests/config.c": "0a6715aa5e4cbe02e53927be96f648b5c9101678c66e16fe40d47f3d23ac7961",
+    "tests/integration.c": "fb18f5cea1837a95c66800769a4dfa21e3e64cbcd2ec2bd9fa038b906607b8de",
+    "tests/checkpoint.c": "5babaa6924503f538202caaf2145887ce82abea1889d32ec4622931e3a39e533",
+    "tests/vfile.c": "4ce922ed286642015cbda949c6349fc194e04392d1b8309d497b40574ba16451",
+    "tests/math_cases.c": "907257316f265794a1a73da7ff04a7890fcd737d8906a8459ec188e9a1a70ca6",
+    "tests/math_cases.h": "66ea7025b3a0580ee8bb300707e10a4bb94cd9a7bcec779faf172cff35a64a82",
+    "tests/math_numeric.c": "01a96c8f47790525966352de86a42b90ad7ec2f39d0bbc9ef403512a53571de5",
+    "tests/math_golden.h": "bb91fd34bf9d908ce30f78e156526963c058b21f914448d68f03035f54fc0cec"
+  },
+  "archive": {
+    "path": "D:\\Decomp\\Bhunter\\GAME_DATA\\Bhunter.bin",
+    "sha256": "2393a661fd647ed6de3eee34c35c30812c44f3ee15b9d44244a63720804df581"
+  }
+}

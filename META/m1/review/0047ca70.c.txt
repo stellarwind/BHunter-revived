@@ -1,0 +1,90 @@
+
+undefined4 __cdecl FUN_0047ca70(LPCSTR param_1,char *param_2)
+
+{
+  char cVar1;
+  int *piVar2;
+  DWORD DVar3;
+  char *pcVar4;
+  char *pcVar5;
+  uint uVar6;
+  uint uVar7;
+  char *pcVar8;
+  
+  piVar2 = VFILE_Open(param_1,param_2);
+  if (piVar2 == (int *)0x0) {
+    return 0;
+  }
+  if (piVar2[6] != 0) {
+    return 1;
+  }
+  FUN_0047cec0(piVar2,0,2);
+  if (piVar2[6] == 0) {
+    if (piVar2[1] == 0) {
+      uVar6 = _ftell((undefined4 *)*piVar2);
+    }
+    else {
+      DVar3 = _ftell((undefined4 *)*piVar2);
+      piVar2[4] = DVar3;
+      uVar6 = DVar3 - piVar2[2];
+    }
+  }
+  else {
+    uVar6 = piVar2[4];
+  }
+  FUN_0047cec0(piVar2,0,0);
+  pcVar4 = (char *)FUN_0047dae0(uVar6);
+  if (pcVar4 != (char *)0x0) {
+    pcVar5 = (char *)FUN_0047dae0(0x100);
+    if (pcVar5 != (char *)0x0) {
+      FUN_0047cf60(pcVar4,uVar6,1,piVar2);
+      if (piVar2[1] == 0) {
+        _fclose((int *)*piVar2);
+      }
+      piVar2[2] = 0;
+      piVar2[3] = uVar6;
+      piVar2[4] = 0;
+      piVar2[5] = 0;
+      uVar6 = 0xffffffff;
+      piVar2[6] = (int)pcVar4;
+      do {
+        pcVar4 = param_1;
+        if (uVar6 == 0) break;
+        uVar6 = uVar6 - 1;
+        pcVar4 = param_1 + 1;
+        cVar1 = *param_1;
+        param_1 = pcVar4;
+      } while (cVar1 != '\0');
+      uVar6 = ~uVar6;
+      pcVar4 = pcVar4 + -uVar6;
+      pcVar8 = pcVar5;
+      for (uVar7 = uVar6 >> 2; uVar7 != 0; uVar7 = uVar7 - 1) {
+        *(undefined4 *)pcVar8 = *(undefined4 *)pcVar4;
+        pcVar4 = pcVar4 + 4;
+        pcVar8 = pcVar8 + 4;
+      }
+      for (uVar6 = uVar6 & 3; uVar6 != 0; uVar6 = uVar6 - 1) {
+        *pcVar8 = *pcVar4;
+        pcVar4 = pcVar4 + 1;
+        pcVar8 = pcVar8 + 1;
+      }
+      *(int **)(pcVar5 + 0xf8) = piVar2;
+      *(char **)(pcVar5 + 0xfc) = DAT_004f960c;
+      DAT_004f960c = pcVar5;
+      return 1;
+    }
+    FUN_0047db90(pcVar4);
+  }
+  if (piVar2[6] == 0) {
+    if (piVar2[1] == 0) {
+      _fclose((int *)*piVar2);
+      piVar2[7] = (int)DAT_004f9604;
+      DAT_004f9604 = piVar2;
+      return 0;
+    }
+    piVar2[7] = (int)DAT_004f9604;
+    DAT_004f9604 = piVar2;
+  }
+  return 0;
+}
+

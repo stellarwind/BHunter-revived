@@ -1,0 +1,71 @@
+{
+  "date": "2026-10-23",
+  "phase": "reader adapters compile/link/run; full original behaviors remain WIP",
+  "scope": "PTH reader plus owning route analysis; LEV parse frontier; no entity/gameplay stubs",
+  "records": [
+    {
+      "address": "00407f30",
+      "role": "engine_candidate",
+      "owner": "scene_path_reader",
+      "reason": "Full mapped 918-byte contiguous body; cdecl stack inputs; call from world initialization after opening test.pth; dependencies VFILE read, allocation/free and 00407d90; unknown engine provenance",
+      "implementation": "wip"
+    },
+    {
+      "address": "00407d90",
+      "role": "engine_candidate",
+      "owner": "scene_path_reader",
+      "reason": "406-byte mapped contiguous self-recursive route helper called by path reader; classify with its owning path behavior, not generic library provenance",
+      "implementation": "not_started"
+    },
+    {
+      "address": "004100d0",
+      "role": "game",
+      "owner": "scene_level_loader",
+      "reason": "M1 reviewed complete level load and entity construction; parser is intertwined with engine/entity routines; whole function cannot be claimed from data parsing alone",
+      "implementation": "wip"
+    }
+  ],
+  "excluded": [
+    "verified CRT allocation/free and imports",
+    "unrecovered entity creation/callback assignment, block registry and renderer objects",
+    "any extension to original-code mapper"
+  ],
+  "reader_contract": {
+    "level": "u32 nonnegative placement count; count * (16-byte name, three signed i32 coordinates, u32 flags); remaining whole records u32 placement ordinal + eight opaque signed i16 values",
+    "routes": "u32 node count then count squared cells: signed i32 local exit slot and float32 distance; matrix stored [destination * count + source] per 0040813a..00408151",
+    "scope": "Owned source data adapters only; no fabricated entities/block registry, graph or callback stubs",
+    "limits": "65535 placements and link records, 2048 route nodes, 64 MiB input; exact shape and count checks; finite nonnegative route distances, local exits -1..5; link payloads opaque, not all indices"
+  },
+  "real_assets": [
+    {
+      "name": "TEST.LEV",
+      "offset": 9817434,
+      "end": 10014378,
+      "size": 196944,
+      "sha256": "1da23c4537d874b15a40093038d2fec9bd8da53b83260efed5b4469c0bcf7df7",
+      "crc32": "a16870ea"
+    },
+    {
+      "name": "TEST.PTH",
+      "offset": 10014378,
+      "end": 10655094,
+      "size": 640716,
+      "sha256": "66f67e77a888834669649afba898b8d2d71bcc0b7029d3d765b0e30eb1efe5a9",
+      "crc32": "7cb20e83"
+    }
+  ],
+  "evidence": [
+    "META/m2/scene/original/004100d0.asm.txt",
+    "META/m2/scene/original/004100d0.c.txt",
+    "META/m2/scene/original/00407f30.asm.txt",
+    "META/m2/scene/original/00407f30.c.txt",
+    "META/m2/scene/original/00407d90.asm.txt",
+    "META/m2/scene/original/00407d90.c.txt",
+    "META/m2/scene/data-validation.json"
+  ],
+  "source_dependencies": [
+    "src/bh_scene.c and src/bh_scene.h; explicit owning data and allocator contract",
+    "source VFILE functions in src/bh_vfile.c, plus real CRT malloc/free/memcpy/memchr",
+    "No entity/graph original-code dependencies invoked; full original routines retain those pending dependencies"
+  ]
+}

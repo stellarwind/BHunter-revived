@@ -1,0 +1,22 @@
+
+void FUN_0042ea70(undefined4 param_1,int param_2)
+
+{
+  int iVar1;
+  
+  iVar1 = DAT_0049656c;
+  DAT_004d1984 = &DAT_004ef7cc + param_2 * 0xbc;
+  if (0 < param_2) {
+    DAT_004dfb1c = param_2;
+  }
+  *(undefined4 *)(DAT_0049656c + 0x1d0) = 3;
+  *(undefined4 *)(iVar1 + 0x1e0) = 0x40400000;
+  iVar1 = DAT_004d190c;
+  *(undefined4 *)(DAT_004d190c + 0x1d0) = 6;
+  *(undefined4 *)(iVar1 + 0x1e0) = 0x40c00000;
+  iVar1 = DAT_00496330;
+  *(undefined4 *)(DAT_00496330 + 0x1d0) = 2;
+  *(undefined4 *)(iVar1 + 0x1e0) = 0x40000000;
+  return;
+}
+

@@ -1,0 +1,14 @@
+# 0042caa0 undefined FUN_0042caa0(void) body=[[0042caa0, 0042cad2]]
+# IN From: 00448e4a To: 0042caa0 Type: DATA Op: 0 ANALYSIS
+# IN From: 00448e76 To: 0042caa0 Type: DATA Op: 0 ANALYSIS
+# IN From: 00448ea2 To: 0042caa0 Type: DATA Op: 0 ANALYSIS
+0042caa0 MOV ECX,dword ptr [0x004dfb1c]
+0042caa6 MOV EAX,dword ptr [ESP + 0x8]
+0042caaa MOV dword ptr [ESP + 0x8],ECX
+0042caae MOV [0x0048f9f4],EAX
+0042cab3 FILD dword ptr [ESP + 0x8]
+0042cab7 MOV EAX,[0x004d1a80]
+0042cabc FSTP float ptr [EAX + 0x1e0]
+0042cac2 MOV dword ptr [EAX + 0x1d0],ECX
+0042cac8 MOV dword ptr [0x004f0000],0x0
+0042cad2 RET

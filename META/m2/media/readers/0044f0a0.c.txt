@@ -1,0 +1,36 @@
+
+undefined4 __cdecl FUN_0044f0a0(LPCSTR param_1)
+
+{
+  int *piVar1;
+  uint uVar2;
+  int iVar3;
+  
+  piVar1 = VFILE_Open(param_1,&DAT_0048ff78);
+  DAT_004e1174 = piVar1;
+  if (piVar1 != (int *)0x0) {
+    iVar3 = 0;
+    do {
+      (&DAT_004e3320)[iVar3] = (char)iVar3;
+      iVar3 = iVar3 + 1;
+    } while (iVar3 < 0x100);
+    DAT_004ede7c._0_2_ = 0;
+    FUN_0047cec0(piVar1,0,0);
+    uVar2 = FUN_0047cf60(&DAT_004e9c28,0xc,1,DAT_004e1174);
+    if ((((uVar2 != 0) && (DAT_004e9c28 == '\n')) && (DAT_004e9c2a == '\x01')) &&
+       (DAT_004e9c2b == '\b')) {
+      DAT_004e2df0._0_2_ = (short)DAT_004e9c30 + 1;
+      DAT_004e3318._0_2_ = DAT_004e9c30._2_2_ + 1;
+      FUN_0047cec0(DAT_004e1174,-0x300,2);
+      uVar2 = FUN_0047cf60((char *)&DAT_004e8ce8,0x300,1,DAT_004e1174);
+      if (uVar2 != 0) {
+        FUN_0047cec0(DAT_004e1174,0x80,0);
+        DAT_004e2e04 = 0;
+        return 1;
+      }
+    }
+    FUN_0047ce50(DAT_004e1174);
+  }
+  return 0;
+}
+

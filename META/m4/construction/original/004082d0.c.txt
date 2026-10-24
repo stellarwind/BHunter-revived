@@ -1,0 +1,37 @@
+
+void FUN_004082d0(int *param_1,int param_2)
+
+{
+  int iVar1;
+  BHVec3 BStack_18;
+  BHVec3 BStack_c;
+  
+  iVar1 = 0;
+  if (0 < param_1[1]) {
+    do {
+      FUN_0044e240(param_1[10],*param_1,iVar1,&BStack_c.x);
+      bh_mat34_transform_point((BHMat34 *)(param_2 + 0x150),&BStack_c,&BStack_18);
+      if (BStack_18.x < *(float *)(param_2 + 0x1b0)) {
+        *(float *)(param_2 + 0x1b0) = BStack_18.x;
+      }
+      if (*(float *)(param_2 + 0x1bc) < BStack_18.x) {
+        *(float *)(param_2 + 0x1bc) = BStack_18.x;
+      }
+      if (BStack_18.y < *(float *)(param_2 + 0x1b4)) {
+        *(float *)(param_2 + 0x1b4) = BStack_18.y;
+      }
+      if (*(float *)(param_2 + 0x1c0) < BStack_18.y) {
+        *(float *)(param_2 + 0x1c0) = BStack_18.y;
+      }
+      if (BStack_18.z < *(float *)(param_2 + 0x1b8)) {
+        *(float *)(param_2 + 0x1b8) = BStack_18.z;
+      }
+      if (*(float *)(param_2 + 0x1c4) < BStack_18.z) {
+        *(float *)(param_2 + 0x1c4) = BStack_18.z;
+      }
+      iVar1 = iVar1 + 1;
+    } while (iVar1 < param_1[1]);
+  }
+  return;
+}
+

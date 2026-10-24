@@ -1,0 +1,273 @@
+{
+  "schema_version": 1,
+  "contract": "Observed x86 layouts and ownership facts, not final C headers. Decompiled signatures are advisory; caller cleanup, return instructions and offsets govern.",
+  "structures": [
+    {
+      "name": "BHVec3",
+      "bytes": 12,
+      "fields": {
+        "0": "float x",
+        "4": "float y",
+        "8": "float z"
+      },
+      "owner": "math_foundations",
+      "evidence": "src/bh_math.h"
+    },
+    {
+      "name": "BHMat34",
+      "bytes": 48,
+      "fields": {
+        "0": "float m[3][4], row-major affine 3x4"
+      },
+      "owner": "math_foundations",
+      "limits": "inverse routines require orthonormal basis; sequential write aliasing; PC24 unresolved"
+    },
+    {
+      "name": "ArchiveDirectoryRecord",
+      "bytes": 256,
+      "fields": {
+        "0": "248-byte NUL-terminated filename field",
+        "248": "u32 begin offset",
+        "252": "u32 exclusive end offset"
+      },
+      "owner": "archive_vfile",
+      "evidence": "0047d270 mount, 0047cbd0 open, assets-index.json"
+    },
+    {
+      "name": "VFILE observed wrapper",
+      "bytes": 32,
+      "fields": {
+        "0": "backing CRT FILE pointer",
+        "4": "archive backend flag (zero loose, nonzero archive)",
+        "8": "absolute start or zero for memory",
+        "12": "exclusive end",
+        "16": "cursor (archive absolute, memory relative)",
+        "20": "EOF flag",
+        "24": "memory base; nonzero selects preloaded mode",
+        "28": "recycle-list next pointer"
+      },
+      "owner": "archive_vfile",
+      "evidence": "0047cbd0/ce50/cea0/cec0/cf60/d050/d230; asm confirms offsets",
+      "limits": "loose FILE EOF reads offset 12 flag bit 0x10 of historical VC CRT FILE; do not transplant that into a modern opaque FILE"
+    },
+    {
+      "name": "PreloadedNameNode",
+      "bytes": 256,
+      "fields": {
+        "0": "248-byte filename storage",
+        "248": "VFILE pointer",
+        "252": "next cached-name node"
+      },
+      "owner": "archive_vfile",
+      "evidence": "0047ca70 and 0047cbd0",
+      "lifetime": "cached wrappers and payload outlive vclose; vopen resets same shared cursor; not independent handles"
+    },
+    {
+      "name": "EntitySlot candidate",
+      "bytes": 864,
+      "fields": {
+        "200": "callback slot",
+        "204": "callback slot",
+        "208": "update callback slot",
+        "212": "update-list next",
+        "216": "update-list previous",
+        "220": "pool/list link",
+        "224": "pool/list link"
+      },
+      "owner": "simulation_scripts",
+      "evidence": "00476e90 and 00476f20",
+      "limits": "partial layout; field meanings outside reviewed accesses and destruction remain unassigned"
+    },
+    {
+      "name": "RenderQueueSlot",
+      "bytes": 12,
+      "count": 3,
+      "base": "004ee308",
+      "fields": {
+        "0": "render buffer pointer",
+        "4": "busy flag",
+        "8": "ordering/state value"
+      },
+      "owner": "frame_scheduler",
+      "evidence": "00471c00 and 00471e00",
+      "lifetime": "three 0x47c70-byte allocations; mutex and worker coordination; ownership/release not yet fully validated"
+    },
+    {
+      "name": "DIDATAFORMAT and object array",
+      "address": "0047d380..0047d657",
+      "owner": "window_input",
+      "fields": {
+        "0047d380": "44 x 16-byte object formats",
+        "0047d640": "dwSize=24, dwObjSize=16, ABSAXIS=1, dataSize=80, objects=44, array=0047d380"
+      },
+      "evidence": "004712b0 pushes 0047d640 before device vtable+0x2c; local dx7sdk/include/dinput.h layout",
+      "limits": "SDK-compatible data layout; exact historical SDK version unproven"
+    }
+  ],
+  "globals": [
+    {
+      "address": "004f95f8",
+      "bytes": 4,
+      "owner": "archive_vfile",
+      "description": "entry first-access/order array, four bytes per archive entry",
+      "evidence": "review/references.tsv and VFILE asm"
+    },
+    {
+      "address": "004f95fc",
+      "bytes": 4,
+      "owner": "archive_vfile",
+      "description": "VFILE debug flags: 1 cache, 2 embedded, 4 external",
+      "evidence": "review/references.tsv and VFILE asm"
+    },
+    {
+      "address": "004f9600",
+      "bytes": 4,
+      "owner": "archive_vfile",
+      "description": "first-access sequence counter",
+      "evidence": "review/references.tsv and VFILE asm"
+    },
+    {
+      "address": "004f9604",
+      "bytes": 4,
+      "owner": "archive_vfile",
+      "description": "32-byte wrapper recycle-list head",
+      "evidence": "review/references.tsv and VFILE asm"
+    },
+    {
+      "address": "004f9608",
+      "bytes": 4,
+      "owner": "archive_vfile",
+      "description": "archive directory allocation",
+      "evidence": "review/references.tsv and VFILE asm"
+    },
+    {
+      "address": "004f960c",
+      "bytes": 4,
+      "owner": "archive_vfile",
+      "description": "preloaded-name linked-list head",
+      "evidence": "review/references.tsv and VFILE asm"
+    },
+    {
+      "address": "004f9610",
+      "bytes": 4,
+      "owner": "archive_vfile",
+      "description": "shared archive CRT FILE pointer",
+      "evidence": "review/references.tsv and VFILE asm"
+    },
+    {
+      "address": "004f9614",
+      "bytes": 4,
+      "owner": "archive_vfile",
+      "description": "archive directory entry count",
+      "evidence": "review/references.tsv and VFILE asm"
+    },
+    {
+      "address": "004f9618",
+      "bytes": 4,
+      "owner": "archive_vfile",
+      "description": "optional cdecl float progress callback",
+      "evidence": "review/references.tsv and VFILE asm"
+    },
+    {
+      "address": "004ee738",
+      "owner": "startup_scene",
+      "description": "256-byte discovered archive path",
+      "evidence": "frontier disassembly and references; sizes only stated where observed"
+    },
+    {
+      "address": "004ee838",
+      "owner": "startup_scene",
+      "description": "256-byte discovered INI path",
+      "evidence": "frontier disassembly and references; sizes only stated where observed"
+    },
+    {
+      "address": "0049189c",
+      "owner": "startup_scene",
+      "description": "copyright XOR expected value 0x6b405d08",
+      "evidence": "frontier disassembly and references; sizes only stated where observed"
+    },
+    {
+      "address": "004ee730",
+      "owner": "frame_scheduler",
+      "description": "render mutex HANDLE",
+      "evidence": "frontier disassembly and references; sizes only stated where observed"
+    },
+    {
+      "address": "004ee300",
+      "owner": "frame_scheduler",
+      "description": "worker HANDLE",
+      "evidence": "frontier disassembly and references; sizes only stated where observed"
+    },
+    {
+      "address": "004ee950",
+      "owner": "window_input",
+      "description": "window active/focus state bits",
+      "evidence": "frontier disassembly and references; sizes only stated where observed"
+    },
+    {
+      "address": "00491890",
+      "owner": "frame_scheduler",
+      "description": "double scheduler period adjustment",
+      "evidence": "frontier disassembly and references; sizes only stated where observed"
+    },
+    {
+      "address": "004f5574/004f5578",
+      "owner": "startup_scene",
+      "description": "simulation/worker shutdown handshake",
+      "evidence": "frontier disassembly and references; sizes only stated where observed"
+    }
+  ],
+  "dispatch_tables": [
+    {
+      "address": "00491880",
+      "owner": "renderer_platform",
+      "behavior": "render callback initially common RET 0047d680, set to 00479090 by 00479120 via 00471df0; called by 00471e00"
+    },
+    {
+      "address": "00491884",
+      "owner": "frame_scheduler",
+      "behavior": "simulation callback initially common RET; set to 00479140 by 00471c00; called by WinMain with double delta argument"
+    },
+    {
+      "address": "00491888",
+      "owner": "window_input",
+      "behavior": "cdecl message hook initially 00471be0; replaced by 00473c40; stdcall WNDPROC wrapper performs caller cleanup"
+    },
+    {
+      "address": "00473d28 and 00473d40",
+      "owner": "00473c40",
+      "behavior": "switch jump tables in application message hook; JMP at 00473c5c and 00473cd5; targets stay in owning hook body; table bytes are not functions"
+    },
+    {
+      "address": "0048fa60..0048fb4f sample",
+      "owner": "simulation_scripts",
+      "behavior": "repeated callback pointer data including common RET sentinel; table words exported; do not claim a recovered C++ vtable or infer class layouts"
+    },
+    {
+      "address": "00492ddc..00492de4",
+      "owner": "crt_runtime",
+      "behavior": "runtime FP initialization/callback pointers including __fpmath and shared RET; not gameplay methods"
+    },
+    {
+      "address": "004ee940/944/948/94c; 004e9c48/58/5c; 004edee0/4/8; 004effe8/ec",
+      "owner": "platform_interfaces",
+      "behavior": "DirectDraw/Direct3D/Input/DirectPlay COM interface storage; external SDK method tables, not guessed game vtables",
+      "limits": "recover exact interface type and each invoked slot before implementing; initial raw decompiler COM argument lists are wrong"
+    }
+  ],
+  "numerical_contract": {
+    "startup": "Verified __setdefaultprecision at 0047e930 calls controlfp(0x10000,0x30000), selecting PC53 in the CRT startup environment",
+    "limits": "Does not prove precision throughout rendering, driver calls, threads or simulation. Runtime traces and PC24 differences still required."
+  },
+  "unresolved_lifetimes": [
+    "WinMain closes the shared archive FILE after bootstrap; identify which later loads use cached data before changing phase lifetimes.",
+    "Mount replaces directory and access-order storage; repeated mount/error cleanup needs a defined safe contract and validation.",
+    "Preloaded filename lookup returns shared mutable wrapper, so overlapping opens share cursor/EOF.",
+    "Worker termination and source resource shutdown must follow observed ordering; no new threading backend is admitted."
+  ],
+  "sdk_layout_reference": {
+    "path": "D:\\Decomp\\dx7sdk\\include\\dinput.h",
+    "sha256": "db6bf3260acd55e0acf3d7c717ab32b732b0a1a92e02f9454d605ccdfb828472",
+    "use": "Only definitions of DIDATAFORMAT/DIOBJECTDATAFORMAT and documented COM slots; not proof of original SDK version"
+  }
+}

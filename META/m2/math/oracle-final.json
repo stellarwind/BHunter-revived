@@ -1,0 +1,473 @@
+{
+  "target": "bhunter-math-oracle.exe",
+  "adapter": "unchanged pinned analysis/math/differential.c mapper; same ten math functions only",
+  "exe_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+  "sources": {
+    "src/bh_math.c": "ce111e18659563a2c41a04b645295227aac6ead9fe9cc2e803ac45c726d6e9bc",
+    "src/bh_math.h": "9ebaf91c16011277e1e2f9a9c3791b3ea1245dafa3e096d918422378d6065a9d",
+    "tests/math_cases.c": "907257316f265794a1a73da7ff04a7890fcd737d8906a8459ec188e9a1a70ca6",
+    "tests/math_cases.h": "66ea7025b3a0580ee8bb300707e10a4bb94cd9a7bcec779faf172cff35a64a82",
+    "tests/math_oracle.c": "d22e976b3657ae543536ce53374784e17e3c35f05ce46797824cd1b5a6715154",
+    "analysis/math/differential.c": "aa1612949e5c6037e4829a06c4739ccd2b26d2bda44874b392b4b59bca1d4233"
+  },
+  "commands": [
+    {
+      "label": "compile-bh_math",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\math-oracle\\final\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_math.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_math.c\n"
+    },
+    {
+      "label": "compile-math_cases",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\math-oracle\\final\\math_cases.obj",
+        "D:\\Decomp\\Bhunter\\tests\\math_cases.c"
+      ],
+      "exit_code": 0,
+      "output": "math_cases.c\n"
+    },
+    {
+      "label": "compile-math_oracle",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\math-oracle\\final\\math_oracle.obj",
+        "D:\\Decomp\\Bhunter\\tests\\math_oracle.c"
+      ],
+      "exit_code": 0,
+      "output": "math_oracle.c\n"
+    },
+    {
+      "label": "link",
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/base:0x10000000",
+        "/fixed",
+        "/subsystem:console",
+        "/map:D:\\Decomp\\Bhunter\\build\\math-oracle\\final\\oracle.map",
+        "/out:D:\\Decomp\\Bhunter\\build\\math-oracle\\final\\bhunter-math-oracle.exe",
+        "D:\\Decomp\\Bhunter\\build\\math-oracle\\final\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\build\\math-oracle\\final\\math_cases.obj",
+        "D:\\Decomp\\Bhunter\\build\\math-oracle\\final\\math_oracle.obj",
+        "kernel32.lib"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "label": "scenario",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\build\\math-oracle\\final\\bhunter-math-oracle.exe",
+        "D:\\Decomp\\Bhunter\\GAME_DATA\\BHUNTER.EXE",
+        "D:\\Decomp\\Bhunter\\tests\\math_golden.h"
+      ],
+      "exit_code": 0,
+      "output": "{\"mode\":0,\"function\":0,\"cases\":10496,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":0,\"function\":1,\"cases\":52480,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":0,\"function\":2,\"cases\":10496,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":0,\"function\":3,\"cases\":20992,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":0,\"function\":4,\"cases\":20992,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":0,\"function\":5,\"cases\":20992,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":0,\"function\":6,\"cases\":20992,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":0,\"function\":7,\"cases\":10496,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":0,\"function\":8,\"cases\":10496,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":0,\"function\":9,\"cases\":10496,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":54,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\nFIRST mode=1 function=6 alias=0 case=35 expected_status=0 actual_status=0 expected=ca800000,ca7ffffc,4b000000, actual=ca800000,ca7ffffd,4b000000,\n{\"mode\":1,\"function\":0,\"cases\":10496,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":1,\"function\":1,\"cases\":52480,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":1,\"function\":2,\"cases\":10496,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":1,\"function\":3,\"cases\":20992,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":1,\"function\":4,\"cases\":20992,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":1,\"function\":5,\"cases\":20992,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":1,\"function\":6,\"cases\":20992,\"return_differences\":0,\"finite_word_differences\":3596,\"classification_or_infinity_differences\":0,\"max_ulp\":512,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":1,\"function\":7,\"cases\":10496,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":1,\"function\":8,\"cases\":10496,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":1,\"function\":9,\"cases\":10496,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":54,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":2,\"function\":0,\"cases\":10496,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":2,\"function\":1,\"cases\":52480,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":2,\"function\":2,\"cases\":10496,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":2,\"function\":3,\"cases\":20992,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":2,\"function\":4,\"cases\":20992,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":2,\"function\":5,\"cases\":20992,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":2,\"function\":6,\"cases\":20992,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":2,\"function\":7,\"cases\":10496,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":2,\"function\":8,\"cases\":10496,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":2,\"function\":9,\"cases\":10496,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":54,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"scenario\":\"expanded-math-oracle\",\"pc53_failing_cases\":0}\n"
+    }
+  ],
+  "passed": true,
+  "environment": {
+    "INCLUDE": "D:\\Decomp\\MSCVC\\MSVC5\\SP3_EXTRACTED\\VS97_SP3\\all\\vc\\include;D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\include",
+    "LIB": "D:\\Decomp\\MSCVC\\MSVC5\\SP3_EXTRACTED\\VS97_SP3\\all\\vc\\lib;D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\lib"
+  },
+  "dependency_manifest_sha256": "21ff5211555a44bd8e14b0f0286c16ffbe9c7a18629afa1033dd364c76573c06",
+  "results": [
+    {
+      "mode": 0,
+      "function": 0,
+      "cases": 10496,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 0,
+      "function": 1,
+      "cases": 52480,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 0,
+      "function": 2,
+      "cases": 10496,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 0,
+      "function": 3,
+      "cases": 20992,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 0,
+      "function": 4,
+      "cases": 20992,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 0,
+      "function": 5,
+      "cases": 20992,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 0,
+      "function": 6,
+      "cases": 20992,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 0,
+      "function": 7,
+      "cases": 10496,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 0,
+      "function": 8,
+      "cases": 10496,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 0,
+      "function": 9,
+      "cases": 10496,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 54,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 1,
+      "function": 0,
+      "cases": 10496,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 1,
+      "function": 1,
+      "cases": 52480,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 1,
+      "function": 2,
+      "cases": 10496,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 1,
+      "function": 3,
+      "cases": 20992,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 1,
+      "function": 4,
+      "cases": 20992,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 1,
+      "function": 5,
+      "cases": 20992,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 1,
+      "function": 6,
+      "cases": 20992,
+      "return_differences": 0,
+      "finite_word_differences": 3596,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 512,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 1,
+      "function": 7,
+      "cases": 10496,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 1,
+      "function": 8,
+      "cases": 10496,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 1,
+      "function": 9,
+      "cases": 10496,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 54,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 2,
+      "function": 0,
+      "cases": 10496,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 2,
+      "function": 1,
+      "cases": 52480,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 2,
+      "function": 2,
+      "cases": 10496,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 2,
+      "function": 3,
+      "cases": 20992,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 2,
+      "function": 4,
+      "cases": 20992,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 2,
+      "function": 5,
+      "cases": 20992,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 2,
+      "function": 6,
+      "cases": 20992,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 2,
+      "function": 7,
+      "cases": 10496,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 2,
+      "function": 8,
+      "cases": 10496,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 2,
+      "function": 9,
+      "cases": 10496,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 54,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "scenario": "expanded-math-oracle",
+      "pc53_failing_cases": 0
+    }
+  ],
+  "counterexamples": [
+    "FIRST mode=1 function=6 alias=0 case=35 expected_status=0 actual_status=0 expected=ca800000,ca7ffffc,4b000000, actual=ca800000,ca7ffffd,4b000000,"
+  ],
+  "golden": {
+    "path": "tests\\math_golden.h",
+    "sha256": "bb91fd34bf9d908ce30f78e156526963c058b21f914448d68f03035f54fc0cec"
+  }
+}

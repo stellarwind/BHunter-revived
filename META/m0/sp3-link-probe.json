@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "target": "bhunter-integration.exe",
+  "original_code_required": false,
+  "commands": [
+    {
+      "label": "compile-bh_math",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\m0\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_math.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_math.c\n"
+    },
+    {
+      "label": "compile-integration",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\m0\\integration.obj",
+        "D:\\Decomp\\Bhunter\\tests\\integration.c"
+      ],
+      "exit_code": 0,
+      "output": "integration.c\n"
+    },
+    {
+      "label": "link",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\link.exe",
+        "/nologo",
+        "/subsystem:console",
+        "/verbose",
+        "/map:D:\\Decomp\\Bhunter\\build\\m0\\bhunter-integration.map",
+        "/out:D:\\Decomp\\Bhunter\\build\\m0\\bhunter-integration.exe",
+        "D:\\Decomp\\Bhunter\\build\\m0\\integration.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_math.obj",
+        "kernel32.lib"
+      ],
+      "exit_code": 3221225785,
+      "output": ""
+    }
+  ],
+  "passed": false,
+  "environment": {
+    "INCLUDE": "D:\\Decomp\\MSCVC\\MSVC5\\SP3_EXTRACTED\\VS97_SP3\\all\\vc\\include;D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\include",
+    "LIB": "D:\\Decomp\\MSCVC\\MSVC5\\SP3_EXTRACTED\\VS97_SP3\\all\\vc\\lib;D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\lib"
+  },
+  "dependency_manifest_sha256": "ee88ae838de423d46e1e69d7d7fa7ae74ef5a217381027c37c04818cf4275570",
+  "sources": {
+    "src/bh_math.c": "7b2345ec74dc49c935c6e1ae53f222339eca4399c4d731150348f7b5c5324a00",
+    "src/bh_math.h": "07c09e2d9627aad6dfa9d3e8b5ca328bba21eff729dcf6d8aa570781e3e1fb40",
+    "tests/integration.c": "fb18f5cea1837a95c66800769a4dfa21e3e64cbcd2ec2bd9fa038b906607b8de"
+  }
+}

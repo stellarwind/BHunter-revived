@@ -2,6 +2,12 @@
 #define BH_MATH_H
 
 /* Recovered binary layouts. Names are ours; original source names are unknown. */
+/* Current admitted source profile: x87 PC53/nearest, all exceptions masked;
+   see bh_fp.h for explicit integration-boundary control support.
+   Cross and transforms allow output==vector input with observed sequential
+   stores; matrix multiply/inverse outputs must not overlap their inputs.
+   Inverse operations assume an orthonormal basis for inverse semantics.
+   NaN result class/status is tested; NaN payload/sign is not guaranteed. */
 typedef struct BHVec3 { float x, y, z; } BHVec3;
 typedef struct BHMat34 { float m[3][4]; } BHMat34;
 

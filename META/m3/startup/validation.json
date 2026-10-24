@@ -1,0 +1,68 @@
+{
+  "date": "2026-10-24",
+  "passed": true,
+  "scope": "M3 isolated original config/device/renderer startup only; no game bootstrap executed",
+  "m3_complete": false,
+  "goal_active": true,
+  "visual_ui_tooling_used": false,
+  "input_injection_used": false,
+  "original_code_executes": true,
+  "normal_integration_target_changed": false,
+  "original_file_patches": 0,
+  "temporary_breakpoints_restored": true,
+  "private_registry_cleanup_verified": true,
+  "windows_config_files_unchanged": true,
+  "source_controls_previously_verified": true,
+  "original_config_specimen": {
+    "bytes": 644,
+    "settings_bytes": 416,
+    "profile_records": 3,
+    "source": "startup/c57437263011.json"
+  },
+  "native_renderer": {
+    "show_parameter": 1,
+    "preset": "software-high",
+    "attempted_modes": 6,
+    "successful_modes": 0,
+    "first_display_hresult": "80004001",
+    "original_fatal_error_reached": true
+  },
+  "compatibility_renderer": {
+    "show_parameter": 1,
+    "preset": "software-high",
+    "dependency": "DDrawCompat v0.7.2 prerelease",
+    "display_hresult": "00000000",
+    "renderer_return": 1,
+    "reached_original_bootstrap_entry": "00479200",
+    "bootstrap_executed": false
+  },
+  "precision": {
+    "observed_control": "027f",
+    "scope": "Only captured startup/config/renderer boundaries; worker/gameplay precision not established"
+  },
+  "audit_command": "python tools/check_m3_startup_evidence.py",
+  "artifacts": {
+    "tools/m3_startup_probe.c": "ad409c777afe11f3617799b6b575c5d1f2b4a7edc5dfba21c2b5d4ae459655d4",
+    "tools/m3_startup_probe.py": "cd3799c869e8c78416436f5ad5ddf73b5dc457f5a583d987b7edc8bad264c0f8",
+    "tools/m3_prepare_ddrawcompat.py": "dd47e14f6206dcfafbce6b6f4a9f7d4b6f9d26374a57f601d27cf199a3f44a09",
+    "tools/check_m3_startup_evidence.py": "0030c5f2f9b87c0b6d701cad6817c4d3de7dde16855b01c7505e913ca9c1ee6b",
+    "META/m3/STARTUP_DESIGN.md": "4a21250382b2540c591cd398d8823ef757e3e6833e4eebfde1bbbe7954f961ea",
+    "META/m3/REFERENCE.md": "f80925e1e5de6bfaf78e3e315c7786d2215163932e8b5138cb7ac81f1d78f5a0",
+    "META/m3/startup/host.json": "bff77526237c76f8c60c4377562f957782fd419893a4436990a233e44abd5873",
+    "META/m3/startup/c57437263011.json": "1a5eb64eeed9c723ac35c628cb02b492ae265bdf7bcc15de0f1252e96bb92554",
+    "META/m3/startup/c4fa4eb8b111.json": "84f2a61b80bc94ece335f4459ba6c34920cfbe6760ed6da88b1a7a4e49791639",
+    "META/m3/startup/dedff5a4e727.json": "1550edab7696308b60d34507666d3fb03b7708fb7d2e5465ac0e5d257c5fce07",
+    "META/m3/startup/62d00616a929.json": "ddbe57c3936fb4972ac1f31c4b1b66a6726cae3310065eed7ad6b9fc2033c0a5",
+    "META/m3/startup/dae86876751f.json": "107bea719b108c65ca9aa16604b2113bda8caa14aeb97da473e2b7d3047c7f82",
+    "META/m3/startup/e1ee374903ef.json": "0fcd0f5e9525ee83ac718496a847fb1fd488fe0ce254122142eba08f53fcc6ee",
+    "META/m3/compat/ddrawcompat-v0.7.2.json": "eb86cc234a751817ffd1663e39cd7a830d10159a79960748503e3b8f58ea5c67",
+    "META/m3/scenario-matrix.json": "4634eadb3a6b46b2481819ba2aa01e37ddb626140c29380929b1eabf6651a357"
+  },
+  "remaining": [
+    "Execute original game bootstrap and real scene loading in isolated reference environment",
+    "Capture actual menu/controls/input/seed/time/state traces",
+    "Movement/collision/objective/failure/retry and orderly shutdown/reload scenarios",
+    "Sound/music playback, track timing and looping",
+    "Original feature/mode/persistence/network inventory and later thread numerical state"
+  ]
+}

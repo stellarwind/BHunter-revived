@@ -1,0 +1,42 @@
+
+void __cdecl FUN_00410880(int *param_1,int param_2)
+
+{
+  int iVar1;
+  uint uVar2;
+  
+  iVar1 = __strcmpi((char *)param_1[3],s_PORTAL_GIF_004900d4);
+  if (iVar1 == 0) {
+    *(int *)(param_2 + 0x20 + *(int *)(param_2 + 0x18) * 4) = *param_1;
+    *(int *)(param_2 + 0x18) = *(int *)(param_2 + 0x18) + 1;
+    uVar2 = FUN_0044e230(param_1[10],*param_1);
+    FUN_0044e210(param_1[10],*param_1,uVar2 | 1);
+    return;
+  }
+  iVar1 = __strcmpi((char *)param_1[3],s_ROOF_GIF_004900c8);
+  if (iVar1 == 0) {
+    uVar2 = FUN_0044e230(param_1[10],*param_1);
+    FUN_0044e210(param_1[10],*param_1,uVar2 | 2);
+    return;
+  }
+  iVar1 = __strcmpi((char *)param_1[3],s_WATER_GIF_004900bc);
+  if (iVar1 == 0) {
+    *(uint *)(param_2 + 0x1c) = *(uint *)(param_2 + 0x1c) | 0x40;
+    uVar2 = FUN_0044e230(param_1[10],*param_1);
+    FUN_0044e210(param_1[10],*param_1,uVar2 | 4);
+    return;
+  }
+  iVar1 = __strcmpi((char *)param_1[3],s_SCRAPR2_TGA_004900b0);
+  if (iVar1 == 0) {
+    uVar2 = FUN_0044e230(param_1[10],*param_1);
+    FUN_0044e210(param_1[10],*param_1,uVar2 | 8);
+    return;
+  }
+  iVar1 = __strcmpi((char *)param_1[3],s_SCRAPR_TGA_004900a4);
+  if (iVar1 == 0) {
+    uVar2 = FUN_0044e230(param_1[10],*param_1);
+    FUN_0044e210(param_1[10],*param_1,uVar2 | 8);
+  }
+  return;
+}
+

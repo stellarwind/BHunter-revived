@@ -1,0 +1,30 @@
+
+undefined4 __fastcall FUN_00471cc0(undefined4 *param_1)
+
+{
+  DWORD DVar1;
+  int iVar2;
+  
+  DVar1 = WaitForSingleObject(DAT_004ee730,5);
+  while (DVar1 == 0x102) {
+    DVar1 = WaitForSingleObject(DAT_004ee730,5);
+  }
+  iVar2 = -1;
+  if ((DAT_004ee30c == 0) && (-1 < DAT_004ee310)) {
+    param_1 = (undefined4 *)&DAT_004ee308;
+    iVar2 = DAT_004ee310;
+  }
+  if ((DAT_004ee318 == 0) && (iVar2 < DAT_004ee31c)) {
+    param_1 = (undefined4 *)&DAT_004ee314;
+    iVar2 = DAT_004ee31c;
+  }
+  if ((DAT_004ee324 == 0) && (iVar2 < DAT_004ee328)) {
+    param_1 = &DAT_004ee320;
+  }
+  DAT_004eed5c = param_1;
+  param_1[1] = 1;
+  param_1[2] = 0xffffffff;
+  ReleaseMutex(DAT_004ee730);
+  return *param_1;
+}
+

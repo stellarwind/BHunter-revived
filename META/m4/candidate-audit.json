@@ -1,0 +1,181 @@
+{
+  "scope": "All ten active unfinished ledger candidates; broader unknown catalog is not an implementation queue",
+  "records": [
+    {
+      "id": "004100d0-reader-subset-c",
+      "address": "004100d0",
+      "boundary": "004100d0-0041058f",
+      "role": "game",
+      "provenance": "Ordinary mapped boundary; engine/game authorship unresolved; no verified CRT/import/shared tail assigned",
+      "body_sha256": "b09459aaf7f7d8f11f05c2b21a4541697ebac696d9f329498780f1e4a7723d8d",
+      "decompilation": "META/m2/scene/original/004100d0.c.txt",
+      "decompilation_sha256": "3b39e148f586762744771ee143ee39db5fd44d715196b2f2e70fa34db33d418c",
+      "disposition": "world_entity_installation",
+      "resolved": [
+        "Binary LEV/PTH readers, source placement construction and navigation are linked",
+        "Prior navigation/corridor/cache blockers are resolved by later distinct implementations",
+        "Six timer/timer2 activation, runtime and cleanup callbacks now linked with real entity pool; full parser/other constructors remain open"
+      ],
+      "remaining": [
+        "Real entity constructors/type dispatch, script/callback installation, scene teardown and complete level-loader side effects"
+      ]
+    },
+    {
+      "id": "00411f00-data-subset-c",
+      "address": "00411f00",
+      "boundary": "00411f00-0041218d",
+      "role": "game",
+      "provenance": "Ordinary mapped boundary; engine/game authorship unresolved; no verified CRT/import/shared tail assigned",
+      "body_sha256": "28a0051e1f66b29c0920cd7a1422c36acc36cda3fffd51ce7b3c45a6d7f37c2a",
+      "decompilation": "META/m2/blocks/original/00411f00.c.txt",
+      "decompilation_sha256": "0e3b70b4966f4abcf1190b64b87124ee6ede9701936d36cccc1f518381c69a5b",
+      "disposition": "script_and_render_registry",
+      "resolved": [
+        "454 source registry entries, model lookup and collision geometry metadata are linked",
+        "Six timer/timer2 activation, runtime and cleanup callbacks now linked with real entity pool; full parser/other constructors remain open"
+      ],
+      "remaining": [
+        "Apply 202 model sidecars through real script semantics",
+        "Rendering BSP/texture owners and water render flags; no fake image handles"
+      ]
+    },
+    {
+      "id": "00457e20-data-subset-c",
+      "address": "00457e20",
+      "boundary": "00457e20-0045813f",
+      "role": "engine_candidate",
+      "provenance": "Ordinary mapped boundary; engine/game authorship unresolved; no verified CRT/import/shared tail assigned",
+      "body_sha256": "589186e7a42c8e33a50fc0b0688d03c0d7315eb34260e609882cb8fb8bb0d1fc",
+      "decompilation": "META/m2/blocks/original/00457e20.c.txt",
+      "decompilation_sha256": "86f7137d8b6e09e103bf164719440a4cdacd6e13b340fe047284fa8b38a62b65",
+      "disposition": "renderer_owner",
+      "resolved": [
+        "All raw BSP sections and root bound decoded/verified"
+      ],
+      "remaining": [
+        "Rendering material/image handle resolution and renderer object state; data decoder does not create those objects"
+      ]
+    },
+    {
+      "id": "00458140-data-subset-c",
+      "address": "00458140",
+      "boundary": "00458140-004582d6",
+      "role": "engine_candidate",
+      "provenance": "Ordinary mapped boundary; engine/game authorship unresolved; no verified CRT/import/shared tail assigned",
+      "body_sha256": "814cd01cf3f6cbcff8b83c05ae555ac610a3f1ed448dd220186a19f3ca682798",
+      "decompilation": "META/m2/blocks/original/00458140.c.txt",
+      "decompilation_sha256": "55d199a6a12a2a46afc931334682b19bf3244c5df610c3a1baba94c9381b3ef9",
+      "disposition": "renderer_dependency",
+      "resolved": [
+        "Search order and source VFILE ownership supplied by bh_bsp_load"
+      ],
+      "remaining": [
+        "Complete 00457e20 rendering loader and owned render-object construction"
+      ]
+    },
+    {
+      "id": "0044b2e0-data-subset-c",
+      "address": "0044b2e0",
+      "boundary": "0044b2e0-0044b78a",
+      "role": "engine_candidate",
+      "provenance": "Ordinary mapped boundary; engine/game authorship unresolved; no verified CRT/import/shared tail assigned",
+      "body_sha256": "d7f3bd582059f952780845f406a36fc0c2b88a81bf1618c01ec9953d73295169",
+      "decompilation": "META/m2/blocks/original/0044b2e0.c.txt",
+      "decompilation_sha256": "2c248270c755ae7cad433d4ff772443921760bb063ddee68e4fd641f52904007",
+      "disposition": "completed_linked_source",
+      "resolved": [
+        "All serialized sections, derived node bounds, source flags and geometry queries now exist"
+      ],
+      "remaining": [],
+      "admission": "0044b2e0-functional-c",
+      "evidence": "META/m4/collision-model/validation.json"
+    },
+    {
+      "id": "0047b830-wave-data-subset-c",
+      "address": "0047b830",
+      "boundary": "0047b830-0047b91f",
+      "role": "engine_candidate",
+      "provenance": "Ordinary mapped boundary; engine/game authorship unresolved; no verified CRT/import/shared tail assigned",
+      "body_sha256": "304e37970269e02b200aa85e08e5c966fd9c7715d4e8eb2203974bfc04216403",
+      "decompilation": "META/m2/media/readers/0047b830.c.txt",
+      "decompilation_sha256": "1c57bce602e729d6e6623bef6c4cc99decbb7ff6d138b3857f2c38d4d1553766",
+      "disposition": "completed_linked_source",
+      "resolved": [
+        "Complete bounded RIFF/all-output adapter exists"
+      ],
+      "remaining": [],
+      "admission": "0047b830-functional-c",
+      "evidence": "META/m4/riff/validation.json"
+    },
+    {
+      "id": "0047b950-wave-data-subset-c",
+      "address": "0047b950",
+      "boundary": "0047b950-0047bc5c",
+      "role": "engine_candidate",
+      "provenance": "Ordinary mapped boundary; engine/game authorship unresolved; no verified CRT/import/shared tail assigned",
+      "body_sha256": "0642d2584e2b5126c95c6a8f5bb2ac731cde56e61fe8110bcc42bc4e65db71ee",
+      "decompilation": "META/m2/media/original/0047b950.c.txt",
+      "decompilation_sha256": "db943e0d94ec96f841b3065e634a9d9dce053b8d3243c2140b7119b0abd5fdcd",
+      "disposition": "sound_owner",
+      "resolved": [
+        "PCM data ownership and all 60 real WAV samples verified"
+      ],
+      "remaining": [
+        "Real DirectSound buffer creation/locking/unlocking, sound-resource lifetime and frequency/parameter bookkeeping"
+      ]
+    },
+    {
+      "id": "0044f0a0-pcx-data-subset-c",
+      "address": "0044f0a0",
+      "boundary": "0044f0a0-0044f1ac",
+      "role": "engine_candidate",
+      "provenance": "Ordinary mapped boundary; engine/game authorship unresolved; no verified CRT/import/shared tail assigned",
+      "body_sha256": "27854e811ab274808d13a63aeb1b09135f66a83bbf34d41cee33d6bf7a4bcf21",
+      "decompilation": "META/m2/media/readers/0044f0a0.c.txt",
+      "decompilation_sha256": "88a4f7255bf6fe85f6c5adec1506d297ef3c7e4a51acd46f06df021437276338",
+      "disposition": "completed_linked_source",
+      "resolved": [
+        "Bounded PCX header/palette bulk decoder exists"
+      ],
+      "remaining": [],
+      "admission": "0044f0a0-functional-c",
+      "evidence": "META/m4/pcx-reader/validation.json"
+    },
+    {
+      "id": "0044efa0-pcx-data-subset-c",
+      "address": "0044efa0",
+      "boundary": "0044efa0-0044f095",
+      "role": "engine_candidate",
+      "provenance": "Ordinary mapped boundary; engine/game authorship unresolved; no verified CRT/import/shared tail assigned",
+      "body_sha256": "619f9582546b4c7b2f65c5365056f7658fe21052b619a97d2c527734aa46394e",
+      "decompilation": "META/m2/media/readers/0044efa0.c.txt",
+      "decompilation_sha256": "c5237d2a426a8bf0cbd1b224b84c5b9ae975e2a53437dad9a4798eaad07aaac5",
+      "disposition": "completed_linked_source",
+      "resolved": [
+        "Bulk bounded PCX RLE adapter exists"
+      ],
+      "remaining": [],
+      "admission": "0044efa0-functional-c",
+      "evidence": "META/m4/pcx-reader/validation.json"
+    },
+    {
+      "id": "0046f490-pcx-data-subset-c",
+      "address": "0046f490",
+      "boundary": "0046f490-00470371",
+      "role": "engine_candidate",
+      "provenance": "Ordinary mapped boundary; engine/game authorship unresolved; no verified CRT/import/shared tail assigned",
+      "body_sha256": "06373c5a81e2bea006dd059ff28525d497df9b4c1892ecfe495aea0b472c886a",
+      "decompilation": "META/m2/media/readers/0046f490.c.txt",
+      "decompilation_sha256": "5bbbb0867cd7d4f28d6f15c05d1b13d07c3e91631a4683cbe85b72221bb81b30",
+      "disposition": "image_owner",
+      "resolved": [
+        "459 raw PCX images/palette transforms verified"
+      ],
+      "remaining": [
+        "Cache identity, pixel conversion/rectangle extraction and real owned image surfaces"
+      ]
+    }
+  ],
+  "game_target": "No playable source game target exists; validated implementations link into bhunter-integration.exe; game admission remains false",
+  "exclusions": "Verified libraries/compiler/imports/shared tails excluded; historical and byte-match variants remain separately audited"
+}

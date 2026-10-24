@@ -1,0 +1,478 @@
+{
+  "target": "bhunter-math-oracle.exe",
+  "adapter": "unchanged pinned analysis/math/differential.c mapper; same ten math functions only",
+  "exe_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+  "sources": {
+    "src/bh_math.c": "7b2345ec74dc49c935c6e1ae53f222339eca4399c4d731150348f7b5c5324a00",
+    "src/bh_math.h": "07c09e2d9627aad6dfa9d3e8b5ca328bba21eff729dcf6d8aa570781e3e1fb40",
+    "tests/math_cases.c": "c79290822c7def72df91dc08eb01ab471bd95d28b05c1be48a5bcaaac8ceb9ba",
+    "tests/math_cases.h": "66ea7025b3a0580ee8bb300707e10a4bb94cd9a7bcec779faf172cff35a64a82",
+    "tests/math_oracle.c": "0d2d7a81e25efca7b546686214c689b00615e00b5d70af072e2be9f8bdf58e83",
+    "analysis/math/differential.c": "aa1612949e5c6037e4829a06c4739ccd2b26d2bda44874b392b4b59bca1d4233"
+  },
+  "commands": [
+    {
+      "label": "compile-bh_math",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\math-oracle\\baseline\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_math.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_math.c\n"
+    },
+    {
+      "label": "compile-math_cases",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\math-oracle\\baseline\\math_cases.obj",
+        "D:\\Decomp\\Bhunter\\tests\\math_cases.c"
+      ],
+      "exit_code": 0,
+      "output": "math_cases.c\n"
+    },
+    {
+      "label": "compile-math_oracle",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\math-oracle\\baseline\\math_oracle.obj",
+        "D:\\Decomp\\Bhunter\\tests\\math_oracle.c"
+      ],
+      "exit_code": 0,
+      "output": "math_oracle.c\n"
+    },
+    {
+      "label": "link",
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/base:0x10000000",
+        "/fixed",
+        "/subsystem:console",
+        "/map:D:\\Decomp\\Bhunter\\build\\math-oracle\\baseline\\oracle.map",
+        "/out:D:\\Decomp\\Bhunter\\build\\math-oracle\\baseline\\bhunter-math-oracle.exe",
+        "D:\\Decomp\\Bhunter\\build\\math-oracle\\baseline\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\build\\math-oracle\\baseline\\math_cases.obj",
+        "D:\\Decomp\\Bhunter\\build\\math-oracle\\baseline\\math_oracle.obj",
+        "kernel32.lib"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "label": "scenario",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\build\\math-oracle\\baseline\\bhunter-math-oracle.exe",
+        "D:\\Decomp\\Bhunter\\GAME_DATA\\BHUNTER.EXE"
+      ],
+      "exit_code": 1,
+      "output": "FIRST mode=0 function=4 alias=0 case=1 expected_status=0 actual_status=0 expected=c0d8d800,7f377800,ff4d1c00, actual=c0b8d800,7f377800,ff4d1c00,\nFIRST mode=0 function=5 alias=0 case=1 expected_status=0 actual_status=0 expected=00000000,7f377800,ff4d1c00, actual=3f800000,7f377800,ff4d1c00,\nFIRST mode=0 function=8 alias=0 case=1 expected_status=0 actual_status=0 expected=3f800000,3f800000,3f800000,c0d8d800,403af000,c1a01a00,41be1e00,7f377800,bfb64000,41c1b800,c1007000,ff4d1c00, actual=3f800000,3f800000,3f800000,c0b8d800,403af000,c1a01a00,41be1e00,7f377800,bfb64000,41c1b800,c1007000,ff4d1c00,\n{\"mode\":0,\"function\":0,\"cases\":10496,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":26,\"guard_or_control_failures\":0}\n{\"mode\":0,\"function\":1,\"cases\":41984,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":40,\"guard_or_control_failures\":0}\n{\"mode\":0,\"function\":2,\"cases\":10496,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":0,\"function\":3,\"cases\":20992,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":0,\"function\":4,\"cases\":20992,\"return_differences\":0,\"finite_word_differences\":32,\"classification_or_infinity_differences\":0,\"max_ulp\":2110898177,\"nan_payload_differences\":0,\"fp_status_differences\":54,\"guard_or_control_failures\":0}\n{\"mode\":0,\"function\":5,\"cases\":20992,\"return_differences\":0,\"finite_word_differences\":32,\"classification_or_infinity_differences\":0,\"max_ulp\":1065353216,\"nan_payload_differences\":0,\"fp_status_differences\":54,\"guard_or_control_failures\":0}\n{\"mode\":0,\"function\":6,\"cases\":20992,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":0,\"function\":7,\"cases\":10496,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":0,\"function\":8,\"cases\":10496,\"return_differences\":0,\"finite_word_differences\":16,\"classification_or_infinity_differences\":0,\"max_ulp\":2110898177,\"nan_payload_differences\":0,\"fp_status_differences\":40,\"guard_or_control_failures\":0}\n{\"mode\":0,\"function\":9,\"cases\":10496,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":106,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\nFIRST mode=1 function=0 alias=0 case=1 expected_status=0 actual_status=0 expected=41cc6400,42694a00,41df7000,4274ed00,42d26260,42d71694,c19ec9df,43a9143e,41371d1e,4397bcea,438c52ee,430a6ce4, actual=41cc6400,42694a00,41df7000,4274ed00,42d26261,42d71694,c19ec9df,43a9143e,41371d1e,4397bceb,438c52ee,430a6ce4,\nFIRST mode=1 function=4 alias=0 case=1 expected_status=0 actual_status=0 expected=c0d8d800,7f377800,ff4d1c00, actual=c0b8d800,7f377800,ff4d1c00,\nFIRST mode=1 function=5 alias=0 case=1 expected_status=0 actual_status=0 expected=00000000,7f377800,ff4d1c00, actual=3f800000,7f377800,ff4d1c00,\nFIRST mode=1 function=8 alias=0 case=1 expected_status=0 actual_status=0 expected=3f800000,3f800000,3f800000,c0d8d800,403af000,c1a01a00,41be1e00,7f377800,bfb64000,41c1b800,c1007000,ff4d1c00, actual=3f800000,3f800000,3f800000,c0b8d800,403af000,c1a01a00,41be1e00,7f377800,bfb64000,41c1b800,c1007000,ff4d1c00,\nFIRST mode=1 function=6 alias=0 case=32 expected_status=0 actual_status=0 expected=41888ce8,c40a8f8a,436c1887, actual=41888ce0,c40a8f8a,436c1888,\n{\"mode\":1,\"function\":0,\"cases\":10496,\"return_differences\":0,\"finite_word_differences\":4400,\"classification_or_infinity_differences\":0,\"max_ulp\":512,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":1,\"function\":1,\"cases\":41984,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":40,\"guard_or_control_failures\":0}\n{\"mode\":1,\"function\":2,\"cases\":10496,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":1,\"function\":3,\"cases\":20992,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":1,\"function\":4,\"cases\":20992,\"return_differences\":0,\"finite_word_differences\":3484,\"classification_or_infinity_differences\":0,\"max_ulp\":2110898177,\"nan_payload_differences\":0,\"fp_status_differences\":39,\"guard_or_control_failures\":0}\n{\"mode\":1,\"function\":5,\"cases\":20992,\"return_differences\":0,\"finite_word_differences\":3643,\"classification_or_infinity_differences\":0,\"max_ulp\":1065353216,\"nan_payload_differences\":0,\"fp_status_differences\":39,\"guard_or_control_failures\":0}\n{\"mode\":1,\"function\":6,\"cases\":20992,\"return_differences\":0,\"finite_word_differences\":3670,\"classification_or_infinity_differences\":0,\"max_ulp\":512,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":1,\"function\":7,\"cases\":10496,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":1,\"function\":8,\"cases\":10496,\"return_differences\":0,\"finite_word_differences\":1858,\"classification_or_infinity_differences\":0,\"max_ulp\":2110898177,\"nan_payload_differences\":0,\"fp_status_differences\":26,\"guard_or_control_failures\":0}\n{\"mode\":1,\"function\":9,\"cases\":10496,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":106,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\nFIRST mode=2 function=4 alias=0 case=1 expected_status=0 actual_status=0 expected=c0d8d800,7f377800,ff4d1c00, actual=c0b8d800,7f377800,ff4d1c00,\nFIRST mode=2 function=5 alias=0 case=1 expected_status=0 actual_status=0 expected=00000000,7f377800,ff4d1c00, actual=3f800000,7f377800,ff4d1c00,\nFIRST mode=2 function=8 alias=0 case=1 expected_status=0 actual_status=0 expected=3f800000,3f800000,3f800000,c0d8d800,403af000,c1a01a00,41be1e00,7f377800,bfb64000,41c1b800,c1007000,ff4d1c00, actual=3f800000,3f800000,3f800000,c0b8d800,403af000,c1a01a00,41be1e00,7f377800,bfb64000,41c1b800,c1007000,ff4d1c00,\n{\"mode\":2,\"function\":0,\"cases\":10496,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":26,\"guard_or_control_failures\":0}\n{\"mode\":2,\"function\":1,\"cases\":41984,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":40,\"guard_or_control_failures\":0}\n{\"mode\":2,\"function\":2,\"cases\":10496,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":2,\"function\":3,\"cases\":20992,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":2,\"function\":4,\"cases\":20992,\"return_differences\":0,\"finite_word_differences\":32,\"classification_or_infinity_differences\":0,\"max_ulp\":2110898177,\"nan_payload_differences\":0,\"fp_status_differences\":54,\"guard_or_control_failures\":0}\n{\"mode\":2,\"function\":5,\"cases\":20992,\"return_differences\":0,\"finite_word_differences\":32,\"classification_or_infinity_differences\":0,\"max_ulp\":1065353216,\"nan_payload_differences\":0,\"fp_status_differences\":54,\"guard_or_control_failures\":0}\n{\"mode\":2,\"function\":6,\"cases\":20992,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":2,\"function\":7,\"cases\":10496,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":0,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"mode\":2,\"function\":8,\"cases\":10496,\"return_differences\":0,\"finite_word_differences\":16,\"classification_or_infinity_differences\":0,\"max_ulp\":2110898177,\"nan_payload_differences\":0,\"fp_status_differences\":40,\"guard_or_control_failures\":0}\n{\"mode\":2,\"function\":9,\"cases\":10496,\"return_differences\":0,\"finite_word_differences\":0,\"classification_or_infinity_differences\":0,\"max_ulp\":0,\"nan_payload_differences\":106,\"fp_status_differences\":0,\"guard_or_control_failures\":0}\n{\"scenario\":\"expanded-math-oracle\",\"pc53_failing_cases\":80}\n"
+    }
+  ],
+  "passed": false,
+  "environment": {
+    "INCLUDE": "D:\\Decomp\\MSCVC\\MSVC5\\SP3_EXTRACTED\\VS97_SP3\\all\\vc\\include;D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\include",
+    "LIB": "D:\\Decomp\\MSCVC\\MSVC5\\SP3_EXTRACTED\\VS97_SP3\\all\\vc\\lib;D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\lib"
+  },
+  "dependency_manifest_sha256": "21ff5211555a44bd8e14b0f0286c16ffbe9c7a18629afa1033dd364c76573c06",
+  "results": [
+    {
+      "mode": 0,
+      "function": 0,
+      "cases": 10496,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 26,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 0,
+      "function": 1,
+      "cases": 41984,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 40,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 0,
+      "function": 2,
+      "cases": 10496,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 0,
+      "function": 3,
+      "cases": 20992,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 0,
+      "function": 4,
+      "cases": 20992,
+      "return_differences": 0,
+      "finite_word_differences": 32,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 2110898177,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 54,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 0,
+      "function": 5,
+      "cases": 20992,
+      "return_differences": 0,
+      "finite_word_differences": 32,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 1065353216,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 54,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 0,
+      "function": 6,
+      "cases": 20992,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 0,
+      "function": 7,
+      "cases": 10496,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 0,
+      "function": 8,
+      "cases": 10496,
+      "return_differences": 0,
+      "finite_word_differences": 16,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 2110898177,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 40,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 0,
+      "function": 9,
+      "cases": 10496,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 106,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 1,
+      "function": 0,
+      "cases": 10496,
+      "return_differences": 0,
+      "finite_word_differences": 4400,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 512,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 1,
+      "function": 1,
+      "cases": 41984,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 40,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 1,
+      "function": 2,
+      "cases": 10496,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 1,
+      "function": 3,
+      "cases": 20992,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 1,
+      "function": 4,
+      "cases": 20992,
+      "return_differences": 0,
+      "finite_word_differences": 3484,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 2110898177,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 39,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 1,
+      "function": 5,
+      "cases": 20992,
+      "return_differences": 0,
+      "finite_word_differences": 3643,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 1065353216,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 39,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 1,
+      "function": 6,
+      "cases": 20992,
+      "return_differences": 0,
+      "finite_word_differences": 3670,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 512,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 1,
+      "function": 7,
+      "cases": 10496,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 1,
+      "function": 8,
+      "cases": 10496,
+      "return_differences": 0,
+      "finite_word_differences": 1858,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 2110898177,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 26,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 1,
+      "function": 9,
+      "cases": 10496,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 106,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 2,
+      "function": 0,
+      "cases": 10496,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 26,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 2,
+      "function": 1,
+      "cases": 41984,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 40,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 2,
+      "function": 2,
+      "cases": 10496,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 2,
+      "function": 3,
+      "cases": 20992,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 2,
+      "function": 4,
+      "cases": 20992,
+      "return_differences": 0,
+      "finite_word_differences": 32,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 2110898177,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 54,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 2,
+      "function": 5,
+      "cases": 20992,
+      "return_differences": 0,
+      "finite_word_differences": 32,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 1065353216,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 54,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 2,
+      "function": 6,
+      "cases": 20992,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 2,
+      "function": 7,
+      "cases": 10496,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 2,
+      "function": 8,
+      "cases": 10496,
+      "return_differences": 0,
+      "finite_word_differences": 16,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 2110898177,
+      "nan_payload_differences": 0,
+      "fp_status_differences": 40,
+      "guard_or_control_failures": 0
+    },
+    {
+      "mode": 2,
+      "function": 9,
+      "cases": 10496,
+      "return_differences": 0,
+      "finite_word_differences": 0,
+      "classification_or_infinity_differences": 0,
+      "max_ulp": 0,
+      "nan_payload_differences": 106,
+      "fp_status_differences": 0,
+      "guard_or_control_failures": 0
+    },
+    {
+      "scenario": "expanded-math-oracle",
+      "pc53_failing_cases": 80
+    }
+  ],
+  "counterexamples": [
+    "FIRST mode=0 function=4 alias=0 case=1 expected_status=0 actual_status=0 expected=c0d8d800,7f377800,ff4d1c00, actual=c0b8d800,7f377800,ff4d1c00,",
+    "FIRST mode=0 function=5 alias=0 case=1 expected_status=0 actual_status=0 expected=00000000,7f377800,ff4d1c00, actual=3f800000,7f377800,ff4d1c00,",
+    "FIRST mode=0 function=8 alias=0 case=1 expected_status=0 actual_status=0 expected=3f800000,3f800000,3f800000,c0d8d800,403af000,c1a01a00,41be1e00,7f377800,bfb64000,41c1b800,c1007000,ff4d1c00, actual=3f800000,3f800000,3f800000,c0b8d800,403af000,c1a01a00,41be1e00,7f377800,bfb64000,41c1b800,c1007000,ff4d1c00,",
+    "FIRST mode=1 function=0 alias=0 case=1 expected_status=0 actual_status=0 expected=41cc6400,42694a00,41df7000,4274ed00,42d26260,42d71694,c19ec9df,43a9143e,41371d1e,4397bcea,438c52ee,430a6ce4, actual=41cc6400,42694a00,41df7000,4274ed00,42d26261,42d71694,c19ec9df,43a9143e,41371d1e,4397bceb,438c52ee,430a6ce4,",
+    "FIRST mode=1 function=4 alias=0 case=1 expected_status=0 actual_status=0 expected=c0d8d800,7f377800,ff4d1c00, actual=c0b8d800,7f377800,ff4d1c00,",
+    "FIRST mode=1 function=5 alias=0 case=1 expected_status=0 actual_status=0 expected=00000000,7f377800,ff4d1c00, actual=3f800000,7f377800,ff4d1c00,",
+    "FIRST mode=1 function=8 alias=0 case=1 expected_status=0 actual_status=0 expected=3f800000,3f800000,3f800000,c0d8d800,403af000,c1a01a00,41be1e00,7f377800,bfb64000,41c1b800,c1007000,ff4d1c00, actual=3f800000,3f800000,3f800000,c0b8d800,403af000,c1a01a00,41be1e00,7f377800,bfb64000,41c1b800,c1007000,ff4d1c00,",
+    "FIRST mode=1 function=6 alias=0 case=32 expected_status=0 actual_status=0 expected=41888ce8,c40a8f8a,436c1887, actual=41888ce0,c40a8f8a,436c1888,",
+    "FIRST mode=2 function=4 alias=0 case=1 expected_status=0 actual_status=0 expected=c0d8d800,7f377800,ff4d1c00, actual=c0b8d800,7f377800,ff4d1c00,",
+    "FIRST mode=2 function=5 alias=0 case=1 expected_status=0 actual_status=0 expected=00000000,7f377800,ff4d1c00, actual=3f800000,7f377800,ff4d1c00,",
+    "FIRST mode=2 function=8 alias=0 case=1 expected_status=0 actual_status=0 expected=3f800000,3f800000,3f800000,c0d8d800,403af000,c1a01a00,41be1e00,7f377800,bfb64000,41c1b800,c1007000,ff4d1c00, actual=3f800000,3f800000,3f800000,c0b8d800,403af000,c1a01a00,41be1e00,7f377800,bfb64000,41c1b800,c1007000,ff4d1c00,"
+  ]
+}

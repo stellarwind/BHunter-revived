@@ -1,0 +1,13 @@
+# 00471be0 undefined __cdecl FUN_00471be0(HWND param_1, UINT param_2, WPARAM param_3, LPARAM param_4) body=[[00471be0, 00471bfa]]
+# IN From: 00491888 To: 00471be0 Type: DATA Op: 0 DEFAULT
+# IN From: 00472251 To: 00471be0 Type: COMPUTED_CALL Op: -1 ANALYSIS
+00471be0 MOV EAX,dword ptr [ESP + 0x10]
+00471be4 MOV ECX,dword ptr [ESP + 0xc]
+00471be8 MOV EDX,dword ptr [ESP + 0x8]
+00471bec PUSH EAX
+00471bed MOV EAX,dword ptr [ESP + 0x8]
+00471bf1 PUSH ECX
+00471bf2 PUSH EDX
+00471bf3 PUSH EAX
+00471bf4 CALL dword ptr [0x00489188]
+00471bfa RET

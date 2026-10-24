@@ -1,0 +1,211 @@
+
+void __cdecl FUN_00407f30(float param_1,undefined4 *param_2)
+
+{
+  float *pfVar1;
+  undefined4 *puVar2;
+  int *piVar3;
+  float *pfVar4;
+  char *pcVar5;
+  float fVar6;
+  float fVar7;
+  int iVar8;
+  int iVar9;
+  int iVar10;
+  int iVar11;
+  int iVar12;
+  int local_10;
+  int local_c;
+  int local_8;
+  
+  fVar6 = param_1;
+  iVar11 = 0;
+  DAT_004df264 = 0.0;
+  DAT_004df26c = 0;
+  fVar7 = param_1;
+  do {
+    iVar12 = 0;
+    if (*(int *)((int)fVar7 + 0x1c8) == 0) {
+      piVar3 = (int *)((int)fVar7 + 0x204);
+      iVar9 = 6;
+      do {
+        if (*piVar3 != 0) {
+          iVar12 = iVar12 + 1;
+        }
+        piVar3 = piVar3 + 0xf;
+        iVar9 = iVar9 + -1;
+      } while (iVar9 != 0);
+    }
+    else {
+      iVar12 = 0;
+    }
+    if (((0 < iVar12) && (DAT_004df26c = DAT_004df26c + 1, 0 < iVar12)) && (iVar12 != 2)) {
+      DAT_004df264 = (float)((int)DAT_004df264 + 1);
+    }
+    fVar7 = *(float *)((int)fVar7 + 0x124);
+  } while (fVar7 != param_1);
+  if (DAT_004df260 != (undefined *)0x0) {
+    FUN_0047db90(DAT_004df260);
+  }
+  if (DAT_004df268 != (float *)0x0) {
+    FUN_0047db90((undefined *)DAT_004df268);
+  }
+  pfVar4 = (float *)FUN_0047dae0(DAT_004df26c * 4);
+  DAT_004df268 = pfVar4;
+  pcVar5 = (char *)FUN_0047dae0((int)DAT_004df264 * (int)DAT_004df264 * 8);
+  DAT_004df260 = pcVar5;
+  do {
+    iVar12 = 0;
+    if (*(int *)((int)fVar6 + 0x1c8) == 0) {
+      piVar3 = (int *)((int)fVar6 + 0x204);
+      iVar9 = 6;
+      do {
+        if (*piVar3 != 0) {
+          iVar12 = iVar12 + 1;
+        }
+        piVar3 = piVar3 + 0xf;
+        iVar9 = iVar9 + -1;
+      } while (iVar9 != 0);
+    }
+    else {
+      iVar12 = 0;
+    }
+    if ((0 < iVar12) && (iVar12 != 2)) {
+      *(int *)((int)fVar6 + 0x108) = iVar11;
+      iVar11 = iVar11 + 1;
+      *pfVar4 = fVar6;
+      pfVar4 = pfVar4 + 1;
+      pcVar5 = DAT_004df260;
+    }
+    fVar6 = *(float *)((int)fVar6 + 0x124);
+    fVar7 = param_1;
+  } while (fVar6 != param_1);
+  do {
+    iVar12 = 0;
+    if (*(int *)((int)fVar7 + 0x1c8) == 0) {
+      piVar3 = (int *)((int)fVar7 + 0x204);
+      iVar9 = 6;
+      do {
+        if (*piVar3 != 0) {
+          iVar12 = iVar12 + 1;
+        }
+        piVar3 = piVar3 + 0xf;
+        iVar9 = iVar9 + -1;
+      } while (iVar9 != 0);
+    }
+    else {
+      iVar12 = 0;
+    }
+    if (iVar12 == 2) {
+      *(int *)((int)fVar7 + 0x108) = iVar11;
+      iVar11 = iVar11 + 1;
+      *pfVar4 = fVar7;
+      pfVar4 = pfVar4 + 1;
+      pcVar5 = DAT_004df260;
+    }
+    pfVar1 = (float *)((int)fVar7 + 0x124);
+    fVar7 = *pfVar1;
+  } while (*pfVar1 != param_1);
+  iVar11 = 0;
+  if (0 < (int)DAT_004df264 * (int)DAT_004df264) {
+    do {
+      pcVar5 = pcVar5 + iVar11 * 8;
+      pcVar5[0] = -1;
+      pcVar5[1] = -1;
+      pcVar5[2] = -1;
+      pcVar5[3] = -1;
+      pcVar5 = DAT_004df260 + iVar11 * 8 + 4;
+      pcVar5[0] = -0x43;
+      pcVar5[1] = 'j';
+      pcVar5[2] = -0x79;
+      pcVar5[3] = '~';
+      iVar11 = iVar11 + 1;
+      pcVar5 = DAT_004df260;
+    } while (iVar11 < (int)DAT_004df264 * (int)DAT_004df264);
+  }
+  iVar12 = 0;
+  iVar11 = 0;
+  fVar7 = DAT_004df264;
+  if (0 < (int)DAT_004df264) {
+    do {
+      iVar9 = ((int)DAT_004df264 + 1) * iVar11;
+      iVar11 = iVar11 + 1;
+      pcVar5 = pcVar5 + iVar9 * 8 + 4;
+      pcVar5[0] = '\0';
+      pcVar5[1] = '\0';
+      pcVar5[2] = '\0';
+      pcVar5[3] = '\0';
+      pcVar5 = DAT_004df260;
+    } while (iVar11 < (int)DAT_004df264);
+    fVar7 = DAT_004df264;
+    if (0 < (int)DAT_004df264) {
+      do {
+        iVar11 = 0;
+        fVar6 = DAT_004df268[iVar12];
+        piVar3 = (int *)((int)fVar6 + 0x204);
+        do {
+          if (*piVar3 != 0) {
+            iVar9 = FUN_00407d90(*(undefined4 *)((int)fVar6 + 0x108),(int)fVar6,*piVar3,&param_1);
+            *(int *)(DAT_004df260 + (iVar9 * (int)DAT_004df264 + iVar12) * 8) = iVar11;
+            *(float *)(DAT_004df260 + (iVar9 * (int)DAT_004df264 + iVar12) * 8 + 4) = param_1;
+            pcVar5 = DAT_004df260;
+            fVar7 = DAT_004df264;
+          }
+          iVar11 = iVar11 + 1;
+          piVar3 = piVar3 + 0xf;
+        } while (iVar11 < 6);
+        iVar12 = iVar12 + 1;
+      } while (iVar12 < (int)fVar7);
+    }
+  }
+  puVar2 = param_2;
+  if ((param_2 != (undefined4 *)0x0) &&
+     (FUN_0047cf60((char *)&param_1,4,1,param_2), pcVar5 = DAT_004df260, fVar7 = DAT_004df264,
+     param_1 == DAT_004df264)) {
+    FUN_0047cf60(DAT_004df260,8,(int)DAT_004df264 * (int)DAT_004df264,puVar2);
+    return;
+  }
+  local_10 = 0;
+  local_c = 0;
+  if (0 < (int)fVar7) {
+    do {
+      param_1 = 0.0;
+      param_2 = (undefined4 *)0x0;
+      if (0 < (int)fVar7) {
+        iVar11 = local_10 * 8;
+        do {
+          iVar12 = 0;
+          local_8 = 0;
+          if (0 < (int)fVar7) {
+            iVar9 = (int)param_1 * 8;
+            iVar10 = local_10 * 8;
+            do {
+              fVar6 = *(float *)(pcVar5 + (local_c + iVar12) * 8 + 4) +
+                      *(float *)(pcVar5 + iVar11 + 4);
+              iVar8 = ((int)param_2 + iVar12) * 8;
+              if (fVar6 < *(float *)(pcVar5 + iVar8 + 4)) {
+                *(float *)(DAT_004df260 + iVar8 + 4) = fVar6;
+                *(float *)(DAT_004df260 + iVar9 + 4) = fVar6;
+                *(undefined4 *)(DAT_004df260 + iVar8) = *(undefined4 *)(DAT_004df260 + iVar11);
+                *(undefined4 *)(DAT_004df260 + iVar9) = *(undefined4 *)(DAT_004df260 + iVar10);
+                fVar7 = DAT_004df264;
+              }
+              iVar12 = iVar12 + (int)fVar7;
+              local_8 = local_8 + 1;
+              iVar10 = iVar10 + 8;
+              iVar9 = iVar9 + 8;
+              pcVar5 = DAT_004df260;
+            } while (local_8 < (int)fVar7);
+          }
+          param_1 = (float)((int)param_1 + (int)fVar7);
+          param_2 = (undefined4 *)((int)param_2 + 1);
+          iVar11 = iVar11 + 8;
+        } while ((int)param_2 < (int)fVar7);
+      }
+      local_10 = local_10 + (int)fVar7;
+      local_c = local_c + 1;
+    } while (local_c < (int)fVar7);
+  }
+  return;
+}
+

@@ -1,0 +1,87 @@
+# 0040af20 undefined __cdecl FUN_0040af20(int param_1, int * param_2, float * param_3, float param_4) body=[[0040af20, 0040b01a]]
+# IN From: 0040b3ba To: 0040af20 Type: UNCONDITIONAL_CALL Op: 0 DEFAULT
+# IN From: 0040b3f8 To: 0040af20 Type: UNCONDITIONAL_CALL Op: 0 DEFAULT
+0040af20 MOV EAX,[0x004df278]
+0040af25 PUSH ESI
+0040af26 TEST EAX,EAX
+0040af28 PUSH EDI
+0040af29 MOV ESI,0x4df278
+0040af2e JZ 0x0040b00e
+0040af34 MOV EDX,dword ptr [ESP + 0x14]
+0040af38 MOV EDI,dword ptr [ESP + 0x10]
+0040af3c PUSH EBX
+0040af3d MOV EBX,dword ptr [ESP + 0x10]
+0040af41 MOV ECX,dword ptr [ESI]
+0040af43 ADD ESI,0x4
+0040af46 CMP ECX,EBX
+0040af48 JZ 0x0040affb
+0040af4e FLD float ptr [ECX + 0xc]
+0040af51 FLD float ptr [ESP + 0x1c]
+0040af55 FADD float ptr [EDX]
+0040af57 FXCH
+0040af59 FSUB float ptr [ECX + 0xc0]
+0040af5f FXCH
+0040af61 FCOMPP
+0040af63 FNSTSW AX
+0040af65 TEST AH,0x41
+0040af68 JNZ 0x0040affb
+0040af6e FLD float ptr [ECX + 0xc]
+0040af71 FLD float ptr [EDX]
+0040af73 FSUB float ptr [ESP + 0x1c]
+0040af77 FXCH
+0040af79 FADD float ptr [ECX + 0xc0]
+0040af7f FXCH
+0040af81 FCOMPP
+0040af83 FNSTSW AX
+0040af85 TEST AH,0x1
+0040af88 JZ 0x0040affb
+0040af8a FLD float ptr [EDX + 0x4]
+0040af8d FLD float ptr [ECX + 0x10]
+0040af90 FSUB float ptr [ECX + 0xc0]
+0040af96 FXCH
+0040af98 FADD float ptr [ESP + 0x1c]
+0040af9c FCOMPP
+0040af9e FNSTSW AX
+0040afa0 TEST AH,0x41
+0040afa3 JNZ 0x0040affb
+0040afa5 FLD float ptr [EDX + 0x4]
+0040afa8 FLD float ptr [ECX + 0x10]
+0040afab FADD float ptr [ECX + 0xc0]
+0040afb1 FXCH
+0040afb3 FSUB float ptr [ESP + 0x1c]
+0040afb7 FCOMPP
+0040afb9 FNSTSW AX
+0040afbb TEST AH,0x1
+0040afbe JZ 0x0040affb
+0040afc0 FLD float ptr [EDX + 0x8]
+0040afc3 FLD float ptr [ECX + 0x14]
+0040afc6 FSUB float ptr [ECX + 0xc0]
+0040afcc FXCH
+0040afce FADD float ptr [ESP + 0x1c]
+0040afd2 FCOMPP
+0040afd4 FNSTSW AX
+0040afd6 TEST AH,0x41
+0040afd9 JNZ 0x0040affb
+0040afdb FLD float ptr [EDX + 0x8]
+0040afde FLD float ptr [ECX + 0x14]
+0040afe1 FADD float ptr [ECX + 0xc0]
+0040afe7 FXCH
+0040afe9 FSUB float ptr [ESP + 0x1c]
+0040afed FCOMPP
+0040afef FNSTSW AX
+0040aff1 TEST AH,0x1
+0040aff4 JZ 0x0040affb
+0040aff6 MOV dword ptr [EDI],ECX
+0040aff8 ADD EDI,0x4
+0040affb CMP dword ptr [ESI],0x0
+0040affe JNZ 0x0040af41
+0040b004 POP EBX
+0040b005 MOV dword ptr [EDI],0x0
+0040b00b POP EDI
+0040b00c POP ESI
+0040b00d RET
+0040b00e MOV EDI,dword ptr [ESP + 0x10]
+0040b012 MOV dword ptr [EDI],0x0
+0040b018 POP EDI
+0040b019 POP ESI
+0040b01a RET

@@ -1,0 +1,163 @@
+{
+  "date": "2026-10-24",
+  "scope": "Geometry face access, model classification and aperture/world bounds construction dependency family",
+  "target": "build/m0/bhunter-integration.exe",
+  "owner_modules": [
+    "src/bh_geometry.c",
+    "src/bh_world_geometry.c",
+    "src/bh_rotation.c"
+  ],
+  "records": [
+    {
+      "address": "0044e060",
+      "role": "engine_candidate",
+      "confidence": "medium ownership; high inspected boundary and behavior",
+      "reason": "Face descriptor enumeration with caller cdecl callback; known global scratch must have explicit owner",
+      "evidence_sha256": {
+        "META/m2/blocks/consumers/0044e060.asm.txt": "869f2cdf50db72a8af94e0aa0fbf6ab17fd91953cb1bf6c0a36072e954665ff3",
+        "META/m2/blocks/consumers/0044e060.c.txt": "0f1f05afc8e605bfdc659562481bfa9d77f834c6a7d8d79d7d381d0f660d824d"
+      },
+      "boundary": "0044e060-0044e20d",
+      "body_sha256": "d63b44a961e21e3a625c88d8cbc0b8e4a72b2a3529184995cd22d3c906f99fb6",
+      "review_state": "complete boundary/dependency review before admission"
+    },
+    {
+      "address": "0044e210",
+      "role": "engine_candidate",
+      "confidence": "medium ownership; high inspected boundary and behavior",
+      "reason": "Face flags setter, not an import/thunk",
+      "evidence_sha256": {
+        "META/m4/construction/original/0044e210.asm.txt": "77168bbe20e1337d35df7c872964bdbcdeaac6140da736f667eac67887b88a02",
+        "META/m4/construction/original/0044e210.c.txt": "05becfa7472328bf2380f3dc788ac85ea7cf71051f08ccb507004f2a108d9458"
+      },
+      "boundary": "0044e210-0044e222",
+      "body_sha256": "5a4dbd55ae445f794afca699a7687ded92fcb78eb2961d3d56352996ab92746f",
+      "review_state": "complete boundary/dependency review before admission"
+    },
+    {
+      "address": "0044e230",
+      "role": "engine_candidate",
+      "confidence": "medium ownership; high inspected boundary and behavior",
+      "reason": "Face flags getter, not a CRT helper",
+      "evidence_sha256": {
+        "META/m4/construction/original/0044e230.asm.txt": "c25ec290756a0ddd2abd5aca1135a4984d898dc9311d715a4a44494cba9b3998",
+        "META/m4/construction/original/0044e230.c.txt": "ac269d73cfce88687ef9534a9817f8409020c887e9a5ffcf486cd3a0665a6c1f"
+      },
+      "boundary": "0044e230-0044e23e",
+      "body_sha256": "fc05ff4f30b8d4826941d9744df711a2e422c07f36ff006eccd60fa435fb2406",
+      "review_state": "complete boundary/dependency review before admission"
+    },
+    {
+      "address": "0044e240",
+      "role": "engine_candidate",
+      "confidence": "medium ownership; high inspected boundary and behavior",
+      "reason": "Walks face edge chain and copies indexed vertex position",
+      "evidence_sha256": {
+        "META/m4/construction/original/0044e240.asm.txt": "86273114d1c7df7e07822bf44652eee42d6e4b99a987f9489032fd87b955a9dc",
+        "META/m4/construction/original/0044e240.c.txt": "305d4b391c205bc6efa44eb588163b2a33a7efc3a7decb3ddc474aaf3cb2b318"
+      },
+      "boundary": "0044e240-0044e296",
+      "body_sha256": "c9ccd9d1cae449597944733c50fe280f6f632f29378c429dd75e0c9cf4384a4d",
+      "review_state": "complete boundary/dependency review before admission"
+    },
+    {
+      "address": "0044e2a0",
+      "role": "engine_candidate",
+      "confidence": "medium ownership; high inspected boundary and behavior",
+      "reason": "Builds descriptor from face topology and leaf ancestry; no calls or compiler scaffolding",
+      "evidence_sha256": {
+        "META/m4/construction/original/0044e2a0.asm.txt": "e8914e4d50151cd5d4976ec38271245ab7d9ad9ba67b0e0c6137393c3cf43bb4",
+        "META/m4/construction/original/0044e2a0.c.txt": "4c3fefa03da58b0ddbfb55a1693a957c460f318cd202338940ee75e95afa3ee1"
+      },
+      "boundary": "0044e2a0-0044e3ec",
+      "body_sha256": "2aa3b33cc45aa6938bb8b6481f029790ce08123932f121fbe00bb961813c34c0",
+      "review_state": "complete boundary/dependency review before admission"
+    },
+    {
+      "address": "00410880",
+      "role": "game",
+      "confidence": "medium ownership; high inspected boundary and behavior",
+      "reason": "Classifies named game materials and installs portal/model flags",
+      "evidence_sha256": {
+        "META/m4/construction/original/00410880.asm.txt": "981da285b1e7221d82be6c30aa63f65d26d7120a8b992a6825bd8b9db6eddc46",
+        "META/m4/construction/original/00410880.c.txt": "7bda0497a7098ead37312f6e43ccee032ae9de02ab3c34c65d544a59d22a4e66"
+      },
+      "boundary": "00410880-004109bd",
+      "body_sha256": "388d18097b7e9ce0ec07eb4de3b83f5617b038f3ae3e0612842a89477e0229b9",
+      "review_state": "complete boundary/dependency review before admission"
+    },
+    {
+      "address": "004083d0",
+      "role": "engine_candidate",
+      "confidence": "Unknown engine/game authorship; complete world/model callback boundary inspected",
+      "reason": "Model bound accumulation callback, ordinary complete body",
+      "evidence_sha256": {
+        "META/m4/construction/original/004083d0.asm.txt": "af103a792b1e4522391ab870a8a1eb6f468abbb32f0cab2380b76a1caaf1a0c7",
+        "META/m4/construction/original/004083d0.c.txt": "2f7b146eeb33bb1dfe5968738b34715dd548ab4b5a0096c727287a219df46800"
+      },
+      "boundary": "004083d0-00408490",
+      "body_sha256": "00db77ce973a829486d5bb944906a63c9a6496352f6bb6be19e347e4eb1d11d8",
+      "review_state": "complete boundary/dependency review before admission"
+    },
+    {
+      "address": "004082d0",
+      "role": "engine_candidate",
+      "confidence": "Unknown engine/game authorship; complete world/model callback boundary inspected",
+      "reason": "World bound accumulation callback, ordinary complete body",
+      "evidence_sha256": {
+        "META/m4/construction/original/004082d0.asm.txt": "56ec4be1c6a67e8b7afac63756ff583972eabc15fc8c92172ee63d0d7d51f1ba",
+        "META/m4/construction/original/004082d0.c.txt": "403cd31a00c78608f51d9f0c373b51e985b89aaf10bb12fcb1b7c5d48b5cd52d"
+      },
+      "boundary": "004082d0-004083cf",
+      "body_sha256": "1de7c099b10d5abc7060f6293bc1705002fcb9ce70bf537670605519f216c1ec",
+      "review_state": "complete boundary/dependency review before admission"
+    },
+    {
+      "address": "004017e0",
+      "role": "engine_candidate",
+      "confidence": "medium ownership; high inspected boundary and behavior",
+      "reason": "Y-axis basis rotation using x87 sine/cosine; no provenance established",
+      "evidence_sha256": {
+        "META/m4/construction/original/004017e0.asm.txt": "a4333338086fba1c9594e2d49ecc0b0b0179209267146cceb67ce61349e924b8",
+        "META/m4/construction/original/004017e0.c.txt": "d240b1b71aaefac1c3e26ca0ac71d58d9c458501b056a637a183d176e7da1342"
+      },
+      "boundary": "004017e0-0040189f",
+      "body_sha256": "23c23ef0097a13e5da0f2e276713e30be5cd4fea96610f2cf4464888aa45e7ec",
+      "review_state": "complete boundary/dependency review before admission"
+    },
+    {
+      "address": "004084a0",
+      "role": "engine_candidate",
+      "confidence": "Unknown engine/game authorship; complete world/model callback boundary inspected",
+      "reason": "World placement aperture and owner/bounds construction; engine usage does not establish library provenance",
+      "evidence_sha256": {
+        "META/m3/navigation-review/004084a0.asm.txt": "dd26c5e1a76c575bef2f21995ea8f06bbcaf53bf656cbc47e41b2f72c5c31a97",
+        "META/m3/navigation-review/004084a0.c.txt": "200d7b00a9b7a9940fc29d84d2108eea3d01a42324617ac93ab15e7c1dfc0f6b"
+      },
+      "boundary": "004084a0-00408938",
+      "body_sha256": "d9ded109d5e0896f348580e51a0aa23175f0f1f1f985a7d99661842405fd1647",
+      "review_state": "complete boundary/dependency review before admission"
+    }
+  ],
+  "exclusions": [
+    "No verified CRT, compiler EH/unwind or __ftol recovery; use C/runtime operations",
+    "No independently counted shared tails; inspected RET-terminated ordinary bodies",
+    "No new original-code execution, game launch or automatic gameplay"
+  ],
+  "dependencies": {
+    "0044e240": "BSP faces/edges/vertices already owned by bh_bsp.c",
+    "0044e2a0": "Face flags have real source owner; names/points from BSP and leaf ancestry/normal rules from assembly",
+    "0044e060": "Callback enumeration over all faces with persistent normal carry; shared global scratch becomes explicit source context",
+    "00410880": "case-insensitive material names, original face flag getter/setter, model portal list and water bit",
+    "004084a0": "Existing math transform/local-translate, recovered Y rotation, face descriptor/vertices, bound accumulation and model grid, explicit scene rings",
+    "unrecovered": "Full block-script semantics, renderer/collision object ABI and source game lifetime remain separate; no stubs"
+  },
+  "numerical_constants": {
+    "00489428": 1.5707963267948966,
+    "004892e8": 0.9,
+    "00489430": -0.9,
+    "00489340": -0.5,
+    "00489280": 0.5,
+    "00489200": 0.0
+  }
+}

@@ -1,0 +1,102 @@
+Diagnostic candidate only; no byte-match or linked-admission claim. Relevant actual VC5 listing excerpts.
+; 128  :         /* Keep the original collision-loader float stores before the halves. */
+; 129  :         bound->center.x=midpoint(next.nodes[i].minimum[0],next.nodes[i].maximum[0]);
+
+	mov	eax, DWORD PTR _next$[esp+224]
+	mov	edx, DWORD PTR [esi+ecx+12]
+	push	edx
+	lea	edi, DWORD PTR [ebx+eax]
+	mov	eax, DWORD PTR [esi+ecx]
+	push	eax
+	call	_midpoint
+	fstp	DWORD PTR [edi]
+
+; 130  :         bound->center.y=midpoint(next.nodes[i].minimum[1],next.nodes[i].maximum[1]);
+
+	mov	eax, DWORD PTR _next$[esp+200]
+	add	esp, 8
+	mov	ecx, DWORD PTR [esi+eax+16]
+	mov	edx, DWORD PTR [esi+eax+4]
+	push	ecx
+	push	edx
+	call	_midpoint
+	fstp	DWORD PTR [edi+4]
+
+; 131  :         bound->center.z=midpoint(next.nodes[i].minimum[2],next.nodes[i].maximum[2]);
+
+	mov	eax, DWORD PTR _next$[esp+200]
+	add	esp, 8
+	mov	ecx, DWORD PTR [esi+eax+20]
+	mov	edx, DWORD PTR [esi+eax+8]
+	push	ecx
+	push	edx
+	call	_midpoint
+	fld	ST(0)
+
+; 132  :         x=(double)next.nodes[i].maximum[0]-bound->center.x;y=(double)next.nodes[i].maximum[1]-bound->center.y;z=(double)next.nodes[i].maximum[2]-bound->center.z;
+
+	fld	DWORD PTR [edi]
+	fxch	ST(1)
+	fstp	DWORD PTR [edi+8]
+	mov	eax, DWORD PTR _next$[esp+200]
+	add	esp, 8
+
+; 133  :         /* 0044b6a4/0044b6be retain x/z in x87 while also storing a float
+; 134  :            operand for their multiply. y is squared at current precision.
+; 135  :            Volatile stores express those observed rounding boundaries in C. */
+; 136  :         rounded_x=(float)x;rounded_z=(float)z;
+; 137  :         squared=(float)((x*rounded_x+y*y)+z*rounded_z);
+; 138  :         bound->radius_squared=squared;bound->radius=(float)sqrt(squared);
+; 139  :         if(!_finite(bound->radius_squared) || !_finite(bound->radius)){bh_bsp_dispose(&next);return fail(bsp,BH_BSP_FORMAT);}
+
+	sub	esp, 8
+	fld	DWORD PTR [esi+eax+12]
+	fld	DWORD PTR [esi+eax+20]
+	fld	DWORD PTR [esi+eax+16]
+	fld	DWORD PTR [edi+4]
+	fxch	ST(4)
+	fsubp	ST(3), ST(0)
+	fxch	ST(3)
+	fsubp	ST(3), ST(0)
+	fxch	ST(3)
+	fsubp	ST(3), ST(0)
+	fst	QWORD PTR _x$[esp+184]
+	fxch	ST(2)
+	fst	QWORD PTR _z$[esp+184]
+	fxch	ST(1)
+	fxch	ST(2)
+	fld	ST(2)
+	fxch	ST(1)
+	fstp	DWORD PTR _rounded_x$[esp+184]
+	fmul	ST(0), ST(2)
+	fxch	ST(1)
+	fstp	DWORD PTR _rounded_z$[esp+184]
+	fld	DWORD PTR _rounded_x$[esp+184]
+	fmul	QWORD PTR _x$[esp+184]
+	fld	DWORD PTR _rounded_z$[esp+184]
+	fmul	QWORD PTR _z$[esp+184]
+	fxch	ST(1)
+	faddp	ST(2), ST(0)
+	faddp	ST(1), ST(0)
+	fstp	DWORD PTR _squared$[esp+184]
+	fstp	ST(0)
+	fld	DWORD PTR _squared$[esp+184]
+	fld	DWORD PTR _squared$[esp+184]
+	fsqrt
+	fld	ST(1)
+	fstp	DWORD PTR [edi+12]
+	fstp	DWORD PTR [edi+16]
+	fstp	QWORD PTR [esp]
+	call	__finite
+	add	esp, 8
+_midpoint PROC NEAR					; COMDAT
+
+; 22   : static float midpoint(float minimum,float maximum){volatile float value=minimum+maximum;value*=0.5f;return value;}
+
+	fld	DWORD PTR _maximum$[esp-4]
+	fadd	DWORD PTR _minimum$[esp-4]
+	fst	DWORD PTR _value$[esp-4]
+	fmul	DWORD PTR $T940
+	fst	DWORD PTR _value$[esp-4]
+	ret	0
+_midpoint ENDP

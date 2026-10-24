@@ -1,0 +1,143 @@
+{
+  "date": "2026-10-24",
+  "passed": true,
+  "scope": "Seven entity pool/list/dispatch functional variants and three source support adapters",
+  "m2_complete": false,
+  "goal_active": true,
+  "game_admitted": false,
+  "original_code_required": false,
+  "original_adapter_added": false,
+  "engine_authorship": "unresolved",
+  "real_scenario": {
+    "scenario": "entity-pool",
+    "checks": 12454,
+    "failures": 0,
+    "original_code_required": false
+  },
+  "clean_scenario": {
+    "scenario": "entity-pool",
+    "checks": 819,
+    "failures": 0,
+    "original_code_required": false
+  },
+  "real_assets": {
+    "scenario": "entities-real-data",
+    "initial_capacity": 9600,
+    "placement_slots": 5815,
+    "gameplay_callbacks_installed": false
+  },
+  "real_integration": {
+    "scenario": "m2-foundations",
+    "checks": 349767,
+    "failures": 0,
+    "archive_entries": 1229,
+    "original_code_required": false
+  },
+  "clean_integration": {
+    "scenario": "m2-foundations",
+    "checks": 33807,
+    "failures": 0,
+    "archive_entries": 0,
+    "original_code_required": false
+  },
+  "identical_real_and_clean_source_hashes": {
+    "src/bh_math.c": "ce111e18659563a2c41a04b645295227aac6ead9fe9cc2e803ac45c726d6e9bc",
+    "src/bh_math.h": "9ebaf91c16011277e1e2f9a9c3791b3ea1245dafa3e096d918422378d6065a9d",
+    "src/bh_fp.c": "cc8400a29fd082f96ffd9b483f490a44992717b25eac0cb32e2e108ba446f3f8",
+    "src/bh_fp.h": "f4565fc55c52d3582181db98d3199f6c8f9b665ffd227ab715ce7a03ab4e818d",
+    "src/bh_vfile.c": "7a8187efa6bfcbdf7a626ff53c6d4133d47a37e2dcf65830985b5cee94bf78d0",
+    "src/bh_vfile.h": "7867198f05fbfa5a4b3ae2a003245e8ff7faaea72e1194852d32b18a0ecae7ba",
+    "src/bh_config.c": "6081596cb764118e0441ce5d3e0cf897a6ce011ca2d7e9aaa81a6ab5ef58092e",
+    "src/bh_config.h": "a82e0abf34974bec247852e225904afe4821fe83d01e1e21f2d53e0b18f70dfc",
+    "src/bh_config_defaults.h": "492d14e242d011967eda0601cf98432ea26c821c9ebebca37c52bcb348688cfb",
+    "src/bh_paths.c": "0ce4a5312e27f1cec73425cea8a25b93677e9a619ec6aeb6c79f828c8293a977",
+    "src/bh_paths.h": "f5b49007ba7ed969612fbffa724b9a803aa4966249b803fd2137a555dbc03bdb",
+    "src/bh_scene.c": "8439df6593816139b4e5b60cb8e9c96283a66c8f18f5465ca1aeec3eee64e3e1",
+    "src/bh_scene.h": "0f999ccc243aeace1bba1b8008beb836760dd7c940adaec9ac53042213a6a48c",
+    "src/bh_bsp.c": "712f5d421bb28635087fe8882b13e887c12893809a7b106ea4fa24275ab48fe5",
+    "src/bh_bsp.h": "9c0c019f20d7496268212f9f18e2a58c96406bf05e7352cc553d71847b5fb263",
+    "src/bh_round.c": "ff848010705702e25cf85f5ba1d9c30a024d1ea8bf93227240285b9c54fc8ef4",
+    "src/bh_round.h": "a81be03deb24df6a85cd6f4dd8206fa37a37a952574422e68377dcd71d8af2d6",
+    "src/bh_blocks.c": "d3279666e06ca171c9844124222bb0ecf886e35850ff0b82181a1a4bf3723881",
+    "src/bh_blocks.h": "a84569dcb145da56f83783cd65ab9c96c01e7e1413e79487492e9ea9d349d638",
+    "src/bh_entities.c": "6fc5e54d88906a7922c149bb1ccc9851c2cbe701217e57d8e3c72646d81cb92a",
+    "src/bh_entities.h": "f02442c0444e41f6e16d2ff28a9a677252bdff0c73f4d6fbf44d3ca419502f13",
+    "tests/entities.c": "b95b741c5df9fb58a69e58194be28428ee327fcff0804622050e54e668bcc392",
+    "tests/entity_query_cases.h": "018820a1882dda338b2d40518b16b3735616398335228cb85975be72b3eccc4d",
+    "tests/blocks.c": "ff70547ce09e7b05d458f497598d2f63b878cdef99ae81d65cbdb6ef4ab2b988",
+    "tests/bsp_manifest.h": "e1deb9990542d45ac3eb542dcc38159509780731a827f04778b94944811e6641",
+    "tests/block_names.h": "fc1d8777692e338a24e5612c645bdc9afe9b0d3c1f387f1dc5f406d9be73342d",
+    "tests/scene.c": "188af4318d63cc8272f7415ea2d78bb869f7cb1f2225404a4da8f0a5e46be056",
+    "tests/config.c": "0a6715aa5e4cbe02e53927be96f648b5c9101678c66e16fe40d47f3d23ac7961",
+    "tests/integration.c": "fb18f5cea1837a95c66800769a4dfa21e3e64cbcd2ec2bd9fa038b906607b8de",
+    "tests/checkpoint.c": "8fb0cc0248fd03b6f24c16fd498282428d3861a8cdb8a0003aa4f6e98240fa90",
+    "tests/vfile.c": "4ce922ed286642015cbda949c6349fc194e04392d1b8309d497b40574ba16451",
+    "tests/math_cases.c": "907257316f265794a1a73da7ff04a7890fcd737d8906a8459ec188e9a1a70ca6",
+    "tests/math_cases.h": "66ea7025b3a0580ee8bb300707e10a4bb94cd9a7bcec779faf172cff35a64a82",
+    "tests/math_numeric.c": "01a96c8f47790525966352de86a42b90ad7ec2f39d0bbc9ef403512a53571de5",
+    "tests/math_golden.h": "bb91fd34bf9d908ce30f78e156526963c058b21f914448d68f03035f54fc0cec"
+  },
+  "dependency_manifest": {
+    "real_raw_sha256": "21ff5211555a44bd8e14b0f0286c16ffbe9c7a18629afa1033dd364c76573c06",
+    "clean_LF_sha256": "e0b0059f8b53f931dfdec6196b2796f1d395c30782dc16a726f72b976a16bf4e",
+    "same_content_after_git_line_ending_normalization": true
+  },
+  "implementation_records": [
+    "00476da0-functional-c",
+    "00476e90-functional-c",
+    "00476f20-functional-c",
+    "00477070-functional-c",
+    "004770f0-functional-c",
+    "004772f0-functional-c",
+    "00477330-functional-c"
+  ],
+  "source_support_functions": [
+    "bh_entities_dispose",
+    "bh_entities_focus",
+    "bh_entities_valid"
+  ],
+  "missing_module_controls": {
+    "missing_definition_control": "rejected with LNK2001",
+    "missing_vfile_control": "rejected with LNK2001",
+    "missing_config_control": "rejected with LNK2001",
+    "missing_paths_control": "rejected with LNK2001",
+    "missing_scene_control": "rejected with LNK2001",
+    "missing_bsp_control": "rejected with LNK2001",
+    "missing_blocks_control": "rejected with LNK2001",
+    "missing_round_control": "rejected with LNK2001",
+    "missing_entities_control": "rejected with LNK2001"
+  },
+  "resolved_symbols": [
+    "bh_entities_init",
+    "bh_entity_set_query",
+    "bh_entity_acquire",
+    "bh_entity_release",
+    "bh_entities_query",
+    "bh_entities_step",
+    "bh_entities_refresh",
+    "bh_entities_dispose",
+    "bh_entities_focus",
+    "bh_entities_valid"
+  ],
+  "artifacts": {
+    "META/m2/entities/review.json": "45599e867c86b5387f8b21bc583d516b603cf521e4395ecc57e509375b617475",
+    "META/m2/entities/query-controls.json": "a92c4bd3055dadda05ddca047e9750f43249aafe585f3c604758bbe0aa143b53",
+    "META/m2/entities/evidence-check.json": "6b2f52f72c75607fb36a1de757da049696b08df80519251a8c519e1e323328dc",
+    "META/m2/entities/integration-real.json": "f7067d23d83c8f8b4595247061169a950308fe15ed5cbfa60d0804390631a3c3",
+    "META/m2/entities/link-map.txt": "15537b073a124c684fb60e8f9fdebd77a17d74679ddaa1946e386969be0aec78",
+    "META/m2/entities-clean/clean-checkout.json": "4d64719db53cd48e99ff6131a4ae91d2a1f2887a23a8ae69e452843051106111",
+    "META/m2/entities-clean/link-map.txt": "e4e915eddfd1195e159fa8a50054c5b0ca9d574148242a08d8887cce67fdbd1a",
+    "tools/check_entities_evidence.py": "c6aff7ff728210c4f1be301c70be73c0bc56ed388e72fa66a735a3792aa251f0",
+    "tools/m0.py": "1ecc296576ed174664af909520028355691900e8679693053e6f5d51a67953e7",
+    "META/m2/EXIT_AUDIT.md": "d1886f61394b4dcab7ddfa14563b5030d5f028fb54dfeaf7d49d6f5178ce92f6"
+  },
+  "limits": [
+    "No original entity code execution or byte-match claim",
+    "Explicit context ABI and inactive NULL representation of verified RET sentinel",
+    "Documented safety extensions for releases, focus, backlinks, reentrancy and future lifetime mutation",
+    "Growth payload unspecified outside observed initialized fields",
+    "PC53 spatial contract; callbacks must preserve profile; original runtime transitions unresolved",
+    "Game callbacks/resource attachments/world/script/navigation not supplied",
+    "Full M2 remains open for PCX/WAV foundations and final integration audit"
+  ]
+}

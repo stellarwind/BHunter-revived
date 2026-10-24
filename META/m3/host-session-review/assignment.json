@@ -1,0 +1,32 @@
+{
+  "game_source_admission": false,
+  "entries": [
+    {
+      "address": "0042f360",
+      "boundary_catalog_rows": [
+        "0042f360\tFUN_0042f360\t0042f360-0042f388\tundefined FUN_0042f360(void)\tfalse\tcandidate-function-code-pointer"
+      ],
+      "role": "engine_network_owner_unresolved",
+      "provenance": "Captured original new-game menu callback",
+      "scope": "Read-only original host-session boundary; no source recovery assignment"
+    },
+    {
+      "address": "004766e0",
+      "boundary_catalog_rows": [
+        "004766e0\tFUN_004766e0\t004766e0-004768b0\tundefined4 __cdecl FUN_004766e0(char * param_1)\tfalse\t"
+      ],
+      "role": "engine_network_owner_unresolved",
+      "provenance": "Original DirectPlay host session creation owner",
+      "scope": "Read-only original host-session boundary; no source recovery assignment"
+    },
+    {
+      "address": "004768c0",
+      "boundary_catalog_rows": [
+        "004768c0\tFUN_004768c0\t004768c0-00476a16\tundefined4 __cdecl FUN_004768c0(undefined4 * param_1, char * param_2)\tfalse\t"
+      ],
+      "role": "engine_network_owner_unresolved",
+      "provenance": "Original join-session and local-player initialization owner, reviewed to distinguish it from host creation; not executed by this trace",
+      "scope": "Read-only original host-session boundary; no source recovery assignment"
+    }
+  ]
+}

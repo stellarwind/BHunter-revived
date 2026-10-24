@@ -1,0 +1,19 @@
+
+/* Recovered layout and behavior tested against original isolated machine code. See src/bh_math.c
+   and analysis/math/RECOVERY.md. Not byte-matched; aliasing and floating-point limits documented
+   there. */
+
+void __cdecl bh_mat34_translate_world(float x,float y,float z,BHMat34 *m)
+
+{
+  float fVar1;
+  float fVar2;
+  
+  fVar1 = m->m[1][3];
+  fVar2 = m->m[2][3];
+  m->m[0][3] = x + m->m[0][3];
+  m->m[1][3] = y + fVar1;
+  m->m[2][3] = z + fVar2;
+  return;
+}
+

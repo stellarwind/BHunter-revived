@@ -1,0 +1,140 @@
+{
+  "date": "2026-10-24",
+  "passed": true,
+  "scope": "Owned BSP/registry/sidecar data adapters and observed-width collision bounds; larger engine/game owners WIP",
+  "m2_complete": false,
+  "goal_active": true,
+  "game_admitted": false,
+  "original_code_required": false,
+  "original_adapter_added": false,
+  "engine_authorship": "unresolved",
+  "real_scenario": {
+    "scenario": "bsp-block-data",
+    "checks": 26101,
+    "failures": 0,
+    "original_code_required": false
+  },
+  "clean_scenario": {
+    "scenario": "bsp-block-data",
+    "checks": 786,
+    "failures": 0,
+    "original_code_required": false
+  },
+  "real_assets": {
+    "scenario": "blocks-real-assets",
+    "bsp_files": 505,
+    "backend_decodes": 1515,
+    "registry_models": 454,
+    "unapplied_scripts": 202,
+    "resolved_placements": 5815
+  },
+  "real_integration": {
+    "scenario": "m2-foundations",
+    "checks": 337313,
+    "failures": 0,
+    "archive_entries": 1229,
+    "original_code_required": false
+  },
+  "clean_integration": {
+    "scenario": "m2-foundations",
+    "checks": 32988,
+    "failures": 0,
+    "archive_entries": 0,
+    "original_code_required": false
+  },
+  "identical_real_and_clean_source_hashes": {
+    "src/bh_math.c": "ce111e18659563a2c41a04b645295227aac6ead9fe9cc2e803ac45c726d6e9bc",
+    "src/bh_math.h": "9ebaf91c16011277e1e2f9a9c3791b3ea1245dafa3e096d918422378d6065a9d",
+    "src/bh_fp.c": "cc8400a29fd082f96ffd9b483f490a44992717b25eac0cb32e2e108ba446f3f8",
+    "src/bh_fp.h": "f4565fc55c52d3582181db98d3199f6c8f9b665ffd227ab715ce7a03ab4e818d",
+    "src/bh_vfile.c": "7a8187efa6bfcbdf7a626ff53c6d4133d47a37e2dcf65830985b5cee94bf78d0",
+    "src/bh_vfile.h": "7867198f05fbfa5a4b3ae2a003245e8ff7faaea72e1194852d32b18a0ecae7ba",
+    "src/bh_config.c": "6081596cb764118e0441ce5d3e0cf897a6ce011ca2d7e9aaa81a6ab5ef58092e",
+    "src/bh_config.h": "a82e0abf34974bec247852e225904afe4821fe83d01e1e21f2d53e0b18f70dfc",
+    "src/bh_config_defaults.h": "492d14e242d011967eda0601cf98432ea26c821c9ebebca37c52bcb348688cfb",
+    "src/bh_paths.c": "0ce4a5312e27f1cec73425cea8a25b93677e9a619ec6aeb6c79f828c8293a977",
+    "src/bh_paths.h": "f5b49007ba7ed969612fbffa724b9a803aa4966249b803fd2137a555dbc03bdb",
+    "src/bh_scene.c": "8439df6593816139b4e5b60cb8e9c96283a66c8f18f5465ca1aeec3eee64e3e1",
+    "src/bh_scene.h": "0f999ccc243aeace1bba1b8008beb836760dd7c940adaec9ac53042213a6a48c",
+    "src/bh_bsp.c": "712f5d421bb28635087fe8882b13e887c12893809a7b106ea4fa24275ab48fe5",
+    "src/bh_bsp.h": "9c0c019f20d7496268212f9f18e2a58c96406bf05e7352cc553d71847b5fb263",
+    "src/bh_round.c": "ff848010705702e25cf85f5ba1d9c30a024d1ea8bf93227240285b9c54fc8ef4",
+    "src/bh_round.h": "a81be03deb24df6a85cd6f4dd8206fa37a37a952574422e68377dcd71d8af2d6",
+    "src/bh_blocks.c": "d3279666e06ca171c9844124222bb0ecf886e35850ff0b82181a1a4bf3723881",
+    "src/bh_blocks.h": "a84569dcb145da56f83783cd65ab9c96c01e7e1413e79487492e9ea9d349d638",
+    "tests/blocks.c": "ff70547ce09e7b05d458f497598d2f63b878cdef99ae81d65cbdb6ef4ab2b988",
+    "tests/bsp_manifest.h": "e1deb9990542d45ac3eb542dcc38159509780731a827f04778b94944811e6641",
+    "tests/block_names.h": "fc1d8777692e338a24e5612c645bdc9afe9b0d3c1f387f1dc5f406d9be73342d",
+    "tests/scene.c": "188af4318d63cc8272f7415ea2d78bb869f7cb1f2225404a4da8f0a5e46be056",
+    "tests/config.c": "0a6715aa5e4cbe02e53927be96f648b5c9101678c66e16fe40d47f3d23ac7961",
+    "tests/integration.c": "fb18f5cea1837a95c66800769a4dfa21e3e64cbcd2ec2bd9fa038b906607b8de",
+    "tests/checkpoint.c": "5babaa6924503f538202caaf2145887ce82abea1889d32ec4622931e3a39e533",
+    "tests/vfile.c": "4ce922ed286642015cbda949c6349fc194e04392d1b8309d497b40574ba16451",
+    "tests/math_cases.c": "907257316f265794a1a73da7ff04a7890fcd737d8906a8459ec188e9a1a70ca6",
+    "tests/math_cases.h": "66ea7025b3a0580ee8bb300707e10a4bb94cd9a7bcec779faf172cff35a64a82",
+    "tests/math_numeric.c": "01a96c8f47790525966352de86a42b90ad7ec2f39d0bbc9ef403512a53571de5",
+    "tests/math_golden.h": "bb91fd34bf9d908ce30f78e156526963c058b21f914448d68f03035f54fc0cec"
+  },
+  "dependency_manifest": {
+    "real_raw_sha256": "21ff5211555a44bd8e14b0f0286c16ffbe9c7a18629afa1033dd364c76573c06",
+    "clean_LF_sha256": "e0b0059f8b53f931dfdec6196b2796f1d395c30782dc16a726f72b976a16bf4e",
+    "same_content_after_git_line_ending_normalization": true
+  },
+  "source_support_functions": [
+    "bh_bsp_init",
+    "bh_bsp_dispose",
+    "bh_bsp_decode",
+    "bh_bsp_read",
+    "bh_bsp_load",
+    "bh_blocks_init",
+    "bh_blocks_dispose",
+    "bh_blocks_decode_names",
+    "bh_blocks_load",
+    "bh_blocks_find",
+    "bh_round_float"
+  ],
+  "partial_original_records": [
+    "00411f00-data-subset-c",
+    "00457e20-data-subset-c",
+    "00458140-data-subset-c",
+    "0044b2e0-data-subset-c"
+  ],
+  "missing_module_controls": {
+    "missing_definition_control": "rejected with LNK2001",
+    "missing_vfile_control": "rejected with LNK2001",
+    "missing_config_control": "rejected with LNK2001",
+    "missing_paths_control": "rejected with LNK2001",
+    "missing_scene_control": "rejected with LNK2001",
+    "missing_bsp_control": "rejected with LNK2001",
+    "missing_blocks_control": "rejected with LNK2001",
+    "missing_round_control": "rejected with LNK2001"
+  },
+  "clean_source_tree": "f330143a48f66f5334c7107a3624b9f20ea7b20b",
+  "checks": [
+    "All original EXE/BIN/MDF/MDS hashes verified unchanged",
+    "Independent reference-data/FP control checker passed without rewriting controls",
+    "M1 historical catalog --check passed; supplemental owners retain pending dependencies",
+    "All support symbols owned by real bsp/blocks/round objects in target; no original mapper symbols",
+    "mkstatus --check passed: 29 tracked addresses / 43 variants; 4 bm, 19 func, 6 wip; zero game admission",
+    "git diff --check passed"
+  ],
+  "artifacts": {
+    "META/m2/blocks/review.json": "d36e5ffcadee1fd9cbb8c7672ad7bb684d5c18d99b1a63bfbc5da1436b1b458e",
+    "META/m2/blocks/data-controls.json": "8e5c3ef5d8f71d771442b35e52daa9ccb4eb26cdf103f127fc61497d4943873d",
+    "META/m2/blocks/bounds-investigation.md": "825f2e2be964a7a148755d36390025cbe386d8bdc2108082b65873fbc390a97d",
+    "META/m2/blocks/integration-real.json": "c52f22d32c4604c1722183259487804e54a1ccf0e4a45e23cc620e590120fcb6",
+    "META/m2/blocks/link-map.txt": "e63ad78103d80e094b3ce6f5ad07d4861685375037a69d82a179d49c7420ce5e",
+    "META/m2/blocks-clean/clean-checkout.json": "0e133d0a619b74e13662bf6a04d98852f93b9a440c014a93b763632d2bd94ab6",
+    "META/m2/blocks-clean/link-map.txt": "7462496ac0da8081d202c0783888900688b33c467574807276f724bd616a06f5",
+    "tools/check_blocks_evidence.py": "4552feb54e15b2ca3972c92112e8dea1f163d3691d826cb8a5abc73d8dd02993",
+    "tools/m0.py": "66c1b8edb212dcac46ed0cf95aa863de175761973f0ca31d2add0cbb92cc661d"
+  },
+  "limits": [
+    "No original BSP/script function executed; numerical controls model inspected instruction widths, not universal equivalence",
+    "Four whole original engine/game routines remain WIP; new public API is data-only adaptation",
+    "All 202 sidecars are explicitly unapplied; texture/collision callback runtime behavior remains unrecovered",
+    "Strict safety profile: count/shape/name/finite/index/cycle policies; no identified format version marker",
+    "Pinned x86 PC53 build; compiler/context/architecture changes require new validation",
+    "Remaining M2 entity/container contracts and exit audit; original runtime scenarios, world/navigation, CD music and DirectPlay still open"
+  ]
+}

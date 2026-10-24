@@ -1,0 +1,38 @@
+{
+  "passed": true,
+  "translation_units": 48,
+  "real_total": {
+    "scenario": "m2-foundations",
+    "checks": 643883,
+    "failures": 0,
+    "archive_entries": 1229,
+    "original_code_required": false
+  },
+  "clean_total": {
+    "scenario": "m2-foundations",
+    "checks": 161905,
+    "failures": 0,
+    "archive_entries": 0,
+    "original_code_required": false
+  },
+  "focused_checks": 85,
+  "independent_random_controls": 6,
+  "restored_functions": 6,
+  "game_launches": 0,
+  "original_code_executed": false,
+  "source_game_admission": false,
+  "sources": {
+    "src/bh_script_timer.c": "7e2aa2cc600ef0e963178d46bc5976b04784c08d5f035f48fcd0f3b3c14229e1",
+    "src/bh_script_timer.h": "ee18a15d51e12e7eb1a45aa951e1e4b16819733e2e6996e1278edc5d6d0d25de",
+    "tests/script_timer.c": "c5cd4bbf65b193b2ad677e86e62e05e56e31538a4084e0139a4a54e849e776dc",
+    "tests/script_timer_cases.h": "386b5811a42f140a4f49e9fd2b19b2a8617fcb52bf29d0fa1e7e9367c63ead13",
+    "tests/checkpoint.c": "89c57da2a785faa4b45095db3adc6e896809def6ad0cde7f096527f098681da6"
+  },
+  "limits": [
+    "Real script statement/level construction is still incomplete; explicit binder supplies these actual callbacks without claiming full parser admission",
+    "Actor variables and one-level owner/activity state are borrowed explicit source inputs, not guessed original global/entity/world layouts",
+    "PC53, fixed double 1/30 tick, shared verified VC5 CRT rand state and signed 32-bit IMUL wrap; no original runtime precision inference",
+    "Callback release/recycle stops rearm with MUTATION; invalid source actor selectors reject instead of original unsafe reads",
+    "Unit checks execute source pool/query/step behavior, not automated game execution or gameplay"
+  ]
+}

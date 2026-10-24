@@ -1,0 +1,20 @@
+
+void __cdecl FUN_0047db90(undefined *param_1)
+
+{
+  undefined *lpMem;
+  byte *pbVar1;
+  int local_4;
+  
+  lpMem = param_1;
+  if (param_1 != (undefined *)0x0) {
+    pbVar1 = (byte *)___sbh_find_block(param_1,&local_4,(uint *)&param_1);
+    if (pbVar1 != (byte *)0x0) {
+      ___sbh_free_block(local_4,(int)param_1,pbVar1);
+      return;
+    }
+    HeapFree(DAT_004f9b78,0,lpMem);
+  }
+  return;
+}
+

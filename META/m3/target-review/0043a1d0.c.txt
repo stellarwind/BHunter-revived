@@ -1,0 +1,219 @@
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void FUN_0043a1d0(int param_1,undefined4 *param_2)
+
+{
+  float *pfVar1;
+  float *pfVar2;
+  float fVar3;
+  float fVar4;
+  int iVar5;
+  float fVar6;
+  float fVar7;
+  float fVar8;
+  float fVar9;
+  float fVar10;
+  float fVar11;
+  int iVar12;
+  float10 fVar13;
+  float10 fVar14;
+  float10 extraout_ST0;
+  longlong lVar15;
+  float fStack_30;
+  float fStack_2c;
+  float fStack_28;
+  float fStack_24;
+  float fStack_20;
+  float fStack_1c;
+  float fStack_18;
+  float fStack_14;
+  float fStack_10;
+  float fStack_c;
+  float fStack_8;
+  float fStack_4;
+  
+  switch(*param_2) {
+  case 0:
+    iVar12 = *(int *)(param_1 + 0xfc);
+    fVar13 = (float10)(float)param_2[1];
+    if (iVar12 == 6) {
+      if (param_2[2] == DAT_004dfab8) {
+        fVar13 = fVar13 * (float10)_DAT_00489330;
+        if ((float10)_DAT_00489ca8 < fVar13) {
+          fVar13 = (float10)_DAT_00489cb0;
+        }
+      }
+      else {
+        fVar13 = (float10)_DAT_00489200;
+      }
+    }
+    iVar5 = param_2[2];
+    if (((iVar5 != 0) && ((float10)_DAT_00489988 < (float10)*(float *)(param_1 + 0x194) + fVar13))
+       && (iVar5 != param_1)) {
+      *(int *)(param_1 + 0x1b8) = iVar5;
+    }
+    if ((iVar12 == 2) || (iVar12 == 6)) {
+      fVar3 = *(float *)(param_1 + 0x184);
+      fVar4 = *(float *)(param_1 + 0x198);
+      fVar14 = (float10)*(float *)(param_1 + 0x198) - fVar13 * (float10)_DAT_004894f0;
+      fVar13 = (float10)_DAT_004892dc;
+      *(float *)(param_1 + 0x198) = (float)fVar14;
+      if (fVar13 < fVar14) {
+        *(undefined4 *)(param_1 + 0x198) = 0x40000000;
+      }
+      fVar4 = (*(float *)(param_1 + 0x188) * fVar4 * *(float *)(param_1 + 0x184)) /
+              (*(float *)(param_1 + 0x188) * *(float *)(param_1 + 0x198));
+      *(float *)(param_1 + 0x184) = fVar4;
+      *(float *)(param_1 + 0x180) = (*(float *)(param_1 + 0x180) / fVar3) * fVar4;
+      lVar15 = __ftol();
+      *(short *)(param_1 + 0x1e6) = (short)lVar15;
+      lVar15 = __ftol();
+      *(short *)(param_1 + 0x1e4) = (short)lVar15;
+      fVar13 = extraout_ST0;
+    }
+    *(code **)(param_1 + 0xcc) = FUN_00439910;
+    fVar13 = fVar13 + (float10)*(float *)(param_1 + 0x194);
+    fVar14 = (float10)_DAT_0048930c;
+    *(float *)(param_1 + 0x194) = (float)fVar13;
+    if (fVar14 <= fVar13) {
+      *(undefined4 *)(param_1 + 0x1ac) = param_2[2];
+      return;
+    }
+    break;
+  case 1:
+    FUN_004341a0(*(float *)(param_1 + 0x180) / *(float *)(param_1 + 0x184),&fStack_30,
+                 (float *)(param_1 + 0x120),(float *)(param_1 + 0x144),(float *)(param_1 + 0x150),
+                 (float *)(param_1 + 300));
+    fVar3 = (*(float *)(param_1 + 0x15c) + fStack_30) - (float)param_2[1];
+    fVar7 = (*(float *)(param_1 + 0x160) + fStack_2c) - (float)param_2[2];
+    fVar6 = (*(float *)(param_1 + 0x164) + fStack_28) - (float)param_2[3];
+    fVar4 = SQRT(fVar6 * fVar6 + fVar7 * fVar7 + fVar3 * fVar3);
+    if ((_DAT_00489200 < fVar4) && (fVar4 < (float)param_2[5])) {
+      fVar4 = (((float)_DAT_00489220 - fVar4 / (float)param_2[5]) * (float)param_2[4] *
+              (float)_DAT_00489c78) / fVar4;
+      *(float *)(param_1 + 0x168) = fVar4 * fVar3 + *(float *)(param_1 + 0x168);
+      *(float *)(param_1 + 0x16c) = fVar4 * fVar7 + *(float *)(param_1 + 0x16c);
+      *(float *)(param_1 + 0x170) = fVar4 * fVar6 + *(float *)(param_1 + 0x170);
+      *(code **)(param_1 + 0xcc) = FUN_00439910;
+      return;
+    }
+    break;
+  case 2:
+    *(code **)(param_1 + 0xcc) = FUN_00439910;
+    *(float *)(param_1 + 0x168) =
+         (float)param_2[4] * (float)param_2[7] + *(float *)(param_1 + 0x168);
+    *(float *)(param_1 + 0x16c) =
+         (float)param_2[5] * (float)param_2[7] + *(float *)(param_1 + 0x16c);
+    *(float *)(param_1 + 0x170) =
+         (float)param_2[6] * (float)param_2[7] + *(float *)(param_1 + 0x170);
+    return;
+  case 3:
+    pfVar1 = (float *)(param_2 + 1);
+    FUN_004341a0(*(float *)(param_1 + 0x180) / *(float *)(param_1 + 0x184),pfVar1,
+                 (float *)(param_1 + 0x120),(float *)(param_1 + 0x144),(float *)(param_1 + 0x150),
+                 (float *)(param_1 + 300));
+    *pfVar1 = *(float *)(param_1 + 0x15c) + *pfVar1;
+    param_2[2] = *(float *)(param_1 + 0x160) + (float)param_2[2];
+    param_2[3] = *(float *)(param_1 + 0x164) + (float)param_2[3];
+    return;
+  case 4:
+    if (*(int *)(param_1 + 0xf8) == 0) {
+      *(undefined4 *)(*(int *)(param_1 + 0x1a4) + 0x128) = *(undefined4 *)(param_1 + 0xf4);
+    }
+    else {
+      *(undefined4 *)(*(int *)(param_1 + 0xf8) + 0xf4) = *(undefined4 *)(param_1 + 0xf4);
+    }
+    if (*(int *)(param_1 + 0xf4) != 0) {
+      *(undefined4 *)(*(int *)(param_1 + 0xf4) + 0xf8) = *(undefined4 *)(param_1 + 0xf8);
+    }
+    if (*(int *)(param_1 + 0xec) == 0) {
+      DAT_004dfb28 = *(undefined4 *)(param_1 + 0xf0);
+    }
+    else {
+      *(undefined4 *)(*(int *)(param_1 + 0xec) + 0xf0) = *(undefined4 *)(param_1 + 0xf0);
+    }
+    if (*(int *)(param_1 + 0xf0) != 0) {
+      *(undefined4 *)(*(int *)(param_1 + 0xf0) + 0xec) = *(undefined4 *)(param_1 + 0xec);
+    }
+    DAT_004dfb2c = DAT_004dfb2c + -1;
+    FUN_0047c140(*(uint *)(param_1 + 0x104));
+    FUN_00477070(param_1);
+    return;
+  case 0xb:
+    if ((float)_DAT_00489c80 <= *(float *)(param_1 + 0x19c)) {
+      fVar3 = *(float *)(param_1 + 0x19c) - (float)_DAT_00489318;
+      fVar4 = (float)_DAT_00489318;
+      *(float *)(param_1 + 0x19c) = fVar3;
+      if (fVar3 < fVar4) {
+        *(undefined4 *)(param_1 + 0x19c) = 0x3dcccccd;
+      }
+      *(code **)(param_1 + 0xcc) = FUN_00439910;
+      return;
+    }
+    if (*(int *)(param_1 + 0x118) != 0) {
+      *(undefined4 *)(param_1 + 0x194) = 0x40000000;
+      *(code **)(param_1 + 0xcc) = FUN_00439910;
+      return;
+    }
+    break;
+  case 0xd:
+    param_2[5] = 1;
+    param_2[6] = param_2[3];
+    break;
+  case 0xf:
+    FUN_004341a0(*(float *)(param_1 + 0x180) / *(float *)(param_1 + 0x184),&fStack_24,
+                 (float *)(param_1 + 0x120),(float *)(param_1 + 0x144),(float *)(param_1 + 0x150),
+                 (float *)(param_1 + 300));
+    fStack_24 = *(float *)(param_1 + 0x15c) + fStack_24;
+    fStack_20 = *(float *)(param_1 + 0x160) + fStack_20;
+    fStack_1c = *(float *)(param_1 + 0x164) + fStack_1c;
+    iVar12 = FUN_00421610(param_1,&fStack_24);
+    *(int *)(param_1 + 0x1b8) = iVar12;
+    return;
+  case 0x10:
+    fVar3 = *(float *)(param_1 + 0x180) / *(float *)(param_1 + 0x184);
+    pfVar1 = (float *)(param_1 + 300);
+    pfVar2 = (float *)(param_1 + 0x150);
+    FUN_004341a0(fVar3 - (float)_DAT_004891f8,&fStack_c,(float *)(param_1 + 0x120),
+                 (float *)(param_1 + 0x144),pfVar2,pfVar1);
+    FUN_004341a0(fVar3,&fStack_24,(float *)(param_1 + 0x120),(float *)(param_1 + 0x144),pfVar2,
+                 pfVar1);
+    FUN_004341a0(fVar3 - (float)_DAT_00489208,&fStack_18,(float *)(param_1 + 0x120),
+                 (float *)(param_1 + 0x144),pfVar2,pfVar1);
+    fVar4 = (float)_DAT_00489360;
+    fVar7 = (float)_DAT_00489360;
+    fVar8 = (fStack_18 - fStack_24) * (float)_DAT_00489360;
+    param_2[4] = fVar8;
+    fVar9 = (fStack_14 - fStack_20) * (float)_DAT_00489360;
+    fVar10 = (fStack_10 - fStack_1c) * (float)_DAT_00489360;
+    fVar3 = (float)_DAT_00489360;
+    fVar6 = (float)_DAT_00489360;
+    fVar11 = (float)_DAT_00489360;
+    param_2[5] = fVar9;
+    param_2[6] = fVar10;
+    param_2[7] = ((fStack_24 - fStack_c) * fVar4 - fVar8) * fVar3;
+    param_2[8] = ((fStack_20 - fStack_8) * fVar7 - fVar9) * fVar6;
+    param_2[9] = ((fStack_1c - fStack_4) * fVar11 - fVar10) * (float)_DAT_00489360;
+    param_2[1] = *(float *)(param_1 + 0x15c) + fStack_24;
+    param_2[2] = *(float *)(param_1 + 0x160) + fStack_20;
+    param_2[3] = *(float *)(param_1 + 0x164) + fStack_1c;
+    return;
+  case 0x11:
+    if (param_2[1] == *(int *)(param_1 + 0x1b8)) {
+      *(undefined4 *)(param_1 + 0x1b8) = 0;
+    }
+    if (param_2[1] == *(int *)(param_1 + 0x1ac)) {
+      *(undefined4 *)(param_1 + 0x1ac) = 0;
+      return;
+    }
+    break;
+  case 0x14:
+    *(code **)(param_1 + 0xcc) = FUN_004397e0;
+    *(code **)(param_1 + 200) = FUN_0047d680;
+    FUN_00476e90(param_1,FUN_0047d680);
+    return;
+  }
+  return;
+}
+

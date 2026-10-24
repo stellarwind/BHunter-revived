@@ -1,0 +1,37 @@
+{
+  "address": "00408940",
+  "end": "00408b06",
+  "role": "engine_candidate",
+  "provenance_confidence": "medium; engine ownership unresolved; portal behavior and boundary reviewed",
+  "body_sha256": "393979c3611b7f6f0a33a7f0f11833eb00509089030fc4b6e3ebd9e4142840ca",
+  "caller": "00410571",
+  "caller_bytes": "e8ca83ffff",
+  "dependencies": {
+    "original_model_registry": "00497230 records stride 0x174; count at +18; replaced by caller-resolved BHPortalNode.count",
+    "original_scene_ring": "entity +124; replaced by source-owned BHPortalNode.next preserving traversal order",
+    "portal_record": "entity +1cc, stride 60, neighbor at +38; compile-checked source BHPortal size and offset",
+    "constants": {
+      "00489318": 0.1,
+      "00489438": -0.1
+    },
+    "calls": "none; no allocation, callbacks, imports or CRT helpers in this body"
+  },
+  "boundary_evidence": [
+    "Complete RET-terminated body with one direct call from reviewed level construction; no compiler EH/unwind or shared-tail assignment",
+    "Full archived assembly reviewed; decompiler types float incorrectly for integer pointer/direction/plane fields; implementation follows assembly"
+  ],
+  "evidence_sha256": {
+    "META/m3/navigation-review/assignment.json": "f0d1983688f773dfd4fdaf27faf66a36f55b2fecb8b27b0de571e8a88c19c801",
+    "META/m3/navigation-review/00408940.asm.txt": "e95206b3b589e9717800876d4bebfcc0784fe504e53e4ed00437b33004386d5b",
+    "META/m3/navigation-review/00408940.c.txt": "525b6216f79c7293fd60e9e06fe8bc3f23dddf23eb47b3dc9a7ef0033796acde",
+    "META/m3/navigation-contract.json": "2a58867c28544455f7b408c1e60d6efe91d600ea5935406e38dc9c11877c3cf3"
+  },
+  "scope": "Complete portal-matching behavior on finite valid components; explicit source ring/count interface rather than unrecovered registry/global ABI",
+  "excluded": [
+    "004084a0 geometry/portal construction remains not_started",
+    "00407f30 graph ordering/cache/recomputation remains wip",
+    "Verified CRT, math and compiler helpers are not assigned"
+  ],
+  "source": "src/bh_portals.c",
+  "target": "build/m0/bhunter-integration.exe"
+}

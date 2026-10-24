@@ -1,0 +1,62 @@
+{
+  "date": "2026-10-24",
+  "passed": true,
+  "scope": "M3 media preservation/recovery and native pre-GUI source-check controls only",
+  "m3_complete": false,
+  "goal_active": true,
+  "user_constraint": "No computer-use skills or visual identification; CLI/programmatic traces only after instruction",
+  "native_reference_executes_original_code": true,
+  "normal_source_integration_target_unchanged": true,
+  "original_file_patches": 0,
+  "temporary_restored_breakpoint_bytes": 2,
+  "immutable_references": {
+    "GAME_DATA/BHUNTER.EXE": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+    "GAME_DATA/Bhunter.bin": "2393a661fd647ed6de3eee34c35c30812c44f3ee15b9d44244a63720804df581",
+    "BHUNTER.mdf": "540ef8a444a9e9e5ab9eb69bc0e7b13a040bb2e49187b91723f317f97a627e1b",
+    "BHUNTER.mds": "77c249c75a2505a36822918a71a11a4d253f9860141d863c5db6084317f1fb19"
+  },
+  "source_check_expected_and_observed": [
+    false,
+    true,
+    false
+  ],
+  "x87_early_startup_control": 639,
+  "media_tracks": [
+    {
+      "number": 1,
+      "mode": "MODE1",
+      "stored_bytes": 75675600,
+      "stored_sectors": 32175,
+      "duration_seconds": 429.0,
+      "sha256": "66de7d5700672c09bd9ea76707737f10a051bda63a954d934b2a14e415309c28"
+    },
+    {
+      "number": 2,
+      "mode": "AUDIO",
+      "stored_bytes": 232180032,
+      "stored_sectors": 98716,
+      "duration_seconds": 1316.2133333333334,
+      "sha256": "59cbdfbce892ebe68eff0c6c5037566987f047c16093e73d0f1625651b17d488"
+    }
+  ],
+  "artifacts": {
+    "tools/m3_media.py": "ba5327dda2039d575977998d71e76036d103b006d95f72a13019a337cfc33d37",
+    "tools/m3_source_probe.c": "4cbd3219793c10e4234202226293557cf9d1c83977216fcf45dcf50c15a5729f",
+    "tools/m3_source_probe.py": "64aae07eec32236bf073c6f250f96314b46c467ac276f2aaf752907a4475dbdc",
+    "META/m3/DEBUGGER_DESIGN.md": "881295e38229ad478e2d1073629fc125a6cba6787b53eb298871c20b8ea1658f",
+    "META/m3/REFERENCE.md": "f62c2a41bd8addcaa863d87674eef0ce6287377306455245f57a4e4b7a69dd0c",
+    "META/m3/media-inventory.json": "92467cae3c85180f413f37e274e61ab28938e31501b7f61772b7e2cf85eb6793",
+    "META/m3/source-probe.json": "e23c2b155bc5ec5efbf4823a480196463bd02a2832f3cc517cdf23792e442836",
+    "META/m3/source-probe-first-attempt.json": "acc365d95c29ed418dfb23e7d8cb84d8ffee7159e8830a9ea1b11df9d475fdb9",
+    "META/m3/source-probe-hardware-attempt.json": "1598098fab75ff0c2c5d3598e1ab1fd10d14281a095194344e7f4ca2cc37644c",
+    "META/m3/cd-contract.json": "eaa8bc90efd010776887478e0f8f6e37176e892b3aab3cac22f054e79de10026",
+    "META/m3/scenario-matrix.json": "559936802960287d1f5c9610c020a7f3c79d636591ca3c94cc1072462758735f"
+  },
+  "remaining": [
+    "Isolated original graphics/config/reference launch beyond source check",
+    "Actual feature/mode/control/render/audio/persistence/network inventory",
+    "Deterministic input/seed/time/state traces and later thread FP controls",
+    "Menu/loading/movement/collision/objective/failure/retry/normal shutdown scenarios",
+    "Runtime CD audio timing/loop/playback verification"
+  ]
+}

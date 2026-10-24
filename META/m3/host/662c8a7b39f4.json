@@ -1,0 +1,150 @@
+{
+  "run_id": "662c8a7b39f4",
+  "scope": "Host MCI CD-audio and DirectPlay3A provider availability only",
+  "original_code_executes": false,
+  "source_hashes": {
+    "tools/m3_host_probe.c": "1fe00f5bd33a5245a2dffb067819cb443bdae39a51c33950de5232b5a1aa1d37",
+    "tools/m3_host_probe.py": "3f76034d3d4a04c12501b98e0c8da948a80d5d871a431aa2e77a21729595c121"
+  },
+  "sdk_dplay_header": {
+    "path": "D:\\Decomp\\dx7sdk\\include\\dplay.h",
+    "sha256": "31c2a6dde39914a48b1245eacee5fecc6ec517924606ec7836701e1794b6beca"
+  },
+  "original_hashes": {
+    "GAME_DATA/BHUNTER.EXE": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+    "GAME_DATA/Bhunter.bin": "2393a661fd647ed6de3eee34c35c30812c44f3ee15b9d44244a63720804df581",
+    "BHUNTER.mdf": "540ef8a444a9e9e5ab9eb69bc0e7b13a040bb2e49187b91723f317f97a627e1b",
+    "BHUNTER.mds": "77c249c75a2505a36822918a71a11a4d253f9860141d863c5db6084317f1fb19"
+  },
+  "registry_before": [
+    {
+      "view": "32",
+      "exists": false,
+      "error": 2
+    },
+    {
+      "view": "64",
+      "exists": false,
+      "error": 2
+    }
+  ],
+  "commands": [
+    {
+      "label": "compile",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/ID:\\Decomp\\dx7sdk\\include",
+        "/FoD:\\Decomp\\Bhunter\\build\\m3\\host\\662c8a7b39f4\\host.obj",
+        "D:\\Decomp\\Bhunter\\tools\\m3_host_probe.c"
+      ],
+      "exit_code": 0,
+      "output": "m3_host_probe.c\n"
+    },
+    {
+      "label": "link",
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/out:D:\\Decomp\\Bhunter\\build\\m3\\host\\662c8a7b39f4\\host.exe",
+        "D:\\Decomp\\Bhunter\\build\\m3\\host\\662c8a7b39f4\\host.obj",
+        "kernel32.lib",
+        "winmm.lib",
+        "ole32.lib"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "label": "host-query",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\build\\m3\\host\\662c8a7b39f4\\host.exe"
+      ],
+      "exit_code": 0,
+      "output": "{\"event\":\"host-api-probe\",\"pointer_bits\":32,\"original_code_executes\":false}\n{\"event\":\"multimedia-device-counts\",\"aux\":0,\"waveout\":2}\n{\"event\":\"mci-cdaudio-open\",\"error\":266,\"device_id\":0,\"error_text\":\"Unknown problem while loading the specified device driver.\"}\n{\"event\":\"com-initialize\",\"hresult\":0}\n{\"event\":\"directplay3a-create\",\"hresult\":0,\"interface_created\":true}\n{\"event\":\"directplay-provider\",\"guid\":\"0f1d6860-88d9-11cf-9c4e-00a0c905425e\",\"name\":\"Serial Connection For DirectPlay\",\"connection_bytes\":80,\"flags\":1}\n{\"event\":\"directplay-provider\",\"guid\":\"44eaa760-cb68-11cf-9c4e-00a0c905425e\",\"name\":\"Modem Connection For DirectPlay\",\"connection_bytes\":80,\"flags\":1}\n{\"event\":\"directplay-provider\",\"guid\":\"36e95ee0-8577-11cf-960c-0080c7534e82\",\"name\":\"Internet TCP/IP Connection For DirectPlay\",\"connection_bytes\":80,\"flags\":1}\n{\"event\":\"directplay-enumeration\",\"hresult\":0,\"providers\":3}\n{\"event\":\"host-probe-complete\",\"playback_requested\":false,\"volume_write_requested\":false,\"network_session_requested\":false}\n"
+    }
+  ],
+  "source_snapshots": {
+    "tools/m3_host_probe.c": "META/m3/host/1fe00f5bd33a5245a2dffb067819cb443bdae39a51c33950de5232b5a1aa1d37-m3_host_probe.c.txt",
+    "tools/m3_host_probe.py": "META/m3/host/3f76034d3d4a04c12501b98e0c8da948a80d5d871a431aa2e77a21729595c121-m3_host_probe.py.txt"
+  },
+  "events": [
+    {
+      "event": "host-api-probe",
+      "pointer_bits": 32,
+      "original_code_executes": false
+    },
+    {
+      "event": "multimedia-device-counts",
+      "aux": 0,
+      "waveout": 2
+    },
+    {
+      "event": "mci-cdaudio-open",
+      "error": 266,
+      "device_id": 0,
+      "error_text": "Unknown problem while loading the specified device driver."
+    },
+    {
+      "event": "com-initialize",
+      "hresult": 0
+    },
+    {
+      "event": "directplay3a-create",
+      "hresult": 0,
+      "interface_created": true
+    },
+    {
+      "event": "directplay-provider",
+      "guid": "0f1d6860-88d9-11cf-9c4e-00a0c905425e",
+      "name": "Serial Connection For DirectPlay",
+      "connection_bytes": 80,
+      "flags": 1
+    },
+    {
+      "event": "directplay-provider",
+      "guid": "44eaa760-cb68-11cf-9c4e-00a0c905425e",
+      "name": "Modem Connection For DirectPlay",
+      "connection_bytes": 80,
+      "flags": 1
+    },
+    {
+      "event": "directplay-provider",
+      "guid": "36e95ee0-8577-11cf-960c-0080c7534e82",
+      "name": "Internet TCP/IP Connection For DirectPlay",
+      "connection_bytes": 80,
+      "flags": 1
+    },
+    {
+      "event": "directplay-enumeration",
+      "hresult": 0,
+      "providers": 3
+    },
+    {
+      "event": "host-probe-complete",
+      "playback_requested": false,
+      "volume_write_requested": false,
+      "network_session_requested": false
+    }
+  ],
+  "executable_sha256": "3a9f30939346f0553f84f366a13f21aa05a647d575bdbacd42a254a923f13f20",
+  "executable_path": "build/m3/host/662c8a7b39f4/host.exe",
+  "passed": true,
+  "registry_after": [
+    {
+      "view": "32",
+      "exists": false,
+      "error": 2
+    },
+    {
+      "view": "64",
+      "exists": false,
+      "error": 2
+    }
+  ]
+}

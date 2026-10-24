@@ -1,0 +1,18 @@
+
+void __cdecl FUN_00449b90(short param_1,MCIDEVICEID param_2)
+
+{
+  undefined4 local_c;
+  uint local_8;
+  uint local_4;
+  
+  if ((((DAT_004dfb6c != 0) && (param_2 == DAT_004dfb6c)) && (param_1 == 1)) && (DAT_004dfb70 != 0))
+  {
+    local_8 = DAT_004dfb64 & 0xff;
+    local_4 = ((DAT_004dfb78 & 0xff) << 8 | DAT_004dfb74 & 0xffff) << 8 | DAT_004dfb60 & 0xff;
+    local_c = DAT_004dfb68;
+    mciSendCommandA(DAT_004dfb6c,0x806,0xd,(DWORD_PTR)&local_c);
+  }
+  return;
+}
+

@@ -1,0 +1,37 @@
+
+int __cdecl FUN_0047cec0(undefined4 *param_1,int param_2,DWORD param_3)
+
+{
+  int iVar1;
+  
+  if ((param_1[6] == 0) && (param_1[1] == 0)) {
+    iVar1 = _fseek((int *)*param_1,param_2,param_3);
+    return iVar1;
+  }
+  if (param_3 == 0) {
+    iVar1 = param_1[2];
+  }
+  else {
+    if (param_3 == 1) {
+      param_1[4] = param_1[4] + param_2;
+      goto LAB_0047cf16;
+    }
+    if (param_3 != 2) goto LAB_0047cf16;
+    iVar1 = param_1[3];
+  }
+  param_1[4] = iVar1 + param_2;
+LAB_0047cf16:
+  if ((int)param_1[3] < (int)param_1[4]) {
+    param_1[4] = param_1[3];
+  }
+  if ((int)param_1[4] < (int)param_1[2]) {
+    param_1[4] = param_1[2];
+  }
+  param_1[5] = 0;
+  if (param_1[6] != 0) {
+    return 0;
+  }
+  iVar1 = _fseek((int *)*param_1,param_1[4],0);
+  return iVar1;
+}
+

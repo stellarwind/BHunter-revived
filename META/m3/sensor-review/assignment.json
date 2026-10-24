@@ -1,0 +1,42 @@
+{
+  "game_source_admission": false,
+  "entries": [
+    {
+      "address": "00443ac0",
+      "boundary_catalog_rows": [
+        "00443ac0\tFUN_00443ac0\t00443ac0-00443d33\tundefined FUN_00443ac0(void)\tfalse\tcandidate-function-code-pointer"
+      ],
+      "role": "engine_game_owner_unresolved",
+      "provenance": "Script opcode 10 installs this sensor step callback",
+      "scope": "Read-only sensor trigger and actual flight input contract"
+    },
+    {
+      "address": "00443f00",
+      "boundary_catalog_rows": [
+        "00443f00\tFUN_00443f00\t00443f00-00443f47\tundefined FUN_00443f00(void)\tfalse\tcandidate-function-code-pointer"
+      ],
+      "role": "engine_game_owner_unresolved",
+      "provenance": "Script sensor event callback",
+      "scope": "Read-only sensor trigger and actual flight input contract"
+    },
+    {
+      "address": "0041e6b0",
+      "boundary_catalog_rows": [
+        "0041e6b0\tFUN_0041e6b0\t0041e6b0-0041e84d\tundefined FUN_0041e6b0(void)\tfalse\tcandidate-function-code-pointer"
+      ],
+      "role": "engine_game_owner_unresolved",
+      "provenance": "Original player constructor installs controller callback",
+      "scope": "Read-only sensor trigger and actual flight input contract",
+      "reviewed_behavior": "Camera/position collision-adjustment callback: two 0040c4a0 queries and borrowed-position writes, not the ship input controller"
+    },
+    {
+      "address": "00416120",
+      "boundary_catalog_rows": [
+        "00416120\tFUN_00416120\t00416120-00416eab\tundefined __cdecl FUN_00416120(int param_1, float param_2, int param_3)\tfalse\t"
+      ],
+      "role": "game_behavior_candidate",
+      "provenance": "Original selected STINGER/spawn-21 controller stored at 0048f958 by 00428f50",
+      "scope": "Read-only input sign/force contract; no source implementation assignment"
+    }
+  ]
+}

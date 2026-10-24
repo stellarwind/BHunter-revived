@@ -1,0 +1,60 @@
+
+undefined4 __cdecl BH_InitDirectInput(undefined4 param_1)
+
+{
+  int iVar1;
+  int *piStack_5c;
+  undefined4 uStack_58;
+  code *pcStack_54;
+  undefined4 *puStack_50;
+  undefined4 uStack_4c;
+  
+  uStack_4c = 0;
+  puStack_50 = &DAT_004edee0;
+  pcStack_54 = (code *)0x500;
+  uStack_58 = param_1;
+  piStack_5c = (int *)0x47127b;
+  iVar1 = DirectInputCreateA();
+  if (iVar1 < 0) {
+    return 0;
+  }
+  uStack_4c = 0x101;
+  puStack_50 = (undefined4 *)0x0;
+  pcStack_54 = FUN_004711b0;
+  uStack_58 = 4;
+  piStack_5c = DAT_004edee0;
+  (**(code **)(*DAT_004edee0 + 0x10))();
+  if (DAT_004edee8 == (int *)0x0) {
+    return 0;
+  }
+  iVar1 = (**(code **)(*DAT_004edee8 + 0x2c))();
+  if (iVar1 < 0) {
+    return 0;
+  }
+  iVar1 = (**(code **)(*DAT_004edee8 + 0x34))(DAT_004edee8);
+  if (iVar1 < 0) {
+    return 0;
+  }
+  pcStack_54 = (code *)0xffffffff;
+  piStack_5c = (int *)0x34;
+  uStack_58 = 0x12;
+  puStack_50 = (undefined4 *)0x0;
+  uStack_4c = 10000;
+  iVar1 = (**(code **)(*DAT_004edee8 + 0x48))
+                    (DAT_004edee8,&DAT_0048a420,&piStack_5c,&DAT_004edee4,0);
+  if (iVar1 < 0) {
+    return 0;
+  }
+  DAT_004edeec = 1;
+  if (DAT_004edef0 == 0) {
+    if (DAT_004edee8 != (int *)0x0) {
+      (**(code **)(*DAT_004edee8 + 0x1c))(DAT_004edee8);
+    }
+    if (DAT_004edee4 != (int *)0x0) {
+      (**(code **)(*DAT_004edee4 + 0x1c))(DAT_004edee4,1,0);
+    }
+    DAT_004edef0 = 1;
+  }
+  return 1;
+}
+

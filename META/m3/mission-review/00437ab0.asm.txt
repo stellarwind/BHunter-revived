@@ -1,0 +1,10 @@
+# 00437ab0 undefined __stdcall FUN_00437ab0(void) body=[[00437ab0, 00437ad9]]
+# IN From: 00422ba2 To: 00437ab0 Type: UNCONDITIONAL_CALL Op: 0 DEFAULT
+00437ab0 CALL 0x00476f20
+00437ab5 TEST EAX,EAX
+00437ab7 JZ 0x00437ad9
+00437ab9 MOV dword ptr [EAX + 0x180],0x40800000
+00437ac3 MOV ECX,dword ptr [0x004d18e0]
+00437ac9 MOV dword ptr [EAX + 0x104],ECX
+00437acf MOV dword ptr [EAX + 0xcc],0x437a30
+00437ad9 RET

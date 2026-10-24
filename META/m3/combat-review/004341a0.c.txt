@@ -1,0 +1,62 @@
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void __cdecl
+FUN_004341a0(float param_1,float *param_2,float *param_3,float *param_4,float *param_5,
+            float *param_6)
+
+{
+  float fVar1;
+  float fVar2;
+  float fVar3;
+  float fVar4;
+  float fVar5;
+  float fVar6;
+  float fVar7;
+  float fVar8;
+  float fVar9;
+  float fVar10;
+  float fVar11;
+  
+  if (param_1 <= _DAT_00489200) {
+    fVar1 = param_4[1];
+    fVar2 = param_3[1];
+    fVar3 = param_4[2];
+    fVar4 = param_3[2];
+    *param_2 = (*param_4 - *param_3) * param_1 + *param_3;
+    param_2[1] = param_3[1] + (fVar1 - fVar2) * param_1;
+    param_2[2] = (fVar3 - fVar4) * param_1 + param_3[2];
+    return;
+  }
+  if (_DAT_0048930c <= param_1) {
+    fVar5 = (float)_DAT_00489220 - param_1;
+    fVar1 = param_5[1];
+    fVar2 = param_6[1];
+    fVar3 = param_5[2];
+    fVar4 = param_6[2];
+    *param_2 = *param_6 + (*param_5 - *param_6) * fVar5;
+    param_2[1] = param_6[1] + (fVar1 - fVar2) * fVar5;
+    param_2[2] = param_6[2] + (fVar3 - fVar4) * fVar5;
+    return;
+  }
+  fVar10 = _DAT_0048930c - param_1;
+  fVar9 = param_1 * param_1 * param_1;
+  fVar1 = param_6[1];
+  fVar2 = param_6[2];
+  fVar3 = param_4[1];
+  fVar4 = param_4[2];
+  fVar5 = param_3[1];
+  fVar6 = param_3[2];
+  fVar7 = param_5[1];
+  fVar8 = param_5[2];
+  fVar9 = param_1 * param_1 * _DAT_004892c0 - (fVar9 + fVar9);
+  fVar11 = _DAT_0048930c - fVar9;
+  *param_2 = (*param_5 * fVar10 + *param_6 * param_1) * fVar9 +
+             fVar11 * (*param_4 * param_1 + *param_3 * fVar10);
+  param_2[1] = (fVar1 * param_1 + fVar7 * fVar10) * fVar9 +
+               fVar11 * (fVar5 * fVar10 + fVar3 * param_1);
+  param_2[2] = (fVar2 * param_1 + fVar8 * fVar10) * fVar9 +
+               fVar11 * (fVar6 * fVar10 + fVar4 * param_1);
+  return;
+}
+

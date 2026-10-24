@@ -1,0 +1,32 @@
+
+void __cdecl FUN_00476e90(int param_1,undefined *param_2)
+
+{
+  if ((code *)param_2 == FUN_0047d680) {
+    if (*(code **)(param_1 + 0xd0) != FUN_0047d680) {
+      *(code **)(param_1 + 0xd0) = FUN_0047d680;
+      if (*(int *)(param_1 + 0xd8) == 0) {
+        DAT_004f0020 = *(int *)(param_1 + 0xd4);
+      }
+      else {
+        *(undefined4 *)(*(int *)(param_1 + 0xd8) + 0xd4) = *(undefined4 *)(param_1 + 0xd4);
+      }
+      if (*(int *)(param_1 + 0xd4) != 0) {
+        *(undefined4 *)(*(int *)(param_1 + 0xd4) + 0xd8) = *(undefined4 *)(param_1 + 0xd8);
+        return;
+      }
+    }
+  }
+  else {
+    if (*(code **)(param_1 + 0xd0) == FUN_0047d680) {
+      *(int *)(param_1 + 0xd4) = DAT_004f0020;
+      DAT_004f0020 = param_1;
+      if (*(int *)(param_1 + 0xd4) != 0) {
+        *(int *)(*(int *)(param_1 + 0xd4) + 0xd8) = param_1;
+      }
+    }
+    *(undefined **)(param_1 + 0xd0) = param_2;
+  }
+  return;
+}
+

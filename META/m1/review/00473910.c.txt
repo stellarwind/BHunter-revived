@@ -1,0 +1,101 @@
+
+undefined4 BH_InitPaths(void)
+
+{
+  char cVar1;
+  UINT UVar2;
+  DWORD DVar3;
+  int iVar4;
+  uint uVar5;
+  uint uVar6;
+  undefined4 *puVar7;
+  char *pcVar8;
+  char *pcVar9;
+  undefined4 local_20c;
+  undefined4 local_208;
+  undefined4 local_204;
+  CHAR local_200;
+  undefined4 local_1ff;
+  char local_100 [256];
+  
+  local_200 = DAT_004dfb5c;
+  puVar7 = &local_1ff;
+  for (iVar4 = 0x3f; iVar4 != 0; iVar4 = iVar4 + -1) {
+    *puVar7 = 0;
+    puVar7 = puVar7 + 1;
+  }
+  *(undefined2 *)puVar7 = 0;
+  local_20c = DAT_00491c68;
+  *(undefined1 *)((int)puVar7 + 2) = 0;
+  local_208 = DAT_00491c6c;
+  local_204 = PTR_DAT_00491c70;
+  UVar2 = GetWindowsDirectoryA(&local_200,0xff);
+  if (UVar2 != 0) {
+    uVar5 = 0xffffffff;
+    pcVar9 = &local_200;
+    do {
+      if (uVar5 == 0) break;
+      uVar5 = uVar5 - 1;
+      cVar1 = *pcVar9;
+      pcVar9 = pcVar9 + 1;
+    } while (cVar1 != '\0');
+    if (*(char *)((int)&local_204 + ~uVar5 + 2) == '\\') {
+      pcVar9 = s__sBHUNTER_INI_00491c58;
+    }
+    else {
+      pcVar9 = s__s_BHUNTER_INI_00491c48;
+    }
+    _sprintf(&DAT_004ee838,pcVar9);
+  }
+  pcVar9 = (char *)&local_20c;
+  cVar1 = (char)local_20c;
+  while (cVar1 != '\0') {
+    *pcVar9 = cVar1 + -1;
+    pcVar8 = pcVar9 + 1;
+    pcVar9 = pcVar9 + 1;
+    cVar1 = *pcVar8;
+  }
+  DVar3 = GetCurrentDirectoryA(0xff,&local_200);
+  if (DVar3 != 0) {
+    uVar5 = 0xffffffff;
+    pcVar9 = &local_200;
+    do {
+      if (uVar5 == 0) break;
+      uVar5 = uVar5 - 1;
+      cVar1 = *pcVar9;
+      pcVar9 = pcVar9 + 1;
+    } while (cVar1 != '\0');
+    if (*(char *)((int)&local_204 + ~uVar5 + 2) == '\\') {
+      pcVar9 = &DAT_00491c40;
+    }
+    else {
+      pcVar9 = s__s__s_00491c38;
+    }
+    _sprintf(local_100,pcVar9);
+  }
+  uVar5 = 0xffffffff;
+  pcVar9 = local_100;
+  do {
+    pcVar8 = pcVar9;
+    if (uVar5 == 0) break;
+    uVar5 = uVar5 - 1;
+    pcVar8 = pcVar9 + 1;
+    cVar1 = *pcVar9;
+    pcVar9 = pcVar8;
+  } while (cVar1 != '\0');
+  uVar5 = ~uVar5;
+  pcVar9 = pcVar8 + -uVar5;
+  pcVar8 = (char *)&DAT_004ee738;
+  for (uVar6 = uVar5 >> 2; uVar6 != 0; uVar6 = uVar6 - 1) {
+    *(undefined4 *)pcVar8 = *(undefined4 *)pcVar9;
+    pcVar9 = pcVar9 + 4;
+    pcVar8 = pcVar8 + 4;
+  }
+  for (uVar5 = uVar5 & 3; uVar5 != 0; uVar5 = uVar5 - 1) {
+    *pcVar8 = *pcVar9;
+    pcVar9 = pcVar9 + 1;
+    pcVar8 = pcVar8 + 1;
+  }
+  return 2;
+}
+

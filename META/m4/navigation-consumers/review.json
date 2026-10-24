@@ -1,0 +1,96 @@
+{
+  "scope": "Complete world-owner, portal-center/normal and junction route-projection query family",
+  "owner": "src/bh_route_query.c",
+  "target": "build/m0/bhunter-integration.exe",
+  "functions": [
+    {
+      "address": "00423840",
+      "boundary": "00423840-0042399c",
+      "role": "engine_candidate",
+      "confidence": "provisional unknown game/engine authorship; direct source-graph node-array reference and complete non-thunk boundary",
+      "reason": "Reads navigation node array 004df268; inspect nearest-node/query behavior and direct dependencies",
+      "body_sha256": "f5527c3bbee0026df7f1caf3b8ac9798f060f41124fbfd563a391bdf041f0acd",
+      "evidence_sha256": {
+        "META/m4/navigation-consumers/original/00423840.asm.txt": "95cc3f52d1d58a3ab5e2cd1dce07bcd213f955e666607d9921f5aca96474f735",
+        "META/m4/navigation-consumers/original/00423840.c.txt": "a50f8781614739f535a18857d5961dac21e40a040498540651d568ad059525ac"
+      },
+      "implementation": "not_started",
+      "disposition": "Inspected encoded navigation word-stream decoder only; stream/counter ownership not assigned to this query family, no implementation counted."
+    },
+    {
+      "address": "00429480",
+      "boundary": "00429480-00429690",
+      "role": "engine_candidate",
+      "confidence": "provisional unknown game/engine authorship; direct route-table reference and complete non-thunk boundary",
+      "reason": "Reads destination-major route cells at 004df260; ordinary caller 00429fb0 invokes it",
+      "body_sha256": "a403a4a420424c9778c54465beb44ee80c4907a4eb3c1898bece252aa1fc13a2",
+      "evidence_sha256": {
+        "META/m4/navigation-consumers/original/00429480.asm.txt": "cef68b5b88c0dd539261f44d7dee6cc010ba075258ac9bd58d883615931c9f38",
+        "META/m4/navigation-consumers/original/00429480.c.txt": "ad2b3f5e8b5f2d935e7b40373b8fcd29db129669cc5a5efd18994bdb32338ad9"
+      },
+      "implementation": "func"
+    },
+    {
+      "address": "0040a8c0",
+      "boundary": "0040a8c0-0040abd9",
+      "role": "engine_candidate",
+      "confidence": "unknown ownership; complete ordinary boundary with direct world/AI callers, including reviewed route consumer",
+      "reason": "Resolve point/current world owner for simulation and route queries; must recover actual dependencies rather than substitute generic AABB scan",
+      "body_sha256": "c150a4078c355c685f8ac37f059ed80dec4edab6a62ec8f7c9c82bc2d4555b06",
+      "evidence_sha256": {
+        "META/m4/navigation-consumers/original/0040a8c0.asm.txt": "439aca684205a7101ebb2957a81fb6148324f92d2fd8669c553efa4543b98b32",
+        "META/m4/navigation-consumers/original/0040a8c0.c.txt": "50aa6ffc32ef6c017fb79df62e7fe7b45313b2da93622695d8fdfcf30a052a62"
+      },
+      "implementation": "func"
+    },
+    {
+      "address": "00433f70",
+      "boundary": "00433f70-00434014",
+      "role": "engine_candidate",
+      "confidence": "unknown ownership; complete ordinary boundary; reviewed route consumer direct call",
+      "reason": "Portal target geometry helper used by route consumer 00429480",
+      "body_sha256": "0c9b4cc881779128e7e1912f10833fdb4f7ff00f61c3d7b26b5f829a3483517e",
+      "evidence_sha256": {
+        "META/m4/navigation-consumers/original/00433f70.asm.txt": "c1b8edc2ec6e6a80612736ca8cb6a3b77f61a0e6c8ffa9f8d9c4ca8639237d48",
+        "META/m4/navigation-consumers/original/00433f70.c.txt": "a2ea502837cfd54a49b485437b5f72e3ec22dffcc9b20e06e43c9eb13d4f172e"
+      },
+      "implementation": "func"
+    },
+    {
+      "address": "00434040",
+      "boundary": "00434040-004340d2",
+      "role": "engine_candidate",
+      "confidence": "unknown ownership; complete ordinary boundary; reviewed route consumer direct call",
+      "reason": "Portal direction/geometry helper used by route consumer 00429480",
+      "body_sha256": "7608eb3ab380ddd012b912f0d81b5dfcf48a436603725cf37c272ac58d7ef7e3",
+      "evidence_sha256": {
+        "META/m4/navigation-consumers/original/00434040.asm.txt": "5fc01132ad4dce56fc88371c9c8bf5d95a55fa2f3567ab0b134ca92680d8ef2e",
+        "META/m4/navigation-consumers/original/00434040.c.txt": "b0a3460a3ccbc249179602ca574eff778e5a8e2417202e671750b42fd844e6a4"
+      },
+      "implementation": "func"
+    }
+  ],
+  "exclusions": [
+    "Verified CRT/imports/compiler scaffolding remain excluded",
+    "No automated gameplay, new M3 observations or original-code execution",
+    "If dependencies are not recovered, keep candidate WIP instead of stubbing"
+  ],
+  "contracts": {
+    "owner_lookup": "Neighbor-slot priority, then hint/first ring order; owned children excluded; inclusive AABB with signed margin and unrounded comparisons",
+    "portal_geometry": "Actual scratch extents, integer plane conversion and direction constants; no overlap substitution",
+    "route_plan": "Caller supplies current owner, route-lookup waypoint and separately selected projection waypoint; current/destination must be junctions",
+    "numerical": "PC53; x delta and x dot projection retained in double while y/z use their original float stores; parameter rate retains +infinity on zero length",
+    "safety": "Malformed rings, foreign hints/neighbors, unlocated destination, invalid/unassigned exit and nonjunction input reject; planner output preserved",
+    "not_included": "Encoded waypoint stream, full AI/state callbacks, entity/script world installation, simulation/render/audio and DirectPlay remain unfinished"
+  },
+  "constants": {
+    "00489288": {
+      "format": "f",
+      "value": 0.5
+    },
+    "00489ae0": {
+      "format": "d",
+      "value": 4.666666666666667
+    }
+  }
+}

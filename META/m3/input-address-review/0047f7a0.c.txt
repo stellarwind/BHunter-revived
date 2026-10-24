@@ -1,0 +1,18 @@
+
+undefined4 FUN_0047f7a0(void)
+
+{
+  undefined **ppuVar1;
+  
+  DAT_004f9b78 = HeapCreate(1,0x1000,0);
+  if (DAT_004f9b78 == (HANDLE)0x0) {
+    return 0;
+  }
+  ppuVar1 = ___sbh_new_region();
+  if (ppuVar1 == (undefined **)0x0) {
+    HeapDestroy(DAT_004f9b78);
+    return 0;
+  }
+  return 1;
+}
+

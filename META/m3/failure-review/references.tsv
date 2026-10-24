@@ -1,0 +1,511 @@
+function	from	to	type	target_owner	target_data
+004225f0	004225f8	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	00422606	0042269c	CONDITIONAL_JUMP	004225f0	
+004225f0	0042260c	0042268d	CONDITIONAL_JUMP	004225f0	
+004225f0	00422616	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	0042261c	00422623	COMPUTED_JUMP	004225f0	
+004225f0	0042261c	00422632	COMPUTED_JUMP	004225f0	
+004225f0	0042261c	00422641	COMPUTED_JUMP	004225f0	
+004225f0	0042261c	00422650	COMPUTED_JUMP	004225f0	
+004225f0	0042261c	004233a1	COMPUTED_JUMP	004225f0	
+004225f0	0042261c	0042265a	COMPUTED_JUMP	004225f0	
+004225f0	0042261c	00422669	COMPUTED_JUMP	004225f0	
+004225f0	0042261c	004233a4	DATA		pointer 00422623
+004225f0	00422623	0048c090	DATA		string 2Welcome to town, Hunter !  Congratulations with the new badge.  You are required by law to be escorted by a veteran on your first missions. 
+004225f0	00422628	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422632	0048c120	DATA		string 6Hey Kid, nice to meet you!  I have been assigned your instructor.  We'll start with a training mission: Locate the slow moving target using your radar.  Then destroy it.
+004225f0	00422637	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422641	0048c1d0	DATA		string 6Here's a little hint:  Move behind the target and get on his tail.  Do not unleash your weapons until you are in position.
+004225f0	00422646	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422650	0048c250	DATA		string 6Nice kill!  Now let's try some larger weapons.  Find your way into the metro tunnels. Then pick up a bunch of homing missiles at the Downtown Station.
+004225f0	00422655	00422be0	UNCONDITIONAL_JUMP	004225f0	
+004225f0	0042265a	0048c2e8	DATA		string 6Got'em?  Okay, the next target moves a bit faster. Make sure the missiles are locked before you fire them, and don't fire when the target is about to make a turn.
+004225f0	0042265f	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422669	0048c390	DATA		string 6Excellent, Hunter!  Now I have other jobs to do, so you'll have to deal with things on your own from now.  Welcome to business!
+004225f0	0042266e	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	0042267b	00496a3a	READ		undefined2 0x0
+004225f0	00422682	00422ba2	CONDITIONAL_JUMP	004225f0	
+004225f0	00422688	00422b97	UNCONDITIONAL_JUMP	004225f0	
+004225f0	0042268d	0048c418	DATA		string 2Listen Hunter,  We have a public enemy roaming the streets of Downtown.  The area has been sealed off until the fugitive has been caught. 
+004225f0	00422692	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	004226a1	004226c9	CONDITIONAL_JUMP	004225f0	
+004225f0	004226a3	004226ba	CONDITIONAL_JUMP	004225f0	
+004225f0	004226aa	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	004226b0	0048c4a8	DATA		string 2Good job, Hunter !  You have secured the area.  The gates will now be opened. 
+004225f0	004226b5	00422be0	UNCONDITIONAL_JUMP	004225f0	
+004225f0	004226ba	0048c4f8	DATA		string 1Attention all Hunters!  Two gang buggies are terrorizing the City Ring highway.  People are afraid to move from one part of town to another.  Go wipe them out!
+004225f0	004226bf	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	004226ce	004226f6	CONDITIONAL_JUMP	004225f0	
+004225f0	004226d0	004226e7	CONDITIONAL_JUMP	004225f0	
+004225f0	004226d7	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	004226dd	0048c5a0	DATA		string 1Well done.  We had to seal off Old Bronx to cut off their escape.  The gates will now be reopened.
+004225f0	004226e2	00422be0	UNCONDITIONAL_JUMP	004225f0	
+004225f0	004226e7	0048c608	DATA		string 3Greetings Hunter, quite impressive job there!  I have an easy job for you: I have had some trouble with a renegade smuggler.  Now he's hiding some- where in Downtown.  Please deal with him...
+004225f0	004226ec	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	004226fb	00422735	CONDITIONAL_JUMP	004225f0	
+004225f0	004226fd	00422726	CONDITIONAL_JUMP	004225f0	
+004225f0	00422704	00422717	CONDITIONAL_JUMP	004225f0	
+004225f0	00422707	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	0042270d	0048c778	DATA		string 3Thank you, that was most pleasing!  Please enjoy the courtesy of my protection the next time you visit Old Bronx. 
+004225f0	00422712	00422be0	UNCONDITIONAL_JUMP	004225f0	
+004225f0	00422717	0048c6d0	DATA		string 7Reports this morning indicate that Police forces have engaged in direct fight with gang members in Old Bronx.  Police Central reports of several killed and wounded.
+004225f0	0042271c	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422726	0048c7f0	DATA		string 5Hello Mister!  I have a small problem with a competitor who runs around Industrial Complex, selling illegal guns from his car.  Take care of the bandit and I shall reward you!
+004225f0	0042272b	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	0042273a	0042277c	CONDITIONAL_JUMP	004225f0	
+004225f0	0042273c	0042276d	CONDITIONAL_JUMP	004225f0	
+004225f0	00422743	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	00422749	0048c8a8	DATA		string 5Oh, very thank you Mister!  Always feel welcome in any of my humble shops!
+004225f0	0042274e	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	0042275b	00496a3a	READ		undefined2 0x0
+004225f0	00422762	00422ba2	CONDITIONAL_JUMP	004225f0	
+004225f0	00422768	00422b97	UNCONDITIONAL_JUMP	004225f0	
+004225f0	0042276d	0048c8f8	DATA		string 2I see you are already learning the name of the game, Hunter.  Well, I have a delicate undercover mission for you.  You have to... punish a corrupted politician here in Downtown.
+004225f0	00422772	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422781	004227bb	CONDITIONAL_JUMP	004225f0	
+004225f0	00422783	004227ac	CONDITIONAL_JUMP	004225f0	
+004225f0	0042278a	0042279d	CONDITIONAL_JUMP	004225f0	
+004225f0	0042278d	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	00422793	0048ca78	DATA		string 2Thank you, Hunter.  We'll have to fine you in order not to blow our cover, but don't worry, I will make it up to you later on!
+004225f0	00422798	00422be0	UNCONDITIONAL_JUMP	004225f0	
+004225f0	0042279d	0048c9b0	DATA		string 7Minutes ago there was a development in the gang vs. Police conflict  A group of gangsters blasted through the gates around the old Central Stadium, killing at least 5 police officers in the process.
+004225f0	004227a2	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	004227ac	0048caf8	DATA		string 1Listen up Hunter!  A couple of gang kids are having a fight at the old stadium.  We will not tolerate this anymore!  Now go spoil that party. 
+004225f0	004227b1	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	004227c0	004227e8	CONDITIONAL_JUMP	004225f0	
+004225f0	004227c2	004227d9	CONDITIONAL_JUMP	004225f0	
+004225f0	004227c9	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	004227cf	0048cb88	DATA		string 1Well done!  Thank you for for disposing those cop killer scumbags.
+004225f0	004227d4	00422be0	UNCONDITIONAL_JUMP	004225f0	
+004225f0	004227d9	0048cbd0	DATA		string 3Listen Hunter,  Two police cars have entered Old Bronx.  Help me clean up my territory, and I'll owe you a favour! 
+004225f0	004227de	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	004227ed	00422827	CONDITIONAL_JUMP	004225f0	
+004225f0	004227ef	00422818	CONDITIONAL_JUMP	004225f0	
+004225f0	004227f6	00422809	CONDITIONAL_JUMP	004225f0	
+004225f0	004227f9	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	004227ff	0048ccd8	DATA		string 3Thank you for cleaning up my neighborhood!  You should think about doin' some more work for me, Hunter. 
+004225f0	00422804	00422be0	UNCONDITIONAL_JUMP	004225f0	
+004225f0	00422809	0048cc48	DATA		string 7Police and Tax Authorities today expressed concern that a large in- crease in smuggling activities has been observed in the Space Port.
+004225f0	0042280e	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422818	0048cd48	DATA		string 1We have reports on a shipload of illegal weapons coming into The Docks area.  Please find and destroy the cargo, and watch out... it may be guarded!
+004225f0	0042281d	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	0042282c	00422854	CONDITIONAL_JUMP	004225f0	
+004225f0	0042282e	00422845	CONDITIONAL_JUMP	004225f0	
+004225f0	00422835	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	0042283b	0048cde0	DATA		string 1Thank you, Hunter.  A bit messy, perhaps, but a nice job nevertheless.
+004225f0	00422840	00422be0	UNCONDITIONAL_JUMP	004225f0	
+004225f0	00422845	0048ce28	DATA		string 1From the contents of the container we have been able to track the smuggler himself.  Now hunt him down!
+004225f0	0042284a	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422859	0042289b	CONDITIONAL_JUMP	004225f0	
+004225f0	0042285b	0042288c	CONDITIONAL_JUMP	004225f0	
+004225f0	00422862	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	00422868	0048ce98	DATA		string 2Excellent job, Hunter!  This should keep the smugglers down for a while!  The city wishes to express its gratitude!
+004225f0	0042286d	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	0042287a	00496a3a	READ		undefined2 0x0
+004225f0	00422881	00422ba2	CONDITIONAL_JUMP	004225f0	
+004225f0	00422887	00422b97	UNCONDITIONAL_JUMP	004225f0	
+004225f0	0042288c	0048cf10	DATA		string 3Please come to the Space Port!  A group of BHunters are trying to intercept one of my incoming arms shipments.  If you take them out I shall reward you.
+004225f0	00422891	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	004228a0	004228c8	CONDITIONAL_JUMP	004225f0	
+004225f0	004228a2	004228b9	CONDITIONAL_JUMP	004225f0	
+004225f0	004228a9	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	004228af	0048cfb0	DATA		string 3Thanks for protecting my freight ship.  Feel free to pick up a souvenir from the cargo room!
+004225f0	004228b4	00422be0	UNCONDITIONAL_JUMP	004225f0	
+004225f0	004228b9	0048d010	DATA		string 6Hi Kid!  I just upgraded my stun gun - maybe you could use the old one?  Pick it up at the Downtown Metro Station!
+004225f0	004228be	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	004228cd	004228f5	CONDITIONAL_JUMP	004225f0	
+004225f0	004228cf	004228e6	CONDITIONAL_JUMP	004225f0	
+004225f0	004228d6	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	004228dc	0048d088	DATA		string 6Glad you could use it.  Just remember you owe me a favor, Kid.
+004225f0	004228e1	00422be0	UNCONDITIONAL_JUMP	004225f0	
+004225f0	004228e6	0048d0c8	DATA		string 2The mining tunnels at the Industrial Complex has collapsed in an earth quake.  We need the assistance of everybody to blast away the rocks!
+004225f0	004228eb	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	004228fa	00422934	CONDITIONAL_JUMP	004225f0	
+004225f0	004228fc	00422925	CONDITIONAL_JUMP	004225f0	
+004225f0	00422903	00422916	CONDITIONAL_JUMP	004225f0	
+004225f0	00422906	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	0042290c	0048d208	DATA		string 2Thank you for getting our very important mining industry up and running again so quickly!
+004225f0	00422911	00422be0	UNCONDITIONAL_JUMP	004225f0	
+004225f0	00422916	0048d158	DATA		string 7The city today witnessed the return of notorious BHunter Edgar 'Shallow Death' Oval.  The Mayor expresses grave concern about the return of this radical crime fighter.
+004225f0	0042291b	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422925	0048d268	DATA		string 8Hey Scumbag!  Who do you think you are? I really don't like you!  Meet me at the Central Stadium, I challenge you to death!!!
+004225f0	0042292a	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422939	00422973	CONDITIONAL_JUMP	004225f0	
+004225f0	0042293b	00422964	CONDITIONAL_JUMP	004225f0	
+004225f0	00422942	0042295a	CONDITIONAL_JUMP	004225f0	
+004225f0	00422945	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	0042294b	0048d358	DATA		string 6I just heard some rumours that a gang called "Buddha's Devils" want you dead!  They hired both Archibald and Edgar Oval to do the job, so watch your back!
+004225f0	00422950	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	0042295a	0048d2e8	DATA		string 6Gee Kid, you were quite lucky to survice that one!  Old Archibald was one of the meanest hunters around!
+004225f0	0042295f	00422be0	UNCONDITIONAL_JUMP	004225f0	
+004225f0	00422964	0048d3f8	DATA		string 1We need you to bring in Mr. Luciano's accountant for questioning!  He is in Old Bronx.  Just paralyze him with your stun ray, then we'll come by and pick him up.
+004225f0	00422969	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422978	004229ba	CONDITIONAL_JUMP	004225f0	
+004225f0	0042297a	004229ab	CONDITIONAL_JUMP	004225f0	
+004225f0	00422981	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	00422987	0048d4a0	DATA		string 7A famous mob accountant was today killed just as Police was taking him into custody.  Rumours say that the crime boss fired the killing shot himself.
+004225f0	0042298c	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422999	00496a3a	READ		undefined2 0x0
+004225f0	004229a0	00422ba2	CONDITIONAL_JUMP	004225f0	
+004225f0	004229a6	00422b97	UNCONDITIONAL_JUMP	004225f0	
+004225f0	004229ab	0048d538	DATA		string 3I need you to do me a favor, Hunter.  A new gang is forming in the Underground City, and they are messing with my interests. There is a hidden entry in the sewers under The Docks. Make a reconnaissance flight down there!
+004225f0	004229b0	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	004229bf	004229e7	CONDITIONAL_JUMP	004225f0	
+004225f0	004229c1	004229d8	CONDITIONAL_JUMP	004225f0	
+004225f0	004229c8	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	004229ce	0048d618	DATA		string 3Thanks Hunter, I owe you a favor!  Now get your car out of there before someone spots you!
+004225f0	004229d3	00422be0	UNCONDITIONAL_JUMP	004225f0	
+004225f0	004229d8	0048d678	DATA		string 9How dare you show up here after killing Archibald, my beloved kid brother?  MEN, GET HIM!  Block the exits!!!
+004225f0	004229dd	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	004229ec	00422a14	CONDITIONAL_JUMP	004225f0	
+004225f0	004229ee	00422a05	CONDITIONAL_JUMP	004225f0	
+004225f0	004229f5	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	004229fb	0048d6e8	DATA		string 9You... you...! I'll get to you!  You keep watching your back Hunter, because I WILL kill you one day!!!
+004225f0	00422a00	00422be0	UNCONDITIONAL_JUMP	004225f0	
+004225f0	00422a05	0048d758	DATA		string 1We decided to come down on Luciano real hard now!  We believe he conducts his business from the Arezzo building in the Financial District.  Take out all four up-link antennas on the building!
+004225f0	00422a0a	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422a19	00422a41	CONDITIONAL_JUMP	004225f0	
+004225f0	00422a1b	00422a32	CONDITIONAL_JUMP	004225f0	
+004225f0	00422a22	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	00422a28	0048d820	DATA		string 1Good job, Hunter.  We appreciate that you support law and order in this city! 
+004225f0	00422a2d	00422be0	UNCONDITIONAL_JUMP	004225f0	
+004225f0	00422a32	0048d870	DATA		string 3Hey, Hunter!  I owe you a favor, remember?  Come down to the old Industrial Complex;  I just got a crate of plasma guns - I want you to have one! 
+004225f0	00422a37	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422a46	00422a80	CONDITIONAL_JUMP	004225f0	
+004225f0	00422a48	00422a71	CONDITIONAL_JUMP	004225f0	
+004225f0	00422a4f	00422a62	CONDITIONAL_JUMP	004225f0	
+004225f0	00422a52	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	00422a58	0048d980	DATA		string 3OK, you seem tougher than the rest - I'll let you live.  But don't EVER mess with me again! 
+004225f0	00422a5d	00422be0	UNCONDITIONAL_JUMP	004225f0	
+004225f0	00422a62	0048d908	DATA		string 3So you thought you could get away with messing with my Arezzo business, huh?  I think I have to teach you a lesson! 
+004225f0	00422a67	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422a71	0048d9e0	DATA		string 6Hey Kid, we gotta talk, but I can't broadcast this all over town!  Please meet me at the Downtown Metro Station.
+004225f0	00422a76	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422a85	00422aba	CONDITIONAL_JUMP	004225f0	
+004225f0	00422a87	00422aab	CONDITIONAL_JUMP	004225f0	
+004225f0	00422a8e	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	00422a94	0048da58	DATA		string 6Listen carefully;  Something is going completely wrong in the Police force.  The Captain has been issuing some strange missions lately, so watch your back, Son!
+004225f0	00422a99	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422aa6	00422b8e	UNCONDITIONAL_JUMP	004225f0	
+004225f0	00422aab	0048db00	DATA		string 5Attention all hunters!  I have a crate of 12 especially cheap nitro crackers for sale to the first hunter on the spot.  Hurry to my main store in Chinatown!
+004225f0	00422ab0	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422abf	00422af9	CONDITIONAL_JUMP	004225f0	
+004225f0	00422ac1	00422aea	CONDITIONAL_JUMP	004225f0	
+004225f0	00422ac8	00422adb	CONDITIONAL_JUMP	004225f0	
+004225f0	00422acb	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	00422ad1	0048dc00	DATA		string 5I enjoyed that!  You fully deserve the weapons; now come and pick them up in my little hardware shop.
+004225f0	00422ad6	00422be0	UNCONDITIONAL_JUMP	004225f0	
+004225f0	00422adb	0048dba0	DATA		string 5Welcome Hunter!  Looks like you have to fight for the hardware. I will sell to the winner!
+004225f0	00422ae0	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422aea	0048dc68	DATA		string 2I have to send the plans for my next out-of-town trip to my driver, but I can't trust our Comm-Link anymore!  I uploaded the docs in your onboard com- puter, please bring them to the Space Port for me!
+004225f0	00422aef	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422afe	00422b26	CONDITIONAL_JUMP	004225f0	
+004225f0	00422b00	00422b17	CONDITIONAL_JUMP	004225f0	
+004225f0	00422b07	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	00422b0d	0048dd38	DATA		string 2Thank you, Hunter.  At least there is SOMEONE around here I can trust!
+004225f0	00422b12	00422be0	UNCONDITIONAL_JUMP	004225f0	
+004225f0	00422b17	0048dd80	DATA		string 3Hunter!  A large police force is raiding my casinos at Grand Vegas.  Come down and help me stop them! 
+004225f0	00422b1c	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422b2b	00422b65	CONDITIONAL_JUMP	004225f0	
+004225f0	00422b2d	00422b56	CONDITIONAL_JUMP	004225f0	
+004225f0	00422b34	00422b4c	CONDITIONAL_JUMP	004225f0	
+004225f0	00422b37	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	00422b3d	0048de68	DATA		string AHi Kid, "Shallow Death" Oval here!  Seems like you've got the stuff! Nice job you did in Vegas...  It's nearly too bad I have to kill you;  See you around!
+004225f0	00422b42	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422b4c	0048dde8	DATA		string 3Great job!  I hope you won't get into too much trouble with the Police Captain for this - she has been acting strange lately.
+004225f0	00422b51	00422be0	UNCONDITIONAL_JUMP	004225f0	
+004225f0	00422b56	0048df08	DATA		string 1In the scrap yards under The Docks we have discovered a suspicious-looking container.  Please check it out!
+004225f0	00422b5b	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422b6a	00422bc7	CONDITIONAL_JUMP	004225f0	
+004225f0	00422b6c	00422bb8	CONDITIONAL_JUMP	004225f0	
+004225f0	00422b73	00422ba9	CONDITIONAL_JUMP	004225f0	
+004225f0	00422b76	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	00422b7c	0048e010	DATA		string 1I see you teamed up with Luciano again. I don't like that!  Remember who is in charge little man, or I'll have your ass!  Strip him of his heavy gear, boys.
+004225f0	00422b81	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422b8e	00496a3a	READ		undefined2 0x0
+004225f0	00422b95	00422ba2	CONDITIONAL_JUMP	004225f0	
+004225f0	00422b97	00496a3a	WRITE		undefined2 0x0
+004225f0	00422b9d	00402370	UNCONDITIONAL_CALL	00402370	
+004225f0	00422ba2	00437ab0	UNCONDITIONAL_CALL	00437ab0	
+004225f0	00422ba9	0048df78	DATA		string 1Hello Hunter, having a bad day?  Cheer up, I won't kill you... I just want you to know who runs this city - and believe me, it is NOT the Mayor!
+004225f0	00422bae	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422bb8	0048e0b0	DATA		string BHail Dennan, leader of Buddha's Devils!  I will revenge the death of his brother!  Hihi hehe haaa!
+004225f0	00422bbd	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422bcc	00422c0a	CONDITIONAL_JUMP	004225f0	
+004225f0	00422bce	00422bfb	CONDITIONAL_JUMP	004225f0	
+004225f0	00422bd5	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	00422bdb	0048e118	DATA		string 7Today the Mayor rushed home from his out-of-town trip and hurried directly to the City Hall.  He had no comments on the rumours of an increased instability inside the walls.
+004225f0	00422be0	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422be8	00496a3a	READ		undefined2 0x0
+004225f0	00422bf0	00422fdf	CONDITIONAL_JUMP	004225f0	
+004225f0	00422bf6	00422fd1	UNCONDITIONAL_JUMP	004225f0	
+004225f0	00422bfb	0048e1c8	DATA		string 2I am afraid I need your trusted services again - I can't trust anyone at City Hall!  You must hide some documents for me in a secret tunnel complex.  There's a hidden entry on the backside of City Hall. Don't let anyone follow you!
+004225f0	00422c00	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422c0f	00422c51	CONDITIONAL_JUMP	004225f0	
+004225f0	00422c11	00422c42	CONDITIONAL_JUMP	004225f0	
+004225f0	00422c18	00422c33	CONDITIONAL_JUMP	004225f0	
+004225f0	00422c1b	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	00422c21	0048e318	DATA		string 2Thank you so much Hunter!  Now better get out of there before somebody spots you again...
+004225f0	00422c26	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422c2e	00422fc7	UNCONDITIONAL_JUMP	004225f0	
+004225f0	00422c33	0048e2b8	DATA		string 1Identify yourself, trespasser!  You are not permitted access to this area!  Get him, Guards!
+004225f0	00422c38	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422c42	0048e378	DATA		string 1Get to the mines!  The recent gold strike made several BHunters collaborate in an attempt to over-run the mine.  Get down there, secure the gold and kill the rebel scum!
+004225f0	00422c47	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422c56	00422c98	CONDITIONAL_JUMP	004225f0	
+004225f0	00422c58	00422c89	CONDITIONAL_JUMP	004225f0	
+004225f0	00422c5f	00422c7a	CONDITIONAL_JUMP	004225f0	
+004225f0	00422c62	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	00422c68	0048e4e8	DATA		string 1What have you done, you fool !?!  I will have your head for this...
+004225f0	00422c6d	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422c75	00422fc7	UNCONDITIONAL_JUMP	004225f0	
+004225f0	00422c7a	0048e428	DATA		string 6Hello there...  I know you've been hired by the police bitch captain but why don't you join us instead?  We could use a great leader, and in return we'll pay you half the gold we find!
+004225f0	00422c7f	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422c89	0048e530	DATA		string 5Hello Hunter.  My sources at City Hall has leaked that a valuable shipment of Micro-Nuclear shells will be transported via the City Ring. Intercept, collect and return the shells to me in Chinatown!
+004225f0	00422c8e	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422c9d	00422cf3	CONDITIONAL_JUMP	004225f0	
+004225f0	00422c9f	00422ce4	CONDITIONAL_JUMP	004225f0	
+004225f0	00422ca6	00422cda	CONDITIONAL_JUMP	004225f0	
+004225f0	00422ca9	00422ccb	CONDITIONAL_JUMP	004225f0	
+004225f0	00422cac	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	00422cb2	0048e748	DATA		string 5Thank you, Hunter!  It seems like I may need them in the time to come.  Grab yourself some ammunition at my store!
+004225f0	00422cb7	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422cc1	00422570	UNCONDITIONAL_CALL	00422570	
+004225f0	00422ccb	0048e660	DATA		string 7Police coupe at the City Hall:  It seems the Police Captain has made an attempt to overthrow the government of this city. She has declared the city into a state of emergency, and practically holds the entire downtown as hostage!
+004225f0	00422cd0	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422cda	0048e5f8	DATA		string 5Great, you got the shells.  Now, deliver them to me in Chinatown and I will pay you handsomely.
+004225f0	00422cdf	00422e47	UNCONDITIONAL_JUMP	004225f0	
+004225f0	00422ce4	0048e7c0	DATA		string 6DISTRESS CALL INCOMING:  I need your help desperately!  'Shallow Death' Oval has caught up with me down in Industrial!  He is just too tough for me, please help!!
+004225f0	00422ce9	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422cf8	00422d20	CONDITIONAL_JUMP	004225f0	
+004225f0	00422cfa	00422d16	CONDITIONAL_JUMP	004225f0	
+004225f0	00422d01	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	00422d07	0048e868	DATA		string AHi Kid, Oval here!  Too bad you missed the show! But then there wasn't much to see... Your friend was an easy kill.  Here, have fun with my friends while I take a nap. You and I will have to play another day!
+004225f0	00422d0c	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422d16	0048e940	DATA		string 3Please help us open up Downtown again!  We'll have to make a head-on attack and blast our way through!  I hope you have some Static Coating ready!
+004225f0	00422d1b	00422e47	UNCONDITIONAL_JUMP	004225f0	
+004225f0	00422d25	00422d4d	CONDITIONAL_JUMP	004225f0	
+004225f0	00422d27	00422d3e	CONDITIONAL_JUMP	004225f0	
+004225f0	00422d2e	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	00422d34	0048e9d8	DATA		string 3Thank you, very nicely done!  No wonder the rebel BHunters chose you as their leader!
+004225f0	00422d39	00422e47	UNCONDITIONAL_JUMP	004225f0	
+004225f0	00422d3e	0048ea30	DATA		string 5I am helping a group of BHunters to secure the Space Port and lock down all incoming transports!  This is to cut off reinforcements to that crazy Police Captain.  Please help us clean out all police cars in The Docks!
+004225f0	00422d43	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422d52	00422d7a	CONDITIONAL_JUMP	004225f0	
+004225f0	00422d54	00422d6b	CONDITIONAL_JUMP	004225f0	
+004225f0	00422d5b	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	00422d61	0048eb10	DATA		string 1Now you've done it!  You son of a Swine...  You have crossed me for the last time, Hunter!
+004225f0	00422d66	00422e47	UNCONDITIONAL_JUMP	004225f0	
+004225f0	00422d6b	0048eb70	DATA		string 3It seems like you're attracting enemies like flies to sugar! How about making some real work for a change? I have a problem with a casino owner in Grand Vegas.  Please demolish the statue in front of his casino!
+004225f0	00422d70	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422d7f	00422db9	CONDITIONAL_JUMP	004225f0	
+004225f0	00422d81	00422daa	CONDITIONAL_JUMP	004225f0	
+004225f0	00422d88	00422d9b	CONDITIONAL_JUMP	004225f0	
+004225f0	00422d8b	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	00422d91	0048ecc0	DATA		string 3Woah!  That blast should shake some of his regular customers off for a while!
+004225f0	00422d96	00422e47	UNCONDITIONAL_JUMP	004225f0	
+004225f0	00422d9b	0048ec48	DATA		string 7Rumour has it that the Mayor may have escaped the clutches of the Police and is now trying to get out of the city.
+004225f0	00422da0	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422daa	0048ed10	DATA		string AHi Kid, Oval here!  Come meet me at the Central Stadium.  I'll try to be gentle, but I can't promise it won't hurt!
+004225f0	00422daf	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422dbe	00422df5	CONDITIONAL_JUMP	004225f0	
+004225f0	00422dc0	00422de6	CONDITIONAL_JUMP	004225f0	
+004225f0	00422dc7	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	00422dcd	0048ed88	DATA		string 7A heavy one-on-one combat was conducted at the Stadium today.  Speculations that this was the famed Edgar Oval in action cannot at this time be confirmed.
+004225f0	00422dd2	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422ddc	00422570	UNCONDITIONAL_CALL	00422570	
+004225f0	00422de6	0048ee28	DATA		string 2Dear Hunter.  I have one ... final request that will earn you all the rest of ... my money.  Pick me up at ... the Underground City and take me to the Space Port.
+004225f0	00422deb	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422dfa	00422e5b	CONDITIONAL_JUMP	004225f0	
+004225f0	00422dfc	00422e42	CONDITIONAL_JUMP	004225f0	
+004225f0	00422e06	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	00422e0c	00422e13	COMPUTED_JUMP	004225f0	
+004225f0	00422e0c	00422e22	COMPUTED_JUMP	004225f0	
+004225f0	00422e0c	00422e31	COMPUTED_JUMP	004225f0	
+004225f0	00422e0c	00422e3b	COMPUTED_JUMP	004225f0	
+004225f0	00422e0c	004233d4	DATA		pointer 00422e13
+004225f0	00422e13	0048eed0	DATA		string 2Watch out, Hunter, it's a setup! They forc#%...
+004225f0	00422e18	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422e22	0048ef08	DATA		string 9Thank you for coming to your own funeral!  KILL HIM MEN!
+004225f0	00422e27	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422e31	0048ef48	DATA		string CHey, we heard your distress call.  I hope we are not too late!
+004225f0	00422e36	00422ee8	UNCONDITIONAL_JUMP	004225f0	
+004225f0	00422e3b	0048ef88	DATA		string COh no, I think Dennan got away!  NO WAIT! He is targeted on the radar.  Hurry up, catch him!
+004225f0	00422e40	00422e47	UNCONDITIONAL_JUMP	004225f0	
+004225f0	00422e42	0048efe8	DATA		string 3Greetings Hunter.  I have heard rumors that the Captain herself will be patrolling the city for the next few weeks.  I suggest we make our move now, and strike while we have the chance!
+004225f0	00422e47	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422e51	00422570	UNCONDITIONAL_CALL	00422570	
+004225f0	00422e60	00422ec1	CONDITIONAL_JUMP	004225f0	
+004225f0	00422e62	00422e79	CONDITIONAL_JUMP	004225f0	
+004225f0	00422e69	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	00422e6f	0048f0a8	DATA		string 1What of it Punk!  Now I am here at the Stadium, come fight me if you dare.  Bring all your pitiful friends,  they are no match for my troops anyway!
+004225f0	00422e74	00422f1b	UNCONDITIONAL_JUMP	004225f0	
+004225f0	00422e79	0048f140	DATA		string CYou did it!  We lost many good men, but you beat that corrupted police force in the end!  
+004225f0	00422e7e	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422e83	004dfab8	READ		undefined4 0x0
+004225f0	00422e96	004dfab8	READ		undefined4 0x0
+004225f0	00422ea6	004215c0	UNCONDITIONAL_CALL	004215c0	
+004225f0	00422ead	00422570	UNCONDITIONAL_CALL	00422570	
+004225f0	00422eb5	004dfabc	WRITE		undefined4 0x0
+004225f0	00422ec6	00422fb2	CONDITIONAL_JUMP	004225f0	
+004225f0	00422ecc	00422fa6	CONDITIONAL_JUMP	004225f0	
+004225f0	00422ed7	00422f49	CONDITIONAL_JUMP	004225f0	
+004225f0	00422eda	00422f16	CONDITIONAL_JUMP	004225f0	
+004225f0	00422edd	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	00422ee3	0048f298	DATA		string 3Either way, we are facing an interesting future, united.  Well done, Hunter.  You are made of the Right Stuff!
+004225f0	00422ee8	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422eed	004dfab8	READ		undefined4 0x0
+004225f0	00422eff	004dfab8	READ		undefined4 0x0
+004225f0	00422f0f	004215c0	UNCONDITIONAL_CALL	004215c0	
+004225f0	00422f16	0048f208	DATA		string 3A number of people moved for me as the new Mayor.  How would you like to run a new division of BHunters, replacing the old police force?
+004225f0	00422f1b	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422f20	004dfab8	READ		undefined4 0x0
+004225f0	00422f33	004dfab8	READ		undefined4 0x0
+004225f0	00422f42	004215c0	UNCONDITIONAL_CALL	004215c0	
+004225f0	00422f49	0048f1a0	DATA		string 3Good job, Hunter!  I think we will build a new government for this city, where everybody has a say!
+004225f0	00422f4e	00442a30	UNCONDITIONAL_CALL	00442a30	
+004225f0	00422f53	004dfab8	READ		undefined4 0x0
+004225f0	00422f66	004dfab8	READ		undefined4 0x0
+004225f0	00422f76	004215c0	UNCONDITIONAL_CALL	004215c0	
+004225f0	00422f7b	004dfab8	READ		undefined4 0x0
+004225f0	00422f88	0047b210	UNCONDITIONAL_CALL	0047b210	
+004225f0	00422f90	0048f958	WRITE		pointer 00416120
+004225f0	00422f90	00414880	DATA	00414880	
+004225f0	00422f9a	004df6b0	WRITE		undefined4 0x0
+004225f0	00422fa6	004dfabc	WRITE		undefined4 0x0
+004225f0	00422fba	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	00422fc0	00422fc7	COMPUTED_JUMP	004225f0	
+004225f0	00422fc0	00422fe6	COMPUTED_JUMP	004225f0	
+004225f0	00422fc0	004230b3	COMPUTED_JUMP	004225f0	
+004225f0	00422fc0	00423164	COMPUTED_JUMP	004225f0	
+004225f0	00422fc0	004231c1	COMPUTED_JUMP	004225f0	
+004225f0	00422fc0	00423256	COMPUTED_JUMP	004225f0	
+004225f0	00422fc0	0042327a	COMPUTED_JUMP	004225f0	
+004225f0	00422fc0	004233e4	DATA		pointer 00422fc7
+004225f0	00422fc7	00496a3a	READ		undefined2 0x0
+004225f0	00422fcf	00422fdf	CONDITIONAL_JUMP	004225f0	
+004225f0	00422fd1	00496a3a	WRITE		undefined2 0x0
+004225f0	00422fda	00402370	UNCONDITIONAL_CALL	00402370	
+004225f0	00422fdf	00437a80	UNCONDITIONAL_CALL	00437a80	
+004225f0	00422fe6	004cdca8	READ		undefined4 0x0
+004225f0	00422ff3	00423007	CONDITIONAL_JUMP	004225f0	
+004225f0	00422ff5	004cdd24	READ		undefined4 0x0
+004225f0	00422ffb	004cdca8	WRITE		undefined4 0x0
+004225f0	00423001	004cdd24	WRITE		undefined4 0x0
+004225f0	00423007	004cdcd0	READ		undefined4 0x0
+004225f0	0042300f	00423023	CONDITIONAL_JUMP	004225f0	
+004225f0	00423011	004cdd24	READ		undefined4 0x0
+004225f0	00423017	004cdcd0	WRITE		undefined4 0x0
+004225f0	0042301d	004cdd24	WRITE		undefined4 0x0
+004225f0	00423023	004cdd50	READ		undefined4 0x0
+004225f0	0042302b	0042303f	CONDITIONAL_JUMP	004225f0	
+004225f0	0042302d	004cdda4	READ		undefined4 0x0
+004225f0	00423033	004cdd50	WRITE		undefined4 0x0
+004225f0	00423039	004cdda4	WRITE		undefined4 0x0
+004225f0	0042303f	004cdd34	READ		undefined4 0x0
+004225f0	00423047	0042305b	CONDITIONAL_JUMP	004225f0	
+004225f0	00423049	004cdda4	READ		undefined4 0x0
+004225f0	0042304f	004cdd34	WRITE		undefined4 0x0
+004225f0	00423055	004cdda4	WRITE		undefined4 0x0
+004225f0	0042305b	004cddd0	READ		undefined4 0x0
+004225f0	00423063	00423077	CONDITIONAL_JUMP	004225f0	
+004225f0	00423065	004cde24	READ		undefined4 0x0
+004225f0	0042306b	004cddd0	WRITE		undefined4 0x0
+004225f0	00423071	004cde24	WRITE		undefined4 0x0
+004225f0	00423077	004cddb4	READ		undefined4 0x0
+004225f0	0042307f	00423093	CONDITIONAL_JUMP	004225f0	
+004225f0	00423081	004cde24	READ		undefined4 0x0
+004225f0	00423087	004cddb4	WRITE		undefined4 0x0
+004225f0	0042308d	004cde24	WRITE		undefined4 0x0
+004225f0	00423093	004cde3c	READ		undefined4 0x0
+004225f0	0042309b	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	004230a1	004cde3c	WRITE		undefined4 0x0
+004225f0	004230a6	004cdea4	READ		undefined4 0x0
+004225f0	004230ac	004cdea4	WRITE		undefined4 0x0
+004225f0	004230b3	004cdcb4	READ		undefined4 0x0
+004225f0	004230c0	004230d4	CONDITIONAL_JUMP	004225f0	
+004225f0	004230c2	004cdd24	READ		undefined4 0x0
+004225f0	004230c8	004cdcb4	WRITE		undefined4 0x0
+004225f0	004230ce	004cdd24	WRITE		undefined4 0x0
+004225f0	004230d4	004cdd54	READ		undefined4 0x0
+004225f0	004230dc	004230f0	CONDITIONAL_JUMP	004225f0	
+004225f0	004230de	004cdda4	READ		undefined4 0x0
+004225f0	004230e4	004cdd54	WRITE		undefined4 0x0
+004225f0	004230ea	004cdda4	WRITE		undefined4 0x0
+004225f0	004230f0	004cdd3c	READ		undefined4 0x0
+004225f0	004230f8	0042310c	CONDITIONAL_JUMP	004225f0	
+004225f0	004230fa	004cdda4	READ		undefined4 0x0
+004225f0	00423100	004cdd3c	WRITE		undefined4 0x0
+004225f0	00423106	004cdda4	WRITE		undefined4 0x0
+004225f0	0042310c	004cddd4	READ		undefined4 0x0
+004225f0	00423114	00423128	CONDITIONAL_JUMP	004225f0	
+004225f0	00423116	004cde24	READ		undefined4 0x0
+004225f0	0042311c	004cddd4	WRITE		undefined4 0x0
+004225f0	00423122	004cde24	WRITE		undefined4 0x0
+004225f0	00423128	004cddbc	READ		undefined4 0x0
+004225f0	00423130	00423144	CONDITIONAL_JUMP	004225f0	
+004225f0	00423132	004cde24	READ		undefined4 0x0
+004225f0	00423138	004cddbc	WRITE		undefined4 0x0
+004225f0	0042313e	004cde24	WRITE		undefined4 0x0
+004225f0	00423144	004cde44	READ		undefined4 0x0
+004225f0	0042314c	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	00423152	004cde44	WRITE		undefined4 0x0
+004225f0	00423157	004cdea4	READ		undefined4 0x0
+004225f0	0042315d	004cdea4	WRITE		undefined4 0x0
+004225f0	00423164	004cdcac	READ		undefined4 0x0
+004225f0	00423171	00423185	CONDITIONAL_JUMP	004225f0	
+004225f0	00423173	004cdd24	READ		undefined4 0x0
+004225f0	00423179	004cdcac	WRITE		undefined4 0x0
+004225f0	0042317f	004cdd24	WRITE		undefined4 0x0
+004225f0	00423185	004cdd44	READ		undefined4 0x0
+004225f0	0042318d	004231a1	CONDITIONAL_JUMP	004225f0	
+004225f0	0042318f	004cdda4	READ		undefined4 0x0
+004225f0	00423195	004cdd44	WRITE		undefined4 0x0
+004225f0	0042319b	004cdda4	WRITE		undefined4 0x0
+004225f0	004231a1	004cddc0	READ		undefined4 0x0
+004225f0	004231a9	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	004231af	004cddc0	WRITE		undefined4 0x0
+004225f0	004231b4	004cde24	READ		undefined4 0x0
+004225f0	004231ba	004cde24	WRITE		undefined4 0x0
+004225f0	004231c1	004cdcb0	READ		undefined4 0x0
+004225f0	004231ce	004231e2	CONDITIONAL_JUMP	004225f0	
+004225f0	004231d0	004cdd24	READ		undefined4 0x0
+004225f0	004231d6	004cdcb0	WRITE		undefined4 0x0
+004225f0	004231dc	004cdd24	WRITE		undefined4 0x0
+004225f0	004231e2	004cdd58	READ		undefined4 0x0
+004225f0	004231ea	004231fe	CONDITIONAL_JUMP	004225f0	
+004225f0	004231ec	004cdda4	READ		undefined4 0x0
+004225f0	004231f2	004cdd58	WRITE		undefined4 0x0
+004225f0	004231f8	004cdda4	WRITE		undefined4 0x0
+004225f0	004231fe	004cddd8	READ		undefined4 0x0
+004225f0	00423206	0042321a	CONDITIONAL_JUMP	004225f0	
+004225f0	00423208	004cde24	READ		undefined4 0x0
+004225f0	0042320e	004cddd8	WRITE		undefined4 0x0
+004225f0	00423214	004cde24	WRITE		undefined4 0x0
+004225f0	0042321a	004cde58	READ		undefined4 0x0
+004225f0	00423222	00423236	CONDITIONAL_JUMP	004225f0	
+004225f0	00423224	004cdea4	READ		undefined4 0x0
+004225f0	0042322a	004cde58	WRITE		undefined4 0x0
+004225f0	00423230	004cdea4	WRITE		undefined4 0x0
+004225f0	00423236	004cde48	READ		undefined4 0x0
+004225f0	0042323e	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	00423244	004cde48	WRITE		undefined4 0x0
+004225f0	00423249	004cdea4	READ		undefined4 0x0
+004225f0	0042324f	004cdea4	WRITE		undefined4 0x0
+004225f0	00423256	004cdcc0	READ		undefined4 0x0
+004225f0	0042325d	004233a1	CONDITIONAL_JUMP	004225f0	
+004225f0	00423263	004cdd24	READ		undefined4 0x0
+004225f0	00423268	004cdcc0	WRITE		undefined4 0x0
+004225f0	00423273	004cdd24	WRITE		undefined4 0x0
+004225f0	0042327a	004f5560	READ		undefined4 0x0
+004225f0	0042328f	0047bd40	UNCONDITIONAL_CALL	0047bd40	
+004225f0	00423294	004dfab8	READ		undefined4 0x0
+004225f0	004232be	004232c4	CONDITIONAL_JUMP	004225f0	
+004225f0	004232ce	004dfab8	READ		undefined4 0x0
+004225f0	004232f4	004232fa	CONDITIONAL_JUMP	004225f0	
+004225f0	00423304	004dfab8	READ		undefined4 0x0
+004225f0	00423329	0042332f	CONDITIONAL_JUMP	004225f0	
+004225f0	00423339	004dfab8	READ		undefined4 0x0
+004225f0	0042335e	00423364	CONDITIONAL_JUMP	004225f0	
+004225f0	0042336e	004dfab8	READ		undefined4 0x0
+004225f0	00423393	00423399	CONDITIONAL_JUMP	004225f0	

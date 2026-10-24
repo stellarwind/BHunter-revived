@@ -1,0 +1,35 @@
+{
+  "passed": true,
+  "translation_units": 44,
+  "real_total": {
+    "scenario": "m2-foundations",
+    "checks": 640354,
+    "failures": 0,
+    "archive_entries": 1229,
+    "original_code_required": false
+  },
+  "clean_total": {
+    "scenario": "m2-foundations",
+    "checks": 159753,
+    "failures": 0,
+    "archive_entries": 0,
+    "original_code_required": false
+  },
+  "focused_checks": 120,
+  "real_files": 60,
+  "real_backend_checks": 180,
+  "game_launches": 0,
+  "original_code_executed": false,
+  "sources": {
+    "src/bh_riff.c": "3b9064792eafd099d6c23c28202810e0dcff17e2c9b6d50f381c16d92ad95272",
+    "src/bh_riff.h": "6399b1496ecc184516059893822c648f953ec01d709f7609f5db56050900c4d7",
+    "tests/riff.c": "f56d42fa6baf4c024f8d532a35fdda09f15a388d699056a115ff2de18e853759",
+    "tests/wave.c": "d6445b0d1a396364883bcc7b84878e22a7bf820046ddc7a3bf06f3dcb2018568",
+    "tests/checkpoint.c": "43021e0860e95e54c91871c282f9975e761e2225ea60e906d425dc2b16832b46"
+  },
+  "limits": [
+    "Length bound rejects unsafe original overreads/overflow; requested output order and partial failure outputs retained",
+    "All-output strict bh_wave_scan remains separate and is not claimed equivalent to this optional scanner",
+    "Sound-buffer creation and playback remain unfinished; no original runtime execution or byte-match claim"
+  ]
+}

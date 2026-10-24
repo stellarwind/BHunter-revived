@@ -1,0 +1,11 @@
+
+/* COFF code section matched VC5 CRT with relocation operands masked. See
+   analysis/crt-comparison.json. Symbol: _rand */
+
+uint _rand(void)
+
+{
+  DAT_00492de8 = DAT_00492de8 * 0x343fd + 0x269ec3;
+  return DAT_00492de8 >> 0x10 & 0x7fff;
+}
+

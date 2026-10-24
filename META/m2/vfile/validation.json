@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-23",
+  "host": "Windows-10-10.0.19044-SP0",
+  "python": "3.15.0 (tags/v3.15.0:d220409, Oct  9 2026, 11:55:56) [MSC v.1951 64 bit (AMD64)]",
+  "target": "build/m0/bhunter-integration.exe",
+  "implementation": "src/bh_vfile.c functional C variant",
+  "source_hashes": {
+    "src/bh_math.c": "7b2345ec74dc49c935c6e1ae53f222339eca4399c4d731150348f7b5c5324a00",
+    "src/bh_math.h": "07c09e2d9627aad6dfa9d3e8b5ca328bba21eff729dcf6d8aa570781e3e1fb40",
+    "src/bh_vfile.c": "7a8187efa6bfcbdf7a626ff53c6d4133d47a37e2dcf65830985b5cee94bf78d0",
+    "src/bh_vfile.h": "7867198f05fbfa5a4b3ae2a003245e8ff7faaea72e1194852d32b18a0ecae7ba",
+    "tests/integration.c": "fb18f5cea1837a95c66800769a4dfa21e3e64cbcd2ec2bd9fa038b906607b8de",
+    "tests/checkpoint.c": "070c9d598ec80ddf75b034cef429beab6409fd0fbf0fa0fb8fbfa3abb34ece79",
+    "tests/vfile.c": "4ce922ed286642015cbda949c6349fc194e04392d1b8309d497b40574ba16451"
+  },
+  "originals": [
+    {
+      "path": "GAME_DATA/BHUNTER.EXE",
+      "sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+      "unchanged": true
+    },
+    {
+      "path": "GAME_DATA/Bhunter.bin",
+      "sha256": "2393a661fd647ed6de3eee34c35c30812c44f3ee15b9d44244a63720804df581",
+      "unchanged": true
+    },
+    {
+      "path": "BHUNTER.mdf",
+      "sha256": "540ef8a444a9e9e5ab9eb69bc0e7b13a040bb2e49187b91723f317f97a627e1b",
+      "unchanged": true
+    },
+    {
+      "path": "BHUNTER.mds",
+      "sha256": "77c249c75a2505a36822918a71a11a4d253f9860141d863c5db6084317f1fb19",
+      "unchanged": true
+    }
+  ],
+  "normal_clean_checkpoint": {
+    "scenario": "m2-foundations",
+    "checks": 826,
+    "failures": 0,
+    "archive_entries": 0,
+    "original_code_required": false
+  },
+  "real_checkpoint": {
+    "scenario": "m2-foundations",
+    "checks": 20475,
+    "failures": 0,
+    "archive_entries": 1229,
+    "original_code_required": false
+  },
+  "real_asset_details": {
+    "scenario": "vfile-real-assets",
+    "entries": 1229,
+    "payload_bytes": 12839409,
+    "preload_payload_bytes": 1168813,
+    "classes": [
+      505,
+      459,
+      203,
+      60,
+      1,
+      1
+    ]
+  },
+  "link_controls": [
+    "rejected with LNK2001",
+    "rejected with LNK2001"
+  ],
+  "diagnostic_controls": "all three exact original diagnostic strings exercised",
+  "source_equivalence": "Real and clean source-only linked checkpoints compiled exactly the same source hashes; no byte-match evidence transferred",
+  "source_tree": "b084a1606708ab4bce98d311097e53366212883c",
+  "new_original_functions_admitted_to_harness": 9,
+  "game_admitted": false,
+  "m2_complete": false,
+  "limitations": [
+    "No original VFILE execution/differential or byte-match claim",
+    "Only declared VC5/SP3 C plus stock linker tested",
+    "No sanitizer or forced allocation/I/O-fault evidence",
+    "Safety deviations, full-window buffer contract and serialized lifetime requirements in META/m2/VFILE.md",
+    "Math numerical environment, payload readers and source-game phase/lifetime remain open"
+  ],
+  "tools_sha256": {
+    "tools/m0.py": "da066deb985595d5e9451bed0403112061c4c32f5b9d55c49354acdc3a0e919b",
+    "tools/check_m0_clean.py": "88bb9a2a6c96c6759e4037526d5fe3808a581bfb7f1feee26b6d03d28ddaea14"
+  },
+  "evidence_sha256": {
+    "META/m2/VFILE.md": "1be8dc03eb6c759049192574a70bfd84a2e6685c9a724820e1ac11433522ae77",
+    "META/m2/vfile/real-archive-result.json": "50a5af8e0f1e314f6bb8a4de923fef830f245044db7d7cfaa26362ec1e79c3fd",
+    "META/m2/vfile/link-map.txt": "bc31b508ba96a3111675e7cdd609c0499cdd2438de6362ca38a0c8d0f269e5d8",
+    "META/m2/vfile-clean/clean-checkout.json": "aabd8a0784f363113a587c027a026259c3651e1d73ac160e7ca4a4d5635df876",
+    "META/function-status.json": "72866af0c80b9f46c3cdfd0341bb60cd21d1ed6934019ff8fad9b783dc37ed2b"
+  }
+}

@@ -1,0 +1,280 @@
+{
+  "date": "2026-10-24",
+  "passed": true,
+  "run_id": "e1ee374903ef",
+  "scope": "Original startup to MessageBox or pre-simulation bootstrap boundary; no dialog executed or visual tooling",
+  "original_code_executes": true,
+  "original_file_patches": 0,
+  "profile_directory_adapter": true,
+  "renderer_preset": {
+    "name": "software-high",
+    "seed_path": "build\\m3\\startup\\profile-c57437263011\\BHUNTER.CFG",
+    "seed_sha256": "0bfc8a6770dad02261eafc6477e5209a93b40c37e227638f742eeef14518493d",
+    "original_seed_bytes": 644,
+    "modified_settings_offsets": [
+      0,
+      4,
+      8
+    ],
+    "settings_words": [
+      1,
+      0,
+      1
+    ],
+    "initial_cfg_sha256": "2b0c9fea68e2aa055de79a4dbf088681d566e91c0a59d0a1e78233fa7e3e151f"
+  },
+  "show_parameter": 1,
+  "registry_before": [
+    {
+      "view": "32",
+      "exists": false,
+      "error": 2
+    },
+    {
+      "view": "64",
+      "exists": false,
+      "error": 2
+    }
+  ],
+  "protected_windows_files_before": {
+    "C:\\Windows\\BHUNTER.CFG": {
+      "exists": false,
+      "sha256": null
+    },
+    "C:\\Windows\\BHUNTER.INI": {
+      "exists": false,
+      "sha256": null
+    }
+  },
+  "commands": [
+    {
+      "label": "compile",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\m3\\startup-ddrawcompat\\startup-probe.obj",
+        "D:\\Decomp\\Bhunter\\tools\\m3_startup_probe.c"
+      ],
+      "exit_code": 0,
+      "output": "m3_startup_probe.c\n"
+    },
+    {
+      "label": "link",
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/out:D:\\Decomp\\Bhunter\\build\\m3\\startup-ddrawcompat\\startup-probe.exe",
+        "D:\\Decomp\\Bhunter\\build\\m3\\startup-ddrawcompat\\startup-probe.obj",
+        "kernel32.lib",
+        "advapi32.lib"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "label": "startup",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\build\\m3\\startup-ddrawcompat\\startup-probe.exe",
+        "D:\\Decomp\\Bhunter\\build\\m3\\startup-ddrawcompat\\BHUNTER.EXE",
+        "D:\\Decomp\\Bhunter\\build\\m3\\startup-ddrawcompat",
+        "D:\\Decomp\\Bhunter\\build\\m3\\reference-source",
+        "D:\\Decomp\\Bhunter\\build\\m3\\startup-ddrawcompat\\profile-e1ee374903ef",
+        "Software\\BhunterM3-e5a08ff871e840c88607dfb1a95f158c",
+        "1"
+      ],
+      "exit_code": 0,
+      "output": "{\"event\":\"process-created\",\"pid\":15912,\"window_show_parameter\":1}\n{\"event\":\"breakpoints-armed\",\"count\":68,\"passed\":true}\n{\"event\":\"source-key-redirect\",\"x87_control\":639}\n{\"event\":\"source-check-return\",\"eax\":1,\"x87_control\":639}\n{\"event\":\"private-profile-directory\",\"caller_return\":4667742,\"buffer_capacity\":255,\"returned_length\":67}\n{\"event\":\"devices-enumerated\",\"x87_control\":639,\"last_device_index\":0,\"devices\":[\"Primary Display Driver\"],\"selection_words\":[0,0,0]}\n{\"event\":\"private-profile-directory\",\"caller_return\":4202519,\"buffer_capacity\":255,\"returned_length\":67}\n{\"event\":\"private-profile-directory\",\"caller_return\":4203445,\"buffer_capacity\":255,\"returned_length\":67}\n{\"event\":\"config-bootstrap-return\",\"x87_control\":639,\"last_device_index\":0,\"devices\":[\"Primary Display Driver\"],\"selection_words\":[1,0,1]}\n{\"event\":\"render-mode-call\",\"callsite\":4663767,\"arguments\":[640,480,16,1],\"x87_control\":639}\n{\"event\":\"directdraw-set-display-mode-result\",\"hresult\":0,\"hresult_hex\":\"00000000\",\"x87_control\":639}\n{\"event\":\"render-mode-return\",\"eax\":1,\"x87_control\":639}\n{\"event\":\"bootstrap-entry\",\"game_bootstrap_executed\":false,\"x87_control\":639}\n{\"event\":\"breakpoints-restored\",\"verified\":true}\n{\"event\":\"process-exit\",\"code\":1295188225,\"probe_termination\":true}\n{\"event\":\"private-key-cleanup\",\"result\":0}\n{\"event\":\"probe-complete\",\"reached_interaction_boundary\":true,\"passed\":true}\n"
+    }
+  ],
+  "source_hashes": {
+    "tools/m3_startup_probe.c": "ad409c777afe11f3617799b6b575c5d1f2b4a7edc5dfba21c2b5d4ae459655d4",
+    "tools/m3_startup_probe.py": "cd3799c869e8c78416436f5ad5ddf73b5dc457f5a583d987b7edc8bad264c0f8"
+  },
+  "original_hashes": {
+    "GAME_DATA/BHUNTER.EXE": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+    "GAME_DATA/Bhunter.bin": "2393a661fd647ed6de3eee34c35c30812c44f3ee15b9d44244a63720804df581",
+    "BHUNTER.mdf": "540ef8a444a9e9e5ab9eb69bc0e7b13a040bb2e49187b91723f317f97a627e1b",
+    "BHUNTER.mds": "77c249c75a2505a36822918a71a11a4d253f9860141d863c5db6084317f1fb19"
+  },
+  "profile_path": "build/m3/startup-ddrawcompat/profile-e1ee374903ef",
+  "m3_complete": false,
+  "compatibility_dependency": {
+    "date": "2026-10-24",
+    "scope": "M3 isolated original-reference dependency only; not a source-game backend selection",
+    "version": "v0.7.2",
+    "prerelease": true,
+    "published": "2026-10-14T21:12:30Z",
+    "release_url": "https://github.com/narzoul/DDrawCompat/releases/tag/v0.7.2",
+    "source_repository": "https://github.com/narzoul/DDrawCompat",
+    "asset_url": "https://github.com/narzoul/DDrawCompat/releases/download/v0.7.2/DDrawCompat-v0.7.2.zip",
+    "asset_digest_from_github": "sha256:a932a4dcb2100552b6918fd4a3cc7de138bb97448bbca2a7051954993a397b39",
+    "archive_sha256": "a932a4dcb2100552b6918fd4a3cc7de138bb97448bbca2a7051954993a397b39",
+    "dll_sha256": "94895cf6ede8fd0f74ee1447fdc08b7044a9c65a1a25a49a4df893a0370975a3",
+    "dll_bytes": 3653632,
+    "machine": "x86",
+    "staged_dll": "build/m3/dependencies/DDrawCompat-v0.7.2/ddraw.dll",
+    "license_files": [],
+    "zip_files": [
+      "ddraw.dll"
+    ],
+    "original_files_modified": false,
+    "normal_integration_dependency": false
+  },
+  "source_snapshots": {
+    "tools/m3_startup_probe.c": "META/m3/startup/sources/ad409c777afe11f3617799b6b575c5d1f2b4a7edc5dfba21c2b5d4ae459655d4-m3_startup_probe.c.txt",
+    "tools/m3_startup_probe.py": "META/m3/startup/sources/cd3799c869e8c78416436f5ad5ddf73b5dc457f5a583d987b7edc8bad264c0f8-m3_startup_probe.py.txt"
+  },
+  "events": [
+    {
+      "event": "process-created",
+      "pid": 15912,
+      "window_show_parameter": 1
+    },
+    {
+      "event": "breakpoints-armed",
+      "count": 68,
+      "passed": true
+    },
+    {
+      "event": "source-key-redirect",
+      "x87_control": 639
+    },
+    {
+      "event": "source-check-return",
+      "eax": 1,
+      "x87_control": 639
+    },
+    {
+      "event": "private-profile-directory",
+      "caller_return": 4667742,
+      "buffer_capacity": 255,
+      "returned_length": 67
+    },
+    {
+      "event": "devices-enumerated",
+      "x87_control": 639,
+      "last_device_index": 0,
+      "devices": [
+        "Primary Display Driver"
+      ],
+      "selection_words": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "event": "private-profile-directory",
+      "caller_return": 4202519,
+      "buffer_capacity": 255,
+      "returned_length": 67
+    },
+    {
+      "event": "private-profile-directory",
+      "caller_return": 4203445,
+      "buffer_capacity": 255,
+      "returned_length": 67
+    },
+    {
+      "event": "config-bootstrap-return",
+      "x87_control": 639,
+      "last_device_index": 0,
+      "devices": [
+        "Primary Display Driver"
+      ],
+      "selection_words": [
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "event": "render-mode-call",
+      "callsite": 4663767,
+      "arguments": [
+        640,
+        480,
+        16,
+        1
+      ],
+      "x87_control": 639
+    },
+    {
+      "event": "directdraw-set-display-mode-result",
+      "hresult": 0,
+      "hresult_hex": "00000000",
+      "x87_control": 639
+    },
+    {
+      "event": "render-mode-return",
+      "eax": 1,
+      "x87_control": 639
+    },
+    {
+      "event": "bootstrap-entry",
+      "game_bootstrap_executed": false,
+      "x87_control": 639
+    },
+    {
+      "event": "breakpoints-restored",
+      "verified": true
+    },
+    {
+      "event": "process-exit",
+      "code": 1295188225,
+      "probe_termination": true
+    },
+    {
+      "event": "private-key-cleanup",
+      "result": 0
+    },
+    {
+      "event": "probe-complete",
+      "reached_interaction_boundary": true,
+      "passed": true
+    }
+  ],
+  "executable_sha256": "d77e9cbd42dbab91c5fe8aff812f5f27cf13521d8c39ef4cad2d114f3d49371a",
+  "registry_after": [
+    {
+      "view": "32",
+      "exists": false,
+      "error": 2
+    },
+    {
+      "view": "64",
+      "exists": false,
+      "error": 2
+    }
+  ],
+  "protected_windows_files_after": {
+    "C:\\Windows\\BHUNTER.CFG": {
+      "exists": false,
+      "sha256": null
+    },
+    "C:\\Windows\\BHUNTER.INI": {
+      "exists": false,
+      "sha256": null
+    }
+  },
+  "private_key_absent_after": true,
+  "profile_files": [
+    {
+      "name": "BHUNTER.CFG",
+      "bytes": 644,
+      "sha256": "839e5da6e68c4306e566fade6783cf23c7669ba55625090a5ab362fc107066a4"
+    }
+  ],
+  "compatibility_log": {
+    "path": "build/m3/startup-ddrawcompat/logs/e1ee374903ef.log",
+    "sha256": "91ab717301fd3165c8265b375dcdd122333f659aa9e1db814950bf2fcc19ad14",
+    "original_path": "build/m3/startup-ddrawcompat/DDrawCompat-BHUNTER.log"
+  }
+}

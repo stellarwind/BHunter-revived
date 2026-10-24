@@ -1,0 +1,888 @@
+address	name	ranges	signature	thunk	tags
+00401000	bh_mat34_multiply	00401000-00401197	void __cdecl bh_mat34_multiply(BHMat34 * a, BHMat34 * b, BHMat34 * out)	false	recovered-math-finite-tested
+004011a0	bh_vec3_cross	004011a0-004011e2	void __cdecl bh_vec3_cross(BHVec3 * a, BHVec3 * b, BHVec3 * out)	false	recovered-math-finite-tested
+004011f0	bh_vec3_normalize	004011f0-00401260	int __cdecl bh_vec3_normalize(BHVec3 * v)	false	recovered-math-finite-tested
+00401270	bh_vec3_normalize_to	00401270-004012de	int __cdecl bh_vec3_normalize_to(BHVec3 * v, BHVec3 * out)	false	recovered-math-finite-tested
+004012e0	bh_mat34_transform_point	004012e0-00401353	void __cdecl bh_mat34_transform_point(BHMat34 * m, BHVec3 * v, BHVec3 * out)	false	recovered-math-finite-tested
+00401360	bh_mat34_transform_direction	00401360-004013ca	void __cdecl bh_mat34_transform_direction(BHMat34 * m, BHVec3 * v, BHVec3 * out)	false	recovered-math-finite-tested
+004013d0	bh_mat34_inverse_transform_point	004013d0-0040145b	void __cdecl bh_mat34_inverse_transform_point(BHMat34 * m, BHVec3 * v, BHVec3 * out)	false	recovered-math-finite-tested
+00401460	bh_mat34_translate_world	00401460-0040148c	void __cdecl bh_mat34_translate_world(float x, float y, float z, BHMat34 * m)	false	recovered-math-finite-tested
+00401490	bh_mat34_translate_local	00401490-0040150a	void __cdecl bh_mat34_translate_local(float x, float y, float z, BHMat34 * m)	false	recovered-math-finite-tested
+00401510	FUN_00401510	00401510-0040160a	undefined __cdecl FUN_00401510(float param_1, int param_2)	false	
+00401610	FUN_00401610	00401610-004016d3	undefined __cdecl FUN_00401610(float param_1, int param_2)	false	
+004016e0	FUN_004016e0	004016e0-004017d6	undefined __cdecl FUN_004016e0(float param_1, float * param_2)	false	
+004017e0	FUN_004017e0	004017e0-0040189f	undefined __cdecl FUN_004017e0(float param_1, float * param_2)	false	
+004018a0	FUN_004018a0	004018a0-00401998	undefined __cdecl FUN_004018a0(float param_1, float * param_2)	false	
+004019a0	FUN_004019a0	004019a0-00401a61	undefined __cdecl FUN_004019a0(float param_1, float * param_2)	false	
+00401a70	bh_mat34_inverse_rigid	00401a70-00401b22	void __cdecl bh_mat34_inverse_rigid(BHMat34 * m, BHMat34 * out)	false	recovered-math-finite-tested
+00401b30	FUN_00401b30	00401b30-00401c01	undefined __cdecl FUN_00401b30(int param_1, int param_2, float * param_3)	false	
+00401c10	FUN_00401c10	00401c10-00401e4d	undefined4 __cdecl FUN_00401c10(float * param_1, float * param_2, float * param_3)	false	
+00401e50	FUN_00401e50	00401e50-00401fc2	undefined4 __cdecl FUN_00401e50(undefined4 * param_1, float * param_2)	false	
+00401fd0	BH_LoadConfig_candidate	00401fd0-004022ca	undefined __stdcall BH_LoadConfig_candidate(void)	false	
+004022d0	FUN_004022d0	004022d0-00402366	undefined __stdcall FUN_004022d0(void)	false	
+00402370	FUN_00402370	00402370-00402460	undefined __stdcall FUN_00402370(void)	false	
+00402470	FUN_00402470	00402470-004024b3	undefined FUN_00402470(void)	false	candidate-function-code-pointer
+004024c0	FUN_004024c0	004024c0-004025bd	undefined FUN_004024c0(void)	false	candidate-function-code-pointer
+004025c0	FUN_004025c0	004025c0-0040270c	undefined __cdecl FUN_004025c0(undefined4 param_1, undefined4 param_2, undefined4 * param_3, undefined4 * param_4, undefined4 * param_5, undefined4 param_6, undefined4 param_7, float param_8, float param_9, undefined4 param_10, undefined4 param_11, float param_12, float param_13)	false	
+00402710	FUN_00402710	00402710-004027e8	undefined FUN_00402710(void)	false	candidate-function-code-pointer
+004027f0	FUN_004027f0	004027f0-00402829	undefined FUN_004027f0(void)	false	candidate-function-code-pointer
+00402830	FUN_00402830	00402830-004029cd	undefined FUN_00402830(void)	false	candidate-function-code-pointer
+004029d0	FUN_004029d0	004029d0-00402aec	undefined FUN_004029d0(void)	false	candidate-function-code-pointer
+00402af0	FUN_00402af0	00402af0-00402cb6	undefined FUN_00402af0(void)	false	candidate-function-code-pointer
+00402cc0	FUN_00402cc0	00402cc0-00402d12	undefined FUN_00402cc0(void)	false	candidate-function-code-pointer
+00402d20	FUN_00402d20	00402d20-00402e11	undefined __cdecl FUN_00402d20(int param_1)	false	
+00402e20	FUN_00402e20	00402e20-00402e44	undefined FUN_00402e20(void)	false	candidate-function-code-pointer
+00402e50	FUN_00402e50	00402e50-00403111	undefined __cdecl FUN_00402e50(float * param_1, undefined4 param_2, float param_3, undefined4 param_4, undefined4 param_5)	false	
+00403120	FUN_00403120	00403120-004032e2	undefined __cdecl FUN_00403120(int param_1, undefined4 * param_2, undefined4 param_3, float param_4, float param_5)	false	
+004032f0	FUN_004032f0	004032f0-004035dc	undefined __cdecl FUN_004032f0(float * param_1, undefined4 param_2, float param_3, undefined4 param_4, float param_5, undefined4 param_6)	false	
+004035e0	FUN_004035e0	004035e0-00403631	undefined FUN_004035e0(void)	false	candidate-function-code-pointer
+00403640	FUN_00403640	00403640-0040366c	undefined FUN_00403640(void)	false	candidate-function-code-pointer
+00403670	FUN_00403670	00403670-0040371c	undefined FUN_00403670(void)	false	candidate-function-code-pointer
+00403720	FUN_00403720	00403720-004037f2	undefined FUN_00403720(void)	false	candidate-function-code-pointer
+00403800	FUN_00403800	00403800-00403845	undefined FUN_00403800(void)	false	candidate-function-code-pointer
+00403850	FUN_00403850	00403850-0040386e	undefined __cdecl FUN_00403850(int param_1)	false	
+00403870	FUN_00403870	00403870-004044bf	undefined FUN_00403870(void)	false	candidate-function-code-pointer
+004044c0	FUN_004044c0	004044c0-004047b8	undefined __cdecl FUN_004044c0(int param_1, float * param_2)	false	
+004047c0	FUN_004047c0	004047c0-00405269	undefined FUN_004047c0(void)	false	candidate-function-code-pointer
+00405270	FUN_00405270	00405270-00405eef	undefined FUN_00405270(void)	false	candidate-function-code-pointer
+00405ef0	FUN_00405ef0	00405ef0-004062ca	undefined FUN_00405ef0(void)	false	candidate-function-code-pointer
+00406300	FUN_00406300	00406300-004067e0	undefined FUN_00406300(void)	false	candidate-function-code-pointer
+00406800	FUN_00406800	00406800-004069c2	undefined __cdecl FUN_00406800(undefined4 param_1, undefined4 param_2, undefined4 * param_3, float * param_4, float * param_5, float * param_6, float * param_7, undefined4 param_8, undefined4 param_9)	false	
+004069d0	FUN_004069d0	004069d0-00406b03	undefined __cdecl FUN_004069d0(undefined4 param_1, undefined4 param_2, undefined4 * param_3, float * param_4, undefined4 param_5, undefined4 param_6, undefined4 param_7, undefined4 param_8)	false	
+00406b10	FUN_00406b10	00406b10-00406c28	undefined __cdecl FUN_00406b10(undefined4 param_1, undefined4 param_2, undefined4 * param_3, float * param_4, undefined4 param_5, undefined4 param_6, undefined4 param_7, undefined4 param_8)	false	
+00406c30	FUN_00406c30	00406c30-00406d44	undefined __cdecl FUN_00406c30(undefined4 param_1, undefined4 param_2, undefined4 * param_3, undefined4 * param_4, undefined4 * param_5)	false	
+00406d50	FUN_00406d50	00406d50-00406e1f	undefined FUN_00406d50(void)	false	candidate-function-code-pointer
+00406e20	FUN_00406e20	00406e20-00406eaf	undefined FUN_00406e20(void)	false	candidate-function-code-pointer
+00406eb0	FUN_00406eb0	00406eb0-0040717b	undefined FUN_00406eb0(void)	false	candidate-function-code-pointer
+00407180	FUN_00407180	00407180-004071a8	undefined FUN_00407180(void)	false	candidate-function-code-pointer
+004071b0	FUN_004071b0	004071b0-004072cf	undefined __cdecl FUN_004071b0(undefined4 param_1, undefined4 param_2, undefined4 param_3, undefined4 * param_4, int param_5, undefined4 param_6, float param_7, float param_8, float param_9, undefined4 param_10, float param_11, float * param_12, undefined4 param_13)	false	
+004072d0	FUN_004072d0	004072d0-004073ad	undefined __cdecl FUN_004072d0(undefined4 param_1, undefined4 param_2, uint param_3, undefined4 * param_4, int param_5, undefined4 param_6, float param_7, float param_8, float param_9, undefined4 param_10, float param_11, float * param_12, undefined4 param_13)	false	
+004073b0	FUN_004073b0	004073b0-004073ec	undefined FUN_004073b0(void)	false	candidate-function-code-pointer
+004073f0	FUN_004073f0	004073f0-00407508	undefined FUN_004073f0(void)	false	candidate-function-code-pointer
+00407510	FUN_00407510	00407510-00407663	undefined __cdecl FUN_00407510(undefined4 * param_1, undefined4 param_2, float param_3)	false	
+00407670	FUN_00407670	00407670-0040771b	undefined FUN_00407670(void)	false	candidate-function-code-pointer
+00407720	FUN_00407720	00407720-0040792d	undefined FUN_00407720(void)	false	candidate-function-code-pointer
+00407930	FUN_00407930	00407930-00407a12	undefined FUN_00407930(void)	false	candidate-function-code-pointer
+00407a20	FUN_00407a20	00407a20-00407ac7	undefined FUN_00407a20(void)	false	candidate-function-code-pointer
+00407ad0	FUN_00407ad0	00407ad0-00407afc	undefined FUN_00407ad0(void)	false	candidate-function-code-pointer
+00407b00	FUN_00407b00	00407b00-00407b35	undefined FUN_00407b00(void)	false	candidate-function-code-pointer
+00407b40	FUN_00407b40	00407b40-00407d83	int __cdecl FUN_00407b40(undefined4 * param_1, float * param_2, undefined4 param_3, uint param_4, int param_5)	false	
+00407d90	FUN_00407d90	00407d90-00407f25	undefined4 __cdecl FUN_00407d90(undefined4 param_1, int param_2, int param_3, float * param_4)	false	
+00407f30	FUN_00407f30	00407f30-004082c5	undefined __cdecl FUN_00407f30(float param_1, undefined4 * param_2)	false	
+004082d0	FUN_004082d0	004082d0-004083cf	undefined FUN_004082d0(void)	false	candidate-function-code-pointer
+004083d0	FUN_004083d0	004083d0-00408490	undefined FUN_004083d0(void)	false	candidate-function-code-pointer
+004084a0	FUN_004084a0	004084a0-00408938	undefined __cdecl FUN_004084a0(int param_1)	false	
+00408940	FUN_00408940	00408940-00408b06	undefined __cdecl FUN_00408940(float param_1)	false	
+00408b10	FUN_00408b10	00408b10-00409124	undefined __cdecl FUN_00408b10(float param_1)	false	
+00409130	FUN_00409130	00409130-00409523	undefined __cdecl FUN_00409130(float * param_1, float * param_2, float param_3, undefined4 param_4, undefined4 param_5, int param_6, int param_7)	false	
+00409530	FUN_00409530	00409530-00409f15	float * __cdecl FUN_00409530(float * param_1)	false	
+00409f20	FUN_00409f20	00409f20-00409f3d	undefined FUN_00409f20(void)	false	candidate-function-code-pointer
+00409f40	FUN_00409f40	00409f40-0040a87e	undefined __cdecl FUN_00409f40(int param_1)	false	
+0040a8c0	FUN_0040a8c0	0040a8c0-0040abd9	int __cdecl FUN_0040a8c0(int param_1, float * param_2, float param_3)	false	
+0040abe0	FUN_0040abe0	0040abe0-0040aefa	int * __cdecl FUN_0040abe0(int param_1, float * param_2, float param_3, int * param_4)	false	
+0040af20	FUN_0040af20	0040af20-0040b01a	undefined __cdecl FUN_0040af20(int param_1, int * param_2, float * param_3, float param_4)	false	
+0040b020	FUN_0040b020	0040b020-0040b2f8	int __cdecl FUN_0040b020(int param_1, float * param_2, float * param_3, float * param_4, int param_5)	false	
+0040b300	FUN_0040b300	0040b300-0040b406	int __cdecl FUN_0040b300(int param_1, int param_2, float * param_3, float param_4, int * param_5)	false	
+0040b410	FUN_0040b410	0040b410-0040ba3d	int __cdecl FUN_0040b410(int param_1, float * param_2, float * param_3, float * param_4, float * param_5, int * param_6)	false	
+0040ba40	FUN_0040ba40	0040ba40-0040c480	int __cdecl FUN_0040ba40(int param_1, int param_2, float * param_3, float * param_4, float param_5, int param_6, float * param_7)	false	
+0040c4a0	FUN_0040c4a0	0040c4a0-0040c65f	int __cdecl FUN_0040c4a0(int param_1, int * param_2, float * param_3, float * param_4, float param_5, float * param_6)	false	
+0040c660	FUN_0040c660	0040c660-0040c9ac	undefined __cdecl FUN_0040c660(int param_1, int param_2, int param_3)	false	
+0040c9b0	FUN_0040c9b0	0040c9b0-0040cff9	undefined __stdcall FUN_0040c9b0(void)	false	
+0040d000	FUN_0040d000	0040d000-0040d13f	undefined __cdecl FUN_0040d000(int param_1, int param_2)	false	
+0040d140	FUN_0040d140	0040d140-0040dff8	undefined FUN_0040d140(void)	false	candidate-function-code-pointer
+0040e050	FUN_0040e050	0040e050-0040e066	undefined FUN_0040e050(void)	false	candidate-function-code-pointer
+0040e070	FUN_0040e070	0040e070-0040e1f8	int __cdecl FUN_0040e070(int param_1, int param_2, int param_3, int param_4, int param_5)	false	
+0040e200	FUN_0040e200	0040e200-0040e2f7	undefined __cdecl FUN_0040e200(float param_1, int param_2, int param_3, int param_4, int param_5)	false	
+0040e300	FUN_0040e300	0040e300-0040e414	undefined __cdecl FUN_0040e300(float param_1, int param_2, int param_3, int param_4)	false	
+0040e420	FUN_0040e420	0040e420-0040fe74	undefined FUN_0040e420(void)	false	candidate-function-code-pointer
+00410020	FUN_00410020	00410020-00410079	undefined FUN_00410020(void)	false	candidate-function-code-pointer
+00410080	FUN_00410080	00410080-004100ab	undefined FUN_00410080(void)	false	candidate-function-code-pointer
+004100b0	FUN_004100b0	004100b0-004100c8	undefined FUN_004100b0(void)	false	candidate-function-code-pointer
+004100d0	FUN_004100d0	004100d0-0041058f	undefined __cdecl FUN_004100d0(LPCSTR param_1)	false	
+00410590	FUN_00410590	00410590-0041087d	undefined __stdcall FUN_00410590(void)	false	
+00410880	FUN_00410880	00410880-004109bd	undefined __cdecl FUN_00410880(int * param_1, int param_2)	false	
+004109c0	FUN_004109c0	004109c0-00410b9b	char * __cdecl FUN_004109c0(char * param_1, int param_2, int * param_3, int * param_4)	false	
+00410ba0	FUN_00410ba0	00410ba0-00410d83	char * __cdecl FUN_00410ba0(char * param_1, int param_2, float * param_3, int * param_4)	false	
+00410d90	FUN_00410d90	00410d90-00410f55	undefined __cdecl FUN_00410d90(undefined4 param_1, char * param_2)	false	
+00410f60	FUN_00410f60	00410f60-00411073	undefined __cdecl FUN_00410f60(int param_1, char * param_2, uint param_3)	false	
+00411080	FUN_00411080	00411080-004111dd	undefined __cdecl FUN_00411080(int param_1, char * param_2, undefined4 param_3)	false	
+004111e0	BH_ParseScriptStatements	004111e0-00411ef6	undefined __cdecl BH_ParseScriptStatements(char * param_1)	false	
+00411f00	FUN_00411f00	00411f00-0041218d	undefined4 __cdecl FUN_00411f00(LPCSTR param_1)	false	
+00412190	FUN_00412190	00412190-004124c3	undefined __stdcall FUN_00412190(void)	false	
+004124d0	FUN_004124d0	004124d0-0041341b	undefined __cdecl FUN_004124d0(int param_1, float param_2)	false	
+00413420	FUN_00413420	00413420-00413986	undefined __stdcall FUN_00413420(void)	false	
+00413990	FUN_00413990	00413990-00413c71	undefined4 __cdecl FUN_00413990(float * param_1, int * param_2, int * param_3, float * param_4, float * param_5)	false	
+00413c80	FUN_00413c80	00413c80-00413f75	undefined4 __cdecl FUN_00413c80(float * param_1, int * param_2, int * param_3, float * param_4, float * param_5)	false	
+00413f80	FUN_00413f80	00413f80-004146e8	undefined __stdcall FUN_00413f80(void)	false	
+004146f0	FUN_004146f0	004146f0-0041487a	undefined __cdecl FUN_004146f0(int param_1, int * param_2, float param_3)	false	
+00414880	FUN_00414880	00414880-0041552a	undefined FUN_00414880(void)	false	candidate-function-code-pointer
+00415530	FUN_00415530	00415530-00416111	undefined FUN_00415530(void)	false	candidate-function-code-pointer
+00416120	FUN_00416120	00416120-00416eab	undefined __cdecl FUN_00416120(int param_1, float param_2, int param_3)	false	
+00416eb0	FUN_00416eb0	00416eb0-00417c4d	undefined FUN_00416eb0(void)	false	candidate-function-code-pointer
+00417c50	FUN_00417c50	00417c50-00417f2e	undefined __cdecl FUN_00417c50(float param_1)	false	
+00417f30	FUN_00417f30	00417f30-00417f6c	undefined __cdecl FUN_00417f30(int param_1)	false	
+00417f70	FUN_00417f70	00417f70-00418ea1	undefined __cdecl FUN_00417f70(int param_1)	false	
+00418f00	FUN_00418f00	00418f00-0041a3c5	undefined __cdecl FUN_00418f00(float param_1)	false	
+0041a3d0	FUN_0041a3d0	0041a3d0-0041b2c1	undefined __cdecl FUN_0041a3d0(int param_1)	false	
+0041b2d0	FUN_0041b2d0	0041b2d0-0041b64c	undefined __cdecl FUN_0041b2d0(int param_1)	false	
+0041b650	FUN_0041b650	0041b650-0041bbe9	undefined __cdecl FUN_0041b650(float param_1, float * param_2, uint param_3, float param_4, int param_5)	false	
+0041bbf0	FUN_0041bbf0	0041bbf0-0041bff4	undefined __cdecl FUN_0041bbf0(float param_1)	false	
+0041c020	FUN_0041c020	0041c020-0041c858	undefined __cdecl FUN_0041c020(int param_1, float * param_2)	false	
+0041c860	FUN_0041c860	0041c860-0041d7bd	undefined FUN_0041c860(void)	false	candidate-function-code-pointer
+0041d7c0	FUN_0041d7c0	0041d7c0-0041e664	undefined FUN_0041d7c0(void)	false	candidate-function-code-pointer
+0041e6b0	FUN_0041e6b0	0041e6b0-0041e84d	undefined FUN_0041e6b0(void)	false	candidate-function-code-pointer
+0041e850	FUN_0041e850	0041e850-00421559	undefined FUN_0041e850(void)	false	candidate-function-code-pointer
+00421560	FUN_00421560	00421560-004215bd	undefined __cdecl FUN_00421560(int param_1)	false	
+004215c0	FUN_004215c0	004215c0-00421605	undefined __stdcall FUN_004215c0(void)	false	
+00421610	FUN_00421610	00421610-0042173f	int __cdecl FUN_00421610(int param_1, float * param_2)	false	
+00421740	FUN_00421740	00421740-00421bba	undefined __stdcall FUN_00421740(void)	false	
+00421bc0	FUN_00421bc0	00421bc0-00421d19	undefined __stdcall FUN_00421bc0(void)	false	
+00421d20	FUN_00421d20	00421d20-004221d3	undefined __cdecl FUN_00421d20(float param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4, int * param_5, undefined4 param_6)	false	
+004221e0	FUN_004221e0	004221e0-0042256d	undefined __cdecl FUN_004221e0(int param_1)	false	
+00422570	FUN_00422570	00422570-004225e5	undefined __cdecl FUN_00422570(int param_1)	false	
+004225f0	FUN_004225f0	004225f0-004233a2	undefined FUN_004225f0(void)	false	candidate-function-code-pointer
+00423400	FUN_00423400	00423400-004234c0	int __cdecl FUN_00423400(int param_1, int param_2, int param_3)	false	
+004234d0	FUN_004234d0	004234d0-00423654	undefined8 __cdecl FUN_004234d0(int * param_1)	false	
+00423660	FUN_00423660	00423660-0042370e	undefined __stdcall FUN_00423660(void)	false	
+00423710	FUN_00423710	00423710-00423790	undefined __cdecl FUN_00423710(undefined4 param_1, int param_2)	false	
+004237a0	FUN_004237a0	004237a0-0042383c	undefined4 __stdcall FUN_004237a0(void)	false	
+00423840	FUN_00423840	00423840-0042399c	undefined4 __cdecl FUN_00423840(int * param_1, float * param_2)	false	
+004239a0	FUN_004239a0	004239a0-00423a0a	undefined4 __cdecl FUN_004239a0(int * param_1)	false	
+00423a10	FUN_00423a10	00423a10-00423a7a	undefined __cdecl FUN_00423a10(float * param_1, float param_2)	false	
+00423a80	FUN_00423a80	00423a80-00423bab	undefined __cdecl FUN_00423a80(int param_1, float * param_2, float * param_3)	false	
+00423bb0	FUN_00423bb0	00423bb0-00423c72	undefined __cdecl FUN_00423bb0(int param_1, float * param_2)	false	
+00423c80	FUN_00423c80	00423c80-00423e61	undefined FUN_00423c80(void)	false	candidate-function-code-pointer
+00423e70	FUN_00423e70	00423e70-00424128	undefined FUN_00423e70(void)	false	candidate-function-code-pointer
+00424160	FUN_00424160	00424160-00425dc6	undefined __cdecl FUN_00424160(int param_1, short param_2, undefined4 param_3, int param_4)	false	
+00425df0	FUN_00425df0	00425df0-00426326	undefined __cdecl FUN_00425df0(int param_1)	false	
+00426330	FUN_00426330	00426330-00426d4f	undefined __stdcall FUN_00426330(void)	false	
+00426d50	FUN_00426d50	00426d50-00426eac	undefined __stdcall FUN_00426d50(void)	false	
+00426eb0	FUN_00426eb0	00426eb0-00426f87	undefined __stdcall FUN_00426eb0(void)	false	
+00426f90	FUN_00426f90	00426f90-00427173	undefined __cdecl FUN_00426f90(int param_1, int param_2)	false	
+00427180	FUN_00427180	00427180-0042733e	undefined __stdcall FUN_00427180(void)	false	
+00427340	FUN_00427340	00427340-004275be	undefined __stdcall FUN_00427340(void)	false	
+004275c0	FUN_004275c0	004275c0-00427700	undefined __stdcall FUN_004275c0(void)	false	
+00427710	FUN_00427710	00427710-0042791e	undefined __stdcall FUN_00427710(void)	false	
+00427920	FUN_00427920	00427920-00427d2b	undefined __stdcall FUN_00427920(void)	false	
+00427d30	FUN_00427d30	00427d30-0042871a	undefined FUN_00427d30(void)	false	candidate-function-code-pointer
+00428750	FUN_00428750	00428750-00428d81	undefined FUN_00428750(void)	false	candidate-function-code-pointer
+00428dc0	FUN_00428dc0	00428dc0-00428f46	undefined __stdcall FUN_00428dc0(void)	false	
+00428f50	FUN_00428f50	00428f50-00429455	undefined FUN_00428f50(void)	false	candidate-function-code-pointer
+00429480	FUN_00429480	00429480-00429690	undefined __cdecl FUN_00429480(int param_1)	false	
+004296a0	FUN_004296a0	004296a0-00429fa2	undefined __cdecl FUN_004296a0(int param_1)	false	
+00429fb0	FUN_00429fb0	00429fb0-0042a9ab	undefined __cdecl FUN_00429fb0(float param_1)	false	
+0042a9b0	FUN_0042a9b0	0042a9b0-0042a9d1	undefined FUN_0042a9b0(void)	false	candidate-function-code-pointer
+0042a9e0	FUN_0042a9e0	0042a9e0-0042abcd	undefined __stdcall FUN_0042a9e0(void)	false	
+0042abd0	FUN_0042abd0	0042abd0-0042b2dc	undefined __cdecl FUN_0042abd0(int param_1)	false	
+0042b2e0	FUN_0042b2e0	0042b2e0-0042be6a	undefined FUN_0042b2e0(void)	false	candidate-function-code-pointer
+0042be70	FUN_0042be70	0042be70-0042bf76	undefined FUN_0042be70(void)	false	candidate-function-code-pointer
+0042bf80	FUN_0042bf80	0042bf80-0042c2f9	undefined FUN_0042bf80(void)	false	candidate-function-code-pointer
+0042c300	FUN_0042c300	0042c300-0042c4be	undefined __cdecl FUN_0042c300(int * param_1, undefined4 param_2)	false	
+0042c4c0	FUN_0042c4c0	0042c4c0-0042c7cc	undefined __cdecl FUN_0042c4c0(int param_1, undefined4 param_2, byte * param_3, byte * param_4, undefined4 param_5, undefined4 param_6, int param_7)	false	
+0042c7d0	FUN_0042c7d0	0042c7d0-0042ca0c	undefined __cdecl FUN_0042c7d0(int param_1, int param_2, int param_3, byte * param_4)	false	
+0042ca10	FUN_0042ca10	0042ca10-0042ca23	undefined FUN_0042ca10(void)	false	candidate-function-code-pointer
+0042ca30	FUN_0042ca30	0042ca30-0042ca90	undefined FUN_0042ca30(void)	false	candidate-function-code-pointer
+0042caa0	FUN_0042caa0	0042caa0-0042cad2	undefined FUN_0042caa0(void)	false	candidate-function-code-pointer
+0042cae0	FUN_0042cae0	0042cae0-0042cb0e	undefined FUN_0042cae0(void)	false	candidate-function-code-pointer
+0042cb10	FUN_0042cb10	0042cb10-0042cb3e	undefined FUN_0042cb10(void)	false	candidate-function-code-pointer
+0042cb40	FUN_0042cb40	0042cb40-0042cba1	undefined FUN_0042cb40(void)	false	candidate-function-code-pointer
+0042cbb0	FUN_0042cbb0	0042cbb0-0042ceba	undefined __cdecl FUN_0042cbb0(int param_1)	false	
+0042cec0	FUN_0042cec0	0042cec0-0042cef3	undefined FUN_0042cec0(void)	false	candidate-function-code-pointer
+0042cf00	FUN_0042cf00	0042cf00-0042cfa3	undefined FUN_0042cf00(void)	false	candidate-function-code-pointer
+0042cfb0	FUN_0042cfb0	0042cfb0-0042d067	undefined __cdecl FUN_0042cfb0(int param_1)	false	
+0042d070	FUN_0042d070	0042d070-0042d0c1	undefined FUN_0042d070(void)	false	candidate-function-code-pointer
+0042d0d0	FUN_0042d0d0	0042d0d0-0042d1a8	undefined FUN_0042d0d0(void)	false	candidate-function-code-pointer
+0042d1b0	FUN_0042d1b0	0042d1b0-0042d282	undefined FUN_0042d1b0(void)	false	candidate-function-code-pointer
+0042d290	FUN_0042d290	0042d290-0042d372	undefined FUN_0042d290(void)	false	candidate-function-code-pointer
+0042d380	FUN_0042d380	0042d380-0042d518	undefined FUN_0042d380(void)	false	candidate-function-code-pointer
+0042d550	FUN_0042d550	0042d550-0042d5f2	undefined FUN_0042d550(void)	false	candidate-function-code-pointer
+0042d620	FUN_0042d620	0042d620-0042d6c2	undefined FUN_0042d620(void)	false	candidate-function-code-pointer
+0042d6f0	FUN_0042d6f0	0042d6f0-0042d8e7	undefined FUN_0042d6f0(void)	false	candidate-function-code-pointer
+0042d920	FUN_0042d920	0042d920-0042d98d	undefined FUN_0042d920(void)	false	candidate-function-code-pointer
+0042d990	FUN_0042d990	0042d990-0042da3a	undefined FUN_0042d990(void)	false	candidate-function-code-pointer
+0042da40	FUN_0042da40	0042da40-0042da97	undefined FUN_0042da40(void)	false	candidate-function-code-pointer
+0042daa0	FUN_0042daa0	0042daa0-0042db42	undefined FUN_0042daa0(void)	false	candidate-function-code-pointer
+0042db60	FUN_0042db60	0042db60-0042de5e	undefined FUN_0042db60(void)	false	candidate-function-code-pointer
+0042de70	FUN_0042de70	0042de70-0042df8f	undefined FUN_0042de70(void)	false	candidate-function-code-pointer
+0042df90	FUN_0042df90	0042df90-0042e14f	undefined FUN_0042df90(void)	false	candidate-function-code-pointer
+0042e150	FUN_0042e150	0042e150-0042e2f1	undefined FUN_0042e150(void)	false	candidate-function-code-pointer
+0042e300	FUN_0042e300	0042e300-0042e35d	undefined FUN_0042e300(void)	false	candidate-function-code-pointer
+0042e360	FUN_0042e360	0042e360-0042e3f2	undefined FUN_0042e360(void)	false	candidate-function-code-pointer
+0042e410	FUN_0042e410	0042e410-0042e51d	undefined FUN_0042e410(void)	false	candidate-function-code-pointer
+0042e540	FUN_0042e540	0042e540-0042e60c	undefined FUN_0042e540(void)	false	candidate-function-code-pointer
+0042e640	FUN_0042e640	0042e640-0042e681	undefined FUN_0042e640(void)	false	candidate-function-code-pointer
+0042e690	FUN_0042e690	0042e690-0042e75c	undefined FUN_0042e690(void)	false	candidate-function-code-pointer
+0042e790	FUN_0042e790	0042e790-0042e7d1	undefined FUN_0042e790(void)	false	candidate-function-code-pointer
+0042e7e0	FUN_0042e7e0	0042e7e0-0042e8c0	undefined FUN_0042e7e0(void)	false	candidate-function-code-pointer
+0042e8f0	FUN_0042e8f0	0042e8f0-0042e9cb	undefined FUN_0042e8f0(void)	false	candidate-function-code-pointer
+0042e9e0	FUN_0042e9e0	0042e9e0-0042ea61	undefined FUN_0042e9e0(void)	false	candidate-function-code-pointer
+0042ea70	FUN_0042ea70	0042ea70-0042eadd	undefined FUN_0042ea70(void)	false	candidate-function-code-pointer
+0042eae0	FUN_0042eae0	0042eae0-0042eb2c	undefined FUN_0042eae0(void)	false	candidate-function-code-pointer
+0042eb30	FUN_0042eb30	0042eb30-0042ee39	undefined FUN_0042eb30(void)	false	candidate-function-code-pointer
+0042ee50	FUN_0042ee50	0042ee50-0042ee9c	undefined FUN_0042ee50(void)	false	candidate-function-code-pointer
+0042eea0	FUN_0042eea0	0042eea0-0042f0b1	undefined FUN_0042eea0(void)	false	candidate-function-code-pointer
+0042f0c0	FUN_0042f0c0	0042f0c0-0042f25b	undefined __cdecl FUN_0042f0c0(int param_1, int param_2)	false	
+0042f280	FUN_0042f280	0042f280-0042f2a8	undefined FUN_0042f280(void)	false	candidate-function-code-pointer
+0042f2b0	FUN_0042f2b0	0042f2b0-0042f346	undefined FUN_0042f2b0(void)	false	candidate-function-code-pointer
+0042f350	thunk_FUN_00402370	0042f350-0042f354	undefined __stdcall thunk_FUN_00402370(void)	true	candidate-function-code-pointer
+0042f360	FUN_0042f360	0042f360-0042f388	undefined FUN_0042f360(void)	false	candidate-function-code-pointer
+0042f390	FUN_0042f390	0042f390-0042f3f1	undefined FUN_0042f390(void)	false	candidate-function-code-pointer
+0042f400	FUN_0042f400	0042f400-0042f723	undefined __stdcall FUN_0042f400(void)	false	
+0042f730	FUN_0042f730	0042f730-0042f792	undefined FUN_0042f730(void)	false	candidate-function-code-pointer
+0042f7a0	FUN_0042f7a0	0042f7a0-004305ea	undefined FUN_0042f7a0(void)	false	candidate-function-code-pointer
+004305f0	FUN_004305f0	004305f0-004309a7	undefined FUN_004305f0(void)	false	candidate-function-code-pointer
+004309b0	FUN_004309b0	004309b0-004309c5	undefined FUN_004309b0(void)	false	candidate-function-code-pointer
+004309d0	FUN_004309d0	004309d0-00430a2d	undefined FUN_004309d0(void)	false	candidate-function-code-pointer
+00430a30	FUN_00430a30	00430a30-00430d7f	undefined FUN_00430a30(void)	false	candidate-function-code-pointer
+00430d80	FUN_00430d80	00430d80-00431042	undefined FUN_00430d80(void)	false	candidate-function-code-pointer
+00431050	FUN_00431050	00431050-004310bb	undefined FUN_00431050(void)	false	candidate-function-code-pointer
+004310c0	FUN_004310c0	004310c0-0043112b	undefined FUN_004310c0(void)	false	candidate-function-code-pointer
+00431130	FUN_00431130	00431130-00431174	undefined __cdecl FUN_00431130(int param_1)	false	
+00431180	FUN_00431180	00431180-004314e6	undefined FUN_00431180(void)	false	candidate-function-code-pointer
+004314f0	FUN_004314f0	004314f0-0043180e	undefined FUN_004314f0(void)	false	candidate-function-code-pointer
+00431810	FUN_00431810	00431810-00431da1	undefined FUN_00431810(void)	false	candidate-function-code-pointer
+00431db0	FUN_00431db0	00431db0-00431ef9	undefined FUN_00431db0(void)	false	candidate-function-code-pointer
+00431f00	FUN_00431f00	00431f00-0043204b	undefined FUN_00431f00(void)	false	candidate-function-code-pointer
+00432050	FUN_00432050	00432050-00432369	undefined __cdecl FUN_00432050(float * param_1, float * param_2, float * param_3, float * param_4, float param_5)	false	
+00432370	FUN_00432370	00432370-0043249e	undefined __cdecl FUN_00432370(float * param_1, float * param_2, float * param_3, float * param_4, float * param_5, float param_6)	false	
+004324a0	FUN_004324a0	004324a0-00432509	undefined FUN_004324a0(void)	false	candidate-function-code-pointer
+00432510	FUN_00432510	00432510-00432550	undefined __cdecl FUN_00432510(int param_1)	false	
+00432560	FUN_00432560	00432560-004325c7	undefined FUN_00432560(void)	false	candidate-function-code-pointer
+004325d0	FUN_004325d0	004325d0-00432795	undefined4 __cdecl FUN_004325d0(int param_1, int param_2, float * param_3, float param_4)	false	
+004327a0	FUN_004327a0	004327a0-00432c50	undefined FUN_004327a0(void)	false	candidate-function-code-pointer
+00432c60	FUN_00432c60	00432c60-00432fe3	undefined FUN_00432c60(void)	false	candidate-function-code-pointer
+00432ff0	FUN_00432ff0	00432ff0-00433166	undefined FUN_00432ff0(void)	false	candidate-function-code-pointer
+00433170	FUN_00433170	00433170-004331be	undefined FUN_00433170(void)	false	candidate-function-code-pointer
+004331c0	FUN_004331c0	004331c0-00433819	undefined FUN_004331c0(void)	false	candidate-function-code-pointer
+00433820	FUN_00433820	00433820-00433849	undefined FUN_00433820(void)	false	candidate-function-code-pointer
+00433850	FUN_00433850	00433850-00433af5	undefined FUN_00433850(void)	false	candidate-function-code-pointer
+00433b00	FUN_00433b00	00433b00-00433b29	undefined FUN_00433b00(void)	false	candidate-function-code-pointer
+00433b30	FUN_00433b30	00433b30-00433db2	undefined FUN_00433b30(void)	false	candidate-function-code-pointer
+00433dc0	FUN_00433dc0	00433dc0-00433e49	undefined FUN_00433dc0(void)	false	candidate-function-code-pointer
+00433e50	FUN_00433e50	00433e50-00433e94	undefined FUN_00433e50(void)	false	candidate-function-code-pointer
+00433ea0	FUN_00433ea0	00433ea0-00433f6a	int __cdecl FUN_00433ea0(undefined4 param_1, int param_2)	false	
+00433f70	FUN_00433f70	00433f70-00434014	undefined __cdecl FUN_00433f70(int param_1, int param_2, float * param_3)	false	
+00434040	FUN_00434040	00434040-004340d2	undefined __cdecl FUN_00434040(int param_1, int param_2, undefined4 * param_3)	false	
+004340f0	FUN_004340f0	004340f0-00434198	undefined __cdecl FUN_004340f0(int param_1, float * param_2)	false	
+004341a0	FUN_004341a0	004341a0-004343be	undefined __cdecl FUN_004341a0(float param_1, float * param_2, float * param_3, float * param_4, float * param_5, float * param_6)	false	
+004343c0	FUN_004343c0	004343c0-004344e9	undefined __cdecl FUN_004343c0(float * param_1)	false	
+004344f0	FUN_004344f0	004344f0-00434647	undefined __cdecl FUN_004344f0(int param_1, int param_2, int param_3, int param_4)	false	
+00434650	FUN_00434650	00434650-00434807	int __cdecl FUN_00434650(int param_1, int param_2, int param_3)	false	
+00434810	FUN_00434810	00434810-00434915	float10 __cdecl FUN_00434810(float param_1)	false	
+00434920	FUN_00434920	00434920-00434f38	undefined FUN_00434920(void)	false	candidate-function-code-pointer
+00434f40	FUN_00434f40	00434f40-0043557f	undefined __cdecl FUN_00434f40(int param_1, int param_2, float param_3)	false	
+004355c0	FUN_004355c0	004355c0-0043571d	undefined __cdecl FUN_004355c0(int param_1)	false	
+00435720	FUN_00435720	00435720-00435785	undefined __cdecl FUN_00435720(int param_1)	false	
+00435790	FUN_00435790	00435790-004357c9	undefined FUN_00435790(void)	false	candidate-function-code-pointer
+004357d0	FUN_004357d0	004357d0-00435e7c	undefined FUN_004357d0(void)	false	candidate-function-code-pointer
+00435e80	FUN_00435e80	00435e80-0043639f	undefined FUN_00435e80(void)	false	candidate-function-code-pointer
+004363f0	FUN_004363f0	004363f0-00436668	undefined FUN_004363f0(void)	false	candidate-function-code-pointer
+00436670	FUN_00436670	00436670-004366c4	undefined FUN_00436670(void)	false	candidate-function-code-pointer
+004366d0	FUN_004366d0	004366d0-00436cc6	undefined FUN_004366d0(void)	false	candidate-function-code-pointer
+00436cd0	FUN_00436cd0	00436cd0-00436f93	undefined FUN_00436cd0(void)	false	candidate-function-code-pointer
+00436fa0	FUN_00436fa0	00436fa0-004374ae	undefined __cdecl FUN_00436fa0(float param_1)	false	
+004374b0	FUN_004374b0	004374b0-004375a1	undefined FUN_004374b0(void)	false	candidate-function-code-pointer
+004375b0	FUN_004375b0	004375b0-004376d2	undefined FUN_004375b0(void)	false	candidate-function-code-pointer
+00437770	FUN_00437770	00437770-004377d1	undefined FUN_00437770(void)	false	candidate-function-code-pointer
+00437a30	FUN_00437a30	00437a30-00437a7b	undefined __cdecl FUN_00437a30(int param_1)	false	
+00437a80	FUN_00437a80	00437a80-00437aa9	undefined __stdcall FUN_00437a80(void)	false	
+00437ab0	FUN_00437ab0	00437ab0-00437ad9	undefined __stdcall FUN_00437ab0(void)	false	
+00437ae0	FUN_00437ae0	00437ae0-00438fe2	undefined __cdecl FUN_00437ae0(int param_1)	false	
+00438ff0	FUN_00438ff0	00438ff0-004397ce	undefined __cdecl FUN_00438ff0(float param_1)	false	
+004397e0	FUN_004397e0	004397e0-004398b3	undefined FUN_004397e0(void)	false	candidate-function-code-pointer
+004398c0	FUN_004398c0	004398c0-0043990f	undefined __cdecl FUN_004398c0(float param_1)	false	
+00439910	FUN_00439910	00439910-0043a1c6	undefined FUN_00439910(void)	false	candidate-function-code-pointer
+0043a1d0	FUN_0043a1d0	0043a1d0-0043a8d0	undefined FUN_0043a1d0(void)	false	candidate-function-code-pointer
+0043a920	FUN_0043a920	0043a920-0043b2aa	undefined __cdecl FUN_0043a920(uint param_1, uint param_2, uint param_3, float param_4, uint param_5, uint param_6)	false	
+0043b2d0	FUN_0043b2d0	0043b2d0-0043bc82	undefined __cdecl FUN_0043b2d0(float * param_1, uint param_2, uint param_3, float param_4, uint param_5, uint param_6)	false	
+0043bca0	FUN_0043bca0	0043bca0-0043beb4	undefined __cdecl FUN_0043bca0(uint param_1, uint param_2, uint param_3, float param_4, uint param_5)	false	
+0043bec0	FUN_0043bec0	0043bec0-0043c1ff	undefined __stdcall FUN_0043bec0(float * param_1, undefined4 param_2)	false	
+0043c3f0	FUN_0043c3f0	0043c3f0-0043c8ae	undefined FUN_0043c3f0(void)	false	candidate-function-code-pointer
+0043c8b0	FUN_0043c8b0	0043c8b0-0043c8e9	undefined FUN_0043c8b0(void)	false	candidate-function-code-pointer
+0043c8f0	FUN_0043c8f0	0043c8f0-0043ccca	undefined FUN_0043c8f0(void)	false	candidate-function-code-pointer
+0043cd00	FUN_0043cd00	0043cd00-0043d27b	undefined FUN_0043cd00(void)	false	candidate-function-code-pointer
+0043d2c0	FUN_0043d2c0	0043d2c0-0043d7b5	undefined __cdecl FUN_0043d2c0(undefined4 param_1, undefined4 param_2, float param_3, int param_4, int param_5)	false	
+0043d7c0	FUN_0043d7c0	0043d7c0-0043ddb2	undefined __cdecl FUN_0043d7c0(float * param_1, float * param_2, undefined4 * param_3, undefined4 * param_4, undefined4 param_5, float param_6, undefined4 param_7, undefined4 param_8, undefined4 param_9, undefined4 param_10, undefined4 param_11)	false	
+0043ddc0	FUN_0043ddc0	0043ddc0-0043e61a	undefined __cdecl FUN_0043ddc0(float * param_1, float * param_2, undefined4 * param_3, undefined4 * param_4, undefined4 param_5, float param_6, undefined4 param_7, undefined4 param_8, undefined4 param_9, float * param_10, float * param_11, float * param_12, undefined4 param_13)	false	
+0043e620	FUN_0043e620	0043e620-0043e706	undefined FUN_0043e620(void)	false	candidate-function-code-pointer
+0043e710	FUN_0043e710	0043e710-0043e834	undefined FUN_0043e710(void)	false	candidate-function-code-pointer
+0043e840	FUN_0043e840	0043e840-0043ea8c	undefined FUN_0043e840(void)	false	candidate-function-code-pointer
+0043ea90	FUN_0043ea90	0043ea90-0043f628	undefined FUN_0043ea90(void)	false	candidate-function-code-pointer
+0043f630	FUN_0043f630	0043f630-00440024	undefined FUN_0043f630(void)	false	candidate-function-code-pointer
+00440030	FUN_00440030	00440030-0044004e	undefined __cdecl FUN_00440030(int param_1)	false	
+00440050	FUN_00440050	00440050-00440804	undefined FUN_00440050(void)	false	candidate-function-code-pointer
+00440810	FUN_00440810	00440810-004408dc	undefined FUN_00440810(void)	false	candidate-function-code-pointer
+004408e0	FUN_004408e0	004408e0-004409ca	undefined __cdecl FUN_004408e0(undefined4 param_1, undefined4 param_2, undefined4 * param_3, undefined4 * param_4, undefined4 param_5)	false	
+004409d0	FUN_004409d0	004409d0-00440ac8	undefined __cdecl FUN_004409d0(undefined4 param_1, undefined4 param_2, undefined4 * param_3, undefined4 * param_4, undefined4 param_5, int param_6)	false	
+00440ad0	FUN_00440ad0	00440ad0-00440c37	undefined __cdecl FUN_00440ad0(undefined4 param_1, undefined4 param_2, undefined4 * param_3, float * param_4, float * param_5)	false	
+00440c40	FUN_00440c40	00440c40-004412ee	undefined __cdecl FUN_00440c40(int param_1, int param_2, int param_3)	false	
+004412f0	FUN_004412f0	004412f0-004413a2	undefined __cdecl FUN_004412f0(int param_1)	false	
+004413b0	FUN_004413b0	004413b0-004414c3	undefined FUN_004413b0(void)	false	candidate-function-code-pointer
+004414d0	FUN_004414d0	004414d0-00441566	undefined FUN_004414d0(void)	false	candidate-function-code-pointer
+00441570	FUN_00441570	00441570-0044159f	undefined FUN_00441570(void)	false	candidate-function-code-pointer
+004415a0	FUN_004415a0	004415a0-004419f6	undefined FUN_004415a0(void)	false	candidate-function-code-pointer
+00441a00	FUN_00441a00	00441a00-00441b7f	undefined __cdecl FUN_00441a00(float * param_1, int param_2, int param_3, int param_4, int param_5, undefined4 param_6, undefined4 param_7)	false	
+00441b80	FUN_00441b80	00441b80-00441cd3	undefined __cdecl FUN_00441b80(float * param_1, int param_2, int param_3, int param_4, undefined4 param_5, undefined4 param_6)	false	
+00441ce0	FUN_00441ce0	00441ce0-00441d75	undefined FUN_00441ce0(void)	false	candidate-function-code-pointer
+00441d80	FUN_00441d80	00441d80-0044232d	undefined FUN_00441d80(void)	false	candidate-function-code-pointer
+00442330	FUN_00442330	00442330-00442354	undefined FUN_00442330(void)	false	candidate-function-code-pointer
+00442360	FUN_00442360	00442360-0044243e	undefined __cdecl FUN_00442360(undefined4 param_1, undefined4 * param_2, float * param_3, undefined4 param_4, undefined4 param_5)	false	
+00442440	FUN_00442440	00442440-004428a9	undefined FUN_00442440(void)	false	candidate-function-code-pointer
+004428b0	FUN_004428b0	004428b0-00442945	undefined __cdecl FUN_004428b0(int param_1)	false	
+00442950	FUN_00442950	00442950-00442a2f	undefined __cdecl FUN_00442950(int param_1)	false	
+00442a30	FUN_00442a30	00442a30-00442b53	undefined4 __cdecl FUN_00442a30(char * param_1)	false	
+00442b60	FUN_00442b60	00442b60-00442be9	undefined FUN_00442b60(void)	false	candidate-function-code-pointer
+00442bf0	FUN_00442bf0	00442bf0-00442cc3	undefined __cdecl FUN_00442bf0(int param_1)	false	
+00442cd0	FUN_00442cd0	00442cd0-00442ce6	undefined FUN_00442cd0(void)	false	candidate-function-code-pointer
+00442cf0	FUN_00442cf0	00442cf0-00442dd8	undefined FUN_00442cf0(void)	false	candidate-function-code-pointer
+00442de0	FUN_00442de0	00442de0-00442ea0	undefined __cdecl FUN_00442de0(int param_1)	false	
+00442eb0	FUN_00442eb0	00442eb0-00442ebd	undefined FUN_00442eb0(void)	false	candidate-function-code-pointer
+00442ec0	FUN_00442ec0	00442ec0-00442ee0	undefined FUN_00442ec0(void)	false	candidate-function-code-pointer
+00442ef0	FUN_00442ef0	00442ef0-00442f37	undefined FUN_00442ef0(void)	false	candidate-function-code-pointer
+00442f40	FUN_00442f40	00442f40-00443009	undefined FUN_00442f40(void)	false	candidate-function-code-pointer
+00443010	FUN_00443010	00443010-00443134	undefined FUN_00443010(void)	false	candidate-function-code-pointer
+00443140	FUN_00443140	00443140-00443264	undefined FUN_00443140(void)	false	candidate-function-code-pointer
+00443270	FUN_00443270	00443270-0044334c	undefined FUN_00443270(void)	false	candidate-function-code-pointer
+00443350	FUN_00443350	00443350-0044338d	undefined __cdecl FUN_00443350(int param_1)	false	
+00443390	FUN_00443390	00443390-004434ae	undefined __cdecl FUN_00443390(int param_1)	false	
+004434b0	FUN_004434b0	004434b0-0044363c	undefined FUN_004434b0(void)	false	candidate-function-code-pointer
+00443640	FUN_00443640	00443640-004436e0	undefined __cdecl FUN_00443640(int param_1)	false	
+004436f0	FUN_004436f0	004436f0-004437fd	undefined __cdecl FUN_004436f0(int param_1)	false	
+00443800	FUN_00443800	00443800-0044399d	undefined __cdecl FUN_00443800(int param_1)	false	
+004439a0	FUN_004439a0	004439a0-00443ab0	undefined FUN_004439a0(void)	false	candidate-function-code-pointer
+00443ac0	FUN_00443ac0	00443ac0-00443d33	undefined FUN_00443ac0(void)	false	candidate-function-code-pointer
+00443d40	FUN_00443d40	00443d40-00443e75	undefined FUN_00443d40(void)	false	candidate-function-code-pointer
+00443e80	FUN_00443e80	00443e80-00443ef7	undefined FUN_00443e80(void)	false	candidate-function-code-pointer
+00443f00	FUN_00443f00	00443f00-00443f47	undefined FUN_00443f00(void)	false	candidate-function-code-pointer
+00443f50	FUN_00443f50	00443f50-00443f88	undefined FUN_00443f50(void)	false	candidate-function-code-pointer
+00443f90	FUN_00443f90	00443f90-00443feb	undefined FUN_00443f90(void)	false	candidate-function-code-pointer
+004457c0	FUN_004457c0	004457c0-0044589c	undefined __cdecl FUN_004457c0(int * param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4, undefined4 param_5, undefined4 param_6, undefined4 param_7, int param_8, int param_9, int param_10, int param_11, int param_12)	false	
+004458a0	FUN_004458a0	004458a0-00445904	undefined4 __cdecl FUN_004458a0(float * param_1, float * param_2)	false	
+00445910	FUN_00445910	00445910-004459f2	undefined __cdecl FUN_00445910(float * param_1, float * param_2, float * param_3, float * param_4)	false	
+00445a00	FUN_00445a00	00445a00-00445e3e	undefined __cdecl FUN_00445a00(char * param_1, float * param_2, float * param_3)	false	
+00445e70	FUN_00445e70	00445e70-00446154	undefined __stdcall FUN_00445e70(void)	false	
+00446160	FUN_00446160	00446160-004462ea	undefined FUN_00446160(void)	false	candidate-function-code-pointer
+004462f0	FUN_004462f0	004462f0-00446b08	undefined FUN_004462f0(void)	false	candidate-function-code-pointer
+00446b10	FUN_00446b10	00446b10-00446df9	undefined FUN_00446b10(void)	false	candidate-function-code-pointer
+00446e00	FUN_00446e00	00446e00-00447093	undefined FUN_00446e00(void)	false	candidate-function-code-pointer
+004470c0	FUN_004470c0	004470c0-004474b5	undefined __cdecl FUN_004470c0(float * param_1, float * param_2)	false	
+004474c0	FUN_004474c0	004474c0-00449a2f	undefined4 __stdcall FUN_004474c0(void)	false	
+00449a50	BH_InitCDAudio	00449a50-00449b3d	undefined4 __cdecl BH_InitCDAudio(undefined4 param_1)	false	
+00449b40	FUN_00449b40	00449b40-00449b8c	undefined __stdcall FUN_00449b40(void)	false	
+00449b90	FUN_00449b90	00449b90-00449c13	undefined __cdecl FUN_00449b90(short param_1, MCIDEVICEID param_2)	false	
+00449c20	FUN_00449c20	00449c20-00449cb5	bool __cdecl FUN_00449c20(uint param_1, uint param_2, uint param_3, uint param_4, undefined4 param_5)	false	
+00449cc0	FUN_00449cc0	00449cc0-00449ce3	undefined __stdcall FUN_00449cc0(void)	false	
+00449cf0	FUN_00449cf0	00449cf0-00449d36	float10 __stdcall FUN_00449cf0(void)	false	
+00449d40	FUN_00449d40	00449d40-00449d97	undefined __stdcall FUN_00449d40(void)	false	
+00449da0	FUN_00449da0	00449da0-00449de6	float10 __stdcall FUN_00449da0(void)	false	
+00449df0	FUN_00449df0	00449df0-00449e47	undefined __stdcall FUN_00449df0(void)	false	
+00449e50	FUN_00449e50	00449e50-0044a150	undefined4 __cdecl FUN_00449e50(LPCSTR param_1, int param_2)	false	
+0044a160	FUN_0044a160	0044a160-0044a211	undefined __stdcall FUN_0044a160(void)	false	
+0044a220	FUN_0044a220	0044a220-0044a373	undefined __cdecl FUN_0044a220(int param_1, int param_2)	false	
+0044a380	FUN_0044a380	0044a380-0044a51a	undefined __cdecl FUN_0044a380(int param_1, int param_2)	false	
+0044a520	FUN_0044a520	0044a520-0044a71f	undefined __cdecl FUN_0044a520(int param_1, int param_2)	false	
+0044a720	FUN_0044a720	0044a720-0044a891	undefined __cdecl FUN_0044a720(int param_1, int param_2)	false	
+0044a8a0	FUN_0044a8a0	0044a8a0-0044aab3	undefined __cdecl FUN_0044a8a0(int param_1, int param_2)	false	
+0044aac0	FUN_0044aac0	0044aac0-0044b08e	undefined __cdecl FUN_0044aac0(float param_1)	false	
+0044b0a0	FUN_0044b0a0	0044b0a0-0044b12b	undefined __cdecl FUN_0044b0a0(char * param_1, int param_2)	false	
+0044b130	FUN_0044b130	0044b130-0044b2d6	undefined __cdecl FUN_0044b130(int param_1)	false	
+0044b2e0	FUN_0044b2e0	0044b2e0-0044b78a	int __cdecl FUN_0044b2e0(char * param_1)	false	
+0044b7a0	FUN_0044b7a0	0044b7a0-0044c1f5	int __cdecl FUN_0044b7a0(float * param_1, float * param_2)	false	
+0044c200	FUN_0044c200	0044c200-0044cc1e	bool __cdecl FUN_0044c200(int param_1, int param_2)	false	
+0044cc20	FUN_0044cc20	0044cc20-0044d2e9	undefined4 __stdcall FUN_0044cc20(void)	false	
+0044d2f0	FUN_0044d2f0	0044d2f0-0044d476	int __cdecl FUN_0044d2f0(int param_1, int param_2)	false	
+0044d480	FUN_0044d480	0044d480-0044d4f7	int __cdecl FUN_0044d480(int param_1, float * param_2, int param_3, undefined4 param_4, float * param_5, undefined4 param_6)	false	
+0044d500	FUN_0044d500	0044d500-0044d521	undefined __cdecl FUN_0044d500(float * param_1)	false	
+0044d530	FUN_0044d530	0044d530-0044d9aa	undefined4 __cdecl FUN_0044d530(int param_1)	false	
+0044d9b0	FUN_0044d9b0	0044d9b0-0044da19	undefined __cdecl FUN_0044d9b0(float * param_1, float * param_2, int param_3, undefined4 param_4, float * param_5, undefined4 param_6)	false	
+0044da20	FUN_0044da20	0044da20-0044e05a	undefined4 __cdecl FUN_0044da20(int param_1, float * param_2, float * param_3, float * param_4, int param_5, undefined4 param_6, float * param_7, float * param_8)	false	
+0044e060	FUN_0044e060	0044e060-0044e20d	undefined __cdecl FUN_0044e060(int param_1, undefined * param_2, undefined4 param_3)	false	
+0044e210	FUN_0044e210	0044e210-0044e222	undefined __cdecl FUN_0044e210(int param_1, int param_2, undefined4 param_3)	false	
+0044e230	FUN_0044e230	0044e230-0044e23e	undefined4 __cdecl FUN_0044e230(int param_1, int param_2)	false	
+0044e240	FUN_0044e240	0044e240-0044e296	undefined __cdecl FUN_0044e240(int param_1, int param_2, int param_3, undefined4 * param_4)	false	
+0044e2a0	FUN_0044e2a0	0044e2a0-0044e3ec	undefined __cdecl FUN_0044e2a0(int param_1, int param_2, int * param_3)	false	
+0044e3f0	FUN_0044e3f0	0044e3f0-0044e481	float10 __cdecl FUN_0044e3f0(int param_1)	false	
+0044e490	FUN_0044e490	0044e490-0044e503	undefined FUN_0044e490(void)	false	candidate-function-code-pointer
+0044e510	FUN_0044e510	0044e510-0044e57b	undefined __cdecl FUN_0044e510(int * param_1)	false	
+0044e580	FUN_0044e580	0044e580-0044e5e8	undefined4 * __cdecl FUN_0044e580(int param_1, int param_2, int param_3, int param_4)	false	
+0044e5f0	FUN_0044e5f0	0044e5f0-0044e776	undefined __cdecl FUN_0044e5f0(undefined4 * param_1)	false	
+0044e780	FUN_0044e780	0044e780-0044e874	undefined4 __stdcall FUN_0044e780(void)	false	
+0044e880	FUN_0044e880	0044e880-0044e90b	undefined __cdecl FUN_0044e880(char * param_1, int param_2)	false	
+0044e910	FUN_0044e910	0044e910-0044e9a2	undefined __cdecl FUN_0044e910(char * param_1, int param_2)	false	
+0044e9b0	FUN_0044e9b0	0044e9b0-0044eb58	undefined __stdcall FUN_0044e9b0(void)	false	
+0044eb60	FUN_0044eb60	0044eb60-0044ef96	undefined __cdecl FUN_0044eb60(int param_1, byte * param_2, int param_3)	false	
+0044efa0	FUN_0044efa0	0044efa0-0044f095	uint __stdcall FUN_0044efa0(void)	false	
+0044f0a0	FUN_0044f0a0	0044f0a0-0044f1ac	undefined4 __cdecl FUN_0044f0a0(LPCSTR param_1)	false	
+0044f1b0	FUN_0044f1b0	0044f1b0-0044f1be	undefined __stdcall FUN_0044f1b0(void)	false	
+0044f1c0	FUN_0044f1c0	0044f1c0-0044f4ed	undefined __cdecl FUN_0044f1c0(int param_1, int param_2)	false	
+0044f4f0	FUN_0044f4f0	0044f4f0-0044f503	undefined __cdecl FUN_0044f4f0(undefined4 param_1, undefined4 param_2)	false	
+0044f510	FUN_0044f510	0044f510-0044f545	undefined __cdecl FUN_0044f510(int param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4, undefined4 param_5, undefined4 param_6, undefined4 param_7, undefined4 param_8)	false	
+0044f550	Engine_LoadImage_candidate	0044f550-004505db	int * __cdecl Engine_LoadImage_candidate(char * param_1)	false	
+004505f0	FUN_004505f0	004505f0-004507b2	undefined4 __cdecl FUN_004505f0(int * param_1)	false	
+004507c0	FUN_004507c0	004507c0-004507cd	undefined __cdecl FUN_004507c0(char * param_1)	false	
+004507d0	FUN_004507d0	004507d0-00450896	int __cdecl FUN_004507d0(int param_1)	false	
+004508a0	FUN_004508a0	004508a0-00450926	undefined __cdecl FUN_004508a0(int * param_1)	false	
+00450980	FUN_00450980	00450980-00450cba	undefined __cdecl FUN_00450980(float * param_1, float param_2)	false	
+00450cd0	FUN_00450cd0	00450cd0-00451126	int __stdcall FUN_00450cd0(void)	false	
+00451140	FUN_00451140	00451140-00451593	int __stdcall FUN_00451140(void)	false	
+004515b0	FUN_004515b0	004515b0-00451657	undefined __cdecl FUN_004515b0(float param_1, float param_2, float param_3, float param_4)	false	
+00451660	FUN_00451660	00451660-00451711	undefined __stdcall FUN_00451660(void)	false	
+00451720	FUN_00451720	00451720-00451744	undefined __cdecl FUN_00451720(double param_1, double param_2, double param_3)	false	
+00451750	FUN_00451750	00451750-00451b7a	undefined __cdecl FUN_00451750(float * param_1)	false	
+00451b80	FUN_00451b80	00451b80-0045206f	undefined __cdecl FUN_00451b80(float * param_1)	false	
+00452070	FUN_00452070	00452070-0045213e	undefined __cdecl FUN_00452070(double param_1, double param_2, double param_3, double param_4, double param_5, double param_6)	false	
+00452140	FUN_00452140	00452140-004532fa	undefined * __cdecl FUN_00452140(undefined * param_1, int param_2)	false	
+00453300	FUN_00453300	00453300-00453c2a	undefined * __cdecl FUN_00453300(undefined * param_1, float param_2)	false	
+00453c30	FUN_00453c30	00453c30-00454fb5	undefined * __cdecl FUN_00453c30(undefined * param_1, int param_2)	false	
+00454fc0	FUN_00454fc0	00454fc0-0045540e	undefined __cdecl FUN_00454fc0(int param_1, float param_2, float param_3, float param_4, float param_5, float param_6, byte param_7, undefined4 param_8, float param_9, float param_10, float param_11, float param_12, undefined4 param_13)	false	
+00455410	FUN_00455410	00455410-00455832	undefined __cdecl FUN_00455410(int param_1, float param_2, float param_3, float param_4, float param_5, float param_6, byte param_7)	false	
+00455840	FUN_00455840	00455840-004558c0	undefined4 __cdecl FUN_00455840(float * param_1, float * param_2, float * param_3)	false	
+004558d0	FUN_004558d0	004558d0-0045595a	undefined4 __cdecl FUN_004558d0(float * param_1, float * param_2, float * param_3, float * param_4)	false	
+00455960	FUN_00455960	00455960-00455e31	undefined __cdecl FUN_00455960(int param_1, float param_2, undefined4 param_3, undefined4 param_4, float param_5, float param_6, float param_7, byte param_8)	false	
+00455e40	FUN_00455e40	00455e40-00455ed2	undefined __cdecl FUN_00455e40(float param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4, undefined4 param_5, undefined4 param_6)	false	
+00455ee0	FUN_00455ee0	00455ee0-00455f67	undefined __cdecl FUN_00455ee0(float param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4, undefined4 param_5, undefined4 param_6, undefined4 param_7)	false	
+00455f70	FUN_00455f70	00455f70-004569ab	undefined __cdecl FUN_00455f70(float * param_1, int param_2)	false	
+004569b0	FUN_004569b0	004569b0-00456d2e	undefined __cdecl FUN_004569b0(int param_1)	false	
+00456d30	FUN_00456d30	00456d30-0045758c	undefined __cdecl FUN_00456d30(int param_1, float param_2, float param_3, float param_4, float param_5, float param_6, float param_7, float param_8, float param_9, float param_10, float param_11, float param_12, float param_13, byte param_14)	false	
+00457590	FUN_00457590	00457590-00457e14	undefined __cdecl FUN_00457590(int param_1, float param_2, float param_3, float param_4, float param_5, float param_6, float param_7, float param_8, float param_9, float param_10, float param_11, float param_12, float param_13, byte param_14, undefined4 param_15, float param_16, float param_17, float param_18, float param_19)	false	
+00457e20	FUN_00457e20	00457e20-0045813f	undefined4 __cdecl FUN_00457e20(undefined4 * param_1, undefined4 * param_2)	false	
+00458140	FUN_00458140	00458140-004582d6	undefined4 * __cdecl FUN_00458140(char * param_1)	false	
+004582f0	FUN_004582f0	004582f0-004582fb	undefined __cdecl FUN_004582f0(int param_1, undefined4 param_2)	false	
+00458300	FUN_00458300	00458300-00458309	undefined __cdecl FUN_00458300(undefined4 param_1)	false	
+00458310	FUN_00458310	00458310-00458421	undefined __cdecl FUN_00458310(int param_1)	false	
+00458430	FUN_00458430	00458430-00458460	undefined __cdecl FUN_00458430(int param_1)	false	
+00458470	FUN_00458470	00458470-004593fe	undefined __cdecl FUN_00458470(float param_1, uint param_2)	false	
+00459400	FUN_00459400	00459400-0045950f	undefined __cdecl FUN_00459400(int param_1, float param_2, float param_3, float param_4, float param_5, float param_6, uint param_7, uint param_8)	false	
+00459510	FUN_00459510	00459510-0045a7b3	undefined __cdecl FUN_00459510(float param_1, uint param_2)	false	
+0045a7c0	FUN_0045a7c0	0045a7c0-0045aa54	uint __cdecl FUN_0045a7c0(float param_1, float param_2, float param_3, float param_4, uint param_5, float * param_6)	false	
+0045aa60	FUN_0045aa60	0045aa60-0045ade2	undefined __cdecl FUN_0045aa60(uint param_1, double param_2, double param_3, double param_4, double param_5, double param_6, double param_7, undefined4 param_8)	false	
+0045adf0	FUN_0045adf0	0045adf0-0045b1b4	undefined __cdecl FUN_0045adf0(undefined4 * param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4, undefined4 param_5, undefined4 param_6, undefined4 param_7, undefined4 param_8, undefined4 param_9, undefined4 param_10, undefined4 param_11, undefined4 param_12, undefined4 param_13, undefined4 param_14)	false	
+0045b1d0	FUN_0045b1d0	0045b1d0-0045b402	undefined4 * __stdcall FUN_0045b1d0(void)	false	
+0045b410	FUN_0045b410	0045b410-0045b480	undefined __cdecl FUN_0045b410(int param_1)	false	
+0045b490	FUN_0045b490	0045b490-0045b4fe	undefined __cdecl FUN_0045b490(int param_1, int param_2, int param_3)	false	
+0045b500	FUN_0045b500	0045b500-0045b7f5	undefined __cdecl FUN_0045b500(undefined4 param_1)	false	
+0045b810	FUN_0045b810	0045b810-0045bc30	undefined4 __cdecl FUN_0045b810(LPCSTR param_1)	false	
+0045bc40	FUN_0045bc40	0045bc40-0045bfd7	undefined4 __cdecl FUN_0045bc40(LPCSTR param_1)	false	
+0045bfe0	FUN_0045bfe0	0045bfe0-0045bfe7	undefined FUN_0045bfe0(void)	false	candidate-function-code-pointer
+0045bff0	BH_InitRenderer	0045bff0-0045c508	undefined4 __cdecl BH_InitRenderer(int * param_1, int * param_2, undefined4 param_3, int param_4, int param_5)	false	
+0045c540	FUN_0045c540	0045c540-0045c9d9	undefined4 __cdecl FUN_0045c540(int * param_1, int * param_2, int * param_3, int * param_4, int param_5, int param_6)	false	
+0045ca10	FUN_0045ca10	0045ca10-0045cbbc	undefined __stdcall FUN_0045ca10(void)	false	
+0045cbc0	FUN_0045cbc0	0045cbc0-0045cded	undefined __cdecl FUN_0045cbc0(int param_1, int param_2, int param_3)	false	
+0045cdf0	FUN_0045cdf0	0045cdf0-0045cf2f	undefined __stdcall FUN_0045cdf0(void)	false	
+0045cf30	FUN_0045cf30	0045cf30-0045cf43	undefined __cdecl FUN_0045cf30(undefined4 param_1, undefined4 param_2)	false	
+0045cf50	FUN_0045cf50	0045cf50-0045d68b	undefined __stdcall FUN_0045cf50(void)	false	
+0045d690	FUN_0045d690	0045d690-0045d743	undefined __stdcall FUN_0045d690(void)	false	
+0045d750	FUN_0045d750	0045d750-0045d79b	undefined __stdcall FUN_0045d750(void)	false	
+0045d7a0	FUN_0045d7a0	0045d7a0-0045db70	undefined __cdecl FUN_0045d7a0(uint param_1)	false	
+0045db80	FUN_0045db80	0045db80-0045e70d	undefined __cdecl FUN_0045db80(int param_1, float param_2, float param_3, float param_4, float param_5, uint param_6)	false	
+0045e710	FUN_0045e710	0045e710-0045e75f	int __cdecl FUN_0045e710(int * param_1, char * param_2)	false	
+0045e760	FUN_0045e760	0045e760-0045e780	undefined __cdecl FUN_0045e760(int * param_1, int param_2, undefined4 param_3)	false	
+0045e790	FUN_0045e790	0045e790-0045efe5	undefined FUN_0045e790(void)	false	candidate-function-code-pointer
+0045eff0	FUN_0045eff0	0045eff0-0045f83f	undefined FUN_0045eff0(void)	false	candidate-function-code-pointer
+0045f840	FUN_0045f840	0045f840-00460097	undefined FUN_0045f840(void)	false	candidate-function-code-pointer
+004600a0	FUN_004600a0	004600a0-00460937	undefined FUN_004600a0(void)	false	candidate-function-code-pointer
+00460940	FUN_00460940	00460940-004611a6	undefined FUN_00460940(void)	false	candidate-function-code-pointer
+004611b0	FUN_004611b0	004611b0-00461a49	undefined FUN_004611b0(void)	false	candidate-function-code-pointer
+00461a50	FUN_00461a50	00461a50-004622af	undefined FUN_00461a50(void)	false	candidate-function-code-pointer
+004622b0	FUN_004622b0	004622b0-00462b0f	undefined FUN_004622b0(void)	false	candidate-function-code-pointer
+00462b10	FUN_00462b10	00462b10-00463370	undefined FUN_00462b10(void)	false	candidate-function-code-pointer
+00463380	FUN_00463380	00463380-00463c23	undefined FUN_00463380(void)	false	candidate-function-code-pointer
+00463c30	FUN_00463c30	00463c30-004644a1	undefined FUN_00463c30(void)	false	candidate-function-code-pointer
+004644b0	FUN_004644b0	004644b0-00464d54	undefined FUN_004644b0(void)	false	candidate-function-code-pointer
+00464d60	FUN_00464d60	00464d60-004655de	undefined FUN_00464d60(void)	false	candidate-function-code-pointer
+004655e0	FUN_004655e0	004655e0-00465e6c	undefined FUN_004655e0(void)	false	candidate-function-code-pointer
+00465e70	FUN_00465e70	00465e70-004666ce	undefined FUN_00465e70(void)	false	candidate-function-code-pointer
+004666d0	FUN_004666d0	004666d0-00466f1e	undefined FUN_004666d0(void)	false	candidate-function-code-pointer
+00466f20	FUN_00466f20	00466f20-00467773	undefined FUN_00466f20(void)	false	candidate-function-code-pointer
+00467780	FUN_00467780	00467780-0046801d	undefined FUN_00467780(void)	false	candidate-function-code-pointer
+00468020	FUN_00468020	00468020-0046887f	undefined FUN_00468020(void)	false	candidate-function-code-pointer
+00468880	FUN_00468880	00468880-00469116	undefined FUN_00468880(void)	false	candidate-function-code-pointer
+00469120	FUN_00469120	00469120-00469988	undefined FUN_00469120(void)	false	candidate-function-code-pointer
+00469990	FUN_00469990	00469990-0046a1ec	undefined FUN_00469990(void)	false	candidate-function-code-pointer
+0046a1f0	FUN_0046a1f0	0046a1f0-0046aa4e	undefined FUN_0046a1f0(void)	false	candidate-function-code-pointer
+0046aa50	FUN_0046aa50	0046aa50-0046b2f7	undefined FUN_0046aa50(void)	false	candidate-function-code-pointer
+0046b300	FUN_0046b300	0046b300-0046bb67	undefined FUN_0046b300(void)	false	candidate-function-code-pointer
+0046bb70	FUN_0046bb70	0046bb70-0046c40f	undefined FUN_0046bb70(void)	false	candidate-function-code-pointer
+0046c410	FUN_0046c410	0046c410-0046cd10	undefined FUN_0046c410(void)	false	candidate-function-code-pointer
+0046cd20	FUN_0046cd20	0046cd20-0046d62f	undefined FUN_0046cd20(void)	false	candidate-function-code-pointer
+0046d630	FUN_0046d630	0046d630-0046d9cc	undefined __cdecl FUN_0046d630(int param_1)	false	
+0046d9d0	FUN_0046d9d0	0046d9d0-0046dd9d	undefined __cdecl FUN_0046d9d0(int param_1)	false	
+0046dda0	FUN_0046dda0	0046dda0-0046e373	undefined __cdecl FUN_0046dda0(int param_1)	false	
+0046e390	FUN_0046e390	0046e390-0046e42a	undefined __cdecl FUN_0046e390(int param_1, int param_2, undefined4 param_3)	false	
+0046e430	FUN_0046e430	0046e430-0046e523	undefined __cdecl FUN_0046e430(int param_1, int param_2)	false	
+0046e530	FUN_0046e530	0046e530-0046e5f4	undefined __cdecl FUN_0046e530(int param_1, int param_2)	false	
+0046e600	FUN_0046e600	0046e600-0046f480	undefined __stdcall FUN_0046e600(void)	false	
+0046f490	FUN_0046f490	0046f490-00470371	char * __cdecl FUN_0046f490(char * param_1, int * param_2)	false	
+00470380	FUN_00470380	00470380-004705b8	undefined4 * __cdecl FUN_00470380(char * param_1, int param_2)	false	
+004705c0	FUN_004705c0	004705c0-004708cd	undefined __cdecl FUN_004705c0(int * param_1, uint param_2)	false	
+004708d0	FUN_004708d0	004708d0-004708f0	undefined __cdecl FUN_004708d0(int param_1, undefined4 param_2, undefined4 param_3)	false	
+00470900	FUN_00470900	00470900-00470ab6	int __cdecl FUN_00470900(int * param_1, byte * param_2)	false	
+00470ac0	FUN_00470ac0	00470ac0-00470c80	int __cdecl FUN_00470ac0(int * param_1, ushort * param_2)	false	
+00470c90	FUN_00470c90	00470c90-00470cdd	int __cdecl FUN_00470c90(int * param_1, byte * param_2)	false	
+00470ce0	FUN_00470ce0	00470ce0-00470d33	int __cdecl FUN_00470ce0(int * param_1, ushort * param_2)	false	
+00470d40	FUN_00470d40	00470d40-00470d4c	undefined4 __cdecl FUN_00470d40(int param_1)	false	
+00470d50	FUN_00470d50	00470d50-00470df3	int __cdecl FUN_00470d50(int param_1, int param_2, int param_3)	false	
+00470e00	FUN_00470e00	00470e00-004711af	undefined __cdecl FUN_00470e00(int * param_1, float param_2, float param_3, float param_4)	false	
+004711b0	FUN_004711b0	004711b0-00471217	undefined FUN_004711b0(void)	false	candidate-function-code-pointer
+00471220	FUN_00471220	00471220-0047125e	undefined __stdcall FUN_00471220(void)	false	
+00471260	BH_InitDirectInput	00471260-004713bd	undefined4 __cdecl BH_InitDirectInput(undefined4 param_1)	false	
+004713c0	FUN_004713c0	004713c0-00471414	undefined __stdcall FUN_004713c0(void)	false	
+00471420	FUN_00471420	00471420-004715d5	undefined __cdecl FUN_00471420(float param_1, float param_2)	false	
+004715e0	FUN_004715e0	004715e0-00471bdf	undefined4 __cdecl FUN_004715e0(int param_1, int param_2, undefined4 param_3)	false	
+00471be0	FUN_00471be0	00471be0-00471bfa	undefined __cdecl FUN_00471be0(HWND param_1, UINT param_2, WPARAM param_3, LPARAM param_4)	false	
+00471c00	FUN_00471c00	00471c00-00471cb6	undefined __cdecl FUN_00471c00(undefined * param_1, double param_2, uint param_3, undefined * param_4)	false	
+00471cc0	FUN_00471cc0	00471cc0-00471d67	undefined4 __fastcall FUN_00471cc0(undefined4 * param_1)	false	
+00471d70	FUN_00471d70	00471d70-00471de6	undefined __stdcall FUN_00471d70(void)	false	
+00471df0	FUN_00471df0	00471df0-00471df9	undefined __cdecl FUN_00471df0(undefined * param_1)	false	
+00471e00	FUN_00471e00	00471e00-00471fe9	undefined FUN_00471e00(void)	false	candidate-function-code-pointer
+00471ff0	FUN_00471ff0	00471ff0-00472262	undefined FUN_00471ff0(void)	false	candidate-function-code-pointer
+00472270	FUN_00472270	00472270-0047232a	undefined FUN_00472270(void)	false	candidate-function-code-pointer
+00472330	FUN_00472330	00472330-004723bf	undefined FUN_00472330(void)	false	candidate-function-code-pointer
+004723c0	BH_WinMain	004723c0-00473897	undefined4 __stdcall BH_WinMain(HINSTANCE param_1, int param_2, undefined4 param_3, int param_4)	false	
+004738a0	FUN_004738a0	004738a0-00473905	undefined __stdcall FUN_004738a0(void)	false	
+00473910	BH_InitPaths	00473910-00473a36	undefined4 __stdcall BH_InitPaths(void)	false	
+00473a40	BH_CheckSourceFiles	00473a40-00473c3b	bool __cdecl BH_CheckSourceFiles(uint param_1)	false	
+00473c40	FUN_00473c40	00473c40-00473d24	undefined FUN_00473c40(void)	false	candidate-function-code-pointer
+00473d60	FUN_00473d60	00473d60-00473fd2	undefined __cdecl FUN_00473d60(HWND param_1)	false	
+00473fe0	FUN_00473fe0	00473fe0-00474016	undefined __stdcall FUN_00473fe0(void)	false	
+00474020	FUN_00474020	00474020-0047447d	undefined __cdecl FUN_00474020(int param_1, int param_2)	false	
+004744f0	FUN_004744f0	004744f0-00475634	int __stdcall FUN_004744f0(void)	false	
+00475640	FUN_00475640	00475640-004756a3	undefined4 * __cdecl FUN_00475640(int param_1)	false	
+004756b0	FUN_004756b0	004756b0-004756db	undefined __cdecl FUN_004756b0(int param_1, int param_2)	false	
+004756e0	FUN_004756e0	004756e0-00475766	undefined __cdecl FUN_004756e0(int param_1, int param_2, char * param_3, undefined1 param_4, undefined2 param_5, undefined2 param_6, undefined2 param_7, undefined2 param_8, undefined2 param_9)	false	
+00475770	FUN_00475770	00475770-004757db	undefined __cdecl FUN_00475770(int param_1, int param_2, char * param_3, undefined1 param_4, undefined2 param_5, undefined2 param_6)	false	
+004757e0	FUN_004757e0	004757e0-00475801	undefined __cdecl FUN_004757e0(int param_1, int param_2)	false	
+00475810	FUN_00475810	00475810-00475862	undefined __cdecl FUN_00475810(int param_1, int param_2, char * param_3)	false	
+00475870	FUN_00475870	00475870-0047596f	undefined __cdecl FUN_00475870(uint param_1, int param_2)	false	
+00475990	FUN_00475990	00475990-004759bb	byte __cdecl FUN_00475990(int param_1, int param_2)	false	
+004759c0	FUN_004759c0	004759c0-00475a70	char * __cdecl FUN_004759c0(int param_1)	false	
+00475a80	FUN_00475a80	00475a80-00475b33	undefined4 __cdecl FUN_00475a80(int param_1)	false	
+00475b40	FUN_00475b40	00475b40-00475b5c	undefined * __cdecl FUN_00475b40(int param_1)	false	
+00475b60	FUN_00475b60	00475b60-00475b6d	int __cdecl FUN_00475b60(int param_1)	false	
+00475b70	FUN_00475b70	00475b70-00475b9a	undefined * __cdecl FUN_00475b70(undefined4 param_1)	false	
+00475bb0	FUN_00475bb0	00475bb0-00475bd4	undefined4 __cdecl FUN_00475bb0(undefined4 param_1)	false	
+00475bf0	FUN_00475bf0	00475bf0-00475c20	char * __cdecl FUN_00475bf0(undefined4 param_1)	false	
+00475c40	FUN_00475c40	00475c40-00475c6a	undefined4 __cdecl FUN_00475c40(undefined4 param_1)	false	
+00475c80	FUN_00475c80	00475c80-00475cc8	int __cdecl FUN_00475c80(char * param_1)	false	
+00475cd0	FUN_00475cd0	00475cd0-00475d52	undefined4 __stdcall FUN_00475cd0(char * param_1, undefined4 param_2, LPCSTR param_3)	false	
+00475d60	FUN_00475d60	00475d60-00475eed	undefined FUN_00475d60(void)	false	candidate-function-code-pointer
+00475ef0	FUN_00475ef0	00475ef0-0047602c	undefined __stdcall FUN_00475ef0(void)	false	
+00476030	FUN_00476030	00476030-00476067	undefined __stdcall FUN_00476030(void)	false	
+00476070	FUN_00476070	00476070-00476349	undefined __cdecl FUN_00476070(undefined1 * param_1)	false	
+00476360	FUN_00476360	00476360-004763e7	undefined FUN_00476360(void)	false	candidate-function-code-pointer
+004763f0	FUN_004763f0	004763f0-00476409	undefined FUN_004763f0(void)	false	candidate-function-code-pointer
+00476410	FUN_00476410	00476410-00476552	undefined4 __cdecl FUN_00476410(undefined1 * param_1)	false	
+00476560	FUN_00476560	00476560-00476615	undefined4 __cdecl FUN_00476560(int param_1)	false	
+00476620	FUN_00476620	00476620-004766d6	undefined __stdcall FUN_00476620(void)	false	
+004766e0	FUN_004766e0	004766e0-004768b0	undefined4 __cdecl FUN_004766e0(char * param_1)	false	
+004768c0	FUN_004768c0	004768c0-00476a16	undefined4 __cdecl FUN_004768c0(undefined4 * param_1, char * param_2)	false	
+00476a20	FUN_00476a20	00476a20-00476c2e	undefined4 __cdecl FUN_00476a20(undefined * param_1)	false	
+00476d50	FUN_00476d50	00476d50-00476d92	undefined __cdecl FUN_00476d50(undefined4 param_1, undefined4 param_2, undefined4 param_3, int param_4)	false	
+00476da0	FUN_00476da0	00476da0-00476e80	undefined4 __cdecl FUN_00476da0(int param_1)	false	
+00476e90	FUN_00476e90	00476e90-00476f1a	undefined __cdecl FUN_00476e90(int param_1, undefined * param_2)	false	
+00476f20	FUN_00476f20	00476f20-00477063	int __stdcall FUN_00476f20(void)	false	
+00477070	FUN_00477070	00477070-004770ec	undefined __cdecl FUN_00477070(int param_1)	false	
+004770f0	FUN_004770f0	004770f0-004772e1	undefined __cdecl FUN_004770f0(uint param_1, uint param_2, float * param_3, float param_4, undefined4 param_5)	false	
+004772f0	FUN_004772f0	004772f0-0047732c	undefined __stdcall FUN_004772f0(void)	false	
+00477330	FUN_00477330	00477330-00477353	undefined __stdcall FUN_00477330(void)	false	
+00477360	FUN_00477360	00477360-00477375	undefined4 __cdecl FUN_00477360(int param_1)	false	
+00477380	FUN_00477380	00477380-00477387	undefined FUN_00477380(void)	false	candidate-function-code-pointer
+00477390	FUN_00477390	00477390-0047752e	undefined __cdecl FUN_00477390(undefined4 * param_1, undefined4 param_2)	false	
+00477530	FUN_00477530	00477530-004775ca	int __cdecl FUN_00477530(undefined4 param_1)	false	
+004775f0	FUN_004775f0	004775f0-0047763f	undefined FUN_004775f0(void)	false	candidate-function-code-pointer
+00477640	FUN_00477640	00477640-0047767e	undefined4 __cdecl FUN_00477640(int param_1)	false	
+00477680	FUN_00477680	00477680-004776b1	undefined4 __cdecl FUN_00477680(int param_1)	false	
+004776c0	FUN_004776c0	004776c0-00477705	undefined4 __cdecl FUN_004776c0(int param_1)	false	
+00477710	FUN_00477710	00477710-0047775d	undefined4 __cdecl FUN_00477710(int param_1)	false	
+00477760	FUN_00477760	00477760-004777bd	undefined4 __cdecl FUN_00477760(int param_1)	false	
+004777c0	FUN_004777c0	004777c0-00477827	undefined4 __cdecl FUN_004777c0(int param_1)	false	
+00477830	FUN_00477830	00477830-00477877	undefined4 __cdecl FUN_00477830(int param_1)	false	
+00477880	FUN_00477880	00477880-004779d8	int __cdecl FUN_00477880(float param_1, float param_2, uint param_3)	false	
+004779e0	FUN_004779e0	004779e0-00477a94	undefined4 __cdecl FUN_004779e0(int param_1)	false	
+00477aa0	FUN_00477aa0	00477aa0-00477ad3	undefined FUN_00477aa0(void)	false	candidate-function-code-pointer
+00477ae0	FUN_00477ae0	00477ae0-00477d19	undefined FUN_00477ae0(void)	false	candidate-function-code-pointer
+00477d20	FUN_00477d20	00477d20-00477e35	undefined FUN_00477d20(void)	false	candidate-function-code-pointer
+00477e40	FUN_00477e40	00477e40-00477e70	int * __cdecl FUN_00477e40(int param_1)	false	
+00477e80	FUN_00477e80	00477e80-00477e99	undefined4 __cdecl FUN_00477e80(int param_1)	false	
+00477ea0	FUN_00477ea0	00477ea0-00477ecf	undefined4 __cdecl FUN_00477ea0(int param_1)	false	
+00477ed0	FUN_00477ed0	00477ed0-00477eff	undefined4 __cdecl FUN_00477ed0(int param_1)	false	
+00477f00	FUN_00477f00	00477f00-00477f19	undefined4 __cdecl FUN_00477f00(int param_1)	false	
+00477f20	FUN_00477f20	00477f20-00477f39	undefined4 __cdecl FUN_00477f20(int param_1)	false	
+00477f40	FUN_00477f40	00477f40-00477f55	undefined4 __cdecl FUN_00477f40(int param_1)	false	
+00477f60	FUN_00477f60	00477f60-00477f91	undefined4 __cdecl FUN_00477f60(int param_1)	false	
+00477fa0	FUN_00477fa0	00477fa0-00477fd1	undefined4 __cdecl FUN_00477fa0(int param_1)	false	
+00477fe0	FUN_00477fe0	00477fe0-00478059	undefined __cdecl FUN_00477fe0(undefined4 * param_1, undefined4 * param_2)	false	
+00478060	FUN_00478060	00478060-00478142	undefined __cdecl FUN_00478060(undefined4 param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4, undefined4 param_5, undefined4 param_6, undefined4 param_7, undefined4 param_8, undefined4 param_9)	false	
+00478170	FUN_00478170	00478170-00478256	undefined __cdecl FUN_00478170(undefined4 param_1, undefined4 param_2, undefined4 * param_3, undefined4 * param_4, undefined4 param_5)	false	
+00478280	FUN_00478280	00478280-0047836b	undefined __cdecl FUN_00478280(undefined4 param_1, undefined4 param_2, undefined4 * param_3, undefined4 param_4, undefined4 param_5, undefined4 param_6, undefined4 param_7, undefined4 param_8)	false	
+00478390	FUN_00478390	00478390-00478492	undefined __cdecl FUN_00478390(undefined4 param_1, undefined4 param_2, undefined4 * param_3, undefined4 * param_4, undefined4 param_5, undefined4 param_6, undefined4 param_7, undefined4 param_8, undefined4 param_9)	false	
+004784c0	FUN_004784c0	004784c0-00478533	undefined __cdecl FUN_004784c0(undefined4 param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4, undefined4 param_5, undefined4 param_6)	false	
+00478540	FUN_00478540	00478540-004785e6	undefined __cdecl FUN_00478540(undefined4 * param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4, undefined4 param_5, undefined4 param_6, int param_7, undefined4 param_8)	false	
+004785f0	FUN_004785f0	004785f0-00478703	undefined __cdecl FUN_004785f0(undefined4 param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4, undefined4 param_5, undefined4 param_6, undefined4 param_7, undefined4 param_8, undefined4 param_9, undefined4 param_10, undefined4 param_11, undefined4 param_12, undefined4 param_13, undefined4 param_14, undefined4 param_15, undefined4 param_16)	false	
+00478730	FUN_00478730	00478730-00478863	undefined __cdecl FUN_00478730(undefined4 param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4, undefined4 param_5, undefined4 param_6, undefined4 param_7, undefined4 param_8, undefined4 param_9, undefined4 param_10, undefined4 param_11, undefined4 param_12, undefined4 param_13, undefined4 param_14, undefined4 param_15, undefined4 param_16, undefined4 param_17, undefined4 param_18, undefined4 param_19, undefined4 param_20)	false	
+00478890	FUN_00478890	00478890-00478925	undefined __cdecl FUN_00478890(undefined2 param_1, undefined2 param_2, char * param_3, uint param_4)	false	
+00478930	FUN_00478930	00478930-0047898a	undefined __cdecl FUN_00478930(undefined4 param_1, undefined4 param_2)	false	
+00478990	FUN_00478990	00478990-00478a41	undefined __cdecl FUN_00478990(undefined4 param_1, undefined4 param_2)	false	
+00478a70	FUN_00478a70	00478a70-00478b36	undefined __cdecl FUN_00478a70(undefined4 param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4, undefined4 param_5)	false	
+00478b60	FUN_00478b60	00478b60-00478bc2	undefined __cdecl FUN_00478b60(undefined4 param_1, char * param_2)	false	
+00478bd0	FUN_00478bd0	00478bd0-00478c44	undefined __cdecl FUN_00478bd0(undefined4 param_1, char * param_2, undefined2 param_3, undefined2 param_4)	false	
+00478c50	FUN_00478c50	00478c50-00478cdd	undefined __cdecl FUN_00478c50(undefined4 param_1, short * param_2, undefined2 param_3, undefined2 param_4)	false	
+00478ce0	FUN_00478ce0	00478ce0-00478d33	undefined __cdecl FUN_00478ce0(undefined4 param_1, undefined4 param_2)	false	
+00478d40	FUN_00478d40	00478d40-00478e22	undefined __cdecl FUN_00478d40(undefined4 param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4, undefined4 param_5, undefined4 param_6, undefined4 param_7, undefined4 param_8, undefined4 param_9)	false	
+00478e50	FUN_00478e50	00478e50-00478f32	undefined __cdecl FUN_00478e50(undefined4 param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4, undefined4 param_5, undefined4 param_6, undefined4 param_7, undefined4 param_8, undefined4 param_9)	false	
+00478f60	FUN_00478f60	00478f60-00479065	undefined __cdecl FUN_00478f60(undefined4 param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4, undefined4 param_5, undefined4 param_6, undefined4 param_7, undefined4 param_8, undefined4 param_9, undefined4 param_10, undefined4 param_11, undefined4 param_12, undefined4 param_13, undefined4 param_14)	false	
+00479090	FUN_00479090	00450930-00450978|00479090-00479115	undefined FUN_00479090(void)	false	candidate-function-code-pointer
+00479120	FUN_00479120	00479120-00479132	undefined4 __stdcall FUN_00479120(void)	false	
+00479140	FUN_00479140	00479140-004791ee	undefined FUN_00479140(void)	false	candidate-function-code-pointer
+004791f0	FUN_004791f0	004791f0-004791fd	undefined FUN_004791f0(void)	false	candidate-function-code-pointer
+00479200	FUN_00479200	00479200-00479907	undefined4 __cdecl FUN_00479200(undefined4 param_1, HWND param_2)	false	
+00479910	FUN_00479910	00479910-00479c6b	undefined __thiscall FUN_00479910(undefined4 param_1, int param_2, float * param_3, float * param_4, double param_5, double param_6)	false	
+00479c70	FUN_00479c70	00479c70-00479dac	undefined __cdecl FUN_00479c70(float * param_1, float * param_2, float * param_3, float * param_4)	false	
+00479db0	FUN_00479db0	00479db0-00479e26	undefined FUN_00479db0(void)	false	candidate-function-code-pointer
+00479e30	FUN_00479e30	00479e30-00479f0f	undefined FUN_00479e30(void)	false	candidate-function-code-pointer
+00479f10	FUN_00479f10	00479f10-00479fef	undefined FUN_00479f10(void)	false	candidate-function-code-pointer
+00479ff0	FUN_00479ff0	00479ff0-0047a0e5	undefined FUN_00479ff0(void)	false	candidate-function-code-pointer
+0047a0f0	FUN_0047a0f0	0047a0f0-0047a15b	undefined FUN_0047a0f0(void)	false	candidate-function-code-pointer
+0047a160	FUN_0047a160	0047a160-0047a1e5	undefined FUN_0047a160(void)	false	candidate-function-code-pointer
+0047a1f0	FUN_0047a1f0	0047a1f0-0047a275	undefined FUN_0047a1f0(void)	false	candidate-function-code-pointer
+0047a280	FUN_0047a280	0047a280-0047a2eb	undefined FUN_0047a280(void)	false	candidate-function-code-pointer
+0047a2f0	FUN_0047a2f0	0047a2f0-0047a471	undefined FUN_0047a2f0(void)	false	candidate-function-code-pointer
+0047a480	FUN_0047a480	0047a480-0047a60c	undefined FUN_0047a480(void)	false	candidate-function-code-pointer
+0047a610	FUN_0047a610	0047a610-0047a7aa	undefined FUN_0047a610(void)	false	candidate-function-code-pointer
+0047a7b0	FUN_0047a7b0	0047a7b0-0047aabe	undefined FUN_0047a7b0(void)	false	candidate-function-code-pointer
+0047aac0	FUN_0047aac0	0047aac0-0047b201	undefined __cdecl FUN_0047aac0(int * param_1, double param_2, undefined4 * param_3, undefined4 param_4, undefined4 param_5, undefined4 param_6, undefined4 param_7, float param_8, float param_9, float param_10)	false	
+0047b210	FUN_0047b210	0047b210-0047b2d0	undefined __cdecl FUN_0047b210(int * param_1, int param_2)	false	
+0047b2e0	FUN_0047b2e0	0047b2e0-0047b317	undefined __cdecl FUN_0047b2e0(undefined4 * param_1, undefined4 param_2)	false	
+0047b320	FUN_0047b320	0047b320-0047b329	undefined __cdecl FUN_0047b320(undefined4 param_1, undefined4 param_2)	false	
+0047b330	FUN_0047b330	0047b330-0047b40f	undefined __stdcall FUN_0047b330(void)	false	
+0047b410	FUN_0047b410	0047b410-0047b4f3	undefined __stdcall FUN_0047b410(void)	false	
+0047b500	FUN_0047b500	0047b500-0047b5e3	undefined4 __cdecl FUN_0047b500(undefined4 param_1)	false	
+0047b5f0	FUN_0047b5f0	0047b5f0-0047b700	undefined __stdcall FUN_0047b5f0(void)	false	
+0047b710	FUN_0047b710	0047b710-0047b82e	undefined __cdecl FUN_0047b710(int param_1, int param_2, undefined4 * param_3, float * param_4, undefined4 * param_5)	false	
+0047b830	FUN_0047b830	0047b830-0047b91f	undefined4 __cdecl FUN_0047b830(int * param_1, uint * param_2, int * param_3, uint * param_4)	false	
+0047b920	FUN_0047b920	0047b920-0047b944	undefined __cdecl FUN_0047b920(int param_1)	false	
+0047b950	FUN_0047b950	0047b950-0047bc5c	uint __cdecl FUN_0047b950(LPCSTR param_1)	false	
+0047bc60	FUN_0047bc60	0047bc60-0047bd33	float10 __cdecl FUN_0047bc60(int param_1, float * param_2, int param_3, int param_4)	false	
+0047bd40	FUN_0047bd40	0047bd40-0047c040	int __cdecl FUN_0047bd40(float param_1, float param_2, float param_3, undefined4 * param_4, undefined4 * param_5)	false	
+0047c050	FUN_0047c050	0047c050-0047c136	undefined __cdecl FUN_0047c050(uint param_1, float param_2, float param_3, undefined4 * param_4, undefined4 * param_5)	false	
+0047c140	FUN_0047c140	0047c140-0047c1fd	undefined __cdecl FUN_0047c140(uint param_1)	false	
+0047c200	FUN_0047c200	0047c200-0047ca66	undefined __cdecl FUN_0047c200(float param_1)	false	
+0047ca70	FUN_0047ca70	0047ca70-0047cbcd	undefined4 __cdecl FUN_0047ca70(LPCSTR param_1, char * param_2)	false	
+0047cbd0	VFILE_Open	0047cbd0-0047ce4e	int * __cdecl VFILE_Open(LPCSTR param_1, char * param_2)	false	
+0047ce50	FUN_0047ce50	0047ce50-0047ce91	undefined4 __cdecl FUN_0047ce50(undefined4 * param_1)	false	
+0047cea0	FUN_0047cea0	0047cea0-0047cebe	uint __cdecl FUN_0047cea0(int * param_1)	false	
+0047cec0	FUN_0047cec0	0047cec0-0047cf51	int __cdecl FUN_0047cec0(undefined4 * param_1, int param_2, DWORD param_3)	false	
+0047cf60	FUN_0047cf60	0047cf60-0047d04c	uint __cdecl FUN_0047cf60(char * param_1, uint param_2, uint param_3, undefined4 * param_4)	false	
+0047d050	FUN_0047d050	0047d050-0047d222	char * __cdecl FUN_0047d050(char * param_1, uint param_2, undefined4 * param_3)	false	
+0047d230	FUN_0047d230	0047d230-0047d269	DWORD __cdecl FUN_0047d230(undefined4 * param_1)	false	
+0047d270	FUN_0047d270	0047d270-0047d35f	undefined4 __cdecl FUN_0047d270(LPCSTR param_1)	false	
+0047d360	DirectSoundCreate	0047d360-0047d365	undefined DirectSoundCreate(void)	true	
+0047d366	DirectDrawCreate	0047d366-0047d36b	undefined DirectDrawCreate(void)	true	
+0047d36c	DirectDrawEnumerateA	0047d36c-0047d371	undefined DirectDrawEnumerateA(void)	true	
+0047d658	DirectInputCreateA	0047d658-0047d65d	undefined DirectInputCreateA(void)	true	
+0047d660	__fpmath	0047d660-0047d676	void __cdecl __fpmath(int param_1)	false	
+0047d680	FUN_0047d680	0047d680-0047d680	undefined __stdcall FUN_0047d680(void)	false	
+0047d690	FUN_0047d690	0047d690-0047d6c7	undefined __stdcall FUN_0047d690(void)	false	
+0047d6d0	_fclose	0047d6d0-0047d746	undefined4 __cdecl _fclose(int * param_1)	false	library-crt-verified
+0047d750	_fread	0047d750-0047d88b	uint __cdecl _fread(char * param_1, uint param_2, uint param_3, int * param_4)	false	library-crt-verified
+0047d890	_ftell	0047d890-0047da30	DWORD __cdecl _ftell(undefined4 * param_1)	false	library-crt-verified
+0047da40	_fseek	0047da40-0047dad5	int __cdecl _fseek(int * param_1, int param_2, DWORD param_3)	false	library-crt-verified
+0047dae0	FUN_0047dae0	0047dae0-0047daf3	undefined __cdecl FUN_0047dae0(uint param_1)	false	
+0047db00	__nh_malloc	0047db00-0047db43	int __cdecl __nh_malloc(uint param_1, int param_2)	false	library-crt-verified
+0047db50	FUN_0047db50	0047db50-0047db87	undefined __cdecl FUN_0047db50(int param_1)	false	
+0047db90	FUN_0047db90	0047db90-0047dbd9	undefined __cdecl FUN_0047db90(undefined * param_1)	false	
+0047dbe0	FUN_0047dbe0	0047dbe0-0047dc02	undefined __cdecl FUN_0047dbe0(LPCSTR param_1, char * param_2, uint param_3)	false	
+0047dc10	FUN_0047dc10	0047dc10-0047dc24	undefined __cdecl FUN_0047dc10(LPCSTR param_1, char * param_2)	false	
+0047dc30	_sprintf	0047dc30-0047dc97	int __cdecl _sprintf(undefined1 * param_1, char * param_2)	false	library-crt-verified
+0047dca0	_fwrite	0047dca0-0047dde5	uint __cdecl _fwrite(char * param_1, uint param_2, uint param_3, int * param_4)	false	library-crt-verified
+0047ddf0	_rand	0047ddf0-0047de19	uint __stdcall _rand(void)	false	library-crt-verified
+0047de20	__ftol	0047de20-0047de46	longlong __stdcall __ftol(void)	false	library-crt-verified
+0047de50	FUN_0047de50	0047de50-0047de8c	int __cdecl FUN_0047de50(char * param_1)	false	
+0047de90	FUN_0047de90	0047de90-0047debc	undefined4 __cdecl FUN_0047de90(LPCSTR param_1)	false	
+0047dec0	FUN_0047dec0	0047dec0-0047dee9	uint __cdecl FUN_0047dec0(int param_1)	false	
+0047def0	FUN_0047def0	0047def0-0047df19	uint __cdecl FUN_0047def0(int param_1)	false	
+0047df20	_sscanf	0047df20-0047df61	undefined __cdecl _sscanf(char * param_1, byte * param_2)	false	library-crt-verified
+0047df70	__CIpow	0047df70-0047df88	undefined __stdcall __CIpow(void)	false	library-crt-verified
+0047df92	FUN_0047df92	0047df92-0047e164	undefined1[10] __cdecl FUN_0047df92(int param_1, uint param_2, int param_3, uint param_4)	false	
+0047e165	FUN_0047e165	0047e165-0047e18c	undefined __stdcall FUN_0047e165(void)	false	
+0047e190	_fflush	0047e190-0047e1d3	int __cdecl _fflush(int * param_1)	false	library-crt-verified
+0047e1e0	__flush	0047e1e0-0047e24d	undefined4 __cdecl __flush(int * param_1)	false	library-crt-verified
+0047e260	_flsall	0047e260-0047e2d1	int __cdecl _flsall(int param_1)	false	library-crt-verified
+0047e3ca	FUN_0047e3ca	0047e3ca-0047e3d3	undefined __fastcall FUN_0047e3ca(undefined4 param_1)	false	
+0047e400	_strncpy	0047e400-0047e4fd	char * __cdecl _strncpy(char * _Dest, char * _Source, size_t _Count)	false	library-crt-verified
+0047e500	_toupper	0047e500-0047e5fd	uint __cdecl _toupper(uint param_1)	false	library-crt-verified
+0047e600	_strstr	0047e600-0047e67f	char * __cdecl _strstr(char * _Str, char * _SubStr)	false	library-crt-verified
+0047e680	FUN_0047e680	0047e680-0047e6ae	undefined __stdcall FUN_0047e680(void)	false	
+0047e6b0	_fgets	0047e6b0-0047e721	char * __cdecl _fgets(char * param_1, int param_2, int * param_3)	false	library-crt-verified
+0047e730	entry	0047e730-0047e879|0047e89b-0047e8c4	undefined __stdcall entry(void)	false	library-crt-verified
+0047e8d0	__amsg_exit	0047e8d0-0047e8f5	void __cdecl __amsg_exit(int param_1)	false	
+0047e900	FUN_0047e900	0047e900-0047e925	undefined __cdecl FUN_0047e900(int param_1)	false	
+0047e930	__setdefaultprecision	0047e930-0047e942	undefined __stdcall __setdefaultprecision(void)	false	
+0047e950	__ms_p5_test_fdiv	0047e950-0047e99f	undefined4 __stdcall __ms_p5_test_fdiv(void)	false	library-crt-verified
+0047e9a0	FUN_0047e9a0	0047e9a0-0047e9c8	undefined __stdcall FUN_0047e9a0(void)	false	
+0047e9d0	FUN_0047e9d0	0047e9d0-0047ea2c	undefined __cdecl FUN_0047e9d0(char * param_1)	false	
+0047ea30	__cropzeros	0047ea30-0047ea9a	undefined __cropzeros(void)	false	library-crt-verified
+0047eaa0	FUN_0047eaa0	0047eaa0-0047eabb	undefined FUN_0047eaa0(void)	false	candidate-function-code-pointer
+0047eac0	__fassign	0047eac0-0047eb11	undefined __fassign(void)	false	library-crt-verified
+0047eb20	__cftoe	0047eb20-0047ec5b	undefined1 * __cdecl __cftoe(undefined4 param_1, undefined1 * param_2, int param_3, int param_4)	false	library-crt-verified
+0047ec60	__cftof	0047ec60-0047ed58	char * __cdecl __cftof(undefined4 param_1, char * param_2, uint param_3)	false	library-crt-verified
+0047ed60	__cftog	0047ed60-0047ee0d	undefined __cdecl __cftog(undefined4 param_1, char * param_2, uint param_3, int param_4)	false	library-crt-verified
+0047ee10	FUN_0047ee10	0047ee10-0047ee3a	undefined __cdecl FUN_0047ee10(undefined4 param_1, undefined1 * param_2, int param_3, int param_4)	false	
+0047ee40	FUN_0047ee40	0047ee40-0047ee65	undefined __cdecl FUN_0047ee40(undefined4 param_1, char * param_2, uint param_3)	false	
+0047ee70	__cfltcvt	0047ee70-0047eed4	undefined __cfltcvt(void)	false	library-crt-verified
+0047eee0	__shift	0047eee0-0047ef08	undefined __cdecl __shift(char * param_1, int param_2)	false	library-crt-verified
+0047ef10	__close	0047ef10-0047efe1	undefined4 __cdecl __close(uint param_1)	false	library-crt-verified
+0047eff0	__freebuf	0047eff0-0047f022	undefined __cdecl __freebuf(undefined4 * param_1)	false	library-crt-verified
+0047f030	__filbuf	0047f030-0047f11b	uint __cdecl __filbuf(int * param_1)	false	library-crt-verified
+0047f120	__read	0047f120-0047f373	int __cdecl __read(uint param_1, char * param_2, DWORD param_3)	false	library-crt-verified
+0047f380	FUN_0047f380	0047f380-0047f3af	undefined __stdcall FUN_0047f380(void)	false	
+0047f3b0	FUN_0047f3b0	0047f3b0-0047f3c1	undefined __cdecl FUN_0047f3b0(UINT param_1)	false	
+0047f3d0	__exit	0047f3d0-0047f3e1	noreturn void __cdecl __exit(int _Code)	false	
+0047f3f0	FUN_0047f3f0	0047f3f0-0047f493	undefined __cdecl FUN_0047f3f0(UINT param_1, int param_2, int param_3)	false	
+0047f4a0	__initterm	0047f4a0-0047f4bf	undefined __cdecl __initterm(undefined4 * param_1, undefined4 * param_2)	false	library-crt-verified
+0047f4c0	__ioinit	0047f4c0-0047f6b7	undefined __stdcall __ioinit(void)	false	library-crt-verified
+0047f6c0	__lseek	0047f6c0-0047f77c	DWORD __cdecl __lseek(uint param_1, LONG param_2, DWORD param_3)	false	library-crt-verified
+0047f780	__callnewh	0047f780-0047f79f	undefined4 __cdecl __callnewh(undefined4 param_1)	false	library-crt-verified
+0047f7a0	FUN_0047f7a0	0047f7a0-0047f7d6	undefined4 __stdcall FUN_0047f7a0(void)	false	
+0047f7e0	___sbh_new_region	0047f7e0-0047f941	undefined * * __stdcall ___sbh_new_region(void)	false	library-crt-verified
+0047f950	FUN_0047f950	0047f950-0047f9aa	undefined __cdecl FUN_0047f950(undefined * * param_1)	false	
+0047f9b0	___sbh_decommit_pages	0047f9b0-0047fa7c	undefined __cdecl ___sbh_decommit_pages(int param_1)	false	library-crt-verified
+0047fa80	___sbh_find_block	0047fa80-0047fad8	int __cdecl ___sbh_find_block(undefined * param_1, undefined4 * param_2, uint * param_3)	false	library-crt-verified
+0047fae0	___sbh_free_block	0047fae0-0047fb32	undefined __cdecl ___sbh_free_block(int param_1, int param_2, byte * param_3)	false	library-crt-verified
+0047fb40	___sbh_alloc_block	0047fb40-0047fd72	int * __cdecl ___sbh_alloc_block(uint param_1)	false	library-crt-verified
+0047fd80	___sbh_alloc_block_from_page	0047fd80-0047fef1	int __cdecl ___sbh_alloc_block_from_page(int * param_1, uint param_2, uint param_3)	false	library-crt-verified
+0047ff00	__openfile	0047ff00-0048005a	undefined4 * __cdecl __openfile(LPCSTR param_1, char * param_2, uint param_3, undefined4 * param_4)	false	library-crt-verified
+004800d0	__getstream	004800d0-00480153	undefined4 * __stdcall __getstream(void)	false	library-crt-verified
+00480160	__flsbuf	00480160-0048028c	uint __cdecl __flsbuf(uint param_1, int * param_2)	false	library-crt-verified
+00480290	__output	00480290-00480b0b	int __cdecl __output(int * param_1, char * param_2, undefined4 * param_3)	false	library-crt-verified
+00480c20	_write_char	00480c20-00480c61	undefined __cdecl _write_char(uint param_1, int * param_2, int * param_3)	false	library-crt-verified
+00480c70	_write_multi_char	00480c70-00480ca8	undefined __cdecl _write_multi_char(uint param_1, int param_2, int * param_3, int * param_4)	false	library-crt-verified
+00480cb0	_write_string	00480cb0-00480cec	undefined __cdecl _write_string(char * param_1, int param_2, int * param_3, int * param_4)	false	library-crt-verified
+00480cf0	_get_int_arg	00480cf0-00480d00	undefined4 __cdecl _get_int_arg(int * param_1)	false	library-crt-verified
+00480d10	_get_int64_arg	00480d10-00480d21	undefined8 __cdecl _get_int64_arg(int * param_1)	false	library-crt-verified
+00480d30	_get_short_arg	00480d30-00480d41	undefined4 __cdecl _get_short_arg(undefined4 * param_1)	false	library-crt-verified
+00480d50	__write	00480d50-00480f6d	int __cdecl __write(uint param_1, char * param_2, uint param_3)	false	library-crt-verified
+00480f70	__stbuf	00480f70-00481027	undefined4 __cdecl __stbuf(undefined4 * param_1)	false	library-crt-verified
+00481030	__ftbuf	00481030-00481083	undefined __cdecl __ftbuf(int param_1, int * param_2)	false	library-crt-verified
+00481090	FUN_00481090	00481090-004810f6	undefined __cdecl FUN_00481090(undefined * param_1)	false	
+00481100	__isctype	00481100-00481194	uint __cdecl __isctype(int param_1, uint param_2)	false	library-crt-verified
+004811a0	__input	004811a0-00481e18	int __cdecl __input(int * param_1, byte * param_2, undefined4 * param_3)	false	library-crt-verified
+00481ee0	__hextodec	00481ee0-00481f18	uint __cdecl __hextodec(uint param_1)	false	library-crt-verified
+00481f20	_fgetc	00481f20-00481f40	uint __cdecl _fgetc(int * param_1)	false	library-crt-verified
+00481f50	FUN_00481f50	00481f50-00481f67	undefined __cdecl FUN_00481f50(uint param_1, int * param_2)	false	
+00481f70	FUN_00481f70	00481f70-00481fb7	uint __cdecl FUN_00481f70(int * param_1, int * param_2)	false	
+0048211e	FUN_0048211e	004820d0-004820fe|0048211e-00482160|004822d6-004822da	undefined5 __fastcall FUN_0048211e(undefined4 param_1, undefined1 param_2)	false	
+004821d0	__trandisp1	004821d0-00482236	undefined __fastcall __trandisp1(undefined4 param_1, int param_2)	false	library-crt-verified
+00482237	__trandisp2	00482237-004822c2	undefined __fastcall __trandisp2(undefined4 param_1, int param_2)	false	library-crt-verified
+004822c8	FUN_004822c8	004822c8-004822cc	undefined __stdcall FUN_004822c8(void)	false	
+004823a0	__startTwoArgErrorHandling	004823a0-004823b6	float10 __fastcall __startTwoArgErrorHandling(undefined4 param_1, undefined4 param_2, undefined2 param_3, undefined4 param_4, undefined4 param_5, undefined4 param_6, undefined4 param_7, undefined4 param_8)	false	library-crt-verified
+004823b7	__startOneArgErrorHandling	004823b7-004823f2	float10 __fastcall __startOneArgErrorHandling(undefined4 param_1, uint param_2, ushort param_3, undefined4 param_4, undefined4 param_5, undefined4 param_6)	false	library-crt-verified
+00482400	__twoToTOS	00482400-00482414	undefined1[10] __stdcall __twoToTOS(void)	false	library-crt-verified
+00482415	__load_CW	00482415-0048242b	undefined __stdcall __load_CW(void)	false	library-crt-verified
+00482445	__fload_withFB	00482445-00482487	uint __fastcall __fload_withFB(undefined4 param_1, int param_2)	false	library-crt-verified
+0048249e	__fast_exit	0048249e-004824aa	undefined __stdcall __fast_exit(void)	false	library-crt-verified
+004824e9	__check_range_exit	004824e9-0048258b	undefined __fastcall __check_range_exit(undefined4 param_1, uint param_2, undefined4 param_3, undefined4 param_4, undefined4 param_5, undefined4 param_6, undefined4 param_7)	false	library-crt-verified
+00482590	__powhlp	00482590-004827b0	undefined4 __cdecl __powhlp(double param_1, double param_2, double * param_3)	false	library-crt-verified
+004827c0	__d_inttype	004827c0-00482840	undefined4 __cdecl __d_inttype(double param_1)	false	library-crt-verified
+00482850	FUN_00482850	00482850-004828aa	undefined4 __cdecl FUN_00482850(uint param_1)	false	
+004828b0	_calloc	004828b0-00482947	int * __cdecl _calloc(int param_1, int param_2)	false	library-crt-verified
+004829c0	__cintrindisp2	004829c0-004829fd	undefined __fastcall __cintrindisp2(undefined4 param_1, int param_2)	false	library-crt-verified
+004829fe	__cintrindisp1	004829fe-00482a33	undefined __fastcall __cintrindisp1(undefined4 param_1, int param_2)	false	library-crt-verified
+00482a34	__ctrandisp2	00482a34-00482a6d	undefined __cdecl __ctrandisp2(uint param_1, int param_2, uint param_3, int param_4)	false	library-crt-verified
+00482a6e	FUN_00482a6e	00482a6e-00482a74	undefined __stdcall FUN_00482a6e(void)	false	
+00482a75	FUN_00482a75	00482a75-00482ba4	undefined __stdcall FUN_00482a75(void)	false	
+00482ba5	__ctrandisp1	00482ba5-00482bd0	undefined __cdecl __ctrandisp1(uint param_1, int param_2)	false	library-crt-verified
+00482bd1	__fload	00482bd1-00482c0c	float10 __cdecl __fload(uint param_1, int param_2)	false	library-crt-verified
+00482c10	_fdiv_main_routine	00482c10-00482d26	uint __cdecl _fdiv_main_routine(int param_1, uint param_2, ushort param_3, undefined4 param_4, uint param_5, uint param_6)	false	library-crt-verified
+00483401	__safe_fdivr	00483401-00483415	undefined4 __stdcall __safe_fdivr(void)	false	library-crt-verified
+00483416	__fprem_common	00483416-0048361b	undefined4 __cdecl __fprem_common(undefined4 param_1, uint param_2, ushort param_3)	false	library-crt-verified
+0048361c	__adj_fprem	0048361c-004836cd	float10 __stdcall __adj_fprem(void)	false	library-crt-verified
+004839a0	___crtLCMapStringA	004839a0-00483bc4	int __cdecl ___crtLCMapStringA(LCID param_1, uint param_2, char * param_3, LPCWSTR param_4, LPWSTR param_5, int param_6, UINT param_7, int param_8)	false	library-crt-verified
+00483bd0	_strncnt	00483bd0-00483bfe	int __cdecl _strncnt(char * param_1, int param_2)	false	library-crt-verified
+00483c16	FUN_00483c16	00483c00-00483c04|00483c16-00483ccb	uint * __cdecl FUN_00483c16(uint * param_1)	false	
+00483e60	FUN_00483e60	00483e60-00483e71	undefined __cdecl FUN_00483e60(uint param_1)	false	
+00483e80	_x_ismbbtype	00483e80-00483eb9	undefined4 __cdecl _x_ismbbtype(uint param_1, uint param_2, byte param_3)	false	library-crt-verified
+00483ec0	__setenvp	00483ec0-00483fad	undefined __stdcall __setenvp(void)	false	library-crt-verified
+00483fb0	__setargv	00483fb0-0048404d	undefined __stdcall __setargv(void)	false	library-crt-verified
+00484050	_parse_cmdline	00484050-0048425e	undefined __cdecl _parse_cmdline(byte * param_1, undefined4 * param_2, byte * param_3, int * param_4, int * param_5)	false	library-crt-verified
+00484260	___crtGetEnvironmentStringsA	00484260-004843b5	LPSTR __stdcall ___crtGetEnvironmentStringsA(void)	false	library-crt-verified
+004843c0	__setmbcp	004843c0-004845cf	undefined4 __cdecl __setmbcp(int param_1)	false	library-crt-verified
+004845d0	FUN_004845d0	004845d0-0048461c	int __cdecl FUN_004845d0(int param_1)	false	
+00484620	_CPtoLCID	00484620-00484657	undefined4 __cdecl _CPtoLCID(undefined4 param_1)	false	library-crt-verified
+00484680	FUN_00484680	00484680-004846b1	undefined __stdcall FUN_00484680(void)	false	
+004846c0	_setSBUpLow	004846c0-00484899	undefined __stdcall _setSBUpLow(void)	false	library-crt-verified
+004848a0	FUN_004848a0	004848a0-004848aa	undefined __stdcall FUN_004848a0(void)	false	
+004848b0	__global_unwind2	004848b0-004848cf	undefined __cdecl __global_unwind2(PVOID param_1)	false	library-crt-verified
+004848d0	__unwind_handler	004848d0-004848f1	undefined __unwind_handler(void)	false	library-crt-verified
+004848f2	__local_unwind2	004848f2-00484959	undefined __cdecl __local_unwind2(int param_1, int param_2)	false	library-crt-verified
+00484986	__NLG_Notify	00484986-0048499d	undefined __stdcall __NLG_Notify(void)	false	library-crt-verified
+004849a8	__except_handler3	004849a8-00484a64	undefined __except_handler3(void)	false	library-crt-verified
+00484a65	__seh_longjmp_unwind@4	00484a65-00484a7f	undefined __stdcall __seh_longjmp_unwind@4(int param_1)	false	library-crt-verified
+00484a80	FUN_00484a80	00484a80-00484abc	undefined __stdcall FUN_00484a80(void)	false	
+00484ac0	__NMSG_WRITE	00484ac0-00484c95	undefined __cdecl __NMSG_WRITE(int param_1)	false	library-crt-verified
+00484ca0	FUN_00484ca0	00484ca0-00484cda	uint __thiscall FUN_00484ca0(void * this, uint param_1, uint param_2)	false	
+00484ce0	FUN_00484ce0	00484ce0-00484cf7	undefined __cdecl FUN_00484ce0(void * param_1, uint param_2)	false	
+00484d00	__abstract_cw	00484d00-00484d95	uint __cdecl __abstract_cw(uint param_1)	false	library-crt-verified
+00484da0	__hw_cw	00484da0-00484e2a	undefined __stdcall __hw_cw(void)	false	library-crt-verified
+00484e30	_tolower	00484e30-00484f2d	uint __cdecl _tolower(uint param_1)	false	library-crt-verified
+00484f30	__ZeroTail	00484f30-00484f95	undefined4 __cdecl __ZeroTail(int param_1, int param_2)	false	library-crt-verified
+00484fa0	__IncMan	00484fa0-00485008	undefined __cdecl __IncMan(int param_1, int param_2)	false	library-crt-verified
+00485010	__RoundMan	00485010-004850ac	undefined4 __cdecl __RoundMan(int param_1, int param_2)	false	library-crt-verified
+004850b0	__CopyMan	004850b0-004850cc	undefined __cdecl __CopyMan(int param_1, undefined4 * param_2)	false	library-crt-verified
+004850d0	FUN_004850d0	004850d0-004850de	undefined __cdecl FUN_004850d0(undefined4 * param_1)	false	
+004850e0	__IsZeroMan	004850e0-004850fc	undefined4 __cdecl __IsZeroMan(int * param_1)	false	library-crt-verified
+00485100	__ShrMan	00485100-004851b0	undefined __cdecl __ShrMan(uint * param_1, int param_2)	false	library-crt-verified
+004851c0	__ld12cvt	004851c0-0048538e	undefined4 __cdecl __ld12cvt(ushort * param_1, uint * param_2, int * param_3)	false	library-crt-verified
+00485390	FUN_00485390	00485390-004853a7	undefined __cdecl FUN_00485390(ushort * param_1, uint * param_2)	false	
+004853b0	FUN_004853b0	004853b0-004853c7	undefined __cdecl FUN_004853b0(ushort * param_1, uint * param_2)	false	
+004853d0	__atodbl	004853d0-00485407	undefined __cdecl __atodbl(uint * param_1, byte * param_2)	false	library-crt-verified
+00485410	FUN_00485410	00485410-00485447	undefined __cdecl FUN_00485410(uint * param_1, byte * param_2)	false	
+00485450	__fptostr	00485450-004854e0	undefined __cdecl __fptostr(char * param_1, int param_2, int param_3)	false	library-crt-verified
+004854f0	__fltout	004854f0-00485562	undefined * __stdcall __fltout(void)	false	library-crt-verified
+00485570	___dtold	00485570-0048562d	undefined __cdecl ___dtold(uint * param_1, uint * param_2)	false	library-crt-verified
+00485630	_memcpy	00485630-0048568a|0048568c-00485692|004856a0-004856c8|004856cc-004856ee|004856f0-00485708|0048572c-00485775|00485788-0048578e|00485790-0048579a|0048579c-004857ac|004857b0-004857c6|004857c8-004857ed|004857f0-004857f8|004857fc-0048581a|00485828-00485844|00485848-0048586e|00485870-004858a0|004858c4-0048590d|00485920-00485926|00485928-00485934|00485938-0048594a|0048594c-00485964	undefined4 * __cdecl _memcpy(undefined4 * param_1, undefined4 * param_2, uint param_3)	false	library-crt-verified
+00485970	FUN_00485970	00485970-0048597a	undefined __stdcall FUN_00485970(void)	false	
+00485980	__alloc_osfhnd	00485980-00485a3b	int __stdcall __alloc_osfhnd(void)	false	library-crt-verified
+00485a40	__set_osfhnd	00485a40-00485ae2	undefined4 __cdecl __set_osfhnd(uint param_1, HANDLE param_2)	false	library-crt-verified
+00485af0	__free_osfhnd	00485af0-00485b83	undefined4 __cdecl __free_osfhnd(uint param_1)	false	library-crt-verified
+00485b90	FUN_00485b90	00485b90-00485bd3	undefined4 __cdecl FUN_00485b90(uint param_1)	false	
+00485be0	__getbuf	00485be0-00485c3c	undefined __cdecl __getbuf(int * param_1)	false	library-crt-verified
+00485c40	__sopen	00485c40-00485fab	uint __cdecl __sopen(LPCSTR param_1, uint param_2, uint param_3, undefined4 param_4)	false	library-crt-verified
+00486000	FUN_00486000	00486000-00486027	byte __cdecl FUN_00486000(uint param_1)	false	
+00486030	_wctomb	00486030-004860a0	int __cdecl _wctomb(LPSTR param_1, WCHAR param_2)	false	library-crt-verified
+004860b0	__aulldiv	004860b0-00486117	undefined8 __stdcall __aulldiv(uint param_1, uint param_2, uint param_3, uint param_4)	false	library-crt-verified
+00486120	__aullrem	00486120-00486194	undefined8 __stdcall __aullrem(uint param_1, uint param_2, uint param_3, uint param_4)	false	library-crt-verified
+004861a0	___crtGetStringTypeA	004861a0-004862d7	BOOL __cdecl ___crtGetStringTypeA(DWORD param_1, LPCSTR param_2, int param_3, LPWORD param_4, UINT param_5, LCID param_6, int param_7)	false	library-crt-verified
+004862e0	_mbtowc	004862e0-004863db	uint __cdecl _mbtowc(LPWSTR param_1, byte * param_2, uint param_3)	false	library-crt-verified
+004863e0	__allmul	004863e0-00486413	longlong __stdcall __allmul(uint param_1, int param_2, uint param_3, int param_4)	false	library-crt-verified
+00486420	__allshl	00486420-0048643e	longlong __fastcall __allshl(byte param_1, int param_2)	false	
+00486440	_ungetc	00486440-004864c2	uint __cdecl _ungetc(uint param_1, int * param_2)	false	library-crt-verified
+004864d0	__87except	004864d0-004865cf	undefined __cdecl __87except(uint param_1, int * param_2, ushort * param_3)	false	library-crt-verified
+004865f0	__set_exp	004865f0-00486628	float10 __cdecl __set_exp(undefined4 param_1, undefined4 param_2, short param_3)	false	library-crt-verified
+00486630	__sptype	00486630-0048668b	undefined4 __cdecl __sptype(int param_1, uint param_2)	false	library-crt-verified
+00486690	__decomp	00486690-00486792	float10 __cdecl __decomp(uint param_1, uint param_2, int * param_3)	false	library-crt-verified
+004867a0	__frnd	004867a0-004867b4	float10 __cdecl __frnd(double param_1)	false	library-crt-verified
+004867c0	__fpclass	004867c0-0048685a	int __cdecl __fpclass(int param_1, uint param_2)	false	library-crt-verified
+00486860	___crtMessageBoxA	00486860-004868ee	int __cdecl ___crtMessageBoxA(undefined4 param_1, undefined4 param_2, undefined4 param_3)	false	library-crt-verified
+004868f0	___addl	004868f0-00486912	undefined4 __cdecl ___addl(uint param_1, uint param_2, uint * param_3)	false	library-crt-verified
+00486920	FUN_00486920	00486920-00486987	undefined __cdecl FUN_00486920(uint * param_1, uint * param_2)	false	
+00486990	___shl_12	00486990-004869bd	undefined __cdecl ___shl_12(uint * param_1)	false	library-crt-verified
+004869c0	___shr_12	004869c0-004869ec	undefined __cdecl ___shr_12(uint * param_1)	false	library-crt-verified
+004869f0	___mtold12	004869f0-00486ae0	undefined __cdecl ___mtold12(char * param_1, int param_2, uint * param_3)	false	library-crt-verified
+00486af0	___strgtold12	00486af0-0048714f	undefined4 __cdecl ___strgtold12(ushort * param_1, int * param_2, byte * param_3, int param_4, int param_5, int param_6, int param_7)	false	library-crt-verified
+00487280	_$I10_OUTPUT	00487280-00487601	undefined4 __cdecl _$I10_OUTPUT(uint param_1, uint param_2, uint param_3, int param_4, byte param_5, short * param_6)	false	library-crt-verified
+00487610	__chsize	00487610-00487789	int __stdcall __chsize(void)	false	library-crt-verified
+00487790	__raise_exc	00487790-00487ab3	undefined __cdecl __raise_exc(uint * param_1, uint * param_2, byte param_3, uint param_4, uint * param_5, uint * param_6)	false	library-crt-verified
+00487ad0	__handle_exc	00487ad0-00487dff	bool __cdecl __handle_exc(uint param_1, double * param_2, uint param_3)	false	library-crt-verified
+00487e00	FUN_00487e00	00487e00-00487e25	undefined __cdecl FUN_00487e00(int param_1)	false	
+00487e30	FUN_00487e30	00487e30-00487e32	undefined4 __stdcall FUN_00487e30(void)	false	
+00487e40	FUN_00487e40	00487e40-00487e4f	int __stdcall FUN_00487e40(void)	false	
+00487e50	__clrfp	00487e50-00487e60	int __stdcall __clrfp(void)	false	library-crt-verified
+00487e70	__ctrlfp	00487e70-00487e97	int __stdcall __ctrlfp(void)	false	library-crt-verified
+00487ea0	__set_statfp	00487ea0-00487ef8	undefined __stdcall __set_statfp(void)	false	library-crt-verified
+00487f00	___ld12mul	00487f00-004881b7	undefined __cdecl ___ld12mul(int * param_1, int * param_2)	false	library-crt-verified
+004881c0	___multtenpow12	004881c0-00488249	undefined __cdecl ___multtenpow12(int * param_1, uint param_2, int param_3)	false	library-crt-verified
+00488250	__setmode	00488250-004882cd	int __cdecl __setmode(uint param_1, int param_2)	false	library-crt-verified
+004882d0	RtlUnwind	004882d0-004882d5	void __stdcall RtlUnwind(PVOID TargetFrame, PVOID TargetIp, PEXCEPTION_RECORD ExceptionRecord, PVOID ReturnValue)	true	
+004882e0	__strcmpi	004882e0-0048836b	int __cdecl __strcmpi(char * _Str1, char * _Str2)	false	library-crt-verified
+00488370	__strnicmp	00488370-0048841c	int __cdecl __strnicmp(char * _Str1, char * _Str2, size_t _MaxCount)	false	library-crt-verified

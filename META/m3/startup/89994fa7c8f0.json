@@ -1,0 +1,527 @@
+{
+  "date": "2026-10-24",
+  "passed": true,
+  "run_id": "89994fa7c8f0",
+  "scope": "Original startup to MessageBox or pre-simulation bootstrap boundary; no dialog executed or visual tooling",
+  "original_code_executes": true,
+  "original_file_patches": 0,
+  "profile_directory_adapter": true,
+  "renderer_preset": {
+    "name": "software-high",
+    "seed_path": "build\\m3\\startup\\profile-c57437263011\\BHUNTER.CFG",
+    "seed_sha256": "0bfc8a6770dad02261eafc6477e5209a93b40c37e227638f742eeef14518493d",
+    "original_seed_bytes": 644,
+    "modified_settings_offsets": [
+      0,
+      4,
+      8
+    ],
+    "settings_words": [
+      1,
+      0,
+      1
+    ],
+    "initial_cfg_sha256": "2b0c9fea68e2aa055de79a4dbf088681d566e91c0a59d0a1e78233fa7e3e151f"
+  },
+  "show_parameter": 1,
+  "registry_before": [
+    {
+      "view": "32",
+      "exists": false,
+      "error": 2
+    },
+    {
+      "view": "64",
+      "exists": false,
+      "error": 2
+    }
+  ],
+  "protected_windows_files_before": {
+    "C:\\Windows\\BHUNTER.CFG": {
+      "exists": false,
+      "sha256": null
+    },
+    "C:\\Windows\\BHUNTER.INI": {
+      "exists": false,
+      "sha256": null
+    }
+  },
+  "commands": [
+    {
+      "label": "compile",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\m3\\startup-ddrawcompat\\startup-probe.obj",
+        "D:\\Decomp\\Bhunter\\tools\\m3_startup_probe.c"
+      ],
+      "exit_code": 0,
+      "output": "m3_startup_probe.c\n"
+    },
+    {
+      "label": "link",
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/out:D:\\Decomp\\Bhunter\\build\\m3\\startup-ddrawcompat\\startup-probe.exe",
+        "D:\\Decomp\\Bhunter\\build\\m3\\startup-ddrawcompat\\startup-probe.obj",
+        "kernel32.lib",
+        "advapi32.lib"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "label": "startup",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\build\\m3\\startup-ddrawcompat\\startup-probe.exe",
+        "D:\\Decomp\\Bhunter\\build\\m3\\startup-ddrawcompat\\BHUNTER.EXE",
+        "D:\\Decomp\\Bhunter\\build\\m3\\startup-ddrawcompat",
+        "D:\\Decomp\\Bhunter\\build\\m3\\reference-source",
+        "D:\\Decomp\\Bhunter\\build\\m3\\startup-ddrawcompat\\profile-89994fa7c8f0",
+        "Software\\BhunterM3-f80226e469554f7b9a8b346e5f327fec",
+        "1",
+        "1"
+      ],
+      "exit_code": 0,
+      "output": "{\"event\":\"process-created\",\"pid\":14544,\"window_show_parameter\":1}\n{\"event\":\"thread-created\",\"thread_id\":25268,\"start_address\":1995463408,\"x87_control\":639}\n{\"event\":\"thread-created\",\"thread_id\":21608,\"start_address\":1995463408,\"x87_control\":639}\n{\"event\":\"thread-created\",\"thread_id\":14836,\"start_address\":1995463408,\"x87_control\":639}\n{\"event\":\"breakpoints-armed\",\"count\":79,\"passed\":true}\n{\"event\":\"thread-created\",\"thread_id\":11596,\"start_address\":1924548528,\"x87_control\":639}\n{\"event\":\"thread-created\",\"thread_id\":16108,\"start_address\":1924548528,\"x87_control\":639}\n{\"event\":\"thread-created\",\"thread_id\":22464,\"start_address\":1995463408,\"x87_control\":639}\n{\"event\":\"source-key-redirect\",\"x87_control\":639}\n{\"event\":\"source-check-return\",\"eax\":1,\"x87_control\":639}\n{\"event\":\"thread-created\",\"thread_id\":11708,\"start_address\":1917535952,\"x87_control\":639}\n{\"event\":\"private-profile-directory\",\"caller_return\":4667742,\"buffer_capacity\":255,\"returned_length\":67}\n{\"event\":\"thread-created\",\"thread_id\":22288,\"start_address\":1924548528,\"x87_control\":639}\n{\"event\":\"thread-created\",\"thread_id\":12528,\"start_address\":1972264256,\"x87_control\":639}\n{\"event\":\"thread-created\",\"thread_id\":4348,\"start_address\":1760406384,\"x87_control\":639}\n{\"event\":\"thread-created\",\"thread_id\":24412,\"start_address\":1995463408,\"x87_control\":639}\n{\"event\":\"thread-created\",\"thread_id\":18548,\"start_address\":1924548528,\"x87_control\":639}\n{\"event\":\"thread-created\",\"thread_id\":23088,\"start_address\":1924548528,\"x87_control\":639}\n{\"event\":\"devices-enumerated\",\"x87_control\":639,\"last_device_index\":0,\"devices\":[\"Primary Display Driver\"],\"selection_words\":[0,0,0]}\n{\"event\":\"private-profile-directory\",\"caller_return\":4202519,\"buffer_capacity\":255,\"returned_length\":67}\n{\"event\":\"private-profile-directory\",\"caller_return\":4203445,\"buffer_capacity\":255,\"returned_length\":67}\n{\"event\":\"config-bootstrap-return\",\"x87_control\":639,\"last_device_index\":0,\"devices\":[\"Primary Display Driver\"],\"selection_words\":[1,0,1]}\n{\"event\":\"render-mode-call\",\"callsite\":4663767,\"arguments\":[640,480,16,1],\"x87_control\":639}\n{\"event\":\"denied-cursor-warp\",\"caller_return\":1924300494,\"x\":320,\"y\":240,\"returned_success\":false}\n{\"event\":\"directdraw-set-display-mode-result\",\"hresult\":0,\"hresult_hex\":\"00000000\",\"x87_control\":639}\n{\"event\":\"denied-cursor-warp\",\"caller_return\":1924017536,\"x\":320,\"y\":240,\"returned_success\":false}\n{\"event\":\"render-mode-return\",\"eax\":1,\"x87_control\":639}\n{\"event\":\"bootstrap-entry\",\"game_bootstrap_executed\":false,\"continue_bootstrap\":true,\"x87_control\":639}\n{\"event\":\"thread-created\",\"thread_id\":19360,\"start_address\":1785375224,\"x87_control\":639}\n{\"event\":\"denied-cursor-warp\",\"caller_return\":4669169,\"x\":160,\"y\":100,\"returned_success\":false}\n{\"event\":\"thread-created\",\"thread_id\":7272,\"start_address\":1926401936,\"x87_control\":639}\n{\"event\":\"thread-created\",\"thread_id\":18668,\"start_address\":1995463408,\"x87_control\":639}\n{\"event\":\"thread-created\",\"thread_id\":20744,\"start_address\":1926865408,\"x87_control\":639}\n{\"event\":\"thread-created\",\"thread_id\":25820,\"start_address\":1926865408,\"x87_control\":639}\n{\"event\":\"bootstrap-stage\",\"address\":4690619,\"eax\":1,\"x87_control\":639,\"sound_device\":12322992,\"model_count\":0,\"entity_capacity\":0,\"entity_used\":0,\"navigation_count_raw\":0}\n{\"event\":\"thread-created\",\"thread_id\":16352,\"start_address\":1926379024,\"x87_control\":639}\n{\"event\":\"thread-created\",\"thread_id\":18672,\"start_address\":1755814656,\"x87_control\":639}\n{\"event\":\"thread-created\",\"thread_id\":19304,\"start_address\":1755348352,\"x87_control\":639}\n{\"event\":\"bootstrap-stage\",\"address\":4690638,\"eax\":0,\"x87_control\":639,\"sound_device\":12322992,\"model_count\":0,\"entity_capacity\":0,\"entity_used\":0,\"navigation_count_raw\":0}\n{\"event\":\"bootstrap-stage\",\"address\":4486336,\"eax\":45045296,\"x87_control\":639,\"sound_device\":12322992,\"model_count\":0,\"entity_capacity\":9600,\"entity_used\":0,\"navigation_count_raw\":0}\n{\"event\":\"bootstrap-stage\",\"address\":4486522,\"eax\":1,\"x87_control\":639,\"sound_device\":12322992,\"model_count\":454,\"entity_capacity\":9600,\"entity_used\":755,\"navigation_count_raw\":0}\n{\"event\":\"bootstrap-stage\",\"address\":4486539,\"eax\":111723584,\"x87_control\":639,\"sound_device\":12322992,\"model_count\":454,\"entity_capacity\":9600,\"entity_used\":7796,\"navigation_count_raw\":0}\n{\"event\":\"bootstrap-stage\",\"address\":4486588,\"eax\":80089,\"x87_control\":639,\"sound_device\":12322992,\"model_count\":454,\"entity_capacity\":9600,\"entity_used\":7797,\"navigation_count_raw\":283}\n{\"event\":\"bootstrap-stage\",\"address\":4692113,\"eax\":1,\"x87_control\":639,\"sound_device\":12322992,\"model_count\":454,\"entity_capacity\":9600,\"entity_used\":7831,\"navigation_count_raw\":283}\n{\"event\":\"bootstrap-return\",\"address\":4666354,\"eax\":1,\"api_executed\":false,\"x87_control\":639}\n{\"event\":\"bootstrap-stage\",\"address\":4666354,\"eax\":1,\"x87_control\":639,\"sound_device\":12322992,\"model_count\":454,\"entity_capacity\":9600,\"entity_used\":7831,\"navigation_count_raw\":283}\n{\"event\":\"breakpoints-restored\",\"verified\":true}\n{\"event\":\"process-exit\",\"code\":1295188225,\"probe_termination\":true}\n{\"event\":\"private-key-cleanup\",\"result\":0}\n{\"event\":\"probe-complete\",\"reached_interaction_boundary\":true,\"passed\":true}\n"
+    }
+  ],
+  "source_hashes": {
+    "tools/m3_startup_probe.c": "a7133a8a1e517e48e0a0a834fa3c073edb1eac65d2d82362b76fe82a6d904c9a",
+    "tools/m3_startup_probe.py": "aa0718b9dc9083c2d3c5949cd722c42024c321453e617482f1b83ac7b1eb2c73"
+  },
+  "original_hashes": {
+    "GAME_DATA/BHUNTER.EXE": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+    "GAME_DATA/Bhunter.bin": "2393a661fd647ed6de3eee34c35c30812c44f3ee15b9d44244a63720804df581",
+    "BHUNTER.mdf": "540ef8a444a9e9e5ab9eb69bc0e7b13a040bb2e49187b91723f317f97a627e1b",
+    "BHUNTER.mds": "77c249c75a2505a36822918a71a11a4d253f9860141d863c5db6084317f1fb19"
+  },
+  "profile_path": "build/m3/startup-ddrawcompat/profile-89994fa7c8f0",
+  "m3_complete": false,
+  "compatibility_dependency": {
+    "date": "2026-10-24",
+    "scope": "M3 isolated original-reference dependency only; not a source-game backend selection",
+    "version": "v0.7.2",
+    "prerelease": true,
+    "published": "2026-10-14T21:12:30Z",
+    "release_url": "https://github.com/narzoul/DDrawCompat/releases/tag/v0.7.2",
+    "source_repository": "https://github.com/narzoul/DDrawCompat",
+    "asset_url": "https://github.com/narzoul/DDrawCompat/releases/download/v0.7.2/DDrawCompat-v0.7.2.zip",
+    "asset_digest_from_github": "sha256:a932a4dcb2100552b6918fd4a3cc7de138bb97448bbca2a7051954993a397b39",
+    "archive_sha256": "a932a4dcb2100552b6918fd4a3cc7de138bb97448bbca2a7051954993a397b39",
+    "dll_sha256": "94895cf6ede8fd0f74ee1447fdc08b7044a9c65a1a25a49a4df893a0370975a3",
+    "dll_bytes": 3653632,
+    "machine": "x86",
+    "staged_dll": "build/m3/dependencies/DDrawCompat-v0.7.2/ddraw.dll",
+    "license_files": [],
+    "zip_files": [
+      "ddraw.dll"
+    ],
+    "original_files_modified": false,
+    "normal_integration_dependency": false
+  },
+  "through_bootstrap": true,
+  "cursor_warp_failure_adapter": true,
+  "stop_before_system_volume_write": true,
+  "source_snapshots": {
+    "tools/m3_startup_probe.c": "META/m3/startup/sources/a7133a8a1e517e48e0a0a834fa3c073edb1eac65d2d82362b76fe82a6d904c9a-m3_startup_probe.c.txt",
+    "tools/m3_startup_probe.py": "META/m3/startup/sources/aa0718b9dc9083c2d3c5949cd722c42024c321453e617482f1b83ac7b1eb2c73-m3_startup_probe.py.txt"
+  },
+  "events": [
+    {
+      "event": "process-created",
+      "pid": 14544,
+      "window_show_parameter": 1
+    },
+    {
+      "event": "thread-created",
+      "thread_id": 25268,
+      "start_address": 1995463408,
+      "x87_control": 639
+    },
+    {
+      "event": "thread-created",
+      "thread_id": 21608,
+      "start_address": 1995463408,
+      "x87_control": 639
+    },
+    {
+      "event": "thread-created",
+      "thread_id": 14836,
+      "start_address": 1995463408,
+      "x87_control": 639
+    },
+    {
+      "event": "breakpoints-armed",
+      "count": 79,
+      "passed": true
+    },
+    {
+      "event": "thread-created",
+      "thread_id": 11596,
+      "start_address": 1924548528,
+      "x87_control": 639
+    },
+    {
+      "event": "thread-created",
+      "thread_id": 16108,
+      "start_address": 1924548528,
+      "x87_control": 639
+    },
+    {
+      "event": "thread-created",
+      "thread_id": 22464,
+      "start_address": 1995463408,
+      "x87_control": 639
+    },
+    {
+      "event": "source-key-redirect",
+      "x87_control": 639
+    },
+    {
+      "event": "source-check-return",
+      "eax": 1,
+      "x87_control": 639
+    },
+    {
+      "event": "thread-created",
+      "thread_id": 11708,
+      "start_address": 1917535952,
+      "x87_control": 639
+    },
+    {
+      "event": "private-profile-directory",
+      "caller_return": 4667742,
+      "buffer_capacity": 255,
+      "returned_length": 67
+    },
+    {
+      "event": "thread-created",
+      "thread_id": 22288,
+      "start_address": 1924548528,
+      "x87_control": 639
+    },
+    {
+      "event": "thread-created",
+      "thread_id": 12528,
+      "start_address": 1972264256,
+      "x87_control": 639
+    },
+    {
+      "event": "thread-created",
+      "thread_id": 4348,
+      "start_address": 1760406384,
+      "x87_control": 639
+    },
+    {
+      "event": "thread-created",
+      "thread_id": 24412,
+      "start_address": 1995463408,
+      "x87_control": 639
+    },
+    {
+      "event": "thread-created",
+      "thread_id": 18548,
+      "start_address": 1924548528,
+      "x87_control": 639
+    },
+    {
+      "event": "thread-created",
+      "thread_id": 23088,
+      "start_address": 1924548528,
+      "x87_control": 639
+    },
+    {
+      "event": "devices-enumerated",
+      "x87_control": 639,
+      "last_device_index": 0,
+      "devices": [
+        "Primary Display Driver"
+      ],
+      "selection_words": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "event": "private-profile-directory",
+      "caller_return": 4202519,
+      "buffer_capacity": 255,
+      "returned_length": 67
+    },
+    {
+      "event": "private-profile-directory",
+      "caller_return": 4203445,
+      "buffer_capacity": 255,
+      "returned_length": 67
+    },
+    {
+      "event": "config-bootstrap-return",
+      "x87_control": 639,
+      "last_device_index": 0,
+      "devices": [
+        "Primary Display Driver"
+      ],
+      "selection_words": [
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "event": "render-mode-call",
+      "callsite": 4663767,
+      "arguments": [
+        640,
+        480,
+        16,
+        1
+      ],
+      "x87_control": 639
+    },
+    {
+      "event": "denied-cursor-warp",
+      "caller_return": 1924300494,
+      "x": 320,
+      "y": 240,
+      "returned_success": false
+    },
+    {
+      "event": "directdraw-set-display-mode-result",
+      "hresult": 0,
+      "hresult_hex": "00000000",
+      "x87_control": 639
+    },
+    {
+      "event": "denied-cursor-warp",
+      "caller_return": 1924017536,
+      "x": 320,
+      "y": 240,
+      "returned_success": false
+    },
+    {
+      "event": "render-mode-return",
+      "eax": 1,
+      "x87_control": 639
+    },
+    {
+      "event": "bootstrap-entry",
+      "game_bootstrap_executed": false,
+      "continue_bootstrap": true,
+      "x87_control": 639
+    },
+    {
+      "event": "thread-created",
+      "thread_id": 19360,
+      "start_address": 1785375224,
+      "x87_control": 639
+    },
+    {
+      "event": "denied-cursor-warp",
+      "caller_return": 4669169,
+      "x": 160,
+      "y": 100,
+      "returned_success": false
+    },
+    {
+      "event": "thread-created",
+      "thread_id": 7272,
+      "start_address": 1926401936,
+      "x87_control": 639
+    },
+    {
+      "event": "thread-created",
+      "thread_id": 18668,
+      "start_address": 1995463408,
+      "x87_control": 639
+    },
+    {
+      "event": "thread-created",
+      "thread_id": 20744,
+      "start_address": 1926865408,
+      "x87_control": 639
+    },
+    {
+      "event": "thread-created",
+      "thread_id": 25820,
+      "start_address": 1926865408,
+      "x87_control": 639
+    },
+    {
+      "event": "bootstrap-stage",
+      "address": 4690619,
+      "eax": 1,
+      "x87_control": 639,
+      "sound_device": 12322992,
+      "model_count": 0,
+      "entity_capacity": 0,
+      "entity_used": 0,
+      "navigation_count_raw": 0
+    },
+    {
+      "event": "thread-created",
+      "thread_id": 16352,
+      "start_address": 1926379024,
+      "x87_control": 639
+    },
+    {
+      "event": "thread-created",
+      "thread_id": 18672,
+      "start_address": 1755814656,
+      "x87_control": 639
+    },
+    {
+      "event": "thread-created",
+      "thread_id": 19304,
+      "start_address": 1755348352,
+      "x87_control": 639
+    },
+    {
+      "event": "bootstrap-stage",
+      "address": 4690638,
+      "eax": 0,
+      "x87_control": 639,
+      "sound_device": 12322992,
+      "model_count": 0,
+      "entity_capacity": 0,
+      "entity_used": 0,
+      "navigation_count_raw": 0
+    },
+    {
+      "event": "bootstrap-stage",
+      "address": 4486336,
+      "eax": 45045296,
+      "x87_control": 639,
+      "sound_device": 12322992,
+      "model_count": 0,
+      "entity_capacity": 9600,
+      "entity_used": 0,
+      "navigation_count_raw": 0
+    },
+    {
+      "event": "bootstrap-stage",
+      "address": 4486522,
+      "eax": 1,
+      "x87_control": 639,
+      "sound_device": 12322992,
+      "model_count": 454,
+      "entity_capacity": 9600,
+      "entity_used": 755,
+      "navigation_count_raw": 0
+    },
+    {
+      "event": "bootstrap-stage",
+      "address": 4486539,
+      "eax": 111723584,
+      "x87_control": 639,
+      "sound_device": 12322992,
+      "model_count": 454,
+      "entity_capacity": 9600,
+      "entity_used": 7796,
+      "navigation_count_raw": 0
+    },
+    {
+      "event": "bootstrap-stage",
+      "address": 4486588,
+      "eax": 80089,
+      "x87_control": 639,
+      "sound_device": 12322992,
+      "model_count": 454,
+      "entity_capacity": 9600,
+      "entity_used": 7797,
+      "navigation_count_raw": 283
+    },
+    {
+      "event": "bootstrap-stage",
+      "address": 4692113,
+      "eax": 1,
+      "x87_control": 639,
+      "sound_device": 12322992,
+      "model_count": 454,
+      "entity_capacity": 9600,
+      "entity_used": 7831,
+      "navigation_count_raw": 283
+    },
+    {
+      "event": "bootstrap-return",
+      "address": 4666354,
+      "eax": 1,
+      "api_executed": false,
+      "x87_control": 639
+    },
+    {
+      "event": "bootstrap-stage",
+      "address": 4666354,
+      "eax": 1,
+      "x87_control": 639,
+      "sound_device": 12322992,
+      "model_count": 454,
+      "entity_capacity": 9600,
+      "entity_used": 7831,
+      "navigation_count_raw": 283
+    },
+    {
+      "event": "breakpoints-restored",
+      "verified": true
+    },
+    {
+      "event": "process-exit",
+      "code": 1295188225,
+      "probe_termination": true
+    },
+    {
+      "event": "private-key-cleanup",
+      "result": 0
+    },
+    {
+      "event": "probe-complete",
+      "reached_interaction_boundary": true,
+      "passed": true
+    }
+  ],
+  "executable_sha256": "ced15756cc21dda756efc991ad714f11b6aecc3630f5296fe69230c87eaf7ca5",
+  "registry_after": [
+    {
+      "view": "32",
+      "exists": false,
+      "error": 2
+    },
+    {
+      "view": "64",
+      "exists": false,
+      "error": 2
+    }
+  ],
+  "protected_windows_files_after": {
+    "C:\\Windows\\BHUNTER.CFG": {
+      "exists": false,
+      "sha256": null
+    },
+    "C:\\Windows\\BHUNTER.INI": {
+      "exists": false,
+      "sha256": null
+    }
+  },
+  "private_key_absent_after": true,
+  "profile_files": [
+    {
+      "name": "BHUNTER.CFG",
+      "bytes": 644,
+      "sha256": "d2bc8d510f92d9ba9e115bd3b615433f6253be73f010550b91778826ff71f5d8"
+    }
+  ],
+  "compatibility_log": {
+    "path": "build/m3/startup-ddrawcompat/logs/89994fa7c8f0.log",
+    "sha256": "16320ea5eda9f3396d487b95f0ef33b1aca9de64de6be4ded86dab58cbdcb36d",
+    "original_path": "build/m3/startup-ddrawcompat/DDrawCompat-BHUNTER.log"
+  }
+}

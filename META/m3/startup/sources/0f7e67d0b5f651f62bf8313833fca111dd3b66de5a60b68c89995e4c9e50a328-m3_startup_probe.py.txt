@@ -1,0 +1,155 @@
+"""Run the original to its first configuration/diagnostic message boundary.
+
+No computer-use or visual tooling. Optional key messages target only the verified
+diagnostic child; process-local platform adaptations are explicit.
+"""
+import ctypes
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import shutil
+import struct
+import subprocess
+import uuid
+import winreg
+from m3_source_probe import registry_state
+
+ROOT=Path(__file__).resolve().parents[1]
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def file_state(p):return dict(exists=p.exists(),sha256=sha(p) if p.exists() else None)
+def imports(blob):
+    u32=lambda at:struct.unpack_from('<I',blob,at)[0]
+    u16=lambda at:struct.unpack_from('<H',blob,at)[0]
+    pe=u32(0x3c);op=pe+24;image_base=u32(op+28);n=u16(pe+6);section=op+u16(pe+20)
+    assert blob[:2]==b'MZ' and blob[pe:pe+4]==b'PE\0\0' and u16(op)==0x10b
+    sections=[struct.unpack_from('<8sIIII',blob,section+i*40) for i in range(n)]
+    def raw(rva):
+        for _,virtual,va,size,offset in sections:
+            if va<=rva<va+max(virtual,size):return offset+rva-va
+        raise ValueError('RVA outside sections')
+    def text(rva):return blob[raw(rva):].split(b'\0',1)[0].decode('ascii')
+    rows={};at=raw(u32(op+104))
+    while u32(at) or u32(at+12):
+        lookup=u32(at);iat=u32(at+16);dll=text(u32(at+12));i=0
+        while u32(raw(lookup+i*4)):
+            v=u32(raw(lookup+i*4))
+            if not v&0x80000000:rows[text(v+2)]=dict(dll=dll.upper(),iat_va=image_base+iat+i*4)
+            i+=1
+        at+=20
+    return rows
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--seed-config',type=Path,help='Real original-written CFG from a prior captured run')
+    parser.add_argument('--render-profile',choices=['software-low','software-high','hardware'])
+    parser.add_argument('--show-reference',action='store_true',help='Use original normal show parameter; no UI inspection/input is performed')
+    parser.add_argument('--ddrawcompat',action='store_true',help='Use the separately staged/pinned M3 DDrawCompat dependency in a separate reference folder')
+    parser.add_argument('--through-bootstrap',action='store_true',help='Trace actual bootstrap to its return, guarding cursor warps and stopping before system volume writes')
+    parser.add_argument('--through-first-frame',action='store_true',help='Continue through first simulation, renderer callback and actual surface Flip result; implies bootstrap tracing')
+    parser.add_argument('--disable-bottom-up-aslr',action='store_true',help='Per-child creation policy only, for the original 28-bit binding pointer assertion; no persistent/system policy change')
+    parser.add_argument('--crt-initial-heap-mib',type=int,choices=[128],help='Diagnostic original CRT HeapCreate initial-size input adaptation; real heap/allocation APIs still execute')
+    parser.add_argument('--observe-callbacks',type=int,choices=[300,600],help='Observe bounded real simulation returns and inventory actual menu entities; implies first-frame tracing')
+    parser.add_argument('--menu-trace',choices=['prologue'],help='Post recorded key messages only to the verified diagnostic child window; implies 600 observed callbacks')
+    parser.add_argument('--relative-cursor',action='store_true',help='Translate real successful game GetCursorPos samples into relative recentered coordinates without desktop warps')
+    options=parser.parse_args()
+    if options.menu_trace:options.observe_callbacks=600
+    if options.observe_callbacks:options.through_first_frame=True
+    if options.through_first_frame:options.through_bootstrap=True
+    assert bool(options.seed_config)==bool(options.render_profile),'Seed and explicit renderer profile must be supplied together'
+    manifest=json.loads((ROOT/'META/reference-manifest.json').read_text());refs={v['path']:v for v in manifest['files'] if v['root']=='repo'}
+    for p,v in refs.items():assert sha(ROOT/p)==v['sha256'],p
+    table=imports((ROOT/'GAME_DATA/BHUNTER.EXE').read_bytes())
+    assert table['MessageBoxA']==dict(dll='USER32.DLL',iat_va=0x489148)
+    assert table['GetWindowsDirectoryA']==dict(dll='KERNEL32.DLL',iat_va=0x48907c)
+    for name,dll,iat in [('SetCursorPos','USER32.DLL',0x489150),('auxSetVolume','WINMM.DLL',0x4891a4),('waveOutSetVolume','WINMM.DLL',0x4891b4)]:assert table[name]==dict(dll=dll,iat_va=iat)
+    source=ROOT/'build/m3/reference-source';assert sha(source/'Copyright.txt')=='2338bda2a87a5a5fb2468f5e56080382e1a88b64bf92c362c6458dcf0a5307ac'
+    folder=ROOT/('build/m3/startup-ddrawcompat' if options.ddrawcompat else 'build/m3/startup');folder.mkdir(parents=True,exist_ok=True)
+    compatibility=None
+    if options.ddrawcompat:
+        compatibility=json.loads((ROOT/'META/m3/compat/ddrawcompat-v0.7.2.json').read_text())
+        dll=ROOT/compatibility['staged_dll'];assert sha(dll)==compatibility['dll_sha256']
+        if (folder/'ddraw.dll').exists():assert sha(folder/'ddraw.dll')==compatibility['dll_sha256']
+        else:shutil.copyfile(dll,folder/'ddraw.dll')
+    else:assert not (folder/'ddraw.dll').exists(),'Native control folder must have no local wrapper'
+    for name in ('BHUNTER.EXE','Bhunter.bin'):
+        target=folder/name;reference=ROOT/'GAME_DATA'/name
+        if target.exists():assert sha(target)==sha(reference),'Do not overwrite a different local reference copy'
+        else:shutil.copyfile(reference,target)
+    run_id=uuid.uuid4().hex[:12];profile=folder/('profile-'+run_id);profile.mkdir()
+    preset=None
+    if options.seed_config:
+        data=bytearray(options.seed_config.read_bytes());assert len(data)>=416 and (len(data)-416)%76==0
+        assert data[12:140].split(b'\0',1)[0]==b'Primary Display Driver','Only measured device name is accepted by this preset'
+        fields=(1,int(options.render_profile=='hardware'),int(options.render_profile!='software-low'))
+        struct.pack_into('<H',data,0,fields[0]);struct.pack_into('<II',data,4,*fields[1:]);(profile/'BHUNTER.CFG').write_bytes(data)
+        preset=dict(name=options.render_profile,seed_path=str(options.seed_config),seed_sha256=sha(options.seed_config),original_seed_bytes=len(data),modified_settings_offsets=[0,4,8],settings_words=fields,initial_cfg_sha256=sha(profile/'BHUNTER.CFG'))
+    winbuf=ctypes.create_unicode_buffer(1024);assert ctypes.windll.kernel32.GetWindowsDirectoryW(winbuf,len(winbuf))
+    windows=Path(winbuf.value);protected={str(windows/n):file_state(windows/n) for n in ('BHUNTER.CFG','BHUNTER.INI')}
+    registry_before=registry_state();key='Software\\BhunterM3-'+uuid.uuid4().hex
+    roots={k:Path(v) for k,v in manifest['roots'].items()};env=os.environ.copy()
+    for k in ('CL','_CL_','LINK','_LINK_'):env.pop(k,None)
+    env['PATH']=os.pathsep.join([str(roots['compiler']),str(roots['shared']),env.get('PATH','')])
+    env['INCLUDE']=os.pathsep.join(str(roots[k]/'include') for k in ('sp3','vc'));env['LIB']=os.pathsep.join(str(roots[k]/'lib') for k in ('sp3','vc'))
+    commands=[];report=dict(date='2026-10-24',passed=False,run_id=run_id,scope='Original startup to MessageBox or pre-simulation bootstrap boundary; no dialog executed or visual tooling',original_code_executes=True,original_file_patches=0,profile_directory_adapter=True,renderer_preset=preset,show_parameter=int(options.show_reference),registry_before=registry_before,protected_windows_files_before=protected,commands=commands,source_hashes={p:sha(ROOT/p) for p in ('tools/m3_startup_probe.c','tools/m3_startup_probe.py')},original_hashes={p:v['sha256'] for p,v in refs.items()},profile_path=profile.relative_to(ROOT).as_posix(),m3_complete=False)
+    report['compatibility_dependency']=compatibility
+    report['through_bootstrap']=options.through_bootstrap
+    report['through_first_frame']=options.through_first_frame
+    report['child_bottom_up_aslr_disabled']=options.disable_bottom_up_aslr
+    report['crt_initial_heap_mib_adapter']=options.crt_initial_heap_mib
+    report['observe_callbacks']=options.observe_callbacks
+    report['child_window_input_trace']=options.menu_trace
+    report['relative_cursor_adapter']=options.relative_cursor
+    if options.through_bootstrap:report['scope']='Original bootstrap/scene load through actual return or earlier diagnostic stop; no menu/gameplay/normal shutdown or visual tooling'
+    if options.through_first_frame:report['scope']='Original through first simulation/render callback returns and surface Flip result or earlier diagnostic stop; no visual/input/gameplay/normal shutdown acceptance'
+    if options.observe_callbacks:report['scope']='Original bounded idle simulation and constructed menu-object inventory; no visual/UI-input/menu-navigation/gameplay acceptance'
+    if options.menu_trace:report['scope']='Original menu navigation attempt with actual child-only key messages; real native cursor with optional relative-coordinate adapter; no visual/gameplay/normal-shutdown acceptance'
+    report['cursor_warp_failure_adapter']=options.through_bootstrap
+    report['stop_before_system_volume_write']=options.through_bootstrap
+    snapshots=ROOT/'META/m3/startup/sources';snapshots.mkdir(parents=True,exist_ok=True)
+    report['source_snapshots']={}
+    for p,h in report['source_hashes'].items():
+        dest=snapshots/(h+'-'+Path(p).name+'.txt')
+        if dest.exists():assert sha(dest)==h
+        else:shutil.copyfile(ROOT/p,dest)
+        report['source_snapshots'][p]=dest.relative_to(ROOT).as_posix()
+    def run(label,argv,timeout=60):
+        p=subprocess.run([str(v) for v in argv],cwd=folder,env=env,capture_output=True,text=True,timeout=timeout,creationflags=subprocess.CREATE_NO_WINDOW)
+        log=p.stdout+p.stderr;commands.append(dict(label=label,argv=[str(v) for v in argv],exit_code=p.returncode,output=log));(folder/(label+'-'+run_id+'.txt')).write_text(log);print(label,p.returncode)
+        if label=='startup':report['events']=[json.loads(line) for line in p.stdout.splitlines() if line.startswith('{')]
+        if p.returncode:raise RuntimeError(log)
+        return p
+    try:
+        run('compile',[roots['compiler']/'CL.EXE','/nologo','/c','/ML','/O2','/G5','/Oi','/Gy','/Fo'+str(folder/'startup-probe.obj'),ROOT/'tools/m3_startup_probe.c'])
+        run('link',[roots['vc']/'bin/LINK.EXE','/nologo','/subsystem:console','/out:'+str(folder/'startup-probe.exe'),folder/'startup-probe.obj','kernel32.lib','advapi32.lib','user32.lib'])
+        p=run('startup',[folder/'startup-probe.exe',folder/'BHUNTER.EXE',folder,source,profile,key,int(options.show_reference),int(options.through_bootstrap),int(options.through_first_frame),int(options.disable_bottom_up_aslr),options.crt_initial_heap_mib or 0,options.observe_callbacks or 0,options.menu_trace or 'none',int(options.relative_cursor)])
+        events=[json.loads(line) for line in p.stdout.splitlines() if line.startswith('{')];report['events']=events
+        if options.menu_trace:report['requested_menu_path_observed']=any(v['event']=='episode-action-return' and v['start_pending']==1 and v['selected_episode']==0 for v in events)
+        assert next(v for v in events if v['event']=='source-check-return')['eax']==1
+        stop_events=('message-box-boundary','bootstrap-return','volume-write-boundary') if options.through_bootstrap else ('message-box-boundary','bootstrap-entry')
+        if options.through_first_frame:stop_events=('message-box-boundary','first-presentation-boundary','volume-write-boundary')
+        if options.observe_callbacks:stop_events=('message-box-boundary','observation-boundary','volume-write-boundary')
+        boundary=next(v for v in events if v['event'] in stop_events)
+        if boundary['event']=='message-box-boundary':assert not boundary['dialog_executed']
+        assert next(v for v in events if v['event']=='breakpoints-restored')['verified']
+        assert next(v for v in events if v['event']=='private-key-cleanup')['result']==0
+        report['executable_sha256']=sha(folder/'startup-probe.exe');report['passed']=True
+        print(json.dumps(boundary))
+    finally:
+        report['registry_after']=registry_state();assert registry_before==report['registry_after']
+        report['protected_windows_files_after']={str(windows/n):file_state(windows/n) for n in ('BHUNTER.CFG','BHUNTER.INI')};assert protected==report['protected_windows_files_after']
+        try:
+            with winreg.OpenKey(winreg.HKEY_CURRENT_USER,key,0,winreg.KEY_READ|winreg.KEY_WOW64_32KEY):raise AssertionError('private registry key remained')
+        except FileNotFoundError:report['private_key_absent_after']=True
+        for p,v in refs.items():assert sha(ROOT/p)==v['sha256'],p
+        for name in ('BHUNTER.EXE','Bhunter.bin'):assert sha(folder/name)==sha(ROOT/'GAME_DATA'/name)
+        report['profile_files']=[dict(name=p.name,bytes=p.stat().st_size,sha256=sha(p)) for p in profile.iterdir() if p.is_file()]
+        log=folder/'DDrawCompat-BHUNTER.log'
+        if log.exists():
+            logs=folder/'logs';logs.mkdir(exist_ok=True);snapshot=logs/(run_id+'.log');shutil.copyfile(log,snapshot)
+            report['compatibility_log']=dict(path=snapshot.relative_to(ROOT).as_posix(),sha256=sha(snapshot),original_path=log.relative_to(ROOT).as_posix())
+        dest=ROOT/'META/m3/startup';dest.mkdir(exist_ok=True);(dest/(run_id+'.json')).write_text(json.dumps(report,indent=2)+'\n',newline='\n')
+        print('Evidence',str((dest/(run_id+'.json')).relative_to(ROOT)))
+
+if __name__=='__main__':main()

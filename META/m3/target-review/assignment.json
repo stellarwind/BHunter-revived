@@ -1,0 +1,142 @@
+{
+  "scope": "Read-only tutorial launch boundary review; no recovery assignment or source admission",
+  "functions": [
+    {
+      "address": "0043bca0",
+      "boundary": "0043bca0-0043beb4",
+      "role": "engine_candidate",
+      "confidence": "medium",
+      "evidence": [
+        "Existing Ghidra body is 533 bytes, one non-thunk contiguous range",
+        "Script launch opcode calls this owner at 00445148 with placement/type/bounty/speed/death-event arguments",
+        "Calls matrix/vector and entity creation owners; no verified CRT/library attribution for this owner"
+      ],
+      "implementation": "not_started",
+      "integration": "not_built",
+      "question": "Immediate vehicle creation versus deferred spawn; identify actual created-entity ownership and return contract before runtime instrumentation",
+      "limits": "Engine provenance unresolved; game ownership is not inferred from absence of a library match"
+    },
+    {
+      "address": "0043a920",
+      "boundary": "0043a920-0043b2aa",
+      "role": "engine_candidate",
+      "confidence": "medium",
+      "evidence": [
+        "Complete launch wrapper forwards six arguments at 0043bea5",
+        "Existing non-thunk contiguous body; construction owner under review"
+      ],
+      "implementation": "not_started",
+      "integration": "not_built"
+    },
+    {
+      "address": "004398c0",
+      "boundary": "004398c0-0043990f",
+      "role": "engine_candidate",
+      "confidence": "medium",
+      "evidence": [
+        "Constructor installs type-6 update callback at entity+cc",
+        "Existing non-thunk complete body; no verified CRT attribution"
+      ],
+      "implementation": "not_started",
+      "integration": "not_built"
+    },
+    {
+      "address": "0043a1d0",
+      "boundary": "0043a1d0-0043a8d0",
+      "role": "engine_candidate",
+      "confidence": "medium",
+      "evidence": [
+        "Constructor installs type-6 event callback via 00476e90",
+        "Existing non-thunk complete body; no verified CRT attribution"
+      ],
+      "implementation": "not_started",
+      "integration": "not_built"
+    },
+    {
+      "address": "00434920",
+      "boundary": "00434920-00434f38",
+      "role": "engine_candidate",
+      "confidence": "medium",
+      "evidence": [
+        "Constructor installs entity callback at +e8; role to verify",
+        "Existing non-thunk complete body; no verified CRT attribution"
+      ],
+      "implementation": "not_started",
+      "integration": "not_built"
+    },
+    {
+      "address": "00476e90",
+      "boundary": "00476e90-00476f1a",
+      "role": "engine_candidate",
+      "confidence": "medium",
+      "evidence": [
+        "Shared entity callback registration owner",
+        "Existing non-thunk complete body; no verified CRT attribution"
+      ],
+      "implementation": "not_started",
+      "integration": "not_built"
+    },
+    {
+      "address": "00476f20",
+      "boundary": "00476f20-00477063",
+      "role": "engine_candidate",
+      "confidence": "medium",
+      "evidence": [
+        "Shared entity allocation owner",
+        "Existing non-thunk complete body; no verified CRT attribution"
+      ],
+      "implementation": "not_started",
+      "integration": "not_built"
+    },
+    {
+      "address": "00439910",
+      "boundary": "00439910-0043a1c6",
+      "role": "engine_candidate",
+      "confidence": "medium",
+      "evidence": [
+        "Type-6 event callback switches +cc to this owner after damage/impulse",
+        "Existing non-thunk contiguous body"
+      ],
+      "implementation": "not_started",
+      "integration": "not_built"
+    },
+    {
+      "address": "00438ff0",
+      "boundary": "00438ff0-004397ce",
+      "role": "engine_candidate",
+      "confidence": "medium",
+      "evidence": [
+        "Default type-6 update calls this when interpolation phase crosses duration",
+        "Existing non-thunk contiguous body"
+      ],
+      "implementation": "not_started",
+      "integration": "not_built"
+    },
+    {
+      "address": "00437ae0",
+      "boundary": "00437ae0-00438fe2",
+      "role": "engine_candidate",
+      "confidence": "medium",
+      "evidence": [
+        "Default type-6 update invokes this owner first",
+        "Existing non-thunk contiguous body"
+      ],
+      "implementation": "not_started",
+      "integration": "not_built"
+    }
+  ],
+  "excluded_dependencies": [
+    {
+      "address": "0047ddf0",
+      "role": "library_verified",
+      "owner": "CRT rand",
+      "evidence": "Existing library-crt-verified tag"
+    },
+    {
+      "address": "0047de20",
+      "role": "compiler_support",
+      "owner": "CRT ftol",
+      "evidence": "Existing library-crt-verified tag"
+    }
+  ]
+}

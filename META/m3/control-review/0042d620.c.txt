@@ -1,0 +1,42 @@
+
+void FUN_0042d620(int param_1,int param_2)
+
+{
+  uint uVar1;
+  
+  switch(param_2) {
+  case 1:
+    uVar1 = (uint)*(byte *)(DAT_004df240 + 0x31);
+    break;
+  case 2:
+    uVar1 = (uint)*(byte *)(DAT_004df240 + 0x32);
+    break;
+  case 3:
+    uVar1 = (uint)*(byte *)(DAT_004df240 + 0x33);
+    break;
+  case 4:
+    uVar1 = (uint)*(byte *)(DAT_004df240 + 0x34);
+    break;
+  case 5:
+    uVar1 = (uint)*(byte *)(DAT_004df240 + 0x35);
+    break;
+  case 6:
+    uVar1 = (uint)*(byte *)(DAT_004df240 + 0x36);
+    break;
+  case 7:
+    uVar1 = (uint)*(byte *)(DAT_004df240 + 0x37);
+    break;
+  case 8:
+    uVar1 = (uint)*(byte *)(DAT_004df240 + 0x38);
+    break;
+  case 9:
+    uVar1 = (uint)*(byte *)(DAT_004df240 + 0x39);
+    break;
+  default:
+    goto switchD_0042d630_default;
+  }
+  FUN_0042c7d0(param_1,param_2,0,(&PTR_s_<No_key>_00491d10)[uVar1]);
+switchD_0042d630_default:
+  return;
+}
+

@@ -1,0 +1,101 @@
+{
+  "date": "2026-10-23",
+  "passed": true,
+  "scope": "Config/profile-container/path integration family; no game admission",
+  "m2_complete": false,
+  "original_code_required": false,
+  "original_adapter_added": false,
+  "source_only_scenario": {
+    "scenario": "config-container-path",
+    "checks": 2508,
+    "failures": 0,
+    "original_code_required": false
+  },
+  "real_integration": {
+    "scenario": "m2-foundations",
+    "checks": 51285,
+    "failures": 0,
+    "archive_entries": 1229,
+    "original_code_required": false
+  },
+  "clean_integration": {
+    "scenario": "m2-foundations",
+    "checks": 31636,
+    "failures": 0,
+    "archive_entries": 0,
+    "original_code_required": false
+  },
+  "identical_real_and_clean_source_hashes": {
+    "src/bh_math.c": "ce111e18659563a2c41a04b645295227aac6ead9fe9cc2e803ac45c726d6e9bc",
+    "src/bh_math.h": "9ebaf91c16011277e1e2f9a9c3791b3ea1245dafa3e096d918422378d6065a9d",
+    "src/bh_fp.c": "cc8400a29fd082f96ffd9b483f490a44992717b25eac0cb32e2e108ba446f3f8",
+    "src/bh_fp.h": "f4565fc55c52d3582181db98d3199f6c8f9b665ffd227ab715ce7a03ab4e818d",
+    "src/bh_vfile.c": "7a8187efa6bfcbdf7a626ff53c6d4133d47a37e2dcf65830985b5cee94bf78d0",
+    "src/bh_vfile.h": "7867198f05fbfa5a4b3ae2a003245e8ff7faaea72e1194852d32b18a0ecae7ba",
+    "src/bh_config.c": "6081596cb764118e0441ce5d3e0cf897a6ce011ca2d7e9aaa81a6ab5ef58092e",
+    "src/bh_config.h": "a82e0abf34974bec247852e225904afe4821fe83d01e1e21f2d53e0b18f70dfc",
+    "src/bh_config_defaults.h": "492d14e242d011967eda0601cf98432ea26c821c9ebebca37c52bcb348688cfb",
+    "src/bh_paths.c": "0ce4a5312e27f1cec73425cea8a25b93677e9a619ec6aeb6c79f828c8293a977",
+    "src/bh_paths.h": "f5b49007ba7ed969612fbffa724b9a803aa4966249b803fd2137a555dbc03bdb",
+    "tests/config.c": "0a6715aa5e4cbe02e53927be96f648b5c9101678c66e16fe40d47f3d23ac7961",
+    "tests/integration.c": "fb18f5cea1837a95c66800769a4dfa21e3e64cbcd2ec2bd9fa038b906607b8de",
+    "tests/checkpoint.c": "3e0f5c3e69a8874093e5fb6171e519007da6a6793a594b2308a37b38c9479626",
+    "tests/vfile.c": "4ce922ed286642015cbda949c6349fc194e04392d1b8309d497b40574ba16451",
+    "tests/math_cases.c": "907257316f265794a1a73da7ff04a7890fcd737d8906a8459ec188e9a1a70ca6",
+    "tests/math_cases.h": "66ea7025b3a0580ee8bb300707e10a4bb94cd9a7bcec779faf172cff35a64a82",
+    "tests/math_numeric.c": "01a96c8f47790525966352de86a42b90ad7ec2f39d0bbc9ef403512a53571de5",
+    "tests/math_golden.h": "bb91fd34bf9d908ce30f78e156526963c058b21f914448d68f03035f54fc0cec"
+  },
+  "dependency_manifest": {
+    "real_raw_sha256": "21ff5211555a44bd8e14b0f0286c16ffbe9c7a18629afa1033dd364c76573c06",
+    "clean_LF_sha256": "e0b0059f8b53f931dfdec6196b2796f1d395c30782dc16a726f72b976a16bf4e",
+    "same_content_after_git_line_ending_normalization": true
+  },
+  "missing_module_controls": {
+    "missing_definition_control": "rejected with LNK2001",
+    "missing_vfile_control": "rejected with LNK2001",
+    "missing_config_control": "rejected with LNK2001",
+    "missing_paths_control": "rejected with LNK2001"
+  },
+  "clean_source_tree": "25b068df981b463543e48fc9c4d3972e247d2bc3",
+  "role_review": "META/m2/config/review.json; supplements historical M1 catalog",
+  "new_functional_variants": [
+    "00401fd0-functional-c",
+    "004022d0-functional-c",
+    "00402370-functional-c",
+    "00473910-functional-c"
+  ],
+  "support_adapters": [
+    "bh_config_init",
+    "bh_config_dispose",
+    "bh_config_valid",
+    "bh_paths_config",
+    "bh_paths_discover"
+  ],
+  "checks": [
+    "all four original EXE/BIN/MDF/MDS preservation hashes verified unchanged",
+    "read-only default-data/header/boundary/dependency verification passed",
+    "M1 historical catalog --check passed",
+    "status --check: 23 tracked addresses, 37 implementation records, 4 bm/19 func, no game admission",
+    "git diff --check passed"
+  ],
+  "artifacts": {
+    "META/m2/config/review.json": "b85fdc116a6184ba30ea29f6d51fb9d91579ce32f46d4e7b96eb6df72124f693",
+    "META/m2/config/dependency-validation.json": "4c5fc5b127d4b9c08da10b3acfaa2d1331b7aca9eaabe506846fb973b61cadfb",
+    "META/m2/config/integration-real.json": "9f55c22b84e9095e9e447dbccb5736b86552f60e94aab5c6ddb1400495f19941",
+    "META/m2/config/link-map.txt": "b71dd7443c40ed9ff6df949872ec2f95000d60cf177fa9a3ab146ba98d09af13",
+    "META/m2/config-clean/clean-checkout.json": "b05259ca8624a7a7e7df118a423a9768e1b51e3ef008b2c1671a6abf05771c14",
+    "META/m2/config-clean/link-map.txt": "1b41226391064c287824a835c59aecff4825243f1034f7cfe812dfacdd32ed33",
+    "tools/check_config_evidence.py": "26720db0d5613b4de74e7d2689a8f0744944b943004f7bdef18c9f193f2f3660",
+    "tools/m0.py": "acfddeb2533d5dae8909c4763a5ca69414c01572e7a2c27365cb460a249144a5"
+  },
+  "limits": [
+    "No actual user-produced CFG supplied; constructed legacy fixtures and exact captured defaults only",
+    "No original config/path execution or byte-match claim; interface inputs are explicit source adapters",
+    "Opaque fields preserved; renderer enumeration/input binding consumption/other engine containers remain open",
+    "No identified version marker; structural validation does not prove version compatibility",
+    "Legacy serialization includes live pointer words; loaded pointer words ignored/sanitized",
+    "Source bounds/ownership/rollback fix unsafe original error paths; disk-save replacement is not atomic",
+    "Required real-asset readers, original runtime precision scenarios, source-game lifecycle, CD audio and DirectPlay remain open"
+  ]
+}

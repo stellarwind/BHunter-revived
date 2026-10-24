@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include "../src/bh_fp.h"
+
+int bh_math_checkpoint(void);
+int bh_vfile_checkpoint(const char *archive, unsigned long *checks, unsigned long *entries);
+int bh_math_numeric_checkpoint(unsigned long *checks);
+int bh_config_checkpoint(unsigned long *checks);
+int bh_scene_checkpoint(const char *archive,unsigned long *checks);
+int bh_blocks_checkpoint(const char *archive,unsigned long *checks);
+int bh_entities_checkpoint(const char *archive,unsigned long *checks);
+
+int bh_wave_checkpoint(const char *archive,unsigned long *checks);
+
+int bh_pcx_checkpoint(const char *archive,unsigned long *checks);
+int bh_portals_checkpoint(unsigned long *checks);
+int bh_geometry_checkpoint(const char *archive,unsigned long *checks);
+int bh_world_geometry_checkpoint(const char *archive,unsigned long *checks);
+int bh_navigation_checkpoint(unsigned long *checks);
+int bh_route_query_checkpoint(unsigned long *checks);
+int bh_world_query_checkpoint(unsigned long *checks);
+int bh_position_checkpoint(unsigned long *checks);
+int bh_segment_query_checkpoint(unsigned long *checks);
+int bh_collision_model_checkpoint(unsigned long *checks);
+int bh_riff_checkpoint(unsigned long *checks);
+int bh_pcx_reader_checkpoint(unsigned long *checks);
+int bh_script_timer_checkpoint(unsigned long *checks);
+
+int main(int argc, char **argv) {
+    unsigned long checks=0, entries=0, numeric_checks=0, config_checks=0, scene_checks=0, block_checks=0, entity_checks=0, wave_checks=0, pcx_checks=0, portal_checks=0;
+    int math_failed, vfile_failed, numeric_failed, environment_failed, config_failed, scene_failed, blocks_failed, entities_failed, wave_failed, pcx_failed;
+    BHMathEnvironment environment;
+    int portals_failed;
+    unsigned long geometry_checks=0;int geometry_failed;
+    unsigned long world_checks=0;int world_failed;
+    unsigned long navigation_checks=0;int navigation_failed;
+    unsigned long route_checks=0;int route_failed;
+    unsigned long world_query_checks=0;int world_query_failed;
+    unsigned long waypoint_checks=0;int waypoint_failed;
+    unsigned long segment_checks=0;int segment_failed;
+    unsigned long collision_model_checks=0;int collision_model_failed;
+    unsigned long riff_checks=0;int riff_failed;
+    unsigned long pcx_reader_checks=0;int pcx_reader_failed;
+    unsigned long script_timer_checks=0;int script_timer_failed;
+    if (argc>2) return 2;
+    if (!bh_math_environment_enter(&environment)) return 2;
+    math_failed=bh_math_checkpoint();
+    numeric_failed=bh_math_numeric_checkpoint(&numeric_checks);
+    vfile_failed=bh_vfile_checkpoint(argc==2 ? argv[1] : NULL,&checks,&entries);
+    config_failed=bh_config_checkpoint(&config_checks);
+    scene_failed=bh_scene_checkpoint(argc==2 ? argv[1] : NULL,&scene_checks);
+    blocks_failed=bh_blocks_checkpoint(argc==2 ? argv[1] : NULL,&block_checks);
+    entities_failed=bh_entities_checkpoint(argc==2 ? argv[1] : NULL,&entity_checks);
+    wave_failed=bh_wave_checkpoint(argc==2 ? argv[1] : NULL,&wave_checks);
+    pcx_failed=bh_pcx_checkpoint(argc==2 ? argv[1] : NULL,&pcx_checks);
+    portals_failed=bh_portals_checkpoint(&portal_checks);
+    geometry_failed=bh_geometry_checkpoint(argc==2 ? argv[1] : NULL,&geometry_checks);
+    world_failed=bh_world_geometry_checkpoint(argc==2 ? argv[1] : NULL,&world_checks);
+    navigation_failed=bh_navigation_checkpoint(&navigation_checks);
+    route_failed=bh_route_query_checkpoint(&route_checks);
+    world_query_failed=bh_world_query_checkpoint(&world_query_checks);
+    waypoint_failed=bh_position_checkpoint(&waypoint_checks);
+    segment_failed=bh_segment_query_checkpoint(&segment_checks);
+    collision_model_failed=bh_collision_model_checkpoint(&collision_model_checks);
+    riff_failed=bh_riff_checkpoint(&riff_checks);
+    pcx_reader_failed=bh_pcx_reader_checkpoint(&pcx_reader_checks);
+    script_timer_failed=bh_script_timer_checkpoint(&script_timer_checks);
+    environment_failed=!bh_math_environment_supported();
+    printf("{\"scenario\":\"m2-foundations\",\"checks\":%lu,\"failures\":%d,"
+           "\"archive_entries\":%lu,\"original_code_required\":false}\n",
+           checks+14+numeric_checks+config_checks+scene_checks+block_checks+entity_checks+wave_checks+pcx_checks+portal_checks+geometry_checks+world_checks+navigation_checks+route_checks+world_query_checks+waypoint_checks+segment_checks+collision_model_checks+riff_checks+pcx_reader_checks+script_timer_checks,math_failed+vfile_failed+numeric_failed+environment_failed+config_failed+scene_failed+blocks_failed+entities_failed+wave_failed+pcx_failed+portals_failed+geometry_failed+world_failed+navigation_failed+route_failed+world_query_failed+waypoint_failed+segment_failed+collision_model_failed+riff_failed+pcx_reader_failed+script_timer_failed,entries);
+    bh_math_environment_leave(&environment);
+    return math_failed || vfile_failed || numeric_failed || environment_failed || config_failed || scene_failed || blocks_failed ||entities_failed || wave_failed || pcx_failed || portals_failed || geometry_failed || world_failed || navigation_failed || route_failed || world_query_failed || waypoint_failed || segment_failed || collision_model_failed || riff_failed || pcx_reader_failed || script_timer_failed ? 1 : 0;
+}

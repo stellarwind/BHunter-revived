@@ -1,0 +1,2040 @@
+{
+  "date": "2026-10-24",
+  "scope": "Actual original constructed menu data only, not complete feature/content execution",
+  "source_report": "META/m3/startup/73beffa6a63f.json",
+  "source_report_sha256": "bfb984e5623b6d28263f88a8629cfdd59d53a7029fb5f0d61f0841ea26cb3b7d",
+  "constructor_evidence": [
+    "META/m3/menu-review/0042c300.asm.txt",
+    "META/m3/menu-review/0042c4c0.asm.txt"
+  ],
+  "menu_count": 18,
+  "menu_item_count": 118,
+  "phases": [
+    "bootstrap-return",
+    "observation-stop"
+  ],
+  "menus": [
+    {
+      "event": "menu-inventory",
+      "phase": "bootstrap-return",
+      "global_slot": 4808256,
+      "entity": 250857184,
+      "step_callback": 4371168,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "GAME",
+          "target_menu": 250870144,
+          "action_callback": 4377312,
+          "edit_callback": 0
+        },
+        {
+          "index": 1,
+          "label": "NETWORK",
+          "target_menu": 250871008,
+          "action_callback": 4377360,
+          "edit_callback": 0
+        },
+        {
+          "index": 2,
+          "label": "SETUP",
+          "target_menu": 250858912,
+          "action_callback": 0,
+          "edit_callback": 0
+        },
+        {
+          "index": 3,
+          "label": "QUIT",
+          "target_menu": 250858048,
+          "action_callback": 0,
+          "edit_callback": 0
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "bootstrap-return",
+      "global_slot": 5052680,
+      "entity": 250858048,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "YES",
+          "target_menu": 0,
+          "action_callback": 4378736,
+          "edit_callback": 0
+        },
+        {
+          "index": 1,
+          "label": "NO",
+          "target_menu": 250857184,
+          "action_callback": 0,
+          "edit_callback": 0
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "bootstrap-return",
+      "global_slot": 5036944,
+      "entity": 250858912,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "VIDEO",
+          "target_menu": 250859776,
+          "action_callback": 0,
+          "edit_callback": 0
+        },
+        {
+          "index": 1,
+          "label": "AUDIO",
+          "target_menu": 250860640,
+          "action_callback": 0,
+          "edit_callback": 0
+        },
+        {
+          "index": 2,
+          "label": "INPUT",
+          "target_menu": 250861504,
+          "action_callback": 0,
+          "edit_callback": 0
+        },
+        {
+          "index": 3,
+          "label": "BACK",
+          "target_menu": 250857184,
+          "action_callback": 4387664,
+          "edit_callback": 0
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "bootstrap-return",
+      "global_slot": 4809248,
+      "entity": 250859776,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "3D\nacceleration",
+          "target_menu": 250859776,
+          "action_callback": 4378832,
+          "edit_callback": 4379056
+        },
+        {
+          "index": 1,
+          "label": "graphics\ndevice",
+          "target_menu": 250859776,
+          "action_callback": 4378832,
+          "edit_callback": 4379056
+        },
+        {
+          "index": 2,
+          "label": "software\nresolution",
+          "target_menu": 250859776,
+          "action_callback": 4378832,
+          "edit_callback": 4379056
+        },
+        {
+          "index": 3,
+          "label": "BACK",
+          "target_menu": 250858912,
+          "action_callback": 4387504,
+          "edit_callback": 0
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "bootstrap-return",
+      "global_slot": 5036948,
+      "entity": 250860640,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "sound fx\nlouder",
+          "target_menu": 250860640,
+          "action_callback": 4381536,
+          "edit_callback": 4379280
+        },
+        {
+          "index": 1,
+          "label": "sound fx\nsofter",
+          "target_menu": 250860640,
+          "action_callback": 4381536,
+          "edit_callback": 4379280
+        },
+        {
+          "index": 2,
+          "label": "cd music\nlouder",
+          "target_menu": 250860640,
+          "action_callback": 4381536,
+          "edit_callback": 4379280
+        },
+        {
+          "index": 3,
+          "label": "cd music\nsofter",
+          "target_menu": 250860640,
+          "action_callback": 4381536,
+          "edit_callback": 4379280
+        },
+        {
+          "index": 4,
+          "label": "BACK",
+          "target_menu": 250858912,
+          "action_callback": 0,
+          "edit_callback": 0
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "bootstrap-return",
+      "global_slot": 4809544,
+      "entity": 250861504,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "input\nconfiguration",
+          "target_menu": 250861504,
+          "action_callback": 4382608,
+          "edit_callback": 4383488
+        },
+        {
+          "index": 1,
+          "label": "NEW",
+          "target_menu": 250861504,
+          "action_callback": 4382608,
+          "edit_callback": 4383488
+        },
+        {
+          "index": 2,
+          "label": "EDIT",
+          "target_menu": 250862368,
+          "action_callback": 0,
+          "edit_callback": 0
+        },
+        {
+          "index": 3,
+          "label": "DELETE",
+          "target_menu": 250861504,
+          "action_callback": 4382608,
+          "edit_callback": 0
+        },
+        {
+          "index": 4,
+          "label": "BACK",
+          "target_menu": 250858912,
+          "action_callback": 4387664,
+          "edit_callback": 0
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "bootstrap-return",
+      "global_slot": 5047428,
+      "entity": 250862368,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "NEXT",
+          "target_menu": 250863232,
+          "action_callback": 0,
+          "edit_callback": 0
+        },
+        {
+          "index": 1,
+          "label": "keyboard\nmove up",
+          "target_menu": 250862368,
+          "action_callback": 4383760,
+          "edit_callback": 4379520
+        },
+        {
+          "index": 2,
+          "label": "keyboard\nmove down",
+          "target_menu": 250862368,
+          "action_callback": 4383760,
+          "edit_callback": 4379520
+        },
+        {
+          "index": 3,
+          "label": "keyboard\nmove left",
+          "target_menu": 250862368,
+          "action_callback": 4383760,
+          "edit_callback": 4379520
+        },
+        {
+          "index": 4,
+          "label": "keyboard\nmove right",
+          "target_menu": 250862368,
+          "action_callback": 4383760,
+          "edit_callback": 4379520
+        },
+        {
+          "index": 5,
+          "label": "keyboard\naccelerate",
+          "target_menu": 250862368,
+          "action_callback": 4383760,
+          "edit_callback": 4379520
+        },
+        {
+          "index": 6,
+          "label": "keyboard\nbrakes",
+          "target_menu": 250862368,
+          "action_callback": 4383760,
+          "edit_callback": 4379520
+        },
+        {
+          "index": 7,
+          "label": "joy move\nup down",
+          "target_menu": 250862368,
+          "action_callback": 4383760,
+          "edit_callback": 4379520
+        },
+        {
+          "index": 8,
+          "label": "joy move\nleft right",
+          "target_menu": 250862368,
+          "action_callback": 4383760,
+          "edit_callback": 4379520
+        },
+        {
+          "index": 9,
+          "label": "joy\naccl brakes",
+          "target_menu": 250862368,
+          "action_callback": 4383760,
+          "edit_callback": 4379520
+        },
+        {
+          "index": 10,
+          "label": "mouse move\nup down",
+          "target_menu": 250862368,
+          "action_callback": 4383760,
+          "edit_callback": 4379520
+        },
+        {
+          "index": 11,
+          "label": "mouse move\nleft right",
+          "target_menu": 250862368,
+          "action_callback": 4383760,
+          "edit_callback": 4379520
+        },
+        {
+          "index": 12,
+          "label": "mouse\naccl brakes",
+          "target_menu": 250862368,
+          "action_callback": 4383760,
+          "edit_callback": 4379520
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "bootstrap-return",
+      "global_slot": 5036952,
+      "entity": 250863232,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "NEXT",
+          "target_menu": 250864096,
+          "action_callback": 0,
+          "edit_callback": 0
+        },
+        {
+          "index": 1,
+          "label": "fire\nprimary",
+          "target_menu": 250863232,
+          "action_callback": 4384320,
+          "edit_callback": 4379984
+        },
+        {
+          "index": 2,
+          "label": "fire\nprimary",
+          "target_menu": 250863232,
+          "action_callback": 4384320,
+          "edit_callback": 4379984
+        },
+        {
+          "index": 3,
+          "label": "fire\nprimary",
+          "target_menu": 250863232,
+          "action_callback": 4384320,
+          "edit_callback": 4379984
+        },
+        {
+          "index": 4,
+          "label": "toggle\nprimary",
+          "target_menu": 250863232,
+          "action_callback": 4384320,
+          "edit_callback": 4379984
+        },
+        {
+          "index": 5,
+          "label": "ion gun",
+          "target_menu": 250863232,
+          "action_callback": 4384320,
+          "edit_callback": 4379984
+        },
+        {
+          "index": 6,
+          "label": "lead buster",
+          "target_menu": 250863232,
+          "action_callback": 4384320,
+          "edit_callback": 4379984
+        },
+        {
+          "index": 7,
+          "label": "magnetic\nplasma",
+          "target_menu": 250863232,
+          "action_callback": 4384320,
+          "edit_callback": 4379984
+        },
+        {
+          "index": 8,
+          "label": "nitro\ncrackers",
+          "target_menu": 250863232,
+          "action_callback": 4384320,
+          "edit_callback": 4379984
+        },
+        {
+          "index": 9,
+          "label": "stun ray",
+          "target_menu": 250863232,
+          "action_callback": 4384320,
+          "edit_callback": 4379984
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "bootstrap-return",
+      "global_slot": 5063688,
+      "entity": 250864096,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "NEXT",
+          "target_menu": 250864960,
+          "action_callback": 0,
+          "edit_callback": 0
+        },
+        {
+          "index": 1,
+          "label": "fire\nsecondary",
+          "target_menu": 250864096,
+          "action_callback": 4384656,
+          "edit_callback": 4380192
+        },
+        {
+          "index": 2,
+          "label": "fire\nsecondary",
+          "target_menu": 250864096,
+          "action_callback": 4384656,
+          "edit_callback": 4380192
+        },
+        {
+          "index": 3,
+          "label": "fire\nsecondary",
+          "target_menu": 250864096,
+          "action_callback": 4384656,
+          "edit_callback": 4380192
+        },
+        {
+          "index": 4,
+          "label": "toggle\nsecondary",
+          "target_menu": 250864096,
+          "action_callback": 4384656,
+          "edit_callback": 4380192
+        },
+        {
+          "index": 5,
+          "label": "homie\nmissile",
+          "target_menu": 250864096,
+          "action_callback": 4384656,
+          "edit_callback": 4380192
+        },
+        {
+          "index": 6,
+          "label": "sonic\nblast",
+          "target_menu": 250864096,
+          "action_callback": 4384656,
+          "edit_callback": 4380192
+        },
+        {
+          "index": 7,
+          "label": "tnt mine",
+          "target_menu": 250864096,
+          "action_callback": 4384656,
+          "edit_callback": 4380192
+        },
+        {
+          "index": 8,
+          "label": "fat lady",
+          "target_menu": 250864096,
+          "action_callback": 4384656,
+          "edit_callback": 4380192
+        },
+        {
+          "index": 9,
+          "label": "static\ncoating",
+          "target_menu": 250864096,
+          "action_callback": 4384656,
+          "edit_callback": 4380192
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "bootstrap-return",
+      "global_slot": 4809540,
+      "entity": 250864960,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "DONE",
+          "target_menu": 250861504,
+          "action_callback": 4383056,
+          "edit_callback": 0
+        },
+        {
+          "index": 1,
+          "label": "cockpit\ncamera",
+          "target_menu": 250864960,
+          "action_callback": 4385008,
+          "edit_callback": 4380400
+        },
+        {
+          "index": 2,
+          "label": "tail view\ncamera",
+          "target_menu": 250864960,
+          "action_callback": 4385008,
+          "edit_callback": 4380400
+        },
+        {
+          "index": 3,
+          "label": "trace\ncamera",
+          "target_menu": 250864960,
+          "action_callback": 4385008,
+          "edit_callback": 4380400
+        },
+        {
+          "index": 4,
+          "label": "fly by\ncamera",
+          "target_menu": 250864960,
+          "action_callback": 4385008,
+          "edit_callback": 4380400
+        },
+        {
+          "index": 5,
+          "label": "circle\ncamera",
+          "target_menu": 250864960,
+          "action_callback": 4385008,
+          "edit_callback": 4380400
+        },
+        {
+          "index": 6,
+          "label": "side view\ncamera",
+          "target_menu": 250864960,
+          "action_callback": 4385008,
+          "edit_callback": 4380400
+        },
+        {
+          "index": 7,
+          "label": "keyboard\nlook left",
+          "target_menu": 250864960,
+          "action_callback": 4385008,
+          "edit_callback": 4380400
+        },
+        {
+          "index": 8,
+          "label": "keyboard\nlook right",
+          "target_menu": 250864960,
+          "action_callback": 4385008,
+          "edit_callback": 4380400
+        },
+        {
+          "index": 9,
+          "label": "keyboard\nlook up",
+          "target_menu": 250864960,
+          "action_callback": 4385008,
+          "edit_callback": 4380400
+        },
+        {
+          "index": 10,
+          "label": "keyboard\nlook down",
+          "target_menu": 250864960,
+          "action_callback": 4385008,
+          "edit_callback": 4380400
+        },
+        {
+          "index": 11,
+          "label": "joy look\nleft right",
+          "target_menu": 250864960,
+          "action_callback": 4385008,
+          "edit_callback": 4380400
+        },
+        {
+          "index": 12,
+          "label": "joy look\nup down",
+          "target_menu": 250864960,
+          "action_callback": 4385008,
+          "edit_callback": 4380400
+        },
+        {
+          "index": 13,
+          "label": "mouse look\nleft right",
+          "target_menu": 250864960,
+          "action_callback": 4385008,
+          "edit_callback": 4380400
+        },
+        {
+          "index": 14,
+          "label": "mouse look\nup down",
+          "target_menu": 250864960,
+          "action_callback": 4385008,
+          "edit_callback": 4380400
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "bootstrap-return",
+      "global_slot": 5053056,
+      "entity": 250865824,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "BACK",
+          "target_menu": 250857184,
+          "action_callback": 0,
+          "edit_callback": 0
+        },
+        {
+          "index": 1,
+          "label": "connect",
+          "target_menu": 250868416,
+          "action_callback": 4385392,
+          "edit_callback": 0
+        },
+        {
+          "index": 2,
+          "label": "connect",
+          "target_menu": 250865824,
+          "action_callback": 0,
+          "edit_callback": 0
+        },
+        {
+          "index": 3,
+          "label": "connect",
+          "target_menu": 250869280,
+          "action_callback": 4385392,
+          "edit_callback": 0
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "bootstrap-return",
+      "global_slot": 5051528,
+      "entity": 250866688,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "BACK",
+          "target_menu": 250865824,
+          "action_callback": 4387456,
+          "edit_callback": 0
+        },
+        {
+          "index": 1,
+          "label": "new game",
+          "target_menu": 0,
+          "action_callback": 4387680,
+          "edit_callback": 0
+        },
+        {
+          "index": 2,
+          "label": "join game",
+          "target_menu": 0,
+          "action_callback": 4387728,
+          "edit_callback": 4380960
+        },
+        {
+          "index": 3,
+          "label": "join game",
+          "target_menu": 0,
+          "action_callback": 4387728,
+          "edit_callback": 4380960
+        },
+        {
+          "index": 4,
+          "label": "join game",
+          "target_menu": 0,
+          "action_callback": 4387728,
+          "edit_callback": 4380960
+        },
+        {
+          "index": 5,
+          "label": "join game",
+          "target_menu": 0,
+          "action_callback": 4387728,
+          "edit_callback": 4380960
+        },
+        {
+          "index": 6,
+          "label": "join game",
+          "target_menu": 0,
+          "action_callback": 4387728,
+          "edit_callback": 4380960
+        },
+        {
+          "index": 7,
+          "label": "join game",
+          "target_menu": 0,
+          "action_callback": 4387728,
+          "edit_callback": 4380960
+        },
+        {
+          "index": 8,
+          "label": "join game",
+          "target_menu": 0,
+          "action_callback": 4387728,
+          "edit_callback": 4380960
+        },
+        {
+          "index": 9,
+          "label": "join game",
+          "target_menu": 0,
+          "action_callback": 4387728,
+          "edit_callback": 4380960
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "bootstrap-return",
+      "global_slot": 4810092,
+      "entity": 250867552,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "BACK",
+          "target_menu": 250865824,
+          "action_callback": 4385584,
+          "edit_callback": 0
+        },
+        {
+          "index": 1,
+          "label": "MODEM",
+          "target_menu": 250867552,
+          "action_callback": 4385584,
+          "edit_callback": 4381072
+        },
+        {
+          "index": 2,
+          "label": "call number",
+          "target_menu": 250867552,
+          "action_callback": 4385584,
+          "edit_callback": 4381072
+        },
+        {
+          "index": 3,
+          "label": "CONNECT",
+          "target_menu": 250866688,
+          "action_callback": 4385584,
+          "edit_callback": 0
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "bootstrap-return",
+      "global_slot": 5052684,
+      "entity": 250868416,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "BACK",
+          "target_menu": 250865824,
+          "action_callback": 4387008,
+          "edit_callback": 0
+        },
+        {
+          "index": 1,
+          "label": "com port",
+          "target_menu": 250868416,
+          "action_callback": 4387008,
+          "edit_callback": 4381344
+        },
+        {
+          "index": 2,
+          "label": "baud rate",
+          "target_menu": 250868416,
+          "action_callback": 4387008,
+          "edit_callback": 4381344
+        },
+        {
+          "index": 3,
+          "label": "stop bits",
+          "target_menu": 250868416,
+          "action_callback": 4387008,
+          "edit_callback": 4381344
+        },
+        {
+          "index": 4,
+          "label": "parity",
+          "target_menu": 250868416,
+          "action_callback": 4387008,
+          "edit_callback": 4381344
+        },
+        {
+          "index": 5,
+          "label": "flow control",
+          "target_menu": 250868416,
+          "action_callback": 4387008,
+          "edit_callback": 4381344
+        },
+        {
+          "index": 6,
+          "label": "CONNECT",
+          "target_menu": 250866688,
+          "action_callback": 4387008,
+          "edit_callback": 0
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "bootstrap-return",
+      "global_slot": 4809520,
+      "entity": 250869280,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "BACK",
+          "target_menu": 250865824,
+          "action_callback": 4386464,
+          "edit_callback": 0
+        },
+        {
+          "index": 1,
+          "label": "ip number or\nhost name",
+          "target_menu": 250869280,
+          "action_callback": 4386464,
+          "edit_callback": 4381248
+        },
+        {
+          "index": 2,
+          "label": "CONNECT",
+          "target_menu": 250866688,
+          "action_callback": 4386464,
+          "edit_callback": 0
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "bootstrap-return",
+      "global_slot": 5037212,
+      "entity": 250870144,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "BARLETTA",
+          "target_menu": 250871872,
+          "action_callback": 4377136,
+          "edit_callback": 0
+        },
+        {
+          "index": 1,
+          "label": "STINGER",
+          "target_menu": 250871872,
+          "action_callback": 4377136,
+          "edit_callback": 0
+        },
+        {
+          "index": 2,
+          "label": "VIPER",
+          "target_menu": 250871872,
+          "action_callback": 4377136,
+          "edit_callback": 0
+        },
+        {
+          "index": 3,
+          "label": "BACK",
+          "target_menu": 250857184,
+          "action_callback": 0,
+          "edit_callback": 0
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "bootstrap-return",
+      "global_slot": 5037216,
+      "entity": 250871008,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "BARLETTA",
+          "target_menu": 250865824,
+          "action_callback": 4377248,
+          "edit_callback": 0
+        },
+        {
+          "index": 1,
+          "label": "STINGER",
+          "target_menu": 250865824,
+          "action_callback": 4377248,
+          "edit_callback": 0
+        },
+        {
+          "index": 2,
+          "label": "VIPER",
+          "target_menu": 250865824,
+          "action_callback": 4377248,
+          "edit_callback": 0
+        },
+        {
+          "index": 3,
+          "label": "BACK",
+          "target_menu": 250857184,
+          "action_callback": 0,
+          "edit_callback": 0
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "bootstrap-return",
+      "global_slot": 5039184,
+      "entity": 250871872,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "prologue",
+          "target_menu": 0,
+          "action_callback": 4377104,
+          "edit_callback": 0
+        },
+        {
+          "index": 1,
+          "label": "episode 1",
+          "target_menu": 0,
+          "action_callback": 4377104,
+          "edit_callback": 0
+        },
+        {
+          "index": 2,
+          "label": "episode 2",
+          "target_menu": 0,
+          "action_callback": 4377104,
+          "edit_callback": 0
+        },
+        {
+          "index": 3,
+          "label": "episode 3",
+          "target_menu": 0,
+          "action_callback": 4377104,
+          "edit_callback": 0
+        },
+        {
+          "index": 4,
+          "label": "episode 4",
+          "target_menu": 0,
+          "action_callback": 4377104,
+          "edit_callback": 0
+        },
+        {
+          "index": 5,
+          "label": "episode 5",
+          "target_menu": 0,
+          "action_callback": 4377104,
+          "edit_callback": 0
+        },
+        {
+          "index": 6,
+          "label": "episode 6",
+          "target_menu": 0,
+          "action_callback": 4377104,
+          "edit_callback": 0
+        },
+        {
+          "index": 7,
+          "label": "episode 7",
+          "target_menu": 0,
+          "action_callback": 4377104,
+          "edit_callback": 0
+        },
+        {
+          "index": 8,
+          "label": "episode 8",
+          "target_menu": 0,
+          "action_callback": 4377104,
+          "edit_callback": 0
+        },
+        {
+          "index": 9,
+          "label": "BACK",
+          "target_menu": 250870144,
+          "action_callback": 0,
+          "edit_callback": 0
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "observation-stop",
+      "global_slot": 4808256,
+      "entity": 250857184,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "GAME",
+          "target_menu": 250870144,
+          "action_callback": 4377312,
+          "edit_callback": 0
+        },
+        {
+          "index": 1,
+          "label": "NETWORK",
+          "target_menu": 250871008,
+          "action_callback": 4377360,
+          "edit_callback": 0
+        },
+        {
+          "index": 2,
+          "label": "SETUP",
+          "target_menu": 250858912,
+          "action_callback": 0,
+          "edit_callback": 0
+        },
+        {
+          "index": 3,
+          "label": "QUIT",
+          "target_menu": 250858048,
+          "action_callback": 0,
+          "edit_callback": 0
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "observation-stop",
+      "global_slot": 5052680,
+      "entity": 250858048,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "YES",
+          "target_menu": 0,
+          "action_callback": 4378736,
+          "edit_callback": 0
+        },
+        {
+          "index": 1,
+          "label": "NO",
+          "target_menu": 250857184,
+          "action_callback": 0,
+          "edit_callback": 0
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "observation-stop",
+      "global_slot": 5036944,
+      "entity": 250858912,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "VIDEO",
+          "target_menu": 250859776,
+          "action_callback": 0,
+          "edit_callback": 0
+        },
+        {
+          "index": 1,
+          "label": "AUDIO",
+          "target_menu": 250860640,
+          "action_callback": 0,
+          "edit_callback": 0
+        },
+        {
+          "index": 2,
+          "label": "INPUT",
+          "target_menu": 250861504,
+          "action_callback": 0,
+          "edit_callback": 0
+        },
+        {
+          "index": 3,
+          "label": "BACK",
+          "target_menu": 250857184,
+          "action_callback": 4387664,
+          "edit_callback": 0
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "observation-stop",
+      "global_slot": 4809248,
+      "entity": 250859776,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "3D\nacceleration",
+          "target_menu": 250859776,
+          "action_callback": 4378832,
+          "edit_callback": 4379056
+        },
+        {
+          "index": 1,
+          "label": "graphics\ndevice",
+          "target_menu": 250859776,
+          "action_callback": 4378832,
+          "edit_callback": 4379056
+        },
+        {
+          "index": 2,
+          "label": "software\nresolution",
+          "target_menu": 250859776,
+          "action_callback": 4378832,
+          "edit_callback": 4379056
+        },
+        {
+          "index": 3,
+          "label": "BACK",
+          "target_menu": 250858912,
+          "action_callback": 4387504,
+          "edit_callback": 0
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "observation-stop",
+      "global_slot": 5036948,
+      "entity": 250860640,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "sound fx\nlouder",
+          "target_menu": 250860640,
+          "action_callback": 4381536,
+          "edit_callback": 4379280
+        },
+        {
+          "index": 1,
+          "label": "sound fx\nsofter",
+          "target_menu": 250860640,
+          "action_callback": 4381536,
+          "edit_callback": 4379280
+        },
+        {
+          "index": 2,
+          "label": "cd music\nlouder",
+          "target_menu": 250860640,
+          "action_callback": 4381536,
+          "edit_callback": 4379280
+        },
+        {
+          "index": 3,
+          "label": "cd music\nsofter",
+          "target_menu": 250860640,
+          "action_callback": 4381536,
+          "edit_callback": 4379280
+        },
+        {
+          "index": 4,
+          "label": "BACK",
+          "target_menu": 250858912,
+          "action_callback": 0,
+          "edit_callback": 0
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "observation-stop",
+      "global_slot": 4809544,
+      "entity": 250861504,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "input\nconfiguration",
+          "target_menu": 250861504,
+          "action_callback": 4382608,
+          "edit_callback": 4383488
+        },
+        {
+          "index": 1,
+          "label": "NEW",
+          "target_menu": 250861504,
+          "action_callback": 4382608,
+          "edit_callback": 4383488
+        },
+        {
+          "index": 2,
+          "label": "EDIT",
+          "target_menu": 250862368,
+          "action_callback": 0,
+          "edit_callback": 0
+        },
+        {
+          "index": 3,
+          "label": "DELETE",
+          "target_menu": 250861504,
+          "action_callback": 4382608,
+          "edit_callback": 0
+        },
+        {
+          "index": 4,
+          "label": "BACK",
+          "target_menu": 250858912,
+          "action_callback": 4387664,
+          "edit_callback": 0
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "observation-stop",
+      "global_slot": 5047428,
+      "entity": 250862368,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "NEXT",
+          "target_menu": 250863232,
+          "action_callback": 0,
+          "edit_callback": 0
+        },
+        {
+          "index": 1,
+          "label": "keyboard\nmove up",
+          "target_menu": 250862368,
+          "action_callback": 4383760,
+          "edit_callback": 4379520
+        },
+        {
+          "index": 2,
+          "label": "keyboard\nmove down",
+          "target_menu": 250862368,
+          "action_callback": 4383760,
+          "edit_callback": 4379520
+        },
+        {
+          "index": 3,
+          "label": "keyboard\nmove left",
+          "target_menu": 250862368,
+          "action_callback": 4383760,
+          "edit_callback": 4379520
+        },
+        {
+          "index": 4,
+          "label": "keyboard\nmove right",
+          "target_menu": 250862368,
+          "action_callback": 4383760,
+          "edit_callback": 4379520
+        },
+        {
+          "index": 5,
+          "label": "keyboard\naccelerate",
+          "target_menu": 250862368,
+          "action_callback": 4383760,
+          "edit_callback": 4379520
+        },
+        {
+          "index": 6,
+          "label": "keyboard\nbrakes",
+          "target_menu": 250862368,
+          "action_callback": 4383760,
+          "edit_callback": 4379520
+        },
+        {
+          "index": 7,
+          "label": "joy move\nup down",
+          "target_menu": 250862368,
+          "action_callback": 4383760,
+          "edit_callback": 4379520
+        },
+        {
+          "index": 8,
+          "label": "joy move\nleft right",
+          "target_menu": 250862368,
+          "action_callback": 4383760,
+          "edit_callback": 4379520
+        },
+        {
+          "index": 9,
+          "label": "joy\naccl brakes",
+          "target_menu": 250862368,
+          "action_callback": 4383760,
+          "edit_callback": 4379520
+        },
+        {
+          "index": 10,
+          "label": "mouse move\nup down",
+          "target_menu": 250862368,
+          "action_callback": 4383760,
+          "edit_callback": 4379520
+        },
+        {
+          "index": 11,
+          "label": "mouse move\nleft right",
+          "target_menu": 250862368,
+          "action_callback": 4383760,
+          "edit_callback": 4379520
+        },
+        {
+          "index": 12,
+          "label": "mouse\naccl brakes",
+          "target_menu": 250862368,
+          "action_callback": 4383760,
+          "edit_callback": 4379520
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "observation-stop",
+      "global_slot": 5036952,
+      "entity": 250863232,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "NEXT",
+          "target_menu": 250864096,
+          "action_callback": 0,
+          "edit_callback": 0
+        },
+        {
+          "index": 1,
+          "label": "fire\nprimary",
+          "target_menu": 250863232,
+          "action_callback": 4384320,
+          "edit_callback": 4379984
+        },
+        {
+          "index": 2,
+          "label": "fire\nprimary",
+          "target_menu": 250863232,
+          "action_callback": 4384320,
+          "edit_callback": 4379984
+        },
+        {
+          "index": 3,
+          "label": "fire\nprimary",
+          "target_menu": 250863232,
+          "action_callback": 4384320,
+          "edit_callback": 4379984
+        },
+        {
+          "index": 4,
+          "label": "toggle\nprimary",
+          "target_menu": 250863232,
+          "action_callback": 4384320,
+          "edit_callback": 4379984
+        },
+        {
+          "index": 5,
+          "label": "ion gun",
+          "target_menu": 250863232,
+          "action_callback": 4384320,
+          "edit_callback": 4379984
+        },
+        {
+          "index": 6,
+          "label": "lead buster",
+          "target_menu": 250863232,
+          "action_callback": 4384320,
+          "edit_callback": 4379984
+        },
+        {
+          "index": 7,
+          "label": "magnetic\nplasma",
+          "target_menu": 250863232,
+          "action_callback": 4384320,
+          "edit_callback": 4379984
+        },
+        {
+          "index": 8,
+          "label": "nitro\ncrackers",
+          "target_menu": 250863232,
+          "action_callback": 4384320,
+          "edit_callback": 4379984
+        },
+        {
+          "index": 9,
+          "label": "stun ray",
+          "target_menu": 250863232,
+          "action_callback": 4384320,
+          "edit_callback": 4379984
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "observation-stop",
+      "global_slot": 5063688,
+      "entity": 250864096,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "NEXT",
+          "target_menu": 250864960,
+          "action_callback": 0,
+          "edit_callback": 0
+        },
+        {
+          "index": 1,
+          "label": "fire\nsecondary",
+          "target_menu": 250864096,
+          "action_callback": 4384656,
+          "edit_callback": 4380192
+        },
+        {
+          "index": 2,
+          "label": "fire\nsecondary",
+          "target_menu": 250864096,
+          "action_callback": 4384656,
+          "edit_callback": 4380192
+        },
+        {
+          "index": 3,
+          "label": "fire\nsecondary",
+          "target_menu": 250864096,
+          "action_callback": 4384656,
+          "edit_callback": 4380192
+        },
+        {
+          "index": 4,
+          "label": "toggle\nsecondary",
+          "target_menu": 250864096,
+          "action_callback": 4384656,
+          "edit_callback": 4380192
+        },
+        {
+          "index": 5,
+          "label": "homie\nmissile",
+          "target_menu": 250864096,
+          "action_callback": 4384656,
+          "edit_callback": 4380192
+        },
+        {
+          "index": 6,
+          "label": "sonic\nblast",
+          "target_menu": 250864096,
+          "action_callback": 4384656,
+          "edit_callback": 4380192
+        },
+        {
+          "index": 7,
+          "label": "tnt mine",
+          "target_menu": 250864096,
+          "action_callback": 4384656,
+          "edit_callback": 4380192
+        },
+        {
+          "index": 8,
+          "label": "fat lady",
+          "target_menu": 250864096,
+          "action_callback": 4384656,
+          "edit_callback": 4380192
+        },
+        {
+          "index": 9,
+          "label": "static\ncoating",
+          "target_menu": 250864096,
+          "action_callback": 4384656,
+          "edit_callback": 4380192
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "observation-stop",
+      "global_slot": 4809540,
+      "entity": 250864960,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "DONE",
+          "target_menu": 250861504,
+          "action_callback": 4383056,
+          "edit_callback": 0
+        },
+        {
+          "index": 1,
+          "label": "cockpit\ncamera",
+          "target_menu": 250864960,
+          "action_callback": 4385008,
+          "edit_callback": 4380400
+        },
+        {
+          "index": 2,
+          "label": "tail view\ncamera",
+          "target_menu": 250864960,
+          "action_callback": 4385008,
+          "edit_callback": 4380400
+        },
+        {
+          "index": 3,
+          "label": "trace\ncamera",
+          "target_menu": 250864960,
+          "action_callback": 4385008,
+          "edit_callback": 4380400
+        },
+        {
+          "index": 4,
+          "label": "fly by\ncamera",
+          "target_menu": 250864960,
+          "action_callback": 4385008,
+          "edit_callback": 4380400
+        },
+        {
+          "index": 5,
+          "label": "circle\ncamera",
+          "target_menu": 250864960,
+          "action_callback": 4385008,
+          "edit_callback": 4380400
+        },
+        {
+          "index": 6,
+          "label": "side view\ncamera",
+          "target_menu": 250864960,
+          "action_callback": 4385008,
+          "edit_callback": 4380400
+        },
+        {
+          "index": 7,
+          "label": "keyboard\nlook left",
+          "target_menu": 250864960,
+          "action_callback": 4385008,
+          "edit_callback": 4380400
+        },
+        {
+          "index": 8,
+          "label": "keyboard\nlook right",
+          "target_menu": 250864960,
+          "action_callback": 4385008,
+          "edit_callback": 4380400
+        },
+        {
+          "index": 9,
+          "label": "keyboard\nlook up",
+          "target_menu": 250864960,
+          "action_callback": 4385008,
+          "edit_callback": 4380400
+        },
+        {
+          "index": 10,
+          "label": "keyboard\nlook down",
+          "target_menu": 250864960,
+          "action_callback": 4385008,
+          "edit_callback": 4380400
+        },
+        {
+          "index": 11,
+          "label": "joy look\nleft right",
+          "target_menu": 250864960,
+          "action_callback": 4385008,
+          "edit_callback": 4380400
+        },
+        {
+          "index": 12,
+          "label": "joy look\nup down",
+          "target_menu": 250864960,
+          "action_callback": 4385008,
+          "edit_callback": 4380400
+        },
+        {
+          "index": 13,
+          "label": "mouse look\nleft right",
+          "target_menu": 250864960,
+          "action_callback": 4385008,
+          "edit_callback": 4380400
+        },
+        {
+          "index": 14,
+          "label": "mouse look\nup down",
+          "target_menu": 250864960,
+          "action_callback": 4385008,
+          "edit_callback": 4380400
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "observation-stop",
+      "global_slot": 5053056,
+      "entity": 250865824,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "BACK",
+          "target_menu": 250857184,
+          "action_callback": 0,
+          "edit_callback": 0
+        },
+        {
+          "index": 1,
+          "label": "connect",
+          "target_menu": 250868416,
+          "action_callback": 4385392,
+          "edit_callback": 0
+        },
+        {
+          "index": 2,
+          "label": "connect",
+          "target_menu": 250865824,
+          "action_callback": 0,
+          "edit_callback": 0
+        },
+        {
+          "index": 3,
+          "label": "connect",
+          "target_menu": 250869280,
+          "action_callback": 4385392,
+          "edit_callback": 0
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "observation-stop",
+      "global_slot": 5051528,
+      "entity": 250866688,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "BACK",
+          "target_menu": 250865824,
+          "action_callback": 4387456,
+          "edit_callback": 0
+        },
+        {
+          "index": 1,
+          "label": "new game",
+          "target_menu": 0,
+          "action_callback": 4387680,
+          "edit_callback": 0
+        },
+        {
+          "index": 2,
+          "label": "join game",
+          "target_menu": 0,
+          "action_callback": 4387728,
+          "edit_callback": 4380960
+        },
+        {
+          "index": 3,
+          "label": "join game",
+          "target_menu": 0,
+          "action_callback": 4387728,
+          "edit_callback": 4380960
+        },
+        {
+          "index": 4,
+          "label": "join game",
+          "target_menu": 0,
+          "action_callback": 4387728,
+          "edit_callback": 4380960
+        },
+        {
+          "index": 5,
+          "label": "join game",
+          "target_menu": 0,
+          "action_callback": 4387728,
+          "edit_callback": 4380960
+        },
+        {
+          "index": 6,
+          "label": "join game",
+          "target_menu": 0,
+          "action_callback": 4387728,
+          "edit_callback": 4380960
+        },
+        {
+          "index": 7,
+          "label": "join game",
+          "target_menu": 0,
+          "action_callback": 4387728,
+          "edit_callback": 4380960
+        },
+        {
+          "index": 8,
+          "label": "join game",
+          "target_menu": 0,
+          "action_callback": 4387728,
+          "edit_callback": 4380960
+        },
+        {
+          "index": 9,
+          "label": "join game",
+          "target_menu": 0,
+          "action_callback": 4387728,
+          "edit_callback": 4380960
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "observation-stop",
+      "global_slot": 4810092,
+      "entity": 250867552,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "BACK",
+          "target_menu": 250865824,
+          "action_callback": 4385584,
+          "edit_callback": 0
+        },
+        {
+          "index": 1,
+          "label": "MODEM",
+          "target_menu": 250867552,
+          "action_callback": 4385584,
+          "edit_callback": 4381072
+        },
+        {
+          "index": 2,
+          "label": "call number",
+          "target_menu": 250867552,
+          "action_callback": 4385584,
+          "edit_callback": 4381072
+        },
+        {
+          "index": 3,
+          "label": "CONNECT",
+          "target_menu": 250866688,
+          "action_callback": 4385584,
+          "edit_callback": 0
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "observation-stop",
+      "global_slot": 5052684,
+      "entity": 250868416,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "BACK",
+          "target_menu": 250865824,
+          "action_callback": 4387008,
+          "edit_callback": 0
+        },
+        {
+          "index": 1,
+          "label": "com port",
+          "target_menu": 250868416,
+          "action_callback": 4387008,
+          "edit_callback": 4381344
+        },
+        {
+          "index": 2,
+          "label": "baud rate",
+          "target_menu": 250868416,
+          "action_callback": 4387008,
+          "edit_callback": 4381344
+        },
+        {
+          "index": 3,
+          "label": "stop bits",
+          "target_menu": 250868416,
+          "action_callback": 4387008,
+          "edit_callback": 4381344
+        },
+        {
+          "index": 4,
+          "label": "parity",
+          "target_menu": 250868416,
+          "action_callback": 4387008,
+          "edit_callback": 4381344
+        },
+        {
+          "index": 5,
+          "label": "flow control",
+          "target_menu": 250868416,
+          "action_callback": 4387008,
+          "edit_callback": 4381344
+        },
+        {
+          "index": 6,
+          "label": "CONNECT",
+          "target_menu": 250866688,
+          "action_callback": 4387008,
+          "edit_callback": 0
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "observation-stop",
+      "global_slot": 4809520,
+      "entity": 250869280,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "BACK",
+          "target_menu": 250865824,
+          "action_callback": 4386464,
+          "edit_callback": 0
+        },
+        {
+          "index": 1,
+          "label": "ip number or\nhost name",
+          "target_menu": 250869280,
+          "action_callback": 4386464,
+          "edit_callback": 4381248
+        },
+        {
+          "index": 2,
+          "label": "CONNECT",
+          "target_menu": 250866688,
+          "action_callback": 4386464,
+          "edit_callback": 0
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "observation-stop",
+      "global_slot": 5037212,
+      "entity": 250870144,
+      "step_callback": 4707968,
+      "selection_raw": 1,
+      "items": [
+        {
+          "index": 0,
+          "label": "BARLETTA",
+          "target_menu": 250871872,
+          "action_callback": 4377136,
+          "edit_callback": 0
+        },
+        {
+          "index": 1,
+          "label": "STINGER",
+          "target_menu": 250871872,
+          "action_callback": 4377136,
+          "edit_callback": 0
+        },
+        {
+          "index": 2,
+          "label": "VIPER",
+          "target_menu": 250871872,
+          "action_callback": 4377136,
+          "edit_callback": 0
+        },
+        {
+          "index": 3,
+          "label": "BACK",
+          "target_menu": 250857184,
+          "action_callback": 0,
+          "edit_callback": 0
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "observation-stop",
+      "global_slot": 5037216,
+      "entity": 250871008,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "BARLETTA",
+          "target_menu": 250865824,
+          "action_callback": 4377248,
+          "edit_callback": 0
+        },
+        {
+          "index": 1,
+          "label": "STINGER",
+          "target_menu": 250865824,
+          "action_callback": 4377248,
+          "edit_callback": 0
+        },
+        {
+          "index": 2,
+          "label": "VIPER",
+          "target_menu": 250865824,
+          "action_callback": 4377248,
+          "edit_callback": 0
+        },
+        {
+          "index": 3,
+          "label": "BACK",
+          "target_menu": 250857184,
+          "action_callback": 0,
+          "edit_callback": 0
+        }
+      ]
+    },
+    {
+      "event": "menu-inventory",
+      "phase": "observation-stop",
+      "global_slot": 5039184,
+      "entity": 250871872,
+      "step_callback": 4707968,
+      "selection_raw": 0,
+      "items": [
+        {
+          "index": 0,
+          "label": "prologue",
+          "target_menu": 0,
+          "action_callback": 4377104,
+          "edit_callback": 0
+        },
+        {
+          "index": 1,
+          "label": "episode 1",
+          "target_menu": 0,
+          "action_callback": 0,
+          "edit_callback": 0
+        },
+        {
+          "index": 2,
+          "label": "episode 2",
+          "target_menu": 0,
+          "action_callback": 0,
+          "edit_callback": 0
+        },
+        {
+          "index": 3,
+          "label": "episode 3",
+          "target_menu": 0,
+          "action_callback": 0,
+          "edit_callback": 0
+        },
+        {
+          "index": 4,
+          "label": "episode 4",
+          "target_menu": 0,
+          "action_callback": 0,
+          "edit_callback": 0
+        },
+        {
+          "index": 5,
+          "label": "episode 5",
+          "target_menu": 0,
+          "action_callback": 0,
+          "edit_callback": 0
+        },
+        {
+          "index": 6,
+          "label": "episode 6",
+          "target_menu": 0,
+          "action_callback": 0,
+          "edit_callback": 0
+        },
+        {
+          "index": 7,
+          "label": "episode 7",
+          "target_menu": 0,
+          "action_callback": 0,
+          "edit_callback": 0
+        },
+        {
+          "index": 8,
+          "label": "episode 8",
+          "target_menu": 0,
+          "action_callback": 0,
+          "edit_callback": 0
+        },
+        {
+          "index": 9,
+          "label": "BACK",
+          "target_menu": 250870144,
+          "action_callback": 0,
+          "edit_callback": 0
+        }
+      ]
+    }
+  ],
+  "features_inventory_complete": false,
+  "unlocked_episode_actions_at_stop": [
+    0
+  ],
+  "limits": [
+    "Constructed menu labels/links/actions are not proof all features or episodes work",
+    "Network-mode/backend execution remains unvalidated",
+    "Default input profiles and full binding/seed/timing contracts remain incomplete",
+    "Only child-local GAME/STINGER/prologue selection was exercised"
+  ]
+}

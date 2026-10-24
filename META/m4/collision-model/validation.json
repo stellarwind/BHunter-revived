@@ -1,0 +1,34 @@
+{
+  "passed": true,
+  "translation_units": 42,
+  "real_total": {
+    "scenario": "m2-foundations",
+    "checks": 640054,
+    "failures": 0,
+    "archive_entries": 1229,
+    "original_code_required": false
+  },
+  "clean_total": {
+    "scenario": "m2-foundations",
+    "checks": 159633,
+    "failures": 0,
+    "archive_entries": 0,
+    "original_code_required": false
+  },
+  "focused_checks": 37,
+  "real_models": 454,
+  "game_launches": 0,
+  "original_code_executed": false,
+  "sources": {
+    "src/bh_collision_model.c": "4f71f621305a9b67639499ecf86a74be1247dde5251b9e625ba1e5c4c04625a7",
+    "src/bh_collision_model.h": "d5445b4f0deaf7e4fdb47e71c6c5de8a76867e25050e3265addf4489487ebf60",
+    "tests/collision_model.c": "463bbbbb182c21f9eb5d866ae9b2d24706453c11496eae6512bbe70c1ce8cf21",
+    "tests/checkpoint.c": "6ce183fe90dd2b605e9ab2315271cc48528973dc0f25a70305648e0509bf4b8b",
+    "tests/world_geometry.c": "3c18c129c7430fb5af1299626e9f3cfbd06b730d2f79cd2d827b0dc82fa5efef"
+  },
+  "limits": [
+    "Explicit source owner replaces original global path/search and pointer result; valid collision model data/metadata/lifetime supplied without rendering dependencies",
+    "Bounded path/count/index/finite/cycle validation and transactional failures intentionally replace original unsafe reads/leaks",
+    "No renderer, audio object, entity/script lifecycle or playable game target admission inferred"
+  ]
+}

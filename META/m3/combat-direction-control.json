@@ -1,0 +1,100 @@
+{
+  "scope": "Corrected diagnostic forward projection and turning fixtures; native probe compile/link only",
+  "passed": true,
+  "original_code_executed": false,
+  "native_probe_executed": false,
+  "source_only_control_executed": true,
+  "game_launches": 0,
+  "commands": [
+    {
+      "label": "control-compile",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\m3\\startup-ddrawcompat\\combat-direction-control.obj",
+        "D:\\Decomp\\Bhunter\\tests\\m3_combat_policy_control.c"
+      ],
+      "exit_code": 0,
+      "output": "m3_combat_policy_control.c\n"
+    },
+    {
+      "label": "control-link",
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/out:D:\\Decomp\\Bhunter\\build\\m3\\startup-ddrawcompat\\combat-direction-control.exe",
+        "D:\\Decomp\\Bhunter\\build\\m3\\startup-ddrawcompat\\combat-direction-control.obj",
+        "kernel32.lib",
+        "advapi32.lib",
+        "user32.lib"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "label": "control-execute",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\build\\m3\\startup-ddrawcompat\\combat-direction-control.exe"
+      ],
+      "exit_code": 0,
+      "output": "{\"passed\":true,\"curve_coordinate_checks\":18,\"forward_projection_checks\":4,\"turn_direction_checks\":4,\"game_launches\":0,\"original_code_executed\":false}\n"
+    },
+    {
+      "label": "native-compile",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\m3\\startup-ddrawcompat\\startup-probe.obj",
+        "D:\\Decomp\\Bhunter\\tools\\m3_startup_probe.c"
+      ],
+      "exit_code": 0,
+      "output": "m3_startup_probe.c\n"
+    },
+    {
+      "label": "native-link",
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/out:D:\\Decomp\\Bhunter\\build\\m3\\startup-ddrawcompat\\startup-probe.exe",
+        "D:\\Decomp\\Bhunter\\build\\m3\\startup-ddrawcompat\\startup-probe.obj",
+        "kernel32.lib",
+        "advapi32.lib",
+        "user32.lib"
+      ],
+      "exit_code": 0,
+      "output": ""
+    }
+  ],
+  "source_hashes": {
+    "tools/m3_startup_probe.c": "75be58aa476d382aa2defabeca3e4160a728fdcf611ff70ad705396ad9f6bfbd",
+    "tools/m3_startup_probe.py": "53435f1afea5c934afe79d4f8c815e226efc2a43aa528588bc5c92fccc59cee6",
+    "tools/m3_flight_probe.h": "3ca5a1bede678c3a6f4aa7386d06c0ea3be1618db93f05940b8269027d1bdd95",
+    "tools/m3_combat_probe.h": "f5787cec13d6a1c71eabc8c425d9497459c84ee7baa2e6e71be66bd668882992",
+    "tests/m3_combat_policy_control.c": "b63f1101a7f41428db98fc14f591b4d3ce6f45cde980b2eb882032f683dc1e4c"
+  },
+  "source_snapshots": {
+    "tools/m3_startup_probe.c": "META/m3/startup/sources/75be58aa476d382aa2defabeca3e4160a728fdcf611ff70ad705396ad9f6bfbd-m3_startup_probe.c.txt",
+    "tools/m3_startup_probe.py": "META/m3/startup/sources/53435f1afea5c934afe79d4f8c815e226efc2a43aa528588bc5c92fccc59cee6-m3_startup_probe.py.txt",
+    "tools/m3_flight_probe.h": "META/m3/startup/sources/3ca5a1bede678c3a6f4aa7386d06c0ea3be1618db93f05940b8269027d1bdd95-m3_flight_probe.h.txt",
+    "tools/m3_combat_probe.h": "META/m3/startup/sources/f5787cec13d6a1c71eabc8c425d9497459c84ee7baa2e6e71be66bd668882992-m3_combat_probe.h.txt",
+    "tests/m3_combat_policy_control.c": "META/m3/startup/sources/b63f1101a7f41428db98fc14f591b4d3ce6f45cde980b2eb882032f683dc1e4c-m3_combat_policy_control.c.txt"
+  },
+  "output_sha256": {
+    "combat-direction-control": "cb88802a2aa652031bc6d2fc6de358f2aed11dab0a3e61609dc6431e0605e840",
+    "startup-probe": "ba1e286e9ccf281d73e8de6fe40d6499f4483217fcfd127981f8d72cd431095c"
+  }
+}

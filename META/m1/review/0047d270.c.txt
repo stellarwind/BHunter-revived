@@ -1,0 +1,35 @@
+
+undefined4 __cdecl FUN_0047d270(LPCSTR param_1)
+
+{
+  int iVar1;
+  
+  if (DAT_004f9608 != (char *)0x0) {
+    FUN_0047db90(DAT_004f9608);
+    DAT_004f9608 = (char *)0x0;
+  }
+  DAT_004f9614 = 0;
+  if (DAT_004f9610 != (int *)0x0) {
+    _fclose(DAT_004f9610);
+    DAT_004f9610 = (int *)0x0;
+  }
+  DAT_004f9610 = (int *)FUN_0047dc10(param_1,&DAT_0048ff78);
+  if (DAT_004f9610 == (int *)0x0) {
+    return 0;
+  }
+  _fread((char *)&DAT_004f9614,4,1,DAT_004f9610);
+  if (DAT_004f9614 != 0) {
+    DAT_004f9608 = (char *)FUN_0047dae0(DAT_004f9614 << 8);
+  }
+  _fread(DAT_004f9608,0x100,DAT_004f9614,DAT_004f9610);
+  DAT_004f95f8 = FUN_0047dae0(DAT_004f9614 * 4);
+  iVar1 = 0;
+  if (0 < (int)DAT_004f9614) {
+    do {
+      iVar1 = iVar1 + 1;
+      *(undefined4 *)(DAT_004f95f8 + -4 + iVar1 * 4) = 0xffffffff;
+    } while (iVar1 < (int)DAT_004f9614);
+  }
+  return 1;
+}
+

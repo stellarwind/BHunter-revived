@@ -1,0 +1,39 @@
+{
+  "passed": true,
+  "translation_units": 36,
+  "real_total": {
+    "scenario": "m2-foundations",
+    "checks": 574451,
+    "failures": 0,
+    "archive_entries": 1229,
+    "original_code_required": false
+  },
+  "clean_total": {
+    "scenario": "m2-foundations",
+    "checks": 94033,
+    "failures": 0,
+    "archive_entries": 0,
+    "original_code_required": false
+  },
+  "focused_checks": 75,
+  "real_placement_count": 5815,
+  "real_boundary_queries": 4,
+  "immutable_references_verified": 4,
+  "game_launches": 0,
+  "original_code_executed": false,
+  "source_game_admission": false,
+  "sources": {
+    "src/bh_world_query.c": "26f0900748e1f0d7a6ecf072f1028ae305e703865cfa34765592ff0f3235fe48",
+    "src/bh_world_query.h": "69ec90b9586a0cbeffb4ce93cddccc4669533c9a85d5f090ef40b0eafbe9f259",
+    "tests/world_query.c": "a39bfd9124f56b5c7c46e1defc40697222c08d30cb05dd521ca2241e5c9c0780",
+    "src/bh_entities.h": "a0245c7cf2fe4f2529170d469030e62401f3651e21699f300aa83e9d80046489",
+    "src/bh_world_geometry.h": "bbaef5d400cdb13edace4099d4ff7743ba943c9645eed8aa620d8bb4aa291543",
+    "tests/world_geometry.c": "83e48d1ee9fc43b331f58efbf5427f47352d5d665eecee6dea0ef8376f547a40",
+    "tests/checkpoint.c": "d6f9c1c04b68ef818902e86371a723978084046d576fd1b7e5c5c377b4295957"
+  },
+  "limits": [
+    "Full model/script flag installation remains unfinished; fixture supplies explicit initial model flags",
+    "This is broad-phase candidate collection, not collision response or damage",
+    "Rejects malformed foreign topology/nonfinite inputs/capacity overflow transactionally; signed extents retained"
+  ]
+}

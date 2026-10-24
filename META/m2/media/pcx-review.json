@@ -1,0 +1,83 @@
+{
+  "date": "2026-10-24",
+  "scope": "Bounded PCX indexed data and complete palette/index transform; no texture surface/cache stub",
+  "records": [
+    {
+      "address": "0044efa0",
+      "body_ranges": [
+        "0044efa0-0044f095"
+      ],
+      "role": "engine_candidate",
+      "provenance": "Behavior reviewed from complete instructions; engine/library authorship unresolved",
+      "behavior": "RLE next-index stream with persistent run count, identity/remapping table and ignored C0 markers",
+      "assignment": "bounded data adapter; original stream/global/surface owner not claimed complete"
+    },
+    {
+      "address": "0044f0a0",
+      "body_ranges": [
+        "0044f0a0-0044f1ac"
+      ],
+      "role": "engine_candidate",
+      "provenance": "Behavior reviewed from complete instructions; engine/library authorship unresolved",
+      "behavior": "open PCX stream, inspect 12 header bytes, dimensions xmax/ymax+1, final 768-byte palette, seek compressed bytes at 128",
+      "assignment": "bounded data adapter; original stream/global/surface owner not claimed complete"
+    },
+    {
+      "address": "0044f1b0",
+      "body_ranges": [
+        "0044f1b0-0044f1be"
+      ],
+      "role": "engine_candidate",
+      "provenance": "Behavior reviewed from complete instructions; engine/library authorship unresolved",
+      "behavior": "close owning PCX stream through VFILE",
+      "assignment": "bounded data adapter; original stream/global/surface owner not claimed complete"
+    },
+    {
+      "address": "0044f1c0",
+      "body_ranges": [
+        "0044f1c0-0044f4ed"
+      ],
+      "role": "engine_candidate",
+      "provenance": "Behavior reviewed from complete instructions; engine/library authorship unresolved",
+      "behavior": "complete palette/index transformation with three mode branches and nearest-color tie order",
+      "assignment": "complete pure transformation with explicit buffers"
+    },
+    {
+      "address": "0046f490",
+      "body_ranges": [
+        "0046f490-00470371"
+      ],
+      "role": "engine_candidate",
+      "provenance": "Behavior reviewed from complete instructions; engine/library authorship unresolved",
+      "behavior": "image cache, inline RLE, palette transform, DirectDraw surface conversion and opaque rectangle extraction",
+      "assignment": "bounded data adapter; original stream/global/surface owner not claimed complete"
+    }
+  ],
+  "dependencies": [
+    "Verified CRT allocation/memory operations reused; source VFILE context/lifetime retained",
+    "Palette helper has no imports/callback dependencies; source explicit copy of original palette/index global buffers",
+    "Raw pixels and raw palette retained unchanged; transform requested separately with caller-selected mode/color",
+    "0046f490 DirectDraw surface/cache/conversion/rectangle ownership remains WIP, not supplied by this data adapter"
+  ],
+  "dialect": {
+    "files": 459,
+    "manufacturer": 10,
+    "version": 5,
+    "encoding": 1,
+    "bits": 8,
+    "planes": 1,
+    "xmin": 0,
+    "ymin": 0,
+    "bytes_per_line": "equals width",
+    "palette_marker": 12,
+    "stream": "exactly width*height outputs, no extra compressed bytes in actual assets"
+  },
+  "safety": [
+    "Full 128-byte header and bounded compressed/palette spans; supported version/plane/origin/stride enforced",
+    "64 MiB input and 16 MiB pixels, dimensions 4096 each; multiply only after caps",
+    "Reject truncated RLE/value, palette/marker, overlong final run, unused trailing data; C0 skip remains bounded",
+    "Transactional owner replacement, allocator checks and VFILE cursor rollback; no shared global decoder buffers"
+  ],
+  "palette_input_contract": "Identity index map is the observed loader precondition: 0044f0a0, 0046f490 and each format branch of 0044f550 initialize it before 0044f1c0. Source initializes identity explicitly; does not claim arbitrary pre-mutated map inputs.",
+  "additional_consumer_evidence": "META/m2/media/pcx-consumer/0044f550.asm.txt"
+}

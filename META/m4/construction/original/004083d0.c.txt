@@ -1,0 +1,37 @@
+
+void FUN_004083d0(int *param_1,int param_2)
+
+{
+  int iVar1;
+  float fStack_c;
+  float fStack_8;
+  float fStack_4;
+  
+  iVar1 = 0;
+  if (0 < param_1[1]) {
+    do {
+      FUN_0044e240(param_1[10],*param_1,iVar1,&fStack_c);
+      if (fStack_c < *(float *)(param_2 + 0x4c)) {
+        *(float *)(param_2 + 0x4c) = fStack_c;
+      }
+      if (*(float *)(param_2 + 0x58) < fStack_c) {
+        *(float *)(param_2 + 0x58) = fStack_c;
+      }
+      if (fStack_8 < *(float *)(param_2 + 0x50)) {
+        *(float *)(param_2 + 0x50) = fStack_8;
+      }
+      if (*(float *)(param_2 + 0x5c) < fStack_8) {
+        *(float *)(param_2 + 0x5c) = fStack_8;
+      }
+      if (fStack_4 < *(float *)(param_2 + 0x54)) {
+        *(float *)(param_2 + 0x54) = fStack_4;
+      }
+      if (*(float *)(param_2 + 0x60) < fStack_4) {
+        *(float *)(param_2 + 0x60) = fStack_4;
+      }
+      iVar1 = iVar1 + 1;
+    } while (iVar1 < param_1[1]);
+  }
+  return;
+}
+

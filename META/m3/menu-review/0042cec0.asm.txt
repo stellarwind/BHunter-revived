@@ -1,0 +1,17 @@
+# 0042cec0 undefined FUN_0042cec0(void) body=[[0042cec0, 0042cef3]]
+# IN From: 0044919c To: 0042cec0 Type: DATA Op: 1 ANALYSIS
+# IN From: 0042f4ed To: 0042cec0 Type: DATA Op: 1 ANALYSIS
+0042cec0 MOV ECX,dword ptr [ESP + 0x4]
+0042cec4 FLD double ptr [ECX + 0x1f8]
+0042ceca FCOMP double ptr [0x00489b90]
+0042ced0 FNSTSW AX
+0042ced2 TEST AH,0x1
+0042ced5 JZ 0x0042cee1
+0042ced7 PUSH ECX
+0042ced8 CALL 0x00477070
+0042cedd ADD ESP,0x4
+0042cee0 RET
+0042cee1 FLD double ptr [ECX + 0x1f8]
+0042cee7 FSUB double ptr [0x004891f8]
+0042ceed FSTP double ptr [ECX + 0x1f8]
+0042cef3 RET

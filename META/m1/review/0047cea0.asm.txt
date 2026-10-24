@@ -1,0 +1,16 @@
+# 0047cea0 uint __cdecl FUN_0047cea0(int * param_1) body=[[0047cea0, 0047cebe]]
+# IN From: 004120ea To: 0047cea0 Type: UNCONDITIONAL_CALL Op: 0 DEFAULT
+# IN From: 00411ed3 To: 0047cea0 Type: UNCONDITIONAL_CALL Op: 0 DEFAULT
+0047cea0 MOV EAX,dword ptr [ESP + 0x4]
+0047cea4 MOV ECX,dword ptr [EAX + 0x18]
+0047cea7 TEST ECX,ECX
+0047cea9 JNZ 0x0047cebb
+0047ceab MOV ECX,dword ptr [EAX + 0x4]
+0047ceae TEST ECX,ECX
+0047ceb0 JNZ 0x0047cebb
+0047ceb2 MOV EAX,dword ptr [EAX]
+0047ceb4 MOV EAX,dword ptr [EAX + 0xc]
+0047ceb7 AND EAX,0x10
+0047ceba RET
+0047cebb MOV EAX,dword ptr [EAX + 0x14]
+0047cebe RET

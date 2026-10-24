@@ -1,0 +1,42 @@
+{
+  "owner": "src/bh_pcx_reader.c",
+  "target": "build/m0/bhunter-integration.exe",
+  "implementation": "wip",
+  "records": [
+    {
+      "id": "0044f0a0-pcx-data-subset-c",
+      "address": "0044f0a0",
+      "boundary": "0044f0a0-0044f1ac",
+      "role": "engine_candidate",
+      "provenance": "Ordinary mapped boundary; engine/game authorship unresolved; no verified CRT/import/shared tail assigned",
+      "body_sha256": "27854e811ab274808d13a63aeb1b09135f66a83bbf34d41cee33d6bf7a4bcf21",
+      "decompilation": "META/m2/media/readers/0044f0a0.c.txt",
+      "decompilation_sha256": "88a4f7255bf6fe85f6c5adec1506d297ef3c7e4a51acd46f06df021437276338",
+      "disposition": "selected_dependency_family",
+      "resolved": [
+        "Bounded PCX header/palette bulk decoder exists"
+      ],
+      "remaining": [
+        "Explicit live VFILE reader state, original header checks/dimensions, identity map and close-on-failure semantics"
+      ]
+    },
+    {
+      "id": "0044efa0-pcx-data-subset-c",
+      "address": "0044efa0",
+      "boundary": "0044efa0-0044f095",
+      "role": "engine_candidate",
+      "provenance": "Ordinary mapped boundary; engine/game authorship unresolved; no verified CRT/import/shared tail assigned",
+      "body_sha256": "619f9582546b4c7b2f65c5365056f7658fe21052b619a97d2c527734aa46394e",
+      "decompilation": "META/m2/media/readers/0044efa0.c.txt",
+      "decompilation_sha256": "c5237d2a426a8bf0cbd1b224b84c5b9ae975e2a53437dad9a4798eaad07aaac5",
+      "disposition": "selected_dependency_family",
+      "resolved": [
+        "Bulk bounded PCX RLE adapter exists"
+      ],
+      "remaining": [
+        "Original buffered next-index behavior with pending runs, C0 skip and mutable map lookup"
+      ]
+    }
+  ],
+  "dependencies": "Real source VFILE open/seek/read/close; explicit file/palette/map/buffer/run ownership. No image surfaces or guessed globals."
+}

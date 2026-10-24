@@ -1,0 +1,319 @@
+{
+  "original_exe_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+  "source": "D:\\Decomp\\Bhunter\\analysis\\astra-review\\matched_math.cpp",
+  "source_sha256": "31409c61ae45e2ed4aaf56fb3e81c8d516d36e137c869431215f39ca6afb641f",
+  "header": "D:\\Decomp\\MSCVC\\MSVC5\\SP3_EXTRACTED\\VS97_SP3\\all\\vc\\include\\math.h",
+  "header_sha256": "12a4c493b44989f93b11ba9ff1be80c4b7129cb431c326289cdaeb02ed8b23b1",
+  "flags": [
+    "/nologo",
+    "/c",
+    "/ML",
+    "/Gy",
+    "/TP",
+    "/O2",
+    "/G5",
+    "/ID:\\Decomp\\MSCVC\\MSVC5\\SP3_EXTRACTED\\VS97_SP3\\all\\vc\\include"
+  ],
+  "tools": {
+    "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE": "bf9f9c74f756fed96e13f7f9a4273495c7dde0a1fb968e3ef6d760ad6d73dfeb",
+    "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\c1.dll": "7f12a4a889c5a0277f12c391ca462657dc81ef7be769faf629331bd117983d5d",
+    "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\c1xx.dll": "e27df3bb9a37058c85dad3fb7d1ed30b9e52d38fb6c0f66c8fdba0a11111d3d9",
+    "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\c2.exe": "e75aecaf4073b0817ffb638cae5fff636b2e2d1a090daabf8f68dbc954515fae"
+  },
+  "builds": [
+    {
+      "label": "combined-clean-1",
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/Gy",
+        "/TP",
+        "/O2",
+        "/G5",
+        "/ID:\\Decomp\\MSCVC\\MSVC5\\SP3_EXTRACTED\\VS97_SP3\\all\\vc\\include",
+        "/FoD:\\Decomp\\Bhunter\\analysis\\astra-review\\verified-math-9c8d7a7bc8bc\\combined-clean-1\\math.obj",
+        "D:\\Decomp\\Bhunter\\analysis\\astra-review\\matched_math.cpp"
+      ],
+      "cwd": "D:\\Decomp\\Bhunter\\analysis\\astra-review\\verified-math-9c8d7a7bc8bc\\combined-clean-1",
+      "source": "D:\\Decomp\\Bhunter\\analysis\\astra-review\\matched_math.cpp",
+      "source_sha256": "31409c61ae45e2ed4aaf56fb3e81c8d516d36e137c869431215f39ca6afb641f",
+      "object": "D:\\Decomp\\Bhunter\\analysis\\astra-review\\verified-math-9c8d7a7bc8bc\\combined-clean-1\\math.obj",
+      "object_sha256": "0bea4d01200b3f8989b89b87836e13a73c13d6542ca55fbfa252fec22890f852",
+      "functions": [
+        {
+          "name": "bh_vec3_cross",
+          "original_va": "0x4011a0",
+          "target_bytes": 67,
+          "object_section_bytes": 80,
+          "original_hex": "8b4c24088b4424048b54240cd94108d94004d94104d9c9decad84808dee9d91ad94108d94008d809d9c9d808dee9d95a04d94004d94104d808d9c9d809dee9d95a08c3",
+          "generated_hex": "8b4c24088b4424048b54240cd94108d94004d94104d9c9decad84808dee9d91ad94108d94008d809d9c9d808dee9d95a04d94004d94104d808d9c9d809dee9d95a08c390909090909090909090909090",
+          "comparison_mask_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "relocations": [],
+          "raw_match": true,
+          "function_sha256": "c9114de20ca6b544a5226406321496363f3b293cec9615853708e803cce87322",
+          "trailing_alignment_hex": "90909090909090909090909090"
+        },
+        {
+          "name": "bh_mat34_transform_point",
+          "original_va": "0x4012e0",
+          "target_bytes": 116,
+          "object_section_bytes": 128,
+          "original_hex": "8b4424048b4c24088b54240cd94004d94008d94104d94108d901d9cadeccdecad808d9c9dec2dec1d8400cd91ad94014d94104d94018d94010d9cadecbd84908d9c9d809d9c9dec2dec1d8401cd95a04d94024d94104d94028d94020d9cadecbd84908d9c9d809d9c9dec2dec1d8402cd95a08c3",
+          "generated_hex": "8b4424048b4c24088b54240cd94004d94008d94104d94108d901d9cadeccdecad808d9c9dec2dec1d8400cd91ad94014d94104d94018d94010d9cadecbd84908d9c9d809d9c9dec2dec1d8401cd95a04d94024d94104d94028d94020d9cadecbd84908d9c9d809d9c9dec2dec1d8402cd95a08c3909090909090909090909090",
+          "comparison_mask_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "relocations": [],
+          "raw_match": true,
+          "function_sha256": "a5df5e01bff8785de1295c3f4c129da65f2ee1ca742ad687ec1ca42c788fc187",
+          "trailing_alignment_hex": "909090909090909090909090"
+        },
+        {
+          "name": "bh_mat34_transform_direction",
+          "original_va": "0x401360",
+          "target_bytes": 107,
+          "object_section_bytes": 112,
+          "original_hex": "8b4424048b4c24088b54240cd94008d94004d94108d94104d901d9cadeccdecad808d9c9dec2dec1d91ad94018d94108d94014d94010d9cadecbd84904d9c9d809d9c9dec2dec1d95a04d94028d94108d94024d94020d9cadecbd84904d9c9d809d9c9dec2dec1d95a08c3",
+          "generated_hex": "8b4424048b4c24088b54240cd94008d94004d94108d94104d901d9cadeccdecad808d9c9dec2dec1d91ad94018d94108d94014d94010d9cadecbd84904d9c9d809d9c9dec2dec1d95a04d94028d94108d94024d94020d9cadecbd84904d9c9d809d9c9dec2dec1d95a08c39090909090",
+          "comparison_mask_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "relocations": [],
+          "raw_match": true,
+          "function_sha256": "7b057b404551ec6616fda1578340532a9b8b316342d9818c3a81e5400fac3c90",
+          "trailing_alignment_hex": "9090909090"
+        },
+        {
+          "name": "bh_mat34_translate_world",
+          "original_va": "0x401460",
+          "target_bytes": 45,
+          "object_section_bytes": 48,
+          "original_hex": "d9442404d9442408d944240cd9ca8b442410d8400cd9c9d8401cd9cad8402cd9c9d9580cd9c9d9581cd9582cc3",
+          "generated_hex": "d9442404d9442408d944240cd9ca8b442410d8400cd9c9d8401cd9cad8402cd9c9d9580cd9c9d9581cd9582cc3909090",
+          "comparison_mask_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "relocations": [],
+          "raw_match": true,
+          "function_sha256": "f7f73b8e266dd63922af978901b8f1b649f37b4938f519964ae9676bb9aa5ded",
+          "trailing_alignment_hex": "909090"
+        }
+      ]
+    },
+    {
+      "label": "combined-clean-2",
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/Gy",
+        "/TP",
+        "/O2",
+        "/G5",
+        "/ID:\\Decomp\\MSCVC\\MSVC5\\SP3_EXTRACTED\\VS97_SP3\\all\\vc\\include",
+        "/FoD:\\Decomp\\Bhunter\\analysis\\astra-review\\verified-math-9c8d7a7bc8bc\\combined-clean-2\\math.obj",
+        "D:\\Decomp\\Bhunter\\analysis\\astra-review\\matched_math.cpp"
+      ],
+      "cwd": "D:\\Decomp\\Bhunter\\analysis\\astra-review\\verified-math-9c8d7a7bc8bc\\combined-clean-2",
+      "source": "D:\\Decomp\\Bhunter\\analysis\\astra-review\\matched_math.cpp",
+      "source_sha256": "31409c61ae45e2ed4aaf56fb3e81c8d516d36e137c869431215f39ca6afb641f",
+      "object": "D:\\Decomp\\Bhunter\\analysis\\astra-review\\verified-math-9c8d7a7bc8bc\\combined-clean-2\\math.obj",
+      "object_sha256": "0bea4d01200b3f8989b89b87836e13a73c13d6542ca55fbfa252fec22890f852",
+      "functions": [
+        {
+          "name": "bh_vec3_cross",
+          "original_va": "0x4011a0",
+          "target_bytes": 67,
+          "object_section_bytes": 80,
+          "original_hex": "8b4c24088b4424048b54240cd94108d94004d94104d9c9decad84808dee9d91ad94108d94008d809d9c9d808dee9d95a04d94004d94104d808d9c9d809dee9d95a08c3",
+          "generated_hex": "8b4c24088b4424048b54240cd94108d94004d94104d9c9decad84808dee9d91ad94108d94008d809d9c9d808dee9d95a04d94004d94104d808d9c9d809dee9d95a08c390909090909090909090909090",
+          "comparison_mask_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "relocations": [],
+          "raw_match": true,
+          "function_sha256": "c9114de20ca6b544a5226406321496363f3b293cec9615853708e803cce87322",
+          "trailing_alignment_hex": "90909090909090909090909090"
+        },
+        {
+          "name": "bh_mat34_transform_point",
+          "original_va": "0x4012e0",
+          "target_bytes": 116,
+          "object_section_bytes": 128,
+          "original_hex": "8b4424048b4c24088b54240cd94004d94008d94104d94108d901d9cadeccdecad808d9c9dec2dec1d8400cd91ad94014d94104d94018d94010d9cadecbd84908d9c9d809d9c9dec2dec1d8401cd95a04d94024d94104d94028d94020d9cadecbd84908d9c9d809d9c9dec2dec1d8402cd95a08c3",
+          "generated_hex": "8b4424048b4c24088b54240cd94004d94008d94104d94108d901d9cadeccdecad808d9c9dec2dec1d8400cd91ad94014d94104d94018d94010d9cadecbd84908d9c9d809d9c9dec2dec1d8401cd95a04d94024d94104d94028d94020d9cadecbd84908d9c9d809d9c9dec2dec1d8402cd95a08c3909090909090909090909090",
+          "comparison_mask_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "relocations": [],
+          "raw_match": true,
+          "function_sha256": "a5df5e01bff8785de1295c3f4c129da65f2ee1ca742ad687ec1ca42c788fc187",
+          "trailing_alignment_hex": "909090909090909090909090"
+        },
+        {
+          "name": "bh_mat34_transform_direction",
+          "original_va": "0x401360",
+          "target_bytes": 107,
+          "object_section_bytes": 112,
+          "original_hex": "8b4424048b4c24088b54240cd94008d94004d94108d94104d901d9cadeccdecad808d9c9dec2dec1d91ad94018d94108d94014d94010d9cadecbd84904d9c9d809d9c9dec2dec1d95a04d94028d94108d94024d94020d9cadecbd84904d9c9d809d9c9dec2dec1d95a08c3",
+          "generated_hex": "8b4424048b4c24088b54240cd94008d94004d94108d94104d901d9cadeccdecad808d9c9dec2dec1d91ad94018d94108d94014d94010d9cadecbd84904d9c9d809d9c9dec2dec1d95a04d94028d94108d94024d94020d9cadecbd84904d9c9d809d9c9dec2dec1d95a08c39090909090",
+          "comparison_mask_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "relocations": [],
+          "raw_match": true,
+          "function_sha256": "7b057b404551ec6616fda1578340532a9b8b316342d9818c3a81e5400fac3c90",
+          "trailing_alignment_hex": "9090909090"
+        },
+        {
+          "name": "bh_mat34_translate_world",
+          "original_va": "0x401460",
+          "target_bytes": 45,
+          "object_section_bytes": 48,
+          "original_hex": "d9442404d9442408d944240cd9ca8b442410d8400cd9c9d8401cd9cad8402cd9c9d9580cd9c9d9581cd9582cc3",
+          "generated_hex": "d9442404d9442408d944240cd9ca8b442410d8400cd9c9d8401cd9cad8402cd9c9d9580cd9c9d9581cd9582cc3909090",
+          "comparison_mask_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "relocations": [],
+          "raw_match": true,
+          "function_sha256": "f7f73b8e266dd63922af978901b8f1b649f37b4938f519964ae9676bb9aa5ded",
+          "trailing_alignment_hex": "909090"
+        }
+      ]
+    },
+    {
+      "label": "isolated-cross",
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/Gy",
+        "/TP",
+        "/O2",
+        "/G5",
+        "/ID:\\Decomp\\MSCVC\\MSVC5\\SP3_EXTRACTED\\VS97_SP3\\all\\vc\\include",
+        "/FoD:\\Decomp\\Bhunter\\analysis\\astra-review\\verified-math-9c8d7a7bc8bc\\isolated-cross\\math.obj",
+        "D:\\Decomp\\Bhunter\\analysis\\astra-review\\verified-math-9c8d7a7bc8bc\\bh_vec3_cross-isolated.cpp"
+      ],
+      "cwd": "D:\\Decomp\\Bhunter\\analysis\\astra-review\\verified-math-9c8d7a7bc8bc\\isolated-cross",
+      "source": "D:\\Decomp\\Bhunter\\analysis\\astra-review\\verified-math-9c8d7a7bc8bc\\bh_vec3_cross-isolated.cpp",
+      "source_sha256": "3b753b2644c995337039e21a0d8733dc07dd3665c6da5c0ffe7ff3ea65a0ad7c",
+      "object": "D:\\Decomp\\Bhunter\\analysis\\astra-review\\verified-math-9c8d7a7bc8bc\\isolated-cross\\math.obj",
+      "object_sha256": "1993758464766cbc071a99653638f9348da50c20076ff33b9ef296b977920679",
+      "functions": [
+        {
+          "name": "bh_vec3_cross",
+          "original_va": "0x4011a0",
+          "target_bytes": 67,
+          "object_section_bytes": 80,
+          "original_hex": "8b4c24088b4424048b54240cd94108d94004d94104d9c9decad84808dee9d91ad94108d94008d809d9c9d808dee9d95a04d94004d94104d808d9c9d809dee9d95a08c3",
+          "generated_hex": "8b4c24088b4424048b54240cd94108d94004d94104d9c9decad84808dee9d91ad94108d94008d809d9c9d808dee9d95a04d94004d94104d808d9c9d809dee9d95a08c390909090909090909090909090",
+          "comparison_mask_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "relocations": [],
+          "raw_match": true,
+          "function_sha256": "c9114de20ca6b544a5226406321496363f3b293cec9615853708e803cce87322",
+          "trailing_alignment_hex": "90909090909090909090909090"
+        }
+      ]
+    },
+    {
+      "label": "isolated-point",
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/Gy",
+        "/TP",
+        "/O2",
+        "/G5",
+        "/ID:\\Decomp\\MSCVC\\MSVC5\\SP3_EXTRACTED\\VS97_SP3\\all\\vc\\include",
+        "/FoD:\\Decomp\\Bhunter\\analysis\\astra-review\\verified-math-9c8d7a7bc8bc\\isolated-point\\math.obj",
+        "D:\\Decomp\\Bhunter\\analysis\\astra-review\\verified-math-9c8d7a7bc8bc\\bh_mat34_transform_point-isolated.cpp"
+      ],
+      "cwd": "D:\\Decomp\\Bhunter\\analysis\\astra-review\\verified-math-9c8d7a7bc8bc\\isolated-point",
+      "source": "D:\\Decomp\\Bhunter\\analysis\\astra-review\\verified-math-9c8d7a7bc8bc\\bh_mat34_transform_point-isolated.cpp",
+      "source_sha256": "53fa1dbc102b28baa1f272a25aa05a91793f7db455be19db01ee9db4542d5f89",
+      "object": "D:\\Decomp\\Bhunter\\analysis\\astra-review\\verified-math-9c8d7a7bc8bc\\isolated-point\\math.obj",
+      "object_sha256": "f38c1e634f3777c16586525e06e89e89573584cb05f0eda6b265abc40636825f",
+      "functions": [
+        {
+          "name": "bh_mat34_transform_point",
+          "original_va": "0x4012e0",
+          "target_bytes": 116,
+          "object_section_bytes": 128,
+          "original_hex": "8b4424048b4c24088b54240cd94004d94008d94104d94108d901d9cadeccdecad808d9c9dec2dec1d8400cd91ad94014d94104d94018d94010d9cadecbd84908d9c9d809d9c9dec2dec1d8401cd95a04d94024d94104d94028d94020d9cadecbd84908d9c9d809d9c9dec2dec1d8402cd95a08c3",
+          "generated_hex": "8b4424048b4c24088b54240cd94004d94008d94104d94108d901d9cadeccdecad808d9c9dec2dec1d8400cd91ad94014d94104d94018d94010d9cadecbd84908d9c9d809d9c9dec2dec1d8401cd95a04d94024d94104d94028d94020d9cadecbd84908d9c9d809d9c9dec2dec1d8402cd95a08c3909090909090909090909090",
+          "comparison_mask_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "relocations": [],
+          "raw_match": true,
+          "function_sha256": "a5df5e01bff8785de1295c3f4c129da65f2ee1ca742ad687ec1ca42c788fc187",
+          "trailing_alignment_hex": "909090909090909090909090"
+        }
+      ]
+    },
+    {
+      "label": "isolated-direction",
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/Gy",
+        "/TP",
+        "/O2",
+        "/G5",
+        "/ID:\\Decomp\\MSCVC\\MSVC5\\SP3_EXTRACTED\\VS97_SP3\\all\\vc\\include",
+        "/FoD:\\Decomp\\Bhunter\\analysis\\astra-review\\verified-math-9c8d7a7bc8bc\\isolated-direction\\math.obj",
+        "D:\\Decomp\\Bhunter\\analysis\\astra-review\\verified-math-9c8d7a7bc8bc\\bh_mat34_transform_direction-isolated.cpp"
+      ],
+      "cwd": "D:\\Decomp\\Bhunter\\analysis\\astra-review\\verified-math-9c8d7a7bc8bc\\isolated-direction",
+      "source": "D:\\Decomp\\Bhunter\\analysis\\astra-review\\verified-math-9c8d7a7bc8bc\\bh_mat34_transform_direction-isolated.cpp",
+      "source_sha256": "8b2cd4cf0ff6cdb9d87d4439e5c10151bce74903fea258ed4d32ecc60eab7946",
+      "object": "D:\\Decomp\\Bhunter\\analysis\\astra-review\\verified-math-9c8d7a7bc8bc\\isolated-direction\\math.obj",
+      "object_sha256": "da83610913662b7f11abbc9297e8dc683386ccf52e3dba53c72aa6d4e0ec0c1d",
+      "functions": [
+        {
+          "name": "bh_mat34_transform_direction",
+          "original_va": "0x401360",
+          "target_bytes": 107,
+          "object_section_bytes": 112,
+          "original_hex": "8b4424048b4c24088b54240cd94008d94004d94108d94104d901d9cadeccdecad808d9c9dec2dec1d91ad94018d94108d94014d94010d9cadecbd84904d9c9d809d9c9dec2dec1d95a04d94028d94108d94024d94020d9cadecbd84904d9c9d809d9c9dec2dec1d95a08c3",
+          "generated_hex": "8b4424048b4c24088b54240cd94004d94008d94104d94108d901d9cadeccdecad808d9c9dec2dec1d91ad94018d94108d94014d94010d9cadecbd84904d9c9d809d9c9dec2dec1d95a04d94028d94108d94024d94020d9cadecbd84904d9c9d809d9c9dec2dec1d95a08c39090909090",
+          "comparison_mask_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "relocations": [],
+          "raw_match": false,
+          "function_sha256": "7b057b404551ec6616fda1578340532a9b8b316342d9818c3a81e5400fac3c90",
+          "trailing_alignment_hex": null
+        }
+      ]
+    },
+    {
+      "label": "isolated-world",
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/Gy",
+        "/TP",
+        "/O2",
+        "/G5",
+        "/ID:\\Decomp\\MSCVC\\MSVC5\\SP3_EXTRACTED\\VS97_SP3\\all\\vc\\include",
+        "/FoD:\\Decomp\\Bhunter\\analysis\\astra-review\\verified-math-9c8d7a7bc8bc\\isolated-world\\math.obj",
+        "D:\\Decomp\\Bhunter\\analysis\\astra-review\\verified-math-9c8d7a7bc8bc\\bh_mat34_translate_world-isolated.cpp"
+      ],
+      "cwd": "D:\\Decomp\\Bhunter\\analysis\\astra-review\\verified-math-9c8d7a7bc8bc\\isolated-world",
+      "source": "D:\\Decomp\\Bhunter\\analysis\\astra-review\\verified-math-9c8d7a7bc8bc\\bh_mat34_translate_world-isolated.cpp",
+      "source_sha256": "59534cf529036d682c800a6f3aed91c10ba463a40e10f99fe1f7e6cd5e193543",
+      "object": "D:\\Decomp\\Bhunter\\analysis\\astra-review\\verified-math-9c8d7a7bc8bc\\isolated-world\\math.obj",
+      "object_sha256": "61d2eef817414c49564937b366d27db2acdfdf78befb6ce30326a422a612c9c9",
+      "functions": [
+        {
+          "name": "bh_mat34_translate_world",
+          "original_va": "0x401460",
+          "target_bytes": 45,
+          "object_section_bytes": 48,
+          "original_hex": "d9442404d9442408d944240cd9ca8b442410d8400cd9c9d8401cd9cad8402cd9c9d9580cd9c9d9581cd9582cc3",
+          "generated_hex": "d9442404d9442408d944240cd9ca8b442410d8400cd9c9d8401cd9cad8402cd9c9d9580cd9c9d9581cd9582cc3909090",
+          "comparison_mask_hex": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+          "relocations": [],
+          "raw_match": true,
+          "function_sha256": "f7f73b8e266dd63922af978901b8f1b649f37b4938f519964ae9676bb9aa5ded",
+          "trailing_alignment_hex": "909090"
+        }
+      ]
+    }
+  ]
+}

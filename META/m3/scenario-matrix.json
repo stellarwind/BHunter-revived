@@ -1,0 +1,172 @@
+{
+  "date": "2026-10-24",
+  "m3_complete": false,
+  "milestone_status": "skipped_by_user",
+  "disposition_date": "2026-10-24",
+  "disposition": "M3 skipped, not passed. Historical scenario evidence retained; missing observations remain unvalidated and do not block M4 source restoration. All automated gameplay and pilot development abandoned. Game execution limited to bounded startup tests.",
+  "visual_ui_tools_allowed": false,
+  "approach": "Command-line instrumentation and programmatic traces only, per user instruction",
+  "scenarios": [
+    {
+      "id": "source-check",
+      "status": "captured_isolated",
+      "evidence": "source-probe.json",
+      "limits": "Three pre-GUI return traces only"
+    },
+    {
+      "id": "startup-renderer",
+      "status": "captured_isolated",
+      "evidence": [
+        "startup/62d00616a929.json",
+        "startup/e1ee374903ef.json"
+      ],
+      "limits": "Native control fails all six software modes; pinned compatibility control accepts 640x480x16 software mode and stops before game bootstrap. No rendered/menu/gameplay acceptance claimed."
+    },
+    {
+      "id": "menu-configuration",
+      "status": "captured_constructed_menus_and_original_navigation",
+      "evidence": [
+        "startup/c57437263011.json",
+        "startup/3fa87b3191c2.json",
+        "startup/73beffa6a63f.json",
+        "MENU_TRACE.md",
+        "menu-inventory.json"
+      ],
+      "limits": "18 menus/118 entries inventoried from actual original objects. Verified-child key messages navigate GAME/STINGER/prologue with relative-cursor adapter. No visual, mission/gameplay or all-settings/backend acceptance."
+    },
+    {
+      "id": "first-simulation-render-presentation",
+      "status": "captured_with_heap_size_adapter",
+      "evidence": [
+        "startup/b8497ba5a485.json",
+        "startup/75fef4730703.json",
+        "FIRST_FRAME.md"
+      ],
+      "limits": "Default original heap faults at its 28-bit binding pointer assertion. Explicit initial-heap-size input adaptation allows first simulation/render callback and real Flip HRESULT 0. No visual/menu/gameplay or deterministic input acceptance."
+    },
+    {
+      "id": "load-real-scene",
+      "status": "captured_bootstrap_boundaries",
+      "evidence": [
+        "startup/89994fa7c8f0.json",
+        "startup/f7a780ff1c4d.json"
+      ],
+      "limits": "Actual original bootstrap returns 1; 454 models, 283 navigation nodes, 7831 used entities. Cursor calls return FALSE. Stops before menu/game rendering worker; no gameplay acceptance."
+    },
+    {
+      "id": "prologue-selection",
+      "status": "original_episode_and_spawn_observed",
+      "evidence": [
+        "startup/dfa3b4981226.json",
+        "PLAY_TRACE.md"
+      ],
+      "limits": "Episode 0 invokes original spawn reset index 21. Objectives and completion remain uncaptured."
+    },
+    {
+      "id": "controls-movement-collision",
+      "status": "bounded_original_motion_and_contact_captured",
+      "evidence": [
+        "play-validation.json",
+        "PLAY_TRACE.md"
+      ],
+      "limits": "Same-source motion/idle control plus one actual player collision result in a later instrumented variant. Explicit platform adapters; no full physics or deterministic world acceptance."
+    },
+    {
+      "id": "objectives-failure-retry",
+      "status": "original_target_spawn_and_bounded_motion_captured_combat_approach_failed",
+      "evidence": [
+        "TUTORIAL_HANDOFF.md",
+        "tutorial-handoff-validation.json",
+        "tutorial-route.json",
+        "INTRO_SENSOR.md",
+        "intro-sensor-validation.json",
+        "DAMAGE_TRIGGER.md",
+        "damage-contract.json",
+        "TARGET_CONTRACT.md",
+        "target-contract.json",
+        "target-contract-validation.json",
+        "TARGET_SPAWN.md",
+        "target-spawn-validation.json",
+        "COMBAT_ATTEMPT.md",
+        "combat-attempt-validation.json",
+        "FORWARD_CONTRACT.md",
+        "forward-contract-validation.json",
+        "forward-attempt-validation.json",
+        "NAVIGATION_REFERENCE.md",
+        "navigation-validation.json",
+        "navigation-route.json"
+      ],
+      "limits": "Handoff, actual target construction and bounded original query-position motion captured. Two combat policy variants fail separately: first climb phase, then corrected positive-forward direct approach remains near start. No firing, projectile/damage/kill, objective/episode completion or player destruction/retry. Contact/obstruction cause unverified; next route requires actual navigation exit/position ownership. A startup-only graph snapshot verifies 1454 nodes and a connected 15-portal candidate route to the initial launch area; ship clearance and actual route flight remain untested."
+    },
+    {
+      "id": "sound-cd-music-loop",
+      "status": "original_directsound_play_api_captured_cd_host_blocked",
+      "evidence": [
+        "cd-contract.json",
+        "HOST_AVAILABILITY.md",
+        "host-validation.json",
+        "SOUND_TRACE.md",
+        "sound-validation.json"
+      ],
+      "limits": "Original primary looping and distinct secondary one-shot Play return S_OK in idle trace. No buffer status/lifetime/output waveform or audibility validation. Zero CD-ROM drives and MCI cdaudio open 266 block original CD playback/notify loop on current host."
+    },
+    {
+      "id": "network-modes",
+      "status": "original_tcpip_setup_and_host_creation_captured",
+      "evidence": [
+        "HOST_SESSION.md",
+        "host-session-validation.json",
+        "NETWORK_SETUP.md",
+        "network-setup-validation.json",
+        "NETWORK_TRACE.md",
+        "network-validation.json"
+      ],
+      "limits": "Actual original TCP/IP setup, active session list, Open CREATE and server-player creation S_OK, ID 1, requested capacity 8. No join/peer exchange, continued hosted gameplay or normal session shutdown. Earlier variant stall remains unexplained; no reliability or eight-human-player claim."
+    },
+    {
+      "id": "orderly-shutdown-reload",
+      "status": "normal_quit_and_saved_configuration_reload_captured",
+      "limits": "Actual natural quit followed by one original settings/profile reload before game bootstrap. Custom bindings/progress advancement persistence and repeated world load/unload remain untested. Reload child stop is diagnostic.",
+      "evidence": [
+        "play-validation.json",
+        "CONFIG_RELOAD.md",
+        "reload-validation.json"
+      ]
+    },
+    {
+      "id": "selected-weapons-camera-events",
+      "status": "bounded_dispatch_and_camera_state_captured",
+      "evidence": [
+        "FEATURE_TRACE.md",
+        "feature-trace-validation.json"
+      ],
+      "limits": "Ion-gun/static-coating callbacks dispatch/return, including original shared RET; F1 changes camera state 1 to 0. No projectile, damage, audio or visual acceptance. Events 9991/3332 do not validate objectives."
+    }
+  ],
+  "features_inventory_complete": false,
+  "deterministic_input_seed_time_trace_available": false,
+  "deterministic_key_schedule_available": true,
+  "feature_inventory": {
+    "status": "exposed_menu_and_loaded_controls_inventoried_execution_incomplete",
+    "evidence": [
+      "FEATURES_CONTROLS.md",
+      "feature-inventory.json"
+    ],
+    "menus": 18,
+    "items": 118,
+    "profile_control_fields": 44,
+    "loaded_profiles": 3,
+    "binding_values": 132
+  },
+  "repeatable_prefix_trace": {
+    "status": "observed_equal_in_two_independent_executed_variants",
+    "evidence": [
+      "intro-prefix-trace.json",
+      "TUTORIAL_HANDOFF.md"
+    ],
+    "exact_selected_player_samples": 20,
+    "matched_key_events": 37,
+    "matched_printed_flight_observations": 23,
+    "full_world_determinism_validated": false
+  }
+}

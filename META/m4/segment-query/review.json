@@ -1,0 +1,54 @@
+{
+  "owner": "src/bh_segment_query.c",
+  "target": "build/m0/bhunter-integration.exe",
+  "implementation": "func for 0044d530; explicit source transform adapter replaces wrapper global setup, not counted as separate recovered 0044d9b0",
+  "scope": "M4 static BSP segment contact owner; complete recursive traversal with real existing geometry/math",
+  "records": [
+    {
+      "address": "0044d530",
+      "role": "engine_candidate",
+      "boundary": "0044d530-0044d9aa",
+      "confidence": "Ordinary recursive geometry leaf, calls existing vector cross and matrix transforms; unknown engine provenance",
+      "body_sha256": "712684e04eabf2ba829bb0f197ec1845177fea1965b758cedc9c549451b42f1f"
+    },
+    {
+      "address": "0044d9b0",
+      "role": "engine_candidate",
+      "boundary": "0044d9b0-0044da19",
+      "confidence": "Complete mapped wrapper sets borrowed geometry/query globals then calls recursive owner; inspect true boundary before implementation",
+      "body_sha256": "e1d8b91cb74b4addb950152e675a5a9c3b40e85c33a8e8fefb6cc4e1b1b4615d"
+    }
+  ],
+  "dependencies_review": [
+    {
+      "address": "0044b130",
+      "role": "engine_candidate",
+      "reason": "Wrapper dependency: determine lazy-loader side effects before deciding whether source decoded geometry is sufficient",
+      "disposition": "Original lazy flags/face-copy/node-bounds allocations; existing decoded BSP and BHGeometry owners supply all fields read by segment traversal. Full cache-preparation routine remains unimplemented, not separately counted."
+    }
+  ],
+  "constants": {
+    "00489ea0": -1.0,
+    "00489ea4": 0.0,
+    "00489ea8": 1.0,
+    "00489eb0": -0.05
+  },
+  "evidence_sha256": {
+    "META/m4/segment-query/original/0044d530.asm.txt": "6c17bd6c2671ae472b92529e699c5275ff538b7b76026f70dc0eb8324b003be0",
+    "META/m4/segment-query/original/0044d530.c.txt": "fec7025162e324d0ba783f91f2a2d2cc41dbe446c407dfacd3dbc87182031dae",
+    "META/m4/segment-query/original/0044d9b0.asm.txt": "96006fa3877aa999ec9afe6a35fd938fe2de318b748c6a087857b854c0e7d150",
+    "META/m4/segment-query/original/0044d9b0.c.txt": "93ee1277d074222ba2bf2f8b60da38b68066f3fa4c6faa2b9c3c0faf4f0b5d4b",
+    "META/m4/segment-query/original/boundaries.tsv": "f52fc700f7350be3d95d2501f367ef78ce1e9a0984fbb1159fd9b95efa201d3b",
+    "META/m4/segment-query/original/code-pointers.tsv": "6a8660fbc62f36248e46a7f05af821605fd4e6b2b80eb1534ee2b552edd00eb2",
+    "META/m4/segment-query/original/control-flow.tsv": "9c8d221e8afaef6fe77cfd961431266c08a8da360cfdcf46a073aa5078a81ac3",
+    "META/m4/segment-query/original/references.tsv": "9da8ba1845d935fc672dd9e076fe8ae1a6d9b91f2f575d6df1fb0275cd496b7f",
+    "META/m4/segment-query/original/table-words.tsv": "c66d46e18792dcb65fbc0cfa2d9b40f52bd36dd88f2f960216cdbb3b6062291a",
+    "META/m4/segment-query/dependencies/0044b130.asm.txt": "899089fe2b9d66b431fabc5dafae3f4f47c65b938f0bc3d293b1f5a69e7c8f3c",
+    "META/m4/segment-query/dependencies/0044b130.c.txt": "1b36fa4061ea166640117c01d4369ba29a44d33ea3dc313acf3b0627cb96f773",
+    "META/m4/segment-query/dependencies/boundaries.tsv": "f52fc700f7350be3d95d2501f367ef78ce1e9a0984fbb1159fd9b95efa201d3b",
+    "META/m4/segment-query/dependencies/code-pointers.tsv": "6a8660fbc62f36248e46a7f05af821605fd4e6b2b80eb1534ee2b552edd00eb2",
+    "META/m4/segment-query/dependencies/control-flow.tsv": "9c8d221e8afaef6fe77cfd961431266c08a8da360cfdcf46a073aa5078a81ac3",
+    "META/m4/segment-query/dependencies/references.tsv": "94fb915e5fd6dbd2714fba2846ac6e6978d17701f776726f1e5006cbe1eb0a24",
+    "META/m4/segment-query/dependencies/table-words.tsv": "c66d46e18792dcb65fbc0cfa2d9b40f52bd36dd88f2f960216cdbb3b6062291a"
+  }
+}

@@ -1,0 +1,295 @@
+{
+  "date": "2026-10-24",
+  "passed": true,
+  "m2_complete": true,
+  "scope": "Full M2 foundation integration gate in RESTORATION_PLAN.md; no source-game admission",
+  "real_integration": {
+    "scenario": "m2-foundations",
+    "checks": 376611,
+    "failures": 0,
+    "archive_entries": 1229,
+    "original_code_required": false
+  },
+  "clean_integration": {
+    "scenario": "m2-foundations",
+    "checks": 36131,
+    "failures": 0,
+    "archive_entries": 0,
+    "original_code_required": false
+  },
+  "translation_units": 23,
+  "missing_module_controls": 11,
+  "linked_implementation_variants": [
+    "0047d270-functional-c",
+    "0047cbd0-functional-c",
+    "0047ce50-functional-c",
+    "0047cea0-functional-c",
+    "0047cec0-functional-c",
+    "0047cf60-functional-c",
+    "0047d230-functional-c",
+    "0047ca70-functional-c",
+    "0047d050-functional-c",
+    "00401000-functional-c-pc53",
+    "004011a0-functional-c-pc53",
+    "004011f0-functional-c-pc53",
+    "00401270-functional-c-pc53",
+    "004012e0-functional-c-pc53",
+    "00401360-functional-c-pc53",
+    "004013d0-functional-c-pc53",
+    "00401460-functional-c-pc53",
+    "00401490-functional-c-pc53",
+    "00401a70-functional-c-pc53",
+    "00401fd0-functional-c",
+    "004022d0-functional-c",
+    "00402370-functional-c",
+    "00473910-functional-c",
+    "00476da0-functional-c",
+    "00476e90-functional-c",
+    "00476f20-functional-c",
+    "00477070-functional-c",
+    "004770f0-functional-c",
+    "004772f0-functional-c",
+    "00477330-functional-c",
+    "0044f1c0-functional-c",
+    "vfile-lifecycle-detach_archive",
+    "vfile-lifecycle-shutdown",
+    "vfile-lifecycle-set_progress",
+    "vfile-lifecycle-set_debug",
+    "vfile-lifecycle-error",
+    "vfile-lifecycle-entry_count",
+    "math-environment-supported",
+    "math-environment-enter",
+    "math-environment-leave",
+    "config-path-support-bh_config_init",
+    "config-path-support-bh_config_dispose",
+    "config-path-support-bh_config_valid",
+    "config-path-support-bh_paths_config",
+    "config-path-support-bh_paths_discover",
+    "scene-data-bh_scene_level_init",
+    "scene-data-bh_scene_routes_init",
+    "scene-data-bh_scene_level_dispose",
+    "scene-data-bh_scene_routes_dispose",
+    "scene-data-bh_scene_level_decode",
+    "scene-data-bh_scene_routes_decode",
+    "scene-data-bh_scene_level_read",
+    "scene-data-bh_scene_routes_read",
+    "blocks-support-bh_bsp_init",
+    "blocks-support-bh_bsp_dispose",
+    "blocks-support-bh_bsp_decode",
+    "blocks-support-bh_bsp_read",
+    "blocks-support-bh_bsp_load",
+    "blocks-support-bh_blocks_init",
+    "blocks-support-bh_blocks_dispose",
+    "blocks-support-bh_blocks_decode_names",
+    "blocks-support-bh_blocks_load",
+    "blocks-support-bh_blocks_find",
+    "blocks-support-bh_round_float",
+    "entities-support-bh_entities_dispose",
+    "entities-support-bh_entities_focus",
+    "entities-support-bh_entities_valid",
+    "wave-support-bh_wave_scan",
+    "wave-support-bh_wave_init",
+    "wave-support-bh_wave_dispose",
+    "wave-support-bh_wave_decode",
+    "wave-support-bh_wave_read",
+    "pcx-support-bh_pcx_init",
+    "pcx-support-bh_pcx_dispose",
+    "pcx-support-bh_pcx_decode",
+    "pcx-support-bh_pcx_read"
+  ],
+  "historical_linked_variants_excluded_from_current_claim": [
+    "00401000-functional-c",
+    "004011a0-functional-c",
+    "004011f0-functional-c",
+    "00401270-functional-c",
+    "004012e0-functional-c",
+    "00401360-functional-c",
+    "004013d0-functional-c",
+    "00401460-functional-c",
+    "00401490-functional-c",
+    "00401a70-functional-c"
+  ],
+  "source_hashes": {
+    "src/bh_math.c": "ce111e18659563a2c41a04b645295227aac6ead9fe9cc2e803ac45c726d6e9bc",
+    "src/bh_math.h": "9ebaf91c16011277e1e2f9a9c3791b3ea1245dafa3e096d918422378d6065a9d",
+    "src/bh_fp.c": "cc8400a29fd082f96ffd9b483f490a44992717b25eac0cb32e2e108ba446f3f8",
+    "src/bh_fp.h": "f4565fc55c52d3582181db98d3199f6c8f9b665ffd227ab715ce7a03ab4e818d",
+    "src/bh_vfile.c": "7a8187efa6bfcbdf7a626ff53c6d4133d47a37e2dcf65830985b5cee94bf78d0",
+    "src/bh_vfile.h": "7867198f05fbfa5a4b3ae2a003245e8ff7faaea72e1194852d32b18a0ecae7ba",
+    "src/bh_config.c": "6081596cb764118e0441ce5d3e0cf897a6ce011ca2d7e9aaa81a6ab5ef58092e",
+    "src/bh_config.h": "a82e0abf34974bec247852e225904afe4821fe83d01e1e21f2d53e0b18f70dfc",
+    "src/bh_config_defaults.h": "492d14e242d011967eda0601cf98432ea26c821c9ebebca37c52bcb348688cfb",
+    "src/bh_paths.c": "0ce4a5312e27f1cec73425cea8a25b93677e9a619ec6aeb6c79f828c8293a977",
+    "src/bh_paths.h": "f5b49007ba7ed969612fbffa724b9a803aa4966249b803fd2137a555dbc03bdb",
+    "src/bh_scene.c": "8439df6593816139b4e5b60cb8e9c96283a66c8f18f5465ca1aeec3eee64e3e1",
+    "src/bh_scene.h": "0f999ccc243aeace1bba1b8008beb836760dd7c940adaec9ac53042213a6a48c",
+    "src/bh_bsp.c": "712f5d421bb28635087fe8882b13e887c12893809a7b106ea4fa24275ab48fe5",
+    "src/bh_bsp.h": "9c0c019f20d7496268212f9f18e2a58c96406bf05e7352cc553d71847b5fb263",
+    "src/bh_round.c": "ff848010705702e25cf85f5ba1d9c30a024d1ea8bf93227240285b9c54fc8ef4",
+    "src/bh_round.h": "a81be03deb24df6a85cd6f4dd8206fa37a37a952574422e68377dcd71d8af2d6",
+    "src/bh_blocks.c": "d3279666e06ca171c9844124222bb0ecf886e35850ff0b82181a1a4bf3723881",
+    "src/bh_blocks.h": "a84569dcb145da56f83783cd65ab9c96c01e7e1413e79487492e9ea9d349d638",
+    "src/bh_pcx.c": "8250cba2a91c4be9b34c69343fd048ed0d193165f6c6ad96775667489cb4ca87",
+    "src/bh_pcx.h": "4b7a317af5c62ad4566bfdf5a4bd9b9f7522552be1f9e2a11c44b49bc94486df",
+    "tests/pcx.c": "ab47c1e72be19949584e0b8ba76017054c6c4d89aa7e3405679262da6dd7e994",
+    "tests/pcx_manifest.h": "b40911d30b5d74088b7bbdba35a9ec7f6f5496729011e87754e60d1da5a6636f",
+    "tests/pcx_palette_cases.h": "328768f053d13e9a5461d92aebb49e1a1262ef0d12edeedd4b3f58c765d3e87a",
+    "src/bh_wave.c": "16bf89dc8799e762bc8eb257c60841214ae4135d9e9b6702f8124ef97fdf7115",
+    "src/bh_wave.h": "6b30865e8a2ab6636af0af2afa6814d6c5c56820ef283934e3c3e64a77273a3a",
+    "tests/wave.c": "54434f2731558300a0561634655ab702a08d8d9a72aca6fff6c6d77bc3c3f6a1",
+    "tests/wave_manifest.h": "bb5a35ba85dd8564120dfb4a833aa90776d2ef19910b57b04369fdc3d7f10c74",
+    "src/bh_entities.c": "6fc5e54d88906a7922c149bb1ccc9851c2cbe701217e57d8e3c72646d81cb92a",
+    "src/bh_entities.h": "f02442c0444e41f6e16d2ff28a9a677252bdff0c73f4d6fbf44d3ca419502f13",
+    "tests/entities.c": "b95b741c5df9fb58a69e58194be28428ee327fcff0804622050e54e668bcc392",
+    "tests/entity_query_cases.h": "018820a1882dda338b2d40518b16b3735616398335228cb85975be72b3eccc4d",
+    "tests/blocks.c": "ff70547ce09e7b05d458f497598d2f63b878cdef99ae81d65cbdb6ef4ab2b988",
+    "tests/bsp_manifest.h": "e1deb9990542d45ac3eb542dcc38159509780731a827f04778b94944811e6641",
+    "tests/block_names.h": "fc1d8777692e338a24e5612c645bdc9afe9b0d3c1f387f1dc5f406d9be73342d",
+    "tests/scene.c": "188af4318d63cc8272f7415ea2d78bb869f7cb1f2225404a4da8f0a5e46be056",
+    "tests/config.c": "0a6715aa5e4cbe02e53927be96f648b5c9101678c66e16fe40d47f3d23ac7961",
+    "tests/integration.c": "fb18f5cea1837a95c66800769a4dfa21e3e64cbcd2ec2bd9fa038b906607b8de",
+    "tests/checkpoint.c": "3be10303aabf7908c5a6552d4b24a393b63dbc2dc17ac7bf70dca886f96c5f8a",
+    "tests/vfile.c": "4ce922ed286642015cbda949c6349fc194e04392d1b8309d497b40574ba16451",
+    "tests/math_cases.c": "907257316f265794a1a73da7ff04a7890fcd737d8906a8459ec188e9a1a70ca6",
+    "tests/math_cases.h": "66ea7025b3a0580ee8bb300707e10a4bb94cd9a7bcec779faf172cff35a64a82",
+    "tests/math_numeric.c": "01a96c8f47790525966352de86a42b90ad7ec2f39d0bbc9ef403512a53571de5",
+    "tests/math_golden.h": "bb91fd34bf9d908ce30f78e156526963c058b21f914448d68f03035f54fc0cec"
+  },
+  "immutable_references": {
+    "GAME_DATA/BHUNTER.EXE": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+    "GAME_DATA/Bhunter.bin": "2393a661fd647ed6de3eee34c35c30812c44f3ee15b9d44244a63720804df581",
+    "BHUNTER.mdf": "540ef8a444a9e9e5ab9eb69bc0e7b13a040bb2e49187b91723f317f97a627e1b",
+    "BHUNTER.mds": "77c249c75a2505a36822918a71a11a4d253f9860141d863c5db6084317f1fb19"
+  },
+  "requirements": [
+    {
+      "requirement": "One chosen variant of each assigned math routine and checked shared layouts",
+      "status": "proven",
+      "evidence": [
+        "src/bh_math.c",
+        "src/bh_math.h",
+        "tests/math_numeric.c",
+        "META/m2/math/oracle-final.json"
+      ],
+      "limit": "Ten assigned routines; original wider engine/game math remains future recovery"
+    },
+    {
+      "requirement": "Alternative matching artifact separately reproducible",
+      "status": "proven",
+      "evidence": [
+        "META/m2/final/matching-verification.json"
+      ],
+      "limit": "Four C++ object variants; no transfer of byte-match evidence into C linked variants"
+    },
+    {
+      "requirement": "PC24 resolved or intended numerical environment explicitly constrained and verified",
+      "status": "proven_constrained_profile",
+      "evidence": [
+        "src/bh_fp.c",
+        "tests/math_numeric.c",
+        "tests/checkpoint.c"
+      ],
+      "limit": "PC53/nearest/masked integration boundary; PC24 and original driver/thread transitions unresolved before game admission"
+    },
+    {
+      "requirement": "Expanded zero/alias/magnitude/exceptional numerical testing",
+      "status": "proven",
+      "evidence": [
+        "tests/math_cases.c",
+        "tests/math_numeric.c",
+        "tests/math_golden.h",
+        "META/m2/math/oracle-final.json"
+      ],
+      "limit": "Explicit alias preconditions and NaN payload/sign exclusions"
+    },
+    {
+      "requirement": "Allocation/container contracts, CRT reuse and real lifecycle ownership",
+      "status": "proven",
+      "evidence": [
+        "src/bh_entities.c",
+        "src/bh_config.c",
+        "tests/entities.c",
+        "tests/config.c"
+      ],
+      "limit": "Assigned foundation owners; game callbacks/resource lifetime/graph semantics remain later work"
+    },
+    {
+      "requirement": "Archive/VFILE, paths/config and all archive entries validated",
+      "status": "proven",
+      "evidence": [
+        "src/bh_vfile.c",
+        "src/bh_paths.c",
+        "src/bh_config.c",
+        "tests/vfile.c",
+        "tests/config.c"
+      ],
+      "limit": "Legacy unversioned config shape cannot uniquely identify every incompatible file"
+    },
+    {
+      "requirement": "Bounded asset readers required by reviewed first scene path",
+      "status": "proven",
+      "evidence": [
+        "src/bh_scene.c",
+        "src/bh_bsp.c",
+        "src/bh_blocks.c",
+        "src/bh_wave.c",
+        "src/bh_pcx.c"
+      ],
+      "limit": "Six archive payload classes; TXT sidecars read/retained, script execution and world construction are M4 behavior"
+    },
+    {
+      "requirement": "Malformed/version-mismatched data rejected without out-of-bounds access",
+      "status": "proven_with_format_limits",
+      "evidence": [
+        "tests/scene.c",
+        "tests/blocks.c",
+        "tests/wave.c",
+        "tests/pcx.c",
+        "tests/vfile.c"
+      ],
+      "limit": "Guarded finite fixture coverage, explicit caps and dialect checks; no universal guarantee for unversioned formats"
+    },
+    {
+      "requirement": "Foundations compile/link/execute together with no unresolved or fabricated definitions",
+      "status": "proven",
+      "evidence": [
+        "META/m2/media/pcx-integration-real.json",
+        "META/m2/media/pcx-link-map.txt",
+        "META/m2/pcx-clean/clean-checkout.json"
+      ],
+      "limit": "Harness admission; callback fixtures isolated in tests, source game target not claimed"
+    },
+    {
+      "requirement": "Representative real assets loaded and invalid data diagnosed",
+      "status": "proven",
+      "evidence": [
+        "META/m2/media/pcx-integration-real.json"
+      ],
+      "limit": "All archive data available locally; no rendered/playable/audio acceptance scenario claimed"
+    }
+  ],
+  "artifacts": {
+    "META/m2/MATH.md": "cdfd59f525378b8427ba1d31232b974798b794bccc735960adab988019608a36",
+    "META/m2/VFILE.md": "1be8dc03eb6c759049192574a70bfd84a2e6685c9a724820e1ac11433522ae77",
+    "META/m2/CONFIG.md": "b163b3781bf2f461ad558de069cfb0f766bb851d91eaea6fa5efdc04b8dd8b1b",
+    "META/m2/SCENE.md": "f10a1ea13db34939edd15ecf50af1b3eb79702c1927be529c18f681ea36c361a",
+    "META/m2/BLOCKS.md": "25eb2034e5400beb1c9e97433be781b3f477c48be68cfb321bada036be690b82",
+    "META/m2/ENTITIES.md": "b49d89023fba75ea986bad63bdbfad9e37f8920c26751ee8abd46b814a67b3c9",
+    "META/m2/WAVE.md": "502845a3d4a4c27eda78356af30e3d7db32266b9838f94d7f4c6724b6aa48922",
+    "META/m2/PCX.md": "38f3b275993f71df821b5d12f6d835a887512b24768e6487793fbd1eec069f40",
+    "META/m2/media/pcx-validation.json": "4d8ae49287af22730d04cc436041263d3a78c0f38261a5fef8db99cc4ecb5281",
+    "META/m2/math/oracle-final.json": "1d75fdd46b77631b98db9bf3711b121534ada747fe13ff5c83354eba6c9b83b3",
+    "META/m2/final/matching-verification.json": "adea27398d5eb887f3c00c7dc925bf1dc9002b219e77b24c946ed221ea314f1b",
+    "META/m2/media/pcx-integration-real.json": "b54e7cee0e07e14b2d0c4d514e0d344f10777de7312ba928d17709577e26667d",
+    "META/m2/pcx-clean/clean-checkout.json": "3d6d57477c655dc0cc564997d3a164f139982d287d1926934d30686145b15fe4"
+  },
+  "remaining_m2_requirements": [],
+  "later_requirements": [
+    "M3 runnable original reference, feature/media/scenario inventory",
+    "Original runtime x87 driver/thread transitions and PC24 constraints before gameplay admission",
+    "M4 complete source world/script/navigation/texture/audio consumers and playable slice",
+    "CD audio/MCI behavior and media, DirectPlay/networking retained",
+    "Modern source compiler/backend/platform game admission, M8 full reachable-dependency audit"
+  ],
+  "audit_tool_sha256": "13c3c2a937ea4ee4095259109fd866a08a405450e02c3a7fa3969a73fe88c252"
+}

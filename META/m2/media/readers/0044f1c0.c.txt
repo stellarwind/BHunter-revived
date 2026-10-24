@@ -1,0 +1,177 @@
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void __cdecl FUN_0044f1c0(int param_1,int param_2)
+
+{
+  byte *pbVar1;
+  uint uVar2;
+  int iVar3;
+  int iVar4;
+  undefined1 *puVar5;
+  byte *pbVar6;
+  char cVar7;
+  uint uVar8;
+  int iVar9;
+  int iVar10;
+  uint uVar11;
+  
+  iVar10 = -1;
+  if (param_1 != 2) {
+    if (param_1 != 0) {
+      iVar3 = 1;
+      puVar5 = &DAT_004e8cec;
+      do {
+        if ((uint)CONCAT11(puVar5[-1],*puVar5) * 0x100 + (uint)(byte)puVar5[1] == param_2) {
+          (&DAT_004e3320)[iVar3] = 0;
+          iVar10 = iVar3;
+        }
+        puVar5 = puVar5 + 3;
+        iVar3 = iVar3 + 1;
+      } while ((int)puVar5 < 0x4e8fe9);
+    }
+    uVar2 = DAT_004e8ce8 >> 8 & 0xff;
+    uVar11 = DAT_004e8ce8 & 0xff;
+    uVar8 = DAT_004e8ce8 >> 0x10 & 0xff;
+    if (((uVar11 * 0x100 + uVar2) * 0x100 + uVar8 != param_2) || (param_1 == 0)) {
+      if (iVar10 < 0) {
+        DAT_004e3320 = '\x01';
+        iVar10 = (DAT_004e8ce8 >> 0x18) - uVar11;
+        if (iVar10 < 0) {
+          iVar10 = -iVar10;
+        }
+        iVar3 = (_DAT_004e8cec & 0xff) - uVar2;
+        if (iVar3 < 0) {
+          iVar3 = -iVar3;
+        }
+        iVar9 = (_DAT_004e8cec >> 8 & 0xff) - uVar8;
+        if (iVar9 < 0) {
+          iVar9 = -iVar9;
+        }
+        cVar7 = '\x02';
+        iVar10 = iVar9 + iVar3 + iVar10;
+        pbVar1 = &DAT_004e8cef;
+        do {
+          iVar3 = pbVar1[-1] - uVar11;
+          if (iVar3 < 0) {
+            iVar3 = -iVar3;
+          }
+          iVar9 = *pbVar1 - uVar2;
+          if (iVar9 < 0) {
+            iVar9 = -iVar9;
+          }
+          iVar4 = pbVar1[1] - uVar8;
+          if (iVar4 < 0) {
+            iVar4 = -iVar4;
+          }
+          iVar3 = iVar4 + iVar9 + iVar3;
+          if (iVar3 < iVar10) {
+            iVar10 = iVar3;
+            DAT_004e3320 = cVar7;
+          }
+          pbVar1 = pbVar1 + 3;
+          cVar7 = cVar7 + '\x01';
+        } while ((int)pbVar1 < 0x4e8fe9);
+      }
+      else {
+        iVar3 = iVar10 * 3;
+        DAT_004e3320 = (char)iVar10;
+        *(undefined1 *)((int)&DAT_004e8ce8 + iVar3) = (undefined1)DAT_004e8ce8;
+        *(undefined1 *)((int)&DAT_004e8ce8 + iVar3 + 1) = DAT_004e8ce8._1_1_;
+        *(undefined1 *)((int)&DAT_004e8ce8 + iVar3 + 2) = DAT_004e8ce8._2_1_;
+      }
+    }
+    pbVar1 = &DAT_004e8cec;
+    do {
+      iVar10 = 8 - (uint)pbVar1[-1];
+      if (iVar10 < 0) {
+        iVar10 = 0;
+      }
+      iVar3 = 8 - (uint)*pbVar1;
+      if (iVar3 < 0) {
+        iVar3 = 0;
+      }
+      iVar9 = 8 - (uint)pbVar1[1];
+      if (iVar9 < 0) {
+        iVar9 = 0;
+      }
+      if (iVar3 < iVar10) {
+        iVar10 = iVar3;
+      }
+      if (iVar9 < iVar10) {
+        iVar10 = iVar9;
+      }
+      cVar7 = (char)iVar10;
+      pbVar6 = pbVar1 + 3;
+      pbVar1[-1] = cVar7 + pbVar1[-1];
+      *pbVar1 = *pbVar1 + cVar7;
+      pbVar1[1] = pbVar1[1] + cVar7;
+      pbVar1 = pbVar6;
+    } while ((int)pbVar6 < 0x4e8fe9);
+    DAT_004e8ce8 = DAT_004e8ce8 & 0xff000000;
+    return;
+  }
+  pbVar1 = (byte *)((int)&DAT_004e8ce8 + 1);
+  do {
+    if (((pbVar1[-1] < 5) && (*pbVar1 < 5)) && (pbVar1[1] < 5)) {
+      pbVar1[-1] = 0;
+      *pbVar1 = 0;
+      pbVar1[1] = 0;
+    }
+    pbVar1 = pbVar1 + 3;
+  } while ((int)pbVar1 < 0x4e8fe9);
+  uVar8 = DAT_004e8ce8 >> 8 & 0xff;
+  uVar11 = DAT_004e8ce8 & 0xff;
+  uVar2 = DAT_004e8ce8 >> 0x10 & 0xff;
+  if ((uVar11 * 0x100 + uVar8) * 0x100 + uVar2 != 0) {
+    DAT_004e3320 = '\x01';
+    iVar10 = (DAT_004e8ce8 >> 0x18) - uVar11;
+    if (iVar10 < 0) {
+      iVar10 = -iVar10;
+    }
+    iVar3 = (_DAT_004e8cec & 0xff) - uVar8;
+    if (iVar3 < 0) {
+      iVar3 = -iVar3;
+    }
+    iVar9 = (_DAT_004e8cec >> 8 & 0xff) - uVar2;
+    if (iVar9 < 0) {
+      iVar9 = -iVar9;
+    }
+    cVar7 = '\x02';
+    iVar10 = iVar9 + iVar3 + iVar10;
+    pbVar1 = &DAT_004e8cef;
+    do {
+      iVar3 = pbVar1[-1] - uVar11;
+      if (iVar3 < 0) {
+        iVar3 = -iVar3;
+      }
+      iVar9 = *pbVar1 - uVar8;
+      if (iVar9 < 0) {
+        iVar9 = -iVar9;
+      }
+      iVar4 = pbVar1[1] - uVar2;
+      if (iVar4 < 0) {
+        iVar4 = -iVar4;
+      }
+      iVar3 = iVar4 + iVar9 + iVar3;
+      if (iVar3 < iVar10) {
+        iVar10 = iVar3;
+        DAT_004e3320 = cVar7;
+      }
+      pbVar1 = pbVar1 + 3;
+      cVar7 = cVar7 + '\x01';
+    } while ((int)pbVar1 < 0x4e8fe9);
+  }
+  iVar10 = 1;
+  pbVar1 = &DAT_004e8cec;
+  do {
+    if (((uint)pbVar1[-1] * 0x100 + (uint)*pbVar1) * 0x100 + (uint)pbVar1[1] == 0) {
+      (&DAT_004e3320)[iVar10] = 0;
+    }
+    pbVar1 = pbVar1 + 3;
+    iVar10 = iVar10 + 1;
+  } while ((int)pbVar1 < 0x4e8fe9);
+  DAT_004e8ce8 = DAT_004e8ce8 & 0xff000000;
+  return;
+}
+

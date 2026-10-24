@@ -1,0 +1,68 @@
+{
+  "game_source_admission": false,
+  "entries": [
+    {
+      "address": "0041e850",
+      "boundary_catalog_rows": [
+        "0041e850\tFUN_0041e850\t0041e850-00421559\tundefined FUN_0041e850(void)\tfalse\tcandidate-function-code-pointer"
+      ],
+      "role": "game_behavior_candidate",
+      "provenance": "Reviewed player owner; four indirect weapon trigger/held dispatch sites",
+      "scope": "Original-backed behavior probe; no implementation assignment"
+    },
+    {
+      "address": "004225f0",
+      "boundary_catalog_rows": [
+        "004225f0\tFUN_004225f0\t004225f0-004233a2\tundefined FUN_004225f0(void)\tfalse\tcandidate-function-code-pointer"
+      ],
+      "role": "game_behavior_candidate",
+      "provenance": "Reviewed original mission event consumer",
+      "scope": "Original-backed behavior probe; no implementation assignment"
+    },
+    {
+      "address": "0047b210",
+      "boundary_catalog_rows": [
+        "0047b210\tFUN_0047b210\t0047b210-0047b2d0\tundefined __cdecl FUN_0047b210(int * param_1, int param_2)\tfalse\t"
+      ],
+      "role": "engine_game_owner_unresolved",
+      "provenance": "Actual player camera selector called by original camera keys",
+      "scope": "Original-backed behavior probe; no implementation assignment"
+    },
+    {
+      "address": "0042f730",
+      "boundary_catalog_rows": [
+        "0042f730\tFUN_0042f730\t0042f730-0042f792\tundefined FUN_0042f730(void)\tfalse\tcandidate-function-code-pointer"
+      ],
+      "role": "game_behavior_candidate",
+      "provenance": "Observed primary trigger callback",
+      "scope": "Observed original callback only, no source implementation assignment"
+    },
+    {
+      "address": "004305f0",
+      "boundary_catalog_rows": [
+        "004305f0\tFUN_004305f0\t004305f0-004309a7\tundefined FUN_004305f0(void)\tfalse\tcandidate-function-code-pointer"
+      ],
+      "role": "game_behavior_candidate",
+      "provenance": "Observed primary held callback; complete historical body already reviewed",
+      "scope": "Observed original callback only, no source implementation assignment"
+    },
+    {
+      "address": "00433dc0",
+      "boundary_catalog_rows": [
+        "00433dc0\tFUN_00433dc0\t00433dc0-00433e49\tundefined FUN_00433dc0(void)\tfalse\tcandidate-function-code-pointer"
+      ],
+      "role": "game_behavior_candidate",
+      "provenance": "Observed secondary trigger callback",
+      "scope": "Observed original callback only, no source implementation assignment"
+    },
+    {
+      "address": "0047d680",
+      "boundary_catalog_rows": [
+        "0047d680\tFUN_0047d680\t0047d680-0047d680\tundefined __stdcall FUN_0047d680(void)\tfalse\t"
+      ],
+      "role": "shared_sentinel",
+      "provenance": "Known common one-byte RET; no independent gameplay assignment",
+      "scope": "Observed original callback only, no source implementation assignment"
+    }
+  ]
+}

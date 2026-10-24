@@ -1,0 +1,22 @@
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+/* Recovered layout and behavior tested against original isolated machine code. See src/bh_math.c
+   and analysis/math/RECOVERY.md. Not byte-matched; aliasing and floating-point limits documented
+   there. */
+
+int __cdecl bh_vec3_normalize_to(BHVec3 *v,BHVec3 *out)
+
+{
+  float fVar1;
+  
+  fVar1 = SQRT(v->x * v->x + v->z * v->z + v->y * v->y);
+  if (fVar1 == (float)_DAT_004891e0) {
+    return 0;
+  }
+  fVar1 = (float)_DAT_004891e8 / fVar1;
+  out->x = fVar1 * v->x;
+  out->y = v->y * fVar1;
+  out->z = v->z * fVar1;
+  return 1;
+}
+

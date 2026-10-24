@@ -1,0 +1,57 @@
+
+LRESULT FUN_00473c40(HWND param_1,uint param_2,uint param_3,uint param_4)
+
+{
+  LRESULT LVar1;
+  
+  if (param_2 < 0x202) {
+    if (param_2 == 0x201) {
+      DAT_004ef0bd = 1;
+      return 0;
+    }
+    switch(param_2) {
+    case 0x100:
+    case 0x104:
+      if ((param_4 & 0x40000000) == 0) {
+        *(char *)((int)&DAT_004ef2ba + (uint)DAT_004ef2da) = (char)param_3;
+        DAT_004ef2da = DAT_004ef2da + 1 & 0x1f;
+        (&DAT_004ef0bc)[param_3 & 0xff] = 1;
+        return 0;
+      }
+      break;
+    case 0x101:
+    case 0x105:
+      if ((param_4 & 0x40000000) != 0) {
+        (&DAT_004ef0bc)[param_3 & 0xff] = 0;
+        return 0;
+      }
+      break;
+    default:
+switchD_00473c5c_caseD_102:
+      LVar1 = DefWindowProcA(param_1,param_2,param_3,param_4);
+      return LVar1;
+    }
+  }
+  else {
+    switch(param_2) {
+    case 0x202:
+      DAT_004ef0bd = 0;
+      return 0;
+    default:
+      goto switchD_00473c5c_caseD_102;
+    case 0x204:
+      DAT_004ef0be = 1;
+      return 0;
+    case 0x205:
+      DAT_004ef0be = 0;
+      return 0;
+    case 0x207:
+      DAT_004ef0c0 = 1;
+      return 0;
+    case 0x208:
+      DAT_004ef0c0 = 0;
+    }
+  }
+  return 0;
+}
+

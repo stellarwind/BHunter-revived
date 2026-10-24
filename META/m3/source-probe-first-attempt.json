@@ -1,0 +1,86 @@
+{
+  "date": "2026-10-24",
+  "passed": false,
+  "scope": "Native OS-loaded original source-check diagnostic; stops before GUI creation",
+  "original_code_executes": true,
+  "original_instruction_patches": 0,
+  "shipping_dependency": false,
+  "integration_target_changed": false,
+  "original_exe_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+  "source_sha256": "d4a54a13df010f957662c084171181f6ecc224eafb69bad74ce45a6b78f499a8",
+  "driver_sha256": "cf3d49760c2a89478216bb1d474edd9d9c4d796f52829b203eea0717bb77a51b",
+  "commands": [
+    {
+      "label": "compile",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\m3\\source-probe\\source-probe.obj",
+        "D:\\Decomp\\Bhunter\\tools\\m3_source_probe.c"
+      ],
+      "exit_code": 0,
+      "output": "m3_source_probe.c\nD:\\Decomp\\Bhunter\\tools\\m3_source_probe.c(13) : warning C4090: 'function' : different 'const' qualifiers\nD:\\Decomp\\Bhunter\\tools\\m3_source_probe.c(13) : warning C4022: 'WriteProcessMemory' : pointer mismatch for actual parameter 3\n"
+    },
+    {
+      "label": "link",
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/out:D:\\Decomp\\Bhunter\\build\\m3\\source-probe\\source-probe.exe",
+        "D:\\Decomp\\Bhunter\\build\\m3\\source-probe\\source-probe.obj",
+        "kernel32.lib",
+        "advapi32.lib"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "label": "absent-registry",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\build\\m3\\source-probe\\source-probe.exe",
+        "baseline",
+        "D:\\Decomp\\Bhunter\\build\\m3\\source-probe\\BHUNTER.EXE",
+        "D:\\Decomp\\Bhunter\\build\\m3\\source-probe",
+        "D:\\Decomp\\Bhunter\\build\\m3\\reference-source",
+        "Software\\BhunterM3-5c19e58e670540f19b03f4b74dd3f21d"
+      ],
+      "exit_code": 1,
+      "output": "{\"event\":\"process-created\",\"pid\":19140,\"redirect\":false,\"original_instruction_patches\":0}\n{\"event\":\"timeout\"}\n{\"event\":\"process-exit\",\"code\":1295187970,\"probe_termination\":true}\n{\"event\":\"probe-complete\",\"observed_return\":false,\"passed\":false}\n"
+    }
+  ],
+  "scenarios": [],
+  "registry_before": [
+    {
+      "view": "32",
+      "exists": false,
+      "error": 2
+    },
+    {
+      "view": "64",
+      "exists": false,
+      "error": 2
+    }
+  ],
+  "m3_complete": false,
+  "registry_after": [
+    {
+      "view": "32",
+      "exists": false,
+      "error": 2
+    },
+    {
+      "view": "64",
+      "exists": false,
+      "error": 2
+    }
+  ],
+  "original_references_unchanged": true,
+  "reference_copy_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1"
+}
