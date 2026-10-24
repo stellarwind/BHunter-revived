@@ -23,6 +23,26 @@ Human playtesting offer, 2026-10-24: ask the user for a focused manual playtest 
 
 ## Working evidence
 
+M4 model-space light preparation, 2026-10-24: complete `00450980`
+now compiles/links as `bh_light_prepare` in `src/bh_light.c`. The 91-TU
+integration passes 664,011 real-data / 171,777 clean source checks and46 missing
+module controls. The 991 focused checks cover256 analytical mixed-light cases,
+positive-range culling, exact distance/8 radius threshold, spot cosine ramp,
+model-space point/direction transforms, original cache retention and override
+reference semantics, plus source preflight of invalid/cyclic borrowed lists.
+
+The original0x5c light record layout is retained. Near lights keep point/spot
+state; distant lights become attenuated directional approximations. Inactive
+branches only clear the prepared tag, preserving stale caches as original.
+Globals are explicit context bindings; no light constructor/lifetime claim.
+Shading evaluators00450cd0/00451140, visibility and native/software primitive
+dispatch remain unfinished. This source owner removes a dependency from the lit
+model traversal; it does not change the saved static scene or establish gameplay.
+No original code or game execution. Evidence: `m4/light-prepare/`; audit:
+`python tools/check_light_prepare.py`. Next: original shading evaluators and
+primitive/visibility closure, then scene/entity/control. Human recording stays
+independent.
+
 M4 recovered camera/frustum/viewport family, 2026-10-24: complete
 `004515b0`, `00451660` and `00451b80` compile/link in `src/bh_view_camera.c`.
 The 89-TU integration passes 663,020 real-data / 170,786 clean checks and

@@ -1,0 +1,65 @@
+{
+  "records": [
+    {
+      "address": "00450980",
+      "function": "bh_light_prepare",
+      "role": "engine_candidate",
+      "classification": "Ordinary complete proprietary/unknown-engine lighting owner called by0045aa60 model draw and consumed by00450cd0/00451140 evaluators. Full boundary/callers/global field use inspected; no verified library, import, CRT, EH/compiler helper or shared tail. Unknown historical authorship.",
+      "original": "META/m4/light-prepare/original/00450980.tsv",
+      "boundary": "00450980-00450cba",
+      "instructions": 257,
+      "body_sha256": "6525784a25fa2419e323fd67aa495e4c7f5e3f8bc98556e9b53ed4eef0cfa3bc"
+    }
+  ],
+  "dependencies": [
+    {
+      "original": "004012e0",
+      "source": "src/bh_math.c",
+      "symbol": "bh_mat34_transform_point",
+      "purpose": "override and point light positions"
+    },
+    {
+      "original": "00401360",
+      "source": "src/bh_math.c",
+      "symbol": "bh_mat34_transform_direction",
+      "purpose": "directional/full spot and distant approximation rays"
+    },
+    {
+      "original": "x87 FSQRT",
+      "source": "verified VC5 intrinsic/math runtime",
+      "purpose": "stored distance"
+    },
+    {
+      "original": "DAT_004ede88",
+      "binding": "BHLightContext.lights",
+      "purpose": "borrowed linked list; next+04"
+    },
+    {
+      "original": "DAT_004e3218",
+      "binding": "BHLightContext.world_to_model",
+      "purpose": "real model inverse supplied by caller; no invented global"
+    },
+    {
+      "original": "DAT_004ede90/DAT_004e2df8",
+      "binding": "reference_override/local_reference",
+      "purpose": "raw override for distance; independently transformed cached evaluator reference"
+    }
+  ],
+  "contracts": [
+    "Full0x5c x86 light layout; type+0c/color+10/intensity+14/range+18/cones+1c,+20/effective+24/position+28/direction+34/local_position+40/local_direction+4c/prepared_type+58",
+    "Type1/unknown descriptors unchanged; type2 transforms direction only and retains prepared tag/effective intensity",
+    "Positive range culls before near test; distance*.125<=radius retains point or spot type and transforms position (also spot direction)",
+    "Far point/spot become type2 with unit light-to-reference ray, linear range attenuation and original spot cosine ramp; nonpositive effective attenuation clears prepared tag only",
+    "Retains original stale caches/effective strength on near/inactive branches instead of inventing clearing or resets",
+    "DeltaX/Y binary32 before squaring; deltaZ retained across float store and multiplied by its stored value; distance binary32; reciprocal retained through component stores; point attenuation positivity/spot outer comparison use retained values",
+    "Override transforms before list traversal even for empty list; raw override is used for distance decisions"
+  ],
+  "limits": [
+    "No recovered light constructor/list lifetime or shading evaluators00450cd0/00451140; their listings are dependency evidence only",
+    "No visibility/traversal or native/software primitive dispatch admission; source scene output unchanged",
+    "Borrowed list/context replace original globals; source preflight rejects cycles/null/nonfinite descriptor inputs before mutation",
+    "PC53/nearest/masked finite-domain functional recovery; PC24, extreme exponent and byte matching unclaimed",
+    "No original game code executed and no game launches"
+  ],
+  "target": "build/m0/bhunter-integration.exe"
+}

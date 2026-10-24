@@ -8,19 +8,19 @@ A source restoration of BHunter, with the goal of faithfully playable gameplay o
 
 <!-- BHUNTER_STATUS_START -->
 
-**Restored and linked source functions:** `[###---------------------]` **13.9% (101/727)**
+**Restored and linked source functions:** `[####--------------------]` **17.1% (124/727)**
 
 | Mapped | Excluded runtime/helpers | Potential game/engine | Restored & linked | In progress | Not started |
 |---:|---:|---:|---:|---:|---:|
-| 887 | 160 | 727 | 101 | 8 | 618 |
+| 887 | 160 | 727 | 124 | 5 | 598 |
 
-**Remaining:** 626 potential functions. Current linked implementations: 101 functional / 0 byte-matched; 0 other adapted/reused addresses.
+**Remaining:** 603 potential functions. Current linked implementations: 124 functional / 0 byte-matched; 0 other adapted/reused addresses.
 
 **Admitted into a playable game target:** `[------------------------]` **0.0% (0/727)**
 
 The denominator uses the **full 887-function role catalog**, including unknown candidates, minus verified libraries, compiler helpers, imports and shared tails. It is provisional: further classification may exclude more functions. **Function count is not effort or playable-game completion.**
 
-The ledger tracks 109 distinct eligible addresses across 128 implementation variants: 15 historical/superseded and 4 object-only byte-match variants are kept separate. Object-only matches do not replace linked functional evidence or add restored functions. 66 source support implementations are counted separately.
+The ledger tracks 129 distinct eligible addresses across 158 implementation variants: 25 historical/superseded and 4 object-only byte-match variants are kept separate. Object-only matches do not replace linked functional evidence or add restored functions. 89 source support implementations are counted separately.
 
 Sources: [role catalog](META/m1/role-catalog.json), [implementation ledger](META/function-status.json). Milestones: [progress and blockers](META/PROGRESS.md).
 

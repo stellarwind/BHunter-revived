@@ -5432,6 +5432,39 @@
         "META/m4/view-camera/clean/clean-checkout.json",
         "META/m4/view-camera/scene-real.json"
       ]
+    },
+    {
+      "id": "00450980-functional-c",
+      "original_va": "00450980",
+      "function": "bh_light_prepare",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary complete proprietary/unknown-engine lighting owner called by0045aa60 model draw and consumed by00450cd0/00451140 evaluators. Full boundary/callers/global field use inspected; no verified library, import, CRT, EH/compiler helper or shared tail. Unknown historical authorship.",
+      "source": "src/bh_light.c",
+      "source_sha256": "18f6f3d33fbce60b1f7ce97fe521f153a39ce7fd70253bbfbf164636ada1e201",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "32-bit cdecl, explicit borrowed context replaces original globals; original0x5c light record layout verified",
+        "fixtures": "991 focused source checks including256 analytical mixed-light cases, range/radius/cone boundaries, actual recovered transforms, cache retention, override semantics and invalid-list controls",
+        "limits": [
+          "No recovered light constructor/list lifetime or shading evaluators00450cd0/00451140; their listings are dependency evidence only",
+          "No visibility/traversal or native/software primitive dispatch admission; source scene output unchanged",
+          "Borrowed list/context replace original globals; source preflight rejects cycles/null/nonfinite descriptor inputs before mutation",
+          "PC53/nearest/masked finite-domain functional recovery; PC24, extreme exponent and byte matching unclaimed",
+          "No original game code executed and no game launches"
+        ]
+      },
+      "evidence": [
+        "META/m4/light-prepare/review.json",
+        "META/m4/light-prepare/validation.json",
+        "META/m4/light-prepare/integration-real.json",
+        "META/m4/light-prepare/clean/clean-checkout.json",
+        "META/m4/light-prepare/link-map.txt"
+      ]
     }
   ],
   "role_catalog": "META/m1/role-catalog.json",

@@ -229,3 +229,11 @@ equivalence is claimed.
 Git preserves byte-pinned source snapshots/raw decompiler exports and the native
 render SDK manifest without text normalization; historical evidence keeps its
 original source hashes across checkouts.
+
+Model-space light preparation audit: `python tools/check_light_prepare.py`
+verifies complete00450980 (257 original instructions),991 focused checks and46
+missing-module controls in the91-TU integration. Current full checks pass664,011
+with real assets and171,777 in a clean checkout. Original0x5c light layout,
+range/radius/cone behavior, borrowed-list caches and override reference semantics
+are tested. Shading evaluation, light construction, visibility and native/software
+primitive closure remain unfinished; the static scene output is unchanged.

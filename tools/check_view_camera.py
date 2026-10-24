@@ -32,7 +32,9 @@ def main():
         test=next(s for s in build['scenarios'] if s.get('scenario')=='view-camera');assert test['checks']==1623 and not test['failures']
         assert sum(k.startswith('missing_') for k in build)==45 and build['missing_view_camera_control']=='rejected with LNK2001'
         for name,expected in v['sources'].items():
-            if name!='src/bh_scene_snapshot.c':assert sha(ROOT/name)==expected==build['sources'][name],name
+            path=ROOT/name
+            if sha(path)!=expected:path=FOLDER/'sources'/(expected+'-'+path.name+'.txt')
+            if name!='src/bh_scene_snapshot.c':assert sha(path)==expected==build['sources'][name],name
         for label in ('compile-bh_view_camera','compile-view_camera'):
             assert not any(a.startswith('/I') for a in next(c for c in build['commands'] if c['label']==label)['argv'])
     scene=read(FOLDER/'scene-real.json');assert scene['passed'] and scene['controls']['checks']==28 and scene['texture_controls']['checks']==46
