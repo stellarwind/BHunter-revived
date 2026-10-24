@@ -1,0 +1,74 @@
+{
+  "records": [
+    {
+      "address": "0046f490",
+      "symbol": "bh_atlas_image_load",
+      "role": "engine_candidate",
+      "provenance_confidence": "medium",
+      "classification": "Complete ordinary native cached atlas/glyph-sheet loader, directly called by00470380. Unknown proprietary engine authorship. Not software raster kernel, CRT/compiler helper, import or shared tail.",
+      "original": "META/m4/atlas-image/original/0046f490.tsv",
+      "boundary": "0046f490-00470371",
+      "instructions": 1087,
+      "bytes": 3810,
+      "body_sha256": "06373c5a81e2bea006dd059ff28525d497df9b4c1892ecfe495aea0b472c886a",
+      "implementation": "func",
+      "integration": "focused_linked_harness; parent integration pending"
+    }
+  ],
+  "target": "bhunter-atlas-image.exe",
+  "source_sha256": {
+    "src/bh_atlas_image.c": "626a715ed86d4fe833f4dbcd44ba1eb7f94e186240a6d6e90b423010eeddef0d",
+    "src/bh_atlas_image.h": "4f48fe7186cfab46f9f580044b21c487c0b0916d12385f8863f209bc8723c94b",
+    "tests/atlas_image.c": "edfd21978035461004911ce5158a960df3d66c87c3ecc51a27e00d407bd256be"
+  },
+  "focused_checks": {
+    "scenario": "atlas-image",
+    "checks": 3439,
+    "failures": 0,
+    "original_code_required": false
+  },
+  "dependencies": [
+    {
+      "original": "0047cbd0/0047ce50/0047cec0/0047cf60",
+      "binding": "real admitted BHVFile through BHPcxReader"
+    },
+    {
+      "original": "inline0044efa0-equivalent RLE/header0044f0a0 contract",
+      "binding": "real bh_pcx_reader_open/next/close in src/bh_pcx_reader.c"
+    },
+    {
+      "original": "0044f1c0",
+      "binding": "real bh_pcx_palette in src/bh_pcx.c"
+    },
+    {
+      "original": "0047dae0/0047db90/004882e0",
+      "role": "library_verified",
+      "binding": "real allocator/free and case-insensitive CRT comparison; excluded from recovered count"
+    },
+    {
+      "original": "004e9c44",
+      "binding": "BHTextureContext.draw real IDirectDraw"
+    },
+    {
+      "original": "00491750/00491754",
+      "binding": "BHTextureContext.palette_mode/palette_color"
+    },
+    {
+      "original": "004ededc",
+      "binding": "BHAtlasContext.images"
+    },
+    {
+      "original": "004e9750",
+      "binding": "BHAtlasContext.scan_step, explicit active-screen pitch; deliberately independent of atlas pitch"
+    }
+  ],
+  "original_code_executed": false,
+  "game_launches": 0,
+  "limits": [
+    "Original publishes owner before decode and can retain partially initialized cache entry after failed Lock; source failure is transactional and cleans resources instead",
+    "Source guards max4096 dimensions, max127 name bytes, standard contiguous/disjoint8/16/24/32formats with RGB bit31 rejected, max512rectangles and scan reads within declared index storage",
+    "Original independent scan step preserved including0; arbitrary nonmatching step can read native padding as original, meaningful-content fixtures bind matching pitch or0",
+    "No original destructor claim: explicit source context dispose releases actual surfaces and owned cache records",
+    "No source game/font/page caller integration or instruction match claimed; focused target links current real m0 dependency objects and parent rebuild remains required"
+  ]
+}

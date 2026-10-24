@@ -1,0 +1,111 @@
+{
+  "target": "bhunter-software-tables.exe",
+  "original_code_required": false,
+  "game_launches": 0,
+  "commands": [
+    {
+      "label": "compile-src/bh_software_tables.c",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:\\Decomp\\dx7sdk\\include",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/DBH_SOFTWARE_TABLES_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\software-tables\\bh_software_tables.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_software_tables.c"
+      ],
+      "exit_code": 0,
+      "stdout": "bh_software_tables.c\n",
+      "stderr": ""
+    },
+    {
+      "label": "compile-src/bh_texture_tables.c",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:\\Decomp\\dx7sdk\\include",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/DBH_SOFTWARE_TABLES_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\software-tables\\bh_texture_tables.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_texture_tables.c"
+      ],
+      "exit_code": 0,
+      "stdout": "bh_texture_tables.c\n",
+      "stderr": ""
+    },
+    {
+      "label": "compile-tests/software_tables.c",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:\\Decomp\\dx7sdk\\include",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/DBH_SOFTWARE_TABLES_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\software-tables\\software_tables.obj",
+        "D:\\Decomp\\Bhunter\\tests\\software_tables.c"
+      ],
+      "exit_code": 0,
+      "stdout": "software_tables.c\n",
+      "stderr": ""
+    },
+    {
+      "label": "link",
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/map:D:\\Decomp\\Bhunter\\build\\software-tables\\bhunter-software-tables.map",
+        "/out:D:\\Decomp\\Bhunter\\build\\software-tables\\bhunter-software-tables.exe",
+        "D:\\Decomp\\Bhunter\\build\\software-tables\\bh_software_tables.obj",
+        "D:\\Decomp\\Bhunter\\build\\software-tables\\bh_texture_tables.obj",
+        "D:\\Decomp\\Bhunter\\build\\software-tables\\software_tables.obj",
+        "kernel32.lib"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "label": "exhaustive-checks",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\build\\software-tables\\bhunter-software-tables.exe"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"scenario\":\"software-tables\",\"checks\":2228273,\"failures\":0,\"original_code_required\":false}\n",
+      "stderr": ""
+    }
+  ],
+  "passed": true,
+  "sources": {
+    "src/bh_software_tables.c": "0a96f604ed8e37903cf1919b48be2ef003cdf54a854d32854cce2513d3de0b0c",
+    "src/bh_texture_tables.c": "0cc9d82eec6212b08a3bd016e18b319a73896dc35e9e191da2edaf7ddf1c60b7",
+    "tests/software_tables.c": "a145f4acab2cd88c1e77badc1b05f0b94b41475c8f8ce57004953a54e338d669"
+  },
+  "test": {
+    "scenario": "software-tables",
+    "checks": 2228273,
+    "failures": 0,
+    "original_code_required": false
+  }
+}

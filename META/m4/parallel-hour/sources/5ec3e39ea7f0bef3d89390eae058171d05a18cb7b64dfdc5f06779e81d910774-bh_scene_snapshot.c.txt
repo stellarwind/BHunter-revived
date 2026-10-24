@@ -1,0 +1,115 @@
+#include "bh_scene_view.h"
+#include "bh_blocks.h"
+#include "bh_geometry.h"
+#include "bh_rotation.h"
+#include "bh_fp.h"
+#include "bh_texture.h"
+#include "bh_model.h"
+#include "bh_model_path.h"
+#include "bh_main_camera.h"
+#include "bh_render_material.h"
+#include "bh_render_state.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+/* Source-only static checkpoint. Real textures and diagnostic camera; no
+   script/entity construction, material fidelity or gameplay admission. */
+int main(int argc,char **argv) {
+    BHBlockLibrary library;BHSceneLevel level;BHGeometry *geometry=NULL;unsigned char *shell=NULL;
+    BHSceneView view;BHTextureContext textures;int textures_live=0;BHModel **models=NULL;BHModelContext model_context;
+    BHMathEnvironment environment;BHVFile *file=NULL;
+    BHVec3 *polygon=NULL,local,world;float *uv=NULL;BHFaceInfo face;BHMat34 transform;BHMainCamera main_camera;
+    BHRenderMaterial native_material;BHRenderState native_state;
+    BHVec3 camera={-60,-17,60};unsigned long i,j,k,initialized=0,faces=0,max_vertices=0,shells=0;
+    long model,edge,material;int ok=0,fp=0;float angle;unsigned long texture_count=0,textured_faces=0;
+    if(argc!=3){printf("usage: bhunter-scene-snapshot archive output.bmp\n");return 2;}
+    memset(&view,0,sizeof(view));memset(&native_material,0,sizeof(native_material));memset(&main_camera,0,sizeof(main_camera));bh_blocks_init(&library,NULL);bh_scene_level_init(&level,NULL);
+    fp=bh_math_environment_enter(&environment);if(!fp)goto done;
+    if(!bh_vfile_mount(argv[1]) || !bh_blocks_load(&library,"BSP\\BLOCKS.TXT","BSP\\",BH_BSP_PREFIX_ONLY))goto done;
+    file=bh_vfile_open("TEST.LEV","rb");if(!file || !bh_scene_level_read(&level,file))goto done;
+    bh_vfile_close(file);file=NULL;
+    geometry=(BHGeometry *)calloc(library.count,sizeof(*geometry));if(!geometry)goto done;
+    shell=(unsigned char *)calloc(library.count,1);if(!shell)goto done;
+    for(i=0;i<library.count;++i) {
+        if(!bh_geometry_init(geometry+i,&library.blocks[i].bsp,NULL))goto done;++initialized;
+        memset(&face,0,sizeof(face));
+        for(j=0;j<library.blocks[i].bsp.counts[3];++j) {
+            if(!bh_geometry_face(geometry+i,j,&face))goto done;
+            if(!_stricmp(face.texture,"PORTAL.GIF"))shell[i]=1;
+            if(max_vertices<face.vertices)max_vertices=face.vertices;
+        }
+    }
+    if(max_vertices>1024 || max_vertices<3)goto done;
+    polygon=(BHVec3 *)malloc(max_vertices*sizeof(*polygon));if(!polygon)goto done;
+    uv=(float *)malloc(max_vertices*2*sizeof(*uv));if(!uv)goto done;
+    if(!bh_scene_view_init(&view,640,480) || !bh_view_config_init(&view.projection,640,480))goto done;
+    if(!bh_main_camera_settings(&view.projection,60,1,100000) ||
+        !bh_main_camera_pose(&view.projection,&main_camera,camera.x,camera.y,camera.z,3.141592653589793,0,0))goto done;
+    view.original_depth=1;
+    if(!bh_texture_context_init(&textures,view.draw,view.device,NULL))goto done;textures_live=1;
+    textures.slot_caps_override=DDSCAPS_TEXTURE|DDSCAPS_SYSTEMMEMORY;
+    if(!bh_texture_formats(&textures))goto done;
+    if(!bh_texture_set_path(&textures,"TEXTURES",2))goto done;
+    if(!bh_model_context_init(&model_context,&textures,NULL) || !bh_model_path_set(&model_context,"BSP\\",BH_BSP_PREFIX_ONLY))goto done;
+    models=(BHModel **)calloc(library.count,sizeof(*models));if(!models)goto done;
+    /* Real recovered model/image owners replace the temporary material array.
+       The diagnostic draw loop consumes the owned model arrays directly. */
+    for(i=0;i<library.count;++i)if(shell[i]) {
+        models[i]=bh_model_load(&model_context,library.blocks[i].name);if(!models[i])goto done;
+    }
+    /* Individual image failures are explicitly retained as NULL by the model
+       owner. They are not a model-load error or a fabricated replacement. */
+    textures.error=BH_TEXTURE_OK;
+    {BHTextureImage *image;for(image=textures.images;image;image=image->next)++texture_count;}
+    /* The static diagnostic retains earlier NULL-image diagnostics. The
+       recovered initializer returns those preexisting strings after doing all
+       native work; require its actual material/handle/calls instead of treating
+       an already recorded image miss as a new native initialization failure. */
+    bh_render_material_initialize(&native_material,&textures,view.d3d);
+    if(!native_material.material || !native_material.handle || native_material.failures ||
+        !bh_render_state_init(&native_state,&textures) || textures.error!=BH_TEXTURE_OK || !bh_scene_view_begin(&view))goto done;
+    textures.frame=1;
+    for(i=0;i<level.placement_count;++i) {
+        BHScenePlacement *placement=level.placements+i;
+        model=bh_blocks_find(&library,placement->name);if(model<0)goto done;
+        /* This first view draws navigation shell models only. Non-shell
+           placements include invisible sensor/script proxy meshes as well as
+           visible props; their actual draw ownership remains unrecovered. */
+        if(!shell[model])continue;++shells;
+        memset(&transform,0,sizeof(transform));transform.m[0][0]=transform.m[1][1]=transform.m[2][2]=1;
+        bh_mat34_translate_local((float)placement->x,(float)placement->y,(float)placement->z,&transform);
+        angle=(float)((placement->flags&3UL)*1.5707963267948966);bh_mat34_rotate_y(angle,&transform);
+        memset(&face,0,sizeof(face));
+        for(j=0;j<models[model]->face_count;++j) {
+            material=models[model]->faces[j].material;
+            if(!_stricmp(models[model]->materials[material].texture,"PORTAL.GIF"))continue;
+            face.vertices=0;edge=models[model]->faces[j].first_edge;
+            while(edge>=0){if(++face.vertices>models[model]->edge_count)goto done;edge=models[model]->edges[edge].next;}
+            if(face.vertices<3)continue;
+            if(!models[model]->images[material])continue; /* recovered NULL-image gate */
+            edge=models[model]->faces[j].first_edge;
+            for(k=0;k<face.vertices;++k) {
+                BHBspVertex *vertex=models[model]->vertices+models[model]->edges[edge].vertex;
+                local.x=vertex->x;local.y=vertex->y;local.z=vertex->z;
+                bh_mat34_transform_point(&transform,&local,&world);
+                bh_mat34_transform_point(&main_camera.view,&world,polygon+k);
+                uv[k*2]=models[model]->edges[edge].u;uv[k*2+1]=models[model]->edges[edge].v;
+                edge=models[model]->edges[edge].next;
+            }
+            if(!bh_scene_view_textured_polygon(&view,polygon,uv,face.vertices,&textures,models[model]->images[material]))goto done;++textured_faces;
+            ++faces;
+        }
+    }
+    if(!bh_scene_view_end(&view,argv[2]) || !view.triangles || !view.pixels)goto done;
+    ok=1;
+done:
+    printf("{\"scenario\":\"source-scene-snapshot\",\"passed\":%s,\"models\":%lu,\"placements\":%lu,\"shell_placements\":%lu,\"faces\":%lu,\"triangles\":%lu,\"nonblack_pixels\":%lu,\"hresult\":%ld,\"unapplied_scripts\":%lu,\"textures\":%lu,\"textured_faces\":%lu,\"camera\":[-60,-17,60],\"forward\":[0,0,-1],\"textured\":true,\"original_code_required\":false}\n",
+        ok?"true":"false",library.count,level.placement_count,shells,faces,view.triangles,view.pixels,(long)view.error,library.unapplied_scripts,texture_count,textured_faces);
+    for(i=0;i<initialized;++i)bh_geometry_dispose(geometry+i);free(geometry);
+    if(models){for(i=0;i<library.count;++i)bh_model_delete(&model_context,models[i]);free(models);}
+    bh_render_material_dispose(&native_material);
+    if(textures_live)bh_texture_context_dispose(&textures);
+    bh_scene_view_dispose(&view);free(polygon);free(shell);free(uv);
+    if(file)bh_vfile_close(file);bh_scene_level_dispose(&level);bh_blocks_dispose(&library);bh_vfile_shutdown();
+    if(fp)bh_math_environment_leave(&environment);return ok?0:1;
+}

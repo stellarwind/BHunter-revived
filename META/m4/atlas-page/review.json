@@ -1,0 +1,66 @@
+{
+  "records": [
+    {
+      "address": "00470380",
+      "symbol": "bh_atlas_page_create",
+      "role": "engine_candidate",
+      "provenance_confidence": "medium",
+      "classification": "Complete ordinary atlas text-page backing constructor called by0042c4c0/004474c0. Unknown proprietary engine authorship; not import/CRT/compiler helper/shared tail.",
+      "original": "META/m4/atlas-page/original/00470380.tsv",
+      "boundary": "00470380-004705b8",
+      "instructions": 196,
+      "bytes": 569,
+      "body_sha256": "31f2f90b1e44c739142842a6f58647e19642422c0769e101be4d70cc669c6141",
+      "implementation": "func",
+      "integration": "focused_linked_harness; parent integration pending"
+    }
+  ],
+  "target": "bhunter-atlas-page.exe",
+  "source_sha256": {
+    "src/bh_atlas_page.c": "4b3ec00facd20563aebfae4a7cf34576bc52eb6839ff969d6d0ebd087b6c49b7",
+    "src/bh_atlas_page.h": "27d341e73fa217cee10b5a280c3de6536ab26b7dbd751410f151199610dccb8b",
+    "tests/atlas_page.c": "f93ef4b0ffa853a8d951fbab88d703dc45f89480aff26b9048d0ecd45973f0ec",
+    "src/bh_atlas_image.c": "626a715ed86d4fe833f4dbcd44ba1eb7f94e186240a6d6e90b423010eeddef0d"
+  },
+  "focused_checks": {
+    "scenario": "atlas-page",
+    "checks": 135,
+    "failures": 0,
+    "original_code_required": false
+  },
+  "dependencies": [
+    {
+      "original": "0044e580",
+      "symbol": "bh_texture_request_format",
+      "source": "src/bh_texture.c"
+    },
+    {
+      "original": "0044eb60",
+      "symbol": "bh_texture_palette_tables",
+      "source": "src/bh_texture_tables.c"
+    },
+    {
+      "original": "0046f490",
+      "symbol": "bh_atlas_image_load",
+      "source": "src/bh_atlas_image.c"
+    },
+    {
+      "original": "0047dae0/0047db90",
+      "role": "library_verified",
+      "binding": "real caller allocator and CRT malloc/free, excluded from recovery count"
+    },
+    {
+      "original": "004e9c44/004edc70",
+      "binding": "BHTextureContext.draw/images real native/owned image bindings"
+    }
+  ],
+  "original_code_executed": false,
+  "game_launches": 0,
+  "limits": [
+    "Constructor creates blank native texture backing only; glyph copying/UV generation/text drawing and font caller ownership remain separate",
+    "Original page packed_color+10 and image padding are undefined until later; source initializes deterministically0 without claiming original value",
+    "Source allocation/native HRESULT failure checks clean partial page ownership; original unchecked palette/arena failures and leaked0x28record on surface failure not reproduced",
+    "Original format request and borrowed atlas-cache side effects remain after later page failure; source dispose is an explicit lifetime adapter, not recovered destructor",
+    "No original function byte match, original execution or game/renderer integration claim; real downstream residency/GetHandle fixture is separate from constructor behavior"
+  ]
+}

@@ -23,6 +23,42 @@ Human playtesting offer, 2026-10-24: ask the user for a focused manual playtest 
 
 ## Working evidence
 
+M4 parallel restoration block, 2026-10-24: **155/727 original functions now
+have admitted source variants**, up 31 from 124. This block recovers 10,007
+original instructions in 31 complete functions; the count excludes the partial
+native primitive dispatcher and all diagnostic adapters. All new owners compile
+in their real translation units and link into the 132-TU integration target.
+It passes 3,398,563 real-data checks and 2,906,329 checks in a clean checkout
+without original assets, plus 66 missing-module link controls. No original code
+was executed and no game was launched. Evidence: `m4/parallel-hour/`; audit:
+`python tools/check_parallel_hour.py`.
+
+Recovered families include main-camera transforms, point/directional/spot/ambient
+light evaluation, native material/depth/blend/mode state, two additional clippers,
+view culling, lit/unlit BSP traversal, texture/model controls, software palette
+tables and atlas image/page/clear/cursor owners. The atlas glyph-copy owner and
+software primitive/rasterizer subsystem remain unfinished. The native-only
+primitive adapter is explicitly partial and rejects software use.
+
+The static real-level scene now passes through recovered BSP traversal, clipping,
+native queue growth/flush and actual Direct3D2 drawing: 1,798 emitted polygons,
+3,112 triangles and146 textures. A separate 71-check native composition scenario
+verifies unlit blue, directional red/green, point-light blue and mask-zero blank
+images, with missing-owner link rejection. Saved city red/green/point presets
+exercise the real light evaluator but are diagnostic lights, not recovered level
+lighting. Main-camera positive Y, original near/z depth and zero depth clear are
+now explicit source rendering contracts. Static shell filtering, camera setup and
+placement binding remain adapters; world/entity/script installation and player
+controls still prevent a playable source game. M4 is not complete.
+
+Next frontier: recover the owning world/model draw orchestration and its entity
+bindings, replacing static shell selection and diagnostic scene bindings one
+small dependency family at a time. Keep software dispatch/rasterizers and atlas
+glyph copy explicitly open. Human prologue observations remain independent.
+
+The entries below preserve earlier checkpoint totals and unfinished dependencies
+as historical evidence; the current block above supersedes their frontier.
+
 M4 model-space light preparation, 2026-10-24: complete `00450980`
 now compiles/links as `bh_light_prepare` in `src/bh_light.c`. The 91-TU
 integration passes 664,011 real-data / 171,777 clean source checks and46 missing
@@ -54,7 +90,7 @@ account for the half-ULP precision of the original stored float offset.
 
 The scene now uses recovered projection/frustum construction and opts into the
 pinned original executable's default FOV/depth range. The saved view emits
-5,881 triangles with146 textures and264,231 nonblack pixels; it was inspected.
+5,881 triangles with 146 textures and264,231 nonblack pixels; it was inspected.
 Native controls retain their explicit90-degree/.25/400 analytical profile and
 all28 renderer/46 texture checks pass. Actual original camera choice, visibility,
 lighting, scripts and TL-depth/primitive/software dispatch are still unfinished.

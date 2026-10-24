@@ -1,0 +1,17 @@
+
+void __cdecl FUN_0045b490(int param_1,int param_2,int param_3)
+
+{
+  if (((DAT_004edeb8 != param_1) || (DAT_00491784 != param_2)) || (DAT_00491788 != param_3)) {
+    DAT_004edeb8 = param_1;
+    DAT_00491784 = param_2;
+    DAT_00491788 = param_3;
+    if (DAT_004e32f4 == 0) {
+      (**(code **)(*DAT_004e9c58 + 0x5c))(DAT_004e9c58,0x1b,param_1);
+      (**(code **)(*DAT_004e9c58 + 0x5c))(DAT_004e9c58,0x13,param_2);
+      (**(code **)(*DAT_004e9c58 + 0x5c))(DAT_004e9c58,0x14,param_3);
+    }
+  }
+  return;
+}
+

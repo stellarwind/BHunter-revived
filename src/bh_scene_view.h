@@ -13,6 +13,11 @@ typedef struct BHSceneView {
     LPDIRECTDRAWSURFACE color,depth;LPDIRECT3DVIEWPORT2 viewport;
     unsigned long width,height,triangles,pixels;HRESULT error;int begun;
     BHViewConfig projection;
+    /* Explicit target-clear/TL binding: zero is the analytic control profile;
+       one uses reviewed original near/z depth with a zero-cleared Z target.
+   Original native material/state owners must set GREATEREQUAL separately.
+       This profile also retains original positive camera Y->screen Y. */
+    unsigned long original_depth;
 } BHSceneView;
 int __cdecl bh_scene_view_init(BHSceneView *view,unsigned long width,unsigned long height);
 void __cdecl bh_scene_view_dispose(BHSceneView *view);
@@ -20,7 +25,9 @@ int __cdecl bh_scene_view_begin(BHSceneView *view);
 /* Camera-space convex polygon; explicit diagnostic 90-degree horizontal FOV,
    positive Z forward, +Y up, near .25, far400. Recovered00452140 performs
    depth clipping, division and screen-edge clipping; native RGB rasterizes
-   and depth-tests triangles. Recovered00451b80 builds projection/frustum; camera choice and TL depth remain diagnostic.
+   and depth-tests triangles. Recovered00451b80 builds projection/frustum.
+   original_depth selects the reviewed native near/z conversion; the complete
+   software/native primitive dispatcher remains unfinished.
    No original BSP traversal, occlusion, lighting or material behavior claimed. */
 int __cdecl bh_scene_view_polygon(BHSceneView *view,const BHVec3 *vertices,
                                   unsigned long count,unsigned long rgb);

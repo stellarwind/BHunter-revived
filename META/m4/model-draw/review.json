@@ -1,0 +1,87 @@
+{
+  "records": [
+    {
+      "address": "00458310",
+      "boundary": "00458310-00458421",
+      "bytes": 274,
+      "instructions": 96,
+      "body_sha256": "dc309ac80b961495d1da29505e6b9d9a70382597b3ddd2e610d2b70d4853e6f9",
+      "role": "engine_candidate",
+      "provenance_confidence": "medium: ordinary application rendering-model owner with verified model-relative offsets, matrix/clipper/render calls and recursive BSP control flow; library attribution unresolved",
+      "boundary_review": "complete contiguous instructions through RET, independent ordinary owner, no CRT/EH/import/shared-tail assignment",
+      "api": "bh_model_draw_face",
+      "source": "src/bh_model_draw.c",
+      "implementation": "wip",
+      "integration": "linked_harness",
+      "target": "bhunter-model-draw.exe",
+      "validation": "focused-build.json",
+      "game_admitted": false,
+      "pending": "Parent-owned composed real native emitter target and current integration build; focused callback capture is isolated evidence, not production dependency admission"
+    },
+    {
+      "address": "00458430",
+      "boundary": "00458430-00458460",
+      "bytes": 49,
+      "instructions": 20,
+      "body_sha256": "827425defae8e79ddca35212294aa07e8aa1dd73bf1cdaf0a1d4fabc259f0374",
+      "role": "engine_candidate",
+      "provenance_confidence": "medium: ordinary application rendering-model owner with verified model-relative offsets, matrix/clipper/render calls and recursive BSP control flow; library attribution unresolved",
+      "boundary_review": "complete contiguous instructions through RET, independent ordinary owner, no CRT/EH/import/shared-tail assignment",
+      "api": "bh_model_draw_leaf_chain",
+      "source": "src/bh_model_draw.c",
+      "implementation": "wip",
+      "integration": "linked_harness",
+      "target": "bhunter-model-draw.exe",
+      "validation": "focused-build.json",
+      "game_admitted": false,
+      "pending": "Parent-owned composed real native emitter target and current integration build; focused callback capture is isolated evidence, not production dependency admission"
+    },
+    {
+      "address": "00458470",
+      "boundary": "00458470-004593fe",
+      "bytes": 3983,
+      "instructions": 1184,
+      "body_sha256": "a02dd51cb74bca495a6f4216ed121077ff39e5bff7134c995130f3710f2b95ba",
+      "role": "engine_candidate",
+      "provenance_confidence": "medium: ordinary application rendering-model owner with verified model-relative offsets, matrix/clipper/render calls and recursive BSP control flow; library attribution unresolved",
+      "boundary_review": "complete contiguous instructions through RET, independent ordinary owner, no CRT/EH/import/shared-tail assignment",
+      "api": "bh_model_draw_unlit",
+      "source": "src/bh_model_draw.c",
+      "implementation": "wip",
+      "integration": "linked_harness",
+      "target": "bhunter-model-draw.exe",
+      "validation": "focused-build.json",
+      "game_admitted": false,
+      "pending": "Parent-owned composed real native emitter target and current integration build; focused callback capture is isolated evidence, not production dependency admission"
+    }
+  ],
+  "original_exe_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+  "sources": {
+    "src/bh_model_draw.c": "0400b49e2abffeb857b0604002a5140bb878825935d41e2c8a3ec21208154f96",
+    "src/bh_clipper.c": "483fa81c86f0354167c12745f9e06841adce924e40f1dc68d9aca113adbe8c62",
+    "src/bh_matrix_inverse.c": "c5cd3ee6b4071fe4f49e55432c696299945c609486359eb0239a053a6a1ce5b7",
+    "src/bh_math.c": "ce111e18659563a2c41a04b645295227aac6ead9fe9cc2e803ac45c726d6e9bc",
+    "src/bh_round.c": "ff848010705702e25cf85f5ba1d9c30a024d1ea8bf93227240285b9c54fc8ef4",
+    "src/bh_fp.c": "cc8400a29fd082f96ffd9b483f490a44992717b25eac0cb32e2e108ba446f3f8",
+    "tests/model_draw.c": "dcddad16ee1cef1f16b8a38b34d75b6b607788a6b236145a8719195c1288cce7",
+    "src/bh_model_draw.h": "44dbc4dcce1e6e0dc42657cf4250ce57e2a96acb458905d95e284a56874b73fb"
+  },
+  "complete_source_candidates": 3,
+  "focused_checks": 171666,
+  "game_launches": 0,
+  "original_code_executed": false,
+  "adapter_apis": [
+    "bh_model_draw_cache_init/dispose/reset",
+    "bh_model_draw_context_init",
+    "BHModelDrawCache typed runtime records and explicit traversal stack",
+    "BHModelPolygonEmit synchronous native dispatch binding with failure propagation"
+  ],
+  "limits": [
+    "Focused source target uses explicitly isolated capture callback; parent real native composition/full integration required before original-owner admission",
+    "Whole0046e390 software dispatch/raster kernels remain unfinished; no backend success stub is supplied",
+    "PC53/nearest/masked only; no byte equivalence or original differential execution",
+    "Source cache invalidates initial epochs and never interprets serialized pointer words; model arrays must remain stable and validated acyclic while cache lives",
+    "Original32bit frame integerbits retained via memcpy in float-declared vertex.frame; callers use nonzero epochs and reset before token reuse",
+    "No independent face backface removal: original BSP eye-side chooses visible leaf chain and preserves painter order"
+  ]
+}

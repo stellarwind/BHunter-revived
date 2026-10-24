@@ -1,0 +1,212 @@
+{
+  "target": "bhunter-view-cull.exe",
+  "passed": true,
+  "commands": [
+    {
+      "label": "compile-bh_view_cull",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\view-cull\\bh_view_cull.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_view_cull.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_view_cull.c\n"
+    },
+    {
+      "label": "compile-bh_main_camera",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\view-cull\\bh_main_camera.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_main_camera.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_main_camera.c\n"
+    },
+    {
+      "label": "compile-bh_view_camera",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\view-cull\\bh_view_camera.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_view_camera.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_view_camera.c\n"
+    },
+    {
+      "label": "compile-bh_math",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\view-cull\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_math.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_math.c\n"
+    },
+    {
+      "label": "compile-bh_rotation",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\view-cull\\bh_rotation.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_rotation.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_rotation.c\n"
+    },
+    {
+      "label": "compile-bh_round",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\view-cull\\bh_round.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_round.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_round.c\n"
+    },
+    {
+      "label": "compile-bh_fp",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\view-cull\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_fp.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_fp.c\n"
+    },
+    {
+      "label": "compile-view_cull",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_VIEW_CULL_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\view-cull\\view_cull.obj",
+        "D:\\Decomp\\Bhunter\\tests\\view_cull.c"
+      ],
+      "exit_code": 0,
+      "output": "view_cull.c\n"
+    },
+    {
+      "label": "link",
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/map:D:\\Decomp\\Bhunter\\build\\view-cull\\bhunter-view-cull.map",
+        "/out:D:\\Decomp\\Bhunter\\build\\view-cull\\bhunter-view-cull.exe",
+        "D:\\Decomp\\Bhunter\\build\\view-cull\\bh_view_cull.obj",
+        "D:\\Decomp\\Bhunter\\build\\view-cull\\bh_main_camera.obj",
+        "D:\\Decomp\\Bhunter\\build\\view-cull\\bh_view_camera.obj",
+        "D:\\Decomp\\Bhunter\\build\\view-cull\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\build\\view-cull\\bh_rotation.obj",
+        "D:\\Decomp\\Bhunter\\build\\view-cull\\bh_round.obj",
+        "D:\\Decomp\\Bhunter\\build\\view-cull\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\build\\view-cull\\view_cull.obj",
+        "kernel32.lib"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "label": "scenario",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\build\\view-cull\\bhunter-view-cull.exe"
+      ],
+      "exit_code": 0,
+      "output": "{\"scenario\":\"view-cull\",\"checks\":245856,\"failures\":0,\"original_code_required\":false}\n"
+    },
+    {
+      "label": "missing-cull-owner-control",
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/out:D:\\Decomp\\Bhunter\\build\\view-cull\\missing-view-cull.exe",
+        "D:\\Decomp\\Bhunter\\build\\view-cull\\bh_main_camera.obj",
+        "D:\\Decomp\\Bhunter\\build\\view-cull\\bh_view_camera.obj",
+        "D:\\Decomp\\Bhunter\\build\\view-cull\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\build\\view-cull\\bh_rotation.obj",
+        "D:\\Decomp\\Bhunter\\build\\view-cull\\bh_round.obj",
+        "D:\\Decomp\\Bhunter\\build\\view-cull\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\build\\view-cull\\view_cull.obj",
+        "kernel32.lib"
+      ],
+      "exit_code": 25,
+      "output": "view_cull.obj : error LNK2001: unresolved external symbol _bh_view_cull_sphere\nD:\\Decomp\\Bhunter\\build\\view-cull\\missing-view-cull.exe : fatal error LNK1120: 1 unresolved externals\n"
+    }
+  ],
+  "original_code_required": false,
+  "game_launches": 0,
+  "scenario": {
+    "scenario": "view-cull",
+    "checks": 245856,
+    "failures": 0,
+    "original_code_required": false
+  },
+  "sources": {
+    "src/bh_view_cull.c": "bf2b02be5c3dfabebf93fe6b64daf6c0bbda5c452147ba8e554580e8fa3ad9a5",
+    "src/bh_main_camera.c": "aa546818ed08a52fd6c87fd498f5ef856470ae42fd5b3928c887be9ad2c2f24f",
+    "src/bh_view_camera.c": "f7984e1bbdf672df12961840426d511844d9f3cef77ddea8370b34375a9042a7",
+    "src/bh_math.c": "ce111e18659563a2c41a04b645295227aac6ead9fe9cc2e803ac45c726d6e9bc",
+    "src/bh_rotation.c": "9a288fba2368c54b0b1a743b907e468b8683d8f6ff101807423c78b44644dd12",
+    "src/bh_round.c": "ff848010705702e25cf85f5ba1d9c30a024d1ea8bf93227240285b9c54fc8ef4",
+    "src/bh_fp.c": "cc8400a29fd082f96ffd9b483f490a44992717b25eac0cb32e2e108ba446f3f8",
+    "tests/view_cull.c": "f3d02caab4599208eb22702c23ca3ce80b732aa1f017edfad3e703124ee2ac5e",
+    "src/bh_view_cull.h": "b2a3d2986907eaaabdd5fe338bcedeab573302589e58628a2c987b511e5cfbb9",
+    "src/bh_main_camera.h": "c74366165c2bf05df43804bae76e7e989ad0816699101659d37ba79f6a488cb7"
+  },
+  "executable_sha256": "e637d6f2b1bfb05e19f4a58a73ed9e30926c5b89ee0891b683c5387019fc2d6f"
+}

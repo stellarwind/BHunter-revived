@@ -6,7 +6,7 @@ On Windows x64 with Python 3.10+ on PATH, run from any working directory:
 D:\Decomp\Bhunter\build.cmd
 ```
 
-This compiles the admitted source families, including deferred native sound update, plus the real math/FP, archive/VFILE, config/path, scene, BSP/block-data, entity pool, WAV/PCM and PCX/palette data, portal matching, and numerical-storage translation units with their integration drivers, then links and executes `build/m0/bhunter-integration.exe`. The current 89-TU source-only scenario passes 170,786 checks, including 786 BSP/registry and 819 entity, 226 WAV and 2,098 PCX checks. Omitted math, VFILE, config, paths, scene, BSP, blocks, round-store, entity, WAV, PCX and portal modules must each produce LNK2001. The pinned original math fixture remains verbatim; only its test-driver `main` is renamed at compile time. No original EXE is read, mapped or executed. Every stage must succeed; dependency mismatches, missing inputs, compile/link failures and failed fixtures return nonzero. Output stays under ignored `build/m0/`: `result.json`, `link.txt` and `bhunter-integration.map` retain commands/results and owning symbols.
+This compiles the admitted source families with their integration drivers, then links and executes `build/m0/bhunter-integration.exe`. The current 132-TU source-only scenario passes 2,906,329 checks. All 66 missing-module controls require LNK2001, including the new lighting, clipping, native rendering and BSP traversal owners. The pinned original math fixture remains verbatim; only its test-driver `main` is renamed at compile time. No original EXE is read, mapped or executed. Every stage must succeed; dependency mismatches, missing inputs, compile/link failures and failed fixtures return nonzero. Output stays under ignored `build/m0/`: `result.json`, `link.txt` and `bhunter-integration.map` retain commands/results and owning symbols.
 
 The portal matcher adds 57,578 source-only checks against 3,739 previously captured aperture records and synthetic ordering/threshold cases; no game launch is used. See [portal restoration evidence](META/m4/PORTALS.md).
 
@@ -16,7 +16,7 @@ Normal builds generate isolated synthetic archive/loose-file fixtures in the bui
 build.cmd --archive GAME_DATA/Bhunter.bin
 ```
 
-The runner verifies the supplied BIN's preservation hash before and after this scenario. Six representative asset classes also pass through preloaded memory, and real TXT assets exercise both archive and cached line reading. The scene scenario additionally decodes every TEST.LEV placement/link and TEST.PTH route cell through embedded, preloaded and loose backends, comparing all fields with independent raw reads. The current real-data combined run passes 663,020 checks. All 505 BSPs additionally pass bounded geometry decoding and derived-bound controls through three backends. The 454-model data registry retains 202 sidecars and resolves all level placement names. All 459 PCXs decode through three backends with independent raw pixel/palette and four palette/index transform controls. The separate image-owner scenario constructs 454 supported native-backed images and verifies five original size-catalog rejections. See [PCX contract](META/m2/PCX.md). All 60 WAVs additionally decode through three backends with exact PCM metadata/sample comparisons; no playback objects are created. See [WAV contract](META/m2/WAVE.md). The entity-pool scenario also exercises all 5,815 placement records in the original 9,600-slot arena. These tests do not construct the full original world, navigation graph, scripts or scene-wide texture/audio objects. See [entity contracts](META/m2/ENTITIES.md) and the [M2 exit audit](META/m2/EXIT_AUDIT.md). See [BSP/registry contracts](META/m2/BLOCKS.md). See [scene reader contracts](META/m2/SCENE.md). See [VFILE contracts and evidence](META/m2/VFILE.md).
+The runner verifies the supplied BIN's preservation hash before and after this scenario. Six representative asset classes also pass through preloaded memory, and real TXT assets exercise both archive and cached line reading. The scene scenario additionally decodes every TEST.LEV placement/link and TEST.PTH route cell through embedded, preloaded and loose backends, comparing all fields with independent raw reads. The current real-data combined run passes 3,398,563 checks. All 505 BSPs additionally pass bounded geometry decoding and derived-bound controls through three backends. The 454-model data registry retains 202 sidecars and resolves all level placement names. All 459 PCXs decode through three backends with independent raw pixel/palette and four palette/index transform controls. The separate image-owner scenario constructs 454 supported native-backed images and verifies five original size-catalog rejections. See [PCX contract](META/m2/PCX.md). All 60 WAVs additionally decode through three backends with exact PCM metadata/sample comparisons; no playback objects are created. See [WAV contract](META/m2/WAVE.md). The entity-pool scenario also exercises all 5,815 placement records in the original 9,600-slot arena. These tests do not construct the full original world, navigation graph, scripts or scene-wide texture/audio objects. See [entity contracts](META/m2/ENTITIES.md) and the [M2 exit audit](META/m2/EXIT_AUDIT.md). See [BSP/registry contracts](META/m2/BLOCKS.md). See [scene reader contracts](META/m2/SCENE.md). See [VFILE contracts and evidence](META/m2/VFILE.md).
 
 Config tests exercise default/custom binary records, circular profile ownership, failure rollback, device selection and bounded paths, including real read-only Win32 directory discovery. Persistence and composed VFILE fixtures stay under the build directory; machine configuration is not changed. The [config/path contract](META/m2/CONFIG.md) records interface adaptations and the limits of the legacy pointer-containing format. Use explicit config paths; original global zero-argument interfaces are not drop-in wrappers.
 
@@ -230,10 +230,34 @@ Git preserves byte-pinned source snapshots/raw decompiler exports and the native
 render SDK manifest without text normalization; historical evidence keeps its
 original source hashes across checkouts.
 
-Model-space light preparation audit: `python tools/check_light_prepare.py`
+Historical model-space light preparation audit: `python tools/check_light_prepare.py`
 verifies complete00450980 (257 original instructions),991 focused checks and46
 missing-module controls in the91-TU integration. Current full checks pass664,011
 with real assets and171,777 in a clean checkout. Original0x5c light layout,
 range/radius/cone behavior, borrowed-list caches and override reference semantics
 are tested. Shading evaluation, light construction, visibility and native/software
 primitive closure remain unfinished; the static scene output is unchanged.
+
+Parallel restoration batch audit: `python tools/check_parallel_hour.py` verifies
+31 complete original owners against immutable EXE bytes, current source hashes,
+real and clean integration evidence, linked symbols and the static native scene.
+The current target has 132 translation units, passes 3,398,563 real-data checks
+or 2,906,329 checks without original assets, and rejects all 66 missing-module
+controls. The earlier checkpoint totals above remain historical.
+
+The scene target now uses recovered main-camera setup, lit/unlit BSP traversal,
+clipping, material/render state and native queues. Its default static world shell
+emits 1,798 polygons and 3,112 triangles with 146 textures. A separate 71-check
+native composition test verifies coloured output and blank negative controls.
+After building the scene target, its executable accepts an optional static camera
+and diagnostic lighting preset:
+
+```cmd
+build\scene-snapshot\bhunter-scene-snapshot.exe GAME_DATA\Bhunter.bin build\scene-snapshot\red.bmp -60 -17 60 180 0 0 red
+```
+
+Presets are `red`, `green` and `point`. These exercise recovered light evaluation;
+they do not reconstruct original level lighting. The native primitive adapter
+covers only the hardware branch; complete software dispatch/rasterizers, atlas
+glyph copy and playable world/entity/script/control orchestration remain open.
+These tests render source-built offscreen images and never launch the game.

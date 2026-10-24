@@ -63,6 +63,14 @@ def main():
                 expected_scoped+=['compile-bh_texture_draw','compile-texture_draw']
             if 'src/bh_clipper.c' in build['sources']:
                 expected_scoped+=['compile-bh_clipper','compile-clipper']
+            for module in ('texture_controls','model_path','texture_policy','model_images',
+                           'render_state','render_material','screen_clipper','attribute_clipper',
+                           'software_tables','atlas_image','native_primitive','model_draw',
+                           'model_draw_lit','atlas_page','atlas_glyph'):
+                if 'src/bh_'+module+'.c' in build['sources']:
+                    expected_scoped+=['compile-bh_'+module,'compile-'+module]
+            if 'tests/model_draw_native.c' in build['sources']:
+                expected_scoped+=['compile-model_draw_native']
         assert sorted(scoped)==sorted(expected_scoped)
         assert 'ole32.lib' in next(c for c in build['commands'] if c['label']=='link')['argv']
     for name in ('link-map.txt','clean/link-map.txt'):

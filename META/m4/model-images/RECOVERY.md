@@ -1,0 +1,11 @@
+# Model image access family
+
+Classified before implementation as two complete independent engine-candidate boundaries0045e710..0045e75f(80bytes) and0045e760..0045e780(33bytes); no CRT/EH/import/sharedtail role. Engine provenance remains unresolved. Full instructions, raw SHA256, decompilation and sole actual caller00447ac3/00447ad6 retained here. Comparison dependency004882e0 is known CRT __strcmpi and is reused through _stricmp, not counted as recovery.
+
+Lookup requires model.frame0 and signed material_count>0, walks images+68, skips NULL, compares supplied name case-insensitively to image.name+1c, returns first index or-1. No extension rewriting occurs. Replacement requires signed index>=0, frame0, index<signed material_count and simply replaces one borrowed image pointer; NULL replacement is allowed and no AddRef/release/cache removal is present. Current shared structs establish exact offsets38/68/1c. New APIs bh_model_image_find and bh_model_image_replace use these existing types unchanged. Source NULL model/name/array guards and replacement success return are explicit interface additions.
+
+Reproduce focused validation with `python META/m4/model-images/build-focused.py`. Both real new translation units compile with pinned SP3 compiler, link real m0 source owners/native DirectDraw/system libraries with stock VC5 linker, run model-images.exe. Actual20checks/zero failures in focused-build.json with command/source/object hashes. Real BSP+PCX fixtures load actual model arrays and native image/cache owners. Tests cover mixedcase, missing/extension names, NULL entries, duplicate firstmatch, NULL replacement, index bounds, all nonzero frame patterns, empty/signednegative count, source guards, exact unchanged model bytes, cache identity and native image survival after model disposal.
+
+Limits: focused target consumes existing real m0 dependency objects; parent full integration rebuild required for admission. No originalcode/game execution or immutable reference changes. Functional source recovery only, no bytematch/gameplay-fidelity claim. Prior family source/header/tests remain frozen.
+
+Parent integration: bh_model_images_checkpoint(unsigned long*) and BH_MODEL_IMAGES_LINKED; same native SDK compile context as model tests. Only new src/bh_model_images.c,h tests/model_images.c and this evidence directory created.

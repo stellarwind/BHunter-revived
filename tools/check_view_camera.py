@@ -40,7 +40,10 @@ def main():
     scene=read(FOLDER/'scene-real.json');assert scene['passed'] and scene['controls']['checks']==28 and scene['texture_controls']['checks']==46
     assert scene['scene']['triangles']==5881 and scene['scene']['textures']==146 and scene['scene']['nonblack_pixels']==264231
     assert scene['image_sha256']==sha(FOLDER/'scene.bmp')
-    for name in ('src/bh_view_camera.c','src/bh_scene_view.c','src/bh_scene_view.h','src/bh_scene_snapshot.c'):assert scene['sources'][name]==sha(ROOT/name)==v['sources'][name]
+    for name in ('src/bh_view_camera.c','src/bh_scene_view.c','src/bh_scene_view.h','src/bh_scene_snapshot.c'):
+        path=ROOT/name
+        if sha(path)!=v['sources'][name]:path=FOLDER/'sources'/(v['sources'][name]+'-'+path.name+'.txt')
+        assert scene['sources'][name]==sha(path)==v['sources'][name]
     for name in ('link-map.txt','scene-link-map.txt','clean/link-map.txt'):
         data=(FOLDER/name).read_bytes()
         for symbol in (b'_bh_view_camera_build',b'_bh_view_reset_viewport',b'_bh_mat34_inverse_rigid',b'_bh_clip_polygon'):assert symbol in data

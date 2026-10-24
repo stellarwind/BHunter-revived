@@ -1,0 +1,15 @@
+# Image policy and seven-word setter
+
+Both targets were classified before implementation as independent proprietary/reused-engine candidates with unresolved engine provenance, not CRT/EH/import/sharedtail functions. Complete RET-terminated boundaries0044f4f0..0044f503 (20bytes) and0044f510..0044f545 (54bytes) have retained full instruction dumps, raw SHA256 fingerprints, decompilation and callers.
+
+0044f4f0 raw-assigns mode and color to00491750/00491754. The admitted0044f550 image owner reads both and passes them to admitted0044f1c0 palette conversion. Other read sites in0046f490 remain unrecovered. The source API bh_texture_policy_set(BHTextureContext*,int,unsigned long) replaces these exact globals with existing explicit context fields. No value clamp, color mask, or cache invalidation is invented.
+
+0044f510 is not a palette mode/color setter. Its sole action caller00477fa0 forwards image from payload+4 and seven32-bit words from payload+8..20; function stores them to image+54,58,5c,60,64,68,6c. Existing image layout names these unused54 and padding6. bh_texture_image_set_words preserves every raw bit without assigning unknown meanings. Known consumer: admitted bh_clip_polygon00452140 uses flag54 and coefficients58..6c for projected-texture bindings (META/m4/clipper/review.json). The action producer00477fa0 parameter meanings and full higher-level authoring semantics remain unrecovered. Both APIs add explicit NULL rejection and an int success result; these are documented source guards, not original return-ABI claims.
+
+0044f1b0 merely closes current reader VFILE through0047ce50. Existing bh_pcx_reader_close already implements reader close as support, with no originaladdress ledger claim found. This is not needed to implement the setters and was not changed or counted here. Palette conversion0044f1c0 was also not duplicated.
+
+Focused reproducible target: `python META/m4/texture-policy/build-focused.py`. Compiles both new real TUs with pinned SP3 compiler, links real current m0 owner objects/native DirectDraw/system definitions with stock VC5 linker and runs texture-policy.exe. focused-build.json records commands/source and object hashes and actual74checks/zero failures. Native-backed PCX fixtures independently distinguish modes0/1/2/3/-1, exact color matching, unchanged cachedimage pixels across policy changes, and updated policy consumption by a newname. Seven-word setter checks exact whole-object byte effect on real native/cache image including zero/highbits, preserving flags and all owning fields.
+
+Limits: existing source-built dependency objects are used for focused link; parent integration rebuild still required for admission. No byte-match, unknown sevenword purpose, software renderer behavior or game-fidelity claim. No game/original code execution or immutable reference mutation. Existing prior-family files remain untouched.
+
+Parent integration uses bh_texture_policy_checkpoint(unsigned long*) with BH_TEXTURE_POLICY_LINKED and same SDK compile context as image-owner tests. Only new source/header/test/evidence files were created.

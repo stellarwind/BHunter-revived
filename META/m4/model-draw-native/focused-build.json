@@ -1,0 +1,818 @@
+{
+  "target": "bhunter-model-draw-native.exe",
+  "passed": true,
+  "commands": [
+    {
+      "label": "compile-bh_model_draw",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:\\Decomp\\dx7sdk\\include",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/FoD:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_model_draw.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_model_draw.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_model_draw.c\n"
+    },
+    {
+      "label": "compile-bh_model_draw_lit",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:\\Decomp\\dx7sdk\\include",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/FoD:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_model_draw_lit.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_model_draw_lit.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_model_draw_lit.c\n"
+    },
+    {
+      "label": "compile-model_draw_native",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:\\Decomp\\dx7sdk\\include",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/DBH_MODEL_DRAW_NATIVE_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\model-draw-native\\model_draw_native.obj",
+        "D:\\Decomp\\Bhunter\\tests\\model_draw_native.c"
+      ],
+      "exit_code": 0,
+      "output": "model_draw_native.c\n"
+    },
+    {
+      "label": "link",
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/map:D:\\Decomp\\Bhunter\\build\\model-draw-native\\bhunter-model-draw-native.map",
+        "/out:D:\\Decomp\\Bhunter\\build\\model-draw-native\\bhunter-model-draw-native.exe",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_atlas_image.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_attribute_clipper.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_blocks.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_bsp.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_clipper.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_collision_model.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_collision_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_config.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_contact_effects.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_debris_response.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_draw_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_entities.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_entity_collision.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_geometry.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_geometry_radius.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_light.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_light_config.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_light_eval.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_main_camera.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_matrix_inverse.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_model.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_model_images.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_model_path.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_native_primitive.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_navigation.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_network_codec.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_network_transport.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_paths.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_pcx.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_pcx_reader.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_physics_response.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_portals.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_position.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_render_guids.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_render_material.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_render_state.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_riff.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_rotation.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_round.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_route_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_scene.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_scene_view.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_screen_clipper.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_script_timer.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_segment_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_software_tables.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_sound_listener.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_sound_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_sound_tick.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_sweep.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_texture.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_texture_controls.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_texture_draw.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_texture_image.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_texture_policy.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_texture_tables.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_vfile.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_view_camera.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_view_cull.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_wave.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_world_geometry.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_world_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_model_draw.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_model_draw_lit.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\model_draw_native.obj",
+        "D:\\Decomp\\dx7sdk\\lib\\ddraw.lib",
+        "kernel32.lib",
+        "dsound.lib",
+        "user32.lib",
+        "ole32.lib"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "label": "native-scenario",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bhunter-model-draw-native.exe"
+      ],
+      "exit_code": 0,
+      "output": "{\"scenario\":\"model-draw-native\",\"checks\":71,\"failures\":0,\"original_code_required\":false}\n"
+    },
+    {
+      "label": "missing-bh_model_draw",
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/out:D:\\Decomp\\Bhunter\\build\\model-draw-native\\missing-bh_model_draw.exe",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_atlas_image.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_attribute_clipper.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_blocks.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_bsp.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_clipper.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_collision_model.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_collision_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_config.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_contact_effects.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_debris_response.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_draw_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_entities.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_entity_collision.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_geometry.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_geometry_radius.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_light.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_light_config.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_light_eval.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_main_camera.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_matrix_inverse.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_model.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_model_images.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_model_path.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_native_primitive.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_navigation.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_network_codec.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_network_transport.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_paths.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_pcx.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_pcx_reader.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_physics_response.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_portals.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_position.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_render_guids.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_render_material.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_render_state.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_riff.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_rotation.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_round.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_route_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_scene.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_scene_view.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_screen_clipper.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_script_timer.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_segment_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_software_tables.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_sound_listener.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_sound_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_sound_tick.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_sweep.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_texture.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_texture_controls.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_texture_draw.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_texture_image.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_texture_policy.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_texture_tables.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_vfile.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_view_camera.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_view_cull.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_wave.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_world_geometry.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_world_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_model_draw_lit.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\model_draw_native.obj",
+        "D:\\Decomp\\dx7sdk\\lib\\ddraw.lib",
+        "kernel32.lib",
+        "dsound.lib",
+        "user32.lib",
+        "ole32.lib"
+      ],
+      "exit_code": 25,
+      "output": "bh_model_draw_lit.obj : error LNK2001: unresolved external symbol _bh_model_draw_leaf_chain\nmodel_draw_native.obj : error LNK2001: unresolved external symbol _bh_model_draw_cache_dispose\nmodel_draw_native.obj : error LNK2001: unresolved external symbol _bh_model_draw_unlit\nmodel_draw_native.obj : error LNK2001: unresolved external symbol _bh_model_draw_context_init\nmodel_draw_native.obj : error LNK2001: unresolved external symbol _bh_model_draw_cache_init\nD:\\Decomp\\Bhunter\\build\\model-draw-native\\missing-bh_model_draw.exe : fatal error LNK1120: 5 unresolved externals\n"
+    },
+    {
+      "label": "missing-bh_model_draw_lit",
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/out:D:\\Decomp\\Bhunter\\build\\model-draw-native\\missing-bh_model_draw_lit.exe",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_atlas_image.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_attribute_clipper.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_blocks.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_bsp.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_clipper.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_collision_model.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_collision_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_config.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_contact_effects.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_debris_response.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_draw_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_entities.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_entity_collision.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_geometry.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_geometry_radius.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_light.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_light_config.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_light_eval.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_main_camera.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_matrix_inverse.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_model.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_model_images.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_model_path.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_native_primitive.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_navigation.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_network_codec.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_network_transport.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_paths.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_pcx.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_pcx_reader.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_physics_response.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_portals.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_position.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_render_guids.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_render_material.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_render_state.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_riff.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_rotation.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_round.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_route_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_scene.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_scene_view.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_screen_clipper.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_script_timer.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_segment_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_software_tables.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_sound_listener.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_sound_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_sound_tick.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_sweep.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_texture.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_texture_controls.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_texture_draw.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_texture_image.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_texture_policy.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_texture_tables.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_vfile.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_view_camera.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_view_cull.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_wave.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_world_geometry.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_world_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_model_draw.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\model_draw_native.obj",
+        "D:\\Decomp\\dx7sdk\\lib\\ddraw.lib",
+        "kernel32.lib",
+        "dsound.lib",
+        "user32.lib",
+        "ole32.lib"
+      ],
+      "exit_code": 25,
+      "output": "model_draw_native.obj : error LNK2001: unresolved external symbol _bh_model_draw_lit\nmodel_draw_native.obj : error LNK2001: unresolved external symbol _bh_model_draw_lit_context_init\nD:\\Decomp\\Bhunter\\build\\model-draw-native\\missing-bh_model_draw_lit.exe : fatal error LNK1120: 2 unresolved externals\n"
+    },
+    {
+      "label": "missing-bh_native_primitive",
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/out:D:\\Decomp\\Bhunter\\build\\model-draw-native\\missing-bh_native_primitive.exe",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_atlas_image.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_attribute_clipper.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_blocks.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_bsp.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_clipper.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_collision_model.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_collision_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_config.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_contact_effects.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_debris_response.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_draw_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_entities.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_entity_collision.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_geometry.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_geometry_radius.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_light.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_light_config.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_light_eval.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_main_camera.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_matrix_inverse.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_model.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_model_images.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_model_path.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_navigation.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_network_codec.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_network_transport.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_paths.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_pcx.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_pcx_reader.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_physics_response.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_portals.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_position.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_render_guids.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_render_material.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_render_state.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_riff.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_rotation.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_round.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_route_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_scene.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_scene_view.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_screen_clipper.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_script_timer.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_segment_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_software_tables.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_sound_listener.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_sound_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_sound_tick.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_sweep.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_texture.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_texture_controls.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_texture_draw.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_texture_image.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_texture_policy.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_texture_tables.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_vfile.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_view_camera.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_view_cull.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_wave.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_world_geometry.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_world_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_model_draw.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\bh_model_draw_lit.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw-native\\model_draw_native.obj",
+        "D:\\Decomp\\dx7sdk\\lib\\ddraw.lib",
+        "kernel32.lib",
+        "dsound.lib",
+        "user32.lib",
+        "ole32.lib"
+      ],
+      "exit_code": 25,
+      "output": "bh_scene_view.obj : error LNK2001: unresolved external symbol _bh_native_primitive_emit\nmodel_draw_native.obj : error LNK2001: unresolved external symbol _bh_native_primitive_emit\nD:\\Decomp\\Bhunter\\build\\model-draw-native\\missing-bh_native_primitive.exe : fatal error LNK1120: 1 unresolved externals\n"
+    }
+  ],
+  "objects": {
+    "bh_atlas_image.obj": {
+      "sha256": "f5204371a15193f7e398f28a4582ca3c36c9981854ba4b0434373a9bbb0b0fe9",
+      "origin": "build\\m0\\bh_atlas_image.obj",
+      "source": "src/bh_atlas_image.c",
+      "source_sha256": "626a715ed86d4fe833f4dbcd44ba1eb7f94e186240a6d6e90b423010eeddef0d"
+    },
+    "bh_attribute_clipper.obj": {
+      "sha256": "cb0dcd14072a77a622b92fb4c8aa86a6fae3296611ccd161b09f384c10d549c1",
+      "origin": "build\\m0\\bh_attribute_clipper.obj",
+      "source": "src/bh_attribute_clipper.c",
+      "source_sha256": "fa2e5c378020c6a6f2c146f169838956b41e9c010858f675b03f28423ce6a622"
+    },
+    "bh_blocks.obj": {
+      "sha256": "1fd29fb5cd4ac3f37df997508940ad8c9e151c7389e992872e95277c0e2eac92",
+      "origin": "build\\m0\\bh_blocks.obj",
+      "source": "src/bh_blocks.c",
+      "source_sha256": "d3279666e06ca171c9844124222bb0ecf886e35850ff0b82181a1a4bf3723881"
+    },
+    "bh_bsp.obj": {
+      "sha256": "624fda5a3439097dc67f95c826851bcf600033902ab8856739308197b54dcbef",
+      "origin": "build\\m0\\bh_bsp.obj",
+      "source": "src/bh_bsp.c",
+      "source_sha256": "712f5d421bb28635087fe8882b13e887c12893809a7b106ea4fa24275ab48fe5"
+    },
+    "bh_clipper.obj": {
+      "sha256": "6e471c666177255f15b285e37d07389280bf3b4393b58530af6fa5ba0f713766",
+      "origin": "build\\m0\\bh_clipper.obj",
+      "source": "src/bh_clipper.c",
+      "source_sha256": "483fa81c86f0354167c12745f9e06841adce924e40f1dc68d9aca113adbe8c62"
+    },
+    "bh_collision_model.obj": {
+      "sha256": "b1c30d29510963f6586c2964f0daf059ac61017dfc81e400b4348dc671e001b1",
+      "origin": "build\\m0\\bh_collision_model.obj",
+      "source": "src/bh_collision_model.c",
+      "source_sha256": "45d4f2fd56e41af59ec73ce2c936f83af6cc6e470a15d8c1a1ad717cb5caa6bd"
+    },
+    "bh_collision_query.obj": {
+      "sha256": "f98700c2c7839677eb3a93f71db9bbf95ca04050e4414c63c9168fc4b244da03",
+      "origin": "build\\m0\\bh_collision_query.obj",
+      "source": "src/bh_collision_query.c",
+      "source_sha256": "1973040655dfb2f871dd6212bf44db3c5cf14057627ee23e26b08c798f907c8e"
+    },
+    "bh_config.obj": {
+      "sha256": "81ad4c6d15a488933c54b765c7cb7b74308c5b000246a73dc338186b6000a50c",
+      "origin": "build\\m0\\bh_config.obj",
+      "source": "src/bh_config.c",
+      "source_sha256": "6081596cb764118e0441ce5d3e0cf897a6ce011ca2d7e9aaa81a6ab5ef58092e"
+    },
+    "bh_contact_effects.obj": {
+      "sha256": "96f0f8ad972ba0e3812bda48bc9f5568a87d9dd7b203100498e1f9f4886b2e77",
+      "origin": "build\\m0\\bh_contact_effects.obj",
+      "source": "src/bh_contact_effects.c",
+      "source_sha256": "78a1a77bea2540718d766aa138f63ff3cd63124ad1a2c8d7fe7c39cef5f6bc90"
+    },
+    "bh_debris_response.obj": {
+      "sha256": "a8acd6c3ca4e08f7ba7149d4c1d0a67be944423a95e6c174dae97c49bf06f2b0",
+      "origin": "build\\m0\\bh_debris_response.obj",
+      "source": "src/bh_debris_response.c",
+      "source_sha256": "3bfa049f333d1b18c34bd3f54f92c9966fb902171dc27e82aabea431b934960d"
+    },
+    "bh_draw_queue.obj": {
+      "sha256": "fc2d65b0bd8a0678999bfbb4c5f5a1109bb2a16d083b2e405df4a43fa74da773",
+      "origin": "build\\m0\\bh_draw_queue.obj",
+      "source": "src/bh_draw_queue.c",
+      "source_sha256": "0c697d2144ebb7453a37f65aa8f208d69512c3e4926e369cc7c37daee706707d"
+    },
+    "bh_entities.obj": {
+      "sha256": "7ea3191d9348006a5b7eb13927791678e3e158a9d4e8ff2e5470c25cf830dbc0",
+      "origin": "build\\m0\\bh_entities.obj",
+      "source": "src/bh_entities.c",
+      "source_sha256": "6fc5e54d88906a7922c149bb1ccc9851c2cbe701217e57d8e3c72646d81cb92a"
+    },
+    "bh_entity_collision.obj": {
+      "sha256": "c9d7ee511e914f21ed9d6338125ce26ec8bcf4d45443b349e31c705708785335",
+      "origin": "build\\m0\\bh_entity_collision.obj",
+      "source": "src/bh_entity_collision.c",
+      "source_sha256": "e9a381944a9f9ba6c47a139df7ce2036ee69f69b9579961b76dc75962631010e"
+    },
+    "bh_fp.obj": {
+      "sha256": "c289df7e97025a344f2d5bae9dfe4bc03bea5c7a6f372123348c40654374827d",
+      "origin": "build\\m0\\bh_fp.obj",
+      "source": "src/bh_fp.c",
+      "source_sha256": "cc8400a29fd082f96ffd9b483f490a44992717b25eac0cb32e2e108ba446f3f8"
+    },
+    "bh_geometry.obj": {
+      "sha256": "be26954a1077576db9dcfdceaa6d5675df0d44d9262c4810d232389462bb3387",
+      "origin": "build\\m0\\bh_geometry.obj",
+      "source": "src/bh_geometry.c",
+      "source_sha256": "9a22644a9c0585cfe22a9c437576c627bf4e68fae5e9e6dabdc9099aa9fa0acf"
+    },
+    "bh_geometry_radius.obj": {
+      "sha256": "4e95612ec0efee52480298c543ccdabb48fcc6325a6159aa678a29b14d6b60d2",
+      "origin": "build\\m0\\bh_geometry_radius.obj",
+      "source": "src/bh_geometry_radius.c",
+      "source_sha256": "38141602d0ef597f2926bf6b1064bb1a91ab54eb5812aa7791e4c46a735ecad7"
+    },
+    "bh_light.obj": {
+      "sha256": "94d4487245cd9a6dca9716848e1777a8e2a3caa1ad312183e0361657989848bc",
+      "origin": "build\\m0\\bh_light.obj",
+      "source": "src/bh_light.c",
+      "source_sha256": "18f6f3d33fbce60b1f7ce97fe521f153a39ce7fd70253bbfbf164636ada1e201"
+    },
+    "bh_light_config.obj": {
+      "sha256": "5b830aa4103e95680df32a51413a04f5707821ecdc5db2c71b744c16da4112f7",
+      "origin": "build\\m0\\bh_light_config.obj",
+      "source": "src/bh_light_config.c",
+      "source_sha256": "82101e7859c555fb65afd5ff44eed25400e91e3f704dc4c24ff566c6454c107c"
+    },
+    "bh_light_eval.obj": {
+      "sha256": "1e7d5ad220670b1503d0d644a80083326a5ecf779dac454c3b33e477542dee43",
+      "origin": "build\\m0\\bh_light_eval.obj",
+      "source": "src/bh_light_eval.c",
+      "source_sha256": "866889a02b417d02f539cffd5ccc58e151f4549be616dc2272ec83b863f8f9a2"
+    },
+    "bh_main_camera.obj": {
+      "sha256": "4d1d1b1ed310f14c39916d0d0ecc2e8fac62e3c5cf874424e8be4e3852025272",
+      "origin": "build\\m0\\bh_main_camera.obj",
+      "source": "src/bh_main_camera.c",
+      "source_sha256": "aa546818ed08a52fd6c87fd498f5ef856470ae42fd5b3928c887be9ad2c2f24f"
+    },
+    "bh_math.obj": {
+      "sha256": "1961d5eef3afff24f26c73c07439afcdd6997e3ef49423622843993ab1a3b53c",
+      "origin": "build\\m0\\bh_math.obj",
+      "source": "src/bh_math.c",
+      "source_sha256": "ce111e18659563a2c41a04b645295227aac6ead9fe9cc2e803ac45c726d6e9bc"
+    },
+    "bh_matrix_inverse.obj": {
+      "sha256": "4c140911c3c30690153424361772444f9bf90c2afe34b2a194399e5b67b483a1",
+      "origin": "build\\m0\\bh_matrix_inverse.obj",
+      "source": "src/bh_matrix_inverse.c",
+      "source_sha256": "c5cd3ee6b4071fe4f49e55432c696299945c609486359eb0239a053a6a1ce5b7"
+    },
+    "bh_model.obj": {
+      "sha256": "a3942f9e8b31b314a38b61120a0ca9c4ea05f26368808a944526c7a53481c2ac",
+      "origin": "build\\m0\\bh_model.obj",
+      "source": "src/bh_model.c",
+      "source_sha256": "6bb470d3965025c41f1bfdce852dce7c7461cd503201991a250d485c507d87b2"
+    },
+    "bh_model_images.obj": {
+      "sha256": "c1eb2640bf211dfb755f2d000208a42df291225d9c495b24095df40b3758b75d",
+      "origin": "build\\m0\\bh_model_images.obj",
+      "source": "src/bh_model_images.c",
+      "source_sha256": "7849ef6332ded6398a9f34a9dd53ca39d7c2c7927f84414e8cd01f9633dc0092"
+    },
+    "bh_model_path.obj": {
+      "sha256": "af2e3c2b489fb233071eff7fc5729caf8c040d46530df160d14852f284200609",
+      "origin": "build\\m0\\bh_model_path.obj",
+      "source": "src/bh_model_path.c",
+      "source_sha256": "f7791fe685289885c6d078ba7606ccacc2a85e87fd766362a00e89f480ed147a"
+    },
+    "bh_native_primitive.obj": {
+      "sha256": "6563fdb1691ab552f551b523934587ae704e6c4f5c6c4a140031de32ab955ae9",
+      "origin": "build\\m0\\bh_native_primitive.obj",
+      "source": "src/bh_native_primitive.c",
+      "source_sha256": "fc22bb58fdfd456a206c7e54c02ce2afd82af28222ab7a89f11380ae3cdc1c69"
+    },
+    "bh_navigation.obj": {
+      "sha256": "6fa605ae3eb7de30d959f974369b6d514a5db5e231ee453977ae46c19e1d8065",
+      "origin": "build\\m0\\bh_navigation.obj",
+      "source": "src/bh_navigation.c",
+      "source_sha256": "23ecfe0859a8fb5d77e07b3919eb851e6f95ec2297b13c5f5d8e6d3d0ef78e05"
+    },
+    "bh_network_codec.obj": {
+      "sha256": "388818e722bfb5e6a73a68c99961469d2b2c73d82ad939fc301edfeb2e337923",
+      "origin": "build\\m0\\bh_network_codec.obj",
+      "source": "src/bh_network_codec.c",
+      "source_sha256": "eef9d8ea4750b1e14731f5c6b55f01d50b199645c2fe4bcf0d998a83b03ab3b9"
+    },
+    "bh_network_transport.obj": {
+      "sha256": "2978478ecb89f46e23a47bed04e9966c64d442c34a0ba6c407d3a3395886006c",
+      "origin": "build\\m0\\bh_network_transport.obj",
+      "source": "src/bh_network_transport.c",
+      "source_sha256": "57654b7ec0b21755f305cd681bccb970485ba49cb84e13ed58c6332a1f2bd10c"
+    },
+    "bh_paths.obj": {
+      "sha256": "c2efc654c290888bca03511b47cf253a40a6a607660a3aa057aff0924b4dc46c",
+      "origin": "build\\m0\\bh_paths.obj",
+      "source": "src/bh_paths.c",
+      "source_sha256": "0ce4a5312e27f1cec73425cea8a25b93677e9a619ec6aeb6c79f828c8293a977"
+    },
+    "bh_pcx.obj": {
+      "sha256": "43d80cce5b0786dc42fa3eceb7b8c0c0f0534509515220b76489473248ec86d8",
+      "origin": "build\\m0\\bh_pcx.obj",
+      "source": "src/bh_pcx.c",
+      "source_sha256": "8250cba2a91c4be9b34c69343fd048ed0d193165f6c6ad96775667489cb4ca87"
+    },
+    "bh_pcx_reader.obj": {
+      "sha256": "c4b7e0a8c4ebdbb309e5ba700871fb7685e2a52d8931846b1e55e050d5afc306",
+      "origin": "build\\m0\\bh_pcx_reader.obj",
+      "source": "src/bh_pcx_reader.c",
+      "source_sha256": "61362f0a0a322a63f54dfad78d807ffd8c8b7ea6e0bb02ae1c54016abb867116"
+    },
+    "bh_physics_response.obj": {
+      "sha256": "11db0cc239b26e30a5791a42676f62afee95cb87bde2d9c40087aec7da589a7f",
+      "origin": "build\\m0\\bh_physics_response.obj",
+      "source": "src/bh_physics_response.c",
+      "source_sha256": "273ba0f8cae1356e757558e88649d6a73f4f8d9fdde8b62027eb535e5556e382"
+    },
+    "bh_portals.obj": {
+      "sha256": "e2b479e49a89e799277062bc8886a83f71d37ee403908721947ad738cfb7c90c",
+      "origin": "build\\m0\\bh_portals.obj",
+      "source": "src/bh_portals.c",
+      "source_sha256": "e3dfd22a94b1edc401b1219d9aba390a7b12be22e6228160608531538db2b3e5"
+    },
+    "bh_position.obj": {
+      "sha256": "0c0a0409f568d4ec036972aa88b98063231e8672fedb3914478412b77ec1158c",
+      "origin": "build\\m0\\bh_position.obj",
+      "source": "src/bh_position.c",
+      "source_sha256": "629dbd42143b6082dc025c4e82585106ae6df97e1a204363c1fde89d11d3b10c"
+    },
+    "bh_render_guids.obj": {
+      "sha256": "b9bafefb9c752bfeb26ce912f6eb370b52881037923c2435a571cdba1ea46f9b",
+      "origin": "build\\m0\\bh_render_guids.obj",
+      "source": "src/bh_render_guids.c",
+      "source_sha256": "c6f27239846e737ac682a0756bb3096dd5b03c9e519ca1e939d4f710e061b396"
+    },
+    "bh_render_material.obj": {
+      "sha256": "9889d7c7662033a60bf3633cc4424d10262a668b3f78f32fde0ccd68e2fd0b0b",
+      "origin": "build\\m0\\bh_render_material.obj",
+      "source": "src/bh_render_material.c",
+      "source_sha256": "ba08e6d118895790c9242bc9d656dcf70241ed3d9c2bd4d057e46ec24771f244"
+    },
+    "bh_render_state.obj": {
+      "sha256": "4f8c8112fdbeac553ea1b2baa6412e627ea813c39df826a4545383c95dbaf0e4",
+      "origin": "build\\m0\\bh_render_state.obj",
+      "source": "src/bh_render_state.c",
+      "source_sha256": "0058f8db4573a808a55756031200563d62b4504cbeb19d735667db73edf38c1f"
+    },
+    "bh_riff.obj": {
+      "sha256": "858e8dd4714918544c35c4f357373148af2b6c672bd61b67ee622e784f2a0c21",
+      "origin": "build\\m0\\bh_riff.obj",
+      "source": "src/bh_riff.c",
+      "source_sha256": "3b9064792eafd099d6c23c28202810e0dcff17e2c9b6d50f381c16d92ad95272"
+    },
+    "bh_rotation.obj": {
+      "sha256": "f80bc07dd685e900834c2bb8a101f4f940d18cf5128a34606370d77e82233aa1",
+      "origin": "build\\m0\\bh_rotation.obj",
+      "source": "src/bh_rotation.c",
+      "source_sha256": "9a288fba2368c54b0b1a743b907e468b8683d8f6ff101807423c78b44644dd12"
+    },
+    "bh_round.obj": {
+      "sha256": "25d2236dd7251e5490ca0dba8b4a49a091287a6d39c0d9710fa4a067ebfcab5c",
+      "origin": "build\\m0\\bh_round.obj",
+      "source": "src/bh_round.c",
+      "source_sha256": "ff848010705702e25cf85f5ba1d9c30a024d1ea8bf93227240285b9c54fc8ef4"
+    },
+    "bh_route_query.obj": {
+      "sha256": "f7250b9dcf8f8b38094a576385d01178f6fc75869fa1635cd017c035283610dd",
+      "origin": "build\\m0\\bh_route_query.obj",
+      "source": "src/bh_route_query.c",
+      "source_sha256": "f4960f8e58e1ea803422ae3a2ba787c2fa658b562d793a1f4c9b0716927ab074"
+    },
+    "bh_scene.obj": {
+      "sha256": "fbd682a3cc996840c0b9718d8a35448cad146eaa738d0606c28d87e135906d72",
+      "origin": "build\\m0\\bh_scene.obj",
+      "source": "src/bh_scene.c",
+      "source_sha256": "8439df6593816139b4e5b60cb8e9c96283a66c8f18f5465ca1aeec3eee64e3e1"
+    },
+    "bh_scene_view.obj": {
+      "sha256": "33ab5897e94fdff0364ba8fa6a6e2438a706796c8119a3178c6b86de211d1c91",
+      "origin": "build\\m0\\bh_scene_view.obj",
+      "source": "src/bh_scene_view.c",
+      "source_sha256": "93c8bb4774f9c546edb3e99e7eec7609a556b737e6dfb2c306832e7fb81db107"
+    },
+    "bh_screen_clipper.obj": {
+      "sha256": "e7e2c62847e71a01eee12aead40243f0faefb930a3fcba5fafcb3bdbcfef114c",
+      "origin": "build\\m0\\bh_screen_clipper.obj",
+      "source": "src/bh_screen_clipper.c",
+      "source_sha256": "b3c386152abe386b75ca1d5649d8350b8258ba08f27ad59d3e042acbe111dd02"
+    },
+    "bh_script_timer.obj": {
+      "sha256": "4ed209fe4b26fe96b4c73045371b241eac0d135bbdab71d01fb223d23bddca06",
+      "origin": "build\\m0\\bh_script_timer.obj",
+      "source": "src/bh_script_timer.c",
+      "source_sha256": "7e2aa2cc600ef0e963178d46bc5976b04784c08d5f035f48fcd0f3b3c14229e1"
+    },
+    "bh_segment_query.obj": {
+      "sha256": "1e0be0433f3d7e9aa2291f7f4bbace8dc0fb6aff2ed3749e116138754c650494",
+      "origin": "build\\m0\\bh_segment_query.obj",
+      "source": "src/bh_segment_query.c",
+      "source_sha256": "bc8b01e7c1bba98f5c3df0ea845e3b4a7570b550435c389f7e6dde7bda4ccb35"
+    },
+    "bh_software_tables.obj": {
+      "sha256": "b688e0609096e35eee3a9752453aeeaf55de04e8d20fd4d1d91f623c32ad21d7",
+      "origin": "build\\m0\\bh_software_tables.obj",
+      "source": "src/bh_software_tables.c",
+      "source_sha256": "0a96f604ed8e37903cf1919b48be2ef003cdf54a854d32854cce2513d3de0b0c"
+    },
+    "bh_sound_listener.obj": {
+      "sha256": "f7932cca437503ee857475a124e9f87d76e03204dfba3acb2c5d09c553e82e6c",
+      "origin": "build\\m0\\bh_sound_listener.obj",
+      "source": "src/bh_sound_listener.c",
+      "source_sha256": "af7535b6408e0c24f0987e4c375b4d00d816497981c1a025933b7ccad569c6aa"
+    },
+    "bh_sound_queue.obj": {
+      "sha256": "08c3158b88d8292ee3d46ef49c39ce84f7f30f29825b533763bbcd8efedb0988",
+      "origin": "build\\m0\\bh_sound_queue.obj",
+      "source": "src/bh_sound_queue.c",
+      "source_sha256": "9c6a9eddf5cb3332539153e7aa7418326c0ec9598a5a565f53d529ce706f61a5"
+    },
+    "bh_sound_tick.obj": {
+      "sha256": "32bcb9b6610f777bf44b7f54b1f18de359b3c078fe350ee969b3753b7868fec8",
+      "origin": "build\\m0\\bh_sound_tick.obj",
+      "source": "src/bh_sound_tick.c",
+      "source_sha256": "c790edd015d07d33b56f9c154be2c035ab2e19ff4d2e9bbbe1d91dae0ec10ba5"
+    },
+    "bh_sweep.obj": {
+      "sha256": "99202819ba9749af787a9cdd8e41c9e9cb27e2dd7813ce32ee7ab7c30602bc0e",
+      "origin": "build\\m0\\bh_sweep.obj",
+      "source": "src/bh_sweep.c",
+      "source_sha256": "829392439f2e0886f45079d69f1e884730cfc1b9faaade22ab8872324fff751a"
+    },
+    "bh_texture.obj": {
+      "sha256": "b049df7c28b496ee5ea089fbba1570ed427bdd9841d81da1a3d463f7d031e6d3",
+      "origin": "build\\m0\\bh_texture.obj",
+      "source": "src/bh_texture.c",
+      "source_sha256": "50447fcc5a161060c743bafa66500f28d7b0cbfdd40e0b14486844d0339db0d2"
+    },
+    "bh_texture_controls.obj": {
+      "sha256": "e05763a8893c8d62fdda64f4c1b06fc3e43375b6010bf0b522277517ac4f6d06",
+      "origin": "build\\m0\\bh_texture_controls.obj",
+      "source": "src/bh_texture_controls.c",
+      "source_sha256": "dc7193a5c83db543187868dcb0f0e62a2d396545f106b86560b46af485943d9a"
+    },
+    "bh_texture_draw.obj": {
+      "sha256": "e61bbc9b7450a4e17766c1c4e96cf4f7ee973467c7f7284475ba3755f027bb4b",
+      "origin": "build\\m0\\bh_texture_draw.obj",
+      "source": "src/bh_texture_draw.c",
+      "source_sha256": "5878f7bfb976a8b7281561787a01e0d819e41002ba4bf7b46b4a6c885c43a61a"
+    },
+    "bh_texture_image.obj": {
+      "sha256": "fb7dcb6ff360b2a8051cc04cad25ad596a8788e5166d5b9fb58da8a503b20e5d",
+      "origin": "build\\m0\\bh_texture_image.obj",
+      "source": "src/bh_texture_image.c",
+      "source_sha256": "b90f9e2e48c816af8a5cdbe476fef73fa4f399b31b6f42024ad24e5f68ed4690"
+    },
+    "bh_texture_policy.obj": {
+      "sha256": "f791d29bbe0f4d150958c120cbed247b3300bcf3b7cba3ddb39d166f5630c81e",
+      "origin": "build\\m0\\bh_texture_policy.obj",
+      "source": "src/bh_texture_policy.c",
+      "source_sha256": "03d1bcbbb0007f8954b79610f65c0cfefcbcf5c3d5cfc6c11e8301725a3f8061"
+    },
+    "bh_texture_tables.obj": {
+      "sha256": "4055d9cdd211e644dd2e83b4a432ff360d6bc75e5a562b7d47797500b3bab455",
+      "origin": "build\\m0\\bh_texture_tables.obj",
+      "source": "src/bh_texture_tables.c",
+      "source_sha256": "0cc9d82eec6212b08a3bd016e18b319a73896dc35e9e191da2edaf7ddf1c60b7"
+    },
+    "bh_vfile.obj": {
+      "sha256": "4a2c0b2fdff5d75fc41c61554331b5766455256f8f84fcec3488bc14b0bfc5d2",
+      "origin": "build\\m0\\bh_vfile.obj",
+      "source": "src/bh_vfile.c",
+      "source_sha256": "7a8187efa6bfcbdf7a626ff53c6d4133d47a37e2dcf65830985b5cee94bf78d0"
+    },
+    "bh_view_camera.obj": {
+      "sha256": "b79d9831e91b8bb117a4068413ab5ad02fd93a522ec9feaf4d0248b9b9f9cb01",
+      "origin": "build\\m0\\bh_view_camera.obj",
+      "source": "src/bh_view_camera.c",
+      "source_sha256": "f7984e1bbdf672df12961840426d511844d9f3cef77ddea8370b34375a9042a7"
+    },
+    "bh_view_cull.obj": {
+      "sha256": "0d04c0328c66801dc468555eaeec94a46cd79f396a108b4a0b09897521afcbbb",
+      "origin": "build\\m0\\bh_view_cull.obj",
+      "source": "src/bh_view_cull.c",
+      "source_sha256": "bf2b02be5c3dfabebf93fe6b64daf6c0bbda5c452147ba8e554580e8fa3ad9a5"
+    },
+    "bh_wave.obj": {
+      "sha256": "80598135ee247f3eec49b089f49542459b70264d7f42c0242d9ae0b598afbec6",
+      "origin": "build\\m0\\bh_wave.obj",
+      "source": "src/bh_wave.c",
+      "source_sha256": "16bf89dc8799e762bc8eb257c60841214ae4135d9e9b6702f8124ef97fdf7115"
+    },
+    "bh_world_geometry.obj": {
+      "sha256": "44999b0a757a9d7ce36e3a66b3dba01b910b009a18142e80f8180308c9a68d87",
+      "origin": "build\\m0\\bh_world_geometry.obj",
+      "source": "src/bh_world_geometry.c",
+      "source_sha256": "c1f81b5b6c07a278e65abe21717866342c89c7486ef7ca1fb0d0772a7c9a0ce0"
+    },
+    "bh_world_query.obj": {
+      "sha256": "aeaa569eac53a6a8ce7f1773aa1b0aa90a156d605e3fab970bbbbfc5d8ec438e",
+      "origin": "build\\m0\\bh_world_query.obj",
+      "source": "src/bh_world_query.c",
+      "source_sha256": "26f0900748e1f0d7a6ecf072f1028ae305e703865cfa34765592ff0f3235fe48"
+    }
+  },
+  "excluded_stale_objects": [
+    "build\\m0\\bh_waypoint.obj"
+  ],
+  "original_code_required": false,
+  "game_launches": 0,
+  "scenario": {
+    "scenario": "model-draw-native",
+    "checks": 71,
+    "failures": 0,
+    "original_code_required": false
+  },
+  "sources": {
+    "src/bh_model_draw.c": "0400b49e2abffeb857b0604002a5140bb878825935d41e2c8a3ec21208154f96",
+    "src/bh_model_draw_lit.c": "a3de4be851830b933e61984bf602f91a69bc87bde3029daeb6e8c2b94d1ac5f2",
+    "tests/model_draw_native.c": "40fd1c9258b1243992888a861cbb0c3b5370423512f0be3c23694c90caafa819",
+    "src/bh_model_draw.h": "44dbc4dcce1e6e0dc42657cf4250ce57e2a96acb458905d95e284a56874b73fb",
+    "src/bh_model_draw_lit.h": "0b467605f6e006f0b5bca8916b3723fe285fc200df2d49b85c11d050244f5a6f",
+    "src/bh_native_primitive.h": "4d627c4d1ff939be5a828d988c590f8ee2030a662ef326b41b1dcfc4a5b9a87b"
+  },
+  "bitmaps": {
+    "model-native-lit-green.bmp": "8426bad8aef8da0b4c52ae053f04e145109fff3ce5435d9ce9412a489bea7385",
+    "model-native-lit-red.bmp": "51fb1512f339cb80b8342caa1231a9d1405f9675fd826a9e87013752301b7eb8",
+    "model-native-mask-zero.bmp": "864233c5bc34b3f4fe671e21531c8877b0e871f74e9bfb3ecc731888567e068f",
+    "model-native-point-blue.bmp": "c3bc45ceb14461e5e44ff1bb401ea12e7364d604c51f845a16314371199dd538",
+    "model-native-unlit-blue.bmp": "c3bc45ceb14461e5e44ff1bb401ea12e7364d604c51f845a16314371199dd538"
+  },
+  "executable_sha256": "465d7c7576ef7ab37d7a00ffa1f658dd74ce3e1305e5ae582f1dc12618a21ec1"
+}

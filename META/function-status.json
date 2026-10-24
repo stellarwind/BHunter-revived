@@ -5465,6 +5465,1260 @@
         "META/m4/light-prepare/clean/clean-checkout.json",
         "META/m4/light-prepare/link-map.txt"
       ]
+    },
+    {
+      "id": "004507c0-functional-c",
+      "original_va": "004507c0",
+      "function": "bh_texture_image_load",
+      "role": "engine_candidate",
+      "provenance_confidence": "Image loader forwarding and sole flags-setting caller; no CRT/EH/import/shared-tail role; independent complete RET-terminated boundaries.",
+      "source": "src/bh_texture_controls.c",
+      "source_sha256": "dc7193a5c83db543187868dcb0f0e62a2d396545f106b86560b46af485943d9a",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "texture-controls",
+          "checks": 48,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": null
+      },
+      "evidence": [
+        "META/m4/texture-controls/functions.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004582f0-functional-c",
+      "original_va": "004582f0",
+      "function": "bh_texture_image_set_flags",
+      "role": "engine_candidate",
+      "provenance_confidence": "Image loader forwarding and sole flags-setting caller; no CRT/EH/import/shared-tail role; independent complete RET-terminated boundaries.",
+      "source": "src/bh_texture_controls.c",
+      "source_sha256": "dc7193a5c83db543187868dcb0f0e62a2d396545f106b86560b46af485943d9a",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "texture-controls",
+          "checks": 48,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": null
+      },
+      "evidence": [
+        "META/m4/texture-controls/functions.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0044e910-functional-c",
+      "original_va": "0044e910",
+      "function": "bh_model_path_set",
+      "role": "engine_candidate",
+      "provenance_confidence": "unresolved engine origin; model path owner highconfidence from exact global readers",
+      "source": "src/bh_model_path.c",
+      "source_sha256": "f7791fe685289885c6d078ba7606ccacc2a85e87fd766362a00e89f480ed147a",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "model-path",
+          "checks": 22,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": null
+      },
+      "evidence": [
+        "META/m4/model-path/function.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0044f4f0-functional-c",
+      "original_va": "0044f4f0",
+      "function": "bh_texture_policy_set",
+      "role": "engine_candidate",
+      "provenance_confidence": "unresolved engine origin; exact image/cache behavior confirmed from caller and field/global consumers",
+      "source": "src/bh_texture_policy.c",
+      "source_sha256": "03d1bcbbb0007f8954b79610f65c0cfefcbcf5c3d5cfc6c11e8301725a3f8061",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "texture-policy",
+          "checks": 74,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": null
+      },
+      "evidence": [
+        "META/m4/texture-policy/functions.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0044f510-functional-c",
+      "original_va": "0044f510",
+      "function": "bh_texture_image_set_words",
+      "role": "engine_candidate",
+      "provenance_confidence": "unresolved engine origin; exact image/cache behavior confirmed from caller and field/global consumers",
+      "source": "src/bh_texture_policy.c",
+      "source_sha256": "03d1bcbbb0007f8954b79610f65c0cfefcbcf5c3d5cfc6c11e8301725a3f8061",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "texture-policy",
+          "checks": 74,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": null
+      },
+      "evidence": [
+        "META/m4/texture-policy/functions.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0045e710-functional-c",
+      "original_va": "0045e710",
+      "function": "bh_model_image_find",
+      "role": "engine_candidate",
+      "provenance_confidence": "unresolved engine origin; model/image ABI and actual caller confirmed",
+      "source": "src/bh_model_images.c",
+      "source_sha256": "7849ef6332ded6398a9f34a9dd53ca39d7c2c7927f84414e8cd01f9633dc0092",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "model-images",
+          "checks": 20,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": null
+      },
+      "evidence": [
+        "META/m4/model-images/functions.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0045e760-functional-c",
+      "original_va": "0045e760",
+      "function": "bh_model_image_replace",
+      "role": "engine_candidate",
+      "provenance_confidence": "unresolved engine origin; model/image ABI and actual caller confirmed",
+      "source": "src/bh_model_images.c",
+      "source_sha256": "7849ef6332ded6398a9f34a9dd53ca39d7c2c7927f84414e8cd01f9633dc0092",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "model-images",
+          "checks": 20,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": null
+      },
+      "evidence": [
+        "META/m4/model-images/functions.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00451720-functional-c",
+      "original_va": "00451720",
+      "function": "bh_main_camera_settings",
+      "role": "engine_candidate",
+      "provenance_confidence": "medium: ordinary application camera/math ownership and callers; library authorship unresolved; no verified CRT/import/EH signature",
+      "source": "src/bh_main_camera.c",
+      "source_sha256": "aa546818ed08a52fd6c87fd498f5ef856470ae42fd5b3928c887be9ad2c2f24f",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "main-camera",
+          "checks": 2025,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "Explicit BHViewConfig/BHMainCamera context binding is an adapter, not assertion that original scattered globals formed these structs",
+          "Finite-input guards intentionally reject invalid/overflowing settings or outputs and preserve destination",
+          "PC53/nearest/masked profile only; PC24, huge-angle x87 reduction, exceptional NaN payloads and original differential execution unvalidated",
+          "No byte match claimed; no gameplay/camera selection/visibility traversal or near/far clipping admission",
+          "Input may alias own view or own projected; other partial/output overlap unsupported",
+          "Original global plane slot1 is retained without guessing its owner or manufacturing a near/far plane",
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": null
+      },
+      "evidence": [
+        "META/m4/main-camera/review.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00451750-functional-c",
+      "original_va": "00451750",
+      "function": "bh_main_camera_build",
+      "role": "engine_candidate",
+      "provenance_confidence": "medium: ordinary application camera/math ownership and callers; library authorship unresolved; no verified CRT/import/EH signature",
+      "source": "src/bh_main_camera.c",
+      "source_sha256": "aa546818ed08a52fd6c87fd498f5ef856470ae42fd5b3928c887be9ad2c2f24f",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "main-camera",
+          "checks": 2025,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "Explicit BHViewConfig/BHMainCamera context binding is an adapter, not assertion that original scattered globals formed these structs",
+          "Finite-input guards intentionally reject invalid/overflowing settings or outputs and preserve destination",
+          "PC53/nearest/masked profile only; PC24, huge-angle x87 reduction, exceptional NaN payloads and original differential execution unvalidated",
+          "No byte match claimed; no gameplay/camera selection/visibility traversal or near/far clipping admission",
+          "Input may alias own view or own projected; other partial/output overlap unsupported",
+          "Original global plane slot1 is retained without guessing its owner or manufacturing a near/far plane",
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": null
+      },
+      "evidence": [
+        "META/m4/main-camera/review.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00452070-functional-c",
+      "original_va": "00452070",
+      "function": "bh_main_camera_pose",
+      "role": "engine_candidate",
+      "provenance_confidence": "medium: ordinary application camera/math ownership and callers; library authorship unresolved; no verified CRT/import/EH signature",
+      "source": "src/bh_main_camera.c",
+      "source_sha256": "aa546818ed08a52fd6c87fd498f5ef856470ae42fd5b3928c887be9ad2c2f24f",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "main-camera",
+          "checks": 2025,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "Explicit BHViewConfig/BHMainCamera context binding is an adapter, not assertion that original scattered globals formed these structs",
+          "Finite-input guards intentionally reject invalid/overflowing settings or outputs and preserve destination",
+          "PC53/nearest/masked profile only; PC24, huge-angle x87 reduction, exceptional NaN payloads and original differential execution unvalidated",
+          "No byte match claimed; no gameplay/camera selection/visibility traversal or near/far clipping admission",
+          "Input may alias own view or own projected; other partial/output overlap unsupported",
+          "Original global plane slot1 is retained without guessing its owner or manufacturing a near/far plane",
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": null
+      },
+      "evidence": [
+        "META/m4/main-camera/review.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004018a0-functional-c",
+      "original_va": "004018a0",
+      "function": "bh_mat34_rotate_world_z",
+      "role": "engine_candidate",
+      "provenance_confidence": "medium: ordinary application camera/math ownership and callers; library authorship unresolved; no verified CRT/import/EH signature",
+      "source": "src/bh_main_camera.c",
+      "source_sha256": "aa546818ed08a52fd6c87fd498f5ef856470ae42fd5b3928c887be9ad2c2f24f",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "main-camera",
+          "checks": 2025,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "Explicit BHViewConfig/BHMainCamera context binding is an adapter, not assertion that original scattered globals formed these structs",
+          "Finite-input guards intentionally reject invalid/overflowing settings or outputs and preserve destination",
+          "PC53/nearest/masked profile only; PC24, huge-angle x87 reduction, exceptional NaN payloads and original differential execution unvalidated",
+          "No byte match claimed; no gameplay/camera selection/visibility traversal or near/far clipping admission",
+          "Input may alias own view or own projected; other partial/output overlap unsupported",
+          "Original global plane slot1 is retained without guessing its owner or manufacturing a near/far plane",
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": null
+      },
+      "evidence": [
+        "META/m4/main-camera/review.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00450cd0-functional-c",
+      "original_va": "00450cd0",
+      "function": "bh_light_evaluate_prepared",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary lighting owner with callers in original renderer; proprietary/unknown engine provenance, no verified reusable library. Not import, CRT, EH/compiler helper or shared tail.",
+      "source": "src/bh_light_eval.c",
+      "source_sha256": "866889a02b417d02f539cffd5ccc58e151f4549be616dc2272ec83b863f8f9a2",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "light-evaluation",
+          "checks": 2100,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "PC53/nearest/masked finite consumed inputs; PC24/64 and FP sticky flags not claimed",
+          "Source guards reject scaled channels outside signed32 conversion range; original CRT low32 behavior for extreme signed64 conversion not admitted",
+          "No renderer/gameplay, real scene lighting integration, light allocation/list lifetime or byte match claimed",
+          "No original-code differential execution; independent analytical and instruction-derived FP contract controls only",
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": null
+      },
+      "evidence": [
+        "META/m4/light-evaluation/review.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00451140-functional-c",
+      "original_va": "00451140",
+      "function": "bh_light_evaluate_world",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary lighting owner with callers in original renderer; proprietary/unknown engine provenance, no verified reusable library. Not import, CRT, EH/compiler helper or shared tail.",
+      "source": "src/bh_light_eval.c",
+      "source_sha256": "866889a02b417d02f539cffd5ccc58e151f4549be616dc2272ec83b863f8f9a2",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "light-evaluation",
+          "checks": 2100,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "PC53/nearest/masked finite consumed inputs; PC24/64 and FP sticky flags not claimed",
+          "Source guards reject scaled channels outside signed32 conversion range; original CRT low32 behavior for extreme signed64 conversion not admitted",
+          "No renderer/gameplay, real scene lighting integration, light allocation/list lifetime or byte match claimed",
+          "No original-code differential execution; independent analytical and instruction-derived FP contract controls only",
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": null
+      },
+      "evidence": [
+        "META/m4/light-evaluation/review.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0045b410-functional-c",
+      "original_va": "0045b410",
+      "function": "bh_render_depth",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary native/cache renderer state owner; reviewed callers, all software/native branches and SDK call values. Not CRT/import/compiler/EH/shared tail. Historical engine authorship unresolved.",
+      "source": "src/bh_render_state.c",
+      "source_sha256": "0058f8db4573a808a55756031200563d62b4504cbeb19d735667db73edf38c1f",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "render-state",
+          "checks": 57,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "Source context/init and return/HRESULT/counters are adapters; native caches update despite failure and later calls continue",
+          "Complete original software branch only updates caches; no rasterizer claim",
+          "Native RGB real device/queued fan pixels tested; native failure paths statically reviewed, not fault-injected",
+          "0046e390 whole native/software dispatcher remains unfinished; near/z native-only emitter is explicitly separate adapter",
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": null
+      },
+      "evidence": [
+        "META/m4/render-state/review.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0045b490-functional-c",
+      "original_va": "0045b490",
+      "function": "bh_render_blend",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary native/cache renderer state owner; reviewed callers, all software/native branches and SDK call values. Not CRT/import/compiler/EH/shared tail. Historical engine authorship unresolved.",
+      "source": "src/bh_render_state.c",
+      "source_sha256": "0058f8db4573a808a55756031200563d62b4504cbeb19d735667db73edf38c1f",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "render-state",
+          "checks": 57,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "Source context/init and return/HRESULT/counters are adapters; native caches update despite failure and later calls continue",
+          "Complete original software branch only updates caches; no rasterizer claim",
+          "Native RGB real device/queued fan pixels tested; native failure paths statically reviewed, not fault-injected",
+          "0046e390 whole native/software dispatcher remains unfinished; near/z native-only emitter is explicitly separate adapter",
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": null
+      },
+      "evidence": [
+        "META/m4/render-state/review.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0045b500-functional-c",
+      "original_va": "0045b500",
+      "function": "bh_render_mode",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary native/cache renderer state owner; reviewed callers, all software/native branches and SDK call values. Not CRT/import/compiler/EH/shared tail. Historical engine authorship unresolved.",
+      "source": "src/bh_render_state.c",
+      "source_sha256": "0058f8db4573a808a55756031200563d62b4504cbeb19d735667db73edf38c1f",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "render-state",
+          "checks": 57,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "Source context/init and return/HRESULT/counters are adapters; native caches update despite failure and later calls continue",
+          "Complete original software branch only updates caches; no rasterizer claim",
+          "Native RGB real device/queued fan pixels tested; native failure paths statically reviewed, not fault-injected",
+          "0046e390 whole native/software dispatcher remains unfinished; near/z native-only emitter is explicitly separate adapter",
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": null
+      },
+      "evidence": [
+        "META/m4/render-state/review.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0045b1d0-functional-c",
+      "original_va": "0045b1d0",
+      "function": "bh_render_material_initialize",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary initialization owner called by00479200, native material/render-state behavior, unknown proprietary engine authorship. Not CRT/import/compiler support/shared tail.",
+      "source": "src/bh_render_material.c",
+      "source_sha256": "ba08e6d118895790c9242bc9d656dcf70241ed3d9c2bd4d057e46ec24771f244",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "render-material",
+          "checks": 83,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "Original local material reference is leaked; source retains it in explicit owner released by separately labeled source adapter",
+          "CreateMaterial failure branch reconstructed statically; native COM allocation/device errors and HAL backend failure behavior not forced or claimed",
+          "All post-CreateMaterial HRESULTs ignored for original return and recorded separately by source diagnostics",
+          "Guarded arguments/reinitialization and bounded error append extend original valid-input contract",
+          "No source game or scene material integration claimed here; focused target links current real m0 owner objects and requires parent full rebuild",
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": null
+      },
+      "evidence": [
+        "META/m4/render-material/review.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00453300-functional-c",
+      "original_va": "00453300",
+      "function": "bh_screen_clip_polygon",
+      "role": "engine_candidate",
+      "provenance_confidence": "medium: complete application geometry owner called by sprite producers, no identified reusable library or CRT/EH/import signature",
+      "source": "src/bh_screen_clipper.c",
+      "source_sha256": "b3c386152abe386b75ca1d5649d8350b8258ba08f27ad59d3e042acbe111dd02",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "screen-clipper",
+          "checks": 11038,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "PC53/nearest/masked only; no byte equivalence or original differential execution",
+          "Convex ring and valid pointer storage are caller contracts; malformed-link/nonfinite/bounded-count checks are source guards",
+          "Two depth bounds reject the whole uniform-depth polygon; only four screen bounds generate vertices; no fabricated general6plane clipping",
+          "Existing input vertices retain their per-vertex depth and cache payload; new scratch writes only original depth/UV/screen/cache/link fields",
+          "Original scratch is shared with textured clipper; adapter contexts are explicit caller-owned storage and output must be consumed before any subsequent clipping operation",
+          "Sprite producers00454fc0/00455410/00455960 remain unrecovered and are exported for dependency evidence only",
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": null
+      },
+      "evidence": [
+        "META/m4/screen-clipper/review.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00453c30-functional-c",
+      "original_va": "00453c30",
+      "function": "bh_attribute_clip_polygon",
+      "role": "engine_candidate",
+      "provenance_confidence": "medium: ordinary application geometry owner with two real rendering producers; no identified reusable library/CRT/EH/import signature",
+      "source": "src/bh_attribute_clipper.c",
+      "source_sha256": "fa2e5c378020c6a6f2c146f169838956b41e9c010858f675b03f28423ce6a622",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "attribute-clipper",
+          "checks": 15931,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "PC53/nearest/masked only; no byte equivalence/original differential execution",
+          "Scalar offset28 interpreted as FLOAT from complete FMUL/FSTP instruction evidence; color/alpha/intensity semantics deliberately unresolved",
+          "project_depth zero skips near/far and projection, but side cuts still need reciprocalZ and perspectiveUV",
+          "Convex ring and valid pointer storage are caller contracts; finite/topology/count/error guards are explicit adapters",
+          "Scratch shared globally among original clippers; explicit contexts do not authorize relying on retained output across another clipping operation",
+          "Producers0045db80 and00455f70 are evidence dependencies, not recovered here",
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": null
+      },
+      "evidence": [
+        "META/m4/attribute-clipper/review.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0046e600-functional-c",
+      "original_va": "0046e600",
+      "function": "bh_software_tables_initialize",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary software renderer table owner called by0045c540. Integer palette/blend initialization, unknown proprietary engine authorship; not rasterkernel, import, CRT/compiler support or shared tail.",
+      "source": "src/bh_software_tables.c",
+      "source_sha256": "0a96f604ed8e37903cf1919b48be2ef003cdf54a854d32854cce2513d3de0b0c",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "software-tables",
+          "checks": 2228273,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "Source guards reject malformed/noncontiguous/overlapping/out-of16bit masks and missing3/3/2bits instead of original potentially infinite division loops",
+          "Pixel byte counts other than1/2 explicitly rejected; original treats any non1 value as native16 branch",
+          "Allocation failure and repeated live-owner initialization safely reject; original did not check allocation or release overwritten pointers",
+          "dispose is explicit source lifetime adapter; no original destructor claim",
+          "No original execution/differential or renderer/gameplay claim; complete integer table behavior tested exhaustively on indexed8/565/555",
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": null
+      },
+      "evidence": [
+        "META/m4/software-tables/review.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00459400-functional-c",
+      "original_va": "00459400",
+      "function": "bh_light_configure",
+      "role": "engine_candidate",
+      "provenance_confidence": "unresolved engine origin; exact light direction/color role from complete body and sole action caller",
+      "source": "src/bh_light_config.c",
+      "source_sha256": "82101e7859c555fb65afd5ff44eed25400e91e3f704dc4c24ff566c6454c107c",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "light-config",
+          "checks": 26,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": null
+      },
+      "evidence": [
+        "META/m4/light-config/function.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0044e3f0-functional-c",
+      "original_va": "0044e3f0",
+      "function": "bh_geometry_radius",
+      "role": "engine_candidate",
+      "provenance_confidence": "unresolved engine origin; first-node geometry radius behavior and entityconstruction callers verified",
+      "source": "src/bh_geometry_radius.c",
+      "source_sha256": "38141602d0ef597f2926bf6b1064bb1a91ab54eb5812aa7791e4c46a735ecad7",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "geometry-radius",
+          "checks": 12,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": null
+      },
+      "evidence": [
+        "META/m4/geometry-radius/function.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0045a7c0-functional-c",
+      "original_va": "0045a7c0",
+      "function": "bh_view_cull_sphere",
+      "role": "engine_candidate",
+      "provenance_confidence": "medium: application sphere/frustum hierarchical mask classification called by recursive rendering owner; no identified reusable library/CRT/EH/import signature",
+      "source": "src/bh_view_cull.c",
+      "source_sha256": "bf2b02be5c3dfabebf93fe6b64daf6c0bbda5c452147ba8e554580e8fa3ad9a5",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "view-cull",
+          "checks": 245856,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "Explicit existing BHMainCamera/BHViewConfig bindings are context adapters rather than scattered original-global ABI layout",
+          "Finite inputs and valid pointer storage, nonnegative radius, normalized original plane meanings and PC53/nearest/masked are caller contracts; no guards invent new classification",
+          "No byte equivalence/original differential execution; PC24/exceptional values remain unvalidated",
+          "Unknown mask bits preserved unless an exact depth AND executes; no normalization to six bits; reserved plane1 ignored",
+          "Recursive caller00477880 remains unrecovered; source geometry culling is not world traversal/gameplay admission",
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": null
+      },
+      "evidence": [
+        "META/m4/view-cull/review.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0046f490-functional-c",
+      "original_va": "0046f490",
+      "function": "bh_atlas_image_load",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary native cached atlas/glyph-sheet loader, directly called by00470380. Unknown proprietary engine authorship. Not software raster kernel, CRT/compiler helper, import or shared tail.",
+      "source": "src/bh_atlas_image.c",
+      "source_sha256": "626a715ed86d4fe833f4dbcd44ba1eb7f94e186240a6d6e90b423010eeddef0d",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "atlas-image",
+          "checks": 3439,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "Original publishes owner before decode and can retain partially initialized cache entry after failed Lock; source failure is transactional and cleans resources instead",
+          "Source guards max4096 dimensions, max127 name bytes, standard contiguous/disjoint8/16/24/32formats with RGB bit31 rejected, max512rectangles and scan reads within declared index storage",
+          "Original independent scan step preserved including0; arbitrary nonmatching step can read native padding as original, meaningful-content fixtures bind matching pitch or0",
+          "No original destructor claim: explicit source context dispose releases actual surfaces and owned cache records",
+          "No source game/font/page caller integration or instruction match claimed; focused target links current real m0 dependency objects and parent rebuild remains required",
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": null
+      },
+      "evidence": [
+        "META/m4/atlas-image/review.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00470380-functional-c",
+      "original_va": "00470380",
+      "function": "bh_atlas_page_create",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary atlas text-page backing constructor called by0042c4c0/004474c0. Unknown proprietary engine authorship; not import/CRT/compiler helper/shared tail.",
+      "source": "src/bh_atlas_page.c",
+      "source_sha256": "4b3ec00facd20563aebfae4a7cf34576bc52eb6839ff969d6d0ebd087b6c49b7",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "atlas-page",
+          "checks": 135,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "Constructor creates blank native texture backing only; glyph copying/UV generation/text drawing and font caller ownership remain separate",
+          "Original page packed_color+10 and image padding are undefined until later; source initializes deterministically0 without claiming original value",
+          "Source allocation/native HRESULT failure checks clean partial page ownership; original unchecked palette/arena failures and leaked0x28record on surface failure not reproduced",
+          "Original format request and borrowed atlas-cache side effects remain after later page failure; source dispose is an explicit lifetime adapter, not recovered destructor",
+          "No original function byte match, original execution or game/renderer integration claim; real downstream residency/GetHandle fixture is separate from constructor behavior",
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": null
+      },
+      "evidence": [
+        "META/m4/atlas-page/review.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004705c0-functional-c",
+      "original_va": "004705c0",
+      "function": "bh_atlas_page_clear",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary page clear/color conversion/residency dirty owner or coupled raw cursor control. Unknown proprietary engine authorship; not glyph copy, import, CRT/compiler helper or shared tail.",
+      "source": "src/bh_atlas_glyph.c",
+      "source_sha256": "37baf1f1e7ba256b2b3279a2744cfe13e35c4c4897ddd38429bb8fb50ebe542c",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "atlas-clear-cursor",
+          "checks": 10313,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "00470900 glyph blits/text wrapping not assigned or implemented; these owners only clear backing and set cursor",
+          "Source int/q.error/last_hresult expose native failure ignored by original void clear; invalid bindings/dimensions/formats reject safely",
+          "Original packed-color cache sentinel collision on first0xffffffff remains tied to page constructor undefined packed_color field; source constructor deterministic0 is an explicit extension",
+          "Native8/16/24/32 actual clears verified on RGB backend; broader native/HAL errors not claimed",
+          "Signed bit31 RGB mask conversion edge verified by original atlas format binding applied to actual standard native32 surface, without claiming driver support for creating that mask format",
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": null
+      },
+      "evidence": [
+        "META/m4/atlas-glyph/review.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004708d0-functional-c",
+      "original_va": "004708d0",
+      "function": "bh_atlas_page_cursor",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary page clear/color conversion/residency dirty owner or coupled raw cursor control. Unknown proprietary engine authorship; not glyph copy, import, CRT/compiler helper or shared tail.",
+      "source": "src/bh_atlas_glyph.c",
+      "source_sha256": "37baf1f1e7ba256b2b3279a2744cfe13e35c4c4897ddd38429bb8fb50ebe542c",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "atlas-clear-cursor",
+          "checks": 10313,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "00470900 glyph blits/text wrapping not assigned or implemented; these owners only clear backing and set cursor",
+          "Source int/q.error/last_hresult expose native failure ignored by original void clear; invalid bindings/dimensions/formats reject safely",
+          "Original packed-color cache sentinel collision on first0xffffffff remains tied to page constructor undefined packed_color field; source constructor deterministic0 is an explicit extension",
+          "Native8/16/24/32 actual clears verified on RGB backend; broader native/HAL errors not claimed",
+          "Signed bit31 RGB mask conversion edge verified by original atlas format binding applied to actual standard native32 surface, without claiming driver support for creating that mask format",
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": null
+      },
+      "evidence": [
+        "META/m4/atlas-glyph/review.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00458310-functional-c",
+      "original_va": "00458310",
+      "function": "bh_model_draw_face",
+      "role": "engine_candidate",
+      "provenance_confidence": "medium: ordinary application rendering-model owner with verified model-relative offsets, matrix/clipper/render calls and recursive BSP control flow; library attribution unresolved",
+      "source": "src/bh_model_draw.c",
+      "source_sha256": "0400b49e2abffeb857b0604002a5140bb878825935d41e2c8a3ec21208154f96",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "model-draw",
+          "checks": 171666,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "Focused-stage isolated capture evidence is supplemented by the parent real native composition test and current full integration; see META/m4/model-draw-native/validation.json and META/m4/parallel-hour/validation.json",
+          "Whole0046e390 software dispatch/raster kernels remain unfinished; no backend success stub is supplied",
+          "PC53/nearest/masked only; no byte equivalence or original differential execution",
+          "Source cache invalidates initial epochs and never interprets serialized pointer words; model arrays must remain stable and validated acyclic while cache lives",
+          "Original32bit frame integerbits retained via memcpy in float-declared vertex.frame; callers use nonzero epochs and reset before token reuse",
+          "No independent face backface removal: original BSP eye-side chooses visible leaf chain and preserves painter order",
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": "META/m4/model-draw-native/validation.json"
+      },
+      "evidence": [
+        "META/m4/model-draw/review.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00458430-functional-c",
+      "original_va": "00458430",
+      "function": "bh_model_draw_leaf_chain",
+      "role": "engine_candidate",
+      "provenance_confidence": "medium: ordinary application rendering-model owner with verified model-relative offsets, matrix/clipper/render calls and recursive BSP control flow; library attribution unresolved",
+      "source": "src/bh_model_draw.c",
+      "source_sha256": "0400b49e2abffeb857b0604002a5140bb878825935d41e2c8a3ec21208154f96",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "model-draw",
+          "checks": 171666,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "Focused-stage isolated capture evidence is supplemented by the parent real native composition test and current full integration; see META/m4/model-draw-native/validation.json and META/m4/parallel-hour/validation.json",
+          "Whole0046e390 software dispatch/raster kernels remain unfinished; no backend success stub is supplied",
+          "PC53/nearest/masked only; no byte equivalence or original differential execution",
+          "Source cache invalidates initial epochs and never interprets serialized pointer words; model arrays must remain stable and validated acyclic while cache lives",
+          "Original32bit frame integerbits retained via memcpy in float-declared vertex.frame; callers use nonzero epochs and reset before token reuse",
+          "No independent face backface removal: original BSP eye-side chooses visible leaf chain and preserves painter order",
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": "META/m4/model-draw-native/validation.json"
+      },
+      "evidence": [
+        "META/m4/model-draw/review.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00458470-functional-c",
+      "original_va": "00458470",
+      "function": "bh_model_draw_unlit",
+      "role": "engine_candidate",
+      "provenance_confidence": "medium: ordinary application rendering-model owner with verified model-relative offsets, matrix/clipper/render calls and recursive BSP control flow; library attribution unresolved",
+      "source": "src/bh_model_draw.c",
+      "source_sha256": "0400b49e2abffeb857b0604002a5140bb878825935d41e2c8a3ec21208154f96",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "model-draw",
+          "checks": 171666,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "Focused-stage isolated capture evidence is supplemented by the parent real native composition test and current full integration; see META/m4/model-draw-native/validation.json and META/m4/parallel-hour/validation.json",
+          "Whole0046e390 software dispatch/raster kernels remain unfinished; no backend success stub is supplied",
+          "PC53/nearest/masked only; no byte equivalence or original differential execution",
+          "Source cache invalidates initial epochs and never interprets serialized pointer words; model arrays must remain stable and validated acyclic while cache lives",
+          "Original32bit frame integerbits retained via memcpy in float-declared vertex.frame; callers use nonzero epochs and reset before token reuse",
+          "No independent face backface removal: original BSP eye-side chooses visible leaf chain and preserves painter order",
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": "META/m4/model-draw-native/validation.json"
+      },
+      "evidence": [
+        "META/m4/model-draw/review.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00459510-functional-c",
+      "original_va": "00459510",
+      "function": "bh_model_draw_lit",
+      "role": "engine_candidate",
+      "provenance_confidence": "medium: complete application lit BSP traversal with real prepared-light evaluator and face/list owners; library attribution unresolved; CRTftol reused not counted",
+      "source": "src/bh_model_draw_lit.c",
+      "source_sha256": "a3de4be851830b933e61984bf602f91a69bc87bde3029daeb6e8c2b94d1ac5f2",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "fixtures": {
+          "scenario": "model-draw-lit",
+          "checks": 43338,
+          "failures": 0,
+          "original_code_required": false
+        },
+        "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+        "limits": [
+          "Focused-stage isolated capture evidence is supplemented by the parent real native composition test and current full integration; see META/m4/model-draw-native/validation.json and META/m4/parallel-hour/validation.json",
+          "Whole0046e390 software dispatcher/rasterizers remain unfinished",
+          "PC53/nearest/masked only; no byte equivalence/original differential execution",
+          "Prepared light constructor/list lifetime are borrowed; type1prepared_type metadata must be initialized by its owner because prepare intentionally preserves it",
+          "Configuration/model/world-to-model changes require context rebind to refresh local directional vector, as original wrapper did per model draw",
+          "Face/vertex integer epoch behavior inherited from frozen unlit owners; no fabricated persistent node color cache",
+          "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+          "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+        ],
+        "native_composition": "META/m4/model-draw-native/validation.json"
+      },
+      "evidence": [
+        "META/m4/model-draw-lit/review.json",
+        "META/m4/parallel-hour/owners.json",
+        "META/m4/parallel-hour/validation.json",
+        "META/m4/parallel-hour/integration-real.json",
+        "META/m4/parallel-hour/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0046e390-native-branch-wip",
+      "original_va": "0046e390",
+      "function": "bh_native_primitive_emit",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete original native/software dispatch body reviewed; native branch restored through real queue composition; software0046dda0/rasterizers not recovered",
+      "source": "src/bh_native_primitive.c",
+      "source_sha256": "fc22bb58fdfd456a206c7e54c02ce2afd82af28222ab7a89f11380ae3cdc1c69",
+      "implementation": "wip",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": false,
+        "raw_byte_match": false,
+        "native_checks": 25,
+        "software": "Explicitly rejected by native-only adapter; actual original subsystem remains unfinished"
+      },
+      "evidence": [
+        "META/m4/view-camera/original/0046e390.tsv",
+        "META/m4/parallel-hour/validation.json"
+      ]
     }
   ],
   "role_catalog": "META/m1/role-catalog.json",
@@ -6912,7 +8166,7 @@
     {
       "id": "bh_scene_view-camera-owner-adapter",
       "function": "bh_scene_view",
-      "source": "src/bh_scene_view.c",
+      "source": "META/m4/parallel-hour/sources/411fd4805055b8f2a222faf5570fc0eebc16aedd1d73749c215d299a6893d768-bh_scene_view.c.txt",
       "source_sha256": "411fd4805055b8f2a222faf5570fc0eebc16aedd1d73749c215d299a6893d768",
       "role": "source_diagnostic_support",
       "implementation": "adapter",
@@ -6923,12 +8177,14 @@
       "evidence": [
         "META/m4/view-camera/validation.json",
         "META/m4/view-camera/scene-real.json"
-      ]
+      ],
+      "historical_source_path": "src/bh_scene_view.c",
+      "historical_variant": true
     },
     {
       "id": "bh_scene_snapshot-camera-owner-adapter",
       "function": "bh_scene_snapshot",
-      "source": "src/bh_scene_snapshot.c",
+      "source": "META/m4/parallel-hour/sources/abd9ca643434cc800aa4bd670fd1e7f86d3460a6a25b2a69d71cc0bf85af8ae0-bh_scene_snapshot.c.txt",
       "source_sha256": "abd9ca643434cc800aa4bd670fd1e7f86d3460a6a25b2a69d71cc0bf85af8ae0",
       "role": "source_diagnostic_support",
       "implementation": "adapter",
@@ -6939,7 +8195,9 @@
       "evidence": [
         "META/m4/view-camera/validation.json",
         "META/m4/view-camera/scene-real.json"
-      ]
+      ],
+      "historical_source_path": "src/bh_scene_snapshot.c",
+      "historical_variant": true
     },
     {
       "id": "bh_view_config_init-support",
@@ -6954,6 +8212,216 @@
       "contract": "Explicit binding of pinned original defaults and actual native target dimensions; not original constructor/config-reader admission",
       "evidence": [
         "META/m4/view-camera/validation.json"
+      ]
+    },
+    {
+      "id": "bh_native_primitive_emit-parallel-hour-adapter",
+      "function": "bh_native_primitive_emit",
+      "source": "src/bh_native_primitive.c",
+      "source_sha256": "fc22bb58fdfd456a206c7e54c02ce2afd82af28222ab7a89f11380ae3cdc1c69",
+      "role": "source_diagnostic_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Native-only real TL/queue composition; whole0046e390 remains WIP",
+      "evidence": [
+        "META/m4/parallel-hour/validation.json"
+      ]
+    },
+    {
+      "id": "bh_render_state_init-parallel-hour-adapter",
+      "function": "bh_render_state_init",
+      "source": "src/bh_render_state.c",
+      "source_sha256": "0058f8db4573a808a55756031200563d62b4504cbeb19d735667db73edf38c1f",
+      "role": "source_diagnostic_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Bind actual native default/cache agreement",
+      "evidence": [
+        "META/m4/parallel-hour/validation.json"
+      ]
+    },
+    {
+      "id": "bh_render_material_dispose-parallel-hour-adapter",
+      "function": "bh_render_material_dispose",
+      "source": "src/bh_render_material.c",
+      "source_sha256": "ba08e6d118895790c9242bc9d656dcf70241ed3d9c2bd4d057e46ec24771f244",
+      "role": "source_diagnostic_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Explicit source material COM lifetime",
+      "evidence": [
+        "META/m4/parallel-hour/validation.json"
+      ]
+    },
+    {
+      "id": "bh_software_tables_dispose-parallel-hour-adapter",
+      "function": "bh_software_tables_dispose",
+      "source": "src/bh_software_tables.c",
+      "source_sha256": "0a96f604ed8e37903cf1919b48be2ef003cdf54a854d32854cce2513d3de0b0c",
+      "role": "source_diagnostic_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Owned generated-table lifetime",
+      "evidence": [
+        "META/m4/parallel-hour/validation.json"
+      ]
+    },
+    {
+      "id": "bh_atlas_context_init-parallel-hour-adapter",
+      "function": "bh_atlas_context_init",
+      "source": "src/bh_atlas_image.c",
+      "source_sha256": "626a715ed86d4fe833f4dbcd44ba1eb7f94e186240a6d6e90b423010eeddef0d",
+      "role": "source_diagnostic_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Explicit native atlas/cache binding",
+      "evidence": [
+        "META/m4/parallel-hour/validation.json"
+      ]
+    },
+    {
+      "id": "bh_atlas_context_dispose-parallel-hour-adapter",
+      "function": "bh_atlas_context_dispose",
+      "source": "src/bh_atlas_image.c",
+      "source_sha256": "626a715ed86d4fe833f4dbcd44ba1eb7f94e186240a6d6e90b423010eeddef0d",
+      "role": "source_diagnostic_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Explicit atlas/native cache teardown",
+      "evidence": [
+        "META/m4/parallel-hour/validation.json"
+      ]
+    },
+    {
+      "id": "bh_atlas_page_dispose-parallel-hour-adapter",
+      "function": "bh_atlas_page_dispose",
+      "source": "src/bh_atlas_page.c",
+      "source_sha256": "4b3ec00facd20563aebfae4a7cf34576bc52eb6839ff969d6d0ebd087b6c49b7",
+      "role": "source_diagnostic_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Explicit page/image unlink/native residency teardown",
+      "evidence": [
+        "META/m4/parallel-hour/validation.json"
+      ]
+    },
+    {
+      "id": "bh_model_draw_cache_init-parallel-hour-adapter",
+      "function": "bh_model_draw_cache_init",
+      "source": "src/bh_model_draw.c",
+      "source_sha256": "0400b49e2abffeb857b0604002a5140bb878825935d41e2c8a3ec21208154f96",
+      "role": "source_diagnostic_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Typed mutable cache replacing unsafe serialized pointer words",
+      "evidence": [
+        "META/m4/parallel-hour/validation.json"
+      ]
+    },
+    {
+      "id": "bh_model_draw_cache_dispose-parallel-hour-adapter",
+      "function": "bh_model_draw_cache_dispose",
+      "source": "src/bh_model_draw.c",
+      "source_sha256": "0400b49e2abffeb857b0604002a5140bb878825935d41e2c8a3ec21208154f96",
+      "role": "source_diagnostic_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Typed cache lifetime",
+      "evidence": [
+        "META/m4/parallel-hour/validation.json"
+      ]
+    },
+    {
+      "id": "bh_model_draw_cache_reset-parallel-hour-adapter",
+      "function": "bh_model_draw_cache_reset",
+      "source": "src/bh_model_draw.c",
+      "source_sha256": "0400b49e2abffeb857b0604002a5140bb878825935d41e2c8a3ec21208154f96",
+      "role": "source_diagnostic_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Explicit cache epoch invalidation",
+      "evidence": [
+        "META/m4/parallel-hour/validation.json"
+      ]
+    },
+    {
+      "id": "bh_model_draw_context_init-parallel-hour-adapter",
+      "function": "bh_model_draw_context_init",
+      "source": "src/bh_model_draw.c",
+      "source_sha256": "0400b49e2abffeb857b0604002a5140bb878825935d41e2c8a3ec21208154f96",
+      "role": "source_diagnostic_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Explicit real clip/camera/native callback binding",
+      "evidence": [
+        "META/m4/parallel-hour/validation.json"
+      ]
+    },
+    {
+      "id": "bh_model_draw_lit_context_init-parallel-hour-adapter",
+      "function": "bh_model_draw_lit_context_init",
+      "source": "src/bh_model_draw_lit.c",
+      "source_sha256": "a3de4be851830b933e61984bf602f91a69bc87bde3029daeb6e8c2b94d1ac5f2",
+      "role": "source_diagnostic_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Explicit lighting/traversal binding",
+      "evidence": [
+        "META/m4/parallel-hour/validation.json"
+      ]
+    },
+    {
+      "id": "bh_scene_view-parallel-hour-adapter",
+      "function": "bh_scene_view",
+      "source": "src/bh_scene_view.c",
+      "source_sha256": "93c8bb4774f9c546edb3e99e7eec7609a556b737e6dfb2c306832e7fb81db107",
+      "role": "source_diagnostic_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Native original near/z/zero Z clear and positive Y profile; legacy analytical profile retained",
+      "evidence": [
+        "META/m4/parallel-hour/validation.json"
+      ]
+    },
+    {
+      "id": "bh_scene_snapshot-parallel-hour-adapter",
+      "function": "bh_scene_snapshot",
+      "source": "src/bh_scene_snapshot.c",
+      "source_sha256": "3929206cbe98f2942846d3056f146999e35d7085971c95bec6372b304682db37",
+      "role": "source_diagnostic_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Actual source unlit/lit BSP traversal and native pipeline over real level shell; static diagnostic camera/presets, no world/scripts/controls",
+      "evidence": [
+        "META/m4/parallel-hour/validation.json"
       ]
     }
   ],

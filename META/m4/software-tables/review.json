@@ -1,0 +1,69 @@
+{
+  "records": [
+    {
+      "address": "0046e600",
+      "symbol": "bh_software_tables_initialize",
+      "role": "engine_candidate",
+      "provenance_confidence": "medium",
+      "classification": "Complete ordinary software renderer table owner called by0045c540. Integer palette/blend initialization, unknown proprietary engine authorship; not rasterkernel, import, CRT/compiler support or shared tail.",
+      "original": "META/m4/software-tables/original/0046e600.tsv",
+      "boundary": "0046e600-0046f480",
+      "instructions": 1122,
+      "bytes": 3713,
+      "body_sha256": "e3173b22a6893a643c4653cdff116ecdb63e0f2cd80cf239c779d31c2961f147",
+      "implementation": "func",
+      "integration": "focused_linked_harness; parent integration pending"
+    }
+  ],
+  "target": "bhunter-software-tables.exe",
+  "source_sha256": {
+    "src/bh_software_tables.c": "0a96f604ed8e37903cf1919b48be2ef003cdf54a854d32854cce2513d3de0b0c",
+    "src/bh_software_tables.h": "a32a259f383573959fbc75053c36001d9d5ed8f53efc8119182da8852b3705b6",
+    "tests/software_tables.c": "a145f4acab2cd88c1e77badc1b05f0b94b41475c8f8ce57004953a54e338d669",
+    "src/bh_texture_tables.c": "0cc9d82eec6212b08a3bd016e18b319a73896dc35e9e191da2edaf7ddf1c60b7"
+  },
+  "dependencies": [
+    {
+      "original": "0044e9b0",
+      "symbol": "bh_texture_tables_init",
+      "source": "src/bh_texture_tables.c"
+    },
+    {
+      "original": "0047dae0",
+      "role": "library_verified",
+      "binding": "real allocator, default CRT malloc implementation in focused fixtures",
+      "evidence": "META/m1/role-catalog.json; META/m1/review/0047dae0.asm.txt; excluded from recovery count"
+    },
+    {
+      "original": "004e38c4",
+      "binding": "explicit bytes_per_pixel1/2"
+    },
+    {
+      "original": "004e38c0/004e3890/004e3894;004e32a4/004e3260/004e3264",
+      "binding": "BHTextureContext.display_right/display_left RGB"
+    },
+    {
+      "original": "004e3424/004e3444/004e3448",
+      "binding": "explicit RGB masks"
+    },
+    {
+      "original": "004e3858/004e2df4/004e2de4/004e38c8",
+      "binding": "owning shade_indexed/blend_indexed/shade_native/blend_native"
+    }
+  ],
+  "focused_checks": {
+    "scenario": "software-tables",
+    "checks": 2228273,
+    "failures": 0,
+    "original_code_required": false
+  },
+  "original_code_executed": false,
+  "game_launches": 0,
+  "limits": [
+    "Source guards reject malformed/noncontiguous/overlapping/out-of16bit masks and missing3/3/2bits instead of original potentially infinite division loops",
+    "Pixel byte counts other than1/2 explicitly rejected; original treats any non1 value as native16 branch",
+    "Allocation failure and repeated live-owner initialization safely reject; original did not check allocation or release overwritten pointers",
+    "dispose is explicit source lifetime adapter; no original destructor claim",
+    "No original execution/differential or renderer/gameplay claim; complete integer table behavior tested exhaustively on indexed8/565/555"
+  ]
+}

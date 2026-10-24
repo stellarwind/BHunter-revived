@@ -1,0 +1,49 @@
+{
+  "records": [
+    {
+      "address": "00453c30",
+      "boundary": "00453c30-00454fb5",
+      "bytes": 4998,
+      "instructions": 1656,
+      "body_sha256": "6bd0193000312b9222b1991e3c9473a11b872795f3ab6d91a2e41afb9cdc7f65",
+      "role": "engine_candidate",
+      "provenance_confidence": "medium: ordinary application geometry owner with two real rendering producers; no identified reusable library/CRT/EH/import signature",
+      "boundary_review": "complete contiguous1656instructions through RET, independent owner with no outgoing calls and no shared tail",
+      "api": "bh_attribute_clip_polygon",
+      "source": "src/bh_attribute_clipper.c",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "bhunter-attribute-clipper.exe",
+      "validation": "focused-build.json",
+      "game_admitted": false
+    }
+  ],
+  "adapter_apis": [
+    "bh_attribute_clip_init",
+    "BHAttributeClipContext original-global/scratch binding"
+  ],
+  "original_exe_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+  "sources": {
+    "src/bh_attribute_clipper.c": "fa2e5c378020c6a6f2c146f169838956b41e9c010858f675b03f28423ce6a622",
+    "src/bh_round.c": "ff848010705702e25cf85f5ba1d9c30a024d1ea8bf93227240285b9c54fc8ef4",
+    "src/bh_fp.c": "cc8400a29fd082f96ffd9b483f490a44992717b25eac0cb32e2e108ba446f3f8",
+    "tests/attribute_clipper.c": "8590e31eb960a2a3d85635f5f5bb3424a3d006c5d745d8cbf70a34588f21a540",
+    "src/bh_attribute_clipper.h": "567525a2260977a96e3de71d12ed1bcf1f6f829cfce66a0ffebd9fb6a9097d93"
+  },
+  "constants_verified": [
+    "00489ee0 double+1",
+    "00489f08 double-1"
+  ],
+  "complete_original_owners": 1,
+  "focused_checks": 15931,
+  "game_launches": 0,
+  "original_code_executed": false,
+  "limits": [
+    "PC53/nearest/masked only; no byte equivalence/original differential execution",
+    "Scalar offset28 interpreted as FLOAT from complete FMUL/FSTP instruction evidence; color/alpha/intensity semantics deliberately unresolved",
+    "project_depth zero skips near/far and projection, but side cuts still need reciprocalZ and perspectiveUV",
+    "Convex ring and valid pointer storage are caller contracts; finite/topology/count/error guards are explicit adapters",
+    "Scratch shared globally among original clippers; explicit contexts do not authorize relying on retained output across another clipping operation",
+    "Producers0045db80 and00455f70 are evidence dependencies, not recovered here"
+  ]
+}

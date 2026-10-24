@@ -2,6 +2,7 @@
 #include "bh_texture.h"
 #include "bh_texture_draw.h"
 #include "bh_clipper.h"
+#include "bh_native_primitive.h"
 #include "bh_round.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -58,12 +59,20 @@ int __cdecl bh_scene_view_init(BHSceneView *v,unsigned long width,unsigned long 
         result(v,IDirect3DDevice2_SetRenderState(v->device,D3DRENDERSTATE_SHADEMODE,D3DSHADE_FLAT));
 }
 int __cdecl bh_scene_view_begin(BHSceneView *v) {
-    D3DRECT rect;
+    D3DRECT rect;DDSURFACEDESC depth;unsigned long y;
     if(!v || !v->device || v->begun)return 0;
     rect.x1=rect.y1=0;rect.x2=v->width;rect.y2=v->height;
     v->triangles=v->pixels=0;
-    if(!result(v,IDirect3DViewport2_Clear(v->viewport,1,&rect,D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER)) ||
-       !result(v,IDirect3DDevice2_BeginScene(v->device)))return 0;
+    if(!result(v,IDirect3DViewport2_Clear(v->viewport,1,&rect,D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER)))return 0;
+    /* Explicit offscreen adapter: the viewport's fixed Clear depth is1; the
+       original native near/z comparison needs an initially zero Z target. */
+    if(v->original_depth) {
+        memset(&depth,0,sizeof(depth));depth.dwSize=sizeof(depth);
+        if(!result(v,IDirectDrawSurface_Lock(v->depth,NULL,&depth,DDLOCK_WAIT,NULL)))return 0;
+        for(y=0;y<v->height;++y)memset((unsigned char *)depth.lpSurface+y*depth.lPitch,0,v->width*2);
+        if(!result(v,IDirectDrawSurface_Unlock(v->depth,NULL)))return 0;
+    }
+    if(!result(v,IDirect3DDevice2_BeginScene(v->device)))return 0;
     v->begun=1;return 1;
 }
 /* Explicit diagnostic viewport binding. The original clipper consumes a
@@ -74,7 +83,7 @@ static int polygon(BHSceneView *v,const BHVec3 *points,const float *uv,unsigned 
     D3DTLVERTEX *fan,triangle[3];unsigned long i,n=0;int ok=1;
     if(!v || !v->begun || !points || count<3 || count>1024)return 0;
     input=(BHClipVertex *)calloc(count,sizeof(*input));if(!input)return 0;
-    memset(&orientation,0,sizeof(orientation));orientation.m[0][0]=orientation.m[2][2]=1;orientation.m[1][1]=-1;
+    memset(&orientation,0,sizeof(orientation));orientation.m[0][0]=orientation.m[2][2]=1;orientation.m[1][1]=v->original_depth?1:-1;
     if(!bh_view_camera_build(&v->projection,&orientation,&camera) ||
         !bh_clip_init(&clip,v->projection.near_z,v->projection.far_z,v->projection.left,v->projection.right,v->projection.top,v->projection.bottom)) {free(input);return 0;}
     bh_clip_set_camera(&clip,&camera.projected);
@@ -86,12 +95,19 @@ static int polygon(BHSceneView *v,const BHVec3 *points,const float *uv,unsigned 
     if(!out){free(input);return clip.error==BH_CLIP_OK;}
     p=out;do{++n;p=p->next;}while(p!=out);
     if(n<3){free(input);return 1;}
+    if(image && v->original_depth) {
+        BHNativePrimitive native;memset(&native,0,sizeof(native));native.textures=textures;native.near_z=v->projection.near_z;
+        ok=bh_native_primitive_emit(out,image,0xff000000UL|rgb,&native) && bh_texture_draw_flush(textures,image,NULL);
+        if(ok)v->triangles+=n-2;else v->error=textures->last_hresult;
+        free(input);return ok;
+    }
     fan=(D3DTLVERTEX *)calloc(n,sizeof(*fan));if(!fan){free(input);return 0;}
     p=out;for(i=0;i<n;++i) {
         double inverse=1.0/p->point.z;fan[i].sx=p->sx;fan[i].sy=p->sy;
-        /* Diagnostic TL depth conversion remains explicit until0046e390's
-           complete producer/software family is recovered. */
-        fan[i].sz=(float)(((double)v->projection.far_z/(v->projection.far_z-v->projection.near_z))*(1-v->projection.near_z*inverse));fan[i].rhw=(float)inverse;
+        /* Native branch0046e390 stores near/z; software dispatch remains an
+           explicit missing owner. Analytic controls retain conventional depth. */
+        fan[i].sz=v->original_depth?(float)((double)v->projection.near_z/p->point.z):
+            (float)(((double)v->projection.far_z/(v->projection.far_z-v->projection.near_z))*(1-v->projection.near_z*inverse));fan[i].rhw=(float)inverse;
         fan[i].color=0xff000000UL|rgb;fan[i].tu=p->u;fan[i].tv=p->v;p=p->next;
     }
     if(image) {

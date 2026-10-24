@@ -1,0 +1,198 @@
+{
+  "target": "bhunter-model-draw.exe",
+  "passed": true,
+  "commands": [
+    {
+      "label": "compile-bh_model_draw",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/FoD:\\Decomp\\Bhunter\\build\\model-draw\\bh_model_draw.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_model_draw.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_model_draw.c\n"
+    },
+    {
+      "label": "compile-bh_clipper",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/FoD:\\Decomp\\Bhunter\\build\\model-draw\\bh_clipper.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_clipper.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_clipper.c\n"
+    },
+    {
+      "label": "compile-bh_matrix_inverse",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/FoD:\\Decomp\\Bhunter\\build\\model-draw\\bh_matrix_inverse.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_matrix_inverse.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_matrix_inverse.c\n"
+    },
+    {
+      "label": "compile-bh_math",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/FoD:\\Decomp\\Bhunter\\build\\model-draw\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_math.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_math.c\n"
+    },
+    {
+      "label": "compile-bh_round",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/FoD:\\Decomp\\Bhunter\\build\\model-draw\\bh_round.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_round.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_round.c\n"
+    },
+    {
+      "label": "compile-bh_fp",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/FoD:\\Decomp\\Bhunter\\build\\model-draw\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_fp.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_fp.c\n"
+    },
+    {
+      "label": "compile-model_draw",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/DBH_MODEL_DRAW_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\model-draw\\model_draw.obj",
+        "D:\\Decomp\\Bhunter\\tests\\model_draw.c"
+      ],
+      "exit_code": 0,
+      "output": "model_draw.c\n"
+    },
+    {
+      "label": "link",
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/map:D:\\Decomp\\Bhunter\\build\\model-draw\\bhunter-model-draw.map",
+        "/out:D:\\Decomp\\Bhunter\\build\\model-draw\\bhunter-model-draw.exe",
+        "D:\\Decomp\\Bhunter\\build\\model-draw\\bh_model_draw.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw\\bh_clipper.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw\\bh_matrix_inverse.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw\\bh_round.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw\\model_draw.obj",
+        "kernel32.lib"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "label": "scenario",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\build\\model-draw\\bhunter-model-draw.exe"
+      ],
+      "exit_code": 0,
+      "output": "{\"scenario\":\"model-draw\",\"checks\":171666,\"failures\":0,\"original_code_required\":false}\n"
+    },
+    {
+      "label": "missing-model-draw-owner-control",
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/out:D:\\Decomp\\Bhunter\\build\\model-draw\\missing-model-draw.exe",
+        "D:\\Decomp\\Bhunter\\build\\model-draw\\bh_clipper.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw\\bh_matrix_inverse.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw\\bh_round.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\build\\model-draw\\model_draw.obj",
+        "kernel32.lib"
+      ],
+      "exit_code": 25,
+      "output": "model_draw.obj : error LNK2001: unresolved external symbol _bh_model_draw_cache_dispose\nmodel_draw.obj : error LNK2001: unresolved external symbol _bh_model_draw_leaf_chain\nmodel_draw.obj : error LNK2001: unresolved external symbol _bh_model_draw_face\nmodel_draw.obj : error LNK2001: unresolved external symbol _bh_model_draw_cache_reset\nmodel_draw.obj : error LNK2001: unresolved external symbol _bh_model_draw_unlit\nmodel_draw.obj : error LNK2001: unresolved external symbol _bh_model_draw_context_init\nmodel_draw.obj : error LNK2001: unresolved external symbol _bh_model_draw_cache_init\nD:\\Decomp\\Bhunter\\build\\model-draw\\missing-model-draw.exe : fatal error LNK1120: 7 unresolved externals\n"
+    }
+  ],
+  "original_code_required": false,
+  "game_launches": 0,
+  "scenario": {
+    "scenario": "model-draw",
+    "checks": 171666,
+    "failures": 0,
+    "original_code_required": false
+  },
+  "sources": {
+    "src/bh_model_draw.c": "0400b49e2abffeb857b0604002a5140bb878825935d41e2c8a3ec21208154f96",
+    "src/bh_clipper.c": "483fa81c86f0354167c12745f9e06841adce924e40f1dc68d9aca113adbe8c62",
+    "src/bh_matrix_inverse.c": "c5cd3ee6b4071fe4f49e55432c696299945c609486359eb0239a053a6a1ce5b7",
+    "src/bh_math.c": "ce111e18659563a2c41a04b645295227aac6ead9fe9cc2e803ac45c726d6e9bc",
+    "src/bh_round.c": "ff848010705702e25cf85f5ba1d9c30a024d1ea8bf93227240285b9c54fc8ef4",
+    "src/bh_fp.c": "cc8400a29fd082f96ffd9b483f490a44992717b25eac0cb32e2e108ba446f3f8",
+    "tests/model_draw.c": "dcddad16ee1cef1f16b8a38b34d75b6b607788a6b236145a8719195c1288cce7",
+    "src/bh_model_draw.h": "44dbc4dcce1e6e0dc42657cf4250ce57e2a96acb458905d95e284a56874b73fb"
+  },
+  "executable_sha256": "588bf274beeea56f90091dbc08d21076e348a1160432a1a3afcff5089aa8597f"
+}

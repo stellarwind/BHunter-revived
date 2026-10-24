@@ -8,19 +8,19 @@ A source restoration of BHunter, with the goal of faithfully playable gameplay o
 
 <!-- BHUNTER_STATUS_START -->
 
-**Restored and linked source functions:** `[####--------------------]` **17.1% (124/727)**
+**Restored and linked source functions:** `[#####-------------------]` **21.3% (155/727)**
 
 | Mapped | Excluded runtime/helpers | Potential game/engine | Restored & linked | In progress | Not started |
 |---:|---:|---:|---:|---:|---:|
-| 887 | 160 | 727 | 124 | 5 | 598 |
+| 887 | 160 | 727 | 155 | 5 | 567 |
 
-**Remaining:** 603 potential functions. Current linked implementations: 124 functional / 0 byte-matched; 0 other adapted/reused addresses.
+**Remaining:** 572 potential functions. Current linked implementations: 155 functional / 0 byte-matched; 0 other adapted/reused addresses.
 
 **Admitted into a playable game target:** `[------------------------]` **0.0% (0/727)**
 
 The denominator uses the **full 887-function role catalog**, including unknown candidates, minus verified libraries, compiler helpers, imports and shared tails. It is provisional: further classification may exclude more functions. **Function count is not effort or playable-game completion.**
 
-The ledger tracks 129 distinct eligible addresses across 158 implementation variants: 25 historical/superseded and 4 object-only byte-match variants are kept separate. Object-only matches do not replace linked functional evidence or add restored functions. 89 source support implementations are counted separately.
+The ledger tracks 160 distinct eligible addresses across 190 implementation variants: 25 historical/superseded and 4 object-only byte-match variants are kept separate. Object-only matches do not replace linked functional evidence or add restored functions. 103 source support implementations are counted separately.
 
 Sources: [role catalog](META/m1/role-catalog.json), [implementation ledger](META/function-status.json). Milestones: [progress and blockers](META/PROGRESS.md).
 
@@ -43,6 +43,14 @@ M2's [archive/VFILE family](META/m2/VFILE.md) now links nine functional variants
 
 ## Current evidence
 
+The latest [parallel restoration batch](META/m4/parallel-hour/CONTRACT.md) adds
+31 linked original functions, including lighting, camera/culling/clipping,
+native render state and lit/unlit BSP traversal. The 132-TU integration passes
+3,398,563 real-data checks and 2,906,329 clean source checks, with 66 missing-module
+link controls. A static real-level shell renders through recovered traversal and
+native queues: 1,798 polygons, 3,112 triangles and 146 textures. World/entity/script
+installation and player controls remain unfinished; this is not a playable game.
+
 Four reconstructed math functions reproduce **335/335 original instruction bytes** in two clean combined builds with the pinned VC5 SP3 C++ setup. One function depends on the preserved translation-unit context. These are matching objects, not a playable game. See [matching findings](analysis/astra-review/FIXED_SETUP_FINDINGS.md).
 
 Ten current C math variants link into the integration target under PC53/nearest/masked exceptions. Expanded oracle tests cover 566,784 function/alias comparisons across three precisions; finite bits match at PC53 and diagnostic PC64. The source-only numerical checkpoint passes 28,302 checks. PC24 inverse-point and NaN payload limits are explicit in the [current math evidence](META/m2/MATH.md); [historical results](analysis/math/RECOVERY.md) remain separate.
@@ -56,7 +64,7 @@ Ten current C math variants link into the integration target under PC53/nearest/
 | `analysis/` | Curated maps, comparison source and research evidence |
 | `tools/` | Status generator and reviewed declaration-context scanner |
 
-Original game files, disc images, SDK/compiler binaries, Ghidra projects and generated experiment trees remain local and are ignored by Git. [Build instructions](BUILDING.md) document the pinned local prerequisites. Run `build.cmd` for source-only math, archive/VFILE config/container/path, scene, BSP/block-data and entity-pool, WAV-reader and PCX/palette checks; add `--archive GAME_DATA/Bhunter.bin` for real-asset byte comparisons. All recovered data modules and the explicit float-store helper have missing-definition link controls. This is not a game build. [Current clean checkout evidence](META/m2/pcx-clean/clean-checkout.json) records a successful build without original game files.
+Original game files, disc images, SDK/compiler binaries, Ghidra projects and generated experiment trees remain local and are ignored by Git. [Build instructions](BUILDING.md) document the pinned local prerequisites. Run `build.cmd` for the source-only integration checks; add `--archive GAME_DATA/Bhunter.bin` for real-asset byte comparisons. Every admitted module has a missing-definition link control. This is not a game build. [Current clean checkout evidence](META/m4/parallel-hour/clean/clean-checkout.json) records a successful build without original game files.
 
 ## Update status
 

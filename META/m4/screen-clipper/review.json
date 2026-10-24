@@ -1,0 +1,45 @@
+{
+  "records": [
+    {
+      "address": "00453300",
+      "boundary": "00453300-00453c2a",
+      "bytes": 2347,
+      "instructions": 777,
+      "body_sha256": "9b3ca4d458cc67661beb4d28fba25769f9127b3dc966d1b31442f9b56512282a",
+      "role": "engine_candidate",
+      "provenance_confidence": "medium: complete application geometry owner called by sprite producers, no identified reusable library or CRT/EH/import signature",
+      "boundary_review": "complete contiguous instructions with ordinary independent entry/multiple returns, no outgoing calls, no shared-tail assignment",
+      "api": "bh_screen_clip_polygon",
+      "source": "src/bh_screen_clipper.c",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "bhunter-screen-clipper.exe",
+      "validation": "focused-build.json",
+      "game_admitted": false
+    }
+  ],
+  "adapter_apis": [
+    "bh_screen_clip_init",
+    "BHScreenClipContext explicit original-global and scratch binding"
+  ],
+  "original_exe_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+  "sources": {
+    "src/bh_screen_clipper.c": "b3c386152abe386b75ca1d5649d8350b8258ba08f27ad59d3e042acbe111dd02",
+    "src/bh_round.c": "ff848010705702e25cf85f5ba1d9c30a024d1ea8bf93227240285b9c54fc8ef4",
+    "src/bh_fp.c": "cc8400a29fd082f96ffd9b483f490a44992717b25eac0cb32e2e108ba446f3f8",
+    "tests/screen_clipper.c": "ba605fc845a71576f92c4117e2ca510ba0022981f000b3e23d8aeb0d79e20064",
+    "src/bh_screen_clipper.h": "42a37eaf74ac5f8220ce23f38d848aa1cd01e7ac56ff85cf20e94cd53c62a2ca"
+  },
+  "complete_original_owners": 1,
+  "focused_checks": 11038,
+  "game_launches": 0,
+  "original_code_executed": false,
+  "limits": [
+    "PC53/nearest/masked only; no byte equivalence or original differential execution",
+    "Convex ring and valid pointer storage are caller contracts; malformed-link/nonfinite/bounded-count checks are source guards",
+    "Two depth bounds reject the whole uniform-depth polygon; only four screen bounds generate vertices; no fabricated general6plane clipping",
+    "Existing input vertices retain their per-vertex depth and cache payload; new scratch writes only original depth/UV/screen/cache/link fields",
+    "Original scratch is shared with textured clipper; adapter contexts are explicit caller-owned storage and output must be consumed before any subsequent clipping operation",
+    "Sprite producers00454fc0/00455410/00455960 remain unrecovered and are exported for dependency evidence only"
+  ]
+}

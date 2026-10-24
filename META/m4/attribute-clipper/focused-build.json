@@ -1,0 +1,135 @@
+{
+  "target": "bhunter-attribute-clipper.exe",
+  "passed": true,
+  "commands": [
+    {
+      "label": "compile-bh_attribute_clipper",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/FoD:\\Decomp\\Bhunter\\build\\attribute-clipper\\bh_attribute_clipper.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_attribute_clipper.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_attribute_clipper.c\n"
+    },
+    {
+      "label": "compile-bh_round",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/FoD:\\Decomp\\Bhunter\\build\\attribute-clipper\\bh_round.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_round.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_round.c\n"
+    },
+    {
+      "label": "compile-bh_fp",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/FoD:\\Decomp\\Bhunter\\build\\attribute-clipper\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_fp.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_fp.c\n"
+    },
+    {
+      "label": "compile-attribute_clipper",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/DBH_ATTRIBUTE_CLIPPER_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\attribute-clipper\\attribute_clipper.obj",
+        "D:\\Decomp\\Bhunter\\tests\\attribute_clipper.c"
+      ],
+      "exit_code": 0,
+      "output": "attribute_clipper.c\n"
+    },
+    {
+      "label": "link",
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/map:D:\\Decomp\\Bhunter\\build\\attribute-clipper\\bhunter-attribute-clipper.map",
+        "/out:D:\\Decomp\\Bhunter\\build\\attribute-clipper\\bhunter-attribute-clipper.exe",
+        "D:\\Decomp\\Bhunter\\build\\attribute-clipper\\bh_attribute_clipper.obj",
+        "D:\\Decomp\\Bhunter\\build\\attribute-clipper\\bh_round.obj",
+        "D:\\Decomp\\Bhunter\\build\\attribute-clipper\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\build\\attribute-clipper\\attribute_clipper.obj",
+        "kernel32.lib"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "label": "scenario",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\build\\attribute-clipper\\bhunter-attribute-clipper.exe"
+      ],
+      "exit_code": 0,
+      "output": "{\"scenario\":\"attribute-clipper\",\"checks\":15931,\"failures\":0,\"original_code_required\":false}\n"
+    },
+    {
+      "label": "missing-attribute-owner-control",
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/out:D:\\Decomp\\Bhunter\\build\\attribute-clipper\\missing-attribute-clipper.exe",
+        "D:\\Decomp\\Bhunter\\build\\attribute-clipper\\bh_round.obj",
+        "D:\\Decomp\\Bhunter\\build\\attribute-clipper\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\build\\attribute-clipper\\attribute_clipper.obj",
+        "kernel32.lib"
+      ],
+      "exit_code": 25,
+      "output": "attribute_clipper.obj : error LNK2001: unresolved external symbol _bh_attribute_clip_polygon\nattribute_clipper.obj : error LNK2001: unresolved external symbol _bh_attribute_clip_init\nD:\\Decomp\\Bhunter\\build\\attribute-clipper\\missing-attribute-clipper.exe : fatal error LNK1120: 2 unresolved externals\n"
+    }
+  ],
+  "original_code_required": false,
+  "game_launches": 0,
+  "scenario": {
+    "scenario": "attribute-clipper",
+    "checks": 15931,
+    "failures": 0,
+    "original_code_required": false
+  },
+  "sources": {
+    "src/bh_attribute_clipper.c": "fa2e5c378020c6a6f2c146f169838956b41e9c010858f675b03f28423ce6a622",
+    "src/bh_round.c": "ff848010705702e25cf85f5ba1d9c30a024d1ea8bf93227240285b9c54fc8ef4",
+    "src/bh_fp.c": "cc8400a29fd082f96ffd9b483f490a44992717b25eac0cb32e2e108ba446f3f8",
+    "tests/attribute_clipper.c": "8590e31eb960a2a3d85635f5f5bb3424a3d006c5d745d8cbf70a34588f21a540",
+    "src/bh_attribute_clipper.h": "567525a2260977a96e3de71d12ed1bcf1f6f829cfce66a0ffebd9fb6a9097d93"
+  },
+  "executable_sha256": "d4a67b2034b1f1d33ea4594526504a7fe96071a994102d0d7a6906a05c03f05f"
+}

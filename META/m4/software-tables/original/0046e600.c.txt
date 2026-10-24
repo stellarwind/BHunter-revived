@@ -1,0 +1,449 @@
+
+void FUN_0046e600(void)
+
+{
+  byte *pbVar1;
+  byte *pbVar2;
+  byte *pbVar3;
+  byte bVar4;
+  byte bVar5;
+  byte bVar6;
+  longlong lVar7;
+  char *pcVar8;
+  uint uVar9;
+  short *psVar10;
+  int iVar11;
+  int iVar12;
+  uint uVar13;
+  int iVar14;
+  int iVar15;
+  uint uVar16;
+  short *psVar17;
+  uint local_31c;
+  short *local_318;
+  int local_30c;
+  int local_308;
+  int local_304;
+  byte abStack_300 [256];
+  byte abStack_200 [256];
+  byte abStack_100 [256];
+  
+  iVar11 = 0;
+  do {
+    iVar12 = ((iVar11 / 0x2a) % 6) * 0xff;
+    abStack_100[iVar11] =
+         ((char)(iVar12 / 5) + (char)(iVar12 >> 0x1f)) -
+         (char)((longlong)iVar12 * 0x66666667 >> 0x3f);
+    lVar7 = (longlong)(((iVar11 / 6) % 7) * 0xff) * 0x2aaaaaab;
+    abStack_300[iVar11] = (char)((ulonglong)lVar7 >> 0x20) - (char)(lVar7 >> 0x3f);
+    iVar12 = (iVar11 % 6) * 0xff;
+    abStack_200[iVar11] =
+         ((char)(iVar12 / 5) + (char)(iVar12 >> 0x1f)) -
+         (char)((longlong)iVar12 * 0x66666667 >> 0x3f);
+    iVar11 = iVar11 + 1;
+  } while (iVar11 < 0x100);
+  pcVar8 = (char *)FUN_0047dae0(0x20000);
+  DAT_004e3858 = pcVar8;
+  FUN_0044e9b0();
+  iVar11 = 0;
+  do {
+    iVar12 = 0;
+    do {
+      local_318._0_1_ = (char)(&DAT_004e1980)[(int)((uint)abStack_300[iVar12] * iVar11) / 0xff];
+      *pcVar8 = ((char)(&DAT_004e1178)[(int)((uint)abStack_100[iVar12] * iVar11) / 0xff] * '\a' +
+                (char)local_318) * '\x06' +
+                (char)(&DAT_004e1178)[(int)((uint)abStack_200[iVar12] * iVar11) / 0xff];
+      pcVar8 = pcVar8 + 1;
+      iVar12 = iVar12 + 1;
+    } while (iVar12 < 0x100);
+    iVar11 = iVar11 + 1;
+  } while (iVar11 < 0x100);
+  local_31c = 0;
+  do {
+    iVar11 = 0;
+    do {
+      local_318._0_1_ =
+           (char)(&DAT_004e1980)[((uint)abStack_300[iVar11] * ((int)local_31c >> 2 & 7U)) / 7];
+      *pcVar8 = ((char)(&DAT_004e1178)[((uint)abStack_100[iVar11] * ((int)local_31c >> 5 & 7U)) / 7]
+                 * '\a' + (char)local_318) * '\x06' +
+                (char)(&DAT_004e1178)[((uint)abStack_200[iVar11] * (local_31c & 3)) / 3];
+      pcVar8 = pcVar8 + 1;
+      iVar11 = iVar11 + 1;
+    } while (iVar11 < 0x100);
+    local_31c = local_31c + 1;
+  } while ((int)local_31c < 0x100);
+  if (DAT_004e38c4 == 1) {
+    DAT_004e2df4 = (char *)FUN_0047dae0(0x80000);
+    local_31c = 0;
+    local_318 = (short *)DAT_004e2df4;
+    do {
+      bVar4 = abStack_100[local_31c];
+      bVar5 = abStack_300[local_31c];
+      bVar6 = abStack_200[local_31c];
+      iVar11 = 0;
+      do {
+        iVar12 = (uint)abStack_100[iVar11] +
+                 (int)((0xff - (uint)abStack_100[iVar11]) * (uint)bVar4) / 0xff;
+        if (iVar12 < 0) {
+          iVar12 = 0;
+        }
+        else if (0xff < iVar12) {
+          iVar12 = 0xff;
+        }
+        iVar15 = (uint)abStack_300[iVar11] +
+                 (int)((0xff - (uint)abStack_300[iVar11]) * (uint)bVar5) / 0xff;
+        if (iVar15 < 0) {
+          iVar15 = 0;
+        }
+        else if (0xff < iVar15) {
+          iVar15 = 0xff;
+        }
+        iVar14 = (uint)abStack_200[iVar11] +
+                 (int)((0xff - (uint)abStack_200[iVar11]) * (uint)bVar6) / 0xff;
+        if (iVar14 < 0) {
+          iVar14 = 0;
+        }
+        else if (0xff < iVar14) {
+          iVar14 = 0xff;
+        }
+        *(char *)local_318 =
+             ((char)(&DAT_004e1178)[iVar12] * '\a' + (char)(&DAT_004e1980)[iVar15]) * '\x06' +
+             (char)(&DAT_004e1178)[iVar14];
+        local_318 = (short *)((int)local_318 + 1);
+        iVar11 = iVar11 + 1;
+      } while (iVar11 < 0x100);
+      local_31c = local_31c + 1;
+    } while ((int)local_31c < 0x100);
+    local_31c = 0;
+    do {
+      bVar4 = abStack_100[local_31c];
+      bVar5 = abStack_300[local_31c];
+      bVar6 = abStack_200[local_31c];
+      iVar11 = 0;
+      do {
+        iVar12 = (int)((0xff - (uint)abStack_100[iVar11]) * (uint)bVar4) / 0xff;
+        if (iVar12 < 0) {
+          iVar12 = 0;
+        }
+        else if (0xff < iVar12) {
+          iVar12 = 0xff;
+        }
+        iVar15 = (int)((0xff - (uint)abStack_300[iVar11]) * (uint)bVar5) / 0xff;
+        if (iVar15 < 0) {
+          iVar15 = 0;
+        }
+        else if (0xff < iVar15) {
+          iVar15 = 0xff;
+        }
+        iVar14 = (int)((0xff - (uint)abStack_200[iVar11]) * (uint)bVar6) / 0xff;
+        if (iVar14 < 0) {
+          iVar14 = 0;
+        }
+        else if (0xff < iVar14) {
+          iVar14 = 0xff;
+        }
+        *(char *)local_318 =
+             ((char)(&DAT_004e1178)[iVar12] * '\a' + (char)(&DAT_004e1980)[iVar15]) * '\x06' +
+             (char)(&DAT_004e1178)[iVar14];
+        local_318 = (short *)((int)local_318 + 1);
+        iVar11 = iVar11 + 1;
+      } while (iVar11 < 0x100);
+      local_31c = local_31c + 1;
+    } while ((int)local_31c < 0x100);
+    iVar11 = 0;
+    do {
+      bVar4 = abStack_200[iVar11];
+      bVar5 = abStack_100[iVar11];
+      bVar6 = abStack_300[iVar11];
+      iVar12 = 0;
+      do {
+        uVar9 = (uint)abStack_100[iVar12] + (uint)bVar5;
+        if ((int)uVar9 < 0) {
+          uVar9 = 0;
+        }
+        else if (0xff < uVar9) {
+          uVar9 = 0xff;
+        }
+        uVar13 = (uint)abStack_300[iVar12] + (uint)bVar6;
+        if ((int)uVar13 < 0) {
+          uVar13 = 0;
+        }
+        else if (0xff < uVar13) {
+          uVar13 = 0xff;
+        }
+        uVar16 = (uint)abStack_200[iVar12] + (uint)bVar4;
+        if ((int)uVar16 < 0) {
+          uVar16 = 0;
+        }
+        else if (0xff < uVar16) {
+          uVar16 = 0xff;
+        }
+        local_304._0_1_ = (char)(&DAT_004e1178)[uVar16];
+        *(char *)local_318 =
+             ((char)(&DAT_004e1178)[uVar9] * '\a' + (char)(&DAT_004e1980)[uVar13]) * '\x06' +
+             (char)local_304;
+        local_318 = (short *)((int)local_318 + 1);
+        iVar12 = iVar12 + 1;
+      } while (iVar12 < 0x100);
+      iVar11 = iVar11 + 1;
+    } while (iVar11 < 0x100);
+    local_308 = 1;
+    local_30c = 5;
+    do {
+      local_31c = 0;
+      do {
+        iVar11 = 0;
+        bVar4 = abStack_300[local_31c];
+        bVar5 = abStack_100[local_31c];
+        bVar6 = abStack_200[local_31c];
+        do {
+          iVar12 = (int)((uint)abStack_100[iVar11] * local_308 + (uint)bVar5 * local_30c) / 6;
+          if (iVar12 < 0) {
+            iVar12 = 0;
+          }
+          else if (0xff < iVar12) {
+            iVar12 = 0xff;
+          }
+          iVar15 = (int)((uint)abStack_300[iVar11] * local_308 + (uint)bVar4 * local_30c) / 6;
+          if (iVar15 < 0) {
+            iVar15 = 0;
+          }
+          else if (0xff < iVar15) {
+            iVar15 = 0xff;
+          }
+          iVar14 = (int)((uint)abStack_200[iVar11] * local_308 + (uint)bVar6 * local_30c) / 6;
+          if (iVar14 < 0) {
+            iVar14 = 0;
+          }
+          else if (0xff < iVar14) {
+            iVar14 = 0xff;
+          }
+          *(char *)local_318 =
+               ((char)(&DAT_004e1178)[iVar12] * '\a' + (char)(&DAT_004e1980)[iVar15]) * '\x06' +
+               (char)(&DAT_004e1178)[iVar14];
+          local_318 = (short *)((int)local_318 + 1);
+          iVar11 = iVar11 + 1;
+        } while (iVar11 < 0x100);
+        local_31c = local_31c + 1;
+      } while ((int)local_31c < 0x100);
+      local_308 = local_308 + 1;
+      local_30c = local_30c + -1;
+    } while (0 < local_30c);
+    return;
+  }
+  psVar10 = (short *)FUN_0047dae0(0x40000);
+  iVar11 = 0;
+  DAT_004e2de4 = psVar10;
+  do {
+    iVar12 = 0;
+    psVar17 = psVar10;
+    do {
+      pbVar1 = abStack_300 + iVar12;
+      psVar10 = psVar17 + 1;
+      pbVar2 = abStack_200 + iVar12;
+      pbVar3 = abStack_100 + iVar12;
+      iVar12 = iVar12 + 1;
+      *psVar17 = (short)(((int)((uint)*pbVar1 * iVar11) / 0xff >> ((byte)DAT_004e3890 & 0x1f)) <<
+                        ((byte)DAT_004e3260 & 0x1f)) +
+                 (short)(((int)((uint)*pbVar2 * iVar11) / 0xff >> ((byte)DAT_004e3894 & 0x1f)) <<
+                        ((byte)DAT_004e3264 & 0x1f)) +
+                 (short)(((int)((uint)*pbVar3 * iVar11) / 0xff >> ((byte)DAT_004e38c0 & 0x1f)) <<
+                        ((byte)DAT_004e32a4 & 0x1f));
+      psVar17 = psVar10;
+    } while (iVar12 < 0x100);
+    iVar11 = iVar11 + 1;
+  } while (iVar11 < 0x100);
+  local_31c = 0;
+  do {
+    iVar11 = 0;
+    psVar17 = psVar10;
+    do {
+      pbVar2 = abStack_100 + iVar11;
+      psVar10 = psVar17 + 1;
+      pbVar1 = abStack_300 + iVar11;
+      pbVar3 = abStack_200 + iVar11;
+      iVar11 = iVar11 + 1;
+      *psVar17 = (short)(((int)(((uint)*pbVar2 * ((int)local_31c >> 5 & 7U)) / 7) >>
+                         ((byte)DAT_004e38c0 & 0x1f)) << ((byte)DAT_004e32a4 & 0x1f)) +
+                 (short)(((int)(((uint)*pbVar1 * ((int)local_31c >> 2 & 7U)) / 7) >>
+                         ((byte)DAT_004e3890 & 0x1f)) << ((byte)DAT_004e3260 & 0x1f)) +
+                 (short)(((int)(((uint)*pbVar3 * (local_31c & 3)) / 3) >>
+                         ((byte)DAT_004e3894 & 0x1f)) << ((byte)DAT_004e3264 & 0x1f));
+      psVar17 = psVar10;
+    } while (iVar11 < 0x100);
+    local_31c = local_31c + 1;
+  } while ((int)local_31c < 0x100);
+  iVar11 = 0;
+  for (iVar12 = DAT_004e3424 >> ((byte)DAT_004e32a4 & 0x1f); iVar12 != 7; iVar12 = iVar12 / 2) {
+    iVar11 = iVar11 + 1;
+  }
+  DAT_004e385c = 7 << ((char)iVar11 + (byte)DAT_004e32a4 & 0x1f);
+  iVar12 = 0;
+  DAT_004e9478 = (0xd - iVar11) - DAT_004e32a4;
+  for (iVar11 = DAT_004e3444 >> ((byte)DAT_004e3260 & 0x1f); iVar11 != 7; iVar11 = iVar11 / 2) {
+    iVar12 = iVar12 + 1;
+  }
+  DAT_004e3420 = 7 << ((char)iVar12 + (byte)DAT_004e3260 & 0x1f);
+  iVar11 = 0;
+  DAT_004e9430 = (10 - iVar12) - DAT_004e3260;
+  for (iVar12 = DAT_004e3448 >> ((byte)DAT_004e3264 & 0x1f); iVar12 != 3; iVar12 = iVar12 / 2) {
+    iVar11 = iVar11 + 1;
+  }
+  DAT_004e9444 = 3 << ((char)iVar11 + (byte)DAT_004e3264 & 0x1f);
+  DAT_004e2da0 = (8 - iVar11) - DAT_004e3264;
+  DAT_004e38c8 = (short *)FUN_0047dae0(0x100000);
+  local_31c = 0;
+  local_318 = DAT_004e38c8;
+  do {
+    iVar11 = 0;
+    do {
+      iVar12 = (uint)abStack_100[iVar11] +
+               (int)((0xff - (uint)abStack_100[iVar11]) * (local_31c & 0xe0)) / 0xff;
+      if (iVar12 < 0) {
+        iVar12 = 0;
+      }
+      else if (0xff < iVar12) {
+        iVar12 = 0xff;
+      }
+      iVar15 = (uint)abStack_300[iVar11] +
+               (int)((0xff - (uint)abStack_300[iVar11]) * (local_31c & 0x1c) * 8) / 0xff;
+      if (iVar15 < 0) {
+        iVar15 = 0;
+      }
+      else if (0xff < iVar15) {
+        iVar15 = 0xff;
+      }
+      iVar14 = (uint)abStack_200[iVar11] +
+               (int)((0xff - (uint)abStack_200[iVar11]) * (local_31c & 3) * 0x40) / 0xff;
+      if (iVar14 < 0) {
+        iVar14 = 0;
+      }
+      else if (0xff < iVar14) {
+        iVar14 = 0xff;
+      }
+      psVar10 = local_318 + 1;
+      iVar11 = iVar11 + 1;
+      *local_318 = (short)((iVar12 >> ((byte)DAT_004e38c0 & 0x1f)) << ((byte)DAT_004e32a4 & 0x1f)) +
+                   (short)((iVar15 >> ((byte)DAT_004e3890 & 0x1f)) << ((byte)DAT_004e3260 & 0x1f)) +
+                   (short)((iVar14 >> ((byte)DAT_004e3894 & 0x1f)) << ((byte)DAT_004e3264 & 0x1f));
+      local_318 = psVar10;
+    } while (iVar11 < 0x100);
+    local_31c = local_31c + 1;
+  } while ((int)local_31c < 0x100);
+  local_31c = 0;
+  do {
+    iVar11 = 0;
+    do {
+      iVar12 = (int)((0xff - (uint)abStack_100[iVar11]) * (local_31c & 0xe0)) / 0xff;
+      if (iVar12 < 0) {
+        iVar12 = 0;
+      }
+      else if (0xff < iVar12) {
+        iVar12 = 0xff;
+      }
+      iVar15 = (int)((0xff - (uint)abStack_300[iVar11]) * (local_31c & 0x1c) * 8) / 0xff;
+      if (iVar15 < 0) {
+        iVar15 = 0;
+      }
+      else if (0xff < iVar15) {
+        iVar15 = 0xff;
+      }
+      iVar14 = (int)((0xff - (uint)abStack_200[iVar11]) * (local_31c & 3) * 0x40) / 0xff;
+      if (iVar14 < 0) {
+        iVar14 = 0;
+      }
+      else if (0xff < iVar14) {
+        iVar14 = 0xff;
+      }
+      psVar10 = local_318 + 1;
+      iVar11 = iVar11 + 1;
+      *local_318 = (short)((iVar12 >> ((byte)DAT_004e38c0 & 0x1f)) << ((byte)DAT_004e32a4 & 0x1f)) +
+                   (short)((iVar15 >> ((byte)DAT_004e3890 & 0x1f)) << ((byte)DAT_004e3260 & 0x1f)) +
+                   (short)((iVar14 >> ((byte)DAT_004e3894 & 0x1f)) << ((byte)DAT_004e3264 & 0x1f));
+      local_318 = psVar10;
+    } while (iVar11 < 0x100);
+    local_31c = local_31c + 1;
+  } while ((int)local_31c < 0x100);
+  local_31c = 0;
+  do {
+    iVar11 = 0;
+    do {
+      uVar9 = (uint)abStack_100[iVar11] + (local_31c & 0xe0);
+      if ((int)uVar9 < 0) {
+        uVar9 = 0;
+      }
+      else if (0xff < uVar9) {
+        uVar9 = 0xff;
+      }
+      uVar13 = (uint)abStack_300[iVar11] + (local_31c & 0x1c) * 8;
+      if ((int)uVar13 < 0) {
+        uVar13 = 0;
+      }
+      else if (0xff < uVar13) {
+        uVar13 = 0xff;
+      }
+      uVar16 = (uint)abStack_200[iVar11] + (local_31c & 3) * 0x40;
+      if ((int)uVar16 < 0) {
+        uVar16 = 0;
+      }
+      else if (0xff < uVar16) {
+        uVar16 = 0xff;
+      }
+      psVar10 = local_318 + 1;
+      iVar11 = iVar11 + 1;
+      *local_318 = (short)(((int)uVar9 >> ((byte)DAT_004e38c0 & 0x1f)) <<
+                          ((byte)DAT_004e32a4 & 0x1f)) +
+                   (short)(((int)uVar13 >> ((byte)DAT_004e3890 & 0x1f)) <<
+                          ((byte)DAT_004e3260 & 0x1f)) +
+                   (short)(((int)uVar16 >> ((byte)DAT_004e3894 & 0x1f)) <<
+                          ((byte)DAT_004e3264 & 0x1f));
+      local_318 = psVar10;
+    } while (iVar11 < 0x100);
+    local_31c = local_31c + 1;
+  } while ((int)local_31c < 0x100);
+  local_308 = 1;
+  local_304 = 5;
+  do {
+    local_31c = 0;
+    do {
+      iVar11 = 0;
+      do {
+        iVar12 = (int)((uint)abStack_100[iVar11] * local_308 + (local_31c & 0xe0) * local_304) / 6;
+        if (iVar12 < 0) {
+          iVar12 = 0;
+        }
+        else if (0xff < iVar12) {
+          iVar12 = 0xff;
+        }
+        iVar15 = (int)((uint)abStack_300[iVar11] * local_308 + (local_31c & 0x1c) * 8 * local_304) /
+                 6;
+        if (iVar15 < 0) {
+          iVar15 = 0;
+        }
+        else if (0xff < iVar15) {
+          iVar15 = 0xff;
+        }
+        iVar14 = (int)((uint)abStack_200[iVar11] * local_308 + (local_31c & 3) * 0x40 * local_304) /
+                 6;
+        if (iVar14 < 0) {
+          iVar14 = 0;
+        }
+        else if (0xff < iVar14) {
+          iVar14 = 0xff;
+        }
+        *local_318 = (short)((iVar12 >> ((byte)DAT_004e38c0 & 0x1f)) << ((byte)DAT_004e32a4 & 0x1f))
+                     + (short)((iVar15 >> ((byte)DAT_004e3890 & 0x1f)) <<
+                              ((byte)DAT_004e3260 & 0x1f)) +
+                     (short)((iVar14 >> ((byte)DAT_004e3894 & 0x1f)) << ((byte)DAT_004e3264 & 0x1f))
+        ;
+        local_318 = local_318 + 1;
+        iVar11 = iVar11 + 1;
+      } while (iVar11 < 0x100);
+      local_31c = local_31c + 1;
+    } while ((int)local_31c < 0x100);
+    local_308 = local_308 + 1;
+    local_304 = local_304 + -1;
+  } while (0 < local_304);
+  return;
+}
+

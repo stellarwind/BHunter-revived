@@ -1,0 +1,73 @@
+{
+  "passed": true,
+  "target": "bhunter-model-draw-native.exe",
+  "checks": 71,
+  "failures": 0,
+  "real_native_binding_validated": true,
+  "original_code_executed": false,
+  "game_launches": 0,
+  "source_sha256": {
+    "src/bh_model_draw.c": "0400b49e2abffeb857b0604002a5140bb878825935d41e2c8a3ec21208154f96",
+    "src/bh_model_draw_lit.c": "a3de4be851830b933e61984bf602f91a69bc87bde3029daeb6e8c2b94d1ac5f2",
+    "tests/model_draw_native.c": "40fd1c9258b1243992888a861cbb0c3b5370423512f0be3c23694c90caafa819",
+    "src/bh_model_draw.h": "44dbc4dcce1e6e0dc42657cf4250ce57e2a96acb458905d95e284a56874b73fb",
+    "src/bh_model_draw_lit.h": "0b467605f6e006f0b5bca8916b3723fe285fc200df2d49b85c11d050244f5a6f",
+    "src/bh_native_primitive.h": "4d627c4d1ff939be5a828d988c590f8ee2030a662ef326b41b1dcfc4a5b9a87b"
+  },
+  "linked_source_object_snapshots": 64,
+  "newly_compiled_real_tus": 3,
+  "negative_link_controls": 3,
+  "pixels": {
+    "model-native-unlit-blue.bmp": {
+      "center_rgb": "0000ff",
+      "nonblack_pixels": 365,
+      "all_unique_rgb": [
+        "000000",
+        "0000ff"
+      ],
+      "sha256": "c3bc45ceb14461e5e44ff1bb401ea12e7364d604c51f845a16314371199dd538"
+    },
+    "model-native-lit-red.bmp": {
+      "center_rgb": "ff0000",
+      "nonblack_pixels": 365,
+      "all_unique_rgb": [
+        "000000",
+        "ff0000"
+      ],
+      "sha256": "51fb1512f339cb80b8342caa1231a9d1405f9675fd826a9e87013752301b7eb8"
+    },
+    "model-native-lit-green.bmp": {
+      "center_rgb": "00ff00",
+      "nonblack_pixels": 365,
+      "all_unique_rgb": [
+        "000000",
+        "00ff00"
+      ],
+      "sha256": "8426bad8aef8da0b4c52ae053f04e145109fff3ce5435d9ce9412a489bea7385"
+    },
+    "model-native-point-blue.bmp": {
+      "center_rgb": "0000ff",
+      "nonblack_pixels": 365,
+      "all_unique_rgb": [
+        "000000",
+        "0000ff"
+      ],
+      "sha256": "c3bc45ceb14461e5e44ff1bb401ea12e7364d604c51f845a16314371199dd538"
+    },
+    "model-native-mask-zero.bmp": {
+      "center_rgb": "000000",
+      "nonblack_pixels": 0,
+      "all_unique_rgb": [
+        "000000"
+      ],
+      "sha256": "864233c5bc34b3f4fe671e21531c8877b0e871f74e9bfb3ecc731888567e068f"
+    }
+  },
+  "limits": [
+    "One explicit typed BSP triangle fixture, real original camera/clipper/default material/state/native queue/RGB backend; this is not source-gameplay acceptance",
+    "Complete0046e390 software/native dispatch remains unfinished; selected original native branch is an explicitly documented adapter",
+    "Shared m0source objects are hash-snapshotted before linking; orphan bh_waypoint.obj lacks current source and is excluded explicitly",
+    "No fakeCOM/vtables or backend-success stubs; native API HRESULTs and actual readback pixels determine results",
+    "Independent real-archive world scene composition is separately parent-owned evidence, not inferred from this fixture"
+  ]
+}

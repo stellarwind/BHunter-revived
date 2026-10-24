@@ -1,0 +1,53 @@
+{
+  "records": [
+    {
+      "address": "0045b410",
+      "api": "bh_render_depth",
+      "source": "src/bh_render_state.c",
+      "role": "engine_candidate",
+      "classification": "Complete ordinary native/cache renderer state owner; reviewed callers, all software/native branches and SDK call values. Not CRT/import/compiler/EH/shared tail. Historical engine authorship unresolved.",
+      "original": "META/m4/render-state/original/0045b410.tsv",
+      "boundary": "0045b410-0045b480",
+      "bytes": 113,
+      "instructions": 44,
+      "body_sha256": "02e11962ea3eaef866b7f7e88d0143cfd1b72a5be1718e5956338510c80aed0c"
+    },
+    {
+      "address": "0045b490",
+      "api": "bh_render_blend",
+      "source": "src/bh_render_state.c",
+      "role": "engine_candidate",
+      "classification": "Complete ordinary native/cache renderer state owner; reviewed callers, all software/native branches and SDK call values. Not CRT/import/compiler/EH/shared tail. Historical engine authorship unresolved.",
+      "original": "META/m4/render-state/original/0045b490.tsv",
+      "boundary": "0045b490-0045b4fe",
+      "bytes": 111,
+      "instructions": 39,
+      "body_sha256": "19574e2a0c64ae2b410c44a655748eed0674d6e68ea7ba05bbe7eda1c1669f5c"
+    },
+    {
+      "address": "0045b500",
+      "api": "bh_render_mode",
+      "source": "src/bh_render_state.c",
+      "role": "engine_candidate",
+      "classification": "Complete ordinary native/cache renderer state owner; reviewed callers, all software/native branches and SDK call values. Not CRT/import/compiler/EH/shared tail. Historical engine authorship unresolved.",
+      "original": "META/m4/render-state/original/0045b500.tsv",
+      "boundary": "0045b500-0045b7f5",
+      "bytes": 758,
+      "instructions": 249,
+      "body_sha256": "1f43c9f98360a3c7ce72dff76770a765ff5c8feceddeb29451d1c1f8041abb87"
+    }
+  ],
+  "limits": [
+    "Source context/init and return/HRESULT/counters are adapters; native caches update despite failure and later calls continue",
+    "Complete original software branch only updates caches; no rasterizer claim",
+    "Native RGB real device/queued fan pixels tested; native failure paths statically reviewed, not fault-injected",
+    "0046e390 whole native/software dispatcher remains unfinished; near/z native-only emitter is explicitly separate adapter"
+  ],
+  "contracts": [
+    "SDK depth modes0/1/2 => (ZWRITE,ZFUNC)=(1,7),(0,7),(1,8),7 isGREATEREQUAL",
+    "Blend modes0..4 => (enable,source,dest)=(0,2,1),(1,2,4),(1,1,4),(1,2,2),(1,5,6)",
+    "Every native mode call increments shared texture frame epoch, flushes every cached image,EndScene/BeginScene,then changes state; same/unknownmode still barriers",
+    "Unknown depth publishes cache only; software publishes state/mode only and leaves imagequeues/epoch untouched"
+  ],
+  "independent_review": "META/m4/render-state/independent-review.md"
+}

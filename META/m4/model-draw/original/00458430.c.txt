@@ -1,0 +1,13 @@
+
+void __cdecl FUN_00458430(int param_1)
+
+{
+  int iVar1;
+  
+  for (; -1 < param_1; param_1 = *(int *)(iVar1 + param_1 * 8 + 4)) {
+    iVar1 = *(int *)(DAT_004edeb0 + 0x5c);
+    FUN_00458310(*(int *)(iVar1 + param_1 * 8));
+  }
+  return;
+}
+

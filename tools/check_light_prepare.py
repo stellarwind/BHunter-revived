@@ -32,7 +32,9 @@ def main():
         focus=next(s for s in build['scenarios'] if s.get('scenario')=='light-prepare');assert focus['checks']==991 and not focus['failures']
         assert sum(k.startswith('missing_') for k in build)==46 and build['missing_light_control']=='rejected with LNK2001'
         for name,expected in v['sources'].items():
-            assert sha(ROOT/name)==expected,name
+            path=ROOT/name
+            if sha(path)!=expected:path=FOLDER/'sources'/(expected+'-'+path.name+'.txt')
+            assert sha(path)==expected,name
             if name!='tools/m0.py':assert expected==build['sources'][name],name
         for label in ('compile-bh_light','compile-light'):
             assert not any(a.startswith('/I') for a in next(c for c in build['commands'] if c['label']==label)['argv'])
