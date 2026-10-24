@@ -1,5 +1,6 @@
 #include "../src/bh_segment_query.h"
 #include <math.h>
+#include "saved_contact.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -139,6 +140,17 @@ static void cases(void) {
           "same-side segment follows child without false contact");
     a.x = 12;
     b.x = 8;
+    /* Captured output contract on analytical geometry; original swept model
+       inputs were not retained, so this is explicitly not a replay. */
+    a.x=17; b.x=9; geometry.face_flags[0]=geometry.face_flags[1]=geometry.face_flags[2]=0;
+    nodes[0].front_node=-1;
+    CHECK(bh_segment_query_run(&query,&a,&b,&world,&local,&hit)==1 &&
+        hit.fraction==SAVED_CONTACT_FRACTION &&
+        fabs(hit.normal.x-saved_contact_normal.x)<.000001 &&
+        fabs(hit.normal.y-saved_contact_normal.y)<.000001 &&
+        fabs(hit.normal.z-saved_contact_normal.z)<.000001,
+        "saved M3 fraction/normal contract on analytical segment (not full detector replay)");
+    a.x=12; b.x=8; saved=hit;
     nodes[0].front_node = 999;
     CHECK(bh_segment_query_run(&query, &a, &b, &world, &local, &hit) == -1 &&
               !memcmp(&hit, &saved, sizeof(hit)) && !query.busy,

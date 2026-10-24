@@ -1,6 +1,8 @@
 #include "../src/bh_blocks.h"
 #include "../src/bh_collision_model.h"
 #include "../src/bh_segment_query.h"
+#include <math.h>
+#include "saved_contact.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -170,10 +172,116 @@ static void cases(void) {
     CHECK(bh_collision_model_dispose(&model) && !memory.live,
           "complete model lifetime frees all real owners");
 }
+static void face_contacts(void) {
+    BHBsp a,b;
+    BHBspVertex av[4],bv[4];
+    BHBspEdge ae[4],be[4];
+    BHBspFace af,bf;
+    BHBspNode plane;
+    BHMat34 identity, world, trial, inverse_world;
+    BHVec3 normal = {1,0,0};
+    BHFaceContact hit,saved;
+    unsigned long i;
+    int center, width, winding, expected, actual;
+    float lo,hi;
+    memset(&a,0,sizeof(a)); memset(&b,0,sizeof(b));
+    memset(av,0,sizeof(av)); memset(bv,0,sizeof(bv));
+    memset(&plane,0,sizeof(plane)); memset(&identity,0,sizeof(identity));
+    identity.m[0][0]=identity.m[1][1]=identity.m[2][2]=1;
+    world=identity; world.m[0][3]=10; world.m[1][3]=20; world.m[2][3]=30;
+    /* a spans x/y on z=0; b spans y/z on x=0. */
+    av[0].x=-2; av[0].y=-2; av[1].x=2; av[1].y=-2;
+    av[2].x=2; av[2].y=2; av[3].x=-2; av[3].y=2;
+    bv[0].y=-1; bv[0].z=-1; bv[1].y=1; bv[1].z=-1;
+    bv[2].y=1; bv[2].z=1; bv[3].y=-1; bv[3].z=1;
+    for(i=0;i<4;++i) {
+        ae[i].vertex=be[i].vertex=i;
+        ae[i].next=be[i].next=i==3 ? -1 : i+1;
+    }
+    af.first_edge=bf.first_edge=0;
+    a.vertices=av; a.edges=ae; a.faces=&af;
+    b.vertices=bv; b.edges=be; b.faces=&bf; b.nodes=&plane;
+    a.counts[1]=a.counts[2]=b.counts[1]=b.counts[2]=4;
+    a.counts[3]=b.counts[3]=b.counts[4]=1;
+    plane.normal[0]=1;
+    CHECK(bh_collision_face_contact(&a,0,&identity,&b,0,0,&world,&normal,&hit)==1 &&
+        hit.raw_point.x==10 && hit.raw_point.y==20 && hit.raw_point.z==30 &&
+        fabs(hit.point.x-10.05)<.00001,"face intersection transforms midpoint and offsets normal");
+    CHECK(bh_collision_face_contact(&a,0,&identity,&b,0,0,&identity,&saved_contact_normal,&hit)==1 &&
+        fabs(hit.point.x-.05*saved_contact_normal.x)<1e-8 &&
+        fabs(hit.point.y-.05*saved_contact_normal.y)<1e-12 &&
+        fabs(hit.point.z-.05*saved_contact_normal.z)<1e-12,
+        "saved M3 normal drives actual recovered contact offset (not detector replay)");
+    trial=world;inverse_world=identity;
+    inverse_world.m[0][3]=-10;inverse_world.m[1][3]=-20;inverse_world.m[2][3]=-30;
+    CHECK(bh_collision_cached_contact(&a,0,&trial,&b,0,0,&world,&inverse_world,
+        &saved_contact_normal,&hit)==1 && hit.raw_point.x==10 && hit.raw_point.y==20 &&
+        hit.raw_point.z==30 && fabs(hit.point.x-(10+.05*saved_contact_normal.x))<1e-6,
+        "cached trial composes local times pose and retains saved M3 normal offset");
+    saved=hit;trial.m[0][3]+=8;
+    CHECK(bh_collision_cached_contact(&a,0,&trial,&b,0,0,&world,&inverse_world,
+        &normal,&hit)==0 && !memcmp(&saved,&hit,sizeof(hit)),
+        "cached trial miss retains previous contact");
+    CHECK(bh_collision_cached_contact(&a,0,NULL,&b,0,0,&world,&inverse_world,
+        &normal,&hit)==-1 && !memcmp(&saved,&hit,sizeof(hit)),
+        "invalid trial leaves contact unchanged");
+    for(i=0;i<4;++i) bv[i].y+=2;
+    CHECK(bh_collision_face_contact(&a,0,&identity,&b,0,0,&identity,&normal,&hit)==1 &&
+        hit.raw_point.y==1.5f,"partial interval clip uses midpoint of overlap");
+    saved=hit;
+    for(i=0;i<4;++i) bv[i].y+=1;
+    CHECK(bh_collision_face_contact(&a,0,&identity,&b,0,0,&identity,&normal,&hit)==0 &&
+        !memcmp(&hit,&saved,sizeof(hit)),"endpoint-only overlap is a strict miss retaining output");
+    for(i=0;i<4;++i) bv[i].y-=3;
+    identity.m[1][3]=.5f;
+    CHECK(bh_collision_face_contact(&a,0,&identity,&b,0,0,&world,&normal,&hit)==1 &&
+        hit.raw_point.y==20,"a-to-b translation intersects in destination coordinates");
+    identity.m[1][3]=0;
+    for(i=0;i<4;++i) ae[i].vertex=3-i;
+    CHECK(bh_collision_face_contact(&a,0,&identity,&b,0,0,&world,&normal,&hit)==1 &&
+        hit.raw_point.y==20,"reversed source winding keeps interval contact");
+    for(i=0;i<4;++i) ae[i].vertex=i;
+    for(i=0;i<4;++i) av[i].x=0;
+    CHECK(bh_collision_face_contact(&a,0,&identity,&b,0,0,&world,&normal,&hit)==0,
+        "coplanar source polygon has no strict crossings");
+    av[0].x=av[3].x=-2; av[1].x=av[2].x=2;
+    saved=hit; ae[0].next=99;
+    CHECK(bh_collision_face_contact(&a,0,&identity,&b,0,0,&world,&normal,&hit)==-1 &&
+        !memcmp(&hit,&saved,sizeof(hit)),"invalid topology retains output");
+    ae[0].next=0;
+    CHECK(bh_collision_face_contact(&a,0,&identity,&b,0,0,&world,&normal,&hit)==-1,
+        "edge cycle rejects within owned edge count");
+    ae[0].next=1;
+    /* Independent interval oracle on perpendicular rectangles: exercises both
+       endpoint order branches, containment, partial overlap and disjointness. */
+    for(winding=0;winding<4;++winding) {
+        for(i=0;i<4;++i) {
+            ae[i].vertex=(winding&1) ? 3-i : i;
+            be[i].vertex=(winding&2) ? 3-i : i;
+        }
+        for(center=-4;center<=4;++center) for(width=1;width<=5;++width) {
+            bv[0].y=bv[3].y=center-width*.5f;
+            bv[1].y=bv[2].y=center+width*.5f;
+            lo=bv[0].y > -2 ? bv[0].y : -2;
+            hi=bv[1].y < 2 ? bv[1].y : 2;
+            expected=hi>lo;
+            saved=hit;
+            actual=bh_collision_face_contact(&a,0,&identity,&b,0,0,&world,&normal,&hit);
+            CHECK(actual==expected && (expected ?
+                hit.raw_point.x==10 && hit.raw_point.y==20+(lo+hi)*.5f && hit.raw_point.z==30 :
+                !memcmp(&hit,&saved,sizeof(hit))),"independent interval/winding oracle");
+        }
+    }
+    CHECK(bh_collision_face_contact(&a,-1,&identity,&b,0,0,&world,&normal,&hit)==-1,
+        "invalid face rejects");
+    CHECK(bh_collision_face_contact(&a,0,&identity,&b,0,1,&world,&normal,&hit)==-1,
+        "invalid plane rejects");
+}
 int bh_collision_model_checkpoint(unsigned long *count) {
     checks = 0;
     failures = 0;
     cases();
+    face_contacts();
     *count = checks;
     printf("{\"scenario\":\"collision-model\",\"checks\":%lu,\"failures\":%d,\"original_code_"
            "required\":false}\n",

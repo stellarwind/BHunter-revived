@@ -1,0 +1,161 @@
+{
+  "records": [
+    {
+      "address": "0044d480",
+      "role": "engine_candidate",
+      "boundary": "0044d480-0044d4f7",
+      "instructions": 35,
+      "body_sha256": "53c4ffe80f1e51a898de1f19b7a6fe43b49b9adc31a5b643c43aa50eefa5c47f",
+      "classification": "Ordinary physics/matrix behavior with reviewed calls and complete boundary; not verified library/CRT, compiler scaffolding, import or independent shared tail. Engine authorship unresolved.",
+      "admission": "complete functional source"
+    },
+    {
+      "address": "00401510",
+      "role": "engine_candidate",
+      "boundary": "00401510-0040160a",
+      "instructions": 90,
+      "body_sha256": "eb01fe5c63ec9a1d1de6a049ea5f7ceeafb0749eb975e184c794ecbab40042f6",
+      "classification": "Ordinary physics/matrix behavior with reviewed calls and complete boundary; not verified library/CRT, compiler scaffolding, import or independent shared tail. Engine authorship unresolved.",
+      "admission": "complete functional source"
+    },
+    {
+      "address": "004016e0",
+      "role": "engine_candidate",
+      "boundary": "004016e0-004017d6",
+      "instructions": 89,
+      "body_sha256": "ac766c3b7c7906f9ca0a60beb94b9bcfb01fbe3d546d002c807e5105637fff35",
+      "classification": "Ordinary physics/matrix behavior with reviewed calls and complete boundary; not verified library/CRT, compiler scaffolding, import or independent shared tail. Engine authorship unresolved.",
+      "admission": "complete functional source"
+    },
+    {
+      "address": "004124d0",
+      "role": "engine_candidate",
+      "boundary": "004124d0-0041341b",
+      "instructions": 1015,
+      "body_sha256": "a230b4b4d11bf78467b9562ebe7dab5dd8d2b6e904c670699d4a80c730e20cee",
+      "classification": "Ordinary physics/matrix behavior with reviewed calls and complete boundary; not verified library/CRT, compiler scaffolding, import or independent shared tail. Engine authorship unresolved.",
+      "admission": "wip numerical portions only; effects/transport/event owners incomplete"
+    }
+  ],
+  "constants": [
+    {
+      "address": "00489538",
+      "type": "d",
+      "value": 7.62939453125e-08,
+      "hex": "7b14ae47e17a743e"
+    },
+    {
+      "address": "00489540",
+      "type": "d",
+      "value": -0.00125,
+      "hex": "7b14ae47e17a54bf"
+    },
+    {
+      "address": "00489548",
+      "type": "d",
+      "value": 4.0,
+      "hex": "0000000000001040"
+    },
+    {
+      "address": "00489550",
+      "type": "f",
+      "value": -100.0,
+      "hex": "0000c8c2"
+    },
+    {
+      "address": "00489554",
+      "type": "f",
+      "value": -150.0,
+      "hex": "000016c3"
+    },
+    {
+      "address": "00489558",
+      "type": "d",
+      "value": 0.3,
+      "hex": "333333333333d33f"
+    },
+    {
+      "address": "00489560",
+      "type": "d",
+      "value": -0.3,
+      "hex": "333333333333d3bf"
+    },
+    {
+      "address": "00489568",
+      "type": "d",
+      "value": 0.01,
+      "hex": "7b14ae47e17a843f"
+    },
+    {
+      "address": "00489578",
+      "type": "d",
+      "value": 1048576.0,
+      "hex": "0000000000003041"
+    },
+    {
+      "address": "004895a8",
+      "type": "d",
+      "value": 0.98,
+      "hex": "5c8fc2f5285cef3f"
+    },
+    {
+      "address": "004895b0",
+      "type": "d",
+      "value": 0.995,
+      "hex": "d7a3703d0ad7ef3f"
+    },
+    {
+      "address": "004895b8",
+      "type": "d",
+      "value": -9.82,
+      "hex": "a4703d0ad7a323c0"
+    },
+    {
+      "address": "004893c8",
+      "type": "f",
+      "value": 50.0,
+      "hex": "00004842"
+    },
+    {
+      "address": "00489360",
+      "type": "d",
+      "value": 30.0,
+      "hex": "0000000000003e40"
+    },
+    {
+      "address": "004892a0",
+      "type": "d",
+      "value": 16384.0,
+      "hex": "000000000000d040"
+    },
+    {
+      "address": "00489340",
+      "type": "d",
+      "value": -0.5,
+      "hex": "000000000000e0bf"
+    }
+  ],
+  "dependencies": [
+    "Existing source candidate dispatch, broad phase, swept/static BSP contact and real geometry owners",
+    "New complete world-X/world-Y rotations include translation; CRT atan2/sqrt/rand reused",
+    "Explicit typed physics numerical state/event-2 packets; original opaque entity/registry ABI is not guessed"
+  ],
+  "recovered_numerical_contract": [
+    "Integrate velocity and angular velocity, clear accelerations, compute broad-phase margin",
+    "Compute tangent slide then dispatch actual selected candidate a second time in source checks",
+    "Retain three shared CRT random draws, contact speed/noise/normal acceleration, material flags 2/4/8 priority, mass split and exact event-2 packet layout",
+    "Final pose velocity reconstruction, 0.995 linear drag, 0.98 angular damping, +9.82 Y acceleration and Euler decomposition"
+  ],
+  "unfinished_004124d0": [
+    "Install bindings from full original actor/model registry and actual physics entity lifecycle",
+    "Special-surface effect callbacks 00407670/00407720/00407ad0 and particle creation 00407510",
+    "Real queued sound 0047bd40 and network packet/transport owners 004234d0/00476d50",
+    "Actual event-2 callbacks: player 0041d7c0 and other actor response/damage receivers remain unrecovered; packets are produced but not dispatched by this numerical slice",
+    "Full original owner orchestration, including prior-clear-pose rewind, effects/event mutation order and all network modes"
+  ],
+  "limits": [
+    "004124d0 stays WIP; helpers are extracted numerical source, not a whole-function replacement or game-admitted physics",
+    "Functional PC53 moderate finite fixtures; cancellation, singular Euler and huge-angle x87 transcendental behavior unvalidated",
+    "No original runtime code execution or byte-match claim; no automated gameplay"
+  ]
+}

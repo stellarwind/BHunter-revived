@@ -2386,7 +2386,7 @@
       "role": "engine_candidate",
       "provenance_confidence": "Complete boundary, ABI and dependencies inspected; ownership conservatively classified",
       "source": "src/bh_rotation.c",
-      "source_sha256": "46f7d31c837acbfd719c0427580b0477522b5b13d0e47d9b98e526bd629ae939",
+      "source_sha256": "9a288fba2368c54b0b1a743b907e468b8683d8f6ff101807423c78b44644dd12",
       "implementation": "func",
       "integration": "linked_harness",
       "target": "build/m0/bhunter-integration.exe",
@@ -2408,7 +2408,9 @@
         "META/m4/construction/review.json",
         "META/m4/construction/world-fixtures.json",
         "META/m4/construction/world-integration-real.json",
-        "META/m4/construction/world-validation.json"
+        "META/m4/construction/world-validation.json",
+        "META/m4/swept-collision/validation.json",
+        "META/m4/physics-response/validation.json"
       ]
     },
     {
@@ -2789,7 +2791,7 @@
       "role": "engine_candidate",
       "provenance_confidence": "Full collision-only loader boundary reviewed; called VFILE/allocation/derived math supplied by linked real source and reused CRT",
       "source": "src/bh_collision_model.c",
-      "source_sha256": "4f71f621305a9b67639499ecf86a74be1247dde5251b9e625ba1e5c4c04625a7",
+      "source_sha256": "45d4f2fd56e41af59ec73ce2c936f83af6cc6e470a15d8c1a1ad717cb5caa6bd",
       "implementation": "func",
       "integration": "linked_harness",
       "target": "build/m0/bhunter-integration.exe",
@@ -2808,7 +2810,9 @@
       "evidence": [
         "META/m4/collision-model/review.json",
         "META/m4/collision-model/integration-real.json",
-        "META/m4/collision-model/validation.json"
+        "META/m4/collision-model/validation.json",
+        "META/m4/face-contact/validation.json",
+        "META/m4/collision-traversal/validation.json"
       ]
     },
     {
@@ -3090,6 +3094,1315 @@
         "META/m4/script-timers/fixtures.json",
         "META/m4/script-timers/integration-real.json",
         "META/m4/script-timers/validation.json"
+      ]
+    },
+    {
+      "id": "0044cc20-functional-c",
+      "original_va": "0044cc20",
+      "function": "bh_collision_face_contact",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary geometry leaf called by 0044da20 and 0044d500; calls only existing point-transform/vector-cross math. No verified library attribution; not CRT, thunk, compiler support or shared tail.",
+      "source": "src/bh_collision_model.c",
+      "source_sha256": "45d4f2fd56e41af59ec73ce2c936f83af6cc6e470a15d8c1a1ad717cb5caa6bd",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Explicit borrowed source BSP/face/node/transform/normal context replaces original query globals; no guessed original object layout",
+        "fixtures": "191 new analytical face-contact checks including 180 independent interval/winding oracle cases; M3 captured-output contract regression scoped separately",
+        "source_build": "48 real TUs; real assets and clean asset-free source checkout pass; absent collision model rejects with LNK2001",
+        "raw_byte_match": false,
+        "limits": [
+          "Explicit source API, not original global ABI",
+          "Functional finite analytical geometry validation; no original execution/differential or byte-match claim",
+          "Boundary numerics outside analytical fixtures and original PC24 transitions remain unvalidated",
+          "Malformed topology/invalid inputs bounded rather than original unsafe access",
+          "Audited saved M3 actual contact. Captured fraction/normal checked on analytical source segment; captured normal used by restored face contact offset. No original detector input/geometry capture exists; exact scenario replay is not claimed."
+        ]
+      },
+      "evidence": [
+        "META/m4/face-contact/review.json",
+        "META/m4/face-contact/saved-contact.json",
+        "META/m4/face-contact/m3-audit.json",
+        "META/m4/face-contact/validation.json",
+        "META/m4/face-contact/integration-real.json",
+        "META/m4/face-contact/clean/clean-checkout.json",
+        "META/m4/collision-traversal/validation.json"
+      ]
+    },
+    {
+      "id": "0044c200-functional-c",
+      "original_va": "0044c200",
+      "function": "bh_collision_query_node",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary recursive geometry behavior; explicit math calls and leaf/child walks. Not CRT/library verified, compiler scaffolding, import thunk or independent shared tail. Engine authorship unresolved.",
+      "source": "src/bh_collision_query.c",
+      "source_sha256": "1973040655dfb2f871dd6212bf44db3c5cf14057627ee23e26b08c798f907c8e",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Explicit source geometry/rigid transform context and owned scratch replace original globals and runtime face copies",
+        "fixtures": "29 focused ordering, flags, bounds, suppression, malformed topology, reuse and rotated transform checks; all 454 real model queries execute twice and leave zero counters",
+        "source_build": "50 TUs; real and clean source build/test pass; missing collision query module rejects with LNK2001",
+        "raw_byte_match": false,
+        "limits": [
+          "Source-owned workspace and explicit rigid transforms; full swept motion/damage not yet recovered",
+          "Analytical finite geometry and real data checks; no original execution or raw byte match",
+          "Near-degenerate floating-point cancellation and PC24 transitions remain unvalidated; shared recovered finite face clip kernel used geometrically"
+        ]
+      },
+      "evidence": [
+        "META/m4/collision-traversal/review.json",
+        "META/m4/collision-traversal/validation.json",
+        "META/m4/collision-traversal/integration-real.json",
+        "META/m4/collision-traversal/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0044d2f0-functional-c",
+      "original_va": "0044d2f0",
+      "function": "bh_collision_query_run",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary recursive geometry behavior; explicit math calls and leaf/child walks. Not CRT/library verified, compiler scaffolding, import thunk or independent shared tail. Engine authorship unresolved.",
+      "source": "src/bh_collision_query.c",
+      "source_sha256": "1973040655dfb2f871dd6212bf44db3c5cf14057627ee23e26b08c798f907c8e",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Explicit source geometry/rigid transform context and owned scratch replace original globals and runtime face copies",
+        "fixtures": "29 focused ordering, flags, bounds, suppression, malformed topology, reuse and rotated transform checks; all 454 real model queries execute twice and leave zero counters",
+        "source_build": "50 TUs; real and clean source build/test pass; missing collision query module rejects with LNK2001",
+        "raw_byte_match": false,
+        "limits": [
+          "Source-owned workspace and explicit rigid transforms; full swept motion/damage not yet recovered",
+          "Analytical finite geometry and real data checks; no original execution or raw byte match",
+          "Near-degenerate floating-point cancellation and PC24 transitions remain unvalidated; shared recovered finite face clip kernel used geometrically"
+        ]
+      },
+      "evidence": [
+        "META/m4/collision-traversal/review.json",
+        "META/m4/collision-traversal/validation.json",
+        "META/m4/collision-traversal/integration-real.json",
+        "META/m4/collision-traversal/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00401610-functional-c",
+      "original_va": "00401610",
+      "function": "bh_mat34_rotate_x",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary local rotation math; original engine authorship unresolved",
+      "source": "src/bh_rotation.c",
+      "source_sha256": "9a288fba2368c54b0b1a743b907e468b8683d8f6ff101807423c78b44644dd12",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Explicit source query/transform/lifetime context; local fallback switch replaces original recursion toggle. No guessed globals/object layouts.",
+        "fixtures": "91 focused checks: rotation signs/composition, fixed three-step brackets, rotating geometry, cached face updates/reselection, fallback scaling, optional-model paths, failure rollback/reuse; repeated sweeps over 454 real models",
+        "source_build": "52 real TUs, real data and clean source builds pass. Missing swept/query/rotation dependencies reject with LNK2001.",
+        "raw_byte_match": false,
+        "limits": [
+          "Source query lifetime/context replaces original shared globals/lazy caches; no gameplay/entity dispatch or damage response admission",
+          "Rigid transforms and checked PC53; huge-angle x87 transcendental reduction and near-degenerate contact boundaries remain unvalidated",
+          "Invalid inputs/topology retain caller matrix/output and report failure rather than original unsafe memory behavior",
+          "This is the original endpoint/bisection/segment algorithm; it is not a continuous analytic time-of-impact solver",
+          "Actual recovered swept code returns captured fraction 0.875 and normal near (1,0,0) on explicit analytical geometry. Exact M3 detector inputs were not captured; no original scenario replay claimed."
+        ]
+      },
+      "evidence": [
+        "META/m4/swept-collision/review.json",
+        "META/m4/swept-collision/validation.json",
+        "META/m4/swept-collision/integration-real.json",
+        "META/m4/swept-collision/clean/clean-checkout.json",
+        "META/m4/physics-response/validation.json"
+      ]
+    },
+    {
+      "id": "004019a0-functional-c",
+      "original_va": "004019a0",
+      "function": "bh_mat34_rotate_z",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary local rotation math; original engine authorship unresolved",
+      "source": "src/bh_rotation.c",
+      "source_sha256": "9a288fba2368c54b0b1a743b907e468b8683d8f6ff101807423c78b44644dd12",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Explicit source query/transform/lifetime context; local fallback switch replaces original recursion toggle. No guessed globals/object layouts.",
+        "fixtures": "91 focused checks: rotation signs/composition, fixed three-step brackets, rotating geometry, cached face updates/reselection, fallback scaling, optional-model paths, failure rollback/reuse; repeated sweeps over 454 real models",
+        "source_build": "52 real TUs, real data and clean source builds pass. Missing swept/query/rotation dependencies reject with LNK2001.",
+        "raw_byte_match": false,
+        "limits": [
+          "Source query lifetime/context replaces original shared globals/lazy caches; no gameplay/entity dispatch or damage response admission",
+          "Rigid transforms and checked PC53; huge-angle x87 transcendental reduction and near-degenerate contact boundaries remain unvalidated",
+          "Invalid inputs/topology retain caller matrix/output and report failure rather than original unsafe memory behavior",
+          "This is the original endpoint/bisection/segment algorithm; it is not a continuous analytic time-of-impact solver",
+          "Actual recovered swept code returns captured fraction 0.875 and normal near (1,0,0) on explicit analytical geometry. Exact M3 detector inputs were not captured; no original scenario replay claimed."
+        ]
+      },
+      "evidence": [
+        "META/m4/swept-collision/review.json",
+        "META/m4/swept-collision/validation.json",
+        "META/m4/swept-collision/integration-real.json",
+        "META/m4/swept-collision/clean/clean-checkout.json",
+        "META/m4/physics-response/validation.json"
+      ]
+    },
+    {
+      "id": "0044da20-functional-c",
+      "original_va": "0044da20",
+      "function": "bh_sweep_run",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary swept contact owner with real collision, face clip, segment fallback and math dependencies; not CRT/compiler scaffolding/library verified/shared tail; original engine authorship unresolved",
+      "source": "src/bh_sweep.c",
+      "source_sha256": "829392439f2e0886f45079d69f1e884730cfc1b9faaade22ab8872324fff751a",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Explicit source query/transform/lifetime context; local fallback switch replaces original recursion toggle. No guessed globals/object layouts.",
+        "fixtures": "91 focused checks: rotation signs/composition, fixed three-step brackets, rotating geometry, cached face updates/reselection, fallback scaling, optional-model paths, failure rollback/reuse; repeated sweeps over 454 real models",
+        "source_build": "52 real TUs, real data and clean source builds pass. Missing swept/query/rotation dependencies reject with LNK2001.",
+        "raw_byte_match": false,
+        "limits": [
+          "Source query lifetime/context replaces original shared globals/lazy caches; no gameplay/entity dispatch or damage response admission",
+          "Rigid transforms and checked PC53; huge-angle x87 transcendental reduction and near-degenerate contact boundaries remain unvalidated",
+          "Invalid inputs/topology retain caller matrix/output and report failure rather than original unsafe memory behavior",
+          "This is the original endpoint/bisection/segment algorithm; it is not a continuous analytic time-of-impact solver",
+          "Actual recovered swept code returns captured fraction 0.875 and normal near (1,0,0) on explicit analytical geometry. Exact M3 detector inputs were not captured; no original scenario replay claimed."
+        ]
+      },
+      "evidence": [
+        "META/m4/swept-collision/review.json",
+        "META/m4/swept-collision/validation.json",
+        "META/m4/swept-collision/integration-real.json",
+        "META/m4/swept-collision/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0040b410-functional-c",
+      "original_va": "0040b410",
+      "function": "bh_entity_collision_dispatch",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary scene/entity candidate dispatch; calls only recovered sweeps, rotations and rigid inverse. Not CRT, compiler support, import thunk or independent shared tail; engine authorship unresolved.",
+      "source": "src/bh_entity_collision.c",
+      "source_sha256": "e9a381944a9f9ba6c47a139df7ce2036ee69f69b9579961b76dc75962631010e",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Explicit source world/actor candidate and physics contexts; checked event-2 packet size/offsets; no guessed opaque BHEntity fields or original registry/globals",
+        "fixtures": "28 focused checks, including real source geometry/sweep/entity-pool dependencies and numerical controls",
+        "source_build": "54 real TUs; real-data and clean source checks pass; missing definitions reject with LNK2001",
+        "raw_byte_match": false,
+        "complete_original_function": true,
+        "limits": [
+          "Typed explicit source bindings replace original mixed pointer array and registry/actor ABI; this does not recover full actor constructors or script installation",
+          "Finite PC53 rigid transform scope inherited from swept implementation; no byte-match or original runtime replay claim",
+          "Invalid/foreign source inputs report failure with caller pose/vectors/output/order retained rather than original unsafe access"
+        ]
+      },
+      "evidence": [
+        "META/m4/entity-collision/review.json",
+        "META/m4/entity-collision/validation.json",
+        "META/m4/entity-collision/integration-real.json",
+        "META/m4/entity-collision/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0044d480-functional-c",
+      "original_va": "0044d480",
+      "function": "bh_physics_overlap",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary physics/matrix behavior with reviewed calls and complete boundary; not verified library/CRT, compiler scaffolding, import or independent shared tail. Engine authorship unresolved.",
+      "source": "src/bh_physics_response.c",
+      "source_sha256": "273ba0f8cae1356e757558e88649d6a73f4f8d9fdde8b62027eb535e5556e382",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Explicit source world/actor candidate and physics contexts; checked event-2 packet size/offsets; no guessed opaque BHEntity fields or original registry/globals",
+        "fixtures": "114 focused checks, including real source geometry/sweep/entity-pool dependencies and numerical controls",
+        "source_build": "56 real TUs; real-data and clean source checks pass; missing definitions reject with LNK2001",
+        "raw_byte_match": false,
+        "complete_original_function": true,
+        "limits": [
+          "004124d0 stays WIP; helpers are extracted numerical source, not a whole-function replacement or game-admitted physics",
+          "Functional PC53 moderate finite fixtures; cancellation, singular Euler and huge-angle x87 transcendental behavior unvalidated",
+          "No original runtime code execution or byte-match claim; no automated gameplay"
+        ]
+      },
+      "evidence": [
+        "META/m4/physics-response/review.json",
+        "META/m4/physics-response/validation.json",
+        "META/m4/physics-response/integration-real.json",
+        "META/m4/physics-response/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00401510-functional-c",
+      "original_va": "00401510",
+      "function": "bh_mat34_rotate_world_x",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary physics/matrix behavior with reviewed calls and complete boundary; not verified library/CRT, compiler scaffolding, import or independent shared tail. Engine authorship unresolved.",
+      "source": "src/bh_rotation.c",
+      "source_sha256": "9a288fba2368c54b0b1a743b907e468b8683d8f6ff101807423c78b44644dd12",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Explicit source world/actor candidate and physics contexts; checked event-2 packet size/offsets; no guessed opaque BHEntity fields or original registry/globals",
+        "fixtures": "114 focused checks, including real source geometry/sweep/entity-pool dependencies and numerical controls",
+        "source_build": "56 real TUs; real-data and clean source checks pass; missing definitions reject with LNK2001",
+        "raw_byte_match": false,
+        "complete_original_function": true,
+        "limits": [
+          "004124d0 stays WIP; helpers are extracted numerical source, not a whole-function replacement or game-admitted physics",
+          "Functional PC53 moderate finite fixtures; cancellation, singular Euler and huge-angle x87 transcendental behavior unvalidated",
+          "No original runtime code execution or byte-match claim; no automated gameplay"
+        ]
+      },
+      "evidence": [
+        "META/m4/physics-response/review.json",
+        "META/m4/physics-response/validation.json",
+        "META/m4/physics-response/integration-real.json",
+        "META/m4/physics-response/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004016e0-functional-c",
+      "original_va": "004016e0",
+      "function": "bh_mat34_rotate_world_y",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary physics/matrix behavior with reviewed calls and complete boundary; not verified library/CRT, compiler scaffolding, import or independent shared tail. Engine authorship unresolved.",
+      "source": "src/bh_rotation.c",
+      "source_sha256": "9a288fba2368c54b0b1a743b907e468b8683d8f6ff101807423c78b44644dd12",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Explicit source world/actor candidate and physics contexts; checked event-2 packet size/offsets; no guessed opaque BHEntity fields or original registry/globals",
+        "fixtures": "114 focused checks, including real source geometry/sweep/entity-pool dependencies and numerical controls",
+        "source_build": "56 real TUs; real-data and clean source checks pass; missing definitions reject with LNK2001",
+        "raw_byte_match": false,
+        "complete_original_function": true,
+        "limits": [
+          "004124d0 stays WIP; helpers are extracted numerical source, not a whole-function replacement or game-admitted physics",
+          "Functional PC53 moderate finite fixtures; cancellation, singular Euler and huge-angle x87 transcendental behavior unvalidated",
+          "No original runtime code execution or byte-match claim; no automated gameplay"
+        ]
+      },
+      "evidence": [
+        "META/m4/physics-response/review.json",
+        "META/m4/physics-response/validation.json",
+        "META/m4/physics-response/integration-real.json",
+        "META/m4/physics-response/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004124d0-numerical-slice-c",
+      "original_va": "004124d0",
+      "function": "partial_physics_numerics",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary physics/matrix behavior with reviewed calls and complete boundary; not verified library/CRT, compiler scaffolding, import or independent shared tail. Engine authorship unresolved.",
+      "source": "src/bh_physics_response.c",
+      "source_sha256": "273ba0f8cae1356e757558e88649d6a73f4f8d9fdde8b62027eb535e5556e382",
+      "implementation": "wip",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Explicit source world/actor candidate and physics contexts; checked event-2 packet size/offsets; no guessed opaque BHEntity fields or original registry/globals",
+        "fixtures": "114 focused checks, including real source geometry/sweep/entity-pool dependencies and numerical controls",
+        "source_build": "56 real TUs; real-data and clean source checks pass; missing definitions reject with LNK2001",
+        "raw_byte_match": false,
+        "complete_original_function": false,
+        "limits": [
+          "004124d0 stays WIP; helpers are extracted numerical source, not a whole-function replacement or game-admitted physics",
+          "Functional PC53 moderate finite fixtures; cancellation, singular Euler and huge-angle x87 transcendental behavior unvalidated",
+          "No original runtime code execution or byte-match claim; no automated gameplay"
+        ],
+        "remaining_dependencies": [
+          "Full actor/model registry bindings and physics entity lifecycle",
+          "Wire restored particle/impact callbacks and source draw commands into full original physics side-effect order; original draw primitive consumers/platform renderer remain unrecovered",
+          "Wire restored queued sound/listener, position codec and native packet-send owners into full physics side-effect order; deferred playback 0047c200, mode-specific packets, original session/player lifecycle and delivery validation remain",
+          "Wire recovered debris event-2 receiver 0043c8f0 into full physics owner; player 0041d7c0 and other actor response/damage receivers remain unrecovered",
+          "Full owner orchestration, prior-clear-pose rewind and effects/event mutation order across modes"
+        ]
+      },
+      "evidence": [
+        "META/m4/physics-response/review.json",
+        "META/m4/physics-response/validation.json",
+        "META/m4/physics-response/integration-real.json",
+        "META/m4/physics-response/clean/clean-checkout.json",
+        "META/m4/contact-effects/validation.json",
+        "META/m4/sound-queue/validation.json",
+        "META/m4/debris-response/validation.json",
+        "META/m4/network-codec/validation.json",
+        "META/m4/network-send/validation.json",
+        "META/m4/sound-listener/validation.json"
+      ]
+    },
+    {
+      "id": "004073b0-functional-c",
+      "original_va": "004073b0",
+      "function": "spark_refresh",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary effect entity lifetime/spawn/refresh or draw-command producer. Explicit field/list/array operations, not verified CRT/library, compiler support, import thunk or independent shared tail; authorship unresolved.",
+      "source": "src/bh_contact_effects.c",
+      "source_sha256": "78a1a77bea2540718d766aa138f63ff3cd63124ad1a2c8d7fe7c39cef5f6bc90",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Checked 84-byte queued records/next+50, verified spark/impact payload fields, source callbacks using real BHEntityPool. Explicit contexts/resources and semantic draw selectors replace original globals/callback pointer data; no fabricated renderer implementations.",
+        "fixtures": "57 queue and 30 effect checks; actual pool callback dispatch/allocation/recycle/release; all bucket ordering, raw float payloads, capacity behavior, native CRT sequence and PC53 controls",
+        "source_build": "60 real TUs; real-data and asset-free clean checkout build/link/run, absent effect/queue modules fail with LNK2001",
+        "raw_byte_match": false,
+        "limits": [
+          "Draw-command semantic selectors replace original executable draw callback pointers. This is source command production; Direct3D primitive consumers 00477640/00477710/004777c0 are not implemented or counted",
+          "Explicit texture identifiers are borrowed values, not fabricated original texture objects; actual texture/platform construction remains open",
+          "Finite PC53 moderate inputs; original x87 transcendental reduction and PC24 transitions unvalidated; malformed lifetimes/foreign entity contexts reject safely",
+          "No source-game renderer admission, no original code executed, no automated gameplay"
+        ]
+      },
+      "evidence": [
+        "META/m4/contact-effects/review.json",
+        "META/m4/contact-effects/validation.json",
+        "META/m4/contact-effects/integration-real.json",
+        "META/m4/contact-effects/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004073f0-functional-c",
+      "original_va": "004073f0",
+      "function": "spark_tick",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary effect entity lifetime/spawn/refresh or draw-command producer. Explicit field/list/array operations, not verified CRT/library, compiler support, import thunk or independent shared tail; authorship unresolved.",
+      "source": "src/bh_contact_effects.c",
+      "source_sha256": "78a1a77bea2540718d766aa138f63ff3cd63124ad1a2c8d7fe7c39cef5f6bc90",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Checked 84-byte queued records/next+50, verified spark/impact payload fields, source callbacks using real BHEntityPool. Explicit contexts/resources and semantic draw selectors replace original globals/callback pointer data; no fabricated renderer implementations.",
+        "fixtures": "57 queue and 30 effect checks; actual pool callback dispatch/allocation/recycle/release; all bucket ordering, raw float payloads, capacity behavior, native CRT sequence and PC53 controls",
+        "source_build": "60 real TUs; real-data and asset-free clean checkout build/link/run, absent effect/queue modules fail with LNK2001",
+        "raw_byte_match": false,
+        "limits": [
+          "Draw-command semantic selectors replace original executable draw callback pointers. This is source command production; Direct3D primitive consumers 00477640/00477710/004777c0 are not implemented or counted",
+          "Explicit texture identifiers are borrowed values, not fabricated original texture objects; actual texture/platform construction remains open",
+          "Finite PC53 moderate inputs; original x87 transcendental reduction and PC24 transitions unvalidated; malformed lifetimes/foreign entity contexts reject safely",
+          "No source-game renderer admission, no original code executed, no automated gameplay"
+        ]
+      },
+      "evidence": [
+        "META/m4/contact-effects/review.json",
+        "META/m4/contact-effects/validation.json",
+        "META/m4/contact-effects/integration-real.json",
+        "META/m4/contact-effects/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00407510-functional-c",
+      "original_va": "00407510",
+      "function": "bh_contact_spark_create",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary effect entity lifetime/spawn/refresh or draw-command producer. Explicit field/list/array operations, not verified CRT/library, compiler support, import thunk or independent shared tail; authorship unresolved.",
+      "source": "src/bh_contact_effects.c",
+      "source_sha256": "78a1a77bea2540718d766aa138f63ff3cd63124ad1a2c8d7fe7c39cef5f6bc90",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Checked 84-byte queued records/next+50, verified spark/impact payload fields, source callbacks using real BHEntityPool. Explicit contexts/resources and semantic draw selectors replace original globals/callback pointer data; no fabricated renderer implementations.",
+        "fixtures": "57 queue and 30 effect checks; actual pool callback dispatch/allocation/recycle/release; all bucket ordering, raw float payloads, capacity behavior, native CRT sequence and PC53 controls",
+        "source_build": "60 real TUs; real-data and asset-free clean checkout build/link/run, absent effect/queue modules fail with LNK2001",
+        "raw_byte_match": false,
+        "limits": [
+          "Draw-command semantic selectors replace original executable draw callback pointers. This is source command production; Direct3D primitive consumers 00477640/00477710/004777c0 are not implemented or counted",
+          "Explicit texture identifiers are borrowed values, not fabricated original texture objects; actual texture/platform construction remains open",
+          "Finite PC53 moderate inputs; original x87 transcendental reduction and PC24 transitions unvalidated; malformed lifetimes/foreign entity contexts reject safely",
+          "No source-game renderer admission, no original code executed, no automated gameplay"
+        ]
+      },
+      "evidence": [
+        "META/m4/contact-effects/review.json",
+        "META/m4/contact-effects/validation.json",
+        "META/m4/contact-effects/integration-real.json",
+        "META/m4/contact-effects/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00407670-functional-c",
+      "original_va": "00407670",
+      "function": "quad_refresh",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary effect entity lifetime/spawn/refresh or draw-command producer. Explicit field/list/array operations, not verified CRT/library, compiler support, import thunk or independent shared tail; authorship unresolved.",
+      "source": "src/bh_contact_effects.c",
+      "source_sha256": "78a1a77bea2540718d766aa138f63ff3cd63124ad1a2c8d7fe7c39cef5f6bc90",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Checked 84-byte queued records/next+50, verified spark/impact payload fields, source callbacks using real BHEntityPool. Explicit contexts/resources and semantic draw selectors replace original globals/callback pointer data; no fabricated renderer implementations.",
+        "fixtures": "57 queue and 30 effect checks; actual pool callback dispatch/allocation/recycle/release; all bucket ordering, raw float payloads, capacity behavior, native CRT sequence and PC53 controls",
+        "source_build": "60 real TUs; real-data and asset-free clean checkout build/link/run, absent effect/queue modules fail with LNK2001",
+        "raw_byte_match": false,
+        "limits": [
+          "Draw-command semantic selectors replace original executable draw callback pointers. This is source command production; Direct3D primitive consumers 00477640/00477710/004777c0 are not implemented or counted",
+          "Explicit texture identifiers are borrowed values, not fabricated original texture objects; actual texture/platform construction remains open",
+          "Finite PC53 moderate inputs; original x87 transcendental reduction and PC24 transitions unvalidated; malformed lifetimes/foreign entity contexts reject safely",
+          "No source-game renderer admission, no original code executed, no automated gameplay"
+        ]
+      },
+      "evidence": [
+        "META/m4/contact-effects/review.json",
+        "META/m4/contact-effects/validation.json",
+        "META/m4/contact-effects/integration-real.json",
+        "META/m4/contact-effects/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00407720-functional-c",
+      "original_va": "00407720",
+      "function": "rays_refresh",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary effect entity lifetime/spawn/refresh or draw-command producer. Explicit field/list/array operations, not verified CRT/library, compiler support, import thunk or independent shared tail; authorship unresolved.",
+      "source": "src/bh_contact_effects.c",
+      "source_sha256": "78a1a77bea2540718d766aa138f63ff3cd63124ad1a2c8d7fe7c39cef5f6bc90",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Checked 84-byte queued records/next+50, verified spark/impact payload fields, source callbacks using real BHEntityPool. Explicit contexts/resources and semantic draw selectors replace original globals/callback pointer data; no fabricated renderer implementations.",
+        "fixtures": "57 queue and 30 effect checks; actual pool callback dispatch/allocation/recycle/release; all bucket ordering, raw float payloads, capacity behavior, native CRT sequence and PC53 controls",
+        "source_build": "60 real TUs; real-data and asset-free clean checkout build/link/run, absent effect/queue modules fail with LNK2001",
+        "raw_byte_match": false,
+        "limits": [
+          "Draw-command semantic selectors replace original executable draw callback pointers. This is source command production; Direct3D primitive consumers 00477640/00477710/004777c0 are not implemented or counted",
+          "Explicit texture identifiers are borrowed values, not fabricated original texture objects; actual texture/platform construction remains open",
+          "Finite PC53 moderate inputs; original x87 transcendental reduction and PC24 transitions unvalidated; malformed lifetimes/foreign entity contexts reject safely",
+          "No source-game renderer admission, no original code executed, no automated gameplay"
+        ]
+      },
+      "evidence": [
+        "META/m4/contact-effects/review.json",
+        "META/m4/contact-effects/validation.json",
+        "META/m4/contact-effects/integration-real.json",
+        "META/m4/contact-effects/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00407ad0-functional-c",
+      "original_va": "00407ad0",
+      "function": "impact_tick",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary effect entity lifetime/spawn/refresh or draw-command producer. Explicit field/list/array operations, not verified CRT/library, compiler support, import thunk or independent shared tail; authorship unresolved.",
+      "source": "src/bh_contact_effects.c",
+      "source_sha256": "78a1a77bea2540718d766aa138f63ff3cd63124ad1a2c8d7fe7c39cef5f6bc90",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Checked 84-byte queued records/next+50, verified spark/impact payload fields, source callbacks using real BHEntityPool. Explicit contexts/resources and semantic draw selectors replace original globals/callback pointer data; no fabricated renderer implementations.",
+        "fixtures": "57 queue and 30 effect checks; actual pool callback dispatch/allocation/recycle/release; all bucket ordering, raw float payloads, capacity behavior, native CRT sequence and PC53 controls",
+        "source_build": "60 real TUs; real-data and asset-free clean checkout build/link/run, absent effect/queue modules fail with LNK2001",
+        "raw_byte_match": false,
+        "limits": [
+          "Draw-command semantic selectors replace original executable draw callback pointers. This is source command production; Direct3D primitive consumers 00477640/00477710/004777c0 are not implemented or counted",
+          "Explicit texture identifiers are borrowed values, not fabricated original texture objects; actual texture/platform construction remains open",
+          "Finite PC53 moderate inputs; original x87 transcendental reduction and PC24 transitions unvalidated; malformed lifetimes/foreign entity contexts reject safely",
+          "No source-game renderer admission, no original code executed, no automated gameplay"
+        ]
+      },
+      "evidence": [
+        "META/m4/contact-effects/review.json",
+        "META/m4/contact-effects/validation.json",
+        "META/m4/contact-effects/integration-real.json",
+        "META/m4/contact-effects/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00477390-functional-c",
+      "original_va": "00477390",
+      "function": "bh_draw_queue_begin",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary effect entity lifetime/spawn/refresh or draw-command producer. Explicit field/list/array operations, not verified CRT/library, compiler support, import thunk or independent shared tail; authorship unresolved.",
+      "source": "src/bh_draw_queue.c",
+      "source_sha256": "0c697d2144ebb7453a37f65aa8f208d69512c3e4926e369cc7c37daee706707d",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Checked 84-byte queued records/next+50, verified spark/impact payload fields, source callbacks using real BHEntityPool. Explicit contexts/resources and semantic draw selectors replace original globals/callback pointer data; no fabricated renderer implementations.",
+        "fixtures": "57 queue and 30 effect checks; actual pool callback dispatch/allocation/recycle/release; all bucket ordering, raw float payloads, capacity behavior, native CRT sequence and PC53 controls",
+        "source_build": "60 real TUs; real-data and asset-free clean checkout build/link/run, absent effect/queue modules fail with LNK2001",
+        "raw_byte_match": false,
+        "limits": [
+          "Draw-command semantic selectors replace original executable draw callback pointers. This is source command production; Direct3D primitive consumers 00477640/00477710/004777c0 are not implemented or counted",
+          "Explicit texture identifiers are borrowed values, not fabricated original texture objects; actual texture/platform construction remains open",
+          "Finite PC53 moderate inputs; original x87 transcendental reduction and PC24 transitions unvalidated; malformed lifetimes/foreign entity contexts reject safely",
+          "No source-game renderer admission, no original code executed, no automated gameplay"
+        ]
+      },
+      "evidence": [
+        "META/m4/contact-effects/review.json",
+        "META/m4/contact-effects/validation.json",
+        "META/m4/contact-effects/integration-real.json",
+        "META/m4/contact-effects/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00478280-functional-c",
+      "original_va": "00478280",
+      "function": "bh_draw_billboard",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary effect entity lifetime/spawn/refresh or draw-command producer. Explicit field/list/array operations, not verified CRT/library, compiler support, import thunk or independent shared tail; authorship unresolved.",
+      "source": "src/bh_draw_queue.c",
+      "source_sha256": "0c697d2144ebb7453a37f65aa8f208d69512c3e4926e369cc7c37daee706707d",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Checked 84-byte queued records/next+50, verified spark/impact payload fields, source callbacks using real BHEntityPool. Explicit contexts/resources and semantic draw selectors replace original globals/callback pointer data; no fabricated renderer implementations.",
+        "fixtures": "57 queue and 30 effect checks; actual pool callback dispatch/allocation/recycle/release; all bucket ordering, raw float payloads, capacity behavior, native CRT sequence and PC53 controls",
+        "source_build": "60 real TUs; real-data and asset-free clean checkout build/link/run, absent effect/queue modules fail with LNK2001",
+        "raw_byte_match": false,
+        "limits": [
+          "Draw-command semantic selectors replace original executable draw callback pointers. This is source command production; Direct3D primitive consumers 00477640/00477710/004777c0 are not implemented or counted",
+          "Explicit texture identifiers are borrowed values, not fabricated original texture objects; actual texture/platform construction remains open",
+          "Finite PC53 moderate inputs; original x87 transcendental reduction and PC24 transitions unvalidated; malformed lifetimes/foreign entity contexts reject safely",
+          "No source-game renderer admission, no original code executed, no automated gameplay"
+        ]
+      },
+      "evidence": [
+        "META/m4/contact-effects/review.json",
+        "META/m4/contact-effects/validation.json",
+        "META/m4/contact-effects/integration-real.json",
+        "META/m4/contact-effects/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00478390-functional-c",
+      "original_va": "00478390",
+      "function": "bh_draw_segment",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary effect entity lifetime/spawn/refresh or draw-command producer. Explicit field/list/array operations, not verified CRT/library, compiler support, import thunk or independent shared tail; authorship unresolved.",
+      "source": "src/bh_draw_queue.c",
+      "source_sha256": "0c697d2144ebb7453a37f65aa8f208d69512c3e4926e369cc7c37daee706707d",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Checked 84-byte queued records/next+50, verified spark/impact payload fields, source callbacks using real BHEntityPool. Explicit contexts/resources and semantic draw selectors replace original globals/callback pointer data; no fabricated renderer implementations.",
+        "fixtures": "57 queue and 30 effect checks; actual pool callback dispatch/allocation/recycle/release; all bucket ordering, raw float payloads, capacity behavior, native CRT sequence and PC53 controls",
+        "source_build": "60 real TUs; real-data and asset-free clean checkout build/link/run, absent effect/queue modules fail with LNK2001",
+        "raw_byte_match": false,
+        "limits": [
+          "Draw-command semantic selectors replace original executable draw callback pointers. This is source command production; Direct3D primitive consumers 00477640/00477710/004777c0 are not implemented or counted",
+          "Explicit texture identifiers are borrowed values, not fabricated original texture objects; actual texture/platform construction remains open",
+          "Finite PC53 moderate inputs; original x87 transcendental reduction and PC24 transitions unvalidated; malformed lifetimes/foreign entity contexts reject safely",
+          "No source-game renderer admission, no original code executed, no automated gameplay"
+        ]
+      },
+      "evidence": [
+        "META/m4/contact-effects/review.json",
+        "META/m4/contact-effects/validation.json",
+        "META/m4/contact-effects/integration-real.json",
+        "META/m4/contact-effects/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004785f0-functional-c",
+      "original_va": "004785f0",
+      "function": "bh_draw_oriented",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary effect entity lifetime/spawn/refresh or draw-command producer. Explicit field/list/array operations, not verified CRT/library, compiler support, import thunk or independent shared tail; authorship unresolved.",
+      "source": "src/bh_draw_queue.c",
+      "source_sha256": "0c697d2144ebb7453a37f65aa8f208d69512c3e4926e369cc7c37daee706707d",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Checked 84-byte queued records/next+50, verified spark/impact payload fields, source callbacks using real BHEntityPool. Explicit contexts/resources and semantic draw selectors replace original globals/callback pointer data; no fabricated renderer implementations.",
+        "fixtures": "57 queue and 30 effect checks; actual pool callback dispatch/allocation/recycle/release; all bucket ordering, raw float payloads, capacity behavior, native CRT sequence and PC53 controls",
+        "source_build": "60 real TUs; real-data and asset-free clean checkout build/link/run, absent effect/queue modules fail with LNK2001",
+        "raw_byte_match": false,
+        "limits": [
+          "Draw-command semantic selectors replace original executable draw callback pointers. This is source command production; Direct3D primitive consumers 00477640/00477710/004777c0 are not implemented or counted",
+          "Explicit texture identifiers are borrowed values, not fabricated original texture objects; actual texture/platform construction remains open",
+          "Finite PC53 moderate inputs; original x87 transcendental reduction and PC24 transitions unvalidated; malformed lifetimes/foreign entity contexts reject safely",
+          "No source-game renderer admission, no original code executed, no automated gameplay"
+        ]
+      },
+      "evidence": [
+        "META/m4/contact-effects/review.json",
+        "META/m4/contact-effects/validation.json",
+        "META/m4/contact-effects/integration-real.json",
+        "META/m4/contact-effects/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0047b330-functional-c",
+      "original_va": "0047b330",
+      "function": "bh_sound_resource_allocate",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary sound resource/voice ownership, spatial priority, request/control or teardown behavior. CRT allocation/log conversion and native DirectSound COM interfaces are dependencies, not recovered assignments; no compiler scaffolding/import/shared-tail target.",
+      "source": "src/bh_sound_queue.c",
+      "source_sha256": "9c6a9eddf5cb3332539153e7aa7418326c0ec9598a5a565f53d529ce706f61a5",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Checked 0x48 voice / 0xac resource records with original offsets; explicit source context and integer resource/packed-generation handles. Uses actual pinned SDK DirectSound interfaces, no fake vtables/backends.",
+        "fixtures": "112 source checks include real native device, PCM upload, duplication/cursor priority, native duplication failure, zero/floor volume, signed-handle edge, ownership/growth/recycle, buffered/stream stop and cleanup",
+        "source_build": "62 real TUs; native APIs and real-data/asset-free clean builds pass; source sound definitions missing fail LNK2001. DSOUND/USER32 import libraries from pinned SDK are explicitly linked.",
+        "raw_byte_match": false,
+        "playback_exercised": false,
+        "limits": [
+          "Functional PC53 moderate finite inputs; CRT log is a functional counterpart to x87 logarithms, no byte-match/NaN payload equivalence claim",
+          "Invalid indices, failing COM calls, bad PCM/options or allocation failure reject safely rather than original unchecked accesses",
+          "Adapter creates PCM buffers using original control flags; full original parser, listener transform and deferred playback/update owner remain unrecovered",
+          "Native tests never call Play or write primary/system volume; original game code is never executed",
+          "Fresh bytes otherwise unspecified by original malloc are zero initialized; recycled record payload is preserved. Zero-level dB floor does not claim original x87 exception-status equivalence."
+        ]
+      },
+      "evidence": [
+        "META/m4/sound-queue/review.json",
+        "META/m4/sound-queue/validation.json",
+        "META/m4/sound-queue/integration-real.json",
+        "META/m4/sound-queue/clean/clean-checkout.json",
+        "META/m4/sound-listener/validation.json"
+      ]
+    },
+    {
+      "id": "0047b410-functional-c",
+      "original_va": "0047b410",
+      "function": "bh_sound_voice_allocate",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary sound resource/voice ownership, spatial priority, request/control or teardown behavior. CRT allocation/log conversion and native DirectSound COM interfaces are dependencies, not recovered assignments; no compiler scaffolding/import/shared-tail target.",
+      "source": "src/bh_sound_queue.c",
+      "source_sha256": "9c6a9eddf5cb3332539153e7aa7418326c0ec9598a5a565f53d529ce706f61a5",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Checked 0x48 voice / 0xac resource records with original offsets; explicit source context and integer resource/packed-generation handles. Uses actual pinned SDK DirectSound interfaces, no fake vtables/backends.",
+        "fixtures": "112 source checks include real native device, PCM upload, duplication/cursor priority, native duplication failure, zero/floor volume, signed-handle edge, ownership/growth/recycle, buffered/stream stop and cleanup",
+        "source_build": "62 real TUs; native APIs and real-data/asset-free clean builds pass; source sound definitions missing fail LNK2001. DSOUND/USER32 import libraries from pinned SDK are explicitly linked.",
+        "raw_byte_match": false,
+        "playback_exercised": false,
+        "limits": [
+          "Functional PC53 moderate finite inputs; CRT log is a functional counterpart to x87 logarithms, no byte-match/NaN payload equivalence claim",
+          "Invalid indices, failing COM calls, bad PCM/options or allocation failure reject safely rather than original unchecked accesses",
+          "Adapter creates PCM buffers using original control flags; full original parser, listener transform and deferred playback/update owner remain unrecovered",
+          "Native tests never call Play or write primary/system volume; original game code is never executed",
+          "Fresh bytes otherwise unspecified by original malloc are zero initialized; recycled record payload is preserved. Zero-level dB floor does not claim original x87 exception-status equivalence."
+        ]
+      },
+      "evidence": [
+        "META/m4/sound-queue/review.json",
+        "META/m4/sound-queue/validation.json",
+        "META/m4/sound-queue/integration-real.json",
+        "META/m4/sound-queue/clean/clean-checkout.json",
+        "META/m4/sound-listener/validation.json"
+      ]
+    },
+    {
+      "id": "0047b5f0-functional-c",
+      "original_va": "0047b5f0",
+      "function": "bh_sound_queue_dispose",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary sound resource/voice ownership, spatial priority, request/control or teardown behavior. CRT allocation/log conversion and native DirectSound COM interfaces are dependencies, not recovered assignments; no compiler scaffolding/import/shared-tail target.",
+      "source": "src/bh_sound_queue.c",
+      "source_sha256": "9c6a9eddf5cb3332539153e7aa7418326c0ec9598a5a565f53d529ce706f61a5",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Checked 0x48 voice / 0xac resource records with original offsets; explicit source context and integer resource/packed-generation handles. Uses actual pinned SDK DirectSound interfaces, no fake vtables/backends.",
+        "fixtures": "112 source checks include real native device, PCM upload, duplication/cursor priority, native duplication failure, zero/floor volume, signed-handle edge, ownership/growth/recycle, buffered/stream stop and cleanup",
+        "source_build": "62 real TUs; native APIs and real-data/asset-free clean builds pass; source sound definitions missing fail LNK2001. DSOUND/USER32 import libraries from pinned SDK are explicitly linked.",
+        "raw_byte_match": false,
+        "playback_exercised": false,
+        "limits": [
+          "Functional PC53 moderate finite inputs; CRT log is a functional counterpart to x87 logarithms, no byte-match/NaN payload equivalence claim",
+          "Invalid indices, failing COM calls, bad PCM/options or allocation failure reject safely rather than original unchecked accesses",
+          "Adapter creates PCM buffers using original control flags; full original parser, listener transform and deferred playback/update owner remain unrecovered",
+          "Native tests never call Play or write primary/system volume; original game code is never executed",
+          "Fresh bytes otherwise unspecified by original malloc are zero initialized; recycled record payload is preserved. Zero-level dB floor does not claim original x87 exception-status equivalence."
+        ]
+      },
+      "evidence": [
+        "META/m4/sound-queue/review.json",
+        "META/m4/sound-queue/validation.json",
+        "META/m4/sound-queue/integration-real.json",
+        "META/m4/sound-queue/clean/clean-checkout.json",
+        "META/m4/sound-listener/validation.json"
+      ]
+    },
+    {
+      "id": "0047bc60-functional-c",
+      "original_va": "0047bc60",
+      "function": "bh_sound_priority",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary sound resource/voice ownership, spatial priority, request/control or teardown behavior. CRT allocation/log conversion and native DirectSound COM interfaces are dependencies, not recovered assignments; no compiler scaffolding/import/shared-tail target.",
+      "source": "src/bh_sound_queue.c",
+      "source_sha256": "9c6a9eddf5cb3332539153e7aa7418326c0ec9598a5a565f53d529ce706f61a5",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Checked 0x48 voice / 0xac resource records with original offsets; explicit source context and integer resource/packed-generation handles. Uses actual pinned SDK DirectSound interfaces, no fake vtables/backends.",
+        "fixtures": "112 source checks include real native device, PCM upload, duplication/cursor priority, native duplication failure, zero/floor volume, signed-handle edge, ownership/growth/recycle, buffered/stream stop and cleanup",
+        "source_build": "62 real TUs; native APIs and real-data/asset-free clean builds pass; source sound definitions missing fail LNK2001. DSOUND/USER32 import libraries from pinned SDK are explicitly linked.",
+        "raw_byte_match": false,
+        "playback_exercised": false,
+        "limits": [
+          "Functional PC53 moderate finite inputs; CRT log is a functional counterpart to x87 logarithms, no byte-match/NaN payload equivalence claim",
+          "Invalid indices, failing COM calls, bad PCM/options or allocation failure reject safely rather than original unchecked accesses",
+          "Adapter creates PCM buffers using original control flags; full original parser, listener transform and deferred playback/update owner remain unrecovered",
+          "Native tests never call Play or write primary/system volume; original game code is never executed",
+          "Fresh bytes otherwise unspecified by original malloc are zero initialized; recycled record payload is preserved. Zero-level dB floor does not claim original x87 exception-status equivalence."
+        ]
+      },
+      "evidence": [
+        "META/m4/sound-queue/review.json",
+        "META/m4/sound-queue/validation.json",
+        "META/m4/sound-queue/integration-real.json",
+        "META/m4/sound-queue/clean/clean-checkout.json",
+        "META/m4/sound-listener/validation.json"
+      ]
+    },
+    {
+      "id": "0047bd40-functional-c",
+      "original_va": "0047bd40",
+      "function": "bh_sound_request",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary sound resource/voice ownership, spatial priority, request/control or teardown behavior. CRT allocation/log conversion and native DirectSound COM interfaces are dependencies, not recovered assignments; no compiler scaffolding/import/shared-tail target.",
+      "source": "src/bh_sound_queue.c",
+      "source_sha256": "9c6a9eddf5cb3332539153e7aa7418326c0ec9598a5a565f53d529ce706f61a5",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Checked 0x48 voice / 0xac resource records with original offsets; explicit source context and integer resource/packed-generation handles. Uses actual pinned SDK DirectSound interfaces, no fake vtables/backends.",
+        "fixtures": "112 source checks include real native device, PCM upload, duplication/cursor priority, native duplication failure, zero/floor volume, signed-handle edge, ownership/growth/recycle, buffered/stream stop and cleanup",
+        "source_build": "62 real TUs; native APIs and real-data/asset-free clean builds pass; source sound definitions missing fail LNK2001. DSOUND/USER32 import libraries from pinned SDK are explicitly linked.",
+        "raw_byte_match": false,
+        "playback_exercised": false,
+        "limits": [
+          "Functional PC53 moderate finite inputs; CRT log is a functional counterpart to x87 logarithms, no byte-match/NaN payload equivalence claim",
+          "Invalid indices, failing COM calls, bad PCM/options or allocation failure reject safely rather than original unchecked accesses",
+          "Adapter creates PCM buffers using original control flags; full original parser, listener transform and deferred playback/update owner remain unrecovered",
+          "Native tests never call Play or write primary/system volume; original game code is never executed",
+          "Fresh bytes otherwise unspecified by original malloc are zero initialized; recycled record payload is preserved. Zero-level dB floor does not claim original x87 exception-status equivalence."
+        ]
+      },
+      "evidence": [
+        "META/m4/sound-queue/review.json",
+        "META/m4/sound-queue/validation.json",
+        "META/m4/sound-queue/integration-real.json",
+        "META/m4/sound-queue/clean/clean-checkout.json",
+        "META/m4/sound-listener/validation.json"
+      ]
+    },
+    {
+      "id": "0047c050-functional-c",
+      "original_va": "0047c050",
+      "function": "bh_sound_update",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary sound resource/voice ownership, spatial priority, request/control or teardown behavior. CRT allocation/log conversion and native DirectSound COM interfaces are dependencies, not recovered assignments; no compiler scaffolding/import/shared-tail target.",
+      "source": "src/bh_sound_queue.c",
+      "source_sha256": "9c6a9eddf5cb3332539153e7aa7418326c0ec9598a5a565f53d529ce706f61a5",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Checked 0x48 voice / 0xac resource records with original offsets; explicit source context and integer resource/packed-generation handles. Uses actual pinned SDK DirectSound interfaces, no fake vtables/backends.",
+        "fixtures": "112 source checks include real native device, PCM upload, duplication/cursor priority, native duplication failure, zero/floor volume, signed-handle edge, ownership/growth/recycle, buffered/stream stop and cleanup",
+        "source_build": "62 real TUs; native APIs and real-data/asset-free clean builds pass; source sound definitions missing fail LNK2001. DSOUND/USER32 import libraries from pinned SDK are explicitly linked.",
+        "raw_byte_match": false,
+        "playback_exercised": false,
+        "limits": [
+          "Functional PC53 moderate finite inputs; CRT log is a functional counterpart to x87 logarithms, no byte-match/NaN payload equivalence claim",
+          "Invalid indices, failing COM calls, bad PCM/options or allocation failure reject safely rather than original unchecked accesses",
+          "Adapter creates PCM buffers using original control flags; full original parser, listener transform and deferred playback/update owner remain unrecovered",
+          "Native tests never call Play or write primary/system volume; original game code is never executed",
+          "Fresh bytes otherwise unspecified by original malloc are zero initialized; recycled record payload is preserved. Zero-level dB floor does not claim original x87 exception-status equivalence."
+        ]
+      },
+      "evidence": [
+        "META/m4/sound-queue/review.json",
+        "META/m4/sound-queue/validation.json",
+        "META/m4/sound-queue/integration-real.json",
+        "META/m4/sound-queue/clean/clean-checkout.json",
+        "META/m4/sound-listener/validation.json"
+      ]
+    },
+    {
+      "id": "0047c140-functional-c",
+      "original_va": "0047c140",
+      "function": "bh_sound_stop",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary sound resource/voice ownership, spatial priority, request/control or teardown behavior. CRT allocation/log conversion and native DirectSound COM interfaces are dependencies, not recovered assignments; no compiler scaffolding/import/shared-tail target.",
+      "source": "src/bh_sound_queue.c",
+      "source_sha256": "9c6a9eddf5cb3332539153e7aa7418326c0ec9598a5a565f53d529ce706f61a5",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Checked 0x48 voice / 0xac resource records with original offsets; explicit source context and integer resource/packed-generation handles. Uses actual pinned SDK DirectSound interfaces, no fake vtables/backends.",
+        "fixtures": "112 source checks include real native device, PCM upload, duplication/cursor priority, native duplication failure, zero/floor volume, signed-handle edge, ownership/growth/recycle, buffered/stream stop and cleanup",
+        "source_build": "62 real TUs; native APIs and real-data/asset-free clean builds pass; source sound definitions missing fail LNK2001. DSOUND/USER32 import libraries from pinned SDK are explicitly linked.",
+        "raw_byte_match": false,
+        "playback_exercised": false,
+        "limits": [
+          "Functional PC53 moderate finite inputs; CRT log is a functional counterpart to x87 logarithms, no byte-match/NaN payload equivalence claim",
+          "Invalid indices, failing COM calls, bad PCM/options or allocation failure reject safely rather than original unchecked accesses",
+          "Adapter creates PCM buffers using original control flags; full original parser, listener transform and deferred playback/update owner remain unrecovered",
+          "Native tests never call Play or write primary/system volume; original game code is never executed",
+          "Fresh bytes otherwise unspecified by original malloc are zero initialized; recycled record payload is preserved. Zero-level dB floor does not claim original x87 exception-status equivalence."
+        ]
+      },
+      "evidence": [
+        "META/m4/sound-queue/review.json",
+        "META/m4/sound-queue/validation.json",
+        "META/m4/sound-queue/integration-real.json",
+        "META/m4/sound-queue/clean/clean-checkout.json",
+        "META/m4/sound-listener/validation.json"
+      ]
+    },
+    {
+      "id": "0044d500-functional-c",
+      "original_va": "0044d500",
+      "function": "bh_collision_cached_contact",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary cached-contact owner entered by CALL from swept collision 0044da20. Its final JMP is a tail call to complete face owner 0044cc20, not a separately assigned shared-tail body. Matrix composition and call sites inspected; no verified CRT/library attribution.",
+      "source": "src/bh_collision_model.c",
+      "source_sha256": "45d4f2fd56e41af59ec73ce2c936f83af6cc6e470a15d8c1a1ad717cb5caa6bd",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "Explicit cdecl source arguments replace original borrowed collision globals; original tail-called face result is returned.",
+        "fixtures": "Translated trial/contact, cached miss and invalid-input rollback; saved M3 normal contract; existing three-bisection sweep, dispatch and physics response regressions.",
+        "limits": [
+          "Functional finite PC53 contract; no raw byte-match claim",
+          "Original shared globals are explicit source arguments; not original binary ABI",
+          "Saved M3 output normal/fraction are contract regressions; original detector inputs unavailable",
+          "No game execution or automated gameplay"
+        ]
+      },
+      "evidence": [
+        "META/m4/cached-contact/review.json",
+        "META/m4/cached-contact/validation.json",
+        "META/m4/cached-contact/integration-real.json",
+        "META/m4/cached-contact/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0043c8b0-functional-c",
+      "original_va": "0043c8b0",
+      "function": "bh_debris_remove",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary entity-response/lifetime callback, reviewed call sites and constructor installation. No verified library attribution; not CRT, import thunk, compiler scaffolding or separately assigned shared tail. Proprietary engine/game authorship unresolved.",
+      "source": "src/bh_debris_response.c",
+      "source_sha256": "3bfa049f333d1b18c34bd3f54f92c9966fb902171dc27e82aabea431b934960d",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "32-bit cdecl callbacks over real source BHEntityPool and explicit borrowed typed physics/context state. Original event-1 size24, event-2 size36 and event-17 size8 interfaces. Original executable globals/opaque entity offsets not fabricated.",
+        "fixtures": "52 linked source checks: closed-form impulse/torque, rotated frame, real produced physics packet, radial falloff, float threshold/Y-spill positive controls, masked singularities, no RNG consumption, native queued sound, stop/detach/retire, registry removal and generation reuse.",
+        "source_build": "64 real translation units, real asset and asset-free clean executable runs; 32 missing-module negative controls.",
+        "playback_exercised": false,
+        "limits": [
+          "Full physics owner 004124d0 remains WIP, as do player/other receivers, effects/network orchestration and actual debris tick/render/constructors",
+          "Source binding adapter reserves payload final pointer word +35c exclusively; this is not a recovered original field or original binary ABI",
+          "Original globals and physics entity fields are explicit borrowed typed source context, with caller-maintained entity position/pose synchronization",
+          "No byte-match or original differential execution claim; focused analytic and numerical source checks only",
+          "No audible playback, game launch or automated gameplay"
+        ]
+      },
+      "evidence": [
+        "META/m4/debris-response/review.json",
+        "META/m4/debris-response/validation.json",
+        "META/m4/debris-response/integration-real.json",
+        "META/m4/debris-response/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0043c8f0-functional-c",
+      "original_va": "0043c8f0",
+      "function": "bh_debris_receive",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary entity-response/lifetime callback, reviewed call sites and constructor installation. No verified library attribution; not CRT, import thunk, compiler scaffolding or separately assigned shared tail. Proprietary engine/game authorship unresolved.",
+      "source": "src/bh_debris_response.c",
+      "source_sha256": "3bfa049f333d1b18c34bd3f54f92c9966fb902171dc27e82aabea431b934960d",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "32-bit cdecl callbacks over real source BHEntityPool and explicit borrowed typed physics/context state. Original event-1 size24, event-2 size36 and event-17 size8 interfaces. Original executable globals/opaque entity offsets not fabricated.",
+        "fixtures": "52 linked source checks: closed-form impulse/torque, rotated frame, real produced physics packet, radial falloff, float threshold/Y-spill positive controls, masked singularities, no RNG consumption, native queued sound, stop/detach/retire, registry removal and generation reuse.",
+        "source_build": "64 real translation units, real asset and asset-free clean executable runs; 32 missing-module negative controls.",
+        "playback_exercised": false,
+        "limits": [
+          "Full physics owner 004124d0 remains WIP, as do player/other receivers, effects/network orchestration and actual debris tick/render/constructors",
+          "Source binding adapter reserves payload final pointer word +35c exclusively; this is not a recovered original field or original binary ABI",
+          "Original globals and physics entity fields are explicit borrowed typed source context, with caller-maintained entity position/pose synchronization",
+          "No byte-match or original differential execution claim; focused analytic and numerical source checks only",
+          "No audible playback, game launch or automated gameplay"
+        ]
+      },
+      "evidence": [
+        "META/m4/debris-response/review.json",
+        "META/m4/debris-response/validation.json",
+        "META/m4/debris-response/integration-real.json",
+        "META/m4/debris-response/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004234d0-functional-c",
+      "original_va": "004234d0",
+      "function": "bh_packet_write_position",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary packet encoding/verification/lookup behavior with mapped callers and boundaries. Only verified VC5 CRT conversion is reused. Not an import, compiler support routine, shared tail or verified library implementation; game/engine authorship unresolved.",
+      "source": "src/bh_network_codec.c",
+      "source_sha256": "eef9d8ea4750b1e14731f5c6b55f01d50b199645c2fe4bcf0d998a83b03ab3b9",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "32-bit cdecl source functions; explicit borrowed wire buffers/registries/stats replace original globals. Full original bodies reviewed; false decompiler signatures/64-bit return discarded.",
+        "fixtures": "1599 linked source checks: every payload byte length, padding/checksum corruption, golden wire bytes, exact dyadic lattice/error bound, upper clamp discontinuity, real CRT 64-bit conversion signed low-word control, masked singularities, world/player lookups and source physics/saved M3 normal contracts.",
+        "source_build": "66 real translation units; asset and asset-free clean runs; 33 missing-module negative link controls.",
+        "network_sends": 0,
+        "limits": [
+          "No network sends, sessions or original-code execution. Actual DirectPlay transport 00476d50, full sender 00423710, packet dispatchers and full physics owner remain unrecovered.",
+          "Source buffer begin/append/finish are explicit adapters, not admission of the transport-owning sender; globals become borrowed reader/writer/stats/world/player bindings.",
+          "Source guards reject truncation, invalid bindings, insufficient writable padding and payload >255. Valid original packet arithmetic, cursor consumption and counters retained.",
+          "PC53 finite moderate source inputs, with original masked zero extents/scale conversions specifically checked. FP exception/status-word equivalence and broad exceptional-input fidelity unvalidated.",
+          "Tests use independent wire bytes, exact dyadic lattice and analytic error bounds; no captured live network exchange or original differential execution. Saved M3 normal is an output-contract fixture."
+        ]
+      },
+      "evidence": [
+        "META/m4/network-codec/review.json",
+        "META/m4/network-codec/validation.json",
+        "META/m4/network-codec/integration-real.json",
+        "META/m4/network-codec/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00423660-functional-c",
+      "original_va": "00423660",
+      "function": "bh_packet_write_vector",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary packet encoding/verification/lookup behavior with mapped callers and boundaries. Only verified VC5 CRT conversion is reused. Not an import, compiler support routine, shared tail or verified library implementation; game/engine authorship unresolved.",
+      "source": "src/bh_network_codec.c",
+      "source_sha256": "eef9d8ea4750b1e14731f5c6b55f01d50b199645c2fe4bcf0d998a83b03ab3b9",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "32-bit cdecl source functions; explicit borrowed wire buffers/registries/stats replace original globals. Full original bodies reviewed; false decompiler signatures/64-bit return discarded.",
+        "fixtures": "1599 linked source checks: every payload byte length, padding/checksum corruption, golden wire bytes, exact dyadic lattice/error bound, upper clamp discontinuity, real CRT 64-bit conversion signed low-word control, masked singularities, world/player lookups and source physics/saved M3 normal contracts.",
+        "source_build": "66 real translation units; asset and asset-free clean runs; 33 missing-module negative link controls.",
+        "network_sends": 0,
+        "limits": [
+          "No network sends, sessions or original-code execution. Actual DirectPlay transport 00476d50, full sender 00423710, packet dispatchers and full physics owner remain unrecovered.",
+          "Source buffer begin/append/finish are explicit adapters, not admission of the transport-owning sender; globals become borrowed reader/writer/stats/world/player bindings.",
+          "Source guards reject truncation, invalid bindings, insufficient writable padding and payload >255. Valid original packet arithmetic, cursor consumption and counters retained.",
+          "PC53 finite moderate source inputs, with original masked zero extents/scale conversions specifically checked. FP exception/status-word equivalence and broad exceptional-input fidelity unvalidated.",
+          "Tests use independent wire bytes, exact dyadic lattice and analytic error bounds; no captured live network exchange or original differential execution. Saved M3 normal is an output-contract fixture."
+        ]
+      },
+      "evidence": [
+        "META/m4/network-codec/review.json",
+        "META/m4/network-codec/validation.json",
+        "META/m4/network-codec/integration-real.json",
+        "META/m4/network-codec/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004237a0-functional-c",
+      "original_va": "004237a0",
+      "function": "bh_packet_receive",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary packet encoding/verification/lookup behavior with mapped callers and boundaries. Only verified VC5 CRT conversion is reused. Not an import, compiler support routine, shared tail or verified library implementation; game/engine authorship unresolved.",
+      "source": "src/bh_network_codec.c",
+      "source_sha256": "eef9d8ea4750b1e14731f5c6b55f01d50b199645c2fe4bcf0d998a83b03ab3b9",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "32-bit cdecl source functions; explicit borrowed wire buffers/registries/stats replace original globals. Full original bodies reviewed; false decompiler signatures/64-bit return discarded.",
+        "fixtures": "1599 linked source checks: every payload byte length, padding/checksum corruption, golden wire bytes, exact dyadic lattice/error bound, upper clamp discontinuity, real CRT 64-bit conversion signed low-word control, masked singularities, world/player lookups and source physics/saved M3 normal contracts.",
+        "source_build": "66 real translation units; asset and asset-free clean runs; 33 missing-module negative link controls.",
+        "network_sends": 0,
+        "limits": [
+          "No network sends, sessions or original-code execution. Actual DirectPlay transport 00476d50, full sender 00423710, packet dispatchers and full physics owner remain unrecovered.",
+          "Source buffer begin/append/finish are explicit adapters, not admission of the transport-owning sender; globals become borrowed reader/writer/stats/world/player bindings.",
+          "Source guards reject truncation, invalid bindings, insufficient writable padding and payload >255. Valid original packet arithmetic, cursor consumption and counters retained.",
+          "PC53 finite moderate source inputs, with original masked zero extents/scale conversions specifically checked. FP exception/status-word equivalence and broad exceptional-input fidelity unvalidated.",
+          "Tests use independent wire bytes, exact dyadic lattice and analytic error bounds; no captured live network exchange or original differential execution. Saved M3 normal is an output-contract fixture."
+        ]
+      },
+      "evidence": [
+        "META/m4/network-codec/review.json",
+        "META/m4/network-codec/validation.json",
+        "META/m4/network-codec/integration-real.json",
+        "META/m4/network-codec/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004239a0-functional-c",
+      "original_va": "004239a0",
+      "function": "bh_packet_read_actor",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary packet encoding/verification/lookup behavior with mapped callers and boundaries. Only verified VC5 CRT conversion is reused. Not an import, compiler support routine, shared tail or verified library implementation; game/engine authorship unresolved.",
+      "source": "src/bh_network_codec.c",
+      "source_sha256": "eef9d8ea4750b1e14731f5c6b55f01d50b199645c2fe4bcf0d998a83b03ab3b9",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "32-bit cdecl source functions; explicit borrowed wire buffers/registries/stats replace original globals. Full original bodies reviewed; false decompiler signatures/64-bit return discarded.",
+        "fixtures": "1599 linked source checks: every payload byte length, padding/checksum corruption, golden wire bytes, exact dyadic lattice/error bound, upper clamp discontinuity, real CRT 64-bit conversion signed low-word control, masked singularities, world/player lookups and source physics/saved M3 normal contracts.",
+        "source_build": "66 real translation units; asset and asset-free clean runs; 33 missing-module negative link controls.",
+        "network_sends": 0,
+        "limits": [
+          "No network sends, sessions or original-code execution. Actual DirectPlay transport 00476d50, full sender 00423710, packet dispatchers and full physics owner remain unrecovered.",
+          "Source buffer begin/append/finish are explicit adapters, not admission of the transport-owning sender; globals become borrowed reader/writer/stats/world/player bindings.",
+          "Source guards reject truncation, invalid bindings, insufficient writable padding and payload >255. Valid original packet arithmetic, cursor consumption and counters retained.",
+          "PC53 finite moderate source inputs, with original masked zero extents/scale conversions specifically checked. FP exception/status-word equivalence and broad exceptional-input fidelity unvalidated.",
+          "Tests use independent wire bytes, exact dyadic lattice and analytic error bounds; no captured live network exchange or original differential execution. Saved M3 normal is an output-contract fixture."
+        ]
+      },
+      "evidence": [
+        "META/m4/network-codec/review.json",
+        "META/m4/network-codec/validation.json",
+        "META/m4/network-codec/integration-real.json",
+        "META/m4/network-codec/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00476d50-functional-c",
+      "original_va": "00476d50",
+      "function": "bh_network_send",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary source transport/packet owner. Complete boundary, calls and SDK vtable Send slot 0x68 reviewed. Not CRT, compiler support, import thunk or independent shared tail; original game/engine attribution unresolved.",
+      "source": "src/bh_network_transport.c",
+      "source_sha256": "57654b7ec0b21755f305cd681bccb970485ba49cb84e13ed58c6332a1f2bd10c",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "Explicit source DirectPlay3A/DPID/writer context. Official SDK Send slot and flag checked at compile time; HRESULT/ownership diagnostics are source extensions.",
+        "fixtures": "24 checks: real unopened DirectPlay3A creation/ownership; reliable/unreliable native failures match direct controls; NULL interface, source checksum receive, unpadded length, capacity/repeat guards.",
+        "source_build": "68 real TUs; asset/clean runs; 34 missing-module controls. New SDK include isolated to transport and its test TU.",
+        "successful_delivery_validated": false,
+        "limits": [
+          "Actual native DirectPlay3A unopened-interface failures tested, not successful delivery, session ownership, peer exchange or network gameplay. No InitializeConnection/Open/CreatePlayer calls in checks.",
+          "Source context init/dispose owns AddRef/Release; explicit DPID/interface/writer replaces original globals. Native HRESULT and call counters are source diagnostic extensions.",
+          "Framing source guards apply to valid <=255-byte payload packets; invalid/repeated finish rejects before any native call.",
+          "Full physics owner and mode-specific packet construction/dispatch remain WIP; native send restoration is not full networking admission.",
+          "Functional source, no raw byte-match or original code execution claim."
+        ]
+      },
+      "evidence": [
+        "META/m4/network-send/review.json",
+        "META/m4/network-send/validation.json",
+        "META/m4/network-send/integration-real.json",
+        "META/m4/network-send/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00423710-functional-c",
+      "original_va": "00423710",
+      "function": "bh_network_packet_send",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary source transport/packet owner. Complete boundary, calls and SDK vtable Send slot 0x68 reviewed. Not CRT, compiler support, import thunk or independent shared tail; original game/engine attribution unresolved.",
+      "source": "src/bh_network_transport.c",
+      "source_sha256": "57654b7ec0b21755f305cd681bccb970485ba49cb84e13ed58c6332a1f2bd10c",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "Explicit source DirectPlay3A/DPID/writer context. Official SDK Send slot and flag checked at compile time; HRESULT/ownership diagnostics are source extensions.",
+        "fixtures": "24 checks: real unopened DirectPlay3A creation/ownership; reliable/unreliable native failures match direct controls; NULL interface, source checksum receive, unpadded length, capacity/repeat guards.",
+        "source_build": "68 real TUs; asset/clean runs; 34 missing-module controls. New SDK include isolated to transport and its test TU.",
+        "successful_delivery_validated": false,
+        "limits": [
+          "Actual native DirectPlay3A unopened-interface failures tested, not successful delivery, session ownership, peer exchange or network gameplay. No InitializeConnection/Open/CreatePlayer calls in checks.",
+          "Source context init/dispose owns AddRef/Release; explicit DPID/interface/writer replaces original globals. Native HRESULT and call counters are source diagnostic extensions.",
+          "Framing source guards apply to valid <=255-byte payload packets; invalid/repeated finish rejects before any native call.",
+          "Full physics owner and mode-specific packet construction/dispatch remain WIP; native send restoration is not full networking admission.",
+          "Functional source, no raw byte-match or original code execution claim."
+        ]
+      },
+      "evidence": [
+        "META/m4/network-send/review.json",
+        "META/m4/network-send/validation.json",
+        "META/m4/network-send/integration-real.json",
+        "META/m4/network-send/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0047b710-functional-c",
+      "original_va": "0047b710",
+      "function": "bh_sound_listener",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary listener/configuration owner, complete mapped body/calls and global layout reviewed before assignment. Not CRT, compiler support, import or independent shared tail. No verified library attribution; game/engine authorship unresolved.",
+      "source": "src/bh_sound_listener.c",
+      "source_sha256": "af7535b6408e0c24f0987e4c375b4d00d816497981c1a025933b7ccad569c6aa",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "Explicit source queue; verified 40-byte listener position/velocity/right/signed flag layout. Index0 consumer only; source failure guards preserve listener fields.",
+        "fixtures": "50 checks: signed flags/disable retention, independent analytic mixed rotations, real priority, shared RNG retention, all policy classes/extremes and actual decoded PCM/native registration captures policy without altering existing resources.",
+        "source_build": "70 real TUs, real asset and clean runs; 35 missing-module controls. Historical source/header snapshots retained for changed queue context.",
+        "playback_exercised": false,
+        "limits": [
+          "Only original index0 is consumed by current sound priority/playback loops; invalid indices reject before touching listener fields. No second listener invented.",
+          "Explicit source queue replaces globals. The contiguous listener fields retain position+0, velocity+c, right+18, signed active+24 layout; full queue is not original global ABI.",
+          "Enabled finite moderate PC53 angles checked analytically, not original differential execution; large-angle x87 transcendental/PC24 fidelity remains unresolved.",
+          "Configured limit0 is an explicit source PCM-registration adapter binding. Full original sound loader 0047b950 and deferred playback 0047c200 remain WIP. No Play calls or audible-playback claim.",
+          "Functional admission, no byte-match or game execution."
+        ]
+      },
+      "evidence": [
+        "META/m4/sound-listener/review.json",
+        "META/m4/sound-listener/validation.json",
+        "META/m4/sound-listener/integration-real.json",
+        "META/m4/sound-listener/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0047b920-functional-c",
+      "original_va": "0047b920",
+      "function": "bh_sound_set_voice_limit",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary listener/configuration owner, complete mapped body/calls and global layout reviewed before assignment. Not CRT, compiler support, import or independent shared tail. No verified library attribution; game/engine authorship unresolved.",
+      "source": "src/bh_sound_listener.c",
+      "source_sha256": "af7535b6408e0c24f0987e4c375b4d00d816497981c1a025933b7ccad569c6aa",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "Explicit source queue; verified 40-byte listener position/velocity/right/signed flag layout. Index0 consumer only; source failure guards preserve listener fields.",
+        "fixtures": "50 checks: signed flags/disable retention, independent analytic mixed rotations, real priority, shared RNG retention, all policy classes/extremes and actual decoded PCM/native registration captures policy without altering existing resources.",
+        "source_build": "70 real TUs, real asset and clean runs; 35 missing-module controls. Historical source/header snapshots retained for changed queue context.",
+        "playback_exercised": false,
+        "limits": [
+          "Only original index0 is consumed by current sound priority/playback loops; invalid indices reject before touching listener fields. No second listener invented.",
+          "Explicit source queue replaces globals. The contiguous listener fields retain position+0, velocity+c, right+18, signed active+24 layout; full queue is not original global ABI.",
+          "Enabled finite moderate PC53 angles checked analytically, not original differential execution; large-angle x87 transcendental/PC24 fidelity remains unresolved.",
+          "Configured limit0 is an explicit source PCM-registration adapter binding. Full original sound loader 0047b950 and deferred playback 0047c200 remain WIP. No Play calls or audible-playback claim.",
+          "Functional admission, no byte-match or game execution."
+        ]
+      },
+      "evidence": [
+        "META/m4/sound-listener/review.json",
+        "META/m4/sound-listener/validation.json",
+        "META/m4/sound-listener/integration-real.json",
+        "META/m4/sound-listener/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0047c200-candidate-c",
+      "original_va": "0047c200",
+      "function": "bh_sound_tick (unfinished candidate)",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete original deferred sound owner mapped/reviewed, 666 instructions; native DirectSound calls, ranking, x87 arithmetic and cleanup behavior inspected. Not CRT, import, compiler helper or shared tail; historical authorship unresolved.",
+      "source": "src/bh_sound_tick.c",
+      "source_sha256": "bdc9fe2bb99dbba7d6cadbcaf34ebb324ff0137fcb774932706a8b039c69d4e0",
+      "implementation": "wip",
+      "integration": "not_built",
+      "target": "build/m0/bhunter-integration.exe (not wired)",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": false,
+        "compiled": false,
+        "linked": false,
+        "executed": false,
+        "remaining_dependencies": [
+          "Apply/review candidate header changes from META/m4/sound-update/candidate-bh_sound_queue.h.txt",
+          "Review spatial/ranking/native error/lifetime semantics against full body",
+          "Wire real translation unit and checks into integration driver; compile/link/test before admission"
+        ]
+      },
+      "evidence": [
+        "META/m4/sound-update/checkpoint.json",
+        "META/m4/sound-update/original/0047c200.decompile.json",
+        "META/m4/sound-update/original/0047c200.disassembly.json"
       ]
     }
   ],
@@ -4025,6 +5338,146 @@
       "original_function_count": 0,
       "evidence": [
         "META/m4/script-timers/validation.json"
+      ]
+    },
+    {
+      "id": "bh_collision-candidate-source-bindings",
+      "function": "bh_collision_candidate_world/bh_collision_candidate_actor",
+      "source": "src/bh_entity_collision.c",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "original_function_count": 0,
+      "evidence": [
+        "META/m4/entity-collision/validation.json"
+      ]
+    },
+    {
+      "id": "bh_physics-numerical-slice",
+      "function": "bh_physics_prepare/bh_physics_slide/bh_physics_contact_response/bh_physics_finish",
+      "source": "src/bh_physics_response.c",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "original_function_count": 0,
+      "evidence": [
+        "META/m4/physics-response/validation.json"
+      ],
+      "limits": [
+        "Extracted tested numeric portions of unfinished 004124d0, not a replacement for the full physics owner. No effects/audio/network/callback stubs supplied."
+      ]
+    },
+    {
+      "id": "bh_draw-queue-owner",
+      "function": "bh_draw_queue_init/bh_draw_queue_dispose",
+      "source": "src/bh_draw_queue.c",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "original_function_count": 0,
+      "evidence": [
+        "META/m4/contact-effects/validation.json"
+      ]
+    },
+    {
+      "id": "bh_contact-effects-source-context",
+      "function": "bh_contact_effects_init/bh_contact_effects_dispose/bh_contact_spark_state/bh_contact_impact_state",
+      "source": "src/bh_contact_effects.c",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "original_function_count": 0,
+      "evidence": [
+        "META/m4/contact-effects/validation.json"
+      ]
+    },
+    {
+      "id": "bh_contact-impact-constructor-fields",
+      "function": "bh_contact_impact_create",
+      "source": "src/bh_contact_effects.c",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "original_function_count": 0,
+      "evidence": [
+        "META/m4/contact-effects/validation.json"
+      ],
+      "limits": [
+        "Restores reviewed inline special-effect allocation fields; does not count as full 004124d0 or queue sound/network actions."
+      ]
+    },
+    {
+      "id": "bh_sound-queue-source-context",
+      "function": "bh_sound_queue_init/bh_sound_voice",
+      "source": "src/bh_sound_queue.c",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "original_function_count": 0,
+      "evidence": [
+        "META/m4/sound-queue/validation.json",
+        "META/m4/sound-listener/validation.json"
+      ]
+    },
+    {
+      "id": "bh_sound-pcm-native-registration",
+      "function": "bh_sound_register_wave",
+      "source": "src/bh_sound_queue.c",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "original_function_count": 0,
+      "evidence": [
+        "META/m4/sound-queue/validation.json",
+        "META/m4/sound-listener/validation.json"
+      ],
+      "limits": [
+        "Real source PCM/native buffer ownership, not full original file/options loader 0047b950 or playback controller."
+      ]
+    },
+    {
+      "id": "bh_debris-source-bindings",
+      "function": "bh_debris_context_init/dispose, bh_debris_bind/unbind",
+      "source": "src/bh_debris_response.c",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "original_function_count": 0,
+      "evidence": [
+        "META/m4/debris-response/validation.json"
+      ],
+      "limits": [
+        "Explicit borrowed source context/state and final payload pointer bridge; not original full debris constructor/tick/render restoration."
+      ]
+    },
+    {
+      "id": "bh_packet-source-framing",
+      "function": "bh_packet_begin/append/finish, bh_packet_read_position bridge to existing bh_position_read",
+      "source": "src/bh_network_codec.c",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "original_function_count": 0,
+      "evidence": [
+        "META/m4/network-codec/validation.json"
+      ],
+      "limits": [
+        "Bounded framing helpers remain adapters; complete send owner/transport are separately admitted in META/m4/network-send."
+      ]
+    },
+    {
+      "id": "bh_network-transport-context",
+      "function": "bh_network_transport_init/dispose",
+      "source": "src/bh_network_transport.c",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "original_function_count": 0,
+      "evidence": [
+        "META/m4/network-send/validation.json"
+      ],
+      "limits": [
+        "Explicit AddRef/Release context, not original provider/session/player initialization."
       ]
     }
   ],

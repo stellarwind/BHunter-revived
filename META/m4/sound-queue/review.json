@@ -1,0 +1,103 @@
+{
+  "records": [
+    {
+      "address": "0047b330",
+      "role": "engine_candidate",
+      "boundary": "0047b330-0047b40f",
+      "instructions": 57,
+      "body_sha256": "e1e951131889e55bb0bdaefe74eea17a034e311d99ca0430ff60234c1c0b9a4c",
+      "classification": "Ordinary sound resource/voice ownership, spatial priority, request/control or teardown behavior. CRT allocation/log conversion and native DirectSound COM interfaces are dependencies, not recovered assignments; no compiler scaffolding/import/shared-tail target."
+    },
+    {
+      "address": "0047b410",
+      "role": "engine_candidate",
+      "boundary": "0047b410-0047b4f3",
+      "instructions": 59,
+      "body_sha256": "a2851aeea8acae39f4bf9ff1ece44d743f78141178d0a8e904f14a50d8302162",
+      "classification": "Ordinary sound resource/voice ownership, spatial priority, request/control or teardown behavior. CRT allocation/log conversion and native DirectSound COM interfaces are dependencies, not recovered assignments; no compiler scaffolding/import/shared-tail target."
+    },
+    {
+      "address": "0047b5f0",
+      "role": "engine_candidate",
+      "boundary": "0047b5f0-0047b700",
+      "instructions": 93,
+      "body_sha256": "5bd74a07e4292db31b86ff0a59a4ab71132f0fee90e994182df522c3bdcb9a6b",
+      "classification": "Ordinary sound resource/voice ownership, spatial priority, request/control or teardown behavior. CRT allocation/log conversion and native DirectSound COM interfaces are dependencies, not recovered assignments; no compiler scaffolding/import/shared-tail target."
+    },
+    {
+      "address": "0047bc60",
+      "role": "engine_candidate",
+      "boundary": "0047bc60-0047bd33",
+      "instructions": 73,
+      "body_sha256": "486dec4090fe82fc01f2bc6c7e3a0c6e1a9f7901f1a16a9b6e146d7669194c41",
+      "classification": "Ordinary sound resource/voice ownership, spatial priority, request/control or teardown behavior. CRT allocation/log conversion and native DirectSound COM interfaces are dependencies, not recovered assignments; no compiler scaffolding/import/shared-tail target."
+    },
+    {
+      "address": "0047bd40",
+      "role": "engine_candidate",
+      "boundary": "0047bd40-0047c040",
+      "instructions": 263,
+      "body_sha256": "b937a96cb060b4477f1bb3a0d0274f36b0e3991233bde6008911df2790219dcd",
+      "classification": "Ordinary sound resource/voice ownership, spatial priority, request/control or teardown behavior. CRT allocation/log conversion and native DirectSound COM interfaces are dependencies, not recovered assignments; no compiler scaffolding/import/shared-tail target."
+    },
+    {
+      "address": "0047c050",
+      "role": "engine_candidate",
+      "boundary": "0047c050-0047c136",
+      "instructions": 77,
+      "body_sha256": "eb6f53af99ef56eb4abb7a4a3d145885f11dd679c5a15b3874594ca53c73fb7a",
+      "classification": "Ordinary sound resource/voice ownership, spatial priority, request/control or teardown behavior. CRT allocation/log conversion and native DirectSound COM interfaces are dependencies, not recovered assignments; no compiler scaffolding/import/shared-tail target."
+    },
+    {
+      "address": "0047c140",
+      "role": "engine_candidate",
+      "boundary": "0047c140-0047c1fd",
+      "instructions": 62,
+      "body_sha256": "6cecb2843f91805a5c9e24ea79bca8892e023fb847ebd67550c454e404144e34",
+      "classification": "Ordinary sound resource/voice ownership, spatial priority, request/control or teardown behavior. CRT allocation/log conversion and native DirectSound COM interfaces are dependencies, not recovered assignments; no compiler scaffolding/import/shared-tail target."
+    }
+  ],
+  "constants": [
+    {
+      "address": "0048a388",
+      "value": 1.25,
+      "hex": "000000000000f43f"
+    },
+    {
+      "address": "0048a398",
+      "value": -1000.0,
+      "hex": "0000000000408fc0"
+    },
+    {
+      "address": "0048a3a0",
+      "value": 0.5,
+      "hex": "000000000000e03f"
+    },
+    {
+      "address": "0048a3a8",
+      "value": -10000.0,
+      "hex": "000000000088c3c0"
+    }
+  ],
+  "dependencies": [
+    "Actual pinned SDK dsound.h COM types/macros, native DirectSound buffers/device with real Stop/Release/DuplicateSoundBuffer/GetCurrentPosition",
+    "Real BHWave PCM owner supplies adapter-created buffer; original full option/file sound loader 0047b950 remains WIP",
+    "Explicit listener/context replaces one original ten-float listener record and global resource/voice pointer arrays"
+  ],
+  "contracts": [
+    "Resource and voice pointer tables start at 16 and grow floor(capacity*1.25); freelists preserve IDs; voice reuse increments 16-bit generation",
+    "Buffered resources use up to three native buffers; take first empty voice slot, otherwise duplicate base until capped or failed, then replace strict greatest distance/progress score; first tie wins and equal-score request is admitted",
+    "Spatial score is nearest active listener squared distance (one original listener); non-positioned baseline 0.01; buffer progress multiplies by bytes/(bytes-play_cursor)",
+    "Replacement increments old voice generation before freeing; allocation from the same free slot increments again; handles pack index|generation<<16",
+    "0047c050/0047c140 use original signed division by 65536, not a logical unsigned high-half extraction; high-generation negative handles do not validate",
+    "Streaming requests prepend a doubly linked source list and keep buffer/voice selection distinct from actual playback; Stop unlinks either kind and invalidates generation",
+    "Request/update dB=base+max(1000*log2(level),-10000); pitch multiplies base frequency; zero level uses floor; position/velocity flags clear without clearing old coordinates"
+  ],
+  "limits": [
+    "Functional PC53 moderate finite inputs; CRT log is a functional counterpart to x87 logarithms, no byte-match/NaN payload equivalence claim",
+    "Invalid indices, failing COM calls, bad PCM/options or allocation failure reject safely rather than original unchecked accesses",
+    "Adapter creates PCM buffers using original control flags; full original parser, listener transform and deferred playback/update owner remain unrecovered",
+    "Native tests never call Play or write primary/system volume; original game code is never executed",
+    "Fresh bytes otherwise unspecified by original malloc are zero initialized; recycled record payload is preserved. Zero-level dB floor does not claim original x87 exception-status equivalence."
+  ]
+}

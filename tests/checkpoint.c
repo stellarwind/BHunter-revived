@@ -20,6 +20,17 @@ int bh_route_query_checkpoint(unsigned long *checks);
 int bh_world_query_checkpoint(unsigned long *checks);
 int bh_position_checkpoint(unsigned long *checks);
 int bh_segment_query_checkpoint(unsigned long *checks);
+int bh_sound_listener_checkpoint(unsigned long *checks);
+int bh_network_transport_checkpoint(unsigned long *checks);
+int bh_network_codec_checkpoint(unsigned long *checks);
+int bh_debris_response_checkpoint(unsigned long *checks);
+int bh_sound_queue_checkpoint(unsigned long *checks);
+int bh_draw_queue_checkpoint(unsigned long *checks);
+int bh_contact_effects_checkpoint(unsigned long *checks);
+int bh_physics_response_checkpoint(unsigned long *checks);
+int bh_entity_collision_checkpoint(unsigned long *checks);
+int bh_sweep_checkpoint(unsigned long *checks);
+int bh_collision_query_checkpoint(unsigned long *checks);
 int bh_collision_model_checkpoint(unsigned long *checks);
 int bh_riff_checkpoint(unsigned long *checks);
 int bh_pcx_reader_checkpoint(unsigned long *checks);
@@ -37,6 +48,16 @@ int main(int argc, char **argv) {
     unsigned long world_query_checks=0;int world_query_failed;
     unsigned long waypoint_checks=0;int waypoint_failed;
     unsigned long segment_checks=0;int segment_failed;
+    unsigned long listener_checks=0;int listener_failed;
+    unsigned long transport_checks=0;int transport_failed;
+    unsigned long packet_checks=0;int packet_failed;
+    unsigned long debris_checks=0;int debris_failed;
+    unsigned long sound_queue_checks=0;int sound_queue_failed;
+    unsigned long draw_queue_checks=0,contact_effects_checks=0;int draw_queue_failed,contact_effects_failed;
+    unsigned long physics_response_checks=0;int physics_response_failed;
+    unsigned long entity_collision_checks=0;int entity_collision_failed;
+    unsigned long sweep_checks=0;int sweep_failed;
+    unsigned long collision_query_checks=0;int collision_query_failed;
     unsigned long collision_model_checks=0;int collision_model_failed;
     unsigned long riff_checks=0;int riff_failed;
     unsigned long pcx_reader_checks=0;int pcx_reader_failed;
@@ -60,6 +81,17 @@ int main(int argc, char **argv) {
     world_query_failed=bh_world_query_checkpoint(&world_query_checks);
     waypoint_failed=bh_position_checkpoint(&waypoint_checks);
     segment_failed=bh_segment_query_checkpoint(&segment_checks);
+    listener_failed=bh_sound_listener_checkpoint(&listener_checks);
+    transport_failed=bh_network_transport_checkpoint(&transport_checks);
+    packet_failed=bh_network_codec_checkpoint(&packet_checks);
+    debris_failed=bh_debris_response_checkpoint(&debris_checks);
+    sound_queue_failed=bh_sound_queue_checkpoint(&sound_queue_checks);
+    draw_queue_failed=bh_draw_queue_checkpoint(&draw_queue_checks);
+    contact_effects_failed=bh_contact_effects_checkpoint(&contact_effects_checks);
+    physics_response_failed=bh_physics_response_checkpoint(&physics_response_checks);
+    entity_collision_failed=bh_entity_collision_checkpoint(&entity_collision_checks);
+    sweep_failed=bh_sweep_checkpoint(&sweep_checks);
+    collision_query_failed=bh_collision_query_checkpoint(&collision_query_checks);
     collision_model_failed=bh_collision_model_checkpoint(&collision_model_checks);
     riff_failed=bh_riff_checkpoint(&riff_checks);
     pcx_reader_failed=bh_pcx_reader_checkpoint(&pcx_reader_checks);
@@ -67,7 +99,7 @@ int main(int argc, char **argv) {
     environment_failed=!bh_math_environment_supported();
     printf("{\"scenario\":\"m2-foundations\",\"checks\":%lu,\"failures\":%d,"
            "\"archive_entries\":%lu,\"original_code_required\":false}\n",
-           checks+14+numeric_checks+config_checks+scene_checks+block_checks+entity_checks+wave_checks+pcx_checks+portal_checks+geometry_checks+world_checks+navigation_checks+route_checks+world_query_checks+waypoint_checks+segment_checks+collision_model_checks+riff_checks+pcx_reader_checks+script_timer_checks,math_failed+vfile_failed+numeric_failed+environment_failed+config_failed+scene_failed+blocks_failed+entities_failed+wave_failed+pcx_failed+portals_failed+geometry_failed+world_failed+navigation_failed+route_failed+world_query_failed+waypoint_failed+segment_failed+collision_model_failed+riff_failed+pcx_reader_failed+script_timer_failed,entries);
+           listener_checks+transport_checks+packet_checks+debris_checks+sound_queue_checks+draw_queue_checks+contact_effects_checks+physics_response_checks+entity_collision_checks+sweep_checks+collision_query_checks+checks+14+numeric_checks+config_checks+scene_checks+block_checks+entity_checks+wave_checks+pcx_checks+portal_checks+geometry_checks+world_checks+navigation_checks+route_checks+world_query_checks+waypoint_checks+segment_checks+collision_model_checks+riff_checks+pcx_reader_checks+script_timer_checks,listener_failed+transport_failed+packet_failed+debris_failed+sound_queue_failed+draw_queue_failed+contact_effects_failed+physics_response_failed+entity_collision_failed+sweep_failed+collision_query_failed+math_failed+vfile_failed+numeric_failed+environment_failed+config_failed+scene_failed+blocks_failed+entities_failed+wave_failed+pcx_failed+portals_failed+geometry_failed+world_failed+navigation_failed+route_failed+world_query_failed+waypoint_failed+segment_failed+collision_model_failed+riff_failed+pcx_reader_failed+script_timer_failed,entries);
     bh_math_environment_leave(&environment);
-    return math_failed || vfile_failed || numeric_failed || environment_failed || config_failed || scene_failed || blocks_failed ||entities_failed || wave_failed || pcx_failed || portals_failed || geometry_failed || world_failed || navigation_failed || route_failed || world_query_failed || waypoint_failed || segment_failed || collision_model_failed || riff_failed || pcx_reader_failed || script_timer_failed ? 1 : 0;
+    return listener_failed || transport_failed || packet_failed || debris_failed || sound_queue_failed || draw_queue_failed || contact_effects_failed || physics_response_failed || entity_collision_failed || sweep_failed || collision_query_failed || math_failed || vfile_failed || numeric_failed || environment_failed || config_failed || scene_failed || blocks_failed ||entities_failed || wave_failed || pcx_failed || portals_failed || geometry_failed || world_failed || navigation_failed || route_failed || world_query_failed || waypoint_failed || segment_failed || collision_model_failed || riff_failed || pcx_reader_failed || script_timer_failed ? 1 : 0;
 }

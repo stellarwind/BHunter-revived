@@ -1,0 +1,46 @@
+{
+  "records": [
+    {
+      "address": "0047b710",
+      "function": "bh_sound_listener",
+      "boundary": "0047b710-0047b82e",
+      "instructions": 74,
+      "body_sha256": "c9158e3acdaff3650ee496bdf17063f4d4f895de5d24263642cbf34c28691b9f",
+      "role": "engine_candidate",
+      "classification": "Ordinary listener/configuration owner, complete mapped body/calls and global layout reviewed before assignment. Not CRT, compiler support, import or independent shared tail. No verified library attribution; game/engine authorship unresolved."
+    },
+    {
+      "address": "0047b920",
+      "function": "bh_sound_set_voice_limit",
+      "boundary": "0047b920-0047b944",
+      "instructions": 12,
+      "body_sha256": "21afbe906b0917d636a79564ed65974b0c8621f4a18893ae34496702467f0c2e",
+      "role": "engine_candidate",
+      "classification": "Ordinary listener/configuration owner, complete mapped body/calls and global layout reviewed before assignment. Not CRT, compiler support, import or independent shared tail. No verified library attribution; game/engine authorship unresolved."
+    }
+  ],
+  "constants": [
+    {
+      "address": "00492d70",
+      "hex": "02000000",
+      "type": "I",
+      "value": 2
+    }
+  ],
+  "contracts": [
+    "Listener setter preserves exact signed enable value; disabled calls retain position/velocity/right and do not dereference unused arguments.",
+    "Local Y(angles.x), then X(angles.y), then Z(angles.z); transform point (1,0,0) with zero translation supplies right vector. Store position then velocity after basis.",
+    "Original global policy default2; signed request0 ->2, 1..3 preserved, negative or >=4 ->3. Source PCM registration with limit0 captures current policy; existing resources retain their prior limit."
+  ],
+  "dependencies": [
+    "Real source local rotations and point transform, PC53 environment",
+    "Real source queue allocation/priority and native DirectSound PCM registration/ownership"
+  ],
+  "limits": [
+    "Only original index0 is consumed by current sound priority/playback loops; invalid indices reject before touching listener fields. No second listener invented.",
+    "Explicit source queue replaces globals. The contiguous listener fields retain position+0, velocity+c, right+18, signed active+24 layout; full queue is not original global ABI.",
+    "Enabled finite moderate PC53 angles checked analytically, not original differential execution; large-angle x87 transcendental/PC24 fidelity remains unresolved.",
+    "Configured limit0 is an explicit source PCM-registration adapter binding. Full original sound loader 0047b950 and deferred playback 0047c200 remain WIP. No Play calls or audible-playback claim.",
+    "Functional admission, no byte-match or game execution."
+  ]
+}

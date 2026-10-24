@@ -23,14 +23,157 @@ Human playtesting offer, 2026-10-24: ask the user for a focused manual playtest 
 
 ## Working evidence
 
+User-requested break, 2026-10-24: implementation paused for commit/push.
+Last admitted checkpoint remains the sound listener/policy family: 646,266 real /
+164,286 clean checks. The in-progress `0047c200` deferred-sound owner is saved
+as `src/bh_sound_tick.c`, explicitly WIP/not built/not linked/not tested. Its
+required header draft is retained in `m4/sound-update/`; the active header is
+restored to the last tested version. See `m4/sound-update/checkpoint.json`.
+Resume with review and real compile/link/test of that owner, without gameplay
+automation. No unfinished source is counted as admitted restoration.
+
+M4 sound listener/configuration, 2026-10-24: restored complete listener setter
+`0047b710` and voice-limit policy setter `0047b920`. The listener stores exact
+signed active state, position, velocity and Y-X-Z right vector, now consumed by
+real source voice priority. Source native PCM registration can capture the
+configured limit (original default 2); old resources retain prior limits. The
+70-TU target passes 646,266 real-data / 164,286 clean checks (50 new checks).
+Evidence: `m4/sound-listener/`; audit `python tools/check_sound_listener.py`.
+Historical queue source/header variants are retained. Deferred playback owner
+`0047c200`, full loader `0047b950` and full physics orchestration remain WIP.
+No Play calls, audible-playback claim, game or original code execution.
+
+M4 native packet send, 2026-10-24: restored complete `00476d50` transport
+wrapper and `00423710` packet-send owner. Real SDK DirectPlay3A Send forwarding,
+reliability flag selection, XOR framing and unpadded wire length now link with
+real source definitions. The 68-TU target passes 646,216 real-data / 164,236
+clean checks (24 new checks). Native unopened-interface Send failures match
+direct controls; no provider/session/player was initialized and no send succeeded.
+Evidence: `m4/network-send/`; audit `python tools/check_network_send.py`.
+The additional SDK header is separately pinned and scoped to two new TUs;
+existing VC5 comparison headers/flags remain unchanged. Original session/player
+lifecycle, actual delivery, dispatchers and full physics orchestration remain
+unvalidated/unfinished. No gameplay or original code execution.
+
+M4 packet codec, 2026-10-24: restored complete world position encoding
+`004234d0`, vector compression `00423660`, receive checksum
+`004237a0` and player lookup `004239a0`. The 66-TU target passes 646,192
+real-data / 164,212 clean checks, including 1,599 codec checks. Golden LE bytes,
+all 256 payload lengths, padding/corruption controls, position lattice/error
+bounds, the discontinuous upper clamp, real CRT low-EAX conversion and full
+32-bit local ID comparison pass. Source physics packets and the saved M3 normal
+also exercise the encoder. Existing decoder `00423840` is reused through a
+framing bridge, not counted again. Evidence: `m4/network-codec/`; audit:
+`python tools/check_network_codec.py`. Framing helpers are adapters; full sender
+`00423710`, transport `00476d50`, packet dispatchers and full physics remain
+unfinished. No network traffic, game execution or original code execution.
+
+M4 debris physics receiver, 2026-10-24: restored complete response `0043c8f0`
+and deferred registry removal `0043c8b0`, using real source entity callbacks,
+physics packets, vector math and queued sound. The 64-TU target passes
+644,593 real-data / 162,613 clean checks, including 52 new response/lifetime
+checks. Analytic blast/torque, rotated body coordinates, Y force float-spill,
+strict double audio threshold, masked zero divisions, generation reuse and
+retirement order pass. Evidence: `m4/debris-response/`; audit:
+`python tools/check_debris_response.py`. Explicit source bindings are adapters;
+original debris constructors/tick/render and full physics `004124d0` remain WIP.
+Next: full physics side-effect orchestration and actor receivers, with sound
+playback/listener and network transport still separate dependencies. No game
+execution, audible playback, original code execution or byte-match claim.
+
+M4 cached collision contact, 2026-10-24: restored complete `0044d500`
+(`bh_collision_cached_contact`) and routed the real sweep bisection through it.
+The 62-TU target passes 644,541 real-data / 162,561 clean source checks,
+including saved M3 contact output contracts, 91 sweep, 28 dispatch and 114
+physics-response checks. Trial transforms, cached misses and rollback pass.
+Evidence: `m4/cached-contact/`; audit `python tools/check_cached_contact.py`.
+Entity dispatch remains complete. Full physics `004124d0` stays WIP for actual
+actor response callbacks, network transport and effects/audio orchestration;
+no whole-owner admission is inferred from numerical tests. Next physics work:
+recover a concrete event-2 actor receiver and its dependencies. No gameplay,
+original code execution, reference changes or byte-match claim.
+
+M4 sound voice/queue ownership, 2026-10-24: seven complete resource/voice
+allocation, priority, request/update/stop and teardown functions now link with
+real SDK DirectSound interfaces. The 62-TU target passes 644,538 real-data /
+162,558 clean checks, including 112 sound checks. Native PCM upload,
+duplication, cursor weighting, actual duplication failure and Stop/Release pass;
+streaming lists, 1.25x table growth, double generation increments, signed-handle
+validation and dB/frequency values are retained. Zero Play calls, primary/system
+volume writes, game launches or original code execution. Evidence:
+`m4/sound-queue/`; audit `python tools/check_sound_queue.py`.
+Next: deferred playback/update `0047c200` and listener transform `0047b710`.
+Full loader `0047b950` and physics orchestration remain WIP; queue admission is
+not audible-playback or source-game admission. Functional, no byte matching sweep.
+
+M4 contact effects, 2026-10-24: recovered six particle/impact spawn, tick and
+refresh functions plus the three required draw producers and queue reset.
+Real source pool callbacks now drive lifetime, movement, growth, camera-facing
+impact geometry and ordered draw commands. The 60-TU target passes
+644,426 real-data / 162,446 clean checks (57 queue / 30 effect checks).
+Allocation failure, release/recycle, shared RNG, full/partial command arenas and
+non-dyadic PC53 carry/reload controls pass. Evidence: `m4/contact-effects/`;
+audit: `python tools/check_contact_effects.py`. Original draw function pointers
+are explicit source semantic selectors; the actual Direct3D primitive consumers
+remain unrecovered and are not counted. Full physics `004124d0` stays WIP for
+remaining effects orchestration, sound, transport and response/damage callbacks.
+No game execution. Functional admission; no byte-match sweep needed.
+Next selected family: sound voice allocation and queued requests (`0047b410`,
+`0047bc60`, `0047bd40`), with real buffer/interface ownership. Static assessment
+is in `m4/sound-queue/assessment.json`; no sound implementation admitted yet.
+
+M4 entity dispatch / physics response, 2026-10-24: complete `0040b410`,
+static overlap `0044d480` and world X/Y rotations `00401510` / `004016e0`
+now compile/link with the existing real collision owners. The 56-TU target passes
+644,339 real-data / 162,359 clean checks, including 28 dispatch and
+114 physics checks. Tests exercise broad-phase binding, relative actor movement,
+ordered multi-hit scaling, integration → sweep → tangent slide → event-2 packet
+production → finish, signed mass rules, material flags, shared CRT RNG and retained
+PC53 mass-denominator/reciprocal precision. Evidence: `m4/entity-collision/` and
+`m4/physics-response/`; audit: `python tools/check_physics_restoration.py`.
+**Full `004124d0` remains WIP:** actual effect/particle, sound, network and entity
+response/damage callback owners plus their orchestration are not yet recovered.
+Numerical helpers do not stand in for those features or count as full recovery.
+No game launches or original code execution.
+
+M4 swept collision, 2026-10-24: complete `0044da20` plus X/Z rotations
+`00401610` / `004019a0` are compiled and linked with real tree/face/segment owners.
+The 52-TU build passes 644,197 real-data / 162,217 clean
+checks, including 91 focused sweep/rotation checks and repeatable sweeps on 454
+real models. Original three bisections, cached-face fallback and one bounded
+segment refinement are retained. Saved M3 fraction/normal now pass through actual
+swept source on explicit analytical geometry; original inputs remain unavailable.
+Evidence: `m4/swept-collision/`; `python tools/check_collision_restoration.py`.
+Next source boundary is entity/candidate collision dispatch and physics response;
+full scene/script/game integration remains open. Zero game launches.
+
+M4 collision traversal, 2026-10-24: recovered `0044c200` / `0044d2f0`
+with real BSP bounds, face flags, traversal order and restored ancestor counters.
+The 50-TU integration passes 644,105 real-data / 162,126 clean checks, including
+29 focused traversal checks and repeatable queries over 454 real models. Rotated
+geometry exposed and now verifies a corrected in-place transform in the prior
+face helper; its failing control is retained. Evidence: `m4/collision-traversal/`.
+Assessment: full face selection is now available; the next dependency closure is
+`0044da20` swept bisection, its X/Z rotations and segment fallback. No gameplay.
+
+M4 face contact, 2026-10-24: restored complete `0044cc20` in
+`src/bh_collision_model.c` with explicit BSP/transform/normal inputs. The 48-TU
+integration passes 644,075 real-data and 162,097 clean
+source-only checks, including 191 new face checks / 180 independent interval and
+winding cases. Saved M3 contact output is audited and checked on analytical source
+geometry; its missing detector inputs prevent an exact replay. Evidence:
+`m4/face-contact/validation.json`; audit: `python tools/check_face_contact.py`.
+The enclosing swept detector/face selection and collision response remain missing.
+No game execution or playable-source admission.
+
 M4 candidate audit, 2026-10-24: all ten active ledger candidates reviewed;
 complete collision model loading, optional RIFF scanning and the two buffered
 PCX routines now supersede their old subsets. Six larger level/script/render/
 sound/image owners remain unfinished. The six timer/timer2 callbacks also now
-use real entity allocation, dispatch and cleanup. Current target: 48 TUs,
-643,883 real-data / 161,905 clean checks, 24 missing-module controls. Ledger:
-63 current linked functions, four comparison variants, fifteen historical
-variants, six unfinished owners. Evidence: `m4/candidate-admission-validation.json`.
+use real entity allocation, dispatch and cleanup. Current target: 62 TUs,
+644,538 real-data / 162,558 clean checks, 31 missing-module controls. Ledger:
+90 current linked functions, four comparison variants, fifteen historical
+variants, seven unfinished owners including physics. Evidence: `m4/candidate-admission-validation.json`.
 No game execution or playable-source-game admission is claimed.
 
 M4 navigation and route consumers, 2026-10-24: full `00407f30`/`00407d90`
@@ -103,7 +246,7 @@ No new byte-match sweep is needed before M2. No milestone is complete merely bec
 
 The repository is named `BHunter-revived`. Original game/media, local toolchains, Ghidra projects and large generated runs are excluded. Small curated evidence snapshots are retained under `analysis/evidence/`.
 
-Run `mkstatus.cmd` to regenerate README accounting from the full role catalog and implementation ledger: 887 mapped, 160 excluded helpers/libraries, 727 potential game/engine functions; 63 restored and linked, 6 in progress, 658 not started. The 88 implementation variants include 15 historical/superseded and four object-only byte matches, without inflating recovery. Playable-game admission remains zero. Counts are provisional and do not measure effort or playable completion.
+Run `mkstatus.cmd` to regenerate README accounting from the full role catalog and implementation ledger: 887 mapped, 160 excluded helpers/libraries, 727 potential game/engine functions; 90 restored and linked, 7 in progress, 630 not started. The 116 implementation variants include 15 historical/superseded and four object-only byte matches, without inflating recovery. Playable-game admission remains zero. Counts are provisional and do not measure effort or playable completion.
 
 ## M1 initial-frontier exit evidence — 2026-10-23
 

@@ -1,0 +1,55 @@
+{
+  "passed": true,
+  "address": "0044cc20",
+  "implementation": "func",
+  "integration": "linked_harness",
+  "target": "build/m0/bhunter-integration.exe",
+  "translation_units": 48,
+  "real_total": {
+    "scenario": "m2-foundations",
+    "checks": 644075,
+    "failures": 0,
+    "archive_entries": 1229,
+    "original_code_required": false
+  },
+  "clean_total": {
+    "scenario": "m2-foundations",
+    "checks": 162097,
+    "failures": 0,
+    "archive_entries": 0,
+    "original_code_required": false
+  },
+  "focused_scenarios": [
+    {
+      "scenario": "segment-query",
+      "checks": 14,
+      "failures": 0,
+      "original_code_required": false
+    },
+    {
+      "scenario": "collision-model",
+      "checks": 228,
+      "failures": 0,
+      "original_code_required": false
+    }
+  ],
+  "new_face_checks": 191,
+  "analytical_interval_cases": 180,
+  "sources": {
+    "src/bh_collision_model.c": "f5629281980362c6f2a4a638d9704a03124d596ffd3251cd00d5160d61821f0d",
+    "src/bh_collision_model.h": "2ab20c87a6007ab3fb5059fd58d96c4f0e79f798fe6137482b43433b9b41f07c",
+    "tests/collision_model.c": "139d049675914c9e8b94bd515b1ef104871f19e2aa6b97f39d2775799bbb8fa2",
+    "tests/segment_query.c": "40aaa60e592e16a90f12911c082fead172371da1bdf043b9d8d9d733c9c077b5",
+    "tests/saved_contact.h": "857464d5999dd503d36828a8b1ce11a5c23607f3738fd51f90a90d39ce24271d"
+  },
+  "game_launches": 0,
+  "original_code_executed": false,
+  "byte_match": false,
+  "saved_contact_scope": "Audited saved M3 actual contact. Captured fraction/normal checked on analytical source segment; captured normal used by restored face contact offset. No original detector input/geometry capture exists; exact scenario replay is not claimed.",
+  "limits": [
+    "Explicit source API, not original global ABI",
+    "Functional finite analytical geometry validation; no original execution/differential or byte-match claim",
+    "Boundary numerics outside analytical fixtures and original PC24 transitions remain unvalidated",
+    "Malformed topology/invalid inputs bounded rather than original unsafe access"
+  ]
+}

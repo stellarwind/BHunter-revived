@@ -6,6 +6,8 @@
 #include "../src/bh_world_query.h"
 int bh_position_real_check(const BHNavigation *navigation);
 int bh_segment_real_check(BHGeometry *geometry,unsigned long count);
+int bh_sweep_real_check(BHGeometry *geometries,unsigned long count);
+int bh_collision_queries_real_check(BHGeometry *geometries,unsigned long count);
 int bh_collision_models_real_check(const BHBlockLibrary *library);
 #include <stdio.h>
 #include <stdlib.h>
@@ -157,6 +159,8 @@ static void real_scene(const char *archive) {
         }
     }
     CHECK(bh_collision_models_real_check(&library),"complete collision loader matches all 454 source registry models and resets runtime state");
+    CHECK(bh_sweep_real_check(geometries,initialized),"swept source collision repeats on all real BSP models");
+    CHECK(bh_collision_queries_real_check(geometries,initialized),"source collision tree queries repeat and clean counters on all real models");
     CHECK(bh_segment_real_check(geometries,initialized),"real BSP segment queries execute and repeat over all source models");
     CHECK(bh_position_real_check(&navigation),"all 1454 source world packed-position outputs match independent saved-bound CRC");
     ok=bh_world_query_init(&query,world,5815,NULL,0,NULL);CHECK(ok,"real source-scene broad-phase workspace");

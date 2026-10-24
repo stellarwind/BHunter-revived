@@ -1,0 +1,49 @@
+{
+  "passed": true,
+  "translation_units": 52,
+  "real_total": {
+    "scenario": "m2-foundations",
+    "checks": 644197,
+    "failures": 0,
+    "archive_entries": 1229,
+    "original_code_required": false
+  },
+  "clean_total": {
+    "scenario": "m2-foundations",
+    "checks": 162217,
+    "failures": 0,
+    "archive_entries": 0,
+    "original_code_required": false
+  },
+  "focused": {
+    "scenario": "swept-collision",
+    "checks": 91,
+    "failures": 0,
+    "original_code_required": false
+  },
+  "sources": {
+    "src/bh_sweep.c": "a96bbae173e821f95a25c447bc2f9e99df0ecfa2e5688b438848709d37a3a542",
+    "src/bh_sweep.h": "73c6c8b95d9eed37b09ece32998d3e748f7d9a76f6934792b8cb1bd6c70672f3",
+    "tests/sweep.c": "ae06bbb667351a1b92342b1ad3c3d5a2a3586b8c93f64143e150a394d15d0c5c",
+    "src/bh_rotation.c": "78eeafcdf8e065300530e7f3a0336815c5dcd666cbb04e9639331a620bbd0b12",
+    "src/bh_rotation.h": "b059053f9a6ef8728b399b55c61f1807cb5f4c1a350206f8a6ffdb91611b85e6",
+    "src/bh_collision_query.c": "1973040655dfb2f871dd6212bf44db3c5cf14057627ee23e26b08c798f907c8e",
+    "src/bh_collision_model.c": "823c78ad4105aaf32ab3a75874123e7e083d2947fb4635981ab7f4e89da24f91",
+    "tests/saved_contact.h": "857464d5999dd503d36828a8b1ce11a5c23607f3738fd51f90a90d39ce24271d",
+    "tests/checkpoint.c": "78f6816b9905378a0dc2cfbc38fa105d74c75d3b0034bacf36e0a2cb53439ebb",
+    "tests/world_geometry.c": "17e4651b0a671c1e57738bbe065c3d6df47d0a86c620c44e3567233ac91f31f5"
+  },
+  "real_model_repeatability_checks": 454,
+  "missing_definition_controls": 26,
+  "original_code_executed": false,
+  "game_launches": 0,
+  "raw_byte_match": false,
+  "saved_contact": "Actual recovered swept code returns captured fraction 0.875 and normal near (1,0,0) on explicit analytical geometry. Exact M3 detector inputs were not captured; no original scenario replay claimed.",
+  "limits": [
+    "Source query lifetime/context replaces original shared globals/lazy caches; no gameplay/entity dispatch or damage response admission",
+    "Rigid transforms and checked PC53; huge-angle x87 transcendental reduction and near-degenerate contact boundaries remain unvalidated",
+    "Invalid inputs/topology retain caller matrix/output and report failure rather than original unsafe memory behavior",
+    "This is the original endpoint/bisection/segment algorithm; it is not a continuous analytic time-of-impact solver"
+  ],
+  "next_boundary": "0040b410 entity/candidate-list dispatch, then physics-response caller 004124d0; review complete boundaries/dependency ownership before implementation."
+}

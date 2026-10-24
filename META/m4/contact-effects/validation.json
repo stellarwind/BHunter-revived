@@ -1,0 +1,52 @@
+{
+  "passed": true,
+  "translation_units": 60,
+  "real_total": {
+    "scenario": "m2-foundations",
+    "checks": 644426,
+    "failures": 0,
+    "archive_entries": 1229,
+    "original_code_required": false
+  },
+  "clean_total": {
+    "scenario": "m2-foundations",
+    "checks": 162446,
+    "failures": 0,
+    "archive_entries": 0,
+    "original_code_required": false
+  },
+  "scenarios": [
+    {
+      "scenario": "draw-command-queue",
+      "checks": 57,
+      "failures": 0,
+      "original_code_required": false
+    },
+    {
+      "scenario": "contact-effects",
+      "checks": 30,
+      "failures": 0,
+      "original_code_required": false
+    }
+  ],
+  "sources": {
+    "src/bh_draw_queue.c": "0c697d2144ebb7453a37f65aa8f208d69512c3e4926e369cc7c37daee706707d",
+    "src/bh_draw_queue.h": "fc34c940a5185dbf4980dee286cac36851d877c1ec9f21518a523f33e807adea",
+    "tests/draw_queue.c": "03bbc42c14b673536604dd9989eacea0554439cb2ddffd73a16c201b3aea2d60",
+    "src/bh_contact_effects.c": "78a1a77bea2540718d766aa138f63ff3cd63124ad1a2c8d7fe7c39cef5f6bc90",
+    "src/bh_contact_effects.h": "3787037915bec668c5a287dd964e626396d4f12aec32b48c213a9efde8696623",
+    "tests/contact_effects.c": "9e94133dbb6cf3a3665cb33102302f1e9bf56d5fca044f5591b10e392ebbfe4b",
+    "tests/checkpoint.c": "e522ea14b6b2b3fb453b1696f4774b8604bb0f3fcd08fbda8bfef29837355133"
+  },
+  "game_launches": 0,
+  "original_code_executed": false,
+  "raw_byte_match": false,
+  "source_game_admitted": false,
+  "limits": [
+    "Draw-command semantic selectors replace original executable draw callback pointers. This is source command production; Direct3D primitive consumers 00477640/00477710/004777c0 are not implemented or counted",
+    "Explicit texture identifiers are borrowed values, not fabricated original texture objects; actual texture/platform construction remains open",
+    "Finite PC53 moderate inputs; original x87 transcendental reduction and PC24 transitions unvalidated; malformed lifetimes/foreign entity contexts reject safely",
+    "No source-game renderer admission, no original code executed, no automated gameplay"
+  ],
+  "precision_control": "00407720 FDIV/extended growth and first extent retain PC53; second segment reloads the float growth stored at 00407833. Non-dyadic fixture distinguishes first 0x3eea5180 and second 0x3e6a5181."
+}

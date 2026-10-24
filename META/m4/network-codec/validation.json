@@ -1,0 +1,56 @@
+{
+  "passed": true,
+  "translation_units": 66,
+  "real_total": {
+    "scenario": "m2-foundations",
+    "checks": 646192,
+    "failures": 0,
+    "archive_entries": 1229,
+    "original_code_required": false
+  },
+  "clean_total": {
+    "scenario": "m2-foundations",
+    "checks": 164212,
+    "failures": 0,
+    "archive_entries": 0,
+    "original_code_required": false
+  },
+  "focused": {
+    "scenario": "network-codec",
+    "checks": 1599,
+    "failures": 0,
+    "network_sends": 0,
+    "original_code_required": false
+  },
+  "sources": {
+    "src/bh_network_codec.c": "eef9d8ea4750b1e14731f5c6b55f01d50b199645c2fe4bcf0d998a83b03ab3b9",
+    "src/bh_network_codec.h": "c1173051c92e0995ef5f3ff5511c9906f31d8b94154dabd16e64f222c16f887a",
+    "src/bh_position.c": "629dbd42143b6082dc025c4e82585106ae6df97e1a204363c1fde89d11d3b10c",
+    "src/bh_position.h": "3b1ef1a9a275be6bed0fda139957cdc1dd0ceffa092f997e0800764de5e86321",
+    "tests/network_codec.c": "9537a814479f6b0306050b0e552fbe1af95013d2f2a02b97e0baa01103807810",
+    "tests/checkpoint.c": "226e5c0388de7b1e8d2c4ec8f45a47fe145abe5f01f08647e4da79ba35d7f626",
+    "tests/saved_contact.h": "857464d5999dd503d36828a8b1ce11a5c23607f3738fd51f90a90d39ce24271d",
+    "src/bh_fp.c": "cc8400a29fd082f96ffd9b483f490a44992717b25eac0cb32e2e108ba446f3f8",
+    "src/bh_round.c": "ff848010705702e25cf85f5ba1d9c30a024d1ea8bf93227240285b9c54fc8ef4",
+    "src/bh_world_geometry.h": "bbaef5d400cdb13edace4099d4ff7743ba943c9645eed8aa620d8bb4aa291543",
+    "src/bh_entities.c": "6fc5e54d88906a7922c149bb1ccc9851c2cbe701217e57d8e3c72646d81cb92a",
+    "src/bh_entities.h": "a0245c7cf2fe4f2529170d469030e62401f3651e21699f300aa83e9d80046489",
+    "src/bh_physics_response.c": "273ba0f8cae1356e757558e88649d6a73f4f8d9fdde8b62027eb535e5556e382",
+    "src/bh_physics_response.h": "6630f64c793b16c0234b700351779aee3e5f258c789e017efcdb3ee8fd480adb"
+  },
+  "driver_sha256": "4c6ada125320afcd997365162c62e4230c42a60823ca29ec2b49a7949f7ab7a2",
+  "missing_definition_controls": 33,
+  "game_launches": 0,
+  "original_code_executed": false,
+  "network_sends": 0,
+  "full_004124d0_admitted": false,
+  "transport_00476d50_admitted": false,
+  "sender_00423710_admitted": false,
+  "limits": [
+    "No network sends, sessions or original-code execution. Actual DirectPlay transport 00476d50, full sender 00423710, packet dispatchers and full physics owner remain unrecovered.",
+    "Source buffer begin/append/finish are explicit adapters, not admission of the transport-owning sender; globals become borrowed reader/writer/stats/world/player bindings.",
+    "Source guards reject truncation, invalid bindings, insufficient writable padding and payload >255. Valid original packet arithmetic, cursor consumption and counters retained.",
+    "PC53 finite moderate source inputs, with original masked zero extents/scale conversions specifically checked. FP exception/status-word equivalence and broad exceptional-input fidelity unvalidated.",
+    "Tests use independent wire bytes, exact dyadic lattice and analytic error bounds; no captured live network exchange or original differential execution. Saved M3 normal is an output-contract fixture."
+  ]
+}

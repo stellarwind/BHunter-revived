@@ -1,0 +1,31 @@
+{
+  "records": [
+    {
+      "address": "0040b410",
+      "role": "engine_candidate",
+      "boundary": "0040b410-0040ba3d",
+      "instructions": 483,
+      "body_sha256": "1d1877bb852a84e25bbead92fd496c2264d60afb6567e565eef1d66cca6beacd",
+      "classification": "Ordinary scene/entity candidate dispatch; calls only recovered sweeps, rotations and rigid inverse. Not CRT, compiler support, import thunk or independent shared tail; engine authorship unresolved."
+    }
+  ],
+  "owner": "src/bh_entity_collision.c",
+  "dependencies": [
+    "Real BHSweepQuery including both BSP trees, face clip, optional segment fallback",
+    "BHWorldHit candidate identities from existing bh_world_query_run; static world geometry transform/model",
+    "Actor binding explicitly supplies original registry geometry, world/local matrices, +48 movement and +114 flags; no guessed BHEntity opaque fields or registry definitions",
+    "Existing source local rotations and rigid inverse; double 1.5 at 00489260"
+  ],
+  "contract": [
+    "Empty list applies full requested translation/X/Y/Z; disabled single actor returns miss without moving",
+    "One candidate leaves requested movement/angles unchanged; static inverse computed from actual transform; actors require flag 2",
+    "Moving actor uses requested movement minus actor movement after adding actor movement to pose; hit contact displacement multiplied by 1.5; single miss additionally subtracts actor movement",
+    "Multiple candidates each start from original pose; successful hits scale requested movement/angles and accumulated fraction; retain last successful pose/contact and swap its candidate to first",
+    "All-miss multiple-candidate result is last attempted pose (including unchanged pose when last actor disabled)"
+  ],
+  "limits": [
+    "Typed explicit source bindings replace original mixed pointer array and registry/actor ABI; this does not recover full actor constructors or script installation",
+    "Finite PC53 rigid transform scope inherited from swept implementation; no byte-match or original runtime replay claim",
+    "Invalid/foreign source inputs report failure with caller pose/vectors/output/order retained rather than original unsafe access"
+  ]
+}

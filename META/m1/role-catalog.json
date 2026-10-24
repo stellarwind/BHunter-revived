@@ -2761,17 +2761,18 @@
       "body_ranges": [
         "004234d0-00423654"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "engine_candidate",
+      "owner": "network_codec",
+      "provenance_confidence": "Complete ordinary packet encoding/verification/lookup behavior with mapped callers and boundaries. Only verified VC5 CRT conversion is reused. Not an import, compiler support routine, shared tail or verified library implementation; game/engine authorship unresolved.",
+      "boundary_review": "complete_body_calls_constants_reviewed",
+      "behavior": "bh_packet_write_position packet wire encoding/validation/lookup",
       "abi": "provisional inferred signature: undefined8 __cdecl FUN_004234d0(int * param_1)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/network-codec/review.json"
       ]
     },
     {
@@ -2780,17 +2781,18 @@
       "body_ranges": [
         "00423660-0042370e"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "engine_candidate",
+      "owner": "network_codec",
+      "provenance_confidence": "Complete ordinary packet encoding/verification/lookup behavior with mapped callers and boundaries. Only verified VC5 CRT conversion is reused. Not an import, compiler support routine, shared tail or verified library implementation; game/engine authorship unresolved.",
+      "boundary_review": "complete_body_calls_constants_reviewed",
+      "behavior": "bh_packet_write_vector packet wire encoding/validation/lookup",
       "abi": "provisional inferred signature: undefined __stdcall FUN_00423660(void)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/network-codec/review.json"
       ]
     },
     {
@@ -2799,17 +2801,18 @@
       "body_ranges": [
         "00423710-00423790"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "engine_candidate",
+      "owner": "network_send",
+      "provenance_confidence": "Ordinary source transport/packet owner. Complete boundary, calls and SDK vtable Send slot 0x68 reviewed. Not CRT, compiler support, import thunk or independent shared tail; original game/engine attribution unresolved.",
+      "boundary_review": "complete_body_and_native_sdk_calls_reviewed",
+      "behavior": "bh_network_packet_send native send owner",
       "abi": "provisional inferred signature: undefined __cdecl FUN_00423710(undefined4 param_1, int param_2)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/network-send/review.json"
       ]
     },
     {
@@ -2818,17 +2821,18 @@
       "body_ranges": [
         "004237a0-0042383c"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "engine_candidate",
+      "owner": "network_codec",
+      "provenance_confidence": "Complete ordinary packet encoding/verification/lookup behavior with mapped callers and boundaries. Only verified VC5 CRT conversion is reused. Not an import, compiler support routine, shared tail or verified library implementation; game/engine authorship unresolved.",
+      "boundary_review": "complete_body_calls_constants_reviewed",
+      "behavior": "bh_packet_receive packet wire encoding/validation/lookup",
       "abi": "provisional inferred signature: undefined4 __stdcall FUN_004237a0(void)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/network-codec/review.json"
       ]
     },
     {
@@ -2856,17 +2860,18 @@
       "body_ranges": [
         "004239a0-00423a0a"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "engine_candidate",
+      "owner": "network_codec",
+      "provenance_confidence": "Complete ordinary packet encoding/verification/lookup behavior with mapped callers and boundaries. Only verified VC5 CRT conversion is reused. Not an import, compiler support routine, shared tail or verified library implementation; game/engine authorship unresolved.",
+      "boundary_review": "complete_body_calls_constants_reviewed",
+      "behavior": "bh_packet_read_actor packet wire encoding/validation/lookup",
       "abi": "provisional inferred signature: undefined4 __cdecl FUN_004239a0(int * param_1)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/network-codec/review.json"
       ]
     },
     {
@@ -5725,17 +5730,18 @@
       "body_ranges": [
         "0043c8b0-0043c8e9"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "engine_candidate",
+      "owner": "debris_response",
+      "provenance_confidence": "Complete ordinary entity-response/lifetime callback, reviewed call sites and constructor installation. No verified library attribution; not CRT, import thunk, compiler scaffolding or separately assigned shared tail. Proprietary engine/game authorship unresolved.",
+      "boundary_review": "complete_body_and_calls_reviewed",
+      "behavior": "Registry compaction and real deferred entity release",
       "abi": "provisional inferred signature: undefined FUN_0043c8b0(void)",
       "assigned_next": false,
-      "callback_review": "candidate_only",
+      "callback_review": "verified_constructor_installation_and_source_callbacks",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/debris-response/review.json"
       ]
     },
     {
@@ -5744,17 +5750,18 @@
       "body_ranges": [
         "0043c8f0-0043ccca"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "engine_candidate",
+      "owner": "debris_response",
+      "provenance_confidence": "Complete ordinary entity-response/lifetime callback, reviewed call sites and constructor installation. No verified library attribution; not CRT, import thunk, compiler scaffolding or separately assigned shared tail. Proprietary engine/game authorship unresolved.",
+      "boundary_review": "complete_body_and_calls_reviewed",
+      "behavior": "Debris response for blast/contact/stop/detach/retirement",
       "abi": "provisional inferred signature: undefined FUN_0043c8f0(void)",
       "assigned_next": false,
-      "callback_review": "candidate_only",
+      "callback_review": "verified_constructor_installation_and_source_callbacks",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/debris-response/review.json"
       ]
     },
     {
@@ -11095,17 +11102,18 @@
       "body_ranges": [
         "00476d50-00476d92"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "engine_candidate",
+      "owner": "network_send",
+      "provenance_confidence": "Ordinary source transport/packet owner. Complete boundary, calls and SDK vtable Send slot 0x68 reviewed. Not CRT, compiler support, import thunk or independent shared tail; original game/engine attribution unresolved.",
+      "boundary_review": "complete_body_and_native_sdk_calls_reviewed",
+      "behavior": "bh_network_send native send owner",
       "abi": "provisional inferred signature: undefined __cdecl FUN_00476d50(undefined4 param_1, undefined4 param_2, undefined4 param_3, int param_4)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/network-send/review.json"
       ]
     },
     {
@@ -12659,17 +12667,18 @@
       "body_ranges": [
         "0047b710-0047b82e"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "engine_candidate",
+      "owner": "sound_listener_configuration",
+      "provenance_confidence": "Ordinary listener/configuration owner, complete mapped body/calls and global layout reviewed before assignment. Not CRT, compiler support, import or independent shared tail. No verified library attribution; game/engine authorship unresolved.",
+      "boundary_review": "complete_body_calls_global_layout_reviewed",
+      "behavior": "bh_sound_listener",
       "abi": "provisional inferred signature: undefined __cdecl FUN_0047b710(int param_1, int param_2, undefined4 * param_3, float * param_4, undefined4 * param_5)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/sound-listener/review.json"
       ]
     },
     {
@@ -12697,17 +12706,18 @@
       "body_ranges": [
         "0047b920-0047b944"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "engine_candidate",
+      "owner": "sound_listener_configuration",
+      "provenance_confidence": "Ordinary listener/configuration owner, complete mapped body/calls and global layout reviewed before assignment. Not CRT, compiler support, import or independent shared tail. No verified library attribution; game/engine authorship unresolved.",
+      "boundary_review": "complete_body_calls_global_layout_reviewed",
+      "behavior": "bh_sound_set_voice_limit",
       "abi": "provisional inferred signature: undefined __cdecl FUN_0047b920(int param_1)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/sound-listener/review.json"
       ]
     },
     {

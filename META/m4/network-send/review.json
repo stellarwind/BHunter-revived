@@ -1,0 +1,39 @@
+{
+  "records": [
+    {
+      "address": "00476d50",
+      "function": "bh_network_send",
+      "boundary": "00476d50-00476d92",
+      "instructions": 27,
+      "body_sha256": "4cf3886902d8bb97e3839694cab36efb66944dcd0f87eac49543e4b6da82ba0c",
+      "role": "engine_candidate",
+      "classification": "Ordinary source transport/packet owner. Complete boundary, calls and SDK vtable Send slot 0x68 reviewed. Not CRT, compiler support, import thunk or independent shared tail; original game/engine attribution unresolved."
+    },
+    {
+      "address": "00423710",
+      "function": "bh_network_packet_send",
+      "boundary": "00423710-00423790",
+      "instructions": 48,
+      "body_sha256": "05b03e8e84e2b1669c3b51d7ff26ebc17d3cba17eb3748659057c901342d9bac",
+      "role": "engine_candidate",
+      "classification": "Ordinary source transport/packet owner. Complete boundary, calls and SDK vtable Send slot 0x68 reviewed. Not CRT, compiler support, import thunk or independent shared tail; original game/engine attribution unresolved."
+    }
+  ],
+  "contracts": [
+    "00476d50 uses original from DPID, requested recipient, payload pointer and DWORD length; any nonzero reliable selects flags1, otherwise flags0. NULL peer makes no call.",
+    "Official local DirectX7 SDK supplies DirectPlay3A declarations; Send vtable offset0x68 and guaranteed flag1 checked at compile time. Existing pinned VC5 headers/flags unaffected in every existing TU.",
+    "00423710 sets byte payload length, zero-pads to DWORD for XOR, updates scratch cursor, and passes original unpadded length to source transport. Real source framing helpers reused."
+  ],
+  "dependencies": [
+    "Real native DirectPlay3A interface, official SDK declarations; COM factory/ownership imports from pinned ole32.lib",
+    "Existing real source packet framing/receive checksum and VC5 CRT"
+  ],
+  "native_factory_note": "DirectPlayCreate(NULL) was observed returning E_INVALIDARG in the initial diagnostic. Final compiled tests use CoInitialize/CoCreateInstance(CLSID_DirectPlay, IID_IDirectPlay3A) without a provider/session; the initial factory failure is not counted as passing validation.",
+  "limits": [
+    "Actual native DirectPlay3A unopened-interface failures tested, not successful delivery, session ownership, peer exchange or network gameplay. No InitializeConnection/Open/CreatePlayer calls in checks.",
+    "Source context init/dispose owns AddRef/Release; explicit DPID/interface/writer replaces original globals. Native HRESULT and call counters are source diagnostic extensions.",
+    "Framing source guards apply to valid <=255-byte payload packets; invalid/repeated finish rejects before any native call.",
+    "Full physics owner and mode-specific packet construction/dispatch remain WIP; native send restoration is not full networking admission.",
+    "Functional source, no raw byte-match or original code execution claim."
+  ]
+}

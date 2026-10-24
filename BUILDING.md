@@ -133,3 +133,11 @@ actual GetCursorPos success and translates observed deltas in the game's stack
 output. The original menu/episode callbacks execute. This remains a qualified
 reference diagnostic, not a source game, full gameplay replay or normal shutdown.
 See [menu trace and unsuccessful controls](META/m3/MENU_TRACE.md).
+
+Native DirectPlay transport checks additionally use the locally installed official
+DirectX SDK declarations, pinned in `META/native-directplay-dependencies.json`.
+`BH_DIRECTPLAY_SDK` (or `tools/m0.py --directplay-sdk`) selects its root, default
+`D:/Decomp/dx7sdk`. Only the transport and its test TU get that include path;
+existing VC5 comparison/header contexts stay pinned. `ole32.lib` comes from the
+existing VC5 dependencies. Native checks create an unopened DirectPlay3A COM
+interface and exercise Send failure paths without a connection or session.
