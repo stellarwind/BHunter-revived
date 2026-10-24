@@ -1,0 +1,53 @@
+
+void __cdecl FUN_00458310(int param_1)
+
+{
+  float *pfVar1;
+  int iVar2;
+  int iVar3;
+  undefined *puVar4;
+  float *pfVar5;
+  int *piVar6;
+  float *pfVar7;
+  float *pfVar8;
+  
+  piVar6 = (int *)(*(int *)(DAT_004edeb0 + 0x4c) + param_1 * 0xc);
+  if ((float)piVar6[2] != DAT_004edea8) {
+    piVar6[2] = (int)DAT_004edea8;
+    iVar2 = *(int *)(*(int *)(DAT_004edeb0 + 0x60) + *piVar6 * 4);
+    if ((iVar2 != 0) && ((DAT_00491778 & *(uint *)(iVar2 + 0x50)) != 0)) {
+      piVar6 = (int *)(piVar6[1] * 0x10 + *(int *)(DAT_004edeb0 + 0x44));
+      pfVar1 = (float *)(*(int *)(DAT_004edeb0 + 0x3c) + *piVar6 * 0x3c);
+      pfVar5 = (float *)0x0;
+      pfVar7 = pfVar1;
+      do {
+        pfVar7[6] = (float)piVar6[2];
+        pfVar7[7] = (float)piVar6[3];
+        if (pfVar7[0xd] != DAT_004edea8) {
+          pfVar7[0xd] = DAT_004edea8;
+          pfVar7[0xe] = 0.0;
+          FUN_004012e0((float *)&DAT_004e9448,pfVar7,pfVar7 + 3);
+        }
+        if (pfVar5 != (float *)0x0) {
+          pfVar5[0xb] = (float)pfVar7;
+          pfVar7[0xc] = (float)pfVar5;
+        }
+        iVar3 = piVar6[1];
+        pfVar8 = pfVar7;
+        if (iVar3 < 0) break;
+        piVar6 = (int *)(iVar3 * 0x10 + *(int *)(DAT_004edeb0 + 0x44));
+        pfVar8 = (float *)(*(int *)(DAT_004edeb0 + 0x3c) + *piVar6 * 0x3c);
+        pfVar5 = pfVar7;
+        pfVar7 = pfVar8;
+      } while (-1 < iVar3);
+      pfVar1[0xc] = (float)pfVar8;
+      pfVar8[0xb] = (float)pfVar1;
+      puVar4 = FUN_00452140((undefined *)pfVar8,iVar2);
+      if (puVar4 != (undefined *)0x0) {
+        FUN_0046e390(iVar2,(int)puVar4,DAT_004e3898);
+      }
+    }
+  }
+  return;
+}
+

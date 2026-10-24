@@ -1,0 +1,154 @@
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+undefined4 __cdecl FUN_00457e20(undefined4 *param_1,undefined4 *param_2)
+
+{
+  uint *puVar1;
+  uint *puVar2;
+  undefined4 *puVar3;
+  float *pfVar4;
+  bool bVar5;
+  char *pcVar6;
+  int iVar7;
+  int iVar8;
+  undefined4 *puVar9;
+  undefined4 *puVar10;
+  int iVar11;
+  int *local_4;
+  
+  puVar1 = param_2 + 0xe;
+  puVar9 = &DAT_0048c030;
+  puVar10 = param_2 + 2;
+  for (iVar7 = 0xc; iVar7 != 0; iVar7 = iVar7 + -1) {
+    *puVar10 = *puVar9;
+    puVar9 = puVar9 + 1;
+    puVar10 = puVar10 + 1;
+  }
+  param_2[0x1b] = 0;
+  param_2[0x1d] = 0;
+  param_2[0x1c] = 0;
+  param_2[0x1e] = 0;
+  param_2[0x1f] = 0;
+  FUN_0047cf60((char *)puVar1,4,1,param_1);
+  pcVar6 = (char *)FUN_0047dae0(*puVar1 << 5);
+  param_2[0xf] = pcVar6;
+  if (pcVar6 == (char *)0x0) {
+    return 0;
+  }
+  FUN_0047cf60(pcVar6,0x20,*puVar1,param_1);
+  puVar2 = param_2 + 0x10;
+  FUN_0047cf60((char *)puVar2,4,1,param_1);
+  pcVar6 = (char *)FUN_0047dae0(*puVar2 * 0x3c);
+  param_2[0x11] = pcVar6;
+  if (pcVar6 == (char *)0x0) {
+    return 0;
+  }
+  FUN_0047cf60(pcVar6,0x3c,*puVar2,param_1);
+  puVar2 = param_2 + 0x12;
+  FUN_0047cf60((char *)puVar2,4,1,param_1);
+  pcVar6 = (char *)FUN_0047dae0(*puVar2 << 4);
+  param_2[0x13] = pcVar6;
+  if (pcVar6 == (char *)0x0) {
+    return 0;
+  }
+  FUN_0047cf60(pcVar6,0x10,*puVar2,param_1);
+  puVar2 = param_2 + 0x14;
+  FUN_0047cf60((char *)puVar2,4,1,param_1);
+  pcVar6 = (char *)FUN_0047dae0(*puVar2 * 0xc);
+  param_2[0x15] = pcVar6;
+  if (pcVar6 == (char *)0x0) {
+    return 0;
+  }
+  FUN_0047cf60(pcVar6,0xc,*puVar2,param_1);
+  puVar2 = param_2 + 0x16;
+  FUN_0047cf60((char *)puVar2,4,1,param_1);
+  pcVar6 = (char *)FUN_0047dae0(*puVar2 * 0x38);
+  param_2[0x17] = pcVar6;
+  if (pcVar6 == (char *)0x0) {
+    return 0;
+  }
+  FUN_0047cf60(pcVar6,0x38,*puVar2,param_1);
+  puVar2 = param_2 + 0x18;
+  FUN_0047cf60((char *)puVar2,4,1,param_1);
+  pcVar6 = (char *)FUN_0047dae0(*puVar2 << 3);
+  param_2[0x19] = pcVar6;
+  if (pcVar6 == (char *)0x0) {
+    return 0;
+  }
+  FUN_0047cf60(pcVar6,8,*puVar2,param_1);
+  iVar7 = FUN_0047dae0(*puVar1 << 2);
+  iVar11 = 0;
+  param_2[0x1a] = iVar7;
+  if (iVar7 == 0) {
+    return 0;
+  }
+  if (0 < (int)*puVar1) {
+    param_1 = (undefined4 *)0x0;
+    do {
+      iVar8 = 0;
+      bVar5 = false;
+      iVar7 = 0;
+      local_4 = (int *)0x0;
+      if (0 < (int)param_2[0x14]) {
+        do {
+          if (bVar5) goto LAB_00458018;
+          if (*(int *)(iVar8 + param_2[0x15]) == iVar11) {
+            bVar5 = true;
+          }
+          iVar7 = iVar7 + 1;
+          iVar8 = iVar8 + 0xc;
+        } while (iVar7 < (int)param_2[0x14]);
+      }
+      if (bVar5) {
+LAB_00458018:
+        pcVar6 = (char *)((int)param_1 + param_2[0xf] + 9);
+        if (*pcVar6 != '\0') {
+          local_4 = FUN_0044f550(pcVar6);
+        }
+      }
+      *(int **)(param_2[0x1a] + iVar11 * 4) = local_4;
+      iVar11 = iVar11 + 1;
+      param_1 = param_1 + 8;
+    } while (iVar11 < (int)param_2[0xe]);
+  }
+  pfVar4 = (float *)param_2[0x17];
+  puVar9 = (undefined4 *)*pfVar4;
+  if ((float)puVar9 < _DAT_00489ed0) {
+    puVar9 = (undefined4 *)-(float)puVar9;
+  }
+  param_1 = (undefined4 *)pfVar4[3];
+  if ((float)param_1 < _DAT_00489ed0) {
+    param_1 = (undefined4 *)-(float)param_1;
+  }
+  if ((float)puVar9 < (float)param_1) {
+    puVar9 = param_1;
+  }
+  puVar10 = (undefined4 *)pfVar4[1];
+  if ((float)puVar10 < _DAT_00489ed0) {
+    puVar10 = (undefined4 *)-(float)puVar10;
+  }
+  param_1 = (undefined4 *)pfVar4[4];
+  if ((float)param_1 < _DAT_00489ed0) {
+    param_1 = (undefined4 *)-(float)param_1;
+  }
+  if ((float)puVar10 < (float)param_1) {
+    puVar10 = param_1;
+  }
+  puVar3 = (undefined4 *)pfVar4[2];
+  if ((float)puVar3 < _DAT_00489ed0) {
+    puVar3 = (undefined4 *)-(float)puVar3;
+  }
+  param_1 = (undefined4 *)pfVar4[5];
+  if ((float)param_1 < _DAT_00489ed0) {
+    param_1 = (undefined4 *)-(float)param_1;
+  }
+  if ((float)puVar3 < (float)param_1) {
+    puVar3 = param_1;
+  }
+  *param_2 = 0;
+  param_2[1] = SQRT((float)puVar3 * (float)puVar3 +
+                    (float)puVar10 * (float)puVar10 + (float)puVar9 * (float)puVar9);
+  return 1;
+}
+

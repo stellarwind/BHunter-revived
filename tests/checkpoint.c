@@ -20,6 +20,14 @@ int bh_route_query_checkpoint(unsigned long *checks);
 int bh_world_query_checkpoint(unsigned long *checks);
 int bh_position_checkpoint(unsigned long *checks);
 int bh_segment_query_checkpoint(unsigned long *checks);
+int bh_view_camera_checkpoint(unsigned long *checks);
+int bh_clipper_checkpoint(unsigned long *checks);
+int bh_matrix_inverse_checkpoint(unsigned long *checks);
+int bh_texture_draw_checkpoint(unsigned long *checks);
+int bh_model_checkpoint(const char *archive,unsigned long *checks);
+int bh_texture_image_checkpoint(const char *archive,unsigned long *checks);
+int bh_texture_checkpoint(unsigned long *checks);
+int bh_sound_tick_checkpoint(unsigned long *checks);
 int bh_sound_listener_checkpoint(unsigned long *checks);
 int bh_network_transport_checkpoint(unsigned long *checks);
 int bh_network_codec_checkpoint(unsigned long *checks);
@@ -48,6 +56,14 @@ int main(int argc, char **argv) {
     unsigned long world_query_checks=0;int world_query_failed;
     unsigned long waypoint_checks=0;int waypoint_failed;
     unsigned long segment_checks=0;int segment_failed;
+    unsigned long camera_checks=0;int camera_failed;
+    unsigned long clipper_checks=0;int clipper_failed;
+    unsigned long inverse_checks=0;int inverse_failed;
+    unsigned long texture_draw_checks=0;int texture_draw_failed;
+    unsigned long model_checks=0;int model_failed;
+    unsigned long image_checks=0;int image_failed;
+    unsigned long texture_checks=0;int texture_failed;
+    unsigned long sound_tick_checks=0;int sound_tick_failed;
     unsigned long listener_checks=0;int listener_failed;
     unsigned long transport_checks=0;int transport_failed;
     unsigned long packet_checks=0;int packet_failed;
@@ -81,6 +97,14 @@ int main(int argc, char **argv) {
     world_query_failed=bh_world_query_checkpoint(&world_query_checks);
     waypoint_failed=bh_position_checkpoint(&waypoint_checks);
     segment_failed=bh_segment_query_checkpoint(&segment_checks);
+    camera_failed=bh_view_camera_checkpoint(&camera_checks);
+    clipper_failed=bh_clipper_checkpoint(&clipper_checks);
+    inverse_failed=bh_matrix_inverse_checkpoint(&inverse_checks);
+    texture_draw_failed=bh_texture_draw_checkpoint(&texture_draw_checks);
+    model_failed=bh_model_checkpoint(argc==2 ? argv[1] : NULL,&model_checks);
+    image_failed=bh_texture_image_checkpoint(argc==2 ? argv[1] : NULL,&image_checks);
+    texture_failed=bh_texture_checkpoint(&texture_checks);
+    sound_tick_failed=bh_sound_tick_checkpoint(&sound_tick_checks);
     listener_failed=bh_sound_listener_checkpoint(&listener_checks);
     transport_failed=bh_network_transport_checkpoint(&transport_checks);
     packet_failed=bh_network_codec_checkpoint(&packet_checks);
@@ -99,7 +123,7 @@ int main(int argc, char **argv) {
     environment_failed=!bh_math_environment_supported();
     printf("{\"scenario\":\"m2-foundations\",\"checks\":%lu,\"failures\":%d,"
            "\"archive_entries\":%lu,\"original_code_required\":false}\n",
-           listener_checks+transport_checks+packet_checks+debris_checks+sound_queue_checks+draw_queue_checks+contact_effects_checks+physics_response_checks+entity_collision_checks+sweep_checks+collision_query_checks+checks+14+numeric_checks+config_checks+scene_checks+block_checks+entity_checks+wave_checks+pcx_checks+portal_checks+geometry_checks+world_checks+navigation_checks+route_checks+world_query_checks+waypoint_checks+segment_checks+collision_model_checks+riff_checks+pcx_reader_checks+script_timer_checks,listener_failed+transport_failed+packet_failed+debris_failed+sound_queue_failed+draw_queue_failed+contact_effects_failed+physics_response_failed+entity_collision_failed+sweep_failed+collision_query_failed+math_failed+vfile_failed+numeric_failed+environment_failed+config_failed+scene_failed+blocks_failed+entities_failed+wave_failed+pcx_failed+portals_failed+geometry_failed+world_failed+navigation_failed+route_failed+world_query_failed+waypoint_failed+segment_failed+collision_model_failed+riff_failed+pcx_reader_failed+script_timer_failed,entries);
+           camera_checks+clipper_checks+inverse_checks+texture_draw_checks+model_checks+image_checks+texture_checks+sound_tick_checks+listener_checks+transport_checks+packet_checks+debris_checks+sound_queue_checks+draw_queue_checks+contact_effects_checks+physics_response_checks+entity_collision_checks+sweep_checks+collision_query_checks+checks+14+numeric_checks+config_checks+scene_checks+block_checks+entity_checks+wave_checks+pcx_checks+portal_checks+geometry_checks+world_checks+navigation_checks+route_checks+world_query_checks+waypoint_checks+segment_checks+collision_model_checks+riff_checks+pcx_reader_checks+script_timer_checks,camera_failed+clipper_failed+inverse_failed+texture_draw_failed+model_failed+image_failed+texture_failed+sound_tick_failed+listener_failed+transport_failed+packet_failed+debris_failed+sound_queue_failed+draw_queue_failed+contact_effects_failed+physics_response_failed+entity_collision_failed+sweep_failed+collision_query_failed+math_failed+vfile_failed+numeric_failed+environment_failed+config_failed+scene_failed+blocks_failed+entities_failed+wave_failed+pcx_failed+portals_failed+geometry_failed+world_failed+navigation_failed+route_failed+world_query_failed+waypoint_failed+segment_failed+collision_model_failed+riff_failed+pcx_reader_failed+script_timer_failed,entries);
     bh_math_environment_leave(&environment);
-    return listener_failed || transport_failed || packet_failed || debris_failed || sound_queue_failed || draw_queue_failed || contact_effects_failed || physics_response_failed || entity_collision_failed || sweep_failed || collision_query_failed || math_failed || vfile_failed || numeric_failed || environment_failed || config_failed || scene_failed || blocks_failed ||entities_failed || wave_failed || pcx_failed || portals_failed || geometry_failed || world_failed || navigation_failed || route_failed || world_query_failed || waypoint_failed || segment_failed || collision_model_failed || riff_failed || pcx_reader_failed || script_timer_failed ? 1 : 0;
+    return camera_failed || clipper_failed || inverse_failed || texture_draw_failed || model_failed || image_failed || texture_failed || sound_tick_failed || listener_failed || transport_failed || packet_failed || debris_failed || sound_queue_failed || draw_queue_failed || contact_effects_failed || physics_response_failed || entity_collision_failed || sweep_failed || collision_query_failed || math_failed || vfile_failed || numeric_failed || environment_failed || config_failed || scene_failed || blocks_failed ||entities_failed || wave_failed || pcx_failed || portals_failed || geometry_failed || world_failed || navigation_failed || route_failed || world_query_failed || waypoint_failed || segment_failed || collision_model_failed || riff_failed || pcx_reader_failed || script_timer_failed ? 1 : 0;
 }

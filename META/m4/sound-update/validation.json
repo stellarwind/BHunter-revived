@@ -1,0 +1,42 @@
+{
+  "passed": true,
+  "translation_units": 72,
+  "real_total": {
+    "scenario": "m2-foundations",
+    "checks": 646323,
+    "failures": 0,
+    "archive_entries": 1229,
+    "original_code_required": false
+  },
+  "clean_total": {
+    "scenario": "m2-foundations",
+    "checks": 164343,
+    "failures": 0,
+    "archive_entries": 0,
+    "original_code_required": false
+  },
+  "focused": {
+    "scenario": "sound-tick",
+    "checks": 57,
+    "failures": 0,
+    "play_calls": 12,
+    "silent_pcm": true,
+    "original_code_required": false
+  },
+  "sources": {
+    "src/bh_sound_tick.c": "c790edd015d07d33b56f9c154be2c035ab2e19ff4d2e9bbbe1d91dae0ec10ba5",
+    "src/bh_sound_queue.h": "b60f66df6a743aceeeb28144785281edae0da70657a62e1467d8ef4d8df8f928",
+    "tests/sound_tick.c": "9fc4be675c2a0aa652fda4891a970c436ae4945bc19795b257b7f226cc3289a7",
+    "tests/checkpoint.c": "1180eb8a65eb2fed3a66f443b8c51a08d409bbe2c878f244ec0c6626a0b7c147"
+  },
+  "missing_definition_controls": 36,
+  "game_launches": 0,
+  "original_code_executed": false,
+  "limits": [
+    "No original-code execution/differential or byte-match claim",
+    "Finite moderate PC53 state; arbitrary NaN/overflow equivalence and PC24 remain unresolved",
+    "Nonpositioned original displacement scratch unspecified; source starts at zero then retains prior scratch",
+    "Source explicit queue replaces original globals; metadata provided explicitly, no original full loader admission",
+    "Silent native PCM playback checks do not establish audible game playback, CD audio or full sound-game integration"
+  ]
+}

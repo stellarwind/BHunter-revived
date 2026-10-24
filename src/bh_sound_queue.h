@@ -11,10 +11,10 @@ typedef struct BHSoundVoice BHSoundVoice;
 struct BHSoundVoice {
     BHVec3 position,velocity,cached;
     float volume,frequency;
-    unsigned long unused;
+    float distance_squared;
     BHSoundVoice *next,*previous;
     BHSoundResource *resource;
-    unsigned short index,generation,unused40,positioned,moving,pending;
+    unsigned short index,generation,listener_index,positioned,moving,pending;
 };
 struct BHSoundResource {
     char name[64];
@@ -23,7 +23,7 @@ struct BHSoundResource {
     unsigned long sample_bytes;
     long cached_volume[3],cached_frequency[3],cached_pan[3];
     float base_frequency,base_volume,phase,time_scale;
-    unsigned long options;
+    float audible_range;
     BHSoundVoice *stream_head,*voices[3];
     BHSoundResource *free_next;
 };
@@ -85,4 +85,21 @@ int __cdecl bh_sound_listener(BHSoundQueue *queue,unsigned long index,long enabl
    Explicit context replaces original global policy; existing resources retain
    their captured limits. New source PCM registrations can request limit 0. */
 int __cdecl bh_sound_set_voice_limit(BHSoundQueue *queue,long requested);
+typedef struct BHSoundTickStats {
+    unsigned long clock_calls,status_calls,stop_calls,play_calls,position_calls;
+    unsigned long volume_calls,pan_calls,frequency_calls,duplicate_calls,recycled;
+    HRESULT last_error;
+} BHSoundTickStats;
+/* Complete 0047c200. Resource audible_range and time_scale are explicit loaded
+   metadata; phase is decremented by dt, and processing occurs only below zero.
+   master_db binds the original software master attenuation, not device volume.
+   PC53 finite moderate state, <=3 slots and stable real native buffers/voices.
+   Returns 1 / 0 for clean execution / invalid state or native error. Native
+   errors are reported while original cache/playing/pending mutation continues;
+   this is not rollback. Optional statistics describe actual API calls.
+   No active listener freezes all phases/voices. Persistent loop requests retain
+   their lifetime until explicit stop; muted one-shots retain original behavior.
+   Nonpositioned displacement scratch starts at zero (original unspecified),
+   then retains the preceding positioned scratch within this call. */
+int __cdecl bh_sound_tick(BHSoundQueue *queue,float dt,float master_db,BHSoundTickStats *stats);
 #endif

@@ -87,6 +87,12 @@ int __cdecl bh_sound_tick(BHSoundQueue *q,float dt,float master,BHSoundTickStats
     unsigned long i,j,k,n,walk;DWORD status;double phase;
     memset(&stats,0,sizeof(stats));
     if(!q || !_finite(dt) || !_finite(master) || !bh_math_environment_supported())return 0;
+    /* Explicit source contexts reject malformed ownership instead of following
+       unchecked original globals. Loaded metadata is supplied by the caller;
+       the original name/options loader is a separate unfinished owner. */
+    if((q->resource_count && !q->resources) || (q->voice_count && !q->voices)) {
+        q->error=BH_SOUND_TOPOLOGY;return 0;
+    }
     q->error=BH_SOUND_OK;++stats.clock_calls;GetTickCount();
     if(!q->listener_active) {if(out)*out=stats;return 1;}
     for(i=0;i<q->resource_count;++i) {
@@ -94,6 +100,9 @@ int __cdecl bh_sound_tick(BHSoundQueue *q,float dt,float master,BHSoundTickStats
         if(!r || r->buffer_count<1 || r->buffer_count>3 || r->voice_limit<1 || r->voice_limit>3) {q->error=BH_SOUND_TOPOLOGY;break;}
         for(j=0;j<r->buffer_count;++j)if(!r->buffers[j])break;
         if(j!=r->buffer_count) {q->error=BH_SOUND_TOPOLOGY;break;}
+        if(!_finite(r->phase) || !_finite(r->time_scale) || !_finite(r->audible_range)) {
+            q->error=BH_SOUND_NUMERICAL;break;
+        }
         phase=(double)r->phase-dt;bh_round_float(&r->phase,phase);
         if(!(phase<0))continue;
         phase+=r->time_scale;bh_round_float(&r->phase,phase);if(phase<0)r->phase=0;

@@ -1,0 +1,86 @@
+{
+  "passed": true,
+  "new_complete_functions": 4,
+  "translation_units": 79,
+  "recompiled_variants": [
+    "0044e490-functional-c-image-layout",
+    "0044e510-functional-c-image-layout",
+    "0044e580-functional-c-image-layout",
+    "0044e5f0-functional-c-image-layout",
+    "0044e780-functional-c-image-layout",
+    "004505f0-functional-c-image-layout"
+  ],
+  "real_total": {
+    "scenario": "m2-foundations",
+    "checks": 648778,
+    "failures": 0,
+    "archive_entries": 1229,
+    "original_code_required": false
+  },
+  "clean_total": {
+    "scenario": "m2-foundations",
+    "checks": 164520,
+    "failures": 0,
+    "archive_entries": 0,
+    "original_code_required": false
+  },
+  "focused_real": {
+    "scenario": "texture-image-owner",
+    "checks": 2409,
+    "failures": 0,
+    "original_code_required": false
+  },
+  "focused_clean": {
+    "scenario": "texture-image-owner",
+    "checks": 131,
+    "failures": 0,
+    "original_code_required": false
+  },
+  "sources": {
+    "src/bh_texture_image.c": "b90f9e2e48c816af8a5cdbe476fef73fa4f399b31b6f42024ad24e5f68ed4690",
+    "src/bh_texture_tables.c": "0cc9d82eec6212b08a3bd016e18b319a73896dc35e9e191da2edaf7ddf1c60b7",
+    "src/bh_texture.c": "50447fcc5a161060c743bafa66500f28d7b0cbfdd40e0b14486844d0339db0d2",
+    "src/bh_texture.h": "bdbf1ab68294eef79c8e33d7e9805af8a5a1f2ee64d9decf04f03f587c512e50",
+    "tests/texture_image.c": "b1110821d0d0a685627a1dc9ad2d2e9dc8b5bffec07feb261150104c12ed8acd",
+    "tests/checkpoint.c": "e43b4678d1a8eeeaf1b01451a28ff3b1dc4424a54b66d340969ad9c650894b66"
+  },
+  "missing_definition_controls": 40,
+  "original_code_executed": false,
+  "game_launches": 0,
+  "scene": {
+    "scenario": "source-scene-snapshot",
+    "passed": true,
+    "models": 454,
+    "placements": 5815,
+    "shell_placements": 1455,
+    "faces": 33011,
+    "triangles": 397,
+    "nonblack_pixels": 267843,
+    "hresult": 0,
+    "unapplied_scripts": 202,
+    "textures": 146,
+    "textured_faces": 33011,
+    "camera": [
+      -60,
+      -17,
+      60
+    ],
+    "forward": [
+      0,
+      0,
+      -1
+    ],
+    "textured": true,
+    "original_code_required": false
+  },
+  "identical_scene_pixels": true,
+  "limits": [
+    "Source rejects overlong names instead of original0x70 object-name overwrite; uses bounded error text",
+    "Missing/truncated data or native/allocation failure rejects safely with no published half-image, unlike unchecked original paths",
+    "No HAL/video-memory/custom software rasterizer acceptance; existing explicit native RGB system-memory binding retained",
+    "No original model/entity/script/render traversal admission from this family",
+    "One-time quantization tables are scoped to explicit source renderer context; changing display shifts after initialization requires a new context.",
+    "The older decoded-PCX staging helper remains a fixture/support adapter; scene material loading now calls complete bh_texture_load.",
+    "Scene remains a diagnostic fixed view; unchanged pixels show replacement compatibility only, not original renderer or gameplay fidelity."
+  ]
+}

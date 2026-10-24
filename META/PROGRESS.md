@@ -14,7 +14,7 @@ Human playtesting offer, 2026-10-24: ask the user for a focused manual playtest 
 | M1 Provenance/source map | Initial assigned frontier complete | 887-record role catalog; 57 manual frontier decisions, corrected input-data/import boundary, reviewed callback/tail ownership, and nine-function VFILE assignment; `m1/REVIEW.md`. Broader dynamic closure remains provisional |
 | M2 Foundations integrated | Complete for reviewed first-scene foundations | 376,611 real-data checks; 36,131 clean source-only checks; 23 TUs; eleven missing-module controls; `m2/EXIT_AUDIT.md`, `m2/final/exit-validation.json` |
 | M3 Runnable original reference/scenarios | SKIPPED by user direction, 2026-10-24; not passed | Retain historical evidence in `m3/REFERENCE.md` and `m3/scenario-matrix.json`; missing observations remain unvalidated. No further automated gameplay or pilot development. Does not block M4 |
-| M4 First source-driven playable slice | In progress; world/navigation/collision and timer source restored | Real model face flags/bounds, 5,815 placement apertures/bounds and captured portal links reproduce in the linked harness. Full entity/script/render/audio owners remain; no source game target yet |
+| M4 First source-driven playable slice | In progress; first textured source-rendered shell view | Real model face flags/bounds, 5,815 placement apertures/bounds and captured portal links reproduce in the linked harness. Full entity/script/render/audio owners remain; no source game target yet |
 | M5 Complete single-player | Not started | Requires slice and actual original feature inventory |
 | M6 Modern platform support | Not started | Backend choice follows faithful slice; numerical contracts remain open |
 | M7 Verified networking | Not started | Active DirectPlay3A references; modes/protocol still need tracing |
@@ -23,14 +23,208 @@ Human playtesting offer, 2026-10-24: ask the user for a focused manual playtest 
 
 ## Working evidence
 
-User-requested break, 2026-10-24: implementation paused for commit/push.
-Last admitted checkpoint remains the sound listener/policy family: 646,266 real /
-164,286 clean checks. The in-progress `0047c200` deferred-sound owner is saved
-as `src/bh_sound_tick.c`, explicitly WIP/not built/not linked/not tested. Its
-required header draft is retained in `m4/sound-update/`; the active header is
-restored to the last tested version. See `m4/sound-update/checkpoint.json`.
-Resume with review and real compile/link/test of that owner, without gameplay
-automation. No unfinished source is counted as admitted restoration.
+M4 recovered camera/frustum/viewport family, 2026-10-24: complete
+`004515b0`, `00451660` and `00451b80` compile/link in `src/bh_view_camera.c`.
+The 89-TU integration passes 663,020 real-data / 170,786 clean checks and
+45 missing-module controls. The 1,623 focused checks cover original default
+60-degree FOV/near1/far100000, viewport reset/asymmetric rectangle clamps,
+64 rotated translated camera configurations, independent pinhole projection,
+world-space planes and original rigid-inverse semantics. Plane boundary checks
+account for the half-ULP precision of the original stored float offset.
+
+The scene now uses recovered projection/frustum construction and opts into the
+pinned original executable's default FOV/depth range. The saved view emits
+5,881 triangles with146 textures and264,231 nonblack pixels; it was inspected.
+Native controls retain their explicit90-degree/.25/400 analytical profile and
+all28 renderer/46 texture checks pass. Actual original camera choice, visibility,
+lighting, scripts and TL-depth/primitive/software dispatch are still unfinished.
+The software rasterizer dependency was inspected and retained explicitly, not
+stubbed or treated as completed. No original code or game execution.
+Evidence: `m4/view-camera/`; audit: `python tools/check_view_camera.py`.
+Current iteration checks are complete; user requested commit/push. Next work
+remains original producer/dispatch/visibility closure toward scene/entity/control;
+human prologue recording remains independent.
+
+M4 original ring clip/project owner, 2026-10-24: complete `00452140`
+now compiles/links as `bh_clip_polygon` in `src/bh_clipper.c`. The 87-TU
+integration passes 661,397 real-data / 169,163 clean checks and 44 missing-module
+controls. The 1,139 focused checks cover both depth and all four screen planes,
+paired ring insertion/head/winding, exact boundaries and endpoint duplicates,
+projection caches, inverse-camera texture coordinates and 1,024-node guards.
+An independent homogeneous Sutherland-Hodgman oracle covers 256 triangles;
+a separate six-plane fixture fills all 12 original scratch slots and verifies
+the resulting seven-node polygon. No original game code executes.
+
+Both colored and textured scene polygons now use the recovered clipper, replacing
+the diagnostic clipping algorithm. Native 28 depth/clipping/pixel controls and
+46 texture controls pass, and the real scene renders 397 triangles/146 textures.
+The native saved view has 267,844 nonblack pixels. Compared with the prior
+adapter, 2,695 colors and three coverage locations change (net +1 nonblack
+pixel); this is recorded in `m4/clipper/scene-comparison.json`, not described as
+pixel identity or original-game visual acceptance. The output was inspected.
+Viewport/camera binding and TL-depth conversion remain explicit adapters.
+
+Image metadata preserves original flag54/coefficient58..6c semantics without
+changing its layout. Near/far clips precede division; side clips retain the
+reviewed perspective UV/depth formulas and cache behavior. Source guards reject
+malformed rings/nonfinite input/invalid inverse and zero unused scratch fields.
+PC24, extreme x87 exponent equivalence and byte matching remain unclaimed.
+Evidence: `m4/clipper/`; audit: `python tools/check_clipper.py`.
+Next: original primitive producer/dispatch closure (including the explicit
+unfinished software-rasterizer dependency), then visibility/traversal and
+scene/entity/control. Human prologue recording stays independent.
+
+M4 general affine inverse prerequisite, 2026-10-24: complete `00401b30`,
+`00401c10` and `00401e50` compile/link in `src/bh_matrix_inverse.c` as LU
+solve, scaled decomposition and general affine inverse. The 85-TU integration
+passes 660,258 real-data / 168,024 clean checks and 43 missing-module controls.
+The focused 3,380 checks cover exact pivot/parity/store vectors, analytical
+scale/shear/translation, actual aliases,128 independent Gauss-Jordan oracle
+matrices, source transform composition and projected-texture coordinate use.
+Zero input rows reject; dependent nonzero rows retain the original success
+return and possible nonfinite solution, with no invented epsilon/tiny pivot.
+Explicit store boundaries preserve the reviewed PC53 contract; PC24 and byte
+matching remain unclaimed. Algorithm resembles common numerical-library LU,
+but verified library provenance remains unresolved; no gameplay authorship claim.
+
+Original `00452140` calls this general inverse for projected textures; the
+existing rigid inverse fails the nonrigid positive control. This is a recovered
+required dependency, not full clipper admission or a changed scene render.
+Evidence: `m4/matrix-inverse/`; audit: `python tools/check_matrix_inverse.py`.
+Next remains full original clip/project owner `00452140`, then producer and
+traversal dependencies. No original code or game execution. Human prologue
+recording remains independent.
+
+M4 native primitive draw-buffer ownership, 2026-10-24: complete `004507d0`
+and `004508a0` now compile/link as `bh_texture_draw_vertex` and
+`bh_texture_draw_flush`. The 83-TU integration passes 656,878 real-data /
+164,644 clean checks and 42 missing-module controls. Sixty-one focused checks
+exercise original paired growth/copy/count rules, both allocation failures,
+mid-polygon rollback/retry, software/empty gates, topology guards and native
+mixed triangle/quad fan pixels with real image residency. Native HRESULT/reset
+behavior follows the inspected body; failure injection is not claimed.
+
+The scene now submits textures through recovered run queues and the original
+Direct3D2 triangle-fan call with flags0x0c. It retains 397 triangles, 146 textures
+and 267,843 nonblack pixels. Fan submission changes 1,421 of 307,200 pixel
+colors versus the prior repeated-triangle-list adapter. A controlled source
+variant changing only that native call back to repeated lists reproduces the
+prior bitmap exactly; evidence is `m4/primitive-queue/fan-control.json`. This
+isolates native dispatch behavior, not original-game visual equivalence.
+
+The already projected polygon composition helper remains an explicit adapter;
+full `0046e390` ring/software production, `00452140` clipping, visibility/lighting,
+world/entity construction and control remain unfinished. No original code or
+game execution. Evidence: `m4/primitive-queue/`; audit:
+`python tools/check_primitive_queue.py`. Next: complete original clip/project
+owner `00452140` and its texture-coordinate/vertex-ring contracts, then producer
+and traversal dependencies. Human prologue recording proceeds independently.
+Earlier exact-bitmap claims below apply to their own historical variants.
+
+M4 original rendering-model ownership, 2026-10-24: complete `00457e20` and
+`00458140` now compile/link as `bh_model_read` and `bh_model_load` in the
+81-TU integration target. 656,817 real-data / 164,583 clean checks pass with
+41 missing-module controls. The focused family passes 8,039 real-data checks,
+including 63 synthetic path/lifetime/failure controls and all 505 archived BSPs.
+All six owned record arrays compare to independent archive reads; original
+0x80 layout, identity transform, zero model runtime fields, pinned root radius,
+used-material rules and real shared image-cache bindings are checked. Missing
+used images remain NULL without failing the model; opened malformed files do
+not trigger search fallback. Source validation safely rejects corrupt input and
+cleans failure leaks; no byte match or original-destructor recovery is claimed.
+
+The scene draws directly from the recovered model-owned arrays and material
+bindings. The saved image remains pixel-identical (397 textured triangles,
+146 textures) to the preceding view. Shell selection, camera/projection and
+polygon submission are still diagnostic adapters. No original code or game
+execution. Evidence: `m4/model-owner/`; audit: `python tools/check_model_owner.py`.
+Next: original primitive producer/consumer dependency family, then traversal,
+scene/entity construction and player control. Human prologue recording remains
+pending and independent. Earlier image/model-data variants retain their separate
+historical source and evidence below.
+
+M4 image/cache/software-palette ownership, 2026-10-24: four complete original
+owners (`0044e880`, `0044e9b0`, `0044eb60`, `0044f550`) now compile and link
+in the 79-TU integration target. 648,778 real-data / 164,520 clean checks pass,
+with 40 missing-module controls. The image family contributes 131 synthetic
+checks and loads 454 native-backed images from all 459 PCXs; five are explicit
+original size-catalog rejections. Native pixels/palettes match pinned asset CRCs.
+Tests cover cache identity, path fallback, original streaming-PCX dialect,
+0x70 image layout, draw arenas, software quantization tables, allocation failure
+cleanup and native 16/24/32-bit staging pixels. No byte-match claim is made.
+
+The scene now uses the recovered image loader; its saved bitmap is pixel-identical
+to the preceding textured diagnostic view. Original BSP/model ownership, primitive
+production, visibility/lighting and scene/entity/control behavior remain unfinished.
+No original code or game execution. Evidence: `m4/image-owner/`; audit:
+`python tools/check_image_owner.py`. Six texture owners have separately recorded
+recompiled variants; earlier variants retain their own historical evidence.
+Next: original BSP/model owners `00457e20` and `00458140`, then original primitive
+production/traversal dependencies toward source scene/entity/control behavior.
+Human prologue/target-objective recording remains pending and independent.
+
+The following texture milestone describes its historical source variant; its
+full-image-loader WIP status was superseded by the image-owner checkpoint above.
+
+M4 native texture ownership and textured shell view, 2026-10-24: six complete
+original format/pool/residency owners (`0044e490`, `0044e510`, `0044e580`,
+`0044e5f0`, `0044e780`, `004505f0`) now compile/link in the 76-TU integration
+with real SDK surfaces/palettes/Texture2 handles. 646,369 real-data / 164,389
+clean checks pass, including 46 texture checks and 38 missing-module controls.
+Tests cover below-request format fallback, original mandatory/best-effort
+allocation, signed oldest-slot reuse, same-frame EndScene/BeginScene flush,
+actual indexed pixels/palette refresh, source/native lifetimes and PC53 retention.
+
+The separate source scene target now loads 146 real textures and raw BSP edge
+UVs, emitting 397 clipped textured triangles in the saved corridor view. Native
+pixel controls distinguish perspective-correct UVs from affine interpolation;
+28 prior renderer controls and all texture controls also pass in a clean checkout
+without assets. `m4/texture-owner/scene.png` is the current rendered checkpoint.
+The earlier static-color variant and its source/evidence remain separately pinned.
+Native RGB uses an explicit system-memory slot-capability binding; original
+HAL/video-memory behavior is unvalidated. Original renderer primitive traversal,
+lighting and full image/BSP ownership are NOT claimed from the diagnostic view.
+
+Call review corrected the next dependency: BSP textures use `0044f550`, while
+`0046f490` is a separate 2D image/rectangle owner. Full `0044f550` remains WIP;
+current PCX staging/cache/material binding are explicit source adapters. Original
+`00458310` confirms that NULL image materials do not emit a polygon; absent
+`ROOF.GIF` is retained as NULL, not replaced with a fabricated image. 202 sidecars
+stay unapplied and gameplay/entity/render owners remain unfinished. No original
+code or game execution. Evidence: `m4/texture-owner/`; audit
+`python tools/check_texture_owner.py`. Next: complete actual texture-image and
+BSP model ownership/primitive producer dependencies, then source scene/entity
+construction and control. Human prologue recording remains independent.
+
+M4 static scene rendering checkpoint, 2026-10-24: source-only
+`build/scene-snapshot/bhunter-scene-snapshot.exe` now loads 454 real block models
+and 5,815 TEST.LEV placements, renders the 1,455 portal-bearing shell placements
+through native Direct3D2 RGB/DrawPrimitive and saves a 640x480 view. The bounded
+view emits 403 clipped triangles and 267,907 nonblack pixels. Twenty-eight native
+pixel/depth/clipping/lifecycle checks pass, including in a clean source-only
+checkout without original assets. This is an explicit diagnostic adapter, not
+recovery of original renderer owners or a playable M4 exit. Colors/FOV/camera
+are diagnostic, 202 scripts stay unapplied, and props/entity proxy meshes are
+outside this shell view. No wrapper or original code executes. Evidence:
+`m4/scene-view/`; reproduce with `python tools/scene_snapshot.py --archive
+GAME_DATA/Bhunter.bin`; audit `python tools/check_scene_view.py`.
+Next source family: original BSP material/image ownership (`00457e20` and
+`0046f490` dependency closure), followed by real textured model submission.
+User's manual prologue recording remains pending; no automated play authorized.
+
+M4 deferred sound update, 2026-10-24: user resumed source work and selected
+source-built scene rendering as the next observable checkpoint. Complete
+`0047c200` now compiles/links in its real TU with real queue/voice owners and
+DirectSound interfaces. The 72-TU target passes 646,323 real-data / 164,343
+clean checks, including 57 new checks and 12 native Play calls using silent PCM.
+Nearest loop ranking/duplication, one-shot retirement, generation reuse,
+strict mute boundary, float-spilled Doppler, cached setters and real native
+failure paths pass. No audible-game-playback or original loader admission;
+full `0047b950` and full physics orchestration remain WIP. Evidence:
+`m4/sound-update/`; audit `python tools/check_sound_tick.py`.
+Human will record the prologue training-target objective; source work continues
+independently. Next: close the real scene load/render path, starting with a
+bounded source-owned static geometry view. No automated gameplay authorized.
 
 M4 sound listener/configuration, 2026-10-24: restored complete listener setter
 `0047b710` and voice-limit policy setter `0047b920`. The listener stores exact

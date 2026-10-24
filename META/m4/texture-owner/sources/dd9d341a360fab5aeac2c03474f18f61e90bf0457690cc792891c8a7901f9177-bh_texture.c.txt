@@ -1,0 +1,215 @@
+#include "bh_texture.h"
+#include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+typedef char format_size[sizeof(BHTextureFormat)==64?1:-1];
+typedef char slot_size[sizeof(BHTextureSlot)==28?1:-1];
+typedef char slot_flags[offsetof(BHTextureSlot,palette_dirty)==0x16?1:-1];
+static void *__cdecl allocate(unsigned long bytes,void *user){return malloc(bytes);}
+static void __cdecl release(void *p,void *user){free(p);}
+static int error(BHTextureContext *q,BHTextureError e){if(q)q->error=e;return 0;}
+static int native(BHTextureContext *q,HRESULT hr){q->last_hresult=hr;if(hr!=DD_OK)return error(q,BH_TEXTURE_BACKEND);return 1;}
+static int owned_format(BHTextureContext *q,BHTextureFormat *f){unsigned long i;if(!q)return 0;for(i=0;i<9;++i)if(q->formats+i==f)return 1;return 0;}
+int __cdecl bh_texture_context_init(BHTextureContext *q,LPDIRECTDRAW draw,
+    LPDIRECT3DDEVICE2 device,const BHSceneAllocator *allocator) {
+    static const unsigned long minimum[9]={16,8,1,8,4,1,4,2,1};unsigned long i;
+    if(!q || !draw || !device || (allocator && (!allocator->allocate || !allocator->release)))return 0;
+    memset(q,0,sizeof(*q));q->draw=draw;q->device=device;
+    IDirectDraw_AddRef(draw);IDirect3DDevice2_AddRef(device);
+    if(allocator)q->allocator=*allocator;else{q->allocator.allocate=allocate;q->allocator.release=release;}
+    for(i=0;i<9;++i) {
+        BHTextureFormat *f=q->formats+i;f->width=f->height=32UL<<(i/3);
+        f->requested_depth=8+(i%3)*8;f->kind=1;f->minimum=minimum[i];f->pixel.dwSize=sizeof(f->pixel);
+    }
+    return 1;
+}
+void __cdecl bh_texture_context_dispose(BHTextureContext *q) {
+    unsigned long i;BHTextureSlot *s,*next;BHTextureImage *image,*next_image;
+    if(!q || !q->allocator.release)return;
+    for(i=0;i<9;++i)for(s=q->formats[i].slots;s;s=next) {
+        next=s->next;if(s->image)s->image->resident=NULL;
+        if(s->palette)IDirectDrawPalette_Release(s->palette);
+        if(s->surface)IDirectDrawSurface_Release(s->surface);
+        q->allocator.release(s,q->allocator.user);
+    }
+    for(image=q->images;image;image=next_image) {
+        next_image=image->next;
+        if(image->palette)IDirectDrawPalette_Release(image->palette);
+        if(image->source)IDirectDrawSurface_Release(image->source);
+        q->allocator.release(image,q->allocator.user);
+    }
+    if(q->device)IDirect3DDevice2_Release(q->device);if(q->draw)IDirectDraw_Release(q->draw);
+    memset(q,0,sizeof(*q));
+}
+HRESULT CALLBACK bh_texture_format_callback(LPDDSURFACEDESC desc,LPVOID context) {
+    BHTextureFormat *f=(BHTextureFormat *)context;DDPIXELFORMAT *p;
+    if(!desc || !f)return D3DENUMRET_CANCEL;p=&desc->ddpfPixelFormat;
+    if(p->dwFlags&3)return D3DENUMRET_OK;
+    if(p->dwRGBBitCount<=8) {if(!(p->dwFlags&0x28))return D3DENUMRET_OK;}
+    else if(!(p->dwFlags&DDPF_RGB))return D3DENUMRET_OK;
+    if(p->dwRGBBitCount>=8 && (!f->pixel.dwRGBBitCount ||
+       (f->requested_depth<=p->dwRGBBitCount && p->dwRGBBitCount-f->requested_depth<f->pixel.dwRGBBitCount-f->requested_depth)))f->pixel=*p;
+    return D3DENUMRET_OK;
+}
+int __cdecl bh_texture_formats(BHTextureContext *q) {
+    unsigned long i;int ok=1;
+    if(!q || !q->device)return error(q,BH_TEXTURE_ARGUMENT);q->error=BH_TEXTURE_OK;
+    for(i=0;i<9;++i) {
+        if(q->software) {q->formats[i].pixel.dwSize=32;q->formats[i].pixel.dwFlags=0x60;q->formats[i].pixel.dwRGBBitCount=8;}
+        else if(!native(q,IDirect3DDevice2_EnumTextureFormats(q->device,bh_texture_format_callback,q->formats+i)))ok=0;
+    }
+    return ok;
+}
+BHTextureFormat *__cdecl bh_texture_request_format(BHTextureContext *q,
+    unsigned long width,unsigned long height,unsigned long depth,unsigned long kind) {
+    unsigned long i;if(!q)return NULL;
+    for(i=0;i<9;++i) {
+        BHTextureFormat *f=q->formats+i;
+        if(f->width==width && f->height==height && f->requested_depth==depth && f->kind==kind) {
+            if(f->references>=65535){error(q,BH_TEXTURE_ARGUMENT);return NULL;}
+            ++f->references;return f;
+        }
+    }
+    error(q,BH_TEXTURE_FORMAT);return NULL;
+}
+int __cdecl bh_texture_slot_create(BHTextureContext *q,BHTextureFormat *f) {
+    BHTextureSlot *s;DDSURFACEDESC desc;LPDIRECT3DTEXTURE2 texture=NULL;
+    PALETTEENTRY entries[256];
+    if(!owned_format(q,f) || !q->device || !q->draw)return error(q,BH_TEXTURE_ARGUMENT);
+    s=(BHTextureSlot *)q->allocator.allocate(sizeof(*s),q->allocator.user);
+    if(!s)return error(q,BH_TEXTURE_MEMORY);memset(s,0,sizeof(*s));
+    memset(&desc,0,sizeof(desc));desc.dwSize=sizeof(desc);desc.dwFlags=0x1007;
+    desc.dwWidth=f->width;desc.dwHeight=f->height;desc.ddpfPixelFormat=f->pixel;
+    desc.ddsCaps.dwCaps=q->software?0x1800:0x4005000;
+    /* Explicit native RGB platform binding, not a fallback after an error.
+       Zero retains the exact original software/hardware capability choice. */
+    if(q->slot_caps_override)desc.ddsCaps.dwCaps=q->slot_caps_override;
+    if(f->kind){desc.dwFlags=0x11007;desc.ddckCKSrcBlt.dwColorSpaceLowValue=desc.ddckCKSrcBlt.dwColorSpaceHighValue=0;}
+    if(!native(q,IDirectDraw_CreateSurface(q->draw,&desc,&s->surface,NULL)))goto failed;
+    if(!native(q,IDirectDrawSurface_QueryInterface(s->surface,&IID_IDirect3DTexture2,(void **)&texture)))goto failed;
+    native(q,IDirect3DTexture2_GetHandle(texture,q->device,&s->handle));IDirect3DTexture2_Release(texture);texture=NULL;
+    if(!s->handle)goto failed;
+    if(f->pixel.dwRGBBitCount==8) {
+        memset(entries,0,sizeof(entries));
+        if(native(q,IDirectDraw_CreatePalette(q->draw,0x44,entries,&s->palette,NULL)))native(q,IDirectDrawSurface_SetPalette(s->surface,s->palette));
+    }
+    s->next=f->slots;f->slots=s;++f->count;return 1;
+failed:
+    if(texture)IDirect3DTexture2_Release(texture);if(s->surface)IDirectDrawSurface_Release(s->surface);
+    q->allocator.release(s,q->allocator.user);return 0;
+}
+int __cdecl bh_texture_preallocate(BHTextureContext *q) {
+    unsigned long i,remaining;
+    if(!q || !q->device || !q->draw)return error(q,BH_TEXTURE_ARGUMENT);
+    q->error=BH_TEXTURE_OK;
+    for(i=0;i<9;++i)if(q->formats[i].references<q->formats[i].minimum)q->formats[i].minimum=q->formats[i].references;
+    i=0;
+    do {
+        BHTextureFormat *f=q->formats+i;
+        if(f->minimum) {
+            bh_texture_slot_create(q,f);if(!f->count)return 0;
+            --f->minimum;--f->references;
+        }
+        i=(i+1)%9;remaining=0;{unsigned long j;for(j=0;j<9;++j)remaining+=q->formats[j].minimum;}
+    }while(remaining);
+    do {
+        BHTextureFormat *f=q->formats+i;
+        if(f->references){bh_texture_slot_create(q,f);--f->references;}
+        i=(i+1)%9;remaining=0;{unsigned long j;for(j=0;j<9;++j)remaining+=q->formats[j].references;}
+    }while(remaining);
+    return 1;
+}
+static void palette_copy(BHTextureContext *q,BHTextureImage *image,BHTextureSlot *s) {
+    PALETTEENTRY entries[256];LPDIRECT3DTEXTURE2 texture=NULL;
+    if(!image->palette || !s->palette)return;
+    memset(entries,0,sizeof(entries));
+    native(q,IDirectDrawPalette_GetEntries(image->palette,0,0,256,entries));
+    native(q,IDirectDrawPalette_SetEntries(s->palette,0,0,256,entries));
+    if(native(q,IDirectDrawSurface_QueryInterface(s->surface,&IID_IDirect3DTexture2,(void **)&texture))) {
+        native(q,IDirect3DTexture2_PaletteChanged(texture,0,256));IDirect3DTexture2_Release(texture);
+    }
+    ++q->palette_uploads;
+}
+static void pixels_copy(BHTextureContext *q,BHTextureImage *image,BHTextureSlot *s) {
+    native(q,IDirectDrawSurface_Blt(s->surface,NULL,image->source,NULL,DDBLT_WAIT,NULL));++q->pixel_uploads;
+}
+D3DTEXTUREHANDLE __cdecl bh_texture_resident(BHTextureContext *q,BHTextureImage *image) {
+    BHTextureSlot *s,*next;
+    if(!q || !image || !image->source || !owned_format(q,image->format)) {error(q,BH_TEXTURE_ARGUMENT);return 0;}
+    s=image->resident;
+    if(s) {
+        if(s->palette_dirty && image->palette && s->palette){palette_copy(q,image,s);s->palette_dirty=0;}
+        if(s->pixels_dirty){s->pixels_dirty=0;pixels_copy(q,image,s);}
+        s->frame=q->frame;return s->handle;
+    }
+    s=image->format->slots;if(!s)return 0;
+    for(next=s->next;next && s->image;next=next->next)if(!next->image || next->frame<s->frame)s=next;
+    s->pixels_dirty=s->palette_dirty=0;
+    if(s->frame==q->frame && s->image) {
+        native(q,IDirect3DDevice2_EndScene(q->device));native(q,IDirect3DDevice2_BeginScene(q->device));++q->flushes;
+    }
+    if(s->image){s->image->resident=NULL;++q->evictions;}
+    image->resident=s;s->frame=q->frame;s->image=image;
+    palette_copy(q,image,s);pixels_copy(q,image,s);return s->handle;
+}
+static unsigned long converted(unsigned char r,unsigned char g,unsigned char b,const DDPIXELFORMAT *format) {
+    unsigned long channel[3],mask[3],i,result=0,m;int shift;
+    channel[0]=r;channel[1]=g;channel[2]=b;mask[0]=format->dwRBitMask;mask[1]=format->dwGBitMask;mask[2]=format->dwBBitMask;
+    for(i=0;i<3;++i) {
+        shift=-8;for(m=mask[i];m;m/=2)++shift;
+        result+=((shift<0?channel[i]>>(-shift):channel[i]<<shift)&mask[i]);
+    }
+    return result;
+}
+BHTextureImage *__cdecl bh_texture_stage(BHTextureContext *q,const char *name,const BHPcx *pcx,int mode,unsigned long color) {
+    BHTextureImage *image;BHTextureFormat *f;BHPcxPalette palette;DDSURFACEDESC desc,locked;
+    PALETTEENTRY entries[256];unsigned long x,y,i,bytes,value;int ok=1;
+    if(!q || !name || strlen(name)>=128 || !pcx || !pcx->pixels ||
+       !pcx->width || !pcx->height || pcx->width>4096 || pcx->height>4096 ||
+       pcx->pixel_bytes!=pcx->width*pcx->height)return NULL;
+    for(image=q->images;image;image=image->next)if(!_stricmp(name,image->name))return image;
+    f=bh_texture_request_format(q,pcx->width,pcx->height,8,1);if(!f)return NULL;
+    bytes=(f->pixel.dwRGBBitCount+7)/8;
+    if(!bytes || bytes>4 || (bytes==1 && f->pixel.dwRGBBitCount!=8)){error(q,BH_TEXTURE_FORMAT);return NULL;}
+    image=(BHTextureImage *)q->allocator.allocate(sizeof(*image),q->allocator.user);
+    if(!image){error(q,BH_TEXTURE_MEMORY);return NULL;}memset(image,0,sizeof(*image));
+    image->format=f;strcpy(image->name,name);
+    memset(&desc,0,sizeof(desc));desc.dwSize=sizeof(desc);desc.dwFlags=0x1007;
+    desc.dwWidth=pcx->width;desc.dwHeight=pcx->height;desc.ddpfPixelFormat=f->pixel;
+    desc.ddsCaps.dwCaps=q->software?0x840:0x1800;
+    if(!native(q,IDirectDraw_CreateSurface(q->draw,&desc,&image->source,NULL)))goto failed;
+    if(!bh_pcx_palette(&palette,pcx->palette,mode,color))goto failed;
+    if(bytes==1) {
+        for(i=0;i<256;++i){entries[i].peRed=palette.rgb[i*3];entries[i].peGreen=palette.rgb[i*3+1];entries[i].peBlue=palette.rgb[i*3+2];entries[i].peFlags=0;}
+        if(!native(q,IDirectDraw_CreatePalette(q->draw,0x44,entries,&image->palette,NULL)) ||
+           !native(q,IDirectDrawSurface_SetPalette(image->source,image->palette)))goto failed;
+    }
+    memset(&locked,0,sizeof(locked));locked.dwSize=sizeof(locked);
+    if(!native(q,IDirectDrawSurface_Lock(image->source,NULL,&locked,DDLOCK_WAIT,NULL)))goto failed;
+    if(locked.lPitch<(long)(pcx->width*bytes))ok=0;
+    for(y=0;ok && y<pcx->height;++y)for(x=0;x<pcx->width;++x) {
+        unsigned char *out=(unsigned char *)locked.lpSurface+y*locked.lPitch+x*bytes;
+        unsigned char index=palette.indices[pcx->pixels[y*pcx->width+x]];
+        value=bytes==1?index:converted(palette.rgb[index*3],palette.rgb[index*3+1],palette.rgb[index*3+2],&f->pixel);
+        for(i=0;i<bytes;++i)out[i]=(unsigned char)(value>>(i*8));
+    }
+    if(!native(q,IDirectDrawSurface_Unlock(image->source,NULL)))ok=0;if(!ok)goto failed;
+    image->next=q->images;q->images=image;return image;
+failed:
+    if(image->palette)IDirectDrawPalette_Release(image->palette);if(image->source)IDirectDrawSurface_Release(image->source);
+    q->allocator.release(image,q->allocator.user);return NULL;
+}
+BHTextureImage *__cdecl bh_texture_load_pcx(BHTextureContext *q,const char *name,const char *prefix,int mode,unsigned long color) {
+    char canonical[128],path[256];unsigned long i,n;BHTextureImage *image;BHPcx pcx;BHVFile *file;
+    if(!q || !name || !prefix || (n=strlen(name))>=sizeof(canonical) || strlen(prefix)+n>=sizeof(path))return NULL;
+    for(i=0;i<=n;++i)canonical[i]=(char)toupper((unsigned char)name[i]);
+    if(n>=4 && (!_stricmp(canonical+n-4,".GIF") || !_stricmp(canonical+n-4,".BMP") || !_stricmp(canonical+n-4,".TGA") || !_stricmp(canonical+n-4,".JPG")))strcpy(canonical+n-4,".PCX");
+    for(image=q->images;image;image=image->next)if(!_stricmp(image->name,canonical))return image;
+    strcpy(path,prefix);strcat(path,canonical);file=bh_vfile_open(path,"rb");
+    if(!file){error(q,BH_TEXTURE_IO);return NULL;}
+    bh_pcx_init(&pcx,&q->allocator);image=NULL;
+    if(bh_pcx_read(&pcx,file))image=bh_texture_stage(q,canonical,&pcx,mode,color);else error(q,BH_TEXTURE_IO);
+    bh_vfile_close(file);bh_pcx_dispose(&pcx);return image;
+}

@@ -1,0 +1,25 @@
+#ifndef BH_SCENE_VIEW_H
+#define BH_SCENE_VIEW_H
+#include <windows.h>
+#include <ddraw.h>
+#include <d3d.h>
+#include "bh_math.h"
+/* Diagnostic platform adapter, no original function-recovery claim. Owns a
+   private offscreen RGB Direct3D2 target and z-buffer; no game/window/input
+   loop. Texture/script/material consumers remain separate restoration work. */
+typedef struct BHSceneView {
+    LPDIRECTDRAW draw;LPDIRECT3D2 d3d;LPDIRECT3DDEVICE2 device;
+    LPDIRECTDRAWSURFACE color,depth;LPDIRECT3DVIEWPORT2 viewport;
+    unsigned long width,height,triangles,pixels;HRESULT error;int begun;
+} BHSceneView;
+int __cdecl bh_scene_view_init(BHSceneView *view,unsigned long width,unsigned long height);
+void __cdecl bh_scene_view_dispose(BHSceneView *view);
+int __cdecl bh_scene_view_begin(BHSceneView *view);
+/* Camera-space convex polygon; explicit diagnostic 90-degree horizontal FOV,
+   positive Z forward, +Y up, near .25, far400. Six-plane polygon clipping
+   precedes projection; native RGB device rasterizes and depth-tests triangles.
+   No original BSP traversal, occlusion, lighting or material behavior claimed. */
+int __cdecl bh_scene_view_polygon(BHSceneView *view,const BHVec3 *vertices,
+                                  unsigned long count,unsigned long rgb);
+int __cdecl bh_scene_view_end(BHSceneView *view,const char *bmp);
+#endif

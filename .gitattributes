@@ -5,3 +5,9 @@
 *.md text eol=lf
 *.json text eol=lf
 *.tsv text eol=lf whitespace=-blank-at-eol
+
+# Preserve byte-pinned source snapshots, raw decompiler exports and SDK manifest.
+META/m4/**/sources/*.txt -text -diff
+META/m4/**/original/*.c.txt -text -diff
+/META/m4/primitive-queue/list-control.c.txt -text -diff
+/META/native-render-dependencies.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

@@ -1468,7 +1468,9 @@
         ],
         "body_sha256": "589186e7a42c8e33a50fc0b0688d03c0d7315eb34260e609882cb8fb8bb0d1fc",
         "evidence": "META/m4/candidate-admission-validation.json"
-      }
+      },
+      "historical_variant": true,
+      "superseded_by": "00457e20-functional-c"
     },
     {
       "id": "00458140-data-subset-c",
@@ -1516,7 +1518,9 @@
         ],
         "body_sha256": "814cd01cf3f6cbcff8b83c05ae555ac610a3f1ed448dd220186a19f3ca682798",
         "evidence": "META/m4/candidate-admission-validation.json"
-      }
+      },
+      "historical_variant": true,
+      "superseded_by": "00458140-functional-c"
     },
     {
       "id": "0044b2e0-data-subset-c",
@@ -4382,7 +4386,7 @@
       "function": "bh_sound_tick (unfinished candidate)",
       "role": "engine_candidate",
       "provenance_confidence": "Complete original deferred sound owner mapped/reviewed, 666 instructions; native DirectSound calls, ranking, x87 arithmetic and cleanup behavior inspected. Not CRT, import, compiler helper or shared tail; historical authorship unresolved.",
-      "source": "src/bh_sound_tick.c",
+      "source": "META/m4/sound-update/sources/bdc9fe2bb99dbba7d6cadbcaf34ebb324ff0137fcb774932706a8b039c69d4e0-bh_sound_tick.c.txt",
       "source_sha256": "bdc9fe2bb99dbba7d6cadbcaf34ebb324ff0137fcb774932706a8b039c69d4e0",
       "implementation": "wip",
       "integration": "not_built",
@@ -4397,12 +4401,1036 @@
           "Apply/review candidate header changes from META/m4/sound-update/candidate-bh_sound_queue.h.txt",
           "Review spatial/ranking/native error/lifetime semantics against full body",
           "Wire real translation unit and checks into integration driver; compile/link/test before admission"
-        ]
+        ],
+        "superseded_by": "0047c200-functional-c"
       },
       "evidence": [
         "META/m4/sound-update/checkpoint.json",
         "META/m4/sound-update/original/0047c200.decompile.json",
         "META/m4/sound-update/original/0047c200.disassembly.json"
+      ],
+      "historical_variant": true,
+      "historical_source_path": "src/bh_sound_tick.c"
+    },
+    {
+      "id": "0047c200-functional-c",
+      "original_va": "0047c200",
+      "function": "bh_sound_tick",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary deferred sound owner; native COM calls, voice ordering/lifetimes and arithmetic reviewed. Not CRT, compiler support, import or independent shared tail. Engine provenance unresolved.",
+      "source": "src/bh_sound_tick.c",
+      "source_sha256": "c790edd015d07d33b56f9c154be2c035ab2e19ff4d2e9bbbe1d91dae0ec10ba5",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "Checked original 0x48 voice / 0xac resource layouts; explicit source queue and native DirectSound interfaces",
+        "fixtures": {
+          "scenario": "sound-tick",
+          "checks": 57,
+          "failures": 0,
+          "play_calls": 12,
+          "silent_pcm": true,
+          "original_code_required": false
+        },
+        "source_build": "72 real TUs; real-asset and clean source-only builds; 36 missing-module controls",
+        "limits": [
+          "No original-code execution/differential or byte-match claim",
+          "Finite moderate PC53 state; arbitrary NaN/overflow equivalence and PC24 remain unresolved",
+          "Nonpositioned original displacement scratch unspecified; source starts at zero then retains prior scratch",
+          "Source explicit queue replaces original globals; metadata provided explicitly, no original full loader admission",
+          "Silent native PCM playback checks do not establish audible game playback, CD audio or full sound-game integration"
+        ]
+      },
+      "evidence": [
+        "META/m4/sound-update/review.json",
+        "META/m4/sound-update/validation.json",
+        "META/m4/sound-update/integration-real.json",
+        "META/m4/sound-update/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0044e490-functional-c",
+      "original_va": "0044e490",
+      "function": "bh_texture_format_callback",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed ordinary texture-format/slot/residency owner. Callback0044e490 is stdcall native SDK callback, remaining owners cdecl. Not verified library/CRT, compiler helper, import or independent shared tail. Engine authorship unknown.",
+      "source": "META/m4/texture-owner/sources/dd9d341a360fab5aeac2c03474f18f61e90bf0457690cc792891c8a7901f9177-bh_texture.c.txt",
+      "source_sha256": "dd9d341a360fab5aeac2c03474f18f61e90bf0457690cc792891c8a7901f9177",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "32-bit source context; verified64-byte format and28-byte slot, original format data and dirty flags. stdcall SDK callback/cdecl owners.",
+        "fixtures": "46 source/native checks: format fallback, palette pixels, real Texture2 handles, partial allocation, signed oldest eviction, same-frame scene flush, palette/pixel dirty refresh, UV quadrants/perspective and PC53 preservation.",
+        "source_build": "76 real TUs; real/clean build,38 missing-module controls; native scene target also exercises owners",
+        "limits": [
+          "Native RGB compatibility capability override is an explicit platform binding; original flag-derived capabilities remain default",
+          "No original software rasterizer/full image loader/model submission admission from this family",
+          "Initial originally unspecified native palette entries are initialized to zero before real source palette copy",
+          "Diagnostic scene remains fixed camera/FOV with unresolved original lighting/script/entity ownership",
+          "Default original video-memory/ALLOCONLOAD slot capabilities are preserved in code; this host integration exercises an explicit system-memory native RGB binding, not original HAL behavior.",
+          "Full0044f550 filename/search/error cache, software quantization tables and image draw arenas are unfinished; decoded-PCX staging and material binding remain adapters.",
+          "Image prefix through resident/source/palette/format is explicit; complete original0x70 cache object ABI is not claimed.",
+          "Original initially unspecified failure-path palette scratch is zero initialized in source; failing COM calls are reported while original cache/flag mutation ordering is retained."
+        ],
+        "superseded_by": "0044e490-functional-c-image-layout"
+      },
+      "evidence": [
+        "META/m4/texture-owner/review.json",
+        "META/m4/texture-owner/validation.json",
+        "META/m4/texture-owner/integration-real.json",
+        "META/m4/texture-owner/clean/clean-checkout.json",
+        "META/m4/texture-owner/scene-real.json"
+      ],
+      "historical_source_path": "src/bh_texture.c",
+      "historical_variant": true
+    },
+    {
+      "id": "0044e510-functional-c",
+      "original_va": "0044e510",
+      "function": "bh_texture_formats",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed ordinary texture-format/slot/residency owner. Callback0044e490 is stdcall native SDK callback, remaining owners cdecl. Not verified library/CRT, compiler helper, import or independent shared tail. Engine authorship unknown.",
+      "source": "META/m4/texture-owner/sources/dd9d341a360fab5aeac2c03474f18f61e90bf0457690cc792891c8a7901f9177-bh_texture.c.txt",
+      "source_sha256": "dd9d341a360fab5aeac2c03474f18f61e90bf0457690cc792891c8a7901f9177",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "32-bit source context; verified64-byte format and28-byte slot, original format data and dirty flags. stdcall SDK callback/cdecl owners.",
+        "fixtures": "46 source/native checks: format fallback, palette pixels, real Texture2 handles, partial allocation, signed oldest eviction, same-frame scene flush, palette/pixel dirty refresh, UV quadrants/perspective and PC53 preservation.",
+        "source_build": "76 real TUs; real/clean build,38 missing-module controls; native scene target also exercises owners",
+        "limits": [
+          "Native RGB compatibility capability override is an explicit platform binding; original flag-derived capabilities remain default",
+          "No original software rasterizer/full image loader/model submission admission from this family",
+          "Initial originally unspecified native palette entries are initialized to zero before real source palette copy",
+          "Diagnostic scene remains fixed camera/FOV with unresolved original lighting/script/entity ownership",
+          "Default original video-memory/ALLOCONLOAD slot capabilities are preserved in code; this host integration exercises an explicit system-memory native RGB binding, not original HAL behavior.",
+          "Full0044f550 filename/search/error cache, software quantization tables and image draw arenas are unfinished; decoded-PCX staging and material binding remain adapters.",
+          "Image prefix through resident/source/palette/format is explicit; complete original0x70 cache object ABI is not claimed.",
+          "Original initially unspecified failure-path palette scratch is zero initialized in source; failing COM calls are reported while original cache/flag mutation ordering is retained."
+        ],
+        "superseded_by": "0044e510-functional-c-image-layout"
+      },
+      "evidence": [
+        "META/m4/texture-owner/review.json",
+        "META/m4/texture-owner/validation.json",
+        "META/m4/texture-owner/integration-real.json",
+        "META/m4/texture-owner/clean/clean-checkout.json",
+        "META/m4/texture-owner/scene-real.json"
+      ],
+      "historical_source_path": "src/bh_texture.c",
+      "historical_variant": true
+    },
+    {
+      "id": "0044e580-functional-c",
+      "original_va": "0044e580",
+      "function": "bh_texture_request_format",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed ordinary texture-format/slot/residency owner. Callback0044e490 is stdcall native SDK callback, remaining owners cdecl. Not verified library/CRT, compiler helper, import or independent shared tail. Engine authorship unknown.",
+      "source": "META/m4/texture-owner/sources/dd9d341a360fab5aeac2c03474f18f61e90bf0457690cc792891c8a7901f9177-bh_texture.c.txt",
+      "source_sha256": "dd9d341a360fab5aeac2c03474f18f61e90bf0457690cc792891c8a7901f9177",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "32-bit source context; verified64-byte format and28-byte slot, original format data and dirty flags. stdcall SDK callback/cdecl owners.",
+        "fixtures": "46 source/native checks: format fallback, palette pixels, real Texture2 handles, partial allocation, signed oldest eviction, same-frame scene flush, palette/pixel dirty refresh, UV quadrants/perspective and PC53 preservation.",
+        "source_build": "76 real TUs; real/clean build,38 missing-module controls; native scene target also exercises owners",
+        "limits": [
+          "Native RGB compatibility capability override is an explicit platform binding; original flag-derived capabilities remain default",
+          "No original software rasterizer/full image loader/model submission admission from this family",
+          "Initial originally unspecified native palette entries are initialized to zero before real source palette copy",
+          "Diagnostic scene remains fixed camera/FOV with unresolved original lighting/script/entity ownership",
+          "Default original video-memory/ALLOCONLOAD slot capabilities are preserved in code; this host integration exercises an explicit system-memory native RGB binding, not original HAL behavior.",
+          "Full0044f550 filename/search/error cache, software quantization tables and image draw arenas are unfinished; decoded-PCX staging and material binding remain adapters.",
+          "Image prefix through resident/source/palette/format is explicit; complete original0x70 cache object ABI is not claimed.",
+          "Original initially unspecified failure-path palette scratch is zero initialized in source; failing COM calls are reported while original cache/flag mutation ordering is retained."
+        ],
+        "superseded_by": "0044e580-functional-c-image-layout"
+      },
+      "evidence": [
+        "META/m4/texture-owner/review.json",
+        "META/m4/texture-owner/validation.json",
+        "META/m4/texture-owner/integration-real.json",
+        "META/m4/texture-owner/clean/clean-checkout.json",
+        "META/m4/texture-owner/scene-real.json"
+      ],
+      "historical_source_path": "src/bh_texture.c",
+      "historical_variant": true
+    },
+    {
+      "id": "0044e5f0-functional-c",
+      "original_va": "0044e5f0",
+      "function": "bh_texture_slot_create",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed ordinary texture-format/slot/residency owner. Callback0044e490 is stdcall native SDK callback, remaining owners cdecl. Not verified library/CRT, compiler helper, import or independent shared tail. Engine authorship unknown.",
+      "source": "META/m4/texture-owner/sources/dd9d341a360fab5aeac2c03474f18f61e90bf0457690cc792891c8a7901f9177-bh_texture.c.txt",
+      "source_sha256": "dd9d341a360fab5aeac2c03474f18f61e90bf0457690cc792891c8a7901f9177",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "32-bit source context; verified64-byte format and28-byte slot, original format data and dirty flags. stdcall SDK callback/cdecl owners.",
+        "fixtures": "46 source/native checks: format fallback, palette pixels, real Texture2 handles, partial allocation, signed oldest eviction, same-frame scene flush, palette/pixel dirty refresh, UV quadrants/perspective and PC53 preservation.",
+        "source_build": "76 real TUs; real/clean build,38 missing-module controls; native scene target also exercises owners",
+        "limits": [
+          "Native RGB compatibility capability override is an explicit platform binding; original flag-derived capabilities remain default",
+          "No original software rasterizer/full image loader/model submission admission from this family",
+          "Initial originally unspecified native palette entries are initialized to zero before real source palette copy",
+          "Diagnostic scene remains fixed camera/FOV with unresolved original lighting/script/entity ownership",
+          "Default original video-memory/ALLOCONLOAD slot capabilities are preserved in code; this host integration exercises an explicit system-memory native RGB binding, not original HAL behavior.",
+          "Full0044f550 filename/search/error cache, software quantization tables and image draw arenas are unfinished; decoded-PCX staging and material binding remain adapters.",
+          "Image prefix through resident/source/palette/format is explicit; complete original0x70 cache object ABI is not claimed.",
+          "Original initially unspecified failure-path palette scratch is zero initialized in source; failing COM calls are reported while original cache/flag mutation ordering is retained."
+        ],
+        "superseded_by": "0044e5f0-functional-c-image-layout"
+      },
+      "evidence": [
+        "META/m4/texture-owner/review.json",
+        "META/m4/texture-owner/validation.json",
+        "META/m4/texture-owner/integration-real.json",
+        "META/m4/texture-owner/clean/clean-checkout.json",
+        "META/m4/texture-owner/scene-real.json"
+      ],
+      "historical_source_path": "src/bh_texture.c",
+      "historical_variant": true
+    },
+    {
+      "id": "0044e780-functional-c",
+      "original_va": "0044e780",
+      "function": "bh_texture_preallocate",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed ordinary texture-format/slot/residency owner. Callback0044e490 is stdcall native SDK callback, remaining owners cdecl. Not verified library/CRT, compiler helper, import or independent shared tail. Engine authorship unknown.",
+      "source": "META/m4/texture-owner/sources/dd9d341a360fab5aeac2c03474f18f61e90bf0457690cc792891c8a7901f9177-bh_texture.c.txt",
+      "source_sha256": "dd9d341a360fab5aeac2c03474f18f61e90bf0457690cc792891c8a7901f9177",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "32-bit source context; verified64-byte format and28-byte slot, original format data and dirty flags. stdcall SDK callback/cdecl owners.",
+        "fixtures": "46 source/native checks: format fallback, palette pixels, real Texture2 handles, partial allocation, signed oldest eviction, same-frame scene flush, palette/pixel dirty refresh, UV quadrants/perspective and PC53 preservation.",
+        "source_build": "76 real TUs; real/clean build,38 missing-module controls; native scene target also exercises owners",
+        "limits": [
+          "Native RGB compatibility capability override is an explicit platform binding; original flag-derived capabilities remain default",
+          "No original software rasterizer/full image loader/model submission admission from this family",
+          "Initial originally unspecified native palette entries are initialized to zero before real source palette copy",
+          "Diagnostic scene remains fixed camera/FOV with unresolved original lighting/script/entity ownership",
+          "Default original video-memory/ALLOCONLOAD slot capabilities are preserved in code; this host integration exercises an explicit system-memory native RGB binding, not original HAL behavior.",
+          "Full0044f550 filename/search/error cache, software quantization tables and image draw arenas are unfinished; decoded-PCX staging and material binding remain adapters.",
+          "Image prefix through resident/source/palette/format is explicit; complete original0x70 cache object ABI is not claimed.",
+          "Original initially unspecified failure-path palette scratch is zero initialized in source; failing COM calls are reported while original cache/flag mutation ordering is retained."
+        ],
+        "superseded_by": "0044e780-functional-c-image-layout"
+      },
+      "evidence": [
+        "META/m4/texture-owner/review.json",
+        "META/m4/texture-owner/validation.json",
+        "META/m4/texture-owner/integration-real.json",
+        "META/m4/texture-owner/clean/clean-checkout.json",
+        "META/m4/texture-owner/scene-real.json"
+      ],
+      "historical_source_path": "src/bh_texture.c",
+      "historical_variant": true
+    },
+    {
+      "id": "004505f0-functional-c",
+      "original_va": "004505f0",
+      "function": "bh_texture_resident",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed ordinary texture-format/slot/residency owner. Callback0044e490 is stdcall native SDK callback, remaining owners cdecl. Not verified library/CRT, compiler helper, import or independent shared tail. Engine authorship unknown.",
+      "source": "META/m4/texture-owner/sources/dd9d341a360fab5aeac2c03474f18f61e90bf0457690cc792891c8a7901f9177-bh_texture.c.txt",
+      "source_sha256": "dd9d341a360fab5aeac2c03474f18f61e90bf0457690cc792891c8a7901f9177",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "32-bit source context; verified64-byte format and28-byte slot, original format data and dirty flags. stdcall SDK callback/cdecl owners.",
+        "fixtures": "46 source/native checks: format fallback, palette pixels, real Texture2 handles, partial allocation, signed oldest eviction, same-frame scene flush, palette/pixel dirty refresh, UV quadrants/perspective and PC53 preservation.",
+        "source_build": "76 real TUs; real/clean build,38 missing-module controls; native scene target also exercises owners",
+        "limits": [
+          "Native RGB compatibility capability override is an explicit platform binding; original flag-derived capabilities remain default",
+          "No original software rasterizer/full image loader/model submission admission from this family",
+          "Initial originally unspecified native palette entries are initialized to zero before real source palette copy",
+          "Diagnostic scene remains fixed camera/FOV with unresolved original lighting/script/entity ownership",
+          "Default original video-memory/ALLOCONLOAD slot capabilities are preserved in code; this host integration exercises an explicit system-memory native RGB binding, not original HAL behavior.",
+          "Full0044f550 filename/search/error cache, software quantization tables and image draw arenas are unfinished; decoded-PCX staging and material binding remain adapters.",
+          "Image prefix through resident/source/palette/format is explicit; complete original0x70 cache object ABI is not claimed.",
+          "Original initially unspecified failure-path palette scratch is zero initialized in source; failing COM calls are reported while original cache/flag mutation ordering is retained."
+        ],
+        "superseded_by": "004505f0-functional-c-image-layout"
+      },
+      "evidence": [
+        "META/m4/texture-owner/review.json",
+        "META/m4/texture-owner/validation.json",
+        "META/m4/texture-owner/integration-real.json",
+        "META/m4/texture-owner/clean/clean-checkout.json",
+        "META/m4/texture-owner/scene-real.json"
+      ],
+      "historical_source_path": "src/bh_texture.c",
+      "historical_variant": true
+    },
+    {
+      "id": "0044f550-staging-subset-c",
+      "original_va": "0044f550",
+      "function": "Texture cache/PCX staging subset",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete original format/search/load/cache owner reviewed via1239-instruction body; not CRT/import/compiler helper/shared tail. Engine authorship unresolved.",
+      "source": "META/m4/texture-owner/sources/dd9d341a360fab5aeac2c03474f18f61e90bf0457690cc792891c8a7901f9177-bh_texture.c.txt",
+      "source_sha256": "dd9d341a360fab5aeac2c03474f18f61e90bf0457690cc792891c8a7901f9177",
+      "implementation": "wip",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": false,
+        "limits": [
+          "Only explicit decoded-PCX staging/case alias cache adapters currently exercise source. Full original prefix/search/error-string semantics, low-level PCX-reader dialect, software palette quantization and image draw arenas remain unfinished."
+        ],
+        "superseded_by": "0044f550-functional-c"
+      },
+      "evidence": [
+        "META/m4/texture-owner/original/0044f550.c.txt",
+        "META/m4/texture-owner/original/0044f550.tsv",
+        "META/m4/texture-owner/review.json"
+      ],
+      "historical_source_path": "src/bh_texture.c",
+      "historical_variant": true
+    },
+    {
+      "id": "0044e490-functional-c-image-layout",
+      "original_va": "0044e490",
+      "function": "bh_texture_format_callback",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed ordinary texture-format/slot/residency owner. Callback0044e490 is stdcall native SDK callback, remaining owners cdecl. Not verified library/CRT, compiler helper, import or independent shared tail. Engine authorship unknown.",
+      "source": "src/bh_texture.c",
+      "source_sha256": "50447fcc5a161060c743bafa66500f28d7b0cbfdd40e0b14486844d0339db0d2",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "32-bit source context; verified64-byte format and28-byte slot, original format data and dirty flags. stdcall SDK callback/cdecl owners.",
+        "fixtures": "46 source/native checks: format fallback, palette pixels, real Texture2 handles, partial allocation, signed oldest eviction, same-frame scene flush, palette/pixel dirty refresh, UV quadrants/perspective and PC53 preservation.",
+        "source_build": "79 real TUs with original0x70 image layout and completed image owner;46 previous texture checks pass in this exact source/header variant",
+        "limits": [
+          "Source rejects overlong names instead of original0x70 object-name overwrite; uses bounded error text",
+          "Missing/truncated data or native/allocation failure rejects safely with no published half-image, unlike unchecked original paths",
+          "No HAL/video-memory/custom software rasterizer acceptance; existing explicit native RGB system-memory binding retained",
+          "No original model/entity/script/render traversal admission from this family",
+          "One-time quantization tables are scoped to explicit source renderer context; changing display shifts after initialization requires a new context.",
+          "The older decoded-PCX staging helper remains a fixture/support adapter; scene material loading now calls complete bh_texture_load.",
+          "Scene remains a diagnostic fixed view; unchanged pixels show replacement compatibility only, not original renderer or gameplay fidelity."
+        ]
+      },
+      "evidence": [
+        "META/m4/image-owner/validation.json",
+        "META/m4/image-owner/integration-real.json",
+        "META/m4/image-owner/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0044e510-functional-c-image-layout",
+      "original_va": "0044e510",
+      "function": "bh_texture_formats",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed ordinary texture-format/slot/residency owner. Callback0044e490 is stdcall native SDK callback, remaining owners cdecl. Not verified library/CRT, compiler helper, import or independent shared tail. Engine authorship unknown.",
+      "source": "src/bh_texture.c",
+      "source_sha256": "50447fcc5a161060c743bafa66500f28d7b0cbfdd40e0b14486844d0339db0d2",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "32-bit source context; verified64-byte format and28-byte slot, original format data and dirty flags. stdcall SDK callback/cdecl owners.",
+        "fixtures": "46 source/native checks: format fallback, palette pixels, real Texture2 handles, partial allocation, signed oldest eviction, same-frame scene flush, palette/pixel dirty refresh, UV quadrants/perspective and PC53 preservation.",
+        "source_build": "79 real TUs with original0x70 image layout and completed image owner;46 previous texture checks pass in this exact source/header variant",
+        "limits": [
+          "Source rejects overlong names instead of original0x70 object-name overwrite; uses bounded error text",
+          "Missing/truncated data or native/allocation failure rejects safely with no published half-image, unlike unchecked original paths",
+          "No HAL/video-memory/custom software rasterizer acceptance; existing explicit native RGB system-memory binding retained",
+          "No original model/entity/script/render traversal admission from this family",
+          "One-time quantization tables are scoped to explicit source renderer context; changing display shifts after initialization requires a new context.",
+          "The older decoded-PCX staging helper remains a fixture/support adapter; scene material loading now calls complete bh_texture_load.",
+          "Scene remains a diagnostic fixed view; unchanged pixels show replacement compatibility only, not original renderer or gameplay fidelity."
+        ]
+      },
+      "evidence": [
+        "META/m4/image-owner/validation.json",
+        "META/m4/image-owner/integration-real.json",
+        "META/m4/image-owner/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0044e580-functional-c-image-layout",
+      "original_va": "0044e580",
+      "function": "bh_texture_request_format",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed ordinary texture-format/slot/residency owner. Callback0044e490 is stdcall native SDK callback, remaining owners cdecl. Not verified library/CRT, compiler helper, import or independent shared tail. Engine authorship unknown.",
+      "source": "src/bh_texture.c",
+      "source_sha256": "50447fcc5a161060c743bafa66500f28d7b0cbfdd40e0b14486844d0339db0d2",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "32-bit source context; verified64-byte format and28-byte slot, original format data and dirty flags. stdcall SDK callback/cdecl owners.",
+        "fixtures": "46 source/native checks: format fallback, palette pixels, real Texture2 handles, partial allocation, signed oldest eviction, same-frame scene flush, palette/pixel dirty refresh, UV quadrants/perspective and PC53 preservation.",
+        "source_build": "79 real TUs with original0x70 image layout and completed image owner;46 previous texture checks pass in this exact source/header variant",
+        "limits": [
+          "Source rejects overlong names instead of original0x70 object-name overwrite; uses bounded error text",
+          "Missing/truncated data or native/allocation failure rejects safely with no published half-image, unlike unchecked original paths",
+          "No HAL/video-memory/custom software rasterizer acceptance; existing explicit native RGB system-memory binding retained",
+          "No original model/entity/script/render traversal admission from this family",
+          "One-time quantization tables are scoped to explicit source renderer context; changing display shifts after initialization requires a new context.",
+          "The older decoded-PCX staging helper remains a fixture/support adapter; scene material loading now calls complete bh_texture_load.",
+          "Scene remains a diagnostic fixed view; unchanged pixels show replacement compatibility only, not original renderer or gameplay fidelity."
+        ]
+      },
+      "evidence": [
+        "META/m4/image-owner/validation.json",
+        "META/m4/image-owner/integration-real.json",
+        "META/m4/image-owner/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0044e5f0-functional-c-image-layout",
+      "original_va": "0044e5f0",
+      "function": "bh_texture_slot_create",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed ordinary texture-format/slot/residency owner. Callback0044e490 is stdcall native SDK callback, remaining owners cdecl. Not verified library/CRT, compiler helper, import or independent shared tail. Engine authorship unknown.",
+      "source": "src/bh_texture.c",
+      "source_sha256": "50447fcc5a161060c743bafa66500f28d7b0cbfdd40e0b14486844d0339db0d2",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "32-bit source context; verified64-byte format and28-byte slot, original format data and dirty flags. stdcall SDK callback/cdecl owners.",
+        "fixtures": "46 source/native checks: format fallback, palette pixels, real Texture2 handles, partial allocation, signed oldest eviction, same-frame scene flush, palette/pixel dirty refresh, UV quadrants/perspective and PC53 preservation.",
+        "source_build": "79 real TUs with original0x70 image layout and completed image owner;46 previous texture checks pass in this exact source/header variant",
+        "limits": [
+          "Source rejects overlong names instead of original0x70 object-name overwrite; uses bounded error text",
+          "Missing/truncated data or native/allocation failure rejects safely with no published half-image, unlike unchecked original paths",
+          "No HAL/video-memory/custom software rasterizer acceptance; existing explicit native RGB system-memory binding retained",
+          "No original model/entity/script/render traversal admission from this family",
+          "One-time quantization tables are scoped to explicit source renderer context; changing display shifts after initialization requires a new context.",
+          "The older decoded-PCX staging helper remains a fixture/support adapter; scene material loading now calls complete bh_texture_load.",
+          "Scene remains a diagnostic fixed view; unchanged pixels show replacement compatibility only, not original renderer or gameplay fidelity."
+        ]
+      },
+      "evidence": [
+        "META/m4/image-owner/validation.json",
+        "META/m4/image-owner/integration-real.json",
+        "META/m4/image-owner/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0044e780-functional-c-image-layout",
+      "original_va": "0044e780",
+      "function": "bh_texture_preallocate",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed ordinary texture-format/slot/residency owner. Callback0044e490 is stdcall native SDK callback, remaining owners cdecl. Not verified library/CRT, compiler helper, import or independent shared tail. Engine authorship unknown.",
+      "source": "src/bh_texture.c",
+      "source_sha256": "50447fcc5a161060c743bafa66500f28d7b0cbfdd40e0b14486844d0339db0d2",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "32-bit source context; verified64-byte format and28-byte slot, original format data and dirty flags. stdcall SDK callback/cdecl owners.",
+        "fixtures": "46 source/native checks: format fallback, palette pixels, real Texture2 handles, partial allocation, signed oldest eviction, same-frame scene flush, palette/pixel dirty refresh, UV quadrants/perspective and PC53 preservation.",
+        "source_build": "79 real TUs with original0x70 image layout and completed image owner;46 previous texture checks pass in this exact source/header variant",
+        "limits": [
+          "Source rejects overlong names instead of original0x70 object-name overwrite; uses bounded error text",
+          "Missing/truncated data or native/allocation failure rejects safely with no published half-image, unlike unchecked original paths",
+          "No HAL/video-memory/custom software rasterizer acceptance; existing explicit native RGB system-memory binding retained",
+          "No original model/entity/script/render traversal admission from this family",
+          "One-time quantization tables are scoped to explicit source renderer context; changing display shifts after initialization requires a new context.",
+          "The older decoded-PCX staging helper remains a fixture/support adapter; scene material loading now calls complete bh_texture_load.",
+          "Scene remains a diagnostic fixed view; unchanged pixels show replacement compatibility only, not original renderer or gameplay fidelity."
+        ]
+      },
+      "evidence": [
+        "META/m4/image-owner/validation.json",
+        "META/m4/image-owner/integration-real.json",
+        "META/m4/image-owner/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004505f0-functional-c-image-layout",
+      "original_va": "004505f0",
+      "function": "bh_texture_resident",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed ordinary texture-format/slot/residency owner. Callback0044e490 is stdcall native SDK callback, remaining owners cdecl. Not verified library/CRT, compiler helper, import or independent shared tail. Engine authorship unknown.",
+      "source": "src/bh_texture.c",
+      "source_sha256": "50447fcc5a161060c743bafa66500f28d7b0cbfdd40e0b14486844d0339db0d2",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "32-bit source context; verified64-byte format and28-byte slot, original format data and dirty flags. stdcall SDK callback/cdecl owners.",
+        "fixtures": "46 source/native checks: format fallback, palette pixels, real Texture2 handles, partial allocation, signed oldest eviction, same-frame scene flush, palette/pixel dirty refresh, UV quadrants/perspective and PC53 preservation.",
+        "source_build": "79 real TUs with original0x70 image layout and completed image owner;46 previous texture checks pass in this exact source/header variant",
+        "limits": [
+          "Source rejects overlong names instead of original0x70 object-name overwrite; uses bounded error text",
+          "Missing/truncated data or native/allocation failure rejects safely with no published half-image, unlike unchecked original paths",
+          "No HAL/video-memory/custom software rasterizer acceptance; existing explicit native RGB system-memory binding retained",
+          "No original model/entity/script/render traversal admission from this family",
+          "One-time quantization tables are scoped to explicit source renderer context; changing display shifts after initialization requires a new context.",
+          "The older decoded-PCX staging helper remains a fixture/support adapter; scene material loading now calls complete bh_texture_load.",
+          "Scene remains a diagnostic fixed view; unchanged pixels show replacement compatibility only, not original renderer or gameplay fidelity."
+        ]
+      },
+      "evidence": [
+        "META/m4/image-owner/validation.json",
+        "META/m4/image-owner/integration-real.json",
+        "META/m4/image-owner/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0044e880-functional-c",
+      "original_va": "0044e880",
+      "function": "bh_texture_set_path",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary complete path/palette/cache owner inspected with callers and native API slots. Not verified CRT/library, compiler/EH support, import or shared tail; engine attribution unresolved.",
+      "source": "src/bh_texture_image.c",
+      "source_sha256": "b90f9e2e48c816af8a5cdbe476fef73fa4f399b31b6f42024ad24e5f68ed4690",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "Explicit source context replaces globals; original0x70 image offsets and real native interface lifetimes checked; cdecl source API.",
+        "fixtures": "131 synthetic checks and all459 PCX asset classification:454 native-backed loads with pinned mapped-pixel/palette CRCs,5 original catalog rejections. RGB8/16/24/32 native surfaces, path/alias/error semantics, software residual phases and nested failure cleanup.",
+        "limits": [
+          "Source rejects overlong names instead of original0x70 object-name overwrite; uses bounded error text",
+          "Missing/truncated data or native/allocation failure rejects safely with no published half-image, unlike unchecked original paths",
+          "No HAL/video-memory/custom software rasterizer acceptance; existing explicit native RGB system-memory binding retained",
+          "No original model/entity/script/render traversal admission from this family",
+          "One-time quantization tables are scoped to explicit source renderer context; changing display shifts after initialization requires a new context.",
+          "The older decoded-PCX staging helper remains a fixture/support adapter; scene material loading now calls complete bh_texture_load.",
+          "Scene remains a diagnostic fixed view; unchanged pixels show replacement compatibility only, not original renderer or gameplay fidelity."
+        ]
+      },
+      "evidence": [
+        "META/m4/image-owner/review.json",
+        "META/m4/image-owner/validation.json",
+        "META/m4/image-owner/integration-real.json",
+        "META/m4/image-owner/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0044e9b0-functional-c",
+      "original_va": "0044e9b0",
+      "function": "bh_texture_tables_init",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary complete path/palette/cache owner inspected with callers and native API slots. Not verified CRT/library, compiler/EH support, import or shared tail; engine attribution unresolved.",
+      "source": "src/bh_texture_tables.c",
+      "source_sha256": "0cc9d82eec6212b08a3bd016e18b319a73896dc35e9e191da2edaf7ddf1c60b7",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "Explicit source context replaces globals; original0x70 image offsets and real native interface lifetimes checked; cdecl source API.",
+        "fixtures": "131 synthetic checks and all459 PCX asset classification:454 native-backed loads with pinned mapped-pixel/palette CRCs,5 original catalog rejections. RGB8/16/24/32 native surfaces, path/alias/error semantics, software residual phases and nested failure cleanup.",
+        "limits": [
+          "Source rejects overlong names instead of original0x70 object-name overwrite; uses bounded error text",
+          "Missing/truncated data or native/allocation failure rejects safely with no published half-image, unlike unchecked original paths",
+          "No HAL/video-memory/custom software rasterizer acceptance; existing explicit native RGB system-memory binding retained",
+          "No original model/entity/script/render traversal admission from this family",
+          "One-time quantization tables are scoped to explicit source renderer context; changing display shifts after initialization requires a new context.",
+          "The older decoded-PCX staging helper remains a fixture/support adapter; scene material loading now calls complete bh_texture_load.",
+          "Scene remains a diagnostic fixed view; unchanged pixels show replacement compatibility only, not original renderer or gameplay fidelity."
+        ]
+      },
+      "evidence": [
+        "META/m4/image-owner/review.json",
+        "META/m4/image-owner/validation.json",
+        "META/m4/image-owner/integration-real.json",
+        "META/m4/image-owner/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0044eb60-functional-c",
+      "original_va": "0044eb60",
+      "function": "bh_texture_palette_tables",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary complete path/palette/cache owner inspected with callers and native API slots. Not verified CRT/library, compiler/EH support, import or shared tail; engine attribution unresolved.",
+      "source": "src/bh_texture_tables.c",
+      "source_sha256": "0cc9d82eec6212b08a3bd016e18b319a73896dc35e9e191da2edaf7ddf1c60b7",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "Explicit source context replaces globals; original0x70 image offsets and real native interface lifetimes checked; cdecl source API.",
+        "fixtures": "131 synthetic checks and all459 PCX asset classification:454 native-backed loads with pinned mapped-pixel/palette CRCs,5 original catalog rejections. RGB8/16/24/32 native surfaces, path/alias/error semantics, software residual phases and nested failure cleanup.",
+        "limits": [
+          "Source rejects overlong names instead of original0x70 object-name overwrite; uses bounded error text",
+          "Missing/truncated data or native/allocation failure rejects safely with no published half-image, unlike unchecked original paths",
+          "No HAL/video-memory/custom software rasterizer acceptance; existing explicit native RGB system-memory binding retained",
+          "No original model/entity/script/render traversal admission from this family",
+          "One-time quantization tables are scoped to explicit source renderer context; changing display shifts after initialization requires a new context.",
+          "The older decoded-PCX staging helper remains a fixture/support adapter; scene material loading now calls complete bh_texture_load.",
+          "Scene remains a diagnostic fixed view; unchanged pixels show replacement compatibility only, not original renderer or gameplay fidelity."
+        ]
+      },
+      "evidence": [
+        "META/m4/image-owner/review.json",
+        "META/m4/image-owner/validation.json",
+        "META/m4/image-owner/integration-real.json",
+        "META/m4/image-owner/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0044f550-functional-c",
+      "original_va": "0044f550",
+      "function": "bh_texture_load",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary complete path/palette/cache owner inspected with callers and native API slots. Not verified CRT/library, compiler/EH support, import or shared tail; engine attribution unresolved.",
+      "source": "src/bh_texture_image.c",
+      "source_sha256": "b90f9e2e48c816af8a5cdbe476fef73fa4f399b31b6f42024ad24e5f68ed4690",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "Explicit source context replaces globals; original0x70 image offsets and real native interface lifetimes checked; cdecl source API.",
+        "fixtures": "131 synthetic checks and all459 PCX asset classification:454 native-backed loads with pinned mapped-pixel/palette CRCs,5 original catalog rejections. RGB8/16/24/32 native surfaces, path/alias/error semantics, software residual phases and nested failure cleanup.",
+        "limits": [
+          "Source rejects overlong names instead of original0x70 object-name overwrite; uses bounded error text",
+          "Missing/truncated data or native/allocation failure rejects safely with no published half-image, unlike unchecked original paths",
+          "No HAL/video-memory/custom software rasterizer acceptance; existing explicit native RGB system-memory binding retained",
+          "No original model/entity/script/render traversal admission from this family",
+          "One-time quantization tables are scoped to explicit source renderer context; changing display shifts after initialization requires a new context.",
+          "The older decoded-PCX staging helper remains a fixture/support adapter; scene material loading now calls complete bh_texture_load.",
+          "Scene remains a diagnostic fixed view; unchanged pixels show replacement compatibility only, not original renderer or gameplay fidelity."
+        ]
+      },
+      "evidence": [
+        "META/m4/image-owner/review.json",
+        "META/m4/image-owner/validation.json",
+        "META/m4/image-owner/integration-real.json",
+        "META/m4/image-owner/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00457e20-functional-c",
+      "original_va": "00457e20",
+      "function": "bh_model_read",
+      "role": "engine_candidate",
+      "provenance_confidence": "high for required behavior; engine attribution unresolved; Complete cdecl engine owner, not CRT/import/compiler helper or shared tail",
+      "source": "src/bh_model.c",
+      "source_sha256": "6bb470d3965025c41f1bfdce852dce7c7461cd503201991a250d485c507d87b2",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "Original 0x80 model layout, 0x38..0x64 section pairs, 0x68 borrowed images, 0x6c runtime fields; explicit context replaces globals",
+        "fixtures": "63 synthetic owner checks plus all505 BSPs; 8039 focused real-data checks; all raw sections compare independently with pinned archive offsets/counts/root radius; native image cache binding",
+        "limits": [
+          "Model source guards use bounded BSP validation before copying six owned arrays; safe failures retain old output and close files instead of original leaks",
+          "Cache publication from failed image loading may remain; model success intentionally permits NULL used images",
+          "Fixed camera shell selection and native diagnostic draw remain adapters; original primitive traversal, lighting, world/entity/control unfinished",
+          "No byte matching claimed; PC53 checks do not resolve original 24-bit x87 behavior"
+        ]
+      },
+      "evidence": [
+        "META/m4/model-owner/review.json",
+        "META/m4/model-owner/validation.json",
+        "META/m4/model-owner/integration-real.json",
+        "META/m4/model-owner/clean/clean-checkout.json",
+        "META/m4/model-owner/scene-real.json"
+      ]
+    },
+    {
+      "id": "00458140-functional-c",
+      "original_va": "00458140",
+      "function": "bh_model_load",
+      "role": "engine_candidate",
+      "provenance_confidence": "high for required behavior; engine attribution unresolved; Complete cdecl engine owner, not CRT/import/compiler helper or shared tail",
+      "source": "src/bh_model.c",
+      "source_sha256": "6bb470d3965025c41f1bfdce852dce7c7461cd503201991a250d485c507d87b2",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "Original 0x80 model layout, 0x38..0x64 section pairs, 0x68 borrowed images, 0x6c runtime fields; explicit context replaces globals",
+        "fixtures": "63 synthetic owner checks plus all505 BSPs; 8039 focused real-data checks; all raw sections compare independently with pinned archive offsets/counts/root radius; native image cache binding",
+        "limits": [
+          "Model source guards use bounded BSP validation before copying six owned arrays; safe failures retain old output and close files instead of original leaks",
+          "Cache publication from failed image loading may remain; model success intentionally permits NULL used images",
+          "Fixed camera shell selection and native diagnostic draw remain adapters; original primitive traversal, lighting, world/entity/control unfinished",
+          "No byte matching claimed; PC53 checks do not resolve original 24-bit x87 behavior"
+        ]
+      },
+      "evidence": [
+        "META/m4/model-owner/review.json",
+        "META/m4/model-owner/validation.json",
+        "META/m4/model-owner/integration-real.json",
+        "META/m4/model-owner/clean/clean-checkout.json",
+        "META/m4/model-owner/scene-real.json"
+      ]
+    },
+    {
+      "id": "004507d0-functional-c",
+      "original_va": "004507d0",
+      "function": "bh_texture_draw_vertex",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete cdecl owner with reviewed callers/body; allocator/free and native COM methods are dependencies, not assigned CRT/import implementations; no compiler support/shared-tail admission; engine provenance unresolved",
+      "source": "src/bh_texture_draw.c",
+      "source_sha256": "5878f7bfb976a8b7281561787a01e0d819e41002ba4bf7b46b4a6c885c43a61a",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "Original image0x38/3c vertex count/capacity,0x40/44 run count/serial and0x48/4c native arenas retained; actual Direct3DDevice2 COM declarations",
+        "fixtures": "61 source/native checks: initial paired failures, full96-vertex arena, exact120-vertex growth, both growth failures, later allocation rollback/retry, retained active bytes, mixed triangle/quad native pixel outputs and run offsets, software/empty gates, topology guard; scene composes397 textured triangles",
+        "limits": [
+          "0046e390 remains WIP: separate software rasterizer and original linked-ring producer not silently omitted or claimed complete",
+          "00452140 clipping and original BSP traversal still unrecovered; existing diagnostic clip/project supplies TL vertices",
+          "Bounded source allocation/topology checks safely reject overflow and clean paired failure; original unchecked allocation behavior not reproduced",
+          "Native HRESULTs exposed, counters/reset and subsequent draw calls retain original behavior",
+          "Native HRESULT failure reset follows inspected complete body; native failure injection is not claimed from successful pixel tests",
+          "Current native RGB fan rasterization differs from triangle-list adapter at1421 pixels; changing only the native call back to repeated lists exactly restores prior image. This is not original-game visual equivalence",
+          "Diagnostic projection still uses its existing depth mapping; original near/z producer conversion and software rasterizer are not claimed"
+        ]
+      },
+      "evidence": [
+        "META/m4/primitive-queue/review.json",
+        "META/m4/primitive-queue/validation.json",
+        "META/m4/primitive-queue/integration-real.json",
+        "META/m4/primitive-queue/clean/clean-checkout.json",
+        "META/m4/primitive-queue/scene-real.json",
+        "META/m4/primitive-queue/fan-control.json"
+      ]
+    },
+    {
+      "id": "004508a0-functional-c",
+      "original_va": "004508a0",
+      "function": "bh_texture_draw_flush",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete cdecl owner with reviewed callers/body; allocator/free and native COM methods are dependencies, not assigned CRT/import implementations; no compiler support/shared-tail admission; engine provenance unresolved",
+      "source": "src/bh_texture_draw.c",
+      "source_sha256": "5878f7bfb976a8b7281561787a01e0d819e41002ba4bf7b46b4a6c885c43a61a",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "Original image0x38/3c vertex count/capacity,0x40/44 run count/serial and0x48/4c native arenas retained; actual Direct3DDevice2 COM declarations",
+        "fixtures": "61 source/native checks: initial paired failures, full96-vertex arena, exact120-vertex growth, both growth failures, later allocation rollback/retry, retained active bytes, mixed triangle/quad native pixel outputs and run offsets, software/empty gates, topology guard; scene composes397 textured triangles",
+        "limits": [
+          "0046e390 remains WIP: separate software rasterizer and original linked-ring producer not silently omitted or claimed complete",
+          "00452140 clipping and original BSP traversal still unrecovered; existing diagnostic clip/project supplies TL vertices",
+          "Bounded source allocation/topology checks safely reject overflow and clean paired failure; original unchecked allocation behavior not reproduced",
+          "Native HRESULTs exposed, counters/reset and subsequent draw calls retain original behavior",
+          "Native HRESULT failure reset follows inspected complete body; native failure injection is not claimed from successful pixel tests",
+          "Current native RGB fan rasterization differs from triangle-list adapter at1421 pixels; changing only the native call back to repeated lists exactly restores prior image. This is not original-game visual equivalence",
+          "Diagnostic projection still uses its existing depth mapping; original near/z producer conversion and software rasterizer are not claimed"
+        ]
+      },
+      "evidence": [
+        "META/m4/primitive-queue/review.json",
+        "META/m4/primitive-queue/validation.json",
+        "META/m4/primitive-queue/integration-real.json",
+        "META/m4/primitive-queue/clean/clean-checkout.json",
+        "META/m4/primitive-queue/scene-real.json",
+        "META/m4/primitive-queue/fan-control.json"
+      ]
+    },
+    {
+      "id": "00401b30-functional-c",
+      "original_va": "00401b30",
+      "function": "bh_mat4_lu_solve",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary math owner required by clipper; scaled LU algorithm resembles common numerical-library algorithms, but no verified library provenance/signature/reusable original component established. Not CRT/import/compiler helper or shared tail; no gameplay attribution claimed.",
+      "source": "src/bh_matrix_inverse.c",
+      "source_sha256": "c5cd3ee6b4071fe4f49e55432c696299945c609486359eb0239a053a6a1ce5b7",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "Fixed4x4 float matrix, four32-bit integer pivots, float parity and BHMat34 affine input/output; cdecl",
+        "fixtures": "3380 focused checks: analytic scale/shear/translation, pivot/parity/scaling, exact instruction-derived stored-factor bits,128 independent double Gauss-Jordan oracle matrices, in-place aliases, projected-texture dependency, zero rows and accepted rank-deficient behavior",
+        "numerical": "PC53/nearest/masked profile; observed binary32 stores use real separate-TU bh_round_float; original PC24 unresolved",
+        "limits": [
+          "No full clipper admission from this prerequisite;00452140 original body exported separately",
+          "Guard invalid pointers/nonfinite LU input; no replacement epsilon or silent tiny-pivot repair",
+          "Nonzero dependent rows may produce zero pivots, return1 and divide-by-zero/nonfinite outputs as original; return1 is not a rank certificate",
+          "PC24 and byte matching not claimed; preserve pinned comparison translation units unchanged"
+        ]
+      },
+      "evidence": [
+        "META/m4/matrix-inverse/review.json",
+        "META/m4/matrix-inverse/validation.json",
+        "META/m4/matrix-inverse/integration-real.json",
+        "META/m4/matrix-inverse/clean/clean-checkout.json",
+        "META/m4/matrix-inverse/store-fixture.json"
+      ]
+    },
+    {
+      "id": "00401c10-functional-c",
+      "original_va": "00401c10",
+      "function": "bh_mat4_lu",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary math owner required by clipper; scaled LU algorithm resembles common numerical-library algorithms, but no verified library provenance/signature/reusable original component established. Not CRT/import/compiler helper or shared tail; no gameplay attribution claimed.",
+      "source": "src/bh_matrix_inverse.c",
+      "source_sha256": "c5cd3ee6b4071fe4f49e55432c696299945c609486359eb0239a053a6a1ce5b7",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "Fixed4x4 float matrix, four32-bit integer pivots, float parity and BHMat34 affine input/output; cdecl",
+        "fixtures": "3380 focused checks: analytic scale/shear/translation, pivot/parity/scaling, exact instruction-derived stored-factor bits,128 independent double Gauss-Jordan oracle matrices, in-place aliases, projected-texture dependency, zero rows and accepted rank-deficient behavior",
+        "numerical": "PC53/nearest/masked profile; observed binary32 stores use real separate-TU bh_round_float; original PC24 unresolved",
+        "limits": [
+          "No full clipper admission from this prerequisite;00452140 original body exported separately",
+          "Guard invalid pointers/nonfinite LU input; no replacement epsilon or silent tiny-pivot repair",
+          "Nonzero dependent rows may produce zero pivots, return1 and divide-by-zero/nonfinite outputs as original; return1 is not a rank certificate",
+          "PC24 and byte matching not claimed; preserve pinned comparison translation units unchanged"
+        ]
+      },
+      "evidence": [
+        "META/m4/matrix-inverse/review.json",
+        "META/m4/matrix-inverse/validation.json",
+        "META/m4/matrix-inverse/integration-real.json",
+        "META/m4/matrix-inverse/clean/clean-checkout.json",
+        "META/m4/matrix-inverse/store-fixture.json"
+      ]
+    },
+    {
+      "id": "00401e50-functional-c",
+      "original_va": "00401e50",
+      "function": "bh_mat34_inverse_general",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary math owner required by clipper; scaled LU algorithm resembles common numerical-library algorithms, but no verified library provenance/signature/reusable original component established. Not CRT/import/compiler helper or shared tail; no gameplay attribution claimed.",
+      "source": "src/bh_matrix_inverse.c",
+      "source_sha256": "c5cd3ee6b4071fe4f49e55432c696299945c609486359eb0239a053a6a1ce5b7",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "Fixed4x4 float matrix, four32-bit integer pivots, float parity and BHMat34 affine input/output; cdecl",
+        "fixtures": "3380 focused checks: analytic scale/shear/translation, pivot/parity/scaling, exact instruction-derived stored-factor bits,128 independent double Gauss-Jordan oracle matrices, in-place aliases, projected-texture dependency, zero rows and accepted rank-deficient behavior",
+        "numerical": "PC53/nearest/masked profile; observed binary32 stores use real separate-TU bh_round_float; original PC24 unresolved",
+        "limits": [
+          "No full clipper admission from this prerequisite;00452140 original body exported separately",
+          "Guard invalid pointers/nonfinite LU input; no replacement epsilon or silent tiny-pivot repair",
+          "Nonzero dependent rows may produce zero pivots, return1 and divide-by-zero/nonfinite outputs as original; return1 is not a rank certificate",
+          "PC24 and byte matching not claimed; preserve pinned comparison translation units unchanged"
+        ]
+      },
+      "evidence": [
+        "META/m4/matrix-inverse/review.json",
+        "META/m4/matrix-inverse/validation.json",
+        "META/m4/matrix-inverse/integration-real.json",
+        "META/m4/matrix-inverse/clean/clean-checkout.json",
+        "META/m4/matrix-inverse/store-fixture.json"
+      ]
+    },
+    {
+      "id": "00452140-functional-c",
+      "original_va": "00452140",
+      "function": "bh_clip_polygon",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete cdecl linked-ring polygon clip/project owner; geometry/projection behavior, not CRT/import/compiler support/shared tail. Engine attribution unverified. Callers and full original body reviewed.",
+      "source": "src/bh_clipper.c",
+      "source_sha256": "483fa81c86f0354167c12745f9e06841adce924e40f1dc68d9aca113adbe8c62",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "60-byte x86 vertex ring with next/previous/frame/projected offsets2c/30/34/38; explicit source context replaces original globals and scratch; actual image54/58..6c metadata",
+        "fixtures": "1139 focused checks including near/far/all4 screen boundaries, paired insertion head/winding, endpoint duplicates, caches, projected texture inverse,1024-node bound,256 independent homogeneous oracle triangles and fixed all6-plane twelve-scratch fixture; native28 render/46 texture controls and real scene397 triangles",
+        "numerical": "Reviewed retained vs binary32-spilled side-intersection formulas; real separate-TU round helper; PC53 caller contract",
+        "limits": [
+          "No original producer/traversal/software rasterizer admission",
+          "Source safety guards bound valid-pointer ring traversal and reject malformed topology, nonfinite values and invalid camera inverse instead of original unchecked behavior",
+          "Scratch unused fields zeroed rather than preserving unspecified old scratch bytes",
+          "Caller PC53 profile; PC24 and byte match not claimed; diagnostic viewport/camera binding remains explicit",
+          "Native TL-depth mapping, camera/FOV, shell selection and immediate per-polygon flushing remain diagnostic adapters",
+          "Independent oracle tests bound ordinary finite geometry; extreme x87 exponent/PC24 equivalence and byte matching are not claimed"
+        ]
+      },
+      "evidence": [
+        "META/m4/clipper/review.json",
+        "META/m4/clipper/validation.json",
+        "META/m4/clipper/integration-real.json",
+        "META/m4/clipper/clean/clean-checkout.json",
+        "META/m4/clipper/scene-real.json",
+        "META/m4/clipper/scene-comparison.json",
+        "META/m4/clipper/six-plane-fixture.json"
+      ]
+    },
+    {
+      "id": "004515b0-functional-c",
+      "original_va": "004515b0",
+      "function": "bh_view_clip_rect",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete camera/viewport owner required by original visibility/model rendering. Reviewed full ordinary function and globals/callers; not CRT/import/compiler/EH/shared tail. Engine provenance unresolved.",
+      "source": "src/bh_view_camera.c",
+      "source_sha256": "f7984e1bbdf672df12961840426d511844d9f3cef77ddea8370b34375a9042a7",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "Explicit source config and projected/inverse matrix, camera position and6 outward world planes replace original globals; cdecl",
+        "fixtures": "1623 focused checks: native-size viewport reset/asymmetric clamps, default60deg/near1/far100000 pins,64 rotated translated camera configurations, independent pinhole projection and world-space plane checks, original rigid-inverse semantics and invalid input cleanup",
+        "numerical": "PC53 retained focal/cosine/firstX offset versus explicit binary32 store boundaries; plane-boundary checks account for at most half ULP of stored float plane offset",
+        "limits": [
+          "Original0046e390 native/software dispatch remains unfinished; software0046dda0 owns scan converter and many handwritten raster kernels, not silently omitted or claimed complete",
+          "No original camera-position selection, visibility traversal or gameplay admission",
+          "Input matrix uses original rigid-inverse semantics even for nonrigid input; not replaced with general inverse",
+          "Source guards reject nonfinite/invalid projection configuration and output safely; PC24 and byte matching unclaimed",
+          "Renderer retains explicit diagnostic camera position/Y orientation and TL depth conversion; source scene now uses original default projection settings"
+        ]
+      },
+      "evidence": [
+        "META/m4/view-camera/review.json",
+        "META/m4/view-camera/validation.json",
+        "META/m4/view-camera/integration-real.json",
+        "META/m4/view-camera/clean/clean-checkout.json",
+        "META/m4/view-camera/scene-real.json"
+      ]
+    },
+    {
+      "id": "00451660-functional-c",
+      "original_va": "00451660",
+      "function": "bh_view_reset_viewport",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete camera/viewport owner required by original visibility/model rendering. Reviewed full ordinary function and globals/callers; not CRT/import/compiler/EH/shared tail. Engine provenance unresolved.",
+      "source": "src/bh_view_camera.c",
+      "source_sha256": "f7984e1bbdf672df12961840426d511844d9f3cef77ddea8370b34375a9042a7",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "Explicit source config and projected/inverse matrix, camera position and6 outward world planes replace original globals; cdecl",
+        "fixtures": "1623 focused checks: native-size viewport reset/asymmetric clamps, default60deg/near1/far100000 pins,64 rotated translated camera configurations, independent pinhole projection and world-space plane checks, original rigid-inverse semantics and invalid input cleanup",
+        "numerical": "PC53 retained focal/cosine/firstX offset versus explicit binary32 store boundaries; plane-boundary checks account for at most half ULP of stored float plane offset",
+        "limits": [
+          "Original0046e390 native/software dispatch remains unfinished; software0046dda0 owns scan converter and many handwritten raster kernels, not silently omitted or claimed complete",
+          "No original camera-position selection, visibility traversal or gameplay admission",
+          "Input matrix uses original rigid-inverse semantics even for nonrigid input; not replaced with general inverse",
+          "Source guards reject nonfinite/invalid projection configuration and output safely; PC24 and byte matching unclaimed",
+          "Renderer retains explicit diagnostic camera position/Y orientation and TL depth conversion; source scene now uses original default projection settings"
+        ]
+      },
+      "evidence": [
+        "META/m4/view-camera/review.json",
+        "META/m4/view-camera/validation.json",
+        "META/m4/view-camera/integration-real.json",
+        "META/m4/view-camera/clean/clean-checkout.json",
+        "META/m4/view-camera/scene-real.json"
+      ]
+    },
+    {
+      "id": "00451b80-functional-c",
+      "original_va": "00451b80",
+      "function": "bh_view_camera_build",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete camera/viewport owner required by original visibility/model rendering. Reviewed full ordinary function and globals/callers; not CRT/import/compiler/EH/shared tail. Engine provenance unresolved.",
+      "source": "src/bh_view_camera.c",
+      "source_sha256": "f7984e1bbdf672df12961840426d511844d9f3cef77ddea8370b34375a9042a7",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "validation": {
+        "complete_original_function": true,
+        "raw_byte_match": false,
+        "abi": "Explicit source config and projected/inverse matrix, camera position and6 outward world planes replace original globals; cdecl",
+        "fixtures": "1623 focused checks: native-size viewport reset/asymmetric clamps, default60deg/near1/far100000 pins,64 rotated translated camera configurations, independent pinhole projection and world-space plane checks, original rigid-inverse semantics and invalid input cleanup",
+        "numerical": "PC53 retained focal/cosine/firstX offset versus explicit binary32 store boundaries; plane-boundary checks account for at most half ULP of stored float plane offset",
+        "limits": [
+          "Original0046e390 native/software dispatch remains unfinished; software0046dda0 owns scan converter and many handwritten raster kernels, not silently omitted or claimed complete",
+          "No original camera-position selection, visibility traversal or gameplay admission",
+          "Input matrix uses original rigid-inverse semantics even for nonrigid input; not replaced with general inverse",
+          "Source guards reject nonfinite/invalid projection configuration and output safely; PC24 and byte matching unclaimed",
+          "Renderer retains explicit diagnostic camera position/Y orientation and TL depth conversion; source scene now uses original default projection settings"
+        ]
+      },
+      "evidence": [
+        "META/m4/view-camera/review.json",
+        "META/m4/view-camera/validation.json",
+        "META/m4/view-camera/integration-real.json",
+        "META/m4/view-camera/clean/clean-checkout.json",
+        "META/m4/view-camera/scene-real.json"
       ]
     }
   ],
@@ -5478,6 +6506,421 @@
       ],
       "limits": [
         "Explicit AddRef/Release context, not original provider/session/player initialization."
+      ]
+    },
+    {
+      "id": "bh_scene_view-native-static-adapter",
+      "function": "bh_scene_view_init/begin/polygon/end/dispose",
+      "source": "META/m4/scene-view/sources/e44928724d1b1cb15e65a0715e93a9dc3785ebdc3ee86de6bb6f0e341ac6dee0-bh_scene_view.c.txt",
+      "source_sha256": "e44928724d1b1cb15e65a0715e93a9dc3785ebdc3ee86de6bb6f0e341ac6dee0",
+      "role": "source_diagnostic_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Bounded source-owned static shell rendering via native DirectDraw/Direct3D2 RGB device. Explicit camera/FOV/colors; no original function recovered or original renderer ABI claimed.",
+      "validation": {
+        "native_controls": 28,
+        "real_models": 454,
+        "real_placements": 5815,
+        "shell_placements": 1455,
+        "triangles": 403,
+        "textured": false,
+        "clean_source_only": true,
+        "original_code_executed": false
+      },
+      "evidence": [
+        "META/m4/scene-view/assessment.json",
+        "META/m4/scene-view/integration-real.json",
+        "META/m4/scene-view/clean.json",
+        "META/m4/scene-view/scene.png"
+      ],
+      "historical_source_path": "src/bh_scene_view.c",
+      "historical_variant": true
+    },
+    {
+      "id": "bh_scene_snapshot-native-static-adapter",
+      "function": "source-only TEST.LEV static shell composition",
+      "source": "META/m4/scene-view/sources/e7c99805f81a80294a8efaa1f8aaebdbbb252e0c057afa91cb7ebafa207e98cd-bh_scene_snapshot.c.txt",
+      "source_sha256": "e7c99805f81a80294a8efaa1f8aaebdbbb252e0c057afa91cb7ebafa207e98cd",
+      "role": "source_diagnostic_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Bounded source-owned static shell rendering via native DirectDraw/Direct3D2 RGB device. Explicit camera/FOV/colors; no original function recovered or original renderer ABI claimed.",
+      "validation": {
+        "native_controls": 28,
+        "real_models": 454,
+        "real_placements": 5815,
+        "shell_placements": 1455,
+        "triangles": 403,
+        "textured": false,
+        "clean_source_only": true,
+        "original_code_executed": false
+      },
+      "evidence": [
+        "META/m4/scene-view/assessment.json",
+        "META/m4/scene-view/integration-real.json",
+        "META/m4/scene-view/clean.json",
+        "META/m4/scene-view/scene.png"
+      ],
+      "historical_source_path": "src/bh_scene_snapshot.c",
+      "historical_variant": true
+    },
+    {
+      "id": "bh_scene_view-native-textured-adapter",
+      "function": "bh_scene_view family",
+      "source": "META/m4/texture-owner/sources/e656db465479394e7eee4dbb6dee6d0d46ad4c1472d0ab4d833f9a4d3fa4ced0-bh_scene_view.c.txt",
+      "source_sha256": "e656db465479394e7eee4dbb6dee6d0d46ad4c1472d0ab4d833f9a4d3fa4ced0",
+      "role": "source_diagnostic_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Native polygon clipping/projection with actual recovered texture residency; fixed diagnostic camera, not original primitive consumer recovery",
+      "evidence": [
+        "META/m4/texture-owner/scene-real.json",
+        "META/m4/texture-owner/scene-clean.json",
+        "META/m4/texture-owner/scene.png"
+      ],
+      "historical_source_path": "src/bh_scene_view.c",
+      "historical_variant": true
+    },
+    {
+      "id": "bh_scene_snapshot-native-textured-adapter",
+      "function": "bh_scene_snapshot family",
+      "source": "META/m4/texture-owner/sources/49336d181f665f88aa3842fc03298f530889069616853833d21ec4be3ecbeb53-bh_scene_snapshot.c.txt",
+      "source_sha256": "49336d181f665f88aa3842fc03298f530889069616853833d21ec4be3ecbeb53",
+      "role": "source_diagnostic_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Real LEV/BSP shell composition, actual textures/raw UVs and recovered NULL material gate; full original world/render construction remains unfinished",
+      "evidence": [
+        "META/m4/texture-owner/scene-real.json",
+        "META/m4/texture-owner/scene-clean.json",
+        "META/m4/texture-owner/scene.png"
+      ],
+      "historical_source_path": "src/bh_scene_snapshot.c",
+      "historical_variant": true
+    },
+    {
+      "id": "bh_texture_context_init-adapter",
+      "function": "bh_texture_context_init",
+      "source": "META/m4/texture-owner/sources/dd9d341a360fab5aeac2c03474f18f61e90bf0457690cc792891c8a7901f9177-bh_texture.c.txt",
+      "source_sha256": "dd9d341a360fab5aeac2c03474f18f61e90bf0457690cc792891c8a7901f9177",
+      "role": "source_lifecycle_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "contract": "Explicit real native texture context/staging/cache binding; not full original0044f550 recovery",
+      "evidence": [
+        "META/m4/texture-owner/review.json",
+        "META/m4/texture-owner/validation.json"
+      ],
+      "historical_source_path": "src/bh_texture.c",
+      "historical_variant": true
+    },
+    {
+      "id": "bh_texture_context_dispose-adapter",
+      "function": "bh_texture_context_dispose",
+      "source": "META/m4/texture-owner/sources/dd9d341a360fab5aeac2c03474f18f61e90bf0457690cc792891c8a7901f9177-bh_texture.c.txt",
+      "source_sha256": "dd9d341a360fab5aeac2c03474f18f61e90bf0457690cc792891c8a7901f9177",
+      "role": "source_lifecycle_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "contract": "Explicit real native texture context/staging/cache binding; not full original0044f550 recovery",
+      "evidence": [
+        "META/m4/texture-owner/review.json",
+        "META/m4/texture-owner/validation.json"
+      ],
+      "historical_source_path": "src/bh_texture.c",
+      "historical_variant": true
+    },
+    {
+      "id": "bh_texture_stage-adapter",
+      "function": "bh_texture_stage",
+      "source": "META/m4/texture-owner/sources/dd9d341a360fab5aeac2c03474f18f61e90bf0457690cc792891c8a7901f9177-bh_texture.c.txt",
+      "source_sha256": "dd9d341a360fab5aeac2c03474f18f61e90bf0457690cc792891c8a7901f9177",
+      "role": "source_data_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "contract": "Explicit real native texture context/staging/cache binding; not full original0044f550 recovery",
+      "evidence": [
+        "META/m4/texture-owner/review.json",
+        "META/m4/texture-owner/validation.json"
+      ],
+      "historical_source_path": "src/bh_texture.c",
+      "historical_variant": true
+    },
+    {
+      "id": "bh_texture_load_pcx-adapter",
+      "function": "bh_texture_load_pcx",
+      "source": "META/m4/texture-owner/sources/dd9d341a360fab5aeac2c03474f18f61e90bf0457690cc792891c8a7901f9177-bh_texture.c.txt",
+      "source_sha256": "dd9d341a360fab5aeac2c03474f18f61e90bf0457690cc792891c8a7901f9177",
+      "role": "source_data_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "contract": "Explicit real native texture context/staging/cache binding; not full original0044f550 recovery",
+      "evidence": [
+        "META/m4/texture-owner/review.json",
+        "META/m4/texture-owner/validation.json"
+      ],
+      "historical_source_path": "src/bh_texture.c",
+      "historical_variant": true
+    },
+    {
+      "id": "bh_scene_snapshot-native-textured-adapter-image-layout",
+      "function": "bh_scene_snapshot family",
+      "source": "META/m4/image-owner/sources/f719e793160116211520b29daa0f10787b280e953129d6ccf3ac0f01c3225815-bh_scene_snapshot.c.txt",
+      "source_sha256": "f719e793160116211520b29daa0f10787b280e953129d6ccf3ac0f01c3225815",
+      "role": "source_diagnostic_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Real LEV/BSP shell composition, actual textures/raw UVs and recovered NULL material gate; full original world/render construction remains unfinished",
+      "evidence": [
+        "META/m4/image-owner/validation.json",
+        "META/m4/image-owner/scene-real.json"
+      ],
+      "historical_variant": true,
+      "historical_source_path": "src/bh_scene_snapshot.c"
+    },
+    {
+      "id": "bh_texture_context_init-adapter-image-layout",
+      "function": "bh_texture_context_init",
+      "source": "src/bh_texture.c",
+      "source_sha256": "50447fcc5a161060c743bafa66500f28d7b0cbfdd40e0b14486844d0339db0d2",
+      "role": "source_lifecycle_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "contract": "Explicit real native texture context/staging/cache binding; not full original0044f550 recovery",
+      "evidence": [
+        "META/m4/image-owner/validation.json",
+        "META/m4/image-owner/scene-real.json"
+      ]
+    },
+    {
+      "id": "bh_texture_context_dispose-adapter-image-layout",
+      "function": "bh_texture_context_dispose",
+      "source": "src/bh_texture.c",
+      "source_sha256": "50447fcc5a161060c743bafa66500f28d7b0cbfdd40e0b14486844d0339db0d2",
+      "role": "source_lifecycle_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "contract": "Explicit real native texture context/staging/cache binding; not full original0044f550 recovery",
+      "evidence": [
+        "META/m4/image-owner/validation.json",
+        "META/m4/image-owner/scene-real.json"
+      ]
+    },
+    {
+      "id": "bh_texture_stage-adapter-image-layout",
+      "function": "bh_texture_stage",
+      "source": "src/bh_texture.c",
+      "source_sha256": "50447fcc5a161060c743bafa66500f28d7b0cbfdd40e0b14486844d0339db0d2",
+      "role": "source_data_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "contract": "Explicit real native texture context/staging/cache binding; not full original0044f550 recovery",
+      "evidence": [
+        "META/m4/image-owner/validation.json",
+        "META/m4/image-owner/scene-real.json"
+      ]
+    },
+    {
+      "id": "bh_texture_load_pcx-adapter-image-layout",
+      "function": "bh_texture_load_pcx",
+      "source": "src/bh_texture.c",
+      "source_sha256": "50447fcc5a161060c743bafa66500f28d7b0cbfdd40e0b14486844d0339db0d2",
+      "role": "source_data_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "contract": "Explicit real native texture context/staging/cache binding; not full original0044f550 recovery",
+      "evidence": [
+        "META/m4/image-owner/validation.json",
+        "META/m4/image-owner/scene-real.json"
+      ]
+    },
+    {
+      "id": "bh_texture_bind_display-adapter",
+      "function": "bh_texture_bind_display",
+      "source": "src/bh_texture_tables.c",
+      "source_sha256": "0cc9d82eec6212b08a3bd016e18b319a73896dc35e9e191da2edaf7ddf1c60b7",
+      "role": "source_platform_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "contract": "Configure original software palette bit-shift bindings from an actual native RGB display format before one-time table initialization",
+      "evidence": [
+        "META/m4/image-owner/validation.json"
+      ]
+    },
+    {
+      "id": "bh_scene_snapshot-model-owner-adapter",
+      "function": "static shell view over actual recovered model/image owners",
+      "source": "META/m4/model-owner/sources/6cfcd23e8c1bd31b8b1a87c6f071d52f51011ff458106242104b4d0ee3299681-bh_scene_snapshot.c.txt",
+      "source_sha256": "6cfcd23e8c1bd31b8b1a87c6f071d52f51011ff458106242104b4d0ee3299681",
+      "role": "source_diagnostic_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Draw directly from recovered model-owned arrays; fixed camera/shell filtering/projection remain diagnostic. Same scene bitmap is replacement compatibility, not gameplay/render fidelity acceptance.",
+      "evidence": [
+        "META/m4/model-owner/scene-real.json",
+        "META/m4/model-owner/validation.json"
+      ],
+      "historical_source_path": "src/bh_scene_snapshot.c",
+      "historical_variant": true
+    },
+    {
+      "id": "bh_model-context-lifetime-support",
+      "function": "bh_model_context_init/set_path/dispose/delete",
+      "source": "src/bh_model.c",
+      "source_sha256": "6bb470d3965025c41f1bfdce852dce7c7461cd503201991a250d485c507d87b2",
+      "role": "source_lifecycle_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Explicit allocator/path/texture context and cleanup for recovered model owners. Borrowed cache images outlive model arrays; does not claim a recovered original destructor.",
+      "evidence": [
+        "META/m4/model-owner/validation.json"
+      ]
+    },
+    {
+      "id": "bh_scene_view-native-queued-fan-adapter",
+      "function": "diagnostic clipping/projection into recovered texture queues",
+      "source": "META/m4/primitive-queue/sources/829eed860f6aeffbd26e28bf0f34fce25e0f0fe9890726ffe7b3c45bb82f3787-bh_scene_view.c.txt",
+      "source_sha256": "829eed860f6aeffbd26e28bf0f34fce25e0f0fe9890726ffe7b3c45bb82f3787",
+      "role": "source_diagnostic_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Retains explicit diagnostic camera/clipping/projection, uses recovered native fan queue/flush for textures; immediate untextured control path retained; original producer/traversal and software renderer unfinished",
+      "evidence": [
+        "META/m4/primitive-queue/scene-real.json",
+        "META/m4/primitive-queue/fan-control.json",
+        "META/m4/primitive-queue/validation.json"
+      ],
+      "historical_source_path": "src/bh_scene_view.c",
+      "historical_variant": true
+    },
+    {
+      "id": "bh_texture_draw_polygon-projected-composition",
+      "function": "bh_texture_draw_polygon",
+      "source": "src/bh_texture_draw.c",
+      "source_sha256": "5878f7bfb976a8b7281561787a01e0d819e41002ba4bf7b46b4a6c885c43a61a",
+      "role": "source_diagnostic_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Own paired initial arenas for staging helpers and transactionally append supplied TL polygon to real recovered vertex/run queues; NOT original0046e390 ring/software producer recovery",
+      "evidence": [
+        "META/m4/primitive-queue/validation.json"
+      ]
+    },
+    {
+      "id": "bh_scene_view-recovered-clipper-adapter",
+      "function": "diagnostic viewport binding to recovered ring clipper and native fan queues",
+      "source": "META/m4/clipper/sources/546120e91fba20fc69c8fd8d6a82802b818d75784072464071fc63c6213f6aaa-bh_scene_view.c.txt",
+      "source_sha256": "546120e91fba20fc69c8fd8d6a82802b818d75784072464071fc63c6213f6aaa",
+      "role": "source_diagnostic_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Both colored/textured polygons use complete recovered00452140. Viewport/camera setup, TL-depth conversion, shell filtering and immediate flush remain diagnostic; no original producer/visibility/lighting or software-rasterizer claim.",
+      "evidence": [
+        "META/m4/clipper/validation.json",
+        "META/m4/clipper/scene-real.json",
+        "META/m4/clipper/scene-comparison.json"
+      ],
+      "historical_source_path": "src/bh_scene_view.c",
+      "historical_variant": true
+    },
+    {
+      "id": "bh_clip-context-support",
+      "function": "bh_clip_init/set_camera",
+      "source": "src/bh_clipper.c",
+      "source_sha256": "483fa81c86f0354167c12745f9e06841adce924e40f1dc68d9aca113adbe8c62",
+      "role": "source_lifecycle_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Explicit near/far/viewport configuration and camera/inverse-cache frame lifetime; no original global initialization/frame-owner recovery claimed.",
+      "evidence": [
+        "META/m4/clipper/validation.json"
+      ]
+    },
+    {
+      "id": "bh_scene_view-camera-owner-adapter",
+      "function": "bh_scene_view",
+      "source": "src/bh_scene_view.c",
+      "source_sha256": "411fd4805055b8f2a222faf5570fc0eebc16aedd1d73749c215d299a6893d768",
+      "role": "source_diagnostic_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Uses recovered camera/frustum projection and ring clipper; analytic native controls retain explicit90deg/.25/400 profile; camera choice and TL-depth are still adapters",
+      "evidence": [
+        "META/m4/view-camera/validation.json",
+        "META/m4/view-camera/scene-real.json"
+      ]
+    },
+    {
+      "id": "bh_scene_snapshot-camera-owner-adapter",
+      "function": "bh_scene_snapshot",
+      "source": "src/bh_scene_snapshot.c",
+      "source_sha256": "abd9ca643434cc800aa4bd670fd1e7f86d3460a6a25b2a69d71cc0bf85af8ae0",
+      "role": "source_diagnostic_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Native source scene opts into pinned original60deg/near1/far100000 defaults; fixed camera, shell filtering, missing props/scripts remain explicit adapters",
+      "evidence": [
+        "META/m4/view-camera/validation.json",
+        "META/m4/view-camera/scene-real.json"
+      ]
+    },
+    {
+      "id": "bh_view_config_init-support",
+      "function": "bh_view_config_init",
+      "source": "src/bh_view_camera.c",
+      "source_sha256": "f7984e1bbdf672df12961840426d511844d9f3cef77ddea8370b34375a9042a7",
+      "role": "source_lifecycle_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+      "game_admitted": false,
+      "contract": "Explicit binding of pinned original defaults and actual native target dimensions; not original constructor/config-reader admission",
+      "evidence": [
+        "META/m4/view-camera/validation.json"
       ]
     }
   ],

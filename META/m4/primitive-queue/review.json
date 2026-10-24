@@ -1,0 +1,42 @@
+{
+  "records": [
+    {
+      "address": "004507d0",
+      "function": "bh_texture_draw_vertex",
+      "role": "engine_candidate",
+      "classification": "Complete cdecl owner with reviewed callers/body; allocator/free and native COM methods are dependencies, not assigned CRT/import implementations; no compiler support/shared-tail admission; engine provenance unresolved",
+      "original": "META/m4/texture-owner/original/004507d0.tsv",
+      "boundary": "004507d0-00450896",
+      "instructions": 76,
+      "body_sha256": "efa576d6eb0af524f01556c0f8669be22afe3f223a4a881ba658b18d8bd7c492",
+      "behavior": "Grow paired run/TL vertex arenas by floor(capacity*5/12)*3; copy active bytes; append one vertex and increment polygon serial"
+    },
+    {
+      "address": "004508a0",
+      "function": "bh_texture_draw_flush",
+      "role": "engine_candidate",
+      "classification": "Complete cdecl owner with reviewed callers/body; allocator/free and native COM methods are dependencies, not assigned CRT/import implementations; no compiler support/shared-tail admission; engine provenance unresolved",
+      "original": "META/m4/texture-owner/original/004508a0.tsv",
+      "boundary": "004508a0-00450926",
+      "instructions": 56,
+      "body_sha256": "43b400218b6a723d3cf63d3332f9b735b1db6e1d88a7acfcfb6af6b503f680b8",
+      "behavior": "Hardware nonempty-run gate; residency, texture handle state, one triangle fan per run with flags0x0c; reset counts even native failure; software mode leaves queue untouched"
+    }
+  ],
+  "dependencies": [
+    "Real BHTextureImage 0x70 layout and loaded 96-vertex/32-run initial arenas",
+    "Recovered bh_texture_resident and actual Direct3DDevice2 SetRenderState/DrawPrimitive",
+    "Explicit allocator/diagnostic projected-polygon composition"
+  ],
+  "limits": [
+    "0046e390 remains WIP: separate software rasterizer and original linked-ring producer not silently omitted or claimed complete",
+    "00452140 clipping and original BSP traversal still unrecovered; existing diagnostic clip/project supplies TL vertices",
+    "Bounded source allocation/topology checks safely reject overflow and clean paired failure; original unchecked allocation behavior not reproduced",
+    "Native HRESULTs exposed, counters/reset and subsequent draw calls retain original behavior"
+  ],
+  "callers": "analysis/call-edges.tsv; pinned complete TSVs. Full project path connects to live derivative Ghidra bridge; slash/join mismatch was the prior apparent lock blocker.",
+  "targets": [
+    "build/m0/bhunter-integration.exe",
+    "build/scene-snapshot/bhunter-scene-snapshot.exe"
+  ]
+}

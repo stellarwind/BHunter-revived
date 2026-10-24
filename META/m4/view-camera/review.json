@@ -1,0 +1,52 @@
+{
+  "records": [
+    {
+      "address": "004515b0",
+      "function": "bh_view_clip_rect",
+      "role": "engine_candidate",
+      "classification": "Complete camera/viewport owner required by original visibility/model rendering. Reviewed full ordinary function and globals/callers; not CRT/import/compiler/EH/shared tail. Engine provenance unresolved.",
+      "original": "META/m4/view-camera/original/004515b0.tsv",
+      "boundary": "004515b0-00451657",
+      "instructions": 46,
+      "body_sha256": "8ba4bb1519446a0d0cc36a289dc63a8aa2d1c538191c553dcd0d92b05038ea8f"
+    },
+    {
+      "address": "00451660",
+      "function": "bh_view_reset_viewport",
+      "role": "engine_candidate",
+      "classification": "Complete camera/viewport owner required by original visibility/model rendering. Reviewed full ordinary function and globals/callers; not CRT/import/compiler/EH/shared tail. Engine provenance unresolved.",
+      "original": "META/m4/view-camera/original/00451660.tsv",
+      "boundary": "00451660-00451711",
+      "instructions": 44,
+      "body_sha256": "cc9d404ab28e3fbaf5264bd215bbdae0e9927b1a4bb47c1f14b9ae969faa8d51"
+    },
+    {
+      "address": "00451b80",
+      "function": "bh_view_camera_build",
+      "role": "engine_candidate",
+      "classification": "Complete camera/viewport owner required by original visibility/model rendering. Reviewed full ordinary function and globals/callers; not CRT/import/compiler/EH/shared tail. Engine provenance unresolved.",
+      "original": "META/m4/view-camera/original/00451b80.tsv",
+      "boundary": "00451b80-0045206f",
+      "instructions": 331,
+      "body_sha256": "c4ee40ab9477c20221c5faf9278edd45d407c58ac920b094e203a0052fbece73"
+    }
+  ],
+  "contracts": [
+    "Projection focal=(width*.5)/tan(fov*.5); centers=origin -dimension*(-.5); firstX offset retained while otherX/ally offsets storedfloat",
+    "World near/far/4side planes and camera position from actual recovered rigid inverse/transform/normalize owners",
+    "Retained cosine used for vertical ratio before binary32 store; horizontal normals retain unnormalized float sine/cosine; vertical normals normalized as original",
+    "Clip rect sums stored before upper clamps; only left/top lower clamp and right/bottom upper clamp; inverted rectangles are not silently repaired",
+    "Explicit config defaults pin original FOV float1.0471975803375244, near1, far100000; reset derives viewport dimensions from actual native target"
+  ],
+  "limits": [
+    "Original0046e390 native/software dispatch remains unfinished; software0046dda0 owns scan converter and many handwritten raster kernels, not silently omitted or claimed complete",
+    "No original camera-position selection, visibility traversal or gameplay admission",
+    "Input matrix uses original rigid-inverse semantics even for nonrigid input; not replaced with general inverse",
+    "Source guards reject nonfinite/invalid projection configuration and output safely; PC24 and byte matching unclaimed",
+    "Renderer retains explicit diagnostic camera position/Y orientation and TL depth conversion; source scene now uses original default projection settings"
+  ],
+  "targets": [
+    "build/m0/bhunter-integration.exe",
+    "build/scene-snapshot/bhunter-scene-snapshot.exe"
+  ]
+}

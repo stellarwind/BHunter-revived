@@ -6,7 +6,7 @@ On Windows x64 with Python 3.10+ on PATH, run from any working directory:
 D:\Decomp\Bhunter\build.cmd
 ```
 
-This compiles the real math/FP, archive/VFILE, config/path, scene, BSP/block-data, entity pool, WAV/PCM and PCX/palette data, portal matching, and numerical-storage translation units with their integration drivers, then links and executes `build/m0/bhunter-integration.exe`. The default source-only scenario passes 93,709 checks, including 786 BSP/registry and 819 entity, 226 WAV and 2,098 PCX checks. Omitted math, VFILE, config, paths, scene, BSP, blocks, round-store, entity, WAV, PCX and portal modules must each produce LNK2001. The pinned original math fixture remains verbatim; only its test-driver `main` is renamed at compile time. No original EXE is read, mapped or executed. Every stage must succeed; dependency mismatches, missing inputs, compile/link failures and failed fixtures return nonzero. Output stays under ignored `build/m0/`: `result.json`, `link.txt` and `bhunter-integration.map` retain commands/results and owning symbols.
+This compiles the admitted source families, including deferred native sound update, plus the real math/FP, archive/VFILE, config/path, scene, BSP/block-data, entity pool, WAV/PCM and PCX/palette data, portal matching, and numerical-storage translation units with their integration drivers, then links and executes `build/m0/bhunter-integration.exe`. The current 89-TU source-only scenario passes 170,786 checks, including 786 BSP/registry and 819 entity, 226 WAV and 2,098 PCX checks. Omitted math, VFILE, config, paths, scene, BSP, blocks, round-store, entity, WAV, PCX and portal modules must each produce LNK2001. The pinned original math fixture remains verbatim; only its test-driver `main` is renamed at compile time. No original EXE is read, mapped or executed. Every stage must succeed; dependency mismatches, missing inputs, compile/link failures and failed fixtures return nonzero. Output stays under ignored `build/m0/`: `result.json`, `link.txt` and `bhunter-integration.map` retain commands/results and owning symbols.
 
 The portal matcher adds 57,578 source-only checks against 3,739 previously captured aperture records and synthetic ordering/threshold cases; no game launch is used. See [portal restoration evidence](META/m4/PORTALS.md).
 
@@ -16,7 +16,7 @@ Normal builds generate isolated synthetic archive/loose-file fixtures in the bui
 build.cmd --archive GAME_DATA/Bhunter.bin
 ```
 
-The runner verifies the supplied BIN's preservation hash before and after this scenario. Six representative asset classes also pass through preloaded memory, and real TXT assets exercise both archive and cached line reading. The scene scenario additionally decodes every TEST.LEV placement/link and TEST.PTH route cell through embedded, preloaded and loose backends, comparing all fields with independent raw reads. The real-data combined run passes 434,189 checks. All 505 BSPs additionally pass bounded geometry decoding and derived-bound controls through three backends. The 454-model data registry retains 202 sidecars and resolves all level placement names. All 459 PCXs decode through three backends with independent raw pixel/palette and four palette/index transform controls; no surface objects are created. See [PCX contract](META/m2/PCX.md). All 60 WAVs additionally decode through three backends with exact PCM metadata/sample comparisons; no playback objects are created. See [WAV contract](META/m2/WAVE.md). The entity-pool scenario also exercises all 5,815 placement records in the original 9,600-slot arena. These tests do not construct the full original world, navigation graph, scripts or texture/audio objects. See [entity contracts](META/m2/ENTITIES.md) and the [M2 exit audit](META/m2/EXIT_AUDIT.md). See [BSP/registry contracts](META/m2/BLOCKS.md). See [scene reader contracts](META/m2/SCENE.md). See [VFILE contracts and evidence](META/m2/VFILE.md).
+The runner verifies the supplied BIN's preservation hash before and after this scenario. Six representative asset classes also pass through preloaded memory, and real TXT assets exercise both archive and cached line reading. The scene scenario additionally decodes every TEST.LEV placement/link and TEST.PTH route cell through embedded, preloaded and loose backends, comparing all fields with independent raw reads. The current real-data combined run passes 663,020 checks. All 505 BSPs additionally pass bounded geometry decoding and derived-bound controls through three backends. The 454-model data registry retains 202 sidecars and resolves all level placement names. All 459 PCXs decode through three backends with independent raw pixel/palette and four palette/index transform controls. The separate image-owner scenario constructs 454 supported native-backed images and verifies five original size-catalog rejections. See [PCX contract](META/m2/PCX.md). All 60 WAVs additionally decode through three backends with exact PCM metadata/sample comparisons; no playback objects are created. See [WAV contract](META/m2/WAVE.md). The entity-pool scenario also exercises all 5,815 placement records in the original 9,600-slot arena. These tests do not construct the full original world, navigation graph, scripts or scene-wide texture/audio objects. See [entity contracts](META/m2/ENTITIES.md) and the [M2 exit audit](META/m2/EXIT_AUDIT.md). See [BSP/registry contracts](META/m2/BLOCKS.md). See [scene reader contracts](META/m2/SCENE.md). See [VFILE contracts and evidence](META/m2/VFILE.md).
 
 Config tests exercise default/custom binary records, circular profile ownership, failure rollback, device selection and bounded paths, including real read-only Win32 directory discovery. Persistence and composed VFILE fixtures stay under the build directory; machine configuration is not changed. The [config/path contract](META/m2/CONFIG.md) records interface adaptations and the limits of the legacy pointer-containing format. Use explicit config paths; original global zero-argument interfaces are not drop-in wrappers.
 
@@ -119,20 +119,11 @@ assertion. This trace ends after the first actual Flip result and does not
 establish visual fidelity, menu interaction, gameplay or shutdown. See the
 [first-frame controls and limits](META/m3/FIRST_FRAME.md).
 
-Bounded menu-object observation and child-local key replay are separate options:
-
-```powershell
-python tools/m3_startup_probe.py --seed-config build/m3/startup/profile-c57437263011/BHUNTER.CFG --render-profile software-high --show-reference --ddrawcompat --observe-callbacks 300 --crt-initial-heap-mib 128
-python tools/m3_startup_probe.py --seed-config build/m3/startup/profile-c57437263011/BHUNTER.CFG --render-profile software-high --show-reference --ddrawcompat --menu-trace prologue --relative-cursor --crt-initial-heap-mib 128
-python tools/check_m3_menu_evidence.py
-```
-
-Replay verifies the child HWND owner for each PostMessage key event. It uses no
-desktop-wide input or computer-use/visual tooling. Relative-cursor mode preserves
-actual GetCursorPos success and translates observed deltas in the game's stack
-output. The original menu/episode callbacks execute. This remains a qualified
-reference diagnostic, not a source game, full gameplay replay or normal shutdown.
-See [menu trace and unsuccessful controls](META/m3/MENU_TRACE.md).
+Historical menu/gameplay automation commands have been withdrawn by the user.
+Do not run menu, tutorial, flight, combat or network replay options. Existing
+M3 artifacts and read-only audit tools remain historical evidence; M3 is skipped,
+not passed. Human playtests may answer focused questions. Automated game
+execution remains limited to a bounded startup test.
 
 Native DirectPlay transport checks additionally use the locally installed official
 DirectX SDK declarations, pinned in `META/native-directplay-dependencies.json`.
@@ -141,3 +132,100 @@ DirectX SDK declarations, pinned in `META/native-directplay-dependencies.json`.
 existing VC5 comparison/header contexts stay pinned. `ole32.lib` comes from the
 existing VC5 dependencies. Native checks create an unopened DirectPlay3A COM
 interface and exercise Send failure paths without a connection or session.
+
+## Static source-built scene view
+
+```powershell
+python tools/scene_snapshot.py --archive GAME_DATA/Bhunter.bin
+python tools/check_view_camera.py
+python tools/check_clipper.py
+python tools/check_primitive_queue.py
+python tools/check_model_owner.py
+python tools/check_image_owner.py
+python tools/check_sound_tick.py
+```
+
+The separate `build/scene-snapshot/bhunter-scene-snapshot.exe` target loads the
+real TEST.LEV/BSP data and saves `build/scene-snapshot/scene.bmp` using a private
+native DirectDraw/Direct3D2 RGB render target. It has no window, input or gameplay
+loop and executes no original game code. Run the build tool without `--archive`
+to build and execute 28 native depth/pixel/clipping/lifecycle checks and 46 texture
+ownership/UV/palette checks without game files. Additional SDK headers/import libraries are pinned in
+`META/native-render-dependencies.json`, scoped to the new adapter TUs only.
+`--sdk` or `BH_DIRECTPLAY_SDK` selects the existing local SDK root.
+
+The current view renders portal-bearing world shells with 146 real textures and
+raw BSP edge UVs, using a fixed diagnostic camera/FOV. It excludes props and
+invisible entity proxy meshes; 202 sidecars remain unapplied. Six original
+texture format/residency owners link into both targets, alongside four complete
+image/cache/software-palette owners. The scene uses the recovered image loader.
+Two complete original BSP/model owners now supply actual owned geometry and
+material/image bindings. Original primitive consumers, visibility/lighting and
+playable M4 completion remain unfinished; shell selection and drawing are adapters.
+Original HAL slot capabilities remain in source; the native RGB diagnostic
+explicitly selects system-memory slots. Official render GUID declarations are
+instantiated once in `src/bh_render_guids.c`, avoiding the aggregate DXGUID.LIB
+object conflicting with existing official DirectPlay GUID definitions.
+The native renderer requires no compatibility wrapper on the tested host.
+
+Deferred sound update checks use silent PCM in real secondary buffers; their
+native Play calls establish API/state behavior, not audible gameplay acceptance.
+The default integration target still never loads or executes original game code.
+
+Current image recovery audit: `python tools/check_image_owner.py` verifies four
+complete bodies (1,726 original instructions), current linked source hashes,
+131 synthetic checks, 454 supported native image loads, five catalog rejections,
+40 missing-module controls and unchanged composed scene pixels.
+
+Historical texture recovery audit: `python tools/check_texture_owner.py` verifies
+six complete body fingerprints (543 original instructions), exact nine-class
+format data, source hashes, native controls, linked targets and original hashes.
+`python tools/check_scene_view.py` audits the retained historical static-color
+variant; its `--clean` option refuses to overwrite that historical evidence.
+
+Current model recovery audit: `python tools/check_model_owner.py` verifies two
+complete bodies, the original 0x80 model layout contract, all 505 BSP models,
+8,039 focused real-data checks / 63 synthetic source-only checks, 41 missing
+module controls, independent raw arrays/root bounds, exact linked source hashes
+and unchanged scene pixels. Model cleanup adapters do not claim recovery of an
+original destructor. Image failure retains NULL material bindings as original;
+source guards reject malformed data and clean partial ownership safely.
+
+Current primitive-buffer audit: `python tools/check_primitive_queue.py` verifies
+complete vertex-growth and native fan-flush owners (132 original instructions),
+61 focused source/native checks, current linked hashes and the real scene. The
+scene uses recovered image run queues with Direct3D2 triangle fans/flags0x0c.
+A retained diagnostic control changing only the native call back to repeated
+triangle lists reproduces the preceding bitmap exactly; the recovered fan path
+changes 1,421 pixel colors with unchanged coverage. Full original linked-ring
+production, clipping and software rasterization remain unfinished; projected
+TL-vertex composition remains an explicit adapter.
+
+General affine inverse audit: `python tools/check_matrix_inverse.py` verifies
+three complete bodies (389 original instructions),3,380 source checks,43 missing
+module controls, exact storage fixtures and independent Gauss-Jordan oracle
+cases in both real-data and clean builds. This is the projected-texture
+prerequisite for00452140; clipping itself remains unfinished.
+
+Current clip/project audit: `python tools/check_clipper.py` verifies complete
+00452140 (1,511 original instructions),1,139 source checks,44 missing-module
+controls and the native scene using its real linked-ring implementation. The
+independent oracle covers256 triangles; a fixed six-plane fixture uses all12
+scratch records. Both colored/textured polygons use it. Viewport/camera and
+TL-depth bindings remain diagnostic. The prior adapter bitmap is retained;
+2,695 colors/three coverage locations change, with397 triangles and146 textures.
+The general inverse paragraph above records the preceding prerequisite milestone;
+clipping itself is now recovered.
+
+Current camera/frustum audit: `python tools/check_view_camera.py` verifies three
+complete owners (421 original instructions),1,623 source checks and45 missing
+module controls. The actual scene uses recovered projection construction with
+the pinned original60-degree FOV/near1/far100000 defaults, emitting5,881 triangles
+and146 textures. Native analytic controls retain their explicit90-degree profile.
+Camera choice, world visibility/lighting and original native/software producer
+closure remain unfinished; no playable source game or original-game visual
+equivalence is claimed.
+
+Git preserves byte-pinned source snapshots/raw decompiler exports and the native
+render SDK manifest without text normalization; historical evidence keeps its
+original source hashes across checkouts.

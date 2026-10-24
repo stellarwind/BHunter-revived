@@ -1,0 +1,69 @@
+#ifndef BH_TEXTURE_H
+#define BH_TEXTURE_H
+#include <windows.h>
+#include <ddraw.h>
+#include <d3d.h>
+#include "bh_pcx.h"
+
+typedef struct BHTextureImage BHTextureImage;
+typedef struct BHTextureSlot BHTextureSlot;
+typedef struct BHTextureFormat {
+    unsigned long width,height,requested_depth,kind;
+    unsigned long minimum,references,count;
+    BHTextureSlot *slots;
+    DDPIXELFORMAT pixel;
+} BHTextureFormat;
+struct BHTextureSlot {
+    LPDIRECTDRAWSURFACE surface;
+    LPDIRECTDRAWPALETTE palette;
+    D3DTEXTUREHANDLE handle;
+    BHTextureImage *image;
+    long frame;
+    unsigned short pixels_dirty,palette_dirty;
+    BHTextureSlot *next;
+};
+/* Source staging owner uses the original prefix consumed by 004505f0.
+   Complete original cache/queue loader 0044f550 remains a separate WIP owner. */
+struct BHTextureImage {
+    BHTextureSlot *resident;
+    LPDIRECTDRAWSURFACE source;
+    LPDIRECTDRAWPALETTE palette;
+    BHTextureFormat *format;
+    BHTextureImage *next;
+    char name[128];
+};
+typedef enum BHTextureError {BH_TEXTURE_OK,BH_TEXTURE_ARGUMENT,BH_TEXTURE_MEMORY,
+    BH_TEXTURE_FORMAT,BH_TEXTURE_BACKEND,BH_TEXTURE_TOPOLOGY,BH_TEXTURE_IO} BHTextureError;
+typedef struct BHTextureContext {
+    BHTextureFormat formats[9];
+    LPDIRECTDRAW draw;LPDIRECT3DDEVICE2 device;
+    BHTextureImage *images;
+    BHSceneAllocator allocator;
+    unsigned long software,slot_caps_override;
+    long frame;
+    BHTextureError error;HRESULT last_hresult;
+    unsigned long evictions,flushes,pixel_uploads,palette_uploads;
+} BHTextureContext;
+/* New explicit lifetime binding, AddRefs real native interfaces. Original nine
+   class dimensions/minima are pinned data; format enumeration is explicit. */
+int __cdecl bh_texture_context_init(BHTextureContext *context,LPDIRECTDRAW draw,
+    LPDIRECT3DDEVICE2 device,const BHSceneAllocator *allocator);
+void __cdecl bh_texture_context_dispose(BHTextureContext *context);
+HRESULT CALLBACK bh_texture_format_callback(LPDDSURFACEDESC desc,LPVOID format); /* 0044e490 */
+int __cdecl bh_texture_formats(BHTextureContext *context); /* 0044e510 */
+BHTextureFormat *__cdecl bh_texture_request_format(BHTextureContext *context,
+    unsigned long width,unsigned long height,unsigned long depth,unsigned long kind); /* 0044e580 */
+int __cdecl bh_texture_slot_create(BHTextureContext *context,BHTextureFormat *format); /* 0044e5f0 */
+/* Original mandatory/best-effort two passes; inspect context.error separately
+   for retained allocation/native failures on its best-effort pass. */
+int __cdecl bh_texture_preallocate(BHTextureContext *context); /* 0044e780 */
+D3DTEXTUREHANDLE __cdecl bh_texture_resident(BHTextureContext *context,BHTextureImage *image); /* 004505f0 */
+/* Explicit diagnostic staging adapters. Source decoded pixels/palette -> real
+   owning native image; no full 0044f550 cache/queue/error-string claim. Returns
+   borrowed cache identity until context disposal; first name match wins.
+   Palette mode/color use recovered 0044f1c0. Unsupported native formats fail. */
+BHTextureImage *__cdecl bh_texture_stage(BHTextureContext *context,const char *name,
+    const BHPcx *image,int mode,unsigned long color);
+BHTextureImage *__cdecl bh_texture_load_pcx(BHTextureContext *context,const char *name,
+    const char *prefix,int mode,unsigned long color);
+#endif

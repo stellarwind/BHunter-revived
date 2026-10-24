@@ -1,0 +1,36 @@
+{
+  "records": [
+    {
+      "address": "00452140",
+      "function": "bh_clip_polygon",
+      "role": "engine_candidate",
+      "classification": "Complete cdecl linked-ring polygon clip/project owner; geometry/projection behavior, not CRT/import/compiler support/shared tail. Engine attribution unverified. Callers and full original body reviewed.",
+      "original": "META/m4/matrix-inverse/original/00452140.tsv",
+      "boundary": "00452140-004532fa",
+      "instructions": 1511,
+      "body_sha256": "4b7de7023ad5254725dbfcf762a84b9c102d9f34fc3fb562b2a2d90c2689a7df"
+    }
+  ],
+  "contracts": [
+    "60-byte x86 vertex ring; next2c/prev30/frame34/projected38; at most12 inserted scratch records",
+    "Projected texture coordinates use inverse camera and image54 flag/58..6c coefficients; inverse latched until caller frame reset",
+    "Near/far depth clips precede division and four viewport side clips; strict outside tests keep exact boundary equality",
+    "Each clipped outside chain replaced by two scratch nodes; returned head is first new node; preserve endpoint duplicates and winding",
+    "Screen-side z/UV interpolation is perspective correct; reviewed retained-versus-float-spilled arithmetic",
+    "Input projected cache flags honored; newly created depth nodes projected once, side nodes retain original zero projection flag"
+  ],
+  "dependencies": [
+    "Recovered bh_mat34_inverse_general, bh_mat34_transform_point and bh_round_float",
+    "Real typed image metadata, explicit source clip context replaces original globals"
+  ],
+  "limits": [
+    "No original producer/traversal/software rasterizer admission",
+    "Source safety guards bound valid-pointer ring traversal and reject malformed topology, nonfinite values and invalid camera inverse instead of original unchecked behavior",
+    "Scratch unused fields zeroed rather than preserving unspecified old scratch bytes",
+    "Caller PC53 profile; PC24 and byte match not claimed; diagnostic viewport/camera binding remains explicit"
+  ],
+  "targets": [
+    "build/m0/bhunter-integration.exe",
+    "build/scene-snapshot/bhunter-scene-snapshot.exe"
+  ]
+}

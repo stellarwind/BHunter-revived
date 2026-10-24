@@ -19,7 +19,7 @@ Created 2026-10-23. This is the project execution contract. Milestones complete 
 | Executable map | 887 function records, including 243 inferred callback candidates; 98.7% of decoded instruction bytes covered by current bodies. Neither number measures source completion |
 | Asset archive | All 1,229 `Bhunter.bin` directory entries validated. File payload formats are only partially understood |
 | APIs | DirectDraw2/Direct3D2, DirectInput 0x0500, DirectSound, MCI CD audio and active DirectPlay3A references |
-| Existing source | Ten math reconstructions link into a differential harness. Four separate matching C++ implementations compile into a verified object. Neither is an integrated playable restoration |
+| Existing source | Math/FP, data, world/navigation/collision, effects, sound update and packet families link into the source harness (89 TUs). Six texture format/residency owners, four image/cache/software-palette owners, two rendering-model owners and two native draw-buffer owners link with native SDK definitions; a separate native Direct3D2 adapter renders a textured static real-level shell view. Four matching C++ variants remain object-only. No playable source game yet |
 | Floating point | Moderate finite fixtures match at 53/64-bit x87 precision; five reconstructed routines have 24-bit rounding differences. Actual runtime precision transitions remain unverified |
 | Third-party code | No QvLib or other reusable open-source engine library established in BHunter. Math, image loading and VFILE provenance remain open |
 
@@ -205,7 +205,7 @@ Use it after real declarations/header/source context have been recovered and a f
 
 ## 8. Next execution block — M4 decompilation and source restoration
 
-M2's reviewed foundations are complete. M3 is skipped. Upon user resumption:
+M2's reviewed foundations are complete. M3 is skipped. Source work resumed; the sound update, six texture owners, four image/cache/software-palette owners, two rendering-model owners and two native draw-buffer owners are admitted and a bounded source-built textured shell view renders. The scene now consumes recovered `00457e20`/`00458140` model ownership. Recovered native buffer growth/flush now submits scene texture fans. The required general affine inverse/LU family is now recovered. The complete original clip/project owner `00452140` now supplies both colored and textured scene polygons. Original camera/frustum/viewport ownership is now recovered and drives scene projection. Next recover primitive producer/dispatch closure, then visibility/traversal ownership, replacing diagnostic bindings before adding scene/entity/control behavior. Human prologue playtesting proceeds independently. For each implementation block:
 
 1. Inspect the current linked source target and select one missing function or small dependency family needed for source-built startup/scene construction. Name its owning source module and named integration target before coding.
 2. Review original boundaries, callers, ABI/layout, globals, callbacks and lifetimes. Exclude verified CRT/compiler helpers; record uncertain engine provenance without treating it as a reason to postpone required recovery.

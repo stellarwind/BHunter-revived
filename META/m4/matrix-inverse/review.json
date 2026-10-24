@@ -1,0 +1,51 @@
+{
+  "records": [
+    {
+      "address": "00401b30",
+      "function": "bh_mat4_lu_solve",
+      "role": "engine_candidate",
+      "classification": "Complete ordinary math owner required by clipper; scaled LU algorithm resembles common numerical-library algorithms, but no verified library provenance/signature/reusable original component established. Not CRT/import/compiler helper or shared tail; no gameplay attribution claimed.",
+      "original": "META/m4/matrix-inverse/original/00401b30.tsv",
+      "boundary": "00401b30-00401c01",
+      "instructions": 81,
+      "body_sha256": "5cb6700092a584dfdbb62b2b0df8578c044a96568610757e77f568686cee71a2",
+      "contract": "Pivoted forward substitution with first-nonzero shortcut, then backward substitution; row sums held at x87 precision until binary32 store"
+    },
+    {
+      "address": "00401c10",
+      "function": "bh_mat4_lu",
+      "role": "engine_candidate",
+      "classification": "Complete ordinary math owner required by clipper; scaled LU algorithm resembles common numerical-library algorithms, but no verified library provenance/signature/reusable original component established. Not CRT/import/compiler helper or shared tail; no gameplay attribution claimed.",
+      "original": "META/m4/matrix-inverse/original/00401c10.tsv",
+      "boundary": "00401c10-00401e4d",
+      "instructions": 204,
+      "body_sha256": "49e9bdb50e29289b5253a26820d8d4a0cab72999a7f5a08b09abe5255699c72e",
+      "contract": "4x4 scaled partial pivot LU; row scales binary32, last candidate wins equal scaled score; parity flips on swaps; no artificial tiny pivot; only zero input rows explicitly reject"
+    },
+    {
+      "address": "00401e50",
+      "function": "bh_mat34_inverse_general",
+      "role": "engine_candidate",
+      "classification": "Complete ordinary math owner required by clipper; scaled LU algorithm resembles common numerical-library algorithms, but no verified library provenance/signature/reusable original component established. Not CRT/import/compiler helper or shared tail; no gameplay attribution claimed.",
+      "original": "META/m4/matrix-inverse/original/00401e50.tsv",
+      "boundary": "00401e50-00401fc2",
+      "instructions": 104,
+      "body_sha256": "76fd8ae1790a2439e97fa043d0b4e687d1545bbf5d64a57145bdd9cca856ce47",
+      "contract": "Extend affine3x4 by bottom row0,0,0,1; LU once and solve four identity columns; commit first3 result rows; input/output may alias"
+    }
+  ],
+  "dependencies": [
+    "Real bh_round_float separate-TU binary32 stores; existing caller PC53/nearest/masked contract",
+    "Original00452140 projected-texture path calls00401e50; rigid inverse00401a70 is not equivalent for scale/shear",
+    "Original zero float004891f0 and one double004891e8"
+  ],
+  "limits": [
+    "No full clipper admission from this prerequisite;00452140 original body exported separately",
+    "Guard invalid pointers/nonfinite LU input; no replacement epsilon or silent tiny-pivot repair",
+    "Nonzero dependent rows may produce zero pivots, return1 and divide-by-zero/nonfinite outputs as original; return1 is not a rank certificate",
+    "PC24 and byte matching not claimed; preserve pinned comparison translation units unchanged"
+  ],
+  "targets": [
+    "build/m0/bhunter-integration.exe"
+  ]
+}

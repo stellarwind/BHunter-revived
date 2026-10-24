@@ -1,0 +1,40 @@
+{
+  "passed": true,
+  "new_complete_functions": 3,
+  "translation_units": 89,
+  "real_total": {
+    "scenario": "m2-foundations",
+    "checks": 663020,
+    "failures": 0,
+    "archive_entries": 1229,
+    "original_code_required": false
+  },
+  "clean_total": {
+    "scenario": "m2-foundations",
+    "checks": 170786,
+    "failures": 0,
+    "archive_entries": 0,
+    "original_code_required": false
+  },
+  "focused_checks": 1623,
+  "missing_module_controls": 45,
+  "sources": {
+    "src/bh_view_camera.c": "f7984e1bbdf672df12961840426d511844d9f3cef77ddea8370b34375a9042a7",
+    "src/bh_view_camera.h": "1760669f159e44c10dae0622cb9a92462ef3924fc9588743f6bfd58ea42b8b14",
+    "tests/view_camera.c": "a9d17a0a3c8a6b7de3923b8864a239f54b98434b9ad49fb9a250493a175696f7",
+    "tests/checkpoint.c": "11d5ba461ae4edc8773ce6c519c1f0f4950cb7130d21b9c652aa604798fc0c89",
+    "src/bh_scene_view.c": "411fd4805055b8f2a222faf5570fc0eebc16aedd1d73749c215d299a6893d768",
+    "src/bh_scene_view.h": "4e0215cf180ea1034ae2da622026003c0b969d58fa67b43bd055ff386e32b6df",
+    "src/bh_scene_snapshot.c": "abd9ca643434cc800aa4bd670fd1e7f86d3460a6a25b2a69d71cc0bf85af8ae0"
+  },
+  "game_launches": 0,
+  "original_code_executed": false,
+  "limits": [
+    "Original0046e390 native/software dispatch remains unfinished; software0046dda0 owns scan converter and many handwritten raster kernels, not silently omitted or claimed complete",
+    "No original camera-position selection, visibility traversal or gameplay admission",
+    "Input matrix uses original rigid-inverse semantics even for nonrigid input; not replaced with general inverse",
+    "Source guards reject nonfinite/invalid projection configuration and output safely; PC24 and byte matching unclaimed",
+    "Renderer retains explicit diagnostic camera position/Y orientation and TL depth conversion; source scene now uses original default projection settings"
+  ],
+  "next": "Original primitive/dispatch/software closure and visibility traversal; scene/entity/control still unfinished"
+}

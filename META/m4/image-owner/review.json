@@ -1,0 +1,75 @@
+{
+  "records": [
+    {
+      "address": "0044e880",
+      "function": "bh_texture_set_path",
+      "role": "engine_candidate",
+      "boundary": "0044e880-0044e90b",
+      "instructions": 53,
+      "body_sha256": "efa3016d5cb80b272a4d7e2119be82a6480768d329d3f1286ff8b87845d6f865",
+      "classification": "Ordinary complete path/palette/cache owner inspected with callers and native API slots. Not verified CRT/library, compiler/EH support, import or shared tail; engine attribution unresolved.",
+      "original": "META/m4/texture-owner/original/0044e880.tsv"
+    },
+    {
+      "address": "0044e9b0",
+      "function": "bh_texture_tables_init",
+      "role": "engine_candidate",
+      "boundary": "0044e9b0-0044eb58",
+      "instructions": 129,
+      "body_sha256": "6c767688fcc14efea15b4cb1c88846aa617f05982945ba0cb7546e52493b327a",
+      "classification": "Ordinary complete path/palette/cache owner inspected with callers and native API slots. Not verified CRT/library, compiler/EH support, import or shared tail; engine attribution unresolved.",
+      "original": "META/m4/texture-owner/original/0044e9b0.tsv"
+    },
+    {
+      "address": "0044eb60",
+      "function": "bh_texture_palette_tables",
+      "role": "engine_candidate",
+      "boundary": "0044eb60-0044ef96",
+      "instructions": 305,
+      "body_sha256": "62a644045db035c0082a50d89f4c27b96b95c66c35f03105ba65538cce1a7229",
+      "classification": "Ordinary complete path/palette/cache owner inspected with callers and native API slots. Not verified CRT/library, compiler/EH support, import or shared tail; engine attribution unresolved.",
+      "original": "META/m4/texture-owner/original/0044eb60.tsv"
+    },
+    {
+      "address": "0044f550",
+      "function": "bh_texture_load",
+      "role": "engine_candidate",
+      "boundary": "0044f550-004505db",
+      "instructions": 1239,
+      "body_sha256": "fcbf57b6fbf6a780b64d217643ffaecb16b2bfc8a77c5e446bda7bc934ae2eb2",
+      "classification": "Ordinary complete path/palette/cache owner inspected with callers and native API slots. Not verified CRT/library, compiler/EH support, import or shared tail; engine attribution unresolved.",
+      "original": "META/m4/texture-owner/original/0044f550.tsv"
+    }
+  ],
+  "dependencies": [
+    "Real source VFILE and complete original-dialect PCX reader0044f0a0/0044efa0",
+    "Recovered palette transform0044f1c0, texture formats/requests and native DirectDraw surfaces/palettes",
+    "Explicit source context owns original logical globals: prefix/search policy, palette mode/color, error text, software flag, display bit shifts and one-time tables",
+    "Original0x70 image prefix, real0x80 run arena/0xc00 vertex arena, software dither1024 bytes/screen2048 bytes with actual lifetime",
+    "CRT allocation, byte/string/case conversion reused; no original EXE calls"
+  ],
+  "contracts": [
+    "Uppercase cache identity; terminal BMP/GIF/TGA/JPG -> PCX; cache hit returns before file/format/palette work",
+    "Search0 prefix then bare;1 bare then prefix;2 prefix only;-1 bare only; malformed PCX can trigger fallback",
+    "Load errors append LOADERR:name once using original substring dedup; format/native allocation errors append their original tags",
+    "Complete original-dialect byte decoder streams mapped indices into locked indexed8/16/24/32 native surface with pitch handling",
+    "Software paletted textures generate original four-phase6x7x6 residual quantization and16-bit screen tables; table init latches once",
+    "Image arenas allocated and initialized before publishing cache owner; only unused/padding bytes defined zero as safety extension",
+    "Exact original error tags include leading newline: \\nLOADERR:, \\nFORMATERR:, \\nALLOCERR:; verified pinned EXE data"
+  ],
+  "limits": [
+    "Source rejects overlong names instead of original0x70 object-name overwrite; uses bounded error text",
+    "Missing/truncated data or native/allocation failure rejects safely with no published half-image, unlike unchecked original paths",
+    "No HAL/video-memory/custom software rasterizer acceptance; existing explicit native RGB system-memory binding retained",
+    "No original model/entity/script/render traversal admission from this family",
+    "One-time quantization tables are scoped to explicit source renderer context; changing display shifts after initialization requires a new context.",
+    "The older decoded-PCX staging helper remains a fixture/support adapter; scene material loading now calls complete bh_texture_load.",
+    "Scene remains a diagnostic fixed view; unchanged pixels show replacement compatibility only, not original renderer or gameplay fidelity."
+  ],
+  "source_map": {
+    "0044e880": "src/bh_texture_image.c",
+    "0044e9b0": "src/bh_texture_tables.c",
+    "0044eb60": "src/bh_texture_tables.c",
+    "0044f550": "src/bh_texture_image.c"
+  }
+}

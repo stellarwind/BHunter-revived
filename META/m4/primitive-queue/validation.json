@@ -1,0 +1,53 @@
+{
+  "passed": true,
+  "new_complete_functions": 2,
+  "translation_units": 83,
+  "real_total": {
+    "scenario": "m2-foundations",
+    "checks": 656878,
+    "failures": 0,
+    "archive_entries": 1229,
+    "original_code_required": false
+  },
+  "clean_total": {
+    "scenario": "m2-foundations",
+    "checks": 164644,
+    "failures": 0,
+    "archive_entries": 0,
+    "original_code_required": false
+  },
+  "focused_real": {
+    "scenario": "texture-draw-queue",
+    "checks": 61,
+    "failures": 0,
+    "original_code_required": false
+  },
+  "focused_clean": {
+    "scenario": "texture-draw-queue",
+    "checks": 61,
+    "failures": 0,
+    "original_code_required": false
+  },
+  "missing_module_controls": 42,
+  "sources": {
+    "src/bh_texture_draw.c": "5878f7bfb976a8b7281561787a01e0d819e41002ba4bf7b46b4a6c885c43a61a",
+    "src/bh_texture_draw.h": "460346cafc05fe5a2c6a3bfc15bfc2264654575d11b50b1e85f87f318c6f0139",
+    "tests/texture_draw.c": "edc38cf0a69da83c8d4d8ecf6971cb0255bcc1caa161c1f84f03fd4cf7edef74",
+    "tests/checkpoint.c": "a6a6b23a1826e44f4c863a840de412078eaa62e5859c2daa76ebd7f54b830349",
+    "src/bh_scene_view.c": "829eed860f6aeffbd26e28bf0f34fce25e0f0fe9890726ffe7b3c45bb82f3787"
+  },
+  "native_pixel_controls": true,
+  "scene_pixels_equal_prior": false,
+  "fan_control": "META/m4/primitive-queue/fan-control.json",
+  "game_launches": 0,
+  "original_code_executed": false,
+  "limits": [
+    "0046e390 remains WIP: separate software rasterizer and original linked-ring producer not silently omitted or claimed complete",
+    "00452140 clipping and original BSP traversal still unrecovered; existing diagnostic clip/project supplies TL vertices",
+    "Bounded source allocation/topology checks safely reject overflow and clean paired failure; original unchecked allocation behavior not reproduced",
+    "Native HRESULTs exposed, counters/reset and subsequent draw calls retain original behavior",
+    "Native HRESULT failure reset follows inspected complete body; native failure injection is not claimed from successful pixel tests",
+    "Current native RGB fan rasterization differs from triangle-list adapter at1421 pixels; changing only the native call back to repeated lists exactly restores prior image. This is not original-game visual equivalence",
+    "Diagnostic projection still uses its existing depth mapping; original near/z producer conversion and software rasterizer are not claimed"
+  ]
+}

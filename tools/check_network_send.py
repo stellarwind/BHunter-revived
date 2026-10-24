@@ -48,7 +48,22 @@ def main():
         scoped=[]
         for command in build['commands']:
             if command['label'].startswith('compile-') and ('/I'+str(Path(native['root'])/'include')) in command['argv']:scoped.append(command['label'])
-        assert sorted(scoped)==['compile-bh_network_transport','compile-network_transport']
+        expected_scoped=['compile-bh_network_transport','compile-network_transport']
+        if 'native_render_dependencies' in build:
+            rendering=build['native_render_dependencies']
+            assert rendering['manifest_sha256']==sha(ROOT/'META/native-render-dependencies.json')
+            for dependency in rendering['files']:
+                assert sha(Path(rendering['root'])/dependency['path'])==dependency['sha256']
+            expected_scoped+=['compile-bh_texture','compile-bh_scene_view','compile-bh_render_guids','compile-texture']
+            if 'src/bh_texture_image.c' in build['sources']:
+                expected_scoped+=['compile-bh_texture_image','compile-bh_texture_tables','compile-texture_image']
+            if 'src/bh_model.c' in build['sources']:
+                expected_scoped+=['compile-bh_model','compile-model']
+            if 'src/bh_texture_draw.c' in build['sources']:
+                expected_scoped+=['compile-bh_texture_draw','compile-texture_draw']
+            if 'src/bh_clipper.c' in build['sources']:
+                expected_scoped+=['compile-bh_clipper','compile-clipper']
+        assert sorted(scoped)==sorted(expected_scoped)
         assert 'ole32.lib' in next(c for c in build['commands'] if c['label']=='link')['argv']
     for name in ('link-map.txt','clean/link-map.txt'):
         data=(FOLDER/name).read_bytes()
