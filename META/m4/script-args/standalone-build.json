@@ -1,0 +1,87 @@
+{
+  "target": "bhunter-script-args-check.exe",
+  "original_code_executed": false,
+  "passed": true,
+  "commands": [
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_SCRIPT_ARGS_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\script-args\\bh_script_args.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_script_args.c"
+      ],
+      "exit_code": 0,
+      "stdout": "bh_script_args.c\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_SCRIPT_ARGS_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\script-args\\script_args_test.obj",
+        "D:\\Decomp\\Bhunter\\tests\\script_args.c"
+      ],
+      "exit_code": 0,
+      "stdout": "script_args.c\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/opt:ref",
+        "/map:D:\\Decomp\\Bhunter\\build\\script-args\\script-args.map",
+        "/out:D:\\Decomp\\Bhunter\\build\\script-args\\bhunter-script-args-check.exe",
+        "D:\\Decomp\\Bhunter\\build\\script-args\\bh_script_args.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-args\\script_args_test.obj",
+        "kernel32.lib"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\build\\script-args\\bhunter-script-args-check.exe"
+      ],
+      "exit_code": 0,
+      "stdout": "SCRIPT ERROR: Model ARGFIXTURE, parameter 'missing next' undefined\nSCRIPT ERROR: Model ARGFIXTURE, parameter 'missing next' undefined\nSCRIPT ERROR: Model ARGFIXTURE, parameter ' 123 tail' undefined\nSCRIPT ERROR: Model ARGFIXTURE, parameter '+12 tail' undefined\n{\"scenario\":\"script-args\",\"checks\":172,\"failures\":0,\"original_code_required\":false}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/out:D:\\Decomp\\Bhunter\\build\\script-args\\missing-script-args.exe",
+        "D:\\Decomp\\Bhunter\\build\\script-args\\script_args_test.obj",
+        "kernel32.lib"
+      ],
+      "exit_code": 25,
+      "stdout": "script_args_test.obj : error LNK2001: unresolved external symbol _bh_script_arg_float\nscript_args_test.obj : error LNK2001: unresolved external symbol _bh_script_arg_int\nD:\\Decomp\\Bhunter\\build\\script-args\\missing-script-args.exe : fatal error LNK1120: 2 unresolved externals\n",
+      "stderr": ""
+    }
+  ],
+  "sources": {
+    "src/bh_script_args.c": "61a732715127d55654ab93509c9bb61498e39ebf91501a22f57f03a289a9452f",
+    "tests/script_args.c": "d0e44f4e844e566cc8196e37e4b9360a76352daf637b0b6fb66ad9121dd6d9b5",
+    "src/bh_script_args.h": "49ca4a085ac844c5aefecb4c1605838664a97f93d794e212aa1fca2654027551"
+  },
+  "stdout": "SCRIPT ERROR: Model ARGFIXTURE, parameter 'missing next' undefined\nSCRIPT ERROR: Model ARGFIXTURE, parameter 'missing next' undefined\nSCRIPT ERROR: Model ARGFIXTURE, parameter ' 123 tail' undefined\nSCRIPT ERROR: Model ARGFIXTURE, parameter '+12 tail' undefined\n{\"scenario\":\"script-args\",\"checks\":172,\"failures\":0,\"original_code_required\":false}\n",
+  "missing_module_link_control": true
+}

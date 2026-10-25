@@ -62,4 +62,7 @@ int __cdecl bh_script_timer_bind(BHScriptTimerContext *context, BHEntity *entity
    may change it. If a fired callback releases/recycles the current timer, source
    stepping stops with MUTATION instead of writing through a recycled slot. */
 BHScriptTimerState *__cdecl bh_script_timer_state(BHScriptTimerContext *context, BHEntity *entity);
+/* Count-zero exposure of actual00442eb0. Caller must supply its existing
+   persistent timer context binding at entity payload+52. */
+BHEntityStep __cdecl bh_script_timer_delete_step(void);
 #endif

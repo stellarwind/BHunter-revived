@@ -1,0 +1,72 @@
+{
+  "target": "D:\\Decomp\\Bhunter\\build\\loading-image\\loading-image.exe",
+  "commands": [
+    {
+      "label": "source",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\loading-image\\bh_loading_image.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_loading_image.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_loading_image.c\n"
+    },
+    {
+      "label": "test",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_LOADING_IMAGE_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\loading-image\\loading_image_tests.obj",
+        "D:\\Decomp\\Bhunter\\tests\\loading_image.c"
+      ],
+      "exit_code": 0,
+      "output": "loading_image.c\n"
+    },
+    {
+      "label": "link",
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "@D:\\Decomp\\Bhunter\\build\\loading-image\\link.rsp"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "label": "run-clean",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\build\\loading-image\\loading-image.exe"
+      ],
+      "exit_code": 0,
+      "output": "{\"scenario\":\"loading-image\",\"checks\":6246,\"failures\":0,\"original_code_required\":false,\"gameplay_executed\":false,\"ui_capture\":false}\n"
+    },
+    {
+      "label": "run-real",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\build\\loading-image\\loading-image.exe",
+        "D:\\Decomp\\Bhunter\\GAME_DATA\\Bhunter.bin"
+      ],
+      "exit_code": 0,
+      "output": "{\"scenario\":\"loading-image\",\"checks\":12443,\"failures\":0,\"original_code_required\":false,\"gameplay_executed\":false,\"ui_capture\":false}\n"
+    }
+  ],
+  "source_sha256": {
+    "src\\bh_loading_image.c": "860381e769454d260906c6cb7617cc5fac08ba6106c26499a8a4c03040062f83",
+    "src\\bh_loading_image.h": "5185e0c8e70f50d3eb60ee519550cd4416c7681b3a3bd6db50a7aa0dc70ba4d0",
+    "tests\\loading_image.c": "a1127c7c7367298171215137c2783421717cb6ae3bffa39f16011980c1ab9bee"
+  },
+  "original_code_required": false
+}

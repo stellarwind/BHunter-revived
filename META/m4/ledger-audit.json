@@ -1,8 +1,8 @@
 {
-  "ledger_sha256": "ad0dd3f286f5e6236ef75e255802a7fdca911acb319cb7f3a53321a59a66cdce",
+  "ledger_sha256": "0f032932f4bd99738d7c5c725760695a95bac08e242013dc850c1b7d054e56b2",
   "build_source_hashes_verified": true,
-  "total_variants": 391,
-  "unique_original_addresses": 346,
+  "total_variants": 424,
+  "unique_original_addresses": 373,
   "categories": {
     "historical_or_superseded": [
       {
@@ -146,6 +146,54 @@
         "address": "0044efa0",
         "source": "src/bh_pcx.c",
         "implementation": "wip",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00443010-functional-c",
+        "address": "00443010",
+        "source": "src/bh_script_timer.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00443140-functional-c",
+        "address": "00443140",
+        "source": "src/bh_script_timer.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00442cf0-functional-c",
+        "address": "00442cf0",
+        "source": "src/bh_script_timer.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00442de0-functional-c",
+        "address": "00442de0",
+        "source": "src/bh_script_timer.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00442eb0-functional-c",
+        "address": "00442eb0",
+        "source": "src/bh_script_timer.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00442ef0-functional-c",
+        "address": "00442ef0",
+        "source": "src/bh_script_timer.c",
+        "implementation": "func",
         "integration": "linked_harness",
         "game_admitted": false
       },
@@ -813,54 +861,6 @@
         "id": "0044efa0-functional-c",
         "address": "0044efa0",
         "source": "src/bh_pcx_reader.c",
-        "implementation": "func",
-        "integration": "linked_harness",
-        "game_admitted": false
-      },
-      {
-        "id": "00443010-functional-c",
-        "address": "00443010",
-        "source": "src/bh_script_timer.c",
-        "implementation": "func",
-        "integration": "linked_harness",
-        "game_admitted": false
-      },
-      {
-        "id": "00443140-functional-c",
-        "address": "00443140",
-        "source": "src/bh_script_timer.c",
-        "implementation": "func",
-        "integration": "linked_harness",
-        "game_admitted": false
-      },
-      {
-        "id": "00442cf0-functional-c",
-        "address": "00442cf0",
-        "source": "src/bh_script_timer.c",
-        "implementation": "func",
-        "integration": "linked_harness",
-        "game_admitted": false
-      },
-      {
-        "id": "00442de0-functional-c",
-        "address": "00442de0",
-        "source": "src/bh_script_timer.c",
-        "implementation": "func",
-        "integration": "linked_harness",
-        "game_admitted": false
-      },
-      {
-        "id": "00442eb0-functional-c",
-        "address": "00442eb0",
-        "source": "src/bh_script_timer.c",
-        "implementation": "func",
-        "integration": "linked_harness",
-        "game_admitted": false
-      },
-      {
-        "id": "00442ef0-functional-c",
-        "address": "00442ef0",
-        "source": "src/bh_script_timer.c",
         "implementation": "func",
         "integration": "linked_harness",
         "game_admitted": false
@@ -3072,6 +3072,262 @@
         "implementation": "func",
         "integration": "linked_harness",
         "game_admitted": false
+      },
+      {
+        "id": "00449e50-functional-c-loading-image",
+        "address": "00449e50",
+        "source": "src/bh_loading_image.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0044a160-functional-c-loading-image",
+        "address": "0044a160",
+        "source": "src/bh_loading_image.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0044a220-functional-c-loading-display",
+        "address": "0044a220",
+        "source": "src/bh_loading_blit.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0044a520-functional-c-loading-display",
+        "address": "0044a520",
+        "source": "src/bh_loading_blit.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0044a380-functional-c-loading-display",
+        "address": "0044a380",
+        "source": "src/bh_loading_blit.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0044a8a0-functional-c-loading-display",
+        "address": "0044a8a0",
+        "source": "src/bh_loading_blit.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0044a720-functional-c-loading-display",
+        "address": "0044a720",
+        "source": "src/bh_loading_blit.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0044aac0-functional-c-loading-display",
+        "address": "0044aac0",
+        "source": "src/bh_loading_display.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004791f0-functional-c-loading-display",
+        "address": "004791f0",
+        "source": "src/bh_loading_progress.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004109c0-functional-c-script-args",
+        "address": "004109c0",
+        "source": "src/bh_script_args.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00410ba0-functional-c-script-args",
+        "address": "00410ba0",
+        "source": "src/bh_script_args.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004458a0-functional-c-rail-paths",
+        "address": "004458a0",
+        "source": "src/bh_rail_paths.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00445910-functional-c-rail-paths",
+        "address": "00445910",
+        "source": "src/bh_rail_paths.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00445a00-functional-c-rail-paths",
+        "address": "00445a00",
+        "source": "src/bh_rail_paths.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00445e70-functional-c-rail-paths",
+        "address": "00445e70",
+        "source": "src/bh_rail_paths.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00470d50-functional-c-model-scale",
+        "address": "00470d50",
+        "source": "src/bh_model_scale.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00470e00-functional-c-model-scale",
+        "address": "00470e00",
+        "source": "src/bh_model_scale.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004711b0-functional-c-input-enum",
+        "address": "004711b0",
+        "source": "src/bh_input_enum.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004470c0-functional-c-rail-wagon",
+        "address": "004470c0",
+        "source": "src/bh_rail_wagon.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00446160-functional-c-rail-wagon",
+        "address": "00446160",
+        "source": "src/bh_rail_wagon.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004462f0-functional-c-rail-wagon",
+        "address": "004462f0",
+        "source": "src/bh_rail_wagon.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00446b10-functional-c-rail-wagon",
+        "address": "00446b10",
+        "source": "src/bh_rail_wagon.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00446e00-functional-c-rail-wagon",
+        "address": "00446e00",
+        "source": "src/bh_rail_wagon.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00443010-functional-c-wait-delete-exposure",
+        "address": "00443010",
+        "source": "src/bh_script_timer.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00443140-functional-c-wait-delete-exposure",
+        "address": "00443140",
+        "source": "src/bh_script_timer.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00442cf0-functional-c-wait-delete-exposure",
+        "address": "00442cf0",
+        "source": "src/bh_script_timer.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00442de0-functional-c-wait-delete-exposure",
+        "address": "00442de0",
+        "source": "src/bh_script_timer.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00442eb0-functional-c-wait-delete-exposure",
+        "address": "00442eb0",
+        "source": "src/bh_script_timer.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00442ef0-functional-c-wait-delete-exposure",
+        "address": "00442ef0",
+        "source": "src/bh_script_timer.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00443270-functional-c-script-wait",
+        "address": "00443270",
+        "source": "src/bh_script_wait.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00442f40-functional-c-script-wait",
+        "address": "00442f40",
+        "source": "src/bh_script_wait.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00441b80-functional-c-pickup-basic",
+        "address": "00441b80",
+        "source": "src/bh_pickup_basic.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
       }
     ],
     "unfinished_active": [
@@ -3140,15 +3396,23 @@
         "implementation": "adapter",
         "integration": "linked_harness",
         "game_admitted": false
+      },
+      {
+        "id": "0044f1b0-owning-close-loading-adapter",
+        "address": "0044f1b0",
+        "source": "src/bh_pcx_reader.c",
+        "implementation": "adapter",
+        "integration": "linked_harness",
+        "game_admitted": false
       }
     ]
   },
   "category_counts": {
-    "historical_or_superseded": 40,
+    "historical_or_superseded": 46,
     "completed_comparison_only": 4,
-    "completed_linked_source": 339,
+    "completed_linked_source": 365,
     "unfinished_active": 7,
-    "other_explicit_state": 1
+    "other_explicit_state": 2
   },
   "duplicate_addresses": {
     "00401000": [
@@ -3230,6 +3494,30 @@
     "0046f490": [
       "0046f490-pcx-data-subset-c",
       "0046f490-functional-c"
+    ],
+    "00443010": [
+      "00443010-functional-c",
+      "00443010-functional-c-wait-delete-exposure"
+    ],
+    "00443140": [
+      "00443140-functional-c",
+      "00443140-functional-c-wait-delete-exposure"
+    ],
+    "00442cf0": [
+      "00442cf0-functional-c",
+      "00442cf0-functional-c-wait-delete-exposure"
+    ],
+    "00442de0": [
+      "00442de0-functional-c",
+      "00442de0-functional-c-wait-delete-exposure"
+    ],
+    "00442eb0": [
+      "00442eb0-functional-c",
+      "00442eb0-functional-c-wait-delete-exposure"
+    ],
+    "00442ef0": [
+      "00442ef0-functional-c",
+      "00442ef0-functional-c-wait-delete-exposure"
     ],
     "0047c200": [
       "0047c200-candidate-c",

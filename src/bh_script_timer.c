@@ -219,3 +219,5 @@ static void activate(BHEntity *entity, void *packet, int unconditional) {
 }
 static void __cdecl template_timer(BHEntity *entity, void *packet) { activate(entity, packet, 0); }
 static void __cdecl template_timer2(BHEntity *entity, void *packet) { activate(entity, packet, 1); }
+
+BHEntityStep __cdecl bh_script_timer_delete_step(void){return delete_tick;}

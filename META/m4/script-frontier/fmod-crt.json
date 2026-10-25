@@ -1,0 +1,55 @@
+{
+  "question": "Bounded script-parser dependency attribution: one pinned library, no compiler sweep.\n\nQuestion: is0047e3ca the pinned VC5 SP3 intrinsic fmod CRT wrapper?\nPositive control: already identified __setdefaultprecision. Stop after this library.\n",
+  "exe_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+  "library": "D:\\Decomp\\MSCVC\\MSVC5\\SP3_EXTRACTED\\VS97_SP3\\all\\vc\\lib\\libc.lib",
+  "library_sha256": "3b5f43e920c37c8da086b0d3ef0396e6517d44fcdcb4e7d03a6058620bc13ee3",
+  "comparison": "Full observed intrinsic wrapper body at its actual COFF symbol offset; masks are only actual COFF DIR32/REL32 operands; not a raw-byte match",
+  "results": [
+    {
+      "symbol": "__setdefaultprecision",
+      "address": "0047e930",
+      "body_bytes": 19,
+      "library_symbol_offset": 0,
+      "compared_bytes": 19,
+      "relocations": [
+        {
+          "offset": 11,
+          "kind": 20,
+          "symbol": "__controlfp",
+          "original_target": "00484ce0"
+        }
+      ],
+      "original_hex": "68000003006800000100e8a163000083c408c3",
+      "library_hex": "68000003006800000100e80000000083c408c3",
+      "mask_hex": "ffffffffffffffffffffff00000000ffffffff",
+      "relocation_normalized_match": true,
+      "negative_control_rejected": true
+    },
+    {
+      "symbol": "__CIfmod",
+      "address": "0047e3ca",
+      "body_bytes": 10,
+      "library_symbol_offset": 10,
+      "compared_bytes": 10,
+      "relocations": [
+        {
+          "offset": 1,
+          "kind": 6,
+          "symbol": "__OP_FMODjmptab",
+          "original_target": "00493080"
+        },
+        {
+          "offset": 6,
+          "kind": 20,
+          "symbol": "__cintrindisp2",
+          "original_target": "004829c0"
+        }
+      ],
+      "original_hex": "ba80304900e9ec450000",
+      "library_hex": "ba00000000e900000000",
+      "mask_hex": "ff00000000ff00000000",
+      "relocation_normalized_match": true,
+      "negative_control_rejected": true
+    }
+  ]
+}

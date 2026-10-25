@@ -1,0 +1,69 @@
+{
+  "target": "D:\\Decomp\\Bhunter\\build\\loading-progress\\loading-progress.exe",
+  "commands": [
+    {
+      "label": "source",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:\\Decomp\\dx7sdk\\include",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/FoD:\\Decomp\\Bhunter\\build\\loading-progress\\bh_loading_progress.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_loading_progress.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_loading_progress.c\n"
+    },
+    {
+      "label": "test",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:\\Decomp\\dx7sdk\\include",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DBH_LOADING_PROGRESS_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\loading-progress\\loading_progress_tests.obj",
+        "D:\\Decomp\\Bhunter\\tests\\loading_progress.c"
+      ],
+      "exit_code": 0,
+      "output": "loading_progress.c\n"
+    },
+    {
+      "label": "link",
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "@D:\\Decomp\\Bhunter\\build\\loading-progress\\link.rsp"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "label": "run-clean",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\build\\loading-progress\\loading-progress.exe"
+      ],
+      "exit_code": 0,
+      "output": "{\"scenario\":\"loading-progress\",\"checks\":114,\"failures\":0,\"original_code_required\":false}\n"
+    }
+  ],
+  "source_sha256": {
+    "src\\bh_loading_progress.c": "f4a1748163f8a8c40a7522d6d0226109439a7aeaa89e5a1d8f3b376cae1e5d40",
+    "src\\bh_loading_progress.h": "7c36b26bf8ba48516d1e3885f711a1d351b16ec2c22b7a0bf0e9eac585bf0d80",
+    "tests\\loading_progress.c": "9e59f1b0308e9726ccd61b9521f1424e8de15e91cd250e3c0ba8d31a941fa755"
+  },
+  "original_code_required": false
+}

@@ -1,0 +1,90 @@
+{
+  "question": "Bounded script-parser dependency attribution: one pinned library, no compiler sweep.\n\nQuestion: are0047dec0/0047def0 pinned VC5 SP3 digit/space CRT wrappers?\nPositive control: already identified __setdefaultprecision. Stop after this library.\n",
+  "exe_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+  "library": "D:\\Decomp\\MSCVC\\MSVC5\\SP3_EXTRACTED\\VS97_SP3\\all\\vc\\lib\\libc.lib",
+  "library_sha256": "3b5f43e920c37c8da086b0d3ef0396e6517d44fcdcb4e7d03a6058620bc13ee3",
+  "comparison": "Full observed body plus library alignment; masks are only actual COFF DIR32/REL32 operands; not a raw-byte match",
+  "results": [
+    {
+      "symbol": "_isdigit",
+      "address": "0047dec0",
+      "body_bytes": 42,
+      "library_section_bytes": 48,
+      "relocations": [
+        {
+          "offset": 2,
+          "kind": 6,
+          "symbol": "___mb_cur_max",
+          "original_target": "004954a4"
+        },
+        {
+          "offset": 17,
+          "kind": 20,
+          "symbol": "__isctype",
+          "original_target": "00481100"
+        },
+        {
+          "offset": 31,
+          "kind": 6,
+          "symbol": "__pctype",
+          "original_target": "00495298"
+        }
+      ],
+      "original_hex": "833da4544900017e108b4424046a0450e82b32000083c408c38b4c24048b15985249008a044a83e004c3",
+      "library_hex": "833d00000000017e108b4424046a0450e80000000083c408c38b4c24048b15000000008a044a83e004c3909090909090",
+      "mask_hex": "ffff00000000ffffffffffffffffffffff00000000ffffffffffffffffffff00000000ffffffffffffff",
+      "relocation_normalized_match": true,
+      "negative_control_rejected": true
+    },
+    {
+      "symbol": "_isspace",
+      "address": "0047def0",
+      "body_bytes": 42,
+      "library_section_bytes": 48,
+      "relocations": [
+        {
+          "offset": 2,
+          "kind": 6,
+          "symbol": "___mb_cur_max",
+          "original_target": "004954a4"
+        },
+        {
+          "offset": 17,
+          "kind": 20,
+          "symbol": "__isctype",
+          "original_target": "00481100"
+        },
+        {
+          "offset": 31,
+          "kind": 6,
+          "symbol": "__pctype",
+          "original_target": "00495298"
+        }
+      ],
+      "original_hex": "833da4544900017e108b4424046a0850e8fb31000083c408c38b4c24048b15985249008a044a83e008c3",
+      "library_hex": "833d00000000017e108b4424046a0850e80000000083c408c38b4c24048b15000000008a044a83e008c3909090909090",
+      "mask_hex": "ffff00000000ffffffffffffffffffffff00000000ffffffffffffffffffff00000000ffffffffffffff",
+      "relocation_normalized_match": true,
+      "negative_control_rejected": true
+    },
+    {
+      "symbol": "__setdefaultprecision",
+      "address": "0047e930",
+      "body_bytes": 19,
+      "library_section_bytes": 32,
+      "relocations": [
+        {
+          "offset": 11,
+          "kind": 20,
+          "symbol": "__controlfp",
+          "original_target": "00484ce0"
+        }
+      ],
+      "original_hex": "68000003006800000100e8a163000083c408c3",
+      "library_hex": "68000003006800000100e80000000083c408c390909090909090909090909090",
+      "mask_hex": "ffffffffffffffffffffff00000000ffffffff",
+      "relocation_normalized_match": true,
+      "negative_control_rejected": true
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+[
+  {
+    "address": "00475870",
+    "bytes": "8b442404",
+    "mnemonic": "MOV",
+    "operands": [
+      "EAX, dword ptr [ESP + 0x4]"
+    ]
+  },
+  {
+    "address": "00475874",
+    "bytes": "8a4801",
+    "mnemonic": "MOV",
+    "operands": [
+      "CL, byte ptr [EAX + 0x1]"
+    ]
+  },
+  {
+    "address": "00475877",
+    "bytes": "83c002",
+    "mnemonic": "ADD",
+    "operands": [
+      "EAX, 0x2"
+    ]
+  },
+  {
+    "address": "0047588a",
+    "bytes": "57",
+    "mnemonic": "PUSH",
+    "operands": [
+      "EDI"
+    ]
+  },
+  {
+    "address": "00475895",
+    "bytes": "56",
+    "mnemonic": "PUSH",
+    "operands": [
+      "ESI"
+    ]
+  },
+  {
+    "address": "00475896",
+    "bytes": "8b742410",
+    "mnemonic": "MOV",
+    "operands": [
+      "ESI, dword ptr [ESP + 0x10]"
+    ]
+  },
+  {
+    "address": "004758d8",
+    "bytes": "c7049e01000000",
+    "mnemonic": "MOV",
+    "operands": [
+      "dword ptr [ESI + EBX*0x4], 0x1"
+    ]
+  },
+  {
+    "address": "00475937",
+    "bytes": "89148e",
+    "mnemonic": "MOV",
+    "operands": [
+      "dword ptr [ESI + ECX*0x4], EDX"
+    ]
+  }
+]

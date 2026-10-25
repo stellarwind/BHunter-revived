@@ -1,0 +1,155 @@
+[
+  {
+    "address": "0044a220",
+    "function": "bh_loading_blit_top",
+    "source": "src/bh_loading_blit.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "loading-blit",
+      "loading-display"
+    ],
+    "original": "META/m4/loading-display/review/0044a220.disasm.json",
+    "bytes": 340,
+    "instructions": 124,
+    "ranges": [
+      {
+        "start": "0044a220",
+        "end_exclusive": "0044a374",
+        "bytes": 340,
+        "instructions": 124,
+        "sha256": "fd2aab55a6ec6b4fdc8e31da724029767c9d8d34a65996c296c4f45ad3ec30ec"
+      }
+    ]
+  },
+  {
+    "address": "0044a520",
+    "function": "bh_loading_blit_right",
+    "source": "src/bh_loading_blit.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "loading-blit",
+      "loading-display"
+    ],
+    "original": "META/m4/loading-display/review/0044a520.disasm.json",
+    "bytes": 512,
+    "instructions": 171,
+    "ranges": [
+      {
+        "start": "0044a520",
+        "end_exclusive": "0044a720",
+        "bytes": 512,
+        "instructions": 171,
+        "sha256": "1e4c9dc1e3377e45e1335f864d41e59d8c4b01136bfb4927060b8a59c79f46e4"
+      }
+    ]
+  },
+  {
+    "address": "0044a380",
+    "function": "bh_loading_blit_bottom",
+    "source": "src/bh_loading_blit.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "loading-blit",
+      "loading-display"
+    ],
+    "original": "META/m4/loading-display/review/0044a380.disasm.json",
+    "bytes": 411,
+    "instructions": 145,
+    "ranges": [
+      {
+        "start": "0044a380",
+        "end_exclusive": "0044a51b",
+        "bytes": 411,
+        "instructions": 145,
+        "sha256": "72c7aa7d667c6164b71ae48584a9cec43bfe403bff5407ae9fef6bff937787bc"
+      }
+    ]
+  },
+  {
+    "address": "0044a8a0",
+    "function": "bh_loading_blit_left",
+    "source": "src/bh_loading_blit.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "loading-blit",
+      "loading-display"
+    ],
+    "original": "META/m4/loading-display/review/0044a8a0.disasm.json",
+    "bytes": 532,
+    "instructions": 177,
+    "ranges": [
+      {
+        "start": "0044a8a0",
+        "end_exclusive": "0044aab4",
+        "bytes": 532,
+        "instructions": 177,
+        "sha256": "6c036ffb6cfdc122856e7fafb6ad3d970640d3ac63df4f8b45ca1107fb9be6bb"
+      }
+    ]
+  },
+  {
+    "address": "0044a720",
+    "function": "bh_loading_blit_top_last",
+    "source": "src/bh_loading_blit.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "loading-blit",
+      "loading-display"
+    ],
+    "original": "META/m4/loading-display/review/0044a720.disasm.json",
+    "bytes": 370,
+    "instructions": 131,
+    "ranges": [
+      {
+        "start": "0044a720",
+        "end_exclusive": "0044a892",
+        "bytes": 370,
+        "instructions": 131,
+        "sha256": "84cf7e41109b5fffbdafbde88bbc7a3c011a29d224133581b0a3fc700f9596e1"
+      }
+    ]
+  },
+  {
+    "address": "0044aac0",
+    "function": "bh_loading_display",
+    "source": "src/bh_loading_display.c",
+    "role": "game",
+    "scenarios": [
+      "loading-display",
+      "loading-progress"
+    ],
+    "original": "META/m4/loading-display/review/0044aac0.disasm.json",
+    "bytes": 1487,
+    "instructions": 444,
+    "ranges": [
+      {
+        "start": "0044aac0",
+        "end_exclusive": "0044b08f",
+        "bytes": 1487,
+        "instructions": 444,
+        "sha256": "72208f360a1566dedfbd5db966ad6c681fa039a8594ae607b5e673a696b91bbd"
+      }
+    ]
+  },
+  {
+    "address": "004791f0",
+    "function": "bh_loading_progress",
+    "source": "src/bh_loading_progress.c",
+    "role": "game",
+    "scenarios": [
+      "loading-progress"
+    ],
+    "original": "META/m4/loading-display/next-review/004791f0.disasm.json",
+    "bytes": 14,
+    "instructions": 5,
+    "ranges": [
+      {
+        "start": "004791f0",
+        "end_exclusive": "004791fe",
+        "bytes": 14,
+        "instructions": 5,
+        "sha256": "0bfde2c45b11621883b26cd23c1fa25d2c8910f74f51bf6b33c54f58b8cb85ff"
+      }
+    ]
+  }
+]

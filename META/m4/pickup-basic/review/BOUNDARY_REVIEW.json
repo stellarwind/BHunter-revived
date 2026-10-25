@@ -1,0 +1,34 @@
+{
+  "owners": [
+    {
+      "address": "00441b80",
+      "function": "bh_pickup_basic_spawn",
+      "source": "src/bh_pickup_basic.c",
+      "role": "engine_candidate",
+      "scenarios": [
+        "pickup-basic"
+      ],
+      "original": "META/m4/script-frontier/00441b80.disasm.json",
+      "bytes": 340,
+      "instructions": 77,
+      "ranges": [
+        {
+          "start": "00441b80",
+          "end_exclusive": "00441cd4",
+          "bytes": 340,
+          "instructions": 77,
+          "sha256": "0869724d27ad41249953d153dfedd5270dbbcd2095dc73e485a100ac18c63f6b"
+        }
+      ]
+    }
+  ],
+  "pe_verified": true,
+  "already_admitted_constructor_excluded": "00441a00",
+  "source_review": "frozen source and fixtures reviewed; no blocking findings",
+  "original_code_executed": false,
+  "reviewed_sources": {
+    "src/bh_pickup_basic.c": "969c63ca3c18a89d20cc379d8ebae881aa2fdf9509699b5a354d3db66cc28ac3",
+    "src/bh_pickup_basic.h": "cdea6b3035c9f27127fa52e8320554aa94da4e33f0fd2fa876a54df0d730a691",
+    "tests/pickup_basic.c": "ef0eced544c1b7ab00658def40e0bf55bb236c593f25feaf1d2a93a119c8db24"
+  }
+}

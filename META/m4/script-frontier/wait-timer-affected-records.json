@@ -1,0 +1,67 @@
+{
+  "reason": "Future count-zero getter exposing actual static delete_tick; no source edit performed in this review",
+  "records": [
+    {
+      "id": "00443010-functional-c",
+      "original_va": "00443010",
+      "function": "template_timer (owned activate, activity-gated child)",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "source": "src/bh_script_timer.c",
+      "source_sha256": "7e2aa2cc600ef0e963178d46bc5976b04784c08d5f035f48fcd0f3b3c14229e1",
+      "target": "build/m0/bhunter-integration.exe"
+    },
+    {
+      "id": "00443140-functional-c",
+      "original_va": "00443140",
+      "function": "template_timer2 (owned activate, unconditional child)",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "source": "src/bh_script_timer.c",
+      "source_sha256": "7e2aa2cc600ef0e963178d46bc5976b04784c08d5f035f48fcd0f3b3c14229e1",
+      "target": "build/m0/bhunter-integration.exe"
+    },
+    {
+      "id": "00442cf0-functional-c",
+      "original_va": "00442cf0",
+      "function": "active_tick (owned timer tick)",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "source": "src/bh_script_timer.c",
+      "source_sha256": "7e2aa2cc600ef0e963178d46bc5976b04784c08d5f035f48fcd0f3b3c14229e1",
+      "target": "build/m0/bhunter-integration.exe"
+    },
+    {
+      "id": "00442de0-functional-c",
+      "original_va": "00442de0",
+      "function": "always_tick (owned timer tick)",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "source": "src/bh_script_timer.c",
+      "source_sha256": "7e2aa2cc600ef0e963178d46bc5976b04784c08d5f035f48fcd0f3b3c14229e1",
+      "target": "build/m0/bhunter-integration.exe"
+    },
+    {
+      "id": "00442eb0-functional-c",
+      "original_va": "00442eb0",
+      "function": "delete_tick",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "source": "src/bh_script_timer.c",
+      "source_sha256": "7e2aa2cc600ef0e963178d46bc5976b04784c08d5f035f48fcd0f3b3c14229e1",
+      "target": "build/m0/bhunter-integration.exe"
+    },
+    {
+      "id": "00442ef0-functional-c",
+      "original_va": "00442ef0",
+      "function": "running_query",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "source": "src/bh_script_timer.c",
+      "source_sha256": "7e2aa2cc600ef0e963178d46bc5976b04784c08d5f035f48fcd0f3b3c14229e1",
+      "target": "build/m0/bhunter-integration.exe"
+    }
+  ],
+  "header_sha256": "ee18a15d51e12e7eb1a45aa951e1e4b16819733e2e6996e1278edc5d6d0d25de",
+  "source_sha256": "7e2aa2cc600ef0e963178d46bc5976b04784c08d5f035f48fcd0f3b3c14229e1"
+}

@@ -1,0 +1,215 @@
+{
+  "target": "bhunter-script-wait-check.exe",
+  "original_code_executed": false,
+  "passed": true,
+  "commands": [
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_SCRIPT_WAIT_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\script-wait\\bh_script_wait.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_script_wait.c"
+      ],
+      "exit_code": 0,
+      "stdout": "bh_script_wait.c\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_SCRIPT_WAIT_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\script-wait\\script_wait_test.obj",
+        "D:\\Decomp\\Bhunter\\tests\\script_wait.c"
+      ],
+      "exit_code": 0,
+      "stdout": "script_wait.c\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_SCRIPT_WAIT_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\script-wait\\bh_script_timer.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_script_timer.c"
+      ],
+      "exit_code": 0,
+      "stdout": "bh_script_timer.c\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_SCRIPT_WAIT_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\script-wait\\script_timer_test.obj",
+        "D:\\Decomp\\Bhunter\\tests\\script_timer.c"
+      ],
+      "exit_code": 0,
+      "stdout": "script_timer.c\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_SCRIPT_WAIT_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\script-wait\\bh_entities.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_entities.c"
+      ],
+      "exit_code": 0,
+      "stdout": "bh_entities.c\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_SCRIPT_WAIT_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\script-wait\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_math.c"
+      ],
+      "exit_code": 0,
+      "stdout": "bh_math.c\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_SCRIPT_WAIT_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\script-wait\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_fp.c"
+      ],
+      "exit_code": 0,
+      "stdout": "bh_fp.c\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_SCRIPT_WAIT_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\script-wait\\bh_round.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_round.c"
+      ],
+      "exit_code": 0,
+      "stdout": "bh_round.c\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/opt:ref",
+        "/map:D:\\Decomp\\Bhunter\\build\\script-wait\\script-wait.map",
+        "/out:D:\\Decomp\\Bhunter\\build\\script-wait\\bhunter-script-wait-check.exe",
+        "D:\\Decomp\\Bhunter\\build\\script-wait\\bh_script_wait.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-wait\\script_wait_test.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-wait\\bh_script_timer.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-wait\\script_timer_test.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-wait\\bh_entities.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-wait\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-wait\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-wait\\bh_round.obj",
+        "kernel32.lib"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\build\\script-wait\\bhunter-script-wait-check.exe"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"scenario\":\"script-wait\",\"checks\":53,\"failures\":0,\"original_code_required\":false}\n{\"scenario\":\"script-timers\",\"checks\":85,\"failures\":0,\"original_code_required\":false}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/out:D:\\Decomp\\Bhunter\\build\\script-wait\\missing-script-wait.exe",
+        "D:\\Decomp\\Bhunter\\build\\script-wait\\script_wait_test.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-wait\\bh_script_timer.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-wait\\script_timer_test.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-wait\\bh_entities.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-wait\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-wait\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-wait\\bh_round.obj",
+        "kernel32.lib"
+      ],
+      "exit_code": 25,
+      "stdout": "script_wait_test.obj : error LNK2001: unresolved external symbol _bh_script_wait_child\nscript_wait_test.obj : error LNK2001: unresolved external symbol _bh_script_wait_state\nscript_wait_test.obj : error LNK2001: unresolved external symbol _bh_script_wait_bind\nscript_wait_test.obj : error LNK2001: unresolved external symbol _bh_script_wait_template\nD:\\Decomp\\Bhunter\\build\\script-wait\\missing-script-wait.exe : fatal error LNK1120: 4 unresolved externals\n",
+      "stderr": ""
+    }
+  ],
+  "sources": {
+    "src/bh_script_wait.c": "6d2c581164d3ec4d3adbc681350db962cb3442c2fd3bb3e7fa5274ea853f7788",
+    "tests/script_wait.c": "5b985d1a88d8cb00a05ed8643ae13eb3a8a1aacfa62b0d82c2d1932049880463",
+    "src/bh_script_timer.c": "c6babeca216dd9e27548dc5b9343cbc0a5285b7f58d8fa317ea41add93cb2079",
+    "tests/script_timer.c": "c5cd4bbf65b193b2ad677e86e62e05e56e31538a4084e0139a4a54e849e776dc",
+    "src/bh_entities.c": "6fc5e54d88906a7922c149bb1ccc9851c2cbe701217e57d8e3c72646d81cb92a",
+    "src/bh_math.c": "ce111e18659563a2c41a04b645295227aac6ead9fe9cc2e803ac45c726d6e9bc",
+    "src/bh_fp.c": "cc8400a29fd082f96ffd9b483f490a44992717b25eac0cb32e2e108ba446f3f8",
+    "src/bh_round.c": "ff848010705702e25cf85f5ba1d9c30a024d1ea8bf93227240285b9c54fc8ef4",
+    "src/bh_script_wait.h": "6c95d0bdfbda673b3775627d2b9e66ff621c90e0f7735c6c131dba1ba8466dd5",
+    "src/bh_script_timer.h": "fb90dedaca2f292ec624a1691b0ea7eedb847d2ea25be4dc8539f459377ed1d7",
+    "tests/script_timer_cases.h": "386b5811a42f140a4f49e9fd2b19b2a8617fcb52bf29d0fa1e7e9367c63ead13"
+  },
+  "stdout": "{\"scenario\":\"script-wait\",\"checks\":53,\"failures\":0,\"original_code_required\":false}\n{\"scenario\":\"script-timers\",\"checks\":85,\"failures\":0,\"original_code_required\":false}\n",
+  "missing_module_link_control": true
+}

@@ -25,8 +25,8 @@ typedef struct BHFrameService {
     BHSoundQueue *sound;
     BHFrameBuffers *frames;
     BHDrawQueue *draw,*slot_draw[3];
-    BHPlayerInputState *player_input; /* current player global004f5500 +2010 */
-    const void *packet;unsigned long packet_bytes; /* distinct global004f5518 */
+    BHPlayerInputState *player_input; /* destination state at original004f5518 */
+    const void *packet;unsigned long packet_bytes; /* current list004f5500 +2010 */
     const volatile LONG *paused;
     volatile unsigned long *frame_counter;
     volatile LONG *stop,*worker_done;
@@ -46,11 +46,12 @@ typedef struct BHFrameService {
    stop then input/CD/sound/network/force-feedback/display cleanup in that order.
    Verified RET0047d680 needs no source stub. Returns status diagnostics while
    original subsequent effects continue after dependency-reported failures.
-   player_input and packet are read after entity refresh/sound; the caller must
-   keep player_input bound to the CURRENT player's embedded state when those
-   callbacks change players. The packet binding is a distinct original global;
-   an input-list state buffer is only a source fixture choice, not a recovered
-   original global alias or constructor. No callback body, device, entity or
-   gameplay state is fabricated here. */
+   player_input and packet are read after entity refresh/sound; callers must
+   keep packet bound to the CURRENT input list's serialized packet when those
+   callbacks replace the list. The original00475870 takes (packet,state); our
+   source API deliberately takes (state,packet). Original004f5518 is the
+   destination; current list004f5500 +2010 supplies the packet. Explicit source
+   storage does not recover original global allocation or startup construction.
+   No callback body, device, entity or gameplay state is fabricated here. */
 int __cdecl bh_frame_service_tick(BHFrameService *);
 #endif

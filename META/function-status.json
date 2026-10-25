@@ -2933,14 +2933,16 @@
           "PC53, fixed double 1/30 tick, shared verified VC5 CRT rand state and signed 32-bit IMUL wrap; no original runtime precision inference",
           "Callback release/recycle stops rearm with MUTATION; invalid source actor selectors reject instead of original unsafe reads",
           "Unit checks execute source pool/query/step behavior, not automated game execution or gameplay"
-        ]
+        ],
+        "superseded_by": "00443010-functional-c-wait-delete-exposure"
       },
       "evidence": [
         "META/m4/script-timers/review.json",
         "META/m4/script-timers/fixtures.json",
         "META/m4/script-timers/integration-real.json",
         "META/m4/script-timers/validation.json"
-      ]
+      ],
+      "historical_variant": true
     },
     {
       "id": "00443140-functional-c",
@@ -2965,14 +2967,16 @@
           "PC53, fixed double 1/30 tick, shared verified VC5 CRT rand state and signed 32-bit IMUL wrap; no original runtime precision inference",
           "Callback release/recycle stops rearm with MUTATION; invalid source actor selectors reject instead of original unsafe reads",
           "Unit checks execute source pool/query/step behavior, not automated game execution or gameplay"
-        ]
+        ],
+        "superseded_by": "00443140-functional-c-wait-delete-exposure"
       },
       "evidence": [
         "META/m4/script-timers/review.json",
         "META/m4/script-timers/fixtures.json",
         "META/m4/script-timers/integration-real.json",
         "META/m4/script-timers/validation.json"
-      ]
+      ],
+      "historical_variant": true
     },
     {
       "id": "00442cf0-functional-c",
@@ -2997,14 +3001,16 @@
           "PC53, fixed double 1/30 tick, shared verified VC5 CRT rand state and signed 32-bit IMUL wrap; no original runtime precision inference",
           "Callback release/recycle stops rearm with MUTATION; invalid source actor selectors reject instead of original unsafe reads",
           "Unit checks execute source pool/query/step behavior, not automated game execution or gameplay"
-        ]
+        ],
+        "superseded_by": "00442cf0-functional-c-wait-delete-exposure"
       },
       "evidence": [
         "META/m4/script-timers/review.json",
         "META/m4/script-timers/fixtures.json",
         "META/m4/script-timers/integration-real.json",
         "META/m4/script-timers/validation.json"
-      ]
+      ],
+      "historical_variant": true
     },
     {
       "id": "00442de0-functional-c",
@@ -3029,14 +3035,16 @@
           "PC53, fixed double 1/30 tick, shared verified VC5 CRT rand state and signed 32-bit IMUL wrap; no original runtime precision inference",
           "Callback release/recycle stops rearm with MUTATION; invalid source actor selectors reject instead of original unsafe reads",
           "Unit checks execute source pool/query/step behavior, not automated game execution or gameplay"
-        ]
+        ],
+        "superseded_by": "00442de0-functional-c-wait-delete-exposure"
       },
       "evidence": [
         "META/m4/script-timers/review.json",
         "META/m4/script-timers/fixtures.json",
         "META/m4/script-timers/integration-real.json",
         "META/m4/script-timers/validation.json"
-      ]
+      ],
+      "historical_variant": true
     },
     {
       "id": "00442eb0-functional-c",
@@ -3061,14 +3069,16 @@
           "PC53, fixed double 1/30 tick, shared verified VC5 CRT rand state and signed 32-bit IMUL wrap; no original runtime precision inference",
           "Callback release/recycle stops rearm with MUTATION; invalid source actor selectors reject instead of original unsafe reads",
           "Unit checks execute source pool/query/step behavior, not automated game execution or gameplay"
-        ]
+        ],
+        "superseded_by": "00442eb0-functional-c-wait-delete-exposure"
       },
       "evidence": [
         "META/m4/script-timers/review.json",
         "META/m4/script-timers/fixtures.json",
         "META/m4/script-timers/integration-real.json",
         "META/m4/script-timers/validation.json"
-      ]
+      ],
+      "historical_variant": true
     },
     {
       "id": "00442ef0-functional-c",
@@ -3093,14 +3103,16 @@
           "PC53, fixed double 1/30 tick, shared verified VC5 CRT rand state and signed 32-bit IMUL wrap; no original runtime precision inference",
           "Callback release/recycle stops rearm with MUTATION; invalid source actor selectors reject instead of original unsafe reads",
           "Unit checks execute source pool/query/step behavior, not automated game execution or gameplay"
-        ]
+        ],
+        "superseded_by": "00442ef0-functional-c-wait-delete-exposure"
       },
       "evidence": [
         "META/m4/script-timers/review.json",
         "META/m4/script-timers/fixtures.json",
         "META/m4/script-timers/integration-real.json",
         "META/m4/script-timers/validation.json"
-      ]
+      ],
+      "historical_variant": true
     },
     {
       "id": "0044cc20-functional-c",
@@ -19028,14 +19040,28 @@
           "Offscreen Flip reaches DDERR_NOTFLIPPABLE; successful fullscreen Flip remains unvalidated.",
           "Positive force-feedback Effect release is established statically, not exercised with an active hardware effect.",
           "CD positive stop/close checks use a private WAV MCI surrogate, not a physical CD drive."
-        ]
+        ],
+        "binding_annotation_correction": {
+          "date": "2026-10-25",
+          "original_abi": "packet,state",
+          "source_abi": "state,packet",
+          "original_packet": "current input list004f5500 +2010",
+          "original_destination": "004f5518",
+          "implementation_body_changed": false,
+          "fixture_behavior_changed": false,
+          "proof": "META/m4/loading-display/next-review/PACKET_ARGUMENT_CORRECTION.md",
+          "fresh_exact_builds": "META/m4/loading-display/validation.json",
+          "limits": "Generic256-word source state capacity does not prove original global allocation span."
+        }
       },
       "evidence": [
         "META/m4/frame-pipeline/service/original/00479140.disasm.json",
         "META/m4/frame-pipeline/README.md",
         "META/m4/frame-pipeline/validation.json",
         "META/m4/frame-pipeline/integration-real.json",
-        "META/m4/frame-pipeline/clean/clean-checkout.json"
+        "META/m4/frame-pipeline/clean/clean-checkout.json",
+        "META/m4/loading-display/annotation-refresh.json",
+        "META/m4/loading-display/next-review/PACKET_ARGUMENT_CORRECTION.md"
       ]
     },
     {
@@ -19535,6 +19561,2128 @@
         "META/m4/sound-loader/validation.json",
         "META/m4/sound-loader/integration-real.json",
         "META/m4/sound-loader/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00449e50-functional-c-loading-image",
+      "original_va": "00449e50",
+      "function": "bh_loading_image_load",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_loading_image.c",
+      "source_sha256": "860381e769454d260906c6cb7617cc5fac08ba6106c26499a8a4c03040062f83",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00449e50",
+            "end_exclusive": "0044a151",
+            "bytes": 769,
+            "instructions": 267,
+            "sha256": "82c76621215d40e164de12ecdf352d46495b7ff47a9411fdd54e68a7aaeb4c2a"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "loading-image": {
+            "scenario": "loading-image",
+            "checks": 12443,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false,
+            "ui_capture": false
+          }
+        },
+        "clean_fixtures": {
+          "loading-image": {
+            "scenario": "loading-image",
+            "checks": 6246,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false,
+            "ui_capture": false
+          }
+        },
+        "abi": "Pinned x86 source binding; WINAPI thread adapter where explicit; PC53 nearest/masked profile",
+        "limits": [
+          "Explicit source contexts preserve live state; documented invalid-state guards and ABI adapters differ from original.",
+          "Source-only offscreen and lifecycle checks; no gameplay or desktop capture.",
+          "No complete startup, mission/gameplay, software raster dispatch, CD playback or DirectPlay session claim.",
+          "Memory-only decoded image and indexed/native LUT checks; no window, GPU rendering, input, audio or original-code execution.",
+          "Original unsafe allocation/span failures have explicit source guards; no pixel screenshot or full loading renderer acceptance."
+        ]
+      },
+      "evidence": [
+        "META/m4/loading-image/original/00449e50.disasm.json",
+        "META/m4/loading-image/README.md",
+        "META/m4/loading-image/validation.json",
+        "META/m4/loading-image/integration-real.json",
+        "META/m4/loading-image/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0044a160-functional-c-loading-image",
+      "original_va": "0044a160",
+      "function": "bh_loading_images_init",
+      "role": "game",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_loading_image.c",
+      "source_sha256": "860381e769454d260906c6cb7617cc5fac08ba6106c26499a8a4c03040062f83",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "0044a160",
+            "end_exclusive": "0044a212",
+            "bytes": 178,
+            "instructions": 42,
+            "sha256": "53731d33fa145af580eb19ef0cded16273f1e1ff4e364890ee9b7723e75fe1a0"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "loading-image": {
+            "scenario": "loading-image",
+            "checks": 12443,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false,
+            "ui_capture": false
+          }
+        },
+        "clean_fixtures": {
+          "loading-image": {
+            "scenario": "loading-image",
+            "checks": 6246,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false,
+            "ui_capture": false
+          }
+        },
+        "abi": "Pinned x86 source binding; WINAPI thread adapter where explicit; PC53 nearest/masked profile",
+        "limits": [
+          "Explicit source contexts preserve live state; documented invalid-state guards and ABI adapters differ from original.",
+          "Source-only offscreen and lifecycle checks; no gameplay or desktop capture.",
+          "No complete startup, mission/gameplay, software raster dispatch, CD playback or DirectPlay session claim.",
+          "Memory-only decoded image and indexed/native LUT checks; no window, GPU rendering, input, audio or original-code execution.",
+          "Original unsafe allocation/span failures have explicit source guards; no pixel screenshot or full loading renderer acceptance."
+        ]
+      },
+      "evidence": [
+        "META/m4/loading-image/original/0044a160.disasm.json",
+        "META/m4/loading-image/README.md",
+        "META/m4/loading-image/validation.json",
+        "META/m4/loading-image/integration-real.json",
+        "META/m4/loading-image/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0044f1b0-owning-close-loading-adapter",
+      "original_va": "0044f1b0",
+      "function": "bh_pcx_reader_close",
+      "role": "engine_candidate",
+      "source": "src/bh_pcx_reader.c",
+      "source_sha256": "61362f0a0a322a63f54dfad78d807ffd8c8b7ea6e0bb02ae1c54016abb867116",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "original_function_count": 0,
+      "validation": {
+        "boundary": {
+          "start": "0044f1b0",
+          "end_exclusive": "0044f1bf",
+          "bytes": 15,
+          "instructions": 5,
+          "sha256": "1734844921e814e85c7951e67bc6c7c88a8dff5b5672eadef0f1d0f49265475e",
+          "original": "META/m4/sound-loader/next-review/0044f1b0.disasm.json"
+        },
+        "fixtures": {
+          "loading-image": {
+            "scenario": "loading-image",
+            "checks": 12443,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false,
+            "ui_capture": false
+          },
+          "pcx-buffered-reader": {
+            "scenario": "pcx-buffered-reader",
+            "checks": 2067,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "loading-image": {
+            "scenario": "loading-image",
+            "checks": 6246,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false,
+            "ui_capture": false
+          },
+          "pcx-buffered-reader": {
+            "scenario": "pcx-buffered-reader",
+            "checks": 2067,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "scope": "Actual owning VFILE closure reused unchanged; source clears reader state while original leaves palette/map globals retained. Loading owner retains palette externally before close. Full original global-state equivalence is unclaimed; not counted as complete original owner."
+      },
+      "evidence": [
+        "META/m4/loading-image/validation.json",
+        "META/m4/loading-image/README.md",
+        "META/m4/sound-loader/next-review/0044f1b0.disasm.json"
+      ]
+    },
+    {
+      "id": "0044a220-functional-c-loading-display",
+      "original_va": "0044a220",
+      "function": "bh_loading_blit_top",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_loading_blit.c",
+      "source_sha256": "3b895b16eccbfb3dd1f75583c65f095f2834dbcee865b1f1ac1105d67c0ca357",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "0044a220",
+            "end_exclusive": "0044a374",
+            "bytes": 340,
+            "instructions": 124,
+            "sha256": "fd2aab55a6ec6b4fdc8e31da724029767c9d8d34a65996c296c4f45ad3ec30ec"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "loading-blit": {
+            "scenario": "loading-blit",
+            "checks": 5056,
+            "failures": 0,
+            "fixtures": 100,
+            "full_resolution_fixtures": 40,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "loading-display": {
+            "scenario": "loading-display",
+            "checks": 270,
+            "failures": 0,
+            "original_code_required": false,
+            "ui_capture": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "loading-blit": {
+            "scenario": "loading-blit",
+            "checks": 5056,
+            "failures": 0,
+            "fixtures": 100,
+            "full_resolution_fixtures": 40,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "loading-display": {
+            "scenario": "loading-display",
+            "checks": 215,
+            "failures": 0,
+            "original_code_required": false,
+            "ui_capture": false,
+            "gameplay_executed": false
+          }
+        },
+        "abi": "Pinned x86 source binding; WINAPI thread adapter where explicit; PC53 nearest/masked profile",
+        "limits": [
+          "Explicit source contexts preserve live state; documented invalid-state guards and ABI adapters differ from original.",
+          "Source-only offscreen and lifecycle checks; no gameplay or desktop capture.",
+          "No complete startup, mission/gameplay, software raster dispatch, CD playback or DirectPlay session claim.",
+          "Memory wedges and actual owned offscreen surfaces only; no visible game, input, audio or UI capture.",
+          "Fullscreen Flip, successful lost-surface Restore and actual COM negative-pitch locks remain unvalidated; offscreen native errors and separate pure-wedge signed-pitch checks retain their own scope.",
+          "PC53 bounded geometry and masked baseline-one checks do not resolve PC24 or arbitrary nonfinite/extreme FTOL behavior."
+        ]
+      },
+      "evidence": [
+        "META/m4/loading-display/review/0044a220.disasm.json",
+        "META/m4/loading-display/README.md",
+        "META/m4/loading-display/validation.json",
+        "META/m4/loading-display/integration-real.json",
+        "META/m4/loading-display/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0044a520-functional-c-loading-display",
+      "original_va": "0044a520",
+      "function": "bh_loading_blit_right",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_loading_blit.c",
+      "source_sha256": "3b895b16eccbfb3dd1f75583c65f095f2834dbcee865b1f1ac1105d67c0ca357",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "0044a520",
+            "end_exclusive": "0044a720",
+            "bytes": 512,
+            "instructions": 171,
+            "sha256": "1e4c9dc1e3377e45e1335f864d41e59d8c4b01136bfb4927060b8a59c79f46e4"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "loading-blit": {
+            "scenario": "loading-blit",
+            "checks": 5056,
+            "failures": 0,
+            "fixtures": 100,
+            "full_resolution_fixtures": 40,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "loading-display": {
+            "scenario": "loading-display",
+            "checks": 270,
+            "failures": 0,
+            "original_code_required": false,
+            "ui_capture": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "loading-blit": {
+            "scenario": "loading-blit",
+            "checks": 5056,
+            "failures": 0,
+            "fixtures": 100,
+            "full_resolution_fixtures": 40,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "loading-display": {
+            "scenario": "loading-display",
+            "checks": 215,
+            "failures": 0,
+            "original_code_required": false,
+            "ui_capture": false,
+            "gameplay_executed": false
+          }
+        },
+        "abi": "Pinned x86 source binding; WINAPI thread adapter where explicit; PC53 nearest/masked profile",
+        "limits": [
+          "Explicit source contexts preserve live state; documented invalid-state guards and ABI adapters differ from original.",
+          "Source-only offscreen and lifecycle checks; no gameplay or desktop capture.",
+          "No complete startup, mission/gameplay, software raster dispatch, CD playback or DirectPlay session claim.",
+          "Memory wedges and actual owned offscreen surfaces only; no visible game, input, audio or UI capture.",
+          "Fullscreen Flip, successful lost-surface Restore and actual COM negative-pitch locks remain unvalidated; offscreen native errors and separate pure-wedge signed-pitch checks retain their own scope.",
+          "PC53 bounded geometry and masked baseline-one checks do not resolve PC24 or arbitrary nonfinite/extreme FTOL behavior."
+        ]
+      },
+      "evidence": [
+        "META/m4/loading-display/review/0044a520.disasm.json",
+        "META/m4/loading-display/README.md",
+        "META/m4/loading-display/validation.json",
+        "META/m4/loading-display/integration-real.json",
+        "META/m4/loading-display/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0044a380-functional-c-loading-display",
+      "original_va": "0044a380",
+      "function": "bh_loading_blit_bottom",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_loading_blit.c",
+      "source_sha256": "3b895b16eccbfb3dd1f75583c65f095f2834dbcee865b1f1ac1105d67c0ca357",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "0044a380",
+            "end_exclusive": "0044a51b",
+            "bytes": 411,
+            "instructions": 145,
+            "sha256": "72c7aa7d667c6164b71ae48584a9cec43bfe403bff5407ae9fef6bff937787bc"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "loading-blit": {
+            "scenario": "loading-blit",
+            "checks": 5056,
+            "failures": 0,
+            "fixtures": 100,
+            "full_resolution_fixtures": 40,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "loading-display": {
+            "scenario": "loading-display",
+            "checks": 270,
+            "failures": 0,
+            "original_code_required": false,
+            "ui_capture": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "loading-blit": {
+            "scenario": "loading-blit",
+            "checks": 5056,
+            "failures": 0,
+            "fixtures": 100,
+            "full_resolution_fixtures": 40,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "loading-display": {
+            "scenario": "loading-display",
+            "checks": 215,
+            "failures": 0,
+            "original_code_required": false,
+            "ui_capture": false,
+            "gameplay_executed": false
+          }
+        },
+        "abi": "Pinned x86 source binding; WINAPI thread adapter where explicit; PC53 nearest/masked profile",
+        "limits": [
+          "Explicit source contexts preserve live state; documented invalid-state guards and ABI adapters differ from original.",
+          "Source-only offscreen and lifecycle checks; no gameplay or desktop capture.",
+          "No complete startup, mission/gameplay, software raster dispatch, CD playback or DirectPlay session claim.",
+          "Memory wedges and actual owned offscreen surfaces only; no visible game, input, audio or UI capture.",
+          "Fullscreen Flip, successful lost-surface Restore and actual COM negative-pitch locks remain unvalidated; offscreen native errors and separate pure-wedge signed-pitch checks retain their own scope.",
+          "PC53 bounded geometry and masked baseline-one checks do not resolve PC24 or arbitrary nonfinite/extreme FTOL behavior."
+        ]
+      },
+      "evidence": [
+        "META/m4/loading-display/review/0044a380.disasm.json",
+        "META/m4/loading-display/README.md",
+        "META/m4/loading-display/validation.json",
+        "META/m4/loading-display/integration-real.json",
+        "META/m4/loading-display/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0044a8a0-functional-c-loading-display",
+      "original_va": "0044a8a0",
+      "function": "bh_loading_blit_left",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_loading_blit.c",
+      "source_sha256": "3b895b16eccbfb3dd1f75583c65f095f2834dbcee865b1f1ac1105d67c0ca357",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "0044a8a0",
+            "end_exclusive": "0044aab4",
+            "bytes": 532,
+            "instructions": 177,
+            "sha256": "6c036ffb6cfdc122856e7fafb6ad3d970640d3ac63df4f8b45ca1107fb9be6bb"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "loading-blit": {
+            "scenario": "loading-blit",
+            "checks": 5056,
+            "failures": 0,
+            "fixtures": 100,
+            "full_resolution_fixtures": 40,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "loading-display": {
+            "scenario": "loading-display",
+            "checks": 270,
+            "failures": 0,
+            "original_code_required": false,
+            "ui_capture": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "loading-blit": {
+            "scenario": "loading-blit",
+            "checks": 5056,
+            "failures": 0,
+            "fixtures": 100,
+            "full_resolution_fixtures": 40,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "loading-display": {
+            "scenario": "loading-display",
+            "checks": 215,
+            "failures": 0,
+            "original_code_required": false,
+            "ui_capture": false,
+            "gameplay_executed": false
+          }
+        },
+        "abi": "Pinned x86 source binding; WINAPI thread adapter where explicit; PC53 nearest/masked profile",
+        "limits": [
+          "Explicit source contexts preserve live state; documented invalid-state guards and ABI adapters differ from original.",
+          "Source-only offscreen and lifecycle checks; no gameplay or desktop capture.",
+          "No complete startup, mission/gameplay, software raster dispatch, CD playback or DirectPlay session claim.",
+          "Memory wedges and actual owned offscreen surfaces only; no visible game, input, audio or UI capture.",
+          "Fullscreen Flip, successful lost-surface Restore and actual COM negative-pitch locks remain unvalidated; offscreen native errors and separate pure-wedge signed-pitch checks retain their own scope.",
+          "PC53 bounded geometry and masked baseline-one checks do not resolve PC24 or arbitrary nonfinite/extreme FTOL behavior."
+        ]
+      },
+      "evidence": [
+        "META/m4/loading-display/review/0044a8a0.disasm.json",
+        "META/m4/loading-display/README.md",
+        "META/m4/loading-display/validation.json",
+        "META/m4/loading-display/integration-real.json",
+        "META/m4/loading-display/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0044a720-functional-c-loading-display",
+      "original_va": "0044a720",
+      "function": "bh_loading_blit_top_last",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_loading_blit.c",
+      "source_sha256": "3b895b16eccbfb3dd1f75583c65f095f2834dbcee865b1f1ac1105d67c0ca357",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "0044a720",
+            "end_exclusive": "0044a892",
+            "bytes": 370,
+            "instructions": 131,
+            "sha256": "84cf7e41109b5fffbdafbde88bbc7a3c011a29d224133581b0a3fc700f9596e1"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "loading-blit": {
+            "scenario": "loading-blit",
+            "checks": 5056,
+            "failures": 0,
+            "fixtures": 100,
+            "full_resolution_fixtures": 40,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "loading-display": {
+            "scenario": "loading-display",
+            "checks": 270,
+            "failures": 0,
+            "original_code_required": false,
+            "ui_capture": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "loading-blit": {
+            "scenario": "loading-blit",
+            "checks": 5056,
+            "failures": 0,
+            "fixtures": 100,
+            "full_resolution_fixtures": 40,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "loading-display": {
+            "scenario": "loading-display",
+            "checks": 215,
+            "failures": 0,
+            "original_code_required": false,
+            "ui_capture": false,
+            "gameplay_executed": false
+          }
+        },
+        "abi": "Pinned x86 source binding; WINAPI thread adapter where explicit; PC53 nearest/masked profile",
+        "limits": [
+          "Explicit source contexts preserve live state; documented invalid-state guards and ABI adapters differ from original.",
+          "Source-only offscreen and lifecycle checks; no gameplay or desktop capture.",
+          "No complete startup, mission/gameplay, software raster dispatch, CD playback or DirectPlay session claim.",
+          "Memory wedges and actual owned offscreen surfaces only; no visible game, input, audio or UI capture.",
+          "Fullscreen Flip, successful lost-surface Restore and actual COM negative-pitch locks remain unvalidated; offscreen native errors and separate pure-wedge signed-pitch checks retain their own scope.",
+          "PC53 bounded geometry and masked baseline-one checks do not resolve PC24 or arbitrary nonfinite/extreme FTOL behavior."
+        ]
+      },
+      "evidence": [
+        "META/m4/loading-display/review/0044a720.disasm.json",
+        "META/m4/loading-display/README.md",
+        "META/m4/loading-display/validation.json",
+        "META/m4/loading-display/integration-real.json",
+        "META/m4/loading-display/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0044aac0-functional-c-loading-display",
+      "original_va": "0044aac0",
+      "function": "bh_loading_display",
+      "role": "game",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_loading_display.c",
+      "source_sha256": "34d61d9ddedac8624b09c86d3d9d2141ea7e4c54550269ae636d3985c8705917",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "0044aac0",
+            "end_exclusive": "0044b08f",
+            "bytes": 1487,
+            "instructions": 444,
+            "sha256": "72208f360a1566dedfbd5db966ad6c681fa039a8594ae607b5e673a696b91bbd"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "loading-display": {
+            "scenario": "loading-display",
+            "checks": 270,
+            "failures": 0,
+            "original_code_required": false,
+            "ui_capture": false,
+            "gameplay_executed": false
+          },
+          "loading-progress": {
+            "scenario": "loading-progress",
+            "checks": 114,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "loading-display": {
+            "scenario": "loading-display",
+            "checks": 215,
+            "failures": 0,
+            "original_code_required": false,
+            "ui_capture": false,
+            "gameplay_executed": false
+          },
+          "loading-progress": {
+            "scenario": "loading-progress",
+            "checks": 114,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "abi": "Pinned x86 source binding; WINAPI thread adapter where explicit; PC53 nearest/masked profile",
+        "limits": [
+          "Explicit source contexts preserve live state; documented invalid-state guards and ABI adapters differ from original.",
+          "Source-only offscreen and lifecycle checks; no gameplay or desktop capture.",
+          "No complete startup, mission/gameplay, software raster dispatch, CD playback or DirectPlay session claim.",
+          "Memory wedges and actual owned offscreen surfaces only; no visible game, input, audio or UI capture.",
+          "Fullscreen Flip, successful lost-surface Restore and actual COM negative-pitch locks remain unvalidated; offscreen native errors and separate pure-wedge signed-pitch checks retain their own scope.",
+          "PC53 bounded geometry and masked baseline-one checks do not resolve PC24 or arbitrary nonfinite/extreme FTOL behavior."
+        ]
+      },
+      "evidence": [
+        "META/m4/loading-display/review/0044aac0.disasm.json",
+        "META/m4/loading-display/README.md",
+        "META/m4/loading-display/validation.json",
+        "META/m4/loading-display/integration-real.json",
+        "META/m4/loading-display/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004791f0-functional-c-loading-display",
+      "original_va": "004791f0",
+      "function": "bh_loading_progress",
+      "role": "game",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_loading_progress.c",
+      "source_sha256": "f4a1748163f8a8c40a7522d6d0226109439a7aeaa89e5a1d8f3b376cae1e5d40",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "004791f0",
+            "end_exclusive": "004791fe",
+            "bytes": 14,
+            "instructions": 5,
+            "sha256": "0bfde2c45b11621883b26cd23c1fa25d2c8910f74f51bf6b33c54f58b8cb85ff"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "loading-progress": {
+            "scenario": "loading-progress",
+            "checks": 114,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "loading-progress": {
+            "scenario": "loading-progress",
+            "checks": 114,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "abi": "Pinned x86 source binding; WINAPI thread adapter where explicit; PC53 nearest/masked profile",
+        "limits": [
+          "Explicit source contexts preserve live state; documented invalid-state guards and ABI adapters differ from original.",
+          "Source-only offscreen and lifecycle checks; no gameplay or desktop capture.",
+          "No complete startup, mission/gameplay, software raster dispatch, CD playback or DirectPlay session claim.",
+          "Memory wedges and actual owned offscreen surfaces only; no visible game, input, audio or UI capture.",
+          "Fullscreen Flip, successful lost-surface Restore and actual COM negative-pitch locks remain unvalidated; offscreen native errors and separate pure-wedge signed-pitch checks retain their own scope.",
+          "PC53 bounded geometry and masked baseline-one checks do not resolve PC24 or arbitrary nonfinite/extreme FTOL behavior."
+        ]
+      },
+      "evidence": [
+        "META/m4/loading-display/next-review/004791f0.disasm.json",
+        "META/m4/loading-display/README.md",
+        "META/m4/loading-display/validation.json",
+        "META/m4/loading-display/integration-real.json",
+        "META/m4/loading-display/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004109c0-functional-c-script-args",
+      "original_va": "004109c0",
+      "function": "bh_script_arg_int",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_script_args.c",
+      "source_sha256": "61a732715127d55654ab93509c9bb61498e39ebf91501a22f57f03a289a9452f",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "004109c0",
+            "end_exclusive": "00410b9c",
+            "bytes": 476,
+            "instructions": 187,
+            "sha256": "fabad425325d41ba46d032b5d947441306f884a809dae04fe81f731f945182c7"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "script-args": {
+            "scenario": "script-args",
+            "checks": 172,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "script-args": {
+            "scenario": "script-args",
+            "checks": 172,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "abi": "Pinned x86 cdecl with explicit borrowed variable state; actual pinned CRT literal/classification calls",
+        "limits": [
+          "Explicit borrowed state replaces original block layout; valid outputs and NUL-terminated active names are required.",
+          "No instruction-match claim; verified CRT routines are reused and excluded from game-owner counts.",
+          "Outer script parser/VM, block construction and gameplay remain incomplete.",
+          "ASCII/CRT classification and pinned CRT conversion bounds are documented; broader locale/range behavior remains unvalidated."
+        ]
+      },
+      "evidence": [
+        "META/m4/script-args/004109c0.disasm.json",
+        "META/m4/script-args/README.md",
+        "META/m4/script-args/validation.json",
+        "META/m4/script-args/integration-real.json",
+        "META/m4/script-args/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00410ba0-functional-c-script-args",
+      "original_va": "00410ba0",
+      "function": "bh_script_arg_float",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_script_args.c",
+      "source_sha256": "61a732715127d55654ab93509c9bb61498e39ebf91501a22f57f03a289a9452f",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00410ba0",
+            "end_exclusive": "00410d84",
+            "bytes": 484,
+            "instructions": 189,
+            "sha256": "cd75f048ec0e6b67a0181bd4851502de22e7841f9176eee5f70b6b96b7f21198"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "script-args": {
+            "scenario": "script-args",
+            "checks": 172,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "script-args": {
+            "scenario": "script-args",
+            "checks": 172,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "abi": "Pinned x86 cdecl with explicit borrowed variable state; actual pinned CRT literal/classification calls",
+        "limits": [
+          "Explicit borrowed state replaces original block layout; valid outputs and NUL-terminated active names are required.",
+          "No instruction-match claim; verified CRT routines are reused and excluded from game-owner counts.",
+          "Outer script parser/VM, block construction and gameplay remain incomplete.",
+          "ASCII/CRT classification and pinned CRT conversion bounds are documented; broader locale/range behavior remains unvalidated."
+        ]
+      },
+      "evidence": [
+        "META/m4/script-args/00410ba0.disasm.json",
+        "META/m4/script-args/README.md",
+        "META/m4/script-args/validation.json",
+        "META/m4/script-args/integration-real.json",
+        "META/m4/script-args/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004458a0-functional-c-rail-paths",
+      "original_va": "004458a0",
+      "function": "bh_rail_near",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_rail_paths.c",
+      "source_sha256": "148f1e1ef311aaf9b2786b80a4c8370299412eeb3246075e55018a75e6e39f98",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "004458a0",
+            "end_exclusive": "00445905",
+            "bytes": 101,
+            "instructions": 38,
+            "sha256": "8ee593bfacc1552bb3931f881ba3dd2c3e3ec899e254e742ede1810e79ccea3f"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "rail-paths": {
+            "scenario": "rail-paths",
+            "checks": 6043,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "rail-paths": {
+            "scenario": "rail-paths",
+            "checks": 89,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "abi": "Pinned x86 cdecl, real 44-byte segment layout and stable source owner; PC53 nearest/masked profile",
+        "limits": [
+          "Actual stable source-owned segment storage replaces original global array; explicit capacity/state guards cover invalid counts.",
+          "Functional CRT sin/cos translation retains binary32 coordinate stores; PC24/extreme-angle/last-bit transcendental equivalence remains unvalidated.",
+          "No instruction-match claim; verified CRT dependencies excluded from game-owner counts.",
+          "Rail data restoration does not recover whole LEV entity/script construction or actual rail consumers/gameplay."
+        ]
+      },
+      "evidence": [
+        "META/m4/script-frontier/004458a0.disasm.json",
+        "META/m4/rail-paths/README.md",
+        "META/m4/rail-paths/validation.json",
+        "META/m4/rail-paths/integration-real.json",
+        "META/m4/rail-paths/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00445910-functional-c-rail-paths",
+      "original_va": "00445910",
+      "function": "bh_rail_add",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_rail_paths.c",
+      "source_sha256": "148f1e1ef311aaf9b2786b80a4c8370299412eeb3246075e55018a75e6e39f98",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00445910",
+            "end_exclusive": "004459f3",
+            "bytes": 227,
+            "instructions": 88,
+            "sha256": "e04911d02e428aff4e7cea1234a16deb2e2e02f4ad0d4c9a6fb2b3ccf9f91884"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "rail-paths": {
+            "scenario": "rail-paths",
+            "checks": 6043,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "rail-paths": {
+            "scenario": "rail-paths",
+            "checks": 89,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "abi": "Pinned x86 cdecl, real 44-byte segment layout and stable source owner; PC53 nearest/masked profile",
+        "limits": [
+          "Actual stable source-owned segment storage replaces original global array; explicit capacity/state guards cover invalid counts.",
+          "Functional CRT sin/cos translation retains binary32 coordinate stores; PC24/extreme-angle/last-bit transcendental equivalence remains unvalidated.",
+          "No instruction-match claim; verified CRT dependencies excluded from game-owner counts.",
+          "Rail data restoration does not recover whole LEV entity/script construction or actual rail consumers/gameplay."
+        ]
+      },
+      "evidence": [
+        "META/m4/script-frontier/00445910.disasm.json",
+        "META/m4/rail-paths/README.md",
+        "META/m4/rail-paths/validation.json",
+        "META/m4/rail-paths/integration-real.json",
+        "META/m4/rail-paths/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00445a00-functional-c-rail-paths",
+      "original_va": "00445a00",
+      "function": "bh_rail_placement",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_rail_paths.c",
+      "source_sha256": "148f1e1ef311aaf9b2786b80a4c8370299412eeb3246075e55018a75e6e39f98",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00445a00",
+            "end_exclusive": "00445e3f",
+            "bytes": 1087,
+            "instructions": 221,
+            "sha256": "222784c7adcca5c61cbd45cf51354b842947a004a168e957d1968c00bd835c56"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "rail-paths": {
+            "scenario": "rail-paths",
+            "checks": 6043,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "rail-paths": {
+            "scenario": "rail-paths",
+            "checks": 89,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "abi": "Pinned x86 cdecl, real 44-byte segment layout and stable source owner; PC53 nearest/masked profile",
+        "limits": [
+          "Actual stable source-owned segment storage replaces original global array; explicit capacity/state guards cover invalid counts.",
+          "Functional CRT sin/cos translation retains binary32 coordinate stores; PC24/extreme-angle/last-bit transcendental equivalence remains unvalidated.",
+          "No instruction-match claim; verified CRT dependencies excluded from game-owner counts.",
+          "Rail data restoration does not recover whole LEV entity/script construction or actual rail consumers/gameplay."
+        ]
+      },
+      "evidence": [
+        "META/m4/script-frontier/00445a00.disasm.json",
+        "META/m4/rail-paths/README.md",
+        "META/m4/rail-paths/validation.json",
+        "META/m4/rail-paths/integration-real.json",
+        "META/m4/rail-paths/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00445e70-functional-c-rail-paths",
+      "original_va": "00445e70",
+      "function": "bh_rail_link",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_rail_paths.c",
+      "source_sha256": "148f1e1ef311aaf9b2786b80a4c8370299412eeb3246075e55018a75e6e39f98",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00445e70",
+            "end_exclusive": "00446155",
+            "bytes": 741,
+            "instructions": 257,
+            "sha256": "6a2e9b619111018f06807c9f3220c3246ea7c006ff0147beaf9b5480e05575e2"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "rail-paths": {
+            "scenario": "rail-paths",
+            "checks": 6043,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "rail-paths": {
+            "scenario": "rail-paths",
+            "checks": 89,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "abi": "Pinned x86 cdecl, real 44-byte segment layout and stable source owner; PC53 nearest/masked profile",
+        "limits": [
+          "Actual stable source-owned segment storage replaces original global array; explicit capacity/state guards cover invalid counts.",
+          "Functional CRT sin/cos translation retains binary32 coordinate stores; PC24/extreme-angle/last-bit transcendental equivalence remains unvalidated.",
+          "No instruction-match claim; verified CRT dependencies excluded from game-owner counts.",
+          "Rail data restoration does not recover whole LEV entity/script construction or actual rail consumers/gameplay."
+        ]
+      },
+      "evidence": [
+        "META/m4/script-frontier/00445e70.disasm.json",
+        "META/m4/rail-paths/README.md",
+        "META/m4/rail-paths/validation.json",
+        "META/m4/rail-paths/integration-real.json",
+        "META/m4/rail-paths/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00470d50-functional-c-model-scale",
+      "original_va": "00470d50",
+      "function": "bh_model_reverse_edges",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_model_scale.c",
+      "source_sha256": "29523e765537bf9af23f33f32edf0b96cbb57ac7b26731bd0ec13a95d9354bce",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00470d50",
+            "end_exclusive": "00470df4",
+            "bytes": 164,
+            "instructions": 61,
+            "sha256": "112bff599eadb3d465e8f36349884e78f4a5d565bc34d5ce51e4370f02e70fbb"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "model-scale": {
+            "scenario": "model-scale",
+            "checks": 446,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "model-scale": {
+            "scenario": "model-scale",
+            "checks": 437,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "abi": "Pinned x86 cdecl, real model geometry and cache owners; PC53 nearest/masked profile",
+        "limits": [
+          "All associated source draw caches are explicitly enumerated and disposed through their real owning allocator; callers must reinitialize before drawing.",
+          "Opaque original runtime words are cleared without casting them to host pointers or freeing them.",
+          "Validated bounded model arrays and reflected acyclic topology are required; zero/nonfinite scales retain IEEE classes and unordered reflection, without NaN payload/sign guarantees.",
+          "No instruction-match claim; PC24, overflow and extreme floating-point equivalence remain unvalidated."
+        ]
+      },
+      "evidence": [
+        "META/m4/model-scale/00470d50.disasm.json",
+        "META/m4/model-scale/README.md",
+        "META/m4/model-scale/validation.json",
+        "META/m4/model-scale/integration-real.json",
+        "META/m4/model-scale/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00470e00-functional-c-model-scale",
+      "original_va": "00470e00",
+      "function": "bh_model_scale",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_model_scale.c",
+      "source_sha256": "29523e765537bf9af23f33f32edf0b96cbb57ac7b26731bd0ec13a95d9354bce",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00470e00",
+            "end_exclusive": "004711b0",
+            "bytes": 944,
+            "instructions": 334,
+            "sha256": "08db2471471e7a886752f99e3359d1e43db132dd6f1c3cc1a7681ce311166aef"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "model-scale": {
+            "scenario": "model-scale",
+            "checks": 446,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "model-scale": {
+            "scenario": "model-scale",
+            "checks": 437,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "abi": "Pinned x86 cdecl, real model geometry and cache owners; PC53 nearest/masked profile",
+        "limits": [
+          "All associated source draw caches are explicitly enumerated and disposed through their real owning allocator; callers must reinitialize before drawing.",
+          "Opaque original runtime words are cleared without casting them to host pointers or freeing them.",
+          "Validated bounded model arrays and reflected acyclic topology are required; zero/nonfinite scales retain IEEE classes and unordered reflection, without NaN payload/sign guarantees.",
+          "No instruction-match claim; PC24, overflow and extreme floating-point equivalence remain unvalidated."
+        ]
+      },
+      "evidence": [
+        "META/m4/model-scale/00470e00.disasm.json",
+        "META/m4/model-scale/README.md",
+        "META/m4/model-scale/validation.json",
+        "META/m4/model-scale/integration-real.json",
+        "META/m4/model-scale/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004711b0-functional-c-input-enum",
+      "original_va": "004711b0",
+      "function": "bh_input_enum_callback",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_input_enum.c",
+      "source_sha256": "7522dd98b756695671f0db53c6956a299064b99cedcae911c07fb069d185fa8f",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "004711b0",
+            "end_exclusive": "00471218",
+            "bytes": 104,
+            "instructions": 42,
+            "sha256": "cab8e87457f60d498d801ca9609dd5f42b8eebb31e92aef930e645661ce9c99c"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "input-enum": {
+            "scenario": "input-enum",
+            "checks": 17,
+            "failures": 0,
+            "devices_acquired": 0,
+            "input_polled": false,
+            "effects_created": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "input-enum": {
+            "scenario": "input-enum",
+            "checks": 17,
+            "failures": 0,
+            "devices_acquired": 0,
+            "input_polled": false,
+            "effects_created": 0,
+            "original_code_required": false
+          }
+        },
+        "abi": "Pinned x86 stdcall callback RET8 with real IDirectInputA/IDirectInputDevice2A owners",
+        "limits": [
+          "Actual native device construction and metadata QueryInterface only; no Acquire, poll, effect creation, physical input or UI capture.",
+          "Successful queried device reference transfers to existing BHForceFeedback owner; temporary base interface releases after both QueryInterface outcomes.",
+          "Hardware-positive device enumeration depends on host availability and must be reported separately from failure-path checks.",
+          "Full-suite preexisting silent PCM twelve Play calls are unrelated to this input callback; no game/original code executes."
+        ]
+      },
+      "evidence": [
+        "META/m4/input-enum/004711b0.disasm.json",
+        "META/m4/input-enum/README.md",
+        "META/m4/input-enum/validation.json",
+        "META/m4/input-enum/integration-real.json",
+        "META/m4/input-enum/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004470c0-functional-c-rail-wagon",
+      "original_va": "004470c0",
+      "function": "bh_rail_wagon_spawn",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary entity/script behavior, not verified CRT; historical engine authorship unresolved",
+      "source": "src/bh_rail_wagon.c",
+      "source_sha256": "f81830abcf5b04e2b4baa7edf46e9350d0df3779c89a1c325212afb0c5cbbaa2",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "004470c0",
+            "end_exclusive": "004474b6",
+            "bytes": 1014,
+            "instructions": 284,
+            "sha256": "db13ee3bd807350dae70da08abc94bc815afea0347892c8c5bba59b4c1b371b3"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "rail-wagon": {
+            "scenario": "rail-wagon",
+            "checks": 64,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "rail-wagon": {
+            "scenario": "rail-wagon",
+            "checks": 53,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0,
+            "gameplay_executed": false
+          }
+        },
+        "abi": "Pinned x86 cdecl entity callbacks, real entity/world/rail/draw/sound owners; PC53 nearest/masked profile",
+        "limits": [
+          "Rail storage and owning world/room/entity/render/sound contexts must outlive every wagon; live rail storage cannot be relinked or disposed.",
+          "Production fixed draw/step/query/follower callbacks are recovered together; no VM callback or original code address is substituted.",
+          "Source guards for invalid linked topology/divisors/lifetimes are documented separately from valid original behavior.",
+          "PC24 and extreme numeric behavior remain unvalidated; this source family does not establish a playable game.",
+          "No new native Play, physical input or UI capture is required; full-suite preexisting silent PCM Play calls are separately retained."
+        ]
+      },
+      "evidence": [
+        "META/m4/rail-wagon/original/004470c0.disasm.json",
+        "META/m4/rail-wagon/README.md",
+        "META/m4/rail-wagon/validation.json",
+        "META/m4/rail-wagon/integration-real.json",
+        "META/m4/rail-wagon/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00446160-functional-c-rail-wagon",
+      "original_va": "00446160",
+      "function": "bh_rail_wagon_draw",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary entity/script behavior, not verified CRT; historical engine authorship unresolved",
+      "source": "src/bh_rail_wagon.c",
+      "source_sha256": "f81830abcf5b04e2b4baa7edf46e9350d0df3779c89a1c325212afb0c5cbbaa2",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00446160",
+            "end_exclusive": "004462eb",
+            "bytes": 395,
+            "instructions": 125,
+            "sha256": "cb0a11fef29073a729bab494762e7a798d119b3c1d83288e7be99fdbd3cee9ba"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "rail-wagon": {
+            "scenario": "rail-wagon",
+            "checks": 64,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "rail-wagon": {
+            "scenario": "rail-wagon",
+            "checks": 53,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0,
+            "gameplay_executed": false
+          }
+        },
+        "abi": "Pinned x86 cdecl entity callbacks, real entity/world/rail/draw/sound owners; PC53 nearest/masked profile",
+        "limits": [
+          "Rail storage and owning world/room/entity/render/sound contexts must outlive every wagon; live rail storage cannot be relinked or disposed.",
+          "Production fixed draw/step/query/follower callbacks are recovered together; no VM callback or original code address is substituted.",
+          "Source guards for invalid linked topology/divisors/lifetimes are documented separately from valid original behavior.",
+          "PC24 and extreme numeric behavior remain unvalidated; this source family does not establish a playable game.",
+          "No new native Play, physical input or UI capture is required; full-suite preexisting silent PCM Play calls are separately retained."
+        ]
+      },
+      "evidence": [
+        "META/m4/rail-wagon/original/00446160.disasm.json",
+        "META/m4/rail-wagon/README.md",
+        "META/m4/rail-wagon/validation.json",
+        "META/m4/rail-wagon/integration-real.json",
+        "META/m4/rail-wagon/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004462f0-functional-c-rail-wagon",
+      "original_va": "004462f0",
+      "function": "bh_rail_wagon_tick",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary entity/script behavior, not verified CRT; historical engine authorship unresolved",
+      "source": "src/bh_rail_wagon.c",
+      "source_sha256": "f81830abcf5b04e2b4baa7edf46e9350d0df3779c89a1c325212afb0c5cbbaa2",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "004462f0",
+            "end_exclusive": "00446b09",
+            "bytes": 2073,
+            "instructions": 574,
+            "sha256": "1213baaee3e4c78f90197f7b6c80f8bc69e3333ef8204924c7537a4dff00038e"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "rail-wagon": {
+            "scenario": "rail-wagon",
+            "checks": 64,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "rail-wagon": {
+            "scenario": "rail-wagon",
+            "checks": 53,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0,
+            "gameplay_executed": false
+          }
+        },
+        "abi": "Pinned x86 cdecl entity callbacks, real entity/world/rail/draw/sound owners; PC53 nearest/masked profile",
+        "limits": [
+          "Rail storage and owning world/room/entity/render/sound contexts must outlive every wagon; live rail storage cannot be relinked or disposed.",
+          "Production fixed draw/step/query/follower callbacks are recovered together; no VM callback or original code address is substituted.",
+          "Source guards for invalid linked topology/divisors/lifetimes are documented separately from valid original behavior.",
+          "PC24 and extreme numeric behavior remain unvalidated; this source family does not establish a playable game.",
+          "No new native Play, physical input or UI capture is required; full-suite preexisting silent PCM Play calls are separately retained."
+        ]
+      },
+      "evidence": [
+        "META/m4/rail-wagon/original/004462f0.disasm.json",
+        "META/m4/rail-wagon/README.md",
+        "META/m4/rail-wagon/validation.json",
+        "META/m4/rail-wagon/integration-real.json",
+        "META/m4/rail-wagon/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00446b10-functional-c-rail-wagon",
+      "original_va": "00446b10",
+      "function": "bh_rail_wagon_follow",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary entity/script behavior, not verified CRT; historical engine authorship unresolved",
+      "source": "src/bh_rail_wagon.c",
+      "source_sha256": "f81830abcf5b04e2b4baa7edf46e9350d0df3779c89a1c325212afb0c5cbbaa2",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00446b10",
+            "end_exclusive": "00446dfa",
+            "bytes": 746,
+            "instructions": 219,
+            "sha256": "4ee3098737746d35993c4940f115b5c557b8f736f1aa8f5bdf8020fd1c36a7f9"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "rail-wagon": {
+            "scenario": "rail-wagon",
+            "checks": 64,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "rail-wagon": {
+            "scenario": "rail-wagon",
+            "checks": 53,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0,
+            "gameplay_executed": false
+          }
+        },
+        "abi": "Pinned x86 cdecl entity callbacks, real entity/world/rail/draw/sound owners; PC53 nearest/masked profile",
+        "limits": [
+          "Rail storage and owning world/room/entity/render/sound contexts must outlive every wagon; live rail storage cannot be relinked or disposed.",
+          "Production fixed draw/step/query/follower callbacks are recovered together; no VM callback or original code address is substituted.",
+          "Source guards for invalid linked topology/divisors/lifetimes are documented separately from valid original behavior.",
+          "PC24 and extreme numeric behavior remain unvalidated; this source family does not establish a playable game.",
+          "No new native Play, physical input or UI capture is required; full-suite preexisting silent PCM Play calls are separately retained."
+        ]
+      },
+      "evidence": [
+        "META/m4/rail-wagon/original/00446b10.disasm.json",
+        "META/m4/rail-wagon/README.md",
+        "META/m4/rail-wagon/validation.json",
+        "META/m4/rail-wagon/integration-real.json",
+        "META/m4/rail-wagon/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00446e00-functional-c-rail-wagon",
+      "original_va": "00446e00",
+      "function": "bh_rail_wagon_query",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary entity/script behavior, not verified CRT; historical engine authorship unresolved",
+      "source": "src/bh_rail_wagon.c",
+      "source_sha256": "f81830abcf5b04e2b4baa7edf46e9350d0df3779c89a1c325212afb0c5cbbaa2",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00446e00",
+            "end_exclusive": "00447094",
+            "bytes": 660,
+            "instructions": 207,
+            "sha256": "95cd50a69e1d5070e6af434c2c157cf939ad33461764871d89e3d5a4e0224e4d"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "rail-wagon": {
+            "scenario": "rail-wagon",
+            "checks": 64,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "rail-wagon": {
+            "scenario": "rail-wagon",
+            "checks": 53,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0,
+            "gameplay_executed": false
+          }
+        },
+        "abi": "Pinned x86 cdecl entity callbacks, real entity/world/rail/draw/sound owners; PC53 nearest/masked profile",
+        "limits": [
+          "Rail storage and owning world/room/entity/render/sound contexts must outlive every wagon; live rail storage cannot be relinked or disposed.",
+          "Production fixed draw/step/query/follower callbacks are recovered together; no VM callback or original code address is substituted.",
+          "Source guards for invalid linked topology/divisors/lifetimes are documented separately from valid original behavior.",
+          "PC24 and extreme numeric behavior remain unvalidated; this source family does not establish a playable game.",
+          "No new native Play, physical input or UI capture is required; full-suite preexisting silent PCM Play calls are separately retained."
+        ]
+      },
+      "evidence": [
+        "META/m4/rail-wagon/original/00446e00.disasm.json",
+        "META/m4/rail-wagon/README.md",
+        "META/m4/rail-wagon/validation.json",
+        "META/m4/rail-wagon/integration-real.json",
+        "META/m4/rail-wagon/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00443010-functional-c-wait-delete-exposure",
+      "original_va": "00443010",
+      "function": "template_timer (owned activate, activity-gated child)",
+      "role": "engine_candidate",
+      "provenance_confidence": "Full ordinary callback boundaries and owning script relationships reviewed; engine/game authorship unresolved; CRT random support reused",
+      "source": "src/bh_script_timer.c",
+      "source_sha256": "c6babeca216dd9e27548dc5b9343cbc0a5285b7f58d8fa317ea41add93cb2079",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Real BHEntityPool allocation/query/step/release and verified timer payload with explicit source context/actor inputs",
+        "limits": [
+          "Real script statement/level construction is still incomplete; explicit binder supplies these actual callbacks without claiming full parser admission",
+          "Actor variables and one-level owner/activity state are borrowed explicit source inputs, not guessed original global/entity/world layouts",
+          "PC53, fixed double 1/30 tick, shared verified VC5 CRT rand state and signed 32-bit IMUL wrap; no original runtime precision inference",
+          "Callback release/recycle stops rearm with MUTATION; invalid source actor selectors reject instead of original unsafe reads",
+          "Unit checks execute source pool/query/step behavior, not automated game execution or gameplay",
+          "Count-zero append-only getter exposes actual delete callback; current variant revalidated in real/clean script-timers and script-wait scenarios without byte-match transfer."
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "script-timers": {
+            "scenario": "script-timers",
+            "checks": 85,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "script-wait": {
+            "scenario": "script-wait",
+            "checks": 53,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "script-timers": {
+            "scenario": "script-timers",
+            "checks": 85,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "script-wait": {
+            "scenario": "script-wait",
+            "checks": 53,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "source_variant": "Append-only count-zero actual delete callback getter",
+        "original_body_prefix_proof": {
+          "original_source_snapshot": "META/m4/loading-display/sources/7e2aa2cc600ef0e963178d46bc5976b04784c08d5f035f48fcd0f3b3c14229e1-bh_script_timer.c.txt",
+          "original_source_sha256": "7e2aa2cc600ef0e963178d46bc5976b04784c08d5f035f48fcd0f3b3c14229e1",
+          "current_source_sha256": "c6babeca216dd9e27548dc5b9343cbc0a5285b7f58d8fa317ea41add93cb2079",
+          "original_prefix_bytes": 8339,
+          "suffix": "\nBHEntityStep __cdecl bh_script_timer_delete_step(void){return delete_tick;}\n",
+          "original_body_unchanged": true,
+          "getter_new_original_count": 0
+        }
+      },
+      "evidence": [
+        "META/m4/script-wait/validation.json",
+        "META/m4/script-wait/integration-real.json",
+        "META/m4/script-wait/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00443140-functional-c-wait-delete-exposure",
+      "original_va": "00443140",
+      "function": "template_timer2 (owned activate, unconditional child)",
+      "role": "engine_candidate",
+      "provenance_confidence": "Full ordinary callback boundaries and owning script relationships reviewed; engine/game authorship unresolved; CRT random support reused",
+      "source": "src/bh_script_timer.c",
+      "source_sha256": "c6babeca216dd9e27548dc5b9343cbc0a5285b7f58d8fa317ea41add93cb2079",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Real BHEntityPool allocation/query/step/release and verified timer payload with explicit source context/actor inputs",
+        "limits": [
+          "Real script statement/level construction is still incomplete; explicit binder supplies these actual callbacks without claiming full parser admission",
+          "Actor variables and one-level owner/activity state are borrowed explicit source inputs, not guessed original global/entity/world layouts",
+          "PC53, fixed double 1/30 tick, shared verified VC5 CRT rand state and signed 32-bit IMUL wrap; no original runtime precision inference",
+          "Callback release/recycle stops rearm with MUTATION; invalid source actor selectors reject instead of original unsafe reads",
+          "Unit checks execute source pool/query/step behavior, not automated game execution or gameplay",
+          "Count-zero append-only getter exposes actual delete callback; current variant revalidated in real/clean script-timers and script-wait scenarios without byte-match transfer."
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "script-timers": {
+            "scenario": "script-timers",
+            "checks": 85,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "script-wait": {
+            "scenario": "script-wait",
+            "checks": 53,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "script-timers": {
+            "scenario": "script-timers",
+            "checks": 85,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "script-wait": {
+            "scenario": "script-wait",
+            "checks": 53,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "source_variant": "Append-only count-zero actual delete callback getter",
+        "original_body_prefix_proof": {
+          "original_source_snapshot": "META/m4/loading-display/sources/7e2aa2cc600ef0e963178d46bc5976b04784c08d5f035f48fcd0f3b3c14229e1-bh_script_timer.c.txt",
+          "original_source_sha256": "7e2aa2cc600ef0e963178d46bc5976b04784c08d5f035f48fcd0f3b3c14229e1",
+          "current_source_sha256": "c6babeca216dd9e27548dc5b9343cbc0a5285b7f58d8fa317ea41add93cb2079",
+          "original_prefix_bytes": 8339,
+          "suffix": "\nBHEntityStep __cdecl bh_script_timer_delete_step(void){return delete_tick;}\n",
+          "original_body_unchanged": true,
+          "getter_new_original_count": 0
+        }
+      },
+      "evidence": [
+        "META/m4/script-wait/validation.json",
+        "META/m4/script-wait/integration-real.json",
+        "META/m4/script-wait/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00442cf0-functional-c-wait-delete-exposure",
+      "original_va": "00442cf0",
+      "function": "active_tick (owned timer tick)",
+      "role": "engine_candidate",
+      "provenance_confidence": "Full ordinary callback boundaries and owning script relationships reviewed; engine/game authorship unresolved; CRT random support reused",
+      "source": "src/bh_script_timer.c",
+      "source_sha256": "c6babeca216dd9e27548dc5b9343cbc0a5285b7f58d8fa317ea41add93cb2079",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Real BHEntityPool allocation/query/step/release and verified timer payload with explicit source context/actor inputs",
+        "limits": [
+          "Real script statement/level construction is still incomplete; explicit binder supplies these actual callbacks without claiming full parser admission",
+          "Actor variables and one-level owner/activity state are borrowed explicit source inputs, not guessed original global/entity/world layouts",
+          "PC53, fixed double 1/30 tick, shared verified VC5 CRT rand state and signed 32-bit IMUL wrap; no original runtime precision inference",
+          "Callback release/recycle stops rearm with MUTATION; invalid source actor selectors reject instead of original unsafe reads",
+          "Unit checks execute source pool/query/step behavior, not automated game execution or gameplay",
+          "Count-zero append-only getter exposes actual delete callback; current variant revalidated in real/clean script-timers and script-wait scenarios without byte-match transfer."
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "script-timers": {
+            "scenario": "script-timers",
+            "checks": 85,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "script-wait": {
+            "scenario": "script-wait",
+            "checks": 53,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "script-timers": {
+            "scenario": "script-timers",
+            "checks": 85,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "script-wait": {
+            "scenario": "script-wait",
+            "checks": 53,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "source_variant": "Append-only count-zero actual delete callback getter",
+        "original_body_prefix_proof": {
+          "original_source_snapshot": "META/m4/loading-display/sources/7e2aa2cc600ef0e963178d46bc5976b04784c08d5f035f48fcd0f3b3c14229e1-bh_script_timer.c.txt",
+          "original_source_sha256": "7e2aa2cc600ef0e963178d46bc5976b04784c08d5f035f48fcd0f3b3c14229e1",
+          "current_source_sha256": "c6babeca216dd9e27548dc5b9343cbc0a5285b7f58d8fa317ea41add93cb2079",
+          "original_prefix_bytes": 8339,
+          "suffix": "\nBHEntityStep __cdecl bh_script_timer_delete_step(void){return delete_tick;}\n",
+          "original_body_unchanged": true,
+          "getter_new_original_count": 0
+        }
+      },
+      "evidence": [
+        "META/m4/script-wait/validation.json",
+        "META/m4/script-wait/integration-real.json",
+        "META/m4/script-wait/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00442de0-functional-c-wait-delete-exposure",
+      "original_va": "00442de0",
+      "function": "always_tick (owned timer tick)",
+      "role": "engine_candidate",
+      "provenance_confidence": "Full ordinary callback boundaries and owning script relationships reviewed; engine/game authorship unresolved; CRT random support reused",
+      "source": "src/bh_script_timer.c",
+      "source_sha256": "c6babeca216dd9e27548dc5b9343cbc0a5285b7f58d8fa317ea41add93cb2079",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Real BHEntityPool allocation/query/step/release and verified timer payload with explicit source context/actor inputs",
+        "limits": [
+          "Real script statement/level construction is still incomplete; explicit binder supplies these actual callbacks without claiming full parser admission",
+          "Actor variables and one-level owner/activity state are borrowed explicit source inputs, not guessed original global/entity/world layouts",
+          "PC53, fixed double 1/30 tick, shared verified VC5 CRT rand state and signed 32-bit IMUL wrap; no original runtime precision inference",
+          "Callback release/recycle stops rearm with MUTATION; invalid source actor selectors reject instead of original unsafe reads",
+          "Unit checks execute source pool/query/step behavior, not automated game execution or gameplay",
+          "Count-zero append-only getter exposes actual delete callback; current variant revalidated in real/clean script-timers and script-wait scenarios without byte-match transfer."
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "script-timers": {
+            "scenario": "script-timers",
+            "checks": 85,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "script-wait": {
+            "scenario": "script-wait",
+            "checks": 53,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "script-timers": {
+            "scenario": "script-timers",
+            "checks": 85,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "script-wait": {
+            "scenario": "script-wait",
+            "checks": 53,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "source_variant": "Append-only count-zero actual delete callback getter",
+        "original_body_prefix_proof": {
+          "original_source_snapshot": "META/m4/loading-display/sources/7e2aa2cc600ef0e963178d46bc5976b04784c08d5f035f48fcd0f3b3c14229e1-bh_script_timer.c.txt",
+          "original_source_sha256": "7e2aa2cc600ef0e963178d46bc5976b04784c08d5f035f48fcd0f3b3c14229e1",
+          "current_source_sha256": "c6babeca216dd9e27548dc5b9343cbc0a5285b7f58d8fa317ea41add93cb2079",
+          "original_prefix_bytes": 8339,
+          "suffix": "\nBHEntityStep __cdecl bh_script_timer_delete_step(void){return delete_tick;}\n",
+          "original_body_unchanged": true,
+          "getter_new_original_count": 0
+        }
+      },
+      "evidence": [
+        "META/m4/script-wait/validation.json",
+        "META/m4/script-wait/integration-real.json",
+        "META/m4/script-wait/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00442eb0-functional-c-wait-delete-exposure",
+      "original_va": "00442eb0",
+      "function": "delete_tick",
+      "role": "engine_candidate",
+      "provenance_confidence": "Full ordinary callback boundaries and owning script relationships reviewed; engine/game authorship unresolved; CRT random support reused",
+      "source": "src/bh_script_timer.c",
+      "source_sha256": "c6babeca216dd9e27548dc5b9343cbc0a5285b7f58d8fa317ea41add93cb2079",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Real BHEntityPool allocation/query/step/release and verified timer payload with explicit source context/actor inputs",
+        "limits": [
+          "Real script statement/level construction is still incomplete; explicit binder supplies these actual callbacks without claiming full parser admission",
+          "Actor variables and one-level owner/activity state are borrowed explicit source inputs, not guessed original global/entity/world layouts",
+          "PC53, fixed double 1/30 tick, shared verified VC5 CRT rand state and signed 32-bit IMUL wrap; no original runtime precision inference",
+          "Callback release/recycle stops rearm with MUTATION; invalid source actor selectors reject instead of original unsafe reads",
+          "Unit checks execute source pool/query/step behavior, not automated game execution or gameplay",
+          "Count-zero append-only getter exposes actual delete callback; current variant revalidated in real/clean script-timers and script-wait scenarios without byte-match transfer."
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "script-timers": {
+            "scenario": "script-timers",
+            "checks": 85,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "script-wait": {
+            "scenario": "script-wait",
+            "checks": 53,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "script-timers": {
+            "scenario": "script-timers",
+            "checks": 85,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "script-wait": {
+            "scenario": "script-wait",
+            "checks": 53,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "source_variant": "Append-only count-zero actual delete callback getter",
+        "original_body_prefix_proof": {
+          "original_source_snapshot": "META/m4/loading-display/sources/7e2aa2cc600ef0e963178d46bc5976b04784c08d5f035f48fcd0f3b3c14229e1-bh_script_timer.c.txt",
+          "original_source_sha256": "7e2aa2cc600ef0e963178d46bc5976b04784c08d5f035f48fcd0f3b3c14229e1",
+          "current_source_sha256": "c6babeca216dd9e27548dc5b9343cbc0a5285b7f58d8fa317ea41add93cb2079",
+          "original_prefix_bytes": 8339,
+          "suffix": "\nBHEntityStep __cdecl bh_script_timer_delete_step(void){return delete_tick;}\n",
+          "original_body_unchanged": true,
+          "getter_new_original_count": 0
+        }
+      },
+      "evidence": [
+        "META/m4/script-wait/validation.json",
+        "META/m4/script-wait/integration-real.json",
+        "META/m4/script-wait/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00442ef0-functional-c-wait-delete-exposure",
+      "original_va": "00442ef0",
+      "function": "running_query",
+      "role": "engine_candidate",
+      "provenance_confidence": "Full ordinary callback boundaries and owning script relationships reviewed; engine/game authorship unresolved; CRT random support reused",
+      "source": "src/bh_script_timer.c",
+      "source_sha256": "c6babeca216dd9e27548dc5b9343cbc0a5285b7f58d8fa317ea41add93cb2079",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Real BHEntityPool allocation/query/step/release and verified timer payload with explicit source context/actor inputs",
+        "limits": [
+          "Real script statement/level construction is still incomplete; explicit binder supplies these actual callbacks without claiming full parser admission",
+          "Actor variables and one-level owner/activity state are borrowed explicit source inputs, not guessed original global/entity/world layouts",
+          "PC53, fixed double 1/30 tick, shared verified VC5 CRT rand state and signed 32-bit IMUL wrap; no original runtime precision inference",
+          "Callback release/recycle stops rearm with MUTATION; invalid source actor selectors reject instead of original unsafe reads",
+          "Unit checks execute source pool/query/step behavior, not automated game execution or gameplay",
+          "Count-zero append-only getter exposes actual delete callback; current variant revalidated in real/clean script-timers and script-wait scenarios without byte-match transfer."
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "script-timers": {
+            "scenario": "script-timers",
+            "checks": 85,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "script-wait": {
+            "scenario": "script-wait",
+            "checks": 53,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "script-timers": {
+            "scenario": "script-timers",
+            "checks": 85,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "script-wait": {
+            "scenario": "script-wait",
+            "checks": 53,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "source_variant": "Append-only count-zero actual delete callback getter",
+        "original_body_prefix_proof": {
+          "original_source_snapshot": "META/m4/loading-display/sources/7e2aa2cc600ef0e963178d46bc5976b04784c08d5f035f48fcd0f3b3c14229e1-bh_script_timer.c.txt",
+          "original_source_sha256": "7e2aa2cc600ef0e963178d46bc5976b04784c08d5f035f48fcd0f3b3c14229e1",
+          "current_source_sha256": "c6babeca216dd9e27548dc5b9343cbc0a5285b7f58d8fa317ea41add93cb2079",
+          "original_prefix_bytes": 8339,
+          "suffix": "\nBHEntityStep __cdecl bh_script_timer_delete_step(void){return delete_tick;}\n",
+          "original_body_unchanged": true,
+          "getter_new_original_count": 0
+        }
+      },
+      "evidence": [
+        "META/m4/script-wait/validation.json",
+        "META/m4/script-wait/integration-real.json",
+        "META/m4/script-wait/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00443270-functional-c-script-wait",
+      "original_va": "00443270",
+      "function": "bh_script_wait_template",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary entity/script behavior, not verified CRT; historical engine authorship unresolved",
+      "source": "src/bh_script_wait.c",
+      "source_sha256": "6d2c581164d3ec4d3adbc681350db962cb3442c2fd3bb3e7fa5274ea853f7788",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00443270",
+            "end_exclusive": "0044334d",
+            "bytes": 221,
+            "instructions": 80,
+            "sha256": "b42d09d44adeea441b21c4d72b0626dcb3988bdc26f504052ddf737810bb2933"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "script-wait": {
+            "scenario": "script-wait",
+            "checks": 53,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "script-wait": {
+            "scenario": "script-wait",
+            "checks": 53,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "abi": "Pinned x86 cdecl entity query callbacks, real timer context and48-byte copied wait state",
+        "limits": [
+          "Real timer delete callback is exposed through a count-zero getter; no duplicated owner or guessed callback.",
+          "Actual pool, timer context, actors and callback entities must outlive queries; generation guards protect recycling callbacks.",
+          "Original unspecified40-byte event payload is documented without claiming deterministic original stack bytes.",
+          "No game/original execution or physical input/UI operations; full-suite existing silent PCM Play calls remain separately recorded."
+        ]
+      },
+      "evidence": [
+        "META/m4/script-wait/00443270.disasm.json",
+        "META/m4/script-wait/README.md",
+        "META/m4/script-wait/validation.json",
+        "META/m4/script-wait/integration-real.json",
+        "META/m4/script-wait/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00442f40-functional-c-script-wait",
+      "original_va": "00442f40",
+      "function": "bh_script_wait_child",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary entity/script behavior, not verified CRT; historical engine authorship unresolved",
+      "source": "src/bh_script_wait.c",
+      "source_sha256": "6d2c581164d3ec4d3adbc681350db962cb3442c2fd3bb3e7fa5274ea853f7788",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00442f40",
+            "end_exclusive": "0044300a",
+            "bytes": 202,
+            "instructions": 63,
+            "sha256": "c7c10a05cf7d5459d8f04ffa8ce9d853eee5e4febde1fc932e2eb3279eb068a8"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "script-wait": {
+            "scenario": "script-wait",
+            "checks": 53,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "script-wait": {
+            "scenario": "script-wait",
+            "checks": 53,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "abi": "Pinned x86 cdecl entity query callbacks, real timer context and48-byte copied wait state",
+        "limits": [
+          "Real timer delete callback is exposed through a count-zero getter; no duplicated owner or guessed callback.",
+          "Actual pool, timer context, actors and callback entities must outlive queries; generation guards protect recycling callbacks.",
+          "Original unspecified40-byte event payload is documented without claiming deterministic original stack bytes.",
+          "No game/original execution or physical input/UI operations; full-suite existing silent PCM Play calls remain separately recorded."
+        ]
+      },
+      "evidence": [
+        "META/m4/script-wait/00442f40.disasm.json",
+        "META/m4/script-wait/README.md",
+        "META/m4/script-wait/validation.json",
+        "META/m4/script-wait/integration-real.json",
+        "META/m4/script-wait/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00441b80-functional-c-pickup-basic",
+      "original_va": "00441b80",
+      "function": "bh_pickup_basic_spawn",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary entity/script behavior, not verified CRT; historical engine authorship unresolved",
+      "source": "src/bh_pickup_basic.c",
+      "source_sha256": "969c63ca3c18a89d20cc379d8ebae881aa2fdf9509699b5a354d3db66cc28ac3",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00441b80",
+            "end_exclusive": "00441cd4",
+            "bytes": 340,
+            "instructions": 77,
+            "sha256": "0869724d27ad41249953d153dfedd5270dbbcd2095dc73e485a100ac18c63f6b"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "pickup-basic": {
+            "scenario": "pickup-basic",
+            "checks": 44,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "pickup-basic": {
+            "scenario": "pickup-basic",
+            "checks": 44,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "abi": "Pinned x86 cdecl, borrowed persistent pickup context and real entity/world/draw ownership",
+        "limits": [
+          "Whole basic constructor00441b80 only; already admitted variant constructor00441a00 and installed pickup callbacks are reused without recounting.",
+          "Persistent actual BHPickupContext must outlive every entity; source-private binding and actual default draw bridge are required.",
+          "Two real CRT rand calls follow successful entity allocation; source guards and malformed world bindings are documented separately.",
+          "No game/original code, physical input or UI capture; full-suite existing native silent PCM Play calls remain separately recorded."
+        ]
+      },
+      "evidence": [
+        "META/m4/script-frontier/00441b80.disasm.json",
+        "META/m4/pickup-basic/README.md",
+        "META/m4/pickup-basic/validation.json",
+        "META/m4/pickup-basic/integration-real.json",
+        "META/m4/pickup-basic/clean/clean-checkout.json"
       ]
     }
   ],
@@ -22517,6 +24665,6 @@
       ]
     }
   ],
-  "current_source_frontier": "META/m4/sound-loader/NEXT.md",
-  "latest_source_session": "META/m4/frame-pipeline/session.json"
+  "current_source_frontier": "META/m4/target365/NEXT.md",
+  "latest_source_session": "META/m4/target365/session.json"
 }
