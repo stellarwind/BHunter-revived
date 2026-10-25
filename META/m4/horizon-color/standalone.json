@@ -1,0 +1,91 @@
+{
+  "commands": [
+    {
+      "args": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/FoD:\\Decomp\\Bhunter\\build\\horizon-color\\bh_horizon_color.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_horizon_color.c"
+      ],
+      "exit_code": 0,
+      "stdout": "bh_horizon_color.c\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/FoD:\\Decomp\\Bhunter\\build\\horizon-color\\bh_texture_tables.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_texture_tables.c"
+      ],
+      "exit_code": 0,
+      "stdout": "bh_texture_tables.c\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/DBH_HORIZON_COLOR_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\horizon-color\\horizon_color_tests.obj",
+        "D:\\Decomp\\Bhunter\\tests\\horizon_color.c"
+      ],
+      "exit_code": 0,
+      "stdout": "horizon_color.c\n",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/map:D:\\Decomp\\Bhunter\\build\\horizon-color\\horizon_color.map",
+        "/out:D:\\Decomp\\Bhunter\\build\\horizon-color\\horizon_color.exe",
+        "D:\\Decomp\\Bhunter\\build\\horizon-color\\bh_horizon_color.obj",
+        "D:\\Decomp\\Bhunter\\build\\horizon-color\\bh_texture_tables.obj",
+        "D:\\Decomp\\Bhunter\\build\\horizon-color\\horizon_color_tests.obj"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "args": [
+        "D:\\Decomp\\Bhunter\\build\\horizon-color\\horizon_color.exe"
+      ],
+      "exit_code": 0,
+      "stdout": "horizon-color: 131350 checks, 0 failures\n{\"scenario\":\"horizon-color\",\"checks\":131350,\"failures\":0}\n",
+      "stderr": ""
+    }
+  ],
+  "passed": true,
+  "original_code_executed": false,
+  "game_launches": 0
+}

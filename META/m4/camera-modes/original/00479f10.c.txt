@@ -1,0 +1,18 @@
+
+/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */
+
+void FUN_00479f10(int param_1,float *param_2,undefined4 param_3,undefined4 param_4,float *param_5,
+                 float *param_6)
+
+{
+  float fStack_c;
+  float fStack_8;
+  float fStack_4;
+  
+  fStack_c = *param_5 * (float)_DAT_0048a2a0 + *param_6 * (float)_DAT_0048a298 + *param_2;
+  fStack_8 = param_5[1] * (float)_DAT_0048a2a0 + param_6[1] * (float)_DAT_0048a298 + param_2[1];
+  fStack_4 = param_5[2] * (float)_DAT_0048a2a0 + param_6[2] * (float)_DAT_0048a298 + param_2[2];
+  FUN_00479910(param_3,param_1,&fStack_c,(float *)param_3,0.85,0.98);
+  return;
+}
+

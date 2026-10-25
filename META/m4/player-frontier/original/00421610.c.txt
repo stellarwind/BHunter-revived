@@ -1,0 +1,43 @@
+
+int __cdecl FUN_00421610(int param_1,float *param_2)
+
+{
+  float fVar1;
+  float fVar2;
+  float fVar3;
+  int iVar4;
+  int iVar5;
+  float local_38;
+  undefined4 local_28;
+  float fStack_24;
+  float fStack_20;
+  float fStack_1c;
+  
+  local_38 = 9e+37;
+  iVar5 = 0;
+  iVar4 = DAT_004dfb28;
+  if ((DAT_004dfab8 != 0) && (*(int *)(DAT_004dfab8 + 0x238) != 0)) {
+    fVar3 = *(float *)(DAT_004dfab8 + 0xc) - *param_2;
+    fVar1 = *(float *)(DAT_004dfab8 + 0x10) - param_2[1];
+    fVar2 = *(float *)(DAT_004dfab8 + 0x14) - param_2[2];
+    local_38 = SQRT(fVar2 * fVar2 + fVar1 * fVar1 + fVar3 * fVar3) /
+               (float)*(int *)(DAT_004dfab8 + 0x234);
+    iVar5 = DAT_004dfab8;
+  }
+  for (; iVar4 != 0; iVar4 = *(int *)(iVar4 + 0xf0)) {
+    if ((iVar4 != param_1) && (*(int *)(iVar4 + 0xfc) == 2)) {
+      local_28 = 3;
+      (**(code **)(iVar4 + 0xd0))(iVar4,&local_28);
+      fVar1 = SQRT((fStack_1c - param_2[2]) * (fStack_1c - param_2[2]) +
+                   (fStack_20 - param_2[1]) * (fStack_20 - param_2[1]) +
+                   (fStack_24 - *param_2) * (fStack_24 - *param_2)) / (float)*(int *)(iVar4 + 0x100)
+      ;
+      if (fVar1 < local_38) {
+        iVar5 = iVar4;
+        local_38 = fVar1;
+      }
+    }
+  }
+  return iVar5;
+}
+

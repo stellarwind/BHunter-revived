@@ -1,8 +1,12 @@
 # BHunter restoration progress
 
-Updated 2026-10-24. Plan: `../RESTORATION_PLAN.md`.
+Updated 2026-10-25. Plan: `../RESTORATION_PLAN.md`.
 
 ## Current checkpoint
+
+Timed source restoration, 2026-10-25: **The timed scene-caller dependency block restores 52 complete owners: 234/727 admitted original functions in 203 translation units; 3,536,976 archive checks, 3,044,022 clean checks and 99 missing-module link controls. Every admitted variant compiles in its real translation unit, links against real definitions in build/m0/bhunter-integration.exe, and passes affected source-built checks. Real and clean source hashes agree. No original code or game execution occurred.**
+
+Both scene callbacks `0041c860`/`00428f50` remain unimplemented. Full horizon/software rasterization, HUD/handoff, player/flyby constructors, physical input collection, weapon lifetimes and startup resource/script bindings remain open. Next recover a complete dependency family on that frontier; weighted target helper `00421610` is reviewed but unimplemented. PC24, CD audio and DirectPlay requirements remain. M3 is skipped; M4 is incomplete. This timed block is stopped pending user resumption. Evidence: `m4/scene-callers/README.md`, `m4/scene-callers/validation.json`; audit `python tools/check_scene_callers.py`.
 
 Human playtesting offer, 2026-10-24: ask the user for a focused manual playtest when a concrete source-restoration question needs gameplay evidence. Describe the action and observation needed; no automated gameplay is authorized. Source restoration continues independently wherever possible.
 

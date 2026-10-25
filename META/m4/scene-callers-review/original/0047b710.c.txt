@@ -1,0 +1,42 @@
+
+void __cdecl
+FUN_0047b710(int param_1,int param_2,undefined4 *param_3,float *param_4,undefined4 *param_5)
+
+{
+  int iVar1;
+  BHVec3 local_3c;
+  BHMat34 local_30;
+  
+  local_30.m[0][0] = 1.0;
+  local_30.m[0][1] = 0.0;
+  local_30.m[0][2] = 0.0;
+  local_30.m[0][3] = 0.0;
+  local_30.m[1][0] = 0.0;
+  iVar1 = param_1 * 0x28;
+  local_30.m[1][1] = 1.0;
+  local_30.m[1][2] = 0.0;
+  local_30.m[1][3] = 0.0;
+  local_30.m[2][0] = 0.0;
+  local_30.m[2][1] = 0.0;
+  local_30.m[2][2] = 1.0;
+  local_30.m[2][3] = 0.0;
+  (&DAT_004f55c4)[param_1 * 10] = param_2;
+  if (param_2 != 0) {
+    FUN_004017e0(*param_4,(float *)&local_30);
+    FUN_00401610(param_4[1],(int)&local_30);
+    FUN_004019a0(param_4[2],(float *)&local_30);
+    local_3c.x = 1.0;
+    local_3c.y = 0.0;
+    local_3c.z = 0.0;
+    bh_mat34_transform_point(&local_30,&local_3c,(BHVec3 *)(&DAT_004f55b8 + iVar1));
+    (&DAT_004f55a0)[param_1 * 10] = *param_3;
+    (&DAT_004f55a4)[param_1 * 10] = param_3[1];
+    (&DAT_004f55a8)[param_1 * 10] = param_3[2];
+    *(undefined4 *)(&DAT_004f55ac + iVar1) = *param_5;
+    *(undefined4 *)(&DAT_004f55b0 + iVar1) = param_5[1];
+    *(undefined4 *)(&DAT_004f55b4 + iVar1) = param_5[2];
+  }
+  return;
+}
+
+

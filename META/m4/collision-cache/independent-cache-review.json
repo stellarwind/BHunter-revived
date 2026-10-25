@@ -1,0 +1,37 @@
+{
+  "owner": "0044b130",
+  "reviewer": "scene_callers",
+  "review_kind": "independent full raw body and source contract audit",
+  "original": {
+    "start": "0044b130",
+    "end": "0044b2d6",
+    "bytes": 423,
+    "instructions": 152,
+    "sha256": "4a9214011efdcb13a949f1966c1958ceb3903e391f32a8108e6b9261574ae2a9",
+    "pinned_exe_bytes_verified": true
+  },
+  "source_sha256": {
+    "src/bh_collision_cache.c": "0993aeb73b2309bec638ee90fdf4626372fcaa1ab2c6f1164580a35ede90ffcf",
+    "src/bh_collision_cache.h": "00f433023ba5209bfbc84f6c579dc4ed65f5b82327d71509abce204e34043dea",
+    "tests/collision_cache.c": "292be88f1cb25fef653b8e09a083a573f4b716ce8cba5bec58080c3ab1649cc6"
+  },
+  "passed": true,
+  "findings": [],
+  "checks": [
+    "Centers pointer at original +0x6c is the lazy initialization guard; repeated preparation preserves mutable copied faces, flags and centers.",
+    "Five allocation sizes and order agree: face flags, node centers, radii, squared radii, copied faces. Allocator state is copied for valid disposal lifetime.",
+    "Each original 12-byte face is copied then only copied runtime word +8 and separate flags are zeroed; borrowed BSP faces are unchanged.",
+    "Original node stride 0x38 and bounds offsets +0/+4/+8 and +0xc/+0x10/+0x14 agree with decoded bounds.",
+    "Every center sum spills to binary32 before multiplication by verified original double 0.5; scaled centers spill again.",
+    "Raw x87 stack audit confirms retained x,y,z differences and squared radius grouping (x*float(x)+y*y)+z*float(z). Stored binary32 square is reloaded before sqrt and binary32 radius store.",
+    "Signed original positive count loops agree for the documented nonempty bounded decoded-BSP domain.",
+    "Allocation rollback, argument bounds and BSP identity check are explicitly documented source safety/lifecycle adapters, not claims about original invalid-input behavior.",
+    "Focused tests cover real decoded geometry, mutable lazy cache preservation, all five allocator failure positions and allocation order. This review did not rerun tests; integration validation belongs to the parent and implementation agent."
+  ],
+  "constant_00489e98": {
+    "bytes": "000000000000e03f",
+    "double": 0.5
+  },
+  "source_mutated": false,
+  "original_execution": false
+}

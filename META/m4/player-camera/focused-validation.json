@@ -1,0 +1,189 @@
+{
+  "target": "player-camera.exe",
+  "original_code_required": false,
+  "game_launches": 0,
+  "passed": true,
+  "source_sha256": {
+    "src/bh_camera_state.c": "ca543379737d7b1006b7d3118fb742704021ed265c2abf1ca94fb1b86b789e42",
+    "src/bh_camera_modes.c": "5523b81e98203730fe616a62a45262ccc5cd2516dcb99d7d12b902ebb9a18179",
+    "src/bh_player_camera.c": "4c58db7f2a5c36dd157421bad5c7b014cf2c0fbd7901ac43a9500117a8202560",
+    "tests/player_camera.c": "4a4a49a49dc82cb39b3c8c8d8a58a8282caf4d01de1a278b027e27463f51b16a",
+    "src/bh_round.c": "ff848010705702e25cf85f5ba1d9c30a024d1ea8bf93227240285b9c54fc8ef4",
+    "src/bh_fp.c": "cc8400a29fd082f96ffd9b483f490a44992717b25eac0cb32e2e108ba446f3f8",
+    "src/bh_rotation.c": "9a288fba2368c54b0b1a743b907e468b8683d8f6ff101807423c78b44644dd12",
+    "src/bh_math.c": "ce111e18659563a2c41a04b645295227aac6ead9fe9cc2e803ac45c726d6e9bc",
+    "build/player-camera/main.c": "55291995c344c577a35ac2fe92c9e2f71136b10901f2e268c86fc5d0304d2f60"
+  },
+  "commands": [
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\cl.exe",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\player-camera\\bh_camera_state.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_camera_state.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_camera_state.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\cl.exe",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\player-camera\\bh_camera_modes.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_camera_modes.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_camera_modes.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\cl.exe",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\player-camera\\bh_player_camera.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_player_camera.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_player_camera.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\cl.exe",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\player-camera\\player_camera.obj",
+        "D:\\Decomp\\Bhunter\\tests\\player_camera.c"
+      ],
+      "exit_code": 0,
+      "output": "player_camera.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\cl.exe",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\player-camera\\bh_round.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_round.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_round.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\cl.exe",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\player-camera\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_fp.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_fp.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\cl.exe",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\player-camera\\bh_rotation.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_rotation.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_rotation.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\cl.exe",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\player-camera\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_math.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_math.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\cl.exe",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\player-camera\\main.obj",
+        "D:\\Decomp\\Bhunter\\build\\player-camera\\main.c"
+      ],
+      "exit_code": 0,
+      "output": "main.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/out:D:\\Decomp\\Bhunter\\build\\player-camera\\player-camera.exe",
+        "D:\\Decomp\\Bhunter\\build\\player-camera\\bh_camera_state.obj",
+        "D:\\Decomp\\Bhunter\\build\\player-camera\\bh_camera_modes.obj",
+        "D:\\Decomp\\Bhunter\\build\\player-camera\\bh_player_camera.obj",
+        "D:\\Decomp\\Bhunter\\build\\player-camera\\player_camera.obj",
+        "D:\\Decomp\\Bhunter\\build\\player-camera\\bh_round.obj",
+        "D:\\Decomp\\Bhunter\\build\\player-camera\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\build\\player-camera\\bh_rotation.obj",
+        "D:\\Decomp\\Bhunter\\build\\player-camera\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\build\\player-camera\\main.obj"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\build\\player-camera\\player-camera.exe"
+      ],
+      "exit_code": 0,
+      "output": "{\"scenario\":\"player-camera\",\"checks\":1030,\"failures\":0,\"original_code_required\":false}\n"
+    }
+  ]
+}

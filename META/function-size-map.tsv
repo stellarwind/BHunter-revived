@@ -81,11 +81,11 @@ address	bytes	instructions	mapped_name	source_name	implementation	integration	ca
 0x0040a8c0	794	263	FUN_0040a8c0	bh_world_locate	func	linked_harness	unknown	0040a8c0-0040abd9	src/bh_route_query.c
 0x0040abe0	795	256	FUN_0040abe0	collect (owned static DFS)	func	linked_harness	unknown	0040abe0-0040aefa	src/bh_world_query.c
 0x0040af20	251	84	FUN_0040af20	actors (owned strict actor collector)	func	linked_harness	unknown	0040af20-0040b01a	src/bh_world_query.c
-0x0040b020	729	232	FUN_0040b020		not tracked		unknown	0040b020-0040b2f8	
+0x0040b020	729	232	FUN_0040b020	bh_world_segment_actor_trace	func	linked_harness	unknown	0040b020-0040b2f8	src/bh_world_segment.c
 0x0040b300	263	109	FUN_0040b300	bh_world_query_run	func	linked_harness	unknown	0040b300-0040b406	src/bh_world_query.c
 0x0040b410	1582	483	FUN_0040b410	bh_entity_collision_dispatch	func	linked_harness	unknown	0040b410-0040ba3d	src/bh_entity_collision.c
-0x0040ba40	2625	809	FUN_0040ba40		not tracked		unknown	0040ba40-0040c480	
-0x0040c4a0	448	173	FUN_0040c4a0		not tracked		unknown	0040c4a0-0040c65f	
+0x0040ba40	2625	809	FUN_0040ba40	bh_world_segment_room_trace	func	linked_harness	unknown	0040ba40-0040c480	src/bh_world_segment.c
+0x0040c4a0	448	173	FUN_0040c4a0	bh_world_segment_run	func	linked_harness	unknown	0040c4a0-0040c65f	src/bh_world_segment.c
 0x0040c660	845	234	FUN_0040c660		not tracked		unknown	0040c660-0040c9ac	
 0x0040c9b0	1610	464	FUN_0040c9b0		not tracked		unknown	0040c9b0-0040cff9	
 0x0040d000	320	69	FUN_0040d000		not tracked		unknown	0040d000-0040d13f	
@@ -110,10 +110,10 @@ address	bytes	instructions	mapped_name	source_name	implementation	integration	ca
 0x00411f00	654	189	FUN_00411f00	block registry (owned data subset only)	wip	linked_harness	engine_candidate	00411f00-0041218d	src/bh_blocks.c
 0x00412190	820	265	FUN_00412190		not tracked		unknown	00412190-004124c3	
 0x004124d0	3916	1015	FUN_004124d0	partial_physics_numerics	wip	linked_harness	unknown	004124d0-0041341b	src/bh_physics_response.c
-0x00413420	1383	396	FUN_00413420		not tracked		unknown	00413420-00413986	
+0x00413420	1383	396	FUN_00413420	bh_actor_basis_build_groups	func	linked_harness	unknown	00413420-00413986	src/bh_actor_basis.c
 0x00413990	738	239	FUN_00413990		not tracked		unknown	00413990-00413c71	
 0x00413c80	758	246	FUN_00413c80		not tracked		unknown	00413c80-00413f75	
-0x00413f80	1897	466	FUN_00413f80		not tracked		unknown	00413f80-004146e8	
+0x00413f80	1897	466	FUN_00413f80	bh_actor_basis_acquire	func	linked_harness	unknown	00413f80-004146e8	src/bh_actor_basis.c
 0x004146f0	395	130	FUN_004146f0		not tracked		unknown	004146f0-0041487a	
 0x00414880	3243	1001	FUN_00414880		not tracked		unknown	00414880-0041552a	
 0x00415530	3042	937	FUN_00415530		not tracked		unknown	00415530-00416111	
@@ -127,18 +127,18 @@ address	bytes	instructions	mapped_name	source_name	implementation	integration	ca
 0x0041b2d0	893	233	FUN_0041b2d0		not tracked		unknown	0041b2d0-0041b64c	
 0x0041b650	1434	427	FUN_0041b650		not tracked		unknown	0041b650-0041bbe9	
 0x0041bbf0	1029	317	FUN_0041bbf0		not tracked		unknown	0041bbf0-0041bff4	
-0x0041c020	2105	604	FUN_0041c020		not tracked		unknown	0041c020-0041c858	
-0x0041c860	3934	1162	FUN_0041c860		not tracked		unknown	0041c860-0041d7bd	
+0x0041c020	2105	604	FUN_0041c020	bh_scene_background_step	func	linked_harness	unknown	0041c020-0041c858	src/bh_scene_background.c
+0x0041c860	3934	1162	FUN_0041c860	FUN_0041c860	not_started	not_built	unknown	0041c860-0041d7bd	
 0x0041d7c0	3749	1110	FUN_0041d7c0		not tracked		unknown	0041d7c0-0041e664	
-0x0041e6b0	414	138	FUN_0041e6b0		not tracked		unknown	0041e6b0-0041e84d	
+0x0041e6b0	414	138	FUN_0041e6b0	bh_camera_correct	func	linked_harness	unknown	0041e6b0-0041e84d	src/bh_camera_correction.c
 0x0041e850	11530	3076	FUN_0041e850		not tracked		unknown	0041e850-00421559	
 0x00421560	94	31	FUN_00421560		not tracked		unknown	00421560-004215bd	
-0x004215c0	70	25	FUN_004215c0		not tracked		unknown	004215c0-00421605	
+0x004215c0	70	25	FUN_004215c0	bh_player_input_broadcast	func	linked_harness	unknown	004215c0-00421605	src/bh_player_input_events.c
 0x00421610	304	107	FUN_00421610		not tracked		unknown	00421610-0042173f	
-0x00421740	1147	407	FUN_00421740		not tracked		unknown	00421740-00421bba	
+0x00421740	1147	407	FUN_00421740	bh_player_input_setup	func	linked_harness	unknown	00421740-00421bba	src/bh_player_input.c
 0x00421bc0	346	88	FUN_00421bc0		not tracked		unknown	00421bc0-00421d19	
 0x00421d20	1204	298	FUN_00421d20		not tracked		unknown	00421d20-004221d3	
-0x004221e0	910	234	FUN_004221e0		not tracked		unknown	004221e0-0042256d	
+0x004221e0	910	234	FUN_004221e0	bh_player_camera_reset	func	linked_harness	unknown	004221e0-0042256d	src/bh_player_camera.c
 0x00422570	118	27	FUN_00422570		not tracked		unknown	00422570-004225e5	
 0x004225f0	3507	936	FUN_004225f0		not tracked		unknown	004225f0-004233a2	
 0x00423400	193	79	FUN_00423400		not tracked		unknown	00423400-004234c0	
@@ -167,10 +167,10 @@ address	bytes	instructions	mapped_name	source_name	implementation	integration	ca
 0x00427d30	2539	703	FUN_00427d30		not tracked		unknown	00427d30-0042871a	
 0x00428750	1586	449	FUN_00428750		not tracked		unknown	00428750-00428d81	
 0x00428dc0	391	127	FUN_00428dc0		not tracked		unknown	00428dc0-00428f46	
-0x00428f50	1286	360	FUN_00428f50		not tracked		unknown	00428f50-00429455	
+0x00428f50	1286	360	FUN_00428f50	FUN_00428f50	not_started	not_built	unknown	00428f50-00429455	
 0x00429480	529	160	FUN_00429480	bh_route_plan	func	linked_harness	unknown	00429480-00429690	src/bh_route_query.c
-0x004296a0	2307	701	FUN_004296a0		not tracked		unknown	004296a0-00429fa2	
-0x00429fb0	2556	757	FUN_00429fb0		not tracked		unknown	00429fb0-0042a9ab	
+0x004296a0	2307	701	FUN_004296a0	bh_camera_route_advance	func	linked_harness	unknown	004296a0-00429fa2	src/bh_camera_route.c
+0x00429fb0	2556	757	FUN_00429fb0	bh_flyby_camera_step	func	linked_harness	unknown	00429fb0-0042a9ab	src/bh_flyby_camera.c
 0x0042a9b0	34	7	FUN_0042a9b0		not tracked		unknown	0042a9b0-0042a9d1	
 0x0042a9e0	494	137	FUN_0042a9e0		not tracked		unknown	0042a9e0-0042abcd	
 0x0042abd0	1805	502	FUN_0042abd0		not tracked		unknown	0042abd0-0042b2dc	
@@ -264,7 +264,7 @@ address	bytes	instructions	mapped_name	source_name	implementation	integration	ca
 0x00433f70	165	46	FUN_00433f70	bh_portal_center	func	linked_harness	unknown	00433f70-00434014	src/bh_route_query.c
 0x00434040	147	44	FUN_00434040	bh_portal_normal	func	linked_harness	unknown	00434040-004340d2	src/bh_route_query.c
 0x004340f0	169	53	FUN_004340f0		not tracked		unknown	004340f0-00434198	
-0x004341a0	543	185	FUN_004341a0		not tracked		unknown	004341a0-004343be	
+0x004341a0	543	185	FUN_004341a0	bh_camera_curve	func	linked_harness	unknown	004341a0-004343be	src/bh_camera_curve.c
 0x004343c0	298	119	FUN_004343c0		not tracked		unknown	004343c0-004344e9	
 0x004344f0	344	116	FUN_004344f0		not tracked		unknown	004344f0-00434647	
 0x00434650	440	138	FUN_00434650		not tracked		unknown	00434650-00434807	
@@ -384,8 +384,8 @@ address	bytes	instructions	mapped_name	source_name	implementation	integration	ca
 0x0044a720	370	131	FUN_0044a720		not tracked		unknown	0044a720-0044a891	
 0x0044a8a0	532	177	FUN_0044a8a0		not tracked		unknown	0044a8a0-0044aab3	
 0x0044aac0	1487	444	FUN_0044aac0		not tracked		unknown	0044aac0-0044b08e	
-0x0044b0a0	140	53	FUN_0044b0a0		not tracked		unknown	0044b0a0-0044b12b	
-0x0044b130	423	152	FUN_0044b130		not tracked		unknown	0044b130-0044b2d6	
+0x0044b0a0	140	53	FUN_0044b0a0	bh_collision_resource_path	func	linked_harness	unknown	0044b0a0-0044b12b	src/bh_collision_resource.c
+0x0044b130	423	152	FUN_0044b130	bh_collision_cache_prepare	func	linked_harness	unknown	0044b130-0044b2d6	src/bh_collision_cache.c
 0x0044b2e0	1195	464	FUN_0044b2e0	bh_collision_model_load	func	linked_harness	unknown	0044b2e0-0044b78a	src/bh_collision_model.c
 0x0044b7a0	2646	711	FUN_0044b7a0		not tracked		unknown	0044b7a0-0044c1f5	
 0x0044c200	2591	759	FUN_0044c200	bh_collision_query_node	func	linked_harness	unknown	0044c200-0044cc1e	src/bh_collision_query.c
@@ -473,7 +473,7 @@ address	bytes	instructions	mapped_name	source_name	implementation	integration	ca
 0x0045cf50	1852	550	FUN_0045cf50		not tracked		unknown	0045cf50-0045d68b	
 0x0045d690	180	58	FUN_0045d690		not tracked		unknown	0045d690-0045d743	
 0x0045d750	76	22	FUN_0045d750		not tracked		engine_candidate	0045d750-0045d79b	
-0x0045d7a0	977	303	FUN_0045d7a0		not tracked		unknown	0045d7a0-0045db70	
+0x0045d7a0	977	303	FUN_0045d7a0	bh_horizon_color_prepare	func	linked_harness	unknown	0045d7a0-0045db70	src/bh_horizon_color.c
 0x0045db80	2958	699	FUN_0045db80		not tracked		unknown	0045db80-0045e70d	
 0x0045e710	80	41	FUN_0045e710	bh_model_image_find	func	linked_harness	unknown	0045e710-0045e75f	src/bh_model_images.c
 0x0045e760	33	12	FUN_0045e760	bh_model_image_replace	func	linked_harness	unknown	0045e760-0045e780	src/bh_model_images.c
@@ -516,11 +516,11 @@ address	bytes	instructions	mapped_name	source_name	implementation	integration	ca
 0x00470380	569	196	FUN_00470380	bh_atlas_page_create	func	linked_harness	unknown	00470380-004705b8	src/bh_atlas_page.c
 0x004705c0	782	292	FUN_004705c0	bh_atlas_page_clear	func	linked_harness	unknown	004705c0-004708cd	src/bh_atlas_glyph.c
 0x004708d0	33	10	FUN_004708d0	bh_atlas_page_cursor	func	linked_harness	unknown	004708d0-004708f0	src/bh_atlas_glyph.c
-0x00470900	439	147	FUN_00470900		not tracked		unknown	00470900-00470ab6	
+0x00470900	439	147	FUN_00470900	bh_atlas_page_text	func	linked_harness	unknown	00470900-00470ab6	src/bh_atlas_text.c
 0x00470ac0	449	147	FUN_00470ac0		not tracked		unknown	00470ac0-00470c80	
-0x00470c90	78	35	FUN_00470c90		not tracked		unknown	00470c90-00470cdd	
+0x00470c90	78	35	FUN_00470c90	bh_atlas_page_text_width	func	linked_harness	unknown	00470c90-00470cdd	src/bh_atlas_text.c
 0x00470ce0	84	35	FUN_00470ce0		not tracked		unknown	00470ce0-00470d33	
-0x00470d40	13	6	FUN_00470d40		not tracked		unknown	00470d40-00470d4c	
+0x00470d40	13	6	FUN_00470d40	bh_atlas_page_image	func	linked_harness	unknown	00470d40-00470d4c	src/bh_atlas_text.c
 0x00470d50	164	61	FUN_00470d50		not tracked		unknown	00470d50-00470df3	
 0x00470e00	944	334	FUN_00470e00		not tracked		unknown	00470e00-004711af	
 0x004711b0	104	42	FUN_004711b0		not tracked		unknown	004711b0-00471217	
@@ -545,16 +545,16 @@ address	bytes	instructions	mapped_name	source_name	implementation	integration	ca
 0x00473c40	229	60	FUN_00473c40		not tracked		engine_candidate	00473c40-00473d24	
 0x00473d60	627	143	FUN_00473d60		not tracked		engine_candidate	00473d60-00473fd2	
 0x00473fe0	55	16	FUN_00473fe0		not tracked		unknown	00473fe0-00474016	
-0x00474020	1118	342	FUN_00474020		not tracked		unknown	00474020-0047447d	
+0x00474020	1118	342	FUN_00474020	bh_input_evaluate	func	linked_harness	unknown	00474020-0047447d	src/bh_input_evaluate.c
 0x004744f0	4421	1107	FUN_004744f0		not tracked		unknown	004744f0-00475634	
-0x00475640	100	34	FUN_00475640		not tracked		unknown	00475640-004756a3	
-0x004756b0	44	14	FUN_004756b0		not tracked		unknown	004756b0-004756db	
-0x004756e0	135	49	FUN_004756e0		not tracked		unknown	004756e0-00475766	
-0x00475770	108	43	FUN_00475770		not tracked		unknown	00475770-004757db	
-0x004757e0	34	14	FUN_004757e0		not tracked		unknown	004757e0-00475801	
-0x00475810	83	37	FUN_00475810		not tracked		unknown	00475810-00475862	
-0x00475870	256	86	FUN_00475870		not tracked		unknown	00475870-0047596f	
-0x00475990	44	20	FUN_00475990		not tracked		unknown	00475990-004759bb	
+0x00475640	100	34	FUN_00475640	bh_player_input_create	func	linked_harness	unknown	00475640-004756a3	src/bh_player_input.c
+0x004756b0	44	14	FUN_004756b0	bh_input_set_enabled	func	linked_harness	unknown	004756b0-004756db	src/bh_input_evaluate.c
+0x004756e0	135	49	FUN_004756e0	bh_player_input_bind_axis	func	linked_harness	unknown	004756e0-00475766	src/bh_player_input.c
+0x00475770	108	43	FUN_00475770	bh_player_input_bind_key	func	linked_harness	unknown	00475770-004757db	src/bh_player_input.c
+0x004757e0	34	14	FUN_004757e0	bh_player_input_bind_kind4	func	linked_harness	unknown	004757e0-00475801	src/bh_player_input_events.c
+0x00475810	83	37	FUN_00475810	bh_player_input_bind_string	func	linked_harness	unknown	00475810-00475862	src/bh_player_input.c
+0x00475870	256	86	FUN_00475870	bh_player_input_apply_packet	func	linked_harness	unknown	00475870-0047596f	src/bh_player_input.c
+0x00475990	44	20	FUN_00475990	bh_player_input_transition	func	linked_harness	unknown	00475990-004759bb	src/bh_player_input.c
 0x004759c0	177	56	FUN_004759c0		not tracked		unknown	004759c0-00475a70	
 0x00475a80	180	56	FUN_00475a80		not tracked		unknown	00475a80-00475b33	
 0x00475b40	29	11	FUN_00475b40		not tracked		unknown	00475b40-00475b5c	
@@ -596,7 +596,7 @@ address	bytes	instructions	mapped_name	source_name	implementation	integration	ca
 0x00477710	78	37	FUN_00477710		not tracked		unknown	00477710-0047775d	
 0x00477760	94	45	FUN_00477760		not tracked		unknown	00477760-004777bd	
 0x004777c0	104	43	FUN_004777c0		not tracked		unknown	004777c0-00477827	
-0x00477830	72	25	FUN_00477830		not tracked		unknown	00477830-00477877	
+0x00477830	72	25	FUN_00477830	bh_camera_queue_execute	func	linked_harness	unknown	00477830-00477877	src/bh_camera_queue.c
 0x00477880	345	135	FUN_00477880		not tracked		unknown	00477880-004779d8	
 0x004779e0	181	79	FUN_004779e0		not tracked		unknown	004779e0-00477a94	
 0x00477aa0	52	22	FUN_00477aa0		not tracked		unknown	00477aa0-00477ad3	
@@ -604,14 +604,14 @@ address	bytes	instructions	mapped_name	source_name	implementation	integration	ca
 0x00477d20	278	99	FUN_00477d20		not tracked		unknown	00477d20-00477e35	
 0x00477e40	49	20	FUN_00477e40	bh_draw_controls_execute	func	linked_harness	unknown	00477e40-00477e70	src/bh_draw_controls.c
 0x00477e80	26	11	FUN_00477e80		not tracked		unknown	00477e80-00477e99	
-0x00477ea0	48	19	FUN_00477ea0		not tracked		unknown	00477ea0-00477ecf	
+0x00477ea0	48	19	FUN_00477ea0	bh_text_queue_execute_text	func	linked_harness	unknown	00477ea0-00477ecf	src/bh_text_queue.c
 0x00477ed0	48	19	FUN_00477ed0		not tracked		unknown	00477ed0-00477eff	
-0x00477f00	26	11	FUN_00477f00		not tracked		unknown	00477f00-00477f19	
+0x00477f00	26	11	FUN_00477f00	bh_text_queue_execute_clear	func	linked_harness	unknown	00477f00-00477f19	src/bh_text_queue.c
 0x00477f20	26	11	FUN_00477f20		not tracked		unknown	00477f20-00477f39	
 0x00477f40	22	9	FUN_00477f40	bh_draw_controls_execute	func	linked_harness	unknown	00477f40-00477f55	src/bh_draw_controls.c
 0x00477f60	50	23	FUN_00477f60		not tracked		unknown	00477f60-00477f91	
 0x00477fa0	50	23	FUN_00477fa0		not tracked		unknown	00477fa0-00477fd1	
-0x00477fe0	122	43	FUN_00477fe0		not tracked		unknown	00477fe0-00478059	
+0x00477fe0	122	43	FUN_00477fe0	bh_camera_queue_pose	func	linked_harness	unknown	00477fe0-00478059	src/bh_camera_queue.c
 0x00478060	227	71	FUN_00478060		not tracked		unknown	00478060-00478142	
 0x00478170	231	75	FUN_00478170	bh_draw_submit_resource	func	linked_harness	unknown	00478170-00478256	src/bh_draw_submit.c
 0x00478280	236	75	FUN_00478280	bh_draw_billboard	func	linked_harness	unknown	00478280-0047836b	src/bh_draw_queue.c
@@ -625,9 +625,9 @@ address	bytes	instructions	mapped_name	source_name	implementation	integration	ca
 0x00478990	178	57	FUN_00478990	bh_draw_controls_state	func	linked_harness	unknown	00478990-00478a41	src/bh_draw_controls.c
 0x00478a70	199	63	FUN_00478a70	bh_draw_controls_clip_rect	func	linked_harness	unknown	00478a70-00478b36	src/bh_draw_controls.c
 0x00478b60	99	31	FUN_00478b60		not tracked		unknown	00478b60-00478bc2	
-0x00478bd0	117	35	FUN_00478bd0		not tracked		unknown	00478bd0-00478c44	
+0x00478bd0	117	35	FUN_00478bd0	bh_text_queue_text	func	linked_harness	unknown	00478bd0-00478c44	src/bh_text_queue.c
 0x00478c50	142	46	FUN_00478c50		not tracked		unknown	00478c50-00478cdd	
-0x00478ce0	84	23	FUN_00478ce0		not tracked		unknown	00478ce0-00478d33	
+0x00478ce0	84	23	FUN_00478ce0	bh_text_queue_clear	func	linked_harness	unknown	00478ce0-00478d33	src/bh_text_queue.c
 0x00478d40	227	71	FUN_00478d40		not tracked		unknown	00478d40-00478e22	
 0x00478e50	227	71	FUN_00478e50		not tracked		unknown	00478e50-00478f32	
 0x00478f60	262	81	FUN_00478f60	bh_pickup_rect_queue	func	linked_harness	unknown	00478f60-00479065	src/bh_pickup_draw.c
@@ -636,24 +636,24 @@ address	bytes	instructions	mapped_name	source_name	implementation	integration	ca
 0x00479140	175	47	FUN_00479140		not tracked		game	00479140-004791ee	
 0x004791f0	14	5	FUN_004791f0		not tracked		game	004791f0-004791fd	
 0x00479200	1800	428	FUN_00479200		not tracked		game	00479200-00479907	
-0x00479910	860	241	FUN_00479910		not tracked		unknown	00479910-00479c6b	
-0x00479c70	317	111	FUN_00479c70		not tracked		unknown	00479c70-00479dac	
-0x00479db0	119	38	FUN_00479db0		not tracked		unknown	00479db0-00479e26	
-0x00479e30	224	70	FUN_00479e30		not tracked		unknown	00479e30-00479f0f	
-0x00479f10	224	70	FUN_00479f10		not tracked		unknown	00479f10-00479fef	
-0x00479ff0	246	81	FUN_00479ff0		not tracked		unknown	00479ff0-0047a0e5	
-0x0047a0f0	108	32	FUN_0047a0f0		not tracked		unknown	0047a0f0-0047a15b	
-0x0047a160	134	41	FUN_0047a160		not tracked		unknown	0047a160-0047a1e5	
-0x0047a1f0	134	41	FUN_0047a1f0		not tracked		unknown	0047a1f0-0047a275	
-0x0047a280	108	32	FUN_0047a280		not tracked		unknown	0047a280-0047a2eb	
-0x0047a2f0	386	131	FUN_0047a2f0		not tracked		unknown	0047a2f0-0047a471	
-0x0047a480	397	139	FUN_0047a480		not tracked		unknown	0047a480-0047a60c	
-0x0047a610	411	138	FUN_0047a610		not tracked		unknown	0047a610-0047a7aa	
-0x0047a7b0	783	248	FUN_0047a7b0		not tracked		unknown	0047a7b0-0047aabe	
-0x0047aac0	1858	514	FUN_0047aac0		not tracked		unknown	0047aac0-0047b201	
-0x0047b210	193	52	FUN_0047b210		not tracked		unknown	0047b210-0047b2d0	
-0x0047b2e0	56	15	FUN_0047b2e0		not tracked		unknown	0047b2e0-0047b317	
-0x0047b320	10	3	FUN_0047b320		not tracked		unknown	0047b320-0047b329	
+0x00479910	860	241	FUN_00479910	bh_camera_mode_smooth	func	linked_harness	unknown	00479910-00479c6b	src/bh_camera_state.c
+0x00479c70	317	111	FUN_00479c70	bh_camera_look_at	func	linked_harness	unknown	00479c70-00479dac	src/bh_camera_modes.c
+0x00479db0	119	38	FUN_00479db0	bh_camera_mode_0	func	linked_harness	unknown	00479db0-00479e26	src/bh_camera_modes.c
+0x00479e30	224	70	FUN_00479e30	bh_camera_mode_1	func	linked_harness	unknown	00479e30-00479f0f	src/bh_camera_modes.c
+0x00479f10	224	70	FUN_00479f10	bh_camera_mode_10	func	linked_harness	unknown	00479f10-00479fef	src/bh_camera_modes.c
+0x00479ff0	246	81	FUN_00479ff0	bh_camera_mode_2	func	linked_harness	unknown	00479ff0-0047a0e5	src/bh_camera_modes.c
+0x0047a0f0	108	32	FUN_0047a0f0	bh_camera_mode_3	func	linked_harness	unknown	0047a0f0-0047a15b	src/bh_camera_modes.c
+0x0047a160	134	41	FUN_0047a160	bh_camera_mode_4	func	linked_harness	unknown	0047a160-0047a1e5	src/bh_camera_modes.c
+0x0047a1f0	134	41	FUN_0047a1f0	bh_camera_mode_5	func	linked_harness	unknown	0047a1f0-0047a275	src/bh_camera_modes.c
+0x0047a280	108	32	FUN_0047a280	bh_camera_mode_6	func	linked_harness	unknown	0047a280-0047a2eb	src/bh_camera_modes.c
+0x0047a2f0	386	131	FUN_0047a2f0	bh_camera_mode_7	func	linked_harness	unknown	0047a2f0-0047a471	src/bh_camera_modes.c
+0x0047a480	397	139	FUN_0047a480	bh_camera_mode_8	func	linked_harness	unknown	0047a480-0047a60c	src/bh_camera_modes.c
+0x0047a610	411	138	FUN_0047a610	bh_camera_mode_11	func	linked_harness	unknown	0047a610-0047a7aa	src/bh_camera_modes.c
+0x0047a7b0	783	248	FUN_0047a7b0	bh_camera_mode_9	func	linked_harness	unknown	0047a7b0-0047aabe	src/bh_camera_modes.c
+0x0047aac0	1858	514	FUN_0047aac0	bh_camera_state_update	func	linked_harness	unknown	0047aac0-0047b201	src/bh_camera_state.c
+0x0047b210	193	52	FUN_0047b210	bh_camera_state_set_mode	func	linked_harness	unknown	0047b210-0047b2d0	src/bh_camera_state.c
+0x0047b2e0	56	15	FUN_0047b2e0	bh_camera_state_init	func	linked_harness	unknown	0047b2e0-0047b317	src/bh_camera_state.c
+0x0047b320	10	3	FUN_0047b320	bh_camera_state_set_correction	func	linked_harness	unknown	0047b320-0047b329	src/bh_camera_state.c
 0x0047b330	224	57	FUN_0047b330	bh_sound_resource_allocate	func	linked_harness	unknown	0047b330-0047b40f	src/bh_sound_queue.c
 0x0047b410	228	59	FUN_0047b410	bh_sound_voice_allocate	func	linked_harness	unknown	0047b410-0047b4f3	src/bh_sound_queue.c
 0x0047b500	228	75	FUN_0047b500		not tracked		engine_candidate	0047b500-0047b5e3	

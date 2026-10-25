@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "functions": [
+    {
+      "address": "0044b0a0",
+      "end_inclusive": "0044b12b",
+      "bytes": 140,
+      "source_function": "bh_collision_resource_path",
+      "role": "engine_candidate",
+      "boundary": "Complete collision-resource path/search initialization owner, called by startup004474c0. Inline strlen/strcpy/strcat compiler expansions are part of this owning path behavior; no verified library/EH/import/shared-tail attribution.",
+      "implementation": "func",
+      "integration": "Focused linked source target; parent owns current main integration admission"
+    }
+  ],
+  "sources": [
+    "src/bh_collision_resource.c",
+    "src/bh_collision_resource.h",
+    "tests/collision_resource.c"
+  ],
+  "dependencies": [
+    "Real bh_collision_model_load src/bh_collision_model.c",
+    "Real bh_bsp_load/read/decode src/bh_bsp.c",
+    "Real geometry and VFILE owners",
+    "Pinned CRT memmove/string/file routines"
+  ],
+  "global_bindings": {
+    "004e1050": "Independent explicit BHCollisionResourcePath.prefix; source guard256 bytes follows current actual collision loader path bound, not a claim original globals form this structure",
+    "0049132c": "BHCollisionResourcePath.search; set bare-only(-1) before literal prefix copy",
+    "00491334": "Verified bytes5c000000, appended literal backslash"
+  },
+  "contracts": [
+    "Empty prefix always selects bare-only",
+    "Nonempty literal prefix gets one backslash if missing; slash and case remain unmodified",
+    "Only policy0..2 retained for nonempty prefixes; every other signed value selects bare-only",
+    "Source null/overlong/append-overflow guards leave whole context unchanged",
+    "Successful copy preserves bytes after the new terminator, including empty-path unused tail",
+    "Configured source adapter invokes actual complete collision loader with its real BSP/geometry ownership; no fake resource or rendering model is substituted"
+  ],
+  "focused_validation": {
+    "target": "build/collision-resource/bhunter-collision-resource.exe",
+    "clean_checks": 37,
+    "real_archive_checks": 40,
+    "failures": 0,
+    "original_code_required": false,
+    "game_launches": 0,
+    "evidence": "META/m4/collision-resource/focused-build.json"
+  },
+  "limitations": [
+    "No original code or game execution",
+    "No raw instruction matching claim",
+    "Old collision/model translation units unchanged",
+    "Source composition adapter is not an additional recovered original function",
+    "Parent owns final current integration/build/ledger/source snapshot"
+  ],
+  "source_sha256": {
+    "src/bh_collision_resource.c": "fc674c6bf74306c8dc0a8387ae9f7dc8bf23eb7507f714ffa2bb222ce96fda75",
+    "src/bh_collision_resource.h": "b1b4fa243e47a927d8e30a16b98742676d661530f3bd8bb40a09bde62c16ddc5",
+    "tests/collision_resource.c": "a246d998e2eb34f84d793d0a8fbadb9e19b358d241bc3535d60476cf3d0fac25"
+  },
+  "original_evidence_sha256": {
+    "META/m4/collision-resource/original/0044b0a0.decompile.json": "d7ed0ccf24d047938a7dac77972ec9a696d1faaee1900934296a17076f25a2d0",
+    "META/m4/collision-resource/original/0044b0a0.disasm.json": "36ee42bf0a9007a4007c97c60f6c3eee546f50d8cb4369f85c352a1b73612874",
+    "META/m4/collision-resource/original/0044b0a0.function-get.json": "d49ff8ab3195092ea7685e495a5cd82fe679b0e43db4666f0d689b95f5070e8d",
+    "META/m4/collision-resource/original/0044b0a0.xrefs.json": "2c4cfd7b94217829b9d0cf9dc1688daf343fddf2580f12201c3b136adc4b3566"
+  }
+}

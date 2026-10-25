@@ -1,0 +1,41 @@
+
+void __cdecl FUN_00479c70(float *param_1,float *param_2,float *param_3,float *param_4)
+
+{
+  float fVar1;
+  float fVar2;
+  float10 fVar3;
+  float10 fVar4;
+  float10 fVar5;
+  float10 fVar6;
+  BHVec3 local_24;
+  BHVec3 local_18;
+  BHVec3 local_c;
+  
+  local_18.x = *param_2 - *param_3;
+  local_18.y = param_2[1] - param_3[1];
+  local_18.z = param_2[2] - param_3[2];
+  bh_vec3_normalize(&local_18);
+  bh_vec3_cross((BHVec3 *)param_4,&local_18,&local_c);
+  bh_vec3_normalize(&local_c);
+  bh_vec3_cross(&local_18,&local_c,&local_24);
+  fVar5 = (float10)fpatan((float10)local_18.x,(float10)local_18.z);
+  fVar3 = (float10)fcos(fVar5);
+  fVar4 = (float10)fsin(fVar5);
+  fVar1 = (float)fVar3;
+  fVar2 = (float)fVar4;
+  fVar6 = (float10)fpatan(-(float10)local_18.y,
+                          (float10)local_18.x * (float10)fVar2 +
+                          (float10)local_18.z * (float10)fVar1);
+  fVar3 = (float10)fcos(fVar6);
+  fVar4 = (float10)fsin(fVar6);
+  *param_1 = (float)fVar5;
+  param_1[1] = (float)fVar6;
+  fVar3 = (float10)fpatan((float10)(float)(fVar3 * (float10)local_c.y -
+                                          ((float10)local_c.z * (float10)fVar1 +
+                                          (float10)local_c.x * (float10)fVar2) * fVar4),
+                          (float10)(local_c.x * fVar1 - local_c.z * fVar2));
+  param_1[2] = (float)fVar3;
+  return;
+}
+

@@ -1,0 +1,7 @@
+address	bytes	mnemonic	operands
+00470d40	8b442404	MOV	EAX, dword ptr [ESP + 0x4]
+00470d44	85c0	TEST	EAX, EAX
+00470d46	7501	JNZ	0x00470d49
+00470d48	c3	RET	
+00470d49	8b4004	MOV	EAX, dword ptr [EAX + 0x4]
+00470d4c	c3	RET	

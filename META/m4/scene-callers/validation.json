@@ -1,0 +1,473 @@
+{
+  "passed": true,
+  "complete_new_functions": 52,
+  "translation_units": 203,
+  "missing_module_controls": 99,
+  "real_total": {
+    "scenario": "m2-foundations",
+    "checks": 3536976,
+    "failures": 0,
+    "archive_entries": 1229,
+    "original_code_required": false
+  },
+  "clean_total": {
+    "scenario": "m2-foundations",
+    "checks": 3044022,
+    "failures": 0,
+    "archive_entries": 0,
+    "original_code_required": false
+  },
+  "real_focused": {
+    "actor-basis": {
+      "scenario": "actor-basis",
+      "checks": 911,
+      "failures": 0,
+      "original_code_required": false
+    },
+    "atlas-text": {
+      "scenario": "atlas-text",
+      "checks": 1124,
+      "failures": 0,
+      "original_code_required": false
+    },
+    "camera-curve": {
+      "scenario": "camera-curve",
+      "checks": 73,
+      "failures": 0
+    },
+    "camera-modes": {
+      "scenario": "camera-modes",
+      "checks": 295,
+      "failures": 0,
+      "original_code_required": false
+    },
+    "camera-queue": {
+      "scenario": "camera-queue",
+      "checks": 23,
+      "failures": 0
+    },
+    "camera-route": {
+      "scenario": "camera-route",
+      "checks": 15,
+      "failures": 0
+    },
+    "camera-route-real": {
+      "scenario": "camera-route-real",
+      "checks": 31,
+      "failures": 0,
+      "original_code_required": false,
+      "archive_skipped": false
+    },
+    "camera-state": {
+      "scenario": "camera-state",
+      "checks": 1452,
+      "failures": 0,
+      "original_code_required": false
+    },
+    "collision-cache": {
+      "scenario": "collision-cache",
+      "checks": 128,
+      "failures": 0,
+      "original_code_required": false
+    },
+    "collision-resource": {
+      "scenario": "collision-resource",
+      "checks": 40,
+      "failures": 0,
+      "original_code_required": false
+    },
+    "flyby-camera": {
+      "scenario": "flyby-camera",
+      "checks": 52,
+      "failures": 0
+    },
+    "horizon-color": {
+      "scenario": "horizon-color",
+      "checks": 131350,
+      "failures": 0
+    },
+    "input-evaluate": {
+      "scenario": "input-evaluate",
+      "checks": 37,
+      "failures": 0,
+      "original_code_required": false
+    },
+    "player-camera": {
+      "scenario": "player-camera",
+      "checks": 1030,
+      "failures": 0,
+      "original_code_required": false
+    },
+    "player-input": {
+      "scenario": "player-input",
+      "checks": 77,
+      "failures": 0
+    },
+    "player-input-events": {
+      "scenario": "player-input-events",
+      "checks": 267,
+      "failures": 0,
+      "original_code_required": false
+    },
+    "scene-background": {
+      "scenario": "scene-background",
+      "checks": 32,
+      "failures": 0
+    },
+    "scene-background-native": {
+      "scenario": "scene-background-native",
+      "checks": 154,
+      "failures": 0,
+      "original_code_required": false,
+      "gameplay_executed": false
+    },
+    "scene-callers-native": {
+      "scenario": "scene-callers-native",
+      "checks": 101,
+      "failures": 0,
+      "original_code_required": false,
+      "gameplay_executed": false
+    },
+    "text-queue": {
+      "scenario": "text-queue",
+      "checks": 282,
+      "failures": 0,
+      "original_code_required": false
+    },
+    "world-segment": {
+      "scenario": "world-segment",
+      "checks": 52,
+      "failures": 0,
+      "original_code_required": false
+    }
+  },
+  "clean_focused": {
+    "actor-basis": {
+      "scenario": "actor-basis",
+      "checks": 911,
+      "failures": 0,
+      "original_code_required": false
+    },
+    "atlas-text": {
+      "scenario": "atlas-text",
+      "checks": 1053,
+      "failures": 0,
+      "original_code_required": false
+    },
+    "camera-curve": {
+      "scenario": "camera-curve",
+      "checks": 73,
+      "failures": 0
+    },
+    "camera-modes": {
+      "scenario": "camera-modes",
+      "checks": 295,
+      "failures": 0,
+      "original_code_required": false
+    },
+    "camera-queue": {
+      "scenario": "camera-queue",
+      "checks": 23,
+      "failures": 0
+    },
+    "camera-route": {
+      "scenario": "camera-route",
+      "checks": 15,
+      "failures": 0
+    },
+    "camera-route-real": {
+      "scenario": "camera-route-real",
+      "checks": 0,
+      "failures": 0,
+      "original_code_required": false,
+      "archive_skipped": true
+    },
+    "camera-state": {
+      "scenario": "camera-state",
+      "checks": 1452,
+      "failures": 0,
+      "original_code_required": false
+    },
+    "collision-cache": {
+      "scenario": "collision-cache",
+      "checks": 20,
+      "failures": 0,
+      "original_code_required": false
+    },
+    "collision-resource": {
+      "scenario": "collision-resource",
+      "checks": 37,
+      "failures": 0,
+      "original_code_required": false
+    },
+    "flyby-camera": {
+      "scenario": "flyby-camera",
+      "checks": 52,
+      "failures": 0
+    },
+    "horizon-color": {
+      "scenario": "horizon-color",
+      "checks": 131350,
+      "failures": 0
+    },
+    "input-evaluate": {
+      "scenario": "input-evaluate",
+      "checks": 37,
+      "failures": 0,
+      "original_code_required": false
+    },
+    "player-camera": {
+      "scenario": "player-camera",
+      "checks": 1030,
+      "failures": 0,
+      "original_code_required": false
+    },
+    "player-input": {
+      "scenario": "player-input",
+      "checks": 77,
+      "failures": 0
+    },
+    "player-input-events": {
+      "scenario": "player-input-events",
+      "checks": 267,
+      "failures": 0,
+      "original_code_required": false
+    },
+    "scene-background": {
+      "scenario": "scene-background",
+      "checks": 32,
+      "failures": 0
+    },
+    "scene-background-native": {
+      "scenario": "scene-background-native",
+      "checks": 1,
+      "failures": 0,
+      "original_code_required": false,
+      "gameplay_executed": false
+    },
+    "scene-callers-native": {
+      "scenario": "scene-callers-native",
+      "checks": 1,
+      "failures": 0,
+      "original_code_required": false,
+      "gameplay_executed": false
+    },
+    "text-queue": {
+      "scenario": "text-queue",
+      "checks": 282,
+      "failures": 0,
+      "original_code_required": false
+    },
+    "world-segment": {
+      "scenario": "world-segment",
+      "checks": 52,
+      "failures": 0,
+      "original_code_required": false
+    }
+  },
+  "sources": {
+    "META/m4/scene-callers/build_evidence.py": "8cb3563b59873f9a82780ca66c98502f9e5253559c7acaba7df8d6994f38f695",
+    "src/bh_actor_basis.c": "631fe1f335f3acaada8c0b2c7f54f7bf6ab6202b37143ce61f10e1aa10d8cdf2",
+    "src/bh_actor_basis.h": "82ff96812f4e77ba5bff2d1a6811a88a08dcac051da964f9456e462f9fef4ae1",
+    "src/bh_atlas_text.c": "0560e31fafdd1c98aeee9d15af69b57cda76ba232bd368fbc51890d9e2596338",
+    "src/bh_atlas_text.h": "bfe9e159156b1b624c5998438e1efb86baf0a6a13cb340c8fb64c55b9cb2c634",
+    "src/bh_camera_correction.c": "34cf629aa4b7201cbd2b58446cc6727247ddafb7a06dd7ee7b2f1446bc58654f",
+    "src/bh_camera_curve.c": "24f3f3f1f191ef1e8078eb2d1fd2c2225f66c7c5e710bdd4e942beca7c5432e7",
+    "src/bh_camera_curve.h": "af0e063d72131e5bfb6179d13eb8aef662fec2e5e76b0becc184fddc0dd6cc18",
+    "src/bh_camera_modes.c": "55dc8b0d271d8adb6d4ac812c3e03af3763011222d2ed68a9c4194a632e77df7",
+    "src/bh_camera_modes.h": "c6585638cb1f8756056890112e817268ed01e99f9f31ee58e322345296b788e4",
+    "src/bh_camera_queue.c": "dbb5914e7852ba51578300e5e59419abc13961b663cf1d2fe2ef65445a614414",
+    "src/bh_camera_queue.h": "febd189383dbc005288ae7deb9ac2de8f29ce3ffdaf8132a222b7fcb37d61732",
+    "src/bh_camera_route.c": "834e10033ae6333ecfdcc5557c908dc2bf1326d12a052f7acfd40d3ad9f89f0a",
+    "src/bh_camera_route.h": "21770dd9bb4cb3930f13fe8c715134a2efa043b4db5acc5bece5e042e26c1fbe",
+    "src/bh_camera_state.c": "f7d1fe3b15ac6a22b05fe94eb22f120ca71152d278535c0790910c108bb3a067",
+    "src/bh_camera_state.h": "e43280c2a7a3d1f73af92798d2305e6347d2cd4dae87004d238dedc188298b23",
+    "src/bh_collision_cache.c": "e44103f2fb0a6be951d0b8527f45441dc69d27f99e428655f6cefe02ddd5487c",
+    "src/bh_collision_cache.h": "01977ade40f5624d057d362467d73fd124d468b04f1e9b06d33f72e17e7a5b2c",
+    "src/bh_collision_resource.c": "fc674c6bf74306c8dc0a8387ae9f7dc8bf23eb7507f714ffa2bb222ce96fda75",
+    "src/bh_collision_resource.h": "b1b4fa243e47a927d8e30a16b98742676d661530f3bd8bb40a09bde62c16ddc5",
+    "src/bh_draw_queue.h": "408bbea34f43cd4d62e195948d400cba1e919afc3ea791e5a70c2e5ebb6edb83",
+    "src/bh_flyby_camera.c": "97c212c8b5ba539eb18e97f1ed22c181624f0166515a5b9bbf9c011c32a161ef",
+    "src/bh_flyby_camera.h": "9e74a4df00c3e5633ce0861c29d2ff0ea521c89ec909244dc20ca60e5a8a54d1",
+    "src/bh_flyby_credits.h": "ac41756cfa26bd098974f171b545a2360a845746162475f311e0d2663aea3fe1",
+    "src/bh_horizon_color.c": "02d6a342fd75b79156494fab36a8e972f0696f65d56fc600e66ac473483df156",
+    "src/bh_horizon_color.h": "b2c644382336410559feca0ebc12407dccdb1c6281c79199c8380cfc1c2c9375",
+    "src/bh_input_evaluate.c": "c96ef2145edb1a1c633123580c14d12d6f6e78a3f1d8ecb3134a403c72847bb3",
+    "src/bh_input_evaluate.h": "1704a6cd51432f20d94e076ba4bfe48548c1d565215aa0153456959f3ccf4972",
+    "src/bh_player_camera.c": "4c58db7f2a5c36dd157421bad5c7b014cf2c0fbd7901ac43a9500117a8202560",
+    "src/bh_player_camera.h": "72a05180cbe98cf901647bda8440d00b16b8fc08e36453961241683d7b1c41b3",
+    "src/bh_player_input.c": "0c4060193e23c0aae26989359c70619b0ef6e50fa7ad195b8868bb1e177a348b",
+    "src/bh_player_input.h": "76d30ff97ce1bcafea346f7bf420c7f13368b1602c1293d32277447e8fce5cda",
+    "src/bh_player_input_events.c": "66412656e9ba97226a227c5a8516cbda9c10cf57afd285ef6e8602206680fb78",
+    "src/bh_player_input_events.h": "bfc3d0fb40e2185801e38e129d4bd41fa01b0b9edfee8e79b1b0bd0d59757e71",
+    "src/bh_scene_background.c": "a392e9a1a2d4cb9d5d60f226f311961c5b9d96fbb8aeff0df3fc064fdb697a7b",
+    "src/bh_scene_background.h": "aea1de5930868c53d03527be81de2a70bb0bd50b5338d68866466938f1466a00",
+    "src/bh_text_queue.c": "b85d5dccd3b5892ad64d8439a678099a55a52094eec98cf74419ab0403783f91",
+    "src/bh_text_queue.h": "35ab3d3e8b3147dc4d25ce12e0d7ffbd23499d807a509886a2580296d154f45d",
+    "src/bh_world_segment.c": "381aa5b0a2e080cef63dc6ce8db6978c32d70f55796be0ea9ab759ffb2219756",
+    "src/bh_world_segment.h": "6ed4340e7a64be740e87b0e45900403f62439a750c2e6a519ee5c598f0d468e2",
+    "tests/actor_basis.c": "e2cfb5e3f9a3576f1caee65dbb888881985e3b0fe93c0658e88d947fd35084d4",
+    "tests/atlas_text.c": "43f1f804603018e5b09e9670acd7ff51cf3d9c22da22129fedf962b186e63052",
+    "tests/camera_curve.c": "bc83ca3c084b2bba9b7357f9cafaca90c5ea60f237a9f66d9921730d21908c1d",
+    "tests/camera_modes.c": "cf4dd73be622ca60f154291316a8cf4b1ab453e173348d55925bbe08940c018d",
+    "tests/camera_queue.c": "876f2c12d30e244188305440e9ef794b75979248108d58f7130065cfc15516bf",
+    "tests/camera_route.c": "1ce5c11c24450e74339d8da6b278fb45ac575e8a2c3a73343fac94e64d6e6e83",
+    "tests/camera_route_real.c": "03abda0b64a307f20fdf92c8d951a857258e7b4199f5a7b1385e9e447cb7886e",
+    "tests/camera_state.c": "320ab0c1a2fae19fa6bac8a540e504caf6801af072c91222726315b2546b9504",
+    "tests/checkpoint.c": "938498b8ee6669a40ff424850aa9f6a1714b67f67443dd51e742ebeb37fa8ba3",
+    "tests/collision_cache.c": "d17e3d4ef85a61c3ecb48644910f49bffb34c19fb9e60bfdce527c88d9c744eb",
+    "tests/collision_resource.c": "a246d998e2eb34f84d793d0a8fbadb9e19b358d241bc3535d60476cf3d0fac25",
+    "tests/flyby_camera.c": "2c78397776cb1ecd28e79f28e180d7b42897aae6738f0d168541d9a9e6a8f90c",
+    "tests/horizon_color.c": "6b915961c02d65701feaef207ad5e710df288f261cf560ea434e62376e21bec8",
+    "tests/input_evaluate.c": "a3e92bc59ca40feb022bee85420828f12690875789478a34280cc7385252d1ea",
+    "tests/player_camera.c": "4a4a49a49dc82cb39b3c8c8d8a58a8282caf4d01de1a278b027e27463f51b16a",
+    "tests/player_input.c": "0f3e74b3e50b03295fc0fdc686547cc8bdd15ed9e29b55f41524329225be6322",
+    "tests/player_input_events.c": "db072de8fed3187adf7ec52eff9f114b58d51f115464a6e67a3b832019dda248",
+    "tests/scene_background.c": "31ea6ac0a6d3d201936de1b0e3f9407fdbaba432b82320c01d796ce3d52183b3",
+    "tests/scene_background_native.c": "5df8f52b50a5d334ca11dd17e915a1b052774e3d9abd35ee9708e4cc68f5d537",
+    "tests/scene_callers_native.c": "080516a56359eba6ff6553b9e49167a4978adb00b09250ba51a968192d9d89e4",
+    "tests/text_queue.c": "d9192dfafdb7a4ae0231b815070526e2141e07aaf2e96043dcafcb84ec8f0d83",
+    "tests/world_segment.c": "4d989c4d42de9c785ff0be56a637daf545abaa8be81bee6840ea09dd01ac1c97",
+    "tools/check_scene_callers.py": "e7ee611cca901cd4ff65f6609a266922faa975c08d7ffa661684f31ab63b3eb1",
+    "tools/m0.py": "ccae0d0cd98791cad26489d5bb92a77f34064299e1b89df1dda65c2e2bdd2b6f"
+  },
+  "source_snapshots": {
+    "META/m4/scene-callers/build_evidence.py": "META/m4/scene-callers/sources/8cb3563b59873f9a82780ca66c98502f9e5253559c7acaba7df8d6994f38f695-build_evidence.py.txt",
+    "src/bh_actor_basis.c": "META/m4/scene-callers/sources/631fe1f335f3acaada8c0b2c7f54f7bf6ab6202b37143ce61f10e1aa10d8cdf2-bh_actor_basis.c.txt",
+    "src/bh_actor_basis.h": "META/m4/scene-callers/sources/82ff96812f4e77ba5bff2d1a6811a88a08dcac051da964f9456e462f9fef4ae1-bh_actor_basis.h.txt",
+    "src/bh_atlas_text.c": "META/m4/scene-callers/sources/0560e31fafdd1c98aeee9d15af69b57cda76ba232bd368fbc51890d9e2596338-bh_atlas_text.c.txt",
+    "src/bh_atlas_text.h": "META/m4/scene-callers/sources/bfe9e159156b1b624c5998438e1efb86baf0a6a13cb340c8fb64c55b9cb2c634-bh_atlas_text.h.txt",
+    "src/bh_camera_correction.c": "META/m4/scene-callers/sources/34cf629aa4b7201cbd2b58446cc6727247ddafb7a06dd7ee7b2f1446bc58654f-bh_camera_correction.c.txt",
+    "src/bh_camera_curve.c": "META/m4/scene-callers/sources/24f3f3f1f191ef1e8078eb2d1fd2c2225f66c7c5e710bdd4e942beca7c5432e7-bh_camera_curve.c.txt",
+    "src/bh_camera_curve.h": "META/m4/scene-callers/sources/af0e063d72131e5bfb6179d13eb8aef662fec2e5e76b0becc184fddc0dd6cc18-bh_camera_curve.h.txt",
+    "src/bh_camera_modes.c": "META/m4/scene-callers/sources/55dc8b0d271d8adb6d4ac812c3e03af3763011222d2ed68a9c4194a632e77df7-bh_camera_modes.c.txt",
+    "src/bh_camera_modes.h": "META/m4/scene-callers/sources/c6585638cb1f8756056890112e817268ed01e99f9f31ee58e322345296b788e4-bh_camera_modes.h.txt",
+    "src/bh_camera_queue.c": "META/m4/scene-callers/sources/dbb5914e7852ba51578300e5e59419abc13961b663cf1d2fe2ef65445a614414-bh_camera_queue.c.txt",
+    "src/bh_camera_queue.h": "META/m4/scene-callers/sources/febd189383dbc005288ae7deb9ac2de8f29ce3ffdaf8132a222b7fcb37d61732-bh_camera_queue.h.txt",
+    "src/bh_camera_route.c": "META/m4/scene-callers/sources/834e10033ae6333ecfdcc5557c908dc2bf1326d12a052f7acfd40d3ad9f89f0a-bh_camera_route.c.txt",
+    "src/bh_camera_route.h": "META/m4/scene-callers/sources/21770dd9bb4cb3930f13fe8c715134a2efa043b4db5acc5bece5e042e26c1fbe-bh_camera_route.h.txt",
+    "src/bh_camera_state.c": "META/m4/scene-callers/sources/f7d1fe3b15ac6a22b05fe94eb22f120ca71152d278535c0790910c108bb3a067-bh_camera_state.c.txt",
+    "src/bh_camera_state.h": "META/m4/scene-callers/sources/e43280c2a7a3d1f73af92798d2305e6347d2cd4dae87004d238dedc188298b23-bh_camera_state.h.txt",
+    "src/bh_collision_cache.c": "META/m4/scene-callers/sources/e44103f2fb0a6be951d0b8527f45441dc69d27f99e428655f6cefe02ddd5487c-bh_collision_cache.c.txt",
+    "src/bh_collision_cache.h": "META/m4/scene-callers/sources/01977ade40f5624d057d362467d73fd124d468b04f1e9b06d33f72e17e7a5b2c-bh_collision_cache.h.txt",
+    "src/bh_collision_resource.c": "META/m4/scene-callers/sources/fc674c6bf74306c8dc0a8387ae9f7dc8bf23eb7507f714ffa2bb222ce96fda75-bh_collision_resource.c.txt",
+    "src/bh_collision_resource.h": "META/m4/scene-callers/sources/b1b4fa243e47a927d8e30a16b98742676d661530f3bd8bb40a09bde62c16ddc5-bh_collision_resource.h.txt",
+    "src/bh_draw_queue.h": "META/m4/scene-callers/sources/408bbea34f43cd4d62e195948d400cba1e919afc3ea791e5a70c2e5ebb6edb83-bh_draw_queue.h.txt",
+    "src/bh_flyby_camera.c": "META/m4/scene-callers/sources/97c212c8b5ba539eb18e97f1ed22c181624f0166515a5b9bbf9c011c32a161ef-bh_flyby_camera.c.txt",
+    "src/bh_flyby_camera.h": "META/m4/scene-callers/sources/9e74a4df00c3e5633ce0861c29d2ff0ea521c89ec909244dc20ca60e5a8a54d1-bh_flyby_camera.h.txt",
+    "src/bh_flyby_credits.h": "META/m4/scene-callers/sources/ac41756cfa26bd098974f171b545a2360a845746162475f311e0d2663aea3fe1-bh_flyby_credits.h.txt",
+    "src/bh_horizon_color.c": "META/m4/scene-callers/sources/02d6a342fd75b79156494fab36a8e972f0696f65d56fc600e66ac473483df156-bh_horizon_color.c.txt",
+    "src/bh_horizon_color.h": "META/m4/scene-callers/sources/b2c644382336410559feca0ebc12407dccdb1c6281c79199c8380cfc1c2c9375-bh_horizon_color.h.txt",
+    "src/bh_input_evaluate.c": "META/m4/scene-callers/sources/c96ef2145edb1a1c633123580c14d12d6f6e78a3f1d8ecb3134a403c72847bb3-bh_input_evaluate.c.txt",
+    "src/bh_input_evaluate.h": "META/m4/scene-callers/sources/1704a6cd51432f20d94e076ba4bfe48548c1d565215aa0153456959f3ccf4972-bh_input_evaluate.h.txt",
+    "src/bh_player_camera.c": "META/m4/scene-callers/sources/4c58db7f2a5c36dd157421bad5c7b014cf2c0fbd7901ac43a9500117a8202560-bh_player_camera.c.txt",
+    "src/bh_player_camera.h": "META/m4/scene-callers/sources/72a05180cbe98cf901647bda8440d00b16b8fc08e36453961241683d7b1c41b3-bh_player_camera.h.txt",
+    "src/bh_player_input.c": "META/m4/scene-callers/sources/0c4060193e23c0aae26989359c70619b0ef6e50fa7ad195b8868bb1e177a348b-bh_player_input.c.txt",
+    "src/bh_player_input.h": "META/m4/scene-callers/sources/76d30ff97ce1bcafea346f7bf420c7f13368b1602c1293d32277447e8fce5cda-bh_player_input.h.txt",
+    "src/bh_player_input_events.c": "META/m4/scene-callers/sources/66412656e9ba97226a227c5a8516cbda9c10cf57afd285ef6e8602206680fb78-bh_player_input_events.c.txt",
+    "src/bh_player_input_events.h": "META/m4/scene-callers/sources/bfc3d0fb40e2185801e38e129d4bd41fa01b0b9edfee8e79b1b0bd0d59757e71-bh_player_input_events.h.txt",
+    "src/bh_scene_background.c": "META/m4/scene-callers/sources/a392e9a1a2d4cb9d5d60f226f311961c5b9d96fbb8aeff0df3fc064fdb697a7b-bh_scene_background.c.txt",
+    "src/bh_scene_background.h": "META/m4/scene-callers/sources/aea1de5930868c53d03527be81de2a70bb0bd50b5338d68866466938f1466a00-bh_scene_background.h.txt",
+    "src/bh_text_queue.c": "META/m4/scene-callers/sources/b85d5dccd3b5892ad64d8439a678099a55a52094eec98cf74419ab0403783f91-bh_text_queue.c.txt",
+    "src/bh_text_queue.h": "META/m4/scene-callers/sources/35ab3d3e8b3147dc4d25ce12e0d7ffbd23499d807a509886a2580296d154f45d-bh_text_queue.h.txt",
+    "src/bh_world_segment.c": "META/m4/scene-callers/sources/381aa5b0a2e080cef63dc6ce8db6978c32d70f55796be0ea9ab759ffb2219756-bh_world_segment.c.txt",
+    "src/bh_world_segment.h": "META/m4/scene-callers/sources/6ed4340e7a64be740e87b0e45900403f62439a750c2e6a519ee5c598f0d468e2-bh_world_segment.h.txt",
+    "tests/actor_basis.c": "META/m4/scene-callers/sources/e2cfb5e3f9a3576f1caee65dbb888881985e3b0fe93c0658e88d947fd35084d4-actor_basis.c.txt",
+    "tests/atlas_text.c": "META/m4/scene-callers/sources/43f1f804603018e5b09e9670acd7ff51cf3d9c22da22129fedf962b186e63052-atlas_text.c.txt",
+    "tests/camera_curve.c": "META/m4/scene-callers/sources/bc83ca3c084b2bba9b7357f9cafaca90c5ea60f237a9f66d9921730d21908c1d-camera_curve.c.txt",
+    "tests/camera_modes.c": "META/m4/scene-callers/sources/cf4dd73be622ca60f154291316a8cf4b1ab453e173348d55925bbe08940c018d-camera_modes.c.txt",
+    "tests/camera_queue.c": "META/m4/scene-callers/sources/876f2c12d30e244188305440e9ef794b75979248108d58f7130065cfc15516bf-camera_queue.c.txt",
+    "tests/camera_route.c": "META/m4/scene-callers/sources/1ce5c11c24450e74339d8da6b278fb45ac575e8a2c3a73343fac94e64d6e6e83-camera_route.c.txt",
+    "tests/camera_route_real.c": "META/m4/scene-callers/sources/03abda0b64a307f20fdf92c8d951a857258e7b4199f5a7b1385e9e447cb7886e-camera_route_real.c.txt",
+    "tests/camera_state.c": "META/m4/scene-callers/sources/320ab0c1a2fae19fa6bac8a540e504caf6801af072c91222726315b2546b9504-camera_state.c.txt",
+    "tests/checkpoint.c": "META/m4/scene-callers/sources/938498b8ee6669a40ff424850aa9f6a1714b67f67443dd51e742ebeb37fa8ba3-checkpoint.c.txt",
+    "tests/collision_cache.c": "META/m4/scene-callers/sources/d17e3d4ef85a61c3ecb48644910f49bffb34c19fb9e60bfdce527c88d9c744eb-collision_cache.c.txt",
+    "tests/collision_resource.c": "META/m4/scene-callers/sources/a246d998e2eb34f84d793d0a8fbadb9e19b358d241bc3535d60476cf3d0fac25-collision_resource.c.txt",
+    "tests/flyby_camera.c": "META/m4/scene-callers/sources/2c78397776cb1ecd28e79f28e180d7b42897aae6738f0d168541d9a9e6a8f90c-flyby_camera.c.txt",
+    "tests/horizon_color.c": "META/m4/scene-callers/sources/6b915961c02d65701feaef207ad5e710df288f261cf560ea434e62376e21bec8-horizon_color.c.txt",
+    "tests/input_evaluate.c": "META/m4/scene-callers/sources/a3e92bc59ca40feb022bee85420828f12690875789478a34280cc7385252d1ea-input_evaluate.c.txt",
+    "tests/player_camera.c": "META/m4/scene-callers/sources/4a4a49a49dc82cb39b3c8c8d8a58a8282caf4d01de1a278b027e27463f51b16a-player_camera.c.txt",
+    "tests/player_input.c": "META/m4/scene-callers/sources/0f3e74b3e50b03295fc0fdc686547cc8bdd15ed9e29b55f41524329225be6322-player_input.c.txt",
+    "tests/player_input_events.c": "META/m4/scene-callers/sources/db072de8fed3187adf7ec52eff9f114b58d51f115464a6e67a3b832019dda248-player_input_events.c.txt",
+    "tests/scene_background.c": "META/m4/scene-callers/sources/31ea6ac0a6d3d201936de1b0e3f9407fdbaba432b82320c01d796ce3d52183b3-scene_background.c.txt",
+    "tests/scene_background_native.c": "META/m4/scene-callers/sources/5df8f52b50a5d334ca11dd17e915a1b052774e3d9abd35ee9708e4cc68f5d537-scene_background_native.c.txt",
+    "tests/scene_callers_native.c": "META/m4/scene-callers/sources/080516a56359eba6ff6553b9e49167a4978adb00b09250ba51a968192d9d89e4-scene_callers_native.c.txt",
+    "tests/text_queue.c": "META/m4/scene-callers/sources/d9192dfafdb7a4ae0231b815070526e2141e07aaf2e96043dcafcb84ec8f0d83-text_queue.c.txt",
+    "tests/world_segment.c": "META/m4/scene-callers/sources/4d989c4d42de9c785ff0be56a637daf545abaa8be81bee6840ea09dd01ac1c97-world_segment.c.txt",
+    "tools/check_scene_callers.py": "META/m4/scene-callers/sources/e7ee611cca901cd4ff65f6609a266922faa975c08d7ffa661684f31ab63b3eb1-check_scene_callers.py.txt",
+    "tools/m0.py": "META/m4/scene-callers/sources/ccae0d0cd98791cad26489d5bb92a77f34064299e1b89df1dda65c2e2bdd2b6f-m0.py.txt"
+  },
+  "native_images": {
+    "background-first-blank.bmp": "ee8e54c74e3527a873bf5bdb44a73607bdbfa9242b9f3ec78654e830e66205b6",
+    "background-first.bmp": "0d7b892252ec1704741b27c98945b8b2e3ad5f2ee090e9cf6bdd243034a0266e",
+    "background-second-blank.bmp": "ee8e54c74e3527a873bf5bdb44a73607bdbfa9242b9f3ec78654e830e66205b6",
+    "background-second.bmp": "bc6089fbfe353bac1860c3711a399a3a91b1bcbceba7240b701b910f455b5d16",
+    "scene-callers-native-after-gate.bmp": "0ac2dad7c3073bffd0d8f73a06c1b10456eddde5570637d4a35de8f243b265e4",
+    "scene-callers-native-blank.bmp": "f2b6b49fabf1238af61ecb37214b4d3c83ffd2ab409db20790f78b8ed8235c79",
+    "scene-callers-native-cached.bmp": "0ac2dad7c3073bffd0d8f73a06c1b10456eddde5570637d4a35de8f243b265e4",
+    "scene-callers-native-first.bmp": "0ac2dad7c3073bffd0d8f73a06c1b10456eddde5570637d4a35de8f243b265e4",
+    "scene-callers-native-second.bmp": "77aa43b2c24e90d115fcc0d1b9d6b10578b061f886cf3a2dbea18d4154699646"
+  },
+  "original_code_executed": false,
+  "game_launches": 0,
+  "gameplay_executed": false,
+  "original_reference_files_changed": false,
+  "admitted_owners": [
+    "00477fe0",
+    "00477830",
+    "0041c020",
+    "00421740",
+    "00475640",
+    "004756e0",
+    "00475770",
+    "00475810",
+    "00475870",
+    "00475990",
+    "0047b2e0",
+    "0047b210",
+    "0047b320",
+    "00479910",
+    "0047aac0",
+    "00479db0",
+    "00479e30",
+    "00479ff0",
+    "0047a0f0",
+    "0047a160",
+    "0047a1f0",
+    "0047a280",
+    "0047a2f0",
+    "0047a480",
+    "0047a7b0",
+    "00479f10",
+    "0047a610",
+    "00479c70",
+    "004221e0",
+    "004341a0",
+    "00413420",
+    "00413f80",
+    "0040c4a0",
+    "0040ba40",
+    "0040b020",
+    "0041e6b0",
+    "004296a0",
+    "00470900",
+    "00470c90",
+    "00470d40",
+    "00478bd0",
+    "00478ce0",
+    "00477ea0",
+    "00477f00",
+    "00429fb0",
+    "0045d7a0",
+    "004215c0",
+    "004757e0",
+    "0044b0a0",
+    "0044b130",
+    "00474020",
+    "004756b0"
+  ],
+  "unimplemented_callers": [
+    "0041c860",
+    "00428f50"
+  ]
+}

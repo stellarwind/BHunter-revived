@@ -1,0 +1,73 @@
+{
+  "reviewed_utc": "2026-10-24 22:08 UTC",
+  "scope": "Independent final-family review; no source mutations",
+  "findings": [],
+  "passed": true,
+  "sources": {
+    "src/bh_collision_resource.c": "fc674c6bf74306c8dc0a8387ae9f7dc8bf23eb7507f714ffa2bb222ce96fda75",
+    "src/bh_collision_resource.h": "b1b4fa243e47a927d8e30a16b98742676d661530f3bd8bb40a09bde62c16ddc5",
+    "src/bh_player_input_events.c": "66412656e9ba97226a227c5a8516cbda9c10cf57afd285ef6e8602206680fb78",
+    "src/bh_player_input_events.h": "bfc3d0fb40e2185801e38e129d4bd41fa01b0b9edfee8e79b1b0bd0d59757e71",
+    "src/bh_player_input.h": "76d30ff97ce1bcafea346f7bf420c7f13368b1602c1293d32277447e8fce5cda",
+    "src/bh_entities.h": "a0245c7cf2fe4f2529170d469030e62401f3651e21699f300aa83e9d80046489"
+  },
+  "owners": {
+    "0044b0a0": {
+      "bytes": 140,
+      "instructions": 53,
+      "body_sha256": "5858c6deda605e44875df65a00771d74682bb207c1d865169ac9f3274ac8ee65",
+      "last_instruction": "RET"
+    },
+    "004215c0": {
+      "bytes": 70,
+      "instructions": 25,
+      "body_sha256": "023d3c7fc86f5b42fc28c92bf9c4eec590d1b414cc108edc82ce67f63065479e",
+      "last_instruction": "RET"
+    },
+    "004757e0": {
+      "bytes": 34,
+      "instructions": 14,
+      "body_sha256": "8d78b2254327fc86f00744b22168b60a2c90d3f23b1383ee2f0a2bdcd2c3c2a5",
+      "last_instruction": "RET"
+    }
+  },
+  "checks": {
+    "0044b0a0": [
+      "Raw491334 append literal verified5c00",
+      "Prefix copied includingNUL, existing backslash retained, empty forces-1",
+      "Policy comparisons signed0..2; BHBspSearch mapping matches actual loader",
+      "Source bounded/null rejection is explicit atomic guard; unused tail retained"
+    ],
+    "004757e0": [
+      "Raw32-byte stride +10 matches BHInputBinding[256]",
+      "Count field+0c signed comparison matches source long max(count,index+1)",
+      "Only kind byte changes to4, all other record bytes preserved",
+      "Valid source caller index0..255 prevents signed index+1 overflow"
+    ],
+    "004215c0": [
+      "payload+24 == original+fc class1",
+      "query offset+d0 typed cdecl, two pushed args, callerADDESP8",
+      "40-byte stack packet, only first unsigned32 event15 initialized per selected actor",
+      "payload+12 == original+f0 successor read AFTER callback",
+      "Missing callback and traversal limit are explicit source guards; no callback installed by owner"
+    ]
+  },
+  "callers": {
+    "0044b0a0": [
+      "004474c0@00447568"
+    ],
+    "004757e0": [
+      "00412190@0041235c",
+      "0042c300@0042c41e"
+    ],
+    "004215c0": [
+      "004225f0@00422ea6",
+      "004225f0@00422f0f",
+      "004225f0@00422f42",
+      "004225f0@00422f76"
+    ]
+  },
+  "actual_defects_found": 0,
+  "original_code_executed": false,
+  "game_launches": 0
+}

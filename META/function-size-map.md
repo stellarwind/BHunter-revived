@@ -25,7 +25,7 @@ Names and body sizes come from `analysis/function-map.tsv`; ranges and roles com
 | 0x004744f0 | 4421 | 1107 | FUN_004744f0 | not tracked | unknown |
 | 0x0044f550 | 4236 | 1239 | bh_texture_load | func / linked_harness | engine_candidate |
 | 0x00458470 | 3983 | 1184 | bh_model_draw_unlit | func / linked_harness | unknown |
-| 0x0041c860 | 3934 | 1162 | FUN_0041c860 | not tracked | unknown |
+| 0x0041c860 | 3934 | 1162 | FUN_0041c860 | not_started / not_built | unknown |
 | 0x004124d0 | 3916 | 1015 | partial_physics_numerics | wip / linked_harness | unknown |
 | 0x00417f70 | 3890 | 1140 | FUN_00417f70 | not tracked | unknown |
 | 0x0041a3d0 | 3826 | 1123 | FUN_0041a3d0 | not tracked | unknown |
@@ -129,11 +129,11 @@ Names and body sizes come from `analysis/function-map.tsv`; ranges and roles com
 | 0x0040a8c0 | 794 | 263 | bh_world_locate | func / linked_harness | unknown |
 | 0x0040abe0 | 795 | 256 | collect (owned static DFS) | func / linked_harness | unknown |
 | 0x0040af20 | 251 | 84 | actors (owned strict actor collector) | func / linked_harness | unknown |
-| 0x0040b020 | 729 | 232 | FUN_0040b020 | not tracked | unknown |
+| 0x0040b020 | 729 | 232 | bh_world_segment_actor_trace | func / linked_harness | unknown |
 | 0x0040b300 | 263 | 109 | bh_world_query_run | func / linked_harness | unknown |
 | 0x0040b410 | 1582 | 483 | bh_entity_collision_dispatch | func / linked_harness | unknown |
-| 0x0040ba40 | 2625 | 809 | FUN_0040ba40 | not tracked | unknown |
-| 0x0040c4a0 | 448 | 173 | FUN_0040c4a0 | not tracked | unknown |
+| 0x0040ba40 | 2625 | 809 | bh_world_segment_room_trace | func / linked_harness | unknown |
+| 0x0040c4a0 | 448 | 173 | bh_world_segment_run | func / linked_harness | unknown |
 | 0x0040c660 | 845 | 234 | FUN_0040c660 | not tracked | unknown |
 | 0x0040c9b0 | 1610 | 464 | FUN_0040c9b0 | not tracked | unknown |
 | 0x0040d000 | 320 | 69 | FUN_0040d000 | not tracked | unknown |
@@ -158,10 +158,10 @@ Names and body sizes come from `analysis/function-map.tsv`; ranges and roles com
 | 0x00411f00 | 654 | 189 | block registry (owned data subset only) | wip / linked_harness | engine_candidate |
 | 0x00412190 | 820 | 265 | FUN_00412190 | not tracked | unknown |
 | 0x004124d0 | 3916 | 1015 | partial_physics_numerics | wip / linked_harness | unknown |
-| 0x00413420 | 1383 | 396 | FUN_00413420 | not tracked | unknown |
+| 0x00413420 | 1383 | 396 | bh_actor_basis_build_groups | func / linked_harness | unknown |
 | 0x00413990 | 738 | 239 | FUN_00413990 | not tracked | unknown |
 | 0x00413c80 | 758 | 246 | FUN_00413c80 | not tracked | unknown |
-| 0x00413f80 | 1897 | 466 | FUN_00413f80 | not tracked | unknown |
+| 0x00413f80 | 1897 | 466 | bh_actor_basis_acquire | func / linked_harness | unknown |
 | 0x004146f0 | 395 | 130 | FUN_004146f0 | not tracked | unknown |
 | 0x00414880 | 3243 | 1001 | FUN_00414880 | not tracked | unknown |
 | 0x00415530 | 3042 | 937 | FUN_00415530 | not tracked | unknown |
@@ -175,18 +175,18 @@ Names and body sizes come from `analysis/function-map.tsv`; ranges and roles com
 | 0x0041b2d0 | 893 | 233 | FUN_0041b2d0 | not tracked | unknown |
 | 0x0041b650 | 1434 | 427 | FUN_0041b650 | not tracked | unknown |
 | 0x0041bbf0 | 1029 | 317 | FUN_0041bbf0 | not tracked | unknown |
-| 0x0041c020 | 2105 | 604 | FUN_0041c020 | not tracked | unknown |
-| 0x0041c860 | 3934 | 1162 | FUN_0041c860 | not tracked | unknown |
+| 0x0041c020 | 2105 | 604 | bh_scene_background_step | func / linked_harness | unknown |
+| 0x0041c860 | 3934 | 1162 | FUN_0041c860 | not_started / not_built | unknown |
 | 0x0041d7c0 | 3749 | 1110 | FUN_0041d7c0 | not tracked | unknown |
-| 0x0041e6b0 | 414 | 138 | FUN_0041e6b0 | not tracked | unknown |
+| 0x0041e6b0 | 414 | 138 | bh_camera_correct | func / linked_harness | unknown |
 | 0x0041e850 | 11530 | 3076 | FUN_0041e850 | not tracked | unknown |
 | 0x00421560 | 94 | 31 | FUN_00421560 | not tracked | unknown |
-| 0x004215c0 | 70 | 25 | FUN_004215c0 | not tracked | unknown |
+| 0x004215c0 | 70 | 25 | bh_player_input_broadcast | func / linked_harness | unknown |
 | 0x00421610 | 304 | 107 | FUN_00421610 | not tracked | unknown |
-| 0x00421740 | 1147 | 407 | FUN_00421740 | not tracked | unknown |
+| 0x00421740 | 1147 | 407 | bh_player_input_setup | func / linked_harness | unknown |
 | 0x00421bc0 | 346 | 88 | FUN_00421bc0 | not tracked | unknown |
 | 0x00421d20 | 1204 | 298 | FUN_00421d20 | not tracked | unknown |
-| 0x004221e0 | 910 | 234 | FUN_004221e0 | not tracked | unknown |
+| 0x004221e0 | 910 | 234 | bh_player_camera_reset | func / linked_harness | unknown |
 | 0x00422570 | 118 | 27 | FUN_00422570 | not tracked | unknown |
 | 0x004225f0 | 3507 | 936 | FUN_004225f0 | not tracked | unknown |
 | 0x00423400 | 193 | 79 | FUN_00423400 | not tracked | unknown |
@@ -215,10 +215,10 @@ Names and body sizes come from `analysis/function-map.tsv`; ranges and roles com
 | 0x00427d30 | 2539 | 703 | FUN_00427d30 | not tracked | unknown |
 | 0x00428750 | 1586 | 449 | FUN_00428750 | not tracked | unknown |
 | 0x00428dc0 | 391 | 127 | FUN_00428dc0 | not tracked | unknown |
-| 0x00428f50 | 1286 | 360 | FUN_00428f50 | not tracked | unknown |
+| 0x00428f50 | 1286 | 360 | FUN_00428f50 | not_started / not_built | unknown |
 | 0x00429480 | 529 | 160 | bh_route_plan | func / linked_harness | unknown |
-| 0x004296a0 | 2307 | 701 | FUN_004296a0 | not tracked | unknown |
-| 0x00429fb0 | 2556 | 757 | FUN_00429fb0 | not tracked | unknown |
+| 0x004296a0 | 2307 | 701 | bh_camera_route_advance | func / linked_harness | unknown |
+| 0x00429fb0 | 2556 | 757 | bh_flyby_camera_step | func / linked_harness | unknown |
 | 0x0042a9b0 | 34 | 7 | FUN_0042a9b0 | not tracked | unknown |
 | 0x0042a9e0 | 494 | 137 | FUN_0042a9e0 | not tracked | unknown |
 | 0x0042abd0 | 1805 | 502 | FUN_0042abd0 | not tracked | unknown |
@@ -312,7 +312,7 @@ Names and body sizes come from `analysis/function-map.tsv`; ranges and roles com
 | 0x00433f70 | 165 | 46 | bh_portal_center | func / linked_harness | unknown |
 | 0x00434040 | 147 | 44 | bh_portal_normal | func / linked_harness | unknown |
 | 0x004340f0 | 169 | 53 | FUN_004340f0 | not tracked | unknown |
-| 0x004341a0 | 543 | 185 | FUN_004341a0 | not tracked | unknown |
+| 0x004341a0 | 543 | 185 | bh_camera_curve | func / linked_harness | unknown |
 | 0x004343c0 | 298 | 119 | FUN_004343c0 | not tracked | unknown |
 | 0x004344f0 | 344 | 116 | FUN_004344f0 | not tracked | unknown |
 | 0x00434650 | 440 | 138 | FUN_00434650 | not tracked | unknown |
@@ -432,8 +432,8 @@ Names and body sizes come from `analysis/function-map.tsv`; ranges and roles com
 | 0x0044a720 | 370 | 131 | FUN_0044a720 | not tracked | unknown |
 | 0x0044a8a0 | 532 | 177 | FUN_0044a8a0 | not tracked | unknown |
 | 0x0044aac0 | 1487 | 444 | FUN_0044aac0 | not tracked | unknown |
-| 0x0044b0a0 | 140 | 53 | FUN_0044b0a0 | not tracked | unknown |
-| 0x0044b130 | 423 | 152 | FUN_0044b130 | not tracked | unknown |
+| 0x0044b0a0 | 140 | 53 | bh_collision_resource_path | func / linked_harness | unknown |
+| 0x0044b130 | 423 | 152 | bh_collision_cache_prepare | func / linked_harness | unknown |
 | 0x0044b2e0 | 1195 | 464 | bh_collision_model_load | func / linked_harness | unknown |
 | 0x0044b7a0 | 2646 | 711 | FUN_0044b7a0 | not tracked | unknown |
 | 0x0044c200 | 2591 | 759 | bh_collision_query_node | func / linked_harness | unknown |
@@ -521,7 +521,7 @@ Names and body sizes come from `analysis/function-map.tsv`; ranges and roles com
 | 0x0045cf50 | 1852 | 550 | FUN_0045cf50 | not tracked | unknown |
 | 0x0045d690 | 180 | 58 | FUN_0045d690 | not tracked | unknown |
 | 0x0045d750 | 76 | 22 | FUN_0045d750 | not tracked | engine_candidate |
-| 0x0045d7a0 | 977 | 303 | FUN_0045d7a0 | not tracked | unknown |
+| 0x0045d7a0 | 977 | 303 | bh_horizon_color_prepare | func / linked_harness | unknown |
 | 0x0045db80 | 2958 | 699 | FUN_0045db80 | not tracked | unknown |
 | 0x0045e710 | 80 | 41 | bh_model_image_find | func / linked_harness | unknown |
 | 0x0045e760 | 33 | 12 | bh_model_image_replace | func / linked_harness | unknown |
@@ -564,11 +564,11 @@ Names and body sizes come from `analysis/function-map.tsv`; ranges and roles com
 | 0x00470380 | 569 | 196 | bh_atlas_page_create | func / linked_harness | unknown |
 | 0x004705c0 | 782 | 292 | bh_atlas_page_clear | func / linked_harness | unknown |
 | 0x004708d0 | 33 | 10 | bh_atlas_page_cursor | func / linked_harness | unknown |
-| 0x00470900 | 439 | 147 | FUN_00470900 | not tracked | unknown |
+| 0x00470900 | 439 | 147 | bh_atlas_page_text | func / linked_harness | unknown |
 | 0x00470ac0 | 449 | 147 | FUN_00470ac0 | not tracked | unknown |
-| 0x00470c90 | 78 | 35 | FUN_00470c90 | not tracked | unknown |
+| 0x00470c90 | 78 | 35 | bh_atlas_page_text_width | func / linked_harness | unknown |
 | 0x00470ce0 | 84 | 35 | FUN_00470ce0 | not tracked | unknown |
-| 0x00470d40 | 13 | 6 | FUN_00470d40 | not tracked | unknown |
+| 0x00470d40 | 13 | 6 | bh_atlas_page_image | func / linked_harness | unknown |
 | 0x00470d50 | 164 | 61 | FUN_00470d50 | not tracked | unknown |
 | 0x00470e00 | 944 | 334 | FUN_00470e00 | not tracked | unknown |
 | 0x004711b0 | 104 | 42 | FUN_004711b0 | not tracked | unknown |
@@ -593,16 +593,16 @@ Names and body sizes come from `analysis/function-map.tsv`; ranges and roles com
 | 0x00473c40 | 229 | 60 | FUN_00473c40 | not tracked | engine_candidate |
 | 0x00473d60 | 627 | 143 | FUN_00473d60 | not tracked | engine_candidate |
 | 0x00473fe0 | 55 | 16 | FUN_00473fe0 | not tracked | unknown |
-| 0x00474020 | 1118 | 342 | FUN_00474020 | not tracked | unknown |
+| 0x00474020 | 1118 | 342 | bh_input_evaluate | func / linked_harness | unknown |
 | 0x004744f0 | 4421 | 1107 | FUN_004744f0 | not tracked | unknown |
-| 0x00475640 | 100 | 34 | FUN_00475640 | not tracked | unknown |
-| 0x004756b0 | 44 | 14 | FUN_004756b0 | not tracked | unknown |
-| 0x004756e0 | 135 | 49 | FUN_004756e0 | not tracked | unknown |
-| 0x00475770 | 108 | 43 | FUN_00475770 | not tracked | unknown |
-| 0x004757e0 | 34 | 14 | FUN_004757e0 | not tracked | unknown |
-| 0x00475810 | 83 | 37 | FUN_00475810 | not tracked | unknown |
-| 0x00475870 | 256 | 86 | FUN_00475870 | not tracked | unknown |
-| 0x00475990 | 44 | 20 | FUN_00475990 | not tracked | unknown |
+| 0x00475640 | 100 | 34 | bh_player_input_create | func / linked_harness | unknown |
+| 0x004756b0 | 44 | 14 | bh_input_set_enabled | func / linked_harness | unknown |
+| 0x004756e0 | 135 | 49 | bh_player_input_bind_axis | func / linked_harness | unknown |
+| 0x00475770 | 108 | 43 | bh_player_input_bind_key | func / linked_harness | unknown |
+| 0x004757e0 | 34 | 14 | bh_player_input_bind_kind4 | func / linked_harness | unknown |
+| 0x00475810 | 83 | 37 | bh_player_input_bind_string | func / linked_harness | unknown |
+| 0x00475870 | 256 | 86 | bh_player_input_apply_packet | func / linked_harness | unknown |
+| 0x00475990 | 44 | 20 | bh_player_input_transition | func / linked_harness | unknown |
 | 0x004759c0 | 177 | 56 | FUN_004759c0 | not tracked | unknown |
 | 0x00475a80 | 180 | 56 | FUN_00475a80 | not tracked | unknown |
 | 0x00475b40 | 29 | 11 | FUN_00475b40 | not tracked | unknown |
@@ -644,7 +644,7 @@ Names and body sizes come from `analysis/function-map.tsv`; ranges and roles com
 | 0x00477710 | 78 | 37 | FUN_00477710 | not tracked | unknown |
 | 0x00477760 | 94 | 45 | FUN_00477760 | not tracked | unknown |
 | 0x004777c0 | 104 | 43 | FUN_004777c0 | not tracked | unknown |
-| 0x00477830 | 72 | 25 | FUN_00477830 | not tracked | unknown |
+| 0x00477830 | 72 | 25 | bh_camera_queue_execute | func / linked_harness | unknown |
 | 0x00477880 | 345 | 135 | FUN_00477880 | not tracked | unknown |
 | 0x004779e0 | 181 | 79 | FUN_004779e0 | not tracked | unknown |
 | 0x00477aa0 | 52 | 22 | FUN_00477aa0 | not tracked | unknown |
@@ -652,14 +652,14 @@ Names and body sizes come from `analysis/function-map.tsv`; ranges and roles com
 | 0x00477d20 | 278 | 99 | FUN_00477d20 | not tracked | unknown |
 | 0x00477e40 | 49 | 20 | bh_draw_controls_execute | func / linked_harness | unknown |
 | 0x00477e80 | 26 | 11 | FUN_00477e80 | not tracked | unknown |
-| 0x00477ea0 | 48 | 19 | FUN_00477ea0 | not tracked | unknown |
+| 0x00477ea0 | 48 | 19 | bh_text_queue_execute_text | func / linked_harness | unknown |
 | 0x00477ed0 | 48 | 19 | FUN_00477ed0 | not tracked | unknown |
-| 0x00477f00 | 26 | 11 | FUN_00477f00 | not tracked | unknown |
+| 0x00477f00 | 26 | 11 | bh_text_queue_execute_clear | func / linked_harness | unknown |
 | 0x00477f20 | 26 | 11 | FUN_00477f20 | not tracked | unknown |
 | 0x00477f40 | 22 | 9 | bh_draw_controls_execute | func / linked_harness | unknown |
 | 0x00477f60 | 50 | 23 | FUN_00477f60 | not tracked | unknown |
 | 0x00477fa0 | 50 | 23 | FUN_00477fa0 | not tracked | unknown |
-| 0x00477fe0 | 122 | 43 | FUN_00477fe0 | not tracked | unknown |
+| 0x00477fe0 | 122 | 43 | bh_camera_queue_pose | func / linked_harness | unknown |
 | 0x00478060 | 227 | 71 | FUN_00478060 | not tracked | unknown |
 | 0x00478170 | 231 | 75 | bh_draw_submit_resource | func / linked_harness | unknown |
 | 0x00478280 | 236 | 75 | bh_draw_billboard | func / linked_harness | unknown |
@@ -673,9 +673,9 @@ Names and body sizes come from `analysis/function-map.tsv`; ranges and roles com
 | 0x00478990 | 178 | 57 | bh_draw_controls_state | func / linked_harness | unknown |
 | 0x00478a70 | 199 | 63 | bh_draw_controls_clip_rect | func / linked_harness | unknown |
 | 0x00478b60 | 99 | 31 | FUN_00478b60 | not tracked | unknown |
-| 0x00478bd0 | 117 | 35 | FUN_00478bd0 | not tracked | unknown |
+| 0x00478bd0 | 117 | 35 | bh_text_queue_text | func / linked_harness | unknown |
 | 0x00478c50 | 142 | 46 | FUN_00478c50 | not tracked | unknown |
-| 0x00478ce0 | 84 | 23 | FUN_00478ce0 | not tracked | unknown |
+| 0x00478ce0 | 84 | 23 | bh_text_queue_clear | func / linked_harness | unknown |
 | 0x00478d40 | 227 | 71 | FUN_00478d40 | not tracked | unknown |
 | 0x00478e50 | 227 | 71 | FUN_00478e50 | not tracked | unknown |
 | 0x00478f60 | 262 | 81 | bh_pickup_rect_queue | func / linked_harness | unknown |
@@ -684,24 +684,24 @@ Names and body sizes come from `analysis/function-map.tsv`; ranges and roles com
 | 0x00479140 | 175 | 47 | FUN_00479140 | not tracked | game |
 | 0x004791f0 | 14 | 5 | FUN_004791f0 | not tracked | game |
 | 0x00479200 | 1800 | 428 | FUN_00479200 | not tracked | game |
-| 0x00479910 | 860 | 241 | FUN_00479910 | not tracked | unknown |
-| 0x00479c70 | 317 | 111 | FUN_00479c70 | not tracked | unknown |
-| 0x00479db0 | 119 | 38 | FUN_00479db0 | not tracked | unknown |
-| 0x00479e30 | 224 | 70 | FUN_00479e30 | not tracked | unknown |
-| 0x00479f10 | 224 | 70 | FUN_00479f10 | not tracked | unknown |
-| 0x00479ff0 | 246 | 81 | FUN_00479ff0 | not tracked | unknown |
-| 0x0047a0f0 | 108 | 32 | FUN_0047a0f0 | not tracked | unknown |
-| 0x0047a160 | 134 | 41 | FUN_0047a160 | not tracked | unknown |
-| 0x0047a1f0 | 134 | 41 | FUN_0047a1f0 | not tracked | unknown |
-| 0x0047a280 | 108 | 32 | FUN_0047a280 | not tracked | unknown |
-| 0x0047a2f0 | 386 | 131 | FUN_0047a2f0 | not tracked | unknown |
-| 0x0047a480 | 397 | 139 | FUN_0047a480 | not tracked | unknown |
-| 0x0047a610 | 411 | 138 | FUN_0047a610 | not tracked | unknown |
-| 0x0047a7b0 | 783 | 248 | FUN_0047a7b0 | not tracked | unknown |
-| 0x0047aac0 | 1858 | 514 | FUN_0047aac0 | not tracked | unknown |
-| 0x0047b210 | 193 | 52 | FUN_0047b210 | not tracked | unknown |
-| 0x0047b2e0 | 56 | 15 | FUN_0047b2e0 | not tracked | unknown |
-| 0x0047b320 | 10 | 3 | FUN_0047b320 | not tracked | unknown |
+| 0x00479910 | 860 | 241 | bh_camera_mode_smooth | func / linked_harness | unknown |
+| 0x00479c70 | 317 | 111 | bh_camera_look_at | func / linked_harness | unknown |
+| 0x00479db0 | 119 | 38 | bh_camera_mode_0 | func / linked_harness | unknown |
+| 0x00479e30 | 224 | 70 | bh_camera_mode_1 | func / linked_harness | unknown |
+| 0x00479f10 | 224 | 70 | bh_camera_mode_10 | func / linked_harness | unknown |
+| 0x00479ff0 | 246 | 81 | bh_camera_mode_2 | func / linked_harness | unknown |
+| 0x0047a0f0 | 108 | 32 | bh_camera_mode_3 | func / linked_harness | unknown |
+| 0x0047a160 | 134 | 41 | bh_camera_mode_4 | func / linked_harness | unknown |
+| 0x0047a1f0 | 134 | 41 | bh_camera_mode_5 | func / linked_harness | unknown |
+| 0x0047a280 | 108 | 32 | bh_camera_mode_6 | func / linked_harness | unknown |
+| 0x0047a2f0 | 386 | 131 | bh_camera_mode_7 | func / linked_harness | unknown |
+| 0x0047a480 | 397 | 139 | bh_camera_mode_8 | func / linked_harness | unknown |
+| 0x0047a610 | 411 | 138 | bh_camera_mode_11 | func / linked_harness | unknown |
+| 0x0047a7b0 | 783 | 248 | bh_camera_mode_9 | func / linked_harness | unknown |
+| 0x0047aac0 | 1858 | 514 | bh_camera_state_update | func / linked_harness | unknown |
+| 0x0047b210 | 193 | 52 | bh_camera_state_set_mode | func / linked_harness | unknown |
+| 0x0047b2e0 | 56 | 15 | bh_camera_state_init | func / linked_harness | unknown |
+| 0x0047b320 | 10 | 3 | bh_camera_state_set_correction | func / linked_harness | unknown |
 | 0x0047b330 | 224 | 57 | bh_sound_resource_allocate | func / linked_harness | unknown |
 | 0x0047b410 | 228 | 59 | bh_sound_voice_allocate | func / linked_harness | unknown |
 | 0x0047b500 | 228 | 75 | FUN_0047b500 | not tracked | engine_candidate |

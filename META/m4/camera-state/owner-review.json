@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "functions": [
+    {
+      "address": "0047b2e0",
+      "end_inclusive": "0047b317",
+      "bytes": 56,
+      "source_function": "bh_camera_state_init",
+      "role": "engine_candidate",
+      "role_confidence": "high for behavior boundary; unknown engine/game provenance",
+      "boundary": "Complete ordinary cdecl camera owner with own return; called from player/flyby mode construction or update. No verified library signature, import, compiler/EH machinery or independent shared tail."
+    },
+    {
+      "address": "0047b210",
+      "end_inclusive": "0047b2d0",
+      "bytes": 193,
+      "source_function": "bh_camera_state_set_mode",
+      "role": "engine_candidate",
+      "role_confidence": "high for behavior boundary; unknown engine/game provenance",
+      "boundary": "Complete ordinary cdecl camera owner with own return; called from player/flyby mode construction or update. No verified library signature, import, compiler/EH machinery or independent shared tail."
+    },
+    {
+      "address": "0047b320",
+      "end_inclusive": "0047b329",
+      "bytes": 10,
+      "source_function": "bh_camera_state_set_correction",
+      "role": "engine_candidate",
+      "role_confidence": "high for behavior boundary; unknown engine/game provenance",
+      "boundary": "Complete ordinary cdecl camera owner with own return; called from player/flyby mode construction or update. No verified library signature, import, compiler/EH machinery or independent shared tail."
+    },
+    {
+      "address": "00479910",
+      "end_inclusive": "00479c6b",
+      "bytes": 860,
+      "source_function": "bh_camera_mode_smooth",
+      "role": "engine_candidate",
+      "role_confidence": "high for behavior boundary; unknown engine/game provenance",
+      "boundary": "Complete ordinary cdecl camera owner with own return; called from player/flyby mode construction or update. No verified library signature, import, compiler/EH machinery or independent shared tail."
+    },
+    {
+      "address": "0047aac0",
+      "end_inclusive": "0047b201",
+      "bytes": 1858,
+      "source_function": "bh_camera_state_update",
+      "role": "engine_candidate",
+      "role_confidence": "high for behavior boundary; unknown engine/game provenance",
+      "boundary": "Complete ordinary cdecl camera owner with own return; called from player/flyby mode construction or update. No verified library signature, import, compiler/EH machinery or independent shared tail."
+    }
+  ],
+  "source": [
+    "src/bh_camera_state.c",
+    "src/bh_camera_state.h"
+  ],
+  "dependencies": [
+    "src/bh_camera_modes.c (twelve actual original mode handlers and look-at)",
+    "src/bh_math.c",
+    "src/bh_rotation.c",
+    "src/bh_round.c",
+    "src/bh_fp.c",
+    "Pinned VC5 single-threaded CRT fmod/atan2/sin/cos"
+  ],
+  "excluded_dependency": {
+    "address": "0047e3ca",
+    "role": "compiler_support",
+    "basis": "10-byte runtime dispatch entry loads493080 and jumps4829c0; nearby underlying sequence usesFPREM/runtime precision branch, distinct from camera behavior. Earlier broad map left provenance unknown; this focused role is based on runtime calling shape, not a verified raw library match.",
+    "source_equivalent": "CRT fmod; no separate recovered gameplay function count"
+  },
+  "layout": {
+    "mode_bytes": 48,
+    "state_bytes": 156,
+    "current": 0,
+    "previous": 48,
+    "look_yaw": 96,
+    "look_pitch": 100,
+    "blend_remaining": 104,
+    "elapsed": 112,
+    "position": 120,
+    "angles": 132,
+    "velocity": 144
+  },
+  "global_bindings": {
+    "correction": "004f559c shared across all camera states, not per state",
+    "elapsed": "004f5580 copied from current state.elapsed each frame",
+    "target": "004f5590 xyz copied from input target",
+    "actor_token": "004f5588 opaque actor token; not binary32 despite decompiler inference"
+  },
+  "contracts": [
+    "Init touches exactly eleven32-bit words and preserves other bytes; it does not synthesize missing mode poses",
+    "Same mode transition preserves every byte; changed mode snapshots48-byte current block into previous, starts.5s blend",
+    "Special modes8/11 rotate output yaw by pi, normalize and reset elapsed",
+    "Smoothing invokes optional real borrowed correction before first-update/smoothing; first update clears flag and copies pose",
+    "Old position products are separately binary32 rounded; desired products retain PC53 precision before sums",
+    "Angle wrap has asymmetric spill/control: upper compare retained candidate, lower compare reloaded float. X initial smooth delta spills first; Y/Z initially retain difference",
+    "Outer update dispatches all12 real handlers; previous mode only while remaining blend>0, clamp negative blend to0",
+    "Blend correction runs at both mode candidate smooths, previous final pose and blended final pose; repeated calls retained",
+    "Look slew quarter-delta limited to signed8*dt, converted by pi/3; actual recovered matrix owners reconstruct final yaw/pitch/roll",
+    "Published velocity is output position minus previous published output, divided by positive double dt"
+  ],
+  "source_guards": [
+    "Null owner/input rejects",
+    "Nonfinite input pose,basis,look,timers and unsupported mode outside0..11 reject before publication",
+    "Special-mode nonfinite yaw rejects transition unchanged",
+    "dt<=0 rejects to avoid divide-by-zero for source-built integration"
+  ],
+  "isolated_test_doubles": [
+    "tests/camera_state.c correction_a/b install-only pointers; not invoked",
+    "tests/camera_state.c correction_move changes candidate x and counts synchronous calls; isolated validation only, not runtime collision implementation"
+  ],
+  "limitations": [
+    "No original game execution or original-code execution",
+    "No instruction or byte-match claim",
+    "PC24 x87 and exceptional/huge-angle behavior remain unverified",
+    "Camera correction0041e6b0 and its world segment owner0040c4a0 are not implemented here; a caller may install an actual borrowed function or leave callback null, as original supports",
+    "Full player/flyby construction and resource startup are not admitted by these five functions",
+    "Current integration build and final evidence snapshots owned by parent work block"
+  ],
+  "focused_validation": {
+    "target": "build/camera-state/camera-state.exe",
+    "scenario": "camera-state",
+    "checks": 1452,
+    "failures": 0,
+    "original_code_required": false,
+    "game_launches": 0,
+    "evidence": "META/m4/camera-state/focused-validation.json"
+  },
+  "source_sha256": {
+    "src/bh_camera_state.c": "ca543379737d7b1006b7d3118fb742704021ed265c2abf1ca94fb1b86b789e42",
+    "src/bh_camera_state.h": "5ff12440cb5328fa4d1446183fd2fae329dcf4ec03abdb37ed61e64021f6d83d",
+    "tests/camera_state.c": "420c2dcba220d09f7d217339db1826eee26793b0458354edea078b9f826fe3a2"
+  },
+  "original_evidence_sha256": {
+    "META/m4/camera-state/original/00479910.decompile.json": "ca4594dd42adb9c0ce0b5ed576c946d4eefd2dbdbdb1104fc49a64e447b927b1",
+    "META/m4/camera-state/original/00479910.disasm.json": "386a44241d4b3488031e42078dd14f109de022ce886593d6f0470c7684c9ad69",
+    "META/m4/camera-state/original/00479910.function-get.json": "a0529ff4953e47bfc5772107da3a82329f6c2714345ce4062d2a80ec3eecce98",
+    "META/m4/camera-state/original/00479910.xrefs.json": "9869ec93ff19c075e54b9f3d6357df8a74c0883cfa3ff9f483ad07e34b831f49",
+    "META/m4/camera-state/original/0047aac0.decompile.json": "964487624b913735ed1238c55882b1384346ab52572eea7e93c47c6a94d2bdd1",
+    "META/m4/camera-state/original/0047aac0.disasm.json": "454481ce74c3773cf86a28c510fa5a624fc9f68c163a2f0a80b388861aba4086",
+    "META/m4/camera-state/original/0047aac0.function-get.json": "3672a5fdc640c948e3ebf2eddb2f6fd595f177b350a71bd64f27638d26ffadb5",
+    "META/m4/camera-state/original/0047aac0.xrefs.json": "361d7e2a48afc84b2d3f45f56687fb08e52f645be02faf52eff582e77a9fe92c",
+    "META/m4/camera-state/original/0047b210.decompile.json": "de8d35956645878e69952ad8668625a1c61876e1c9c61384625d2db23dce2594",
+    "META/m4/camera-state/original/0047b210.disasm.json": "7241d3de78f8eaf67f5bdfae34f9e2e53ee128994f8f151c90f1b5a7c139d3c0",
+    "META/m4/camera-state/original/0047b210.function-get.json": "2e3b6ab3815834c3f551397b2f8aa6fb633a33bcbd34842a4e58c95083dcdb70",
+    "META/m4/camera-state/original/0047b210.xrefs.json": "f1dfb783dba31010767d169708b09e59f79dd02409a414aa9cb4045ba37bd610",
+    "META/m4/camera-state/original/0047b2e0.decompile.json": "1de42d4538a2727e093f270018eff66a04d22edcad772bcf13e551e5143a719d",
+    "META/m4/camera-state/original/0047b2e0.disasm.json": "f15660dde248916efb65a2245808fd60ae38ae94b721ddf399cc70f3141efaab",
+    "META/m4/camera-state/original/0047b2e0.function-get.json": "a6b6b4be668bf63b2965b7ea4e96ecd2cd4fb25a21bcdc834e32719e44719f57",
+    "META/m4/camera-state/original/0047b2e0.xrefs.json": "2b93a91293ed24f8e64a42c30653e317a48d7890f5c31382611998ae09dc6ae2",
+    "META/m4/camera-state/original/0047b320.decompile.json": "7d8227e6ad358ed3dffdadefd708c0413673aca49259ab268fda555546492975",
+    "META/m4/camera-state/original/0047b320.disasm.json": "4599f270064226f6ccd9bd51bd16b7e28df422cdc88bfd221ab0ea85802ceedd",
+    "META/m4/camera-state/original/0047b320.function-get.json": "74bab5f028ab9f8f8f60d46f28ec6590d5e4cbf452ad5a350119f92ac162d20a",
+    "META/m4/camera-state/original/0047b320.xrefs.json": "4b80054ba0da4254840be55368d1751883256f80237e374ae6d90f7364933b95"
+  }
+}

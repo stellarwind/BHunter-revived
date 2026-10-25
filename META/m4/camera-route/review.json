@@ -1,0 +1,68 @@
+{
+  "address": "004296a0",
+  "end": "00429fa2",
+  "bytes": 2307,
+  "instructions": 701,
+  "body_sha256": "95c22f646b11474c7b7991b2b9837db27abd30fa0f08cc1c724d8ca1648dd8b7",
+  "role": "engine_candidate",
+  "provenance_confidence": "Complete ordinary path/camera geometry owner; engine authorship unknown; import/CRT/compiler/shared-tail excluded.",
+  "calls": [
+    "0x0040a8c0",
+    "0x00433f70",
+    "0x00434040",
+    "0x0047de20"
+  ],
+  "constants": {
+    "00489ae0": {
+      "type": "d",
+      "bytes": "abaaaaaaaaaa1240",
+      "value": 4.666666666666667
+    },
+    "00489350": {
+      "type": "f",
+      "bytes": "000080bf",
+      "value": -1.0
+    },
+    "00489628": {
+      "type": "f",
+      "bytes": "000000c0",
+      "value": -2.0
+    },
+    "00489308": {
+      "type": "f",
+      "bytes": "00002041",
+      "value": 10.0
+    },
+    "004894f0": {
+      "type": "f",
+      "bytes": "000020c1",
+      "value": -10.0
+    },
+    "00489340": {
+      "type": "d",
+      "bytes": "000000000000e0bf",
+      "value": -0.5
+    },
+    "00489280": {
+      "type": "d",
+      "bytes": "000000000000e03f",
+      "value": 0.5
+    }
+  },
+  "source_sha256": {
+    "src/bh_camera_route.c": "834e10033ae6333ecfdcc5557c908dc2bf1326d12a052f7acfd40d3ad9f89f0a",
+    "src/bh_camera_route.h": "21770dd9bb4cb3930f13fe8c715134a2efa043b4db5acc5bece5e042e26c1fbe",
+    "tests/camera_route.c": "1ce5c11c24450e74339d8da6b278fb45ac575e8a2c3a73343fac94e64d6e6e83",
+    "tests/camera_route_real.c": "b84574b9f5712823b0bc6033d164eb37f7f204d560826054772c698156ccb740",
+    "src/bh_camera_curve.c": "24f3f3f1f191ef1e8078eb2d1fd2c2225f66c7c5e710bdd4e942beca7c5432e7",
+    "src/bh_camera_curve.h": "af0e063d72131e5bfb6179d13eb8aef662fec2e5e76b0becc184fddc0dd6cc18"
+  },
+  "source_target": "build/camera-route/camera_route.exe",
+  "real_target": "build/camera-route/camera_route_real.exe",
+  "focused_checks": 15,
+  "real_checks": 31,
+  "original_code_executed": false,
+  "game_launches": 0,
+  "integration_admission": "Parent current integration build and ledger required",
+  "raw_byte_match": false
+}

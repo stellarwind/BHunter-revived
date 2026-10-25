@@ -1,0 +1,47 @@
+{
+  "reviewer": "camera_init independent of source owner player_input_init",
+  "functions": [
+    "00474020",
+    "004756b0"
+  ],
+  "classification": "Pure evaluation of already collected input snapshot and enabled-state wrapper. This review admits no DirectInput acquisition, device polling, or automatic gameplay.",
+  "original_evidence": [
+    "original/00474020.tsv",
+    "original/004756b0.tsv"
+  ],
+  "review": {
+    "kind1": "Full mode emits exactly one down/up entry by current key plus optional current modifier. Edge mode emits current down only when prior state zero and modifier allows, up on current zero/prior nonzero, and no event for held current. Exact current+255/prior+255 aliases preserved; local history read observes earlier kind5 changes.",
+    "kind2": "Actual jump table interleaves positive/negative selectors1..16 for eight axes and1..4 for two mouse axes. Unselected indices contribute zero. Analog sum clips before digital overrides; positive override occurs first, negative last and wins; modifier gates only digital overrides. Final payload binary32. Finite sum intermediate rounding has no distinct clipped binary32 payload.",
+    "kind3_4": "Two16bit raw halves emitted without conversion, pairs3 from originaleed88/eed8a, pairs4 from originaleed80/eed84.",
+    "kind5": "Reverse recent-history match wraps index31; source signed namebyte vs unsigned historybyte is retained; empty names match; success zeroes current head slot and increments head mod32 before later binding evaluation.",
+    "packet": "Analog and pair records emit in binding order, followed by both down/up batches even empty. Each batch padding depends on its own count+2 and explicitly zero-filled in original743ee..74402 and74441..74455 STOS. Source copies only finalat bytes preserving old tail. Packet length/count bytes retain original wrapping.",
+    "wrapper": "Nonzero mode writesflags2 without snapshot evaluation. Zero mode evaluates full state and flags0 on valid nonalias source inputs. Invalid argument/capacity transactional rejection is explicit adapter, not original crash behavior."
+  },
+  "findings": [
+    {
+      "status": "fixed",
+      "issue": "NaN unordered analog sum incorrectly retained NaN instead of original -1",
+      "raw": "74226 FCOM -1,7422e TEST AH1,74231 JZ; unordered falls through74233 FSTP/74235 FLD -1",
+      "source_fix": "if(!(value>= -1))value=-1;",
+      "test": "quiet NaN payload0x7fc12345 produces decoded-1"
+    },
+    {
+      "status": "fixed_by_owner",
+      "issue": "previous key255 aliases history0, so later binding must see earlier kind5 zero",
+      "fix": "key helper reads local mutable history[0] for previous255",
+      "test": "same-pass empty-string consume then key255 does not emit falseup"
+    },
+    {
+      "status": "retracted",
+      "issue": "Initial inference of sequentialpositive/negative switch mapping from physical code order was incorrect",
+      "resolution": "Decompile jump-table mapping confirms source odd/even mapping; immediately notified owner/parent, no incorrect production change made"
+    }
+  ],
+  "validation": "Meaningful actual bh_player_input_apply_packet_checked roundtrips all16 joystick and4 mouse selectors, edge/full key branches, modifier/digital priority, both packed pairs, wraparound consuming string history, alias cases, NaN clamp, analog followed by nonempty Boolean batches, wrapper behavior, capacity rejection. Owner standalone result recorded separately; parent canonical build must cover final hashes.",
+  "unresolved": "No further production defects found. Snapshot/list non-overlap and source bounded malformed-input rejection should remain explicit. No original device polling or game code executed.",
+  "source_hashes": {
+    "src/bh_input_evaluate.c": "c96ef2145edb1a1c633123580c14d12d6f6e78a3f1d8ecb3134a403c72847bb3",
+    "src/bh_input_evaluate.h": "5dd08ce558e731ad41e5584b23413bfe355743f808b19bdea1830abe904813f0",
+    "tests/input_evaluate.c": "a3e92bc59ca40feb022bee85420828f12690875789478a34280cc7385252d1ea"
+  }
+}

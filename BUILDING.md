@@ -6,7 +6,7 @@ On Windows x64 with Python 3.10+ on PATH, run from any working directory:
 D:\Decomp\Bhunter\build.cmd
 ```
 
-This compiles the admitted source families with their integration drivers, then links and executes `build/m0/bhunter-integration.exe`. The current 132-TU source-only scenario passes 2,906,329 checks. All 66 missing-module controls require LNK2001, including the new lighting, clipping, native rendering and BSP traversal owners. The pinned original math fixture remains verbatim; only its test-driver `main` is renamed at compile time. No original EXE is read, mapped or executed. Every stage must succeed; dependency mismatches, missing inputs, compile/link failures and failed fixtures return nonzero. Output stays under ignored `build/m0/`: `result.json`, `link.txt` and `bhunter-integration.map` retain commands/results and owning symbols.
+This compiles the admitted source families with their integration drivers, then links and executes `build/m0/bhunter-integration.exe`. The historical 132-TU source-only scenario passes 2,906,329 checks. All 66 missing-module controls require LNK2001, including the new lighting, clipping, native rendering and BSP traversal owners. The pinned original math fixture remains verbatim; only its test-driver `main` is renamed at compile time. No original EXE is read, mapped or executed. Every stage must succeed; dependency mismatches, missing inputs, compile/link failures and failed fixtures return nonzero. Output stays under ignored `build/m0/`: `result.json`, `link.txt` and `bhunter-integration.map` retain commands/results and owning symbols.
 
 The portal matcher adds 57,578 source-only checks against 3,739 previously captured aperture records and synthetic ordering/threshold cases; no game launch is used. See [portal restoration evidence](META/m4/PORTALS.md).
 
@@ -306,3 +306,5 @@ target clip extents and blank controls pass. The binding module is separately
 recorded as an adapter. Evidence: `META/m4/scene-owner/`. No original game
 code or gameplay is executed. Callers, full startup/resource metadata and
 software rendering remain open.
+
+Scene-caller dependency audit (2026-10-25): `python tools/check_scene_callers.py` verifies 234/727 admitted original functions in 203 translation units; 3,536,976 archive checks, 3,044,022 clean checks and 99 missing-module link controls. All new source families link into the real integration target. The asset-free Git-index checkout has identical source hashes; the archive-only route fixture explicitly reports its absent-archive skip, while synthetic route tests remain required. Native fixtures use actual assets and include blank controls. Input evaluation consumes explicit snapshots and does not collect devices. The lazy collision cache does not silently replace existing query metadata. Both full scene callers and horizon/software rendering remain unfinished. No original code or gameplay is executed. Evidence: `META/m4/scene-callers/`.

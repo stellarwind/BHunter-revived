@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated": "2026-10-24",
+  "updated": "2026-10-25",
   "scope": "Starter implementation-variant ledger, not exhaustive binary inventory. Other observed regions remain unadmitted until catalogued.",
   "plan": "RESTORATION_PLAN.md",
   "reference_exe_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
@@ -9439,6 +9439,3056 @@
         "META/m4/scene-owner/integration-real.json",
         "META/m4/scene-owner/clean/clean-checkout.json"
       ]
+    },
+    {
+      "id": "00477fe0-functional-c",
+      "original_va": "00477fe0",
+      "function": "bh_camera_queue_pose",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_camera_queue.c",
+      "source_sha256": "dbb5914e7852ba51578300e5e59419abc13961b663cf1d2fe2ef65445a614414",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original00477fe0..00478059 (122bytes/43instructions)",
+        "fixtures": {
+          "camera-queue": {
+            "scenario": "camera-queue",
+            "checks": 23,
+            "failures": 0
+          },
+          "scene-callers-native": {
+            "scenario": "scene-callers-native",
+            "checks": 101,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "scene-background-native": {
+            "scenario": "scene-background-native",
+            "checks": 154,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "camera-queue": {
+            "scenario": "camera-queue",
+            "checks": 23,
+            "failures": 0
+          },
+          "scene-callers-native": {
+            "scenario": "scene-callers-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "scene-background-native": {
+            "scenario": "scene-background-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/scene-callers-review/REVIEW.md",
+        "META/m4/scene-callers/original/00477fe0.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00477830-functional-c",
+      "original_va": "00477830",
+      "function": "bh_camera_queue_execute",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_camera_queue.c",
+      "source_sha256": "dbb5914e7852ba51578300e5e59419abc13961b663cf1d2fe2ef65445a614414",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original00477830..00477877 (72bytes/25instructions)",
+        "fixtures": {
+          "camera-queue": {
+            "scenario": "camera-queue",
+            "checks": 23,
+            "failures": 0
+          },
+          "scene-callers-native": {
+            "scenario": "scene-callers-native",
+            "checks": 101,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "scene-background-native": {
+            "scenario": "scene-background-native",
+            "checks": 154,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "camera-queue": {
+            "scenario": "camera-queue",
+            "checks": 23,
+            "failures": 0
+          },
+          "scene-callers-native": {
+            "scenario": "scene-callers-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "scene-background-native": {
+            "scenario": "scene-background-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/scene-callers-review/REVIEW.md",
+        "META/m4/scene-callers/original/00477830.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0041c020-functional-c",
+      "original_va": "0041c020",
+      "function": "bh_scene_background_step",
+      "role": "game",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_scene_background.c",
+      "source_sha256": "a392e9a1a2d4cb9d5d60f226f311961c5b9d96fbb8aeff0df3fc064fdb697a7b",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original0041c020..0041c858 (2105bytes/604instructions)",
+        "fixtures": {
+          "scene-background": {
+            "scenario": "scene-background",
+            "checks": 32,
+            "failures": 0
+          },
+          "scene-background-native": {
+            "scenario": "scene-background-native",
+            "checks": 154,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "scene-background": {
+            "scenario": "scene-background",
+            "checks": 32,
+            "failures": 0
+          },
+          "scene-background-native": {
+            "scenario": "scene-background-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/scene-callers-review/REVIEW.md",
+        "META/m4/scene-callers/original/0041c020.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00421740-functional-c",
+      "original_va": "00421740",
+      "function": "bh_player_input_setup",
+      "role": "game",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_player_input.c",
+      "source_sha256": "0c4060193e23c0aae26989359c70619b0ef6e50fa7ad195b8868bb1e177a348b",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original00421740..00421bba (1147bytes/407instructions)",
+        "fixtures": {
+          "player-input": {
+            "scenario": "player-input",
+            "checks": 77,
+            "failures": 0
+          }
+        },
+        "clean_fixtures": {
+          "player-input": {
+            "scenario": "player-input",
+            "checks": 77,
+            "failures": 0
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/player-input/review.json",
+        "META/m4/scene-callers/original/00421740.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00475640-functional-c",
+      "original_va": "00475640",
+      "function": "bh_player_input_create",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_player_input.c",
+      "source_sha256": "0c4060193e23c0aae26989359c70619b0ef6e50fa7ad195b8868bb1e177a348b",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original00475640..004756a3 (100bytes/34instructions)",
+        "fixtures": {
+          "player-input": {
+            "scenario": "player-input",
+            "checks": 77,
+            "failures": 0
+          }
+        },
+        "clean_fixtures": {
+          "player-input": {
+            "scenario": "player-input",
+            "checks": 77,
+            "failures": 0
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/player-input/review.json",
+        "META/m4/scene-callers/original/00475640.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004756e0-functional-c",
+      "original_va": "004756e0",
+      "function": "bh_player_input_bind_axis",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_player_input.c",
+      "source_sha256": "0c4060193e23c0aae26989359c70619b0ef6e50fa7ad195b8868bb1e177a348b",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original004756e0..00475766 (135bytes/49instructions)",
+        "fixtures": {
+          "player-input": {
+            "scenario": "player-input",
+            "checks": 77,
+            "failures": 0
+          }
+        },
+        "clean_fixtures": {
+          "player-input": {
+            "scenario": "player-input",
+            "checks": 77,
+            "failures": 0
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/player-input/review.json",
+        "META/m4/scene-callers/original/004756e0.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00475770-functional-c",
+      "original_va": "00475770",
+      "function": "bh_player_input_bind_key",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_player_input.c",
+      "source_sha256": "0c4060193e23c0aae26989359c70619b0ef6e50fa7ad195b8868bb1e177a348b",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original00475770..004757db (108bytes/43instructions)",
+        "fixtures": {
+          "player-input": {
+            "scenario": "player-input",
+            "checks": 77,
+            "failures": 0
+          }
+        },
+        "clean_fixtures": {
+          "player-input": {
+            "scenario": "player-input",
+            "checks": 77,
+            "failures": 0
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/player-input/review.json",
+        "META/m4/scene-callers/original/00475770.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00475810-functional-c",
+      "original_va": "00475810",
+      "function": "bh_player_input_bind_string",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_player_input.c",
+      "source_sha256": "0c4060193e23c0aae26989359c70619b0ef6e50fa7ad195b8868bb1e177a348b",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original00475810..00475862 (83bytes/37instructions)",
+        "fixtures": {
+          "player-input": {
+            "scenario": "player-input",
+            "checks": 77,
+            "failures": 0
+          }
+        },
+        "clean_fixtures": {
+          "player-input": {
+            "scenario": "player-input",
+            "checks": 77,
+            "failures": 0
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/player-input/review.json",
+        "META/m4/scene-callers/original/00475810.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00475870-functional-c",
+      "original_va": "00475870",
+      "function": "bh_player_input_apply_packet",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_player_input.c",
+      "source_sha256": "0c4060193e23c0aae26989359c70619b0ef6e50fa7ad195b8868bb1e177a348b",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original00475870..0047596f (256bytes/86instructions)",
+        "fixtures": {
+          "player-input": {
+            "scenario": "player-input",
+            "checks": 77,
+            "failures": 0
+          }
+        },
+        "clean_fixtures": {
+          "player-input": {
+            "scenario": "player-input",
+            "checks": 77,
+            "failures": 0
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/player-input/review.json",
+        "META/m4/scene-callers/original/00475870.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00475990-functional-c",
+      "original_va": "00475990",
+      "function": "bh_player_input_transition",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_player_input.c",
+      "source_sha256": "0c4060193e23c0aae26989359c70619b0ef6e50fa7ad195b8868bb1e177a348b",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original00475990..004759bb (44bytes/20instructions)",
+        "fixtures": {
+          "player-input": {
+            "scenario": "player-input",
+            "checks": 77,
+            "failures": 0
+          }
+        },
+        "clean_fixtures": {
+          "player-input": {
+            "scenario": "player-input",
+            "checks": 77,
+            "failures": 0
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/player-input/review.json",
+        "META/m4/scene-callers/original/00475990.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0047b2e0-functional-c",
+      "original_va": "0047b2e0",
+      "function": "bh_camera_state_init",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_camera_state.c",
+      "source_sha256": "f7d1fe3b15ac6a22b05fe94eb22f120ca71152d278535c0790910c108bb3a067",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original0047b2e0..0047b317 (56bytes/15instructions)",
+        "fixtures": {
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "world-segment": {
+            "scenario": "world-segment",
+            "checks": 52,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "scene-callers-native": {
+            "scenario": "scene-callers-native",
+            "checks": 101,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "world-segment": {
+            "scenario": "world-segment",
+            "checks": 52,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "scene-callers-native": {
+            "scenario": "scene-callers-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/camera-state/owner-review.json",
+        "META/m4/scene-callers/original/0047b2e0.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0047b210-functional-c",
+      "original_va": "0047b210",
+      "function": "bh_camera_state_set_mode",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_camera_state.c",
+      "source_sha256": "f7d1fe3b15ac6a22b05fe94eb22f120ca71152d278535c0790910c108bb3a067",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original0047b210..0047b2d0 (193bytes/52instructions)",
+        "fixtures": {
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "world-segment": {
+            "scenario": "world-segment",
+            "checks": 52,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "scene-callers-native": {
+            "scenario": "scene-callers-native",
+            "checks": 101,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "world-segment": {
+            "scenario": "world-segment",
+            "checks": 52,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "scene-callers-native": {
+            "scenario": "scene-callers-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/camera-state/owner-review.json",
+        "META/m4/scene-callers/original/0047b210.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0047b320-functional-c",
+      "original_va": "0047b320",
+      "function": "bh_camera_state_set_correction",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_camera_state.c",
+      "source_sha256": "f7d1fe3b15ac6a22b05fe94eb22f120ca71152d278535c0790910c108bb3a067",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original0047b320..0047b329 (10bytes/3instructions)",
+        "fixtures": {
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "world-segment": {
+            "scenario": "world-segment",
+            "checks": 52,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "scene-callers-native": {
+            "scenario": "scene-callers-native",
+            "checks": 101,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "world-segment": {
+            "scenario": "world-segment",
+            "checks": 52,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "scene-callers-native": {
+            "scenario": "scene-callers-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/camera-state/owner-review.json",
+        "META/m4/scene-callers/original/0047b320.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00479910-functional-c",
+      "original_va": "00479910",
+      "function": "bh_camera_mode_smooth",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_camera_state.c",
+      "source_sha256": "f7d1fe3b15ac6a22b05fe94eb22f120ca71152d278535c0790910c108bb3a067",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original00479910..00479c6b (860bytes/241instructions)",
+        "fixtures": {
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "world-segment": {
+            "scenario": "world-segment",
+            "checks": 52,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "scene-callers-native": {
+            "scenario": "scene-callers-native",
+            "checks": 101,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "world-segment": {
+            "scenario": "world-segment",
+            "checks": 52,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "scene-callers-native": {
+            "scenario": "scene-callers-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/camera-state/owner-review.json",
+        "META/m4/scene-callers/original/00479910.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0047aac0-functional-c",
+      "original_va": "0047aac0",
+      "function": "bh_camera_state_update",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_camera_state.c",
+      "source_sha256": "f7d1fe3b15ac6a22b05fe94eb22f120ca71152d278535c0790910c108bb3a067",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original0047aac0..0047b201 (1858bytes/514instructions)",
+        "fixtures": {
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "world-segment": {
+            "scenario": "world-segment",
+            "checks": 52,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "scene-callers-native": {
+            "scenario": "scene-callers-native",
+            "checks": 101,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "world-segment": {
+            "scenario": "world-segment",
+            "checks": 52,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "scene-callers-native": {
+            "scenario": "scene-callers-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/camera-state/owner-review.json",
+        "META/m4/scene-callers/original/0047aac0.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00479db0-functional-c",
+      "original_va": "00479db0",
+      "function": "bh_camera_mode_0",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_camera_modes.c",
+      "source_sha256": "55dc8b0d271d8adb6d4ac812c3e03af3763011222d2ed68a9c4194a632e77df7",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original00479db0..00479e26 (119bytes/38instructions)",
+        "fixtures": {
+          "camera-modes": {
+            "scenario": "camera-modes",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "camera-modes": {
+            "scenario": "camera-modes",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/camera-modes/README.md",
+        "META/m4/scene-callers/original/00479db0.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00479e30-functional-c",
+      "original_va": "00479e30",
+      "function": "bh_camera_mode_1",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_camera_modes.c",
+      "source_sha256": "55dc8b0d271d8adb6d4ac812c3e03af3763011222d2ed68a9c4194a632e77df7",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original00479e30..00479f0f (224bytes/70instructions)",
+        "fixtures": {
+          "camera-modes": {
+            "scenario": "camera-modes",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "camera-modes": {
+            "scenario": "camera-modes",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/camera-modes/README.md",
+        "META/m4/scene-callers/original/00479e30.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00479ff0-functional-c",
+      "original_va": "00479ff0",
+      "function": "bh_camera_mode_2",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_camera_modes.c",
+      "source_sha256": "55dc8b0d271d8adb6d4ac812c3e03af3763011222d2ed68a9c4194a632e77df7",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original00479ff0..0047a0e5 (246bytes/81instructions)",
+        "fixtures": {
+          "camera-modes": {
+            "scenario": "camera-modes",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "camera-modes": {
+            "scenario": "camera-modes",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/camera-modes/README.md",
+        "META/m4/scene-callers/original/00479ff0.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0047a0f0-functional-c",
+      "original_va": "0047a0f0",
+      "function": "bh_camera_mode_3",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_camera_modes.c",
+      "source_sha256": "55dc8b0d271d8adb6d4ac812c3e03af3763011222d2ed68a9c4194a632e77df7",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original0047a0f0..0047a15b (108bytes/32instructions)",
+        "fixtures": {
+          "camera-modes": {
+            "scenario": "camera-modes",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "camera-modes": {
+            "scenario": "camera-modes",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/camera-modes/README.md",
+        "META/m4/scene-callers/original/0047a0f0.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0047a160-functional-c",
+      "original_va": "0047a160",
+      "function": "bh_camera_mode_4",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_camera_modes.c",
+      "source_sha256": "55dc8b0d271d8adb6d4ac812c3e03af3763011222d2ed68a9c4194a632e77df7",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original0047a160..0047a1e5 (134bytes/41instructions)",
+        "fixtures": {
+          "camera-modes": {
+            "scenario": "camera-modes",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "camera-modes": {
+            "scenario": "camera-modes",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/camera-modes/README.md",
+        "META/m4/scene-callers/original/0047a160.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0047a1f0-functional-c",
+      "original_va": "0047a1f0",
+      "function": "bh_camera_mode_5",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_camera_modes.c",
+      "source_sha256": "55dc8b0d271d8adb6d4ac812c3e03af3763011222d2ed68a9c4194a632e77df7",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original0047a1f0..0047a275 (134bytes/41instructions)",
+        "fixtures": {
+          "camera-modes": {
+            "scenario": "camera-modes",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "camera-modes": {
+            "scenario": "camera-modes",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/camera-modes/README.md",
+        "META/m4/scene-callers/original/0047a1f0.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0047a280-functional-c",
+      "original_va": "0047a280",
+      "function": "bh_camera_mode_6",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_camera_modes.c",
+      "source_sha256": "55dc8b0d271d8adb6d4ac812c3e03af3763011222d2ed68a9c4194a632e77df7",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original0047a280..0047a2eb (108bytes/32instructions)",
+        "fixtures": {
+          "camera-modes": {
+            "scenario": "camera-modes",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "camera-modes": {
+            "scenario": "camera-modes",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/camera-modes/README.md",
+        "META/m4/scene-callers/original/0047a280.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0047a2f0-functional-c",
+      "original_va": "0047a2f0",
+      "function": "bh_camera_mode_7",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_camera_modes.c",
+      "source_sha256": "55dc8b0d271d8adb6d4ac812c3e03af3763011222d2ed68a9c4194a632e77df7",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original0047a2f0..0047a471 (386bytes/131instructions)",
+        "fixtures": {
+          "camera-modes": {
+            "scenario": "camera-modes",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "camera-modes": {
+            "scenario": "camera-modes",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/camera-modes/README.md",
+        "META/m4/scene-callers/original/0047a2f0.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0047a480-functional-c",
+      "original_va": "0047a480",
+      "function": "bh_camera_mode_8",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_camera_modes.c",
+      "source_sha256": "55dc8b0d271d8adb6d4ac812c3e03af3763011222d2ed68a9c4194a632e77df7",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original0047a480..0047a60c (397bytes/139instructions)",
+        "fixtures": {
+          "camera-modes": {
+            "scenario": "camera-modes",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "camera-modes": {
+            "scenario": "camera-modes",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/camera-modes/README.md",
+        "META/m4/scene-callers/original/0047a480.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0047a7b0-functional-c",
+      "original_va": "0047a7b0",
+      "function": "bh_camera_mode_9",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_camera_modes.c",
+      "source_sha256": "55dc8b0d271d8adb6d4ac812c3e03af3763011222d2ed68a9c4194a632e77df7",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original0047a7b0..0047aabe (783bytes/248instructions)",
+        "fixtures": {
+          "camera-modes": {
+            "scenario": "camera-modes",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "camera-modes": {
+            "scenario": "camera-modes",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/camera-modes/README.md",
+        "META/m4/scene-callers/original/0047a7b0.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00479f10-functional-c",
+      "original_va": "00479f10",
+      "function": "bh_camera_mode_10",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_camera_modes.c",
+      "source_sha256": "55dc8b0d271d8adb6d4ac812c3e03af3763011222d2ed68a9c4194a632e77df7",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original00479f10..00479fef (224bytes/70instructions)",
+        "fixtures": {
+          "camera-modes": {
+            "scenario": "camera-modes",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "camera-modes": {
+            "scenario": "camera-modes",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/camera-modes/README.md",
+        "META/m4/scene-callers/original/00479f10.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0047a610-functional-c",
+      "original_va": "0047a610",
+      "function": "bh_camera_mode_11",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_camera_modes.c",
+      "source_sha256": "55dc8b0d271d8adb6d4ac812c3e03af3763011222d2ed68a9c4194a632e77df7",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original0047a610..0047a7aa (411bytes/138instructions)",
+        "fixtures": {
+          "camera-modes": {
+            "scenario": "camera-modes",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "camera-modes": {
+            "scenario": "camera-modes",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/camera-modes/README.md",
+        "META/m4/scene-callers/original/0047a610.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00479c70-functional-c",
+      "original_va": "00479c70",
+      "function": "bh_camera_look_at",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_camera_modes.c",
+      "source_sha256": "55dc8b0d271d8adb6d4ac812c3e03af3763011222d2ed68a9c4194a632e77df7",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original00479c70..00479dac (317bytes/111instructions)",
+        "fixtures": {
+          "camera-modes": {
+            "scenario": "camera-modes",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "camera-modes": {
+            "scenario": "camera-modes",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "camera-state": {
+            "scenario": "camera-state",
+            "checks": 1452,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/camera-modes/README.md",
+        "META/m4/scene-callers/original/00479c70.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004221e0-functional-c",
+      "original_va": "004221e0",
+      "function": "bh_player_camera_reset",
+      "role": "game",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_player_camera.c",
+      "source_sha256": "4c58db7f2a5c36dd157421bad5c7b014cf2c0fbd7901ac43a9500117a8202560",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original004221e0..0042256d (910bytes/234instructions)",
+        "fixtures": {
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "world-segment": {
+            "scenario": "world-segment",
+            "checks": 52,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "scene-callers-native": {
+            "scenario": "scene-callers-native",
+            "checks": 101,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "player-camera": {
+            "scenario": "player-camera",
+            "checks": 1030,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "world-segment": {
+            "scenario": "world-segment",
+            "checks": 52,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "scene-callers-native": {
+            "scenario": "scene-callers-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/player-camera/owner-review.json",
+        "META/m4/scene-callers/original/004221e0.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004341a0-functional-c",
+      "original_va": "004341a0",
+      "function": "bh_camera_curve",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_camera_curve.c",
+      "source_sha256": "24f3f3f1f191ef1e8078eb2d1fd2c2225f66c7c5e710bdd4e942beca7c5432e7",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original004341a0..004343be (543bytes/185instructions)",
+        "fixtures": {
+          "camera-curve": {
+            "scenario": "camera-curve",
+            "checks": 73,
+            "failures": 0
+          },
+          "camera-route": {
+            "scenario": "camera-route",
+            "checks": 15,
+            "failures": 0
+          }
+        },
+        "clean_fixtures": {
+          "camera-curve": {
+            "scenario": "camera-curve",
+            "checks": 73,
+            "failures": 0
+          },
+          "camera-route": {
+            "scenario": "camera-route",
+            "checks": 15,
+            "failures": 0
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/scene-callers-review/CURVE_REVIEW.md",
+        "META/m4/scene-callers/original/004341a0.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00413420-functional-c",
+      "original_va": "00413420",
+      "function": "bh_actor_basis_build_groups",
+      "role": "game",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_actor_basis.c",
+      "source_sha256": "631fe1f335f3acaada8c0b2c7f54f7bf6ab6202b37143ce61f10e1aa10d8cdf2",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original00413420..00413986 (1383bytes/396instructions)",
+        "fixtures": {
+          "actor-basis": {
+            "scenario": "actor-basis",
+            "checks": 911,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "actor-basis": {
+            "scenario": "actor-basis",
+            "checks": 911,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/actor-basis/owner-review.json",
+        "META/m4/scene-callers/original/00413420.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00413f80-functional-c",
+      "original_va": "00413f80",
+      "function": "bh_actor_basis_acquire",
+      "role": "game",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_actor_basis.c",
+      "source_sha256": "631fe1f335f3acaada8c0b2c7f54f7bf6ab6202b37143ce61f10e1aa10d8cdf2",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original00413f80..004146e8 (1897bytes/466instructions)",
+        "fixtures": {
+          "actor-basis": {
+            "scenario": "actor-basis",
+            "checks": 911,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "actor-basis": {
+            "scenario": "actor-basis",
+            "checks": 911,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/actor-basis/owner-review.json",
+        "META/m4/scene-callers/original/00413f80.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0040c4a0-functional-c",
+      "original_va": "0040c4a0",
+      "function": "bh_world_segment_run",
+      "role": "game",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_world_segment.c",
+      "source_sha256": "381aa5b0a2e080cef63dc6ce8db6978c32d70f55796be0ea9ab759ffb2219756",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original0040c4a0..0040c65f (448bytes/173instructions)",
+        "fixtures": {
+          "world-segment": {
+            "scenario": "world-segment",
+            "checks": 52,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "world-segment": {
+            "scenario": "world-segment",
+            "checks": 52,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/world-segment/review.json",
+        "META/m4/scene-callers/original/0040c4a0.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0040ba40-functional-c",
+      "original_va": "0040ba40",
+      "function": "bh_world_segment_room_trace",
+      "role": "game",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_world_segment.c",
+      "source_sha256": "381aa5b0a2e080cef63dc6ce8db6978c32d70f55796be0ea9ab759ffb2219756",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original0040ba40..0040c480 (2625bytes/809instructions)",
+        "fixtures": {
+          "world-segment": {
+            "scenario": "world-segment",
+            "checks": 52,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "world-segment": {
+            "scenario": "world-segment",
+            "checks": 52,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/world-segment/review.json",
+        "META/m4/scene-callers/original/0040ba40.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0040b020-functional-c",
+      "original_va": "0040b020",
+      "function": "bh_world_segment_actor_trace",
+      "role": "game",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_world_segment.c",
+      "source_sha256": "381aa5b0a2e080cef63dc6ce8db6978c32d70f55796be0ea9ab759ffb2219756",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original0040b020..0040b2f8 (729bytes/232instructions)",
+        "fixtures": {
+          "world-segment": {
+            "scenario": "world-segment",
+            "checks": 52,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "world-segment": {
+            "scenario": "world-segment",
+            "checks": 52,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/world-segment/review.json",
+        "META/m4/scene-callers/original/0040b020.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0041e6b0-functional-c",
+      "original_va": "0041e6b0",
+      "function": "bh_camera_correct",
+      "role": "game",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_camera_correction.c",
+      "source_sha256": "34cf629aa4b7201cbd2b58446cc6727247ddafb7a06dd7ee7b2f1446bc58654f",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original0041e6b0..0041e84d (414bytes/138instructions)",
+        "fixtures": {
+          "world-segment": {
+            "scenario": "world-segment",
+            "checks": 52,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "world-segment": {
+            "scenario": "world-segment",
+            "checks": 52,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/world-segment/review.json",
+        "META/m4/scene-callers/original/0041e6b0.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004296a0-functional-c",
+      "original_va": "004296a0",
+      "function": "bh_camera_route_advance",
+      "role": "game",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_camera_route.c",
+      "source_sha256": "834e10033ae6333ecfdcc5557c908dc2bf1326d12a052f7acfd40d3ad9f89f0a",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original004296a0..00429fa2 (2307bytes/701instructions)",
+        "fixtures": {
+          "camera-route": {
+            "scenario": "camera-route",
+            "checks": 15,
+            "failures": 0
+          },
+          "camera-route-real": {
+            "scenario": "camera-route-real",
+            "checks": 31,
+            "failures": 0,
+            "original_code_required": false,
+            "archive_skipped": false
+          }
+        },
+        "clean_fixtures": {
+          "camera-route": {
+            "scenario": "camera-route",
+            "checks": 15,
+            "failures": 0
+          },
+          "camera-route-real": {
+            "scenario": "camera-route-real",
+            "checks": 0,
+            "failures": 0,
+            "original_code_required": false,
+            "archive_skipped": true
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/camera-route/REVIEW.md",
+        "META/m4/scene-callers/original/004296a0.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00470900-functional-c",
+      "original_va": "00470900",
+      "function": "bh_atlas_page_text",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_atlas_text.c",
+      "source_sha256": "0560e31fafdd1c98aeee9d15af69b57cda76ba232bd368fbc51890d9e2596338",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original00470900..00470ab6 (439bytes/147instructions)",
+        "fixtures": {
+          "atlas-text": {
+            "scenario": "atlas-text",
+            "checks": 1124,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "text-queue": {
+            "scenario": "text-queue",
+            "checks": 282,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "atlas-text": {
+            "scenario": "atlas-text",
+            "checks": 1053,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "text-queue": {
+            "scenario": "text-queue",
+            "checks": 282,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/atlas-text/owner-review.json",
+        "META/m4/scene-callers/original/00470900.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00470c90-functional-c",
+      "original_va": "00470c90",
+      "function": "bh_atlas_page_text_width",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_atlas_text.c",
+      "source_sha256": "0560e31fafdd1c98aeee9d15af69b57cda76ba232bd368fbc51890d9e2596338",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original00470c90..00470cdd (78bytes/35instructions)",
+        "fixtures": {
+          "atlas-text": {
+            "scenario": "atlas-text",
+            "checks": 1124,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "text-queue": {
+            "scenario": "text-queue",
+            "checks": 282,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "atlas-text": {
+            "scenario": "atlas-text",
+            "checks": 1053,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "text-queue": {
+            "scenario": "text-queue",
+            "checks": 282,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/atlas-text/owner-review.json",
+        "META/m4/scene-callers/original/00470c90.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00470d40-functional-c",
+      "original_va": "00470d40",
+      "function": "bh_atlas_page_image",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_atlas_text.c",
+      "source_sha256": "0560e31fafdd1c98aeee9d15af69b57cda76ba232bd368fbc51890d9e2596338",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original00470d40..00470d4c (13bytes/6instructions)",
+        "fixtures": {
+          "atlas-text": {
+            "scenario": "atlas-text",
+            "checks": 1124,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "text-queue": {
+            "scenario": "text-queue",
+            "checks": 282,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "atlas-text": {
+            "scenario": "atlas-text",
+            "checks": 1053,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "text-queue": {
+            "scenario": "text-queue",
+            "checks": 282,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/atlas-text/owner-review.json",
+        "META/m4/scene-callers/original/00470d40.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00478bd0-functional-c",
+      "original_va": "00478bd0",
+      "function": "bh_text_queue_text",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_text_queue.c",
+      "source_sha256": "b85d5dccd3b5892ad64d8439a678099a55a52094eec98cf74419ab0403783f91",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original00478bd0..00478c44 (117bytes/35instructions)",
+        "fixtures": {
+          "text-queue": {
+            "scenario": "text-queue",
+            "checks": 282,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "text-queue": {
+            "scenario": "text-queue",
+            "checks": 282,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/text-queue/review.json",
+        "META/m4/scene-callers/original/00478bd0.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00478ce0-functional-c",
+      "original_va": "00478ce0",
+      "function": "bh_text_queue_clear",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_text_queue.c",
+      "source_sha256": "b85d5dccd3b5892ad64d8439a678099a55a52094eec98cf74419ab0403783f91",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original00478ce0..00478d33 (84bytes/23instructions)",
+        "fixtures": {
+          "text-queue": {
+            "scenario": "text-queue",
+            "checks": 282,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "text-queue": {
+            "scenario": "text-queue",
+            "checks": 282,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/text-queue/review.json",
+        "META/m4/scene-callers/original/00478ce0.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00477ea0-functional-c",
+      "original_va": "00477ea0",
+      "function": "bh_text_queue_execute_text",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_text_queue.c",
+      "source_sha256": "b85d5dccd3b5892ad64d8439a678099a55a52094eec98cf74419ab0403783f91",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original00477ea0..00477ecf (48bytes/19instructions)",
+        "fixtures": {
+          "text-queue": {
+            "scenario": "text-queue",
+            "checks": 282,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "text-queue": {
+            "scenario": "text-queue",
+            "checks": 282,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/text-queue/review.json",
+        "META/m4/scene-callers/original/00477ea0.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00477f00-functional-c",
+      "original_va": "00477f00",
+      "function": "bh_text_queue_execute_clear",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_text_queue.c",
+      "source_sha256": "b85d5dccd3b5892ad64d8439a678099a55a52094eec98cf74419ab0403783f91",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original00477f00..00477f19 (26bytes/11instructions)",
+        "fixtures": {
+          "text-queue": {
+            "scenario": "text-queue",
+            "checks": 282,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "text-queue": {
+            "scenario": "text-queue",
+            "checks": 282,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/text-queue/review.json",
+        "META/m4/scene-callers/original/00477f00.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00429fb0-functional-c",
+      "original_va": "00429fb0",
+      "function": "bh_flyby_camera_step",
+      "role": "game",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_flyby_camera.c",
+      "source_sha256": "97c212c8b5ba539eb18e97f1ed22c181624f0166515a5b9bbf9c011c32a161ef",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original00429fb0..0042a9ab (2556bytes/757instructions)",
+        "fixtures": {
+          "flyby-camera": {
+            "scenario": "flyby-camera",
+            "checks": 52,
+            "failures": 0
+          }
+        },
+        "clean_fixtures": {
+          "flyby-camera": {
+            "scenario": "flyby-camera",
+            "checks": 52,
+            "failures": 0
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/flyby-camera/REVIEW.md",
+        "META/m4/scene-callers/original/00429fb0.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0045d7a0-functional-c",
+      "original_va": "0045d7a0",
+      "function": "bh_horizon_color_prepare",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_horizon_color.c",
+      "source_sha256": "02d6a342fd75b79156494fab36a8e972f0696f65d56fc600e66ac473483df156",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original0045d7a0..0045db70 (977bytes/303instructions)",
+        "fixtures": {
+          "horizon-color": {
+            "scenario": "horizon-color",
+            "checks": 131350,
+            "failures": 0
+          }
+        },
+        "clean_fixtures": {
+          "horizon-color": {
+            "scenario": "horizon-color",
+            "checks": 131350,
+            "failures": 0
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/horizon-color/REVIEW.md",
+        "META/m4/scene-callers/original/0045d7a0.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004215c0-functional-c",
+      "original_va": "004215c0",
+      "function": "bh_player_input_broadcast",
+      "role": "game",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_player_input_events.c",
+      "source_sha256": "66412656e9ba97226a227c5a8516cbda9c10cf57afd285ef6e8602206680fb78",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original004215c0..00421605 (70bytes/25instructions)",
+        "fixtures": {
+          "player-input-events": {
+            "scenario": "player-input-events",
+            "checks": 267,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "player-input-events": {
+            "scenario": "player-input-events",
+            "checks": 267,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/player-frontier/README.md",
+        "META/m4/scene-callers/original/004215c0.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004757e0-functional-c",
+      "original_va": "004757e0",
+      "function": "bh_player_input_bind_kind4",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_player_input_events.c",
+      "source_sha256": "66412656e9ba97226a227c5a8516cbda9c10cf57afd285ef6e8602206680fb78",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original004757e0..00475801 (34bytes/14instructions)",
+        "fixtures": {
+          "player-input-events": {
+            "scenario": "player-input-events",
+            "checks": 267,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "player-input-events": {
+            "scenario": "player-input-events",
+            "checks": 267,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/player-frontier/README.md",
+        "META/m4/scene-callers/original/004757e0.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0044b0a0-functional-c",
+      "original_va": "0044b0a0",
+      "function": "bh_collision_resource_path",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_collision_resource.c",
+      "source_sha256": "fc674c6bf74306c8dc0a8387ae9f7dc8bf23eb7507f714ffa2bb222ce96fda75",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original0044b0a0..0044b12b (140bytes/53instructions)",
+        "fixtures": {
+          "collision-resource": {
+            "scenario": "collision-resource",
+            "checks": 40,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "collision-resource": {
+            "scenario": "collision-resource",
+            "checks": 37,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/collision-resource/owner-review.json",
+        "META/m4/scene-callers/original/0044b0a0.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0044b130-functional-c",
+      "original_va": "0044b130",
+      "function": "bh_collision_cache_prepare",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_collision_cache.c",
+      "source_sha256": "e44103f2fb0a6be951d0b8527f45441dc69d27f99e428655f6cefe02ddd5487c",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original0044b130..0044b2d6 (423bytes/152instructions)",
+        "fixtures": {
+          "collision-cache": {
+            "scenario": "collision-cache",
+            "checks": 128,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "collision-cache": {
+            "scenario": "collision-cache",
+            "checks": 20,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/collision-cache/owner-review.json",
+        "META/m4/scene-callers/original/0044b130.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00474020-functional-c",
+      "original_va": "00474020",
+      "function": "bh_input_evaluate",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_input_evaluate.c",
+      "source_sha256": "c96ef2145edb1a1c633123580c14d12d6f6e78a3f1d8ecb3134a403c72847bb3",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original00474020..0047447d (1118bytes/342instructions)",
+        "fixtures": {
+          "input-evaluate": {
+            "scenario": "input-evaluate",
+            "checks": 37,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "input-evaluate": {
+            "scenario": "input-evaluate",
+            "checks": 37,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/input-poller-review/review.json",
+        "META/m4/scene-callers/original/00474020.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004756b0-functional-c",
+      "original_va": "004756b0",
+      "function": "bh_input_set_enabled",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+      "source": "src/bh_input_evaluate.c",
+      "source_sha256": "c96ef2145edb1a1c633123580c14d12d6f6e78a3f1d8ecb3134a403c72847bb3",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+        "raw_byte_match": false,
+        "differential": false,
+        "boundary": "Complete original004756b0..004756db (44bytes/14instructions)",
+        "fixtures": {
+          "input-evaluate": {
+            "scenario": "input-evaluate",
+            "checks": 37,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "input-evaluate": {
+            "scenario": "input-evaluate",
+            "checks": 37,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+          "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+        ]
+      },
+      "evidence": [
+        "META/m4/input-poller-review/review.json",
+        "META/m4/scene-callers/original/004756b0.tsv",
+        "META/m4/scene-callers/validation.json",
+        "META/m4/scene-callers/integration-real.json",
+        "META/m4/scene-callers/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0041c860-reviewed-frontier",
+      "original_va": "0041c860",
+      "function": "FUN_0041c860",
+      "role": "game",
+      "provenance_confidence": "High: complete entity render callback installed by reviewed original constructors",
+      "implementation": "not_started",
+      "integration": "not_built",
+      "game_admitted": false,
+      "validation": {
+        "boundary": "Complete RET owner; decompilation and dependency review only, no source implementation admission",
+        "limits": [
+          "Horizon/HUD/handoff/recipient and constructor dependencies remain real blockers; no omitted-body or success-stub implementation"
+        ]
+      },
+      "evidence": [
+        "META/m4/scene-callers-review/REVIEW.md",
+        "META/m4/scene-callers/validation.json"
+      ]
+    },
+    {
+      "id": "00428f50-reviewed-frontier",
+      "original_va": "00428f50",
+      "function": "FUN_00428f50",
+      "role": "game",
+      "provenance_confidence": "High: complete entity render callback installed by reviewed original constructors",
+      "implementation": "not_started",
+      "integration": "not_built",
+      "game_admitted": false,
+      "validation": {
+        "boundary": "Complete RET owner; decompilation and dependency review only, no source implementation admission",
+        "limits": [
+          "Horizon/HUD/handoff/recipient and constructor dependencies remain real blockers; no omitted-body or success-stub implementation"
+        ]
+      },
+      "evidence": [
+        "META/m4/scene-callers-review/REVIEW.md",
+        "META/m4/scene-callers/validation.json"
+      ]
     }
   ],
   "role_catalog": "META/m1/role-catalog.json",
@@ -11210,6 +14260,174 @@
         "META/m4/scene-owner/validation.json",
         "META/m4/scene-owner/clean/clean-checkout.json"
       ]
+    },
+    {
+      "id": "bh_collision_cache_lifecycle-adapter",
+      "source": "src/bh_collision_cache.c",
+      "function": "bh_collision_cache_dispose",
+      "source_sha256": "e44103f2fb0a6be951d0b8527f45441dc69d27f99e428655f6cefe02ddd5487c",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "evidence": [
+        "META/m4/scene-callers/validation.json"
+      ],
+      "validation": "Explicit source ownership/bounds/dispatch binding; no original function count or original-code execution"
+    },
+    {
+      "id": "bh_collision_resource_load-adapter",
+      "source": "src/bh_collision_resource.c",
+      "function": "bh_collision_resource_load",
+      "source_sha256": "fc674c6bf74306c8dc0a8387ae9f7dc8bf23eb7507f714ffa2bb222ce96fda75",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "evidence": [
+        "META/m4/scene-callers/validation.json"
+      ],
+      "validation": "Explicit source ownership/bounds/dispatch binding; no original function count or original-code execution"
+    },
+    {
+      "id": "bh_horizon_color_lifecycle-adapter",
+      "source": "src/bh_horizon_color.c",
+      "function": "bh_horizon_color_init",
+      "source_sha256": "02d6a342fd75b79156494fab36a8e972f0696f65d56fc600e66ac473483df156",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "evidence": [
+        "META/m4/scene-callers/validation.json"
+      ],
+      "validation": "Explicit source ownership/bounds/dispatch binding; no original function count or original-code execution"
+    },
+    {
+      "id": "bh_camera_mode_dispatch-adapter",
+      "source": "src/bh_camera_modes.c",
+      "function": "bh_camera_mode_update",
+      "source_sha256": "55dc8b0d271d8adb6d4ac812c3e03af3763011222d2ed68a9c4194a632e77df7",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "evidence": [
+        "META/m4/scene-callers/validation.json"
+      ],
+      "validation": "Explicit source ownership/bounds/dispatch binding; no original function count or original-code execution"
+    },
+    {
+      "id": "bh_camera_contextual_binding-adapter",
+      "source": "src/bh_camera_state.c",
+      "function": "bh_camera_state_bind_correction",
+      "source_sha256": "f7d1fe3b15ac6a22b05fe94eb22f120ca71152d278535c0790910c108bb3a067",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "evidence": [
+        "META/m4/scene-callers/validation.json"
+      ],
+      "validation": "Explicit source ownership/bounds/dispatch binding; no original function count or original-code execution"
+    },
+    {
+      "id": "bh_player_input_lifecycle-adapter",
+      "source": "src/bh_player_input.c",
+      "function": "bh_player_input_owner_init",
+      "source_sha256": "0c4060193e23c0aae26989359c70619b0ef6e50fa7ad195b8868bb1e177a348b",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "evidence": [
+        "META/m4/scene-callers/validation.json"
+      ],
+      "validation": "Explicit source ownership/bounds/dispatch binding; no original function count or original-code execution"
+    },
+    {
+      "id": "bh_player_input_packet_bounds-adapter",
+      "source": "src/bh_player_input.c",
+      "function": "bh_player_input_apply_packet_checked",
+      "source_sha256": "0c4060193e23c0aae26989359c70619b0ef6e50fa7ad195b8868bb1e177a348b",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "evidence": [
+        "META/m4/scene-callers/validation.json"
+      ],
+      "validation": "Explicit source ownership/bounds/dispatch binding; no original function count or original-code execution"
+    },
+    {
+      "id": "bh_scene_background_bindings-adapter",
+      "source": "src/bh_scene_background.c",
+      "function": "bh_scene_background_init",
+      "source_sha256": "a392e9a1a2d4cb9d5d60f226f311961c5b9d96fbb8aeff0df3fc064fdb697a7b",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "evidence": [
+        "META/m4/scene-callers/validation.json"
+      ],
+      "validation": "Explicit source ownership/bounds/dispatch binding; no original function count or original-code execution"
+    },
+    {
+      "id": "bh_player_camera_field-adapter",
+      "source": "src/bh_player_camera.c",
+      "function": "bh_player_camera_state",
+      "source_sha256": "4c58db7f2a5c36dd157421bad5c7b014cf2c0fbd7901ac43a9500117a8202560",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "evidence": [
+        "META/m4/scene-callers/validation.json"
+      ],
+      "validation": "Explicit source ownership/bounds/dispatch binding; no original function count or original-code execution"
+    },
+    {
+      "id": "bh_world_segment_bindings-adapter",
+      "source": "src/bh_world_segment.c",
+      "function": "bh_world_segment_init",
+      "source_sha256": "381aa5b0a2e080cef63dc6ce8db6978c32d70f55796be0ea9ab759ffb2219756",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "evidence": [
+        "META/m4/scene-callers/validation.json"
+      ],
+      "validation": "Explicit source ownership/bounds/dispatch binding; no original function count or original-code execution"
+    },
+    {
+      "id": "bh_camera_correction_bridge-adapter",
+      "source": "src/bh_camera_correction.c",
+      "function": "bh_camera_correct_callback",
+      "source_sha256": "34cf629aa4b7201cbd2b58446cc6727247ddafb7a06dd7ee7b2f1446bc58654f",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "evidence": [
+        "META/m4/scene-callers/validation.json"
+      ],
+      "validation": "Explicit source ownership/bounds/dispatch binding; no original function count or original-code execution"
+    },
+    {
+      "id": "bh_text_queue_fifo-adapter",
+      "source": "src/bh_text_queue.c",
+      "function": "bh_text_queue_drain",
+      "source_sha256": "b85d5dccd3b5892ad64d8439a678099a55a52094eec98cf74419ab0403783f91",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "evidence": [
+        "META/m4/scene-callers/validation.json"
+      ],
+      "validation": "Explicit source ownership/bounds/dispatch binding; no original function count or original-code execution"
     }
   ],
   "supplemental_role_catalogs": [
