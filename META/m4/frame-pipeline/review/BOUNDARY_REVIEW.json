@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-25",
+  "scope": "Independent static boundary/lifetime review; no game or original-code execution",
+  "reference_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+  "ledger_at_review": "Neither 00471e00 nor 00479140 has an active ledger entry. 00471cc0/00471d70/0045d690/00451660 already func linked_harness; no new count assigned by audit.",
+  "owners": [
+    {
+      "boundary": "Whole standalone body, not CRT/compiler helper/shared tail",
+      "instructions": 155,
+      "address": "00471e00",
+      "contracts": [
+        "Startup Sleep(10) until 004eed58 nonzero",
+        "Mutex WaitForSingleObject(handle,5) retries only WAIT_TIMEOUT",
+        "Select strict minimum signed age below4 among three unlocked slots; first wins ties",
+        "Selected age -9999 bypasses claim/render/present",
+        "Busy is set under mutex then cleared after present_end before display-state wait and Flip",
+        "Only if display-state initially !=3: Sleep(10) until3, IsLost/Restore each nonnull surface; Flip(primary,NULL,1) follows",
+        "Shutdown checked only loop bottom; acknowledge=1 then return0",
+        "Dump branch scans c:\\DUMP%.4d.BMP indices0..9999 using CRT fopen/fclose/sprintf; reset viewport, Sleep250, capture, clear request"
+      ],
+      "registration": "00473606 takes entry address in CreateThread setup within 004723c0",
+      "bytes": 490,
+      "end": "00471fe9",
+      "role": "engine_candidate renderer_platform worker; historical authorship unknown",
+      "unknowns": [
+        "No selected slot below4 leaves stack-derived EDI; source must document supported valid queue invariant or explicit safety divergence",
+        "Thread entry has plain RET despite CreateThread registration; adapter ABI must be explicit",
+        "Full original-backed callback array layout, dump capture owner and begin-present owner require linked definitions"
+      ]
+    },
+    {
+      "boundary": "Whole standalone body, not rendering-only producer",
+      "instructions": 47,
+      "address": "00479140",
+      "contracts": [
+        "shutdown==0 calls input poller and conditionally increments frame counter; acquire slot then477390(slot,3500),4772f0,477330,47c200(float0x3d088889),475870(context+0x2010,&global4f5518),publish(slot)",
+        "shutdown!=0 requires ack!=0 and signed shutdown<=1; increment shutdown BEFORE ordered cleanup calls",
+        "Cleanup order47d680,473fe0,449b40,47b5f0,476030,4713c0,4738a0"
+      ],
+      "registration": "004798d0 address passed to00471c00 in startup00479200",
+      "bytes": 175,
+      "end": "004791ee",
+      "role": "game startup_scene fixed-step callback plus acknowledged shutdown sequencing",
+      "unknowns": [
+        "Whole004744f0 input poller and0047c200 fixed-step simulation plus cleanup owners are separate dependencies; existing adapters/slices cannot imply admission",
+        "Do not count CRT0047d680 or fclose/sprintf/fopen as recovered gameplay"
+      ]
+    }
+  ],
+  "evidence": [
+    "analysis/function-map.tsv",
+    "analysis/call-edges.tsv",
+    "META/m1/role-catalog.json",
+    "META/m1/review/00471e00.c.txt",
+    "META/m1/supplement/00479140.c.txt",
+    "analysis/004723c0.c",
+    "00471e00.raw.json",
+    "00479140.raw.json"
+  ],
+  "method": "Exact-project raw Ghidra disasm with explicit155/47 instruction counts, complete terminal RETs. Current project lacks formal function definitions at both entries; decompile failure is not missing raw code."
+}

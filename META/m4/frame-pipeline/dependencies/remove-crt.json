@@ -1,0 +1,59 @@
+{
+  "question": "Bounded shutdown dependency attribution: one pinned library, no compiler sweep.\n\nQuestion: is0047de90 the VC5 SP3 CRT remove wrapper, rather than putenv/free?\nPositive control: already identified __setdefaultprecision. Stop after this library.\n",
+  "exe_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+  "library": "D:\\Decomp\\MSCVC\\MSVC5\\SP3_EXTRACTED\\VS97_SP3\\all\\vc\\lib\\libc.lib",
+  "library_sha256": "3b5f43e920c37c8da086b0d3ef0396e6517d44fcdcb4e7d03a6058620bc13ee3",
+  "comparison": "Full observed body plus library alignment; masks are only actual COFF DIR32/REL32 operands; not a raw-byte match",
+  "results": [
+    {
+      "symbol": "_remove",
+      "address": "0047de90",
+      "body_bytes": 45,
+      "library_section_bytes": 48,
+      "relocations": [
+        {
+          "offset": 7,
+          "kind": 6,
+          "symbol": "__imp__DeleteFileA@4",
+          "original_target": "00489114"
+        },
+        {
+          "offset": 17,
+          "kind": 6,
+          "symbol": "__imp__GetLastError@0",
+          "original_target": "00489110"
+        },
+        {
+          "offset": 31,
+          "kind": 20,
+          "symbol": "__dosmaperr",
+          "original_target": "00481090"
+        }
+      ],
+      "original_hex": "8b44240450ff151491480085c07508ff1510914800eb0233c085c0740d50e8dd31000083c40483c8ffc333c0c3",
+      "library_hex": "8b44240450ff150000000085c07508ff1500000000eb0233c085c0740d50e80000000083c40483c8ffc333c0c3909090",
+      "mask_hex": "ffffffffffffff00000000ffffffffffff00000000ffffffffffffffffffff00000000ffffffffffffffffffff",
+      "relocation_normalized_match": true,
+      "negative_control_rejected": true
+    },
+    {
+      "symbol": "__setdefaultprecision",
+      "address": "0047e930",
+      "body_bytes": 19,
+      "library_section_bytes": 32,
+      "relocations": [
+        {
+          "offset": 11,
+          "kind": 20,
+          "symbol": "__controlfp",
+          "original_target": "00484ce0"
+        }
+      ],
+      "original_hex": "68000003006800000100e8a163000083c408c3",
+      "library_hex": "68000003006800000100e80000000083c408c390909090909090909090909090",
+      "mask_hex": "ffffffffffffffffffffff00000000ffffffff",
+      "relocation_normalized_match": true,
+      "negative_control_rejected": true
+    }
+  ]
+}

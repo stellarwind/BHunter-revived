@@ -1,0 +1,77 @@
+{
+  "passed": true,
+  "commands": [
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\frame-pipeline\\cd\\bh_cd_close0.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_cd_close.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_cd_close.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\frame-pipeline\\cd\\cd_close1.obj",
+        "D:\\Decomp\\Bhunter\\tests\\cd_close.c"
+      ],
+      "exit_code": 0,
+      "output": "cd_close.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\frame-pipeline\\cd\\main2.obj",
+        "D:\\Decomp\\Bhunter\\build\\frame-pipeline\\cd\\main.c"
+      ],
+      "exit_code": 0,
+      "output": "main.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/out:D:\\Decomp\\Bhunter\\build\\frame-pipeline\\cd\\cd-check.exe",
+        "D:\\Decomp\\Bhunter\\build\\frame-pipeline\\cd\\bh_cd_close0.obj",
+        "D:\\Decomp\\Bhunter\\build\\frame-pipeline\\cd\\cd_close1.obj",
+        "D:\\Decomp\\Bhunter\\build\\frame-pipeline\\cd\\main2.obj",
+        "winmm.lib",
+        "kernel32.lib"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\build\\frame-pipeline\\cd\\cd-check.exe"
+      ],
+      "exit_code": 0,
+      "output": "{\"scenario\":\"cd-close\",\"checks\":11,\"failures\":0,\"original_code_required\":false,\"play_calls\":0,\"cd_drive_tested\":false}\n"
+    }
+  ],
+  "stdout": "{\"scenario\":\"cd-close\",\"checks\":11,\"failures\":0,\"original_code_required\":false,\"play_calls\":0,\"cd_drive_tested\":false}\n",
+  "original_code_executed": false
+}

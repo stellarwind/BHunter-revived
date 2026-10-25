@@ -1,0 +1,53 @@
+/* Instantiate only official DirectInput GUIDs in this test translation unit. */
+#include <windows.h>
+#include <initguid.h>
+#include "../src/bh_force_feedback.h"
+#include <stdio.h>
+#include <string.h>
+static unsigned long checks,failures;
+#define CHECK(x,s) do{++checks;if(!(x)){++failures;printf("FAIL force-feedback-stop: %s\n",s);}}while(0)
+int bh_force_feedback_checkpoint(unsigned long *count){
+    BHForceFeedback state;LPDIRECTINPUTA retained=NULL;LPDIRECTINPUTDEVICEA keyboard=NULL;
+    LPDIRECTINPUTDEVICE2A retained_device=NULL;HRESULT hr;unsigned long before;
+    checks=failures=0;memset(&state,0,sizeof(state));state.enabled=1;
+    bh_force_feedback_stop(&state);
+    CHECK(!state.enabled&&!state.effect_releases&&!state.unacquires&&!state.device_releases&&!state.input_releases,
+          "all-NULL partial initialization clears availability without native call");
+    hr=DirectInputCreateA(GetModuleHandleA(NULL),0x0500,&state.input,NULL);
+    CHECK(SUCCEEDED(hr)&&state.input,"actual DirectInput5 root creation without acquisition or polling");
+    if(FAILED(hr)||!state.input)goto done;
+    retained=state.input;IDirectInput_AddRef(retained);
+    state.enabled=1;bh_force_feedback_stop(&state);
+    CHECK(!state.input&&!state.enabled&&state.input_releases==1&&!state.unacquires,"root-only partial initialization releases and clears actual interface");
+    CHECK(IDirectInput_Release(retained)==0,"retained positive control observes exactly one root ownership release");retained=NULL;
+    hr=DirectInputCreateA(GetModuleHandleA(NULL),0x0500,&state.input,NULL);
+    CHECK(SUCCEEDED(hr)&&state.input,"fresh actual DirectInput root");if(FAILED(hr)||!state.input)goto done;
+    hr=IDirectInput_CreateDevice(state.input,&GUID_SysKeyboard,&keyboard,NULL);
+    CHECK(SUCCEEDED(hr)&&keyboard,"unacquired keyboard device creation only");
+    if(SUCCEEDED(hr)&&keyboard){
+        hr=IDirectInputDevice_QueryInterface(keyboard,&IID_IDirectInputDevice2A,(void**)&state.device);
+        CHECK(SUCCEEDED(hr)&&state.device,"official Device2A QueryInterface validates Unacquire ABI");
+        IDirectInputDevice_Release(keyboard);keyboard=NULL;
+    }
+    if(state.device){retained_device=state.device;IDirectInputDevice2_AddRef(retained_device);}
+    state.enabled=1;before=state.input_releases;bh_force_feedback_stop(&state);
+    CHECK(!state.enabled&&!state.input&&!state.device&&!state.effect&&state.input_releases==before+1,
+          "complete available native teardown clears all owned pointers");
+    if(retained_device){
+        CHECK(state.unacquires==1&&state.device_releases==1&&SUCCEEDED(state.last_unacquire),
+              "actual Unacquire on never-acquired device precedes actual ownership release");
+        CHECK(IDirectInputDevice2_Release(retained_device)==0,"retained native device control observes one source release");retained_device=NULL;
+    }
+    before=state.input_releases;bh_force_feedback_stop(&state);
+    CHECK(state.input_releases==before&&state.device_releases==1&&!state.effect_releases,
+          "repeat teardown performs no duplicate release, unavailable effect branch remains static-only");
+done:
+    if(keyboard)IDirectInputDevice_Release(keyboard);if(retained_device)IDirectInputDevice2_Release(retained_device);
+    bh_force_feedback_stop(&state);if(retained)IDirectInput_Release(retained);
+    if(count)*count=checks;
+    printf("{\"scenario\":\"force-feedback-stop\",\"checks\":%lu,\"failures\":%lu,\"devices_acquired\":0,\"effects_created\":0,\"input_polled\":false,\"original_code_required\":false}\n",checks,failures);
+    return failures!=0;
+}
+#ifdef BH_FORCE_FEEDBACK_STANDALONE
+int main(void){return bh_force_feedback_checkpoint(NULL);}
+#endif

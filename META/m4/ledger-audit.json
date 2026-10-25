@@ -1,8 +1,8 @@
 {
-  "ledger_sha256": "1c38f61154b6190972b034a5f3c8b6d06377bba479c13244894909f74d3a3626",
+  "ledger_sha256": "ad0dd3f286f5e6236ef75e255802a7fdca911acb319cb7f3a53321a59a66cdce",
   "build_source_hashes_verified": true,
-  "total_variants": 374,
-  "unique_original_addresses": 330,
+  "total_variants": 391,
+  "unique_original_addresses": 346,
   "categories": {
     "historical_or_superseded": [
       {
@@ -120,6 +120,14 @@
       {
         "id": "0047b830-wave-data-subset-c",
         "address": "0047b830",
+        "source": "src/bh_wave.c",
+        "implementation": "wip",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0047b950-wave-data-subset-c",
+        "address": "0047b950",
         "source": "src/bh_wave.c",
         "implementation": "wip",
         "integration": "linked_harness",
@@ -2928,6 +2936,142 @@
         "implementation": "func",
         "integration": "linked_harness",
         "game_admitted": false
+      },
+      {
+        "id": "00471e00-functional-c-frame-pipeline",
+        "address": "00471e00",
+        "source": "src/bh_frame_worker.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0045cdf0-functional-c-frame-pipeline",
+        "address": "0045cdf0",
+        "source": "src/bh_present_begin.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0045b810-functional-c-frame-pipeline",
+        "address": "0045b810",
+        "source": "src/bh_capture.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0045bc40-functional-c-frame-pipeline",
+        "address": "0045bc40",
+        "source": "src/bh_capture.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0045d750-functional-c-frame-pipeline",
+        "address": "0045d750",
+        "source": "src/bh_display_shutdown.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004738a0-functional-c-frame-pipeline",
+        "address": "004738a0",
+        "source": "src/bh_display_shutdown.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004713c0-functional-c-frame-pipeline",
+        "address": "004713c0",
+        "source": "src/bh_force_feedback.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00476030-functional-c-frame-pipeline",
+        "address": "00476030",
+        "source": "src/bh_network_shutdown.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00449b40-functional-c-frame-pipeline",
+        "address": "00449b40",
+        "source": "src/bh_cd_close.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00479140-functional-c-frame-pipeline",
+        "address": "00479140",
+        "source": "src/bh_frame_service.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00471df0-functional-c-frame-pipeline",
+        "address": "00471df0",
+        "source": "src/bh_frame_callback.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00479120-functional-c-frame-pipeline",
+        "address": "00479120",
+        "source": "src/bh_frame_callback.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00471ff0-functional-c-window-dispatch",
+        "address": "00471ff0",
+        "source": "src/bh_window_dispatch.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00471be0-functional-c-window-dispatch",
+        "address": "00471be0",
+        "source": "src/bh_window_dispatch.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00471220-functional-c-window-dispatch",
+        "address": "00471220",
+        "source": "src/bh_force_feedback_start.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00449b90-functional-c-window-dispatch",
+        "address": "00449b90",
+        "source": "src/bh_cd_notify.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0047b950-functional-c-sound-loader",
+        "address": "0047b950",
+        "source": "src/bh_sound_load.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
       }
     ],
     "unfinished_active": [
@@ -2943,14 +3087,6 @@
         "id": "00411f00-data-subset-c",
         "address": "00411f00",
         "source": "src/bh_blocks.c",
-        "implementation": "wip",
-        "integration": "linked_harness",
-        "game_admitted": false
-      },
-      {
-        "id": "0047b950-wave-data-subset-c",
-        "address": "0047b950",
-        "source": "src/bh_wave.c",
         "implementation": "wip",
         "integration": "linked_harness",
         "game_admitted": false
@@ -3008,10 +3144,10 @@
     ]
   },
   "category_counts": {
-    "historical_or_superseded": 39,
+    "historical_or_superseded": 40,
     "completed_comparison_only": 4,
-    "completed_linked_source": 322,
-    "unfinished_active": 8,
+    "completed_linked_source": 339,
+    "unfinished_active": 7,
     "other_explicit_state": 1
   },
   "duplicate_addresses": {
@@ -3078,6 +3214,10 @@
     "0047b830": [
       "0047b830-wave-data-subset-c",
       "0047b830-functional-c"
+    ],
+    "0047b950": [
+      "0047b950-wave-data-subset-c",
+      "0047b950-functional-c-sound-loader"
     ],
     "0044f0a0": [
       "0044f0a0-pcx-data-subset-c",

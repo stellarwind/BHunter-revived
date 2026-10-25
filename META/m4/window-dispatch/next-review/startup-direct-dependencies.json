@@ -1,0 +1,952 @@
+[
+  {
+    "address": "004474c0",
+    "map": {
+      "address": "004474c0",
+      "name": "FUN_004474c0",
+      "body_bytes": "9584",
+      "instructions": "2572",
+      "ebp_frame": "false",
+      "return_pops": "RET",
+      "calls": "00407f30:FUN_00407f30|004100d0:FUN_004100d0|00411f00:FUN_00411f00|00412190:FUN_00412190|00421d20:FUN_00421d20|0042a9e0:FUN_0042a9e0|0042c300:FUN_0042c300|0042c4c0:FUN_0042c4c0|0044b0a0:FUN_0044b0a0|0044e880:FUN_0044e880|004507c0:FUN_004507c0|00458140:FUN_00458140|0045e710:FUN_0045e710|0045e760:FUN_0045e760|00470380:FUN_00470380|004705c0:FUN_004705c0|004708d0:FUN_004708d0|00470900:FUN_00470900|00470c90:FUN_00470c90|00470d40:FUN_00470d40|00470e00:FUN_00470e00|00475640:FUN_00475640|004756b0:FUN_004756b0|00475770:FUN_00475770|00475c80:FUN_00475c80|00476e90:FUN_00476e90|00476f20:FUN_00476f20|00478ce0:FUN_00478ce0|0047b920:FUN_0047b920|0047b950:FUN_0047b950|0047ca70:FUN_0047ca70|0047cbd0:VFILE_Open|0047ce50:FUN_0047ce50|0047dc30:_sprintf|0047de20:__ftol|0047e400:_strncpy|004882e0:__strcmpi|EXTERNAL:00000012:GetComputerNameA|EXTERNAL:00000065:GetUserNameA",
+      "strings": "00490084:test.lev|00490098:test.pth|004902dc:water.gif|004902e8:bsp\\blocks.txt|004902fc:textures|00490424:textures\\tvfont.pcx|00490610:RCWAGON.BSP|0049061c:sound\\tv_char.wav|00490630:sound\\tv_off.wav|00490644:sound\\tv_on.wav|00490654:tvc.pcx|0049065c:tvb.pcx|00490664:tva.pcx|0049066c:tv9.pcx|00490674:tv8.pcx|0049067c:tv7.pcx|00490684:tv6.pcx|0049068c:tv5.pcx|00490694:tv4.pcx|0049069c:tv3.pcx|004906a4:tv2.pcx|004906ac:tv1.pcx|004906b4:pu_bail.bsp|004906c0:pu_eng.bsp|004906cc:pu_4k.bsp|004906d8:pu_2k.bsp|004906e4:pu_1k.bsp|004906f0:pu_0k.bsp|004906fc:pu_9a.bsp|00490708:pu_8a.bsp|00490714:pu_7a.bsp|00490720:pu_6a.bsp|0049072c:pu_5a.bsp|00490738:pu_4a.bsp|00490744:pu_3a.bsp|00490750:pu_2a.bsp|0049075c:pu_1a.bsp|00490768:pu_0a.bsp|00490774:sound\\tntmine.wav|00490788:tntmine.bsp|00490794:captain.bsp|004907a0:truck4.bsp|004907ac:truck3.bsp|004907b8:truck2.bsp|004907c4:truck1.bsp|004907d0:sound\\tk_eic.wav|004907e4:sound\\tk_sil.wav|004907f8:sound\\tk_swi.wav|0049080c:sound\\tk_pwi.wav|00490820:sound\\tk_ec.wav|00490830:sound\\misacc.wav|00490844:sound\\targdest.wav|00490858:sound\\incoming.wav|0049086c:sound\\gong.wav|0049087c:m_train.bsp|00490888:m_trainl.bsp|00490898:sound\\metro.wav|004908a8:trainwag.bsp|004908b8:trainloc.bsp|004908c8:sound\\e_truck.wav|004908dc:sound\\e_ship.wav|004908f0:sound\\e_police.wav|00490904:sound\\e_heavy.wav|00490918:sound\\e_mc.wav|00490928:sound\\e_turbin.wav|0049093c:sound\\e_metro.wav|00490950:sound\\e_jet.wav|00490960:sray2.bmp|0049096c:sray1.bmp|00490978:sound\\soniclop.wav|0049098c:sound\\sonic.wav|0049099c:sound\\w_shift2.wav|004909b0:sound\\w_shift1.wav|004909c4:sound\\w_shift0.wav|004909d8:sound\\blip.wav|004909e8:sound\\srayball.wav|004909fc:sound\\ray_out.wav|00490a10:sound\\ray_in.wav|00490a24:sound\\ray.wav|00490a34:sound\\plasma.wav|00490a48:sound\\led.wav|00490a58:win.bmp|00490a60:episode 8|00490a6c:A New Beginning|00490a7c:episode 7|00490a88:One for the Gipper|00490a9c:episode 6|00490aa8:The City Falls|00490ab8:episode 5|00490ac4:Stalemate|00490ad0:episode 4|00490adc:Disturbing News|00490aec:episode 3|00490af8:A Storm Rising|00490b08:episode 2|00490b14:Something's Cooking|00490b28:episode 1|00490b34:In the Service|00490b44:prologue|00490b50:The Training|00490b60:VIPER|00490b68:Rock'n'Roll|00490b74:STINGER|00490b7c:Steady as we go|00490b8c:BARLETTA|00490b98:Slick'n'Easy|00490ba8:join game|00490bb4:new game|00490bc0:flow control|00490bd0:parity|00490bd8:stop bits|00490be4:baud rate|00490bf0:com port|00490bfc:ip number or host name|00490c14:CONNECT|00490c1c:call number|00490c28:MODEM|00490c30:connect|00490c38:mouse look up down|00490c4c:mouse look left right|00490c64:joy look up down|00490c78:joy look left right|00490c8c:keyboard look down|00490ca0:keyboard look up|00490cb4:keyboard look right|00490cc8:keyboard look left|00490cdc:side view camera|00490cf0:circle camera|00490d00:fly by camera|00490d10:trace camera|00490d20:tail view camera|00490d34:cockpit camera|00490d4c:static coating|00490d5c:fat lady|00490d68:tnt mine|00490d74:sonic blast|00490d80:homie missile|00490d90:toggle secondary|00490da4:fire secondary|00490db4:stun ray|00490dc0:nitro crackers|00490dd0:magnetic plasma|00490de0:lead buster|00490dec:ion gun|00490df4:toggle primary|00490e04:fire primary|00490e14:mouse accl brakes|00490e28:mouse move left right|00490e40:mouse move up down|00490e54:joy accl brakes|00490e64:joy move left right|00490e78:joy move up down|00490e8c:keyboard brakes|00490e9c:keyboard accelerate|00490eb0:keyboard move right|00490ec4:keyboard move left|00490ed8:keyboard move down|00490eec:keyboard move up|00490f08:DELETE|00490f1c:input configuration|00490f30:cd music softer|00490f40:cd music louder|00490f50:sound fx softer|00490f60:sound fx louder|00490f70:software resolution|00490f84:graphics device|00490f94:3D acceleration|00490fac:INPUT|00490fb4:AUDIO|00490fbc:VIDEO|00490fc8:Back to the fun!|00490fe0:Let me out of here!|00490ffc:SETUP|00491004:NETWORK|00491014:Anonymous|00491020:win.pcx|00491028:graffiti.bsp|00491038:textures\\graffiti.pcx|00491050:butgl.bsp|0049105c:but3.bsp|00491068:but2.bsp|00491074:but1.bsp|00491080:sound\\menu3.wav|00491090:sound\\menu2.wav|004910a0:sound\\menu1.wav|004910b0:[Y/N]|004910b8:Game ?|004910c0:Abandon|004910c8:cartit00.bsp|004910d8:m_spsh3.bsp|004910e4:m_spship.bsp|004910f4:cockpit.bsp|00491100:carvip20.bsp|00491110:carvip10.bsp|00491120:carvip00.bsp|00491130:carsti20.bsp|00491140:carsti10.bsp|00491150:carsti00.bsp|00491160:carbar20.bsp|00491170:carbar10.bsp|00491180:carbar00.bsp|00491190:scrapcab.bsp|004911a0:vanos_ia.bsp|004911b0:vanos2.bsp|004911bc:vanos.bsp|004911c8:pizza.bsp|004911d4:polma2.bsp|004911e0:polma.bsp|004911ec:police.bsp|004911f8:sx2.bsp|00491200:cryo3.bsp|0049120c:cryo2.bsp|00491218:cryo1.bsp|00491224:cabby2.bsp|00491230:cabby.bsp|0049123c:cab.bsp|00491244:hunter.bsp|00491250:bsp\\hun_lod2.BSP|00491264:bsp\\hun_lod1.BSP|00491278:fatlady.bsp|00491284:cracker.bsp|00491290:homing.bsp|0049129c:sound\\whistle.wav|004912b0:sound\\hitwall.wav|004912c4:frag.bmp",
+      "tags": ""
+    },
+    "ledger": []
+  },
+  {
+    "address": "0044a160",
+    "map": {
+      "address": "0044a160",
+      "name": "FUN_0044a160",
+      "body_bytes": "178",
+      "instructions": "42",
+      "ebp_frame": "false",
+      "return_pops": "RET",
+      "calls": "00449e50:FUN_00449e50|0047dae0:FUN_0047dae0|EXTERNAL:00000018:GetTickCount",
+      "strings": "00491304:textures\\iel.pcx|00491318:textures\\midas.pcx",
+      "tags": ""
+    },
+    "ledger": []
+  },
+  {
+    "address": "0044aac0",
+    "map": {
+      "address": "0044aac0",
+      "name": "FUN_0044aac0",
+      "body_bytes": "1487",
+      "instructions": "444",
+      "ebp_frame": "false",
+      "return_pops": "RET",
+      "calls": "0044a220:FUN_0044a220|0044a380:FUN_0044a380|0044a520:FUN_0044a520|0044a720:FUN_0044a720|0044a8a0:FUN_0044a8a0|EXTERNAL:00000018:GetTickCount",
+      "strings": "",
+      "tags": ""
+    },
+    "ledger": []
+  },
+  {
+    "address": "0044e880",
+    "map": {
+      "address": "0044e880",
+      "name": "FUN_0044e880",
+      "body_bytes": "140",
+      "instructions": "53",
+      "ebp_frame": "false",
+      "return_pops": "RET",
+      "calls": "",
+      "strings": "",
+      "tags": ""
+    },
+    "ledger": [
+      {
+        "id": "0044e880-functional-c",
+        "original_va": "0044e880",
+        "function": "bh_texture_set_path",
+        "role": "engine_candidate",
+        "provenance_confidence": "Ordinary complete path/palette/cache owner inspected with callers and native API slots. Not verified CRT/library, compiler/EH support, import or shared tail; engine attribution unresolved.",
+        "source": "src/bh_texture_image.c",
+        "source_sha256": "b90f9e2e48c816af8a5cdbe476fef73fa4f399b31b6f42024ad24e5f68ed4690",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+        "game_admitted": false,
+        "validation": {
+          "complete_original_function": true,
+          "raw_byte_match": false,
+          "abi": "Explicit source context replaces globals; original0x70 image offsets and real native interface lifetimes checked; cdecl source API.",
+          "fixtures": "131 synthetic checks and all459 PCX asset classification:454 native-backed loads with pinned mapped-pixel/palette CRCs,5 original catalog rejections. RGB8/16/24/32 native surfaces, path/alias/error semantics, software residual phases and nested failure cleanup.",
+          "limits": [
+            "Source rejects overlong names instead of original0x70 object-name overwrite; uses bounded error text",
+            "Missing/truncated data or native/allocation failure rejects safely with no published half-image, unlike unchecked original paths",
+            "No HAL/video-memory/custom software rasterizer acceptance; existing explicit native RGB system-memory binding retained",
+            "No original model/entity/script/render traversal admission from this family",
+            "One-time quantization tables are scoped to explicit source renderer context; changing display shifts after initialization requires a new context.",
+            "The older decoded-PCX staging helper remains a fixture/support adapter; scene material loading now calls complete bh_texture_load.",
+            "Scene remains a diagnostic fixed view; unchanged pixels show replacement compatibility only, not original renderer or gameplay fidelity."
+          ]
+        },
+        "evidence": [
+          "META/m4/image-owner/review.json",
+          "META/m4/image-owner/validation.json",
+          "META/m4/image-owner/integration-real.json",
+          "META/m4/image-owner/clean/clean-checkout.json"
+        ]
+      }
+    ]
+  },
+  {
+    "address": "0044e910",
+    "map": {
+      "address": "0044e910",
+      "name": "FUN_0044e910",
+      "body_bytes": "147",
+      "instructions": "61",
+      "ebp_frame": "false",
+      "return_pops": "RET",
+      "calls": "",
+      "strings": "",
+      "tags": ""
+    },
+    "ledger": [
+      {
+        "id": "0044e910-functional-c",
+        "original_va": "0044e910",
+        "function": "bh_model_path_set",
+        "role": "engine_candidate",
+        "provenance_confidence": "unresolved engine origin; model path owner highconfidence from exact global readers",
+        "source": "src/bh_model_path.c",
+        "source_sha256": "f7791fe685289885c6d078ba7606ccacc2a85e87fd766362a00e89f480ed147a",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+        "game_admitted": false,
+        "validation": {
+          "complete_original_function": true,
+          "raw_byte_match": false,
+          "fixtures": {
+            "scenario": "model-path",
+            "checks": 22,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+          "limits": [
+            "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+            "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+          ],
+          "native_composition": null
+        },
+        "evidence": [
+          "META/m4/model-path/function.json",
+          "META/m4/parallel-hour/owners.json",
+          "META/m4/parallel-hour/validation.json",
+          "META/m4/parallel-hour/integration-real.json",
+          "META/m4/parallel-hour/clean/clean-checkout.json"
+        ]
+      }
+    ]
+  },
+  {
+    "address": "0044f4f0",
+    "map": {
+      "address": "0044f4f0",
+      "name": "FUN_0044f4f0",
+      "body_bytes": "20",
+      "instructions": "5",
+      "ebp_frame": "false",
+      "return_pops": "RET",
+      "calls": "",
+      "strings": "",
+      "tags": ""
+    },
+    "ledger": [
+      {
+        "id": "0044f4f0-functional-c",
+        "original_va": "0044f4f0",
+        "function": "bh_texture_policy_set",
+        "role": "engine_candidate",
+        "provenance_confidence": "unresolved engine origin; exact image/cache behavior confirmed from caller and field/global consumers",
+        "source": "src/bh_texture_policy.c",
+        "source_sha256": "03d1bcbbb0007f8954b79610f65c0cfefcbcf5c3d5cfc6c11e8301725a3f8061",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "target": "build/m0/bhunter-integration.exe",
+        "game_admitted": false,
+        "validation": {
+          "complete_original_function": true,
+          "raw_byte_match": false,
+          "fixtures": {
+            "scenario": "texture-policy",
+            "checks": 74,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+          "limits": [
+            "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+            "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+          ],
+          "native_composition": null
+        },
+        "evidence": [
+          "META/m4/texture-policy/functions.json",
+          "META/m4/parallel-hour/owners.json",
+          "META/m4/parallel-hour/validation.json",
+          "META/m4/parallel-hour/integration-real.json",
+          "META/m4/parallel-hour/clean/clean-checkout.json"
+        ]
+      }
+    ]
+  },
+  {
+    "address": "004507c0",
+    "map": {
+      "address": "004507c0",
+      "name": "FUN_004507c0",
+      "body_bytes": "14",
+      "instructions": "5",
+      "ebp_frame": "false",
+      "return_pops": "RET",
+      "calls": "0044f550:Engine_LoadImage_candidate",
+      "strings": "",
+      "tags": ""
+    },
+    "ledger": [
+      {
+        "id": "004507c0-functional-c",
+        "original_va": "004507c0",
+        "function": "bh_texture_image_load",
+        "role": "engine_candidate",
+        "provenance_confidence": "Image loader forwarding and sole flags-setting caller; no CRT/EH/import/shared-tail role; independent complete RET-terminated boundaries.",
+        "source": "src/bh_texture_controls.c",
+        "source_sha256": "dc7193a5c83db543187868dcb0f0e62a2d396545f106b86560b46af485943d9a",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "target": "build/m0/bhunter-integration.exe",
+        "game_admitted": false,
+        "validation": {
+          "complete_original_function": true,
+          "raw_byte_match": false,
+          "fixtures": {
+            "scenario": "texture-controls",
+            "checks": 48,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+          "limits": [
+            "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+            "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+          ],
+          "native_composition": null
+        },
+        "evidence": [
+          "META/m4/texture-controls/functions.json",
+          "META/m4/parallel-hour/owners.json",
+          "META/m4/parallel-hour/validation.json",
+          "META/m4/parallel-hour/integration-real.json",
+          "META/m4/parallel-hour/clean/clean-checkout.json"
+        ]
+      }
+    ]
+  },
+  {
+    "address": "00451720",
+    "map": {
+      "address": "00451720",
+      "name": "FUN_00451720",
+      "body_bytes": "37",
+      "instructions": "8",
+      "ebp_frame": "false",
+      "return_pops": "RET",
+      "calls": "",
+      "strings": "",
+      "tags": ""
+    },
+    "ledger": [
+      {
+        "id": "00451720-functional-c",
+        "original_va": "00451720",
+        "function": "bh_main_camera_settings",
+        "role": "engine_candidate",
+        "provenance_confidence": "medium: ordinary application camera/math ownership and callers; library authorship unresolved; no verified CRT/import/EH signature",
+        "source": "src/bh_main_camera.c",
+        "source_sha256": "aa546818ed08a52fd6c87fd498f5ef856470ae42fd5b3928c887be9ad2c2f24f",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+        "game_admitted": false,
+        "validation": {
+          "complete_original_function": true,
+          "raw_byte_match": false,
+          "fixtures": {
+            "scenario": "main-camera",
+            "checks": 2025,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+          "limits": [
+            "Explicit BHViewConfig/BHMainCamera context binding is an adapter, not assertion that original scattered globals formed these structs",
+            "Finite-input guards intentionally reject invalid/overflowing settings or outputs and preserve destination",
+            "PC53/nearest/masked profile only; PC24, huge-angle x87 reduction, exceptional NaN payloads and original differential execution unvalidated",
+            "No byte match claimed; no gameplay/camera selection/visibility traversal or near/far clipping admission",
+            "Input may alias own view or own projected; other partial/output overlap unsupported",
+            "Original global plane slot1 is retained without guessing its owner or manufacturing a near/far plane",
+            "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+            "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+          ],
+          "native_composition": null
+        },
+        "evidence": [
+          "META/m4/main-camera/review.json",
+          "META/m4/parallel-hour/owners.json",
+          "META/m4/parallel-hour/validation.json",
+          "META/m4/parallel-hour/integration-real.json",
+          "META/m4/parallel-hour/clean/clean-checkout.json"
+        ]
+      }
+    ]
+  },
+  {
+    "address": "0045b1d0",
+    "map": {
+      "address": "0045b1d0",
+      "name": "FUN_0045b1d0",
+      "body_bytes": "563",
+      "instructions": "195",
+      "ebp_frame": "false",
+      "return_pops": "RET",
+      "calls": "0044e780:FUN_0044e780",
+      "strings": "0049181c: D3DERR: Create default material failed. |00491848: VMEMERR: Alloc texture slots failed. ",
+      "tags": ""
+    },
+    "ledger": [
+      {
+        "id": "0045b1d0-functional-c",
+        "original_va": "0045b1d0",
+        "function": "bh_render_material_initialize",
+        "role": "engine_candidate",
+        "provenance_confidence": "Complete ordinary initialization owner called by00479200, native material/render-state behavior, unknown proprietary engine authorship. Not CRT/import/compiler support/shared tail.",
+        "source": "src/bh_render_material.c",
+        "source_sha256": "ba08e6d118895790c9242bc9d656dcf70241ed3d9c2bd4d057e46ec24771f244",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "target": "build/m0/bhunter-integration.exe; build/scene-snapshot/bhunter-scene-snapshot.exe",
+        "game_admitted": false,
+        "validation": {
+          "complete_original_function": true,
+          "raw_byte_match": false,
+          "fixtures": {
+            "scenario": "render-material",
+            "checks": 83,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "abi": "Explicit reviewed source context/guards replace original scattered globals; original record layouts and caller dataflow are checked in family evidence",
+          "limits": [
+            "Original local material reference is leaked; source retains it in explicit owner released by separately labeled source adapter",
+            "CreateMaterial failure branch reconstructed statically; native COM allocation/device errors and HAL backend failure behavior not forced or claimed",
+            "All post-CreateMaterial HRESULTs ignored for original return and recorded separately by source diagnostics",
+            "Guarded arguments/reinitialization and bounded error append extend original valid-input contract",
+            "No source game or scene material integration claimed here; focused target links current real m0 owner objects and requires parent full rebuild",
+            "Integration admission only; no playable game target or byte match; original native/software dispatcher0046e390 remains unfinished",
+            "Detailed numerical/input/lifetime and platform guards are scoped by the linked family review; no original code execution or game launches"
+          ],
+          "native_composition": null
+        },
+        "evidence": [
+          "META/m4/render-material/review.json",
+          "META/m4/parallel-hour/owners.json",
+          "META/m4/parallel-hour/validation.json",
+          "META/m4/parallel-hour/integration-real.json",
+          "META/m4/parallel-hour/clean/clean-checkout.json"
+        ]
+      }
+    ]
+  },
+  {
+    "address": "00471260",
+    "map": {
+      "address": "00471260",
+      "name": "BH_InitDirectInput",
+      "body_bytes": "350",
+      "instructions": "113",
+      "ebp_frame": "false",
+      "return_pops": "RET",
+      "calls": "0047d658:DirectInputCreateA",
+      "strings": "",
+      "tags": ""
+    },
+    "ledger": []
+  },
+  {
+    "address": "00471c00",
+    "map": {
+      "address": "00471c00",
+      "name": "FUN_00471c00",
+      "body_bytes": "183",
+      "instructions": "36",
+      "ebp_frame": "false",
+      "return_pops": "RET",
+      "calls": "0047dae0:FUN_0047dae0",
+      "strings": "",
+      "tags": ""
+    },
+    "ledger": [
+      {
+        "id": "00471c00-functional-c",
+        "original_va": "00471c00",
+        "function": "bh_frame_buffers_start",
+        "role": "engine_candidate",
+        "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+        "source": "src/bh_frame_buffers.c",
+        "source_sha256": "9252358b8af6ff298fb3867af3cd68a51bb805fdc8832baf57bbffd999e1fc64",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "target": "build/m0/bhunter-integration.exe",
+        "game_admitted": false,
+        "validation": {
+          "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+          "boundary": "00471c00..00471cb6: 183bytes/36instructions",
+          "raw_byte_match": false,
+          "differential": false,
+          "fixtures": {
+            "frame-buffers": {
+              "scenario": "frame-buffers",
+              "checks": 123,
+              "failures": 0,
+              "original_code_required": false
+            }
+          },
+          "clean_fixtures": {
+            "frame-buffers": {
+              "scenario": "frame-buffers",
+              "checks": 123,
+              "failures": 0,
+              "original_code_required": false
+            }
+          },
+          "limits": [
+            "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+            "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+            "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+          ]
+        },
+        "evidence": [
+          "META/m4/frame-buffers/README.md",
+          "META/m4/frontier-90min/original/00471c00.tsv",
+          "META/m4/frontier-90min/validation.json",
+          "META/m4/frontier-90min/integration-real.json",
+          "META/m4/frontier-90min/clean/clean-checkout.json"
+        ]
+      }
+    ]
+  },
+  {
+    "address": "00473d60",
+    "map": {
+      "address": "00473d60",
+      "name": "FUN_00473d60",
+      "body_bytes": "627",
+      "instructions": "143",
+      "ebp_frame": "false",
+      "return_pops": "RET",
+      "calls": "0047dae0:FUN_0047dae0|0047dc30:_sprintf|EXTERNAL:0000000c:joyGetDevCapsA|EXTERNAL:0000000d:joySetCapture|EXTERNAL:00000049:MapVirtualKeyA|EXTERNAL:0000004e:SetCursorPos",
+      "strings": "00492764:Key #%d|0049276c:Key '%c'",
+      "tags": ""
+    },
+    "ledger": [
+      {
+        "id": "00473d60-functional-c",
+        "original_va": "00473d60",
+        "function": "bh_input_devices_start",
+        "role": "engine_candidate",
+        "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+        "source": "src/bh_input_devices.c",
+        "source_sha256": "1693d391f4c903d2da6f97759657ce88fc98ef12954f570d1d7040767e8ae42d",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "target": "build/m0/bhunter-integration.exe",
+        "game_admitted": false,
+        "validation": {
+          "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+          "boundary": "00473d60..00473fd2: 627bytes/143instructions",
+          "raw_byte_match": false,
+          "differential": false,
+          "fixtures": {
+            "input-devices": {
+              "scenario": "input-devices",
+              "checks": 1369,
+              "failures": 0,
+              "native_capture_calls": 0,
+              "native_recenter_calls": 0,
+              "original_code_required": false
+            }
+          },
+          "clean_fixtures": {
+            "input-devices": {
+              "scenario": "input-devices",
+              "checks": 1369,
+              "failures": 0,
+              "native_capture_calls": 0,
+              "native_recenter_calls": 0,
+              "original_code_required": false
+            }
+          },
+          "limits": [
+            "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+            "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+            "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+          ]
+        },
+        "evidence": [
+          "META/m4/input-collection/README.md",
+          "META/m4/frontier-90min/original/00473d60.tsv",
+          "META/m4/frontier-90min/validation.json",
+          "META/m4/frontier-90min/integration-real.json",
+          "META/m4/frontier-90min/clean/clean-checkout.json"
+        ]
+      }
+    ]
+  },
+  {
+    "address": "00475640",
+    "map": {
+      "address": "00475640",
+      "name": "FUN_00475640",
+      "body_bytes": "100",
+      "instructions": "34",
+      "ebp_frame": "false",
+      "return_pops": "RET",
+      "calls": "0047dae0:FUN_0047dae0",
+      "strings": "",
+      "tags": ""
+    },
+    "ledger": [
+      {
+        "id": "00475640-functional-c",
+        "original_va": "00475640",
+        "function": "bh_player_input_create",
+        "role": "engine_candidate",
+        "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+        "source": "src/bh_player_input.c",
+        "source_sha256": "0c4060193e23c0aae26989359c70619b0ef6e50fa7ad195b8868bb1e177a348b",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "target": "build/m0/bhunter-integration.exe",
+        "game_admitted": false,
+        "validation": {
+          "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+          "raw_byte_match": false,
+          "differential": false,
+          "boundary": "Complete original00475640..004756a3 (100bytes/34instructions)",
+          "fixtures": {
+            "player-input": {
+              "scenario": "player-input",
+              "checks": 77,
+              "failures": 0
+            }
+          },
+          "clean_fixtures": {
+            "player-input": {
+              "scenario": "player-input",
+              "checks": 77,
+              "failures": 0
+            }
+          },
+          "limits": [
+            "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+            "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+          ]
+        },
+        "evidence": [
+          "META/m4/player-input/review.json",
+          "META/m4/scene-callers/original/00475640.tsv",
+          "META/m4/scene-callers/validation.json",
+          "META/m4/scene-callers/integration-real.json",
+          "META/m4/scene-callers/clean/clean-checkout.json"
+        ]
+      }
+    ]
+  },
+  {
+    "address": "00475770",
+    "map": {
+      "address": "00475770",
+      "name": "FUN_00475770",
+      "body_bytes": "108",
+      "instructions": "43",
+      "ebp_frame": "false",
+      "return_pops": "RET",
+      "calls": "",
+      "strings": "",
+      "tags": ""
+    },
+    "ledger": [
+      {
+        "id": "00475770-functional-c",
+        "original_va": "00475770",
+        "function": "bh_player_input_bind_key",
+        "role": "engine_candidate",
+        "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+        "source": "src/bh_player_input.c",
+        "source_sha256": "0c4060193e23c0aae26989359c70619b0ef6e50fa7ad195b8868bb1e177a348b",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "target": "build/m0/bhunter-integration.exe",
+        "game_admitted": false,
+        "validation": {
+          "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+          "raw_byte_match": false,
+          "differential": false,
+          "boundary": "Complete original00475770..004757db (108bytes/43instructions)",
+          "fixtures": {
+            "player-input": {
+              "scenario": "player-input",
+              "checks": 77,
+              "failures": 0
+            }
+          },
+          "clean_fixtures": {
+            "player-input": {
+              "scenario": "player-input",
+              "checks": 77,
+              "failures": 0
+            }
+          },
+          "limits": [
+            "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+            "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+          ]
+        },
+        "evidence": [
+          "META/m4/player-input/review.json",
+          "META/m4/scene-callers/original/00475770.tsv",
+          "META/m4/scene-callers/validation.json",
+          "META/m4/scene-callers/integration-real.json",
+          "META/m4/scene-callers/clean/clean-checkout.json"
+        ]
+      }
+    ]
+  },
+  {
+    "address": "00475810",
+    "map": {
+      "address": "00475810",
+      "name": "FUN_00475810",
+      "body_bytes": "83",
+      "instructions": "37",
+      "ebp_frame": "false",
+      "return_pops": "RET",
+      "calls": "",
+      "strings": "",
+      "tags": ""
+    },
+    "ledger": [
+      {
+        "id": "00475810-functional-c",
+        "original_va": "00475810",
+        "function": "bh_player_input_bind_string",
+        "role": "engine_candidate",
+        "provenance_confidence": "Complete reviewed ordinary owner and real callers/table; CRT/import/compiler/shared tails excluded. Engine authorship unresolved where engine_candidate.",
+        "source": "src/bh_player_input.c",
+        "source_sha256": "0c4060193e23c0aae26989359c70619b0ef6e50fa7ad195b8868bb1e177a348b",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "target": "build/m0/bhunter-integration.exe",
+        "game_admitted": false,
+        "validation": {
+          "abi": "32-bit cdecl source with explicit owning/borrowed contexts and checked layouts; not a binary drop-in ABI claim",
+          "raw_byte_match": false,
+          "differential": false,
+          "boundary": "Complete original00475810..00475862 (83bytes/37instructions)",
+          "fixtures": {
+            "player-input": {
+              "scenario": "player-input",
+              "checks": 77,
+              "failures": 0
+            }
+          },
+          "clean_fixtures": {
+            "player-input": {
+              "scenario": "player-input",
+              "checks": 77,
+              "failures": 0
+            }
+          },
+          "limits": [
+            "Finite moderate masked-PC53 source checks and instruction-derived contracts; PC24/transcendental edges/universal original numerical equivalence unvalidated.",
+            "No original-code adapter or game execution; source game, full callers, horizon/software rasterizers/startup/weapon/mission lifetimes remain unfinished."
+          ]
+        },
+        "evidence": [
+          "META/m4/player-input/review.json",
+          "META/m4/scene-callers/original/00475810.tsv",
+          "META/m4/scene-callers/validation.json",
+          "META/m4/scene-callers/integration-real.json",
+          "META/m4/scene-callers/clean/clean-checkout.json"
+        ]
+      }
+    ]
+  },
+  {
+    "address": "00475ef0",
+    "map": {
+      "address": "00475ef0",
+      "name": "FUN_00475ef0",
+      "body_bytes": "317",
+      "instructions": "111",
+      "ebp_frame": "false",
+      "return_pops": "RET",
+      "calls": "0047dae0:FUN_0047dae0|0047db90:FUN_0047db90|EXTERNAL:00000067:CoCreateInstance|EXTERNAL:00000068:CoInitialize",
+      "strings": "",
+      "tags": ""
+    },
+    "ledger": []
+  },
+  {
+    "address": "00476da0",
+    "map": {
+      "address": "00476da0",
+      "name": "FUN_00476da0",
+      "body_bytes": "225",
+      "instructions": "64",
+      "ebp_frame": "false",
+      "return_pops": "RET",
+      "calls": "0047dae0:FUN_0047dae0",
+      "strings": "",
+      "tags": ""
+    },
+    "ledger": [
+      {
+        "id": "00476da0-functional-c",
+        "original_va": "00476da0",
+        "function": "bh_entities_init",
+        "role": "engine_candidate",
+        "provenance_confidence": "Complete boundary/behavior inspected; historical engine authorship unknown",
+        "source": "src/bh_entities.c",
+        "source_sha256": "6fc5e54d88906a7922c149bb1ccc9851c2cbe701217e57d8e3c72646d81cb92a",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "target": "build/m0/bhunter-integration.exe",
+        "game_admitted": false,
+        "validation": {
+          "abi": "Compile-checked x86 864-byte entity, callback/list/position/origin offsets; new explicit cdecl pool context, not original global-entry ABI",
+          "behavior": "initialize zeroed contiguous entity arena and free chain",
+          "scenario": "Growth/generation/payload retention, active/free/query order, self/future mutation, focus, nested dispatch, 768 independent numerical boundary cases and original-size arena with real placements",
+          "dependencies": "Real CRT allocator, explicit source chunk owner, supplied callbacks, shared math profile and real round-store helper",
+          "limits": [
+            "No original entity function executes; no byte-match claim",
+            "Inactive verified RET callback represented by NULL; game callbacks are not fabricated",
+            "Safety extensions for bad releases, list backlinks, focus retirement, reentrancy, callback-time dispose and future-slot lifetime changes documented",
+            "Growth payload remains intentionally unspecified except observed fields; caller must initialize game-owned fields",
+            "Spatial callback must preserve PC53 contract; broad driver/thread transitions unresolved",
+            "Entity resource attachments, game/script semantics and world/navigation integration remain unrecovered"
+          ]
+        },
+        "evidence": [
+          "META/m2/ENTITIES.md",
+          "META/m2/entities/review.json",
+          "META/m2/entities/original/00476da0.asm.txt",
+          "META/m2/entities/original/00476da0.c.txt",
+          "META/m2/entities/query-controls.json",
+          "META/m2/entities/evidence-check.json",
+          "META/m2/entities/integration-real.json",
+          "META/m2/entities/link-map.txt",
+          "META/m2/entities-clean/clean-checkout.json"
+        ]
+      }
+    ]
+  },
+  {
+    "address": "0047b500",
+    "map": {
+      "address": "0047b500",
+      "name": "FUN_0047b500",
+      "body_bytes": "228",
+      "instructions": "75",
+      "ebp_frame": "false",
+      "return_pops": "RET",
+      "calls": "0047d360:DirectSoundCreate|EXTERNAL:0000000f:Sleep",
+      "strings": "",
+      "tags": ""
+    },
+    "ledger": []
+  },
+  {
+    "address": "0047b920",
+    "map": {
+      "address": "0047b920",
+      "name": "FUN_0047b920",
+      "body_bytes": "37",
+      "instructions": "12",
+      "ebp_frame": "false",
+      "return_pops": "RET",
+      "calls": "",
+      "strings": "",
+      "tags": ""
+    },
+    "ledger": [
+      {
+        "id": "0047b920-functional-c",
+        "original_va": "0047b920",
+        "function": "bh_sound_set_voice_limit",
+        "role": "engine_candidate",
+        "provenance_confidence": "Ordinary listener/configuration owner, complete mapped body/calls and global layout reviewed before assignment. Not CRT, compiler support, import or independent shared tail. No verified library attribution; game/engine authorship unresolved.",
+        "source": "src/bh_sound_listener.c",
+        "source_sha256": "af7535b6408e0c24f0987e4c375b4d00d816497981c1a025933b7ccad569c6aa",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "target": "build/m0/bhunter-integration.exe",
+        "game_admitted": false,
+        "validation": {
+          "complete_original_function": true,
+          "raw_byte_match": false,
+          "abi": "Explicit source queue; verified 40-byte listener position/velocity/right/signed flag layout. Index0 consumer only; source failure guards preserve listener fields.",
+          "fixtures": "50 checks: signed flags/disable retention, independent analytic mixed rotations, real priority, shared RNG retention, all policy classes/extremes and actual decoded PCM/native registration captures policy without altering existing resources.",
+          "source_build": "70 real TUs, real asset and clean runs; 35 missing-module controls. Historical source/header snapshots retained for changed queue context.",
+          "playback_exercised": false,
+          "limits": [
+            "Only original index0 is consumed by current sound priority/playback loops; invalid indices reject before touching listener fields. No second listener invented.",
+            "Explicit source queue replaces globals. The contiguous listener fields retain position+0, velocity+c, right+18, signed active+24 layout; full queue is not original global ABI.",
+            "Enabled finite moderate PC53 angles checked analytically, not original differential execution; large-angle x87 transcendental/PC24 fidelity remains unresolved.",
+            "Configured limit0 is an explicit source PCM-registration adapter binding. Full original sound loader 0047b950 and deferred playback 0047c200 remain WIP. No Play calls or audible-playback claim.",
+            "Functional admission, no byte-match or game execution."
+          ]
+        },
+        "evidence": [
+          "META/m4/sound-listener/review.json",
+          "META/m4/sound-listener/validation.json",
+          "META/m4/sound-listener/integration-real.json",
+          "META/m4/sound-listener/clean/clean-checkout.json"
+        ]
+      }
+    ]
+  },
+  {
+    "address": "0047b950",
+    "map": {
+      "address": "0047b950",
+      "name": "FUN_0047b950",
+      "body_bytes": "781",
+      "instructions": "261",
+      "ebp_frame": "false",
+      "return_pops": "RET",
+      "calls": "0047b330:FUN_0047b330|0047b830:FUN_0047b830|0047cbd0:VFILE_Open|0047ce50:FUN_0047ce50|0047cec0:FUN_0047cec0|0047cf60:FUN_0047cf60|0047d230:FUN_0047d230|0047dae0:FUN_0047dae0|0047db90:FUN_0047db90|0047ddf0:_rand",
+      "strings": "",
+      "tags": ""
+    },
+    "ledger": [
+      {
+        "id": "0047b950-wave-data-subset-c",
+        "original_va": "0047b950",
+        "function": "PCM reader subset",
+        "role": "engine_candidate",
+        "provenance_confidence": "Complete boundary reviewed; engine/library authorship unresolved",
+        "source": "src/bh_wave.c",
+        "source_sha256": "16bf89dc8799e762bc8eb257c60841214ae4135d9e9b6702f8124ef97fdf7115",
+        "implementation": "wip",
+        "integration": "linked_harness",
+        "target": "build/m0/bhunter-integration.exe",
+        "game_admitted": false,
+        "validation": {
+          "behavior": "Owning PCM bytes/metadata only; complete sound loading, buffer and resource lifecycle unrecovered",
+          "abi": "New length-bearing explicit owner and borrowed view; not original global/COM ABI",
+          "scenario": "Protected memory prefixes, malformed RIFF/codec/frame metadata, allocation rollback and all 60 real WAVs through three VFILE backends",
+          "limits": [
+            "No original code executes; no byte-match claim",
+            "No audio objects or playback; source-only PCM data adapters",
+            "Strict RIFF extent/padding checks and defined first-chunk/empty-data policy are safety adaptations",
+            "Compressed/extensible/non-PCM codecs rejected; actual archive dialect verified independently"
+          ]
+        },
+        "evidence": [
+          "META/m2/WAVE.md",
+          "META/m2/media/wave-review.json",
+          "META/m2/media/readers/0047b830.asm.txt",
+          "META/m2/media/original/0047b950.asm.txt",
+          "META/m2/media/wave-controls.json",
+          "META/m2/media/wave-integration-real.json",
+          "META/m2/media/wave-link-map.txt",
+          "META/m2/wave-clean/clean-checkout.json"
+        ],
+        "candidate_audit": {
+          "disposition": "sound_owner",
+          "resolved": [
+            "PCM data ownership and all 60 real WAV samples verified"
+          ],
+          "remaining": [
+            "Real DirectSound buffer creation/locking/unlocking, sound-resource lifetime and frequency/parameter bookkeeping"
+          ],
+          "body_sha256": "0642d2584e2b5126c95c6a8f5bb2ac731cde56e61fe8110bcc42bc4e65db71ee",
+          "evidence": "META/m4/candidate-admission-validation.json"
+        }
+      }
+    ]
+  },
+  {
+    "address": "0047d270",
+    "map": {
+      "address": "0047d270",
+      "name": "FUN_0047d270",
+      "body_bytes": "240",
+      "instructions": "65",
+      "ebp_frame": "false",
+      "return_pops": "RET",
+      "calls": "0047d6d0:_fclose|0047d750:_fread|0047dae0:FUN_0047dae0|0047db90:FUN_0047db90|0047dc10:FUN_0047dc10",
+      "strings": "",
+      "tags": ""
+    },
+    "ledger": [
+      {
+        "id": "0047d270-functional-c",
+        "original_va": "0047d270",
+        "function": "bh_vfile_mount",
+        "role": "engine_candidate",
+        "provenance_confidence": "M1 boundary/behavior reviewed; historical game/library authorship unresolved",
+        "source": "src/bh_vfile.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "target": "build/m0/bhunter-integration.exe",
+        "game_admitted": false,
+        "validation": {
+          "abi": "x86 cdecl; 32-byte VFILE, 256-byte archive/name nodes and observed offsets compile-checked",
+          "source_sha256": "7a8187efa6bfcbdf7a626ff53c6d4133d47a37e2dcf65830985b5cee94bf78d0",
+          "fixtures": "full real directory and malformed count/name/offset/truncation/reload fixtures",
+          "scenario": "source-only synthetic fixtures and optional pinned original BIN as data; 20475 combined checks, zero failures",
+          "comparison": "disassembly-guided behavior and independent raw-file payload comparison; no original-code differential or byte-match claim",
+          "limits": [
+            "VC5/SP3 C + stock VC5 LINK target only; no modern compiler or source game admission",
+            "Documented safety/lifecycle extensions; see META/m2/VFILE.md",
+            "Serialized module state; full source-game cache/phase lifetime still unverified",
+            "No forced allocator/I/O fault injection or sanitizer evidence"
+          ]
+        },
+        "evidence": [
+          "META/m1/role-catalog.json",
+          "META/m2/VFILE.md",
+          "META/m2/vfile/real-archive-result.json",
+          "META/m2/vfile/link-map.txt",
+          "META/m2/vfile-clean/clean-checkout.json"
+        ],
+        "source_sha256": "7a8187efa6bfcbdf7a626ff53c6d4133d47a37e2dcf65830985b5cee94bf78d0"
+      }
+    ]
+  },
+  {
+    "address": "0047de50",
+    "map": {
+      "address": "0047de50",
+      "name": "FUN_0047de50",
+      "body_bytes": "61",
+      "instructions": "22",
+      "ebp_frame": "false",
+      "return_pops": "RET",
+      "calls": "00480290:__output|00480f70:__stbuf|00481030:__ftbuf",
+      "strings": "",
+      "tags": ""
+    },
+    "ledger": []
+  }
+]

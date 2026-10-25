@@ -1,0 +1,10 @@
+{
+  "target": "build/frame-teardown/network_shutdown.exe",
+  "fixture_variant": "initial-retained-alias-after-final-CoUninitialize",
+  "exit_code_unsigned": 3221225477,
+  "exit_code_hex": "C0000005",
+  "passed": false,
+  "scope": "source-built test fixture only; no original code or gameplay",
+  "correction": "Keep a second balanced successful same-thread CoInitialize alive until retained interface reference controls are released, then CoUninitialize the control initialization.",
+  "final_result": "corrected fixture passes 21 checks; see focused-results.json"
+}

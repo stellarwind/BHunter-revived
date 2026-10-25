@@ -1902,7 +1902,8 @@
           "No audio objects or playback; source-only PCM data adapters",
           "Strict RIFF extent/padding checks and defined first-chunk/empty-data policy are safety adaptations",
           "Compressed/extensible/non-PCM codecs rejected; actual archive dialect verified independently"
-        ]
+        ],
+        "superseded_by": "0047b950-functional-c-sound-loader"
       },
       "evidence": [
         "META/m2/WAVE.md",
@@ -1924,7 +1925,8 @@
         ],
         "body_sha256": "0642d2584e2b5126c95c6a8f5bb2ac731cde56e61fe8110bcc42bc4e65db71ee",
         "evidence": "META/m4/candidate-admission-validation.json"
-      }
+      },
+      "historical_variant": true
     },
     {
       "id": "0044f0a0-pcx-data-subset-c",
@@ -18417,6 +18419,1123 @@
         "META/m4/hud-continuation/weapon-factory/README.md",
         "META/m4/hud-continuation/validation.json"
       ]
+    },
+    {
+      "id": "00471e00-functional-c-frame-pipeline",
+      "original_va": "00471e00",
+      "function": "bh_frame_worker_run",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_frame_worker.c",
+      "source_sha256": "12ab0162207d818394bf957467f169c08e820e23b1114e6dffecd7c2f5f8c223",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00471e00",
+            "end_exclusive": "00471fea",
+            "bytes": 490,
+            "instructions": 155,
+            "sha256": "9df5fdd671c6a8e08638fd7fc7a7842cff945345b416aecdab387bc6dbc68bc8"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "frame-worker": {
+            "scenario": "frame-worker",
+            "checks": 42,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false,
+            "ui_capture": false
+          }
+        },
+        "clean_fixtures": {
+          "frame-worker": {
+            "scenario": "frame-worker",
+            "checks": 42,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false,
+            "ui_capture": false
+          }
+        },
+        "abi": "Pinned x86 source binding; WINAPI thread adapter where explicit; PC53 nearest/masked profile",
+        "limits": [
+          "Explicit source contexts preserve live state; documented invalid-state guards and ABI adapters differ from original.",
+          "Source-only offscreen and lifecycle checks; no gameplay or desktop capture.",
+          "No complete startup, mission/gameplay, software raster dispatch, CD playback or DirectPlay session claim.",
+          "Offscreen Flip reaches DDERR_NOTFLIPPABLE; successful fullscreen Flip remains unvalidated.",
+          "Positive force-feedback Effect release is established statically, not exercised with an active hardware effect.",
+          "CD positive stop/close checks use a private WAV MCI surrogate, not a physical CD drive."
+        ]
+      },
+      "evidence": [
+        "META/m4/frame-pipeline/worker/original/00471e00.disasm.json",
+        "META/m4/frame-pipeline/README.md",
+        "META/m4/frame-pipeline/validation.json",
+        "META/m4/frame-pipeline/integration-real.json",
+        "META/m4/frame-pipeline/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0045cdf0-functional-c-frame-pipeline",
+      "original_va": "0045cdf0",
+      "function": "bh_present_begin",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_present_begin.c",
+      "source_sha256": "76ac039a1170326582627c31ca766114c0d10980c2ad29e4149fae2ace25b638",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "0045cdf0",
+            "end_exclusive": "0045cf30",
+            "bytes": 320,
+            "instructions": 122,
+            "sha256": "24030b79a13e845dada77dea7ed07308366ee935d783fa482cd59ef4357c1d64"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "present-begin": {
+            "scenario": "present-begin",
+            "checks": 18,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "present-begin": {
+            "scenario": "present-begin",
+            "checks": 18,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "abi": "Pinned x86 source binding; WINAPI thread adapter where explicit; PC53 nearest/masked profile",
+        "limits": [
+          "Explicit source contexts preserve live state; documented invalid-state guards and ABI adapters differ from original.",
+          "Source-only offscreen and lifecycle checks; no gameplay or desktop capture.",
+          "No complete startup, mission/gameplay, software raster dispatch, CD playback or DirectPlay session claim.",
+          "Offscreen Flip reaches DDERR_NOTFLIPPABLE; successful fullscreen Flip remains unvalidated.",
+          "Positive force-feedback Effect release is established statically, not exercised with an active hardware effect.",
+          "CD positive stop/close checks use a private WAV MCI surrogate, not a physical CD drive."
+        ]
+      },
+      "evidence": [
+        "META/m4/frame-pipeline/dependencies/0045cdf0.disasm.json",
+        "META/m4/frame-pipeline/README.md",
+        "META/m4/frame-pipeline/validation.json",
+        "META/m4/frame-pipeline/integration-real.json",
+        "META/m4/frame-pipeline/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0045b810-functional-c-frame-pipeline",
+      "original_va": "0045b810",
+      "function": "bh_capture_software",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_capture.c",
+      "source_sha256": "dedc29dd04a7f64152e48e6bbd1304359d1c960f84dfc00e568dd0f5e19963e4",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "0045b810",
+            "end_exclusive": "0045bc31",
+            "bytes": 1057,
+            "instructions": 322,
+            "sha256": "990b34f0083c3257f24e876fe4826dbc6ac3c4fe550b1c710bfd76795f2aab14"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "capture": {
+            "scenario": "capture",
+            "checks": 278,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false,
+            "desktop_capture": false
+          }
+        },
+        "clean_fixtures": {
+          "capture": {
+            "scenario": "capture",
+            "checks": 278,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false,
+            "desktop_capture": false
+          }
+        },
+        "abi": "Pinned x86 source binding; WINAPI thread adapter where explicit; PC53 nearest/masked profile",
+        "limits": [
+          "Explicit source contexts preserve live state; documented invalid-state guards and ABI adapters differ from original.",
+          "Source-only offscreen and lifecycle checks; no gameplay or desktop capture.",
+          "No complete startup, mission/gameplay, software raster dispatch, CD playback or DirectPlay session claim.",
+          "Offscreen Flip reaches DDERR_NOTFLIPPABLE; successful fullscreen Flip remains unvalidated.",
+          "Positive force-feedback Effect release is established statically, not exercised with an active hardware effect.",
+          "CD positive stop/close checks use a private WAV MCI surrogate, not a physical CD drive."
+        ]
+      },
+      "evidence": [
+        "META/m4/frame-pipeline/dependencies/0045b810.disasm.json",
+        "META/m4/frame-pipeline/README.md",
+        "META/m4/frame-pipeline/validation.json",
+        "META/m4/frame-pipeline/integration-real.json",
+        "META/m4/frame-pipeline/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0045bc40-functional-c-frame-pipeline",
+      "original_va": "0045bc40",
+      "function": "bh_capture_write",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_capture.c",
+      "source_sha256": "dedc29dd04a7f64152e48e6bbd1304359d1c960f84dfc00e568dd0f5e19963e4",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "0045bc40",
+            "end_exclusive": "0045bfd8",
+            "bytes": 920,
+            "instructions": 276,
+            "sha256": "db1cfb6203db2ffa8f3aa3c4688bbfc7fca644f11c876697a82b1e9ccf525baa"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "capture": {
+            "scenario": "capture",
+            "checks": 278,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false,
+            "desktop_capture": false
+          }
+        },
+        "clean_fixtures": {
+          "capture": {
+            "scenario": "capture",
+            "checks": 278,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false,
+            "desktop_capture": false
+          }
+        },
+        "abi": "Pinned x86 source binding; WINAPI thread adapter where explicit; PC53 nearest/masked profile",
+        "limits": [
+          "Explicit source contexts preserve live state; documented invalid-state guards and ABI adapters differ from original.",
+          "Source-only offscreen and lifecycle checks; no gameplay or desktop capture.",
+          "No complete startup, mission/gameplay, software raster dispatch, CD playback or DirectPlay session claim.",
+          "Offscreen Flip reaches DDERR_NOTFLIPPABLE; successful fullscreen Flip remains unvalidated.",
+          "Positive force-feedback Effect release is established statically, not exercised with an active hardware effect.",
+          "CD positive stop/close checks use a private WAV MCI surrogate, not a physical CD drive."
+        ]
+      },
+      "evidence": [
+        "META/m4/frame-pipeline/dependencies/0045bc40.disasm.json",
+        "META/m4/frame-pipeline/README.md",
+        "META/m4/frame-pipeline/validation.json",
+        "META/m4/frame-pipeline/integration-real.json",
+        "META/m4/frame-pipeline/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0045d750-functional-c-frame-pipeline",
+      "original_va": "0045d750",
+      "function": "bh_display_release",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_display_shutdown.c",
+      "source_sha256": "765c542f77c7af97c850910d86247489e6a5af9b6a3ac8853eb6b938bb1d0906",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "0045d750",
+            "end_exclusive": "0045d79c",
+            "bytes": 76,
+            "instructions": 22,
+            "sha256": "60bf8a7d774d08f74c5c5cd213fec5c57ce2b8877cc4fa498ebc09541b050dfb"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "display-shutdown": {
+            "scenario": "display-shutdown",
+            "checks": 18,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "display-shutdown": {
+            "scenario": "display-shutdown",
+            "checks": 18,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "abi": "Pinned x86 source binding; WINAPI thread adapter where explicit; PC53 nearest/masked profile",
+        "limits": [
+          "Explicit source contexts preserve live state; documented invalid-state guards and ABI adapters differ from original.",
+          "Source-only offscreen and lifecycle checks; no gameplay or desktop capture.",
+          "No complete startup, mission/gameplay, software raster dispatch, CD playback or DirectPlay session claim.",
+          "Offscreen Flip reaches DDERR_NOTFLIPPABLE; successful fullscreen Flip remains unvalidated.",
+          "Positive force-feedback Effect release is established statically, not exercised with an active hardware effect.",
+          "CD positive stop/close checks use a private WAV MCI surrogate, not a physical CD drive."
+        ]
+      },
+      "evidence": [
+        "META/m4/frame-pipeline/dependencies/0045d750.disasm.json",
+        "META/m4/frame-pipeline/README.md",
+        "META/m4/frame-pipeline/validation.json",
+        "META/m4/frame-pipeline/integration-real.json",
+        "META/m4/frame-pipeline/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004738a0-functional-c-frame-pipeline",
+      "original_va": "004738a0",
+      "function": "bh_display_shutdown",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_display_shutdown.c",
+      "source_sha256": "765c542f77c7af97c850910d86247489e6a5af9b6a3ac8853eb6b938bb1d0906",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "004738a0",
+            "end_exclusive": "00473906",
+            "bytes": 102,
+            "instructions": 26,
+            "sha256": "dd46096a1db83db9a27e7d04232c7a201113a219db3a8d7da692e4079bd79bac"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "display-shutdown": {
+            "scenario": "display-shutdown",
+            "checks": 18,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "clean_fixtures": {
+          "display-shutdown": {
+            "scenario": "display-shutdown",
+            "checks": 18,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          }
+        },
+        "abi": "Pinned x86 source binding; WINAPI thread adapter where explicit; PC53 nearest/masked profile",
+        "limits": [
+          "Explicit source contexts preserve live state; documented invalid-state guards and ABI adapters differ from original.",
+          "Source-only offscreen and lifecycle checks; no gameplay or desktop capture.",
+          "No complete startup, mission/gameplay, software raster dispatch, CD playback or DirectPlay session claim.",
+          "Offscreen Flip reaches DDERR_NOTFLIPPABLE; successful fullscreen Flip remains unvalidated.",
+          "Positive force-feedback Effect release is established statically, not exercised with an active hardware effect.",
+          "CD positive stop/close checks use a private WAV MCI surrogate, not a physical CD drive."
+        ]
+      },
+      "evidence": [
+        "META/m4/frame-pipeline/dependencies/004738a0.disasm.json",
+        "META/m4/frame-pipeline/README.md",
+        "META/m4/frame-pipeline/validation.json",
+        "META/m4/frame-pipeline/integration-real.json",
+        "META/m4/frame-pipeline/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004713c0-functional-c-frame-pipeline",
+      "original_va": "004713c0",
+      "function": "bh_force_feedback_stop",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_force_feedback.c",
+      "source_sha256": "a319be0e072d443779aabe9da2acd89e976127022d85923133316dc2a02ec7da",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "004713c0",
+            "end_exclusive": "00471415",
+            "bytes": 85,
+            "instructions": 30,
+            "sha256": "912dd8778af5a5612256992bd62d7b2284cecebd3fd92cdc0f59004140d0174c"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "force-feedback-stop": {
+            "scenario": "force-feedback-stop",
+            "checks": 11,
+            "failures": 0,
+            "devices_acquired": 0,
+            "effects_created": 0,
+            "input_polled": false,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "force-feedback-stop": {
+            "scenario": "force-feedback-stop",
+            "checks": 11,
+            "failures": 0,
+            "devices_acquired": 0,
+            "effects_created": 0,
+            "input_polled": false,
+            "original_code_required": false
+          }
+        },
+        "abi": "Pinned x86 source binding; WINAPI thread adapter where explicit; PC53 nearest/masked profile",
+        "limits": [
+          "Explicit source contexts preserve live state; documented invalid-state guards and ABI adapters differ from original.",
+          "Source-only offscreen and lifecycle checks; no gameplay or desktop capture.",
+          "No complete startup, mission/gameplay, software raster dispatch, CD playback or DirectPlay session claim.",
+          "Offscreen Flip reaches DDERR_NOTFLIPPABLE; successful fullscreen Flip remains unvalidated.",
+          "Positive force-feedback Effect release is established statically, not exercised with an active hardware effect.",
+          "CD positive stop/close checks use a private WAV MCI surrogate, not a physical CD drive."
+        ]
+      },
+      "evidence": [
+        "META/m4/frame-pipeline/teardown/original/004713c0.disasm.json",
+        "META/m4/frame-pipeline/README.md",
+        "META/m4/frame-pipeline/validation.json",
+        "META/m4/frame-pipeline/integration-real.json",
+        "META/m4/frame-pipeline/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00476030-functional-c-frame-pipeline",
+      "original_va": "00476030",
+      "function": "bh_network_shutdown",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_network_shutdown.c",
+      "source_sha256": "ceb379de0488a219741fb26643d37db1a84b7a5f70ac424094366d104071fe1c",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00476030",
+            "end_exclusive": "00476068",
+            "bytes": 56,
+            "instructions": 15,
+            "sha256": "91a57a31aa99f3ae265530b6da6fb4900b8b2b38a9733c9f64c330d8c4b0f2c3"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "network-shutdown": {
+            "scenario": "network-shutdown",
+            "checks": 21,
+            "failures": 0,
+            "sessions_opened": 0,
+            "connections_initialized": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "network-shutdown": {
+            "scenario": "network-shutdown",
+            "checks": 21,
+            "failures": 0,
+            "sessions_opened": 0,
+            "connections_initialized": 0,
+            "original_code_required": false
+          }
+        },
+        "abi": "Pinned x86 source binding; WINAPI thread adapter where explicit; PC53 nearest/masked profile",
+        "limits": [
+          "Explicit source contexts preserve live state; documented invalid-state guards and ABI adapters differ from original.",
+          "Source-only offscreen and lifecycle checks; no gameplay or desktop capture.",
+          "No complete startup, mission/gameplay, software raster dispatch, CD playback or DirectPlay session claim.",
+          "Offscreen Flip reaches DDERR_NOTFLIPPABLE; successful fullscreen Flip remains unvalidated.",
+          "Positive force-feedback Effect release is established statically, not exercised with an active hardware effect.",
+          "CD positive stop/close checks use a private WAV MCI surrogate, not a physical CD drive."
+        ]
+      },
+      "evidence": [
+        "META/m4/frame-pipeline/teardown/original/00476030.disasm.json",
+        "META/m4/frame-pipeline/README.md",
+        "META/m4/frame-pipeline/validation.json",
+        "META/m4/frame-pipeline/integration-real.json",
+        "META/m4/frame-pipeline/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00449b40-functional-c-frame-pipeline",
+      "original_va": "00449b40",
+      "function": "bh_cd_stop_close",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_cd_close.c",
+      "source_sha256": "d9d24ffb439daf17c9bebc489d380bd1fc06490da216bb0d27b582021bfcd446",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00449b40",
+            "end_exclusive": "00449b8d",
+            "bytes": 77,
+            "instructions": 21,
+            "sha256": "012a3fba0b0fbf5b78cf69d6c1e90a2f4e3663be23b6233e4977d8603d904cfa"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "cd-close": {
+            "scenario": "cd-close",
+            "checks": 11,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0,
+            "cd_drive_tested": false
+          }
+        },
+        "clean_fixtures": {
+          "cd-close": {
+            "scenario": "cd-close",
+            "checks": 11,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0,
+            "cd_drive_tested": false
+          }
+        },
+        "abi": "Pinned x86 source binding; WINAPI thread adapter where explicit; PC53 nearest/masked profile",
+        "limits": [
+          "Explicit source contexts preserve live state; documented invalid-state guards and ABI adapters differ from original.",
+          "Source-only offscreen and lifecycle checks; no gameplay or desktop capture.",
+          "No complete startup, mission/gameplay, software raster dispatch, CD playback or DirectPlay session claim.",
+          "Offscreen Flip reaches DDERR_NOTFLIPPABLE; successful fullscreen Flip remains unvalidated.",
+          "Positive force-feedback Effect release is established statically, not exercised with an active hardware effect.",
+          "CD positive stop/close checks use a private WAV MCI surrogate, not a physical CD drive."
+        ]
+      },
+      "evidence": [
+        "META/m4/frame-pipeline/review/00449b40.disasm.json",
+        "META/m4/frame-pipeline/README.md",
+        "META/m4/frame-pipeline/validation.json",
+        "META/m4/frame-pipeline/integration-real.json",
+        "META/m4/frame-pipeline/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00479140-functional-c-frame-pipeline",
+      "original_va": "00479140",
+      "function": "bh_frame_service_tick",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_frame_service.c",
+      "source_sha256": "099972e593c4b621bb4989735ef1d764b96628589b2b8ae27ec2d952686bf6f0",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00479140",
+            "end_exclusive": "004791ef",
+            "bytes": 175,
+            "instructions": 47,
+            "sha256": "88310110b4e592974f325ce2246ec72b1b60cf861fafeba5b600d7a936863bf1"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "frame-service": {
+            "scenario": "frame-service",
+            "checks": 52,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false,
+            "physical_input": false,
+            "sessions_opened": 0
+          }
+        },
+        "clean_fixtures": {
+          "frame-service": {
+            "scenario": "frame-service",
+            "checks": 52,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false,
+            "physical_input": false,
+            "sessions_opened": 0
+          }
+        },
+        "abi": "Pinned x86 source binding; WINAPI thread adapter where explicit; PC53 nearest/masked profile",
+        "limits": [
+          "Explicit source contexts preserve live state; documented invalid-state guards and ABI adapters differ from original.",
+          "Source-only offscreen and lifecycle checks; no gameplay or desktop capture.",
+          "No complete startup, mission/gameplay, software raster dispatch, CD playback or DirectPlay session claim.",
+          "Offscreen Flip reaches DDERR_NOTFLIPPABLE; successful fullscreen Flip remains unvalidated.",
+          "Positive force-feedback Effect release is established statically, not exercised with an active hardware effect.",
+          "CD positive stop/close checks use a private WAV MCI surrogate, not a physical CD drive."
+        ]
+      },
+      "evidence": [
+        "META/m4/frame-pipeline/service/original/00479140.disasm.json",
+        "META/m4/frame-pipeline/README.md",
+        "META/m4/frame-pipeline/validation.json",
+        "META/m4/frame-pipeline/integration-real.json",
+        "META/m4/frame-pipeline/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00471df0-functional-c-frame-pipeline",
+      "original_va": "00471df0",
+      "function": "bh_frame_callback_set",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_frame_callback.c",
+      "source_sha256": "4cdec459b07a73e1ca28fba56a0ffa6b2e479dc68c5e460c80b94104a86008a9",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00471df0",
+            "end_exclusive": "00471dfa",
+            "bytes": 10,
+            "instructions": 3,
+            "sha256": "110050fc49a474ef364060ab23952b553cd2722bb2fe29802768e41e2c621087"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "frame-callback": {
+            "scenario": "frame-callback",
+            "checks": 4,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "frame-worker": {
+            "scenario": "frame-worker",
+            "checks": 42,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false,
+            "ui_capture": false
+          }
+        },
+        "clean_fixtures": {
+          "frame-callback": {
+            "scenario": "frame-callback",
+            "checks": 4,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "frame-worker": {
+            "scenario": "frame-worker",
+            "checks": 42,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false,
+            "ui_capture": false
+          }
+        },
+        "abi": "Pinned x86 source binding; WINAPI thread adapter where explicit; PC53 nearest/masked profile",
+        "limits": [
+          "Explicit source contexts preserve live state; documented invalid-state guards and ABI adapters differ from original.",
+          "Source-only offscreen and lifecycle checks; no gameplay or desktop capture.",
+          "No complete startup, mission/gameplay, software raster dispatch, CD playback or DirectPlay session claim.",
+          "Offscreen Flip reaches DDERR_NOTFLIPPABLE; successful fullscreen Flip remains unvalidated.",
+          "Positive force-feedback Effect release is established statically, not exercised with an active hardware effect.",
+          "CD positive stop/close checks use a private WAV MCI surrogate, not a physical CD drive."
+        ]
+      },
+      "evidence": [
+        "META/m4/frame-pipeline/callback/original/00471df0.disasm.json",
+        "META/m4/frame-pipeline/README.md",
+        "META/m4/frame-pipeline/validation.json",
+        "META/m4/frame-pipeline/integration-real.json",
+        "META/m4/frame-pipeline/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00479120-functional-c-frame-pipeline",
+      "original_va": "00479120",
+      "function": "bh_frame_callback_start",
+      "role": "game",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_frame_callback.c",
+      "source_sha256": "4cdec459b07a73e1ca28fba56a0ffa6b2e479dc68c5e460c80b94104a86008a9",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00479120",
+            "end_exclusive": "00479133",
+            "bytes": 19,
+            "instructions": 5,
+            "sha256": "0e50c3a595e7beafcd648d9c00ac69e625bfc2c0224597bb76020a0ff1da1c96"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "frame-callback": {
+            "scenario": "frame-callback",
+            "checks": 4,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "frame-worker": {
+            "scenario": "frame-worker",
+            "checks": 42,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false,
+            "ui_capture": false
+          }
+        },
+        "clean_fixtures": {
+          "frame-callback": {
+            "scenario": "frame-callback",
+            "checks": 4,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "frame-worker": {
+            "scenario": "frame-worker",
+            "checks": 42,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false,
+            "ui_capture": false
+          }
+        },
+        "abi": "Pinned x86 source binding; WINAPI thread adapter where explicit; PC53 nearest/masked profile",
+        "limits": [
+          "Explicit source contexts preserve live state; documented invalid-state guards and ABI adapters differ from original.",
+          "Source-only offscreen and lifecycle checks; no gameplay or desktop capture.",
+          "No complete startup, mission/gameplay, software raster dispatch, CD playback or DirectPlay session claim.",
+          "Offscreen Flip reaches DDERR_NOTFLIPPABLE; successful fullscreen Flip remains unvalidated.",
+          "Positive force-feedback Effect release is established statically, not exercised with an active hardware effect.",
+          "CD positive stop/close checks use a private WAV MCI surrogate, not a physical CD drive."
+        ]
+      },
+      "evidence": [
+        "META/m4/frame-pipeline/callback/original/00479120.disasm.json",
+        "META/m4/frame-pipeline/README.md",
+        "META/m4/frame-pipeline/validation.json",
+        "META/m4/frame-pipeline/integration-real.json",
+        "META/m4/frame-pipeline/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00471ff0-functional-c-window-dispatch",
+      "original_va": "00471ff0",
+      "function": "bh_window_dispatch",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_window_dispatch.c",
+      "source_sha256": "d65d7be23861264f6ba4460178f1912d68a986061b51be83d0cfafb07bb57355",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00471ff0",
+            "end_exclusive": "00472263",
+            "bytes": 627,
+            "instructions": 184,
+            "sha256": "594e2d2747cc762cc0f82276b7aed4fe7cb7f10a14eb4da63210431f3f9ae8d4"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "window-dispatch": {
+            "scenario": "window-dispatch",
+            "checks": 39,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false,
+            "physical_input": false,
+            "ui_capture": false
+          }
+        },
+        "clean_fixtures": {
+          "window-dispatch": {
+            "scenario": "window-dispatch",
+            "checks": 39,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false,
+            "physical_input": false,
+            "ui_capture": false
+          }
+        },
+        "abi": "Pinned x86 source binding; WINAPI thread adapter where explicit; PC53 nearest/masked profile",
+        "limits": [
+          "Explicit source contexts preserve live state; documented invalid-state guards and ABI adapters differ from original.",
+          "Source-only offscreen and lifecycle checks; no gameplay or desktop capture.",
+          "No complete startup, mission/gameplay, software raster dispatch, CD playback or DirectPlay session claim.",
+          "Private source window and offscreen/native lifetime fixtures; no fullscreen game acceptance.",
+          "Physical force-feedback device Acquire and Effect Start positive calls remain static-only without hardware; no fake COM vtables.",
+          "MCI_PLAY is executed only on a retired private device and fails without playback; physical CD looping remains unvalidated."
+        ]
+      },
+      "evidence": [
+        "META/m4/frame-pipeline/next-review/00471ff0.disasm.json",
+        "META/m4/window-dispatch/README.md",
+        "META/m4/window-dispatch/validation.json",
+        "META/m4/window-dispatch/integration-real.json",
+        "META/m4/window-dispatch/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00471be0-functional-c-window-dispatch",
+      "original_va": "00471be0",
+      "function": "bh_window_default_message",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_window_dispatch.c",
+      "source_sha256": "d65d7be23861264f6ba4460178f1912d68a986061b51be83d0cfafb07bb57355",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00471be0",
+            "end_exclusive": "00471bfb",
+            "bytes": 27,
+            "instructions": 10,
+            "sha256": "f3003b4eae0ca0ecfcc00aaf706a9d3e1d172dbd072c0958acd621ab1951c77c"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "window-dispatch": {
+            "scenario": "window-dispatch",
+            "checks": 39,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false,
+            "physical_input": false,
+            "ui_capture": false
+          }
+        },
+        "clean_fixtures": {
+          "window-dispatch": {
+            "scenario": "window-dispatch",
+            "checks": 39,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false,
+            "physical_input": false,
+            "ui_capture": false
+          }
+        },
+        "abi": "Pinned x86 source binding; WINAPI thread adapter where explicit; PC53 nearest/masked profile",
+        "limits": [
+          "Explicit source contexts preserve live state; documented invalid-state guards and ABI adapters differ from original.",
+          "Source-only offscreen and lifecycle checks; no gameplay or desktop capture.",
+          "No complete startup, mission/gameplay, software raster dispatch, CD playback or DirectPlay session claim.",
+          "Private source window and offscreen/native lifetime fixtures; no fullscreen game acceptance.",
+          "Physical force-feedback device Acquire and Effect Start positive calls remain static-only without hardware; no fake COM vtables.",
+          "MCI_PLAY is executed only on a retired private device and fails without playback; physical CD looping remains unvalidated."
+        ]
+      },
+      "evidence": [
+        "META/m4/frame-pipeline/next-review/00471be0.disasm.json",
+        "META/m4/window-dispatch/README.md",
+        "META/m4/window-dispatch/validation.json",
+        "META/m4/window-dispatch/integration-real.json",
+        "META/m4/window-dispatch/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00471220-functional-c-window-dispatch",
+      "original_va": "00471220",
+      "function": "bh_force_feedback_start",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_force_feedback_start.c",
+      "source_sha256": "9139423076a5e7fea813da9ea33e51cb260e29fb0b9476907e8e2a8d8b70145a",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00471220",
+            "end_exclusive": "0047125f",
+            "bytes": 63,
+            "instructions": 22,
+            "sha256": "591a5ba2b58f5cb422d5da37406a0b20115d64b888ae6bb1d1ab15899ffb4fb1"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "force-feedback-start": {
+            "scenario": "force-feedback-start",
+            "checks": 8,
+            "failures": 0,
+            "hardware_acquired": false,
+            "effect_started": false,
+            "original_code_required": false
+          },
+          "window-dispatch": {
+            "scenario": "window-dispatch",
+            "checks": 39,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false,
+            "physical_input": false,
+            "ui_capture": false
+          }
+        },
+        "clean_fixtures": {
+          "force-feedback-start": {
+            "scenario": "force-feedback-start",
+            "checks": 8,
+            "failures": 0,
+            "hardware_acquired": false,
+            "effect_started": false,
+            "original_code_required": false
+          },
+          "window-dispatch": {
+            "scenario": "window-dispatch",
+            "checks": 39,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false,
+            "physical_input": false,
+            "ui_capture": false
+          }
+        },
+        "abi": "Pinned x86 source binding; WINAPI thread adapter where explicit; PC53 nearest/masked profile",
+        "limits": [
+          "Explicit source contexts preserve live state; documented invalid-state guards and ABI adapters differ from original.",
+          "Source-only offscreen and lifecycle checks; no gameplay or desktop capture.",
+          "No complete startup, mission/gameplay, software raster dispatch, CD playback or DirectPlay session claim.",
+          "Private source window and offscreen/native lifetime fixtures; no fullscreen game acceptance.",
+          "Physical force-feedback device Acquire and Effect Start positive calls remain static-only without hardware; no fake COM vtables.",
+          "MCI_PLAY is executed only on a retired private device and fails without playback; physical CD looping remains unvalidated."
+        ]
+      },
+      "evidence": [
+        "META/m4/frame-pipeline/next-review/00471220.disasm.json",
+        "META/m4/window-dispatch/README.md",
+        "META/m4/window-dispatch/validation.json",
+        "META/m4/window-dispatch/integration-real.json",
+        "META/m4/window-dispatch/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00449b90-functional-c-window-dispatch",
+      "original_va": "00449b90",
+      "function": "bh_cd_notify",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_cd_notify.c",
+      "source_sha256": "f0dbaf9da131d5f0ff23b20effbe79e8f2ce02166506c616779aba69074934f9",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00449b90",
+            "end_exclusive": "00449c14",
+            "bytes": 132,
+            "instructions": 39,
+            "sha256": "214ff1a003aa47ec52171b7ecccd13fa7ee9c1173ac287e3c73a4e02d8d506de"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "cd-notify": {
+            "scenario": "cd-notify",
+            "checks": 18,
+            "failures": 0,
+            "plays": 1,
+            "mci_result": 274,
+            "audible_playback": false,
+            "original_code_required": false
+          },
+          "window-dispatch": {
+            "scenario": "window-dispatch",
+            "checks": 39,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false,
+            "physical_input": false,
+            "ui_capture": false
+          }
+        },
+        "clean_fixtures": {
+          "cd-notify": {
+            "scenario": "cd-notify",
+            "checks": 18,
+            "failures": 0,
+            "plays": 1,
+            "mci_result": 274,
+            "audible_playback": false,
+            "original_code_required": false
+          },
+          "window-dispatch": {
+            "scenario": "window-dispatch",
+            "checks": 39,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false,
+            "physical_input": false,
+            "ui_capture": false
+          }
+        },
+        "abi": "Pinned x86 source binding; WINAPI thread adapter where explicit; PC53 nearest/masked profile",
+        "limits": [
+          "Explicit source contexts preserve live state; documented invalid-state guards and ABI adapters differ from original.",
+          "Source-only offscreen and lifecycle checks; no gameplay or desktop capture.",
+          "No complete startup, mission/gameplay, software raster dispatch, CD playback or DirectPlay session claim.",
+          "Private source window and offscreen/native lifetime fixtures; no fullscreen game acceptance.",
+          "Physical force-feedback device Acquire and Effect Start positive calls remain static-only without hardware; no fake COM vtables.",
+          "MCI_PLAY is executed only on a retired private device and fails without playback; physical CD looping remains unvalidated."
+        ]
+      },
+      "evidence": [
+        "META/m4/frame-pipeline/next-review/00449b90.disasm.json",
+        "META/m4/window-dispatch/README.md",
+        "META/m4/window-dispatch/validation.json",
+        "META/m4/window-dispatch/integration-real.json",
+        "META/m4/window-dispatch/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0047b950-functional-c-sound-loader",
+      "original_va": "0047b950",
+      "function": "bh_sound_load",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole PE boundary and dependency role reviewed; historical engine authorship unresolved",
+      "source": "src/bh_sound_load.c",
+      "source_sha256": "4f147255f007a50905dc4eebf93f8e156ad4f08d63bc5b9ae868b6d6a04df94a",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "0047b950",
+            "end_exclusive": "0047bc5d",
+            "bytes": 781,
+            "instructions": 261,
+            "sha256": "0642d2584e2b5126c95c6a8f5bb2ac731cde56e61fe8110bcc42bc4e65db71ee"
+          }
+        ],
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "fixtures": {
+          "sound-load": {
+            "scenario": "sound-load",
+            "checks": 395,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0,
+            "archive": true
+          }
+        },
+        "clean_fixtures": {
+          "sound-load": {
+            "scenario": "sound-load",
+            "checks": 32,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0,
+            "archive": false
+          }
+        },
+        "abi": "Pinned x86 source binding; WINAPI thread adapter where explicit; PC53 nearest/masked profile",
+        "limits": [
+          "Explicit source contexts preserve live state; documented invalid-state guards and ABI adapters differ from original.",
+          "Source-only offscreen and lifecycle checks; no gameplay or desktop capture.",
+          "No complete startup, mission/gameplay, software raster dispatch, CD playback or DirectPlay session claim.",
+          "Real DirectSound buffer creation/Lock/Unlock/metadata only; no DirectSound Play, audible playback or original code execution.",
+          "PC53 source checks do not resolve original PC24 rounding or arbitrary invalid metadata behavior."
+        ]
+      },
+      "evidence": [
+        "META/m4/window-dispatch/next-review/0047b950.disasm.json",
+        "META/m4/sound-loader/README.md",
+        "META/m4/sound-loader/validation.json",
+        "META/m4/sound-loader/integration-real.json",
+        "META/m4/sound-loader/clean/clean-checkout.json"
+      ]
     }
   ],
   "role_catalog": "META/m1/role-catalog.json",
@@ -21397,5 +22516,7 @@
         "No input, gameplay replay, mapper expansion, source-game admission or M3 completion"
       ]
     }
-  ]
+  ],
+  "current_source_frontier": "META/m4/sound-loader/NEXT.md",
+  "latest_source_session": "META/m4/frame-pipeline/session.json"
 }

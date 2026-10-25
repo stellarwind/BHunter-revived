@@ -1,0 +1,256 @@
+[
+  {
+    "address": "00471e00",
+    "function": "bh_frame_worker_run",
+    "source": "src/bh_frame_worker.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "frame-worker"
+    ],
+    "original": "META/m4/frame-pipeline/worker/original/00471e00.disasm.json",
+    "bytes": 490,
+    "instructions": 155,
+    "ranges": [
+      {
+        "start": "00471e00",
+        "end_exclusive": "00471fea",
+        "bytes": 490,
+        "instructions": 155,
+        "sha256": "9df5fdd671c6a8e08638fd7fc7a7842cff945345b416aecdab387bc6dbc68bc8"
+      }
+    ]
+  },
+  {
+    "address": "0045cdf0",
+    "function": "bh_present_begin",
+    "source": "src/bh_present_begin.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "present-begin"
+    ],
+    "original": "META/m4/frame-pipeline/dependencies/0045cdf0.disasm.json",
+    "bytes": 320,
+    "instructions": 122,
+    "ranges": [
+      {
+        "start": "0045cdf0",
+        "end_exclusive": "0045cf30",
+        "bytes": 320,
+        "instructions": 122,
+        "sha256": "24030b79a13e845dada77dea7ed07308366ee935d783fa482cd59ef4357c1d64"
+      }
+    ]
+  },
+  {
+    "address": "0045b810",
+    "function": "bh_capture_software",
+    "source": "src/bh_capture.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "capture"
+    ],
+    "original": "META/m4/frame-pipeline/dependencies/0045b810.disasm.json",
+    "bytes": 1057,
+    "instructions": 322,
+    "ranges": [
+      {
+        "start": "0045b810",
+        "end_exclusive": "0045bc31",
+        "bytes": 1057,
+        "instructions": 322,
+        "sha256": "990b34f0083c3257f24e876fe4826dbc6ac3c4fe550b1c710bfd76795f2aab14"
+      }
+    ]
+  },
+  {
+    "address": "0045bc40",
+    "function": "bh_capture_write",
+    "source": "src/bh_capture.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "capture"
+    ],
+    "original": "META/m4/frame-pipeline/dependencies/0045bc40.disasm.json",
+    "bytes": 920,
+    "instructions": 276,
+    "ranges": [
+      {
+        "start": "0045bc40",
+        "end_exclusive": "0045bfd8",
+        "bytes": 920,
+        "instructions": 276,
+        "sha256": "db1cfb6203db2ffa8f3aa3c4688bbfc7fca644f11c876697a82b1e9ccf525baa"
+      }
+    ]
+  },
+  {
+    "address": "0045d750",
+    "function": "bh_display_release",
+    "source": "src/bh_display_shutdown.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "display-shutdown"
+    ],
+    "original": "META/m4/frame-pipeline/dependencies/0045d750.disasm.json",
+    "bytes": 76,
+    "instructions": 22,
+    "ranges": [
+      {
+        "start": "0045d750",
+        "end_exclusive": "0045d79c",
+        "bytes": 76,
+        "instructions": 22,
+        "sha256": "60bf8a7d774d08f74c5c5cd213fec5c57ce2b8877cc4fa498ebc09541b050dfb"
+      }
+    ]
+  },
+  {
+    "address": "004738a0",
+    "function": "bh_display_shutdown",
+    "source": "src/bh_display_shutdown.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "display-shutdown"
+    ],
+    "original": "META/m4/frame-pipeline/dependencies/004738a0.disasm.json",
+    "bytes": 102,
+    "instructions": 26,
+    "ranges": [
+      {
+        "start": "004738a0",
+        "end_exclusive": "00473906",
+        "bytes": 102,
+        "instructions": 26,
+        "sha256": "dd46096a1db83db9a27e7d04232c7a201113a219db3a8d7da692e4079bd79bac"
+      }
+    ]
+  },
+  {
+    "address": "004713c0",
+    "function": "bh_force_feedback_stop",
+    "source": "src/bh_force_feedback.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "force-feedback-stop"
+    ],
+    "original": "META/m4/frame-pipeline/teardown/original/004713c0.disasm.json",
+    "bytes": 85,
+    "instructions": 30,
+    "ranges": [
+      {
+        "start": "004713c0",
+        "end_exclusive": "00471415",
+        "bytes": 85,
+        "instructions": 30,
+        "sha256": "912dd8778af5a5612256992bd62d7b2284cecebd3fd92cdc0f59004140d0174c"
+      }
+    ]
+  },
+  {
+    "address": "00476030",
+    "function": "bh_network_shutdown",
+    "source": "src/bh_network_shutdown.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "network-shutdown"
+    ],
+    "original": "META/m4/frame-pipeline/teardown/original/00476030.disasm.json",
+    "bytes": 56,
+    "instructions": 15,
+    "ranges": [
+      {
+        "start": "00476030",
+        "end_exclusive": "00476068",
+        "bytes": 56,
+        "instructions": 15,
+        "sha256": "91a57a31aa99f3ae265530b6da6fb4900b8b2b38a9733c9f64c330d8c4b0f2c3"
+      }
+    ]
+  },
+  {
+    "address": "00449b40",
+    "function": "bh_cd_stop_close",
+    "source": "src/bh_cd_close.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "cd-close"
+    ],
+    "original": "META/m4/frame-pipeline/review/00449b40.disasm.json",
+    "bytes": 77,
+    "instructions": 21,
+    "ranges": [
+      {
+        "start": "00449b40",
+        "end_exclusive": "00449b8d",
+        "bytes": 77,
+        "instructions": 21,
+        "sha256": "012a3fba0b0fbf5b78cf69d6c1e90a2f4e3663be23b6233e4977d8603d904cfa"
+      }
+    ]
+  },
+  {
+    "address": "00479140",
+    "function": "bh_frame_service_tick",
+    "source": "src/bh_frame_service.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "frame-service"
+    ],
+    "original": "META/m4/frame-pipeline/service/original/00479140.disasm.json",
+    "bytes": 175,
+    "instructions": 47,
+    "ranges": [
+      {
+        "start": "00479140",
+        "end_exclusive": "004791ef",
+        "bytes": 175,
+        "instructions": 47,
+        "sha256": "88310110b4e592974f325ce2246ec72b1b60cf861fafeba5b600d7a936863bf1"
+      }
+    ]
+  },
+  {
+    "address": "00471df0",
+    "function": "bh_frame_callback_set",
+    "source": "src/bh_frame_callback.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "frame-callback",
+      "frame-worker"
+    ],
+    "original": "META/m4/frame-pipeline/callback/original/00471df0.disasm.json",
+    "bytes": 10,
+    "instructions": 3,
+    "ranges": [
+      {
+        "start": "00471df0",
+        "end_exclusive": "00471dfa",
+        "bytes": 10,
+        "instructions": 3,
+        "sha256": "110050fc49a474ef364060ab23952b553cd2722bb2fe29802768e41e2c621087"
+      }
+    ]
+  },
+  {
+    "address": "00479120",
+    "function": "bh_frame_callback_start",
+    "source": "src/bh_frame_callback.c",
+    "role": "game",
+    "scenarios": [
+      "frame-callback",
+      "frame-worker"
+    ],
+    "original": "META/m4/frame-pipeline/callback/original/00479120.disasm.json",
+    "bytes": 19,
+    "instructions": 5,
+    "ranges": [
+      {
+        "start": "00479120",
+        "end_exclusive": "00479133",
+        "bytes": 19,
+        "instructions": 5,
+        "sha256": "0e50c3a595e7beafcd648d9c00ac69e625bfc2c0224597bb76020a0ff1da1c96"
+      }
+    ]
+  }
+]

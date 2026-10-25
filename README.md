@@ -5,19 +5,19 @@ Restoring BHunter as a faithfully playable, source-built game on modern Windows.
 
 <!-- BHUNTER_STATUS_START -->
 
-**Source recovery:** `[##########--------------]` **44.3% (322/727)**
+**Source recovery:** `[###########-------------]` **46.6% (339/727)**
 
 | Restored & linked | In progress | Not started |
 |---:|---:|---:|
-| 322 | 7 | 397 |
+| 339 | 6 | 381 |
 
 887 mapped functions − 160 verified runtime/helpers = 727 potential game/engine functions. Classification remains provisional.
 
 **Playable game target:** 0/727 functions admitted. Function count is not effort or gameplay completion.
 
-**Latest validated block:** 22 complete owners. [Block evidence](META/m4/hud-continuation/README.md).
+**Latest validated block:** 1 complete owner. [Block evidence](META/m4/sound-loader/README.md).
 
-**Last validated builds:** 310 translation units · 3,845,398 real-asset checks · 3,352,159 clean checks · 148 missing-module controls.
+**Last validated builds:** 336 translation units · 3,846,313 real-asset checks · 3,352,711 clean checks · 161 missing-module controls.
 
 <!-- BHUNTER_STATUS_END -->
 

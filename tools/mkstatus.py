@@ -135,7 +135,7 @@ def render(summary, checkpoint=None):
         f'**Playable game target:** {c.get("admitted", 0)}/{total} functions admitted. '
         'Function count is not effort or gameplay completion.', '',
         *([] if checkpoint is None else [
-            f'**Latest validated block:** {checkpoint["complete_new_functions"]} complete owners. '
+            f'**Latest validated block:** {checkpoint["complete_new_functions"]} complete owner{"" if checkpoint["complete_new_functions"]==1 else "s"}. '
             f'[Block evidence]({checkpoint["evidence"]}).', '',
             f'**Last validated builds:** {checkpoint["translation_units"]:,} translation units · '
             f'{checkpoint["real_total"]["checks"]:,} real-asset checks · '

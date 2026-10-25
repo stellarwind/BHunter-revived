@@ -1,0 +1,38 @@
+{
+  "started_utc": "2026-10-25 16:57:11 UTC",
+  "requested_duration_minutes": 60,
+  "deadline_utc": "2026-10-25 17:57:11 UTC",
+  "baseline_active_originals": 322,
+  "baseline_translation_units": 310,
+  "scope": "Complete registered frame producer/worker and lifecycle closure; window/display dispatch; whole native sound resource loader",
+  "status": "completed_at_time_limit",
+  "game_launches": 0,
+  "original_code_executed": false,
+  "gameplay_executed": false,
+  "native_input_capture_calls": 0,
+  "ended_utc": "2026-10-25 17:57:21 UTC",
+  "elapsed_seconds": 3610.0,
+  "new_complete_originals": 17,
+  "active_originals": 339,
+  "translation_units": 336,
+  "missing_module_controls": 161,
+  "final_real_checks": 3846313,
+  "final_clean_checks": 3352711,
+  "source_game_admitted": false,
+  "source_game_target_exists": false,
+  "new_fixture_directsound_play_calls": 0,
+  "successful_or_audible_cd_playback": false,
+  "mci_notify_validation": "Real MCI_PLAY error on retired private WAV device only; no physical CD loop",
+  "preexisting_sound_tick_regression": {
+    "play_calls_per_recorded_build": 12,
+    "silent_pcm": true,
+    "scope": "Existing regression fixture; distinct from new loader/frame fixtures"
+  },
+  "evidence": [
+    "META/m4/frame-pipeline/session-audit.json",
+    "META/m4/frame-pipeline/validation.json",
+    "META/m4/window-dispatch/validation.json",
+    "META/m4/sound-loader/validation.json"
+  ],
+  "next": "META/m4/sound-loader/NEXT.md"
+}

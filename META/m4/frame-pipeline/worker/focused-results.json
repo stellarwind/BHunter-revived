@@ -1,0 +1,129 @@
+{
+  "target": "D:\\Decomp\\Bhunter\\build\\frame-worker\\frame-worker.exe",
+  "commands": [
+    {
+      "label": "bh_frame_worker",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:\\Decomp\\dx7sdk\\include",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/FoD:\\Decomp\\Bhunter\\build\\frame-worker\\bh_frame_worker.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_frame_worker.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_frame_worker.c\n"
+    },
+    {
+      "label": "bh_present_begin",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:\\Decomp\\dx7sdk\\include",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/FoD:\\Decomp\\Bhunter\\build\\frame-worker\\bh_present_begin.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_present_begin.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_present_begin.c\n"
+    },
+    {
+      "label": "bh_capture",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:\\Decomp\\dx7sdk\\include",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/FoD:\\Decomp\\Bhunter\\build\\frame-worker\\bh_capture.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_capture.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_capture.c\n"
+    },
+    {
+      "label": "bh_frame_callback",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:\\Decomp\\dx7sdk\\include",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/FoD:\\Decomp\\Bhunter\\build\\frame-worker\\bh_frame_callback.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_frame_callback.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_frame_callback.c\n"
+    },
+    {
+      "label": "test",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_FRAME_WORKER_STANDALONE",
+        "/ID:\\Decomp\\dx7sdk\\include",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/FoD:\\Decomp\\Bhunter\\build\\frame-worker\\frame_worker_tests.obj",
+        "D:\\Decomp\\Bhunter\\tests\\frame_worker.c"
+      ],
+      "exit_code": 0,
+      "output": "frame_worker.c\n"
+    },
+    {
+      "label": "link",
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "@D:\\Decomp\\Bhunter\\build\\frame-worker\\link.rsp"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "label": "run",
+      "argv": [
+        "D:\\Decomp\\Bhunter\\build\\frame-worker\\frame-worker.exe"
+      ],
+      "exit_code": 0,
+      "output": "{\"scenario\":\"frame-worker\",\"checks\":42,\"failures\":0,\"original_code_required\":false,\"gameplay_executed\":false,\"ui_capture\":false}\n"
+    }
+  ],
+  "source_sha256": {
+    "src\\bh_frame_worker.c": "12ab0162207d818394bf957467f169c08e820e23b1114e6dffecd7c2f5f8c223",
+    "src\\bh_frame_worker.h": "ad57f61ac0b3b1a4a38ea1a060a19b72fed81f76fe052e497b007f6ed9d545d2",
+    "tests\\frame_worker.c": "db20e18d0df15293c25e264e932fa59e1d77647df28042818d2e54e7b99e0dca"
+  },
+  "original_code_required": false
+}

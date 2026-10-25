@@ -1,0 +1,72 @@
+{
+  "owners": [
+    {
+      "address": "00471df0",
+      "role": "engine_candidate",
+      "classification": "ordinary complete owner; no CRT/import/compiler/shared-tail signature; engine provenance unresolved unless application-specific installer",
+      "bytes": 10,
+      "instructions": 3,
+      "end": "00471df9",
+      "sha256": "110050fc49a474ef364060ab23952b553cd2722bb2fe29802768e41e2c621087",
+      "ledger": [],
+      "direct_calls": ""
+    },
+    {
+      "address": "00479120",
+      "role": "game",
+      "classification": "ordinary complete owner; no CRT/import/compiler/shared-tail signature; engine provenance unresolved unless application-specific installer",
+      "bytes": 19,
+      "instructions": 5,
+      "end": "00479132",
+      "sha256": "0e50c3a595e7beafcd648d9c00ac69e625bfc2c0224597bb76020a0ff1da1c96",
+      "ledger": [],
+      "direct_calls": "00471df0:FUN_00471df0"
+    },
+    {
+      "address": "00471be0",
+      "role": "engine_candidate",
+      "classification": "ordinary complete owner; no CRT/import/compiler/shared-tail signature; engine provenance unresolved unless application-specific installer",
+      "bytes": 27,
+      "instructions": 10,
+      "end": "00471bfa",
+      "sha256": "f3003b4eae0ca0ecfcc00aaf706a9d3e1d172dbd072c0958acd621ab1951c77c",
+      "ledger": [],
+      "direct_calls": "EXTERNAL:0000005c:DefWindowProcA"
+    },
+    {
+      "address": "00471ff0",
+      "role": "engine_candidate",
+      "classification": "ordinary complete owner; no CRT/import/compiler/shared-tail signature; engine provenance unresolved unless application-specific installer",
+      "bytes": 627,
+      "instructions": 184,
+      "end": "00472262",
+      "sha256": "594e2d2747cc762cc0f82276b7aed4fe7cb7f10a14eb4da63210431f3f9ae8d4",
+      "ledger": [],
+      "direct_calls": "00449b90:FUN_00449b90|00471220:FUN_00471220|00471be0:FUN_00471be0|EXTERNAL:00000011:TerminateThread|EXTERNAL:00000048:ShowCursor|EXTERNAL:00000059:PostQuitMessage|EXTERNAL:0000005a:BeginPaint|EXTERNAL:0000005b:EndPaint"
+    },
+    {
+      "address": "00471220",
+      "role": "engine_candidate",
+      "classification": "ordinary complete owner; no CRT/import/compiler/shared-tail signature; engine provenance unresolved unless application-specific installer",
+      "bytes": 63,
+      "instructions": 22,
+      "end": "0047125e",
+      "sha256": "591a5ba2b58f5cb422d5da37406a0b20115d64b888ae6bb1d1ab15899ffb4fb1",
+      "ledger": [],
+      "direct_calls": ""
+    },
+    {
+      "address": "00449b90",
+      "role": "engine_candidate",
+      "classification": "ordinary complete owner; no CRT/import/compiler/shared-tail signature; engine provenance unresolved unless application-specific installer",
+      "bytes": 132,
+      "instructions": 39,
+      "end": "00449c13",
+      "sha256": "214ff1a003aa47ec52171b7ecccd13fa7ee9c1173ac287e3c73a4e02d8d506de",
+      "ledger": [],
+      "direct_calls": "EXTERNAL:00000005:mciSendCommandA"
+    }
+  ],
+  "original_code_executed": false,
+  "source_implementation_created": false
+}

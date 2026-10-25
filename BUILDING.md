@@ -133,6 +133,14 @@ existing VC5 comparison/header contexts stay pinned. `ole32.lib` comes from the
 existing VC5 dependencies. Native checks create an unopened DirectPlay3A COM
 interface and exercise Send failure paths without a connection or session.
 
+The frame pipeline's force-feedback teardown checks additionally pin
+`include/dinput.h` and `lib/dinput.lib` in `META/native-input-dependencies.json`
+under the same SDK root. DirectInput version 0x0500 is scoped to the new frame
+pipeline translation units. Tests create an unacquired keyboard interface and
+release it; they never acquire or poll input. COM shutdown checks use unopened
+DirectPlay objects. The CD cleanup fixture uses a private stopped WAV MCI device,
+with no playback or physical CD-drive validation.
+
 ## Static source-built scene view
 
 ```powershell
