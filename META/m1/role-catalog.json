@@ -2495,17 +2495,19 @@
       "body_ranges": [
         "0041c860-0041d7bd"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "game",
+      "owner": "src/bh_player_scene.c",
+      "provenance_confidence": "Complete owner and table/caller behavior reviewed; historical engine authorship unresolved",
+      "boundary_review": "whole_PE_verified",
+      "behavior": "bh_player_scene_draw",
       "abi": "provisional inferred signature: undefined FUN_0041c860(void)",
       "assigned_next": false,
       "callback_review": "candidate_only",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/hud-attachment/next-player-review/0041c860.disasm.json",
+        "META/m4/hud-continuation/validation.json"
       ]
     },
     {
@@ -2647,17 +2649,19 @@
       "body_ranges": [
         "00421bc0-00421d19"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "game",
+      "owner": "src/bh_player_reset.c",
+      "provenance_confidence": "Complete owner and table/caller behavior reviewed; historical engine authorship unresolved",
+      "boundary_review": "whole_PE_verified",
+      "behavior": "bh_player_reset",
       "abi": "provisional inferred signature: undefined __stdcall FUN_00421bc0(void)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/hud-continuation/original/00421bc0.disasm.json",
+        "META/m4/hud-continuation/validation.json"
       ]
     },
     {
@@ -3241,17 +3245,19 @@
       "body_ranges": [
         "00428f50-00429455"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "game",
+      "owner": "src/bh_flyby_scene.c",
+      "provenance_confidence": "Complete owner and table/caller behavior reviewed; historical engine authorship unresolved",
+      "boundary_review": "whole_PE_verified",
+      "behavior": "bh_flyby_scene_draw",
       "abi": "provisional inferred signature: undefined FUN_00428f50(void)",
       "assigned_next": false,
       "callback_review": "candidate_only",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/hud-continuation/original/00428f50.disasm.json",
+        "META/m4/hud-continuation/validation.json"
       ]
     },
     {
@@ -3317,17 +3323,19 @@
       "body_ranges": [
         "0042a9b0-0042a9d1"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "game",
+      "owner": "src/bh_flyby_scene.c",
+      "provenance_confidence": "Complete owner and table/caller behavior reviewed; historical engine authorship unresolved",
+      "boundary_review": "whole_PE_verified",
+      "behavior": "bh_flyby_scene_rearm_entity",
       "abi": "provisional inferred signature: undefined FUN_0042a9b0(void)",
       "assigned_next": false,
       "callback_review": "candidate_only",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/hud-continuation/original/0042a9b0.disasm.json",
+        "META/m4/hud-continuation/validation.json"
       ]
     },
     {
@@ -4400,17 +4408,19 @@
       "body_ranges": [
         "0042f730-0042f792"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "game",
+      "owner": "src/bh_weapon_empty.c",
+      "provenance_confidence": "Complete owner and table/caller behavior reviewed; historical engine authorship unresolved",
+      "boundary_review": "whole_PE_verified",
+      "behavior": "bh_weapon_empty_trigger",
       "abi": "provisional inferred signature: undefined FUN_0042f730(void)",
       "assigned_next": false,
       "callback_review": "candidate_only",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/hud-continuation/weapon-factory/0042f730.disasm.json",
+        "META/m4/hud-continuation/validation.json"
       ]
     },
     {
@@ -4476,17 +4486,19 @@
       "body_ranges": [
         "004309d0-00430a2d"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "game",
+      "owner": "src/bh_weapon_empty.c",
+      "provenance_confidence": "Complete owner and table/caller behavior reviewed; historical engine authorship unresolved",
+      "boundary_review": "whole_PE_verified",
+      "behavior": "bh_weapon_empty_trigger",
       "abi": "provisional inferred signature: undefined FUN_004309d0(void)",
       "assigned_next": false,
       "callback_review": "candidate_only",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/hud-continuation/weapon-factory/004309d0.disasm.json",
+        "META/m4/hud-continuation/validation.json"
       ]
     },
     {
@@ -4761,17 +4773,19 @@
       "body_ranges": [
         "00432560-004325c7"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "game",
+      "owner": "src/bh_weapon_empty.c",
+      "provenance_confidence": "Complete owner and table/caller behavior reviewed; historical engine authorship unresolved",
+      "boundary_review": "whole_PE_verified",
+      "behavior": "bh_weapon_empty_trigger",
       "abi": "provisional inferred signature: undefined FUN_00432560(void)",
       "assigned_next": false,
       "callback_review": "candidate_only",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/hud-continuation/weapon-factory/00432560.disasm.json",
+        "META/m4/hud-continuation/validation.json"
       ]
     },
     {
@@ -4894,17 +4908,19 @@
       "body_ranges": [
         "00433820-00433849"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "game",
+      "owner": "src/bh_weapon_timer.c",
+      "provenance_confidence": "Complete owner and table/caller behavior reviewed; historical engine authorship unresolved",
+      "boundary_review": "whole_PE_verified",
+      "behavior": "bh_weapon_single_timer_tick",
       "abi": "provisional inferred signature: undefined FUN_00433820(void)",
       "assigned_next": false,
       "callback_review": "candidate_only",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/hud-continuation/weapon-factory/00433820.disasm.json",
+        "META/m4/hud-continuation/validation.json"
       ]
     },
     {
@@ -4932,17 +4948,19 @@
       "body_ranges": [
         "00433b00-00433b29"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "game",
+      "owner": "src/bh_weapon_timer.c",
+      "provenance_confidence": "Complete owner and table/caller behavior reviewed; historical engine authorship unresolved",
+      "boundary_review": "whole_PE_verified",
+      "behavior": "bh_weapon_single_timer_tick",
       "abi": "provisional inferred signature: undefined FUN_00433b00(void)",
       "assigned_next": false,
       "callback_review": "candidate_only",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/hud-continuation/weapon-factory/00433b00.disasm.json",
+        "META/m4/hud-continuation/validation.json"
       ]
     },
     {
@@ -4970,17 +4988,19 @@
       "body_ranges": [
         "00433dc0-00433e49"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "game",
+      "owner": "src/bh_weapon_empty.c",
+      "provenance_confidence": "Complete owner and table/caller behavior reviewed; historical engine authorship unresolved",
+      "boundary_review": "whole_PE_verified",
+      "behavior": "bh_weapon_index9_trigger",
       "abi": "provisional inferred signature: undefined FUN_00433dc0(void)",
       "assigned_next": false,
       "callback_review": "candidate_only",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/hud-continuation/weapon-factory/00433dc0.disasm.json",
+        "META/m4/hud-continuation/validation.json"
       ]
     },
     {
@@ -6283,17 +6303,19 @@
       "body_ranges": [
         "00442440-004428a9"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "game",
+      "owner": "src/bh_message_panel.c",
+      "provenance_confidence": "Complete owner and table/caller behavior reviewed; historical engine authorship unresolved",
+      "boundary_review": "whole_PE_verified",
+      "behavior": "bh_message_panel_render",
       "abi": "provisional inferred signature: undefined FUN_00442440(void)",
       "assigned_next": false,
       "callback_review": "candidate_only",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/hud-continuation/weapon-factory/00442440.disasm.json",
+        "META/m4/hud-continuation/validation.json"
       ]
     },
     {
@@ -6302,17 +6324,19 @@
       "body_ranges": [
         "004428b0-00442945"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "game",
+      "owner": "src/bh_message_panel.c",
+      "provenance_confidence": "Complete owner and table/caller behavior reviewed; historical engine authorship unresolved",
+      "boundary_review": "whole_PE_verified",
+      "behavior": "bh_message_panel_advance",
       "abi": "provisional inferred signature: undefined __cdecl FUN_004428b0(int param_1)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/hud-continuation/weapon-factory/004428b0.disasm.json",
+        "META/m4/hud-continuation/validation.json"
       ]
     },
     {
@@ -6321,17 +6345,19 @@
       "body_ranges": [
         "00442950-00442a2f"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "game",
+      "owner": "src/bh_message_panel.c",
+      "provenance_confidence": "Complete owner and table/caller behavior reviewed; historical engine authorship unresolved",
+      "boundary_review": "whole_PE_verified",
+      "behavior": "bh_message_panel_advance",
       "abi": "provisional inferred signature: undefined __cdecl FUN_00442950(int param_1)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/hud-continuation/weapon-factory/00442950.disasm.json",
+        "META/m4/hud-continuation/validation.json"
       ]
     },
     {
@@ -6340,17 +6366,19 @@
       "body_ranges": [
         "00442a30-00442b53"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "game",
+      "owner": "src/bh_messages.c",
+      "provenance_confidence": "Complete owner and table/caller behavior reviewed; historical engine authorship unresolved",
+      "boundary_review": "whole_PE_verified",
+      "behavior": "bh_message_enqueue",
       "abi": "provisional inferred signature: undefined4 __cdecl FUN_00442a30(char * param_1)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/hud-continuation/weapon-factory/00442a30.disasm.json",
+        "META/m4/hud-continuation/validation.json"
       ]
     },
     {
@@ -6359,17 +6387,19 @@
       "body_ranges": [
         "00442b60-00442be9"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "game",
+      "owner": "src/bh_message_panel.c",
+      "provenance_confidence": "Complete owner and table/caller behavior reviewed; historical engine authorship unresolved",
+      "boundary_review": "whole_PE_verified",
+      "behavior": "bh_message_panel_advance",
       "abi": "provisional inferred signature: undefined FUN_00442b60(void)",
       "assigned_next": false,
       "callback_review": "candidate_only",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/hud-continuation/weapon-factory/00442b60.disasm.json",
+        "META/m4/hud-continuation/validation.json"
       ]
     },
     {
@@ -6378,17 +6408,19 @@
       "body_ranges": [
         "00442bf0-00442cc3"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "game",
+      "owner": "src/bh_message_panel.c",
+      "provenance_confidence": "Complete owner and table/caller behavior reviewed; historical engine authorship unresolved",
+      "boundary_review": "whole_PE_verified",
+      "behavior": "bh_message_panel_advance",
       "abi": "provisional inferred signature: undefined __cdecl FUN_00442bf0(int param_1)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/hud-continuation/weapon-factory/00442bf0.disasm.json",
+        "META/m4/hud-continuation/validation.json"
       ]
     },
     {
@@ -6397,17 +6429,19 @@
       "body_ranges": [
         "00442cd0-00442ce6"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "game",
+      "owner": "src/bh_message_panel.c",
+      "provenance_confidence": "Complete owner and table/caller behavior reviewed; historical engine authorship unresolved",
+      "boundary_review": "whole_PE_verified",
+      "behavior": "bh_message_panel_query",
       "abi": "provisional inferred signature: undefined FUN_00442cd0(void)",
       "assigned_next": false,
       "callback_review": "candidate_only",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/hud-continuation/weapon-factory/00442cd0.disasm.json",
+        "META/m4/hud-continuation/validation.json"
       ]
     },
     {
@@ -8939,17 +8973,19 @@
       "body_ranges": [
         "0045ca10-0045cbbc"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "engine_candidate",
+      "owner": "src/bh_frame_render.c",
+      "provenance_confidence": "Complete owner and table/caller behavior reviewed; historical engine authorship unresolved",
+      "boundary_review": "whole_PE_verified",
+      "behavior": "bh_frame_clear_depth",
       "abi": "provisional inferred signature: undefined __stdcall FUN_0045ca10(void)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/hud-continuation/original/0045ca10.disasm.json",
+        "META/m4/hud-continuation/validation.json"
       ]
     },
     {
@@ -8958,17 +8994,19 @@
       "body_ranges": [
         "0045cbc0-0045cded"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "engine_candidate",
+      "owner": "src/bh_frame_render.c",
+      "provenance_confidence": "Complete owner and table/caller behavior reviewed; historical engine authorship unresolved",
+      "boundary_review": "whole_PE_verified",
+      "behavior": "bh_frame_clear_color",
       "abi": "provisional inferred signature: undefined __cdecl FUN_0045cbc0(int param_1, int param_2, int param_3)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/hud-continuation/original/0045cbc0.disasm.json",
+        "META/m4/hud-continuation/validation.json"
       ]
     },
     {
@@ -11603,17 +11641,19 @@
       "body_ranges": [
         "00477e80-00477e99"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "engine_candidate",
+      "owner": "src/bh_message_panel.c",
+      "provenance_confidence": "Complete owner and table/caller behavior reviewed; historical engine authorship unresolved",
+      "boundary_review": "whole_PE_verified",
+      "behavior": "bh_message_text_execute_plain",
       "abi": "provisional inferred signature: undefined4 __cdecl FUN_00477e80(int param_1)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/hud-continuation/weapon-factory/00477e80.disasm.json",
+        "META/m4/hud-continuation/validation.json"
       ]
     },
     {
@@ -12002,17 +12042,19 @@
       "body_ranges": [
         "00478b60-00478bc2"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "engine_candidate",
+      "owner": "src/bh_message_panel.c",
+      "provenance_confidence": "Complete owner and table/caller behavior reviewed; historical engine authorship unresolved",
+      "boundary_review": "whole_PE_verified",
+      "behavior": "bh_message_text_plain",
       "abi": "provisional inferred signature: undefined __cdecl FUN_00478b60(undefined4 param_1, char * param_2)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/hud-continuation/weapon-factory/00478b60.disasm.json",
+        "META/m4/hud-continuation/validation.json"
       ]
     },
     {
@@ -12137,10 +12179,10 @@
         "00479090-00479115"
       ],
       "role": "engine_candidate",
-      "owner": "renderer_platform",
-      "provenance_confidence": "high behavior/boundary; historical authorship unknown",
-      "boundary_review": "frontier_role_and_boundary_review",
-      "behavior": "render command/list callback with jump into owned tail 00450930..00450978",
+      "owner": "src/bh_render_execute.c",
+      "provenance_confidence": "Complete owner and table/caller behavior reviewed; historical engine authorship unresolved",
+      "boundary_review": "whole_PE_verified",
+      "behavior": "bh_render_execute",
       "abi": "x86; decompiler signature is provisional until caller/stack checks",
       "assigned_next": false,
       "callback_review": "registration_and_body_reviewed",
@@ -12149,7 +12191,9 @@
         "META/m1/review/boundaries.tsv",
         "META/m1/review-decisions.json",
         "META/m1/review/00479090.asm.txt",
-        "META/m1/review/00479090.c.txt"
+        "META/m1/review/00479090.c.txt",
+        "META/m4/hud-continuation/original/00479090.ranges.json",
+        "META/m4/hud-continuation/validation.json"
       ]
     },
     {

@@ -1,8 +1,8 @@
 {
-  "ledger_sha256": "a4a75bdc09a496a2111337b6335009d142d8f1f426c50eebb7607a750e6bab6b",
+  "ledger_sha256": "1c38f61154b6190972b034a5f3c8b6d06377bba479c13244894909f74d3a3626",
   "build_source_hashes_verified": true,
-  "total_variants": 316,
-  "unique_original_addresses": 276,
+  "total_variants": 374,
+  "unique_original_addresses": 330,
   "categories": {
     "historical_or_superseded": [
       {
@@ -206,6 +206,22 @@
         "game_admitted": false
       },
       {
+        "id": "00455f70-functional-c",
+        "address": "00455f70",
+        "source": "META/m4/hud-attachment/prior-ribbon/bh_sprite_oriented.c.txt",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004569b0-functional-c",
+        "address": "004569b0",
+        "source": "META/m4/hud-attachment/prior-ribbon/bh_sprite_oriented.c.txt",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
         "id": "0045adf0-functional-c",
         "address": "0045adf0",
         "source": "META/m4/sprite-world/sources/c25e81cd1a9201006fad78fd08f417191f19a748ac048f2a68640a2f8dfa393b-bh_draw_resource.c.txt",
@@ -283,6 +299,22 @@
         "source": "META/m4/pickup/sources/3fa9c9e70141ca460a647a074e8e677145a49a9b5905e8fef3ff76b43e4e730a-bh_entity_schedule.c.txt",
         "implementation": "func",
         "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0041c860-reviewed-frontier",
+        "address": "0041c860",
+        "source": null,
+        "implementation": "not_started",
+        "integration": "not_built",
+        "game_admitted": false
+      },
+      {
+        "id": "00428f50-reviewed-frontier",
+        "address": "00428f50",
+        "source": null,
+        "implementation": "not_started",
+        "integration": "not_built",
         "game_admitted": false
       }
     ],
@@ -1578,22 +1610,6 @@
         "game_admitted": false
       },
       {
-        "id": "00455f70-functional-c",
-        "address": "00455f70",
-        "source": "src/bh_sprite_oriented.c",
-        "implementation": "func",
-        "integration": "linked_harness",
-        "game_admitted": false
-      },
-      {
-        "id": "004569b0-functional-c",
-        "address": "004569b0",
-        "source": "src/bh_sprite_oriented.c",
-        "implementation": "func",
-        "integration": "linked_harness",
-        "game_admitted": false
-      },
-      {
         "id": "0045adf0-functional-c-queue-integration",
         "address": "0045adf0",
         "source": "src/bh_draw_resource.c",
@@ -2456,6 +2472,462 @@
         "implementation": "func",
         "integration": "linked_harness",
         "game_admitted": false
+      },
+      {
+        "id": "00417f30-functional-c",
+        "address": "00417f30",
+        "source": "src/bh_attachment.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00417f70-functional-c",
+        "address": "00417f70",
+        "source": "src/bh_attachment.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0041b2d0-functional-c",
+        "address": "0041b2d0",
+        "source": "src/bh_hud.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0041bbf0-functional-c",
+        "address": "0041bbf0",
+        "source": "src/bh_hud_markers.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00418f00-functional-c",
+        "address": "00418f00",
+        "source": "src/bh_hud_world.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0041a3d0-functional-c",
+        "address": "0041a3d0",
+        "source": "src/bh_hud_flat.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00456d30-functional-c",
+        "address": "00456d30",
+        "source": "src/bh_plane_quad.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00477710-functional-c",
+        "address": "00477710",
+        "source": "src/bh_plane_quad.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004275c0-functional-c",
+        "address": "004275c0",
+        "source": "src/bh_hud_scores.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00427710-functional-c",
+        "address": "00427710",
+        "source": "src/bh_hud_scores.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00432050-functional-c",
+        "address": "00432050",
+        "source": "src/bh_weapon_hud_arc.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00432ff0-functional-c",
+        "address": "00432ff0",
+        "source": "src/bh_weapon_hud_arc.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004314f0-functional-c",
+        "address": "004314f0",
+        "source": "src/bh_weapon_hud_target.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00455ee0-functional-c",
+        "address": "00455ee0",
+        "source": "src/bh_path_queue.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00477880-functional-c",
+        "address": "00477880",
+        "source": "src/bh_path_queue.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004779e0-functional-c",
+        "address": "004779e0",
+        "source": "src/bh_path_queue.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00455e40-functional-c",
+        "address": "00455e40",
+        "source": "src/bh_segment_queue.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004777c0-functional-c",
+        "address": "004777c0",
+        "source": "src/bh_segment_queue.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00478930-functional-c",
+        "address": "00478930",
+        "source": "src/bh_fade.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00477f20-functional-c",
+        "address": "00477f20",
+        "source": "src/bh_fade.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0045cf30-functional-c",
+        "address": "0045cf30",
+        "source": "src/bh_fade.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0045cf50-functional-c",
+        "address": "0045cf50",
+        "source": "src/bh_fade.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00455f70-degenerate-ribbon-c",
+        "address": "00455f70",
+        "source": "src/bh_sprite_oriented.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004569b0-degenerate-ribbon-c",
+        "address": "004569b0",
+        "source": "src/bh_sprite_oriented.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0045d690-functional-c",
+        "address": "0045d690",
+        "source": "src/bh_present.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004309b0-functional-c",
+        "address": "004309b0",
+        "source": "src/bh_weapon_common.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00431050-functional-c",
+        "address": "00431050",
+        "source": "src/bh_weapon_common.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00433e50-functional-c",
+        "address": "00433e50",
+        "source": "src/bh_weapon_removal.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004310c0-functional-c",
+        "address": "004310c0",
+        "source": "src/bh_weapon_target_lifecycle.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00431130-functional-c",
+        "address": "00431130",
+        "source": "src/bh_weapon_target_lifecycle.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00431180-functional-c",
+        "address": "00431180",
+        "source": "src/bh_weapon_target_lifecycle.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004324a0-functional-c",
+        "address": "004324a0",
+        "source": "src/bh_weapon_arc_lifecycle.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00432510-functional-c",
+        "address": "00432510",
+        "source": "src/bh_weapon_arc_lifecycle.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00432c60-functional-c",
+        "address": "00432c60",
+        "source": "src/bh_weapon_arc_lifecycle.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00433170-functional-c",
+        "address": "00433170",
+        "source": "src/bh_weapon_latch.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0041c860-functional-c-hud-continuation",
+        "address": "0041c860",
+        "source": "src/bh_player_scene.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00428f50-functional-c-hud-continuation",
+        "address": "00428f50",
+        "source": "src/bh_flyby_scene.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0042a9b0-functional-c-hud-continuation",
+        "address": "0042a9b0",
+        "source": "src/bh_flyby_scene.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00433820-functional-c-hud-continuation",
+        "address": "00433820",
+        "source": "src/bh_weapon_timer.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00433b00-functional-c-hud-continuation",
+        "address": "00433b00",
+        "source": "src/bh_weapon_timer.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00442a30-functional-c-hud-continuation",
+        "address": "00442a30",
+        "source": "src/bh_messages.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0042f730-functional-c-hud-continuation",
+        "address": "0042f730",
+        "source": "src/bh_weapon_empty.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004309d0-functional-c-hud-continuation",
+        "address": "004309d0",
+        "source": "src/bh_weapon_empty.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00432560-functional-c-hud-continuation",
+        "address": "00432560",
+        "source": "src/bh_weapon_empty.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00433dc0-functional-c-hud-continuation",
+        "address": "00433dc0",
+        "source": "src/bh_weapon_empty.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00442440-functional-c-hud-continuation",
+        "address": "00442440",
+        "source": "src/bh_message_panel.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004428b0-functional-c-hud-continuation",
+        "address": "004428b0",
+        "source": "src/bh_message_panel.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00442950-functional-c-hud-continuation",
+        "address": "00442950",
+        "source": "src/bh_message_panel.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00442b60-functional-c-hud-continuation",
+        "address": "00442b60",
+        "source": "src/bh_message_panel.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00442bf0-functional-c-hud-continuation",
+        "address": "00442bf0",
+        "source": "src/bh_message_panel.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00442cd0-functional-c-hud-continuation",
+        "address": "00442cd0",
+        "source": "src/bh_message_panel.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00478b60-functional-c-hud-continuation",
+        "address": "00478b60",
+        "source": "src/bh_message_panel.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00477e80-functional-c-hud-continuation",
+        "address": "00477e80",
+        "source": "src/bh_message_panel.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00421bc0-functional-c-hud-continuation",
+        "address": "00421bc0",
+        "source": "src/bh_player_reset.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0045ca10-functional-c-hud-continuation",
+        "address": "0045ca10",
+        "source": "src/bh_frame_render.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0045cbc0-functional-c-hud-continuation",
+        "address": "0045cbc0",
+        "source": "src/bh_frame_render.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00479090-functional-c-hud-continuation",
+        "address": "00479090",
+        "source": "src/bh_render_execute.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
       }
     ],
     "unfinished_active": [
@@ -2516,22 +2988,6 @@
         "game_admitted": false
       },
       {
-        "id": "0041c860-reviewed-frontier",
-        "address": "0041c860",
-        "source": null,
-        "implementation": "not_started",
-        "integration": "not_built",
-        "game_admitted": false
-      },
-      {
-        "id": "00428f50-reviewed-frontier",
-        "address": "00428f50",
-        "source": null,
-        "implementation": "not_started",
-        "integration": "not_built",
-        "game_admitted": false
-      },
-      {
         "id": "00454fc0-rect-uv-corrected-c",
         "address": "00454fc0",
         "source": "src/bh_pickup_draw.c",
@@ -2539,13 +2995,24 @@
         "integration": "linked_harness",
         "game_admitted": false
       }
+    ],
+    "other_explicit_state": [
+      {
+        "id": "00433ea0-construction-registry-adapter",
+        "address": "00433ea0",
+        "source": "src/bh_weapon_factory.c",
+        "implementation": "adapter",
+        "integration": "linked_harness",
+        "game_admitted": false
+      }
     ]
   },
   "category_counts": {
-    "historical_or_superseded": 35,
+    "historical_or_superseded": 39,
     "completed_comparison_only": 4,
-    "completed_linked_source": 267,
-    "unfinished_active": 10
+    "completed_linked_source": 322,
+    "unfinished_active": 8,
+    "other_explicit_state": 1
   },
   "duplicate_addresses": {
     "00401000": [
@@ -2656,6 +3123,14 @@
       "0044f550-staging-subset-c",
       "0044f550-functional-c"
     ],
+    "00455f70": [
+      "00455f70-functional-c",
+      "00455f70-degenerate-ribbon-c"
+    ],
+    "004569b0": [
+      "004569b0-functional-c",
+      "004569b0-degenerate-ribbon-c"
+    ],
     "0045adf0": [
       "0045adf0-functional-c",
       "0045adf0-functional-c-queue-integration"
@@ -2695,9 +3170,17 @@
     "00409530": [
       "00409530-functional-c",
       "00409530-functional-c-scene-bindings"
+    ],
+    "0041c860": [
+      "0041c860-reviewed-frontier",
+      "0041c860-functional-c-hud-continuation"
+    ],
+    "00428f50": [
+      "00428f50-reviewed-frontier",
+      "00428f50-functional-c-hud-continuation"
     ]
   },
-  "support_implementations": 126,
+  "support_implementations": 132,
   "original_backed_diagnostics": 24,
   "game_admitted_variants": 0,
   "limits": [

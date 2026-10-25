@@ -12,6 +12,10 @@
 # Build products, local compiler runtimes and caches
 /build/
 /dist/
+# Local, unmodified original HUD asset extractions used for pixel diagnosis.
+/META/m4/hud-attachment/review/asset-previews/*.pcx
+/META/m4/hud-attachment/review/asset-previews/*.PCX
+/META/m4/hud-attachment/review/asset-previews/*.png
 *.exe
 *.dll
 *.obj
@@ -66,3 +70,6 @@ __pycache__/
 !/analysis/evidence/
 /analysis/evidence/*
 !/analysis/evidence/*.json
+
+# Local Blender asset export; keep original game textures out of source pushes.
+/BHunter Level Export/

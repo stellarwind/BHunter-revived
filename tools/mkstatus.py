@@ -101,7 +101,27 @@ def bar(done, total):
     return f'`[{"#" * filled}{"-" * (width - filled)}]` **{percent:.1f}% ({done}/{total})**'
 
 
-def render(summary):
+def latest_checkpoint(root, ledger):
+    """Use the last admitted owner's recorded validation, never a build-in-progress."""
+    for row in reversed(ledger['records']):
+        if row.get('historical_variant') or row.get('validation', {}).get('superseded_by') or row.get('implementation') not in {'func', 'bm'} or row.get('integration') not in LINKED:
+            continue
+        for name in row.get('evidence', []):
+            if not name.endswith('/validation.json'):
+                continue
+            path = root / name
+            if not path.is_file():
+                continue
+            data = json.loads(path.read_text(encoding='utf-8-sig'))
+            if not data.get('passed') or not all(k in data for k in ('real_total', 'clean_total', 'translation_units', 'missing_module_controls', 'complete_new_functions')):
+                continue
+            if data['real_total']['failures'] or data['clean_total']['failures']:
+                raise ValueError('Passed checkpoint contains failed checks: ' + name)
+            return dict(data, evidence=(path.parent / 'README.md').relative_to(root).as_posix())
+    return None
+
+
+def render(summary, checkpoint=None):
     c = summary['counts']
     total = summary['total']
     return '\n'.join([
@@ -113,22 +133,45 @@ def render(summary):
         f'{summary["mapped"]} mapped functions − {summary["excluded"]} verified runtime/helpers = '
         f'{total} potential game/engine functions. Classification remains provisional.', '',
         f'**Playable game target:** {c.get("admitted", 0)}/{total} functions admitted. '
-        'Function count is not effort or gameplay completion.', '', END])
+        'Function count is not effort or gameplay completion.', '',
+        *([] if checkpoint is None else [
+            f'**Latest validated block:** {checkpoint["complete_new_functions"]} complete owners. '
+            f'[Block evidence]({checkpoint["evidence"]}).', '',
+            f'**Last validated builds:** {checkpoint["translation_units"]:,} translation units · '
+            f'{checkpoint["real_total"]["checks"]:,} real-asset checks · '
+            f'{checkpoint["clean_total"]["checks"]:,} clean checks · '
+            f'{checkpoint["missing_module_controls"]:,} missing-module controls.', '',
+        ]), END])
+
+def refresh(root=ROOT, *, check=False, dry_run=False):
+    ledger=json.loads((root/'META/function-status.json').read_text(encoding='utf-8-sig'))
+    catalog=json.loads((root/ledger['role_catalog']).read_text(encoding='utf-8-sig'))
+    summary=summarize(ledger,catalog)
+    readme=root/'README.md';text=readme.read_text(encoding='utf-8')
+    if text.count(START)!=1 or text.count(END)!=1 or text.index(START)>text.index(END):
+        raise ValueError('README needs exactly one correctly ordered status marker pair')
+    a=text.index(START);b=text.index(END)+len(END)
+    updated=text[:a]+render(summary, latest_checkpoint(root, ledger))+text[b:]
+    if check and updated!=text:
+        raise ValueError('README status is stale; run mkstatus.cmd')
+    if not check and not dry_run and updated!=text:
+        readme.write_text(updated,encoding='utf-8',newline='\n')
+    return summary, updated!=text
+
 
 def main():
     ap=argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--check',action='store_true',help='Fail if README differs; do not write')
+    ap.add_argument('--dry-run',action='store_true',help='Preview counts without changing files')
     args=ap.parse_args()
-    ledger=json.loads((ROOT/'META/function-status.json').read_text(encoding='utf-8'))
-    catalog=json.loads((ROOT/ledger['role_catalog']).read_text(encoding='utf-8'))
-    summary=summarize(ledger,catalog)
-    readme=ROOT/'README.md';text=readme.read_text(encoding='utf-8')
-    if text.count(START)!=1 or text.count(END)!=1 or text.index(START)>text.index(END):
-        raise ValueError('README needs exactly one correctly ordered status marker pair')
-    a=text.index(START);b=text.index(END)+len(END)
-    updated=text[:a]+render(summary)+text[b:]
-    if args.check and updated!=text: raise SystemExit('README status is stale; run mkstatus.cmd')
-    if not args.check and updated!=text: readme.write_text(updated,encoding='utf-8',newline='\n')
-    print(('Checked' if args.check else 'Updated')+' README: '+json.dumps(summary,sort_keys=True))
+    try:
+        summary, changed=refresh(check=args.check, dry_run=args.dry_run)
+    except (OSError, ValueError, KeyError) as error:
+        ap.exit(1, 'STATUS ERROR: '+str(error)+'\n')
+    print(('Checked' if args.check else 'Preview' if args.dry_run else 'Updated')+
+          ' README: '+json.dumps(summary,sort_keys=True))
+    if args.dry_run:
+        print('README '+('would change' if changed else 'is current'))
+
 
 if __name__=='__main__': main()

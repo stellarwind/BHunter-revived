@@ -1,0 +1,123 @@
+{
+  "original_exe_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+  "records": [
+    {
+      "address": "00442440",
+      "role": "refresh",
+      "end_exclusive": "004428aa",
+      "bytes": 1130,
+      "instructions": 329,
+      "sha256": "fb879543f77c8cbaa3371884a286c214f9b5b899799afa655e81065746e64d15",
+      "direct_calls": [
+        "0x0047de20",
+        "0x00478e50",
+        "0x00478f60",
+        "0x00478f60",
+        "0x00478e50",
+        "0x00478f60"
+      ],
+      "provenance": "game panel behavior; historical engine ownership unresolved"
+    },
+    {
+      "address": "004428b0",
+      "role": "exit",
+      "end_exclusive": "00442946",
+      "bytes": 150,
+      "instructions": 39,
+      "sha256": "55f205c36d7e614e0af5afc06106740f439095293167f38d4390dddb94cf6509",
+      "direct_calls": [],
+      "provenance": "game panel behavior; historical engine ownership unresolved"
+    },
+    {
+      "address": "00442950",
+      "role": "typing",
+      "end_exclusive": "00442a30",
+      "bytes": 224,
+      "instructions": 58,
+      "sha256": "9207b5a89710db91dbfe0a813e7d2cb03e0a6b8af1a7dd515ce693305dd2c7fe",
+      "direct_calls": [
+        "0x00478b60",
+        "0x0047bd40",
+        "0x0047bd40"
+      ],
+      "provenance": "game panel behavior; historical engine ownership unresolved"
+    },
+    {
+      "address": "00442b60",
+      "role": "entry",
+      "end_exclusive": "00442bea",
+      "bytes": 138,
+      "instructions": 30,
+      "sha256": "c12496c8dc78f29e915d5281e4eb99600bcb77abf7026cd103ffefa028238089",
+      "direct_calls": [],
+      "provenance": "game panel behavior; historical engine ownership unresolved"
+    },
+    {
+      "address": "00442bf0",
+      "role": "startup",
+      "end_exclusive": "00442cc4",
+      "bytes": 212,
+      "instructions": 47,
+      "sha256": "51d745e1d9a2717d856dee19720e760a185789f904ac00a11ae3d65a26e77224",
+      "direct_calls": [
+        "0x0047bd40",
+        "0x00478ce0"
+      ],
+      "provenance": "game panel behavior; historical engine ownership unresolved"
+    },
+    {
+      "address": "00442cd0",
+      "role": "event4_query",
+      "end_exclusive": "00442ce7",
+      "bytes": 23,
+      "instructions": 8,
+      "sha256": "d9b0a6d714652f967ad18a78cc2be77458cbf7718cdfe456b14cad675bd704f1",
+      "direct_calls": [
+        "0x00477070"
+      ],
+      "provenance": "game panel behavior; historical engine ownership unresolved"
+    },
+    {
+      "address": "00478b60",
+      "role": "plain_text_producer",
+      "end_exclusive": "00478bc3",
+      "bytes": 99,
+      "instructions": 31,
+      "sha256": "b6a8efb4e2fcf556c3fb59e02cbd666eedc69a6005898d892eb03a3dd5f5dfe8",
+      "direct_calls": [
+        "0x0047e400"
+      ],
+      "provenance": "game panel behavior; historical engine ownership unresolved"
+    },
+    {
+      "address": "00477e80",
+      "role": "plain_text_consumer",
+      "end_exclusive": "00477e9a",
+      "bytes": 26,
+      "instructions": 11,
+      "sha256": "772f62935ac8776f50e601b8875384b1df5ca7a85ffbc108733013b2f2470d49",
+      "direct_calls": [
+        "0x00470900"
+      ],
+      "provenance": "game panel behavior; historical engine ownership unresolved"
+    }
+  ],
+  "draw_constants": {
+    "00489948": 1.1,
+    "004893e8": 1.7,
+    "00489db8": 1.05,
+    "004894c0": -0.01,
+    "00489dc0": 3.6,
+    "00489280": 0.5,
+    "004899b8": -0.6,
+    "00489b78": 0.35,
+    "00489558": 0.3
+  },
+  "original_arena_pointer": "004ce458",
+  "original_last_index": -1,
+  "plain_producer_callback_identity": "00477e80",
+  "panel_lifecycle_startup_subset": "004474c0",
+  "startup_subset_only": true,
+  "supported_ring_icon_domain": "'1'..'9' or 'A'..'C'",
+  "no_original_code_executed": true
+}

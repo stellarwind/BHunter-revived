@@ -1,0 +1,82 @@
+[
+  {
+    "address": "00433b00",
+    "bytes": "8b4c2404",
+    "mnemonic": "MOV",
+    "operands": [
+      "ECX",
+      "dword ptr [ESP + 0x4]"
+    ]
+  },
+  {
+    "address": "00433b04",
+    "bytes": "d981f0000000",
+    "mnemonic": "FLD",
+    "operands": [
+      "float ptr [ECX + 0xf0]"
+    ]
+  },
+  {
+    "address": "00433b0a",
+    "bytes": "d81d00924800",
+    "mnemonic": "FCOMP",
+    "operands": [
+      "float ptr [0x00489200]"
+    ]
+  },
+  {
+    "address": "00433b10",
+    "bytes": "dfe0",
+    "mnemonic": "FNSTSW",
+    "operands": [
+      "AX"
+    ]
+  },
+  {
+    "address": "00433b12",
+    "bytes": "f6c441",
+    "mnemonic": "TEST",
+    "operands": [
+      "AH",
+      "0x41"
+    ]
+  },
+  {
+    "address": "00433b15",
+    "bytes": "7512",
+    "mnemonic": "JNZ",
+    "operands": [
+      "0x00433b29"
+    ]
+  },
+  {
+    "address": "00433b17",
+    "bytes": "d981f0000000",
+    "mnemonic": "FLD",
+    "operands": [
+      "float ptr [ECX + 0xf0]"
+    ]
+  },
+  {
+    "address": "00433b1d",
+    "bytes": "dc25f8914800",
+    "mnemonic": "FSUB",
+    "operands": [
+      "double ptr [0x004891f8]"
+    ]
+  },
+  {
+    "address": "00433b23",
+    "bytes": "d999f0000000",
+    "mnemonic": "FSTP",
+    "operands": [
+      "float ptr [ECX + 0xf0]"
+    ]
+  },
+  {
+    "address": "00433b29",
+    "bytes": "c3",
+    "mnemonic": "RET",
+    "operands": []
+  }
+]

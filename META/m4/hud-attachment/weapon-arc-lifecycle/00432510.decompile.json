@@ -1,0 +1,8 @@
+[
+  {
+    "address": "00432510",
+    "code": "\r\nvoid __cdecl FUN_00432510(int param_1)\r\n\r\n{\r\n  *(undefined4 *)(param_1 + 0xe8) = 0;\r\n  *(undefined4 *)(param_1 + 0xf8) = 0;\r\n  *(undefined4 *)(param_1 + 0xfc) = 0;\r\n  if (*(uint *)(param_1 + 0x100) != 0xffffffff) {\r\n    FUN_0047c140(*(uint *)(param_1 + 0x100));\r\n  }\r\n  *(undefined4 *)(param_1 + 0x108) = 0;\r\n  *(undefined4 *)(param_1 + 0x100) = 0xffffffff;\r\n  return;\r\n}\r\n\r\n",
+    "name": "FUN_00432510",
+    "signature": "undefined FUN_00432510(int param_1)"
+  }
+]

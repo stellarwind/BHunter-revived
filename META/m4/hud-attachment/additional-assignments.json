@@ -1,0 +1,195 @@
+[
+  {
+    "address": "00455e40",
+    "function": "bh_segment_queue_append",
+    "source": "src/bh_segment_queue.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "segment-queue",
+      "weapon-hud-native"
+    ],
+    "upstream_original": "META/m4/hud-attachment/next-player-review/00455e40.disasm.json",
+    "review": "META/m4/hud-attachment/segment-queue/README.md"
+  },
+  {
+    "address": "004777c0",
+    "function": "bh_segment_queue_execute",
+    "source": "src/bh_segment_queue.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "segment-queue",
+      "weapon-hud-native"
+    ],
+    "upstream_original": "META/m4/hud-attachment/next-player-review/004777c0.disasm.json",
+    "review": "META/m4/hud-attachment/segment-queue/README.md"
+  },
+  {
+    "address": "00478930",
+    "function": "bh_fade_queue",
+    "source": "src/bh_fade.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "fade",
+      "fade-native"
+    ],
+    "upstream_original": "META/m4/hud-attachment/fade/00478930.disasm.json",
+    "review": "META/m4/hud-attachment/fade/NOTES.md"
+  },
+  {
+    "address": "00477f20",
+    "function": "bh_fade_execute",
+    "source": "src/bh_fade.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "fade",
+      "fade-native"
+    ],
+    "upstream_original": "META/m4/hud-attachment/fade/00477f20.disasm.json",
+    "review": "META/m4/hud-attachment/fade/NOTES.md"
+  },
+  {
+    "address": "0045cf30",
+    "function": "bh_fade_set",
+    "source": "src/bh_fade.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "fade",
+      "fade-native"
+    ],
+    "upstream_original": "META/m4/hud-attachment/fade/0045cf30.disasm.json",
+    "review": "META/m4/hud-attachment/fade/NOTES.md"
+  },
+  {
+    "address": "0045cf50",
+    "function": "bh_fade_apply",
+    "source": "src/bh_fade.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "fade",
+      "fade-native"
+    ],
+    "upstream_original": "META/m4/hud-attachment/fade/0045cf50.disasm.json",
+    "review": "META/m4/hud-attachment/fade/NOTES.md"
+  },
+  {
+    "address": "0045d690",
+    "function": "bh_present_end",
+    "source": "src/bh_present.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "present-native"
+    ],
+    "upstream_original": "META/m4/hud-attachment/present/0045d690.disasm.json",
+    "review": "META/m4/hud-attachment/present/README.md"
+  },
+  {
+    "address": "004309b0",
+    "function": "bh_weapon_delay_tick",
+    "source": "src/bh_weapon_common.c",
+    "role": "game",
+    "scenarios": [
+      "weapon-common"
+    ],
+    "upstream_original": "META/m4/hud-attachment/weapon-common/004309b0.disasm.json",
+    "review": "META/m4/hud-attachment/weapon-common/README.md"
+  },
+  {
+    "address": "00431050",
+    "function": "bh_weapon_ready_reset",
+    "source": "src/bh_weapon_common.c",
+    "role": "game",
+    "scenarios": [
+      "weapon-common"
+    ],
+    "upstream_original": "META/m4/hud-attachment/weapon-common/00431050.disasm.json",
+    "review": "META/m4/hud-attachment/weapon-common/README.md"
+  },
+  {
+    "address": "00433e50",
+    "function": "bh_weapon_target_removed",
+    "source": "src/bh_weapon_removal.c",
+    "role": "game",
+    "scenarios": [
+      "weapon-removal"
+    ],
+    "upstream_original": "META/m4/hud-attachment/weapon-removal/00433e50.disasm.json",
+    "review": "META/m4/hud-attachment/weapon-removal/README.md"
+  },
+  {
+    "address": "004310c0",
+    "function": "bh_weapon_target_ready",
+    "source": "src/bh_weapon_target_lifecycle.c",
+    "role": "game",
+    "scenarios": [
+      "weapon-target-lifecycle"
+    ],
+    "upstream_original": "META/m4/hud-attachment/weapon-target-lifecycle/004310c0.disasm.json",
+    "review": "META/m4/hud-attachment/weapon-target-lifecycle/README.md"
+  },
+  {
+    "address": "00431130",
+    "function": "bh_weapon_target_cancel",
+    "source": "src/bh_weapon_target_lifecycle.c",
+    "role": "game",
+    "scenarios": [
+      "weapon-target-lifecycle"
+    ],
+    "upstream_original": "META/m4/hud-attachment/weapon-target-lifecycle/00431130.disasm.json",
+    "review": "META/m4/hud-attachment/weapon-target-lifecycle/README.md"
+  },
+  {
+    "address": "00431180",
+    "function": "bh_weapon_target_update",
+    "source": "src/bh_weapon_target_lifecycle.c",
+    "role": "game",
+    "scenarios": [
+      "weapon-target-lifecycle"
+    ],
+    "upstream_original": "META/m4/hud-attachment/weapon-target-lifecycle/00431180.disasm.json",
+    "review": "META/m4/hud-attachment/weapon-target-lifecycle/README.md"
+  },
+  {
+    "address": "004324a0",
+    "function": "bh_weapon_arc_activate",
+    "source": "src/bh_weapon_arc_lifecycle.c",
+    "role": "game",
+    "scenarios": [
+      "weapon-arc-lifecycle"
+    ],
+    "upstream_original": "META/m4/hud-attachment/weapon-arc-lifecycle/004324a0.disasm.json",
+    "review": "META/m4/hud-attachment/weapon-arc-lifecycle/README.md"
+  },
+  {
+    "address": "00432510",
+    "function": "bh_weapon_arc_deactivate",
+    "source": "src/bh_weapon_arc_lifecycle.c",
+    "role": "game",
+    "scenarios": [
+      "weapon-arc-lifecycle"
+    ],
+    "upstream_original": "META/m4/hud-attachment/weapon-arc-lifecycle/00432510.disasm.json",
+    "review": "META/m4/hud-attachment/weapon-arc-lifecycle/README.md"
+  },
+  {
+    "address": "00432c60",
+    "function": "bh_weapon_arc_track",
+    "source": "src/bh_weapon_arc_lifecycle.c",
+    "role": "game",
+    "scenarios": [
+      "weapon-arc-lifecycle"
+    ],
+    "upstream_original": "META/m4/hud-attachment/weapon-arc-lifecycle/00432c60.disasm.json",
+    "review": "META/m4/hud-attachment/weapon-arc-lifecycle/README.md"
+  },
+  {
+    "address": "00433170",
+    "function": "bh_weapon_latch_tick",
+    "source": "src/bh_weapon_latch.c",
+    "role": "game",
+    "scenarios": [
+      "weapon-latch"
+    ],
+    "upstream_original": "META/m4/hud-attachment/weapon-latch/00433170.disasm.json",
+    "review": "META/m4/hud-attachment/weapon-latch/README.md"
+  }
+]

@@ -1,0 +1,15 @@
+#ifndef BH_PORTAL_CENTER_H
+#define BH_PORTAL_CENTER_H
+#include "bh_portals.h"
+#include "bh_math.h"
+/* Complete00433f70 over the actual six60-byte portal records. Uses scratch
+   bounds+28..34, not aperture/overlap. Slot is physical0..5; count is not read.
+   Plane and first midpoint spill float before direction dispatch; the second
+   midpoint remains double until its final output store. Directions0/4,1/5,
+   2/6 select X,Y,Z plane respectively. Other directions leave output untouched
+   after those computations and return-1. Returns0 for a source argument or
+   nonfinite scratch binding error. PC53 nearest/masked; no original whole-room
+   layout/ownership or navigation construction is claimed. Inputs are borrowed.
+   All scratch reads precede output writes, including overlapping output. */
+int __cdecl bh_portal_scratch_center(const BHPortalNode *,unsigned long slot,BHVec3 *out);
+#endif

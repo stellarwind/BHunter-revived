@@ -23,6 +23,7 @@ typedef struct BHWorldGeometry {
     BHVec3 minimum,maximum;
     struct BHWorldGeometry *owner;
     unsigned long query_flags; /* caller's model/script +114 flags, not orientation */
+    unsigned long radar_visited; /* source field for original +fc traversal mark */
 } BHWorldGeometry;
 
 /* Bind a fresh source model to live immutable geometry; real material callbacks

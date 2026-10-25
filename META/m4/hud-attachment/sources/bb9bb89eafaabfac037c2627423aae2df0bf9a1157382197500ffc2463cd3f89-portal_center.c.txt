@@ -1,0 +1,35 @@
+#include "../src/bh_portal_center.h"
+#include "../src/bh_fp.h"
+#include <stdio.h>
+#include <string.h>
+#include <float.h>
+#include <limits.h>
+static unsigned long checks,failures;
+#define CHECK(x,s) do{++checks;if(!(x)){++failures;printf("FAIL portal-center: %s\n",s);}}while(0)
+int bh_portal_center_checkpoint(unsigned long *count) {
+ BHPortalNode node,before;BHVec3 out,expected;BHMathEnvironment fp;unsigned long slot,d,raw;float tiny;
+ static const long planes[]={19,-31,LONG_MAX,LONG_MIN,0,1073741825};
+ checks=failures=0;if(!bh_math_environment_enter(&fp))return 2;
+ memset(&node,0xa5,sizeof(node));node.count=0;
+ for(slot=0;slot<6;++slot){
+  node.portals[slot].plane=planes[slot];node.portals[slot].scratch[0]=-16;node.portals[slot].scratch[1]=24;
+  node.portals[slot].scratch[2]=-32;node.portals[slot].scratch[3]=52;
+  for(d=0;d<8;++d){
+   node.portals[slot].direction=d;before=node;out.x=101;out.y=102;out.z=103;expected=out;
+   if(d==0||d==4){expected.x=(float)planes[slot];expected.y=4;expected.z=10;}
+   if(d==1||d==5){expected.x=4;expected.y=(float)planes[slot];expected.z=10;}
+   if(d==2||d==6){expected.x=4;expected.y=10;expected.z=(float)planes[slot];}
+   CHECK(bh_portal_scratch_center(&node,slot,&out)==((d==3||d==7)?-1:1)&&!memcmp(&out,&expected,12),"all six physical records/directions and signed plane conversion; ignores count/aperture/overlap");
+   CHECK(!memcmp(&node,&before,sizeof(node)),"borrowed portal records stay unchanged");
+  }
+ }
+ node.portals[0].direction=0;node.portals[0].plane=13;
+ CHECK(bh_portal_scratch_center(&node,0,(BHVec3*)node.portals[0].scratch)==1 && node.portals[0].scratch[0]==13 && node.portals[0].scratch[1]==4 && node.portals[0].scratch[2]==10,"all inputs read before overlapping output writes");
+ raw=1;memcpy(&tiny,&raw,4);node.portals[0].scratch[0]=node.portals[0].scratch[1]=0;
+ node.portals[0].scratch[2]=tiny;node.portals[0].scratch[3]=0;node.portals[0].direction=3;
+ _clearfp();CHECK(bh_portal_scratch_center(&node,0,&out)==-1 && !(_status87()&_SW_UNDERFLOW),"unsupported direction discards retained midpoint without float underflow");_clearfp();
+ node.portals[0].direction=0;out.z=1;CHECK(bh_portal_scratch_center(&node,0,&out)==1 && out.z==0 && (_status87()&_SW_UNDERFLOW),"valid branch performs original final subnormal midpoint float store");_clearfp();
+ before=node;CHECK(!bh_portal_scratch_center(NULL,0,&out)&&!bh_portal_scratch_center(&node,6,&out)&&!bh_portal_scratch_center(&node,0,NULL),"source bounds/binding guards");
+ CHECK(bh_math_environment_supported(),"PC53 caller profile preserved");bh_math_environment_leave(&fp);if(count)*count=checks;
+ printf("{\"scenario\":\"portal-center\",\"checks\":%lu,\"failures\":%lu,\"original_code_required\":false}\n",checks,failures);return failures!=0;
+}

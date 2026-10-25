@@ -99,7 +99,9 @@ int __cdecl bh_sprite_oriented_ribbon(BHSpriteOrientedContext *c,BHSpriteOriente
     for(p=head;p && p->next;p=p->next){
         BHVec3 dir;float dx,dy,aw,bw;
         q=p->next;dir.x=q->point.x-p->point.x;dir.y=q->point.y-p->point.y;dir.z=0;
-        if(!bh_vec3_normalize(&dir))return fail(c,BH_SPRITE_ORIENTED_NUMERICAL);
+        /* 0045601b ignores the normalization result. A zero projected edge
+           leaves dir zero and still builds its degenerate finite corners. */
+        bh_vec3_normalize(&dir);
         dx=-dir.y;dy=dir.x;aw=p->width;bw=q->width;
         p->corners[0].x=p->point.x-dx*aw;p->corners[0].y=p->point.y-dy*aw;p->corners[0].z=0;
         p->corners[1].x=p->point.x+dx*aw;p->corners[1].y=p->point.y+dy*aw;p->corners[1].z=0;
@@ -119,9 +121,10 @@ int __cdecl bh_sprite_oriented_ribbon(BHSpriteOrientedContext *c,BHSpriteOriente
         bh_round_float(&v.y,(double)q->corners[1].y-center.y);
         bh_round_float(&v.z,(double)q->corners[1].z-center.z);
         den=sqrt((double)u.x*u.x+(double)u.y*u.y)*sqrt((double)v.x*v.x+(double)v.y*v.y);
-        if(den==0)return fail(c,BH_SPRITE_ORIENTED_NUMERICAL);
         dot=(((double)u.z*v.z+(double)u.y*v.y)+(double)u.x*v.x)/den;
-        if(dot< -0.8)dot=(float)-0.8;
+        /* 00456238 FCOM /0045626e tests C0 alone: unordered 0/0 also takes
+           the float clamp. Keep the actual masked division/sticky exception. */
+        if(!(dot>= -0.8))dot=(float)-0.8;
         scale=1.0/(dot+1.0);
         bh_round_float(&sum.x,(double)u.x+v.x);
         bh_round_float(&sum.y,(double)u.y+v.y);

@@ -1,0 +1,48 @@
+{
+  "reference_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+  "execution": "none",
+  "classification_before_decompile": "All three complete standalone engine-candidate rendering owners, high confidence functional role; proprietary attribution unresolved. Function-map call boundaries and xrefs inspected first. No CRT/import/EH/shared-tail owner admitted by this review.",
+  "functions": [
+    {
+      "va": "004779e0",
+      "end": "00477a94",
+      "bytes": 181,
+      "instructions": 79,
+      "all_match_pe": true
+    },
+    {
+      "va": "00477880",
+      "end": "004779d8",
+      "bytes": 345,
+      "instructions": 135,
+      "all_match_pe": true
+    },
+    {
+      "va": "00455ee0",
+      "end": "00455f67",
+      "bytes": 136,
+      "instructions": 41,
+      "all_match_pe": true
+    }
+  ],
+  "constants": [
+    {
+      "va": "0x48a230",
+      "type": "d",
+      "bytes": "000000000000e03f",
+      "value": 0.5
+    },
+    {
+      "va": "0x48a238",
+      "type": "f",
+      "bytes": "0000003f",
+      "value": 0.5
+    },
+    {
+      "va": "0x48a23c",
+      "type": "f",
+      "bytes": "00008041",
+      "value": 16.0
+    }
+  ]
+}

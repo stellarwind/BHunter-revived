@@ -1,0 +1,115 @@
+"""Freeze complete reviewed source owners; never executes game/original code."""
+import argparse,csv,hashlib,json,shutil,struct
+from pathlib import Path
+ROOT=Path(__file__).resolve().parents[3]
+HERE=Path(__file__).resolve().parent
+def read(p):return json.loads(p.read_text(encoding='utf-8-sig'))
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def write(p,value):
+ p.parent.mkdir(parents=True,exist_ok=True)
+ p.write_bytes((json.dumps(value,indent=2)+'\n').encode())
+def assignments():
+ rows=[]
+ def add(a,f,module,role,scenarios,original,review):
+  rows.append(dict(address=a,function=f,source='src/'+module+'.c',role=role,scenarios=scenarios.split(),upstream_original=original,review=review))
+ base='META/m4/hud-attachment/'
+ for a,f in [('00417f30','bh_attachment_reset'),('00417f70','bh_attachment_render')]:
+  add(a,f,'bh_attachment','engine_candidate','attachment hud hud-native',base+'attachment/'+a+'.disasm.json',base+'attachment/NOTES.md')
+ add('0041b2d0','bh_hud_setup','bh_hud','game','hud hud-native','META/m4/radar/original/0041b2d0.disasm.json',base+'hud/README.md')
+ add('0041bbf0','bh_hud_markers_draw','bh_hud_markers','game','hud-markers hud-native',base+'review/0041bbf0.disasm.json',base+'review/REVIEW.md')
+ add('00418f00','bh_hud_world_draw','bh_hud_world','game','hud-world hud-native',base+'hud-world/original/00418f00.disasm.json',base+'hud-world/README.md')
+ add('0041a3d0','bh_hud_flat_draw','bh_hud_flat','game','hud-flat hud-native',base+'hud-flat/0041a3d0.disasm.json',base+'hud-flat/NOTES.md')
+ for a,f in [('00456d30','bh_plane_quad_draw'),('00477710','bh_plane_quad_execute')]:
+  add(a,f,'bh_plane_quad','engine_candidate','plane-quad hud-native',base+'plane-quad/'+a+'.disasm.json',base+'review/PLANE_REVIEW.md')
+ for a,f in [('004275c0','bh_hud_scores_text'),('00427710','bh_hud_scores_draw')]:
+  add(a,f,'bh_hud_scores','game','hud-scores hud-native',base+'scoreboard/'+a+'.disasm.json',base+'review/SCORES_REVIEW.json')
+ for a,f,role in [('00432050','bh_arc_queue','engine_candidate'),('00432ff0','bh_weapon_hud_arc','game')]:
+  add(a,f,'bh_weapon_hud_arc',role,'weapon-hud-arc path-queue weapon-hud-native' if a=='00432050' else 'weapon-hud-arc weapon-hud-native',base+'weapon-hud-arc/'+a+'.disasm.json',base+'weapon-hud-arc/NOTES.md')
+ add('004314f0','bh_weapon_hud_target_draw','bh_weapon_hud_target','game','weapon-hud-target weapon-hud-native',base+'weapon-hud-target/original/004314f0.disasm.json',base+'weapon-hud-target/README.md')
+ for a,f in [('00455ee0','bh_path_queue_append'),('00477880','bh_path_queue_select'),('004779e0','bh_path_queue_execute')]:
+  add(a,f,'bh_path_queue','engine_candidate','path-queue weapon-hud-native',base+'path-queue/original/'+a+'.disasm.json',base+'path-queue/REVIEW.md')
+ extra=HERE/'additional-assignments.json'
+ if extra.exists():rows.extend(read(extra))
+ return rows
+def export():
+ blob=(ROOT/'GAME_DATA/BHUNTER.EXE').read_bytes()
+ assert hashlib.sha256(blob).hexdigest()=='c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1'
+ pe=struct.unpack_from('<I',blob,60)[0];table=pe+24+struct.unpack_from('<H',blob,pe+20)[0]
+ sections=[struct.unpack_from('<IIII',blob,table+i*40+8) for i in range(struct.unpack_from('<H',blob,pe+6)[0])]
+ def raw(va,n):
+  r=va-0x400000;_,v,_,o=next(x for x in sections if x[1]<=r and r+n<=x[1]+x[2]);return blob[o+r-v:o+r-v+n]
+ mapping={x['address']:x for x in csv.DictReader((ROOT/'analysis/function-map.tsv').open(),delimiter='\t')}
+ rows=assignments()
+ ledger=read(ROOT/'META/function-status.json')
+ for row in rows:
+  prior=[r for r in ledger['records'] if r.get('original_va')==row['address'] and r.get('implementation') in ['func','bm'] and r.get('integration')=='linked_harness' and not r.get('historical_variant') and not r.get('validation',{}).get('superseded_by')]
+  assert all(r['source']==row['source'] and r['function']==row['function'] for r in prior),('Already admitted owner; cannot count a duplicate',row['address'])
+  instructions=read(ROOT/row['upstream_original']);at=int(row['address'],16);body=bytearray()
+  for ins in instructions:
+   assert int(ins['address'],16)==at,(row['address'],ins['address'])
+   data=bytes.fromhex(ins['bytes']);assert raw(at,len(data))==data
+   body.extend(data);at+=len(data)
+  expected=mapping[row['address']]
+  assert int(expected['instructions'])==len(instructions) and int(expected['body_bytes'])==len(body),row['address']
+  target=HERE/'original'/(row['address']+'.tsv');target.parent.mkdir(exist_ok=True)
+  with target.open('w',newline='') as f:
+   writer=csv.writer(f,delimiter='\t');writer.writerow(['address','bytes','mnemonic','operands'])
+   for ins in instructions:writer.writerow([ins['address'],ins['bytes'],ins['mnemonic'],','.join(ins['operands']) if isinstance(ins['operands'],list) else ins['operands']])
+  row.update(bytes=len(body),instructions=len(instructions),end_inclusive=f'{at-1:08x}',body_sha256=hashlib.sha256(body).hexdigest(),original=target.relative_to(ROOT).as_posix())
+  assert (ROOT/row['review']).is_file(),row['review']
+ write(HERE/'owners.json',rows)
+ print(json.dumps(dict(complete_new_owners=len(rows),all_original_body_bytes_verified=True)))
+def freeze():
+ real=read(ROOT/'build/m0/result.json');report=read(HERE/'clean/clean-checkout.json');clean=report['result'];owners=read(HERE/'owners.json')
+ assert real['passed'] and clean['passed'] and not report['original_assets_present'] and not report['compiler_in_checkout']
+ assert real['sources']==clean['sources'],'source variants differ between linked builds'
+ for name,digest in real['sources'].items():assert sha(ROOT/name)==digest,name
+ focused=sorted({s for o in owners for s in o['scenarios']}|{'sprite-oriented','sprite-native','draw-resource'})
+ def fixtures(build):
+  selected={name:next(x for x in build['scenarios'] if x.get('scenario')==name) for name in focused}
+  assert all(x['checks']>0 and x['failures']==0 for x in selected.values())
+  assert sum(x['checks'] for x in build['scenarios'] if 'checks' in x and x.get('scenario')!='m2-foundations')==build['test']['checks']
+  assert not build['original_code_required'] and not build['test']['failures']
+  return selected
+ real_fixtures=fixtures(real);clean_fixtures=fixtures(clean)
+ for name,target in [('build/m0/result.json','integration-real.json'),('build/m0/bhunter-integration.map','link-map.txt')]:shutil.copy2(ROOT/name,HERE/target)
+ snapshot_names=set(real['sources'])|{'tools/m0.py','tools/check_hud_attachment.py',Path(__file__).relative_to(ROOT).as_posix()}
+ snapshots={}
+ for name in sorted(snapshot_names):
+  p=ROOT/name;target=HERE/'sources'/(sha(p)+'-'+p.name+'.txt');target.parent.mkdir(exist_ok=True);target.write_bytes(p.read_bytes());snapshots[name]=target.relative_to(ROOT).as_posix()
+ images={}
+ for pattern in ['hud-native-*.bmp','weapon-hud-native-*.bmp','fade-*.bmp']:
+  for p in (ROOT/'build/m0').glob(pattern):
+   shutil.copy2(p,HERE/p.name);images[p.name]=sha(p)
+ validation=dict(passed=True,complete_new_functions=len(owners),translation_units=sum(x['label'].startswith('compile-') for x in real['commands']),missing_module_controls=sum(x.startswith('missing_') for x in real),
+  real_total=real['test'],clean_total=clean['test'],real_focused=real_fixtures,clean_focused=clean_fixtures,sources={n:sha(ROOT/n) for n in snapshots},source_snapshots=snapshots,native_images=images,
+  original_code_executed=False,game_launches=0,gameplay_executed=False,native_input_capture_calls=0,native_input_recenter_calls=0,unimplemented_callers=['0041c860','00428f50'])
+ ledger=read(ROOT/'META/function-status.json')
+ for owner in owners:
+  identifier=owner['address']+'-functional-c';old=next((x for x in ledger['records'] if x['id']==identifier),None)
+  if old:
+   assert old['source_sha256']==sha(ROOT/owner['source']),identifier
+   continue
+  ledger['records'].append(dict(id=identifier,original_va=owner['address'],function=owner['function'],role=owner['role'],provenance_confidence='Complete ordinary owner and callers/dataflow reviewed; no verified CRT/library/import/compiler/shared-tail assignment. Historical library authorship unresolved where engine_candidate.',source=owner['source'],source_sha256=sha(ROOT/owner['source']),implementation='func',integration='linked_harness',target='build/m0/bhunter-integration.exe',game_admitted=False,
+   validation=dict(abi='x86 source definitions; exact checked record fields and explicit borrowed owner/context bindings; no full original entity/player/weapon layout claim',boundary=f"{owner['address']}..{owner['end_inclusive']}: {owner['bytes']}bytes/{owner['instructions']}instructions",raw_byte_match=False,differential=False,fixtures={s:real_fixtures[s] for s in owner['scenarios']},clean_fixtures={s:clean_fixtures[s] for s in owner['scenarios']},limits=['Source/static instruction-derived PC53 nearest/masked finite fixtures; PC24/extreme/transcendental universal equivalence remains unvalidated.','Actual query methods in isolated tests do not recover player/target/weapon construction or gameplay event lifetimes. Source bindings borrow real data definitions; no guessed production callback/global/vtable.','No source-game admission, original-code execution or gameplay. M3 skipped; M4 playable slice incomplete.']),evidence=[owner['review'],owner['original'],'META/m4/hud-attachment/validation.json','META/m4/hud-attachment/integration-real.json','META/m4/hud-attachment/clean/clean-checkout.json']))
+ corrected=[]
+ for old_id in ['00455f70-functional-c','004569b0-functional-c']:
+  old=next(x for x in ledger['records'] if x['id']==old_id);identifier=old['original_va']+'-degenerate-ribbon-c';corrected.append(identifier)
+  existing=next((x for x in ledger['records'] if x['id']==identifier),None)
+  if existing:
+   assert existing['source_sha256']==sha(ROOT/'src/bh_sprite_oriented.c');continue
+  assert old['source_sha256']==sha(HERE/'prior-ribbon/bh_sprite_oriented.c.txt')
+  new=read(HERE/'prior-ribbon/ledger-records.json');new=next(x for x in new if x['id']==old_id)
+  old['historical_variant']=True;old['historical_source_path']=old['source'];old['source']='META/m4/hud-attachment/prior-ribbon/bh_sprite_oriented.c.txt';old['validation']['superseded_by']=identifier
+  scenarios=['sprite-oriented','sprite-native','draw-resource','path-queue','weapon-hud-native']
+  new.update(id=identifier,source_sha256=sha(ROOT/'src/bh_sprite_oriented.c'))
+  new['validation']=dict(abi='Same checked x86 source pool/clip layouts; original ignored zero-normalization return and masked unordered miter clamp restored',raw_byte_match=False,differential=False,fixtures={s:real_fixtures[s] for s in scenarios},clean_fixtures={s:clean_fixtures[s] for s in scenarios},limits=['Preserves actual masked invalid/divide sticky effects; no PC24/extreme/transcendental universal equivalence claim.','Separate corrected source variant; prior byte/source/linked tests retained without transfer.'])
+  new['evidence']=['META/m4/hud-attachment/oriented-degenerate/NOTES.md','META/m4/hud-attachment/prior-ribbon/ledger-records.json','META/m4/hud-attachment/validation.json'];ledger['records'].append(new)
+ for identifier,function,source,scenario in [('weapon-common-field-binding-adapter','bh_weapon_common_state','src/bh_weapon_common.c','weapon-common'),('fade-table-lifetime-adapter','bh_fade_dispose','src/bh_fade.c','fade'),('weapon-target-aim-binding-adapter','bh_weapon_target_player_aim','src/bh_weapon_target_lifecycle.c','weapon-target-lifecycle')]:
+  if not any(x['id']==identifier for x in ledger['support_implementations']):
+   ledger['support_implementations'].append(dict(id=identifier,function=function,source=source,source_sha256=sha(ROOT/source),implementation='adapter',integration='linked_harness',target='build/m0/bhunter-integration.exe',game_admitted=False,evidence=['META/m4/hud-attachment/validation.json'],validation=dict(scope='Explicit source field/lifetime binding; no constructor, additional original function, or source-game admission.',fixture=real_fixtures[scenario],clean_fixture=clean_fixtures[scenario])))
+ ledger['updated']='2026-10-25';write(ROOT/'META/function-status.json',ledger)
+ validation['corrected_variants']=corrected;write(HERE/'validation.json',validation)
+ print(json.dumps({k:validation[k] for k in ['complete_new_functions','translation_units','missing_module_controls','real_total','clean_total']}))
+if __name__=='__main__':
+ p=argparse.ArgumentParser();p.add_argument('action',choices=['export','freeze']);a=p.parse_args();export() if a.action=='export' else freeze()

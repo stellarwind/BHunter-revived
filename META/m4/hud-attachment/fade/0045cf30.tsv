@@ -1,0 +1,6 @@
+address	bytes	mnemonic	operands
+0045cf30	8b442404	MOV	EAX,dword ptr [ESP + 0x4]
+0045cf34	8b4c2408	MOV	ECX,dword ptr [ESP + 0x8]
+0045cf38	a3c0de4e00	MOV	[0x004edec0],EAX
+0045cf3d	890dc4de4e00	MOV	dword ptr [0x004edec4],ECX
+0045cf43	c3	RET	

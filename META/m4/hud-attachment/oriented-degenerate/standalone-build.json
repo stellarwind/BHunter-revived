@@ -1,0 +1,168 @@
+{
+  "target": "bhunter-oriented-degenerate-check.exe",
+  "original_code_executed": false,
+  "passed": true,
+  "commands": [
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/FoD:\\Decomp\\Bhunter\\build\\hud-attachment\\oriented-degenerate\\bh_sprite_oriented.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_sprite_oriented.c"
+      ],
+      "exit_code": 0,
+      "stdout": "bh_sprite_oriented.c\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/FoD:\\Decomp\\Bhunter\\build\\hud-attachment\\oriented-degenerate\\bh_attribute_clipper.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_attribute_clipper.c"
+      ],
+      "exit_code": 0,
+      "stdout": "bh_attribute_clipper.c\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/FoD:\\Decomp\\Bhunter\\build\\hud-attachment\\oriented-degenerate\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_math.c"
+      ],
+      "exit_code": 0,
+      "stdout": "bh_math.c\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/FoD:\\Decomp\\Bhunter\\build\\hud-attachment\\oriented-degenerate\\bh_round.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_round.c"
+      ],
+      "exit_code": 0,
+      "stdout": "bh_round.c\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/FoD:\\Decomp\\Bhunter\\build\\hud-attachment\\oriented-degenerate\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_fp.c"
+      ],
+      "exit_code": 0,
+      "stdout": "bh_fp.c\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/DBH_SPRITE_ORIENTED_TEST_MAIN",
+        "/FoD:\\Decomp\\Bhunter\\build\\hud-attachment\\oriented-degenerate\\sprite_oriented_test.obj",
+        "D:\\Decomp\\Bhunter\\tests\\sprite_oriented.c"
+      ],
+      "exit_code": 0,
+      "stdout": "sprite_oriented.c\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/map:D:\\Decomp\\Bhunter\\build\\hud-attachment\\oriented-degenerate\\bhunter-oriented-degenerate-check.map",
+        "/out:D:\\Decomp\\Bhunter\\build\\hud-attachment\\oriented-degenerate\\bhunter-oriented-degenerate-check.exe",
+        "D:\\Decomp\\Bhunter\\build\\hud-attachment\\oriented-degenerate\\bh_sprite_oriented.obj",
+        "D:\\Decomp\\Bhunter\\build\\hud-attachment\\oriented-degenerate\\bh_attribute_clipper.obj",
+        "D:\\Decomp\\Bhunter\\build\\hud-attachment\\oriented-degenerate\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\build\\hud-attachment\\oriented-degenerate\\bh_round.obj",
+        "D:\\Decomp\\Bhunter\\build\\hud-attachment\\oriented-degenerate\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\build\\hud-attachment\\oriented-degenerate\\sprite_oriented_test.obj"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\build\\hud-attachment\\oriented-degenerate\\bhunter-oriented-degenerate-check.exe"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"scenario\":\"sprite-oriented\",\"checks\":34,\"failures\":0,\"original_code_required\":false}\n",
+      "stderr": ""
+    }
+  ],
+  "sources": {
+    "src/bh_sprite_oriented.c": "548cf5d859e947934e89c0d2db41fd7a13d114f6fb6d70c966ae4a983f93069c",
+    "src/bh_attribute_clipper.c": "fa2e5c378020c6a6f2c146f169838956b41e9c010858f675b03f28423ce6a622",
+    "src/bh_math.c": "ce111e18659563a2c41a04b645295227aac6ead9fe9cc2e803ac45c726d6e9bc",
+    "src/bh_round.c": "ff848010705702e25cf85f5ba1d9c30a024d1ea8bf93227240285b9c54fc8ef4",
+    "src/bh_fp.c": "cc8400a29fd082f96ffd9b483f490a44992717b25eac0cb32e2e108ba446f3f8",
+    "tests/sprite_oriented.c": "705a64c2e2c76706513b4ae6071cc479a36669df9a6b29a390c798e2ad14b92b"
+  },
+  "scenario": {
+    "scenario": "sprite-oriented",
+    "checks": 34,
+    "failures": 0,
+    "original_code_required": false
+  }
+}

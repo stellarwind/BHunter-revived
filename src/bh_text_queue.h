@@ -2,7 +2,9 @@
 #define BH_TEXT_QUEUE_H
 #include "bh_atlas_glyph.h"
 
-typedef enum BHTextCommandKind {BH_TEXT_COMMAND_TEXT=1,BH_TEXT_COMMAND_CLEAR=2} BHTextCommandKind;
+typedef enum BHTextCommandKind {
+    BH_TEXT_COMMAND_TEXT=1,BH_TEXT_COMMAND_CLEAR=2,BH_TEXT_COMMAND_PLAIN=3
+} BHTextCommandKind;
 /* Original84-byte record. Semantic kind replaces original function pointer;
    page is borrowed, text includes the original59-byte strncpy region and NUL.
    Unused words and next remain untouched by both recovered producers. */
@@ -34,7 +36,9 @@ int __cdecl bh_text_queue_clear(BHTextQueue *,BHAtlasPage *,unsigned long color)
 unsigned long __cdecl bh_text_queue_execute_text(const BHTextCommand *);
 unsigned long __cdecl bh_text_queue_execute_clear(BHAtlasContext *,const BHTextCommand *);
 /* Source FIFO consumption adapter for the original ring portion of00479090;
-   not admission of that complete render callback. Ring ignores returned next.
+   not admission of that complete render callback. This generic adapter accepts
+   positioned TEXT and CLEAR only; panel PLAIN records use bh_message_text_drain.
+   Ring ignores returned next.
    Returns1 drained,-1 invalid selector/arguments; prior commands stay consumed.
    Native failures remain observable in real borrowed atlas/texture owners. */
 int __cdecl bh_text_queue_drain(BHTextQueue *,BHAtlasContext *,unsigned long *processed);

@@ -1,0 +1,44 @@
+{
+  "review": "Independent read-only raw/source audit; no source edits or original execution",
+  "result": "no_material_mismatch_found",
+  "bodies": [
+    {
+      "address": "004309b0",
+      "bytes": 22,
+      "instructions": 7,
+      "raw_sha256": "270a928857a470cde03db35ab4f9503f32df344784d33571d5ad5caaa7cb76ed",
+      "complete_contiguous_PE_verified": true
+    },
+    {
+      "address": "00431050",
+      "bytes": 108,
+      "instructions": 26,
+      "raw_sha256": "9c3592bf087051dadc8cb4177aafa32a23ea4de6e985e8e99bfbcc13ab8fa6cd",
+      "complete_contiguous_PE_verified": true
+    }
+  ],
+  "constants": {
+    "004892e0": {
+      "bytes": "9a9999999999d9be",
+      "double": -6.103515625e-06
+    },
+    "004892e8": {
+      "bytes": "cdccccccccccec3f",
+      "double": 0.9
+    }
+  },
+  "verified_contracts": [
+    "delay+114: every nonzero32-bit signed word decrements modulo2^32; zero and other entity bytes stay unchanged; source unsigned subtraction preserves LONG_MIN wrap",
+    "source entity payload at+e4 plus4 gives common base+e8; embedded HUD subobject+10 gives actual target+f8/charge+fc; ammo+24 gives+10c; delay+2c gives+114; compile-time assertions and runtime address test agree",
+    "reset writes+e8,+f4,+f0,+f8,+fc=0 and+100=-1 before exactly one real CRT rand and the sound request; availability+ec/ammo/delay/method region preserved",
+    "pitch is floatstore(double.9 - rand*negative double1/163840), level is binary32.9; source grouping and real bh_round_float match raw FILD/FMUL/FSUBR/FSTP",
+    "original player+0c position and+48 velocity remain live borrowed vector pointers to actual bh_sound_request; source has no temporary snapshots",
+    "allocator mutation fixture delegates actual malloc/free and changes player position/velocity before sound voice_parameters reads vectors; latest source directly passes &player->position/&player->origin and test observes changed31/-61",
+    "actual DirectSound resource registration/request/stop validates native-backed queued voice state without Play; independent CRT stream checks16seeds; missing-resource failure retains reset and RNG side effects",
+    "no constructor/callback table/global/vtable fabricated; source common-state accessor is explicit field binding adapter, not recovered allocation lifecycle"
+  ],
+  "limits": [
+    "Static source audit plus inspection of existing passing tests; final full real/clean execution evidence remains parent-owned.",
+    "No claim of weapon constructor or production sound-resource lifetime completion."
+  ]
+}

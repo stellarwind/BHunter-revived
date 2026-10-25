@@ -1,0 +1,61 @@
+[
+  {
+    "address": "0042a9b0",
+    "bytes": "a108fb4d00",
+    "mnemonic": "MOV",
+    "operands": [
+      "EAX",
+      "[0x004dfb08]"
+    ]
+  },
+  {
+    "address": "0042a9b5",
+    "bytes": "85c0",
+    "mnemonic": "TEST",
+    "operands": [
+      "EAX",
+      "EAX"
+    ]
+  },
+  {
+    "address": "0042a9b7",
+    "bytes": "7518",
+    "mnemonic": "JNZ",
+    "operands": [
+      "0x0042a9d1"
+    ]
+  },
+  {
+    "address": "0042a9b9",
+    "bytes": "8b442404",
+    "mnemonic": "MOV",
+    "operands": [
+      "EAX",
+      "dword ptr [ESP + 0x4]"
+    ]
+  },
+  {
+    "address": "0042a9bd",
+    "bytes": "c780c8000000508f4200",
+    "mnemonic": "MOV",
+    "operands": [
+      "dword ptr [EAX + 0xc8]",
+      "0x428f50"
+    ]
+  },
+  {
+    "address": "0042a9c7",
+    "bytes": "c780cc000000b09f4200",
+    "mnemonic": "MOV",
+    "operands": [
+      "dword ptr [EAX + 0xcc]",
+      "0x429fb0"
+    ]
+  },
+  {
+    "address": "0042a9d1",
+    "bytes": "c3",
+    "mnemonic": "RET",
+    "operands": []
+  }
+]

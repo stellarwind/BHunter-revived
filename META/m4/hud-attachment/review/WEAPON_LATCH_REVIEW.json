@@ -1,0 +1,27 @@
+{
+  "result": "no_material_mismatch_found",
+  "review": "Independent read-only full raw/source review",
+  "address": "00433170",
+  "bytes": 79,
+  "instructions": 18,
+  "PE_verified": true,
+  "raw_sha256": "ed3614a4b6405995d82d85072ea0c6e11e0e4debfa82d80e58e0bc61e0f541dd",
+  "source_sha256": "3bcad65b00cfec46de01933a10955df1838bfe1b119240c8582d096605791d87",
+  "verified": [
+    "exact current weapon+f0 and+f4 float storage aliases",
+    "strict positive FCOMP/AH41 gating: zero, negative and unordered skip store",
+    "actual double1/30 constant bytes111111111111a13f matches source literal",
+    "double subtraction then explicit binary32 store without zero clamp",
+    "NaN/signedzero payload preservation and all unrelated allocation bytes preserved",
+    "null allocation guard is explicit source behavior; no constructor/callback/global fabricated"
+  ],
+  "validation_inspected": [
+    "independent raw-word vectors and40-step timer sequence",
+    "whole allocation memcmp preservation",
+    "quietNaN payload and actual masked invalid sticky assertion",
+    "focused63checks0fail reported by owner"
+  ],
+  "limits": [
+    "No original code executed; fresh full integration/admission remains parent-owned."
+  ]
+}

@@ -1,0 +1,152 @@
+"""Export immutable BHunter static assets for an inspectable Blender scene.
+
+This is a data conversion tool, not restored gameplay or original code execution.
+Uses the independently checked BSP section and palette interpreters already used
+by the source fixture audits. Original archives are never modified.
+"""
+import argparse
+import hashlib
+import json
+import math
+from pathlib import Path
+import struct
+import subprocess
+import zlib
+
+from geometry_fixtures import sections
+from check_pcx_evidence import palette_control
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def sha(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def png(path, data):
+    xmin, ymin, xmax, ymax = struct.unpack_from('<4H', data, 4)
+    w, h = xmax-xmin+1, ymax-ymin+1
+    stride = struct.unpack_from('<H', data, 66)[0]
+    assert data[:4] == bytes([10, 5, 1, 8]) and data[65] == 1 and data[-769] == 12
+    at = 128
+    pixels = bytearray()
+    while len(pixels) < stride*h:
+        v = data[at]; at += 1
+        n = 1
+        if v >= 192:
+            n = v & 63
+            assert n
+            v = data[at]; at += 1
+        pixels.extend(bytes([v])*n)
+    assert len(pixels) == stride*h and at == len(data)-769
+    rgb, mapping = palette_control(data[-768:], 1, 0xff00ff)
+    rows = bytearray()
+    for y in range(h):
+        rows.append(0)
+        for raw in pixels[y*stride:y*stride+w]:
+            index = mapping[raw]
+            rows.extend(rgb[index*3:index*3+3])
+            rows.append(255 if index else 0)
+    def chunk(kind, value):
+        return struct.pack('>I', len(value))+kind+value+struct.pack('>I', zlib.crc32(kind+value)&0xffffffff)
+    result = b'\x89PNG\r\n\x1a\n'
+    result += chunk(b'IHDR', struct.pack('>IIBBBBB', w, h, 8, 6, 0, 0, 0))
+    result += chunk(b'IDAT', zlib.compress(rows, 9))+chunk(b'IEND', b'')
+    path.write_bytes(result)
+    return dict(width=w, height=h, sha256=sha(result))
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--output', required=True, type=Path)
+    parser.add_argument('--blender', required=True, type=Path)
+    args = parser.parse_args()
+    output = args.output.resolve()
+    output.mkdir(parents=True, exist_ok=True)
+    assert not (output/'BHunter_TEST.blend').exists(), 'Refusing to replace an existing blend'
+    texture_dir = output/'textures'; texture_dir.mkdir(exist_ok=True)
+    archive_path = ROOT/'GAME_DATA/Bhunter.bin'
+    archive = archive_path.read_bytes()
+    manifest = json.loads((ROOT/'META/reference-manifest.json').read_text())
+    expected = next(r['sha256'] for r in manifest['files'] if r['path']=='GAME_DATA/Bhunter.bin')
+    assert sha(archive) == expected
+    index = {}
+    for item in json.loads((ROOT/'analysis/assets-index.json').read_text()):
+        index.setdefault(item['name'].upper().replace('/', '\\'), item)
+    def asset(name):
+        item = index[name.upper().replace('/', '\\')]
+        return archive[item['offset']:item['end']]
+    def texture_key(name):
+        return str(Path(name.replace('\\', '/')).with_suffix('.PCX')).upper().replace('/', '\\')
+    names = []
+    for line in asset('BSP\\BLOCKS.TXT').decode('ascii').splitlines():
+        if line.lower() == 'end': break
+        if line and not line.startswith(';'): names.append(line)
+    models = []
+    used_textures = {}
+    sidecars = {}
+    for name in names:
+        material_raw, vertex_raw, edge_raw, face_raw, _, _ = sections(asset('BSP\\'+name))
+        vertices = [struct.unpack_from('<3f', row) for row in vertex_raw]
+        edges = [struct.unpack('<iiff', row) for row in edge_raw]
+        materials = []
+        for row in material_raw:
+            texture = row[9:].split(b'\0', 1)[0].decode('ascii')
+            key = texture_key(texture) if texture else ''
+            full = 'TEXTURES\\'+key
+            present = full in index
+            if present:
+                used_textures[key] = full
+            materials.append(dict(name=texture, attributes=list(row[:9]),
+                                  texture=key if present else None))
+        faces, uvs, face_materials, ids = [], [], [], []
+        for face_id, row in enumerate(face_raw):
+            mat, edge, _ = struct.unpack('<iii', row)
+            face, uv = [], []
+            while edge >= 0:
+                v, nxt, u, vtex = edges[edge]
+                face.append(v); uv.append([u, 1-vtex]); edge = nxt
+                assert len(face) <= len(edges)
+            if len(face) >= 3 and len(set(face)) >= 3:
+                faces.append(face); uvs.append(uv); face_materials.append(mat); ids.append(face_id)
+        assert all(math.isfinite(x) for v in vertices for x in v)
+        models.append(dict(name=name, vertices=vertices, faces=faces, uvs=uvs,
+                           face_materials=face_materials, face_ids=ids, materials=materials,
+                           shell=any(materials[i]['name'].upper()=='PORTAL.GIF' for i in face_materials)))
+        script_name = 'BSP\\'+name[:-4]+'.TXT'
+        if script_name.upper() in index:
+            sidecars[name] = asset(script_name).decode('latin1')
+    level = asset('TEST.LEV'); count = struct.unpack_from('<I', level)[0]
+    placements = []
+    for i, (raw, x, y, z, flags) in enumerate(struct.iter_unpack('<16siiiI', level[4:4+count*32])):
+        name = raw.split(b'\0', 1)[0].decode('ascii')
+        assert name.lower() in {n.lower() for n in names}
+        placements.append(dict(index=i, name=name, position=[x, y, z], flags=flags))
+    textures = {}
+    for key, full in sorted(used_textures.items()):
+        filename = Path(key).stem+'.png'
+        textures[key] = dict(file='textures/'+filename, **png(texture_dir/filename, asset(full)))
+    payload = dict(level='TEST.LEV', archive_sha256=expected, models=models,
+                   placements=placements, textures=textures,
+                   coordinate_conversion='Blender(x,y,z) = game(x,z,-y); units unchanged',
+                   limits=['Static meshes and raw placements only; scripts retained as metadata, not executed.',
+                           'Non-rendering portal/proxy faces are retained in a hidden helper collection.',
+                           'Materials approximate original color-key rendering; game lighting is not baked.'])
+    (output/'level-data.json').write_text(json.dumps(payload, separators=(',', ':')))
+    (output/'source-scripts.json').write_text(json.dumps(sidecars, indent=2))
+    report = dict(archive_sha256=expected, source_models=len(models), placements=count,
+                  textures=len(textures), faces=sum(len(m['faces']) for m in models),
+                  original_code_executed=False, output=str(output))
+    (output/'export-report.json').write_text(json.dumps(report, indent=2)+'\n')
+    p = subprocess.run([str(args.blender), '--background', '--factory-startup', '--python-exit-code', '1', '--python',
+                        str(ROOT/'tools/blender_level_scene.py'), '--', str(output)],
+                       capture_output=True, text=True, timeout=600)
+    (output/'blender-build.log').write_text(p.stdout+p.stderr)
+    assert p.returncode == 0, p.stdout+p.stderr
+    assert (output/'BHunter_TEST.blend').is_file() and (output/'blender-validation.json').is_file()
+    assert archive_path.read_bytes() == archive
+    print(json.dumps(report))
+
+
+if __name__ == '__main__':
+    main()

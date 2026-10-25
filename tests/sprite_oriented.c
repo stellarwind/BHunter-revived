@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
+#include <float.h>
 
 #define CHECK(x,message) do {++checks;if(!(x)){fprintf(stderr,"sprite oriented: %s\n",message);++failed;}} while(0)
 typedef struct Capture {unsigned long calls,count[8];float x[8][8],y[8][8],z[8][8],u[8][8],v[8][8],scalar[8][8];BHTextureImage *image;unsigned long color;int reject;} Capture;
@@ -107,6 +108,34 @@ int bh_sprite_oriented_checkpoint(unsigned long *count){
     pool[0].point.z=pool[1].point.z=2;pool[1].point.x=2;pool[0].width=pool[1].width=1;
     pool[0].next=pool+1;pool[1].previous=pool;c.used=2;pool[0].texture_end=2147483648.0f;
     CHECK(!bh_sprite_oriented_draw(&c) && c.error==BH_SPRITE_ORIENTED_NUMERICAL && !got.calls,"texture coordinate conversion rejects out-of-range input");
+    setup(&c,pool,&clip,&image,&got);
+    pool[0].point.z=pool[1].point.z=2;pool[0].width=pool[1].width=1;
+    pool[0].next=pool+1;pool[1].previous=pool;c.used=2;
+    CHECK(bh_sprite_oriented_draw(&c) && c.used==0 && got.calls==1 && c.paths_emitted==1,
+        "duplicate projected two-point edge retains finite degenerate quad instead of rejecting normalization");
+    CHECK(got.x[0][0]==0 && got.y[0][0]==0 && got.x[0][2]==0 && got.y[0][2]==0,
+        "zero direction normalization return is ignored exactly as original");
+    setup(&c,pool,&clip,&image,&got);
+    pool[0].point.z=pool[1].point.z=pool[2].point.z=2;
+    pool[0].width=pool[1].width=pool[2].width=1;
+    pool[0].next=pool+1;pool[1].next=pool+2;pool[1].previous=pool;pool[2].previous=pool+1;c.used=3;
+    _clear87();
+    CHECK(bh_sprite_oriented_draw(&c) && c.used==0 && got.calls==2 && c.paths_emitted==1,
+        "three duplicate points recover unordered zero miter through actual clip/emitter owners");
+    CHECK((_status87()&_SW_INVALID)!=0,"zero miter performs actual masked0/0 and retains original invalid sticky flag");
+    CHECK(_finite(pool[0].corners[2].x) && _finite(pool[0].corners[2].y) &&
+          pool[0].corners[2].x==0 && pool[0].corners[2].y==0 &&
+          pool[1].corners[1].x==0 && pool[1].corners[1].y==0,
+        "unordered compare selects finite float clamp, zero offset stays finite");
+    setup(&c,pool,&clip,&image,&got);
+    pool[0].point.z=pool[1].point.z=pool[2].point.z=2;pool[2].point.x=2;
+    pool[0].width=pool[1].width=pool[2].width=1;
+    pool[0].next=pool+1;pool[1].next=pool+2;pool[1].previous=pool;pool[2].previous=pool+1;c.used=3;
+    CHECK(bh_sprite_oriented_draw(&c) && c.used==0 && got.calls==2,
+        "zero first edge followed by a nonzero edge keeps complete original path");
+    CHECK(close(pool[0].corners[2].x,0) && close(pool[0].corners[2].y,2.5f) &&
+          close(pool[1].corners[1].y,2.5f),"zero/nonzero miter uses unordered float-.8 fallback and shares analytical finite corner");
+    _clear87();
     CHECK(bh_math_environment_supported(),"oriented sprite owners preserve caller PC53 profile");
     bh_math_environment_leave(&fp);if(count)*count=checks;
     printf("{\"scenario\":\"sprite-oriented\",\"checks\":%lu,\"failures\":%lu,\"original_code_required\":false}\n",checks,failed);

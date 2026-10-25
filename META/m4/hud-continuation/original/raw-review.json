@@ -1,0 +1,154 @@
+[
+  {
+    "address": "00421bc0",
+    "end_exclusive": "00421d1a",
+    "bytes": 346,
+    "instructions": 88,
+    "raw_sha256": "99ebc93b66189554a902973295f960e7c9dea219415ebe7c6098ee86cab98ed8",
+    "immutable_exe_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+    "whole_raw_body_verified": true,
+    "role": "gameplay",
+    "boundary": "complete contiguous function; no shared tail, CRT helper or import",
+    "source_owner": "src/bh_player_reset.c",
+    "call_operands": [
+      "0x0047c140"
+    ],
+    "source_limit": "Source prevalidates player and ten live weapon identities; original assumes pointers. Sound-stop failure is reported only after all original mutations.",
+    "original_code_executed": false,
+    "source_admission_decided_here": false
+  },
+  {
+    "address": "00428f50",
+    "end_exclusive": "00429456",
+    "bytes": 1286,
+    "instructions": 360,
+    "raw_sha256": "0567cbb4df15d371f28df55d66e839f6961691b72ae6cdc5f055c1282cfafc1a",
+    "immutable_exe_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+    "whole_raw_body_verified": true,
+    "role": "gameplay",
+    "boundary": "complete contiguous function; no shared tail, CRT helper or import",
+    "source_owner": "src/bh_flyby_scene.c",
+    "call_operands": [
+      "0x00409130",
+      "0x0041c020",
+      "0x00421740",
+      "0x004221e0",
+      "0x004756b0",
+      "0x00475870",
+      "0x004770f0",
+      "0x00477530",
+      "0x00477fe0",
+      "0x004784c0",
+      "0x00478f60",
+      "0x0047b710",
+      "0x0047ddf0"
+    ],
+    "source_limit": "Source rejects invalid waypoint indexing, released entities, malformed input and queue/resource failures; normal callback mutation and handoff are live.",
+    "original_code_executed": false,
+    "source_admission_decided_here": false
+  },
+  {
+    "address": "0042a9b0",
+    "end_exclusive": "0042a9d2",
+    "bytes": 34,
+    "instructions": 7,
+    "raw_sha256": "aa19df9829dd3e78a3e87262bc3cfe41263701609389825989264322b36f0a38",
+    "immutable_exe_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+    "whole_raw_body_verified": true,
+    "role": "gameplay",
+    "boundary": "complete contiguous function; no shared tail, CRT helper or import",
+    "source_owner": "src/bh_flyby_scene.c",
+    "call_operands": [],
+    "source_limit": "Source callback rearm is guarded by explicit entity/generation binding; original uses a global mode counter.",
+    "original_code_executed": false,
+    "source_admission_decided_here": false
+  },
+  {
+    "address": "0045ca10",
+    "end_exclusive": "0045cbbd",
+    "bytes": 429,
+    "instructions": 130,
+    "raw_sha256": "61b3ba36d5e9b9ef9b50fb6bbfd15be4a02b32f22b927db94f8ae055bd4593fa",
+    "immutable_exe_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+    "whole_raw_body_verified": true,
+    "role": "renderer",
+    "boundary": "complete contiguous function; no shared tail, CRT helper or import",
+    "source_owner": "src/bh_frame_render.c",
+    "call_operands": [
+      "0x004508a0",
+      "0x0047de20",
+      "dword ptr [ECX + 0x28]",
+      "dword ptr [EDX + 0x14]",
+      "dword ptr [EDX + 0x2c]"
+    ],
+    "source_limit": "Source guards invalid viewport, cyclic texture list and out-of-bounds locked pixels; original trusts raw pointers and widths.",
+    "original_code_executed": false,
+    "source_admission_decided_here": false
+  },
+  {
+    "address": "0045cbc0",
+    "end_exclusive": "0045cdee",
+    "bytes": 558,
+    "instructions": 167,
+    "raw_sha256": "6e7d8c8cedce91e82e6f47e41e3287df1a28ebb2eefa047507039d613ec68e71",
+    "immutable_exe_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+    "whole_raw_body_verified": true,
+    "role": "renderer",
+    "boundary": "complete contiguous function; no shared tail, CRT helper or import",
+    "source_owner": "src/bh_frame_render.c",
+    "call_operands": [
+      "0x004508a0",
+      "0x0045ca10",
+      "0x0047de20",
+      "EBX",
+      "dword ptr [ECX + 0x14]",
+      "dword ptr [ECX + 0x2c]",
+      "dword ptr [ECX + 0x80]",
+      "dword ptr [EDX + 0x14]",
+      "dword ptr [EDX + 0x28]",
+      "dword ptr [EDX + 0x64]"
+    ],
+    "source_limit": "Source bounds RGB to 0..255 and requires valid surfaces; original arbitrary signed color overflow/native failure state is not promised.",
+    "original_code_executed": false,
+    "source_admission_decided_here": false
+  },
+  {
+    "address": "00479090",
+    "ranges": [
+      {
+        "start": "00479090",
+        "end_exclusive": "00479116",
+        "role": "entry",
+        "bytes": 134,
+        "instructions": 38,
+        "sha256": "a6457e07e5de2828c0687a485420b4dc9949b0f171a5aa7ac736bdb3060872c7",
+        "hex": "833d50f24d0001751968ff00000068ff00000068ff000000e8133bfeff83c40ceb05e85939feffa0ec544f008a0df0544f003ac174398b0dec544f0081e1ff0000008bc1c1e0032bc18d0c408d048dd8004f0050ff10a0ec544f008a0df0544f0083c404fec03ac1a2ec544f0075c78b44240c85c0740a50ff1083c40485c075f6e91a78fdff"
+      },
+      {
+        "start": "00450930",
+        "end_exclusive": "00450979",
+        "role": "owned_tail",
+        "bytes": 73,
+        "instructions": 26,
+        "sha256": "ae2a968fac1395ed2767c233c22e694f883870dadfd0aec5981ab7967de396a3",
+        "hex": "a1f4324e00568b3570dc4e0085c075378b0d80de4e004185f6890d80de4e00741056e849ffffff8b761083c40485f675f0a1589c4e00508b08ff512ca1589c4e00508b10ff52285ec3"
+      }
+    ],
+    "bytes": 207,
+    "instructions": 64,
+    "concatenated_ranges_sha256": "74e88d80c4df8ecb82dc098e25ab46cce7522c079d0ac313840735f6b28eb451",
+    "immutable_exe_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+    "whole_raw_body_verified": true,
+    "role": "renderer",
+    "boundary": "one discontiguous owner; 00450930 tail is not a separate function",
+    "source_owner": "src/bh_render_execute.c",
+    "call_operands": [
+      "0045cbc0",
+      "0045ca10",
+      "004508a0"
+    ],
+    "source_limit": "Typed semantic command selectors and explicit borrowed source contexts replace original function pointers; callback mutation remains live.",
+    "original_code_executed": false,
+    "source_admission_decided_here": false
+  }
+]

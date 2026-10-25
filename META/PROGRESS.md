@@ -4,9 +4,18 @@ Updated 2026-10-25. Plan: `../RESTORATION_PLAN.md`.
 
 ## Current checkpoint
 
-Timed source restoration, 2026-10-25: The 90-minute input/render/actor-route block restores **33 complete owners: 267/727 admitted original functions in 249 translation units**. The real integration passes **3,839,979 checks**, the asset-free clean build **3,347,025 checks**, with **120 missing-module link controls** and identical source hashes. New owners cover horizon and quad queues/geometry, radar, complete input message/collection/device owners, target/route updates, three-buffer handoff, generic queue reservation and queued render-mode execution. Rectangle UV and live near-plane fixes retain separate historical variants. No original code or game execution, native capture or cursor recenter occurred.
 
-Both full scene callbacks `0041c860`/`00428f50`, render producer/worker `00479140`/`00471e00`, complete HUD/attachment setup, player/flyby construction, weapon/mission lifetimes and startup resource/script bindings remain open. Horizon geometry is restored; software dispatch/raster kernels remain unfinished. PC24, CD audio and DirectPlay requirements remain. M3 is skipped; M4 is incomplete and no playable source game exists. This timed block stops pending user resumption. Evidence: `m4/frontier-90min/README.md`; audit `python tools/check_frontier_90min.py`.
+HUD/attachment continuation,2026-10-25: **22 complete owners added:322/727 linked original functions in310 translation units**. The final real integration passes **3,845,398 checks**; the asset-free clean checkout passes **3,352,159 checks**, with **148 missing-module link controls** and identical source hashes. Complete player/flyby scenes and rearm, player reset, both display clears, whole renderer callback (including its owned tail), message/panel/plain-text family, two weapon timers and four empty-ammo/action methods now compile in their real units, link real definitions and execute affected checks. The640x480 source player scene now drains through the complete renderer; native panel checks distinguish plain text cursor continuity from positioned text.
+
+The factory/weapon identity registry and panel allocation remain explicit adapters; unrecovered firing/mission/player/startup lifetimes are not counted as complete. Full render producer/worker, software raster dispatch, PC24 behavior, CD audio and DirectPlay remain open. No original code, game execution, automated gameplay or native input occurred. M3 remains skipped; M4 remains incomplete. The user requested early closeout and **work is stopped**. Evidence: `m4/hud-continuation/README.md`, `validation.json`, `owners.json`; audit `python tools/check_hud_continuation.py`.
+
+The requested textured Blender export was delivered separately and confirmed good by the user:454 BSP models,5815 placements,10367 faces and351 packed textures, with saved-file transform/UV verification. This is an asset export, not additional source completion. No further screenshots unless explicitly requested.
+
+### Previous HUD checkpoint (historical)
+
+Timed HUD/attachment restoration, 2026-10-25: **33 complete owners added: 300/727 admitted original functions in 288 translation units**. The real integration passes **3,844,710 checks**, the asset-free clean build **3,351,626 checks**, with **138 missing-module link controls** and identical source hashes. Complete room/portal radar graph, HUD setup/markers/world/flat status, scoreboard, weapon arc/target overlays, full-image plane quads, adaptive paths, two-point segments, fade, end-frame presentation, shared weapon reset/delay, both selected weapons' lifecycle, target removal and float timers now link with real source definitions. Two corrected ribbon variants preserve duplicate-point/unordered x87 behavior with historical evidence kept separately. Real HUD/font/weapon assets render through actual offscreen DirectDraw/Direct3D2 owners. No original code, game execution, native capture or cursor recenter occurred.
+
+Next source boundary is complete player scene callback `0041c860`; its direct rendering dependencies are now available, while player/camera/weapon construction and live resource/state binding remain explicit work. Flyby callback `00428f50`, render producer/worker `00479140`/`00471e00`, software raster dispatch, mission lifetimes and startup resource/script binding remain open. Fractional native fade has a patterned host readback; lost-surface Restore, PC24 numerical behavior, CD audio and DirectPlay retain stated validation limits. M3 is skipped; M4 is incomplete and no playable source game exists. User directed stopping at exactly 300 admitted functions; this checkpoint is stopped pending resumption. Evidence: `m4/hud-attachment/README.md`, `m4/hud-attachment/NEXT.md`; audit `python tools/check_hud_attachment.py`.
 
 Human playtesting offer, 2026-10-24: ask the user for a focused manual playtest when a concrete source-restoration question needs gameplay evidence. Describe the action and observation needed; no automated gameplay is authorized. Source restoration continues independently wherever possible.
 
@@ -26,6 +35,12 @@ Human playtesting offer, 2026-10-24: ask the user for a focused manual playtest 
 | M9 Release/preservation | Not started | No release package |
 
 ## Working evidence
+
+Previous input/render/actor-route checkpoint, preserved as history:
+
+Timed source restoration, 2026-10-25: The 90-minute input/render/actor-route block restores **33 complete owners: 267/727 admitted original functions in 249 translation units**. The real integration passes **3,839,979 checks**, the asset-free clean build **3,347,025 checks**, with **120 missing-module link controls** and identical source hashes. New owners cover horizon and quad queues/geometry, radar, complete input message/collection/device owners, target/route updates, three-buffer handoff, generic queue reservation and queued render-mode execution. Rectangle UV and live near-plane fixes retain separate historical variants. No original code or game execution, native capture or cursor recenter occurred.
+
+Both full scene callbacks `0041c860`/`00428f50`, render producer/worker `00479140`/`00471e00`, complete HUD/attachment setup, player/flyby construction, weapon/mission lifetimes and startup resource/script bindings remain open. Horizon geometry is restored; software dispatch/raster kernels remain unfinished. PC24, CD audio and DirectPlay requirements remain. M3 is skipped; M4 is incomplete and no playable source game exists. This timed block stops pending user resumption. Evidence: `m4/frontier-90min/README.md`; audit `python tools/check_frontier_90min.py`.
 
 Previous checkpoint, preserved as history:
 
