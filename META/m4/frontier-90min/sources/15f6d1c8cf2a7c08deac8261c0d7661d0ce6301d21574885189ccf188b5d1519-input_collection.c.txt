@@ -1,0 +1,106 @@
+#include "../src/bh_input_collection.h"
+#include "../src/bh_input_messages.h"
+#include "../src/bh_fp.h"
+#include "input_collection_cases.h"
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+static unsigned long checks;static int failures;
+#define CHECK(x,s) do{++checks;if(!(x)){++failures;if(failures<15)printf("FAIL input collection %d: %s\n",__LINE__,s);}}while(0)
+typedef struct Fixture {
+    BHInputCollection collect;BHInputSnapshot snapshot;BHPlayerInputOwner lists;
+    JOYINFOEX sample[2];POINT cursor;
+    MMRESULT joystick_result;BOOL cursor_result,recenter_result;
+    unsigned long joystick_calls[2],cursor_calls,recenter_calls,order;
+} Fixture;
+static Fixture *active;
+static MMRESULT WINAPI joystick_sample(UINT device,LPJOYINFOEX sample){
+    CHECK(device<2 && sample->dwSize==52 && sample->dwFlags==0x4ff,"actual WinMM joystick ABI and flags");
+    if(device>=2)return JOYERR_PARMS;++active->joystick_calls[device];active->order=active->order*4+device+1;
+    *sample=active->sample[device];return active->joystick_result;
+}
+static BOOL WINAPI cursor_sample(LPPOINT point){++active->cursor_calls;active->order=active->order*4+3;*point=active->cursor;return active->cursor_result;}
+static BOOL WINAPI recenter_sample(int x,int y){CHECK(x==160 && y==100,"original physical recenter coordinates forwarded only to isolated test binding");++active->recenter_calls;return active->recenter_result;}
+static int setup(Fixture *f){unsigned long i;memset(f,0,sizeof(*f));CHECK(bh_player_input_owner_init(&f->lists,NULL),"real list owner initialized");
+    CHECK(bh_input_collection_init(&f->collect,&f->snapshot,&f->lists),"explicit collector startup adapter");
+    CHECK(f->collect.api.joystick==joyGetPosEx && f->collect.api.cursor==GetCursorPos && f->collect.api.recenter==SetCursorPos,"shipping defaults bind actual Win32 definitions");
+    f->collect.api.joystick=joystick_sample;f->collect.api.cursor=cursor_sample;f->collect.api.recenter=recenter_sample;
+    for(i=0;i<2;++i)f->sample[i].dwXpos=f->sample[i].dwYpos=f->sample[i].dwZpos=f->sample[i].dwRpos=32768;
+    f->cursor.x=160;f->cursor.y=100;f->cursor_result=f->recenter_result=1;active=f;return 1;
+}
+static void done(Fixture *f){bh_player_input_owner_dispose(&f->lists);active=NULL;}
+static double normalized(unsigned long value,int deadzone){
+    /* Independent piecewise transfer function over the raw WinMM uint32. */
+    double x=(double)value;
+    if(deadzone){if(x<27768)x=(x-27768)/25000;else if(x>37768)x=(x-37768)/25000;else x=0;}
+    else x=(x-32768)/30000;
+    return x< -1?-1:x>1?1:x;
+}
+static void axes(void){Fixture f;unsigned long raw,device,axis,dead,changed,values[]={0,1,2767,2768,27767,27768,27769,32767,32768,32769,37767,37768,37769,62767,62768,65535,0x7fffffffUL,0x80000000UL,0xffffffffUL};
+    setup(&f);f.collect.enabled[0]=f.collect.enabled[1]=1;f.collect.calibrated[0]=f.collect.calibrated[1]=1;f.collect.capabilities[0]=f.collect.capabilities[1]=3;
+    for(raw=0;raw<sizeof(values)/sizeof(values[0]);++raw)for(dead=0;dead<2;++dead){
+        f.collect.deadzone_mask=dead?0xffffffffUL:0;f.order=0;
+        for(device=0;device<2;++device){f.sample[device].dwXpos=f.sample[device].dwYpos=f.sample[device].dwZpos=f.sample[device].dwRpos=values[raw];f.sample[device].dwButtons=device?10:5;}
+        CHECK(bh_input_collect(&f.collect,&changed),"collect both active real-shape joystick samples");
+        CHECK(f.order==27,"original joystick0 then joystick1 then cursor order");
+        for(axis=0;axis<8;++axis)CHECK(fabs(f.snapshot.axes[axis]-normalized(values[raw],dead))<1e-7,"independent raw-axis/dead-zone analytical oracle");
+        CHECK(f.snapshot.current[166]==1 && f.snapshot.current[167]==0 && f.snapshot.current[168]==1 && f.snapshot.current[169]==0 &&
+            f.snapshot.current[170]==0 && f.snapshot.current[171]==1 && f.snapshot.current[172]==0 && f.snapshot.current[173]==1,"actual original four-button index mapping for both devices");
+    }
+    f.collect.capabilities[0]=0;f.sample[0].dwXpos=62768;f.sample[0].dwYpos=2768;CHECK(bh_input_collect(&f.collect,&changed) && !f.snapshot.axes[2] && !f.snapshot.axes[3],"absent Z/R axes reset only on enabled calibrated device");
+    f.collect.enabled[1]=0;f.snapshot.axes[4]=.25f;f.snapshot.current[170]=1;CHECK(bh_input_collect(&f.collect,&changed) && f.snapshot.axes[4]==.25f && f.snapshot.current[170]==1,"disabled joystick retains prior axes/buttons");done(&f);
+}
+static void calibration(void){Fixture f;unsigned long changed,i;setup(&f);f.collect.enabled[0]=1;f.collect.capabilities[0]=3;f.sample[0].dwRpos=65535;
+    f.sample[0].dwXpos=27768;CHECK(bh_input_collect(&f.collect,&changed) && !f.collect.calibrated[0],"initial center sample doesn't activate");
+    f.sample[0].dwXpos=50268;CHECK(bh_input_collect(&f.collect,&changed) && !f.collect.calibrated[0],"exact half-range threshold remains calibrating");
+    f.sample[0].dwRpos=65535;CHECK(bh_input_collect(&f.collect,&changed) && !f.collect.calibrated[0],"first R sample initializes range but alone is not movement");
+    f.sample[0].dwXpos=50269;CHECK(bh_input_collect(&f.collect,&changed) && f.collect.calibrated[0],"strictly larger range activates");
+    for(i=0;i<4;++i)CHECK(f.snapshot.axes[i]==0,"activation poll still outputs calibration zeros");
+    CHECK(bh_input_collect(&f.collect,&changed) && f.snapshot.axes[0]>.5f && f.snapshot.axes[3]==1,"next poll uses active transfer function");done(&f);
+}
+static void golden(void){Fixture f;unsigned long i,bits,changed,position;setup(&f);f.collect.enabled[0]=1;
+    for(i=0;i<sizeof(bh_input_axis_cases)/sizeof(bh_input_axis_cases[0]);++i){const BHInputAxisCase *a=bh_input_axis_cases+i;
+        f.collect.calibrated[0]=1;f.collect.deadzone_mask=a->deadzone?0xffffffffUL:0;f.sample[0].dwXpos=a->raw;
+        CHECK(bh_input_collect(&f.collect,&changed),"exact active-axis fixture");memcpy(&bits,f.snapshot.axes,4);CHECK(bits==a->expected,"independent exact retained/store axis golden");
+        f.collect.calibrated[0]=0;f.collect.minimum[0]=1;f.collect.maximum[0]=-1;
+        CHECK(bh_input_collect(&f.collect,&changed),"exact calibration-axis fixture");memcpy(&bits,f.collect.minimum,4);CHECK(bits==a->calibration,"independent exact calibration transfer golden");
+    }
+    f.collect.enabled[0]=0;
+    for(i=0;i<sizeof(bh_input_mouse_cases)/sizeof(bh_input_mouse_cases[0]);++i){const BHInputMouseCase *a=bh_input_mouse_cases+i;
+        memcpy(f.snapshot.mouse_axes,&a->previous,4);position=(unsigned long)a->delta+160UL;memcpy(&f.cursor.x,&position,4);f.cursor.y=100;
+        CHECK(bh_input_collect(&f.collect,&changed),"exact double-filter fixture");memcpy(&bits,f.snapshot.mouse_axes,4);CHECK(bits==a->expected,"independent exact retained-lower/stored-upper mouse golden");
+    }
+    done(&f);
+}
+static void mouse_and_lists(void){Fixture f;BHPlayerInputList *list,*disabled;BHPlayerInputState state;unsigned long changed;float expected;setup(&f);
+    list=bh_player_input_create(&f.lists,1);disabled=bh_player_input_create(&f.lists,0);CHECK(list && disabled,"actual owning list allocations");if(!list || !disabled){done(&f);return;}
+    bh_player_input_bind_key(list,7,"FIRE",0,0,'A');bh_input_message(&f.snapshot,NULL,WM_KEYDOWN,'A',0);
+    memset(&state,0,sizeof(state));memset(disabled->state,0x5a,sizeof(disabled->state));
+    f.cursor.x=170;f.cursor.y=80;
+    CHECK(bh_input_collect(&f.collect,&changed) && changed==1 && list->flags==1,"first enabled poll evaluates full state then advances previous keys");
+    CHECK(bh_player_input_apply_packet_checked(&state,list->state,list->state[0]) && state.values[7]==1,"real binding packet owner consumes collected message state");
+    CHECK(disabled->state[0]==0x5a && f.snapshot.previous['A']==1,"disabled lists untouched and current->previous snapshot published last");
+    CHECK(f.snapshot.pair3[0]==522 && f.snapshot.pair3[1]==492 && f.snapshot.pair4[0]==10 && f.snapshot.pair4[1]==(unsigned short)-20,"unsigned16 accumulated and separate signed-delta low words");
+    CHECK(f.snapshot.mouse_axes[0]==(float).0198 && f.snapshot.mouse_axes[1]==(float)-.0396,"double -.002/.99 filter (independent decimal result)");
+    f.cursor.x=160;f.cursor.y=100;expected=(float)((double)f.snapshot.mouse_axes[0]*.99);CHECK(bh_input_collect(&f.collect,&changed) && !changed && f.snapshot.mouse_axes[0]==expected,"zero-motion decay and edge-only held state");
+    bh_input_message(&f.snapshot,NULL,WM_KEYUP,'A',0x40000000L);CHECK(bh_input_collect(&f.collect,&changed) && changed==1,"message release counted after all list evaluations");
+    CHECK(bh_player_input_apply_packet_checked(&state,list->state,list->state[0]) && state.values[7]==0,"real packet applies edge-only release");
+    f.snapshot.pair3[0]=0;f.snapshot.pair3[1]=1020;f.cursor.x=159;f.cursor.y=110;
+    CHECK(bh_input_collect(&f.collect,&changed) && f.snapshot.pair3[0]==1023 && f.snapshot.pair3[1]==1023,"16-bit negative underflow clamps to1023, no signed lower clamp");
+    f.snapshot.pair3[0]=65000;f.cursor.x=1160;f.cursor.y=100;
+    CHECK(bh_input_collect(&f.collect,&changed) && f.snapshot.pair3[0]==464 && f.snapshot.mouse_axes[0]==1,"16-bit addition wraps before upper clamp, mouse filter saturates");
+    f.recenter_result=0;CHECK(bh_input_collect(&f.collect,&changed) && !f.collect.last_recenter,"original ignored recenter failure remains nonfatal with recorded result");done(&f);
+}
+static void guards_and_native(void){Fixture f;BHPlayerInputList *list;unsigned long changed=0x12345678UL;POINT point;JOYINFOEX sample;MMRESULT result;setup(&f);
+    CHECK(GetCursorPos(&point),"actual native read-only cursor API executes (no recenter)");memset(&sample,0,sizeof(sample));sample.dwSize=sizeof(sample);sample.dwFlags=0x4ff;
+    result=joyGetPosEx(0,&sample);printf("{\"input_readonly_joystick_hresult\":%lu,\"native_recenter_calls\":0}\n",(unsigned long)result);
+    f.cursor_result=0;CHECK(!bh_input_collect(&f.collect,&changed) && f.collect.error==BH_INPUT_COLLECTION_DEVICE && changed==0x12345678UL && !f.recenter_calls,"failed cursor read never moves cursor or publishes count");
+    f.cursor_result=1;f.collect.enabled[0]=1;f.joystick_result=JOYERR_UNPLUGGED;
+    CHECK(!bh_input_collect(&f.collect,&changed) && !f.recenter_calls,"failed joystick explicitly rejected before cursor recenter");
+    f.collect.enabled[0]=0;list=bh_player_input_create(&f.lists,1);CHECK(list!=NULL,"real topology guard owner");if(list){list->next=list;CHECK(!bh_input_collect(&f.collect,&changed) && f.collect.error==BH_INPUT_COLLECTION_TOPOLOGY,"cyclic input list rejected");list->next=NULL;}
+    done(&f);
+}
+int bh_input_collection_checkpoint(unsigned long *count){BHMathEnvironment fp;checks=0;failures=0;if(!bh_math_environment_enter(&fp))return 2;
+    axes();calibration();mouse_and_lists();guards_and_native();golden();CHECK(bh_math_environment_supported(),"input collection retainsPC53");bh_math_environment_leave(&fp);if(count)*count=checks;
+    printf("{\"scenario\":\"input-collection\",\"checks\":%lu,\"failures\":%d,\"native_recenter_calls\":0,\"original_code_required\":false}\n",checks,failures);return failures!=0;
+}

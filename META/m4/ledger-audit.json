@@ -1,8 +1,8 @@
 {
-  "ledger_sha256": "d4ba13f2f6ce2a7fc7e0001221e2da1adf3cf534d131d844b71e1ded32e3e6f4",
+  "ledger_sha256": "a4a75bdc09a496a2111337b6335009d142d8f1f426c50eebb7607a750e6bab6b",
   "build_source_hashes_verified": true,
-  "total_variants": 277,
-  "unique_original_addresses": 243,
+  "total_variants": 316,
+  "unique_original_addresses": 276,
   "categories": {
     "historical_or_superseded": [
       {
@@ -210,6 +210,54 @@
         "address": "0045adf0",
         "source": "META/m4/sprite-world/sources/c25e81cd1a9201006fad78fd08f417191f19a748ac048f2a68640a2f8dfa393b-bh_draw_resource.c.txt",
         "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004412f0-functional-c",
+        "address": "004412f0",
+        "source": "src/bh_pickup_draw.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00440c40-functional-c",
+        "address": "00440c40",
+        "source": "src/bh_pickup_draw.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004558d0-functional-c",
+        "address": "004558d0",
+        "source": "src/bh_pickup_draw.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00478f60-functional-c",
+        "address": "00478f60",
+        "source": "src/bh_pickup_draw.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004776c0-functional-c",
+        "address": "004776c0",
+        "source": "src/bh_pickup_draw.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00454fc0-functional-c",
+        "address": "00454fc0",
+        "source": "src/bh_pickup_draw.c",
+        "implementation": "wip",
         "integration": "linked_harness",
         "game_admitted": false
       },
@@ -1618,46 +1666,6 @@
         "game_admitted": false
       },
       {
-        "id": "004412f0-functional-c",
-        "address": "004412f0",
-        "source": "src/bh_pickup_draw.c",
-        "implementation": "func",
-        "integration": "linked_harness",
-        "game_admitted": false
-      },
-      {
-        "id": "00440c40-functional-c",
-        "address": "00440c40",
-        "source": "src/bh_pickup_draw.c",
-        "implementation": "func",
-        "integration": "linked_harness",
-        "game_admitted": false
-      },
-      {
-        "id": "004558d0-functional-c",
-        "address": "004558d0",
-        "source": "src/bh_pickup_draw.c",
-        "implementation": "func",
-        "integration": "linked_harness",
-        "game_admitted": false
-      },
-      {
-        "id": "00478f60-functional-c",
-        "address": "00478f60",
-        "source": "src/bh_pickup_draw.c",
-        "implementation": "func",
-        "integration": "linked_harness",
-        "game_admitted": false
-      },
-      {
-        "id": "004776c0-functional-c",
-        "address": "004776c0",
-        "source": "src/bh_pickup_draw.c",
-        "implementation": "func",
-        "integration": "linked_harness",
-        "game_admitted": false
-      },
-      {
         "id": "00478990-functional-c",
         "address": "00478990",
         "source": "src/bh_draw_controls.c",
@@ -2144,6 +2152,310 @@
         "implementation": "func",
         "integration": "linked_harness",
         "game_admitted": false
+      },
+      {
+        "id": "004784c0-functional-c",
+        "address": "004784c0",
+        "source": "src/bh_horizon_queue.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00477aa0-functional-c",
+        "address": "00477aa0",
+        "source": "src/bh_horizon_queue.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0045db80-functional-c",
+        "address": "0045db80",
+        "source": "src/bh_horizon.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0046d630-functional-c",
+        "address": "0046d630",
+        "source": "src/bh_depth_subdivide.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0046d9d0-functional-c",
+        "address": "0046d9d0",
+        "source": "src/bh_depth_subdivide.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00478060-functional-c",
+        "address": "00478060",
+        "source": "src/bh_material_queue.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00477fa0-functional-c",
+        "address": "00477fa0",
+        "source": "src/bh_material_queue.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00457590-functional-c",
+        "address": "00457590",
+        "source": "src/bh_sprite_quad.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00478730-functional-c",
+        "address": "00478730",
+        "source": "src/bh_quad_queue.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00477760-functional-c",
+        "address": "00477760",
+        "source": "src/bh_quad_queue.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00421610-functional-c",
+        "address": "00421610",
+        "source": "src/bh_target_selection.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004340f0-functional-c",
+        "address": "004340f0",
+        "source": "src/bh_target_steering.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004344f0-functional-c",
+        "address": "004344f0",
+        "source": "src/bh_route_choice.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00434810-functional-c",
+        "address": "00434810",
+        "source": "src/bh_route_curve_length.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00434650-functional-c",
+        "address": "00434650",
+        "source": "src/bh_route_guided.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004343c0-functional-c",
+        "address": "004343c0",
+        "source": "src/bh_axis_snap.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00434f40-functional-c",
+        "address": "00434f40",
+        "source": "src/bh_actor_route.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004355c0-functional-c",
+        "address": "004355c0",
+        "source": "src/bh_actor_route.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00435790-functional-c",
+        "address": "00435790",
+        "source": "src/bh_actor_route_lifetime.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00435720-functional-c",
+        "address": "00435720",
+        "source": "src/bh_actor_route_lifetime.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00473c40-functional-c",
+        "address": "00473c40",
+        "source": "src/bh_input_messages.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004744f0-functional-c",
+        "address": "004744f0",
+        "source": "src/bh_input_collection.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00473d60-functional-c",
+        "address": "00473d60",
+        "source": "src/bh_input_devices.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00473fe0-functional-c",
+        "address": "00473fe0",
+        "source": "src/bh_input_devices.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0041b650-functional-c",
+        "address": "0041b650",
+        "source": "src/bh_radar.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00471c00-functional-c",
+        "address": "00471c00",
+        "source": "src/bh_frame_buffers.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00471cc0-functional-c",
+        "address": "00471cc0",
+        "source": "src/bh_frame_buffers.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00471d70-functional-c",
+        "address": "00471d70",
+        "source": "src/bh_frame_buffers.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00455410-functional-c",
+        "address": "00455410",
+        "source": "src/bh_screen_quad.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00477680-functional-c",
+        "address": "00477680",
+        "source": "src/bh_screen_quad.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00478e50-functional-c",
+        "address": "00478e50",
+        "source": "src/bh_screen_quad.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004412f0-rect-uv-corrected-c",
+        "address": "004412f0",
+        "source": "src/bh_pickup_draw.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00440c40-rect-uv-corrected-c",
+        "address": "00440c40",
+        "source": "src/bh_pickup_draw.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004558d0-rect-uv-corrected-c",
+        "address": "004558d0",
+        "source": "src/bh_pickup_draw.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00478f60-rect-uv-corrected-c",
+        "address": "00478f60",
+        "source": "src/bh_pickup_draw.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004776c0-rect-uv-corrected-c",
+        "address": "004776c0",
+        "source": "src/bh_pickup_draw.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00477530-functional-c",
+        "address": "00477530",
+        "source": "src/bh_queue_reserve.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00477360-functional-c",
+        "address": "00477360",
+        "source": "src/bh_queue_reserve.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
       }
     ],
     "unfinished_active": [
@@ -2204,14 +2516,6 @@
         "game_admitted": false
       },
       {
-        "id": "00454fc0-functional-c",
-        "address": "00454fc0",
-        "source": "src/bh_pickup_draw.c",
-        "implementation": "wip",
-        "integration": "linked_harness",
-        "game_admitted": false
-      },
-      {
         "id": "0041c860-reviewed-frontier",
         "address": "0041c860",
         "source": null,
@@ -2226,13 +2530,21 @@
         "implementation": "not_started",
         "integration": "not_built",
         "game_admitted": false
+      },
+      {
+        "id": "00454fc0-rect-uv-corrected-c",
+        "address": "00454fc0",
+        "source": "src/bh_pickup_draw.c",
+        "implementation": "wip",
+        "integration": "linked_harness",
+        "game_admitted": false
       }
     ]
   },
   "category_counts": {
-    "historical_or_superseded": 29,
+    "historical_or_superseded": 35,
     "completed_comparison_only": 4,
-    "completed_linked_source": 234,
+    "completed_linked_source": 267,
     "unfinished_active": 10
   },
   "duplicate_addresses": {
@@ -2348,6 +2660,30 @@
       "0045adf0-functional-c",
       "0045adf0-functional-c-queue-integration"
     ],
+    "004412f0": [
+      "004412f0-functional-c",
+      "004412f0-rect-uv-corrected-c"
+    ],
+    "00440c40": [
+      "00440c40-functional-c",
+      "00440c40-rect-uv-corrected-c"
+    ],
+    "004558d0": [
+      "004558d0-functional-c",
+      "004558d0-rect-uv-corrected-c"
+    ],
+    "00478f60": [
+      "00478f60-functional-c",
+      "00478f60-rect-uv-corrected-c"
+    ],
+    "004776c0": [
+      "004776c0-functional-c",
+      "004776c0-rect-uv-corrected-c"
+    ],
+    "00454fc0": [
+      "00454fc0-functional-c",
+      "00454fc0-rect-uv-corrected-c"
+    ],
     "00409f20": [
       "00409f20-functional-c",
       "00409f20-functional-c-scene-bindings"
@@ -2361,7 +2697,7 @@
       "00409530-functional-c-scene-bindings"
     ]
   },
-  "support_implementations": 119,
+  "support_implementations": 126,
   "original_backed_diagnostics": 24,
   "game_admitted_variants": 0,
   "limits": [

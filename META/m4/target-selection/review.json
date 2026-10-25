@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "address": "00421610",
+  "end_exclusive": "00421740",
+  "role": "game",
+  "role_confidence": "high",
+  "classification_before_implementation": {
+    "source": "META/m4/player-frontier/review.json",
+    "inherited_pre_decompile_review": true,
+    "evidence": [
+      "Complete contiguous 304-byte/107-instruction body, entry stack frame and own RET",
+      "Both retained incoming callers (00438ff0 at 00439059 and 0043a1d0 at 0043a2c6) are game actor/target behavior; first embeds fugitive surveillance strings",
+      "Reads game player/list globals, actor class and signed priority fields, calls event-3 installed query",
+      "No imported thunk, CRT/library fingerprint, EH/unwind scaffolding, or shared-tail boundary"
+    ],
+    "library_survey": "No reusable library identified; required game actor-selection behavior, not assigned from mere unknown engine provenance"
+  },
+  "source_symbol": "bh_target_select",
+  "source_variant": {
+    "src/bh_target_selection.c": "589b0ee1dd8f1a81a583ae2d14a8fa2209c85d6445a50a25c0029390feb7f9d2",
+    "src/bh_target_selection.h": "585d764b0dcaef8cd23fe44f1540328e38074b83f1ffeb3212e462e7c4f62653",
+    "tests/target_selection.c": "8f23176b4bc4bed1f9494891b1ff39a681deda9574e76cf17c4a7055d3cfd47e",
+    "tests/target_selection_cases.h": "14316f980e14a770f44f59d24bdb0e4d122b123dfc2815867f5d358ec47237e4",
+    "src/bh_entities.c": "6fc5e54d88906a7922c149bb1ccc9851c2cbe701217e57d8e3c72646d81cb92a",
+    "src/bh_entities.h": "a0245c7cf2fe4f2529170d469030e62401f3651e21699f300aa83e9d80046489",
+    "src/bh_fp.c": "cc8400a29fd082f96ffd9b483f490a44992717b25eac0cb32e2e108ba446f3f8",
+    "src/bh_fp.h": "f4565fc55c52d3582181db98d3199f6c8f9b665ffd227ab715ce7a03ab4e818d",
+    "src/bh_round.c": "ff848010705702e25cf85f5ba1d9c30a024d1ea8bf93227240285b9c54fc8ef4",
+    "src/bh_round.h": "a81be03deb24df6a85cd6f4dd8206fa37a37a952574422e68377dcd71d8af2d6",
+    "src/bh_math.h": "9ebaf91c16011277e1e2f9a9c3791b3ea1245dafa3e096d918422378d6065a9d",
+    "src/bh_scene.h": "0f999ccc243aeace1bba1b8008beb836760dd7c940adaec9ac53042213a6a48c"
+  },
+  "implementation": "func",
+  "integration": "linked_harness",
+  "target": "build/target-selection/target-selection.exe",
+  "admission": "Standalone functional evidence only; parent must run current full integration before ledger admission",
+  "dependencies": [
+    {
+      "original": "004dfab8",
+      "source": "borrowed BHEntity *player parameter",
+      "ownership": "caller retains complete player storage/lifetime; no guessed global definition"
+    },
+    {
+      "original": "004dfb28",
+      "source": "borrowed BHEntity *head parameter",
+      "ownership": "caller retains complete actor list/lifetimes; payload+12 successor"
+    },
+    {
+      "original": "actor+d0 event3 query",
+      "source": "actual installed BHEntity.query callback",
+      "ownership": "no production callback fabricated; isolated fixture registered via real entity owner"
+    },
+    {
+      "original": "x87 FST float stores",
+      "source": "real existing bh_round_float in src/bh_round.c",
+      "ownership": "separate TU materializes required float rounding before mixed products"
+    },
+    {
+      "original": "FSQRT/FILD/FCOM",
+      "source": "sqrt intrinsic, exact signed long-to-double conversion, explicit unordered test and ordered comparison",
+      "ownership": "real VC5 runtime supplies _isnan; no original code execution"
+    }
+  ],
+  "contracts": {
+    "abi": "cdecl source API exposes original two globals and bounded failure status explicitly; 32-bit pointers/long, BHEntity query+d0/payload+e4 and position+c checked at compile time",
+    "initial": "best raw float bits 7e876abd (9e37), target null; eligible player+238 nonzero selects player unconditionally, regardless excluded or score; weight signed player+234",
+    "filter": "list actor != excluded and signed class+fc ==2; list next+f0 read after callback",
+    "packet": "40-byte original stack capacity. Only event=3 initialized before each query; callback fills floats at+4/+8/+c. Other words unspecified",
+    "player_score": "dx=player.x-origin.x etc retained at PC53; rx=float(dx), rz=float(dz); sqrt((dx*rx+dy*dy)+dz*rz) / signed_exact(player+234), then float store",
+    "actor_score": "event-3 positions minus origin; rx=float(dx), ry=float(dy); sqrt((dx*rx+dy*ry)+dz*dz) / signed_exact(actor+100)",
+    "selection": "compare retained score to stored-float incumbent BEFORE score float conversion. FCOM C0 chooses ordered less OR unordered. Ordered equality retains prior target, but identical nonaxis distances may replace a rounded-up incumbent",
+    "weight_domain": "signed min/max, zero and negative retained. No positive-only filter, clamp or float divisor conversion; signed values above 2^24 remain exact",
+    "mutation": "query may alter successor, weight and supplied position context; successor/weight reads occur after callback. Caller guarantees lifetimes and fully initialized event-3 position",
+    "source_guards": "null origin/result, missing selected callback and traversal bound return0. Partial result and callback effects retained. Outside original valid input domain",
+    "numerical_profile": "PC53 nearest all traps masked established by caller. 64-bit/24-bit precision and original runtime transition behavior not established"
+  },
+  "validation": {
+    "result": "standalone-build.json",
+    "focused_checks": 115,
+    "failures": 0,
+    "missing_module_control": true,
+    "original_byte_audit": "original-audit.json",
+    "independent_numeric_fixtures": 16,
+    "numeric_fixture_modes": [
+      "player x/z rounded multiplicands",
+      "actor x/y rounded multiplicands"
+    ],
+    "fixture_limits": "Independent Python binary64 operation-graph checks, not original differential execution",
+    "game_launches": 0,
+    "original_code_required": false
+  },
+  "limits": [
+    "No byte match claimed",
+    "No original code or game execution",
+    "No complete player/AI actor constructors or callback recovery supplied; caller bindings remain explicit",
+    "Original signaling-NaN exception/status flags and PC24/PC64 behavior not validated",
+    "Full gameplay admission and current integration belong to parent owner"
+  ],
+  "line_ending_normalization": {
+    "evidence": "META/m4/frontier-90min/line-ending-variants.json",
+    "current_sources": "Canonical LF; focused target rebuilt and rerun against these exact hashes",
+    "prior_bytes": "META/m4/frontier-90min/line-ending-prior"
+  }
+}

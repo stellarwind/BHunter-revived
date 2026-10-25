@@ -84,6 +84,24 @@ static void native_rectangle(void){
           "software backend is explicitly rejected before queue publication");
     free(native_image.runs);free(native_image.vertices);bh_draw_queue_dispose(&queue);
 }
+static void asymmetric_uv_pairs(void) {
+    BHDrawQueue q;BHPickupDrawContext c;BHMainCamera cam;BHViewConfig view;BHScreenClipContext clip;
+    unsigned long flags,next;float u0,u1,v0,v1;
+    CHECK(bh_draw_queue_init(&q,20,0),"UV pair-order queue");fixture(&c,&q,&cam,&view,&clip);
+    for(flags=0;flags<8;++flags){
+        bh_draw_queue_begin(&q);emitted=0;
+        CHECK(bh_pickup_rect_queue(&q,8,17,50,50,20,10,0,flags,1,.125f,.5f,.25f,.125f,10)==1 &&
+            val(q.commands[9].words+6)==.125f && val(q.commands[9].words+7)==.5f &&
+            val(q.commands[9].words+8)==.25f && val(q.commands[9].words+9)==.125f,
+            "asymmetric U-start/U-extent/V-start/V-extent retains original raw word order");
+        CHECK(bh_pickup_rect_execute(&c,lookup,0,q.commands+9,&next) && emitted==1,"real corrected consumer/draw/clip chain");
+        u0=(flags&1)?.875f:.125f;u1=(flags&1)?.375f:.625f;v0=(flags&2)?.75f:.25f;v1=(flags&2)?.625f:.375f;
+        CHECK(corners[0][2]==u0 && corners[0][3]==v0 && corners[2][2]==u1 && corners[2][3]==v1 &&
+            corners[1][2]==((flags&4)?u1:u0) && corners[1][3]==((flags&4)?v0:v1),
+            "independent asymmetric UV bounds survive all eight flip/transpose selectors");
+    }
+    bh_draw_queue_dispose(&q);
+}
 static void labels(void){
     BHDrawQueue q;BHPickupDrawContext c;BHMainCamera cam;BHViewConfig view;BHScreenClipContext clip;BHEntity e;
     memset(&e,0,sizeof(e));e.position.x=5;e.position.y=5;e.position.z=10;
@@ -172,7 +190,7 @@ static void constructor_bridge(void){
     }
     bh_entities_dispose(&pool);bh_draw_queue_dispose(&q);
 }
-int bh_pickup_draw_checkpoint(unsigned long *count){checks=0;failures=0;producer();projection_and_rect();native_rectangle();labels();owner();constructor_bridge();if(count)*count=checks;
+int bh_pickup_draw_checkpoint(unsigned long *count){checks=0;failures=0;producer();projection_and_rect();native_rectangle();asymmetric_uv_pairs();labels();owner();constructor_bridge();if(count)*count=checks;
     printf("{\"scenario\":\"pickup-draw\",\"checks\":%lu,\"failures\":%d,\"original_code_required\":false}\n",checks,failures);return failures?1:0;}
 #ifdef BH_PICKUP_DRAW_STANDALONE
 int main(void){unsigned long count;return bh_pickup_draw_checkpoint(&count);}

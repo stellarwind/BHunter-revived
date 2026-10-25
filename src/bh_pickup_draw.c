@@ -39,7 +39,7 @@ int __cdecl bh_pickup_project(const BHPickupDrawContext *c,
    +04 resource,+08 x..angle,+1c alpha,+20..+2c UV,+30 depth,+34 flags. */
 int __cdecl bh_pickup_rect_queue(BHDrawQueue *q,unsigned long bucket,
     unsigned long image,float x,float y,float width,float height,float angle,
-    unsigned long flags,float alpha,float u,float v,float du,float dv,float depth) {
+    unsigned long flags,float alpha,float u,float u_extent,float v,float v_extent,float depth) {
     static const unsigned long mapping[9]={1,2,3,4,5,0,6,7,8};
     unsigned long header,tail,index;BHDrawCommand *command;
     if(!q || !q->commands || q->count<9 || q->count>q->capacity){if(q)q->error=BH_DRAW_ARGUMENT;return -1;}
@@ -54,8 +54,8 @@ int __cdecl bh_pickup_rect_queue(BHDrawQueue *q,unsigned long bucket,
     put_float(command->words+0,x);put_float(command->words+1,y);
     put_float(command->words+2,width);put_float(command->words+3,height);
     put_float(command->words+4,angle);put_float(command->words+5,alpha);
-    put_float(command->words+6,u);put_float(command->words+7,v);
-    put_float(command->words+8,du);put_float(command->words+9,dv);
+    put_float(command->words+6,u);put_float(command->words+7,u_extent);
+    put_float(command->words+8,v);put_float(command->words+9,v_extent);
     put_float(command->words+10,depth);command->words[11]=flags;
     q->error=BH_DRAW_OK;return 1;
 }
@@ -64,20 +64,20 @@ static void vertex(BHClipVertex *p,float x,float y,float u,float v){p->sx=x;p->s
 
 int __cdecl bh_pickup_rect_draw(BHPickupDrawContext *c,BHTextureImage *image,
     float x,float y,float width,float height,float angle,unsigned long flags,
-    float alpha,float u,float v,float du,float dv,float depth) {
+    float alpha,float u,float u_extent,float v,float v_extent,float depth) {
     BHClipVertex quad[4],*ring,*p;float half_width,half_height,radius;
     float u0,u1,v0,v1,cs,sn,xw,yw,wx,hy;
     double conversion;long shade;unsigned long i,n,color;
     if(!c || !image || !c->view || !c->clip || !c->emit || !_finite(x) || !_finite(y) ||
        !_finite(width) || !_finite(height) || !_finite(angle) || !_finite(alpha) ||
-       !_finite(u) || !_finite(v) || !_finite(du) || !_finite(dv) || !_finite(depth))return 0;
+       !_finite(u) || !_finite(u_extent) || !_finite(v) || !_finite(v_extent) || !_finite(depth))return 0;
     c->rectangles++;
     half_width=width*.5f;half_height=height*.5f;
     bh_round_float(&radius,sqrt((double)half_width*half_width+(double)half_height*half_height));
     if(!(c->view->left<radius+x && x-radius<c->view->right &&
          c->view->top<radius+y && y-radius<c->view->bottom)){c->culled++;return 1;}
-    u0=(flags&1)?1.0f-u:u;u1=(flags&1)?1.0f-(u+du):u+du;
-    v0=(flags&2)?1.0f-v:v;v1=(flags&2)?1.0f-(v+dv):v+dv;
+    u0=(flags&1)?1.0f-u:u;u1=(flags&1)?1.0f-(u+u_extent):u+u_extent;
+    v0=(flags&2)?1.0f-v:v;v1=(flags&2)?1.0f-(v+v_extent):v+v_extent;
     memset(quad,0,sizeof(quad));
     vertex(quad+0,0,0,u0,v0);
     if(flags&4){vertex(quad+1,0,0,u1,v0);vertex(quad+2,0,0,u1,v1);vertex(quad+3,0,0,u0,v1);}
@@ -117,8 +117,8 @@ int __cdecl bh_pickup_rect_execute(BHPickupDrawContext *c,
 }
 
 static int rect(BHPickupDrawContext *c,float x,float y,float w,float h,float alpha,
-    float u,float v,float du,float dv,float z){
-    return bh_pickup_rect_queue(c->queue,8,c->atlas_image,x,y,w,h,0,0,alpha,u,v,du,dv,z);
+    float u,float u_extent,float v,float v_extent,float z){
+    return bh_pickup_rect_queue(c->queue,8,c->atlas_image,x,y,w,h,0,0,alpha,u,u_extent,v,v_extent,z);
 }
 static void digits(long value,long out[8],int *first) {
     long divisor=10000000,remainder=value;int i;

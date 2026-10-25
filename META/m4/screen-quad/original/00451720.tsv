@@ -1,0 +1,9 @@
+address	bytes	instruction
+00451720	dd442404	FLD double ptr [ESP + 0x4]
+00451724	dc0df09e4800	FMUL double ptr [0x00489ef0]
+0045172a	dd442414	FLD double ptr [ESP + 0x14]
+0045172e	dd44240c	FLD double ptr [ESP + 0xc]
+00451732	d91d5c174900	FSTP float ptr [0x0049175c]
+00451738	d91d60174900	FSTP float ptr [0x00491760]
+0045173e	d91d64174900	FSTP float ptr [0x00491764]
+00451744	c3	RET

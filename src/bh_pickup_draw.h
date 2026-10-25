@@ -36,16 +36,17 @@ int __cdecl bh_pickup_project(const BHPickupDrawContext *,
     float *x,float *y,float *z,float *scale);
 
 /* Complete 00478f60: original 0x54 queued UV rectangle record and bucket links.
+   UV words retain original pair order: U-start,U-extent,V-start,V-extent.
    Returns 1 appended, 0 full, -1 invalid queue. */
 int __cdecl bh_pickup_rect_queue(BHDrawQueue *,unsigned long bucket,
     unsigned long image,float x,float y,float width,float height,float angle,
-    unsigned long flags,float alpha,float u,float v,float du,float dv,float depth);
+    unsigned long flags,float alpha,float u,float u_extent,float v,float v_extent,float depth);
 
 /* 00454fc0 hardware path composed from recovered screen clipping and native
    emission. Software rasterization remains outside this adapter. */
 int __cdecl bh_pickup_rect_draw(BHPickupDrawContext *,BHTextureImage *,
     float x,float y,float width,float height,float angle,unsigned long flags,
-    float alpha,float u,float v,float du,float dv,float depth);
+    float alpha,float u,float u_extent,float v,float v_extent,float depth);
 /* Complete 004776c0 command consumer; next link is read after synchronous draw. */
 int __cdecl bh_pickup_rect_execute(BHPickupDrawContext *,
     BHDrawImageLookup lookup,void *lookup_user,const BHDrawCommand *,unsigned long *next);

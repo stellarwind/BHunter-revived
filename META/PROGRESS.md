@@ -4,9 +4,9 @@ Updated 2026-10-25. Plan: `../RESTORATION_PLAN.md`.
 
 ## Current checkpoint
 
-Timed source restoration, 2026-10-25: **The timed scene-caller dependency block restores 52 complete owners: 234/727 admitted original functions in 203 translation units; 3,536,976 archive checks, 3,044,022 clean checks and 99 missing-module link controls. Every admitted variant compiles in its real translation unit, links against real definitions in build/m0/bhunter-integration.exe, and passes affected source-built checks. Real and clean source hashes agree. No original code or game execution occurred.**
+Timed source restoration, 2026-10-25: The 90-minute input/render/actor-route block restores **33 complete owners: 267/727 admitted original functions in 249 translation units**. The real integration passes **3,839,979 checks**, the asset-free clean build **3,347,025 checks**, with **120 missing-module link controls** and identical source hashes. New owners cover horizon and quad queues/geometry, radar, complete input message/collection/device owners, target/route updates, three-buffer handoff, generic queue reservation and queued render-mode execution. Rectangle UV and live near-plane fixes retain separate historical variants. No original code or game execution, native capture or cursor recenter occurred.
 
-Both scene callbacks `0041c860`/`00428f50` remain unimplemented. Full horizon/software rasterization, HUD/handoff, player/flyby constructors, physical input collection, weapon lifetimes and startup resource/script bindings remain open. Next recover a complete dependency family on that frontier; weighted target helper `00421610` is reviewed but unimplemented. PC24, CD audio and DirectPlay requirements remain. M3 is skipped; M4 is incomplete. This timed block is stopped pending user resumption. Evidence: `m4/scene-callers/README.md`, `m4/scene-callers/validation.json`; audit `python tools/check_scene_callers.py`.
+Both full scene callbacks `0041c860`/`00428f50`, render producer/worker `00479140`/`00471e00`, complete HUD/attachment setup, player/flyby construction, weapon/mission lifetimes and startup resource/script bindings remain open. Horizon geometry is restored; software dispatch/raster kernels remain unfinished. PC24, CD audio and DirectPlay requirements remain. M3 is skipped; M4 is incomplete and no playable source game exists. This timed block stops pending user resumption. Evidence: `m4/frontier-90min/README.md`; audit `python tools/check_frontier_90min.py`.
 
 Human playtesting offer, 2026-10-24: ask the user for a focused manual playtest when a concrete source-restoration question needs gameplay evidence. Describe the action and observation needed; no automated gameplay is authorized. Source restoration continues independently wherever possible.
 
@@ -26,6 +26,13 @@ Human playtesting offer, 2026-10-24: ask the user for a focused manual playtest 
 | M9 Release/preservation | Not started | No release package |
 
 ## Working evidence
+
+Previous checkpoint, preserved as history:
+
+Timed source restoration, 2026-10-25: **The timed scene-caller dependency block restores 52 complete owners: 234/727 admitted original functions in 203 translation units; 3,536,976 archive checks, 3,044,022 clean checks and 99 missing-module link controls. Every admitted variant compiles in its real translation unit, links against real definitions in build/m0/bhunter-integration.exe, and passes affected source-built checks. Real and clean source hashes agree. No original code or game execution occurred.**
+
+Both scene callbacks `0041c860`/`00428f50` remain unimplemented. Full horizon/software rasterization, HUD/handoff, player/flyby constructors, physical input collection, weapon lifetimes and startup resource/script bindings remain open. Next recover a complete dependency family on that frontier; weighted target helper `00421610` is reviewed but unimplemented. PC24, CD audio and DirectPlay requirements remain. M3 is skipped; M4 is incomplete. This timed block is stopped pending user resumption. Evidence: `m4/scene-callers/README.md`, `m4/scene-callers/validation.json`; audit `python tools/check_scene_callers.py`.
+
 
 M4 outer scene orchestration and world/resource bindings, 2026-10-24:
 **182/727 original functions now have admitted source variants** in a

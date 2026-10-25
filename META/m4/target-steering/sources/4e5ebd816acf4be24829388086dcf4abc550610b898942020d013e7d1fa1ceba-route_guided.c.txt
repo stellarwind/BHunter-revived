@@ -1,0 +1,74 @@
+#include "../src/bh_route_guided.h"
+#include "../src/bh_fp.h"
+#include <stdio.h>
+#include <string.h>
+#include <float.h>
+static unsigned long checks,failures;
+#define CHECK(x,s) do {++checks;if(!(x)){++failures;printf("FAIL route-guided: %s\n",s);}} while(0)
+static void kind(BHEntity *a,long value) {memcpy(a->payload+24,&value,4);}
+static float from_bits(unsigned long value) {float f;memcpy(&f,&value,4);return f;}
+static void portal(BHPortal *p,unsigned long direction,long plane,float u,float v,BHWorldGeometry *neighbor) {
+    memset(p,0,sizeof(*p));p->direction=direction;p->plane=plane;
+    p->scratch[0]=p->scratch[1]=u;p->scratch[2]=p->scratch[3]=v;p->neighbor=&neighbor->navigation;
+}
+static void branches(BHEntity *actor) {
+    BHWorldGeometry rooms[7];BHGeometryModel model;unsigned long axis,sign,flag,k,index;
+    long kinds[]={-1,0,1,6,7},selected;BHEntity before;
+    memset(rooms,0,sizeof(rooms));memset(&model,0,sizeof(model));model.portal_count=6;
+    rooms[0].model=&model;rooms[0].navigation.count=6;
+    for(axis=0;axis<3;++axis)for(sign=0;sign<2;++sign) {
+        unsigned long direction=axis+4*sign;
+        portal(rooms[0].navigation.portals,direction,0,0,0,rooms+1);
+        for(index=1;index<6;++index)portal(rooms[0].navigation.portals+index,direction^4,10,(float)(6-index),(float)(6-index),rooms+index+1);
+        kind(actor,2);before=*actor;
+        CHECK(bh_route_guided_exit(actor,rooms,0,&selected) && selected==(axis==1?1:5),
+            "all six incoming directions choose least offset opposite portal through actual center/normal/cross owners");
+        CHECK(!memcmp(actor,&before,sizeof(before)),"guided selection never changes actor RNG or other state");
+        for(k=0;k<5;++k)for(flag=0;flag<4;++flag) {
+            int eligible=!((flag&1) && kinds[k]>0) && !((flag&2) && (kinds[k]==0 || kinds[k]==6));
+            for(index=1;index<7;++index)rooms[index].query_flags=flag<<4;
+            kind(actor,kinds[k]);
+            CHECK(bh_route_guided_exit(actor,rooms,0,&selected) && selected==(eligible?(axis==1?1:5):0),
+                "signed class and actual neighbor query flags preserve eligibility");
+        }
+        for(index=1;index<7;++index)rooms[index].query_flags=0;
+    }
+    kind(actor,2);
+    portal(rooms[0].navigation.portals,0,0,0,0,rooms+1);
+    for(index=1;index<6;++index)portal(rooms[0].navigation.portals+index,4,10,3,4,rooms+index+1);
+    CHECK(bh_route_guided_exit(actor,rooms,0,&selected) && selected==1,"exact equal squared scores retain first slot");
+    rooms[0].navigation.portals[1].direction=6;
+    CHECK(bh_route_guided_exit(actor,rooms,0,&selected) && selected==2,"nonopposite connected portal ignored");
+    rooms[0].navigation.portals[2].neighbor=NULL;
+    CHECK(bh_route_guided_exit(actor,rooms,0,&selected) && selected==3,"unlinked opposite portal ignored");
+    rooms[0].navigation.portals[3].scratch[0]=rooms[0].navigation.portals[3].scratch[1]=from_bits(0x7fc00001);
+    CHECK(bh_route_guided_exit(actor,rooms,0,&selected) && selected==4,"finite candidate replaces unordered incumbent");
+    rooms[0].navigation.portals[5].scratch[0]=rooms[0].navigation.portals[5].scratch[1]=from_bits(0x7fc00001);
+    CHECK(bh_route_guided_exit(actor,rooms,0,&selected) && selected==5,"last unordered candidate selected through original C0");
+    selected=88;
+    CHECK(!bh_route_guided_exit(actor,rooms,-1,&selected) && selected==88,"negative incoming index rejects before publication");
+    CHECK(!bh_route_guided_exit(actor,rooms,6,&selected) && selected==88,"incoming index equal count rejects");
+    rooms[0].navigation.portals[0].direction=3;
+    CHECK(!bh_route_guided_exit(actor,rooms,0,&selected) && selected==88,"invalid incoming direction rejects");
+    rooms[0].navigation.portals[0].direction=0;model.portal_count=7;
+    CHECK(!bh_route_guided_exit(actor,rooms,0,&selected) && selected==88,"oversized model count rejects");
+    model.portal_count=5;
+    CHECK(!bh_route_guided_exit(actor,rooms,0,&selected) && selected==88,"model/resolved count mismatch rejects");
+    CHECK(!bh_route_guided_exit(NULL,rooms,0,&selected),"missing actor guard");
+    CHECK(!bh_route_guided_exit(actor,NULL,0,&selected),"missing room guard");
+    CHECK(!bh_route_guided_exit(actor,rooms,0,NULL),"missing result guard");
+    _clearfp();
+}
+int bh_route_guided_checkpoint(unsigned long *count) {
+    BHEntityPool pool;BHEntity *actor;BHMathEnvironment env;
+    checks=failures=0;CHECK(bh_math_environment_enter(&env),"real numerical environment");
+    CHECK(bh_entities_init(&pool,1,NULL),"real actor owner");actor=bh_entity_acquire(&pool);CHECK(actor!=NULL,"real actor acquired");
+    if(actor)branches(actor);
+    CHECK(bh_entities_dispose(&pool),"real actor owner disposed");bh_math_environment_leave(&env);
+    if(count)*count=checks;
+    printf("{\"scenario\":\"route-guided\",\"checks\":%lu,\"failures\":%lu,\"original_code_required\":false}\n",checks,failures);
+    return failures!=0;
+}
+#ifdef BH_ROUTE_GUIDED_STANDALONE
+int main(void) {return bh_route_guided_checkpoint(NULL);}
+#endif

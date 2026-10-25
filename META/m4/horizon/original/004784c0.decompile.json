@@ -1,0 +1,8 @@
+[
+  {
+    "address": "004784c0",
+    "code": "\r\nvoid __cdecl\r\nFUN_004784c0(undefined4 param_1,undefined4 param_2,undefined4 param_3,undefined4 param_4,\r\n            undefined4 param_5,undefined4 param_6)\r\n\r\n{\r\n  int *piVar1;\r\n  undefined4 *puVar2;\r\n  \r\n  if (DAT_004f54e8 < DAT_004f0038) {\r\n    piVar1 = (int *)(DAT_004f0044 + 4);\r\n    puVar2 = (undefined4 *)(DAT_004f0044 + DAT_004f54e8 * 0x54);\r\n    DAT_004f54e8 = DAT_004f54e8 + 1;\r\n    puVar2[0x14] = *(undefined4 *)(*piVar1 + 0x50);\r\n    *(undefined4 **)(*piVar1 + 0x50) = puVar2;\r\n    *piVar1 = (int)puVar2;\r\n  }\r\n  else {\r\n    puVar2 = (undefined4 *)0x0;\r\n  }\r\n  if (puVar2 != (undefined4 *)0x0) {\r\n    puVar2[1] = param_1;\r\n    puVar2[2] = param_2;\r\n    puVar2[6] = param_3;\r\n    puVar2[7] = param_4;\r\n    *puVar2 = &LAB_00477aa0;\r\n    puVar2[8] = param_5;\r\n    puVar2[9] = param_6;\r\n  }\r\n  return;\r\n}\r\n\r\n",
+    "name": "FUN_004784c0",
+    "signature": "undefined FUN_004784c0(undefined4 param_1, undefined4 param_2, undefined4 param_3, undefined4 param_4, undefined4 param_5, undefined4 param_6)"
+  }
+]

@@ -1,0 +1,119 @@
+"""Freeze reviewed whole owners and exact linked source variants for this block."""
+import argparse,csv,hashlib,json,shutil,struct
+from pathlib import Path
+ROOT=Path(__file__).resolve().parents[3];HERE=Path(__file__).resolve().parent
+def read(p):return json.loads(p.read_text(encoding='utf-8-sig'))
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def write(p,v):p.parent.mkdir(parents=True,exist_ok=True);p.write_text(json.dumps(v,indent=2)+'\n')
+def descriptions():
+ rows=[]
+ def add(a,f,s,role,tests,review,original):
+  rows.append(dict(address=a,function=f,source='src/'+s+'.c',role=role,scenarios=tests.split(),review=review,original=original))
+ h='META/m4/horizon/'
+ for a,f,s,tests in [('004784c0','bh_horizon_queue','bh_horizon_queue','horizon-queue horizon-native'),('00477aa0','bh_horizon_queue_execute','bh_horizon_queue','horizon-native'),('0045db80','bh_horizon_draw','bh_horizon','horizon horizon-native'),('0046d630','bh_depth_subdivide','bh_depth_subdivide','depth-subdivide depth-subdivide-native'),('0046d9d0','bh_depth_subdivide_scalar','bh_depth_subdivide','depth-subdivide depth-subdivide-native')]:
+  add(a,f,s,'engine_candidate',tests,h+'REVIEW.md',h+'original/'+a+'.disasm.json')
+ m='META/m4/material-queue/'
+ for a,f in [('00478060','bh_material_queue_words'),('00477fa0','bh_material_queue_execute')]:add(a,f,'bh_material_queue','engine_candidate','material-queue',m+'REVIEW.md',m+'original/'+a+'.disasm.json')
+ q='META/m4/sprite-quad/'
+ for a,f,s in [('00457590','bh_sprite_quad_draw','bh_sprite_quad'),('00478730','bh_quad_queue','bh_quad_queue'),('00477760','bh_quad_queue_execute','bh_quad_queue')]:add(a,f,s,'engine_candidate','sprite-quad quad-queue radar-native',q+'README.md',q+'original/'+a+'.disasm.json')
+ t='META/m4/target-selection/'
+ add('00421610','bh_target_select','bh_target_selection','game','target-selection',t+'review.json','META/m4/player-frontier/original/00421610.tsv')
+ t='META/m4/target-steering/'
+ for a,f,s,role,tests in [('004340f0','bh_world_clamp_point','bh_target_steering','engine_candidate','target-steering'),('004344f0','bh_route_choose_exit','bh_route_choice','game','route-choice actor-route'),('00434810','bh_route_curve_length','bh_route_curve_length','engine_candidate','route-curve-length'),('00434650','bh_route_guided_exit','bh_route_guided','game','route-guided actor-route'),('004343c0','bh_vec3_snap_axis','bh_axis_snap','engine_candidate','axis-snap actor-route'),('00434f40','bh_actor_route_promote','bh_actor_route','game','actor-route'),('004355c0','bh_actor_route_advance','bh_actor_route','game','actor-route'),('00435790','bh_actor_route_due','bh_actor_route_lifetime','game','actor-route-lifetime'),('00435720','bh_actor_route_release','bh_actor_route_lifetime','game','actor-route-lifetime')]:add(a,f,s,role,tests,t+'review.json',t+'original/'+a+'.tsv')
+ i='META/m4/input-messages/'
+ add('00473c40','bh_input_message','bh_input_messages','engine_candidate','input-messages input-collection',i+'REVIEW.md',i+'original/00473c40.tsv')
+ i='META/m4/input-collection/'
+ for a,f,s,tests in [('004744f0','bh_input_collect','bh_input_collection','input-collection'),('00473d60','bh_input_devices_start','bh_input_devices','input-devices'),('00473fe0','bh_input_devices_stop','bh_input_devices','input-devices')]:add(a,f,s,'engine_candidate',tests,i+'README.md',i+'original/'+a+'.tsv')
+ i='META/m4/radar/'
+ add('0041b650','bh_radar_marker','bh_radar','game','radar radar-native',i+'REVIEW.md',i+'original/0041b650.disasm.json')
+ i='META/m4/frame-buffers/'
+ for a,f in [('00471c00','bh_frame_buffers_start'),('00471cc0','bh_frame_buffers_acquire'),('00471d70','bh_frame_buffers_publish')]:add(a,f,'bh_frame_buffers','engine_candidate','frame-buffers',i+'README.md',i+'original/'+a+'.tsv')
+ i='META/m4/screen-quad/'
+ for a,f in [('00455410','bh_screen_quad_draw'),('00477680','bh_screen_quad_execute'),('00478e50','bh_screen_quad_queue')]:add(a,f,'bh_screen_quad','engine_candidate','screen-quad',i+'REVIEW.md',i+'original/'+a+'.disasm.json')
+ i='META/m4/queue-reserve/'
+ for a,f in [('00477530','bh_queue_reserve'),('00477360','bh_queue_mode_execute')]:add(a,f,'bh_queue_reserve','engine_candidate','queue-reserve',i+'REVIEW.md',i+'original/'+a+'.json')
+ return rows
+def instructions(path):
+ if path.suffix=='.tsv':
+  rows=list(csv.DictReader(path.open(),delimiter='\t'))
+  for r in rows:
+   if 'mnemonic' not in r:
+    words=r['instruction'].split(' ',1);r['mnemonic']=words[0];r['operands']=words[1] if len(words)>1 else ''
+  return rows
+ return read(path)
+def export():
+ exe=(ROOT/'GAME_DATA/BHUNTER.EXE').read_bytes();assert hashlib.sha256(exe).hexdigest()=='c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1'
+ pe=struct.unpack_from('<I',exe,60)[0];table=pe+24+struct.unpack_from('<H',exe,pe+20)[0]
+ sections=[struct.unpack_from('<IIII',exe,table+i*40+8) for i in range(struct.unpack_from('<H',exe,pe+6)[0])]
+ def raw(a,n):
+  r=a-0x400000;_,start,_,offset=next(s for s in sections if s[1]<=r and r+n<=s[1]+s[2]);return exe[offset+r-start:offset+r-start+n]
+ mapping={r['address']:r for r in csv.DictReader((ROOT/'analysis/function-map.tsv').open(),delimiter='\t')}
+ owners=descriptions()
+ for owner in owners:
+  address=owner['address'];at=int(address,16);body=bytearray();original=ROOT/owner['original'];rows=instructions(original)
+  for r in rows:
+   assert int(r['address'],16)==at,(address,r['address'],hex(at));b=bytes.fromhex(r['bytes']);body.extend(b);at+=len(b)
+  m=mapping[address];assert len(rows)==int(m['instructions']) and len(body)==int(m['body_bytes']) and body==raw(int(address,16),len(body)),address
+  path=HERE/'original'/f'{address}.tsv';path.parent.mkdir(exist_ok=True)
+  with path.open('w',newline='') as f:
+   w=csv.writer(f,delimiter='\t');w.writerow(['address','bytes','mnemonic','operands']);w.writerows((r['address'],r['bytes'],r['mnemonic'],','.join(r['operands']) if isinstance(r['operands'],list) else r['operands']) for r in rows)
+  owner.update(bytes=len(body),instructions=len(rows),end_inclusive=f'{at-1:08x}',body_sha256=hashlib.sha256(body).hexdigest(),original=str(path.relative_to(ROOT)).replace('\\','/'),upstream_original=str(original.relative_to(ROOT)).replace('\\','/'))
+ write(HERE/'owners.json',owners);print(json.dumps(dict(whole_owners=len(owners),instructions=sum(r['instructions'] for r in owners),original_bytes_verified=True)))
+def freeze():
+ real=read(ROOT/'build/m0/result.json');clean_report=read(HERE/'clean/clean-checkout.json');clean=clean_report['result'];owners=read(HERE/'owners.json')
+ assert real['passed'] and clean['passed'] and not clean_report['original_assets_present'] and not clean_report['compiler_in_checkout']
+ assert real['sources']==clean['sources'],'different tested source contexts'
+ for n,h in real['sources'].items():assert sha(ROOT/n)==h,n
+ for build in [real,clean]:
+  assert not build['original_code_required'] and not build['test']['failures']
+  assert sum(r['checks'] for r in build['scenarios'] if 'checks' in r and r.get('scenario')!='m2-foundations')==build['test']['checks']
+  for owner in owners:
+   for scenario in owner['scenarios']:
+    row=next(r for r in build['scenarios'] if r.get('scenario')==scenario);assert row['checks']>0 and not row['failures'],(owner['address'],scenario)
+ shutil.copy2(ROOT/'build/m0/result.json',HERE/'integration-real.json');shutil.copy2(ROOT/'build/m0/bhunter-integration.map',HERE/'link-map.txt')
+ paths=set(real['sources'])|{'tools/m0.py','tools/check_frontier_90min.py',str(Path(__file__).relative_to(ROOT)).replace('\\','/')}
+ snapshots={}
+ for name in sorted(paths):
+  p=ROOT/name;target=HERE/'sources'/(sha(p)+'-'+p.name+'.txt');target.parent.mkdir(exist_ok=True);target.write_bytes(p.read_bytes());snapshots[name]=target.relative_to(ROOT).as_posix()
+ images={}
+ for p in (ROOT/'build/m0').glob('*.bmp'):
+  if p.name.startswith(('quad-native-','horizon-native-','depth-','radar-','rect-uv-','screen-quad-','queue-reserve-')):
+   shutil.copy2(p,HERE/p.name);images[p.name]=sha(p)
+ focused=sorted({s for row in owners for s in row['scenarios']}|{'pickup','pickup-draw','pickup-native','rect-uv-native'})
+ scenarios=lambda b:{s:next(r for r in b['scenarios'] if r.get('scenario')==s) for s in focused}
+ validation=dict(passed=True,complete_new_functions=len(owners),translation_units=sum(c['label'].startswith('compile-') for c in real['commands']),missing_module_controls=sum(k.startswith('missing_') for k in real),
+  real_total=real['test'],clean_total=clean['test'],real_focused=scenarios(real),clean_focused=scenarios(clean),sources={n:sha(ROOT/n) for n in snapshots},source_snapshots=snapshots,native_images=images,
+  original_code_executed=False,game_launches=0,gameplay_executed=False,native_input_capture_calls=0,native_input_recenter_calls=0,unimplemented_callers=['0041c860','00428f50'])
+ write(HERE/'validation.json',validation)
+ ledger_path=ROOT/'META/function-status.json';ledger=read(ledger_path)
+ for owner in owners:
+  identifier=owner['address']+'-functional-c'
+  existing=next((r for r in ledger['records'] if r['id']==identifier),None)
+  if existing:
+   assert existing['source_sha256']==sha(ROOT/owner['source']),identifier
+   continue
+  ledger['records'].append(dict(id=identifier,original_va=owner['address'],function=owner['function'],role=owner['role'],provenance_confidence='Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.',
+   source=owner['source'],source_sha256=sha(ROOT/owner['source']),implementation='func',integration='linked_harness',target='build/m0/bhunter-integration.exe',game_admitted=False,
+   validation=dict(abi='x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim',boundary=f"{owner['address']}..{owner['end_inclusive']}: {owner['bytes']}bytes/{owner['instructions']}instructions",raw_byte_match=False,differential=False,
+    fixtures={s:validation['real_focused'][s] for s in owner['scenarios']},clean_fixtures={s:validation['clean_focused'][s] for s in owner['scenarios']},limits=['PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.','Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.','No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open.']),
+   evidence=[owner['review'],owner['original'],'META/m4/frontier-90min/validation.json','META/m4/frontier-90min/integration-real.json','META/m4/frontier-90min/clean/clean-checkout.json']))
+ # The UV correction changes the real TU; preserve each previous implementation
+ # variant independently rather than attaching current tests to old bytes.
+ corrected=[r['id'] for r in ledger['records'] if r['id'].endswith('-rect-uv-corrected-c') and not r.get('historical_variant')]
+ for r in list(ledger['records']):
+  if r.get('source')!='src/bh_pickup_draw.c' or r.get('historical_variant'):continue
+  if r['implementation'] not in ['func','wip'] or r['id'].endswith('-rect-uv-corrected-c'):continue
+  new=json.loads(json.dumps(r));identifier=r['original_va']+'-rect-uv-corrected-c';assert not any(x['id']==identifier for x in ledger['records'])
+  r['historical_variant']=True;r.setdefault('validation',{})['superseded_by']=identifier
+  new.update(id=identifier,source_sha256=sha(ROOT/new['source']))
+  new['validation']=dict(abi='Same x86 source contexts; unchanged raw rectangle packet ordering, corrected start/extent consumer interpretation',raw_byte_match=False,differential=False,fixtures={s:validation['real_focused'][s] for s in ['pickup','pickup-draw','pickup-native','rect-uv-native']},clean_fixtures={s:validation['clean_focused'][s] for s in ['pickup','pickup-draw','pickup-native','rect-uv-native']},limits=['00454fc0 remains a partial native adapter/WIP; software branch unfinished. Prior variant/source/linked evidence preserved separately.'])
+  new['evidence']=['META/m4/radar/REVIEW.md','META/m4/radar/prior','META/m4/frontier-90min/validation.json'];ledger['records'].append(new);corrected.append(identifier)
+ support=[('horizon-native-gradient-adapter','src/bh_horizon.c','bh_horizon_native_emit'),('input-collection-bindings-adapter','src/bh_input_collection.c','bh_input_collection_init'),('input-device-lifetime-adapter','src/bh_input_devices.c','bh_input_devices_bind'),('radar-frame-bindings-adapter','src/bh_radar.c','bh_radar_bind'),('actor-route-field-binding-adapter','src/bh_actor_route.c','bh_actor_route_read'),('frame-buffer-lifetime-adapter','src/bh_frame_buffers.c','bh_frame_buffers_bind'),('queue-mode-submission-adapter','src/bh_queue_reserve.c','bh_queue_mode')]
+ for identifier,source,function in support:
+  if any(r['id']==identifier for r in ledger['support_implementations']):continue
+  ledger['support_implementations'].append(dict(id=identifier,function=function,source=source,source_sha256=sha(ROOT/source),implementation='adapter',integration='linked_harness',target='build/m0/bhunter-integration.exe',game_admitted=False,evidence=['META/m4/frontier-90min/validation.json'],validation='Explicit source lifetime/context/native binding. No additional original function or source-game admission.'))
+ ledger['updated']='2026-10-25';write(ledger_path,ledger)
+ validation['corrected_variants']=corrected;write(HERE/'validation.json',validation)
+ print(json.dumps({k:validation[k] for k in ['complete_new_functions','translation_units','missing_module_controls','real_total','clean_total']}))
+if __name__=='__main__':
+ p=argparse.ArgumentParser();p.add_argument('action',choices=['export','freeze']);args=p.parse_args();export() if args.action=='export' else freeze()

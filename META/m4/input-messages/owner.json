@@ -1,0 +1,79 @@
+{
+  "address": "00473c40",
+  "end": "00473d24",
+  "bytes": 229,
+  "instructions": 60,
+  "body_sha256": "362afd7ef6061f6c7388aa4aa1c2778e1c22af2c4d20c4129290629341974976",
+  "original_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+  "returns": [
+    {
+      "address": "00473ca2",
+      "bytes": "c3"
+    },
+    {
+      "address": "00473cbf",
+      "bytes": "c3"
+    },
+    {
+      "address": "00473cc9",
+      "bytes": "c3"
+    },
+    {
+      "address": "00473ce5",
+      "bytes": "c3"
+    },
+    {
+      "address": "00473cef",
+      "bytes": "c3"
+    },
+    {
+      "address": "00473cf9",
+      "bytes": "c3"
+    },
+    {
+      "address": "00473d03",
+      "bytes": "c3"
+    },
+    {
+      "address": "00473d0d",
+      "bytes": "c3"
+    },
+    {
+      "address": "00473d24",
+      "bytes": "c3"
+    }
+  ],
+  "abi": "cdecl four arguments; every return C3, no callee pop",
+  "role": "engine_candidate",
+  "provenance": "input message processor; engine attribution unresolved; no verified library/CRT match",
+  "padding": {
+    "address": "00473d25",
+    "bytes": "8d4900"
+  },
+  "jump_tables": {
+    "00473d28": {
+      "bytes": "633c4700a33c47000e3d47000e3d4700633c4700a33c4700",
+      "destinations": [
+        "00473c63",
+        "00473ca3",
+        "00473d0e",
+        "00473d0e",
+        "00473c63",
+        "00473ca3"
+      ]
+    },
+    "00473d40": {
+      "bytes": "dc3c47000e3d4700e63c4700f03c47000e3d4700fa3c4700043d4700",
+      "destinations": [
+        "00473cdc",
+        "00473d0e",
+        "00473ce6",
+        "00473cf0",
+        "00473d0e",
+        "00473cfa",
+        "00473d04"
+      ]
+    }
+  },
+  "original_code_executed": false
+}

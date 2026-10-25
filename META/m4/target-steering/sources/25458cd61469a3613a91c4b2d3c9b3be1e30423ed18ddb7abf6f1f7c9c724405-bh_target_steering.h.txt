@@ -1,0 +1,12 @@
+#ifndef BH_TARGET_STEERING_H
+#define BH_TARGET_STEERING_H
+#include "bh_world_geometry.h"
+/* Complete 004340f0. Bounds are the actual world +1b0/+1bc vectors, borrowed
+   through the real BHWorldGeometry minimum/maximum fields. Sequential x/y/z writes preserve aliasing
+   with world/bounds storage. Reversed bounds use the original min-first branch
+   order. NaN behavior intentionally differs: x chooses its lower bound on an
+   unordered lower comparison; y/z choose their upper bound on an unordered
+   upper comparison. Ordered equality performs no write (preserves signed0).
+   Pointers must be live/accessibly sized, as in the original valid domain. */
+void __cdecl bh_world_clamp_point(const BHWorldGeometry *world,BHVec3 *point);
+#endif

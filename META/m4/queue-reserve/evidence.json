@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "owners": [
+    {
+      "address": "00477530",
+      "end_inclusive": "004775ca",
+      "bytes": 155,
+      "instructions": 50,
+      "body_sha256": "0f874618497d0758030ea98482bf272c524cca842b3a6947f109b8adc04c889c",
+      "role": "engine_candidate",
+      "implementation": "func",
+      "source": "src/bh_queue_reserve.c",
+      "symbol": "bh_queue_reserve",
+      "integration": "focused real TU linked harness; parent integration admission required",
+      "provenance": "ordinary queue reservation/render callback; engine attribution unknown, not CRT/compiler/EH/import/shared tail"
+    },
+    {
+      "address": "00477360",
+      "end_inclusive": "00477375",
+      "bytes": 22,
+      "instructions": 9,
+      "body_sha256": "eca8170efb5e8d0657f9a117fba78e069c094254681d1eab57b502e085b998b5",
+      "role": "engine_candidate",
+      "implementation": "func",
+      "source": "src/bh_queue_reserve.c",
+      "symbol": "bh_queue_mode_execute",
+      "integration": "focused real TU linked harness; parent integration admission required",
+      "provenance": "ordinary queue reservation/render callback; engine attribution unknown, not CRT/compiler/EH/import/shared tail"
+    }
+  ],
+  "jump_table": {
+    "address": "004775cc",
+    "bytes": "5975470060754700677547006e75470075754700557547007c754700837547008a754700",
+    "targets": [
+      "00477559",
+      "00477560",
+      "00477567",
+      "0047756e",
+      "00477575",
+      "00477555",
+      "0047757c",
+      "00477583",
+      "0047758a"
+    ]
+  },
+  "header_mapping": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    0,
+    6,
+    7,
+    8
+  ],
+  "default_header": 0,
+  "source_sha256": {
+    "src/bh_queue_reserve.c": "9fb6097bb5f8701f139d3b8aac4b7d2a8fbed70d5e2d0ad626449b79c0c85b45",
+    "src/bh_queue_reserve.h": "82c885bac7cab667477c3461136aeb432fc51498a09342d3b7926f03d62d21ad",
+    "tests/queue_reserve.c": "da3edbf07d325e5f926041190c089cd76aef87abf223ab29bd5ede622fe4478d"
+  },
+  "focused_output": "{\"scenario\":\"queue-reserve\",\"checks\":65,\"failures\":0}\n",
+  "adapter": {
+    "symbol": "bh_queue_mode",
+    "source": "src/bh_queue_reserve.c",
+    "implementation": "adapter",
+    "original_function_claim": false
+  },
+  "original_code_executed": false,
+  "game_launches": 0,
+  "limits": [
+    "bounded source queue representation; malformed original pointer behavior not claimed",
+    "not a game/render worker implementation",
+    "parent integration and clean-check admission separately required",
+    "no instruction matching"
+  ]
+}

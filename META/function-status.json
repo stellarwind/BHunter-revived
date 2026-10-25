@@ -7764,7 +7764,8 @@
           "unlinked portal ignores stale target",
           "32-bit wrapped price total",
           "missing selected draw callback rejected before allocation/random"
-        ]
+        ],
+        "superseded_by": "004412f0-rect-uv-corrected-c"
       },
       "evidence": [
         "META/m4/pickup/owners.json",
@@ -7775,7 +7776,8 @@
         "META/m4/pickup-lifecycle/review.json",
         "META/m4/pickup-draw/REVIEW.md",
         "META/m4/entity-schedule/REVIEW.md"
-      ]
+      ],
+      "historical_variant": true
     },
     {
       "id": "00440c40-functional-c",
@@ -7866,7 +7868,8 @@
           "unlinked portal ignores stale target",
           "32-bit wrapped price total",
           "missing selected draw callback rejected before allocation/random"
-        ]
+        ],
+        "superseded_by": "00440c40-rect-uv-corrected-c"
       },
       "evidence": [
         "META/m4/pickup/owners.json",
@@ -7877,7 +7880,8 @@
         "META/m4/pickup-lifecycle/review.json",
         "META/m4/pickup-draw/REVIEW.md",
         "META/m4/entity-schedule/REVIEW.md"
-      ]
+      ],
+      "historical_variant": true
     },
     {
       "id": "004558d0-functional-c",
@@ -7968,7 +7972,8 @@
           "unlinked portal ignores stale target",
           "32-bit wrapped price total",
           "missing selected draw callback rejected before allocation/random"
-        ]
+        ],
+        "superseded_by": "004558d0-rect-uv-corrected-c"
       },
       "evidence": [
         "META/m4/pickup/owners.json",
@@ -7979,7 +7984,8 @@
         "META/m4/pickup-lifecycle/review.json",
         "META/m4/pickup-draw/REVIEW.md",
         "META/m4/entity-schedule/REVIEW.md"
-      ]
+      ],
+      "historical_variant": true
     },
     {
       "id": "00478f60-functional-c",
@@ -8070,7 +8076,8 @@
           "unlinked portal ignores stale target",
           "32-bit wrapped price total",
           "missing selected draw callback rejected before allocation/random"
-        ]
+        ],
+        "superseded_by": "00478f60-rect-uv-corrected-c"
       },
       "evidence": [
         "META/m4/pickup/owners.json",
@@ -8081,7 +8088,8 @@
         "META/m4/pickup-lifecycle/review.json",
         "META/m4/pickup-draw/REVIEW.md",
         "META/m4/entity-schedule/REVIEW.md"
-      ]
+      ],
+      "historical_variant": true
     },
     {
       "id": "004776c0-functional-c",
@@ -8172,7 +8180,8 @@
           "unlinked portal ignores stale target",
           "32-bit wrapped price total",
           "missing selected draw callback rejected before allocation/random"
-        ]
+        ],
+        "superseded_by": "004776c0-rect-uv-corrected-c"
       },
       "evidence": [
         "META/m4/pickup/owners.json",
@@ -8183,7 +8192,8 @@
         "META/m4/pickup-lifecycle/review.json",
         "META/m4/pickup-draw/REVIEW.md",
         "META/m4/entity-schedule/REVIEW.md"
-      ]
+      ],
+      "historical_variant": true
     },
     {
       "id": "00454fc0-functional-c",
@@ -8274,7 +8284,8 @@
           "unlinked portal ignores stale target",
           "32-bit wrapped price total",
           "missing selected draw callback rejected before allocation/random"
-        ]
+        ],
+        "superseded_by": "00454fc0-rect-uv-corrected-c"
       },
       "evidence": [
         "META/m4/pickup/owners.json",
@@ -8285,7 +8296,8 @@
         "META/m4/pickup-lifecycle/review.json",
         "META/m4/pickup-draw/REVIEW.md",
         "META/m4/entity-schedule/REVIEW.md"
-      ]
+      ],
+      "historical_variant": true
     },
     {
       "id": "00409f20-functional-c",
@@ -12489,6 +12501,2205 @@
         "META/m4/scene-callers-review/REVIEW.md",
         "META/m4/scene-callers/validation.json"
       ]
+    },
+    {
+      "id": "004784c0-functional-c",
+      "original_va": "004784c0",
+      "function": "bh_horizon_queue",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_horizon_queue.c",
+      "source_sha256": "4699d06ffae9d08248ed2d3283f3cf5c681562e4a7af9630fe29a532b2958612",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "004784c0..00478533: 116bytes/37instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "horizon-queue": {
+            "scenario": "horizon-queue",
+            "checks": 23,
+            "failures": 0
+          },
+          "horizon-native": {
+            "scenario": "horizon-native",
+            "checks": 29,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "horizon-queue": {
+            "scenario": "horizon-queue",
+            "checks": 23,
+            "failures": 0
+          },
+          "horizon-native": {
+            "scenario": "horizon-native",
+            "checks": 29,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/horizon/REVIEW.md",
+        "META/m4/frontier-90min/original/004784c0.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00477aa0-functional-c",
+      "original_va": "00477aa0",
+      "function": "bh_horizon_queue_execute",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_horizon_queue.c",
+      "source_sha256": "4699d06ffae9d08248ed2d3283f3cf5c681562e4a7af9630fe29a532b2958612",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "00477aa0..00477ad3: 52bytes/22instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "horizon-native": {
+            "scenario": "horizon-native",
+            "checks": 29,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "horizon-native": {
+            "scenario": "horizon-native",
+            "checks": 29,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/horizon/REVIEW.md",
+        "META/m4/frontier-90min/original/00477aa0.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0045db80-functional-c",
+      "original_va": "0045db80",
+      "function": "bh_horizon_draw",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_horizon.c",
+      "source_sha256": "b53872979e57b14e7c798dbaf8adcaa253aad6bd0a5eb5473922ccc9665be428",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "0045db80..0045e70d: 2958bytes/699instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "horizon": {
+            "scenario": "horizon",
+            "checks": 31,
+            "failures": 0
+          },
+          "horizon-native": {
+            "scenario": "horizon-native",
+            "checks": 29,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "horizon": {
+            "scenario": "horizon",
+            "checks": 31,
+            "failures": 0
+          },
+          "horizon-native": {
+            "scenario": "horizon-native",
+            "checks": 29,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/horizon/REVIEW.md",
+        "META/m4/frontier-90min/original/0045db80.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0046d630-functional-c",
+      "original_va": "0046d630",
+      "function": "bh_depth_subdivide",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_depth_subdivide.c",
+      "source_sha256": "12b5c8baf400249a7e24010c9eb93bc169e704a8e6389901e32bd63abd337fe0",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "0046d630..0046d9cc: 925bytes/314instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "depth-subdivide": {
+            "scenario": "depth-subdivide",
+            "checks": 66,
+            "failures": 0
+          },
+          "depth-subdivide-native": {
+            "scenario": "depth-subdivide-native",
+            "checks": 26,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "depth-subdivide": {
+            "scenario": "depth-subdivide",
+            "checks": 66,
+            "failures": 0
+          },
+          "depth-subdivide-native": {
+            "scenario": "depth-subdivide-native",
+            "checks": 26,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/horizon/REVIEW.md",
+        "META/m4/frontier-90min/original/0046d630.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0046d9d0-functional-c",
+      "original_va": "0046d9d0",
+      "function": "bh_depth_subdivide_scalar",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_depth_subdivide.c",
+      "source_sha256": "12b5c8baf400249a7e24010c9eb93bc169e704a8e6389901e32bd63abd337fe0",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "0046d9d0..0046dd9d: 974bytes/331instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "depth-subdivide": {
+            "scenario": "depth-subdivide",
+            "checks": 66,
+            "failures": 0
+          },
+          "depth-subdivide-native": {
+            "scenario": "depth-subdivide-native",
+            "checks": 26,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "depth-subdivide": {
+            "scenario": "depth-subdivide",
+            "checks": 66,
+            "failures": 0
+          },
+          "depth-subdivide-native": {
+            "scenario": "depth-subdivide-native",
+            "checks": 26,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/horizon/REVIEW.md",
+        "META/m4/frontier-90min/original/0046d9d0.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00478060-functional-c",
+      "original_va": "00478060",
+      "function": "bh_material_queue_words",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_material_queue.c",
+      "source_sha256": "bb967135388884c1b149392a7ef44aad256166bdbd9f90df56f9ad03b04eeba0",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "00478060..00478142: 227bytes/71instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "material-queue": {
+            "scenario": "material-queue",
+            "checks": 100,
+            "failures": 0
+          }
+        },
+        "clean_fixtures": {
+          "material-queue": {
+            "scenario": "material-queue",
+            "checks": 100,
+            "failures": 0
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/material-queue/REVIEW.md",
+        "META/m4/frontier-90min/original/00478060.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00477fa0-functional-c",
+      "original_va": "00477fa0",
+      "function": "bh_material_queue_execute",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_material_queue.c",
+      "source_sha256": "bb967135388884c1b149392a7ef44aad256166bdbd9f90df56f9ad03b04eeba0",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "00477fa0..00477fd1: 50bytes/23instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "material-queue": {
+            "scenario": "material-queue",
+            "checks": 100,
+            "failures": 0
+          }
+        },
+        "clean_fixtures": {
+          "material-queue": {
+            "scenario": "material-queue",
+            "checks": 100,
+            "failures": 0
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/material-queue/REVIEW.md",
+        "META/m4/frontier-90min/original/00477fa0.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00457590-functional-c",
+      "original_va": "00457590",
+      "function": "bh_sprite_quad_draw",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_sprite_quad.c",
+      "source_sha256": "015e70078a5d4a4f3aca7606f258ffeb26d451afbbcd8bbc322afd90d8524a04",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "00457590..00457e14: 2181bytes/556instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "sprite-quad": {
+            "scenario": "sprite-quad",
+            "checks": 648,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "quad-queue": {
+            "scenario": "quad-queue",
+            "checks": 179,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "radar-native": {
+            "scenario": "radar-native",
+            "checks": 57,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "sprite-quad": {
+            "scenario": "sprite-quad",
+            "checks": 648,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "quad-queue": {
+            "scenario": "quad-queue",
+            "checks": 179,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "radar-native": {
+            "scenario": "radar-native",
+            "checks": 57,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/sprite-quad/README.md",
+        "META/m4/frontier-90min/original/00457590.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00478730-functional-c",
+      "original_va": "00478730",
+      "function": "bh_quad_queue",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_quad_queue.c",
+      "source_sha256": "c415b3031dcc05fb1906b7a9d5af20dc1813ba9dffe6217a5500edcd96448848",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "00478730..00478863: 308bytes/93instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "sprite-quad": {
+            "scenario": "sprite-quad",
+            "checks": 648,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "quad-queue": {
+            "scenario": "quad-queue",
+            "checks": 179,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "radar-native": {
+            "scenario": "radar-native",
+            "checks": 57,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "sprite-quad": {
+            "scenario": "sprite-quad",
+            "checks": 648,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "quad-queue": {
+            "scenario": "quad-queue",
+            "checks": 179,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "radar-native": {
+            "scenario": "radar-native",
+            "checks": 57,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/sprite-quad/README.md",
+        "META/m4/frontier-90min/original/00478730.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00477760-functional-c",
+      "original_va": "00477760",
+      "function": "bh_quad_queue_execute",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_quad_queue.c",
+      "source_sha256": "c415b3031dcc05fb1906b7a9d5af20dc1813ba9dffe6217a5500edcd96448848",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "00477760..004777bd: 94bytes/45instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "sprite-quad": {
+            "scenario": "sprite-quad",
+            "checks": 648,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "quad-queue": {
+            "scenario": "quad-queue",
+            "checks": 179,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "radar-native": {
+            "scenario": "radar-native",
+            "checks": 57,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "sprite-quad": {
+            "scenario": "sprite-quad",
+            "checks": 648,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "quad-queue": {
+            "scenario": "quad-queue",
+            "checks": 179,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "radar-native": {
+            "scenario": "radar-native",
+            "checks": 57,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/sprite-quad/README.md",
+        "META/m4/frontier-90min/original/00477760.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00421610-functional-c",
+      "original_va": "00421610",
+      "function": "bh_target_select",
+      "role": "game",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_target_selection.c",
+      "source_sha256": "589b0ee1dd8f1a81a583ae2d14a8fa2209c85d6445a50a25c0029390feb7f9d2",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "00421610..0042173f: 304bytes/107instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "target-selection": {
+            "scenario": "target-selection",
+            "checks": 115,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "target-selection": {
+            "scenario": "target-selection",
+            "checks": 115,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/target-selection/review.json",
+        "META/m4/frontier-90min/original/00421610.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004340f0-functional-c",
+      "original_va": "004340f0",
+      "function": "bh_world_clamp_point",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_target_steering.c",
+      "source_sha256": "16a569d49292ba805b33180fa7688c8d5832a0193e788609c323e0c387515af8",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "004340f0..00434198: 169bytes/53instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "target-steering": {
+            "scenario": "target-steering",
+            "checks": 2685,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "target-steering": {
+            "scenario": "target-steering",
+            "checks": 2685,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/target-steering/review.json",
+        "META/m4/frontier-90min/original/004340f0.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004344f0-functional-c",
+      "original_va": "004344f0",
+      "function": "bh_route_choose_exit",
+      "role": "game",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_route_choice.c",
+      "source_sha256": "a8a25b4d2a76f892973657f2f4c292bd76752a4e864108052d651b09aadfdd37",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "004344f0..00434647: 344bytes/116instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "route-choice": {
+            "scenario": "route-choice",
+            "checks": 288848,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "actor-route": {
+            "scenario": "actor-route",
+            "checks": 229,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "route-choice": {
+            "scenario": "route-choice",
+            "checks": 288848,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "actor-route": {
+            "scenario": "actor-route",
+            "checks": 229,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/target-steering/review.json",
+        "META/m4/frontier-90min/original/004344f0.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00434810-functional-c",
+      "original_va": "00434810",
+      "function": "bh_route_curve_length",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_route_curve_length.c",
+      "source_sha256": "d3772581e1ec9de4e26eb8880726b5991a870db362021b32643671d51a01318c",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "00434810..00434915: 262bytes/85instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "route-curve-length": {
+            "scenario": "route-curve-length",
+            "checks": 276,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "route-curve-length": {
+            "scenario": "route-curve-length",
+            "checks": 276,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/target-steering/review.json",
+        "META/m4/frontier-90min/original/00434810.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00434650-functional-c",
+      "original_va": "00434650",
+      "function": "bh_route_guided_exit",
+      "role": "game",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_route_guided.c",
+      "source_sha256": "887efcd2de5a6b68fa14378c2d30d35a7704b7e49f2b74e1e5454bf1ab6e67bd",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "00434650..00434807: 440bytes/138instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "route-guided": {
+            "scenario": "route-guided",
+            "checks": 165,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "actor-route": {
+            "scenario": "actor-route",
+            "checks": 229,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "route-guided": {
+            "scenario": "route-guided",
+            "checks": 165,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "actor-route": {
+            "scenario": "actor-route",
+            "checks": 229,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/target-steering/review.json",
+        "META/m4/frontier-90min/original/00434650.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004343c0-functional-c",
+      "original_va": "004343c0",
+      "function": "bh_vec3_snap_axis",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_axis_snap.c",
+      "source_sha256": "5647f155cda69fe80eade27aea9798325d650ebc3b0abdc5858d189a899a01de",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "004343c0..004344e9: 298bytes/119instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "axis-snap": {
+            "scenario": "axis-snap",
+            "checks": 1375,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "actor-route": {
+            "scenario": "actor-route",
+            "checks": 229,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "axis-snap": {
+            "scenario": "axis-snap",
+            "checks": 1375,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "actor-route": {
+            "scenario": "actor-route",
+            "checks": 229,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/target-steering/review.json",
+        "META/m4/frontier-90min/original/004343c0.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00434f40-functional-c",
+      "original_va": "00434f40",
+      "function": "bh_actor_route_promote",
+      "role": "game",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_actor_route.c",
+      "source_sha256": "fe310663c498707e698c6346bdaee39cef8ea330434d597c9d2ea08f1500d04e",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "00434f40..0043557f: 1600bytes/411instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "actor-route": {
+            "scenario": "actor-route",
+            "checks": 229,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "actor-route": {
+            "scenario": "actor-route",
+            "checks": 229,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/target-steering/review.json",
+        "META/m4/frontier-90min/original/00434f40.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004355c0-functional-c",
+      "original_va": "004355c0",
+      "function": "bh_actor_route_advance",
+      "role": "game",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_actor_route.c",
+      "source_sha256": "fe310663c498707e698c6346bdaee39cef8ea330434d597c9d2ea08f1500d04e",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "004355c0..0043571d: 350bytes/109instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "actor-route": {
+            "scenario": "actor-route",
+            "checks": 229,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "actor-route": {
+            "scenario": "actor-route",
+            "checks": 229,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/target-steering/review.json",
+        "META/m4/frontier-90min/original/004355c0.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00435790-functional-c",
+      "original_va": "00435790",
+      "function": "bh_actor_route_due",
+      "role": "game",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_actor_route_lifetime.c",
+      "source_sha256": "ffc468d9c4442037b174afd88a31e78b9020ec3e8c24b210cf23553c9e21686d",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "00435790..004357c9: 58bytes/17instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "actor-route-lifetime": {
+            "scenario": "actor-route-lifetime",
+            "checks": 56,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "actor-route-lifetime": {
+            "scenario": "actor-route-lifetime",
+            "checks": 56,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/target-steering/review.json",
+        "META/m4/frontier-90min/original/00435790.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00435720-functional-c",
+      "original_va": "00435720",
+      "function": "bh_actor_route_release",
+      "role": "game",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_actor_route_lifetime.c",
+      "source_sha256": "ffc468d9c4442037b174afd88a31e78b9020ec3e8c24b210cf23553c9e21686d",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "00435720..00435785: 102bytes/28instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "actor-route-lifetime": {
+            "scenario": "actor-route-lifetime",
+            "checks": 56,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "actor-route-lifetime": {
+            "scenario": "actor-route-lifetime",
+            "checks": 56,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/target-steering/review.json",
+        "META/m4/frontier-90min/original/00435720.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00473c40-functional-c",
+      "original_va": "00473c40",
+      "function": "bh_input_message",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_input_messages.c",
+      "source_sha256": "b8b18ed57cd851b96fec7ab2b58655bcb9f10b25da5fbe55b4891c2262abd8f8",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "00473c40..00473d24: 229bytes/60instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "input-messages": {
+            "scenario": "input-messages",
+            "checks": 5170,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "input-collection": {
+            "scenario": "input-collection",
+            "checks": 1165,
+            "failures": 0,
+            "native_recenter_calls": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "input-messages": {
+            "scenario": "input-messages",
+            "checks": 5170,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "input-collection": {
+            "scenario": "input-collection",
+            "checks": 1165,
+            "failures": 0,
+            "native_recenter_calls": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/input-messages/REVIEW.md",
+        "META/m4/frontier-90min/original/00473c40.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004744f0-functional-c",
+      "original_va": "004744f0",
+      "function": "bh_input_collect",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_input_collection.c",
+      "source_sha256": "0790537292a3e6c4e3c4fdef94ae976f9d88ba04727493bf66ed166a6a604813",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "004744f0..00475634: 4421bytes/1107instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "input-collection": {
+            "scenario": "input-collection",
+            "checks": 1165,
+            "failures": 0,
+            "native_recenter_calls": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "input-collection": {
+            "scenario": "input-collection",
+            "checks": 1165,
+            "failures": 0,
+            "native_recenter_calls": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/input-collection/README.md",
+        "META/m4/frontier-90min/original/004744f0.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00473d60-functional-c",
+      "original_va": "00473d60",
+      "function": "bh_input_devices_start",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_input_devices.c",
+      "source_sha256": "1693d391f4c903d2da6f97759657ce88fc98ef12954f570d1d7040767e8ae42d",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "00473d60..00473fd2: 627bytes/143instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "input-devices": {
+            "scenario": "input-devices",
+            "checks": 1369,
+            "failures": 0,
+            "native_capture_calls": 0,
+            "native_recenter_calls": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "input-devices": {
+            "scenario": "input-devices",
+            "checks": 1369,
+            "failures": 0,
+            "native_capture_calls": 0,
+            "native_recenter_calls": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/input-collection/README.md",
+        "META/m4/frontier-90min/original/00473d60.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00473fe0-functional-c",
+      "original_va": "00473fe0",
+      "function": "bh_input_devices_stop",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_input_devices.c",
+      "source_sha256": "1693d391f4c903d2da6f97759657ce88fc98ef12954f570d1d7040767e8ae42d",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "00473fe0..00474016: 55bytes/16instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "input-devices": {
+            "scenario": "input-devices",
+            "checks": 1369,
+            "failures": 0,
+            "native_capture_calls": 0,
+            "native_recenter_calls": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "input-devices": {
+            "scenario": "input-devices",
+            "checks": 1369,
+            "failures": 0,
+            "native_capture_calls": 0,
+            "native_recenter_calls": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/input-collection/README.md",
+        "META/m4/frontier-90min/original/00473fe0.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0041b650-functional-c",
+      "original_va": "0041b650",
+      "function": "bh_radar_marker",
+      "role": "game",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_radar.c",
+      "source_sha256": "fd0225af2df099129fab42aa0a8c061c6580c88e42d414d0790f663fed8d0f71",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "0041b650..0041bbe9: 1434bytes/427instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "radar": {
+            "scenario": "radar",
+            "checks": 39,
+            "failures": 0
+          },
+          "radar-native": {
+            "scenario": "radar-native",
+            "checks": 57,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "radar": {
+            "scenario": "radar",
+            "checks": 39,
+            "failures": 0
+          },
+          "radar-native": {
+            "scenario": "radar-native",
+            "checks": 57,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/radar/REVIEW.md",
+        "META/m4/frontier-90min/original/0041b650.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00471c00-functional-c",
+      "original_va": "00471c00",
+      "function": "bh_frame_buffers_start",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_frame_buffers.c",
+      "source_sha256": "9252358b8af6ff298fb3867af3cd68a51bb805fdc8832baf57bbffd999e1fc64",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "00471c00..00471cb6: 183bytes/36instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "frame-buffers": {
+            "scenario": "frame-buffers",
+            "checks": 123,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "frame-buffers": {
+            "scenario": "frame-buffers",
+            "checks": 123,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/frame-buffers/README.md",
+        "META/m4/frontier-90min/original/00471c00.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00471cc0-functional-c",
+      "original_va": "00471cc0",
+      "function": "bh_frame_buffers_acquire",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_frame_buffers.c",
+      "source_sha256": "9252358b8af6ff298fb3867af3cd68a51bb805fdc8832baf57bbffd999e1fc64",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "00471cc0..00471d67: 168bytes/50instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "frame-buffers": {
+            "scenario": "frame-buffers",
+            "checks": 123,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "frame-buffers": {
+            "scenario": "frame-buffers",
+            "checks": 123,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/frame-buffers/README.md",
+        "META/m4/frontier-90min/original/00471cc0.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00471d70-functional-c",
+      "original_va": "00471d70",
+      "function": "bh_frame_buffers_publish",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_frame_buffers.c",
+      "source_sha256": "9252358b8af6ff298fb3867af3cd68a51bb805fdc8832baf57bbffd999e1fc64",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "00471d70..00471de6: 119bytes/32instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "frame-buffers": {
+            "scenario": "frame-buffers",
+            "checks": 123,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "frame-buffers": {
+            "scenario": "frame-buffers",
+            "checks": 123,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/frame-buffers/README.md",
+        "META/m4/frontier-90min/original/00471d70.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00455410-functional-c",
+      "original_va": "00455410",
+      "function": "bh_screen_quad_draw",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_screen_quad.c",
+      "source_sha256": "3b9da81e10337ae963300e5b7d817ebe2a0c46cd25209d71ad010d6fb22466d8",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "00455410..00455832: 1059bytes/251instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "screen-quad": {
+            "scenario": "screen-quad",
+            "checks": 117,
+            "failures": 0
+          }
+        },
+        "clean_fixtures": {
+          "screen-quad": {
+            "scenario": "screen-quad",
+            "checks": 117,
+            "failures": 0
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/screen-quad/REVIEW.md",
+        "META/m4/frontier-90min/original/00455410.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00477680-functional-c",
+      "original_va": "00477680",
+      "function": "bh_screen_quad_execute",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_screen_quad.c",
+      "source_sha256": "3b9da81e10337ae963300e5b7d817ebe2a0c46cd25209d71ad010d6fb22466d8",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "00477680..004776b1: 50bytes/23instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "screen-quad": {
+            "scenario": "screen-quad",
+            "checks": 117,
+            "failures": 0
+          }
+        },
+        "clean_fixtures": {
+          "screen-quad": {
+            "scenario": "screen-quad",
+            "checks": 117,
+            "failures": 0
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/screen-quad/REVIEW.md",
+        "META/m4/frontier-90min/original/00477680.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00478e50-functional-c",
+      "original_va": "00478e50",
+      "function": "bh_screen_quad_queue",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_screen_quad.c",
+      "source_sha256": "3b9da81e10337ae963300e5b7d817ebe2a0c46cd25209d71ad010d6fb22466d8",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "00478e50..00478f32: 227bytes/71instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "screen-quad": {
+            "scenario": "screen-quad",
+            "checks": 117,
+            "failures": 0
+          }
+        },
+        "clean_fixtures": {
+          "screen-quad": {
+            "scenario": "screen-quad",
+            "checks": 117,
+            "failures": 0
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/screen-quad/REVIEW.md",
+        "META/m4/frontier-90min/original/00478e50.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004412f0-rect-uv-corrected-c",
+      "original_va": "004412f0",
+      "function": "bh_pickup_draw",
+      "role": "game",
+      "provenance_confidence": "Reviewed owner boundary, callers and immutable body; CRT/compiler/import/tail excluded. High-confidence game role.",
+      "source": "src/bh_pickup_draw.c",
+      "source_sha256": "d256d73555d5a589d8143e35a7ebff161a4809d589e2695c1942f41591879e82",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Same x86 source contexts; unchanged raw rectangle packet ordering, corrected start/extent consumer interpretation",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 91,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 77,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "rect-uv-native": {
+            "scenario": "rect-uv-native",
+            "checks": 22,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 91,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "rect-uv-native": {
+            "scenario": "rect-uv-native",
+            "checks": 22,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "00454fc0 remains a partial native adapter/WIP; software branch unfinished. Prior variant/source/linked evidence preserved separately."
+        ]
+      },
+      "evidence": [
+        "META/m4/radar/REVIEW.md",
+        "META/m4/radar/prior",
+        "META/m4/frontier-90min/validation.json"
+      ]
+    },
+    {
+      "id": "00440c40-rect-uv-corrected-c",
+      "original_va": "00440c40",
+      "function": "bh_pickup_label",
+      "role": "game",
+      "provenance_confidence": "Reviewed owner boundary, callers and immutable body; CRT/compiler/import/tail excluded. High-confidence game role.",
+      "source": "src/bh_pickup_draw.c",
+      "source_sha256": "d256d73555d5a589d8143e35a7ebff161a4809d589e2695c1942f41591879e82",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Same x86 source contexts; unchanged raw rectangle packet ordering, corrected start/extent consumer interpretation",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 91,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 77,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "rect-uv-native": {
+            "scenario": "rect-uv-native",
+            "checks": 22,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 91,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "rect-uv-native": {
+            "scenario": "rect-uv-native",
+            "checks": 22,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "00454fc0 remains a partial native adapter/WIP; software branch unfinished. Prior variant/source/linked evidence preserved separately."
+        ]
+      },
+      "evidence": [
+        "META/m4/radar/REVIEW.md",
+        "META/m4/radar/prior",
+        "META/m4/frontier-90min/validation.json"
+      ]
+    },
+    {
+      "id": "004558d0-rect-uv-corrected-c",
+      "original_va": "004558d0",
+      "function": "bh_pickup_project",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed owner boundary, callers and immutable body; CRT/compiler/import/tail excluded. Engine authorship remains unverified.",
+      "source": "src/bh_pickup_draw.c",
+      "source_sha256": "d256d73555d5a589d8143e35a7ebff161a4809d589e2695c1942f41591879e82",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Same x86 source contexts; unchanged raw rectangle packet ordering, corrected start/extent consumer interpretation",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 91,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 77,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "rect-uv-native": {
+            "scenario": "rect-uv-native",
+            "checks": 22,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 91,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "rect-uv-native": {
+            "scenario": "rect-uv-native",
+            "checks": 22,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "00454fc0 remains a partial native adapter/WIP; software branch unfinished. Prior variant/source/linked evidence preserved separately."
+        ]
+      },
+      "evidence": [
+        "META/m4/radar/REVIEW.md",
+        "META/m4/radar/prior",
+        "META/m4/frontier-90min/validation.json"
+      ]
+    },
+    {
+      "id": "00478f60-rect-uv-corrected-c",
+      "original_va": "00478f60",
+      "function": "bh_pickup_rect_queue",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed owner boundary, callers and immutable body; CRT/compiler/import/tail excluded. Engine authorship remains unverified.",
+      "source": "src/bh_pickup_draw.c",
+      "source_sha256": "d256d73555d5a589d8143e35a7ebff161a4809d589e2695c1942f41591879e82",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Same x86 source contexts; unchanged raw rectangle packet ordering, corrected start/extent consumer interpretation",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 91,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 77,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "rect-uv-native": {
+            "scenario": "rect-uv-native",
+            "checks": 22,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 91,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "rect-uv-native": {
+            "scenario": "rect-uv-native",
+            "checks": 22,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "00454fc0 remains a partial native adapter/WIP; software branch unfinished. Prior variant/source/linked evidence preserved separately."
+        ]
+      },
+      "evidence": [
+        "META/m4/radar/REVIEW.md",
+        "META/m4/radar/prior",
+        "META/m4/frontier-90min/validation.json"
+      ]
+    },
+    {
+      "id": "004776c0-rect-uv-corrected-c",
+      "original_va": "004776c0",
+      "function": "bh_pickup_rect_execute",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed owner boundary, callers and immutable body; CRT/compiler/import/tail excluded. Engine authorship remains unverified.",
+      "source": "src/bh_pickup_draw.c",
+      "source_sha256": "d256d73555d5a589d8143e35a7ebff161a4809d589e2695c1942f41591879e82",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Same x86 source contexts; unchanged raw rectangle packet ordering, corrected start/extent consumer interpretation",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 91,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 77,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "rect-uv-native": {
+            "scenario": "rect-uv-native",
+            "checks": 22,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 91,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "rect-uv-native": {
+            "scenario": "rect-uv-native",
+            "checks": 22,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "00454fc0 remains a partial native adapter/WIP; software branch unfinished. Prior variant/source/linked evidence preserved separately."
+        ]
+      },
+      "evidence": [
+        "META/m4/radar/REVIEW.md",
+        "META/m4/radar/prior",
+        "META/m4/frontier-90min/validation.json"
+      ]
+    },
+    {
+      "id": "00454fc0-rect-uv-corrected-c",
+      "original_va": "00454fc0",
+      "function": "bh_pickup_rect_draw",
+      "role": "engine_candidate",
+      "provenance_confidence": "Reviewed owner boundary, callers and immutable body; CRT/compiler/import/tail excluded. Engine authorship remains unverified.",
+      "source": "src/bh_pickup_draw.c",
+      "source_sha256": "d256d73555d5a589d8143e35a7ebff161a4809d589e2695c1942f41591879e82",
+      "implementation": "wip",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "Same x86 source contexts; unchanged raw rectangle packet ordering, corrected start/extent consumer interpretation",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 91,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 77,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "rect-uv-native": {
+            "scenario": "rect-uv-native",
+            "checks": 22,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "pickup": {
+            "scenario": "pickup",
+            "checks": 33,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-draw": {
+            "scenario": "pickup-draw",
+            "checks": 91,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "pickup-native": {
+            "scenario": "pickup-native",
+            "checks": 1,
+            "failures": 0,
+            "original_code_required": false,
+            "gameplay_executed": false
+          },
+          "rect-uv-native": {
+            "scenario": "rect-uv-native",
+            "checks": 22,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "limits": [
+          "00454fc0 remains a partial native adapter/WIP; software branch unfinished. Prior variant/source/linked evidence preserved separately."
+        ]
+      },
+      "evidence": [
+        "META/m4/radar/REVIEW.md",
+        "META/m4/radar/prior",
+        "META/m4/frontier-90min/validation.json"
+      ]
+    },
+    {
+      "id": "00477530-functional-c",
+      "original_va": "00477530",
+      "function": "bh_queue_reserve",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_queue_reserve.c",
+      "source_sha256": "9fb6097bb5f8701f139d3b8aac4b7d2a8fbed70d5e2d0ad626449b79c0c85b45",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "00477530..004775ca: 155bytes/50instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "queue-reserve": {
+            "scenario": "queue-reserve",
+            "checks": 65,
+            "failures": 0
+          }
+        },
+        "clean_fixtures": {
+          "queue-reserve": {
+            "scenario": "queue-reserve",
+            "checks": 65,
+            "failures": 0
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/queue-reserve/REVIEW.md",
+        "META/m4/frontier-90min/original/00477530.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00477360-functional-c",
+      "original_va": "00477360",
+      "function": "bh_queue_mode_execute",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary owner/boundary and actual game/engine callers reviewed; library attribution unresolved for engine_candidate. CRT/import/compiler/shared tails excluded.",
+      "source": "src/bh_queue_reserve.c",
+      "source_sha256": "9fb6097bb5f8701f139d3b8aac4b7d2a8fbed70d5e2d0ad626449b79c0c85b45",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "abi": "x86 source definitions with verified layouts and explicit owning/borrowed contexts; no original binary drop-in ABI claim",
+        "boundary": "00477360..00477375: 22bytes/9instructions",
+        "raw_byte_match": false,
+        "differential": false,
+        "fixtures": {
+          "queue-reserve": {
+            "scenario": "queue-reserve",
+            "checks": 65,
+            "failures": 0
+          }
+        },
+        "clean_fixtures": {
+          "queue-reserve": {
+            "scenario": "queue-reserve",
+            "checks": 65,
+            "failures": 0
+          }
+        },
+        "limits": [
+          "PC53/nearest/masked source/static-instruction fixtures; PC24/extreme/transcendental universal fidelity unvalidated.",
+          "Explicit selected emitters do not admit software raster dispatch/kernels; native input capture/recenter tested through isolated API fixtures only.",
+          "No game or original-code execution. Complete scene callers/startup/mission/weapon lifetimes remain open."
+        ]
+      },
+      "evidence": [
+        "META/m4/queue-reserve/REVIEW.md",
+        "META/m4/frontier-90min/original/00477360.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
     }
   ],
   "role_catalog": "META/m1/role-catalog.json",
@@ -14428,6 +16639,104 @@
         "META/m4/scene-callers/validation.json"
       ],
       "validation": "Explicit source ownership/bounds/dispatch binding; no original function count or original-code execution"
+    },
+    {
+      "id": "horizon-native-gradient-adapter",
+      "function": "bh_horizon_native_emit",
+      "source": "src/bh_horizon.c",
+      "source_sha256": "b53872979e57b14e7c798dbaf8adcaa253aad6bd0a5eb5473922ccc9665be428",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "evidence": [
+        "META/m4/frontier-90min/validation.json"
+      ],
+      "validation": "Explicit source lifetime/context/native binding. No additional original function or source-game admission."
+    },
+    {
+      "id": "input-collection-bindings-adapter",
+      "function": "bh_input_collection_init",
+      "source": "src/bh_input_collection.c",
+      "source_sha256": "0790537292a3e6c4e3c4fdef94ae976f9d88ba04727493bf66ed166a6a604813",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "evidence": [
+        "META/m4/frontier-90min/validation.json"
+      ],
+      "validation": "Explicit source lifetime/context/native binding. No additional original function or source-game admission."
+    },
+    {
+      "id": "input-device-lifetime-adapter",
+      "function": "bh_input_devices_bind",
+      "source": "src/bh_input_devices.c",
+      "source_sha256": "1693d391f4c903d2da6f97759657ce88fc98ef12954f570d1d7040767e8ae42d",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "evidence": [
+        "META/m4/frontier-90min/validation.json"
+      ],
+      "validation": "Explicit source lifetime/context/native binding. No additional original function or source-game admission."
+    },
+    {
+      "id": "radar-frame-bindings-adapter",
+      "function": "bh_radar_bind",
+      "source": "src/bh_radar.c",
+      "source_sha256": "fd0225af2df099129fab42aa0a8c061c6580c88e42d414d0790f663fed8d0f71",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "evidence": [
+        "META/m4/frontier-90min/validation.json"
+      ],
+      "validation": "Explicit source lifetime/context/native binding. No additional original function or source-game admission."
+    },
+    {
+      "id": "actor-route-field-binding-adapter",
+      "function": "bh_actor_route_read",
+      "source": "src/bh_actor_route.c",
+      "source_sha256": "fe310663c498707e698c6346bdaee39cef8ea330434d597c9d2ea08f1500d04e",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "evidence": [
+        "META/m4/frontier-90min/validation.json"
+      ],
+      "validation": "Explicit source lifetime/context/native binding. No additional original function or source-game admission."
+    },
+    {
+      "id": "frame-buffer-lifetime-adapter",
+      "function": "bh_frame_buffers_bind",
+      "source": "src/bh_frame_buffers.c",
+      "source_sha256": "9252358b8af6ff298fb3867af3cd68a51bb805fdc8832baf57bbffd999e1fc64",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "evidence": [
+        "META/m4/frontier-90min/validation.json"
+      ],
+      "validation": "Explicit source lifetime/context/native binding. No additional original function or source-game admission."
+    },
+    {
+      "id": "queue-mode-submission-adapter",
+      "function": "bh_queue_mode",
+      "source": "src/bh_queue_reserve.c",
+      "source_sha256": "9fb6097bb5f8701f139d3b8aac4b7d2a8fbed70d5e2d0ad626449b79c0c85b45",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "evidence": [
+        "META/m4/frontier-90min/validation.json"
+      ],
+      "validation": "Explicit source lifetime/context/native binding. No additional original function or source-game admission."
     }
   ],
   "supplemental_role_catalogs": [

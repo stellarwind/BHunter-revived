@@ -1,0 +1,513 @@
+[
+  {
+    "address": "004784c0",
+    "function": "bh_horizon_queue",
+    "source": "src/bh_horizon_queue.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "horizon-queue",
+      "horizon-native"
+    ],
+    "review": "META/m4/horizon/REVIEW.md",
+    "original": "META/m4/frontier-90min/original/004784c0.tsv",
+    "bytes": 116,
+    "instructions": 37,
+    "end_inclusive": "00478533",
+    "body_sha256": "a69b07f3ac674774a7fe5de78002588feba264c5079c72075e6f0d396f4c88b5",
+    "upstream_original": "META/m4/horizon/original/004784c0.disasm.json"
+  },
+  {
+    "address": "00477aa0",
+    "function": "bh_horizon_queue_execute",
+    "source": "src/bh_horizon_queue.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "horizon-native"
+    ],
+    "review": "META/m4/horizon/REVIEW.md",
+    "original": "META/m4/frontier-90min/original/00477aa0.tsv",
+    "bytes": 52,
+    "instructions": 22,
+    "end_inclusive": "00477ad3",
+    "body_sha256": "922890fde26d90d46c1716b8bbdbdd0e7836eb32be5d42ccacd214e2a01d12cb",
+    "upstream_original": "META/m4/horizon/original/00477aa0.disasm.json"
+  },
+  {
+    "address": "0045db80",
+    "function": "bh_horizon_draw",
+    "source": "src/bh_horizon.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "horizon",
+      "horizon-native"
+    ],
+    "review": "META/m4/horizon/REVIEW.md",
+    "original": "META/m4/frontier-90min/original/0045db80.tsv",
+    "bytes": 2958,
+    "instructions": 699,
+    "end_inclusive": "0045e70d",
+    "body_sha256": "306b3034cc9def74ea1292b8dae75525634412b7330336a463570e7c25fbae07",
+    "upstream_original": "META/m4/horizon/original/0045db80.disasm.json"
+  },
+  {
+    "address": "0046d630",
+    "function": "bh_depth_subdivide",
+    "source": "src/bh_depth_subdivide.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "depth-subdivide",
+      "depth-subdivide-native"
+    ],
+    "review": "META/m4/horizon/REVIEW.md",
+    "original": "META/m4/frontier-90min/original/0046d630.tsv",
+    "bytes": 925,
+    "instructions": 314,
+    "end_inclusive": "0046d9cc",
+    "body_sha256": "5459f7a4a4b49f95f07fab40992097c30773ce69f84200df3d96625c7953cedd",
+    "upstream_original": "META/m4/horizon/original/0046d630.disasm.json"
+  },
+  {
+    "address": "0046d9d0",
+    "function": "bh_depth_subdivide_scalar",
+    "source": "src/bh_depth_subdivide.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "depth-subdivide",
+      "depth-subdivide-native"
+    ],
+    "review": "META/m4/horizon/REVIEW.md",
+    "original": "META/m4/frontier-90min/original/0046d9d0.tsv",
+    "bytes": 974,
+    "instructions": 331,
+    "end_inclusive": "0046dd9d",
+    "body_sha256": "470e49c96f1ff5fee44b2cff40af03c5f7fd86fbbfeb748a74238df2e1720723",
+    "upstream_original": "META/m4/horizon/original/0046d9d0.disasm.json"
+  },
+  {
+    "address": "00478060",
+    "function": "bh_material_queue_words",
+    "source": "src/bh_material_queue.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "material-queue"
+    ],
+    "review": "META/m4/material-queue/REVIEW.md",
+    "original": "META/m4/frontier-90min/original/00478060.tsv",
+    "bytes": 227,
+    "instructions": 71,
+    "end_inclusive": "00478142",
+    "body_sha256": "b99debbcba7d6ec3429694e56b53e966ed750efdf555409eecc0535a840f890b",
+    "upstream_original": "META/m4/material-queue/original/00478060.disasm.json"
+  },
+  {
+    "address": "00477fa0",
+    "function": "bh_material_queue_execute",
+    "source": "src/bh_material_queue.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "material-queue"
+    ],
+    "review": "META/m4/material-queue/REVIEW.md",
+    "original": "META/m4/frontier-90min/original/00477fa0.tsv",
+    "bytes": 50,
+    "instructions": 23,
+    "end_inclusive": "00477fd1",
+    "body_sha256": "aee6b081e96ea8f66fccb64c1d80e094d9db6b273a6d1e7219864cf956a33008",
+    "upstream_original": "META/m4/material-queue/original/00477fa0.disasm.json"
+  },
+  {
+    "address": "00457590",
+    "function": "bh_sprite_quad_draw",
+    "source": "src/bh_sprite_quad.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "sprite-quad",
+      "quad-queue",
+      "radar-native"
+    ],
+    "review": "META/m4/sprite-quad/README.md",
+    "original": "META/m4/frontier-90min/original/00457590.tsv",
+    "bytes": 2181,
+    "instructions": 556,
+    "end_inclusive": "00457e14",
+    "body_sha256": "ebb1ee2b137305230b1f8f030d896427f93dc5ffbde18eede351f41e4f4c9322",
+    "upstream_original": "META/m4/sprite-quad/original/00457590.disasm.json"
+  },
+  {
+    "address": "00478730",
+    "function": "bh_quad_queue",
+    "source": "src/bh_quad_queue.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "sprite-quad",
+      "quad-queue",
+      "radar-native"
+    ],
+    "review": "META/m4/sprite-quad/README.md",
+    "original": "META/m4/frontier-90min/original/00478730.tsv",
+    "bytes": 308,
+    "instructions": 93,
+    "end_inclusive": "00478863",
+    "body_sha256": "3c78f41ea8535dc8ce0e597ff99e9347bbe64b46ca779c91de614f0cb2e10aa6",
+    "upstream_original": "META/m4/sprite-quad/original/00478730.disasm.json"
+  },
+  {
+    "address": "00477760",
+    "function": "bh_quad_queue_execute",
+    "source": "src/bh_quad_queue.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "sprite-quad",
+      "quad-queue",
+      "radar-native"
+    ],
+    "review": "META/m4/sprite-quad/README.md",
+    "original": "META/m4/frontier-90min/original/00477760.tsv",
+    "bytes": 94,
+    "instructions": 45,
+    "end_inclusive": "004777bd",
+    "body_sha256": "7222dbe7b7b2a70d35327a017962582a4f438b550f92001707b164f3690c4bc7",
+    "upstream_original": "META/m4/sprite-quad/original/00477760.disasm.json"
+  },
+  {
+    "address": "00421610",
+    "function": "bh_target_select",
+    "source": "src/bh_target_selection.c",
+    "role": "game",
+    "scenarios": [
+      "target-selection"
+    ],
+    "review": "META/m4/target-selection/review.json",
+    "original": "META/m4/frontier-90min/original/00421610.tsv",
+    "bytes": 304,
+    "instructions": 107,
+    "end_inclusive": "0042173f",
+    "body_sha256": "790a17f255acb7ec3596279361e48c931121aee1f52e5e57a0271142796112cc",
+    "upstream_original": "META/m4/player-frontier/original/00421610.tsv"
+  },
+  {
+    "address": "004340f0",
+    "function": "bh_world_clamp_point",
+    "source": "src/bh_target_steering.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "target-steering"
+    ],
+    "review": "META/m4/target-steering/review.json",
+    "original": "META/m4/frontier-90min/original/004340f0.tsv",
+    "bytes": 169,
+    "instructions": 53,
+    "end_inclusive": "00434198",
+    "body_sha256": "41bf030528f60f2aeda4aef6f23dfe79f92da93aec0bc8bde10c099b710070d0",
+    "upstream_original": "META/m4/target-steering/original/004340f0.tsv"
+  },
+  {
+    "address": "004344f0",
+    "function": "bh_route_choose_exit",
+    "source": "src/bh_route_choice.c",
+    "role": "game",
+    "scenarios": [
+      "route-choice",
+      "actor-route"
+    ],
+    "review": "META/m4/target-steering/review.json",
+    "original": "META/m4/frontier-90min/original/004344f0.tsv",
+    "bytes": 344,
+    "instructions": 116,
+    "end_inclusive": "00434647",
+    "body_sha256": "665a2fb59c153ae188b8833c405d007f0079808be1cf44a08535f28eac1992ea",
+    "upstream_original": "META/m4/target-steering/original/004344f0.tsv"
+  },
+  {
+    "address": "00434810",
+    "function": "bh_route_curve_length",
+    "source": "src/bh_route_curve_length.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "route-curve-length"
+    ],
+    "review": "META/m4/target-steering/review.json",
+    "original": "META/m4/frontier-90min/original/00434810.tsv",
+    "bytes": 262,
+    "instructions": 85,
+    "end_inclusive": "00434915",
+    "body_sha256": "768a30578734301defcd2d228df0e11c5ebef8820a44016d11f0fc767a35020e",
+    "upstream_original": "META/m4/target-steering/original/00434810.tsv"
+  },
+  {
+    "address": "00434650",
+    "function": "bh_route_guided_exit",
+    "source": "src/bh_route_guided.c",
+    "role": "game",
+    "scenarios": [
+      "route-guided",
+      "actor-route"
+    ],
+    "review": "META/m4/target-steering/review.json",
+    "original": "META/m4/frontier-90min/original/00434650.tsv",
+    "bytes": 440,
+    "instructions": 138,
+    "end_inclusive": "00434807",
+    "body_sha256": "4ce5b12fbd2d4e1d5e9e20f1f81802e649d4666ca187143a4d6e3a3ada684251",
+    "upstream_original": "META/m4/target-steering/original/00434650.tsv"
+  },
+  {
+    "address": "004343c0",
+    "function": "bh_vec3_snap_axis",
+    "source": "src/bh_axis_snap.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "axis-snap",
+      "actor-route"
+    ],
+    "review": "META/m4/target-steering/review.json",
+    "original": "META/m4/frontier-90min/original/004343c0.tsv",
+    "bytes": 298,
+    "instructions": 119,
+    "end_inclusive": "004344e9",
+    "body_sha256": "b9b12a43bb418f74c3bbe7d38263a7132abb708265bd7d8ce7dd89c13fb44451",
+    "upstream_original": "META/m4/target-steering/original/004343c0.tsv"
+  },
+  {
+    "address": "00434f40",
+    "function": "bh_actor_route_promote",
+    "source": "src/bh_actor_route.c",
+    "role": "game",
+    "scenarios": [
+      "actor-route"
+    ],
+    "review": "META/m4/target-steering/review.json",
+    "original": "META/m4/frontier-90min/original/00434f40.tsv",
+    "bytes": 1600,
+    "instructions": 411,
+    "end_inclusive": "0043557f",
+    "body_sha256": "94a39defa5e19bf7f3d7be162628f1e03770098400b9bd08d4b9175120703f1b",
+    "upstream_original": "META/m4/target-steering/original/00434f40.tsv"
+  },
+  {
+    "address": "004355c0",
+    "function": "bh_actor_route_advance",
+    "source": "src/bh_actor_route.c",
+    "role": "game",
+    "scenarios": [
+      "actor-route"
+    ],
+    "review": "META/m4/target-steering/review.json",
+    "original": "META/m4/frontier-90min/original/004355c0.tsv",
+    "bytes": 350,
+    "instructions": 109,
+    "end_inclusive": "0043571d",
+    "body_sha256": "29eaada70fb14d100e70aa0155dd68baebd506015cff5f7be25550b44bc16260",
+    "upstream_original": "META/m4/target-steering/original/004355c0.tsv"
+  },
+  {
+    "address": "00435790",
+    "function": "bh_actor_route_due",
+    "source": "src/bh_actor_route_lifetime.c",
+    "role": "game",
+    "scenarios": [
+      "actor-route-lifetime"
+    ],
+    "review": "META/m4/target-steering/review.json",
+    "original": "META/m4/frontier-90min/original/00435790.tsv",
+    "bytes": 58,
+    "instructions": 17,
+    "end_inclusive": "004357c9",
+    "body_sha256": "367ed20e8763fb75b20183f801ffe57dabd9d715ff84215c5397505b8a542d32",
+    "upstream_original": "META/m4/target-steering/original/00435790.tsv"
+  },
+  {
+    "address": "00435720",
+    "function": "bh_actor_route_release",
+    "source": "src/bh_actor_route_lifetime.c",
+    "role": "game",
+    "scenarios": [
+      "actor-route-lifetime"
+    ],
+    "review": "META/m4/target-steering/review.json",
+    "original": "META/m4/frontier-90min/original/00435720.tsv",
+    "bytes": 102,
+    "instructions": 28,
+    "end_inclusive": "00435785",
+    "body_sha256": "a90fbbb773d56072915864ea19d73b995da1c171ede3a8b5c8f062efa840a436",
+    "upstream_original": "META/m4/target-steering/original/00435720.tsv"
+  },
+  {
+    "address": "00473c40",
+    "function": "bh_input_message",
+    "source": "src/bh_input_messages.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "input-messages",
+      "input-collection"
+    ],
+    "review": "META/m4/input-messages/REVIEW.md",
+    "original": "META/m4/frontier-90min/original/00473c40.tsv",
+    "bytes": 229,
+    "instructions": 60,
+    "end_inclusive": "00473d24",
+    "body_sha256": "362afd7ef6061f6c7388aa4aa1c2778e1c22af2c4d20c4129290629341974976",
+    "upstream_original": "META/m4/input-messages/original/00473c40.tsv"
+  },
+  {
+    "address": "004744f0",
+    "function": "bh_input_collect",
+    "source": "src/bh_input_collection.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "input-collection"
+    ],
+    "review": "META/m4/input-collection/README.md",
+    "original": "META/m4/frontier-90min/original/004744f0.tsv",
+    "bytes": 4421,
+    "instructions": 1107,
+    "end_inclusive": "00475634",
+    "body_sha256": "93380cfa1ea024de9192d9fe8cd9c0350d6c5699402f0e1141e80bf60f4f7f0a",
+    "upstream_original": "META/m4/input-collection/original/004744f0.tsv"
+  },
+  {
+    "address": "00473d60",
+    "function": "bh_input_devices_start",
+    "source": "src/bh_input_devices.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "input-devices"
+    ],
+    "review": "META/m4/input-collection/README.md",
+    "original": "META/m4/frontier-90min/original/00473d60.tsv",
+    "bytes": 627,
+    "instructions": 143,
+    "end_inclusive": "00473fd2",
+    "body_sha256": "2e9c533ffbad56e3b46fbfe6b7fbb9fe869bc1dcf45112230e26fbdb70327695",
+    "upstream_original": "META/m4/input-collection/original/00473d60.tsv"
+  },
+  {
+    "address": "00473fe0",
+    "function": "bh_input_devices_stop",
+    "source": "src/bh_input_devices.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "input-devices"
+    ],
+    "review": "META/m4/input-collection/README.md",
+    "original": "META/m4/frontier-90min/original/00473fe0.tsv",
+    "bytes": 55,
+    "instructions": 16,
+    "end_inclusive": "00474016",
+    "body_sha256": "2d5db47174f885deb6f6e6a9c2ad13437e4c1927f494494eb880e5b24ea5bfb9",
+    "upstream_original": "META/m4/input-collection/original/00473fe0.tsv"
+  },
+  {
+    "address": "0041b650",
+    "function": "bh_radar_marker",
+    "source": "src/bh_radar.c",
+    "role": "game",
+    "scenarios": [
+      "radar",
+      "radar-native"
+    ],
+    "review": "META/m4/radar/REVIEW.md",
+    "original": "META/m4/frontier-90min/original/0041b650.tsv",
+    "bytes": 1434,
+    "instructions": 427,
+    "end_inclusive": "0041bbe9",
+    "body_sha256": "8f7dacf79ebb4bbcb32792e4419868ab02f292525eff0e13bc5619bdb5940210",
+    "upstream_original": "META/m4/radar/original/0041b650.disasm.json"
+  },
+  {
+    "address": "00471c00",
+    "function": "bh_frame_buffers_start",
+    "source": "src/bh_frame_buffers.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "frame-buffers"
+    ],
+    "review": "META/m4/frame-buffers/README.md",
+    "original": "META/m4/frontier-90min/original/00471c00.tsv",
+    "bytes": 183,
+    "instructions": 36,
+    "end_inclusive": "00471cb6",
+    "body_sha256": "3a72ce21835b36514b384dc5d8bd21e0a3e3ee068026750e185765895747b631",
+    "upstream_original": "META/m4/frame-buffers/original/00471c00.tsv"
+  },
+  {
+    "address": "00471cc0",
+    "function": "bh_frame_buffers_acquire",
+    "source": "src/bh_frame_buffers.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "frame-buffers"
+    ],
+    "review": "META/m4/frame-buffers/README.md",
+    "original": "META/m4/frontier-90min/original/00471cc0.tsv",
+    "bytes": 168,
+    "instructions": 50,
+    "end_inclusive": "00471d67",
+    "body_sha256": "3336ff9ed9ba10299517ba31a26c75e6dcd2149c2c6d54dd78f150aefa8a76b5",
+    "upstream_original": "META/m4/frame-buffers/original/00471cc0.tsv"
+  },
+  {
+    "address": "00471d70",
+    "function": "bh_frame_buffers_publish",
+    "source": "src/bh_frame_buffers.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "frame-buffers"
+    ],
+    "review": "META/m4/frame-buffers/README.md",
+    "original": "META/m4/frontier-90min/original/00471d70.tsv",
+    "bytes": 119,
+    "instructions": 32,
+    "end_inclusive": "00471de6",
+    "body_sha256": "9d1f00c59cec87caae71602a94aa09cf0099d6573c08baa61cf64f3e413f63b0",
+    "upstream_original": "META/m4/frame-buffers/original/00471d70.tsv"
+  },
+  {
+    "address": "00455410",
+    "function": "bh_screen_quad_draw",
+    "source": "src/bh_screen_quad.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "screen-quad"
+    ],
+    "review": "META/m4/screen-quad/REVIEW.md",
+    "original": "META/m4/frontier-90min/original/00455410.tsv",
+    "bytes": 1059,
+    "instructions": 251,
+    "end_inclusive": "00455832",
+    "body_sha256": "9be37ff36bbef4cfbba66e135e62584804620c5a6c7d2ec480d4b7e113103fd8",
+    "upstream_original": "META/m4/screen-quad/original/00455410.disasm.json"
+  },
+  {
+    "address": "00477680",
+    "function": "bh_screen_quad_execute",
+    "source": "src/bh_screen_quad.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "screen-quad"
+    ],
+    "review": "META/m4/screen-quad/REVIEW.md",
+    "original": "META/m4/frontier-90min/original/00477680.tsv",
+    "bytes": 50,
+    "instructions": 23,
+    "end_inclusive": "004776b1",
+    "body_sha256": "fb24951605fd0fd15ca00f569b57778dc89fdb83a00565e2dcaa93ccb33879d0",
+    "upstream_original": "META/m4/screen-quad/original/00477680.disasm.json"
+  },
+  {
+    "address": "00478e50",
+    "function": "bh_screen_quad_queue",
+    "source": "src/bh_screen_quad.c",
+    "role": "engine_candidate",
+    "scenarios": [
+      "screen-quad"
+    ],
+    "review": "META/m4/screen-quad/REVIEW.md",
+    "original": "META/m4/frontier-90min/original/00478e50.tsv",
+    "bytes": 227,
+    "instructions": 71,
+    "end_inclusive": "00478f32",
+    "body_sha256": "187c321cb291c4465eba498b1b48ae773a74536e160dd291e170cea300a657e7",
+    "upstream_original": "META/m4/screen-quad/original/00478e50.disasm.json"
+  }
+]

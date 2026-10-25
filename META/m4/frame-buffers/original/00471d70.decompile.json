@@ -1,0 +1,8 @@
+[
+  {
+    "address": "00471d70",
+    "code": "\r\nvoid FUN_00471d70(void)\r\n\r\n{\r\n  DWORD DVar1;\r\n  \r\n  DVar1 = WaitForSingleObject(DAT_004ee730,5);\r\n  while (DVar1 == 0x102) {\r\n    DVar1 = WaitForSingleObject(DAT_004ee730,5);\r\n  }\r\n  DAT_004ee310 = DAT_004ee310 + 1;\r\n  DAT_004ee31c = DAT_004ee31c + 1;\r\n  DAT_004ee328 = DAT_004ee328 + 1;\r\n  *(undefined4 *)(DAT_004eed5c + 4) = 0;\r\n  DAT_004eed58 = DAT_004eed5c;\r\n  ReleaseMutex(DAT_004ee730);\r\n  return;\r\n}\r\n\r\n",
+    "name": "FUN_00471d70",
+    "signature": "undefined FUN_00471d70(void)"
+  }
+]

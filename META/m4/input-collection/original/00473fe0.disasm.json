@@ -1,0 +1,135 @@
+[
+  {
+    "address": "00473fe0",
+    "bytes": "a170ed4e00",
+    "mnemonic": "MOV",
+    "operands": [
+      "EAX",
+      "[0x004eed70]"
+    ]
+  },
+  {
+    "address": "00473fe5",
+    "bytes": "56",
+    "mnemonic": "PUSH",
+    "operands": [
+      "ESI"
+    ]
+  },
+  {
+    "address": "00473fe6",
+    "bytes": "8b35c0914800",
+    "mnemonic": "MOV",
+    "operands": [
+      "ESI",
+      "dword ptr [0x004891c0]"
+    ]
+  },
+  {
+    "address": "00473fec",
+    "bytes": "85c0",
+    "mnemonic": "TEST",
+    "operands": [
+      "EAX",
+      "EAX"
+    ]
+  },
+  {
+    "address": "00473fee",
+    "bytes": "7404",
+    "mnemonic": "JZ",
+    "operands": [
+      "0x00473ff4"
+    ]
+  },
+  {
+    "address": "00473ff0",
+    "bytes": "6a00",
+    "mnemonic": "PUSH",
+    "operands": [
+      "0x0"
+    ]
+  },
+  {
+    "address": "00473ff2",
+    "bytes": "ffd6",
+    "mnemonic": "CALL",
+    "operands": [
+      "ESI"
+    ]
+  },
+  {
+    "address": "00473ff4",
+    "bytes": "a174ed4e00",
+    "mnemonic": "MOV",
+    "operands": [
+      "EAX",
+      "[0x004eed74]"
+    ]
+  },
+  {
+    "address": "00473ff9",
+    "bytes": "85c0",
+    "mnemonic": "TEST",
+    "operands": [
+      "EAX",
+      "EAX"
+    ]
+  },
+  {
+    "address": "00473ffb",
+    "bytes": "7404",
+    "mnemonic": "JZ",
+    "operands": [
+      "0x00474001"
+    ]
+  },
+  {
+    "address": "00473ffd",
+    "bytes": "6a01",
+    "mnemonic": "PUSH",
+    "operands": [
+      "0x1"
+    ]
+  },
+  {
+    "address": "00473fff",
+    "bytes": "ffd6",
+    "mnemonic": "CALL",
+    "operands": [
+      "ESI"
+    ]
+  },
+  {
+    "address": "00474001",
+    "bytes": "c70574ed4e0000000000",
+    "mnemonic": "MOV",
+    "operands": [
+      "dword ptr [0x004eed74]",
+      "0x0"
+    ]
+  },
+  {
+    "address": "0047400b",
+    "bytes": "c70570ed4e0000000000",
+    "mnemonic": "MOV",
+    "operands": [
+      "dword ptr [0x004eed70]",
+      "0x0"
+    ]
+  },
+  {
+    "address": "00474015",
+    "bytes": "5e",
+    "mnemonic": "POP",
+    "operands": [
+      "ESI"
+    ]
+  },
+  {
+    "address": "00474016",
+    "bytes": "c3",
+    "mnemonic": "RET",
+    "operands": []
+  }
+]
