@@ -21684,6 +21684,2017 @@
         "META/m4/pickup-basic/integration-real.json",
         "META/m4/pickup-basic/clean/clean-checkout.json"
       ]
+    },
+    {
+      "id": "0042caa0-functional-c-target400",
+      "original_va": "0042caa0",
+      "function": "bh_menu_network_open",
+      "role": "game",
+      "provenance_confidence": "High: UI callback pointers and switch-specific input/profile selection behavior; no CRT/EH/import signature; distinct entry and RET owner boundaries verified",
+      "source": "src/bh_menu_settings.c",
+      "source_sha256": "fe278c84324b82130e6863305c7d10086fe93bbe49a741415d65517e0605faa5",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "0042caa0",
+            "end_exclusive": "0042cad3",
+            "bytes": 51,
+            "instructions": 10,
+            "sha256": "1492a1bfc80938315787e7e946ca8740a1c5c16aec350e8958240e2ff196b355"
+          }
+        ],
+        "abi": "x86 cdecl; explicit borrowed menu/profile/registry binding; source BHInputProfile76 bytes and network record188 bytes",
+        "fixtures": {
+          "menu-settings": {
+            "scenario": "menu-settings",
+            "checks": 976449,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "menu-settings": {
+            "scenario": "menu-settings",
+            "checks": 976449,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Menu construction and original row label rendering are external owners; supplied row refresh methods retain the verified invocation contract.",
+          "Non-NULL refresh integration uses an explicit adapter forwarding to an actual recovered submenu owner; this does not claim recovery of label rendering.",
+          "Invalid row/record/text storage rejected; original adjacent-memory string overflow not reproduced.",
+          "No game, network session, physical input, audio, original code or gameplay execution.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/a/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0042cae0-functional-c-target400",
+      "original_va": "0042cae0",
+      "function": "bh_menu_submenu_first",
+      "role": "game",
+      "provenance_confidence": "High: UI callback pointers and switch-specific input/profile selection behavior; no CRT/EH/import signature; distinct entry and RET owner boundaries verified",
+      "source": "src/bh_menu_settings.c",
+      "source_sha256": "fe278c84324b82130e6863305c7d10086fe93bbe49a741415d65517e0605faa5",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "0042cae0",
+            "end_exclusive": "0042cb0f",
+            "bytes": 47,
+            "instructions": 12,
+            "sha256": "b52527141da4155628736e7e3539cb731dada3681e0b1e8da131f55969a24c89"
+          }
+        ],
+        "abi": "x86 cdecl; explicit borrowed menu/profile/registry binding; source BHInputProfile76 bytes and network record188 bytes",
+        "fixtures": {
+          "menu-settings": {
+            "scenario": "menu-settings",
+            "checks": 976449,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "menu-settings": {
+            "scenario": "menu-settings",
+            "checks": 976449,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Menu construction and original row label rendering are external owners; supplied row refresh methods retain the verified invocation contract.",
+          "Non-NULL refresh integration uses an explicit adapter forwarding to an actual recovered submenu owner; this does not claim recovery of label rendering.",
+          "Invalid row/record/text storage rejected; original adjacent-memory string overflow not reproduced.",
+          "No game, network session, physical input, audio, original code or gameplay execution.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/a/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0042cb10-functional-c-target400",
+      "original_va": "0042cb10",
+      "function": "bh_menu_submenu_second",
+      "role": "game",
+      "provenance_confidence": "High: UI callback pointers and switch-specific input/profile selection behavior; no CRT/EH/import signature; distinct entry and RET owner boundaries verified",
+      "source": "src/bh_menu_settings.c",
+      "source_sha256": "fe278c84324b82130e6863305c7d10086fe93bbe49a741415d65517e0605faa5",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "0042cb10",
+            "end_exclusive": "0042cb3f",
+            "bytes": 47,
+            "instructions": 12,
+            "sha256": "53e1698da43974ee801b9792edc47401c6cea2e41eae02f9cc2463764acb479e"
+          }
+        ],
+        "abi": "x86 cdecl; explicit borrowed menu/profile/registry binding; source BHInputProfile76 bytes and network record188 bytes",
+        "fixtures": {
+          "menu-settings": {
+            "scenario": "menu-settings",
+            "checks": 976449,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "menu-settings": {
+            "scenario": "menu-settings",
+            "checks": 976449,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Menu construction and original row label rendering are external owners; supplied row refresh methods retain the verified invocation contract.",
+          "Non-NULL refresh integration uses an explicit adapter forwarding to an actual recovered submenu owner; this does not claim recovery of label rendering.",
+          "Invalid row/record/text storage rejected; original adjacent-memory string overflow not reproduced.",
+          "No game, network session, physical input, audio, original code or gameplay execution.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/a/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0042e360-functional-c-target400",
+      "original_va": "0042e360",
+      "function": "bh_menu_keys_motion",
+      "role": "game",
+      "provenance_confidence": "High: UI callback pointers and switch-specific input/profile selection behavior; no CRT/EH/import signature; distinct entry and RET owner boundaries verified",
+      "source": "src/bh_menu_settings.c",
+      "source_sha256": "fe278c84324b82130e6863305c7d10086fe93bbe49a741415d65517e0605faa5",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "0042e360",
+            "end_exclusive": "0042e3f3",
+            "bytes": 147,
+            "instructions": 46,
+            "sha256": "04d6f31205b012b337d3cee32ed1b9a1073e8a7b288a18d33e780fcd1c683f7e"
+          }
+        ],
+        "abi": "x86 cdecl; explicit borrowed menu/profile/registry binding; source BHInputProfile76 bytes and network record188 bytes",
+        "fixtures": {
+          "menu-settings": {
+            "scenario": "menu-settings",
+            "checks": 976449,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "menu-settings": {
+            "scenario": "menu-settings",
+            "checks": 976449,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Menu construction and original row label rendering are external owners; supplied row refresh methods retain the verified invocation contract.",
+          "Non-NULL refresh integration uses an explicit adapter forwarding to an actual recovered submenu owner; this does not claim recovery of label rendering.",
+          "Invalid row/record/text storage rejected; original adjacent-memory string overflow not reproduced.",
+          "No game, network session, physical input, audio, original code or gameplay execution.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/a/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0042e540-functional-c-target400",
+      "original_va": "0042e540",
+      "function": "bh_menu_keys_weapons",
+      "role": "game",
+      "provenance_confidence": "High: UI callback pointers and switch-specific input/profile selection behavior; no CRT/EH/import signature; distinct entry and RET owner boundaries verified",
+      "source": "src/bh_menu_settings.c",
+      "source_sha256": "fe278c84324b82130e6863305c7d10086fe93bbe49a741415d65517e0605faa5",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "0042e540",
+            "end_exclusive": "0042e60d",
+            "bytes": 205,
+            "instructions": 61,
+            "sha256": "e815feb0ada178e6ed283eafb64d5806a2863c2133faf2ffcf9936dbe017f79c"
+          }
+        ],
+        "abi": "x86 cdecl; explicit borrowed menu/profile/registry binding; source BHInputProfile76 bytes and network record188 bytes",
+        "fixtures": {
+          "menu-settings": {
+            "scenario": "menu-settings",
+            "checks": 976449,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "menu-settings": {
+            "scenario": "menu-settings",
+            "checks": 976449,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Menu construction and original row label rendering are external owners; supplied row refresh methods retain the verified invocation contract.",
+          "Non-NULL refresh integration uses an explicit adapter forwarding to an actual recovered submenu owner; this does not claim recovery of label rendering.",
+          "Invalid row/record/text storage rejected; original adjacent-memory string overflow not reproduced.",
+          "No game, network session, physical input, audio, original code or gameplay execution.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/a/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0042e690-functional-c-target400",
+      "original_va": "0042e690",
+      "function": "bh_menu_keys_camera",
+      "role": "game",
+      "provenance_confidence": "High: UI callback pointers and switch-specific input/profile selection behavior; no CRT/EH/import signature; distinct entry and RET owner boundaries verified",
+      "source": "src/bh_menu_settings.c",
+      "source_sha256": "fe278c84324b82130e6863305c7d10086fe93bbe49a741415d65517e0605faa5",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "0042e690",
+            "end_exclusive": "0042e75d",
+            "bytes": 205,
+            "instructions": 61,
+            "sha256": "a9e1c48ff9d1860633fe3a8c3d69cd98109aa577243e4baed59d0bdee6c15a77"
+          }
+        ],
+        "abi": "x86 cdecl; explicit borrowed menu/profile/registry binding; source BHInputProfile76 bytes and network record188 bytes",
+        "fixtures": {
+          "menu-settings": {
+            "scenario": "menu-settings",
+            "checks": 976449,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "menu-settings": {
+            "scenario": "menu-settings",
+            "checks": 976449,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Menu construction and original row label rendering are external owners; supplied row refresh methods retain the verified invocation contract.",
+          "Non-NULL refresh integration uses an explicit adapter forwarding to an actual recovered submenu owner; this does not claim recovery of label rendering.",
+          "Invalid row/record/text storage rejected; original adjacent-memory string overflow not reproduced.",
+          "No game, network session, physical input, audio, original code or gameplay execution.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/a/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0042e7e0-functional-c-target400",
+      "original_va": "0042e7e0",
+      "function": "bh_menu_keys_extra",
+      "role": "game",
+      "provenance_confidence": "High: UI callback pointers and switch-specific input/profile selection behavior; no CRT/EH/import signature; distinct entry and RET owner boundaries verified",
+      "source": "src/bh_menu_settings.c",
+      "source_sha256": "fe278c84324b82130e6863305c7d10086fe93bbe49a741415d65517e0605faa5",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "0042e7e0",
+            "end_exclusive": "0042e8c1",
+            "bytes": 225,
+            "instructions": 66,
+            "sha256": "380e9c146d6e76cfa3fff0e3ab240df80533365d73c6c28e4c979c55eeca717f"
+          }
+        ],
+        "abi": "x86 cdecl; explicit borrowed menu/profile/registry binding; source BHInputProfile76 bytes and network record188 bytes",
+        "fixtures": {
+          "menu-settings": {
+            "scenario": "menu-settings",
+            "checks": 976449,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "menu-settings": {
+            "scenario": "menu-settings",
+            "checks": 976449,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Menu construction and original row label rendering are external owners; supplied row refresh methods retain the verified invocation contract.",
+          "Non-NULL refresh integration uses an explicit adapter forwarding to an actual recovered submenu owner; this does not claim recovery of label rendering.",
+          "Invalid row/record/text storage rejected; original adjacent-memory string overflow not reproduced.",
+          "No game, network session, physical input, audio, original code or gameplay execution.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/a/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0042ea70-functional-c-target400",
+      "original_va": "0042ea70",
+      "function": "bh_menu_network_select",
+      "role": "game",
+      "provenance_confidence": "High: UI callback pointers and switch-specific input/profile selection behavior; no CRT/EH/import signature; distinct entry and RET owner boundaries verified",
+      "source": "src/bh_menu_settings.c",
+      "source_sha256": "fe278c84324b82130e6863305c7d10086fe93bbe49a741415d65517e0605faa5",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "0042ea70",
+            "end_exclusive": "0042eade",
+            "bytes": 110,
+            "instructions": 19,
+            "sha256": "8d5112ce0e2fe35ab4c02c98b69c32e3ccf88e1c71903a222b59cddc991207d3"
+          }
+        ],
+        "abi": "x86 cdecl; explicit borrowed menu/profile/registry binding; source BHInputProfile76 bytes and network record188 bytes",
+        "fixtures": {
+          "menu-settings": {
+            "scenario": "menu-settings",
+            "checks": 976449,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "menu-settings": {
+            "scenario": "menu-settings",
+            "checks": 976449,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Menu construction and original row label rendering are external owners; supplied row refresh methods retain the verified invocation contract.",
+          "Non-NULL refresh integration uses an explicit adapter forwarding to an actual recovered submenu owner; this does not claim recovery of label rendering.",
+          "Invalid row/record/text storage rejected; original adjacent-memory string overflow not reproduced.",
+          "No game, network session, physical input, audio, original code or gameplay execution.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/a/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0042eae0-functional-c-target400",
+      "original_va": "0042eae0",
+      "function": "bh_menu_network_address",
+      "role": "game",
+      "provenance_confidence": "High: UI callback pointers and switch-specific input/profile selection behavior; no CRT/EH/import signature; distinct entry and RET owner boundaries verified",
+      "source": "src/bh_menu_settings.c",
+      "source_sha256": "fe278c84324b82130e6863305c7d10086fe93bbe49a741415d65517e0605faa5",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "0042eae0",
+            "end_exclusive": "0042eb2d",
+            "bytes": 77,
+            "instructions": 33,
+            "sha256": "57c92f6509f1b7a53d0cbe95d0134b71384f7c26a5727439889f87eedc1ba294"
+          }
+        ],
+        "abi": "x86 cdecl; explicit borrowed menu/profile/registry binding; source BHInputProfile76 bytes and network record188 bytes",
+        "fixtures": {
+          "menu-settings": {
+            "scenario": "menu-settings",
+            "checks": 976449,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "menu-settings": {
+            "scenario": "menu-settings",
+            "checks": 976449,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Menu construction and original row label rendering are external owners; supplied row refresh methods retain the verified invocation contract.",
+          "Non-NULL refresh integration uses an explicit adapter forwarding to an actual recovered submenu owner; this does not claim recovery of label rendering.",
+          "Invalid row/record/text storage rejected; original adjacent-memory string overflow not reproduced.",
+          "No game, network session, physical input, audio, original code or gameplay execution.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/a/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0042ee50-functional-c-target400",
+      "original_va": "0042ee50",
+      "function": "bh_menu_network_phone",
+      "role": "game",
+      "provenance_confidence": "High: UI callback pointers and switch-specific input/profile selection behavior; no CRT/EH/import signature; distinct entry and RET owner boundaries verified",
+      "source": "src/bh_menu_settings.c",
+      "source_sha256": "fe278c84324b82130e6863305c7d10086fe93bbe49a741415d65517e0605faa5",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "0042ee50",
+            "end_exclusive": "0042ee9d",
+            "bytes": 77,
+            "instructions": 33,
+            "sha256": "d16af218cfe7acde5625b58a715f3e45263eab432d691228ca0eb906a00489a3"
+          }
+        ],
+        "abi": "x86 cdecl; explicit borrowed menu/profile/registry binding; source BHInputProfile76 bytes and network record188 bytes",
+        "fixtures": {
+          "menu-settings": {
+            "scenario": "menu-settings",
+            "checks": 976449,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "menu-settings": {
+            "scenario": "menu-settings",
+            "checks": 976449,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Menu construction and original row label rendering are external owners; supplied row refresh methods retain the verified invocation contract.",
+          "Non-NULL refresh integration uses an explicit adapter forwarding to an actual recovered submenu owner; this does not claim recovery of label rendering.",
+          "Invalid row/record/text storage rejected; original adjacent-memory string overflow not reproduced.",
+          "No game, network session, physical input, audio, original code or gameplay execution.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/a/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00442ec0-functional-c-target400",
+      "original_va": "00442ec0",
+      "function": "bh_script_unloaded_query",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole entity/script behavior, callsites and field offsets verified; proprietary engine/game authorship unresolved; no CRT/import/compiler support or standalone shared tails",
+      "source": "src/bh_script_lifetime.c",
+      "source_sha256": "d26c5acb9029a042a0c0e0a6012c45cc513cc9566c850f369fff047a7405e94c",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00442ec0",
+            "end_exclusive": "00442ee1",
+            "bytes": 33,
+            "instructions": 11,
+            "sha256": "757000dfdce41e51d406d62ad50784a75c4204e87ddd05139da6bea8ec2ca266"
+          }
+        ],
+        "abi": "x86 cdecl with explicit borrowed source contexts; callback ABI as documented in family README",
+        "fixtures": {
+          "script-lifetime": {
+            "scenario": "script-lifetime",
+            "checks": 865,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "clean_fixtures": {
+          "script-lifetime": {
+            "scenario": "script-lifetime",
+            "checks": 865,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/b/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00443350-functional-c-target400",
+      "original_va": "00443350",
+      "function": "bh_script_sound_expiry",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole entity/script behavior, callsites and field offsets verified; proprietary engine/game authorship unresolved; no CRT/import/compiler support or standalone shared tails",
+      "source": "src/bh_script_lifetime.c",
+      "source_sha256": "d26c5acb9029a042a0c0e0a6012c45cc513cc9566c850f369fff047a7405e94c",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00443350",
+            "end_exclusive": "0044338e",
+            "bytes": 62,
+            "instructions": 18,
+            "sha256": "24c7458e57be210a7d3de037eb1b7c27c8d9892dcf9dea6872538e6f14bf07d2"
+          }
+        ],
+        "abi": "x86 cdecl with explicit borrowed source contexts; callback ABI as documented in family README",
+        "fixtures": {
+          "script-lifetime": {
+            "scenario": "script-lifetime",
+            "checks": 865,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "clean_fixtures": {
+          "script-lifetime": {
+            "scenario": "script-lifetime",
+            "checks": 865,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/b/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00443e80-functional-c-target400",
+      "original_va": "00443e80",
+      "function": "bh_script_motion_query",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole entity/script behavior, callsites and field offsets verified; proprietary engine/game authorship unresolved; no CRT/import/compiler support or standalone shared tails",
+      "source": "src/bh_script_lifetime.c",
+      "source_sha256": "d26c5acb9029a042a0c0e0a6012c45cc513cc9566c850f369fff047a7405e94c",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00443e80",
+            "end_exclusive": "00443ef8",
+            "bytes": 120,
+            "instructions": 36,
+            "sha256": "d363ff84a59c0c8dc256a21434861b89bf587e0f604db9f6545e1240c60825cf"
+          }
+        ],
+        "abi": "x86 cdecl with explicit borrowed source contexts; callback ABI as documented in family README",
+        "fixtures": {
+          "script-lifetime": {
+            "scenario": "script-lifetime",
+            "checks": 865,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "clean_fixtures": {
+          "script-lifetime": {
+            "scenario": "script-lifetime",
+            "checks": 865,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/b/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00443f00-functional-c-target400",
+      "original_va": "00443f00",
+      "function": "bh_script_sensor_query",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole entity/script behavior, callsites and field offsets verified; proprietary engine/game authorship unresolved; no CRT/import/compiler support or standalone shared tails",
+      "source": "src/bh_script_lifetime.c",
+      "source_sha256": "d26c5acb9029a042a0c0e0a6012c45cc513cc9566c850f369fff047a7405e94c",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00443f00",
+            "end_exclusive": "00443f48",
+            "bytes": 72,
+            "instructions": 25,
+            "sha256": "f88f458b65fb7f78eece737f42aa3eb5c941de78ca34416cc01ffe0bdf8545a6"
+          }
+        ],
+        "abi": "x86 cdecl with explicit borrowed source contexts; callback ABI as documented in family README",
+        "fixtures": {
+          "script-lifetime": {
+            "scenario": "script-lifetime",
+            "checks": 865,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "clean_fixtures": {
+          "script-lifetime": {
+            "scenario": "script-lifetime",
+            "checks": 865,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/b/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00443f50-functional-c-target400",
+      "original_va": "00443f50",
+      "function": "bh_script_sound_query",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole entity/script behavior, callsites and field offsets verified; proprietary engine/game authorship unresolved; no CRT/import/compiler support or standalone shared tails",
+      "source": "src/bh_script_lifetime.c",
+      "source_sha256": "d26c5acb9029a042a0c0e0a6012c45cc513cc9566c850f369fff047a7405e94c",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00443f50",
+            "end_exclusive": "00443f89",
+            "bytes": 57,
+            "instructions": 20,
+            "sha256": "9b1856dc63133720708a89aee52725778817b0b99b075b61c01c56893915d23c"
+          }
+        ],
+        "abi": "x86 cdecl with explicit borrowed source contexts; callback ABI as documented in family README",
+        "fixtures": {
+          "script-lifetime": {
+            "scenario": "script-lifetime",
+            "checks": 865,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "clean_fixtures": {
+          "script-lifetime": {
+            "scenario": "script-lifetime",
+            "checks": 865,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/b/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00443f90-functional-c-target400",
+      "original_va": "00443f90",
+      "function": "bh_script_sound_actor_query",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole entity/script behavior, callsites and field offsets verified; proprietary engine/game authorship unresolved; no CRT/import/compiler support or standalone shared tails",
+      "source": "src/bh_script_lifetime.c",
+      "source_sha256": "d26c5acb9029a042a0c0e0a6012c45cc513cc9566c850f369fff047a7405e94c",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00443f90",
+            "end_exclusive": "00443fec",
+            "bytes": 92,
+            "instructions": 30,
+            "sha256": "594aeef95e19dab9a2879d69931071de76805764053e647cca77b67a2a9894ba"
+          }
+        ],
+        "abi": "x86 cdecl with explicit borrowed source contexts; callback ABI as documented in family README",
+        "fixtures": {
+          "script-lifetime": {
+            "scenario": "script-lifetime",
+            "checks": 865,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "clean_fixtures": {
+          "script-lifetime": {
+            "scenario": "script-lifetime",
+            "checks": 865,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/b/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00437a30-functional-c-target400",
+      "original_va": "00437a30",
+      "function": "bh_mission_sound_tick",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole entity/script behavior, callsites and field offsets verified; proprietary engine/game authorship unresolved; no CRT/import/compiler support or standalone shared tails",
+      "source": "src/bh_script_lifetime.c",
+      "source_sha256": "d26c5acb9029a042a0c0e0a6012c45cc513cc9566c850f369fff047a7405e94c",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00437a30",
+            "end_exclusive": "00437a7c",
+            "bytes": 76,
+            "instructions": 22,
+            "sha256": "fbcb6366c3a652b3941153bc50aaa251c1f68b75917d87515ce1c1f3635029b4"
+          }
+        ],
+        "abi": "x86 cdecl with explicit borrowed source contexts; callback ABI as documented in family README",
+        "fixtures": {
+          "script-lifetime": {
+            "scenario": "script-lifetime",
+            "checks": 865,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "clean_fixtures": {
+          "script-lifetime": {
+            "scenario": "script-lifetime",
+            "checks": 865,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/b/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00437a80-functional-c-target400",
+      "original_va": "00437a80",
+      "function": "bh_mission_sound_first",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole entity/script behavior, callsites and field offsets verified; proprietary engine/game authorship unresolved; no CRT/import/compiler support or standalone shared tails",
+      "source": "src/bh_script_lifetime.c",
+      "source_sha256": "d26c5acb9029a042a0c0e0a6012c45cc513cc9566c850f369fff047a7405e94c",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00437a80",
+            "end_exclusive": "00437aaa",
+            "bytes": 42,
+            "instructions": 8,
+            "sha256": "1ef12c4ed270752f7dd570003cd0e70c8adb15d993eac178d503f28ffe2447c9"
+          }
+        ],
+        "abi": "x86 cdecl with explicit borrowed source contexts; callback ABI as documented in family README",
+        "fixtures": {
+          "script-lifetime": {
+            "scenario": "script-lifetime",
+            "checks": 865,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "clean_fixtures": {
+          "script-lifetime": {
+            "scenario": "script-lifetime",
+            "checks": 865,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/b/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00437ab0-functional-c-target400",
+      "original_va": "00437ab0",
+      "function": "bh_mission_sound_second",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole entity/script behavior, callsites and field offsets verified; proprietary engine/game authorship unresolved; no CRT/import/compiler support or standalone shared tails",
+      "source": "src/bh_script_lifetime.c",
+      "source_sha256": "d26c5acb9029a042a0c0e0a6012c45cc513cc9566c850f369fff047a7405e94c",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00437ab0",
+            "end_exclusive": "00437ada",
+            "bytes": 42,
+            "instructions": 8,
+            "sha256": "d6fa8e0e37777fb30ad0f53c97a4ff1e78c6091f1df43042eb4a76703d75a6b8"
+          }
+        ],
+        "abi": "x86 cdecl with explicit borrowed source contexts; callback ABI as documented in family README",
+        "fixtures": {
+          "script-lifetime": {
+            "scenario": "script-lifetime",
+            "checks": 865,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "clean_fixtures": {
+          "script-lifetime": {
+            "scenario": "script-lifetime",
+            "checks": 865,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/b/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004759c0-functional-c-target400",
+      "original_va": "004759c0",
+      "function": "bh_serial_baud_label",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary serial/modem preferences and DirectPlay address callback with application-owned fixed modem-name list; not verified CRT/library, historical engine authorship unresolved",
+      "source": "src/bh_serial_options.c",
+      "source_sha256": "62829646f6fc61ff7852b38746d571aa00789a9701f175bbbb92f35650166f48",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "004759c0",
+            "end_exclusive": "00475a71",
+            "bytes": 177,
+            "instructions": 56,
+            "sha256": "b25810c4b7ff116f822a7122ba486695d3067ecd48b81767ee6a1c9d56d55693"
+          }
+        ],
+        "abi": "x86 cdecl options and name lookup; exact four-argument WINAPI callback with RET0x10; explicit borrowed BHModemNames context replaces original globals",
+        "fixtures": {
+          "serial-options": {
+            "scenario": "serial-options",
+            "checks": 32654,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "serial-options": {
+            "scenario": "serial-options",
+            "checks": 32654,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Pending full integration and clean build before admission.",
+          "Valid input contract: live context count0..8; complete double-NUL list; names<=127 bytes. Original size parameter is ignored.",
+          "Source malformed-input/null/count/overlong guards are additions; valid callback ordering, append semantics, duplicates, eight-slot cap and unconditional TRUE match inspected owner.",
+          "No network provider/session enumeration or actual modem transport execution; no claim that serial networking gameplay is complete.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/c/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00475a80-functional-c-target400",
+      "original_va": "00475a80",
+      "function": "bh_serial_baud_next",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary serial/modem preferences and DirectPlay address callback with application-owned fixed modem-name list; not verified CRT/library, historical engine authorship unresolved",
+      "source": "src/bh_serial_options.c",
+      "source_sha256": "62829646f6fc61ff7852b38746d571aa00789a9701f175bbbb92f35650166f48",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00475a80",
+            "end_exclusive": "00475b34",
+            "bytes": 180,
+            "instructions": 56,
+            "sha256": "7f7c65121b065db2ffcd4109ef8009678bd7e3491d9c5a4834c35a63321a37c8"
+          }
+        ],
+        "abi": "x86 cdecl options and name lookup; exact four-argument WINAPI callback with RET0x10; explicit borrowed BHModemNames context replaces original globals",
+        "fixtures": {
+          "serial-options": {
+            "scenario": "serial-options",
+            "checks": 32654,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "serial-options": {
+            "scenario": "serial-options",
+            "checks": 32654,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Pending full integration and clean build before admission.",
+          "Valid input contract: live context count0..8; complete double-NUL list; names<=127 bytes. Original size parameter is ignored.",
+          "Source malformed-input/null/count/overlong guards are additions; valid callback ordering, append semantics, duplicates, eight-slot cap and unconditional TRUE match inspected owner.",
+          "No network provider/session enumeration or actual modem transport execution; no claim that serial networking gameplay is complete.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/c/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00475b40-functional-c-target400",
+      "original_va": "00475b40",
+      "function": "bh_serial_stop_label",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary serial/modem preferences and DirectPlay address callback with application-owned fixed modem-name list; not verified CRT/library, historical engine authorship unresolved",
+      "source": "src/bh_serial_options.c",
+      "source_sha256": "62829646f6fc61ff7852b38746d571aa00789a9701f175bbbb92f35650166f48",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00475b40",
+            "end_exclusive": "00475b5d",
+            "bytes": 29,
+            "instructions": 11,
+            "sha256": "261769e2ef1697ea7985239857a05582556d70004387dffaa976d7e540f4a4cc"
+          }
+        ],
+        "abi": "x86 cdecl options and name lookup; exact four-argument WINAPI callback with RET0x10; explicit borrowed BHModemNames context replaces original globals",
+        "fixtures": {
+          "serial-options": {
+            "scenario": "serial-options",
+            "checks": 32654,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "serial-options": {
+            "scenario": "serial-options",
+            "checks": 32654,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Pending full integration and clean build before admission.",
+          "Valid input contract: live context count0..8; complete double-NUL list; names<=127 bytes. Original size parameter is ignored.",
+          "Source malformed-input/null/count/overlong guards are additions; valid callback ordering, append semantics, duplicates, eight-slot cap and unconditional TRUE match inspected owner.",
+          "No network provider/session enumeration or actual modem transport execution; no claim that serial networking gameplay is complete.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/c/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00475b60-functional-c-target400",
+      "original_va": "00475b60",
+      "function": "bh_serial_stop_next",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary serial/modem preferences and DirectPlay address callback with application-owned fixed modem-name list; not verified CRT/library, historical engine authorship unresolved",
+      "source": "src/bh_serial_options.c",
+      "source_sha256": "62829646f6fc61ff7852b38746d571aa00789a9701f175bbbb92f35650166f48",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00475b60",
+            "end_exclusive": "00475b6e",
+            "bytes": 14,
+            "instructions": 6,
+            "sha256": "5bdf4a2b1802cce96213a398611c5be8bcdd5a743a3158ed2ffdcf02ed553c2c"
+          }
+        ],
+        "abi": "x86 cdecl options and name lookup; exact four-argument WINAPI callback with RET0x10; explicit borrowed BHModemNames context replaces original globals",
+        "fixtures": {
+          "serial-options": {
+            "scenario": "serial-options",
+            "checks": 32654,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "serial-options": {
+            "scenario": "serial-options",
+            "checks": 32654,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Pending full integration and clean build before admission.",
+          "Valid input contract: live context count0..8; complete double-NUL list; names<=127 bytes. Original size parameter is ignored.",
+          "Source malformed-input/null/count/overlong guards are additions; valid callback ordering, append semantics, duplicates, eight-slot cap and unconditional TRUE match inspected owner.",
+          "No network provider/session enumeration or actual modem transport execution; no claim that serial networking gameplay is complete.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/c/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00475b70-functional-c-target400",
+      "original_va": "00475b70",
+      "function": "bh_serial_parity_label",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary serial/modem preferences and DirectPlay address callback with application-owned fixed modem-name list; not verified CRT/library, historical engine authorship unresolved",
+      "source": "src/bh_serial_options.c",
+      "source_sha256": "62829646f6fc61ff7852b38746d571aa00789a9701f175bbbb92f35650166f48",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00475b70",
+            "end_exclusive": "00475b9b",
+            "bytes": 43,
+            "instructions": 14,
+            "sha256": "5b11097ba1d5932daf8de91f167c01cff1a0135aac5239511e4d8d2e5c8db4bf"
+          }
+        ],
+        "abi": "x86 cdecl options and name lookup; exact four-argument WINAPI callback with RET0x10; explicit borrowed BHModemNames context replaces original globals",
+        "fixtures": {
+          "serial-options": {
+            "scenario": "serial-options",
+            "checks": 32654,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "serial-options": {
+            "scenario": "serial-options",
+            "checks": 32654,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Pending full integration and clean build before admission.",
+          "Valid input contract: live context count0..8; complete double-NUL list; names<=127 bytes. Original size parameter is ignored.",
+          "Source malformed-input/null/count/overlong guards are additions; valid callback ordering, append semantics, duplicates, eight-slot cap and unconditional TRUE match inspected owner.",
+          "No network provider/session enumeration or actual modem transport execution; no claim that serial networking gameplay is complete.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/c/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00475bb0-functional-c-target400",
+      "original_va": "00475bb0",
+      "function": "bh_serial_parity_next",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary serial/modem preferences and DirectPlay address callback with application-owned fixed modem-name list; not verified CRT/library, historical engine authorship unresolved",
+      "source": "src/bh_serial_options.c",
+      "source_sha256": "62829646f6fc61ff7852b38746d571aa00789a9701f175bbbb92f35650166f48",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00475bb0",
+            "end_exclusive": "00475bd5",
+            "bytes": 37,
+            "instructions": 12,
+            "sha256": "18e6eaa366cd1c0d4829f9a8753bcddac2815210e26ae18a0cdb6e13262ab8d0"
+          }
+        ],
+        "abi": "x86 cdecl options and name lookup; exact four-argument WINAPI callback with RET0x10; explicit borrowed BHModemNames context replaces original globals",
+        "fixtures": {
+          "serial-options": {
+            "scenario": "serial-options",
+            "checks": 32654,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "serial-options": {
+            "scenario": "serial-options",
+            "checks": 32654,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Pending full integration and clean build before admission.",
+          "Valid input contract: live context count0..8; complete double-NUL list; names<=127 bytes. Original size parameter is ignored.",
+          "Source malformed-input/null/count/overlong guards are additions; valid callback ordering, append semantics, duplicates, eight-slot cap and unconditional TRUE match inspected owner.",
+          "No network provider/session enumeration or actual modem transport execution; no claim that serial networking gameplay is complete.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/c/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00475bf0-functional-c-target400",
+      "original_va": "00475bf0",
+      "function": "bh_serial_flow_label",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary serial/modem preferences and DirectPlay address callback with application-owned fixed modem-name list; not verified CRT/library, historical engine authorship unresolved",
+      "source": "src/bh_serial_options.c",
+      "source_sha256": "62829646f6fc61ff7852b38746d571aa00789a9701f175bbbb92f35650166f48",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00475bf0",
+            "end_exclusive": "00475c21",
+            "bytes": 49,
+            "instructions": 16,
+            "sha256": "234dba1220f37cadfff67d8a87b060c2a8ce96522e50abf8948b72bceced167d"
+          }
+        ],
+        "abi": "x86 cdecl options and name lookup; exact four-argument WINAPI callback with RET0x10; explicit borrowed BHModemNames context replaces original globals",
+        "fixtures": {
+          "serial-options": {
+            "scenario": "serial-options",
+            "checks": 32654,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "serial-options": {
+            "scenario": "serial-options",
+            "checks": 32654,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Pending full integration and clean build before admission.",
+          "Valid input contract: live context count0..8; complete double-NUL list; names<=127 bytes. Original size parameter is ignored.",
+          "Source malformed-input/null/count/overlong guards are additions; valid callback ordering, append semantics, duplicates, eight-slot cap and unconditional TRUE match inspected owner.",
+          "No network provider/session enumeration or actual modem transport execution; no claim that serial networking gameplay is complete.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/c/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00475c40-functional-c-target400",
+      "original_va": "00475c40",
+      "function": "bh_serial_flow_next",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary serial/modem preferences and DirectPlay address callback with application-owned fixed modem-name list; not verified CRT/library, historical engine authorship unresolved",
+      "source": "src/bh_serial_options.c",
+      "source_sha256": "62829646f6fc61ff7852b38746d571aa00789a9701f175bbbb92f35650166f48",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00475c40",
+            "end_exclusive": "00475c6b",
+            "bytes": 43,
+            "instructions": 14,
+            "sha256": "59a640bad119c12e771c0ec3f41fd8e9473283216fc2d4207659690b8bb0ff1d"
+          }
+        ],
+        "abi": "x86 cdecl options and name lookup; exact four-argument WINAPI callback with RET0x10; explicit borrowed BHModemNames context replaces original globals",
+        "fixtures": {
+          "serial-options": {
+            "scenario": "serial-options",
+            "checks": 32654,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "serial-options": {
+            "scenario": "serial-options",
+            "checks": 32654,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Pending full integration and clean build before admission.",
+          "Valid input contract: live context count0..8; complete double-NUL list; names<=127 bytes. Original size parameter is ignored.",
+          "Source malformed-input/null/count/overlong guards are additions; valid callback ordering, append semantics, duplicates, eight-slot cap and unconditional TRUE match inspected owner.",
+          "No network provider/session enumeration or actual modem transport execution; no claim that serial networking gameplay is complete.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/c/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00475c80-functional-c-target400",
+      "original_va": "00475c80",
+      "function": "bh_modem_name_find",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary serial/modem preferences and DirectPlay address callback with application-owned fixed modem-name list; not verified CRT/library, historical engine authorship unresolved",
+      "source": "src/bh_serial_options.c",
+      "source_sha256": "62829646f6fc61ff7852b38746d571aa00789a9701f175bbbb92f35650166f48",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00475c80",
+            "end_exclusive": "00475cc9",
+            "bytes": 73,
+            "instructions": 35,
+            "sha256": "0ed1907c300e12a9843088ed4694ecb1add7d83811ffbf1cb06343deb30d14cb"
+          }
+        ],
+        "abi": "x86 cdecl options and name lookup; exact four-argument WINAPI callback with RET0x10; explicit borrowed BHModemNames context replaces original globals",
+        "fixtures": {
+          "serial-options": {
+            "scenario": "serial-options",
+            "checks": 32654,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "serial-options": {
+            "scenario": "serial-options",
+            "checks": 32654,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Pending full integration and clean build before admission.",
+          "Valid input contract: live context count0..8; complete double-NUL list; names<=127 bytes. Original size parameter is ignored.",
+          "Source malformed-input/null/count/overlong guards are additions; valid callback ordering, append semantics, duplicates, eight-slot cap and unconditional TRUE match inspected owner.",
+          "No network provider/session enumeration or actual modem transport execution; no claim that serial networking gameplay is complete.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/c/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00475cd0-functional-c-target400",
+      "original_va": "00475cd0",
+      "function": "bh_modem_address_element",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary serial/modem preferences and DirectPlay address callback with application-owned fixed modem-name list; not verified CRT/library, historical engine authorship unresolved",
+      "source": "src/bh_serial_options.c",
+      "source_sha256": "62829646f6fc61ff7852b38746d571aa00789a9701f175bbbb92f35650166f48",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00475cd0",
+            "end_exclusive": "00475d53",
+            "bytes": 131,
+            "instructions": 51,
+            "sha256": "b077cb7d51ba840f02eddad0c674d04f7ec8680bd57c7c21f90e7cc82f46141e"
+          }
+        ],
+        "abi": "x86 cdecl options and name lookup; exact four-argument WINAPI callback with RET0x10; explicit borrowed BHModemNames context replaces original globals",
+        "fixtures": {
+          "serial-options": {
+            "scenario": "serial-options",
+            "checks": 32654,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "serial-options": {
+            "scenario": "serial-options",
+            "checks": 32654,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Pending full integration and clean build before admission.",
+          "Valid input contract: live context count0..8; complete double-NUL list; names<=127 bytes. Original size parameter is ignored.",
+          "Source malformed-input/null/count/overlong guards are additions; valid callback ordering, append semantics, duplicates, eight-slot cap and unconditional TRUE match inspected owner.",
+          "No network provider/session enumeration or actual modem transport execution; no claim that serial networking gameplay is complete.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/c/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00402e20-functional-c-target400",
+      "original_va": "00402e20",
+      "function": "bh_actor_target_removed",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary entity callback/numeric behavior with complete reviewed code boundaries; engine authorship unresolved",
+      "source": "src/bh_callback_helpers.c",
+      "source_sha256": "819ff773fd229ebd3710f5a0acd95bf581a537cb550d50ba7c6a89fb3063457d",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00402e20",
+            "end_exclusive": "00402e45",
+            "bytes": 37,
+            "instructions": 10,
+            "sha256": "c858948566464319998e71a61a1c5c1295ef9472d1820842ef15e3c1fbd6c3ac"
+          }
+        ],
+        "abi": "x86 cdecl with explicit borrowed source contexts; callback ABI as documented in family README",
+        "fixtures": {
+          "callback-helpers": {
+            "scenario": "callback-helpers",
+            "checks": 7723,
+            "failures": 0
+          }
+        },
+        "clean_fixtures": {
+          "callback-helpers": {
+            "scenario": "callback-helpers",
+            "checks": 7723,
+            "failures": 0
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/parent/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00407180-functional-c-target400",
+      "original_va": "00407180",
+      "function": "bh_effect_target_removed",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary entity callback/numeric behavior with complete reviewed code boundaries; engine authorship unresolved",
+      "source": "src/bh_callback_helpers.c",
+      "source_sha256": "819ff773fd229ebd3710f5a0acd95bf581a537cb550d50ba7c6a89fb3063457d",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00407180",
+            "end_exclusive": "004071a9",
+            "bytes": 41,
+            "instructions": 12,
+            "sha256": "6daadcc3bb3b404a7b9f3004713d28feb765f864511821c8443919a3b5193817"
+          }
+        ],
+        "abi": "x86 cdecl with explicit borrowed source contexts; callback ABI as documented in family README",
+        "fixtures": {
+          "callback-helpers": {
+            "scenario": "callback-helpers",
+            "checks": 7723,
+            "failures": 0
+          }
+        },
+        "clean_fixtures": {
+          "callback-helpers": {
+            "scenario": "callback-helpers",
+            "checks": 7723,
+            "failures": 0
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/parent/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00407b00-functional-c-target400",
+      "original_va": "00407b00",
+      "function": "bh_marker_query",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary entity callback/numeric behavior with complete reviewed code boundaries; engine authorship unresolved",
+      "source": "src/bh_callback_helpers.c",
+      "source_sha256": "819ff773fd229ebd3710f5a0acd95bf581a537cb550d50ba7c6a89fb3063457d",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00407b00",
+            "end_exclusive": "00407b36",
+            "bytes": 54,
+            "instructions": 18,
+            "sha256": "bc453101f26821c70c54dac735253f8a2eb5df2ffda280571c48d7acf8d75a04"
+          }
+        ],
+        "abi": "x86 cdecl with explicit borrowed source contexts; callback ABI as documented in family README",
+        "fixtures": {
+          "callback-helpers": {
+            "scenario": "callback-helpers",
+            "checks": 7723,
+            "failures": 0
+          }
+        },
+        "clean_fixtures": {
+          "callback-helpers": {
+            "scenario": "callback-helpers",
+            "checks": 7723,
+            "failures": 0
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/parent/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00442330-functional-c-target400",
+      "original_va": "00442330",
+      "function": "bh_pickup_target_removed",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary entity callback/numeric behavior with complete reviewed code boundaries; engine authorship unresolved",
+      "source": "src/bh_callback_helpers.c",
+      "source_sha256": "819ff773fd229ebd3710f5a0acd95bf581a537cb550d50ba7c6a89fb3063457d",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00442330",
+            "end_exclusive": "00442355",
+            "bytes": 37,
+            "instructions": 10,
+            "sha256": "9df25bb63c8f25a032dbb40013ef0dc819073bdb9c1b59b3072a2eda72dd7114"
+          }
+        ],
+        "abi": "x86 cdecl with explicit borrowed source contexts; callback ABI as documented in family README",
+        "fixtures": {
+          "callback-helpers": {
+            "scenario": "callback-helpers",
+            "checks": 7723,
+            "failures": 0
+          }
+        },
+        "clean_fixtures": {
+          "callback-helpers": {
+            "scenario": "callback-helpers",
+            "checks": 7723,
+            "failures": 0
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/parent/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00436670-functional-c-target400",
+      "original_va": "00436670",
+      "function": "bh_vec3_interpolate",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary entity callback/numeric behavior with complete reviewed code boundaries; engine authorship unresolved",
+      "source": "src/bh_callback_helpers.c",
+      "source_sha256": "819ff773fd229ebd3710f5a0acd95bf581a537cb550d50ba7c6a89fb3063457d",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00436670",
+            "end_exclusive": "004366c5",
+            "bytes": 85,
+            "instructions": 31,
+            "sha256": "8d9ba067fac16b8828e912b09dfa92c3ecf792615110bf5e141f2f88c494af56"
+          }
+        ],
+        "abi": "x86 cdecl with explicit borrowed source contexts; callback ABI as documented in family README",
+        "fixtures": {
+          "callback-helpers": {
+            "scenario": "callback-helpers",
+            "checks": 7723,
+            "failures": 0
+          }
+        },
+        "clean_fixtures": {
+          "callback-helpers": {
+            "scenario": "callback-helpers",
+            "checks": 7723,
+            "failures": 0
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/parent/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00423a10-functional-c-target400",
+      "original_va": "00423a10",
+      "function": "bh_packet_read_vector",
+      "role": "engine_candidate",
+      "provenance_confidence": "Ordinary entity callback/numeric behavior with complete reviewed code boundaries; engine authorship unresolved",
+      "source": "src/bh_callback_helpers.c",
+      "source_sha256": "819ff773fd229ebd3710f5a0acd95bf581a537cb550d50ba7c6a89fb3063457d",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00423a10",
+            "end_exclusive": "00423a7b",
+            "bytes": 107,
+            "instructions": 32,
+            "sha256": "c9bcfb164753d823d264285fca6e1ff5677abf04a4844c38b146a3e2a42b548d"
+          }
+        ],
+        "abi": "x86 cdecl with explicit borrowed source contexts; callback ABI as documented in family README",
+        "fixtures": {
+          "callback-helpers": {
+            "scenario": "callback-helpers",
+            "checks": 7723,
+            "failures": 0
+          }
+        },
+        "clean_fixtures": {
+          "callback-helpers": {
+            "scenario": "callback-helpers",
+            "checks": 7723,
+            "failures": 0
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/target400/parent/README.md",
+        "META/m4/target400/owners.json",
+        "META/m4/target400/validation.json",
+        "META/m4/target400/integration-real.json",
+        "META/m4/target400/clean/clean-checkout.json"
+      ]
     }
   ],
   "role_catalog": "META/m1/role-catalog.json",

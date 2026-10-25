@@ -1,0 +1,18 @@
+
+GAME_DATA/BHUNTER.EXE:     file format pei-i386
+
+
+Disassembly of section .text:
+
+00442ec0 <.text+0x41ec0>:
+  442ec0:	8b 4c 24 08          	mov    ecx,DWORD PTR [esp+0x8]
+  442ec4:	8b 44 24 04          	mov    eax,DWORD PTR [esp+0x4]
+  442ec8:	83 39 14             	cmp    DWORD PTR [ecx],0x14
+  442ecb:	75 13                	jne    0x442ee0
+  442ecd:	8b 88 f4 00 00 00    	mov    ecx,DWORD PTR [eax+0xf4]
+  442ed3:	85 c9                	test   ecx,ecx
+  442ed5:	75 09                	jne    0x442ee0
+  442ed7:	50                   	push   eax
+  442ed8:	e8 93 41 03 00       	call   0x477070
+  442edd:	83 c4 04             	add    esp,0x4
+  442ee0:	c3                   	ret

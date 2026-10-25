@@ -1,0 +1,33 @@
+
+GAME_DATA/BHUNTER.EXE:     file format pei-i386
+
+
+Disassembly of section .text:
+
+00443f00 <.text+0x42f00>:
+  443f00:	8b 54 24 08          	mov    edx,DWORD PTR [esp+0x8]
+  443f04:	8b 4c 24 04          	mov    ecx,DWORD PTR [esp+0x4]
+  443f08:	56                   	push   esi
+  443f09:	8b 02                	mov    eax,DWORD PTR [edx]
+  443f0b:	83 f8 04             	cmp    eax,0x4
+  443f0e:	74 2d                	je     0x443f3d
+  443f10:	8b b1 f4 00 00 00    	mov    esi,DWORD PTR [ecx+0xf4]
+  443f16:	85 f6                	test   esi,esi
+  443f18:	75 05                	jne    0x443f1f
+  443f1a:	83 f8 14             	cmp    eax,0x14
+  443f1d:	74 1e                	je     0x443f3d
+  443f1f:	83 f8 0a             	cmp    eax,0xa
+  443f22:	75 22                	jne    0x443f46
+  443f24:	8b 42 04             	mov    eax,DWORD PTR [edx+0x4]
+  443f27:	8b 91 f0 00 00 00    	mov    edx,DWORD PTR [ecx+0xf0]
+  443f2d:	3b c2                	cmp    eax,edx
+  443f2f:	75 15                	jne    0x443f46
+  443f31:	c7 81 cc 00 00 00 b0 	mov    DWORD PTR [ecx+0xcc],0x442eb0
+  443f38:	2e 44 00 
+  443f3b:	5e                   	pop    esi
+  443f3c:	c3                   	ret
+  443f3d:	51                   	push   ecx
+  443f3e:	e8 2d 31 03 00       	call   0x477070
+  443f43:	83 c4 04             	add    esp,0x4
+  443f46:	5e                   	pop    esi
+  443f47:	c3                   	ret

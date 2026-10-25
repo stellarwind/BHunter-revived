@@ -1,0 +1,382 @@
+[
+  {
+    "original_va": "0042caa0",
+    "function": "bh_menu_network_open",
+    "source": "src/bh_menu_settings.c",
+    "role": "game",
+    "provenance_confidence": "High: UI callback pointers and switch-specific input/profile selection behavior; no CRT/EH/import signature; distinct entry and RET owner boundaries verified",
+    "boundary": {
+      "start": "0042caa0",
+      "end_exclusive": "0042cad3",
+      "bytes": 51,
+      "instructions": 10,
+      "sha256": "1492a1bfc80938315787e7e946ca8740a1c5c16aec350e8958240e2ff196b355"
+    },
+    "implementation": "func",
+    "integration": "linked_harness",
+    "target": "build/target400-menu-settings/bhunter-menu-settings-check.exe",
+    "validation": {
+      "original_code_executed": false,
+      "game_executed": false,
+      "raw_byte_match": false,
+      "scenario": "menu-settings",
+      "checks": 976449,
+      "failures": 0,
+      "abi": "x86 cdecl; explicit borrowed menu/profile/registry binding; source BHInputProfile76 bytes and network record188 bytes",
+      "limits": [
+        "Menu construction and original row label rendering are external owners; supplied row refresh methods retain the verified invocation contract.",
+        "Non-NULL refresh integration uses an explicit adapter forwarding to an actual recovered submenu owner; this does not claim recovery of label rendering.",
+        "Invalid row/record/text storage rejected; original adjacent-memory string overflow not reproduced.",
+        "No game, network session, physical input, audio, original code or gameplay execution."
+      ]
+    },
+    "evidence": [
+      "META/m4/target400/a/README.md",
+      "META/m4/target400/a/standalone-build.json",
+      "META/m4/target400/a/original/0042caa0.decompile.json",
+      "META/m4/target400/a/original/0042caa0.disasm.json"
+    ]
+  },
+  {
+    "original_va": "0042cae0",
+    "function": "bh_menu_submenu_first",
+    "source": "src/bh_menu_settings.c",
+    "role": "game",
+    "provenance_confidence": "High: UI callback pointers and switch-specific input/profile selection behavior; no CRT/EH/import signature; distinct entry and RET owner boundaries verified",
+    "boundary": {
+      "start": "0042cae0",
+      "end_exclusive": "0042cb0f",
+      "bytes": 47,
+      "instructions": 12,
+      "sha256": "b52527141da4155628736e7e3539cb731dada3681e0b1e8da131f55969a24c89"
+    },
+    "implementation": "func",
+    "integration": "linked_harness",
+    "target": "build/target400-menu-settings/bhunter-menu-settings-check.exe",
+    "validation": {
+      "original_code_executed": false,
+      "game_executed": false,
+      "raw_byte_match": false,
+      "scenario": "menu-settings",
+      "checks": 976449,
+      "failures": 0,
+      "abi": "x86 cdecl; explicit borrowed menu/profile/registry binding; source BHInputProfile76 bytes and network record188 bytes",
+      "limits": [
+        "Menu construction and original row label rendering are external owners; supplied row refresh methods retain the verified invocation contract.",
+        "Non-NULL refresh integration uses an explicit adapter forwarding to an actual recovered submenu owner; this does not claim recovery of label rendering.",
+        "Invalid row/record/text storage rejected; original adjacent-memory string overflow not reproduced.",
+        "No game, network session, physical input, audio, original code or gameplay execution."
+      ]
+    },
+    "evidence": [
+      "META/m4/target400/a/README.md",
+      "META/m4/target400/a/standalone-build.json",
+      "META/m4/target400/a/original/0042cae0.decompile.json",
+      "META/m4/target400/a/original/0042cae0.disasm.json"
+    ]
+  },
+  {
+    "original_va": "0042cb10",
+    "function": "bh_menu_submenu_second",
+    "source": "src/bh_menu_settings.c",
+    "role": "game",
+    "provenance_confidence": "High: UI callback pointers and switch-specific input/profile selection behavior; no CRT/EH/import signature; distinct entry and RET owner boundaries verified",
+    "boundary": {
+      "start": "0042cb10",
+      "end_exclusive": "0042cb3f",
+      "bytes": 47,
+      "instructions": 12,
+      "sha256": "53e1698da43974ee801b9792edc47401c6cea2e41eae02f9cc2463764acb479e"
+    },
+    "implementation": "func",
+    "integration": "linked_harness",
+    "target": "build/target400-menu-settings/bhunter-menu-settings-check.exe",
+    "validation": {
+      "original_code_executed": false,
+      "game_executed": false,
+      "raw_byte_match": false,
+      "scenario": "menu-settings",
+      "checks": 976449,
+      "failures": 0,
+      "abi": "x86 cdecl; explicit borrowed menu/profile/registry binding; source BHInputProfile76 bytes and network record188 bytes",
+      "limits": [
+        "Menu construction and original row label rendering are external owners; supplied row refresh methods retain the verified invocation contract.",
+        "Non-NULL refresh integration uses an explicit adapter forwarding to an actual recovered submenu owner; this does not claim recovery of label rendering.",
+        "Invalid row/record/text storage rejected; original adjacent-memory string overflow not reproduced.",
+        "No game, network session, physical input, audio, original code or gameplay execution."
+      ]
+    },
+    "evidence": [
+      "META/m4/target400/a/README.md",
+      "META/m4/target400/a/standalone-build.json",
+      "META/m4/target400/a/original/0042cb10.decompile.json",
+      "META/m4/target400/a/original/0042cb10.disasm.json"
+    ]
+  },
+  {
+    "original_va": "0042e360",
+    "function": "bh_menu_keys_motion",
+    "source": "src/bh_menu_settings.c",
+    "role": "game",
+    "provenance_confidence": "High: UI callback pointers and switch-specific input/profile selection behavior; no CRT/EH/import signature; distinct entry and RET owner boundaries verified",
+    "boundary": {
+      "start": "0042e360",
+      "end_exclusive": "0042e3f3",
+      "bytes": 147,
+      "instructions": 46,
+      "sha256": "04d6f31205b012b337d3cee32ed1b9a1073e8a7b288a18d33e780fcd1c683f7e"
+    },
+    "implementation": "func",
+    "integration": "linked_harness",
+    "target": "build/target400-menu-settings/bhunter-menu-settings-check.exe",
+    "validation": {
+      "original_code_executed": false,
+      "game_executed": false,
+      "raw_byte_match": false,
+      "scenario": "menu-settings",
+      "checks": 976449,
+      "failures": 0,
+      "abi": "x86 cdecl; explicit borrowed menu/profile/registry binding; source BHInputProfile76 bytes and network record188 bytes",
+      "limits": [
+        "Menu construction and original row label rendering are external owners; supplied row refresh methods retain the verified invocation contract.",
+        "Non-NULL refresh integration uses an explicit adapter forwarding to an actual recovered submenu owner; this does not claim recovery of label rendering.",
+        "Invalid row/record/text storage rejected; original adjacent-memory string overflow not reproduced.",
+        "No game, network session, physical input, audio, original code or gameplay execution."
+      ]
+    },
+    "evidence": [
+      "META/m4/target400/a/README.md",
+      "META/m4/target400/a/standalone-build.json",
+      "META/m4/target400/a/original/0042e360.decompile.json",
+      "META/m4/target400/a/original/0042e360.disasm.json"
+    ]
+  },
+  {
+    "original_va": "0042e540",
+    "function": "bh_menu_keys_weapons",
+    "source": "src/bh_menu_settings.c",
+    "role": "game",
+    "provenance_confidence": "High: UI callback pointers and switch-specific input/profile selection behavior; no CRT/EH/import signature; distinct entry and RET owner boundaries verified",
+    "boundary": {
+      "start": "0042e540",
+      "end_exclusive": "0042e60d",
+      "bytes": 205,
+      "instructions": 61,
+      "sha256": "e815feb0ada178e6ed283eafb64d5806a2863c2133faf2ffcf9936dbe017f79c"
+    },
+    "implementation": "func",
+    "integration": "linked_harness",
+    "target": "build/target400-menu-settings/bhunter-menu-settings-check.exe",
+    "validation": {
+      "original_code_executed": false,
+      "game_executed": false,
+      "raw_byte_match": false,
+      "scenario": "menu-settings",
+      "checks": 976449,
+      "failures": 0,
+      "abi": "x86 cdecl; explicit borrowed menu/profile/registry binding; source BHInputProfile76 bytes and network record188 bytes",
+      "limits": [
+        "Menu construction and original row label rendering are external owners; supplied row refresh methods retain the verified invocation contract.",
+        "Non-NULL refresh integration uses an explicit adapter forwarding to an actual recovered submenu owner; this does not claim recovery of label rendering.",
+        "Invalid row/record/text storage rejected; original adjacent-memory string overflow not reproduced.",
+        "No game, network session, physical input, audio, original code or gameplay execution."
+      ]
+    },
+    "evidence": [
+      "META/m4/target400/a/README.md",
+      "META/m4/target400/a/standalone-build.json",
+      "META/m4/target400/a/original/0042e540.decompile.json",
+      "META/m4/target400/a/original/0042e540.disasm.json"
+    ]
+  },
+  {
+    "original_va": "0042e690",
+    "function": "bh_menu_keys_camera",
+    "source": "src/bh_menu_settings.c",
+    "role": "game",
+    "provenance_confidence": "High: UI callback pointers and switch-specific input/profile selection behavior; no CRT/EH/import signature; distinct entry and RET owner boundaries verified",
+    "boundary": {
+      "start": "0042e690",
+      "end_exclusive": "0042e75d",
+      "bytes": 205,
+      "instructions": 61,
+      "sha256": "a9e1c48ff9d1860633fe3a8c3d69cd98109aa577243e4baed59d0bdee6c15a77"
+    },
+    "implementation": "func",
+    "integration": "linked_harness",
+    "target": "build/target400-menu-settings/bhunter-menu-settings-check.exe",
+    "validation": {
+      "original_code_executed": false,
+      "game_executed": false,
+      "raw_byte_match": false,
+      "scenario": "menu-settings",
+      "checks": 976449,
+      "failures": 0,
+      "abi": "x86 cdecl; explicit borrowed menu/profile/registry binding; source BHInputProfile76 bytes and network record188 bytes",
+      "limits": [
+        "Menu construction and original row label rendering are external owners; supplied row refresh methods retain the verified invocation contract.",
+        "Non-NULL refresh integration uses an explicit adapter forwarding to an actual recovered submenu owner; this does not claim recovery of label rendering.",
+        "Invalid row/record/text storage rejected; original adjacent-memory string overflow not reproduced.",
+        "No game, network session, physical input, audio, original code or gameplay execution."
+      ]
+    },
+    "evidence": [
+      "META/m4/target400/a/README.md",
+      "META/m4/target400/a/standalone-build.json",
+      "META/m4/target400/a/original/0042e690.decompile.json",
+      "META/m4/target400/a/original/0042e690.disasm.json"
+    ]
+  },
+  {
+    "original_va": "0042e7e0",
+    "function": "bh_menu_keys_extra",
+    "source": "src/bh_menu_settings.c",
+    "role": "game",
+    "provenance_confidence": "High: UI callback pointers and switch-specific input/profile selection behavior; no CRT/EH/import signature; distinct entry and RET owner boundaries verified",
+    "boundary": {
+      "start": "0042e7e0",
+      "end_exclusive": "0042e8c1",
+      "bytes": 225,
+      "instructions": 66,
+      "sha256": "380e9c146d6e76cfa3fff0e3ab240df80533365d73c6c28e4c979c55eeca717f"
+    },
+    "implementation": "func",
+    "integration": "linked_harness",
+    "target": "build/target400-menu-settings/bhunter-menu-settings-check.exe",
+    "validation": {
+      "original_code_executed": false,
+      "game_executed": false,
+      "raw_byte_match": false,
+      "scenario": "menu-settings",
+      "checks": 976449,
+      "failures": 0,
+      "abi": "x86 cdecl; explicit borrowed menu/profile/registry binding; source BHInputProfile76 bytes and network record188 bytes",
+      "limits": [
+        "Menu construction and original row label rendering are external owners; supplied row refresh methods retain the verified invocation contract.",
+        "Non-NULL refresh integration uses an explicit adapter forwarding to an actual recovered submenu owner; this does not claim recovery of label rendering.",
+        "Invalid row/record/text storage rejected; original adjacent-memory string overflow not reproduced.",
+        "No game, network session, physical input, audio, original code or gameplay execution."
+      ]
+    },
+    "evidence": [
+      "META/m4/target400/a/README.md",
+      "META/m4/target400/a/standalone-build.json",
+      "META/m4/target400/a/original/0042e7e0.decompile.json",
+      "META/m4/target400/a/original/0042e7e0.disasm.json"
+    ]
+  },
+  {
+    "original_va": "0042ea70",
+    "function": "bh_menu_network_select",
+    "source": "src/bh_menu_settings.c",
+    "role": "game",
+    "provenance_confidence": "High: UI callback pointers and switch-specific input/profile selection behavior; no CRT/EH/import signature; distinct entry and RET owner boundaries verified",
+    "boundary": {
+      "start": "0042ea70",
+      "end_exclusive": "0042eade",
+      "bytes": 110,
+      "instructions": 19,
+      "sha256": "8d5112ce0e2fe35ab4c02c98b69c32e3ccf88e1c71903a222b59cddc991207d3"
+    },
+    "implementation": "func",
+    "integration": "linked_harness",
+    "target": "build/target400-menu-settings/bhunter-menu-settings-check.exe",
+    "validation": {
+      "original_code_executed": false,
+      "game_executed": false,
+      "raw_byte_match": false,
+      "scenario": "menu-settings",
+      "checks": 976449,
+      "failures": 0,
+      "abi": "x86 cdecl; explicit borrowed menu/profile/registry binding; source BHInputProfile76 bytes and network record188 bytes",
+      "limits": [
+        "Menu construction and original row label rendering are external owners; supplied row refresh methods retain the verified invocation contract.",
+        "Non-NULL refresh integration uses an explicit adapter forwarding to an actual recovered submenu owner; this does not claim recovery of label rendering.",
+        "Invalid row/record/text storage rejected; original adjacent-memory string overflow not reproduced.",
+        "No game, network session, physical input, audio, original code or gameplay execution."
+      ]
+    },
+    "evidence": [
+      "META/m4/target400/a/README.md",
+      "META/m4/target400/a/standalone-build.json",
+      "META/m4/target400/a/original/0042ea70.decompile.json",
+      "META/m4/target400/a/original/0042ea70.disasm.json"
+    ]
+  },
+  {
+    "original_va": "0042eae0",
+    "function": "bh_menu_network_address",
+    "source": "src/bh_menu_settings.c",
+    "role": "game",
+    "provenance_confidence": "High: UI callback pointers and switch-specific input/profile selection behavior; no CRT/EH/import signature; distinct entry and RET owner boundaries verified",
+    "boundary": {
+      "start": "0042eae0",
+      "end_exclusive": "0042eb2d",
+      "bytes": 77,
+      "instructions": 33,
+      "sha256": "57c92f6509f1b7a53d0cbe95d0134b71384f7c26a5727439889f87eedc1ba294"
+    },
+    "implementation": "func",
+    "integration": "linked_harness",
+    "target": "build/target400-menu-settings/bhunter-menu-settings-check.exe",
+    "validation": {
+      "original_code_executed": false,
+      "game_executed": false,
+      "raw_byte_match": false,
+      "scenario": "menu-settings",
+      "checks": 976449,
+      "failures": 0,
+      "abi": "x86 cdecl; explicit borrowed menu/profile/registry binding; source BHInputProfile76 bytes and network record188 bytes",
+      "limits": [
+        "Menu construction and original row label rendering are external owners; supplied row refresh methods retain the verified invocation contract.",
+        "Non-NULL refresh integration uses an explicit adapter forwarding to an actual recovered submenu owner; this does not claim recovery of label rendering.",
+        "Invalid row/record/text storage rejected; original adjacent-memory string overflow not reproduced.",
+        "No game, network session, physical input, audio, original code or gameplay execution."
+      ]
+    },
+    "evidence": [
+      "META/m4/target400/a/README.md",
+      "META/m4/target400/a/standalone-build.json",
+      "META/m4/target400/a/original/0042eae0.decompile.json",
+      "META/m4/target400/a/original/0042eae0.disasm.json"
+    ]
+  },
+  {
+    "original_va": "0042ee50",
+    "function": "bh_menu_network_phone",
+    "source": "src/bh_menu_settings.c",
+    "role": "game",
+    "provenance_confidence": "High: UI callback pointers and switch-specific input/profile selection behavior; no CRT/EH/import signature; distinct entry and RET owner boundaries verified",
+    "boundary": {
+      "start": "0042ee50",
+      "end_exclusive": "0042ee9d",
+      "bytes": 77,
+      "instructions": 33,
+      "sha256": "d16af218cfe7acde5625b58a715f3e45263eab432d691228ca0eb906a00489a3"
+    },
+    "implementation": "func",
+    "integration": "linked_harness",
+    "target": "build/target400-menu-settings/bhunter-menu-settings-check.exe",
+    "validation": {
+      "original_code_executed": false,
+      "game_executed": false,
+      "raw_byte_match": false,
+      "scenario": "menu-settings",
+      "checks": 976449,
+      "failures": 0,
+      "abi": "x86 cdecl; explicit borrowed menu/profile/registry binding; source BHInputProfile76 bytes and network record188 bytes",
+      "limits": [
+        "Menu construction and original row label rendering are external owners; supplied row refresh methods retain the verified invocation contract.",
+        "Non-NULL refresh integration uses an explicit adapter forwarding to an actual recovered submenu owner; this does not claim recovery of label rendering.",
+        "Invalid row/record/text storage rejected; original adjacent-memory string overflow not reproduced.",
+        "No game, network session, physical input, audio, original code or gameplay execution."
+      ]
+    },
+    "evidence": [
+      "META/m4/target400/a/README.md",
+      "META/m4/target400/a/standalone-build.json",
+      "META/m4/target400/a/original/0042ee50.decompile.json",
+      "META/m4/target400/a/original/0042ee50.disasm.json"
+    ]
+  }
+]

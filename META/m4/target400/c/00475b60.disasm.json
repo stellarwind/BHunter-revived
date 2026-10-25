@@ -1,0 +1,52 @@
+[
+  {
+    "address": "00475b60",
+    "bytes": "8b442404",
+    "mnemonic": "MOV",
+    "operands": [
+      "EAX",
+      "dword ptr [ESP + 0x4]"
+    ]
+  },
+  {
+    "address": "00475b64",
+    "bytes": "f7d8",
+    "mnemonic": "NEG",
+    "operands": [
+      "EAX"
+    ]
+  },
+  {
+    "address": "00475b66",
+    "bytes": "1bc0",
+    "mnemonic": "SBB",
+    "operands": [
+      "EAX",
+      "EAX"
+    ]
+  },
+  {
+    "address": "00475b68",
+    "bytes": "24fe",
+    "mnemonic": "AND",
+    "operands": [
+      "AL",
+      "0xfe"
+    ]
+  },
+  {
+    "address": "00475b6a",
+    "bytes": "83c002",
+    "mnemonic": "ADD",
+    "operands": [
+      "EAX",
+      "0x2"
+    ]
+  },
+  {
+    "address": "00475b6d",
+    "bytes": "c3",
+    "mnemonic": "RET",
+    "operands": []
+  }
+]

@@ -1,0 +1,44 @@
+
+GAME_DATA/BHUNTER.EXE:     file format pei-i386
+
+
+Disassembly of section .text:
+
+00443e80 <.text+0x42e80>:
+  443e80:	8b 54 24 08          	mov    edx,DWORD PTR [esp+0x8]
+  443e84:	8b 44 24 04          	mov    eax,DWORD PTR [esp+0x4]
+  443e88:	56                   	push   esi
+  443e89:	8b 0a                	mov    ecx,DWORD PTR [edx]
+  443e8b:	83 f9 04             	cmp    ecx,0x4
+  443e8e:	74 5d                	je     0x443eed
+  443e90:	8b b0 f4 00 00 00    	mov    esi,DWORD PTR [eax+0xf4]
+  443e96:	85 f6                	test   esi,esi
+  443e98:	75 05                	jne    0x443e9f
+  443e9a:	83 f9 14             	cmp    ecx,0x14
+  443e9d:	74 4e                	je     0x443eed
+  443e9f:	83 f9 0a             	cmp    ecx,0xa
+  443ea2:	75 52                	jne    0x443ef6
+  443ea4:	8b 88 f0 00 00 00    	mov    ecx,DWORD PTR [eax+0xf0]
+  443eaa:	8b 72 04             	mov    esi,DWORD PTR [edx+0x4]
+  443ead:	3b f1                	cmp    esi,ecx
+  443eaf:	75 45                	jne    0x443ef6
+  443eb1:	d9 80 30 01 00 00    	fld    DWORD PTR [eax+0x130]
+  443eb7:	d8 69 48             	fsubr  DWORD PTR [ecx+0x48]
+  443eba:	d9 59 48             	fstp   DWORD PTR [ecx+0x48]
+  443ebd:	8b 88 f0 00 00 00    	mov    ecx,DWORD PTR [eax+0xf0]
+  443ec3:	d9 80 34 01 00 00    	fld    DWORD PTR [eax+0x134]
+  443ec9:	d8 69 4c             	fsubr  DWORD PTR [ecx+0x4c]
+  443ecc:	d9 59 4c             	fstp   DWORD PTR [ecx+0x4c]
+  443ecf:	8b 88 f0 00 00 00    	mov    ecx,DWORD PTR [eax+0xf0]
+  443ed5:	d9 80 38 01 00 00    	fld    DWORD PTR [eax+0x138]
+  443edb:	d8 69 50             	fsubr  DWORD PTR [ecx+0x50]
+  443ede:	d9 59 50             	fstp   DWORD PTR [ecx+0x50]
+  443ee1:	c7 80 cc 00 00 00 b0 	mov    DWORD PTR [eax+0xcc],0x442eb0
+  443ee8:	2e 44 00 
+  443eeb:	5e                   	pop    esi
+  443eec:	c3                   	ret
+  443eed:	50                   	push   eax
+  443eee:	e8 7d 31 03 00       	call   0x477070
+  443ef3:	83 c4 04             	add    esp,0x4
+  443ef6:	5e                   	pop    esi
+  443ef7:	c3                   	ret

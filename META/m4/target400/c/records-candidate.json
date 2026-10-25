@@ -1,0 +1,472 @@
+[
+  {
+    "id": "004759c0-functional-c-serial-options",
+    "original_va": "004759c0",
+    "function": "bh_serial_baud_label",
+    "role": "engine_candidate",
+    "provenance_confidence": "Ordinary serial/modem preferences and DirectPlay address callback with application-owned fixed modem-name list; not verified CRT/library, historical engine authorship unresolved",
+    "source": "src/bh_serial_options.c",
+    "source_sha256": "51e23f3365af82996452808d58a644a01d3e891e94cd9ce6619bdee6c1b7a77d",
+    "implementation": "wip",
+    "integration": "linked_harness",
+    "target": "build/target400-c/serial-options.exe",
+    "game_admitted": false,
+    "validation": {
+      "boundary": [
+        {
+          "start": "004759c0",
+          "end_exclusive": "00475a71",
+          "bytes": 177,
+          "instructions": 56,
+          "sha256": "b25810c4b7ff116f822a7122ba486695d3067ecd48b81767ee6a1c9d56d55693"
+        }
+      ],
+      "raw_byte_match": false,
+      "original_code_executed": false,
+      "fixtures": {
+        "scenario": "serial-options",
+        "checks": 32654,
+        "failures": 0,
+        "original_code_required": false
+      },
+      "abi": "x86 cdecl options and name lookup; exact four-argument WINAPI callback with RET0x10; explicit borrowed BHModemNames context replaces original globals",
+      "limits": [
+        "Pending full integration and clean build before admission.",
+        "Valid input contract: live context count0..8; complete double-NUL list; names<=127 bytes. Original size parameter is ignored.",
+        "Source malformed-input/null/count/overlong guards are additions; valid callback ordering, append semantics, duplicates, eight-slot cap and unconditional TRUE match inspected owner.",
+        "No network provider/session enumeration or actual modem transport execution; no claim that serial networking gameplay is complete."
+      ]
+    },
+    "evidence": [
+      "META/m4/target400/c/004759c0.disasm.json",
+      "META/m4/target400/c/004759c0.decompile.json",
+      "META/m4/target400/c/004759c0.xrefs.json",
+      "META/m4/target400/c/README.md",
+      "META/m4/target400/c/focused-validation.json",
+      "META/m4/target400/c/reference-check.json"
+    ]
+  },
+  {
+    "id": "00475a80-functional-c-serial-options",
+    "original_va": "00475a80",
+    "function": "bh_serial_baud_next",
+    "role": "engine_candidate",
+    "provenance_confidence": "Ordinary serial/modem preferences and DirectPlay address callback with application-owned fixed modem-name list; not verified CRT/library, historical engine authorship unresolved",
+    "source": "src/bh_serial_options.c",
+    "source_sha256": "51e23f3365af82996452808d58a644a01d3e891e94cd9ce6619bdee6c1b7a77d",
+    "implementation": "wip",
+    "integration": "linked_harness",
+    "target": "build/target400-c/serial-options.exe",
+    "game_admitted": false,
+    "validation": {
+      "boundary": [
+        {
+          "start": "00475a80",
+          "end_exclusive": "00475b34",
+          "bytes": 180,
+          "instructions": 56,
+          "sha256": "7f7c65121b065db2ffcd4109ef8009678bd7e3491d9c5a4834c35a63321a37c8"
+        }
+      ],
+      "raw_byte_match": false,
+      "original_code_executed": false,
+      "fixtures": {
+        "scenario": "serial-options",
+        "checks": 32654,
+        "failures": 0,
+        "original_code_required": false
+      },
+      "abi": "x86 cdecl options and name lookup; exact four-argument WINAPI callback with RET0x10; explicit borrowed BHModemNames context replaces original globals",
+      "limits": [
+        "Pending full integration and clean build before admission.",
+        "Valid input contract: live context count0..8; complete double-NUL list; names<=127 bytes. Original size parameter is ignored.",
+        "Source malformed-input/null/count/overlong guards are additions; valid callback ordering, append semantics, duplicates, eight-slot cap and unconditional TRUE match inspected owner.",
+        "No network provider/session enumeration or actual modem transport execution; no claim that serial networking gameplay is complete."
+      ]
+    },
+    "evidence": [
+      "META/m4/target400/c/00475a80.disasm.json",
+      "META/m4/target400/c/00475a80.decompile.json",
+      "META/m4/target400/c/00475a80.xrefs.json",
+      "META/m4/target400/c/README.md",
+      "META/m4/target400/c/focused-validation.json",
+      "META/m4/target400/c/reference-check.json"
+    ]
+  },
+  {
+    "id": "00475b40-functional-c-serial-options",
+    "original_va": "00475b40",
+    "function": "bh_serial_stop_label",
+    "role": "engine_candidate",
+    "provenance_confidence": "Ordinary serial/modem preferences and DirectPlay address callback with application-owned fixed modem-name list; not verified CRT/library, historical engine authorship unresolved",
+    "source": "src/bh_serial_options.c",
+    "source_sha256": "51e23f3365af82996452808d58a644a01d3e891e94cd9ce6619bdee6c1b7a77d",
+    "implementation": "wip",
+    "integration": "linked_harness",
+    "target": "build/target400-c/serial-options.exe",
+    "game_admitted": false,
+    "validation": {
+      "boundary": [
+        {
+          "start": "00475b40",
+          "end_exclusive": "00475b5d",
+          "bytes": 29,
+          "instructions": 11,
+          "sha256": "261769e2ef1697ea7985239857a05582556d70004387dffaa976d7e540f4a4cc"
+        }
+      ],
+      "raw_byte_match": false,
+      "original_code_executed": false,
+      "fixtures": {
+        "scenario": "serial-options",
+        "checks": 32654,
+        "failures": 0,
+        "original_code_required": false
+      },
+      "abi": "x86 cdecl options and name lookup; exact four-argument WINAPI callback with RET0x10; explicit borrowed BHModemNames context replaces original globals",
+      "limits": [
+        "Pending full integration and clean build before admission.",
+        "Valid input contract: live context count0..8; complete double-NUL list; names<=127 bytes. Original size parameter is ignored.",
+        "Source malformed-input/null/count/overlong guards are additions; valid callback ordering, append semantics, duplicates, eight-slot cap and unconditional TRUE match inspected owner.",
+        "No network provider/session enumeration or actual modem transport execution; no claim that serial networking gameplay is complete."
+      ]
+    },
+    "evidence": [
+      "META/m4/target400/c/00475b40.disasm.json",
+      "META/m4/target400/c/00475b40.decompile.json",
+      "META/m4/target400/c/00475b40.xrefs.json",
+      "META/m4/target400/c/README.md",
+      "META/m4/target400/c/focused-validation.json",
+      "META/m4/target400/c/reference-check.json"
+    ]
+  },
+  {
+    "id": "00475b60-functional-c-serial-options",
+    "original_va": "00475b60",
+    "function": "bh_serial_stop_next",
+    "role": "engine_candidate",
+    "provenance_confidence": "Ordinary serial/modem preferences and DirectPlay address callback with application-owned fixed modem-name list; not verified CRT/library, historical engine authorship unresolved",
+    "source": "src/bh_serial_options.c",
+    "source_sha256": "51e23f3365af82996452808d58a644a01d3e891e94cd9ce6619bdee6c1b7a77d",
+    "implementation": "wip",
+    "integration": "linked_harness",
+    "target": "build/target400-c/serial-options.exe",
+    "game_admitted": false,
+    "validation": {
+      "boundary": [
+        {
+          "start": "00475b60",
+          "end_exclusive": "00475b6e",
+          "bytes": 14,
+          "instructions": 6,
+          "sha256": "5bdf4a2b1802cce96213a398611c5be8bcdd5a743a3158ed2ffdcf02ed553c2c"
+        }
+      ],
+      "raw_byte_match": false,
+      "original_code_executed": false,
+      "fixtures": {
+        "scenario": "serial-options",
+        "checks": 32654,
+        "failures": 0,
+        "original_code_required": false
+      },
+      "abi": "x86 cdecl options and name lookup; exact four-argument WINAPI callback with RET0x10; explicit borrowed BHModemNames context replaces original globals",
+      "limits": [
+        "Pending full integration and clean build before admission.",
+        "Valid input contract: live context count0..8; complete double-NUL list; names<=127 bytes. Original size parameter is ignored.",
+        "Source malformed-input/null/count/overlong guards are additions; valid callback ordering, append semantics, duplicates, eight-slot cap and unconditional TRUE match inspected owner.",
+        "No network provider/session enumeration or actual modem transport execution; no claim that serial networking gameplay is complete."
+      ]
+    },
+    "evidence": [
+      "META/m4/target400/c/00475b60.disasm.json",
+      "META/m4/target400/c/00475b60.decompile.json",
+      "META/m4/target400/c/00475b60.xrefs.json",
+      "META/m4/target400/c/README.md",
+      "META/m4/target400/c/focused-validation.json",
+      "META/m4/target400/c/reference-check.json"
+    ]
+  },
+  {
+    "id": "00475b70-functional-c-serial-options",
+    "original_va": "00475b70",
+    "function": "bh_serial_parity_label",
+    "role": "engine_candidate",
+    "provenance_confidence": "Ordinary serial/modem preferences and DirectPlay address callback with application-owned fixed modem-name list; not verified CRT/library, historical engine authorship unresolved",
+    "source": "src/bh_serial_options.c",
+    "source_sha256": "51e23f3365af82996452808d58a644a01d3e891e94cd9ce6619bdee6c1b7a77d",
+    "implementation": "wip",
+    "integration": "linked_harness",
+    "target": "build/target400-c/serial-options.exe",
+    "game_admitted": false,
+    "validation": {
+      "boundary": [
+        {
+          "start": "00475b70",
+          "end_exclusive": "00475b9b",
+          "bytes": 43,
+          "instructions": 14,
+          "sha256": "5b11097ba1d5932daf8de91f167c01cff1a0135aac5239511e4d8d2e5c8db4bf"
+        }
+      ],
+      "raw_byte_match": false,
+      "original_code_executed": false,
+      "fixtures": {
+        "scenario": "serial-options",
+        "checks": 32654,
+        "failures": 0,
+        "original_code_required": false
+      },
+      "abi": "x86 cdecl options and name lookup; exact four-argument WINAPI callback with RET0x10; explicit borrowed BHModemNames context replaces original globals",
+      "limits": [
+        "Pending full integration and clean build before admission.",
+        "Valid input contract: live context count0..8; complete double-NUL list; names<=127 bytes. Original size parameter is ignored.",
+        "Source malformed-input/null/count/overlong guards are additions; valid callback ordering, append semantics, duplicates, eight-slot cap and unconditional TRUE match inspected owner.",
+        "No network provider/session enumeration or actual modem transport execution; no claim that serial networking gameplay is complete."
+      ]
+    },
+    "evidence": [
+      "META/m4/target400/c/00475b70.disasm.json",
+      "META/m4/target400/c/00475b70.decompile.json",
+      "META/m4/target400/c/00475b70.xrefs.json",
+      "META/m4/target400/c/README.md",
+      "META/m4/target400/c/focused-validation.json",
+      "META/m4/target400/c/reference-check.json"
+    ]
+  },
+  {
+    "id": "00475bb0-functional-c-serial-options",
+    "original_va": "00475bb0",
+    "function": "bh_serial_parity_next",
+    "role": "engine_candidate",
+    "provenance_confidence": "Ordinary serial/modem preferences and DirectPlay address callback with application-owned fixed modem-name list; not verified CRT/library, historical engine authorship unresolved",
+    "source": "src/bh_serial_options.c",
+    "source_sha256": "51e23f3365af82996452808d58a644a01d3e891e94cd9ce6619bdee6c1b7a77d",
+    "implementation": "wip",
+    "integration": "linked_harness",
+    "target": "build/target400-c/serial-options.exe",
+    "game_admitted": false,
+    "validation": {
+      "boundary": [
+        {
+          "start": "00475bb0",
+          "end_exclusive": "00475bd5",
+          "bytes": 37,
+          "instructions": 12,
+          "sha256": "18e6eaa366cd1c0d4829f9a8753bcddac2815210e26ae18a0cdb6e13262ab8d0"
+        }
+      ],
+      "raw_byte_match": false,
+      "original_code_executed": false,
+      "fixtures": {
+        "scenario": "serial-options",
+        "checks": 32654,
+        "failures": 0,
+        "original_code_required": false
+      },
+      "abi": "x86 cdecl options and name lookup; exact four-argument WINAPI callback with RET0x10; explicit borrowed BHModemNames context replaces original globals",
+      "limits": [
+        "Pending full integration and clean build before admission.",
+        "Valid input contract: live context count0..8; complete double-NUL list; names<=127 bytes. Original size parameter is ignored.",
+        "Source malformed-input/null/count/overlong guards are additions; valid callback ordering, append semantics, duplicates, eight-slot cap and unconditional TRUE match inspected owner.",
+        "No network provider/session enumeration or actual modem transport execution; no claim that serial networking gameplay is complete."
+      ]
+    },
+    "evidence": [
+      "META/m4/target400/c/00475bb0.disasm.json",
+      "META/m4/target400/c/00475bb0.decompile.json",
+      "META/m4/target400/c/00475bb0.xrefs.json",
+      "META/m4/target400/c/README.md",
+      "META/m4/target400/c/focused-validation.json",
+      "META/m4/target400/c/reference-check.json"
+    ]
+  },
+  {
+    "id": "00475bf0-functional-c-serial-options",
+    "original_va": "00475bf0",
+    "function": "bh_serial_flow_label",
+    "role": "engine_candidate",
+    "provenance_confidence": "Ordinary serial/modem preferences and DirectPlay address callback with application-owned fixed modem-name list; not verified CRT/library, historical engine authorship unresolved",
+    "source": "src/bh_serial_options.c",
+    "source_sha256": "51e23f3365af82996452808d58a644a01d3e891e94cd9ce6619bdee6c1b7a77d",
+    "implementation": "wip",
+    "integration": "linked_harness",
+    "target": "build/target400-c/serial-options.exe",
+    "game_admitted": false,
+    "validation": {
+      "boundary": [
+        {
+          "start": "00475bf0",
+          "end_exclusive": "00475c21",
+          "bytes": 49,
+          "instructions": 16,
+          "sha256": "234dba1220f37cadfff67d8a87b060c2a8ce96522e50abf8948b72bceced167d"
+        }
+      ],
+      "raw_byte_match": false,
+      "original_code_executed": false,
+      "fixtures": {
+        "scenario": "serial-options",
+        "checks": 32654,
+        "failures": 0,
+        "original_code_required": false
+      },
+      "abi": "x86 cdecl options and name lookup; exact four-argument WINAPI callback with RET0x10; explicit borrowed BHModemNames context replaces original globals",
+      "limits": [
+        "Pending full integration and clean build before admission.",
+        "Valid input contract: live context count0..8; complete double-NUL list; names<=127 bytes. Original size parameter is ignored.",
+        "Source malformed-input/null/count/overlong guards are additions; valid callback ordering, append semantics, duplicates, eight-slot cap and unconditional TRUE match inspected owner.",
+        "No network provider/session enumeration or actual modem transport execution; no claim that serial networking gameplay is complete."
+      ]
+    },
+    "evidence": [
+      "META/m4/target400/c/00475bf0.disasm.json",
+      "META/m4/target400/c/00475bf0.decompile.json",
+      "META/m4/target400/c/00475bf0.xrefs.json",
+      "META/m4/target400/c/README.md",
+      "META/m4/target400/c/focused-validation.json",
+      "META/m4/target400/c/reference-check.json"
+    ]
+  },
+  {
+    "id": "00475c40-functional-c-serial-options",
+    "original_va": "00475c40",
+    "function": "bh_serial_flow_next",
+    "role": "engine_candidate",
+    "provenance_confidence": "Ordinary serial/modem preferences and DirectPlay address callback with application-owned fixed modem-name list; not verified CRT/library, historical engine authorship unresolved",
+    "source": "src/bh_serial_options.c",
+    "source_sha256": "51e23f3365af82996452808d58a644a01d3e891e94cd9ce6619bdee6c1b7a77d",
+    "implementation": "wip",
+    "integration": "linked_harness",
+    "target": "build/target400-c/serial-options.exe",
+    "game_admitted": false,
+    "validation": {
+      "boundary": [
+        {
+          "start": "00475c40",
+          "end_exclusive": "00475c6b",
+          "bytes": 43,
+          "instructions": 14,
+          "sha256": "59a640bad119c12e771c0ec3f41fd8e9473283216fc2d4207659690b8bb0ff1d"
+        }
+      ],
+      "raw_byte_match": false,
+      "original_code_executed": false,
+      "fixtures": {
+        "scenario": "serial-options",
+        "checks": 32654,
+        "failures": 0,
+        "original_code_required": false
+      },
+      "abi": "x86 cdecl options and name lookup; exact four-argument WINAPI callback with RET0x10; explicit borrowed BHModemNames context replaces original globals",
+      "limits": [
+        "Pending full integration and clean build before admission.",
+        "Valid input contract: live context count0..8; complete double-NUL list; names<=127 bytes. Original size parameter is ignored.",
+        "Source malformed-input/null/count/overlong guards are additions; valid callback ordering, append semantics, duplicates, eight-slot cap and unconditional TRUE match inspected owner.",
+        "No network provider/session enumeration or actual modem transport execution; no claim that serial networking gameplay is complete."
+      ]
+    },
+    "evidence": [
+      "META/m4/target400/c/00475c40.disasm.json",
+      "META/m4/target400/c/00475c40.decompile.json",
+      "META/m4/target400/c/00475c40.xrefs.json",
+      "META/m4/target400/c/README.md",
+      "META/m4/target400/c/focused-validation.json",
+      "META/m4/target400/c/reference-check.json"
+    ]
+  },
+  {
+    "id": "00475c80-functional-c-serial-options",
+    "original_va": "00475c80",
+    "function": "bh_modem_name_find",
+    "role": "engine_candidate",
+    "provenance_confidence": "Ordinary serial/modem preferences and DirectPlay address callback with application-owned fixed modem-name list; not verified CRT/library, historical engine authorship unresolved",
+    "source": "src/bh_serial_options.c",
+    "source_sha256": "51e23f3365af82996452808d58a644a01d3e891e94cd9ce6619bdee6c1b7a77d",
+    "implementation": "wip",
+    "integration": "linked_harness",
+    "target": "build/target400-c/serial-options.exe",
+    "game_admitted": false,
+    "validation": {
+      "boundary": [
+        {
+          "start": "00475c80",
+          "end_exclusive": "00475cc9",
+          "bytes": 73,
+          "instructions": 35,
+          "sha256": "0ed1907c300e12a9843088ed4694ecb1add7d83811ffbf1cb06343deb30d14cb"
+        }
+      ],
+      "raw_byte_match": false,
+      "original_code_executed": false,
+      "fixtures": {
+        "scenario": "serial-options",
+        "checks": 32654,
+        "failures": 0,
+        "original_code_required": false
+      },
+      "abi": "x86 cdecl options and name lookup; exact four-argument WINAPI callback with RET0x10; explicit borrowed BHModemNames context replaces original globals",
+      "limits": [
+        "Pending full integration and clean build before admission.",
+        "Valid input contract: live context count0..8; complete double-NUL list; names<=127 bytes. Original size parameter is ignored.",
+        "Source malformed-input/null/count/overlong guards are additions; valid callback ordering, append semantics, duplicates, eight-slot cap and unconditional TRUE match inspected owner.",
+        "No network provider/session enumeration or actual modem transport execution; no claim that serial networking gameplay is complete."
+      ]
+    },
+    "evidence": [
+      "META/m4/target400/c/00475c80.disasm.json",
+      "META/m4/target400/c/00475c80.decompile.json",
+      "META/m4/target400/c/00475c80.xrefs.json",
+      "META/m4/target400/c/README.md",
+      "META/m4/target400/c/focused-validation.json",
+      "META/m4/target400/c/reference-check.json"
+    ]
+  },
+  {
+    "id": "00475cd0-functional-c-serial-options",
+    "original_va": "00475cd0",
+    "function": "bh_modem_address_element",
+    "role": "engine_candidate",
+    "provenance_confidence": "Ordinary serial/modem preferences and DirectPlay address callback with application-owned fixed modem-name list; not verified CRT/library, historical engine authorship unresolved",
+    "source": "src/bh_serial_options.c",
+    "source_sha256": "51e23f3365af82996452808d58a644a01d3e891e94cd9ce6619bdee6c1b7a77d",
+    "implementation": "wip",
+    "integration": "linked_harness",
+    "target": "build/target400-c/serial-options.exe",
+    "game_admitted": false,
+    "validation": {
+      "boundary": [
+        {
+          "start": "00475cd0",
+          "end_exclusive": "00475d53",
+          "bytes": 131,
+          "instructions": 51,
+          "sha256": "b077cb7d51ba840f02eddad0c674d04f7ec8680bd57c7c21f90e7cc82f46141e"
+        }
+      ],
+      "raw_byte_match": false,
+      "original_code_executed": false,
+      "fixtures": {
+        "scenario": "serial-options",
+        "checks": 32654,
+        "failures": 0,
+        "original_code_required": false
+      },
+      "abi": "x86 cdecl options and name lookup; exact four-argument WINAPI callback with RET0x10; explicit borrowed BHModemNames context replaces original globals",
+      "limits": [
+        "Pending full integration and clean build before admission.",
+        "Valid input contract: live context count0..8; complete double-NUL list; names<=127 bytes. Original size parameter is ignored.",
+        "Source malformed-input/null/count/overlong guards are additions; valid callback ordering, append semantics, duplicates, eight-slot cap and unconditional TRUE match inspected owner.",
+        "No network provider/session enumeration or actual modem transport execution; no claim that serial networking gameplay is complete."
+      ]
+    },
+    "evidence": [
+      "META/m4/target400/c/00475cd0.disasm.json",
+      "META/m4/target400/c/00475cd0.decompile.json",
+      "META/m4/target400/c/00475cd0.xrefs.json",
+      "META/m4/target400/c/README.md",
+      "META/m4/target400/c/focused-validation.json",
+      "META/m4/target400/c/reference-check.json"
+    ]
+  }
+]
