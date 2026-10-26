@@ -1,0 +1,64 @@
+{
+  "baseline_functions": 449,
+  "complete_new_functions": 3,
+  "active_original_functions": 452,
+  "translation_units": 423,
+  "missing_module_controls": 205,
+  "prior_validation": "META/m4/hour443/stages/closures/validation.json",
+  "families": {
+    "b": "physics-step",
+    "parent": "physics-effects",
+    "c3": "menu-profile",
+    "a2": "input-text"
+  },
+  "refreshed_sources": [
+    "src/bh_config.c"
+  ],
+  "refreshed_variants": 3,
+  "refresh_existing_scenarios": [
+    "config-container-path"
+  ],
+  "refresh_scenarios": [
+    "menu-profile",
+    "input-text"
+  ],
+  "refresh_note": "Fresh same-owner config TU after addition of actual public profile-clone allocation/registration API. Existing config/container/path checks and new menu-profile/text-entry composition execute in real/clean builds. Three original owners remain counted once; earlier source snapshots/evidence remain historical. No byte-match transfer.",
+  "support": [
+    {
+      "id": "whole-physics-registry-binding-hour443",
+      "function": "bh_physics_step_init/dispose/read_entity/publish",
+      "source": "src/bh_physics_step.c",
+      "family": "b",
+      "validation": {
+        "scope": "Count-zero typed geometry/world/actor registry and source boundary/lifetime ownership. Whole004124d0 counted once separately."
+      }
+    },
+    {
+      "id": "physics-effect-orchestration-binding-hour443",
+      "function": "bh_physics_effects_run",
+      "source": "src/bh_physics_effects.c",
+      "family": "parent",
+      "validation": {
+        "scope": "Count-zero factored effect/audio/packet/spark block inside whole004124d0, not an independent original owner. Actual source dependencies and safe NULL-peer send."
+      }
+    },
+    {
+      "id": "config-profile-clone-ownership-hour443",
+      "function": "bh_config_profile_clone_after",
+      "source": "src/bh_config.c",
+      "family": "c3",
+      "validation": {
+        "scope": "Count-zero actual private ProfileNode allocation/registration preserving real config save/disposal, supporting whole menu profile0042de70."
+      }
+    },
+    {
+      "id": "text-capture-context-lifetime-binding-hour443",
+      "function": "bh_input_text_begin/cancel/text_tick",
+      "source": "src/bh_input_text.c",
+      "family": "a2",
+      "validation": {
+        "scope": "Count-zero cached-packet source entity/context bindings for whole890B0042bf80. Dispatches actual three commit owners; no physical input backend."
+      }
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+[
+  {
+    "original_va": "0043cd00",
+    "function": "bh_target_step",
+    "source": "src/bh_target_step.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary entity target/debris lifecycle callback with original application mode, smoke particle, damage countdown, pickup switch, explosion and full physics dependencies. Historical authorship unresolved; not CRT/import/EH/shared tail.",
+    "boundary": {
+      "start": "0043cd00",
+      "end_exclusive": "0043d27c",
+      "bytes": 1404,
+      "instructions": 431,
+      "sha256": "edd43e22f9d0798daca6114df82f4dc1ad37ffe3163aad3032bb52c1e9cedc44"
+    },
+    "owned_data": "META/m4/hour443/a3/switch-data.json",
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/target-step/bhunter-target-step-check.exe",
+    "validation": {
+      "abi": "Pinned x86 cdecl installed step. Actual original state ec/fc..120 with shared BHDebrisBody.sleep_time/owner and authoritative BHPhysicsState. Actual ordered callbacks, shared outside registry, source-private context pointer payload+616.",
+      "fixtures": {
+        "scenario": "target-step",
+        "checks": 179,
+        "failures": 0,
+        "original_code_required": false,
+        "play_calls": 0
+      },
+      "original_code_executed": false,
+      "game_executed": false,
+      "raw_byte_match": false,
+      "limits": [
+        "Count-zero binding, not complete original target construction/world startup. Existing fixed physics roster must be disposed/rebound after target retirement before stepping another actor.",
+        "Event12 uses a borrowed live actual query interface. Fixture invokes admitted ignored-event branch and isolated packet observer; no positive gameplay semantics of an unrecovered event12 recipient are claimed.",
+        "Real pickup renderer callbacks are installed; target fixtures validate actual constructor/resource/registration state, not original pickup artwork. Existing rendering owner validation remains separate.",
+        "PC53 nearest/masked finite physics domain. Death countdown and sleep decisions use retained prestore values; original PC24 and extreme arithmetic remain fidelity limits.",
+        "Corrected explosion variant uses PE004892c8=-1/32768; actual gameplay magnitudes12/15 and complete debris random consumption run here. Earlier wrong explosion variant evidence is historical only.",
+        "Borrow all typed owners and stable registry/body storage; response callbacks may not invalidate/rebind the target body while its step runs. Current release/recycle stops later source accesses.",
+        "Standalone compiles target/test and real physics/effects/corrected explosion TUs fresh, links retained snapshotted admitted object closure. Current parent full and clean integration still required.",
+        "No original code, game launch, automated gameplay/input/UI capture, sound playback or native networking."
+      ]
+    },
+    "evidence": [
+      "META/m4/hour443/a3/README.md",
+      "META/m4/hour443/a3/standalone-build.json",
+      "META/m4/hour443/a3/original/0043cd00.disasm.json",
+      "META/m4/hour443/a3/0043cd00.asm.txt",
+      "META/m4/hour443/a3/0043cd00.decompile.json",
+      "META/m4/hour443/a3/switch-data.json"
+    ]
+  }
+]

@@ -1,13 +1,13 @@
 # Source integration build
 
-Current checkpoint (2026-10-26): **443/727 linked original owners, 409 translation units, 198 missing-module controls**. The final real-data build passes **4,898,629 checks**; the independent asset-free checkout passes **4,392,781**. Current evidence: [hour424](META/m4/hour424/README.md). Earlier totals below are historical checkpoints.
+Current checkpoint (2026-10-26): **453/727 linked original owners, 425 translation units, 206 missing-module controls**. The final real-data build passes **4,900,025 checks**; the independent asset-free checkout passes **4,394,082**. Current evidence: [hour443](META/m4/hour443/README.md). Earlier totals below are historical checkpoints.
 
 From the repository root, reproduce the current source checks with:
 
 ```powershell
 python tools/m0.py build --archive GAME_DATA/Bhunter.bin
 python tools/check_m0_clean.py --evidence-dir build/current-clean-evidence
-python tools/check_hour424_final.py
+python tools/check_hour443_final.py
 python tools/mkstatus.py --check
 ```
 

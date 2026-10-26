@@ -103,6 +103,25 @@ int __cdecl bh_config_valid(const BHConfig *config) {
     return profile==config->profiles;
 }
 
+BHInputProfile *__cdecl bh_config_profile_clone_after(BHConfig *config,BHInputProfile *current) {
+    ProfileNode *node;
+    BHInputProfile *profile,*following;
+    if(!config || !current || !config->allocator.allocate ||
+       !bh_config_valid(config) || !member(config,current)) {
+        fail(config,BH_CONFIG_ARGUMENT);return NULL;
+    }
+    if(config->profile_count>=4096) {fail(config,BH_CONFIG_LIMIT);return NULL;}
+    node=(ProfileNode*)config->allocator.allocate(sizeof(*node),config->allocator.user);
+    if(!node) {fail(config,BH_CONFIG_MEMORY);return NULL;}
+    memset(node,0,sizeof(*node));node->profile=*current;
+    profile=&node->profile;following=current->next;
+    profile->previous=current;profile->next=following;
+    node->allocation_next=(ProfileNode*)config->owned_nodes;
+    config->owned_nodes=node;current->next=profile;following->previous=profile;
+    ++config->profile_count;config->error=BH_CONFIG_OK;
+    return profile;
+}
+
 int __cdecl bh_config_load(BHConfig *config,const char *path) {
     BHConfig next;
     FILE *file;

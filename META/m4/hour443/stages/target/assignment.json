@@ -1,0 +1,35 @@
+{
+  "baseline_functions": 452,
+  "complete_new_functions": 1,
+  "active_original_functions": 453,
+  "translation_units": 425,
+  "missing_module_controls": 206,
+  "prior_validation": "META/m4/hour443/stages/final/validation.json",
+  "families": {
+    "a3": "target-step",
+    "correction": "script-explosion"
+  },
+  "refreshed_sources": [
+    "src/bh_script_explosion.c"
+  ],
+  "refreshed_variants": 4,
+  "refresh_scenarios": [
+    "script-explosion",
+    "target-step"
+  ],
+  "refresh_note": "Corrected same-owner explosion source after immutable PE literal audit found wrong debris-count scale; all21 original FP literals independently reread. Current real/clean corrected explosion and target-composition tests execute. These four variants add zero original functions; previous incorrect source and mirrored tests stay historical, with known defect recorded.",
+  "corrected_sources": {
+    "src/bh_script_explosion.c": "Explosion debris count at004030b0/0040354f uses original binary64[004892c8]=-1/32768. Previous source used-.5 and its tests mirrored that wrong scale. Corrected source and independent gameplay-magnitude12/15 population/RNG controls replace that known-defective variant; prior linked results remain historical evidence only."
+  },
+  "support": [
+    {
+      "id": "target-step-shared-lifetime-binding-hour443",
+      "function": "bh_target_step_bind/read/write",
+      "source": "src/bh_target_step.c",
+      "family": "a3",
+      "validation": {
+        "scope": "Count-zero binding to actual shared debris/physics state, owner, outside registry and whole target step. Event12 delivery is implemented; receiver gameplay meaning remains external/unrestored. Fixed physics roster must be rebound after target retirement."
+      }
+    }
+  ]
+}

@@ -46,5 +46,12 @@ int __cdecl bh_config_bootstrap(BHConfig *config, const char *path,
 int __cdecl bh_config_init(BHConfig *config, const BHConfigAllocator *allocator);
 void __cdecl bh_config_dispose(BHConfig *config);
 int __cdecl bh_config_valid(const BHConfig *config);
+/* Count-zero owning adapter for original menu profile cloning. Copy a current
+   owned profile's complete76-byte record, borrowing its existing baseline,
+   then insert immediately after it in the circular list. The context owns
+   and frees the new allocation. Failure preserves ring and profile count;
+   caller supplies name/flags and current selection. Profiles and baselines
+   remain borrowed until config disposal or replacement by a successful load. */
+BHInputProfile *__cdecl bh_config_profile_clone_after(BHConfig *,BHInputProfile *current);
 
 #endif

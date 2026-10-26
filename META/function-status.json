@@ -1134,7 +1134,7 @@
       "function": "bh_config_load",
       "role": "game",
       "provenance_confidence": "Game-specific CFG/defaults for config; engine ownership unknown for path helper; not identified CRT/library scaffolding",
-      "source": "src/bh_config.c",
+      "source": "META/m4/loading-display/sources/6081596cb764118e0441ce5d3e0cf897a6ce011ca2d7e9aaa81a6ab5ef58092e-bh_config.c.txt",
       "source_sha256": "6081596cb764118e0441ce5d3e0cf897a6ce011ca2d7e9aaa81a6ab5ef58092e",
       "implementation": "func",
       "integration": "linked_harness",
@@ -1154,7 +1154,8 @@
           "Legacy save writes 32-bit process pointer words; reload rebuilds links; no portable new serialization format introduced",
           "Source-game integration, registry/CD source checks, other engine pools and numerical runtime transitions remain open"
         ],
-        "byte_match": "None claimed; historical math matching context untouched"
+        "byte_match": "None claimed; historical math matching context untouched",
+        "superseded_by": "00401fd0-functional-c-hour443-final-context"
       },
       "evidence": [
         "META/m2/CONFIG.md",
@@ -1165,7 +1166,9 @@
         "META/m2/config/integration-real.json",
         "META/m2/config/link-map.txt",
         "META/m2/config-clean/clean-checkout.json"
-      ]
+      ],
+      "historical_variant": true,
+      "historical_source_path": "src/bh_config.c"
     },
     {
       "id": "004022d0-functional-c",
@@ -1173,7 +1176,7 @@
       "function": "bh_config_bootstrap",
       "role": "game",
       "provenance_confidence": "Game-specific CFG/defaults for config; engine ownership unknown for path helper; not identified CRT/library scaffolding",
-      "source": "src/bh_config.c",
+      "source": "META/m4/loading-display/sources/6081596cb764118e0441ce5d3e0cf897a6ce011ca2d7e9aaa81a6ab5ef58092e-bh_config.c.txt",
       "source_sha256": "6081596cb764118e0441ce5d3e0cf897a6ce011ca2d7e9aaa81a6ab5ef58092e",
       "implementation": "func",
       "integration": "linked_harness",
@@ -1193,7 +1196,8 @@
           "Legacy save writes 32-bit process pointer words; reload rebuilds links; no portable new serialization format introduced",
           "Source-game integration, registry/CD source checks, other engine pools and numerical runtime transitions remain open"
         ],
-        "byte_match": "None claimed; historical math matching context untouched"
+        "byte_match": "None claimed; historical math matching context untouched",
+        "superseded_by": "004022d0-functional-c-hour443-final-context"
       },
       "evidence": [
         "META/m2/CONFIG.md",
@@ -1204,7 +1208,9 @@
         "META/m2/config/integration-real.json",
         "META/m2/config/link-map.txt",
         "META/m2/config-clean/clean-checkout.json"
-      ]
+      ],
+      "historical_variant": true,
+      "historical_source_path": "src/bh_config.c"
     },
     {
       "id": "00402370-functional-c",
@@ -1212,7 +1218,7 @@
       "function": "bh_config_save",
       "role": "game",
       "provenance_confidence": "Game-specific CFG/defaults for config; engine ownership unknown for path helper; not identified CRT/library scaffolding",
-      "source": "src/bh_config.c",
+      "source": "META/m4/loading-display/sources/6081596cb764118e0441ce5d3e0cf897a6ce011ca2d7e9aaa81a6ab5ef58092e-bh_config.c.txt",
       "source_sha256": "6081596cb764118e0441ce5d3e0cf897a6ce011ca2d7e9aaa81a6ab5ef58092e",
       "implementation": "func",
       "integration": "linked_harness",
@@ -1232,7 +1238,8 @@
           "Legacy save writes 32-bit process pointer words; reload rebuilds links; no portable new serialization format introduced",
           "Source-game integration, registry/CD source checks, other engine pools and numerical runtime transitions remain open"
         ],
-        "byte_match": "None claimed; historical math matching context untouched"
+        "byte_match": "None claimed; historical math matching context untouched",
+        "superseded_by": "00402370-functional-c-hour443-final-context"
       },
       "evidence": [
         "META/m2/CONFIG.md",
@@ -1243,7 +1250,9 @@
         "META/m2/config/integration-real.json",
         "META/m2/config/link-map.txt",
         "META/m2/config-clean/clean-checkout.json"
-      ]
+      ],
+      "historical_variant": true,
+      "historical_source_path": "src/bh_config.c"
     },
     {
       "id": "00473910-functional-c",
@@ -3460,7 +3469,8 @@
           "Wire restored queued sound/listener, position codec and native packet-send owners into full physics side-effect order; deferred playback 0047c200, mode-specific packets, original session/player lifecycle and delivery validation remain",
           "Wire recovered debris event-2 receiver 0043c8f0 into full physics owner; player 0041d7c0 and other actor response/damage receivers remain unrecovered",
           "Full owner orchestration, prior-clear-pose rewind and effects/event mutation order across modes"
-        ]
+        ],
+        "superseded_by": "004124d0-functional-c-hour443-final"
       },
       "evidence": [
         "META/m4/physics-response/review.json",
@@ -3473,7 +3483,8 @@
         "META/m4/network-codec/validation.json",
         "META/m4/network-send/validation.json",
         "META/m4/sound-listener/validation.json"
-      ]
+      ],
+      "historical_variant": true
     },
     {
       "id": "004073b0-functional-c",
@@ -27362,6 +27373,1260 @@
         "META/m4/hour424/stages/lifetimes/integration-real.json",
         "META/m4/hour424/stages/lifetimes/clean/clean-checkout.json"
       ]
+    },
+    {
+      "id": "0042c300-functional-c-hour443-menu",
+      "original_va": "0042c300",
+      "function": "bh_menu_object_create",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole application menu entity/input constructor with18 actual startup callers; not verified CRT/library/compiler support/shared tail; historical engine attribution unresolved",
+      "source": "src/bh_menu_object.c",
+      "source_sha256": "18bd909a9409c3ec2970a83340e12e7bc4d29fcf45939aea3bc0e4ea8bde4da1",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "0042c300",
+            "end_exclusive": "0042c4bf",
+            "bytes": 447,
+            "instructions": 132,
+            "sha256": "a67a0652f859dbe3a886fdb7ff652bef712e462bad4054688e7ea5fdc245c688"
+          }
+        ],
+        "abi": "Original x86 cdecl outputentity/tag retained over explicit actual pool/input source ownership; all stores and binding order retained. Verified RET callback representedNULL under actual entity contract.",
+        "fixtures": {
+          "menu-object": {
+            "scenario": "menu-object",
+            "checks": 132,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "menu-object": {
+            "scenario": "menu-object",
+            "checks": 111,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Fresh zeroed source owner required. Original live name global is borrowed explicit source name (NULL means initiallyempty); opaque32bit tag retained without inferred meaning.",
+          "Original unchecked input allocation failure is guarded by actual entity rollback; pool failure preserves output. No source/original byte-match claim.",
+          "Count-zero row bindings/add-row/disposal use actual admitted owners with explicit caller rowcapacity; do not claim full menuheader/update/query behavior. Entity/list may not be independently released by callers.",
+          "No game/originalcode execution, physicalinput/polling, UIcapture, audioPlay or native network operations; only owned nativepage readback. Full menu/world startup remains incomplete elsewhere.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/hour443/validation.json",
+        "META/m4/hour443/README.md",
+        "META/m4/hour443/c/README.md",
+        "META/m4/hour443/stages/menu/owners.json",
+        "META/m4/hour443/stages/menu/validation.json",
+        "META/m4/hour443/stages/menu/integration-real.json",
+        "META/m4/hour443/stages/menu/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00402e50-functional-c-hour443-closures",
+      "original_va": "00402e50",
+      "function": "bh_script_explosion_create",
+      "role": "engine_candidate",
+      "provenance_confidence": "Verified ordinary application effect behavior from entity field writes, sound/image globals, real gameplay event packets and installed callbacks; historical game/engine authorship unresolved. Complete distinct RET body, not imported/CRT/EH/stack helper or independently counted shared tail.",
+      "source": "META/m4/hour443/stages/closures/sources/efd0133e37f6e9d8840349a2166df718e3f273a845da6a840d568e084f87221b-bh_script_explosion.c.txt",
+      "source_sha256": "efd0133e37f6e9d8840349a2166df718e3f273a845da6a840d568e084f87221b",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00402e50",
+            "end_exclusive": "00403112",
+            "bytes": 706,
+            "instructions": 181,
+            "sha256": "af2b9485eb4b5f2c31af8a300e8b1bd5e15747a426ae4af462fef977be3d9731"
+          }
+        ],
+        "abi": "Pinned x86 cdecl, whole constructor/installed step/refresh bodies; entity+e8/ec/f4..1b4 verified original fields, persistent private source context at payload+624. Original void constructors expose source-only main entity result.",
+        "fixtures": {
+          "script-explosion": {
+            "scenario": "script-explosion",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "clean_fixtures": {
+          "script-explosion": {
+            "scenario": "script-explosion",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Borrowed real entity/queue/sound/flash/debris contexts, texture IDs and sound-resource identity replace original global owners; complete startup/world/script VM integration remains incomplete.",
+          "Finite constructor position/duration/magnitude/probability, nonnegative magnitude and PC53 nearest/masked required. NaN tick age/duration/probability behavior and masked refresh division retained/tested; original PC24 transitions and extreme arithmetic remain unvalidated.",
+          "Actual integer debris count0..65535 retained. Pretruncate count>=65536 or nonfinite reports LIMIT and skips only that unbounded debris batch after prior sound/flash/main/blast effects, continuing damage queries. Finite child magnitude>3 is supported/tested.",
+          "Released/recycled current entity stops remaining accesses with MUTATION. Stable borrowed point/context/pool topology required; arbitrary hostile state/context mutation excluded.",
+          "Standalone freshly compiles14 actual source translation units and links snapshotted admitted renderer dependency objects; source variant only eligible for admission after parent current full and clean integration checks.",
+          "No original code execution, game launch, automated input/UI capture, audio playback or network operation.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ],
+        "superseded_by": "00402e50-functional-c-hour443-target-context",
+        "known_defect": "Explosion debris count at004030b0/0040354f uses original binary64[004892c8]=-1/32768. Previous source used-.5 and its tests mirrored that wrong scale. Corrected source and independent gameplay-magnitude12/15 population/RNG controls replace that known-defective variant; prior linked results remain historical evidence only."
+      },
+      "evidence": [
+        "META/m4/hour443/validation.json",
+        "META/m4/hour443/README.md",
+        "META/m4/hour443/a/README.md",
+        "META/m4/hour443/stages/closures/owners.json",
+        "META/m4/hour443/stages/closures/validation.json",
+        "META/m4/hour443/stages/closures/integration-real.json",
+        "META/m4/hour443/stages/closures/clean/clean-checkout.json"
+      ],
+      "historical_variant": true,
+      "historical_source_path": "src/bh_script_explosion.c",
+      "historical_reason": "Incorrect functional source variant; correction receives independent current linked evidence."
+    },
+    {
+      "id": "00402af0-functional-c-hour443-closures",
+      "original_va": "00402af0",
+      "function": "bh_script_explosion_tick",
+      "role": "engine_candidate",
+      "provenance_confidence": "Verified ordinary application effect behavior from entity field writes, sound/image globals, real gameplay event packets and installed callbacks; historical game/engine authorship unresolved. Complete distinct RET body, not imported/CRT/EH/stack helper or independently counted shared tail.",
+      "source": "META/m4/hour443/stages/closures/sources/efd0133e37f6e9d8840349a2166df718e3f273a845da6a840d568e084f87221b-bh_script_explosion.c.txt",
+      "source_sha256": "efd0133e37f6e9d8840349a2166df718e3f273a845da6a840d568e084f87221b",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00402af0",
+            "end_exclusive": "00402cb7",
+            "bytes": 455,
+            "instructions": 120,
+            "sha256": "cc055ee0d790607fcd020f91ed32c2d8a8e655de150a94635209f4362ef15874"
+          }
+        ],
+        "abi": "Pinned x86 cdecl, whole constructor/installed step/refresh bodies; entity+e8/ec/f4..1b4 verified original fields, persistent private source context at payload+624. Original void constructors expose source-only main entity result.",
+        "fixtures": {
+          "script-explosion": {
+            "scenario": "script-explosion",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "clean_fixtures": {
+          "script-explosion": {
+            "scenario": "script-explosion",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Borrowed real entity/queue/sound/flash/debris contexts, texture IDs and sound-resource identity replace original global owners; complete startup/world/script VM integration remains incomplete.",
+          "Finite constructor position/duration/magnitude/probability, nonnegative magnitude and PC53 nearest/masked required. NaN tick age/duration/probability behavior and masked refresh division retained/tested; original PC24 transitions and extreme arithmetic remain unvalidated.",
+          "Actual integer debris count0..65535 retained. Pretruncate count>=65536 or nonfinite reports LIMIT and skips only that unbounded debris batch after prior sound/flash/main/blast effects, continuing damage queries. Finite child magnitude>3 is supported/tested.",
+          "Released/recycled current entity stops remaining accesses with MUTATION. Stable borrowed point/context/pool topology required; arbitrary hostile state/context mutation excluded.",
+          "Standalone freshly compiles14 actual source translation units and links snapshotted admitted renderer dependency objects; source variant only eligible for admission after parent current full and clean integration checks.",
+          "No original code execution, game launch, automated input/UI capture, audio playback or network operation.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ],
+        "superseded_by": "00402af0-functional-c-hour443-target-context",
+        "known_defect": "Explosion debris count at004030b0/0040354f uses original binary64[004892c8]=-1/32768. Previous source used-.5 and its tests mirrored that wrong scale. Corrected source and independent gameplay-magnitude12/15 population/RNG controls replace that known-defective variant; prior linked results remain historical evidence only."
+      },
+      "evidence": [
+        "META/m4/hour443/validation.json",
+        "META/m4/hour443/README.md",
+        "META/m4/hour443/a/README.md",
+        "META/m4/hour443/stages/closures/owners.json",
+        "META/m4/hour443/stages/closures/validation.json",
+        "META/m4/hour443/stages/closures/integration-real.json",
+        "META/m4/hour443/stages/closures/clean/clean-checkout.json"
+      ],
+      "historical_variant": true,
+      "historical_source_path": "src/bh_script_explosion.c",
+      "historical_reason": "Incorrect functional source variant; correction receives independent current linked evidence."
+    },
+    {
+      "id": "004032f0-functional-c-hour443-closures",
+      "original_va": "004032f0",
+      "function": "bh_script_explosion_secondary",
+      "role": "engine_candidate",
+      "provenance_confidence": "Verified ordinary application effect behavior from entity field writes, sound/image globals, real gameplay event packets and installed callbacks; historical game/engine authorship unresolved. Complete distinct RET body, not imported/CRT/EH/stack helper or independently counted shared tail.",
+      "source": "META/m4/hour443/stages/closures/sources/efd0133e37f6e9d8840349a2166df718e3f273a845da6a840d568e084f87221b-bh_script_explosion.c.txt",
+      "source_sha256": "efd0133e37f6e9d8840349a2166df718e3f273a845da6a840d568e084f87221b",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "004032f0",
+            "end_exclusive": "004035dd",
+            "bytes": 749,
+            "instructions": 193,
+            "sha256": "9413d942b7968d2844218803dd1476cd6ca732f4fc8043f3c53c89f188421f5d"
+          }
+        ],
+        "abi": "Pinned x86 cdecl, whole constructor/installed step/refresh bodies; entity+e8/ec/f4..1b4 verified original fields, persistent private source context at payload+624. Original void constructors expose source-only main entity result.",
+        "fixtures": {
+          "script-explosion": {
+            "scenario": "script-explosion",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "clean_fixtures": {
+          "script-explosion": {
+            "scenario": "script-explosion",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Borrowed real entity/queue/sound/flash/debris contexts, texture IDs and sound-resource identity replace original global owners; complete startup/world/script VM integration remains incomplete.",
+          "Finite constructor position/duration/magnitude/probability, nonnegative magnitude and PC53 nearest/masked required. NaN tick age/duration/probability behavior and masked refresh division retained/tested; original PC24 transitions and extreme arithmetic remain unvalidated.",
+          "Actual integer debris count0..65535 retained. Pretruncate count>=65536 or nonfinite reports LIMIT and skips only that unbounded debris batch after prior sound/flash/main/blast effects, continuing damage queries. Finite child magnitude>3 is supported/tested.",
+          "Released/recycled current entity stops remaining accesses with MUTATION. Stable borrowed point/context/pool topology required; arbitrary hostile state/context mutation excluded.",
+          "Standalone freshly compiles14 actual source translation units and links snapshotted admitted renderer dependency objects; source variant only eligible for admission after parent current full and clean integration checks.",
+          "No original code execution, game launch, automated input/UI capture, audio playback or network operation.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ],
+        "superseded_by": "004032f0-functional-c-hour443-target-context",
+        "known_defect": "Explosion debris count at004030b0/0040354f uses original binary64[004892c8]=-1/32768. Previous source used-.5 and its tests mirrored that wrong scale. Corrected source and independent gameplay-magnitude12/15 population/RNG controls replace that known-defective variant; prior linked results remain historical evidence only."
+      },
+      "evidence": [
+        "META/m4/hour443/validation.json",
+        "META/m4/hour443/README.md",
+        "META/m4/hour443/a/README.md",
+        "META/m4/hour443/stages/closures/owners.json",
+        "META/m4/hour443/stages/closures/validation.json",
+        "META/m4/hour443/stages/closures/integration-real.json",
+        "META/m4/hour443/stages/closures/clean/clean-checkout.json"
+      ],
+      "historical_variant": true,
+      "historical_source_path": "src/bh_script_explosion.c",
+      "historical_reason": "Incorrect functional source variant; correction receives independent current linked evidence."
+    },
+    {
+      "id": "00402710-functional-c-hour443-closures",
+      "original_va": "00402710",
+      "function": "bh_script_explosion_refresh",
+      "role": "engine_candidate",
+      "provenance_confidence": "Verified ordinary application effect behavior from entity field writes, sound/image globals, real gameplay event packets and installed callbacks; historical game/engine authorship unresolved. Complete distinct RET body, not imported/CRT/EH/stack helper or independently counted shared tail.",
+      "source": "META/m4/hour443/stages/closures/sources/efd0133e37f6e9d8840349a2166df718e3f273a845da6a840d568e084f87221b-bh_script_explosion.c.txt",
+      "source_sha256": "efd0133e37f6e9d8840349a2166df718e3f273a845da6a840d568e084f87221b",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00402710",
+            "end_exclusive": "004027e9",
+            "bytes": 217,
+            "instructions": 71,
+            "sha256": "978d49c17441842034966197c8bfbaa0c8afa16224756de8ccad797488951dbc"
+          }
+        ],
+        "abi": "Pinned x86 cdecl, whole constructor/installed step/refresh bodies; entity+e8/ec/f4..1b4 verified original fields, persistent private source context at payload+624. Original void constructors expose source-only main entity result.",
+        "fixtures": {
+          "script-explosion": {
+            "scenario": "script-explosion",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "clean_fixtures": {
+          "script-explosion": {
+            "scenario": "script-explosion",
+            "checks": 295,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Borrowed real entity/queue/sound/flash/debris contexts, texture IDs and sound-resource identity replace original global owners; complete startup/world/script VM integration remains incomplete.",
+          "Finite constructor position/duration/magnitude/probability, nonnegative magnitude and PC53 nearest/masked required. NaN tick age/duration/probability behavior and masked refresh division retained/tested; original PC24 transitions and extreme arithmetic remain unvalidated.",
+          "Actual integer debris count0..65535 retained. Pretruncate count>=65536 or nonfinite reports LIMIT and skips only that unbounded debris batch after prior sound/flash/main/blast effects, continuing damage queries. Finite child magnitude>3 is supported/tested.",
+          "Released/recycled current entity stops remaining accesses with MUTATION. Stable borrowed point/context/pool topology required; arbitrary hostile state/context mutation excluded.",
+          "Standalone freshly compiles14 actual source translation units and links snapshotted admitted renderer dependency objects; source variant only eligible for admission after parent current full and clean integration checks.",
+          "No original code execution, game launch, automated input/UI capture, audio playback or network operation.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ],
+        "superseded_by": "00402710-functional-c-hour443-target-context",
+        "known_defect": "Explosion debris count at004030b0/0040354f uses original binary64[004892c8]=-1/32768. Previous source used-.5 and its tests mirrored that wrong scale. Corrected source and independent gameplay-magnitude12/15 population/RNG controls replace that known-defective variant; prior linked results remain historical evidence only."
+      },
+      "evidence": [
+        "META/m4/hour443/validation.json",
+        "META/m4/hour443/README.md",
+        "META/m4/hour443/a/README.md",
+        "META/m4/hour443/stages/closures/owners.json",
+        "META/m4/hour443/stages/closures/validation.json",
+        "META/m4/hour443/stages/closures/integration-real.json",
+        "META/m4/hour443/stages/closures/clean/clean-checkout.json"
+      ],
+      "historical_variant": true,
+      "historical_source_path": "src/bh_script_explosion.c",
+      "historical_reason": "Incorrect functional source variant; correction receives independent current linked evidence."
+    },
+    {
+      "id": "0042be70-functional-c-hour443-closures",
+      "original_va": "0042be70",
+      "function": "bh_input_key_capture_step",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole application menu key-capture step with four actual installed references; no CRT/compiler/import/shared tail; historical engine attribution unresolved",
+      "source": "src/bh_input_mode.c",
+      "source_sha256": "4eeb1653fdf17d755bb0fa0d9975b781869b544b1a674528482b3e10fee87460",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "0042be70",
+            "end_exclusive": "0042bf77",
+            "bytes": 263,
+            "instructions": 85,
+            "sha256": "792d33e93218c306a2e31eb280de875af703dbf4ca0d6fc229bf3ef22fda8a18"
+          }
+        ],
+        "abi": "Original x86 cdecl entity step over explicit borrowed list/snapshot/counter/settings/menu/callback/result owners. Actual entity dispatch installs a source callback bridge; original current menu callback/global bindings are typed source ownership.",
+        "fixtures": {
+          "input-mode": {
+            "scenario": "input-mode",
+            "checks": 155,
+            "failures": 0,
+            "original_code_required": false,
+            "physical_input_calls": 0,
+            "play_calls": 0
+          }
+        },
+        "clean_fixtures": {
+          "input-mode": {
+            "scenario": "input-mode",
+            "checks": 121,
+            "failures": 0,
+            "original_code_required": false,
+            "physical_input_calls": 0,
+            "play_calls": 0
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Only actual admitted four bh_menu_keys_* commit definitions accepted. Begin/cancel/context bridge count zero; original menu setup owners are not claimed.",
+          "Result is two borrowed bytes. Phase/counter/last-key semantics retain original0..254 scan, Escape skip only during capture, multiple sound requests and delayed commit with live selection reload.",
+          "Malformed packets/allocation/repeated setup are guarded. Sound/evaluation failure diagnostics do not suppress subsequent original side effects. No function-level byte-match claim.",
+          "Context/result/entity ownership must remain valid; no independent release or owner reinitialization during capture. Native snapshot collection and adjacent text capture remain outside this family.",
+          "Focused fixtures execute cached/event source state and native owned font/page resources only; zero physical input APIs, game execution, audio playback and network sessions.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/hour443/validation.json",
+        "META/m4/hour443/README.md",
+        "META/m4/hour443/c2/README.md",
+        "META/m4/hour443/stages/closures/owners.json",
+        "META/m4/hour443/stages/closures/validation.json",
+        "META/m4/hour443/stages/closures/integration-real.json",
+        "META/m4/hour443/stages/closures/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004124d0-functional-c-hour443-final",
+      "original_va": "004124d0",
+      "function": "bh_physics_step",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole ordinary actor/world physics integration, collision, response/effects owner; verified contiguous original3916 bytes and1015 decoded instructions. Not CRT/import/compiler support/shared tail; proprietary engine versus game authorship unresolved.",
+      "source": "src/bh_physics_step.c",
+      "source_sha256": "e7b3d0db0c5b21ccf190e8c7457f21b1227b3c44c98b3d213044b81feb800af3",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "004124d0",
+            "end_exclusive": "0041341c",
+            "bytes": 3916,
+            "instructions": 1015,
+            "sha256": "a230b4b4d11bf78467b9562ebe7dab5dd8d2b6e904c670699d4a80c730e20cee"
+          }
+        ],
+        "abi": "x86 cdecl whole004124d0 semantics with explicit source context replacing original shared candidate/fallback/model/world/audio registry globals. Original common basis/position/angles/forces/lastclear/mass/friction/world fields are published through asserted layouts. Positive finite dt under pinned PC53.",
+        "fixtures": {
+          "physics-step": {
+            "scenario": "physics-step",
+            "checks": 213,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0,
+            "native_send_calls": 0
+          }
+        },
+        "clean_fixtures": {
+          "physics-step": {
+            "scenario": "physics-step",
+            "checks": 213,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0,
+            "native_send_calls": 0
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Complete ordinary physics owner004124d0 only. Existing bh_physics_response.c supplies previously admitted count-zero extracted arithmetic; no new count or byte-match transfer for those helpers. New registry/read/publish/dispose/init helpers and parent bh_physics_effects.c add zero owners.",
+          "Explicit borrowed real pool, typed body/world/model registry, stable decoded geometry topology, actual150/180 target matrices, and persistent BHPhysicsState shared with actual response owners. Caller synchronizes external teleports. Registry identities/topology and zero vector remain unchanged until dispose; callback generations are guarded. Any unrelated constructor or target/projectile step remains separate.",
+          "Moderate finite PC53 nearest/masked profile, positive dt, finite mass/friction and radius; PC24 transitions, nonfinite/extreme state and division-domain fidelity are not validated. Source guards report invalid dependency/state without fabricating original success; already-performed forces/effects remain visible.",
+          "Original segment-only fallback can report a hit without initialized surface data. Source explicitly rejects that undefined contact domain with BH_PHYSICS_STEP_CONTACT after actual query; no surface normal/flags are invented. Actual zero-fraction actor mesh overlap and rollback are executed.",
+          "Original effects are ordered after three shared response rand draws and before event2 callbacks; first and second callback packets are delivered only for nonzero split impulse. Both queries see old actor pose; final commit preserves shared callback force/spin changes. All original special-material, audio, packet and particle branches use real source owners through the parent helper.",
+          "World response NULL denotes the original verified RET sentinel. A non-NULL recipient must be an actual live pool entity with an installed real callback or NULL query equivalent. Constructor source wiring and actual game world/assets are not claimed by synthetic decoded contact fixtures.",
+          "No game/original code, automated gameplay, physical input, UI capture, native audio playback or native network Send. Actual source streaming resources queue voices and actual NULL-peer transport returns S_FALSE.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/hour443/validation.json",
+        "META/m4/hour443/README.md",
+        "META/m4/hour443/b/README.md",
+        "META/m4/hour443/stages/final/owners.json",
+        "META/m4/hour443/stages/final/validation.json",
+        "META/m4/hour443/stages/final/integration-real.json",
+        "META/m4/hour443/stages/final/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0042de70-functional-c-hour443-final",
+      "original_va": "0042de70",
+      "function": "bh_menu_profile_commit",
+      "role": "engine_candidate",
+      "provenance_confidence": "Whole application menu profile-name commit with actual installed reference0042e05b; not CRT/library/compiler/import/shared tail; historical engine attribution unresolved",
+      "source": "src/bh_menu_profile.c",
+      "source_sha256": "b11bf4e75b193a8098209988d83714d89ffe83afe8665c6a25976fdcbee35fe2",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "0042de70",
+            "end_exclusive": "0042df90",
+            "bytes": 288,
+            "instructions": 101,
+            "sha256": "fb766b596e9c91ed1cc902dd3ecd0d288d2b454e6f5450d2704f2fc33abadd37"
+          }
+        ],
+        "abi": "Original x86 cdecl parent-menu/name/index over explicit actual config/current/pending source context. Actual CRT case-insensitive comparison, full76B profile clone and after-current ring topology; live optional row callbacks.",
+        "fixtures": {
+          "menu-profile": {
+            "scenario": "menu-profile",
+            "checks": 111,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "menu-profile": {
+            "scenario": "menu-profile",
+            "checks": 71,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Parent count-zero public BHConfig clone/register API owns actual ProfileNode registration/disposal; no new TU private layout duplication. Existing original/support config source variants require parent fresh validation.",
+          "Explicit selected profile is independent of config ring root; full76B metadata and borrowed baseline retained. Newclone owns no additional baseline allocation; config lifetime must outlive all borrowed pointers.",
+          "Name limited15bytes+NUL and actual config membership checked; original adjacent-control overwrite is guarded. Clone/register insertion precedes name/flags stores with no intervening callback; allocation failures preserve ring/count/current.",
+          "Nonempty successful select/clone row0 refresh precedes pending clear and selected-index refresh. Empty/failure/index0/live-row mutation behaviors retained; callback may change menu rows but not dispose config/current storage.",
+          "Focused source-only fixtures cover real save/reload/dispose and private native pages/FIFO; no physicalinput, gameplay, originalcode, UIcapture, audioPlay or native networking. No byte-match claim.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/hour443/validation.json",
+        "META/m4/hour443/README.md",
+        "META/m4/hour443/c3/README.md",
+        "META/m4/hour443/stages/final/owners.json",
+        "META/m4/hour443/stages/final/validation.json",
+        "META/m4/hour443/stages/final/integration-real.json",
+        "META/m4/hour443/stages/final/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0042bf80-functional-c-hour443-final",
+      "original_va": "0042bf80",
+      "function": "bh_input_text_step",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary menu entity callback with verified input-packet/transition calls, text-buffer globals, sound effects, actual row drawing and profile/network commits. Application role known; historical game/engine authorship unresolved. Distinct RET body, not CRT/import/EH/shared tail.",
+      "source": "src/bh_input_text.c",
+      "source_sha256": "a0b20d8b4d611de1194925f77a26f759ba7c88a7bfa96b952de59ca8df80aae6",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "0042bf80",
+            "end_exclusive": "0042c2fa",
+            "bytes": 890,
+            "instructions": 268,
+            "sha256": "d1754bd130796e87cf515567466d0563589af912af3615746dbefb12e9699b73"
+          }
+        ],
+        "abi": "Pinned x86 cdecl complete text entity step; actual phase+1bc, source explicit parent/menu and global input/text bindings; three actual direct source commits, native MapVirtualKeyA(mode2), CRT sprintf.",
+        "fixtures": {
+          "input-text": {
+            "scenario": "input-text",
+            "checks": 243,
+            "failures": 0,
+            "original_code_required": false,
+            "physical_input_calls": 0,
+            "play_calls": 0
+          }
+        },
+        "clean_fixtures": {
+          "input-text": {
+            "scenario": "input-text",
+            "checks": 243,
+            "failures": 0,
+            "original_code_required": false,
+            "physical_input_calls": 0,
+            "play_calls": 0
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Pure cached input packet/state fixture; no physical device polling/capture, game loop or native input injection. MapVirtualKeyA(mode2) is translation only.",
+          "Real profile callback0042de70 and real BHConfig clone ownership API are part of parent current admission batch; existing keycapture0042be70 is not recounted.",
+          "Borrowed source contexts/buffer must outlive capture; row callbacks retain capture entity/context. Terminated buffer length must match counter; limit<capacity and fit actual owning records (profile15/address63/phone95).",
+          "Native translated scan index replaces current virtual-key index exactly. Negative/dead-key indices reject before unsafe lookup. Original low-byte append preserved; positive native host ASCII tested, other layouts/extended/dead-key behavior not established.",
+          "Standalone freshly compiles new text owner/test plus real menu-profile/config TUs and links snapshotted admitted dependencies. Current full and clean parent builds remain required before admission.",
+          "No original code, game launch, automated gameplay/input/UI capture, audio playback or network activity.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ]
+      },
+      "evidence": [
+        "META/m4/hour443/validation.json",
+        "META/m4/hour443/README.md",
+        "META/m4/hour443/a2/README.md",
+        "META/m4/hour443/stages/final/owners.json",
+        "META/m4/hour443/stages/final/validation.json",
+        "META/m4/hour443/stages/final/integration-real.json",
+        "META/m4/hour443/stages/final/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00401fd0-functional-c-hour443-final-context",
+      "original_va": "00401fd0",
+      "function": "bh_config_load",
+      "role": "game",
+      "provenance_confidence": "Game-specific CFG/defaults for config; engine ownership unknown for path helper; not identified CRT/library scaffolding",
+      "source": "src/bh_config.c",
+      "source_sha256": "926fb03ccc0ebd92ee0156d67f351adc741db675ba685bc26d8c44dd568ad564",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": "Complete contiguous body, plain RET; no shared tail or computed flow; zero-argument original entry; explicit source state/path inputs are adapters",
+        "interface_adaptation": "Original zero-argument global-state entry; source has explicit initialized context/path/directory/device inputs and reports errors. This is not a binary drop-in ABI claim.",
+        "layout": "32-bit cdecl source API; 416-byte settings block, 76-byte profile layout with offsets 4/8/12/72 compile checked; data verified against immutable original",
+        "scenario": "2508 source-only config/container/path checks; default/custom roundtrip, singleton/max ring, rollback, allocator failures, readonly save failure, device selection, native directory discovery and path-driven VFILE composition",
+        "limits": [
+          "No actual user-produced BHUNTER.CFG supplied; constructed legacy files plus exact original default data tested",
+          "No original config/path code executed; evidence is full-body review, independent fixtures and linked scenarios",
+          "Opaque settings/binding fields retained; input consumption and renderer enumeration remain unrecovered",
+          "Reject partial/trailing records, unterminated strings and over 4096 profiles; no version marker exists in the reviewed legacy format",
+          "Source-owned list and rollback fix unsafe original failure/lifetime paths; baseline pointer for nonzero flags sanitized",
+          "Legacy save writes 32-bit process pointer words; reload rebuilds links; no portable new serialization format introduced",
+          "Source-game integration, registry/CD source checks, other engine pools and numerical runtime transitions remain open",
+          "Fresh same-owner config TU after addition of actual public profile-clone allocation/registration API. Existing config/container/path checks and new menu-profile/text-entry composition execute in real/clean builds. Three original owners remain counted once; earlier source snapshots/evidence remain historical. No byte-match transfer."
+        ],
+        "byte_match": "None claimed; historical math matching context untouched",
+        "raw_byte_match": false,
+        "supersedes": "00401fd0-functional-c",
+        "fixtures": {
+          "config-container-path": {
+            "scenario": "config-container-path",
+            "checks": 2508,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "config-container-path": {
+            "scenario": "config-container-path",
+            "checks": 2508,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "tu_dispatch_fixtures": {
+          "menu-profile": {
+            "scenario": "menu-profile",
+            "checks": 111,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "input-text": {
+            "scenario": "input-text",
+            "checks": 243,
+            "failures": 0,
+            "original_code_required": false,
+            "physical_input_calls": 0,
+            "play_calls": 0
+          }
+        },
+        "original_code_executed": false
+      },
+      "evidence": [
+        "META/m4/hour443/validation.json",
+        "META/m4/hour443/README.md",
+        "META/m4/hour443/stages/final/validation.json",
+        "META/m4/hour443/stages/final/refreshed-variants.json",
+        "META/m2/CONFIG.md",
+        "META/m2/config/review.json",
+        "META/m2/config/dependency-validation.json",
+        "META/m2/config/original/00401fd0.asm.txt",
+        "META/m2/config/original/00401fd0.c.txt",
+        "META/m2/config/integration-real.json",
+        "META/m2/config/link-map.txt",
+        "META/m2/config-clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004022d0-functional-c-hour443-final-context",
+      "original_va": "004022d0",
+      "function": "bh_config_bootstrap",
+      "role": "game",
+      "provenance_confidence": "Game-specific CFG/defaults for config; engine ownership unknown for path helper; not identified CRT/library scaffolding",
+      "source": "src/bh_config.c",
+      "source_sha256": "926fb03ccc0ebd92ee0156d67f351adc741db675ba685bc26d8c44dd568ad564",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": "Complete contiguous body, plain RET; no shared tail or computed flow; zero-argument original entry; explicit source state/path inputs are adapters",
+        "interface_adaptation": "Original zero-argument global-state entry; source has explicit initialized context/path/directory/device inputs and reports errors. This is not a binary drop-in ABI claim.",
+        "layout": "32-bit cdecl source API; 416-byte settings block, 76-byte profile layout with offsets 4/8/12/72 compile checked; data verified against immutable original",
+        "scenario": "2508 source-only config/container/path checks; default/custom roundtrip, singleton/max ring, rollback, allocator failures, readonly save failure, device selection, native directory discovery and path-driven VFILE composition",
+        "limits": [
+          "No actual user-produced BHUNTER.CFG supplied; constructed legacy files plus exact original default data tested",
+          "No original config/path code executed; evidence is full-body review, independent fixtures and linked scenarios",
+          "Opaque settings/binding fields retained; input consumption and renderer enumeration remain unrecovered",
+          "Reject partial/trailing records, unterminated strings and over 4096 profiles; no version marker exists in the reviewed legacy format",
+          "Source-owned list and rollback fix unsafe original failure/lifetime paths; baseline pointer for nonzero flags sanitized",
+          "Legacy save writes 32-bit process pointer words; reload rebuilds links; no portable new serialization format introduced",
+          "Source-game integration, registry/CD source checks, other engine pools and numerical runtime transitions remain open",
+          "Fresh same-owner config TU after addition of actual public profile-clone allocation/registration API. Existing config/container/path checks and new menu-profile/text-entry composition execute in real/clean builds. Three original owners remain counted once; earlier source snapshots/evidence remain historical. No byte-match transfer."
+        ],
+        "byte_match": "None claimed; historical math matching context untouched",
+        "raw_byte_match": false,
+        "supersedes": "004022d0-functional-c",
+        "fixtures": {
+          "config-container-path": {
+            "scenario": "config-container-path",
+            "checks": 2508,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "config-container-path": {
+            "scenario": "config-container-path",
+            "checks": 2508,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "tu_dispatch_fixtures": {
+          "menu-profile": {
+            "scenario": "menu-profile",
+            "checks": 111,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "input-text": {
+            "scenario": "input-text",
+            "checks": 243,
+            "failures": 0,
+            "original_code_required": false,
+            "physical_input_calls": 0,
+            "play_calls": 0
+          }
+        },
+        "original_code_executed": false
+      },
+      "evidence": [
+        "META/m4/hour443/validation.json",
+        "META/m4/hour443/README.md",
+        "META/m4/hour443/stages/final/validation.json",
+        "META/m4/hour443/stages/final/refreshed-variants.json",
+        "META/m2/CONFIG.md",
+        "META/m2/config/review.json",
+        "META/m2/config/dependency-validation.json",
+        "META/m2/config/original/004022d0.asm.txt",
+        "META/m2/config/original/004022d0.c.txt",
+        "META/m2/config/integration-real.json",
+        "META/m2/config/link-map.txt",
+        "META/m2/config-clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00402370-functional-c-hour443-final-context",
+      "original_va": "00402370",
+      "function": "bh_config_save",
+      "role": "game",
+      "provenance_confidence": "Game-specific CFG/defaults for config; engine ownership unknown for path helper; not identified CRT/library scaffolding",
+      "source": "src/bh_config.c",
+      "source_sha256": "926fb03ccc0ebd92ee0156d67f351adc741db675ba685bc26d8c44dd568ad564",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": "Complete contiguous body, plain RET; no shared tail or computed flow; zero-argument original entry; explicit source state/path inputs are adapters",
+        "interface_adaptation": "Original zero-argument global-state entry; source has explicit initialized context/path/directory/device inputs and reports errors. This is not a binary drop-in ABI claim.",
+        "layout": "32-bit cdecl source API; 416-byte settings block, 76-byte profile layout with offsets 4/8/12/72 compile checked; data verified against immutable original",
+        "scenario": "2508 source-only config/container/path checks; default/custom roundtrip, singleton/max ring, rollback, allocator failures, readonly save failure, device selection, native directory discovery and path-driven VFILE composition",
+        "limits": [
+          "No actual user-produced BHUNTER.CFG supplied; constructed legacy files plus exact original default data tested",
+          "No original config/path code executed; evidence is full-body review, independent fixtures and linked scenarios",
+          "Opaque settings/binding fields retained; input consumption and renderer enumeration remain unrecovered",
+          "Reject partial/trailing records, unterminated strings and over 4096 profiles; no version marker exists in the reviewed legacy format",
+          "Source-owned list and rollback fix unsafe original failure/lifetime paths; baseline pointer for nonzero flags sanitized",
+          "Legacy save writes 32-bit process pointer words; reload rebuilds links; no portable new serialization format introduced",
+          "Source-game integration, registry/CD source checks, other engine pools and numerical runtime transitions remain open",
+          "Fresh same-owner config TU after addition of actual public profile-clone allocation/registration API. Existing config/container/path checks and new menu-profile/text-entry composition execute in real/clean builds. Three original owners remain counted once; earlier source snapshots/evidence remain historical. No byte-match transfer."
+        ],
+        "byte_match": "None claimed; historical math matching context untouched",
+        "raw_byte_match": false,
+        "supersedes": "00402370-functional-c",
+        "fixtures": {
+          "config-container-path": {
+            "scenario": "config-container-path",
+            "checks": 2508,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "clean_fixtures": {
+          "config-container-path": {
+            "scenario": "config-container-path",
+            "checks": 2508,
+            "failures": 0,
+            "original_code_required": false
+          }
+        },
+        "tu_dispatch_fixtures": {
+          "menu-profile": {
+            "scenario": "menu-profile",
+            "checks": 111,
+            "failures": 0,
+            "original_code_required": false
+          },
+          "input-text": {
+            "scenario": "input-text",
+            "checks": 243,
+            "failures": 0,
+            "original_code_required": false,
+            "physical_input_calls": 0,
+            "play_calls": 0
+          }
+        },
+        "original_code_executed": false
+      },
+      "evidence": [
+        "META/m4/hour443/validation.json",
+        "META/m4/hour443/README.md",
+        "META/m4/hour443/stages/final/validation.json",
+        "META/m4/hour443/stages/final/refreshed-variants.json",
+        "META/m2/CONFIG.md",
+        "META/m2/config/review.json",
+        "META/m2/config/dependency-validation.json",
+        "META/m2/config/original/00402370.asm.txt",
+        "META/m2/config/original/00402370.c.txt",
+        "META/m2/config/integration-real.json",
+        "META/m2/config/link-map.txt",
+        "META/m2/config-clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "0043cd00-functional-c-hour443-target",
+      "original_va": "0043cd00",
+      "function": "bh_target_step",
+      "role": "engine_candidate",
+      "provenance_confidence": "Complete ordinary entity target/debris lifecycle callback with original application mode, smoke particle, damage countdown, pickup switch, explosion and full physics dependencies. Historical authorship unresolved; not CRT/import/EH/shared tail.",
+      "source": "src/bh_target_step.c",
+      "source_sha256": "8d2695226c28bf7cf902131a6a5479bcf6517ed262787e370b525b30326071dc",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "0043cd00",
+            "end_exclusive": "0043d27c",
+            "bytes": 1404,
+            "instructions": 431,
+            "sha256": "edd43e22f9d0798daca6114df82f4dc1ad37ffe3163aad3032bb52c1e9cedc44"
+          }
+        ],
+        "abi": "Pinned x86 cdecl installed step. Actual original state ec/fc..120 with shared BHDebrisBody.sleep_time/owner and authoritative BHPhysicsState. Actual ordered callbacks, shared outside registry, source-private context pointer payload+616.",
+        "fixtures": {
+          "target-step": {
+            "scenario": "target-step",
+            "checks": 179,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "clean_fixtures": {
+          "target-step": {
+            "scenario": "target-step",
+            "checks": 179,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Count-zero binding, not complete original target construction/world startup. Existing fixed physics roster must be disposed/rebound after target retirement before stepping another actor.",
+          "Event12 uses a borrowed live actual query interface. Fixture invokes admitted ignored-event branch and isolated packet observer; no positive gameplay semantics of an unrecovered event12 recipient are claimed.",
+          "Real pickup renderer callbacks are installed; target fixtures validate actual constructor/resource/registration state, not original pickup artwork. Existing rendering owner validation remains separate.",
+          "PC53 nearest/masked finite physics domain. Death countdown and sleep decisions use retained prestore values; original PC24 and extreme arithmetic remain fidelity limits.",
+          "Corrected explosion variant uses PE004892c8=-1/32768; actual gameplay magnitudes12/15 and complete debris random consumption run here. Earlier wrong explosion variant evidence is historical only.",
+          "Borrow all typed owners and stable registry/body storage; response callbacks may not invalidate/rebind the target body while its step runs. Current release/recycle stops later source accesses.",
+          "Standalone compiles target/test and real physics/effects/corrected explosion TUs fresh, links retained snapshotted admitted object closure. Current parent full and clean integration still required.",
+          "No original code, game launch, automated gameplay/input/UI capture, sound playback or native networking.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture."
+        ],
+        "owned_data": "META/m4/hour443/a3/switch-data.json"
+      },
+      "evidence": [
+        "META/m4/hour443/validation.json",
+        "META/m4/hour443/README.md",
+        "META/m4/hour443/a3/README.md",
+        "META/m4/hour443/stages/target/owners.json",
+        "META/m4/hour443/stages/target/validation.json",
+        "META/m4/hour443/stages/target/integration-real.json",
+        "META/m4/hour443/stages/target/clean/clean-checkout.json",
+        "META/m4/hour443/a3/switch-data.json"
+      ]
+    },
+    {
+      "id": "00402e50-functional-c-hour443-target-context",
+      "original_va": "00402e50",
+      "function": "bh_script_explosion_create",
+      "role": "engine_candidate",
+      "provenance_confidence": "Verified ordinary application effect behavior from entity field writes, sound/image globals, real gameplay event packets and installed callbacks; historical game/engine authorship unresolved. Complete distinct RET body, not imported/CRT/EH/stack helper or independently counted shared tail.",
+      "source": "src/bh_script_explosion.c",
+      "source_sha256": "4a2e8b39a75ceb46e3d3fe908939705feab66ac69773109cb0039f64d4146a7c",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00402e50",
+            "end_exclusive": "00403112",
+            "bytes": 706,
+            "instructions": 181,
+            "sha256": "af2b9485eb4b5f2c31af8a300e8b1bd5e15747a426ae4af462fef977be3d9731"
+          }
+        ],
+        "abi": "Pinned x86 cdecl, whole constructor/installed step/refresh bodies; entity+e8/ec/f4..1b4 verified original fields, persistent private source context at payload+624. Original void constructors expose source-only main entity result.",
+        "fixtures": {
+          "script-explosion": {
+            "scenario": "script-explosion",
+            "checks": 297,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "clean_fixtures": {
+          "script-explosion": {
+            "scenario": "script-explosion",
+            "checks": 297,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Borrowed real entity/queue/sound/flash/debris contexts, texture IDs and sound-resource identity replace original global owners; complete startup/world/script VM integration remains incomplete.",
+          "Finite constructor position/duration/magnitude/probability, nonnegative magnitude and PC53 nearest/masked required. NaN tick age/duration/probability behavior and masked refresh division retained/tested; original PC24 transitions and extreme arithmetic remain unvalidated.",
+          "Actual integer debris count0..65535 retained. Pretruncate count>=65536 or nonfinite reports LIMIT and skips only that unbounded debris batch after prior sound/flash/main/blast effects, continuing damage queries. Finite child magnitude>3 is supported/tested.",
+          "Released/recycled current entity stops remaining accesses with MUTATION. Stable borrowed point/context/pool topology required; arbitrary hostile state/context mutation excluded.",
+          "Standalone freshly compiles14 actual source translation units and links snapshotted admitted renderer dependency objects; source variant only eligible for admission after parent current full and clean integration checks.",
+          "No original code execution, game launch, automated input/UI capture, audio playback or network operation.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture.",
+          "Corrected same-owner explosion source after immutable PE literal audit found wrong debris-count scale; all21 original FP literals independently reread. Current real/clean corrected explosion and target-composition tests execute. These four variants add zero original functions; previous incorrect source and mirrored tests stay historical, with known defect recorded."
+        ],
+        "supersedes": "00402e50-functional-c-hour443-closures",
+        "corrects_previous_defect": "Explosion debris count at004030b0/0040354f uses original binary64[004892c8]=-1/32768. Previous source used-.5 and its tests mirrored that wrong scale. Corrected source and independent gameplay-magnitude12/15 population/RNG controls replace that known-defective variant; prior linked results remain historical evidence only.",
+        "tu_dispatch_fixtures": {
+          "script-explosion": {
+            "scenario": "script-explosion",
+            "checks": 297,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          },
+          "target-step": {
+            "scenario": "target-step",
+            "checks": 179,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        }
+      },
+      "evidence": [
+        "META/m4/hour443/validation.json",
+        "META/m4/hour443/README.md",
+        "META/m4/hour443/stages/target/validation.json",
+        "META/m4/hour443/stages/target/refreshed-variants.json",
+        "META/m4/hour443/a/README.md",
+        "META/m4/hour443/stages/closures/owners.json",
+        "META/m4/hour443/stages/closures/validation.json",
+        "META/m4/hour443/stages/closures/integration-real.json",
+        "META/m4/hour443/stages/closures/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00402af0-functional-c-hour443-target-context",
+      "original_va": "00402af0",
+      "function": "bh_script_explosion_tick",
+      "role": "engine_candidate",
+      "provenance_confidence": "Verified ordinary application effect behavior from entity field writes, sound/image globals, real gameplay event packets and installed callbacks; historical game/engine authorship unresolved. Complete distinct RET body, not imported/CRT/EH/stack helper or independently counted shared tail.",
+      "source": "src/bh_script_explosion.c",
+      "source_sha256": "4a2e8b39a75ceb46e3d3fe908939705feab66ac69773109cb0039f64d4146a7c",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00402af0",
+            "end_exclusive": "00402cb7",
+            "bytes": 455,
+            "instructions": 120,
+            "sha256": "cc055ee0d790607fcd020f91ed32c2d8a8e655de150a94635209f4362ef15874"
+          }
+        ],
+        "abi": "Pinned x86 cdecl, whole constructor/installed step/refresh bodies; entity+e8/ec/f4..1b4 verified original fields, persistent private source context at payload+624. Original void constructors expose source-only main entity result.",
+        "fixtures": {
+          "script-explosion": {
+            "scenario": "script-explosion",
+            "checks": 297,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "clean_fixtures": {
+          "script-explosion": {
+            "scenario": "script-explosion",
+            "checks": 297,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Borrowed real entity/queue/sound/flash/debris contexts, texture IDs and sound-resource identity replace original global owners; complete startup/world/script VM integration remains incomplete.",
+          "Finite constructor position/duration/magnitude/probability, nonnegative magnitude and PC53 nearest/masked required. NaN tick age/duration/probability behavior and masked refresh division retained/tested; original PC24 transitions and extreme arithmetic remain unvalidated.",
+          "Actual integer debris count0..65535 retained. Pretruncate count>=65536 or nonfinite reports LIMIT and skips only that unbounded debris batch after prior sound/flash/main/blast effects, continuing damage queries. Finite child magnitude>3 is supported/tested.",
+          "Released/recycled current entity stops remaining accesses with MUTATION. Stable borrowed point/context/pool topology required; arbitrary hostile state/context mutation excluded.",
+          "Standalone freshly compiles14 actual source translation units and links snapshotted admitted renderer dependency objects; source variant only eligible for admission after parent current full and clean integration checks.",
+          "No original code execution, game launch, automated input/UI capture, audio playback or network operation.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture.",
+          "Corrected same-owner explosion source after immutable PE literal audit found wrong debris-count scale; all21 original FP literals independently reread. Current real/clean corrected explosion and target-composition tests execute. These four variants add zero original functions; previous incorrect source and mirrored tests stay historical, with known defect recorded."
+        ],
+        "supersedes": "00402af0-functional-c-hour443-closures",
+        "corrects_previous_defect": "Explosion debris count at004030b0/0040354f uses original binary64[004892c8]=-1/32768. Previous source used-.5 and its tests mirrored that wrong scale. Corrected source and independent gameplay-magnitude12/15 population/RNG controls replace that known-defective variant; prior linked results remain historical evidence only.",
+        "tu_dispatch_fixtures": {
+          "script-explosion": {
+            "scenario": "script-explosion",
+            "checks": 297,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          },
+          "target-step": {
+            "scenario": "target-step",
+            "checks": 179,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        }
+      },
+      "evidence": [
+        "META/m4/hour443/validation.json",
+        "META/m4/hour443/README.md",
+        "META/m4/hour443/stages/target/validation.json",
+        "META/m4/hour443/stages/target/refreshed-variants.json",
+        "META/m4/hour443/a/README.md",
+        "META/m4/hour443/stages/closures/owners.json",
+        "META/m4/hour443/stages/closures/validation.json",
+        "META/m4/hour443/stages/closures/integration-real.json",
+        "META/m4/hour443/stages/closures/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "004032f0-functional-c-hour443-target-context",
+      "original_va": "004032f0",
+      "function": "bh_script_explosion_secondary",
+      "role": "engine_candidate",
+      "provenance_confidence": "Verified ordinary application effect behavior from entity field writes, sound/image globals, real gameplay event packets and installed callbacks; historical game/engine authorship unresolved. Complete distinct RET body, not imported/CRT/EH/stack helper or independently counted shared tail.",
+      "source": "src/bh_script_explosion.c",
+      "source_sha256": "4a2e8b39a75ceb46e3d3fe908939705feab66ac69773109cb0039f64d4146a7c",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "004032f0",
+            "end_exclusive": "004035dd",
+            "bytes": 749,
+            "instructions": 193,
+            "sha256": "9413d942b7968d2844218803dd1476cd6ca732f4fc8043f3c53c89f188421f5d"
+          }
+        ],
+        "abi": "Pinned x86 cdecl, whole constructor/installed step/refresh bodies; entity+e8/ec/f4..1b4 verified original fields, persistent private source context at payload+624. Original void constructors expose source-only main entity result.",
+        "fixtures": {
+          "script-explosion": {
+            "scenario": "script-explosion",
+            "checks": 297,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "clean_fixtures": {
+          "script-explosion": {
+            "scenario": "script-explosion",
+            "checks": 297,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Borrowed real entity/queue/sound/flash/debris contexts, texture IDs and sound-resource identity replace original global owners; complete startup/world/script VM integration remains incomplete.",
+          "Finite constructor position/duration/magnitude/probability, nonnegative magnitude and PC53 nearest/masked required. NaN tick age/duration/probability behavior and masked refresh division retained/tested; original PC24 transitions and extreme arithmetic remain unvalidated.",
+          "Actual integer debris count0..65535 retained. Pretruncate count>=65536 or nonfinite reports LIMIT and skips only that unbounded debris batch after prior sound/flash/main/blast effects, continuing damage queries. Finite child magnitude>3 is supported/tested.",
+          "Released/recycled current entity stops remaining accesses with MUTATION. Stable borrowed point/context/pool topology required; arbitrary hostile state/context mutation excluded.",
+          "Standalone freshly compiles14 actual source translation units and links snapshotted admitted renderer dependency objects; source variant only eligible for admission after parent current full and clean integration checks.",
+          "No original code execution, game launch, automated input/UI capture, audio playback or network operation.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture.",
+          "Corrected same-owner explosion source after immutable PE literal audit found wrong debris-count scale; all21 original FP literals independently reread. Current real/clean corrected explosion and target-composition tests execute. These four variants add zero original functions; previous incorrect source and mirrored tests stay historical, with known defect recorded."
+        ],
+        "supersedes": "004032f0-functional-c-hour443-closures",
+        "corrects_previous_defect": "Explosion debris count at004030b0/0040354f uses original binary64[004892c8]=-1/32768. Previous source used-.5 and its tests mirrored that wrong scale. Corrected source and independent gameplay-magnitude12/15 population/RNG controls replace that known-defective variant; prior linked results remain historical evidence only.",
+        "tu_dispatch_fixtures": {
+          "script-explosion": {
+            "scenario": "script-explosion",
+            "checks": 297,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          },
+          "target-step": {
+            "scenario": "target-step",
+            "checks": 179,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        }
+      },
+      "evidence": [
+        "META/m4/hour443/validation.json",
+        "META/m4/hour443/README.md",
+        "META/m4/hour443/stages/target/validation.json",
+        "META/m4/hour443/stages/target/refreshed-variants.json",
+        "META/m4/hour443/a/README.md",
+        "META/m4/hour443/stages/closures/owners.json",
+        "META/m4/hour443/stages/closures/validation.json",
+        "META/m4/hour443/stages/closures/integration-real.json",
+        "META/m4/hour443/stages/closures/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "id": "00402710-functional-c-hour443-target-context",
+      "original_va": "00402710",
+      "function": "bh_script_explosion_refresh",
+      "role": "engine_candidate",
+      "provenance_confidence": "Verified ordinary application effect behavior from entity field writes, sound/image globals, real gameplay event packets and installed callbacks; historical game/engine authorship unresolved. Complete distinct RET body, not imported/CRT/EH/stack helper or independently counted shared tail.",
+      "source": "src/bh_script_explosion.c",
+      "source_sha256": "4a2e8b39a75ceb46e3d3fe908939705feab66ac69773109cb0039f64d4146a7c",
+      "implementation": "func",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "validation": {
+        "boundary": [
+          {
+            "start": "00402710",
+            "end_exclusive": "004027e9",
+            "bytes": 217,
+            "instructions": 71,
+            "sha256": "978d49c17441842034966197c8bfbaa0c8afa16224756de8ccad797488951dbc"
+          }
+        ],
+        "abi": "Pinned x86 cdecl, whole constructor/installed step/refresh bodies; entity+e8/ec/f4..1b4 verified original fields, persistent private source context at payload+624. Original void constructors expose source-only main entity result.",
+        "fixtures": {
+          "script-explosion": {
+            "scenario": "script-explosion",
+            "checks": 297,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "clean_fixtures": {
+          "script-explosion": {
+            "scenario": "script-explosion",
+            "checks": 297,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        },
+        "raw_byte_match": false,
+        "original_code_executed": false,
+        "limits": [
+          "Borrowed real entity/queue/sound/flash/debris contexts, texture IDs and sound-resource identity replace original global owners; complete startup/world/script VM integration remains incomplete.",
+          "Finite constructor position/duration/magnitude/probability, nonnegative magnitude and PC53 nearest/masked required. NaN tick age/duration/probability behavior and masked refresh division retained/tested; original PC24 transitions and extreme arithmetic remain unvalidated.",
+          "Actual integer debris count0..65535 retained. Pretruncate count>=65536 or nonfinite reports LIMIT and skips only that unbounded debris batch after prior sound/flash/main/blast effects, continuing damage queries. Finite child magnitude>3 is supported/tested.",
+          "Released/recycled current entity stops remaining accesses with MUTATION. Stable borrowed point/context/pool topology required; arbitrary hostile state/context mutation excluded.",
+          "Standalone freshly compiles14 actual source translation units and links snapshotted admitted renderer dependency objects; source variant only eligible for admission after parent current full and clean integration checks.",
+          "No original code execution, game launch, automated input/UI capture, audio playback or network operation.",
+          "Full contract, source context adaptations and outstanding ownership/precision requirements in family README.",
+          "Linked source harness only; live world/menu/script construction and playable game are incomplete; M3 skipped.",
+          "No game/original code, gameplay automation, physical input or UI capture.",
+          "Corrected same-owner explosion source after immutable PE literal audit found wrong debris-count scale; all21 original FP literals independently reread. Current real/clean corrected explosion and target-composition tests execute. These four variants add zero original functions; previous incorrect source and mirrored tests stay historical, with known defect recorded."
+        ],
+        "supersedes": "00402710-functional-c-hour443-closures",
+        "corrects_previous_defect": "Explosion debris count at004030b0/0040354f uses original binary64[004892c8]=-1/32768. Previous source used-.5 and its tests mirrored that wrong scale. Corrected source and independent gameplay-magnitude12/15 population/RNG controls replace that known-defective variant; prior linked results remain historical evidence only.",
+        "tu_dispatch_fixtures": {
+          "script-explosion": {
+            "scenario": "script-explosion",
+            "checks": 297,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          },
+          "target-step": {
+            "scenario": "target-step",
+            "checks": 179,
+            "failures": 0,
+            "original_code_required": false,
+            "play_calls": 0
+          }
+        }
+      },
+      "evidence": [
+        "META/m4/hour443/validation.json",
+        "META/m4/hour443/README.md",
+        "META/m4/hour443/stages/target/validation.json",
+        "META/m4/hour443/stages/target/refreshed-variants.json",
+        "META/m4/hour443/a/README.md",
+        "META/m4/hour443/stages/closures/owners.json",
+        "META/m4/hour443/stages/closures/validation.json",
+        "META/m4/hour443/stages/closures/integration-real.json",
+        "META/m4/hour443/stages/closures/clean/clean-checkout.json"
+      ]
     }
   ],
   "role_catalog": "META/m1/role-catalog.json",
@@ -27517,7 +28782,7 @@
     {
       "id": "config-path-support-bh_config_init",
       "function": "bh_config_init",
-      "source": "src/bh_config.c",
+      "source": "META/m4/loading-display/sources/6081596cb764118e0441ce5d3e0cf897a6ce011ca2d7e9aaa81a6ab5ef58092e-bh_config.c.txt",
       "source_sha256": "6081596cb764118e0441ce5d3e0cf897a6ce011ca2d7e9aaa81a6ab5ef58092e",
       "role": "source_lifecycle_support",
       "implementation": "adapter",
@@ -27529,12 +28794,17 @@
         "META/m2/CONFIG.md",
         "META/m2/config/integration-real.json",
         "META/m2/config-clean/clean-checkout.json"
-      ]
+      ],
+      "historical_variant": true,
+      "historical_source_path": "src/bh_config.c",
+      "validation": {
+        "superseded_by": "config-path-support-bh_config_init-hour443-final"
+      }
     },
     {
       "id": "config-path-support-bh_config_dispose",
       "function": "bh_config_dispose",
-      "source": "src/bh_config.c",
+      "source": "META/m4/loading-display/sources/6081596cb764118e0441ce5d3e0cf897a6ce011ca2d7e9aaa81a6ab5ef58092e-bh_config.c.txt",
       "source_sha256": "6081596cb764118e0441ce5d3e0cf897a6ce011ca2d7e9aaa81a6ab5ef58092e",
       "role": "source_lifecycle_support",
       "implementation": "adapter",
@@ -27546,12 +28816,17 @@
         "META/m2/CONFIG.md",
         "META/m2/config/integration-real.json",
         "META/m2/config-clean/clean-checkout.json"
-      ]
+      ],
+      "historical_variant": true,
+      "historical_source_path": "src/bh_config.c",
+      "validation": {
+        "superseded_by": "config-path-support-bh_config_dispose-hour443-final"
+      }
     },
     {
       "id": "config-path-support-bh_config_valid",
       "function": "bh_config_valid",
-      "source": "src/bh_config.c",
+      "source": "META/m4/loading-display/sources/6081596cb764118e0441ce5d3e0cf897a6ce011ca2d7e9aaa81a6ab5ef58092e-bh_config.c.txt",
       "source_sha256": "6081596cb764118e0441ce5d3e0cf897a6ce011ca2d7e9aaa81a6ab5ef58092e",
       "role": "source_lifecycle_support",
       "implementation": "adapter",
@@ -27563,7 +28838,12 @@
         "META/m2/CONFIG.md",
         "META/m2/config/integration-real.json",
         "META/m2/config-clean/clean-checkout.json"
-      ]
+      ],
+      "historical_variant": true,
+      "historical_source_path": "src/bh_config.c",
+      "validation": {
+        "superseded_by": "config-path-support-bh_config_valid-hour443-final"
+      }
     },
     {
       "id": "config-path-support-bh_paths_config",
@@ -29591,6 +30871,195 @@
       "evidence": [
         "META/m4/hour424/parent/README.md",
         "META/m4/hour424/stages/rendering/validation.json"
+      ]
+    },
+    {
+      "id": "menu-object-row-lifetime-binding-hour443",
+      "function": "bh_menu_object_rows_init/add_row/dispose",
+      "source": "src/bh_menu_object.c",
+      "family": "c",
+      "validation": {
+        "scope": "Count-zero source ownership/bounded row binding; whole original0042c300 counted separately; exact original menu destructor/update not claimed."
+      },
+      "source_sha256": "18bd909a9409c3ec2970a83340e12e7bc4d29fcf45939aea3bc0e4ea8bde4da1",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "evidence": [
+        "META/m4/hour443/stages/menu/validation.json",
+        "META/m4/hour443/c/README.md"
+      ]
+    },
+    {
+      "id": "key-capture-context-lifetime-binding-hour443",
+      "function": "bh_input_key_capture_begin/cancel/capture_tick",
+      "source": "src/bh_input_mode.c",
+      "family": "c2",
+      "validation": {
+        "scope": "Count-zero source temporary entity/context lifetime bridge; whole263B0042be70 counted separately. Only four actual key commit owners can be installed; no input capture backend or poll supplied."
+      },
+      "source_sha256": "4eeb1653fdf17d755bb0fa0d9975b781869b544b1a674528482b3e10fee87460",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "evidence": [
+        "META/m4/hour443/stages/closures/validation.json",
+        "META/m4/hour443/c2/README.md"
+      ]
+    },
+    {
+      "id": "config-path-support-bh_config_init-hour443-final",
+      "function": "bh_config_init",
+      "source": "src/bh_config.c",
+      "source_sha256": "926fb03ccc0ebd92ee0156d67f351adc741db675ba685bc26d8c44dd568ad564",
+      "role": "source_lifecycle_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "contract": "Initialize explicit owning state; default real CRT allocator, paired custom allocator supported",
+      "evidence": [
+        "META/m4/hour443/stages/final/validation.json",
+        "META/m2/CONFIG.md",
+        "META/m2/config/integration-real.json",
+        "META/m2/config-clean/clean-checkout.json"
+      ],
+      "validation": {
+        "supersedes": "config-path-support-bh_config_init"
+      }
+    },
+    {
+      "id": "config-path-support-bh_config_dispose-hour443-final",
+      "function": "bh_config_dispose",
+      "source": "src/bh_config.c",
+      "source_sha256": "926fb03ccc0ebd92ee0156d67f351adc741db675ba685bc26d8c44dd568ad564",
+      "role": "source_lifecycle_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "contract": "Release every owned node and custom baseline by independent allocation chain, even if public ring/flags changed; borrowed templates remain static",
+      "evidence": [
+        "META/m4/hour443/stages/final/validation.json",
+        "META/m2/CONFIG.md",
+        "META/m2/config/integration-real.json",
+        "META/m2/config-clean/clean-checkout.json"
+      ],
+      "validation": {
+        "supersedes": "config-path-support-bh_config_dispose"
+      }
+    },
+    {
+      "id": "config-path-support-bh_config_valid-hour443-final",
+      "function": "bh_config_valid",
+      "source": "src/bh_config.c",
+      "source_sha256": "926fb03ccc0ebd92ee0156d67f351adc741db675ba685bc26d8c44dd568ad564",
+      "role": "source_lifecycle_support",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "contract": "Validate owned membership, count, circular reciprocity and bounded names before serialization",
+      "evidence": [
+        "META/m4/hour443/stages/final/validation.json",
+        "META/m2/CONFIG.md",
+        "META/m2/config/integration-real.json",
+        "META/m2/config-clean/clean-checkout.json"
+      ],
+      "validation": {
+        "supersedes": "config-path-support-bh_config_valid"
+      }
+    },
+    {
+      "id": "whole-physics-registry-binding-hour443",
+      "function": "bh_physics_step_init/dispose/read_entity/publish",
+      "source": "src/bh_physics_step.c",
+      "family": "b",
+      "validation": {
+        "scope": "Count-zero typed geometry/world/actor registry and source boundary/lifetime ownership. Whole004124d0 counted once separately."
+      },
+      "source_sha256": "e7b3d0db0c5b21ccf190e8c7457f21b1227b3c44c98b3d213044b81feb800af3",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "evidence": [
+        "META/m4/hour443/stages/final/validation.json",
+        "META/m4/hour443/b/README.md"
+      ]
+    },
+    {
+      "id": "physics-effect-orchestration-binding-hour443",
+      "function": "bh_physics_effects_run",
+      "source": "src/bh_physics_effects.c",
+      "family": "parent",
+      "validation": {
+        "scope": "Count-zero factored effect/audio/packet/spark block inside whole004124d0, not an independent original owner. Actual source dependencies and safe NULL-peer send."
+      },
+      "source_sha256": "43f858b975ad5cb7c67f789cb0504cd414b40f5379081f5bb7d5c0b773e7cbba",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "evidence": [
+        "META/m4/hour443/stages/final/validation.json",
+        "META/m4/hour443/parent/README.md"
+      ]
+    },
+    {
+      "id": "config-profile-clone-ownership-hour443",
+      "function": "bh_config_profile_clone_after",
+      "source": "src/bh_config.c",
+      "family": "c3",
+      "validation": {
+        "scope": "Count-zero actual private ProfileNode allocation/registration preserving real config save/disposal, supporting whole menu profile0042de70."
+      },
+      "source_sha256": "926fb03ccc0ebd92ee0156d67f351adc741db675ba685bc26d8c44dd568ad564",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "evidence": [
+        "META/m4/hour443/stages/final/validation.json",
+        "META/m4/hour443/c3/README.md"
+      ]
+    },
+    {
+      "id": "text-capture-context-lifetime-binding-hour443",
+      "function": "bh_input_text_begin/cancel/text_tick",
+      "source": "src/bh_input_text.c",
+      "family": "a2",
+      "validation": {
+        "scope": "Count-zero cached-packet source entity/context bindings for whole890B0042bf80. Dispatches actual three commit owners; no physical input backend."
+      },
+      "source_sha256": "a0b20d8b4d611de1194925f77a26f759ba7c88a7bfa96b952de59ca8df80aae6",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "evidence": [
+        "META/m4/hour443/stages/final/validation.json",
+        "META/m4/hour443/a2/README.md"
+      ]
+    },
+    {
+      "id": "target-step-shared-lifetime-binding-hour443",
+      "function": "bh_target_step_bind/read/write",
+      "source": "src/bh_target_step.c",
+      "family": "a3",
+      "validation": {
+        "scope": "Count-zero binding to actual shared debris/physics state, owner, outside registry and whole target step. Event12 delivery is implemented; receiver gameplay meaning remains external/unrestored. Fixed physics roster must be rebound after target retirement."
+      },
+      "source_sha256": "8d2695226c28bf7cf902131a6a5479bcf6517ed262787e370b525b30326071dc",
+      "implementation": "adapter",
+      "integration": "linked_harness",
+      "target": "build/m0/bhunter-integration.exe",
+      "game_admitted": false,
+      "evidence": [
+        "META/m4/hour443/stages/target/validation.json",
+        "META/m4/hour443/a3/README.md"
       ]
     }
   ],

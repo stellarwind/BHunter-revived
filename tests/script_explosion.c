@@ -1,0 +1,123 @@
+#include "../src/bh_script_explosion.h"
+#include "../src/bh_callback_helpers.h"
+#include "../src/bh_debris_response.h"
+#include "../src/bh_fp.h"
+#include "../src/bh_round.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <float.h>
+#include <string.h>
+static unsigned long checks,failures;
+#define CHECK(x,s) do{++checks;if(!(x)){++failures;if(failures<15)printf("FAIL script-explosion %lu: %s\n",checks,s);}}while(0)
+typedef struct Memory{unsigned long calls,fail_at,live;}Memory;
+static void *__cdecl allocate(unsigned long n,void *u){Memory*m=(Memory*)u;void*p;if(++m->calls==m->fail_at)return NULL;p=malloc(n);if(p)++m->live;return p;}
+static void __cdecl release(void*p,void*u){--((Memory*)u)->live;free(p);}
+typedef struct Fixture{BHEntityPool pool;BHDrawQueue queue;BHSoundQueue sound;BHScriptDebrisContext debris;BHFlashFlareContext flash;BHScriptExplosionContext c;Memory mem;}Fixture;
+static int fixture(Fixture*f){BHSceneAllocator a;BHSoundResource*r;memset(f,0,sizeof(*f));a.allocate=allocate;a.release=release;a.user=&f->mem;
+ if(!bh_entities_init(&f->pool,8,&a)||!bh_draw_queue_init(&f->queue,32,&a)||!bh_sound_queue_init(&f->sound,NULL,NULL,NULL))return 0;
+ r=bh_sound_resource_allocate(&f->sound);if(!r)return 0;r->streaming=1;r->base_frequency=22050;r->base_volume=0;r->buffer_count=1;
+ f->debris.pool=&f->pool;f->debris.queue=&f->queue;f->debris.image=19;f->flash.pool=&f->pool;f->flash.queue=&f->queue;f->flash.textures[0]=29;
+ f->c.pool=&f->pool;f->c.queue=&f->queue;f->c.sound=&f->sound;f->c.debris=&f->debris;f->c.flash=&f->flash;f->c.sound_resource=r->index;f->c.image=31;return 1;}
+static void finish(Fixture*f){CHECK(bh_sound_queue_dispose(&f->sound)&&bh_draw_queue_dispose(&f->queue)&&bh_entities_dispose(&f->pool)&&!f->mem.live,"all actual sound/queue/entity ownership released");}
+static float number(const unsigned long*p){float x;memcpy(&x,p,4);return x;}
+static int vec(BHVec3 a,BHVec3 b){return !memcmp(&a,&b,12);}
+static void clear(Fixture*f){while(f->pool.active)bh_entity_release(&f->pool,f->pool.active);}
+typedef struct Log{unsigned long blast,damage;unsigned char packet[24];float amount[4];unsigned long target[4],hits[6];float last[6];}Log;
+static Log observed;
+/* Test-only packet observer, not a substituted production callback. */
+static void __cdecl observe(BHEntity*e,void*p){long event;unsigned long i;memcpy(&event,p,4);if(event==1){++observed.blast;memcpy(observed.packet,p,24);}if(event==0){i=observed.damage++;if(i<4){memcpy(observed.amount+i,(char*)p+4,4);memcpy(observed.target+i,(char*)p+8,4);}if(e->kind<6){++observed.hits[e->kind];memcpy(observed.last+e->kind,(char*)p+4,4);}}}
+static void constructors(void){Fixture f;BHVec3 point={1,2,3},expected;BHScriptExplosionState s;BHEntity*e,*at,*observer;BHSoundVoice*v;unsigned long seed,i,j,next,n,used;int randoms[49];double inverse,factor;float angle,spin;unsigned long packet[2];
+ CHECK(fixture(&f),"actual linked explosion dependency fixture");
+ for(seed=1;seed<=16;++seed){
+  srand(seed);for(i=0;i<49;++i)randoms[i]=rand();n=(long)(2.0+(double)randoms[48]*.0001f/32768);for(i=0;i<n*9;++i)rand();next=rand();srand(seed);
+  f.debris.origin_tag=0x12345678UL;e=bh_script_explosion_create(&f.c,&point,2,.0001f,.25f,0x11223344UL);CHECK(e!=NULL,"whole root constructor creates main entity");if(!e)break;bh_script_explosion_read(e,&s);
+  CHECK(s.age==0&&s.duration==2&&s.radius==0&&s.magnitude==.0001f&&s.probability==.25f&&s.origin_tag==0x12345678UL&&!f.debris.origin_tag&&s.target==0x11223344UL,"verified scalar fields and single shared attribution consumption");
+  CHECK(e->step==bh_script_explosion_tick&&e->refresh==bh_script_explosion_refresh&&e->query==bh_actor_target_removed&&vec(e->position,point),"real installed whole owners and reused real event17 callback");
+  CHECK((unsigned long)rand()==next&&f.pool.used==n+2,"48 lobe draws plus raw unscaled magnitude debris count and nine draws per real debris");
+  for(i=0;i<8;++i){j=i*6;expected.x=(float)(randoms[j]-16384);expected.y=(float)(randoms[j+1]-16384);expected.z=(float)(randoms[j+2]-16384);
+   inverse=1.0/sqrt(((double)expected.x*expected.x+(double)expected.y*expected.y)+(double)expected.z*expected.z);
+   bh_round_float(&expected.x,inverse*expected.x);bh_round_float(&expected.y,inverse*expected.y);bh_round_float(&expected.z,inverse*expected.z);factor=.5+(double)randoms[j+3]/65536;
+   bh_round_float(&expected.x,factor*expected.x);bh_round_float(&expected.y,factor*expected.y);bh_round_float(&expected.z,factor*expected.z);
+   bh_round_float(&angle,(double)randoms[j+4]/4096);bh_round_float(&spin,(double)(randoms[j+5]-16384)*.0000025);
+   CHECK(vec(s.direction[i],expected)&&s.angle[i]==angle&&s.spin[i]==spin,"each lobe preserves normalized float stores, retained scale, angle and spin");
+  }
+  for(at=f.pool.active;at;at=at->next)if(at->step==bh_script_flash_tick)CHECK(bh_script_flash_countdown(at)==.1f&&at->refresh==bh_flash_flare_refresh,"real .1 lifetime flash/flare closure installed");
+  v=f.sound.resources[f.c.sound_resource]->stream_head;CHECK(v&&v->positioned&&v->moving&&vec(v->position,point)&&v->velocity.x==0&&v->velocity.y==0&&v->velocity.z==0,"actual positioned moving sound request uses zero vector without playback");
+  packet[0]=17;packet[1]=s.target;bh_entities_query(&f.pool,0,0,NULL,0,packet);bh_script_explosion_read(e,&s);CHECK(!s.target,"real broadcast and admitted callback clear matching target");clear(&f);
+ }
+ for(seed=12;seed<=15;seed+=3){
+  clear(&f);srand(81);for(i=0;i<48;++i)rand();n=2+(unsigned long)(((double)rand()*seed)/32768.0);for(i=0;i<n*9;++i)rand();next=rand();srand(81);
+  e=bh_script_explosion_create(&f.c,&point,1,(float)seed,0,0);
+  CHECK(e&&f.pool.used==n+2&&(unsigned long)rand()==next,"PE4892c8=-1/32768 positive control: gameplay magnitudes12/15 produce bounded actual debris counts and exact random schedule");
+ }
+ memset(&observed,0,sizeof(observed));observer=bh_entity_acquire(&f.pool);observer->position=point;bh_entity_set_query(&f.pool,observer,observe);srand(71);
+ e=bh_script_explosion_create(&f.c,&point,2,.0001f,0,77);CHECK(e&&observed.blast==1&&observed.damage==1&&observed.amount[0]==.6f&&observed.target[0]==77,"root sends complete blast then actual spatial .6 damage packet");
+ CHECK(number((unsigned long*)observed.packet+4)>0&&number((unsigned long*)observed.packet+5)==(float)((double).0001f*5)&&!memcmp(observed.packet+4,&point,12),"blast layout point +4 energy +16 radius +20");clear(&f);
+ memset(&observed,0,sizeof(observed));observer=bh_entity_acquire(&f.pool);observer->position=point;bh_entity_set_query(&f.pool,observer,observe);srand(72);
+ e=bh_script_explosion_secondary(&f.c,&point,3,.0001f,0,f.c.sound_resource,91);CHECK(e&&observed.blast==1&&observed.damage==2&&observed.amount[0]==.4f&&observed.amount[1]==.5f&&observed.target[0]==91&&observed.target[1]==91,"whole secondary emits ordered .4 square-radius then .5 half-radius events");
+ used=f.pool.used;f.debris.origin_tag=61;CHECK(!bh_script_explosion_create(&f.c,&point,1,-1,0,0)&&f.c.error==BH_EXPLOSION_ARGUMENT&&f.pool.used==used&&f.debris.origin_tag==61,"explicit finite nonnegative constructor guard has no partial side effects");finish(&f);
+}
+static void response(void){Fixture f;BHVec3 point={0,0,0},inertia={1,1,1};BHEntity*body,*e,*registry[2]={NULL,NULL};BHDebrisContext c;BHDebrisBody b;BHPhysicsState physics;float expected;
+ CHECK(fixture(&f),"real blast receiver fixture");memset(&b,0,sizeof(b));memset(&physics,0,sizeof(physics));body=bh_entity_acquire(&f.pool);body->position.x=.025f;
+ CHECK(bh_debris_context_init(&c,&f.pool,&f.sound,0,registry,2)&&bh_debris_bind(&c,&b,body,&physics,2,0,&inertia),"actual admitted debris blast receiver bound");
+ srand(100);e=bh_script_explosion_create(&f.c,&point,2,.01f,0,0);
+ bh_round_float(&expected,((double).01f*.01f)*125);bh_round_float(&expected,((double)expected/2)*(1.0-(double).025f/(float)((double).01f*5))*30);
+ CHECK(e&&fabs((double)physics.acceleration.x-expected)<1e-7&&physics.acceleration.y==0&&physics.acceleration.z==0,"whole constructor event1 applies actual radial physics response");
+ CHECK(bh_debris_unbind(&b)&&bh_debris_context_dispose(&c),"real receiver detached before context destruction");finish(&f);
+}
+static void spatial(void){Fixture f;BHVec3 point={0,0,0};BHEntity*e,*observer;unsigned long i;float positions[5]={.025f,.25f,.75f,1.5f,2.1f};
+ CHECK(fixture(&f),"real spatial packet radius fixture");
+ for(i=0;i<5;++i){observer=bh_entity_acquire(&f.pool);observer->kind=i;observer->position.x=positions[i];bh_entity_set_query(&f.pool,observer,observe);}
+ memset(&observed,0,sizeof(observed));f.mem.fail_at=f.mem.calls+1;srand(73);e=bh_script_explosion_create(&f.c,&point,1,1,0,94);f.mem.fail_at=0;
+ CHECK(e&&observed.blast==5&&observed.damage==4&&observed.hits[0]==1&&observed.hits[1]==1&&observed.hits[2]==1&&observed.hits[3]==1&&!observed.hits[4],"root actual dispatch uses 2*magnitude radius after partial debris allocation failure");
+ CHECK(f.debris.error==BH_DEBRIS_POOL&&f.debris.origin_tag==0,"actual partial debris batch preserves constructor progress and zero attribution");clear(&f);
+ for(i=0;i<5;++i){observer=bh_entity_acquire(&f.pool);observer->kind=i;observer->position.x=positions[i];bh_entity_set_query(&f.pool,observer,observe);}
+ memset(&observed,0,sizeof(observed));f.mem.fail_at=f.mem.calls+1;srand(74);e=bh_script_explosion_secondary(&f.c,&point,1,1,0,f.c.sound_resource,95);f.mem.fail_at=0;
+ CHECK(e&&observed.blast==5&&observed.damage==3&&observed.hits[0]==2&&observed.hits[1]==1&&!observed.hits[2]&&!observed.hits[3]&&!observed.hits[4]&&observed.last[0]==.5f&&observed.last[1]==.5f,"secondary actual .05*square and .5*magnitude radii select distinct receivers in order");clear(&f);
+ observer=bh_entity_acquire(&f.pool);bh_entity_set_query(&f.pool,observer,observe);memset(&observed,0,sizeof(observed));f.debris.origin_tag=17;srand(75);e=bh_script_explosion_secondary(&f.c,&point,1,.0001f,0,f.c.sound_resource,96);
+ CHECK(e&&observed.blast==1&&!observed.damage,"nonzero captured attribution suppresses secondary damage broadcasts while retaining blast");finish(&f);
+}
+static void ticking(void){Fixture f;BHVec3 point={10,20,30},v,expected;BHScriptExplosionState s,child;BHEntity*e,*at,*created=NULL;unsigned long i,n,next,used,bits=0x7fc01234UL;int r[54];float old,angle,distance,duration,mag,prob,nan,expected_age,expected_mag,expected_radius;
+ CHECK(fixture(&f),"tick and refresh actual closure fixture");srand(19);e=bh_script_explosion_create(&f.c,&point,10,.0001f,0,23);CHECK(e!=NULL,"real root supplies installed tick context");bh_script_explosion_read(e,&s);s.radius=2;s.age=1;s.duration=4;s.magnitude=.25f;s.probability=0;for(i=0;i<8;++i){s.angle[i]=(float)i;s.spin[i]=.125f;}bh_script_explosion_write(e,&s);
+ srand(51);rand();next=rand();srand(51);old=s.magnitude;bh_round_float(&expected_age,1.0+1.0/30.0);bh_round_float(&expected_mag,(double)old*.95);bh_round_float(&expected_radius,2.0+(double)old/30);e->step(e);bh_script_explosion_read(e,&s);CHECK((unsigned long)rand()==next&&s.age==expected_age&&s.magnitude==expected_mag&&s.radius==expected_radius,"one nontrigger draw; retained age comparison, old magnitude radius increment and .95 decay");
+ for(i=0;i<8;++i)CHECK(s.angle[i]==(float)i+.125f,"all eight angle/spin stores");
+ s.age=1;s.duration=4;s.radius=2;bh_script_explosion_write(e,&s);bh_draw_queue_begin(&f.queue);e->refresh(e,NULL);CHECK(f.queue.count==17&&f.queue.commands[4].next==9,"whole refresh emits eight real bucket3 billboard commands");
+ for(i=0;i<8;++i){BHDrawCommand*q=f.queue.commands+9+i;bh_round_float(&expected.x,(double)s.direction[i].x*2+point.x);bh_round_float(&expected.y,(double)s.direction[i].y*2+point.y);bh_round_float(&expected.z,(double)s.direction[i].z*2+point.z);
+  CHECK(q->kind==BH_DRAW_BILLBOARD&&q->resource==31&&!memcmp(q->words,&expected,12)&&number(q->words+3)==2.5f&&number(q->words+4)==2.5f&&number(q->words+5)==s.angle[i]&&number(q->words+6)==.75f&&!q->words[7],"exact world lobe point, positive quadratic size, alpha, frame and angle");}
+ f.queue.capacity=12;bh_draw_queue_begin(&f.queue);e->refresh(e,NULL);CHECK(f.queue.count==12&&f.queue.error==BH_DRAW_FULL,"queue exhaustion retains admitted commands and later attempts");f.queue.capacity=32;
+ s.age=0;s.duration=2;s.radius=3;s.magnitude=.0001f;s.probability=1e10f;s.origin_tag=97;bh_script_explosion_write(e,&s);
+ srand(99);for(i=0;i<54;++i)r[i]=rand();n=(long)(2+(double)r[53]*(float)((double)s.magnitude*1.5)/32768);for(i=0;i<n*9;++i)rand();next=rand();srand(99);used=f.pool.used;
+ bh_round_float(&distance,((double)r[1]*3)/32768);v.x=(float)(r[2]-16384);v.y=(float)(r[3]-16384);v.z=(float)(r[4]-16384);bh_vec3_normalize(&v);bh_round_float(&v.x,(double)v.x*distance);bh_round_float(&v.y,(double)v.y*distance);bh_round_float(&v.z,(double)v.z*distance);
+ bh_round_float(&expected.x,(double)point.x+v.x);bh_round_float(&expected.y,(double)point.y+v.y);bh_round_float(&expected.z,(double)point.z+v.z);bh_round_float(&duration,2.0-(float)(1.0/30));bh_round_float(&mag,(double)s.magnitude*1.5);bh_round_float(&prob,(double)s.probability*.25);
+ e->step(e);for(at=f.pool.active;at;at=at->next)if(at!=e&&at->step==bh_script_explosion_tick)created=at;
+ CHECK(created&&f.pool.used==used+n+2&&(unsigned long)rand()==next,"trigger executes whole secondary with exact five prefix draws and its complete closure");
+ if(created){bh_script_explosion_read(created,&child);CHECK(vec(created->position,expected)&&child.duration==duration&&child.magnitude==mag&&child.probability==prob&&child.origin_tag==97&&child.target==23&&child.sound_resource==f.c.sound_resource,"child uses rounded distance/vector/point, stored-age remaining, scaling and actual sound/target/tag inheritance");}
+ bh_script_explosion_read(e,&s);s.age=0;s.duration=2;s.radius=1;s.magnitude=3;s.probability=10000;bh_script_explosion_write(e,&s);created=NULL;f.mem.fail_at=f.mem.calls+1;srand(93);e->step(e);f.mem.fail_at=0;
+ for(at=f.pool.active;at;at=at->next)if(at!=e&&at->step==bh_script_explosion_tick){bh_script_explosion_read(at,&child);if(child.magnitude==4.5f)created=at;}
+ CHECK(created!=NULL,"finite child magnitude above3 still runs real secondary constructor and effects");
+ memcpy(&nan,&bits,4);bh_script_explosion_read(e,&s);s.age=nan;s.probability=nan;s.magnitude=1;s.radius=0;bh_script_explosion_write(e,&s);used=f.pool.used;srand(91);rand();next=rand();srand(91);e->step(e);CHECK(f.pool.used==used&&_isnan(number((unsigned long*)((char*)e+0xe8)))&&(unsigned long)rand()==next,"unordered age does not expire; unordered probability does not trigger");
+ s.age=0;s.duration=nan;s.probability=0;bh_script_explosion_write(e,&s);used=f.pool.used;e->step(e);CHECK(f.pool.used==used,"unordered duration does not expire");
+ s.age=0;s.duration=1;s.magnitude=0;s.probability=0;bh_script_explosion_write(e,&s);for(i=0;i<100000;++i){srand(i);if(!rand())break;}CHECK(i<100000,"positive control seed with exact zero random threshold comparison");srand(i);used=f.pool.used;e->step(e);CHECK(f.pool.used==used,"equal zero threshold/random does not trigger secondary");
+ s.age=1048576;s.duration=1048576;s.probability=0;bh_script_explosion_write(e,&s);used=f.pool.used;e->step(e);CHECK(f.pool.used==used-1,"expiry compares retained pre-store age even when float store rounds back to duration");finish(&f);
+}
+static Fixture *mutating;
+/* Isolated source fault injection: lifetime guard must prevent stale writes. */
+static void __cdecl remove_current(BHEntity*observer,void*p){long event;BHEntity*e,*replacement;(void)observer;memcpy(&event,p,4);if(event!=1)return;
+ for(e=mutating->pool.active;e;e=e->next)if(e->step==bh_script_explosion_tick){bh_entity_release(&mutating->pool,e);replacement=bh_entity_acquire(&mutating->pool);memset(replacement->payload,0xa7,sizeof(replacement->payload));break;}}
+static void faults(void){Fixture f;BHVec3 point={0,0,0};BHEntity*e,*at;unsigned long next,used;int r;float magnitude;
+ CHECK(fixture(&f),"actual allocation failure fixture");while(f.pool.used+1<f.pool.capacity)bh_entity_acquire(&f.pool);used=f.pool.used;f.mem.fail_at=f.mem.calls+1;f.debris.origin_tag=53;srand(31);next=rand();srand(31);
+ CHECK(!bh_script_explosion_create(&f.c,&point,1,.0001f,0,0)&&f.pool.used==used+1&&f.c.error==BH_EXPLOSION_POOL&&f.debris.origin_tag==53&&(unsigned long)rand()==next,"sound and flash precede failed main allocation; no random or attribution consumption");
+ at=f.pool.active;CHECK(at->step==bh_script_flash_tick&&at->refresh==bh_flash_flare_refresh,"main failure retains real flash lifetime and refresh");f.mem.fail_at=0;clear(&f);
+ mutating=&f;at=bh_entity_acquire(&f.pool);bh_entity_set_query(&f.pool,at,remove_current);f.debris.origin_tag=13;srand(32);for(r=0;r<48;++r)rand();next=rand();srand(32);
+ e=bh_script_explosion_create(&f.c,&point,1,.0001f,0,0);CHECK(!e&&f.c.error==BH_EXPLOSION_MUTATION&&(unsigned long)rand()==next,"real dispatcher release/recycle stops constructor before debris-count draw");
+ for(at=f.pool.active;at;at=at->next)if(!at->step&&!at->query&&at->payload[0]==0xa7)CHECK(at->payload[624]==0xa7&&at->payload[635]==0xa7,"recycled replacement private context/payload left untouched");mutating=NULL;clear(&f);
+ srand(13);for(r=0;r<48;++r)rand();r=rand();bh_round_float(&magnitude,((65535.5-2.0)*32768)/(double)r);f.mem.fail_at=f.mem.calls+1;srand(13);e=bh_script_explosion_create(&f.c,&point,1,magnitude,0,0);f.mem.fail_at=0;
+ CHECK(e&&f.c.error!=BH_EXPLOSION_LIMIT&&f.debris.error==BH_DEBRIS_POOL,"debris count65535.fraction truncates into supported65535 before batch limit check");clear(&f);
+ f.mem.fail_at=f.mem.calls+1;srand(13);e=bh_script_explosion_create(&f.c,&point,1,1000000,0,0);f.mem.fail_at=0;
+ CHECK(e&&f.c.error==BH_EXPLOSION_LIMIT,"oversize debris count reports explicit LIMIT after preserving whole main explosion construction");finish(&f);
+}
+int __cdecl bh_script_explosion_checkpoint(unsigned long*count){BHMathEnvironment env;checks=failures=0;if(!bh_math_environment_enter(&env))return 2;constructors();response();spatial();ticking();faults();bh_math_environment_leave(&env);if(count)*count=checks;printf("{\"scenario\":\"script-explosion\",\"checks\":%lu,\"failures\":%lu,\"original_code_required\":false,\"play_calls\":0}\n",checks,failures);return failures!=0;}
+#ifdef BH_SCRIPT_EXPLOSION_STANDALONE
+int main(void){return bh_script_explosion_checkpoint(NULL);}
+#endif

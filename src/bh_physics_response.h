@@ -24,7 +24,8 @@ int __cdecl bh_physics_overlap(BHSweepQuery *query,const BHMat34 *pose,
     const BHMat34 *world,const BHMat34 *local,BHCollisionHit *out);
 /* Extracted arithmetic from 004124d0, NOT admission of its full owner.
    These helpers do not install effects, queue audio/network packets or invoke
-   actor damage/response callbacks. Their owners remain explicit WIP blockers.
+   actor response callbacks. The complete orchestration is supplied separately
+   by bh_physics_step, with explicit registry and shared-state ownership.
    PC53, finite moderate inputs, dt>0; initialize state/output before use.
    Success is 1, invalid numerical input is 0 and leaves caller output alone. */
 int __cdecl bh_physics_prepare(BHPhysicsState *state,float dt,float radius,

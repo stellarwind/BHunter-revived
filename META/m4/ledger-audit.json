@@ -1,8 +1,8 @@
 {
-  "ledger_sha256": "f6f522d65ba2cfe430fd5ecdb3e9f478302a0077ccbbe1ee4b0ce4fe8983bbb7",
+  "ledger_sha256": "9bd197fe871934b03d1307f29d0d086d912047494c886cf0e78d3a9807848b8f",
   "build_source_hashes_verified": true,
-  "total_variants": 511,
-  "unique_original_addresses": 451,
+  "total_variants": 528,
+  "unique_original_addresses": 460,
   "categories": {
     "historical_or_superseded": [
       {
@@ -81,6 +81,30 @@
         "id": "00401a70-functional-c",
         "address": "00401a70",
         "source": "META/m2/math/baseline-bh_math.c.txt",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00401fd0-functional-c",
+        "address": "00401fd0",
+        "source": "META/m4/loading-display/sources/6081596cb764118e0441ce5d3e0cf897a6ce011ca2d7e9aaa81a6ab5ef58092e-bh_config.c.txt",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004022d0-functional-c",
+        "address": "004022d0",
+        "source": "META/m4/loading-display/sources/6081596cb764118e0441ce5d3e0cf897a6ce011ca2d7e9aaa81a6ab5ef58092e-bh_config.c.txt",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00402370-functional-c",
+        "address": "00402370",
+        "source": "META/m4/loading-display/sources/6081596cb764118e0441ce5d3e0cf897a6ce011ca2d7e9aaa81a6ab5ef58092e-bh_config.c.txt",
         "implementation": "func",
         "integration": "linked_harness",
         "game_admitted": false
@@ -194,6 +218,14 @@
         "address": "00442ef0",
         "source": "src/bh_script_timer.c",
         "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004124d0-numerical-slice-c",
+        "address": "004124d0",
+        "source": "src/bh_physics_response.c",
+        "implementation": "wip",
         "integration": "linked_harness",
         "game_admitted": false
       },
@@ -444,6 +476,38 @@
         "implementation": "func",
         "integration": "linked_harness",
         "game_admitted": false
+      },
+      {
+        "id": "00402e50-functional-c-hour443-closures",
+        "address": "00402e50",
+        "source": "META/m4/hour443/stages/closures/sources/efd0133e37f6e9d8840349a2166df718e3f273a845da6a840d568e084f87221b-bh_script_explosion.c.txt",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00402af0-functional-c-hour443-closures",
+        "address": "00402af0",
+        "source": "META/m4/hour443/stages/closures/sources/efd0133e37f6e9d8840349a2166df718e3f273a845da6a840d568e084f87221b-bh_script_explosion.c.txt",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004032f0-functional-c-hour443-closures",
+        "address": "004032f0",
+        "source": "META/m4/hour443/stages/closures/sources/efd0133e37f6e9d8840349a2166df718e3f273a845da6a840d568e084f87221b-bh_script_explosion.c.txt",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00402710-functional-c-hour443-closures",
+        "address": "00402710",
+        "source": "META/m4/hour443/stages/closures/sources/efd0133e37f6e9d8840349a2166df718e3f273a845da6a840d568e084f87221b-bh_script_explosion.c.txt",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
       }
     ],
     "completed_comparison_only": [
@@ -629,30 +693,6 @@
         "id": "00401a70-functional-c-pc53",
         "address": "00401a70",
         "source": "src/bh_math.c",
-        "implementation": "func",
-        "integration": "linked_harness",
-        "game_admitted": false
-      },
-      {
-        "id": "00401fd0-functional-c",
-        "address": "00401fd0",
-        "source": "src/bh_config.c",
-        "implementation": "func",
-        "integration": "linked_harness",
-        "game_admitted": false
-      },
-      {
-        "id": "004022d0-functional-c",
-        "address": "004022d0",
-        "source": "src/bh_config.c",
-        "implementation": "func",
-        "integration": "linked_harness",
-        "game_admitted": false
-      },
-      {
-        "id": "00402370-functional-c",
-        "address": "00402370",
-        "source": "src/bh_config.c",
         "implementation": "func",
         "integration": "linked_harness",
         "game_admitted": false
@@ -4024,6 +4064,110 @@
         "implementation": "func",
         "integration": "linked_harness",
         "game_admitted": false
+      },
+      {
+        "id": "0042c300-functional-c-hour443-menu",
+        "address": "0042c300",
+        "source": "src/bh_menu_object.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0042be70-functional-c-hour443-closures",
+        "address": "0042be70",
+        "source": "src/bh_input_mode.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004124d0-functional-c-hour443-final",
+        "address": "004124d0",
+        "source": "src/bh_physics_step.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0042de70-functional-c-hour443-final",
+        "address": "0042de70",
+        "source": "src/bh_menu_profile.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0042bf80-functional-c-hour443-final",
+        "address": "0042bf80",
+        "source": "src/bh_input_text.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00401fd0-functional-c-hour443-final-context",
+        "address": "00401fd0",
+        "source": "src/bh_config.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004022d0-functional-c-hour443-final-context",
+        "address": "004022d0",
+        "source": "src/bh_config.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00402370-functional-c-hour443-final-context",
+        "address": "00402370",
+        "source": "src/bh_config.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "0043cd00-functional-c-hour443-target",
+        "address": "0043cd00",
+        "source": "src/bh_target_step.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00402e50-functional-c-hour443-target-context",
+        "address": "00402e50",
+        "source": "src/bh_script_explosion.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00402af0-functional-c-hour443-target-context",
+        "address": "00402af0",
+        "source": "src/bh_script_explosion.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "004032f0-functional-c-hour443-target-context",
+        "address": "004032f0",
+        "source": "src/bh_script_explosion.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
+      },
+      {
+        "id": "00402710-functional-c-hour443-target-context",
+        "address": "00402710",
+        "source": "src/bh_script_explosion.c",
+        "implementation": "func",
+        "integration": "linked_harness",
+        "game_admitted": false
       }
     ],
     "unfinished_active": [
@@ -4047,14 +4191,6 @@
         "id": "0046f490-pcx-data-subset-c",
         "address": "0046f490",
         "source": "src/bh_pcx.c",
-        "implementation": "wip",
-        "integration": "linked_harness",
-        "game_admitted": false
-      },
-      {
-        "id": "004124d0-numerical-slice-c",
-        "address": "004124d0",
-        "source": "src/bh_physics_response.c",
         "implementation": "wip",
         "integration": "linked_harness",
         "game_admitted": false
@@ -4104,10 +4240,10 @@
     ]
   },
   "category_counts": {
-    "historical_or_superseded": 55,
+    "historical_or_superseded": 63,
     "completed_comparison_only": 4,
-    "completed_linked_source": 443,
-    "unfinished_active": 7,
+    "completed_linked_source": 453,
+    "unfinished_active": 6,
     "other_explicit_state": 2
   },
   "duplicate_addresses": {
@@ -4154,6 +4290,18 @@
     "00401a70": [
       "00401a70-functional-c",
       "00401a70-functional-c-pc53"
+    ],
+    "00401fd0": [
+      "00401fd0-functional-c",
+      "00401fd0-functional-c-hour443-final-context"
+    ],
+    "004022d0": [
+      "004022d0-functional-c",
+      "004022d0-functional-c-hour443-final-context"
+    ],
+    "00402370": [
+      "00402370-functional-c",
+      "00402370-functional-c-hour443-final-context"
     ],
     "00407f30": [
       "00407f30-reader-subset-c",
@@ -4214,6 +4362,10 @@
     "00442ef0": [
       "00442ef0-functional-c",
       "00442ef0-functional-c-wait-delete-exposure"
+    ],
+    "004124d0": [
+      "004124d0-numerical-slice-c",
+      "004124d0-functional-c-hour443-final"
     ],
     "0047c200": [
       "0047c200-candidate-c",
@@ -4338,9 +4490,25 @@
     "00479090": [
       "00479090-functional-c-hud-continuation",
       "00479090-functional-c-hour424-rendering-context"
+    ],
+    "00402e50": [
+      "00402e50-functional-c-hour443-closures",
+      "00402e50-functional-c-hour443-target-context"
+    ],
+    "00402af0": [
+      "00402af0-functional-c-hour443-closures",
+      "00402af0-functional-c-hour443-target-context"
+    ],
+    "004032f0": [
+      "004032f0-functional-c-hour443-closures",
+      "004032f0-functional-c-hour443-target-context"
+    ],
+    "00402710": [
+      "00402710-functional-c-hour443-closures",
+      "00402710-functional-c-hour443-target-context"
     ]
   },
-  "support_implementations": 135,
+  "support_implementations": 145,
   "original_backed_diagnostics": 24,
   "game_admitted_variants": 0,
   "limits": [

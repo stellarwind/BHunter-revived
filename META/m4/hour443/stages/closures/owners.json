@@ -1,0 +1,146 @@
+[
+  {
+    "address": "00402e50",
+    "function": "bh_script_explosion_create",
+    "source": "src/bh_script_explosion.c",
+    "role": "engine_candidate",
+    "family": "a",
+    "scenarios": [
+      "script-explosion"
+    ],
+    "ranges": [
+      {
+        "start": "00402e50",
+        "end_exclusive": "00403112",
+        "bytes": 706,
+        "instructions": 181,
+        "sha256": "af2b9485eb4b5f2c31af8a300e8b1bd5e15747a426ae4af462fef977be3d9731"
+      }
+    ],
+    "provenance_confidence": "Verified ordinary application effect behavior from entity field writes, sound/image globals, real gameplay event packets and installed callbacks; historical game/engine authorship unresolved. Complete distinct RET body, not imported/CRT/EH/stack helper or independently counted shared tail.",
+    "abi": "Pinned x86 cdecl, whole constructor/installed step/refresh bodies; entity+e8/ec/f4..1b4 verified original fields, persistent private source context at payload+624. Original void constructors expose source-only main entity result.",
+    "limits": [
+      "Borrowed real entity/queue/sound/flash/debris contexts, texture IDs and sound-resource identity replace original global owners; complete startup/world/script VM integration remains incomplete.",
+      "Finite constructor position/duration/magnitude/probability, nonnegative magnitude and PC53 nearest/masked required. NaN tick age/duration/probability behavior and masked refresh division retained/tested; original PC24 transitions and extreme arithmetic remain unvalidated.",
+      "Actual integer debris count0..65535 retained. Pretruncate count>=65536 or nonfinite reports LIMIT and skips only that unbounded debris batch after prior sound/flash/main/blast effects, continuing damage queries. Finite child magnitude>3 is supported/tested.",
+      "Released/recycled current entity stops remaining accesses with MUTATION. Stable borrowed point/context/pool topology required; arbitrary hostile state/context mutation excluded.",
+      "Standalone freshly compiles14 actual source translation units and links snapshotted admitted renderer dependency objects; source variant only eligible for admission after parent current full and clean integration checks.",
+      "No original code execution, game launch, automated input/UI capture, audio playback or network operation."
+    ]
+  },
+  {
+    "address": "00402af0",
+    "function": "bh_script_explosion_tick",
+    "source": "src/bh_script_explosion.c",
+    "role": "engine_candidate",
+    "family": "a",
+    "scenarios": [
+      "script-explosion"
+    ],
+    "ranges": [
+      {
+        "start": "00402af0",
+        "end_exclusive": "00402cb7",
+        "bytes": 455,
+        "instructions": 120,
+        "sha256": "cc055ee0d790607fcd020f91ed32c2d8a8e655de150a94635209f4362ef15874"
+      }
+    ],
+    "provenance_confidence": "Verified ordinary application effect behavior from entity field writes, sound/image globals, real gameplay event packets and installed callbacks; historical game/engine authorship unresolved. Complete distinct RET body, not imported/CRT/EH/stack helper or independently counted shared tail.",
+    "abi": "Pinned x86 cdecl, whole constructor/installed step/refresh bodies; entity+e8/ec/f4..1b4 verified original fields, persistent private source context at payload+624. Original void constructors expose source-only main entity result.",
+    "limits": [
+      "Borrowed real entity/queue/sound/flash/debris contexts, texture IDs and sound-resource identity replace original global owners; complete startup/world/script VM integration remains incomplete.",
+      "Finite constructor position/duration/magnitude/probability, nonnegative magnitude and PC53 nearest/masked required. NaN tick age/duration/probability behavior and masked refresh division retained/tested; original PC24 transitions and extreme arithmetic remain unvalidated.",
+      "Actual integer debris count0..65535 retained. Pretruncate count>=65536 or nonfinite reports LIMIT and skips only that unbounded debris batch after prior sound/flash/main/blast effects, continuing damage queries. Finite child magnitude>3 is supported/tested.",
+      "Released/recycled current entity stops remaining accesses with MUTATION. Stable borrowed point/context/pool topology required; arbitrary hostile state/context mutation excluded.",
+      "Standalone freshly compiles14 actual source translation units and links snapshotted admitted renderer dependency objects; source variant only eligible for admission after parent current full and clean integration checks.",
+      "No original code execution, game launch, automated input/UI capture, audio playback or network operation."
+    ]
+  },
+  {
+    "address": "004032f0",
+    "function": "bh_script_explosion_secondary",
+    "source": "src/bh_script_explosion.c",
+    "role": "engine_candidate",
+    "family": "a",
+    "scenarios": [
+      "script-explosion"
+    ],
+    "ranges": [
+      {
+        "start": "004032f0",
+        "end_exclusive": "004035dd",
+        "bytes": 749,
+        "instructions": 193,
+        "sha256": "9413d942b7968d2844218803dd1476cd6ca732f4fc8043f3c53c89f188421f5d"
+      }
+    ],
+    "provenance_confidence": "Verified ordinary application effect behavior from entity field writes, sound/image globals, real gameplay event packets and installed callbacks; historical game/engine authorship unresolved. Complete distinct RET body, not imported/CRT/EH/stack helper or independently counted shared tail.",
+    "abi": "Pinned x86 cdecl, whole constructor/installed step/refresh bodies; entity+e8/ec/f4..1b4 verified original fields, persistent private source context at payload+624. Original void constructors expose source-only main entity result.",
+    "limits": [
+      "Borrowed real entity/queue/sound/flash/debris contexts, texture IDs and sound-resource identity replace original global owners; complete startup/world/script VM integration remains incomplete.",
+      "Finite constructor position/duration/magnitude/probability, nonnegative magnitude and PC53 nearest/masked required. NaN tick age/duration/probability behavior and masked refresh division retained/tested; original PC24 transitions and extreme arithmetic remain unvalidated.",
+      "Actual integer debris count0..65535 retained. Pretruncate count>=65536 or nonfinite reports LIMIT and skips only that unbounded debris batch after prior sound/flash/main/blast effects, continuing damage queries. Finite child magnitude>3 is supported/tested.",
+      "Released/recycled current entity stops remaining accesses with MUTATION. Stable borrowed point/context/pool topology required; arbitrary hostile state/context mutation excluded.",
+      "Standalone freshly compiles14 actual source translation units and links snapshotted admitted renderer dependency objects; source variant only eligible for admission after parent current full and clean integration checks.",
+      "No original code execution, game launch, automated input/UI capture, audio playback or network operation."
+    ]
+  },
+  {
+    "address": "00402710",
+    "function": "bh_script_explosion_refresh",
+    "source": "src/bh_script_explosion.c",
+    "role": "engine_candidate",
+    "family": "a",
+    "scenarios": [
+      "script-explosion"
+    ],
+    "ranges": [
+      {
+        "start": "00402710",
+        "end_exclusive": "004027e9",
+        "bytes": 217,
+        "instructions": 71,
+        "sha256": "978d49c17441842034966197c8bfbaa0c8afa16224756de8ccad797488951dbc"
+      }
+    ],
+    "provenance_confidence": "Verified ordinary application effect behavior from entity field writes, sound/image globals, real gameplay event packets and installed callbacks; historical game/engine authorship unresolved. Complete distinct RET body, not imported/CRT/EH/stack helper or independently counted shared tail.",
+    "abi": "Pinned x86 cdecl, whole constructor/installed step/refresh bodies; entity+e8/ec/f4..1b4 verified original fields, persistent private source context at payload+624. Original void constructors expose source-only main entity result.",
+    "limits": [
+      "Borrowed real entity/queue/sound/flash/debris contexts, texture IDs and sound-resource identity replace original global owners; complete startup/world/script VM integration remains incomplete.",
+      "Finite constructor position/duration/magnitude/probability, nonnegative magnitude and PC53 nearest/masked required. NaN tick age/duration/probability behavior and masked refresh division retained/tested; original PC24 transitions and extreme arithmetic remain unvalidated.",
+      "Actual integer debris count0..65535 retained. Pretruncate count>=65536 or nonfinite reports LIMIT and skips only that unbounded debris batch after prior sound/flash/main/blast effects, continuing damage queries. Finite child magnitude>3 is supported/tested.",
+      "Released/recycled current entity stops remaining accesses with MUTATION. Stable borrowed point/context/pool topology required; arbitrary hostile state/context mutation excluded.",
+      "Standalone freshly compiles14 actual source translation units and links snapshotted admitted renderer dependency objects; source variant only eligible for admission after parent current full and clean integration checks.",
+      "No original code execution, game launch, automated input/UI capture, audio playback or network operation."
+    ]
+  },
+  {
+    "address": "0042be70",
+    "function": "bh_input_key_capture_step",
+    "source": "src/bh_input_mode.c",
+    "role": "engine_candidate",
+    "family": "c2",
+    "scenarios": [
+      "input-mode"
+    ],
+    "ranges": [
+      {
+        "start": "0042be70",
+        "end_exclusive": "0042bf77",
+        "bytes": 263,
+        "instructions": 85,
+        "sha256": "792d33e93218c306a2e31eb280de875af703dbf4ca0d6fc229bf3ef22fda8a18"
+      }
+    ],
+    "provenance_confidence": "Whole application menu key-capture step with four actual installed references; no CRT/compiler/import/shared tail; historical engine attribution unresolved",
+    "abi": "Original x86 cdecl entity step over explicit borrowed list/snapshot/counter/settings/menu/callback/result owners. Actual entity dispatch installs a source callback bridge; original current menu callback/global bindings are typed source ownership.",
+    "limits": [
+      "Only actual admitted four bh_menu_keys_* commit definitions accepted. Begin/cancel/context bridge count zero; original menu setup owners are not claimed.",
+      "Result is two borrowed bytes. Phase/counter/last-key semantics retain original0..254 scan, Escape skip only during capture, multiple sound requests and delayed commit with live selection reload.",
+      "Malformed packets/allocation/repeated setup are guarded. Sound/evaluation failure diagnostics do not suppress subsequent original side effects. No function-level byte-match claim.",
+      "Context/result/entity ownership must remain valid; no independent release or owner reinitialization during capture. Native snapshot collection and adjacent text capture remain outside this family.",
+      "Focused fixtures execute cached/event source state and native owned font/page resources only; zero physical input APIs, game execution, audio playback and network sessions."
+    ]
+  }
+]

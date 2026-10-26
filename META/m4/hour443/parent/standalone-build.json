@@ -1,0 +1,330 @@
+{
+  "passed": true,
+  "target": "D:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\bhunter-physics-effects.exe",
+  "fixture": {
+    "scenario": "physics-effects",
+    "checks": 66,
+    "failures": 0,
+    "original_code_required": false,
+    "play_calls": 0,
+    "native_send_calls": 0
+  },
+  "commands": [
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DBH_PHYSICS_EFFECTS_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module0.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_physics_effects.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_physics_effects.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DBH_PHYSICS_EFFECTS_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module1.obj",
+        "D:\\Decomp\\Bhunter\\tests\\physics_effects.c"
+      ],
+      "exit_code": 0,
+      "output": "physics_effects.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DBH_PHYSICS_EFFECTS_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module2.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_entities.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_entities.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DBH_PHYSICS_EFFECTS_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module3.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_draw_queue.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_draw_queue.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DBH_PHYSICS_EFFECTS_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module4.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_contact_effects.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_contact_effects.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DBH_PHYSICS_EFFECTS_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module5.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_sound_queue.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_sound_queue.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DBH_PHYSICS_EFFECTS_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module6.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_network_transport.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_network_transport.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DBH_PHYSICS_EFFECTS_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module7.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_network_codec.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_network_codec.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DBH_PHYSICS_EFFECTS_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module8.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_position.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_position.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DBH_PHYSICS_EFFECTS_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module9.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_math.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_math.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DBH_PHYSICS_EFFECTS_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module10.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_fp.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_fp.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DBH_PHYSICS_EFFECTS_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module11.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_round.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_round.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/opt:ref",
+        "/out:D:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\bhunter-physics-effects.exe",
+        "/map:D:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\effects.map",
+        "D:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module0.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module1.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module2.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module3.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module4.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module5.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module6.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module7.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module8.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module9.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module10.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module11.obj",
+        "kernel32.lib",
+        "user32.lib",
+        "winmm.lib"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\bhunter-physics-effects.exe"
+      ],
+      "exit_code": 0,
+      "output": "{\"scenario\":\"physics-effects\",\"checks\":66,\"failures\":0,\"original_code_required\":false,\"play_calls\":0,\"native_send_calls\":0}\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/opt:ref",
+        "/out:D:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\missing.exe",
+        "D:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module1.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module2.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module3.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module4.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module5.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module6.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module7.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module8.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module9.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module10.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\module11.obj",
+        "kernel32.lib",
+        "user32.lib",
+        "winmm.lib"
+      ],
+      "exit_code": 25,
+      "output": "module1.obj : error LNK2001: unresolved external symbol _bh_physics_effects_run\nD:\\Decomp\\Bhunter\\build\\hour443-physics-effects\\missing.exe : fatal error LNK1120: 1 unresolved externals\n"
+    }
+  ],
+  "sources": {
+    "src/bh_physics_effects.c": "43f858b975ad5cb7c67f789cb0504cd414b40f5379081f5bb7d5c0b773e7cbba",
+    "tests/physics_effects.c": "d5c2d02316bfc32772def079be3c78f6293fb5893564f553305445bac1a2ff8e",
+    "src/bh_entities.c": "6fc5e54d88906a7922c149bb1ccc9851c2cbe701217e57d8e3c72646d81cb92a",
+    "src/bh_draw_queue.c": "0c697d2144ebb7453a37f65aa8f208d69512c3e4926e369cc7c37daee706707d",
+    "src/bh_contact_effects.c": "78a1a77bea2540718d766aa138f63ff3cd63124ad1a2c8d7fe7c39cef5f6bc90",
+    "src/bh_sound_queue.c": "9c6a9eddf5cb3332539153e7aa7418326c0ec9598a5a565f53d529ce706f61a5",
+    "src/bh_network_transport.c": "57654b7ec0b21755f305cd681bccb970485ba49cb84e13ed58c6332a1f2bd10c",
+    "src/bh_network_codec.c": "eef9d8ea4750b1e14731f5c6b55f01d50b199645c2fe4bcf0d998a83b03ab3b9",
+    "src/bh_position.c": "629dbd42143b6082dc025c4e82585106ae6df97e1a204363c1fde89d11d3b10c",
+    "src/bh_math.c": "ce111e18659563a2c41a04b645295227aac6ead9fe9cc2e803ac45c726d6e9bc",
+    "src/bh_fp.c": "cc8400a29fd082f96ffd9b483f490a44992717b25eac0cb32e2e108ba446f3f8",
+    "src/bh_round.c": "ff848010705702e25cf85f5ba1d9c30a024d1ea8bf93227240285b9c54fc8ef4",
+    "src/bh_physics_effects.h": "1adaef84d48121f16d3a4ef6f6fd39ed35af9f2282ad6e03c426de41d1c75101"
+  },
+  "original_code_executed": false,
+  "missing_module_link_control": true
+}

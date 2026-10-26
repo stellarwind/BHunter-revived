@@ -1,0 +1,35 @@
+[
+  {
+    "original_va": "0042c300",
+    "function": "bh_menu_object_create",
+    "source": "src/bh_menu_object.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Whole application menu entity/input constructor with18 actual startup callers; not verified CRT/library/compiler support/shared tail; historical engine attribution unresolved",
+    "boundary": {
+      "start": "0042c300",
+      "end_exclusive": "0042c4bf",
+      "bytes": 447,
+      "instructions": 132,
+      "sha256": "a67a0652f859dbe3a886fdb7ff652bef712e462bad4054688e7ea5fdc245c688"
+    },
+    "validation": {
+      "abi": "Original x86 cdecl outputentity/tag retained over explicit actual pool/input source ownership; all stores and binding order retained. Verified RET callback representedNULL under actual entity contract.",
+      "limits": [
+        "Fresh zeroed source owner required. Original live name global is borrowed explicit source name (NULL means initiallyempty); opaque32bit tag retained without inferred meaning.",
+        "Original unchecked input allocation failure is guarded by actual entity rollback; pool failure preserves output. No source/original byte-match claim.",
+        "Count-zero row bindings/add-row/disposal use actual admitted owners with explicit caller rowcapacity; do not claim full menuheader/update/query behavior. Entity/list may not be independently released by callers.",
+        "No game/originalcode execution, physicalinput/polling, UIcapture, audioPlay or native network operations; only owned nativepage readback. Full menu/world startup remains incomplete elsewhere."
+      ]
+    },
+    "evidence": [
+      "META/m4/hour443/c/CLASSIFICATION.md",
+      "META/m4/hour443/c/0042c300.disasm.json",
+      "META/m4/hour443/c/0042c300.decompile.json",
+      "META/m4/hour443/c/0042c300.xrefs.json",
+      "META/m4/hour443/c/CONTRACT.md",
+      "META/m4/hour443/c/README.md",
+      "META/m4/hour443/c/reference-check.json",
+      "META/m4/hour443/c/focused-validation.json"
+    ]
+  }
+]
