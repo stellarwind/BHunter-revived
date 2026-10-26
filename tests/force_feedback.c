@@ -1,6 +1,7 @@
-/* Instantiate only official DirectInput GUIDs in this test translation unit. */
+/* Native stop/lifetime checks; source platform data owns official GUIDs. */
 #include <windows.h>
-#include <initguid.h>
+/* Official DirectInput GUID definitions are owned by source platform data,
+   not this isolated fixture (bh_input_format_guids.c). */
 #include "../src/bh_force_feedback.h"
 #include <stdio.h>
 #include <string.h>

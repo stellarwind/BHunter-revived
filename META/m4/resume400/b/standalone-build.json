@@ -1,0 +1,223 @@
+{
+  "target": "bhunter-script-motion-check.exe",
+  "passed": true,
+  "original_code_executed": false,
+  "commands": [
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_SCRIPT_MOTION_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\script-motion\\bh_script_lifetime.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_script_lifetime.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_script_lifetime.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_SCRIPT_MOTION_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\script-motion\\bh_script_motion.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_script_motion.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_script_motion.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_SCRIPT_MOTION_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\script-motion\\script_motion_test.obj",
+        "D:\\Decomp\\Bhunter\\tests\\script_motion.c"
+      ],
+      "exit_code": 0,
+      "output": "script_motion.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_SCRIPT_MOTION_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\script-motion\\bh_script_timer.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_script_timer.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_script_timer.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_SCRIPT_MOTION_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\script-motion\\bh_sound_queue.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_sound_queue.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_sound_queue.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_SCRIPT_MOTION_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\script-motion\\bh_entities.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_entities.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_entities.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_SCRIPT_MOTION_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\script-motion\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_math.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_math.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_SCRIPT_MOTION_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\script-motion\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_fp.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_fp.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_SCRIPT_MOTION_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\script-motion\\bh_round.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_round.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_round.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/opt:ref",
+        "/map:D:\\Decomp\\Bhunter\\build\\script-motion\\script-motion.map",
+        "/out:D:\\Decomp\\Bhunter\\build\\script-motion\\bhunter-script-motion-check.exe",
+        "D:\\Decomp\\Bhunter\\build\\script-motion\\bh_script_lifetime.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-motion\\bh_script_motion.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-motion\\script_motion_test.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-motion\\bh_script_timer.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-motion\\bh_sound_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-motion\\bh_entities.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-motion\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-motion\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-motion\\bh_round.obj",
+        "kernel32.lib"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\build\\script-motion\\bhunter-script-motion-check.exe"
+      ],
+      "exit_code": 0,
+      "output": "{\"scenario\":\"script-motion\",\"checks\":99,\"failures\":0,\"original_code_required\":false,\"play_calls\":0}\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/opt:ref",
+        "/out:D:\\Decomp\\Bhunter\\build\\script-motion\\missing-motion.exe",
+        "D:\\Decomp\\Bhunter\\build\\script-motion\\bh_script_lifetime.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-motion\\script_motion_test.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-motion\\bh_script_timer.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-motion\\bh_sound_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-motion\\bh_entities.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-motion\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-motion\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-motion\\bh_round.obj",
+        "kernel32.lib"
+      ],
+      "exit_code": 25,
+      "output": "script_motion_test.obj : error LNK2001: unresolved external symbol _bh_script_motion_actor_read\nscript_motion_test.obj : error LNK2001: unresolved external symbol _bh_script_translate_tick\nscript_motion_test.obj : error LNK2001: unresolved external symbol _bh_script_motion_bind\nscript_motion_test.obj : error LNK2001: unresolved external symbol _bh_script_motion_actor_write\nscript_motion_test.obj : error LNK2001: unresolved external symbol _bh_script_motion_attachment_link\nscript_motion_test.obj : error LNK2001: unresolved external symbol _bh_script_rotate_tick\nD:\\Decomp\\Bhunter\\build\\script-motion\\missing-motion.exe : fatal error LNK1120: 6 unresolved externals\n"
+    }
+  ],
+  "sources": {
+    "src/bh_script_lifetime.c": "d26c5acb9029a042a0c0e0a6012c45cc513cc9566c850f369fff047a7405e94c",
+    "src/bh_script_motion.c": "46a39c003fba440af3f26abbe8c40f07a205b512277a1b2fb4e1d4ee5bc6510d",
+    "tests/script_motion.c": "01fbc8b127f6401ee493c98c32e1e1d40167b63ce64d729ea6c33671f2b98594",
+    "src/bh_script_timer.c": "c6babeca216dd9e27548dc5b9343cbc0a5285b7f58d8fa317ea41add93cb2079",
+    "src/bh_sound_queue.c": "9c6a9eddf5cb3332539153e7aa7418326c0ec9598a5a565f53d529ce706f61a5",
+    "src/bh_entities.c": "6fc5e54d88906a7922c149bb1ccc9851c2cbe701217e57d8e3c72646d81cb92a",
+    "src/bh_math.c": "ce111e18659563a2c41a04b645295227aac6ead9fe9cc2e803ac45c726d6e9bc",
+    "src/bh_fp.c": "cc8400a29fd082f96ffd9b483f490a44992717b25eac0cb32e2e108ba446f3f8",
+    "src/bh_round.c": "ff848010705702e25cf85f5ba1d9c30a024d1ea8bf93227240285b9c54fc8ef4",
+    "src/bh_script_motion.h": "5dbf3694bebef835d99cd122a95d72465508877fe362489c6b485900a84224b2"
+  },
+  "stdout": "{\"scenario\":\"script-motion\",\"checks\":99,\"failures\":0,\"original_code_required\":false,\"play_calls\":0}\n",
+  "missing_module_link_control": true
+}

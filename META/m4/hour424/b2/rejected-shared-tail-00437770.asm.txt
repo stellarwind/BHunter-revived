@@ -1,0 +1,35 @@
+
+GAME_DATA/BHUNTER.EXE:     file format pei-i386
+
+
+Disassembly of section .text:
+
+00437770 <.text+0x36770>:
+  437770:	8b 86 a4 01 00 00    	mov    eax,DWORD PTR [esi+0x1a4]
+  437776:	8b 8e f8 00 00 00    	mov    ecx,DWORD PTR [esi+0xf8]
+  43777c:	05 e8 00 00 00       	add    eax,0xe8
+  437781:	85 c9                	test   ecx,ecx
+  437783:	74 0e                	je     0x437793
+  437785:	8b 96 f4 00 00 00    	mov    edx,DWORD PTR [esi+0xf4]
+  43778b:	89 91 f4 00 00 00    	mov    DWORD PTR [ecx+0xf4],edx
+  437791:	eb 09                	jmp    0x43779c
+  437793:	8b 8e f4 00 00 00    	mov    ecx,DWORD PTR [esi+0xf4]
+  437799:	89 48 40             	mov    DWORD PTR [eax+0x40],ecx
+  43779c:	8b 86 f4 00 00 00    	mov    eax,DWORD PTR [esi+0xf4]
+  4377a2:	85 c0                	test   eax,eax
+  4377a4:	74 0c                	je     0x4377b2
+  4377a6:	8b 96 f8 00 00 00    	mov    edx,DWORD PTR [esi+0xf8]
+  4377ac:	89 90 f8 00 00 00    	mov    DWORD PTR [eax+0xf8],edx
+  4377b2:	8b 86 04 01 00 00    	mov    eax,DWORD PTR [esi+0x104]
+  4377b8:	50                   	push   eax
+  4377b9:	e8 82 49 04 00       	call   0x47c140
+  4377be:	83 c4 04             	add    esp,0x4
+  4377c1:	56                   	push   esi
+  4377c2:	e8 a9 f8 03 00       	call   0x477070
+  4377c7:	83 c4 04             	add    esp,0x4
+  4377ca:	5f                   	pop    edi
+  4377cb:	5e                   	pop    esi
+  4377cc:	5d                   	pop    ebp
+  4377cd:	5b                   	pop    ebx
+  4377ce:	83 c4 24             	add    esp,0x24
+  4377d1:	c3                   	ret

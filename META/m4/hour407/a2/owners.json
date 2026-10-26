@@ -1,0 +1,42 @@
+[
+  {
+    "original_va": "00403640",
+    "function": "bh_script_flash_tick",
+    "source": "src/bh_script_flash.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Whole45-byte12-instruction ordinary effect lifetime callback installed by VM opcode4; only actual pool-release dependency, distinct RET; not CRT/import/EH/shared tail, historical game/engine authorship unresolved",
+    "boundary": {
+      "start": "00403640",
+      "end_exclusive": "0040366d",
+      "bytes": 45,
+      "instructions": 12,
+      "sha256": "e8b114828b004370cdfd4e220c8cc563e3d911cd901d2b2c30aa466fbc932b9b"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/script-flash/bhunter-script-flash-check.exe",
+    "validation": {
+      "abi": "Pinned x86 cdecl BHEntityStep, original countdown+e8 and persistent real entity-pool binding, PC53 nearest/masked",
+      "fixtures": {
+        "scenario": "script-flash",
+        "checks": 25,
+        "failures": 0,
+        "play_calls": 0
+      },
+      "original_code_executed": false,
+      "game_executed": false,
+      "raw_byte_match": false,
+      "limits": [
+        "Only the whole flash lifetime step is recovered; real light refresh004035e0 requires missing00478540 queue producer and00477ae0 full consumer, so no flash/VM constructor or fake refresh is admitted.",
+        "Source helper binds actual pool/countdown/step and retains existing refresh/query; caller must retain entity/pool lifetime and complete visual bindings independently.",
+        "PC24/runtime precision transitions and signaling-NaN payload/exception ordering remain open; no game/original code, UI/input, playback or network operation."
+      ]
+    },
+    "evidence": [
+      "META/m4/hour407/a2/README.md",
+      "META/m4/hour407/a2/00403640.asm.txt",
+      "META/m4/hour407/a2/standalone-build.json",
+      "META/m4/hour407/a2/vm-install.asm.txt"
+    ]
+  }
+]

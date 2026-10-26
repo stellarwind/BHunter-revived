@@ -1,0 +1,71 @@
+
+GAME_DATA/BHUNTER.EXE:     file format pei-i386
+
+
+Disassembly of section .text:
+
+00440810 <.text+0x3f810>:
+  440810:	8b 4c 24 08          	mov    ecx,DWORD PTR [esp+0x8]
+  440814:	56                   	push   esi
+  440815:	8b 74 24 08          	mov    esi,DWORD PTR [esp+0x8]
+  440819:	57                   	push   edi
+  44081a:	8b 01                	mov    eax,DWORD PTR [ecx]
+  44081c:	83 e8 11             	sub    eax,0x11
+  44081f:	0f 84 8d 00 00 00    	je     0x4408b2
+  440825:	48                   	dec    eax
+  440826:	74 2e                	je     0x440856
+  440828:	83 e8 02             	sub    eax,0x2
+  44082b:	0f 85 a9 00 00 00    	jne    0x4408da
+  440831:	68 80 d6 47 00       	push   0x47d680
+  440836:	56                   	push   esi
+  440837:	c7 86 cc 00 00 00 30 	mov    DWORD PTR [esi+0xcc],0x440030
+  44083e:	00 44 00 
+  440841:	e8 4a 66 03 00       	call   0x476e90
+  440846:	83 c4 08             	add    esp,0x8
+  440849:	c7 86 c8 00 00 00 80 	mov    DWORD PTR [esi+0xc8],0x47d680
+  440850:	d6 47 00 
+  440853:	5f                   	pop    edi
+  440854:	5e                   	pop    esi
+  440855:	c3                   	ret
+  440856:	8b 41 04             	mov    eax,DWORD PTR [ecx+0x4]
+  440859:	8b 96 1c 01 00 00    	mov    edx,DWORD PTR [esi+0x11c]
+  44085f:	3b c2                	cmp    eax,edx
+  440861:	75 77                	jne    0x4408da
+  440863:	8b 41 08             	mov    eax,DWORD PTR [ecx+0x8]
+  440866:	c7 41 04 ff ff ff ff 	mov    DWORD PTR [ecx+0x4],0xffffffff
+  44086d:	83 f8 03             	cmp    eax,0x3
+  440870:	75 68                	jne    0x4408da
+  440872:	d9 86 e8 00 00 00    	fld    DWORD PTR [esi+0xe8]
+  440878:	dc 1d 88 99 48 00    	fcomp  QWORD PTR ds:0x489988
+  44087e:	df e0                	fnstsw ax
+  440880:	f6 c4 41             	test   ah,0x41
+  440883:	75 0a                	jne    0x44088f
+  440885:	c7 86 e8 00 00 00 cd 	mov    DWORD PTR [esi+0xe8],0x3e4ccccd
+  44088c:	cc 4c 3e 
+  44088f:	83 c1 10             	add    ecx,0x10
+  440892:	8d 56 0c             	lea    edx,[esi+0xc]
+  440895:	8b 01                	mov    eax,DWORD PTR [ecx]
+  440897:	89 02                	mov    DWORD PTR [edx],eax
+  440899:	8b 41 04             	mov    eax,DWORD PTR [ecx+0x4]
+  44089c:	89 42 04             	mov    DWORD PTR [edx+0x4],eax
+  44089f:	8b 49 08             	mov    ecx,DWORD PTR [ecx+0x8]
+  4408a2:	89 4a 08             	mov    DWORD PTR [edx+0x8],ecx
+  4408a5:	c7 86 1c 01 00 00 01 	mov    DWORD PTR [esi+0x11c],0x1
+  4408ac:	00 00 00 
+  4408af:	5f                   	pop    edi
+  4408b0:	5e                   	pop    esi
+  4408b1:	c3                   	ret
+  4408b2:	8b 51 04             	mov    edx,DWORD PTR [ecx+0x4]
+  4408b5:	8b be 2c 01 00 00    	mov    edi,DWORD PTR [esi+0x12c]
+  4408bb:	33 c0                	xor    eax,eax
+  4408bd:	3b d7                	cmp    edx,edi
+  4408bf:	75 06                	jne    0x4408c7
+  4408c1:	89 86 2c 01 00 00    	mov    DWORD PTR [esi+0x12c],eax
+  4408c7:	8b 49 04             	mov    ecx,DWORD PTR [ecx+0x4]
+  4408ca:	8b 96 30 01 00 00    	mov    edx,DWORD PTR [esi+0x130]
+  4408d0:	3b ca                	cmp    ecx,edx
+  4408d2:	75 06                	jne    0x4408da
+  4408d4:	89 86 30 01 00 00    	mov    DWORD PTR [esi+0x130],eax
+  4408da:	5f                   	pop    edi
+  4408db:	5e                   	pop    esi
+  4408dc:	c3                   	ret

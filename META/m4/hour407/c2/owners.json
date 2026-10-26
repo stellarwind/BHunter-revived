@@ -1,0 +1,101 @@
+[
+  {
+    "original_va": "00449a50",
+    "function": "bh_cd_audio_startup",
+    "source": "src/bh_cd_audio.c",
+    "role": "engine_candidate",
+    "boundary": {
+      "start": "00449a50",
+      "end_exclusive": "00449b3e",
+      "bytes": 238,
+      "instructions": 75,
+      "sha256": "5f5cd5aa918f45e5270914b48a6be4d2db89ffa63a2bcbeb727df1b905a38290"
+    },
+    "validation": {
+      "abi": "x86 cdecl, actual WinMM MCI/aux/wave SDK layouts; borrowed existing notify/cd state and explicit HWAVEOUT identity. Scalar query returns native x87 double under PC53.",
+      "limits": [
+        "Current host has no physical CD drive: actual cdaudio open returns266. Startup positive-open/TMSF/endpoint-discovery branches remain statically recovered but not dynamically exercised. No physical CD/looping/audibility claim.",
+        "Existing BHCdClose.last_track is reused as original004912d0 AUX device identity; its historical field name is misleading. Existing BHCdNotify.callback and actual MCI device ownership are reused without admitted-source changes.",
+        "Source fresh-owner/null guards prevent overwriting a live MCI device. Native failed caps queries are skipped with defined-zero records; original consumed uninitialized stack fields.",
+        "Original volume errors left stack output unspecified; source returns defined1.0 and records exact MMRESULT. Valid native queries retain low16-only normalization with exact pinned double1/65535.",
+        "Read queries require borrowed endpoint lifetime and PC53 nearest/masked contract. Tests open/close actual waveOut PCM handle without samples, Play or system volume writes; AUX-positive hardware is unavailable.",
+        "No original/game code, native physical input, UI capture, network session, native playback or volume writes performed. CD option owner and full source startup remain separate unfinished functions."
+      ]
+    },
+    "evidence": [
+      "META/m4/hour407/c2/00449a50.disasm.json",
+      "META/m4/hour407/c2/00449a50.decompile.json",
+      "META/m4/hour407/c2/00449a50.xrefs.json",
+      "META/m4/hour407/c2/CONTRACT.md",
+      "META/m4/hour407/c2/README.md",
+      "META/m4/hour407/c2/focused-validation.json",
+      "META/m4/hour407/c2/reference-check.json"
+    ]
+  },
+  {
+    "original_va": "00449cf0",
+    "function": "bh_cd_audio_volume",
+    "source": "src/bh_cd_audio.c",
+    "role": "engine_candidate",
+    "boundary": {
+      "start": "00449cf0",
+      "end_exclusive": "00449d37",
+      "bytes": 71,
+      "instructions": 19,
+      "sha256": "ea891e70bd6a4272d68a7f22ff6a3100ed9b7dcb35e241a977bd0b609d08541b"
+    },
+    "validation": {
+      "abi": "x86 cdecl, actual WinMM MCI/aux/wave SDK layouts; borrowed existing notify/cd state and explicit HWAVEOUT identity. Scalar query returns native x87 double under PC53.",
+      "limits": [
+        "Current host has no physical CD drive: actual cdaudio open returns266. Startup positive-open/TMSF/endpoint-discovery branches remain statically recovered but not dynamically exercised. No physical CD/looping/audibility claim.",
+        "Existing BHCdClose.last_track is reused as original004912d0 AUX device identity; its historical field name is misleading. Existing BHCdNotify.callback and actual MCI device ownership are reused without admitted-source changes.",
+        "Source fresh-owner/null guards prevent overwriting a live MCI device. Native failed caps queries are skipped with defined-zero records; original consumed uninitialized stack fields.",
+        "Original volume errors left stack output unspecified; source returns defined1.0 and records exact MMRESULT. Valid native queries retain low16-only normalization with exact pinned double1/65535.",
+        "Read queries require borrowed endpoint lifetime and PC53 nearest/masked contract. Tests open/close actual waveOut PCM handle without samples, Play or system volume writes; AUX-positive hardware is unavailable.",
+        "No original/game code, native physical input, UI capture, network session, native playback or volume writes performed. CD option owner and full source startup remain separate unfinished functions."
+      ]
+    },
+    "evidence": [
+      "META/m4/hour407/c2/00449cf0.disasm.json",
+      "META/m4/hour407/c2/00449cf0.decompile.json",
+      "META/m4/hour407/c2/00449cf0.xrefs.json",
+      "META/m4/hour407/c2/CONTRACT.md",
+      "META/m4/hour407/c2/README.md",
+      "META/m4/hour407/c2/focused-validation.json",
+      "META/m4/hour407/c2/reference-check.json"
+    ]
+  },
+  {
+    "original_va": "00449da0",
+    "function": "bh_wave_audio_volume",
+    "source": "src/bh_cd_audio.c",
+    "role": "engine_candidate",
+    "boundary": {
+      "start": "00449da0",
+      "end_exclusive": "00449de7",
+      "bytes": 71,
+      "instructions": 19,
+      "sha256": "c4b28841c7530dc6fbb71a66e8076b81c30ac8dd48facbc18447dad339e6a36f"
+    },
+    "validation": {
+      "abi": "x86 cdecl, actual WinMM MCI/aux/wave SDK layouts; borrowed existing notify/cd state and explicit HWAVEOUT identity. Scalar query returns native x87 double under PC53.",
+      "limits": [
+        "Current host has no physical CD drive: actual cdaudio open returns266. Startup positive-open/TMSF/endpoint-discovery branches remain statically recovered but not dynamically exercised. No physical CD/looping/audibility claim.",
+        "Existing BHCdClose.last_track is reused as original004912d0 AUX device identity; its historical field name is misleading. Existing BHCdNotify.callback and actual MCI device ownership are reused without admitted-source changes.",
+        "Source fresh-owner/null guards prevent overwriting a live MCI device. Native failed caps queries are skipped with defined-zero records; original consumed uninitialized stack fields.",
+        "Original volume errors left stack output unspecified; source returns defined1.0 and records exact MMRESULT. Valid native queries retain low16-only normalization with exact pinned double1/65535.",
+        "Read queries require borrowed endpoint lifetime and PC53 nearest/masked contract. Tests open/close actual waveOut PCM handle without samples, Play or system volume writes; AUX-positive hardware is unavailable.",
+        "No original/game code, native physical input, UI capture, network session, native playback or volume writes performed. CD option owner and full source startup remain separate unfinished functions."
+      ]
+    },
+    "evidence": [
+      "META/m4/hour407/c2/00449da0.disasm.json",
+      "META/m4/hour407/c2/00449da0.decompile.json",
+      "META/m4/hour407/c2/00449da0.xrefs.json",
+      "META/m4/hour407/c2/CONTRACT.md",
+      "META/m4/hour407/c2/README.md",
+      "META/m4/hour407/c2/focused-validation.json",
+      "META/m4/hour407/c2/reference-check.json"
+    ]
+  }
+]

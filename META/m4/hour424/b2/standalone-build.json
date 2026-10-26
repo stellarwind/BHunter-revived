@@ -1,0 +1,183 @@
+{
+  "target": "bhunter-projectile-lifetime-check.exe",
+  "passed": true,
+  "original_code_executed": false,
+  "commands": [
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_PROJECTILE_LIFETIME_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\projectile-lifetime\\bh_projectile_lifetime.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_projectile_lifetime.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_projectile_lifetime.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_PROJECTILE_LIFETIME_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\projectile-lifetime\\projectile_lifetime_test.obj",
+        "D:\\Decomp\\Bhunter\\tests\\projectile_lifetime.c"
+      ],
+      "exit_code": 0,
+      "output": "projectile_lifetime.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_PROJECTILE_LIFETIME_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\projectile-lifetime\\bh_entities.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_entities.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_entities.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_PROJECTILE_LIFETIME_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\projectile-lifetime\\bh_sound_queue.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_sound_queue.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_sound_queue.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_PROJECTILE_LIFETIME_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\projectile-lifetime\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_math.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_math.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_PROJECTILE_LIFETIME_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\projectile-lifetime\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_fp.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_fp.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_PROJECTILE_LIFETIME_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\projectile-lifetime\\bh_round.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_round.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_round.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/opt:ref",
+        "/map:D:\\Decomp\\Bhunter\\build\\projectile-lifetime\\projectile-lifetime.map",
+        "/out:D:\\Decomp\\Bhunter\\build\\projectile-lifetime\\bhunter-projectile-lifetime-check.exe",
+        "D:\\Decomp\\Bhunter\\build\\projectile-lifetime\\bh_projectile_lifetime.obj",
+        "D:\\Decomp\\Bhunter\\build\\projectile-lifetime\\projectile_lifetime_test.obj",
+        "D:\\Decomp\\Bhunter\\build\\projectile-lifetime\\bh_entities.obj",
+        "D:\\Decomp\\Bhunter\\build\\projectile-lifetime\\bh_sound_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\projectile-lifetime\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\build\\projectile-lifetime\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\build\\projectile-lifetime\\bh_round.obj",
+        "kernel32.lib"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\build\\projectile-lifetime\\bhunter-projectile-lifetime-check.exe"
+      ],
+      "exit_code": 0,
+      "output": "{\"scenario\":\"projectile-lifetime\",\"checks\":37,\"failures\":0,\"original_code_required\":false,\"play_calls\":0}\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/opt:ref",
+        "/out:D:\\Decomp\\Bhunter\\build\\projectile-lifetime\\missing-projectile-lifetime.exe",
+        "D:\\Decomp\\Bhunter\\build\\projectile-lifetime\\projectile_lifetime_test.obj",
+        "D:\\Decomp\\Bhunter\\build\\projectile-lifetime\\bh_entities.obj",
+        "D:\\Decomp\\Bhunter\\build\\projectile-lifetime\\bh_sound_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\projectile-lifetime\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\build\\projectile-lifetime\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\build\\projectile-lifetime\\bh_round.obj",
+        "kernel32.lib"
+      ],
+      "exit_code": 25,
+      "output": "projectile_lifetime_test.obj : error LNK2001: unresolved external symbol _bh_projectile_lifetime_bind\nprojectile_lifetime_test.obj : error LNK2001: unresolved external symbol _bh_projectile_cleanup\nprojectile_lifetime_test.obj : error LNK2001: unresolved external symbol _bh_projectile_query_state\nD:\\Decomp\\Bhunter\\build\\projectile-lifetime\\missing-projectile-lifetime.exe : fatal error LNK1120: 3 unresolved externals\n"
+    }
+  ],
+  "sources": {
+    "src/bh_projectile_lifetime.c": "aa08c4f73e1e379759829c88e799c14f8347bc6bf5040915af23bc103bcf064e",
+    "tests/projectile_lifetime.c": "52a0d60c8ba8bcd9c8c3025f85dfbaeeb54ac7a140c0c4bc1db595b9a7e70f7e",
+    "src/bh_entities.c": "6fc5e54d88906a7922c149bb1ccc9851c2cbe701217e57d8e3c72646d81cb92a",
+    "src/bh_sound_queue.c": "9c6a9eddf5cb3332539153e7aa7418326c0ec9598a5a565f53d529ce706f61a5",
+    "src/bh_math.c": "ce111e18659563a2c41a04b645295227aac6ead9fe9cc2e803ac45c726d6e9bc",
+    "src/bh_fp.c": "cc8400a29fd082f96ffd9b483f490a44992717b25eac0cb32e2e108ba446f3f8",
+    "src/bh_round.c": "ff848010705702e25cf85f5ba1d9c30a024d1ea8bf93227240285b9c54fc8ef4",
+    "src/bh_projectile_lifetime.h": "397b7a16dc5bb75e91a7a2f1355c5c61b7b6b390889f0ce2f937626ee28a6741"
+  },
+  "stdout": "{\"scenario\":\"projectile-lifetime\",\"checks\":37,\"failures\":0,\"original_code_required\":false,\"play_calls\":0}\n",
+  "missing_module_link_control": true
+}

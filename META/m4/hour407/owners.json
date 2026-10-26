@@ -1,0 +1,478 @@
+[
+  {
+    "address": "0047b500",
+    "function": "bh_sound_startup",
+    "source": "src/bh_sound_startup.c",
+    "role": "engine_candidate",
+    "family": "parent",
+    "scenarios": [
+      "sound-startup"
+    ],
+    "ranges": [
+      {
+        "start": "0047b500",
+        "end_exclusive": "0047b5e4",
+        "bytes": 228,
+        "instructions": 75,
+        "sha256": "0742af0bfbfce5d647d5d2bb55a7a8bd92969a35a1c466d23d1e775379c6df14"
+      }
+    ],
+    "provenance_confidence": "Whole native sound initialization owner called by startup; real DirectSound interfaces, native imports only; no CRT/EH/import-thunk/shared-tail admission, historical engine authorship unresolved",
+    "abi": "Pinned x86 cdecl; actual DirectSound COM methods, original20-byte descriptor prefix and loop flag1; explicit fresh source queue owns actual COM references",
+    "limits": [
+      "Device Create retries10/100ms, ignored cooperative/Play results and primary-failure success return implemented; only native positive path executed on this host.",
+      "Fresh initialized source queue and live application HWND required; occupied/invalid source owner rejected before calls.",
+      "Primary native Play is required original behavior; fixture stops immediately, loads no samples and releases both actual interfaces.",
+      "Failure-output defensive release and diagnostic fields are source adapters; no forced native API failures or fabricated implementations.",
+      "No original/game code, physical input/cursor, UI capture or secondary playback; actual CD audio and full startup remain open."
+    ]
+  },
+  {
+    "address": "004025c0",
+    "function": "bh_script_particle_create",
+    "source": "src/bh_script_particles.c",
+    "role": "engine_candidate",
+    "family": "a",
+    "scenarios": [
+      "script-particles"
+    ],
+    "ranges": [
+      {
+        "start": "004025c0",
+        "end_exclusive": "0040270d",
+        "bytes": 333,
+        "instructions": 84,
+        "sha256": "df41f790d09cb37741105117bbb1353337900bf1de439c27e0f0b13556e63115"
+      }
+    ],
+    "provenance_confidence": "Complete independently referenced source effect constructor/step/refresh, actual pool/random/draw calls; not CRT/import/EH/shared tail; game versus proprietary engine authorship unresolved",
+    "abi": "Pinned x86 cdecl; actual entity pool,84-byte particle state at+e8, real queue methods and source timer actor table; explicit persistent source contexts, no guessed globals/vtables",
+    "limits": [
+      "Full VM/parser construction and live world resource/actor binding remain separate incomplete owners; emitter binding and context helpers add no owner count.",
+      "PC53 nearest/masked exceptions tested; runtime PC24 transitions and NaN payload/signaling exception ordering remain unvalidated.",
+      "Texture IDs are explicit borrowed queue identities; no native presentation, gameplay, input/audio/network operation or original code execution.",
+      "Caller retains real actor/owner/context/queue/pool lifetime; source membership helpers are not generation-proof after slot recycling."
+    ]
+  },
+  {
+    "address": "004024c0",
+    "function": "bh_script_particle_tick",
+    "source": "src/bh_script_particles.c",
+    "role": "engine_candidate",
+    "family": "a",
+    "scenarios": [
+      "script-particles"
+    ],
+    "ranges": [
+      {
+        "start": "004024c0",
+        "end_exclusive": "004025be",
+        "bytes": 254,
+        "instructions": 62,
+        "sha256": "52d87c6eefba9bf1a143104328f2be3ddf8f7dd35431ff1c35b92fedd38595a4"
+      }
+    ],
+    "provenance_confidence": "Complete independently referenced source effect constructor/step/refresh, actual pool/random/draw calls; not CRT/import/EH/shared tail; game versus proprietary engine authorship unresolved",
+    "abi": "Pinned x86 cdecl; actual entity pool,84-byte particle state at+e8, real queue methods and source timer actor table; explicit persistent source contexts, no guessed globals/vtables",
+    "limits": [
+      "Full VM/parser construction and live world resource/actor binding remain separate incomplete owners; emitter binding and context helpers add no owner count.",
+      "PC53 nearest/masked exceptions tested; runtime PC24 transitions and NaN payload/signaling exception ordering remain unvalidated.",
+      "Texture IDs are explicit borrowed queue identities; no native presentation, gameplay, input/audio/network operation or original code execution.",
+      "Caller retains real actor/owner/context/queue/pool lifetime; source membership helpers are not generation-proof after slot recycling."
+    ]
+  },
+  {
+    "address": "00402470",
+    "function": "bh_script_particle_refresh",
+    "source": "src/bh_script_particles.c",
+    "role": "engine_candidate",
+    "family": "a",
+    "scenarios": [
+      "script-particles"
+    ],
+    "ranges": [
+      {
+        "start": "00402470",
+        "end_exclusive": "004024b4",
+        "bytes": 68,
+        "instructions": 21,
+        "sha256": "8585fb6cfafebd940b978672fd7007b6354fc1c3db3769c71c3863ed5571e0c3"
+      }
+    ],
+    "provenance_confidence": "Complete independently referenced source effect constructor/step/refresh, actual pool/random/draw calls; not CRT/import/EH/shared tail; game versus proprietary engine authorship unresolved",
+    "abi": "Pinned x86 cdecl; actual entity pool,84-byte particle state at+e8, real queue methods and source timer actor table; explicit persistent source contexts, no guessed globals/vtables",
+    "limits": [
+      "Full VM/parser construction and live world resource/actor binding remain separate incomplete owners; emitter binding and context helpers add no owner count.",
+      "PC53 nearest/masked exceptions tested; runtime PC24 transitions and NaN payload/signaling exception ordering remain unvalidated.",
+      "Texture IDs are explicit borrowed queue identities; no native presentation, gameplay, input/audio/network operation or original code execution.",
+      "Caller retains real actor/owner/context/queue/pool lifetime; source membership helpers are not generation-proof after slot recycling."
+    ]
+  },
+  {
+    "address": "00443390",
+    "function": "bh_script_fountain_tick",
+    "source": "src/bh_script_particles.c",
+    "role": "engine_candidate",
+    "family": "a",
+    "scenarios": [
+      "script-particles"
+    ],
+    "ranges": [
+      {
+        "start": "00443390",
+        "end_exclusive": "004434af",
+        "bytes": 287,
+        "instructions": 79,
+        "sha256": "de663ef66f4236c44905c7c70292f97ae2d2c20923e3da33f12e6dc9d1e702b6"
+      }
+    ],
+    "provenance_confidence": "Complete independently referenced source effect constructor/step/refresh, actual pool/random/draw calls; not CRT/import/EH/shared tail; game versus proprietary engine authorship unresolved",
+    "abi": "Pinned x86 cdecl; actual entity pool,84-byte particle state at+e8, real queue methods and source timer actor table; explicit persistent source contexts, no guessed globals/vtables",
+    "limits": [
+      "Full VM/parser construction and live world resource/actor binding remain separate incomplete owners; emitter binding and context helpers add no owner count.",
+      "PC53 nearest/masked exceptions tested; runtime PC24 transitions and NaN payload/signaling exception ordering remain unvalidated.",
+      "Texture IDs are explicit borrowed queue identities; no native presentation, gameplay, input/audio/network operation or original code execution.",
+      "Caller retains real actor/owner/context/queue/pool lifetime; source membership helpers are not generation-proof after slot recycling."
+    ]
+  },
+  {
+    "address": "004434b0",
+    "function": "bh_script_steam_tick",
+    "source": "src/bh_script_particles.c",
+    "role": "engine_candidate",
+    "family": "a",
+    "scenarios": [
+      "script-particles"
+    ],
+    "ranges": [
+      {
+        "start": "004434b0",
+        "end_exclusive": "0044363d",
+        "bytes": 397,
+        "instructions": 105,
+        "sha256": "71c8cc09e80cba65d9ff509ca974bcec564e8b885875876b6c4937c28f0ac566"
+      }
+    ],
+    "provenance_confidence": "Complete independently referenced source effect constructor/step/refresh, actual pool/random/draw calls; not CRT/import/EH/shared tail; game versus proprietary engine authorship unresolved",
+    "abi": "Pinned x86 cdecl; actual entity pool,84-byte particle state at+e8, real queue methods and source timer actor table; explicit persistent source contexts, no guessed globals/vtables",
+    "limits": [
+      "Full VM/parser construction and live world resource/actor binding remain separate incomplete owners; emitter binding and context helpers add no owner count.",
+      "PC53 nearest/masked exceptions tested; runtime PC24 transitions and NaN payload/signaling exception ordering remain unvalidated.",
+      "Texture IDs are explicit borrowed queue identities; no native presentation, gameplay, input/audio/network operation or original code execution.",
+      "Caller retains real actor/owner/context/queue/pool lifetime; source membership helpers are not generation-proof after slot recycling."
+    ]
+  },
+  {
+    "address": "00443640",
+    "function": "bh_script_steam_refresh",
+    "source": "src/bh_script_particles.c",
+    "role": "engine_candidate",
+    "family": "a",
+    "scenarios": [
+      "script-particles"
+    ],
+    "ranges": [
+      {
+        "start": "00443640",
+        "end_exclusive": "004436e1",
+        "bytes": 161,
+        "instructions": 53,
+        "sha256": "0347e486d862e13d89841a8868e8dc5eb0e3e363e4ec2b749a7716473df156a4"
+      }
+    ],
+    "provenance_confidence": "Complete independently referenced source effect constructor/step/refresh, actual pool/random/draw calls; not CRT/import/EH/shared tail; game versus proprietary engine authorship unresolved",
+    "abi": "Pinned x86 cdecl; actual entity pool,84-byte particle state at+e8, real queue methods and source timer actor table; explicit persistent source contexts, no guessed globals/vtables",
+    "limits": [
+      "Full VM/parser construction and live world resource/actor binding remain separate incomplete owners; emitter binding and context helpers add no owner count.",
+      "PC53 nearest/masked exceptions tested; runtime PC24 transitions and NaN payload/signaling exception ordering remain unvalidated.",
+      "Texture IDs are explicit borrowed queue identities; no native presentation, gameplay, input/audio/network operation or original code execution.",
+      "Caller retains real actor/owner/context/queue/pool lifetime; source membership helpers are not generation-proof after slot recycling."
+    ]
+  },
+  {
+    "address": "0044b7a0",
+    "function": "bh_collision_box_build",
+    "source": "src/bh_collision_box.c",
+    "role": "engine_candidate",
+    "family": "c",
+    "scenarios": [
+      "collision-box"
+    ],
+    "ranges": [
+      {
+        "start": "0044b7a0",
+        "end_exclusive": "0044c1f6",
+        "bytes": 2646,
+        "instructions": 711,
+        "sha256": "70e1336e6872a1c5f21cc617b8ac0859e1135b09776561f2a805994952bd55c5"
+      }
+    ],
+    "provenance_confidence": "Ordinary entity callback/numeric behavior with complete reviewed code boundaries; engine authorship unresolved",
+    "abi": "x86 cdecl over existing actual BHCollisionModel owner; extent/padding float3 borrowed. Exact six record layouts and raw complete boundary; source model binding is explicit ownership adapter.",
+    "limits": [
+      "PC53 nearest masked finite moderate inputs; PC24 and global runtime precision transitions remain unresolved.",
+      "Original eleven unchecked allocations become real source collision-owner transaction; allocation failure retains previous model and cleans partial storage.",
+      "Originally unspecified header/material/cache bytes are defined zero; populated vertex frame word remains0xffffffff. The existing decoded BSP computes additional root_radius metadata; original actor-radius behavior is consumed through real bh_geometry_radius.",
+      "Source null/nonfinite/negative-extent/active-enumeration guards are added; borrowed queries must be disposed before successful model replacement.",
+      "All six original planes are literally the negated selected coordinate, including low faces; this has an observable source segment-query consequence and was deliberately preserved.",
+      "Actor construction0043ddc0 and its actual gameplay lifetime remain unrecovered; no source target spawned, game/original code executed, physical input, UI capture, audioPlay or network session."
+    ]
+  },
+  {
+    "address": "00443ac0",
+    "function": "bh_script_proximity_tick",
+    "source": "src/bh_script_sensor.c",
+    "role": "engine_candidate",
+    "family": "b",
+    "scenarios": [
+      "script-sensor"
+    ],
+    "ranges": [
+      {
+        "start": "00443ac0",
+        "end_exclusive": "00443d34",
+        "bytes": 628,
+        "instructions": 180,
+        "sha256": "583ae26713b5a73b1d564930492dd404973fdf8d3114cdec4cb4119ce8f87f77"
+      }
+    ],
+    "provenance_confidence": "Complete ordinary VM-installed sensor step, real entity query/release, native field access and reviewed separate returns; not verified CRT/import/compiler support or independently counted shared tail; game/engine authorship unresolved",
+    "abi": "Pinned x86 cdecl BHEntityStep; original+f0/f4/fc/100/104/108/128/12c fields, actual actor148 damage and owner bounds; persistent explicit contexts, PC53 nearest/masked",
+    "limits": [
+      "Count-zero explicit sensor state/context binding; full VM00443ff0, radar list construction, target construction and parser remain unadmitted.",
+      "Caller owns stable context, radar and real actor/owner table/pool entity lifetimes. Source rejects malformed binding and stops on current generation/actor mutation after broadcast instead of writing through freed/recycled state.",
+      "Original proximity owner releases on final finite shot then reaches a stale-state end-of-list write; source returns after actual release, avoiding that write without changing live behavior.",
+      "Event14 packet event/actor/expected and event17 event/actor are contractual; source zeros original unspecified stack remainder and claims no wire protocol.",
+      "Actual query owner starts from latest query registration then follows active-next as original; fixtures construct receivers before the sensor and retain this original ordering behavior.",
+      "PC53 finite moderate geometry, explicit unordered branch fixtures and pre-store damage threshold checks; original runtime PC24 transitions and NaN payload/sign are unvalidated.",
+      "No game/original code, gameplay automation, physical input, native audio playback, UI or network operations."
+    ]
+  },
+  {
+    "address": "00443d40",
+    "function": "bh_script_damage_tick",
+    "source": "src/bh_script_sensor.c",
+    "role": "engine_candidate",
+    "family": "b",
+    "scenarios": [
+      "script-sensor"
+    ],
+    "ranges": [
+      {
+        "start": "00443d40",
+        "end_exclusive": "00443e76",
+        "bytes": 310,
+        "instructions": 80,
+        "sha256": "d14c4c5da7d49a5e9fa55dd6763e295a0c7ae81a965e4201cdba041542d945c4"
+      }
+    ],
+    "provenance_confidence": "Complete ordinary VM-installed sensor step, real entity query/release, native field access and reviewed separate returns; not verified CRT/import/compiler support or independently counted shared tail; game/engine authorship unresolved",
+    "abi": "Pinned x86 cdecl BHEntityStep; original+f0/f4/fc/100/104/108/128/12c fields, actual actor148 damage and owner bounds; persistent explicit contexts, PC53 nearest/masked",
+    "limits": [
+      "Count-zero explicit sensor state/context binding; full VM00443ff0, radar list construction, target construction and parser remain unadmitted.",
+      "Caller owns stable context, radar and real actor/owner table/pool entity lifetimes. Source rejects malformed binding and stops on current generation/actor mutation after broadcast instead of writing through freed/recycled state.",
+      "Original proximity owner releases on final finite shot then reaches a stale-state end-of-list write; source returns after actual release, avoiding that write without changing live behavior.",
+      "Event14 packet event/actor/expected and event17 event/actor are contractual; source zeros original unspecified stack remainder and claims no wire protocol.",
+      "Actual query owner starts from latest query registration then follows active-next as original; fixtures construct receivers before the sensor and retain this original ordering behavior.",
+      "PC53 finite moderate geometry, explicit unordered branch fixtures and pre-store damage threshold checks; original runtime PC24 transitions and NaN payload/sign are unvalidated.",
+      "No game/original code, gameplay automation, physical input, native audio playback, UI or network operations."
+    ]
+  },
+  {
+    "address": "00475d60",
+    "function": "bh_provider_catalog_callback",
+    "source": "src/bh_provider_catalog.c",
+    "role": "engine_candidate",
+    "family": "parent2",
+    "scenarios": [
+      "provider-catalog"
+    ],
+    "ranges": [
+      {
+        "start": "00475d60",
+        "end_exclusive": "00475eee",
+        "bytes": 398,
+        "instructions": 139,
+        "sha256": "62f1ebc588e97de168f3391dd34ce31d3e2bd834f81d2423893bf5062ef00510"
+      }
+    ],
+    "provenance_confidence": "Whole original six-argument EnumConnections callback installed by actual provider startup; system COM/native data, no CRT/helper/import/shared tail counted; engine attribution unresolved",
+    "abi": "Real six-argument x86 WINAPI, RET24;188-byte records, GUID+0, owned connection+16, reserved+20, kind+24, ANSI short label+156 through+176",
+    "limits": [
+      "Callback alone; whole provider startup00475ef0 remains unadmitted and no connections or sessions initialized.",
+      "Explicit owning catalog replaces global slots; caller keeps context alive through native enumeration, disposes copied allocations before reuse.",
+      "Source invalid/full/malloc-failure guards are transactional changes outside original valid-input contract.",
+      "Other record bytes retained; no complete overlapping network profile layout inferred.",
+      "Native actual DirectPlay3A EnumConnections validates callback, blob ownership and final reference release; no game/input/audio."
+    ]
+  },
+  {
+    "address": "00403640",
+    "function": "bh_script_flash_tick",
+    "source": "src/bh_script_flash.c",
+    "role": "engine_candidate",
+    "family": "a2",
+    "scenarios": [
+      "script-flash"
+    ],
+    "ranges": [
+      {
+        "start": "00403640",
+        "end_exclusive": "0040366d",
+        "bytes": 45,
+        "instructions": 12,
+        "sha256": "e8b114828b004370cdfd4e220c8cc563e3d911cd901d2b2c30aa466fbc932b9b"
+      }
+    ],
+    "provenance_confidence": "Whole45-byte12-instruction ordinary effect lifetime callback installed by VM opcode4; only actual pool-release dependency, distinct RET; not CRT/import/EH/shared tail, historical game/engine authorship unresolved",
+    "abi": "Pinned x86 cdecl BHEntityStep, original countdown+e8 and persistent real entity-pool binding, PC53 nearest/masked",
+    "limits": [
+      "Only the whole flash lifetime step is recovered; real light refresh004035e0 requires missing00478540 queue producer and00477ae0 full consumer, so no flash/VM constructor or fake refresh is admitted.",
+      "Source helper binds actual pool/countdown/step and retains existing refresh/query; caller must retain entity/pool lifetime and complete visual bindings independently.",
+      "PC24/runtime precision transitions and signaling-NaN payload/exception ordering remain open; no game/original code, UI/input, playback or network operation."
+    ]
+  },
+  {
+    "address": "00455840",
+    "function": "bh_project_point_scale",
+    "source": "src/bh_project_scale.c",
+    "role": "engine_candidate",
+    "family": "b2",
+    "scenarios": [
+      "project-scale"
+    ],
+    "ranges": [
+      {
+        "start": "00455840",
+        "end_exclusive": "004558c1",
+        "bytes": 129,
+        "instructions": 46,
+        "sha256": "9cf6946bda8c89cd7a7f5afb6bc66bb79deea7465d76dd2c83bd83e6c5335128"
+      }
+    ],
+    "provenance_confidence": "Whole ordinary projected camera helper, direct real matrix point-transform call and distinct near reject/success returns; not verified CRT/import/compiler helper/shared tail; proprietary engine/game authorship unresolved",
+    "abi": "Pinned32-bit x86 cdecl; original in-place world scalars copied before screenX/screenY/scale output stores; actual source BHMainCamera projected matrix/focal and BHViewConfig near plane replace scattered globals; PC53 nearest/masked",
+    "limits": [
+      "Whole helper only; target draw0043c3f0 and target actor construction remain unadmitted. Adjacent004558d0 already admitted and is not counted again.",
+      "Persistent borrowed camera/view and disjoint camera/config versus scalar outputs; scalar pointers may alias each other with original sequential store behavior.",
+      "Source pointer and FP-profile guards reject before input mutation; no global camera initialization or original binary ABI drop-in claim.",
+      "Moderate finite camera geometry, masked zero-depth division and unordered near/depth class fixtures; NaN payload/sign, runtimePC24 and general extreme matrix numerics remain unvalidated.",
+      "No renderer callback or native backend is substituted: direct actual math definitions and source camera builder are linked. No game/original code, input, automation or playback."
+    ]
+  },
+  {
+    "address": "00449a50",
+    "function": "bh_cd_audio_startup",
+    "source": "src/bh_cd_audio.c",
+    "role": "engine_candidate",
+    "family": "c2",
+    "scenarios": [
+      "cd-audio"
+    ],
+    "ranges": [
+      {
+        "start": "00449a50",
+        "end_exclusive": "00449b3e",
+        "bytes": 238,
+        "instructions": 75,
+        "sha256": "5f5cd5aa918f45e5270914b48a6be4d2db89ffa63a2bcbeb727df1b905a38290"
+      }
+    ],
+    "provenance_confidence": "Ordinary entity callback/numeric behavior with complete reviewed code boundaries; engine authorship unresolved",
+    "abi": "x86 cdecl, actual WinMM MCI/aux/wave SDK layouts; borrowed existing notify/cd state and explicit HWAVEOUT identity. Scalar query returns native x87 double under PC53.",
+    "limits": [
+      "Current host has no physical CD drive: actual cdaudio open returns266. Startup positive-open/TMSF/endpoint-discovery branches remain statically recovered but not dynamically exercised. No physical CD/looping/audibility claim.",
+      "Existing BHCdClose.last_track is reused as original004912d0 AUX device identity; its historical field name is misleading. Existing BHCdNotify.callback and actual MCI device ownership are reused without admitted-source changes.",
+      "Source fresh-owner/null guards prevent overwriting a live MCI device. Native failed caps queries are skipped with defined-zero records; original consumed uninitialized stack fields.",
+      "Original volume errors left stack output unspecified; source returns defined1.0 and records exact MMRESULT. Valid native queries retain low16-only normalization with exact pinned double1/65535.",
+      "Read queries require borrowed endpoint lifetime and PC53 nearest/masked contract. Tests open/close actual waveOut PCM handle without samples, Play or system volume writes; AUX-positive hardware is unavailable.",
+      "No original/game code, native physical input, UI capture, network session, native playback or volume writes performed. CD option owner and full source startup remain separate unfinished functions."
+    ]
+  },
+  {
+    "address": "00449cf0",
+    "function": "bh_cd_audio_volume",
+    "source": "src/bh_cd_audio.c",
+    "role": "engine_candidate",
+    "family": "c2",
+    "scenarios": [
+      "cd-audio"
+    ],
+    "ranges": [
+      {
+        "start": "00449cf0",
+        "end_exclusive": "00449d37",
+        "bytes": 71,
+        "instructions": 19,
+        "sha256": "ea891e70bd6a4272d68a7f22ff6a3100ed9b7dcb35e241a977bd0b609d08541b"
+      }
+    ],
+    "provenance_confidence": "Ordinary entity callback/numeric behavior with complete reviewed code boundaries; engine authorship unresolved",
+    "abi": "x86 cdecl, actual WinMM MCI/aux/wave SDK layouts; borrowed existing notify/cd state and explicit HWAVEOUT identity. Scalar query returns native x87 double under PC53.",
+    "limits": [
+      "Current host has no physical CD drive: actual cdaudio open returns266. Startup positive-open/TMSF/endpoint-discovery branches remain statically recovered but not dynamically exercised. No physical CD/looping/audibility claim.",
+      "Existing BHCdClose.last_track is reused as original004912d0 AUX device identity; its historical field name is misleading. Existing BHCdNotify.callback and actual MCI device ownership are reused without admitted-source changes.",
+      "Source fresh-owner/null guards prevent overwriting a live MCI device. Native failed caps queries are skipped with defined-zero records; original consumed uninitialized stack fields.",
+      "Original volume errors left stack output unspecified; source returns defined1.0 and records exact MMRESULT. Valid native queries retain low16-only normalization with exact pinned double1/65535.",
+      "Read queries require borrowed endpoint lifetime and PC53 nearest/masked contract. Tests open/close actual waveOut PCM handle without samples, Play or system volume writes; AUX-positive hardware is unavailable.",
+      "No original/game code, native physical input, UI capture, network session, native playback or volume writes performed. CD option owner and full source startup remain separate unfinished functions."
+    ]
+  },
+  {
+    "address": "00449da0",
+    "function": "bh_wave_audio_volume",
+    "source": "src/bh_cd_audio.c",
+    "role": "engine_candidate",
+    "family": "c2",
+    "scenarios": [
+      "cd-audio"
+    ],
+    "ranges": [
+      {
+        "start": "00449da0",
+        "end_exclusive": "00449de7",
+        "bytes": 71,
+        "instructions": 19,
+        "sha256": "c4b28841c7530dc6fbb71a66e8076b81c30ac8dd48facbc18447dad339e6a36f"
+      }
+    ],
+    "provenance_confidence": "Ordinary entity callback/numeric behavior with complete reviewed code boundaries; engine authorship unresolved",
+    "abi": "x86 cdecl, actual WinMM MCI/aux/wave SDK layouts; borrowed existing notify/cd state and explicit HWAVEOUT identity. Scalar query returns native x87 double under PC53.",
+    "limits": [
+      "Current host has no physical CD drive: actual cdaudio open returns266. Startup positive-open/TMSF/endpoint-discovery branches remain statically recovered but not dynamically exercised. No physical CD/looping/audibility claim.",
+      "Existing BHCdClose.last_track is reused as original004912d0 AUX device identity; its historical field name is misleading. Existing BHCdNotify.callback and actual MCI device ownership are reused without admitted-source changes.",
+      "Source fresh-owner/null guards prevent overwriting a live MCI device. Native failed caps queries are skipped with defined-zero records; original consumed uninitialized stack fields.",
+      "Original volume errors left stack output unspecified; source returns defined1.0 and records exact MMRESULT. Valid native queries retain low16-only normalization with exact pinned double1/65535.",
+      "Read queries require borrowed endpoint lifetime and PC53 nearest/masked contract. Tests open/close actual waveOut PCM handle without samples, Play or system volume writes; AUX-positive hardware is unavailable.",
+      "No original/game code, native physical input, UI capture, network session, native playback or volume writes performed. CD option owner and full source startup remain separate unfinished functions."
+    ]
+  },
+  {
+    "address": "00475ef0",
+    "function": "bh_provider_startup",
+    "source": "src/bh_provider_startup.c",
+    "role": "engine_candidate",
+    "family": "parent3",
+    "scenarios": [
+      "provider-startup"
+    ],
+    "ranges": [
+      {
+        "start": "00475ef0",
+        "end_exclusive": "0047602d",
+        "bytes": 317,
+        "instructions": 111,
+        "sha256": "04ead963f1958a97a70dc90a484ce522ffc224855377d956cce864f967e943ad"
+      }
+    ],
+    "provenance_confidence": "Whole actual startup provider/modem initialization owner; exact COM identities/application GUID/vtable slots verified; native imports/reused allocation not counted, engine attribution unresolved",
+    "abi": "x86 cdecl; real DirectPlay3A/Lobby2A and actual six-argument provider/four-argument modem callbacks; explicit owning contexts; same-thread retained COM init",
+    "limits": [
+      "Actual peer/lobby creation and provider enumeration validated; modem initialization HRESULT-2005466886, player address HRESULT-2005466816,0successfulconnections/0sessions.",
+      "Successful InitializeConnection/GetPlayerAddress/EnumAddress branches remain unforced host limitations.",
+      "Source invalid/repeated state, failed allocation/lobby guards and zero-initialized size output differ only outside original valid native contracts.",
+      "Catalog copies outlive transient interfaces; dispose copied blobs and balance successful CoInitialize with actual same-thread network shutdown.",
+      "Whole provider initialization, not DirectPlay gameplay or full application startup; no original/game/input/audio/UI execution."
+    ]
+  }
+]

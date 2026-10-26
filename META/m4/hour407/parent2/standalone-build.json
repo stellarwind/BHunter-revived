@@ -1,0 +1,112 @@
+{
+  "passed": true,
+  "fixture": {
+    "scenario": "provider-catalog",
+    "checks": 109,
+    "failures": 0,
+    "sessions_opened": 0,
+    "connections_initialized": 0,
+    "original_code_required": false
+  },
+  "target": "D:\\Decomp\\Bhunter\\build\\hour407-provider\\bhunter-provider-catalog-check.exe",
+  "commands": [
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/FoD:\\Decomp\\Bhunter\\build\\hour407-provider\\module0.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_provider_catalog.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_provider_catalog.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/FoD:\\Decomp\\Bhunter\\build\\hour407-provider\\module1.obj",
+        "D:\\Decomp\\Bhunter\\tests\\provider_catalog.c"
+      ],
+      "exit_code": 0,
+      "output": "provider_catalog.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:/Decomp/dx7sdk/include",
+        "/FoD:\\Decomp\\Bhunter\\build\\hour407-provider\\module2.obj",
+        "D:\\Decomp\\Bhunter\\META\\m4\\hour407\\parent2\\driver.c"
+      ],
+      "exit_code": 0,
+      "output": "driver.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/opt:ref",
+        "/map:D:\\Decomp\\Bhunter\\build\\hour407-provider\\provider-catalog.map",
+        "/out:D:\\Decomp\\Bhunter\\build\\hour407-provider\\bhunter-provider-catalog-check.exe",
+        "D:\\Decomp\\Bhunter\\build\\hour407-provider\\module0.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour407-provider\\module1.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour407-provider\\module2.obj",
+        "kernel32.lib",
+        "ole32.lib"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\build\\hour407-provider\\bhunter-provider-catalog-check.exe"
+      ],
+      "exit_code": 0,
+      "output": "{\"scenario\":\"provider-catalog\",\"checks\":109,\"failures\":0,\"sessions_opened\":0,\"connections_initialized\":0,\"original_code_required\":false}\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/opt:ref",
+        "/out:D:\\Decomp\\Bhunter\\build\\hour407-provider\\missing.exe",
+        "D:\\Decomp\\Bhunter\\build\\hour407-provider\\module1.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour407-provider\\module2.obj",
+        "kernel32.lib",
+        "ole32.lib"
+      ],
+      "exit_code": 25,
+      "output": "module1.obj : error LNK2001: unresolved external symbol _bh_provider_catalog_dispose\nmodule1.obj : error LNK2001: unresolved external symbol _bh_provider_catalog_callback@24\nmodule1.obj : error LNK2001: unresolved external symbol _bh_provider_catalog_init\nD:\\Decomp\\Bhunter\\build\\hour407-provider\\missing.exe : fatal error LNK1120: 3 unresolved externals\n"
+    }
+  ],
+  "sources": {
+    "src/bh_provider_catalog.c": "0e4577713ae09b9f84bec71f4d9cb05ec2801b755c668db382d223b859ccc6fc",
+    "tests/provider_catalog.c": "0f273aa280b62b558f77f8e23f7fa13dfcaa36cc7b25b81ad0ca6cdcb58a4b7c",
+    "META/m4/hour407/parent2/driver.c": "85957de9facabec62487a163647a3d85c03822600d176f6ebc1be989a1ffdefe",
+    "src/bh_provider_catalog.h": "cf8f48dd7378341785b71b2394868ee6a7306ec38691799ac97658b98085e3da"
+  },
+  "original_code_executed": false,
+  "game_launches": 0
+}

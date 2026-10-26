@@ -1,0 +1,70 @@
+[
+  {
+    "original_va": "0042c4c0",
+    "function": "bh_menu_row_create",
+    "source": "src/bh_menu_row.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Actual application menu row construction/label refresh using hardcoded TVFONT resource and borrowed callback; not verified CRT/library/compiler support/shared tail; historical engine attribution unresolved",
+    "boundary": {
+      "start": "0042c4c0",
+      "end_exclusive": "0042c7cd",
+      "bytes": 781,
+      "instructions": 241,
+      "sha256": "23fac5f2003316db99fac54638336b00d0a68ea9d4c495f796628b36a28f995a"
+    },
+    "validation": {
+      "abi": "x86 cdecl and exact28byte row fields; seven original constructor arguments over explicit menu context. Real page/image/cache/metric/ANSI+UTF16 producer definitions linked; retained short wrapping and body mutation.",
+      "limits": [
+        "Existing28byte row layout is recovered exactly; containing menu header/row-array/capacity are explicit bounded source bindings, not a guessed whole-menu binary overlay.",
+        "Title pointer and optional real refresh callback are borrowed and must outlive row use. Callback is retained, not invoked here; nonNULL callback skips initial painting/body mutation as original.",
+        "Body is caller-owned writable storage: newline separators are destructively replaced byNUL; trailing newline emits no extra final row. Title lines must fit255converted UTF16units plus NUL.",
+        "Original unchecked row/page allocations become explicit source cleanup/transaction; failures retain prior row/page ownership and existing borrowed atlas cache effects. Invalid/full/overlong inputs are source guards.",
+        "Queue capacity failure drops individual commands while title/body processing, count and successful ownership continue. Dispose queued borrowers before owner; source rejects disposal until FIFO empty.",
+        "No original/game execution, physical input, UI capture, audioPlay, network sessions or volume writes. Native memory reads only inspect private owned page surfaces. Full menu callbacks/world/startup remain incomplete elsewhere."
+      ]
+    },
+    "evidence": [
+      "META/m4/hour424/c2/0042c4c0.disasm.json",
+      "META/m4/hour424/c2/0042c4c0.decompile.json",
+      "META/m4/hour424/c2/0042c4c0.xrefs.json",
+      "META/m4/hour424/c2/CONTRACT.md",
+      "META/m4/hour424/c2/README.md",
+      "META/m4/hour424/c2/reference-check.json",
+      "META/m4/hour424/c2/focused-validation.json"
+    ]
+  },
+  {
+    "original_va": "0042c7d0",
+    "function": "bh_menu_row_refresh",
+    "source": "src/bh_menu_row.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Actual application menu row construction/label refresh using hardcoded TVFONT resource and borrowed callback; not verified CRT/library/compiler support/shared tail; historical engine attribution unresolved",
+    "boundary": {
+      "start": "0042c7d0",
+      "end_exclusive": "0042ca0d",
+      "bytes": 573,
+      "instructions": 202,
+      "sha256": "fbb6e96b19a343c6b44aaa743af3e25a691a574b59920214e9134b592ee6ec85"
+    },
+    "validation": {
+      "abi": "x86 cdecl and exact28byte row fields; seven original constructor arguments over explicit menu context. Real page/image/cache/metric/ANSI+UTF16 producer definitions linked; retained short wrapping and body mutation.",
+      "limits": [
+        "Existing28byte row layout is recovered exactly; containing menu header/row-array/capacity are explicit bounded source bindings, not a guessed whole-menu binary overlay.",
+        "Title pointer and optional real refresh callback are borrowed and must outlive row use. Callback is retained, not invoked here; nonNULL callback skips initial painting/body mutation as original.",
+        "Body is caller-owned writable storage: newline separators are destructively replaced byNUL; trailing newline emits no extra final row. Title lines must fit255converted UTF16units plus NUL.",
+        "Original unchecked row/page allocations become explicit source cleanup/transaction; failures retain prior row/page ownership and existing borrowed atlas cache effects. Invalid/full/overlong inputs are source guards.",
+        "Queue capacity failure drops individual commands while title/body processing, count and successful ownership continue. Dispose queued borrowers before owner; source rejects disposal until FIFO empty.",
+        "No original/game execution, physical input, UI capture, audioPlay, network sessions or volume writes. Native memory reads only inspect private owned page surfaces. Full menu callbacks/world/startup remain incomplete elsewhere."
+      ]
+    },
+    "evidence": [
+      "META/m4/hour424/c2/0042c7d0.disasm.json",
+      "META/m4/hour424/c2/0042c7d0.decompile.json",
+      "META/m4/hour424/c2/0042c7d0.xrefs.json",
+      "META/m4/hour424/c2/CONTRACT.md",
+      "META/m4/hour424/c2/README.md",
+      "META/m4/hour424/c2/reference-check.json",
+      "META/m4/hour424/c2/focused-validation.json"
+    ]
+  }
+]

@@ -1,0 +1,163 @@
+{
+  "target": "bhunter-script-flash-check.exe",
+  "passed": true,
+  "original_code_executed": false,
+  "commands": [
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_SCRIPT_FLASH_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\script-flash\\bh_script_flash.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_script_flash.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_script_flash.c\n"
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_SCRIPT_FLASH_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\script-flash\\script_flash_test.obj",
+        "D:\\Decomp\\Bhunter\\tests\\script_flash.c"
+      ],
+      "exit_code": 0,
+      "output": "script_flash.c\n"
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_SCRIPT_FLASH_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\script-flash\\bh_entities.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_entities.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_entities.c\n"
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_SCRIPT_FLASH_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\script-flash\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_math.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_math.c\n"
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_SCRIPT_FLASH_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\script-flash\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_fp.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_fp.c\n"
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/DBH_SCRIPT_FLASH_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\script-flash\\bh_round.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_round.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_round.c\n"
+    },
+    {
+      "command": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/opt:ref",
+        "/out:D:\\Decomp\\Bhunter\\build\\script-flash\\bhunter-script-flash-check.exe",
+        "/map:D:\\Decomp\\Bhunter\\build\\script-flash\\script-flash.map",
+        "D:\\Decomp\\Bhunter\\build\\script-flash\\bh_script_flash.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-flash\\script_flash_test.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-flash\\bh_entities.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-flash\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-flash\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-flash\\bh_round.obj",
+        "kernel32.lib"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\build\\script-flash\\bhunter-script-flash-check.exe"
+      ],
+      "exit_code": 0,
+      "output": "{\"scenario\":\"script-flash\",\"checks\":25,\"failures\":0,\"original_code_required\":false,\"play_calls\":0}\n"
+    },
+    {
+      "command": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/opt:ref",
+        "/out:D:\\Decomp\\Bhunter\\build\\script-flash\\missing-flash.exe",
+        "D:\\Decomp\\Bhunter\\build\\script-flash\\script_flash_test.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-flash\\bh_entities.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-flash\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-flash\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\build\\script-flash\\bh_round.obj",
+        "kernel32.lib"
+      ],
+      "exit_code": 25,
+      "output": "script_flash_test.obj : error LNK2001: unresolved external symbol _bh_script_flash_countdown\nscript_flash_test.obj : error LNK2001: unresolved external symbol _bh_script_flash_tick\nscript_flash_test.obj : error LNK2001: unresolved external symbol _bh_script_flash_bind\nD:\\Decomp\\Bhunter\\build\\script-flash\\missing-flash.exe : fatal error LNK1120: 3 unresolved externals\n"
+    }
+  ],
+  "sources": {
+    "src/bh_script_flash.c": "fc99f7e789542ac83fa3d86c9021474bc05cd8504c59b7b3d8413188911c9078",
+    "tests/script_flash.c": "4c5b12025ead1da97c377597a71c1cfc331295612b868c448a1899c3bf78ac15",
+    "src/bh_entities.c": "6fc5e54d88906a7922c149bb1ccc9851c2cbe701217e57d8e3c72646d81cb92a",
+    "src/bh_math.c": "ce111e18659563a2c41a04b645295227aac6ead9fe9cc2e803ac45c726d6e9bc",
+    "src/bh_fp.c": "cc8400a29fd082f96ffd9b483f490a44992717b25eac0cb32e2e108ba446f3f8",
+    "src/bh_round.c": "ff848010705702e25cf85f5ba1d9c30a024d1ea8bf93227240285b9c54fc8ef4",
+    "src/bh_script_flash.h": "892ec534b08231aa58be390fb1ea0e0412ef4233df7094684a221298d900e1af"
+  },
+  "stdout": "{\"scenario\":\"script-flash\",\"checks\":25,\"failures\":0,\"original_code_required\":false,\"play_calls\":0}\n",
+  "missing_module_link_control": true
+}

@@ -1,0 +1,134 @@
+[
+  {
+    "original_va": "00470ac0",
+    "function": "bh_atlas_page_wide_text",
+    "source": "src/bh_atlas_wide.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Ordinary atlas/native glyph resource consumption and real rendering command ring; not CRT/import/compiler helper/shared tail; historical engine authorship unresolved",
+    "boundary": {
+      "start": "00470ac0",
+      "end_exclusive": "00470c81",
+      "bytes": 449,
+      "instructions": 147,
+      "sha256": "3c945d7f3ee83788b4304f8e1335952842624916dc2b4789d2c994e643cacd39"
+    },
+    "validation": {
+      "abi": "x86 cdecl; original32bit wrapped counters/coordinates, signed16glyph metrics, unsigned16text and exact84byte command with29unit prefix. Native surface and actual resident-image ownership reused.",
+      "limits": [
+        "UTF16 code units directly index original atlas glyphs; no Unicode shaping/surrogate decoding is invented. Supported glyphs are32..31+rectangle_count, maximum543.",
+        "Caller retains actual page/atlas/image/native surface/residency and terminated command lifetime. Source validates live bindings/count<=512; partial overlapping string/command storage not established.",
+        "Native Blt HRESULT is intentionally ignored as original while total/cursor/line-height and final pixels_dirty state proceed; actual platform error control is exercised.",
+        "Shared source FIFO dispatches semanticWIDE4 through the actual new executor. Parent separately revalidates existing message-panel/renderer variants; this dispatch adds no original owner.",
+        "No game/original code execution, native input, UI capture, audioPlay, network sessions or user volume writes. Native pixels read from private owned offscreen resources only."
+      ]
+    },
+    "evidence": [
+      "META/m4/hour424/c/00470ac0.disasm.json",
+      "META/m4/hour424/c/00470ac0.decompile.json",
+      "META/m4/hour424/c/00470ac0.xrefs.json",
+      "META/m4/hour424/c/CONTRACT.md",
+      "META/m4/hour424/c/README.md",
+      "META/m4/hour424/c/reference-check.json",
+      "META/m4/hour424/c/focused-validation.json"
+    ]
+  },
+  {
+    "original_va": "00470ce0",
+    "function": "bh_atlas_page_wide_width",
+    "source": "src/bh_atlas_wide.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Ordinary atlas/native glyph resource consumption and real rendering command ring; not CRT/import/compiler helper/shared tail; historical engine authorship unresolved",
+    "boundary": {
+      "start": "00470ce0",
+      "end_exclusive": "00470d34",
+      "bytes": 84,
+      "instructions": 35,
+      "sha256": "2cc44363a60428e820b09fccee213a00730495fcf50a44bff58cba12d3ed1257"
+    },
+    "validation": {
+      "abi": "x86 cdecl; original32bit wrapped counters/coordinates, signed16glyph metrics, unsigned16text and exact84byte command with29unit prefix. Native surface and actual resident-image ownership reused.",
+      "limits": [
+        "UTF16 code units directly index original atlas glyphs; no Unicode shaping/surrogate decoding is invented. Supported glyphs are32..31+rectangle_count, maximum543.",
+        "Caller retains actual page/atlas/image/native surface/residency and terminated command lifetime. Source validates live bindings/count<=512; partial overlapping string/command storage not established.",
+        "Native Blt HRESULT is intentionally ignored as original while total/cursor/line-height and final pixels_dirty state proceed; actual platform error control is exercised.",
+        "Shared source FIFO dispatches semanticWIDE4 through the actual new executor. Parent separately revalidates existing message-panel/renderer variants; this dispatch adds no original owner.",
+        "No game/original code execution, native input, UI capture, audioPlay, network sessions or user volume writes. Native pixels read from private owned offscreen resources only."
+      ]
+    },
+    "evidence": [
+      "META/m4/hour424/c/00470ce0.disasm.json",
+      "META/m4/hour424/c/00470ce0.decompile.json",
+      "META/m4/hour424/c/00470ce0.xrefs.json",
+      "META/m4/hour424/c/CONTRACT.md",
+      "META/m4/hour424/c/README.md",
+      "META/m4/hour424/c/reference-check.json",
+      "META/m4/hour424/c/focused-validation.json"
+    ]
+  },
+  {
+    "original_va": "00477ed0",
+    "function": "bh_text_queue_execute_wide",
+    "source": "src/bh_atlas_wide.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Ordinary atlas/native glyph resource consumption and real rendering command ring; not CRT/import/compiler helper/shared tail; historical engine authorship unresolved",
+    "boundary": {
+      "start": "00477ed0",
+      "end_exclusive": "00477f00",
+      "bytes": 48,
+      "instructions": 19,
+      "sha256": "839e6a42b1291912e00b6237cba73db5aa7319c2cf232fd5c0887dcb13d97a6c"
+    },
+    "validation": {
+      "abi": "x86 cdecl; original32bit wrapped counters/coordinates, signed16glyph metrics, unsigned16text and exact84byte command with29unit prefix. Native surface and actual resident-image ownership reused.",
+      "limits": [
+        "UTF16 code units directly index original atlas glyphs; no Unicode shaping/surrogate decoding is invented. Supported glyphs are32..31+rectangle_count, maximum543.",
+        "Caller retains actual page/atlas/image/native surface/residency and terminated command lifetime. Source validates live bindings/count<=512; partial overlapping string/command storage not established.",
+        "Native Blt HRESULT is intentionally ignored as original while total/cursor/line-height and final pixels_dirty state proceed; actual platform error control is exercised.",
+        "Shared source FIFO dispatches semanticWIDE4 through the actual new executor. Parent separately revalidates existing message-panel/renderer variants; this dispatch adds no original owner.",
+        "No game/original code execution, native input, UI capture, audioPlay, network sessions or user volume writes. Native pixels read from private owned offscreen resources only."
+      ]
+    },
+    "evidence": [
+      "META/m4/hour424/c/00477ed0.disasm.json",
+      "META/m4/hour424/c/00477ed0.decompile.json",
+      "META/m4/hour424/c/00477ed0.xrefs.json",
+      "META/m4/hour424/c/CONTRACT.md",
+      "META/m4/hour424/c/README.md",
+      "META/m4/hour424/c/reference-check.json",
+      "META/m4/hour424/c/focused-validation.json"
+    ]
+  },
+  {
+    "original_va": "00478c50",
+    "function": "bh_text_queue_wide",
+    "source": "src/bh_atlas_wide.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Ordinary atlas/native glyph resource consumption and real rendering command ring; not CRT/import/compiler helper/shared tail; historical engine authorship unresolved",
+    "boundary": {
+      "start": "00478c50",
+      "end_exclusive": "00478cde",
+      "bytes": 142,
+      "instructions": 46,
+      "sha256": "3b2ff20f124a6644d5d0933a112abc44e733e0fccd24cff5e8dc1548450dd9e4"
+    },
+    "validation": {
+      "abi": "x86 cdecl; original32bit wrapped counters/coordinates, signed16glyph metrics, unsigned16text and exact84byte command with29unit prefix. Native surface and actual resident-image ownership reused.",
+      "limits": [
+        "UTF16 code units directly index original atlas glyphs; no Unicode shaping/surrogate decoding is invented. Supported glyphs are32..31+rectangle_count, maximum543.",
+        "Caller retains actual page/atlas/image/native surface/residency and terminated command lifetime. Source validates live bindings/count<=512; partial overlapping string/command storage not established.",
+        "Native Blt HRESULT is intentionally ignored as original while total/cursor/line-height and final pixels_dirty state proceed; actual platform error control is exercised.",
+        "Shared source FIFO dispatches semanticWIDE4 through the actual new executor. Parent separately revalidates existing message-panel/renderer variants; this dispatch adds no original owner.",
+        "No game/original code execution, native input, UI capture, audioPlay, network sessions or user volume writes. Native pixels read from private owned offscreen resources only."
+      ]
+    },
+    "evidence": [
+      "META/m4/hour424/c/00478c50.disasm.json",
+      "META/m4/hour424/c/00478c50.decompile.json",
+      "META/m4/hour424/c/00478c50.xrefs.json",
+      "META/m4/hour424/c/CONTRACT.md",
+      "META/m4/hour424/c/README.md",
+      "META/m4/hour424/c/reference-check.json",
+      "META/m4/hour424/c/focused-validation.json"
+    ]
+  }
+]

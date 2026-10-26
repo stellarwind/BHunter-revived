@@ -1,0 +1,64 @@
+[
+  {
+    "original_va": "00443800",
+    "function": "bh_script_translate_tick",
+    "source": "src/bh_script_motion.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Ordinary complete script target movement/rotation callback; parser installs both reviewed entrypoints; proprietary game/engine authorship unresolved; no verified CRT/import/compiler helper/shared tail counted",
+    "boundary": {
+      "start": "00443800",
+      "end_exclusive": "0044399e",
+      "bytes": 414,
+      "instructions": 106,
+      "sha256": "910f28cf7cf70c6e7bd21d9b83363ebb173855702dd0763e3c28dc6c1b0e5efe"
+    },
+    "validation": {
+      "abi": "32-bit x86 cdecl BHEntityStep; actual entity fields and source pool ownership, PC53 nearest/masked",
+      "limits": [
+        "Functional reconstruction, not byte match; complete script VM and movement target construction remain unrecovered.",
+        "Source explicit binding guards reject dead/foreign/self target and malformed/cyclic attachment chains before mutation; target/context ownership must stay stable while bound.",
+        "Movable target matrices/bounds and origin preinitialization are explicit caller state, not guessed globals or autonomous route actor layout.",
+        "Finite moderate matrix geometry and current PC53 numerical profile; PC24 and NaN payload/sign are not validated.",
+        "No game/original code execution, automated gameplay, physical input, native audio or Play calls."
+      ]
+    },
+    "evidence": [
+      "META/m4/resume400/b/00443800.asm.txt",
+      "META/m4/resume400/b/constants.json",
+      "META/m4/resume400/b/parser-install.asm.txt",
+      "META/m4/resume400/b/README.md",
+      "META/m4/resume400/b/standalone-build.json"
+    ]
+  },
+  {
+    "original_va": "004439a0",
+    "function": "bh_script_rotate_tick",
+    "source": "src/bh_script_motion.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Ordinary complete script target movement/rotation callback; parser installs both reviewed entrypoints; proprietary game/engine authorship unresolved; no verified CRT/import/compiler helper/shared tail counted",
+    "boundary": {
+      "start": "004439a0",
+      "end_exclusive": "00443ab1",
+      "bytes": 273,
+      "instructions": 76,
+      "sha256": "1fe25b7246927ac662805db161aefb98dd3395aea19c895ff029d448d3d99028"
+    },
+    "validation": {
+      "abi": "32-bit x86 cdecl BHEntityStep; actual entity fields and source pool ownership, PC53 nearest/masked",
+      "limits": [
+        "Functional reconstruction, not byte match; complete script VM and movement target construction remain unrecovered.",
+        "Source explicit binding guards reject dead/foreign/self target and malformed/cyclic attachment chains before mutation; target/context ownership must stay stable while bound.",
+        "Movable target matrices/bounds and origin preinitialization are explicit caller state, not guessed globals or autonomous route actor layout.",
+        "Finite moderate matrix geometry and current PC53 numerical profile; PC24 and NaN payload/sign are not validated.",
+        "No game/original code execution, automated gameplay, physical input, native audio or Play calls."
+      ]
+    },
+    "evidence": [
+      "META/m4/resume400/b/004439a0.asm.txt",
+      "META/m4/resume400/b/constants.json",
+      "META/m4/resume400/b/parser-install.asm.txt",
+      "META/m4/resume400/b/README.md",
+      "META/m4/resume400/b/standalone-build.json"
+    ]
+  }
+]

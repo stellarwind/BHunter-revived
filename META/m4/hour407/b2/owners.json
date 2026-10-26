@@ -1,0 +1,42 @@
+[
+  {
+    "original_va": "00455840",
+    "function": "bh_project_point_scale",
+    "source": "src/bh_project_scale.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Whole ordinary projected camera helper, direct real matrix point-transform call and distinct near reject/success returns; not verified CRT/import/compiler helper/shared tail; proprietary engine/game authorship unresolved",
+    "boundary": {
+      "start": "00455840",
+      "end_exclusive": "004558c1",
+      "bytes": 129,
+      "instructions": 46,
+      "sha256": "9cf6946bda8c89cd7a7f5afb6bc66bb79deea7465d76dd2c83bd83e6c5335128"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/project-scale/bhunter-project-scale-check.exe",
+    "validation": {
+      "abi": "Pinned32-bit x86 cdecl; original in-place world scalars copied before screenX/screenY/scale output stores; actual source BHMainCamera projected matrix/focal and BHViewConfig near plane replace scattered globals; PC53 nearest/masked",
+      "fixtures": {
+        "scenario": "project-scale",
+        "checks": 21,
+        "failures": 0
+      },
+      "original_code_executed": false,
+      "game_executed": false,
+      "raw_byte_match": false,
+      "limits": [
+        "Whole helper only; target draw0043c3f0 and target actor construction remain unadmitted. Adjacent004558d0 already admitted and is not counted again.",
+        "Persistent borrowed camera/view and disjoint camera/config versus scalar outputs; scalar pointers may alias each other with original sequential store behavior.",
+        "Source pointer and FP-profile guards reject before input mutation; no global camera initialization or original binary ABI drop-in claim.",
+        "Moderate finite camera geometry, masked zero-depth division and unordered near/depth class fixtures; NaN payload/sign, runtimePC24 and general extreme matrix numerics remain unvalidated.",
+        "No renderer callback or native backend is substituted: direct actual math definitions and source camera builder are linked. No game/original code, input, automation or playback."
+      ]
+    },
+    "evidence": [
+      "META/m4/hour407/b2/00455840.asm.txt",
+      "META/m4/hour407/b2/README.md",
+      "META/m4/hour407/b2/standalone-build.json"
+    ]
+  }
+]

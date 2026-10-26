@@ -1,0 +1,62 @@
+[
+  {
+    "address": "00443ac0",
+    "function": "bh_script_proximity_tick",
+    "source": "src/bh_script_sensor.c",
+    "role": "engine_candidate",
+    "family": "b",
+    "scenarios": [
+      "script-sensor"
+    ],
+    "ranges": [
+      {
+        "start": "00443ac0",
+        "end_exclusive": "00443d34",
+        "bytes": 628,
+        "instructions": 180,
+        "sha256": "583ae26713b5a73b1d564930492dd404973fdf8d3114cdec4cb4119ce8f87f77"
+      }
+    ],
+    "provenance_confidence": "Complete ordinary VM-installed sensor step, real entity query/release, native field access and reviewed separate returns; not verified CRT/import/compiler support or independently counted shared tail; game/engine authorship unresolved",
+    "abi": "Pinned x86 cdecl BHEntityStep; original+f0/f4/fc/100/104/108/128/12c fields, actual actor148 damage and owner bounds; persistent explicit contexts, PC53 nearest/masked",
+    "limits": [
+      "Count-zero explicit sensor state/context binding; full VM00443ff0, radar list construction, target construction and parser remain unadmitted.",
+      "Caller owns stable context, radar and real actor/owner table/pool entity lifetimes. Source rejects malformed binding and stops on current generation/actor mutation after broadcast instead of writing through freed/recycled state.",
+      "Original proximity owner releases on final finite shot then reaches a stale-state end-of-list write; source returns after actual release, avoiding that write without changing live behavior.",
+      "Event14 packet event/actor/expected and event17 event/actor are contractual; source zeros original unspecified stack remainder and claims no wire protocol.",
+      "Actual query owner starts from latest query registration then follows active-next as original; fixtures construct receivers before the sensor and retain this original ordering behavior.",
+      "PC53 finite moderate geometry, explicit unordered branch fixtures and pre-store damage threshold checks; original runtime PC24 transitions and NaN payload/sign are unvalidated.",
+      "No game/original code, gameplay automation, physical input, native audio playback, UI or network operations."
+    ]
+  },
+  {
+    "address": "00443d40",
+    "function": "bh_script_damage_tick",
+    "source": "src/bh_script_sensor.c",
+    "role": "engine_candidate",
+    "family": "b",
+    "scenarios": [
+      "script-sensor"
+    ],
+    "ranges": [
+      {
+        "start": "00443d40",
+        "end_exclusive": "00443e76",
+        "bytes": 310,
+        "instructions": 80,
+        "sha256": "d14c4c5da7d49a5e9fa55dd6763e295a0c7ae81a965e4201cdba041542d945c4"
+      }
+    ],
+    "provenance_confidence": "Complete ordinary VM-installed sensor step, real entity query/release, native field access and reviewed separate returns; not verified CRT/import/compiler support or independently counted shared tail; game/engine authorship unresolved",
+    "abi": "Pinned x86 cdecl BHEntityStep; original+f0/f4/fc/100/104/108/128/12c fields, actual actor148 damage and owner bounds; persistent explicit contexts, PC53 nearest/masked",
+    "limits": [
+      "Count-zero explicit sensor state/context binding; full VM00443ff0, radar list construction, target construction and parser remain unadmitted.",
+      "Caller owns stable context, radar and real actor/owner table/pool entity lifetimes. Source rejects malformed binding and stops on current generation/actor mutation after broadcast instead of writing through freed/recycled state.",
+      "Original proximity owner releases on final finite shot then reaches a stale-state end-of-list write; source returns after actual release, avoiding that write without changing live behavior.",
+      "Event14 packet event/actor/expected and event17 event/actor are contractual; source zeros original unspecified stack remainder and claims no wire protocol.",
+      "Actual query owner starts from latest query registration then follows active-next as original; fixtures construct receivers before the sensor and retain this original ordering behavior.",
+      "PC53 finite moderate geometry, explicit unordered branch fixtures and pre-store damage threshold checks; original runtime PC24 transitions and NaN payload/sign are unvalidated.",
+      "No game/original code, gameplay automation, physical input, native audio playback, UI or network operations."
+    ]
+  }
+]

@@ -1,0 +1,113 @@
+
+GAME_DATA/BHUNTER.EXE:     file format pei-i386
+
+
+Disassembly of section .text:
+
+00443800 <.text+0x42800>:
+  443800:	56                   	push   esi
+  443801:	8b 74 24 08          	mov    esi,DWORD PTR [esp+0x8]
+  443805:	57                   	push   edi
+  443806:	d9 86 30 01 00 00    	fld    DWORD PTR [esi+0x130]
+  44380c:	8b be f0 00 00 00    	mov    edi,DWORD PTR [esi+0xf0]
+  443812:	d8 87 b0 01 00 00    	fadd   DWORD PTR [edi+0x1b0]
+  443818:	8d 87 50 01 00 00    	lea    eax,[edi+0x150]
+  44381e:	50                   	push   eax
+  44381f:	51                   	push   ecx
+  443820:	d9 9f b0 01 00 00    	fstp   DWORD PTR [edi+0x1b0]
+  443826:	d9 86 34 01 00 00    	fld    DWORD PTR [esi+0x134]
+  44382c:	d8 87 b4 01 00 00    	fadd   DWORD PTR [edi+0x1b4]
+  443832:	d9 9f b4 01 00 00    	fstp   DWORD PTR [edi+0x1b4]
+  443838:	d9 86 38 01 00 00    	fld    DWORD PTR [esi+0x138]
+  44383e:	d8 87 b8 01 00 00    	fadd   DWORD PTR [edi+0x1b8]
+  443844:	d9 9f b8 01 00 00    	fstp   DWORD PTR [edi+0x1b8]
+  44384a:	d9 86 30 01 00 00    	fld    DWORD PTR [esi+0x130]
+  443850:	d8 87 bc 01 00 00    	fadd   DWORD PTR [edi+0x1bc]
+  443856:	d9 9f bc 01 00 00    	fstp   DWORD PTR [edi+0x1bc]
+  44385c:	d9 86 34 01 00 00    	fld    DWORD PTR [esi+0x134]
+  443862:	d8 87 c0 01 00 00    	fadd   DWORD PTR [edi+0x1c0]
+  443868:	d9 9f c0 01 00 00    	fstp   DWORD PTR [edi+0x1c0]
+  44386e:	d9 86 38 01 00 00    	fld    DWORD PTR [esi+0x138]
+  443874:	d8 87 c4 01 00 00    	fadd   DWORD PTR [edi+0x1c4]
+  44387a:	d9 9f c4 01 00 00    	fstp   DWORD PTR [edi+0x1c4]
+  443880:	d9 86 30 01 00 00    	fld    DWORD PTR [esi+0x130]
+  443886:	d8 47 0c             	fadd   DWORD PTR [edi+0xc]
+  443889:	d9 5f 0c             	fstp   DWORD PTR [edi+0xc]
+  44388c:	d9 86 34 01 00 00    	fld    DWORD PTR [esi+0x134]
+  443892:	d8 47 10             	fadd   DWORD PTR [edi+0x10]
+  443895:	d9 5f 10             	fstp   DWORD PTR [edi+0x10]
+  443898:	d9 86 38 01 00 00    	fld    DWORD PTR [esi+0x138]
+  44389e:	d8 47 14             	fadd   DWORD PTR [edi+0x14]
+  4438a1:	d9 5f 14             	fstp   DWORD PTR [edi+0x14]
+  4438a4:	d9 86 34 01 00 00    	fld    DWORD PTR [esi+0x134]
+  4438aa:	d9 86 38 01 00 00    	fld    DWORD PTR [esi+0x138]
+  4438b0:	d9 1c 24             	fstp   DWORD PTR [esp]
+  4438b3:	d9 86 30 01 00 00    	fld    DWORD PTR [esi+0x130]
+  4438b9:	d9 c9                	fxch   st(1)
+  4438bb:	51                   	push   ecx
+  4438bc:	d9 1c 24             	fstp   DWORD PTR [esp]
+  4438bf:	51                   	push   ecx
+  4438c0:	d9 1c 24             	fstp   DWORD PTR [esp]
+  4438c3:	e8 98 db fb ff       	call   0x401460
+  4438c8:	d9 86 38 01 00 00    	fld    DWORD PTR [esi+0x138]
+  4438ce:	d9 86 34 01 00 00    	fld    DWORD PTR [esi+0x134]
+  4438d4:	d9 c9                	fxch   st(1)
+  4438d6:	d9 e0                	fchs
+  4438d8:	d9 86 30 01 00 00    	fld    DWORD PTR [esi+0x130]
+  4438de:	d9 c9                	fxch   st(1)
+  4438e0:	83 c4 10             	add    esp,0x10
+  4438e3:	8d 8f 80 01 00 00    	lea    ecx,[edi+0x180]
+  4438e9:	51                   	push   ecx
+  4438ea:	51                   	push   ecx
+  4438eb:	d9 1c 24             	fstp   DWORD PTR [esp]
+  4438ee:	d9 c9                	fxch   st(1)
+  4438f0:	d9 e0                	fchs
+  4438f2:	51                   	push   ecx
+  4438f3:	d9 1c 24             	fstp   DWORD PTR [esp]
+  4438f6:	51                   	push   ecx
+  4438f7:	d9 e0                	fchs
+  4438f9:	d9 1c 24             	fstp   DWORD PTR [esp]
+  4438fc:	e8 8f db fb ff       	call   0x401490
+  443901:	8b 87 2c 01 00 00    	mov    eax,DWORD PTR [edi+0x12c]
+  443907:	83 c4 10             	add    esp,0x10
+  44390a:	85 c0                	test   eax,eax
+  44390c:	74 2e                	je     0x44393c
+  44390e:	d9 86 30 01 00 00    	fld    DWORD PTR [esi+0x130]
+  443914:	d8 40 0c             	fadd   DWORD PTR [eax+0xc]
+  443917:	d9 58 0c             	fstp   DWORD PTR [eax+0xc]
+  44391a:	d9 86 34 01 00 00    	fld    DWORD PTR [esi+0x134]
+  443920:	d8 40 10             	fadd   DWORD PTR [eax+0x10]
+  443923:	d9 58 10             	fstp   DWORD PTR [eax+0x10]
+  443926:	d9 86 38 01 00 00    	fld    DWORD PTR [esi+0x138]
+  44392c:	d8 40 14             	fadd   DWORD PTR [eax+0x14]
+  44392f:	d9 58 14             	fstp   DWORD PTR [eax+0x14]
+  443932:	8b 80 ec 00 00 00    	mov    eax,DWORD PTR [eax+0xec]
+  443938:	85 c0                	test   eax,eax
+  44393a:	75 d2                	jne    0x44390e
+  44393c:	d9 86 28 01 00 00    	fld    DWORD PTR [esi+0x128]
+  443942:	d8 1d 00 92 48 00    	fcomp  DWORD PTR ds:0x489200
+  443948:	df e0                	fnstsw ax
+  44394a:	f6 c4 41             	test   ah,0x41
+  44394d:	75 4c                	jne    0x44399b
+  44394f:	d9 86 28 01 00 00    	fld    DWORD PTR [esi+0x128]
+  443955:	dc 25 f8 91 48 00    	fsub   QWORD PTR ds:0x4891f8
+  44395b:	d8 15 00 92 48 00    	fcom   DWORD PTR ds:0x489200
+  443961:	d9 9e 28 01 00 00    	fstp   DWORD PTR [esi+0x128]
+  443967:	df e0                	fnstsw ax
+  443969:	f6 c4 41             	test   ah,0x41
+  44396c:	74 2d                	je     0x44399b
+  44396e:	d9 86 30 01 00 00    	fld    DWORD PTR [esi+0x130]
+  443974:	d8 6f 48             	fsubr  DWORD PTR [edi+0x48]
+  443977:	56                   	push   esi
+  443978:	d9 5f 48             	fstp   DWORD PTR [edi+0x48]
+  44397b:	d9 86 34 01 00 00    	fld    DWORD PTR [esi+0x134]
+  443981:	d8 6f 4c             	fsubr  DWORD PTR [edi+0x4c]
+  443984:	d9 5f 4c             	fstp   DWORD PTR [edi+0x4c]
+  443987:	d9 86 38 01 00 00    	fld    DWORD PTR [esi+0x138]
+  44398d:	d8 6f 50             	fsubr  DWORD PTR [edi+0x50]
+  443990:	d9 5f 50             	fstp   DWORD PTR [edi+0x50]
+  443993:	e8 d8 36 03 00       	call   0x477070
+  443998:	83 c4 04             	add    esp,0x4
+  44399b:	5f                   	pop    edi
+  44399c:	5e                   	pop    esi
+  44399d:	c3                   	ret

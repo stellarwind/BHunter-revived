@@ -1,5 +1,18 @@
 # Source integration build
 
+Current checkpoint (2026-10-26): **443/727 linked original owners, 409 translation units, 198 missing-module controls**. The final real-data build passes **4,898,629 checks**; the independent asset-free checkout passes **4,392,781**. Current evidence: [hour424](META/m4/hour424/README.md). Earlier totals below are historical checkpoints.
+
+From the repository root, reproduce the current source checks with:
+
+```powershell
+python tools/m0.py build --archive GAME_DATA/Bhunter.bin
+python tools/check_m0_clean.py --evidence-dir build/current-clean-evidence
+python tools/check_hour424_final.py
+python tools/mkstatus.py --check
+```
+
+The aggregate audit verifies the retained final evidence and unchanged current source; a later source change requires a new checkpoint. Use a fresh evidence directory for the clean rebuild. These commands run source fixtures and native offscreen/API checks. The force-feedback fixture requires a zero-device preflight and refuses physical acquisition or effect Start on a hardware-equipped host. Existing sound fixtures retain twelve silent-PCM and two immediately stopped primary Play calls per full build. No game or original code runs. M3 is skipped; historical reference/gameplay commands below are not the current workflow. Automated gameplay remains prohibited.
+
 On Windows x64 with Python 3.10+ on PATH, run from any working directory:
 
 ```cmd
@@ -36,6 +49,8 @@ The compiler and SDK are proprietary local dependencies and are not distributed 
 | `BH_SHARED_DIR` | `D:/Decomp/MSCVC/MSVC5/TOOLS/DEVSTUDIO/SHAREDIDE/BIN` | VC5 helper DLLs |
 
 To prepare a new compiler directory, copy stock `VC/bin/CL.EXE`; copy `c1.dll`, `c1xx.dll`, `c2.exe` and `link.exe` from the SP3 extraction's `VS97_SP3/enu/vc/bin`; copy `MSDIS100.DLL`, `MSPDB50.DLL` and `MSVCP50.DLL` from stock `DEVSTUDIO/SHAREDIDE/BIN`. Preserve the SP3 `all/vc/include` and `all/vc/lib` overlay separately from the stock trees. Use the supplied manifest to check exact hashes, including helpers. Set the variables above if these directories differ. Equivalent command-line overrides are listed by `python tools/m0.py --help`.
+
+The native provider initializer additionally pins `include/dplobby.h` under the existing DX7 SDK root in `META/native-lobby-dependencies.json`. The build verifies its bytes before compilation and records the same dependency in both real and clean results; historical comparison flags are unchanged.
 
 Declared combination: CL driver 11.00.7022; C frontend 11.00.7113; C++ frontend/backend 11.00.7303; stock LINK 5.00.7022. Integration flags are `/ML /O2 /G5 /Oi /Gy`; these are a scoped historical integration baseline, not a modern game compiler choice. INCLUDE and LIB are constructed explicitly, and inherited CL/_CL_/LINK/_LINK_ options are removed. The historical C++ matching flags and source/header arrangement remain unchanged.
 

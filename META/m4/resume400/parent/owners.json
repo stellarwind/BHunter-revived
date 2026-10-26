@@ -1,0 +1,62 @@
+[
+  {
+    "original_va": "00412190",
+    "function": "bh_editor_input_setup",
+    "source": "src/bh_editor_input.c",
+    "role": "game",
+    "provenance_confidence": "Reviewed editor control setup and installed editor packet consumer; distinct whole application owners, no CRT/EH/import/shared-tail body",
+    "boundary": {
+      "start": "00412190",
+      "end_exclusive": "004124c4",
+      "bytes": 820,
+      "instructions": 265,
+      "sha256": "6cc00a9bb258667cf53f26633a191c58ac9fbea08f8df782d2e942db96bbc2fd"
+    },
+    "validation": {
+      "abi": "Pinned x86 cdecl; real0x2130 input list, packet+2010, actual entity step+cc; explicit borrowed persistent editor globals",
+      "limits": [
+        "Editor control family, not player controls or full world construction.",
+        "Source NULL/repeated-init/list-failure guards; original assumes list allocation succeeds.",
+        "Entity allocation failure preserves constructed list as original; caller releases any dispatcher before list/context destruction.",
+        "Valid current list encoded packet must not overlap destination state; actual input packet application ABI is deliberately state,packet in source.",
+        "Private entity payload+420 stores context; contexts/list/state/pool must outlive callback; live list rebinding retained.",
+        "No game, original code, physical input/cursor, UI capture or playback."
+      ]
+    },
+    "evidence": [
+      "META/m4/loading-display/next-review/WORLD_INPUT_CONTRACT.md",
+      "META/m4/resume400/parent/README.md",
+      "META/m4/resume400/parent/00412190.disasm.json"
+    ]
+  },
+  {
+    "original_va": "004100b0",
+    "function": "bh_editor_input_tick",
+    "source": "src/bh_editor_input.c",
+    "role": "game",
+    "provenance_confidence": "Reviewed editor control setup and installed editor packet consumer; distinct whole application owners, no CRT/EH/import/shared-tail body",
+    "boundary": {
+      "start": "004100b0",
+      "end_exclusive": "004100c9",
+      "bytes": 25,
+      "instructions": 7,
+      "sha256": "8da349d83ef2ae522d0acf86623f5711d66ed05680c82c6415a6c446c5ca53bc"
+    },
+    "validation": {
+      "abi": "Pinned x86 cdecl; real0x2130 input list, packet+2010, actual entity step+cc; explicit borrowed persistent editor globals",
+      "limits": [
+        "Editor control family, not player controls or full world construction.",
+        "Source NULL/repeated-init/list-failure guards; original assumes list allocation succeeds.",
+        "Entity allocation failure preserves constructed list as original; caller releases any dispatcher before list/context destruction.",
+        "Valid current list encoded packet must not overlap destination state; actual input packet application ABI is deliberately state,packet in source.",
+        "Private entity payload+420 stores context; contexts/list/state/pool must outlive callback; live list rebinding retained.",
+        "No game, original code, physical input/cursor, UI capture or playback."
+      ]
+    },
+    "evidence": [
+      "META/m4/loading-display/next-review/WORLD_INPUT_CONTRACT.md",
+      "META/m4/resume400/parent/README.md",
+      "META/m4/resume400/parent/004100b0.disasm.json"
+    ]
+  }
+]

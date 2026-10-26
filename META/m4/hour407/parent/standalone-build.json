@@ -1,0 +1,166 @@
+{
+  "passed": true,
+  "fixture": {
+    "scenario": "sound-startup",
+    "checks": 32,
+    "failures": 0,
+    "original_code_required": false
+  },
+  "target": "D:\\Decomp\\Bhunter\\build\\hour407-sound\\bhunter-sound-startup-check.exe",
+  "commands": [
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\hour407-sound\\module0.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_sound_startup.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_sound_startup.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\hour407-sound\\module1.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_sound_queue.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_sound_queue.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\hour407-sound\\module2.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_round.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_round.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\hour407-sound\\module3.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_fp.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_fp.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\hour407-sound\\module4.obj",
+        "D:\\Decomp\\Bhunter\\tests\\sound_startup.c"
+      ],
+      "exit_code": 0,
+      "output": "sound_startup.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\hour407-sound\\module5.obj",
+        "D:\\Decomp\\Bhunter\\META\\m4\\hour407\\parent\\driver.c"
+      ],
+      "exit_code": 0,
+      "output": "driver.c\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/opt:ref",
+        "/map:D:\\Decomp\\Bhunter\\build\\hour407-sound\\sound-startup.map",
+        "/out:D:\\Decomp\\Bhunter\\build\\hour407-sound\\bhunter-sound-startup-check.exe",
+        "D:\\Decomp\\Bhunter\\build\\hour407-sound\\module0.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour407-sound\\module1.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour407-sound\\module2.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour407-sound\\module3.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour407-sound\\module4.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour407-sound\\module5.obj",
+        "kernel32.lib",
+        "user32.lib",
+        "dsound.lib"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\Bhunter\\build\\hour407-sound\\bhunter-sound-startup-check.exe"
+      ],
+      "exit_code": 0,
+      "output": "{\"scenario\":\"sound-startup\",\"checks\":32,\"failures\":0,\"original_code_required\":false}\n"
+    },
+    {
+      "argv": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/opt:ref",
+        "/out:D:\\Decomp\\Bhunter\\build\\hour407-sound\\missing.exe",
+        "D:\\Decomp\\Bhunter\\build\\hour407-sound\\module1.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour407-sound\\module2.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour407-sound\\module3.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour407-sound\\module4.obj",
+        "D:\\Decomp\\Bhunter\\build\\hour407-sound\\module5.obj",
+        "kernel32.lib",
+        "user32.lib",
+        "dsound.lib"
+      ],
+      "exit_code": 25,
+      "output": "module4.obj : error LNK2001: unresolved external symbol _bh_sound_startup\nD:\\Decomp\\Bhunter\\build\\hour407-sound\\missing.exe : fatal error LNK1120: 1 unresolved externals\n"
+    }
+  ],
+  "sources": {
+    "src/bh_sound_startup.c": "adb78451fabccf05272dc289cebb02c4a48a84c23da56aa49a1a2d79e08dcc82",
+    "src/bh_sound_queue.c": "9c6a9eddf5cb3332539153e7aa7418326c0ec9598a5a565f53d529ce706f61a5",
+    "src/bh_round.c": "ff848010705702e25cf85f5ba1d9c30a024d1ea8bf93227240285b9c54fc8ef4",
+    "src/bh_fp.c": "cc8400a29fd082f96ffd9b483f490a44992717b25eac0cb32e2e108ba446f3f8",
+    "tests/sound_startup.c": "a2fd53484bba529c236a331b069e73e0074ba1355688859ce0015cd0e7704a43",
+    "META/m4/hour407/parent/driver.c": "603c43fa6e7a2a0c5c656b1ef3a2ff0ccb0238d3f27ceb6a1a1f493919ea5fd9",
+    "src/bh_sound_startup.h": "e9c272bd5abb71b928c10dfccfead761b0fb150dcae44292f8b1c3b7afb8d8f6"
+  },
+  "original_code_executed": false,
+  "game_launches": 0
+}

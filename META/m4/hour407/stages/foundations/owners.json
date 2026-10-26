@@ -1,0 +1,221 @@
+[
+  {
+    "address": "0047b500",
+    "function": "bh_sound_startup",
+    "source": "src/bh_sound_startup.c",
+    "role": "engine_candidate",
+    "family": "parent",
+    "scenarios": [
+      "sound-startup"
+    ],
+    "ranges": [
+      {
+        "start": "0047b500",
+        "end_exclusive": "0047b5e4",
+        "bytes": 228,
+        "instructions": 75,
+        "sha256": "0742af0bfbfce5d647d5d2bb55a7a8bd92969a35a1c466d23d1e775379c6df14"
+      }
+    ],
+    "provenance_confidence": "Whole native sound initialization owner called by startup; real DirectSound interfaces, native imports only; no CRT/EH/import-thunk/shared-tail admission, historical engine authorship unresolved",
+    "abi": "Pinned x86 cdecl; actual DirectSound COM methods, original20-byte descriptor prefix and loop flag1; explicit fresh source queue owns actual COM references",
+    "limits": [
+      "Device Create retries10/100ms, ignored cooperative/Play results and primary-failure success return implemented; only native positive path executed on this host.",
+      "Fresh initialized source queue and live application HWND required; occupied/invalid source owner rejected before calls.",
+      "Primary native Play is required original behavior; fixture stops immediately, loads no samples and releases both actual interfaces.",
+      "Failure-output defensive release and diagnostic fields are source adapters; no forced native API failures or fabricated implementations.",
+      "No original/game code, physical input/cursor, UI capture or secondary playback; actual CD audio and full startup remain open."
+    ]
+  },
+  {
+    "address": "004025c0",
+    "function": "bh_script_particle_create",
+    "source": "src/bh_script_particles.c",
+    "role": "engine_candidate",
+    "family": "a",
+    "scenarios": [
+      "script-particles"
+    ],
+    "ranges": [
+      {
+        "start": "004025c0",
+        "end_exclusive": "0040270d",
+        "bytes": 333,
+        "instructions": 84,
+        "sha256": "df41f790d09cb37741105117bbb1353337900bf1de439c27e0f0b13556e63115"
+      }
+    ],
+    "provenance_confidence": "Complete independently referenced source effect constructor/step/refresh, actual pool/random/draw calls; not CRT/import/EH/shared tail; game versus proprietary engine authorship unresolved",
+    "abi": "Pinned x86 cdecl; actual entity pool,84-byte particle state at+e8, real queue methods and source timer actor table; explicit persistent source contexts, no guessed globals/vtables",
+    "limits": [
+      "Full VM/parser construction and live world resource/actor binding remain separate incomplete owners; emitter binding and context helpers add no owner count.",
+      "PC53 nearest/masked exceptions tested; runtime PC24 transitions and NaN payload/signaling exception ordering remain unvalidated.",
+      "Texture IDs are explicit borrowed queue identities; no native presentation, gameplay, input/audio/network operation or original code execution.",
+      "Caller retains real actor/owner/context/queue/pool lifetime; source membership helpers are not generation-proof after slot recycling."
+    ]
+  },
+  {
+    "address": "004024c0",
+    "function": "bh_script_particle_tick",
+    "source": "src/bh_script_particles.c",
+    "role": "engine_candidate",
+    "family": "a",
+    "scenarios": [
+      "script-particles"
+    ],
+    "ranges": [
+      {
+        "start": "004024c0",
+        "end_exclusive": "004025be",
+        "bytes": 254,
+        "instructions": 62,
+        "sha256": "52d87c6eefba9bf1a143104328f2be3ddf8f7dd35431ff1c35b92fedd38595a4"
+      }
+    ],
+    "provenance_confidence": "Complete independently referenced source effect constructor/step/refresh, actual pool/random/draw calls; not CRT/import/EH/shared tail; game versus proprietary engine authorship unresolved",
+    "abi": "Pinned x86 cdecl; actual entity pool,84-byte particle state at+e8, real queue methods and source timer actor table; explicit persistent source contexts, no guessed globals/vtables",
+    "limits": [
+      "Full VM/parser construction and live world resource/actor binding remain separate incomplete owners; emitter binding and context helpers add no owner count.",
+      "PC53 nearest/masked exceptions tested; runtime PC24 transitions and NaN payload/signaling exception ordering remain unvalidated.",
+      "Texture IDs are explicit borrowed queue identities; no native presentation, gameplay, input/audio/network operation or original code execution.",
+      "Caller retains real actor/owner/context/queue/pool lifetime; source membership helpers are not generation-proof after slot recycling."
+    ]
+  },
+  {
+    "address": "00402470",
+    "function": "bh_script_particle_refresh",
+    "source": "src/bh_script_particles.c",
+    "role": "engine_candidate",
+    "family": "a",
+    "scenarios": [
+      "script-particles"
+    ],
+    "ranges": [
+      {
+        "start": "00402470",
+        "end_exclusive": "004024b4",
+        "bytes": 68,
+        "instructions": 21,
+        "sha256": "8585fb6cfafebd940b978672fd7007b6354fc1c3db3769c71c3863ed5571e0c3"
+      }
+    ],
+    "provenance_confidence": "Complete independently referenced source effect constructor/step/refresh, actual pool/random/draw calls; not CRT/import/EH/shared tail; game versus proprietary engine authorship unresolved",
+    "abi": "Pinned x86 cdecl; actual entity pool,84-byte particle state at+e8, real queue methods and source timer actor table; explicit persistent source contexts, no guessed globals/vtables",
+    "limits": [
+      "Full VM/parser construction and live world resource/actor binding remain separate incomplete owners; emitter binding and context helpers add no owner count.",
+      "PC53 nearest/masked exceptions tested; runtime PC24 transitions and NaN payload/signaling exception ordering remain unvalidated.",
+      "Texture IDs are explicit borrowed queue identities; no native presentation, gameplay, input/audio/network operation or original code execution.",
+      "Caller retains real actor/owner/context/queue/pool lifetime; source membership helpers are not generation-proof after slot recycling."
+    ]
+  },
+  {
+    "address": "00443390",
+    "function": "bh_script_fountain_tick",
+    "source": "src/bh_script_particles.c",
+    "role": "engine_candidate",
+    "family": "a",
+    "scenarios": [
+      "script-particles"
+    ],
+    "ranges": [
+      {
+        "start": "00443390",
+        "end_exclusive": "004434af",
+        "bytes": 287,
+        "instructions": 79,
+        "sha256": "de663ef66f4236c44905c7c70292f97ae2d2c20923e3da33f12e6dc9d1e702b6"
+      }
+    ],
+    "provenance_confidence": "Complete independently referenced source effect constructor/step/refresh, actual pool/random/draw calls; not CRT/import/EH/shared tail; game versus proprietary engine authorship unresolved",
+    "abi": "Pinned x86 cdecl; actual entity pool,84-byte particle state at+e8, real queue methods and source timer actor table; explicit persistent source contexts, no guessed globals/vtables",
+    "limits": [
+      "Full VM/parser construction and live world resource/actor binding remain separate incomplete owners; emitter binding and context helpers add no owner count.",
+      "PC53 nearest/masked exceptions tested; runtime PC24 transitions and NaN payload/signaling exception ordering remain unvalidated.",
+      "Texture IDs are explicit borrowed queue identities; no native presentation, gameplay, input/audio/network operation or original code execution.",
+      "Caller retains real actor/owner/context/queue/pool lifetime; source membership helpers are not generation-proof after slot recycling."
+    ]
+  },
+  {
+    "address": "004434b0",
+    "function": "bh_script_steam_tick",
+    "source": "src/bh_script_particles.c",
+    "role": "engine_candidate",
+    "family": "a",
+    "scenarios": [
+      "script-particles"
+    ],
+    "ranges": [
+      {
+        "start": "004434b0",
+        "end_exclusive": "0044363d",
+        "bytes": 397,
+        "instructions": 105,
+        "sha256": "71c8cc09e80cba65d9ff509ca974bcec564e8b885875876b6c4937c28f0ac566"
+      }
+    ],
+    "provenance_confidence": "Complete independently referenced source effect constructor/step/refresh, actual pool/random/draw calls; not CRT/import/EH/shared tail; game versus proprietary engine authorship unresolved",
+    "abi": "Pinned x86 cdecl; actual entity pool,84-byte particle state at+e8, real queue methods and source timer actor table; explicit persistent source contexts, no guessed globals/vtables",
+    "limits": [
+      "Full VM/parser construction and live world resource/actor binding remain separate incomplete owners; emitter binding and context helpers add no owner count.",
+      "PC53 nearest/masked exceptions tested; runtime PC24 transitions and NaN payload/signaling exception ordering remain unvalidated.",
+      "Texture IDs are explicit borrowed queue identities; no native presentation, gameplay, input/audio/network operation or original code execution.",
+      "Caller retains real actor/owner/context/queue/pool lifetime; source membership helpers are not generation-proof after slot recycling."
+    ]
+  },
+  {
+    "address": "00443640",
+    "function": "bh_script_steam_refresh",
+    "source": "src/bh_script_particles.c",
+    "role": "engine_candidate",
+    "family": "a",
+    "scenarios": [
+      "script-particles"
+    ],
+    "ranges": [
+      {
+        "start": "00443640",
+        "end_exclusive": "004436e1",
+        "bytes": 161,
+        "instructions": 53,
+        "sha256": "0347e486d862e13d89841a8868e8dc5eb0e3e363e4ec2b749a7716473df156a4"
+      }
+    ],
+    "provenance_confidence": "Complete independently referenced source effect constructor/step/refresh, actual pool/random/draw calls; not CRT/import/EH/shared tail; game versus proprietary engine authorship unresolved",
+    "abi": "Pinned x86 cdecl; actual entity pool,84-byte particle state at+e8, real queue methods and source timer actor table; explicit persistent source contexts, no guessed globals/vtables",
+    "limits": [
+      "Full VM/parser construction and live world resource/actor binding remain separate incomplete owners; emitter binding and context helpers add no owner count.",
+      "PC53 nearest/masked exceptions tested; runtime PC24 transitions and NaN payload/signaling exception ordering remain unvalidated.",
+      "Texture IDs are explicit borrowed queue identities; no native presentation, gameplay, input/audio/network operation or original code execution.",
+      "Caller retains real actor/owner/context/queue/pool lifetime; source membership helpers are not generation-proof after slot recycling."
+    ]
+  },
+  {
+    "address": "0044b7a0",
+    "function": "bh_collision_box_build",
+    "source": "src/bh_collision_box.c",
+    "role": "engine_candidate",
+    "family": "c",
+    "scenarios": [
+      "collision-box"
+    ],
+    "ranges": [
+      {
+        "start": "0044b7a0",
+        "end_exclusive": "0044c1f6",
+        "bytes": 2646,
+        "instructions": 711,
+        "sha256": "70e1336e6872a1c5f21cc617b8ac0859e1135b09776561f2a805994952bd55c5"
+      }
+    ],
+    "provenance_confidence": "Ordinary entity callback/numeric behavior with complete reviewed code boundaries; engine authorship unresolved",
+    "abi": "x86 cdecl over existing actual BHCollisionModel owner; extent/padding float3 borrowed. Exact six record layouts and raw complete boundary; source model binding is explicit ownership adapter.",
+    "limits": [
+      "PC53 nearest masked finite moderate inputs; PC24 and global runtime precision transitions remain unresolved.",
+      "Original eleven unchecked allocations become real source collision-owner transaction; allocation failure retains previous model and cleans partial storage.",
+      "Originally unspecified header/material/cache bytes are defined zero; populated vertex frame word remains0xffffffff. The existing decoded BSP computes additional root_radius metadata; original actor-radius behavior is consumed through real bh_geometry_radius.",
+      "Source null/nonfinite/negative-extent/active-enumeration guards are added; borrowed queries must be disposed before successful model replacement.",
+      "All six original planes are literally the negated selected coordinate, including low faces; this has an observable source segment-query consequence and was deliberately preserved.",
+      "Actor construction0043ddc0 and its actual gameplay lifetime remain unrecovered; no source target spawned, game/original code executed, physical input, UI capture, audioPlay or network session."
+    ]
+  }
+]

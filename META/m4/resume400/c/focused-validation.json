@@ -1,0 +1,114 @@
+{
+  "passed": true,
+  "target": "D:\\Decomp\\Bhunter\\build\\resume400-c\\display-enum.exe",
+  "fixture": {
+    "scenario": "display-enum",
+    "checks": 42,
+    "failures": 0,
+    "original_code_required": false
+  },
+  "commands": [
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\resume400-c\\module0.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_display_enum.c"
+      ],
+      "exit_code": 0,
+      "stdout": "bh_display_enum.c\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\resume400-c\\module1.obj",
+        "D:\\Decomp\\Bhunter\\tests\\display_enum.c"
+      ],
+      "exit_code": 0,
+      "stdout": "display_enum.c\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/FoD:\\Decomp\\Bhunter\\build\\resume400-c\\module2.obj",
+        "D:\\Decomp\\Bhunter\\META\\m4\\resume400\\c\\driver.c"
+      ],
+      "exit_code": 0,
+      "stdout": "driver.c\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/machine:ix86",
+        "/out:D:\\Decomp\\Bhunter\\build\\resume400-c\\display-enum.exe",
+        "D:\\Decomp\\Bhunter\\build\\resume400-c\\module0.obj",
+        "D:\\Decomp\\Bhunter\\build\\resume400-c\\module1.obj",
+        "D:\\Decomp\\Bhunter\\build\\resume400-c\\module2.obj",
+        "kernel32.lib",
+        "ddraw.lib"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\build\\resume400-c\\display-enum.exe"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"scenario\":\"display-enum\",\"checks\":42,\"failures\":0,\"original_code_required\":false}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/machine:ix86",
+        "/out:D:\\Decomp\\Bhunter\\build\\resume400-c\\negative.exe",
+        "D:\\Decomp\\Bhunter\\build\\resume400-c\\module1.obj",
+        "D:\\Decomp\\Bhunter\\build\\resume400-c\\module2.obj",
+        "kernel32.lib",
+        "ddraw.lib"
+      ],
+      "exit_code": 25,
+      "stdout": "module1.obj : error LNK2001: unresolved external symbol _bh_display_select_callback@16\nmodule1.obj : error LNK2001: unresolved external symbol _bh_display_catalog_callback@16\nD:\\Decomp\\Bhunter\\build\\resume400-c\\negative.exe : fatal error LNK1120: 2 unresolved externals\n",
+      "stderr": ""
+    }
+  ],
+  "sources": {
+    "src/bh_display_enum.c": "bd76c49d1fbc11e48cb21ce754ee0d85615caafc68e7b0a5033bb188407da6bf",
+    "tests/display_enum.c": "ed62bcd28f11d437a84afb8e311aa49c5bc7fa36a4ecd8eecd3f214fdb0162db",
+    "META/m4/resume400/c/driver.c": "443801605bc9214ff015b8dfc3f1dc59a49688b53b1e9c27521ce660d88e70c7",
+    "src/bh_display_enum.h": "9b2ebf8a2f2bffeab81c2a332f01114b5da9a3a60191e180cb880afc3b264895"
+  },
+  "game_launches": 0,
+  "original_code_executed": false,
+  "implementation": "candidate pending full integration",
+  "new_whole_functions": 2
+}

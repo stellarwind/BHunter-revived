@@ -1,4 +1,5 @@
 #include "bh_message_panel.h"
+#include "bh_atlas_wide.h"
 #include "bh_round.h"
 #include "bh_pickup_draw.h"
 #include "bh_atlas_text.h"
@@ -50,6 +51,7 @@ int __cdecl bh_message_text_drain(BHTextQueue *queue,BHAtlasContext *atlas,
         case BH_TEXT_COMMAND_TEXT:bh_text_queue_execute_text(command);break;
         case BH_TEXT_COMMAND_CLEAR:bh_text_queue_execute_clear(atlas,command);break;
         case BH_TEXT_COMMAND_PLAIN:bh_message_text_execute_plain(command);break;
+        case BH_TEXT_COMMAND_WIDE:bh_text_queue_execute_wide(command);break;
         default:queue->error=BH_TEXT_QUEUE_KIND;
             if(processed)*processed=count;return -1;
         }

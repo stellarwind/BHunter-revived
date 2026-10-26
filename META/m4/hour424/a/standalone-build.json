@@ -1,0 +1,1687 @@
+{
+  "target": "bhunter-flash-flare-check.exe",
+  "passed": true,
+  "original_code_executed": false,
+  "game_executed": false,
+  "commands": [
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:\\Decomp\\dx7sdk\\include",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/DDIRECTINPUT_VERSION=0x0500",
+        "/DBH_FLASH_FLARE_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\flash-flare\\bh_flash_flare.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_flash_flare.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_flash_flare.c\n"
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:\\Decomp\\dx7sdk\\include",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/DDIRECTINPUT_VERSION=0x0500",
+        "/DBH_FLASH_FLARE_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\flash-flare\\flash_flare_test.obj",
+        "D:\\Decomp\\Bhunter\\tests\\flash_flare.c"
+      ],
+      "exit_code": 0,
+      "output": "flash_flare.c\n"
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:\\Decomp\\dx7sdk\\include",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/DDIRECTINPUT_VERSION=0x0500",
+        "/DBH_FLASH_FLARE_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\flash-flare\\bh_render_execute.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_render_execute.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_render_execute.c\n"
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:\\Decomp\\dx7sdk\\include",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/DDIRECTINPUT_VERSION=0x0500",
+        "/DBH_FLASH_FLARE_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\flash-flare\\bh_message_panel.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_message_panel.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_message_panel.c\n"
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Oi",
+        "/Gy",
+        "/ID:\\Decomp\\dx7sdk\\include",
+        "/DDIRECT3D_VERSION=0x0500",
+        "/DDIRECTDRAW_VERSION=0x0500",
+        "/DDIRECTINPUT_VERSION=0x0500",
+        "/DBH_FLASH_FLARE_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\flash-flare\\bh_atlas_wide.obj",
+        "D:\\Decomp\\Bhunter\\src\\bh_atlas_wide.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_atlas_wide.c\n"
+    },
+    {
+      "command": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/opt:ref",
+        "/out:D:\\Decomp\\Bhunter\\build\\flash-flare\\bhunter-flash-flare-check.exe",
+        "/map:D:\\Decomp\\Bhunter\\build\\flash-flare\\flash-flare.map",
+        "D:\\Decomp\\Bhunter\\build\\flash-flare\\bh_flash_flare.obj",
+        "D:\\Decomp\\Bhunter\\build\\flash-flare\\flash_flare_test.obj",
+        "D:\\Decomp\\Bhunter\\build\\flash-flare\\bh_render_execute.obj",
+        "D:\\Decomp\\Bhunter\\build\\flash-flare\\bh_message_panel.obj",
+        "D:\\Decomp\\Bhunter\\build\\flash-flare\\bh_atlas_wide.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_pickup_basic.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_script_wait.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_rail_wagon.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_input_enum.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_model_scale.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_rail_paths.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_script_args.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_loading_blit.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_loading_display.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_loading_progress.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_loading_image.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_sound_load.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_window_dispatch.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_force_feedback_start.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_cd_notify.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_frame_callback.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_present_begin.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_capture.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_display_shutdown.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_frame_worker.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_cd_close.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_force_feedback.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_network_shutdown.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_frame_service.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_frame_render.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_player_reset.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_flyby_scene.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_messages.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_weapon_empty.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_player_scene.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_weapon_factory.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_weapon_timer.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_weapon_latch.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_weapon_target_lifecycle.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_weapon_arc_lifecycle.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_weapon_removal.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_weapon_common.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_present.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_fade.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_segment_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_path_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_weapon_hud_arc.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_weapon_hud_target.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_hud_scores.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_hud_world.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_hud_flat.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_plane_quad.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_attachment.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_hud.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_hud_markers.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_queue_reserve.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_screen_quad.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_frame_buffers.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_actor_route_lifetime.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_axis_snap.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_actor_route.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_input_devices.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_radar.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_route_guided.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_input_collection.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_route_curve_length.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_horizon.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_target_steering.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_route_choice.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_input_messages.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_quad_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_depth_subdivide.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_sprite_quad.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_target_selection.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_horizon_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_material_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_input_evaluate.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_collision_cache.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_collision_resource.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_player_input_events.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_horizon_color.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_flyby_camera.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_text_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_atlas_text.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_camera_route.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_camera_correction.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_world_segment.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_actor_basis.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_camera_curve.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_player_camera.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_camera_modes.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_player_input.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_scene_background.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_camera_state.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_camera_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_scene_owner.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_scene_bindings.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_pickup.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_pickup_draw.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_entity_schedule.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_draw_controls.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_draw_submit.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_render_resources.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_entity_resource_draw.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_sprite_billboard.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_sprite_oriented.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_draw_resource.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_native_attribute.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_model_instance.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_model_draw.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_model_draw_lit.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_atlas_page.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_atlas_glyph.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_attribute_clipper.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_software_tables.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_light_config.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_geometry_radius.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_view_cull.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_atlas_image.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_native_primitive.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_texture_controls.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_model_path.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_texture_policy.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_model_images.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_main_camera.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_light_eval.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_render_state.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_render_material.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_screen_clipper.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_light.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_view_camera.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_clipper.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_matrix_inverse.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_texture_draw.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_model.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_texture_image.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_texture_tables.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_render_guids.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_texture.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_scene_view.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_sound_tick.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_sound_listener.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_network_transport.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_network_codec.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_debris_response.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_vfile.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_config.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_paths.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_scene.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_bsp.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_round.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_blocks.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_pcx.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_script_timer.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_pcx_reader.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_riff.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_sound_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_draw_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_contact_effects.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_physics_response.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_entity_collision.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_sweep.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_collision_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_collision_model.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_segment_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_position.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_world_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_route_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_navigation.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_rotation.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_world_geometry.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_geometry.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_portals.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_wave.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_entities.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_callback_helpers.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_serial_options.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_script_lifetime.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_menu_settings.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_editor_input.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_script_attached_sound.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_script_motion.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_display_enum.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_sound_startup.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_script_particles.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_collision_box.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_script_sensor.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_script_flash.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_project_scale.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_cd_audio.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_provider_catalog.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_provider_startup.obj",
+        "D:\\Decomp\\dx7sdk\\lib\\ddraw.lib",
+        "D:\\Decomp\\dx7sdk\\lib\\dinput.lib",
+        "kernel32.lib",
+        "dsound.lib",
+        "user32.lib",
+        "ole32.lib",
+        "winmm.lib"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\build\\flash-flare\\bhunter-flash-flare-check.exe"
+      ],
+      "exit_code": 0,
+      "output": "{\"scenario\":\"flash-flare\",\"checks\":59,\"failures\":0,\"original_code_required\":false,\"play_calls\":0}\n"
+    },
+    {
+      "command": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/opt:ref",
+        "/out:D:\\Decomp\\Bhunter\\build\\flash-flare\\missing-flare.exe",
+        "D:\\Decomp\\Bhunter\\build\\flash-flare\\flash_flare_test.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_pickup_basic.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_script_wait.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_rail_wagon.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_input_enum.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_model_scale.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_rail_paths.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_script_args.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_loading_blit.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_loading_display.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_loading_progress.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_loading_image.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_sound_load.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_window_dispatch.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_force_feedback_start.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_cd_notify.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_frame_callback.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_present_begin.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_capture.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_display_shutdown.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_frame_worker.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_cd_close.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_force_feedback.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_network_shutdown.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_frame_service.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_frame_render.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_player_reset.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_flyby_scene.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_messages.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_weapon_empty.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_player_scene.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_weapon_factory.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_weapon_timer.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_weapon_latch.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_weapon_target_lifecycle.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_weapon_arc_lifecycle.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_weapon_removal.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_weapon_common.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_present.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_fade.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_segment_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_path_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_weapon_hud_arc.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_weapon_hud_target.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_hud_scores.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_hud_world.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_hud_flat.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_plane_quad.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_attachment.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_hud.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_hud_markers.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_queue_reserve.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_screen_quad.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_frame_buffers.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_actor_route_lifetime.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_axis_snap.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_actor_route.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_input_devices.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_radar.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_route_guided.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_input_collection.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_route_curve_length.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_horizon.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_target_steering.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_route_choice.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_input_messages.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_quad_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_depth_subdivide.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_sprite_quad.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_target_selection.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_horizon_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_material_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_input_evaluate.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_collision_cache.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_collision_resource.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_player_input_events.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_horizon_color.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_flyby_camera.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_text_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_atlas_text.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_camera_route.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_camera_correction.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_world_segment.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_actor_basis.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_camera_curve.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_player_camera.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_camera_modes.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_player_input.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_scene_background.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_camera_state.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_camera_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_scene_owner.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_scene_bindings.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_pickup.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_pickup_draw.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_entity_schedule.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_draw_controls.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_draw_submit.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_render_resources.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_entity_resource_draw.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_sprite_billboard.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_sprite_oriented.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_draw_resource.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_native_attribute.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_model_instance.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_model_draw.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_model_draw_lit.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_atlas_page.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_atlas_glyph.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_attribute_clipper.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_software_tables.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_light_config.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_geometry_radius.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_view_cull.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_atlas_image.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_native_primitive.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_texture_controls.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_model_path.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_texture_policy.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_model_images.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_main_camera.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_light_eval.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_render_state.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_render_material.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_screen_clipper.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_light.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_view_camera.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_clipper.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_matrix_inverse.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_texture_draw.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_model.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_texture_image.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_texture_tables.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_render_guids.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_texture.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_scene_view.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_sound_tick.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_sound_listener.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_network_transport.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_network_codec.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_debris_response.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_math.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_vfile.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_config.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_paths.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_scene.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_bsp.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_round.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_blocks.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_pcx.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_script_timer.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_pcx_reader.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_riff.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_sound_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_draw_queue.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_contact_effects.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_physics_response.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_entity_collision.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_sweep.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_collision_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_collision_model.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_segment_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_position.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_world_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_route_query.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_navigation.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_rotation.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_world_geometry.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_geometry.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_portals.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_wave.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_entities.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_callback_helpers.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_serial_options.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_script_lifetime.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_menu_settings.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_editor_input.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_script_attached_sound.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_script_motion.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_display_enum.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_sound_startup.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_script_particles.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_collision_box.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_script_sensor.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_script_flash.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_project_scale.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_cd_audio.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_provider_catalog.obj",
+        "D:\\Decomp\\Bhunter\\build\\m0\\bh_provider_startup.obj",
+        "D:\\Decomp\\dx7sdk\\lib\\ddraw.lib",
+        "D:\\Decomp\\dx7sdk\\lib\\dinput.lib",
+        "kernel32.lib",
+        "dsound.lib",
+        "user32.lib",
+        "ole32.lib",
+        "winmm.lib"
+      ],
+      "exit_code": 25,
+      "output": "flash_flare_test.obj : error LNK2001: unresolved external symbol _bh_flare_execute\nflash_flare_test.obj : error LNK2001: unresolved external symbol _bh_flare_queue\nflash_flare_test.obj : error LNK2001: unresolved external symbol _bh_render_execute\nbh_frame_callback.obj : error LNK2001: unresolved external symbol _bh_render_execute\nflash_flare_test.obj : error LNK2001: unresolved external symbol _bh_flash_flare_refresh\nflash_flare_test.obj : error LNK2001: unresolved external symbol _bh_flash_flare_bind\nD:\\Decomp\\Bhunter\\build\\flash-flare\\missing-flare.exe : fatal error LNK1120: 5 unresolved externals\n"
+    }
+  ],
+  "sources": {
+    "src/bh_flash_flare.c": "f9cbc63340eba08ea098b5885d9b984fe1c54243ff65cca7df171bcc823d6535",
+    "tests/flash_flare.c": "954d4f9f5164bc3e0d0b03054e932899cd8366bbe9abe28269a4de2bd32e42a6",
+    "src/bh_render_execute.c": "798f01c8aa0bea8195968270b52b3f0e39db9c1e7cc3405b6b0bccb7bbb68846",
+    "src/bh_message_panel.c": "7f964d026cd94ed5d6e996ddb5bdfb3cce497bdc6f32e171a44aef7d2e1236b8",
+    "src/bh_atlas_wide.c": "23765842f4b1c9c5f00a5f2cb4f5f26df52a2ed8690a7c7c861a69f80861f5bd",
+    "src/bh_flash_flare.h": "48941a9c09d3aa72322816b2d9cc92e4001fccc352da1a89cc3db1a9237a1286"
+  },
+  "real_dependency_objects": [
+    {
+      "source": "src/bh_pickup_basic.c",
+      "source_sha256": "969c63ca3c18a89d20cc379d8ebae881aa2fdf9509699b5a354d3db66cc28ac3",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_pickup_basic.obj",
+      "object_sha256": "d2cd05d69b59eb1e4d4845e49c5fdea42530cab5b281984c7b9e8bdb70f424ea"
+    },
+    {
+      "source": "src/bh_script_wait.c",
+      "source_sha256": "6d2c581164d3ec4d3adbc681350db962cb3442c2fd3bb3e7fa5274ea853f7788",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_script_wait.obj",
+      "object_sha256": "2899a338283cdfe817c9da01459e06ba3af90982cd58c1d1dfaba8a13bcd9368"
+    },
+    {
+      "source": "src/bh_rail_wagon.c",
+      "source_sha256": "f81830abcf5b04e2b4baa7edf46e9350d0df3779c89a1c325212afb0c5cbbaa2",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_rail_wagon.obj",
+      "object_sha256": "f92c502528a3921be822604be8bc5ba0f59e1fa244e214cb9be1c46fa057a8a7"
+    },
+    {
+      "source": "src/bh_input_enum.c",
+      "source_sha256": "7522dd98b756695671f0db53c6956a299064b99cedcae911c07fb069d185fa8f",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_input_enum.obj",
+      "object_sha256": "eaa6784b11ddbfaee723e048750015e64b8b9a1ecfdcdc16264edec6be5f0e46"
+    },
+    {
+      "source": "src/bh_model_scale.c",
+      "source_sha256": "29523e765537bf9af23f33f32edf0b96cbb57ac7b26731bd0ec13a95d9354bce",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_model_scale.obj",
+      "object_sha256": "b2b878d3c8e567a0f4d9028101d71ac4f357d885ba7e00bd0e09761a24325d17"
+    },
+    {
+      "source": "src/bh_rail_paths.c",
+      "source_sha256": "148f1e1ef311aaf9b2786b80a4c8370299412eeb3246075e55018a75e6e39f98",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_rail_paths.obj",
+      "object_sha256": "4b975482c9934b2eeeb4ad238a0666d3853146586cbb6ce11012c6eb533c2f18"
+    },
+    {
+      "source": "src/bh_script_args.c",
+      "source_sha256": "61a732715127d55654ab93509c9bb61498e39ebf91501a22f57f03a289a9452f",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_script_args.obj",
+      "object_sha256": "3ab08f5c5529a10eacbb6598d3d8ee3606ba280d8bc392b9d322513baf3deb37"
+    },
+    {
+      "source": "src/bh_loading_blit.c",
+      "source_sha256": "3b895b16eccbfb3dd1f75583c65f095f2834dbcee865b1f1ac1105d67c0ca357",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_loading_blit.obj",
+      "object_sha256": "791968bf371cbd53a5348424300824e32baf6fe359897a59e032538b983564f3"
+    },
+    {
+      "source": "src/bh_loading_display.c",
+      "source_sha256": "34d61d9ddedac8624b09c86d3d9d2141ea7e4c54550269ae636d3985c8705917",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_loading_display.obj",
+      "object_sha256": "1efe3b0190e2299ff559c378d1bff5592987226f396a1d94377f4b26a0a09d7e"
+    },
+    {
+      "source": "src/bh_loading_progress.c",
+      "source_sha256": "f4a1748163f8a8c40a7522d6d0226109439a7aeaa89e5a1d8f3b376cae1e5d40",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_loading_progress.obj",
+      "object_sha256": "c6ed6197f61a1e7d3c62d2a1370f6c0b87632f0584668f384029a6b606187b4d"
+    },
+    {
+      "source": "src/bh_loading_image.c",
+      "source_sha256": "860381e769454d260906c6cb7617cc5fac08ba6106c26499a8a4c03040062f83",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_loading_image.obj",
+      "object_sha256": "20782236bcaf9a34b10668a1d54d12c24f61a0ab6340f0cb4801f8346a2e55c7"
+    },
+    {
+      "source": "src/bh_sound_load.c",
+      "source_sha256": "4f147255f007a50905dc4eebf93f8e156ad4f08d63bc5b9ae868b6d6a04df94a",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_sound_load.obj",
+      "object_sha256": "57631dad546c6565ce078047b0b61ccd7e61cfa48581dfe70429c24218fcf7f4"
+    },
+    {
+      "source": "src/bh_window_dispatch.c",
+      "source_sha256": "d65d7be23861264f6ba4460178f1912d68a986061b51be83d0cfafb07bb57355",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_window_dispatch.obj",
+      "object_sha256": "0821cbd3b47baa872aeb76137779d856e4b55209ece3287c2007bdade269c43f"
+    },
+    {
+      "source": "src/bh_force_feedback_start.c",
+      "source_sha256": "9139423076a5e7fea813da9ea33e51cb260e29fb0b9476907e8e2a8d8b70145a",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_force_feedback_start.obj",
+      "object_sha256": "864cec0a96a41ba43e121e8b96d1314aea59b677bef3d026b58c8fde2a5f8a8c"
+    },
+    {
+      "source": "src/bh_cd_notify.c",
+      "source_sha256": "f0dbaf9da131d5f0ff23b20effbe79e8f2ce02166506c616779aba69074934f9",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_cd_notify.obj",
+      "object_sha256": "046357a8f2fdbbc5fad4d24a94b6936d8aa37e19f2fd38b7cdb35d554a90c000"
+    },
+    {
+      "source": "src/bh_frame_callback.c",
+      "source_sha256": "4cdec459b07a73e1ca28fba56a0ffa6b2e479dc68c5e460c80b94104a86008a9",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_frame_callback.obj",
+      "object_sha256": "f35474ffbc2c5e7219b2f32681379da7311d5afc05af21ade80174d13ec0c91f"
+    },
+    {
+      "source": "src/bh_present_begin.c",
+      "source_sha256": "76ac039a1170326582627c31ca766114c0d10980c2ad29e4149fae2ace25b638",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_present_begin.obj",
+      "object_sha256": "1d0dfcbd0eb90a99ff15bbcb1e5706b81c676d8b5d396ebfdd62ee39ab81e121"
+    },
+    {
+      "source": "src/bh_capture.c",
+      "source_sha256": "dedc29dd04a7f64152e48e6bbd1304359d1c960f84dfc00e568dd0f5e19963e4",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_capture.obj",
+      "object_sha256": "eccbbb4a067d16350d953ef974b5800d1c958b0cfbe50bd61d9213bdcf6c8c3e"
+    },
+    {
+      "source": "src/bh_display_shutdown.c",
+      "source_sha256": "765c542f77c7af97c850910d86247489e6a5af9b6a3ac8853eb6b938bb1d0906",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_display_shutdown.obj",
+      "object_sha256": "8166e0355723491fc138bbb347ba1d287b5eb33d100b546d02efa047a225244c"
+    },
+    {
+      "source": "src/bh_frame_worker.c",
+      "source_sha256": "12ab0162207d818394bf957467f169c08e820e23b1114e6dffecd7c2f5f8c223",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_frame_worker.obj",
+      "object_sha256": "56b91fa09673888d3e6cc241dae5a07df6808ff36aa81c5ceb933c7b0210abdb"
+    },
+    {
+      "source": "src/bh_cd_close.c",
+      "source_sha256": "d9d24ffb439daf17c9bebc489d380bd1fc06490da216bb0d27b582021bfcd446",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_cd_close.obj",
+      "object_sha256": "deb91333ffedeae6acc9c22a32e1d6200470a7b9c6ea8463c19100cc5d38aeba"
+    },
+    {
+      "source": "src/bh_force_feedback.c",
+      "source_sha256": "a319be0e072d443779aabe9da2acd89e976127022d85923133316dc2a02ec7da",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_force_feedback.obj",
+      "object_sha256": "f1d5ba304c706a4e035e8525da6e3f4107bd2324d0dd3c6052359045f42a4efd"
+    },
+    {
+      "source": "src/bh_network_shutdown.c",
+      "source_sha256": "ceb379de0488a219741fb26643d37db1a84b7a5f70ac424094366d104071fe1c",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_network_shutdown.obj",
+      "object_sha256": "120895f8f48a59d1109c56b5fb90fd08d94133089d94db107d64649f3d915a7a"
+    },
+    {
+      "source": "src/bh_frame_service.c",
+      "source_sha256": "099972e593c4b621bb4989735ef1d764b96628589b2b8ae27ec2d952686bf6f0",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_frame_service.obj",
+      "object_sha256": "890eb26a79455f694ca8fdb5382984754d3057f10a0c82c5162b3c8408249539"
+    },
+    {
+      "source": "src/bh_frame_render.c",
+      "source_sha256": "0e83e541e0f984dd95ac95adb8da776df6fffecd0be1b21953884419db96597d",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_frame_render.obj",
+      "object_sha256": "77aed826f2a73037d87eb949047e37b2ed154a6ca798b8ab302f07573d026c34"
+    },
+    {
+      "source": "src/bh_player_reset.c",
+      "source_sha256": "60f86bcfc18e30b816582aa64c6b4ecf58f21380087a7dd3b64a087214c111c7",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_player_reset.obj",
+      "object_sha256": "7e9ccdf284d70004fbe75147c1fe49a862cb67f76cb066566972fda1e1805a0b"
+    },
+    {
+      "source": "src/bh_flyby_scene.c",
+      "source_sha256": "7f091ba6486aaae65bc39464abc2e636d420f4194bb3241978c83e3751fb88a4",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_flyby_scene.obj",
+      "object_sha256": "94eb6d204682de2e7efc69328674fee4ab26870c5ceb3191611ed559b04926d4"
+    },
+    {
+      "source": "src/bh_messages.c",
+      "source_sha256": "ce7c598dc11f4c6220c712ffd42e37a4a3b970251e0b2d8af102799a53f42a27",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_messages.obj",
+      "object_sha256": "1c379bf0924d248ae9fc59eefbe15d3dae5c801ccfe1a51db2e71f56063d0fc4"
+    },
+    {
+      "source": "src/bh_weapon_empty.c",
+      "source_sha256": "8cf828a5c9de71a34fd8a0508cde287ca372a2806a4afd431262b79845debe3b",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_weapon_empty.obj",
+      "object_sha256": "2f03979bc8750a2246fcda117ae734ccc102988489433eea4ebf63a8488b44e0"
+    },
+    {
+      "source": "src/bh_player_scene.c",
+      "source_sha256": "d59908f2e6c54e9ab968390895640853be9404b9474c6286521b94571dbd1702",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_player_scene.obj",
+      "object_sha256": "736e7aa0365817b47e455fba2ae66d8bb2dcaa11ea79366b26c1585f86eb89c7"
+    },
+    {
+      "source": "src/bh_weapon_factory.c",
+      "source_sha256": "3edc02df07cd0a48f7517c8c0b85bec983eeab893f8adda9ef91357658fa6cf8",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_weapon_factory.obj",
+      "object_sha256": "25d2849856c38adad792ff4cf9531c778930b0d32f4bc47d6a16d853fce4e572"
+    },
+    {
+      "source": "src/bh_weapon_timer.c",
+      "source_sha256": "8eb99f99602e2cafa0ad0d85c1a0bf24e9d8e49eff36efc577dd1911b12600cd",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_weapon_timer.obj",
+      "object_sha256": "a96c934906688df1b03865698ad1dd0803c69ca8a90e72f91db41a57decf0ff9"
+    },
+    {
+      "source": "src/bh_weapon_latch.c",
+      "source_sha256": "3bcad65b00cfec46de01933a10955df1838bfe1b119240c8582d096605791d87",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_weapon_latch.obj",
+      "object_sha256": "7838cdc3c4a64be307822ec30fab5d1b1886dcf6846969312728e472c1f9b9a9"
+    },
+    {
+      "source": "src/bh_weapon_target_lifecycle.c",
+      "source_sha256": "893a08c2a2a3d4a8b3f01efe14c1b3cfc83e2898d59a78012da063d01b764393",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_weapon_target_lifecycle.obj",
+      "object_sha256": "860a4c28abedbeb8f79b9b20b3e53f512e24e31001943acf12e536ee19100a1c"
+    },
+    {
+      "source": "src/bh_weapon_arc_lifecycle.c",
+      "source_sha256": "150a193a9347bd653b14bcc3a4f25cfb508ae5c093645fb9dfd38f9307c6b120",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_weapon_arc_lifecycle.obj",
+      "object_sha256": "1665b7f79fd49c39077ad5e38cfcb596f00ea59c2e132fdc52e0be6d0066b07e"
+    },
+    {
+      "source": "src/bh_weapon_removal.c",
+      "source_sha256": "a2c53d5898afc7700e49c18427e2f2dbebdf685698fa10c355d80445ac58e046",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_weapon_removal.obj",
+      "object_sha256": "ef155e571f5b22ed7ce08ba9712363e54bd4eea6c21f48578be40f9f43ef34c0"
+    },
+    {
+      "source": "src/bh_weapon_common.c",
+      "source_sha256": "1ef81cdab4917b5af72253e4a0b7ff53b61ebfbd6c0c7a4ee03bfe02e6831c9d",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_weapon_common.obj",
+      "object_sha256": "c3cb1ac9b21ce34eb7c91df53a439c9f04c614f1429d2a9d4177ea8bbacd6a16"
+    },
+    {
+      "source": "src/bh_present.c",
+      "source_sha256": "267a6cc6e11ff827872a88f8e150d29448677260598e99cefa2b909642c6cfa0",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_present.obj",
+      "object_sha256": "8460be32d6e0170d469570caf87b838f48bb384d3cb140d24d65497aff81bbc9"
+    },
+    {
+      "source": "src/bh_fade.c",
+      "source_sha256": "427b08e3bd3277c6cb9fb549b2f351e4edd9090473d8ff30ff4794a216274262",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_fade.obj",
+      "object_sha256": "81b267b21009458006f61a899c8d934fc03750ba0499a351471219cb8911e2c1"
+    },
+    {
+      "source": "src/bh_segment_queue.c",
+      "source_sha256": "a096a3e7ace004c7baf3962b1d2186586649a73a2a7a70a1b3f9bdc4fa7daebf",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_segment_queue.obj",
+      "object_sha256": "c704ab10258f8350047a14fedafd5b6f9601c16d90a34412b5191ffc6657a1d7"
+    },
+    {
+      "source": "src/bh_path_queue.c",
+      "source_sha256": "63479729671561f029fb54d1fef0b2b38f1ea7638843486fd5a32406ce17f38e",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_path_queue.obj",
+      "object_sha256": "11f751a9b5232bc2aef12a50cf96724c205fb6c90a85962a155602c88cbb03de"
+    },
+    {
+      "source": "src/bh_weapon_hud_arc.c",
+      "source_sha256": "f96afd1a4391b60e0cefb7484c4f45f09a89c5379f284ab2ae0d6813ea2440cb",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_weapon_hud_arc.obj",
+      "object_sha256": "b680f2151267702b3d639a82379ed63b1b71627455245f5aa776ed463ce6d6f5"
+    },
+    {
+      "source": "src/bh_weapon_hud_target.c",
+      "source_sha256": "7e0033fcae14cf4f274100a95bf80b1a4c6997bb9c0f8e69e6cb8037f28e87f7",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_weapon_hud_target.obj",
+      "object_sha256": "72f0bab8ffe29c6a529f58d792e37301480deddb2dd9cc399c2a4b010910c374"
+    },
+    {
+      "source": "src/bh_hud_scores.c",
+      "source_sha256": "f3586a34bf197f90ae6caec0baaea71830b8119fa50059018adbf395418f42e4",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_hud_scores.obj",
+      "object_sha256": "2d92345ad52fad4ff26fe973fbbe0bdfee4b6b3316e0f0f32e02f761d303f8a1"
+    },
+    {
+      "source": "src/bh_hud_world.c",
+      "source_sha256": "4ab38eaf1a65fa2bc185e1f44992ea4ed58623189d224413cd451b54625b5ffe",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_hud_world.obj",
+      "object_sha256": "e9bb65f04b7b0affaca3203c9edfe5d8ba6968cd6a2d9f84bd2376ab29bebd04"
+    },
+    {
+      "source": "src/bh_hud_flat.c",
+      "source_sha256": "79e95283f0aac52af397187f0a26e7d29f38ba9ba9f6c74f86fecc3a1da33125",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_hud_flat.obj",
+      "object_sha256": "dc4d9c72d40452f194b59905fff01f86f02e7f76ddcd8cabc7b5fb253f89ff56"
+    },
+    {
+      "source": "src/bh_plane_quad.c",
+      "source_sha256": "dedc6f83b853f388761a0920991f8eb1d47d535b388a7e24c70c32b87768531f",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_plane_quad.obj",
+      "object_sha256": "e12ec00f109ca914f541b83d2b8d625df92bde24a544e92376c7b9020d8eb891"
+    },
+    {
+      "source": "src/bh_attachment.c",
+      "source_sha256": "a0247a833434de616d899bb5337829b4f1140f5cbf1aace49c8e3c023513c3a1",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_attachment.obj",
+      "object_sha256": "99a57baf328606d91f752cc36a2683f8b133e20d3e5faf842aebe8d8a1212060"
+    },
+    {
+      "source": "src/bh_hud.c",
+      "source_sha256": "b2fefeea56c522f3592981f282d39269927ff41052998950855d1d466ef32f05",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_hud.obj",
+      "object_sha256": "2b90742afb3bb322df5fb3fb24edfbb31d63b954355296efa61d651a01f5da1f"
+    },
+    {
+      "source": "src/bh_hud_markers.c",
+      "source_sha256": "240a0f6e50b4529414c4f38ab27af90364089615041b9e05db75b91e7ba6a0bb",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_hud_markers.obj",
+      "object_sha256": "745cffa7cd70e22723ba7c5dc9be9ffcd5af2465d1086a7157fe8395a4f3e221"
+    },
+    {
+      "source": "src/bh_queue_reserve.c",
+      "source_sha256": "9fb6097bb5f8701f139d3b8aac4b7d2a8fbed70d5e2d0ad626449b79c0c85b45",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_queue_reserve.obj",
+      "object_sha256": "475a2de33d2429c77866a92313742c1bf8680309d7db2dff06c7198ee4f682d1"
+    },
+    {
+      "source": "src/bh_screen_quad.c",
+      "source_sha256": "3b9da81e10337ae963300e5b7d817ebe2a0c46cd25209d71ad010d6fb22466d8",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_screen_quad.obj",
+      "object_sha256": "6847aeb9b837ff27a896e377219210c0e7eb5e28eb92f1b65bc69d4473c6afff"
+    },
+    {
+      "source": "src/bh_frame_buffers.c",
+      "source_sha256": "9252358b8af6ff298fb3867af3cd68a51bb805fdc8832baf57bbffd999e1fc64",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_frame_buffers.obj",
+      "object_sha256": "6423b88dcbabb954f782f0a0b7a4f4559182e9640518e76ad48bfe62176dc5db"
+    },
+    {
+      "source": "src/bh_actor_route_lifetime.c",
+      "source_sha256": "ffc468d9c4442037b174afd88a31e78b9020ec3e8c24b210cf23553c9e21686d",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_actor_route_lifetime.obj",
+      "object_sha256": "26ea509e73b68661b9a19f8a2e50024fddcc10c788b538aec4e85f235e7cebe6"
+    },
+    {
+      "source": "src/bh_axis_snap.c",
+      "source_sha256": "5647f155cda69fe80eade27aea9798325d650ebc3b0abdc5858d189a899a01de",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_axis_snap.obj",
+      "object_sha256": "2a90cc810b5b207bfc47f3b93c008baecce27c5107b6beaa0c2424894c29fbef"
+    },
+    {
+      "source": "src/bh_actor_route.c",
+      "source_sha256": "fe310663c498707e698c6346bdaee39cef8ea330434d597c9d2ea08f1500d04e",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_actor_route.obj",
+      "object_sha256": "b19e14bfdc7413ce709dc440ea66a746abe5acf33dab6c37d09a95a9407824bd"
+    },
+    {
+      "source": "src/bh_input_devices.c",
+      "source_sha256": "1693d391f4c903d2da6f97759657ce88fc98ef12954f570d1d7040767e8ae42d",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_input_devices.obj",
+      "object_sha256": "4813190297c93a31b1c84d4d7857fbe8531bd82d4313ea584de6f7402946f5f0"
+    },
+    {
+      "source": "src/bh_radar.c",
+      "source_sha256": "fd0225af2df099129fab42aa0a8c061c6580c88e42d414d0790f663fed8d0f71",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_radar.obj",
+      "object_sha256": "c1bffca030ca08fa9d6f5bb12ddc8441000d0da0f8f04db6a295fcbc080d0ae7"
+    },
+    {
+      "source": "src/bh_route_guided.c",
+      "source_sha256": "887efcd2de5a6b68fa14378c2d30d35a7704b7e49f2b74e1e5454bf1ab6e67bd",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_route_guided.obj",
+      "object_sha256": "a8869c9c74326f0cfd5ff6e385c3d03445defdf87493a89aa36e59debbd33d27"
+    },
+    {
+      "source": "src/bh_input_collection.c",
+      "source_sha256": "0790537292a3e6c4e3c4fdef94ae976f9d88ba04727493bf66ed166a6a604813",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_input_collection.obj",
+      "object_sha256": "7466a1e4849d5ea0d884f43b862a0d55f8056380b74761b8aad54b886336865a"
+    },
+    {
+      "source": "src/bh_route_curve_length.c",
+      "source_sha256": "d3772581e1ec9de4e26eb8880726b5991a870db362021b32643671d51a01318c",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_route_curve_length.obj",
+      "object_sha256": "7169daf7b10c1b439aa13da8e9dca8d31948dcfc77c80c010a60767af7c000de"
+    },
+    {
+      "source": "src/bh_horizon.c",
+      "source_sha256": "b53872979e57b14e7c798dbaf8adcaa253aad6bd0a5eb5473922ccc9665be428",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_horizon.obj",
+      "object_sha256": "bd207ac7417f39996ab40eac2450d697f57f8742538af1dfb6efed342a2633c7"
+    },
+    {
+      "source": "src/bh_target_steering.c",
+      "source_sha256": "16a569d49292ba805b33180fa7688c8d5832a0193e788609c323e0c387515af8",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_target_steering.obj",
+      "object_sha256": "a1e3c56b840d02cf3b22720425fd4fba65ac611153a21cd91dd4911b8db2ea41"
+    },
+    {
+      "source": "src/bh_route_choice.c",
+      "source_sha256": "a8a25b4d2a76f892973657f2f4c292bd76752a4e864108052d651b09aadfdd37",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_route_choice.obj",
+      "object_sha256": "9c1cb114ba4f6f774e982ea0425f6662cf428f62dda00fe24e29650a5a169134"
+    },
+    {
+      "source": "src/bh_input_messages.c",
+      "source_sha256": "b8b18ed57cd851b96fec7ab2b58655bcb9f10b25da5fbe55b4891c2262abd8f8",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_input_messages.obj",
+      "object_sha256": "4224eb22c83ee806250af40b0ef28e2acc6be84160808bec056de010333a8cf9"
+    },
+    {
+      "source": "src/bh_quad_queue.c",
+      "source_sha256": "c415b3031dcc05fb1906b7a9d5af20dc1813ba9dffe6217a5500edcd96448848",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_quad_queue.obj",
+      "object_sha256": "e05f3f69cafc4b2ec142ef421ec8fbdcc0e362b4a7b5441f2c9c6ae4927f78c0"
+    },
+    {
+      "source": "src/bh_depth_subdivide.c",
+      "source_sha256": "12b5c8baf400249a7e24010c9eb93bc169e704a8e6389901e32bd63abd337fe0",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_depth_subdivide.obj",
+      "object_sha256": "c5022bf50caf9cbbed75d3acb7718ad5360150b8036d5a4db64189cc41f14720"
+    },
+    {
+      "source": "src/bh_sprite_quad.c",
+      "source_sha256": "015e70078a5d4a4f3aca7606f258ffeb26d451afbbcd8bbc322afd90d8524a04",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_sprite_quad.obj",
+      "object_sha256": "7727b44723732f5d95efb85753b16bcea36ebe6bd5a98bd7637515c870f9f095"
+    },
+    {
+      "source": "src/bh_target_selection.c",
+      "source_sha256": "589b0ee1dd8f1a81a583ae2d14a8fa2209c85d6445a50a25c0029390feb7f9d2",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_target_selection.obj",
+      "object_sha256": "c94ac2509014cc0d7f158268dd257de21f910d88cbbe53a2a3c22f19f65a0db8"
+    },
+    {
+      "source": "src/bh_horizon_queue.c",
+      "source_sha256": "4699d06ffae9d08248ed2d3283f3cf5c681562e4a7af9630fe29a532b2958612",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_horizon_queue.obj",
+      "object_sha256": "400a60f876c54a803035521bc110830dc4c0dd408e7daba15e294fc18f7ab574"
+    },
+    {
+      "source": "src/bh_material_queue.c",
+      "source_sha256": "bb967135388884c1b149392a7ef44aad256166bdbd9f90df56f9ad03b04eeba0",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_material_queue.obj",
+      "object_sha256": "fa717393bed4b2a9dc944a545748e544e4f966bde996ac1b57f41fe1db906160"
+    },
+    {
+      "source": "src/bh_input_evaluate.c",
+      "source_sha256": "c96ef2145edb1a1c633123580c14d12d6f6e78a3f1d8ecb3134a403c72847bb3",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_input_evaluate.obj",
+      "object_sha256": "88ddbbcdb27caabb5e524ae507f2f18a051cee205a8c60a428d1588d02aebfc3"
+    },
+    {
+      "source": "src/bh_collision_cache.c",
+      "source_sha256": "e44103f2fb0a6be951d0b8527f45441dc69d27f99e428655f6cefe02ddd5487c",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_collision_cache.obj",
+      "object_sha256": "bf5b0965609405047d17d8147c9993cf117ae6a1c117f10f379da93aab7d1794"
+    },
+    {
+      "source": "src/bh_collision_resource.c",
+      "source_sha256": "fc674c6bf74306c8dc0a8387ae9f7dc8bf23eb7507f714ffa2bb222ce96fda75",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_collision_resource.obj",
+      "object_sha256": "e72371e28f32ce14ce348bb3152aa5de436de9affa34c55e8c956202aea6ca9b"
+    },
+    {
+      "source": "src/bh_player_input_events.c",
+      "source_sha256": "66412656e9ba97226a227c5a8516cbda9c10cf57afd285ef6e8602206680fb78",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_player_input_events.obj",
+      "object_sha256": "d76f1974291e35a1a45f335076cccae1e692bd39e1236dc622cb1b37b578cc06"
+    },
+    {
+      "source": "src/bh_horizon_color.c",
+      "source_sha256": "02d6a342fd75b79156494fab36a8e972f0696f65d56fc600e66ac473483df156",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_horizon_color.obj",
+      "object_sha256": "04bcd5f7d92c7967fac21a5e5d95fe399593d3e3df0acb3befb6c3a827c82d5d"
+    },
+    {
+      "source": "src/bh_flyby_camera.c",
+      "source_sha256": "97c212c8b5ba539eb18e97f1ed22c181624f0166515a5b9bbf9c011c32a161ef",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_flyby_camera.obj",
+      "object_sha256": "79b5a94602bf466b3f55d935d48f5a6911cc222f94f7d66b003570fde73aa9cb"
+    },
+    {
+      "source": "src/bh_text_queue.c",
+      "source_sha256": "b85d5dccd3b5892ad64d8439a678099a55a52094eec98cf74419ab0403783f91",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_text_queue.obj",
+      "object_sha256": "225f72a23d1f0988aefc92911888eaa88a93bc3bb2410e80ea1d9e35365d47e0"
+    },
+    {
+      "source": "src/bh_atlas_text.c",
+      "source_sha256": "0560e31fafdd1c98aeee9d15af69b57cda76ba232bd368fbc51890d9e2596338",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_atlas_text.obj",
+      "object_sha256": "2ceead080e143e97f804bfb090e04b137edd1b15581d9784b99c4d985c3be535"
+    },
+    {
+      "source": "src/bh_camera_route.c",
+      "source_sha256": "834e10033ae6333ecfdcc5557c908dc2bf1326d12a052f7acfd40d3ad9f89f0a",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_camera_route.obj",
+      "object_sha256": "30a1c9e2ade2772e1504732b182436b9b1b19103ed4faf1c68b0d4cef41ad684"
+    },
+    {
+      "source": "src/bh_camera_correction.c",
+      "source_sha256": "34cf629aa4b7201cbd2b58446cc6727247ddafb7a06dd7ee7b2f1446bc58654f",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_camera_correction.obj",
+      "object_sha256": "38b23127c3ce56c3be34fc7ea10e1120a66f6904cc88e07df2491e6d88c2fbe0"
+    },
+    {
+      "source": "src/bh_world_segment.c",
+      "source_sha256": "381aa5b0a2e080cef63dc6ce8db6978c32d70f55796be0ea9ab759ffb2219756",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_world_segment.obj",
+      "object_sha256": "b42537210b9031fff9ca3e77b392507c7bb332d9fd07985b0833df6d4dfb5fd0"
+    },
+    {
+      "source": "src/bh_actor_basis.c",
+      "source_sha256": "631fe1f335f3acaada8c0b2c7f54f7bf6ab6202b37143ce61f10e1aa10d8cdf2",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_actor_basis.obj",
+      "object_sha256": "c1696c505c87fcc35aa9328a928604c1e369a4edac99f4f91a765953ea0067f6"
+    },
+    {
+      "source": "src/bh_camera_curve.c",
+      "source_sha256": "24f3f3f1f191ef1e8078eb2d1fd2c2225f66c7c5e710bdd4e942beca7c5432e7",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_camera_curve.obj",
+      "object_sha256": "7eb24f4a964536283b49f097e169d6e39af5c3543addc799968aa6f69ecbd42c"
+    },
+    {
+      "source": "src/bh_player_camera.c",
+      "source_sha256": "4c58db7f2a5c36dd157421bad5c7b014cf2c0fbd7901ac43a9500117a8202560",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_player_camera.obj",
+      "object_sha256": "6dbaf082cfe28d063706d1d9a3defcf052aade3fe87facd1a0d06be4e22a658a"
+    },
+    {
+      "source": "src/bh_camera_modes.c",
+      "source_sha256": "55dc8b0d271d8adb6d4ac812c3e03af3763011222d2ed68a9c4194a632e77df7",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_camera_modes.obj",
+      "object_sha256": "4c2ec01885ee4988b13b08161cc6fc913dde90e0810d010735f0cecece265257"
+    },
+    {
+      "source": "src/bh_player_input.c",
+      "source_sha256": "0c4060193e23c0aae26989359c70619b0ef6e50fa7ad195b8868bb1e177a348b",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_player_input.obj",
+      "object_sha256": "901e852f3236b16927b7fcaf9a1f5ce3179b377326176125eed23408a6a47264"
+    },
+    {
+      "source": "src/bh_scene_background.c",
+      "source_sha256": "a392e9a1a2d4cb9d5d60f226f311961c5b9d96fbb8aeff0df3fc064fdb697a7b",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_scene_background.obj",
+      "object_sha256": "6c5977bdd5d784765de130745e78b8be0b3fa26479268816b75954e48d0801e0"
+    },
+    {
+      "source": "src/bh_camera_state.c",
+      "source_sha256": "f7d1fe3b15ac6a22b05fe94eb22f120ca71152d278535c0790910c108bb3a067",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_camera_state.obj",
+      "object_sha256": "91b588c77cf6544ff80ac092dfadd020bfbac6e0a0b31bb45d371a7a18fe9fb7"
+    },
+    {
+      "source": "src/bh_camera_queue.c",
+      "source_sha256": "dbb5914e7852ba51578300e5e59419abc13961b663cf1d2fe2ef65445a614414",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_camera_queue.obj",
+      "object_sha256": "c1211cb5af13b30c5fe9c0c38b0d5afdde6e0ea48136f592b7b2cc6064d9c9f8"
+    },
+    {
+      "source": "src/bh_scene_owner.c",
+      "source_sha256": "a63bc0976bf0185853edaaa6640e3a3dab428c4cc1579f76c1148fa0c1469edb",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_scene_owner.obj",
+      "object_sha256": "fe8443d9f8b5e90aebde6fc2513960b73f784c1ee16a453c29e2e05ae5dc894a"
+    },
+    {
+      "source": "src/bh_scene_bindings.c",
+      "source_sha256": "e8c472472bc9f76f3d977ddb0e77a044682274b913fe04741b43caaf5804a3ef",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_scene_bindings.obj",
+      "object_sha256": "70dc4c5749731f462bb78a87f6e7772ed2297a0e596866b396d6e7c9b35a1627"
+    },
+    {
+      "source": "src/bh_pickup.c",
+      "source_sha256": "be00366ba816c0e95a168b0386b022eb2ced476e0e1ddff6b57443605d688ed8",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_pickup.obj",
+      "object_sha256": "cceb960d0f8fec1425148e48ba3aa2166e66690beb2bb5edf3a2cf096f3a7fa6"
+    },
+    {
+      "source": "src/bh_pickup_draw.c",
+      "source_sha256": "d256d73555d5a589d8143e35a7ebff161a4809d589e2695c1942f41591879e82",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_pickup_draw.obj",
+      "object_sha256": "86e4b5545ef790a0210014e477b297f30276016fda24330f5cc3c3a623166869"
+    },
+    {
+      "source": "src/bh_entity_schedule.c",
+      "source_sha256": "5a83eb1e4de2711b529e80b528a81eecec8c4d28ac52e40db27a41d9ed0af576",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_entity_schedule.obj",
+      "object_sha256": "10c58a238eee8b9ca9eb85e845d9c1d3d2e954837fdd5abd04f504a35c57535e"
+    },
+    {
+      "source": "src/bh_draw_controls.c",
+      "source_sha256": "ca1ceb1702478ebf1aab124ea4ab2754285a7ca06df506a3279cbafd77c33755",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_draw_controls.obj",
+      "object_sha256": "5795fa07e69e2a0f4687f364996311a8b429067421fcb5b01c765e45ce522256"
+    },
+    {
+      "source": "src/bh_draw_submit.c",
+      "source_sha256": "b2601bb927e089a1680d61f2bdc2e4c3cb423a840d9416ac6162409d5ceb59fd",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_draw_submit.obj",
+      "object_sha256": "22c81cee42efb35e365d8fafc5c023bd5bfeebd063179afe3278d9a165759364"
+    },
+    {
+      "source": "src/bh_render_resources.c",
+      "source_sha256": "f4c20ce680121278d3812166c48c9b7137fc9cb0b098073ef1e16797d38d8a63",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_render_resources.obj",
+      "object_sha256": "38ee5748172e0c21d3602fd20ac4c3b0aa2faec3c01182c153607f57d4abd536"
+    },
+    {
+      "source": "src/bh_entity_resource_draw.c",
+      "source_sha256": "f35c7984a31b438f6d6aa915e66575f4598e2368445e27af163ebf60c3d28969",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_entity_resource_draw.obj",
+      "object_sha256": "2bb3badecfa6e9b719a94c87e8e7a0b6a0be66cfed51f637d76317e025508076"
+    },
+    {
+      "source": "src/bh_sprite_billboard.c",
+      "source_sha256": "47d4885a1662b94b3511ce5863c4996d66dd52f4139b700ffc7de7d242c8bd61",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_sprite_billboard.obj",
+      "object_sha256": "bd65f630c6fa0e59fa752db5a179c7aefa2773bba285103b640461f4eac5c0a3"
+    },
+    {
+      "source": "src/bh_sprite_oriented.c",
+      "source_sha256": "548cf5d859e947934e89c0d2db41fd7a13d114f6fb6d70c966ae4a983f93069c",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_sprite_oriented.obj",
+      "object_sha256": "8bb28a058a2fe091d744a8e3d8ab3a0594e890035ea2ead6f003c2a4e26436ea"
+    },
+    {
+      "source": "src/bh_draw_resource.c",
+      "source_sha256": "d6eb1d65b14db4c0394051dd9090da6fa6cba008dac8728d687a1fcc26ab3ba6",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_draw_resource.obj",
+      "object_sha256": "9386ca6cffd55e0d2f7830f1eef09961c06989156bed18fb3275d8d23201a2ce"
+    },
+    {
+      "source": "src/bh_native_attribute.c",
+      "source_sha256": "2f1199587abc2309451a2cd5fbbc889608467cf6b0354ecafc7e642452917aac",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_native_attribute.obj",
+      "object_sha256": "102fd44fe006a22651381970fe9db0fcfd0e5e34c9a36e6f165d66c3ccdfb490"
+    },
+    {
+      "source": "src/bh_model_instance.c",
+      "source_sha256": "512e7a495b5ff79823821923b5e111c880d1987d4e3ddf8fb7e89ef137f5c84e",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_model_instance.obj",
+      "object_sha256": "409948b1d7e6d45659a890a7beb676ae66bf5c69391921bdddf0d61260070064"
+    },
+    {
+      "source": "src/bh_model_draw.c",
+      "source_sha256": "0400b49e2abffeb857b0604002a5140bb878825935d41e2c8a3ec21208154f96",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_model_draw.obj",
+      "object_sha256": "23a419cfedbad167d201614fe2fb2c3e7970fb68b0dbfd41567995459e0e4b50"
+    },
+    {
+      "source": "src/bh_model_draw_lit.c",
+      "source_sha256": "a3de4be851830b933e61984bf602f91a69bc87bde3029daeb6e8c2b94d1ac5f2",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_model_draw_lit.obj",
+      "object_sha256": "f0385f15e46b4026156f88b585bd8837bb9358e52b7055f6b19584c39b50c91c"
+    },
+    {
+      "source": "src/bh_atlas_page.c",
+      "source_sha256": "4b3ec00facd20563aebfae4a7cf34576bc52eb6839ff969d6d0ebd087b6c49b7",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_atlas_page.obj",
+      "object_sha256": "cf6d46f5e91599193e8e00fbe0df808c678b125f3415adc07a2b6773fed59c7f"
+    },
+    {
+      "source": "src/bh_atlas_glyph.c",
+      "source_sha256": "37baf1f1e7ba256b2b3279a2744cfe13e35c4c4897ddd38429bb8fb50ebe542c",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_atlas_glyph.obj",
+      "object_sha256": "47d988d7f9b4773c81ef98dd379a26030ae3b1acd323a582bc7df730e2bbb297"
+    },
+    {
+      "source": "src/bh_attribute_clipper.c",
+      "source_sha256": "fa2e5c378020c6a6f2c146f169838956b41e9c010858f675b03f28423ce6a622",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_attribute_clipper.obj",
+      "object_sha256": "9f18b276d4a79e5e74be37cfd82aacffa245f7aff8a6c7a558f54f852f03ce20"
+    },
+    {
+      "source": "src/bh_software_tables.c",
+      "source_sha256": "0a96f604ed8e37903cf1919b48be2ef003cdf54a854d32854cce2513d3de0b0c",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_software_tables.obj",
+      "object_sha256": "c192d0fb6f13e3c9a5fe0696d07e8bf2108750b724e6f37009451467c27b39d9"
+    },
+    {
+      "source": "src/bh_light_config.c",
+      "source_sha256": "82101e7859c555fb65afd5ff44eed25400e91e3f704dc4c24ff566c6454c107c",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_light_config.obj",
+      "object_sha256": "56ef56a16018aad2e03d2880846d4794353748cef7b247c2a773600b0a90e44a"
+    },
+    {
+      "source": "src/bh_geometry_radius.c",
+      "source_sha256": "38141602d0ef597f2926bf6b1064bb1a91ab54eb5812aa7791e4c46a735ecad7",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_geometry_radius.obj",
+      "object_sha256": "f00fab27a70a3ebe7490acbee8b5d97963c3f05b1a9698ec027c94e89ab5e270"
+    },
+    {
+      "source": "src/bh_view_cull.c",
+      "source_sha256": "bf2b02be5c3dfabebf93fe6b64daf6c0bbda5c452147ba8e554580e8fa3ad9a5",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_view_cull.obj",
+      "object_sha256": "068e743294a3eee2c38b7c9ca174af0e1158ae1064da6a9c9cd50312d76bee70"
+    },
+    {
+      "source": "src/bh_atlas_image.c",
+      "source_sha256": "626a715ed86d4fe833f4dbcd44ba1eb7f94e186240a6d6e90b423010eeddef0d",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_atlas_image.obj",
+      "object_sha256": "4b906d84ae2c221829d891ba32a6c82ee2a343b59264920becb4dccd1f3daddf"
+    },
+    {
+      "source": "src/bh_native_primitive.c",
+      "source_sha256": "fc22bb58fdfd456a206c7e54c02ce2afd82af28222ab7a89f11380ae3cdc1c69",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_native_primitive.obj",
+      "object_sha256": "3db6887bb1d126392aed5f07e29d30cd016ab466b765a718b13e9dc241aef149"
+    },
+    {
+      "source": "src/bh_texture_controls.c",
+      "source_sha256": "dc7193a5c83db543187868dcb0f0e62a2d396545f106b86560b46af485943d9a",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_texture_controls.obj",
+      "object_sha256": "125b9e53ec4f00566294d48879853894e85c88995ff8dd34071a15bd87a00b69"
+    },
+    {
+      "source": "src/bh_model_path.c",
+      "source_sha256": "f7791fe685289885c6d078ba7606ccacc2a85e87fd766362a00e89f480ed147a",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_model_path.obj",
+      "object_sha256": "e46780424a8e218d6008f0e55b261916417f1e7e0104b517dfe04e8155caab59"
+    },
+    {
+      "source": "src/bh_texture_policy.c",
+      "source_sha256": "03d1bcbbb0007f8954b79610f65c0cfefcbcf5c3d5cfc6c11e8301725a3f8061",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_texture_policy.obj",
+      "object_sha256": "e22821e18b5cf55ff6e1abf9c1e2c0283f9c70d61cc4ecbb1d630986c2318878"
+    },
+    {
+      "source": "src/bh_model_images.c",
+      "source_sha256": "7849ef6332ded6398a9f34a9dd53ca39d7c2c7927f84414e8cd01f9633dc0092",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_model_images.obj",
+      "object_sha256": "f42e30c13487d7fa85fc1b7f87e6e3e6d561769df31a5d9285423fd3807cd680"
+    },
+    {
+      "source": "src/bh_main_camera.c",
+      "source_sha256": "aa546818ed08a52fd6c87fd498f5ef856470ae42fd5b3928c887be9ad2c2f24f",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_main_camera.obj",
+      "object_sha256": "a59b1425fe8e3c5a1225a532feb2935c889d37b2749f943907b2c40ba782f140"
+    },
+    {
+      "source": "src/bh_light_eval.c",
+      "source_sha256": "866889a02b417d02f539cffd5ccc58e151f4549be616dc2272ec83b863f8f9a2",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_light_eval.obj",
+      "object_sha256": "da47ee30c2931c9f6722869ccd32ddc05a7ac2e14aa67b2ff734daf3e3dbcda0"
+    },
+    {
+      "source": "src/bh_render_state.c",
+      "source_sha256": "0058f8db4573a808a55756031200563d62b4504cbeb19d735667db73edf38c1f",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_render_state.obj",
+      "object_sha256": "1ec443c27c3670ace79d2e13f3ddf56cb55b697d5029477c32d03b6bfe615581"
+    },
+    {
+      "source": "src/bh_render_material.c",
+      "source_sha256": "ba08e6d118895790c9242bc9d656dcf70241ed3d9c2bd4d057e46ec24771f244",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_render_material.obj",
+      "object_sha256": "667766ced5d67e928cecefc926c6d1d4faa668e237af420c32b974b4dbdb71c3"
+    },
+    {
+      "source": "src/bh_screen_clipper.c",
+      "source_sha256": "b3c386152abe386b75ca1d5649d8350b8258ba08f27ad59d3e042acbe111dd02",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_screen_clipper.obj",
+      "object_sha256": "839bc0d83eea1077a0655d00fb3594e62723fc89ccc4ed67ccbd0bf3c4c8276c"
+    },
+    {
+      "source": "src/bh_light.c",
+      "source_sha256": "18f6f3d33fbce60b1f7ce97fe521f153a39ce7fd70253bbfbf164636ada1e201",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_light.obj",
+      "object_sha256": "460977337413845d1d3f5d0a614dd4e15a258253a54ef1e4ecd296d3c8c1314f"
+    },
+    {
+      "source": "src/bh_view_camera.c",
+      "source_sha256": "f7984e1bbdf672df12961840426d511844d9f3cef77ddea8370b34375a9042a7",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_view_camera.obj",
+      "object_sha256": "e18ca0c0724bf0b2a411ce8a591de005101581127b6fdcca80d3911268e5933f"
+    },
+    {
+      "source": "src/bh_clipper.c",
+      "source_sha256": "483fa81c86f0354167c12745f9e06841adce924e40f1dc68d9aca113adbe8c62",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_clipper.obj",
+      "object_sha256": "e039deaeae8a5afe7cb9f3ee352ce81282cdb484a6084524e24776e87ef4cb1c"
+    },
+    {
+      "source": "src/bh_matrix_inverse.c",
+      "source_sha256": "c5cd3ee6b4071fe4f49e55432c696299945c609486359eb0239a053a6a1ce5b7",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_matrix_inverse.obj",
+      "object_sha256": "7d303ced6836e73999b6eba91541312c117174cb34bb948a8b6ca979785b0225"
+    },
+    {
+      "source": "src/bh_texture_draw.c",
+      "source_sha256": "5878f7bfb976a8b7281561787a01e0d819e41002ba4bf7b46b4a6c885c43a61a",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_texture_draw.obj",
+      "object_sha256": "9ee95ef3effdabc3cd7f6590adb8685ef2fc0561752a582adc2271972d6f176e"
+    },
+    {
+      "source": "src/bh_model.c",
+      "source_sha256": "6bb470d3965025c41f1bfdce852dce7c7461cd503201991a250d485c507d87b2",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_model.obj",
+      "object_sha256": "9c2a5834af06098e87655ad251991fb98557a6b78f3a2ee374552fd0966a1fc2"
+    },
+    {
+      "source": "src/bh_texture_image.c",
+      "source_sha256": "b90f9e2e48c816af8a5cdbe476fef73fa4f399b31b6f42024ad24e5f68ed4690",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_texture_image.obj",
+      "object_sha256": "eeba2b9b98e479024eb35c46992f5860d124fcbff845daa10ed5659fd4e35467"
+    },
+    {
+      "source": "src/bh_texture_tables.c",
+      "source_sha256": "0cc9d82eec6212b08a3bd016e18b319a73896dc35e9e191da2edaf7ddf1c60b7",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_texture_tables.obj",
+      "object_sha256": "eb5e5cf33882fc055801899b629facc250210724315badb8d65650b732c7eea5"
+    },
+    {
+      "source": "src/bh_render_guids.c",
+      "source_sha256": "c6f27239846e737ac682a0756bb3096dd5b03c9e519ca1e939d4f710e061b396",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_render_guids.obj",
+      "object_sha256": "47156664871434ba91e95f8d21d2151f9256df331b5de149c3fef908f2c6faaf"
+    },
+    {
+      "source": "src/bh_texture.c",
+      "source_sha256": "50447fcc5a161060c743bafa66500f28d7b0cbfdd40e0b14486844d0339db0d2",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_texture.obj",
+      "object_sha256": "d853756a037c78e7d0a50c7f4347edfa1eab28269024e75fdaf4642bc851957a"
+    },
+    {
+      "source": "src/bh_scene_view.c",
+      "source_sha256": "93c8bb4774f9c546edb3e99e7eec7609a556b737e6dfb2c306832e7fb81db107",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_scene_view.obj",
+      "object_sha256": "9eb91ee8d1423c8c94257cba5495b571e311da87425e0b23252c09428e28b1c1"
+    },
+    {
+      "source": "src/bh_sound_tick.c",
+      "source_sha256": "c790edd015d07d33b56f9c154be2c035ab2e19ff4d2e9bbbe1d91dae0ec10ba5",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_sound_tick.obj",
+      "object_sha256": "b8c7802bd06c56fc123e7a23539f132c3c836e6e3e15774568e2bd64cfe003cf"
+    },
+    {
+      "source": "src/bh_sound_listener.c",
+      "source_sha256": "af7535b6408e0c24f0987e4c375b4d00d816497981c1a025933b7ccad569c6aa",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_sound_listener.obj",
+      "object_sha256": "101f7e1f3744691a43f848bfd3cea8a4e747f6695e6ad7156d275e6b1f364bb5"
+    },
+    {
+      "source": "src/bh_network_transport.c",
+      "source_sha256": "57654b7ec0b21755f305cd681bccb970485ba49cb84e13ed58c6332a1f2bd10c",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_network_transport.obj",
+      "object_sha256": "a6a956402a7e0f111d48f7338d0c6d3e19ea809162294fd5af3b4b8da1dc4bcc"
+    },
+    {
+      "source": "src/bh_network_codec.c",
+      "source_sha256": "eef9d8ea4750b1e14731f5c6b55f01d50b199645c2fe4bcf0d998a83b03ab3b9",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_network_codec.obj",
+      "object_sha256": "9b89be3fdc67d80e85085c5f6f81e19d1e1be65e796e38b389d6cbaaa66a612e"
+    },
+    {
+      "source": "src/bh_debris_response.c",
+      "source_sha256": "3bfa049f333d1b18c34bd3f54f92c9966fb902171dc27e82aabea431b934960d",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_debris_response.obj",
+      "object_sha256": "cb3579d66fec7f2768a38ddf789a2b728205281d4abd9c39c119593641b7f0e3"
+    },
+    {
+      "source": "src/bh_math.c",
+      "source_sha256": "ce111e18659563a2c41a04b645295227aac6ead9fe9cc2e803ac45c726d6e9bc",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_math.obj",
+      "object_sha256": "6571bae72a644650091ecd1e024f5c47b927cb230b982c91845bfaa9f67abbf4"
+    },
+    {
+      "source": "src/bh_fp.c",
+      "source_sha256": "cc8400a29fd082f96ffd9b483f490a44992717b25eac0cb32e2e108ba446f3f8",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_fp.obj",
+      "object_sha256": "d338cabcc865b6474cdc3ef912cd099c83a711cd903991c9f73413df3f49534c"
+    },
+    {
+      "source": "src/bh_vfile.c",
+      "source_sha256": "7a8187efa6bfcbdf7a626ff53c6d4133d47a37e2dcf65830985b5cee94bf78d0",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_vfile.obj",
+      "object_sha256": "02976143510f933130c36606c894d9f29930a668d5f6490664811731ac0dde6c"
+    },
+    {
+      "source": "src/bh_config.c",
+      "source_sha256": "6081596cb764118e0441ce5d3e0cf897a6ce011ca2d7e9aaa81a6ab5ef58092e",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_config.obj",
+      "object_sha256": "63709cd6118f2ac48add7340e8fef9f70b27df02cb9c78c64a0fe0acfacbe8e1"
+    },
+    {
+      "source": "src/bh_paths.c",
+      "source_sha256": "0ce4a5312e27f1cec73425cea8a25b93677e9a619ec6aeb6c79f828c8293a977",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_paths.obj",
+      "object_sha256": "ddb91dfa7a505357ff17fa6a0d1afd70157f82c6778ad50fd372701869709a0d"
+    },
+    {
+      "source": "src/bh_scene.c",
+      "source_sha256": "8439df6593816139b4e5b60cb8e9c96283a66c8f18f5465ca1aeec3eee64e3e1",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_scene.obj",
+      "object_sha256": "81a88d3dc494b7323a48454726082157d1d4306b0d2536c72738ad990e8f1a55"
+    },
+    {
+      "source": "src/bh_bsp.c",
+      "source_sha256": "712f5d421bb28635087fe8882b13e887c12893809a7b106ea4fa24275ab48fe5",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_bsp.obj",
+      "object_sha256": "8c90cda5c33f2859cbeb65e1c1d6f495431980d2cd0b92f62d4adde374ab9410"
+    },
+    {
+      "source": "src/bh_round.c",
+      "source_sha256": "ff848010705702e25cf85f5ba1d9c30a024d1ea8bf93227240285b9c54fc8ef4",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_round.obj",
+      "object_sha256": "f05a00fc10ee0e740abe1a0ccd36fb89179fc26c4c7d1a12de52e1d3542bffe0"
+    },
+    {
+      "source": "src/bh_blocks.c",
+      "source_sha256": "d3279666e06ca171c9844124222bb0ecf886e35850ff0b82181a1a4bf3723881",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_blocks.obj",
+      "object_sha256": "4ad8bf9ff0a8d3593396389d7f2e4ce80a69b3bdccdff2be7365bab71edc0b3d"
+    },
+    {
+      "source": "src/bh_pcx.c",
+      "source_sha256": "8250cba2a91c4be9b34c69343fd048ed0d193165f6c6ad96775667489cb4ca87",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_pcx.obj",
+      "object_sha256": "81731b0a9967facccaad342614c29e0fb0ebe7a48583f4c33be25a226b2a5b51"
+    },
+    {
+      "source": "src/bh_script_timer.c",
+      "source_sha256": "c6babeca216dd9e27548dc5b9343cbc0a5285b7f58d8fa317ea41add93cb2079",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_script_timer.obj",
+      "object_sha256": "f8af8b4da590951a68a76d85e430746cfdf0429114b3d86a1bbab451dcc94c37"
+    },
+    {
+      "source": "src/bh_pcx_reader.c",
+      "source_sha256": "61362f0a0a322a63f54dfad78d807ffd8c8b7ea6e0bb02ae1c54016abb867116",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_pcx_reader.obj",
+      "object_sha256": "09eb2d08dd0c9f1aeaa522e55c818d7935e74223d39620aef1659a3f33deb741"
+    },
+    {
+      "source": "src/bh_riff.c",
+      "source_sha256": "3b9064792eafd099d6c23c28202810e0dcff17e2c9b6d50f381c16d92ad95272",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_riff.obj",
+      "object_sha256": "7dbf6e7be5afc70352847eeeb35d3744f89304674f24964d55ade745cb3f9fca"
+    },
+    {
+      "source": "src/bh_sound_queue.c",
+      "source_sha256": "9c6a9eddf5cb3332539153e7aa7418326c0ec9598a5a565f53d529ce706f61a5",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_sound_queue.obj",
+      "object_sha256": "7e3414aa685bfef05968c3ebed4078f6e393dcc9b55ff979fea8746279b53ca3"
+    },
+    {
+      "source": "src/bh_draw_queue.c",
+      "source_sha256": "0c697d2144ebb7453a37f65aa8f208d69512c3e4926e369cc7c37daee706707d",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_draw_queue.obj",
+      "object_sha256": "e1c5a926ab929a42d14df058be17fbf5481e8392e4735c4320d2e949db0f2e9b"
+    },
+    {
+      "source": "src/bh_contact_effects.c",
+      "source_sha256": "78a1a77bea2540718d766aa138f63ff3cd63124ad1a2c8d7fe7c39cef5f6bc90",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_contact_effects.obj",
+      "object_sha256": "4912b28d31bbfabf0d2f0cc1758e2b9fd622633192ee6876df78707305503fc3"
+    },
+    {
+      "source": "src/bh_physics_response.c",
+      "source_sha256": "273ba0f8cae1356e757558e88649d6a73f4f8d9fdde8b62027eb535e5556e382",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_physics_response.obj",
+      "object_sha256": "40cbe77cd78a6dae90b9f10e7a7000f3daad137c1512ae11ac3ce290b12dece1"
+    },
+    {
+      "source": "src/bh_entity_collision.c",
+      "source_sha256": "e9a381944a9f9ba6c47a139df7ce2036ee69f69b9579961b76dc75962631010e",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_entity_collision.obj",
+      "object_sha256": "aeae4cc961abe608856a64262e9d5aaaf75bfe9ff1660dc5e19a94bc8dfc8cde"
+    },
+    {
+      "source": "src/bh_sweep.c",
+      "source_sha256": "829392439f2e0886f45079d69f1e884730cfc1b9faaade22ab8872324fff751a",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_sweep.obj",
+      "object_sha256": "7d94211d514f42cb733d6c869551a1e19ff9b3775f1f06bd12f8ea95697b4111"
+    },
+    {
+      "source": "src/bh_collision_query.c",
+      "source_sha256": "1973040655dfb2f871dd6212bf44db3c5cf14057627ee23e26b08c798f907c8e",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_collision_query.obj",
+      "object_sha256": "63ca8c1b0d24c1d74b3288672b603ffac1c46fe15fe76a8826da18d3764095cb"
+    },
+    {
+      "source": "src/bh_collision_model.c",
+      "source_sha256": "45d4f2fd56e41af59ec73ce2c936f83af6cc6e470a15d8c1a1ad717cb5caa6bd",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_collision_model.obj",
+      "object_sha256": "83c1aa0d97e63a4d32b869be7d5ece5df7e71919e224a97cbdccdf6aa76bc861"
+    },
+    {
+      "source": "src/bh_segment_query.c",
+      "source_sha256": "bc8b01e7c1bba98f5c3df0ea845e3b4a7570b550435c389f7e6dde7bda4ccb35",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_segment_query.obj",
+      "object_sha256": "2f69e0889a6ee1f4f67ac571568a6b9c9473ae7ff8b5265cf09344e310c368f4"
+    },
+    {
+      "source": "src/bh_position.c",
+      "source_sha256": "629dbd42143b6082dc025c4e82585106ae6df97e1a204363c1fde89d11d3b10c",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_position.obj",
+      "object_sha256": "96dd96821d108fba37e9db0572fcde289d69d164f8b6eccc8c8a051014d6be88"
+    },
+    {
+      "source": "src/bh_world_query.c",
+      "source_sha256": "26f0900748e1f0d7a6ecf072f1028ae305e703865cfa34765592ff0f3235fe48",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_world_query.obj",
+      "object_sha256": "89e738b39fa6d67e8e68f9c2c9e0cd04ed110257848e70af0efdd57fd2740b06"
+    },
+    {
+      "source": "src/bh_route_query.c",
+      "source_sha256": "f4960f8e58e1ea803422ae3a2ba787c2fa658b562d793a1f4c9b0716927ab074",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_route_query.obj",
+      "object_sha256": "4d0084f76099c613d0a13b4dab88d91c1328d08e3fe749f856f23b201baa9298"
+    },
+    {
+      "source": "src/bh_navigation.c",
+      "source_sha256": "23ecfe0859a8fb5d77e07b3919eb851e6f95ec2297b13c5f5d8e6d3d0ef78e05",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_navigation.obj",
+      "object_sha256": "b7744f1b2b80cfcc8fb99b6d72fc566c154a76f8bc81ced8393760b65947624b"
+    },
+    {
+      "source": "src/bh_rotation.c",
+      "source_sha256": "9a288fba2368c54b0b1a743b907e468b8683d8f6ff101807423c78b44644dd12",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_rotation.obj",
+      "object_sha256": "c8a53d614ef8d0f18eb8bfc72eebbc9a3c70518ab189fd9935156be1e8e5bd0d"
+    },
+    {
+      "source": "src/bh_world_geometry.c",
+      "source_sha256": "c1f81b5b6c07a278e65abe21717866342c89c7486ef7ca1fb0d0772a7c9a0ce0",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_world_geometry.obj",
+      "object_sha256": "bc5f1289b37edbca5d1821d6627e5076410c4521022e9720487442a5bb6e6c6f"
+    },
+    {
+      "source": "src/bh_geometry.c",
+      "source_sha256": "9a22644a9c0585cfe22a9c437576c627bf4e68fae5e9e6dabdc9099aa9fa0acf",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_geometry.obj",
+      "object_sha256": "b155379362576de58c68689113404764a373b60cd09523c9de31a43d67fbc86f"
+    },
+    {
+      "source": "src/bh_portals.c",
+      "source_sha256": "e3dfd22a94b1edc401b1219d9aba390a7b12be22e6228160608531538db2b3e5",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_portals.obj",
+      "object_sha256": "da316a0988505d0adbffe42507f0eb90f8d52f3466f038c44587207fbdaacbcb"
+    },
+    {
+      "source": "src/bh_wave.c",
+      "source_sha256": "16bf89dc8799e762bc8eb257c60841214ae4135d9e9b6702f8124ef97fdf7115",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_wave.obj",
+      "object_sha256": "cad962c3d8bce0bebfdd0f591fb606283ca3e1cb142805821c11349caefbd808"
+    },
+    {
+      "source": "src/bh_entities.c",
+      "source_sha256": "6fc5e54d88906a7922c149bb1ccc9851c2cbe701217e57d8e3c72646d81cb92a",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_entities.obj",
+      "object_sha256": "c96f18e179603c00e2fa85c6d4d71032c28ead60fdf73dc081249eaed0a63531"
+    },
+    {
+      "source": "src/bh_callback_helpers.c",
+      "source_sha256": "819ff773fd229ebd3710f5a0acd95bf581a537cb550d50ba7c6a89fb3063457d",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_callback_helpers.obj",
+      "object_sha256": "3df00acd80b5addd5ef0380a9c96b81e3dd673f8cbac479f70ff462213c7b05f"
+    },
+    {
+      "source": "src/bh_serial_options.c",
+      "source_sha256": "62829646f6fc61ff7852b38746d571aa00789a9701f175bbbb92f35650166f48",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_serial_options.obj",
+      "object_sha256": "dabf87efce5f834bfa2098414bdb785bc5b4e032d7049bd25e7ba1732c06e342"
+    },
+    {
+      "source": "src/bh_script_lifetime.c",
+      "source_sha256": "d26c5acb9029a042a0c0e0a6012c45cc513cc9566c850f369fff047a7405e94c",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_script_lifetime.obj",
+      "object_sha256": "106351cc902d2de28646c835d6eceb608d7cad04dfa6e0dff1689c714a480341"
+    },
+    {
+      "source": "src/bh_menu_settings.c",
+      "source_sha256": "fe278c84324b82130e6863305c7d10086fe93bbe49a741415d65517e0605faa5",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_menu_settings.obj",
+      "object_sha256": "56f5279402df5fd9fa6ebdc2089c38185aef245697cbe4b1f85b589e55f6f51a"
+    },
+    {
+      "source": "src/bh_editor_input.c",
+      "source_sha256": "2b8b5e75e2a2fdd081b20442ccbf559ec1a0d1e465fb6a3f82680b453496a3ac",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_editor_input.obj",
+      "object_sha256": "985a26d5c73c5327578f243dccd5b8e22a0ebec68f07260042dd12b1bce72b92"
+    },
+    {
+      "source": "src/bh_script_attached_sound.c",
+      "source_sha256": "9c3856ed93b3f6b4ef0b1f31362352edc35435fa8d4b78838165c8cdc0f99349",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_script_attached_sound.obj",
+      "object_sha256": "609c8eff00207e36afeb1282f420dc1b8c28511387ca7d9b9e437ac9c6993df1"
+    },
+    {
+      "source": "src/bh_script_motion.c",
+      "source_sha256": "46a39c003fba440af3f26abbe8c40f07a205b512277a1b2fb4e1d4ee5bc6510d",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_script_motion.obj",
+      "object_sha256": "90c8651f41b9097adb664a5e6a16737f8d78d5e2ba8725443cf7a82bb9e95751"
+    },
+    {
+      "source": "src/bh_display_enum.c",
+      "source_sha256": "3408cd36b3270e3c13bd26c484d481b905fb0b6261d84c265ff56c1a3b587557",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_display_enum.obj",
+      "object_sha256": "db8c6e437a86d7c405cca9f72463877e33843ae54174bbe588fcfc1f44f9dded"
+    },
+    {
+      "source": "src/bh_sound_startup.c",
+      "source_sha256": "adb78451fabccf05272dc289cebb02c4a48a84c23da56aa49a1a2d79e08dcc82",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_sound_startup.obj",
+      "object_sha256": "6555aaf3fec64697aaaccf26a5c8f290e68d13497045343ce8bb4ac3a5be2ba3"
+    },
+    {
+      "source": "src/bh_script_particles.c",
+      "source_sha256": "bd11fd125f9ad933d98549c1911e8105bc1ffb004f86c4e669f39a742e82efac",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_script_particles.obj",
+      "object_sha256": "89434d2717e1e65bdbe8b6c8842342f881ec395995b0d219851203359212741e"
+    },
+    {
+      "source": "src/bh_collision_box.c",
+      "source_sha256": "89496fbb219e73702170aa12ff97b121af41a419e138f64a143bc2368343ca4d",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_collision_box.obj",
+      "object_sha256": "64f30514a02c19b585b5861bfc2e7db8a0f83adcd2f0426e3890b142607b7973"
+    },
+    {
+      "source": "src/bh_script_sensor.c",
+      "source_sha256": "0e776079267b3283190904bc56361d3c7d8eb041cfb599833cc4ac4526c4ee19",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_script_sensor.obj",
+      "object_sha256": "0271dc616aff65b974632d9d2ce5c09bc42ee1ca7fb4f416c8695a5b27788536"
+    },
+    {
+      "source": "src/bh_script_flash.c",
+      "source_sha256": "fc99f7e789542ac83fa3d86c9021474bc05cd8504c59b7b3d8413188911c9078",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_script_flash.obj",
+      "object_sha256": "187918b2cb11dc8f71c44a345eb5eee9d393c637ace65a509ebdcd0d22e5e340"
+    },
+    {
+      "source": "src/bh_project_scale.c",
+      "source_sha256": "3610d0bb9e9a4ecbfea4b3266fad77d96da64f0532b2c0e717c7a749f2919046",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_project_scale.obj",
+      "object_sha256": "85f91e1cfcb90eb404fbd04072ac17d9e0d4a1321330e396a066c880972ece9a"
+    },
+    {
+      "source": "src/bh_cd_audio.c",
+      "source_sha256": "77fe48d42181d12e4e97eeb5a4c280bba358f9a94e2d6c2d0f4bd0d1f2aab9cf",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_cd_audio.obj",
+      "object_sha256": "1696e4ac2e111be2793fb25b7c95247ee111f360b0cd6e36090c1c56fb352bd4"
+    },
+    {
+      "source": "src/bh_provider_catalog.c",
+      "source_sha256": "0e4577713ae09b9f84bec71f4d9cb05ec2801b755c668db382d223b859ccc6fc",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_provider_catalog.obj",
+      "object_sha256": "379b5435f5b0e9d0fe891d851de9236ea5c2c7ab9b5b564841e74e564e0e2a6b"
+    },
+    {
+      "source": "src/bh_provider_startup.c",
+      "source_sha256": "7bb9e7d7244b72918e78945a35460052d24c6d036898b6cafba4e1c37a1cf233",
+      "object": "D:\\Decomp\\Bhunter\\build\\m0\\bh_provider_startup.obj",
+      "object_sha256": "6e938e9a2ba4c0d69b7c5667849bad3d00bec0e830464beef9218ff28f4d5b5f"
+    }
+  ],
+  "stdout": "{\"scenario\":\"flash-flare\",\"checks\":59,\"failures\":0,\"original_code_required\":false,\"play_calls\":0}\n",
+  "missing_module_link_control": true
+}

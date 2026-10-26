@@ -1,0 +1,197 @@
+
+GAME_DATA/BHUNTER.EXE:     file format pei-i386
+
+
+Disassembly of section .text:
+
+00477ae0 <.text+0x76ae0>:
+  477ae0:	83 ec 20             	sub    esp,0x20
+  477ae3:	56                   	push   esi
+  477ae4:	57                   	push   edi
+  477ae5:	8b 7c 24 2c          	mov    edi,DWORD PTR [esp+0x2c]
+  477ae9:	8d 44 24 0c          	lea    eax,[esp+0xc]
+  477aed:	8d 4c 24 1c          	lea    ecx,[esp+0x1c]
+  477af1:	50                   	push   eax
+  477af2:	d9 47 04             	fld    DWORD PTR [edi+0x4]
+  477af5:	d9 5c 24 1c          	fstp   DWORD PTR [esp+0x1c]
+  477af9:	d9 47 08             	fld    DWORD PTR [edi+0x8]
+  477afc:	d9 5c 24 20          	fstp   DWORD PTR [esp+0x20]
+  477b00:	d9 47 0c             	fld    DWORD PTR [edi+0xc]
+  477b03:	8d 54 24 1c          	lea    edx,[esp+0x1c]
+  477b07:	51                   	push   ecx
+  477b08:	d9 5c 24 14          	fstp   DWORD PTR [esp+0x14]
+  477b0c:	52                   	push   edx
+  477b0d:	e8 2e dd fd ff       	call   0x455840
+  477b12:	83 c4 0c             	add    esp,0xc
+  477b15:	85 c0                	test   eax,eax
+  477b17:	0f 84 f4 01 00 00    	je     0x477d11
+  477b1d:	a1 98 29 4e 00       	mov    eax,ds:0x4e2998
+  477b22:	d9 44 24 0c          	fld    DWORD PTR [esp+0xc]
+  477b26:	99                   	cdq
+  477b27:	2b c2                	sub    eax,edx
+  477b29:	d1 f8                	sar    eax,1
+  477b2b:	89 44 24 2c          	mov    DWORD PTR [esp+0x2c],eax
+  477b2f:	db 44 24 2c          	fild   DWORD PTR [esp+0x2c]
+  477b33:	d9 c9                	fxch   st(1)
+  477b35:	dc 3d 40 a2 48 00    	fdivr  QWORD PTR ds:0x48a240
+  477b3b:	d9 c9                	fxch   st(1)
+  477b3d:	d8 7f 14             	fdivr  DWORD PTR [edi+0x14]
+  477b40:	d9 54 24 2c          	fst    DWORD PTR [esp+0x2c]
+  477b44:	8b 44 24 2c          	mov    eax,DWORD PTR [esp+0x2c]
+  477b48:	d9 c1                	fld    st(1)
+  477b4a:	de d9                	fcompp
+  477b4c:	89 47 14             	mov    DWORD PTR [edi+0x14],eax
+  477b4f:	df e0                	fnstsw ax
+  477b51:	f6 c4 41             	test   ah,0x41
+  477b54:	75 0b                	jne    0x477b61
+  477b56:	dd d8                	fstp   st(0)
+  477b58:	8b 47 50             	mov    eax,DWORD PTR [edi+0x50]
+  477b5b:	5f                   	pop    edi
+  477b5c:	5e                   	pop    esi
+  477b5d:	83 c4 20             	add    esp,0x20
+  477b60:	c3                   	ret
+  477b61:	a1 98 29 4e 00       	mov    eax,ds:0x4e2998
+  477b66:	99                   	cdq
+  477b67:	db 05 ec 2d 4e 00    	fild   DWORD PTR ds:0x4e2dec
+  477b6d:	2b c2                	sub    eax,edx
+  477b6f:	8b c8                	mov    ecx,eax
+  477b71:	a1 ec 2d 4e 00       	mov    eax,ds:0x4e2dec
+  477b76:	99                   	cdq
+  477b77:	2b c2                	sub    eax,edx
+  477b79:	d1 f8                	sar    eax,1
+  477b7b:	d1 f9                	sar    ecx,1
+  477b7d:	89 44 24 14          	mov    DWORD PTR [esp+0x14],eax
+  477b81:	89 4c 24 20          	mov    DWORD PTR [esp+0x20],ecx
+  477b85:	db 44 24 14          	fild   DWORD PTR [esp+0x14]
+  477b89:	db 44 24 20          	fild   DWORD PTR [esp+0x20]
+  477b8d:	d8 6c 24 18          	fsubr  DWORD PTR [esp+0x18]
+  477b91:	d9 c9                	fxch   st(1)
+  477b93:	d8 6c 24 1c          	fsubr  DWORD PTR [esp+0x1c]
+  477b97:	d9 c9                	fxch   st(1)
+  477b99:	d9 54 24 14          	fst    DWORD PTR [esp+0x14]
+  477b9d:	d9 c9                	fxch   st(1)
+  477b9f:	d9 54 24 10          	fst    DWORD PTR [esp+0x10]
+  477ba3:	d9 c9                	fxch   st(1)
+  477ba5:	d8 4c 24 14          	fmul   DWORD PTR [esp+0x14]
+  477ba9:	d9 c9                	fxch   st(1)
+  477bab:	d8 4c 24 10          	fmul   DWORD PTR [esp+0x10]
+  477baf:	de c1                	faddp  st(1),st
+  477bb1:	d9 fa                	fsqrt
+  477bb3:	d8 d1                	fcom   st(1)
+  477bb5:	df e0                	fnstsw ax
+  477bb7:	f6 c4 01             	test   ah,0x1
+  477bba:	75 0f                	jne    0x477bcb
+  477bbc:	8b 47 50             	mov    eax,DWORD PTR [edi+0x50]
+  477bbf:	dd d8                	fstp   st(0)
+  477bc1:	dd d8                	fstp   st(0)
+  477bc3:	dd d8                	fstp   st(0)
+  477bc5:	5f                   	pop    edi
+  477bc6:	5e                   	pop    esi
+  477bc7:	83 c4 20             	add    esp,0x20
+  477bca:	c3                   	ret
+  477bcb:	d8 f1                	fdiv   st,st(1)
+  477bcd:	d9 44 24 2c          	fld    DWORD PTR [esp+0x2c]
+  477bd1:	d8 e3                	fsub   st,st(3)
+  477bd3:	d9 c9                	fxch   st(1)
+  477bd5:	dc 2d 40 a2 48 00    	fsubr  QWORD PTR ds:0x48a240
+  477bdb:	d9 c9                	fxch   st(1)
+  477bdd:	d8 74 24 2c          	fdiv   DWORD PTR [esp+0x2c]
+  477be1:	d9 c9                	fxch   st(1)
+  477be3:	dd db                	fstp   st(3)
+  477be5:	de ca                	fmulp  st(2),st
+  477be7:	d9 c9                	fxch   st(1)
+  477be9:	d9 5c 24 08          	fstp   DWORD PTR [esp+0x8]
+  477bed:	dd d8                	fstp   st(0)
+  477bef:	d9 44 24 08          	fld    DWORD PTR [esp+0x8]
+  477bf3:	d8 0d 48 a2 48 00    	fmul   DWORD PTR ds:0x48a248
+  477bf9:	d9 54 24 2c          	fst    DWORD PTR [esp+0x2c]
+  477bfd:	d8 1d 4c a2 48 00    	fcomp  DWORD PTR ds:0x48a24c
+  477c03:	df e0                	fnstsw ax
+  477c05:	f6 c4 41             	test   ah,0x41
+  477c08:	75 16                	jne    0x477c20
+  477c0a:	8b 47 24             	mov    eax,DWORD PTR [edi+0x24]
+  477c0d:	85 c0                	test   eax,eax
+  477c0f:	75 0f                	jne    0x477c20
+  477c11:	8b 47 28             	mov    eax,DWORD PTR [edi+0x28]
+  477c14:	85 c0                	test   eax,eax
+  477c16:	75 08                	jne    0x477c20
+  477c18:	c7 44 24 2c 00 00 00 	mov    DWORD PTR [esp+0x2c],0x40000000
+  477c1f:	40 
+  477c20:	d9 44 24 2c          	fld    DWORD PTR [esp+0x2c]
+  477c24:	dc 1d 50 a2 48 00    	fcomp  QWORD PTR ds:0x48a250
+  477c2a:	df e0                	fnstsw ax
+  477c2c:	f6 c4 41             	test   ah,0x41
+  477c2f:	0f 85 dc 00 00 00    	jne    0x477d11
+  477c35:	be f0 28 49 00       	mov    esi,0x4928f0
+  477c3a:	8b 56 04             	mov    edx,DWORD PTR [esi+0x4]
+  477c3d:	8b 4c 97 1c          	mov    ecx,DWORD PTR [edi+edx*4+0x1c]
+  477c41:	85 c9                	test   ecx,ecx
+  477c43:	0f 84 a6 00 00 00    	je     0x477cef
+  477c49:	d9 44 24 2c          	fld    DWORD PTR [esp+0x2c]
+  477c4d:	dc 1d 40 a2 48 00    	fcomp  QWORD PTR ds:0x48a240
+  477c53:	df e0                	fnstsw ax
+  477c55:	f6 c4 01             	test   ah,0x1
+  477c58:	75 06                	jne    0x477c60
+  477c5a:	d9 44 24 08          	fld    DWORD PTR [esp+0x8]
+  477c5e:	eb 08                	jmp    0x477c68
+  477c60:	d9 44 24 2c          	fld    DWORD PTR [esp+0x2c]
+  477c64:	d8 4c 24 08          	fmul   DWORD PTR [esp+0x8]
+  477c68:	d8 0e                	fmul   DWORD PTR [esi]
+  477c6a:	d9 5c 24 20          	fstp   DWORD PTR [esp+0x20]
+  477c6e:	d9 46 fc             	fld    DWORD PTR [esi-0x4]
+  477c71:	d8 15 58 a2 48 00    	fcom   DWORD PTR ds:0x48a258
+  477c77:	df e0                	fnstsw ax
+  477c79:	f6 c4 01             	test   ah,0x1
+  477c7c:	74 09                	je     0x477c87
+  477c7e:	d8 4f 10             	fmul   DWORD PTR [edi+0x10]
+  477c81:	d8 4c 24 0c          	fmul   DWORD PTR [esp+0xc]
+  477c85:	d9 e0                	fchs
+  477c87:	db 05 98 29 4e 00    	fild   DWORD PTR ds:0x4e2998
+  477c8d:	d9 c9                	fxch   st(1)
+  477c8f:	de c9                	fmulp  st(1),st
+  477c91:	8b 44 24 20          	mov    eax,DWORD PTR [esp+0x20]
+  477c95:	8b 57 18             	mov    edx,DWORD PTR [edi+0x18]
+  477c98:	50                   	push   eax
+  477c99:	6a 00                	push   0x0
+  477c9b:	dc 0d 60 a2 48 00    	fmul   QWORD PTR ds:0x48a260
+  477ca1:	52                   	push   edx
+  477ca2:	d9 5c 24 30          	fstp   DWORD PTR [esp+0x30]
+  477ca6:	8b 44 24 30          	mov    eax,DWORD PTR [esp+0x30]
+  477caa:	d9 44 24 1c          	fld    DWORD PTR [esp+0x1c]
+  477cae:	50                   	push   eax
+  477caf:	50                   	push   eax
+  477cb0:	a1 ec 2d 4e 00       	mov    eax,ds:0x4e2dec
+  477cb5:	51                   	push   ecx
+  477cb6:	d8 4e f8             	fmul   DWORD PTR [esi-0x8]
+  477cb9:	99                   	cdq
+  477cba:	2b c2                	sub    eax,edx
+  477cbc:	d1 f8                	sar    eax,1
+  477cbe:	89 44 24 3c          	mov    DWORD PTR [esp+0x3c],eax
+  477cc2:	a1 98 29 4e 00       	mov    eax,ds:0x4e2998
+  477cc7:	da 44 24 3c          	fiadd  DWORD PTR [esp+0x3c]
+  477ccb:	99                   	cdq
+  477ccc:	2b c2                	sub    eax,edx
+  477cce:	d1 f8                	sar    eax,1
+  477cd0:	89 44 24 3c          	mov    DWORD PTR [esp+0x3c],eax
+  477cd4:	d9 1c 24             	fstp   DWORD PTR [esp]
+  477cd7:	d9 44 24 2c          	fld    DWORD PTR [esp+0x2c]
+  477cdb:	d8 4e f8             	fmul   DWORD PTR [esi-0x8]
+  477cde:	51                   	push   ecx
+  477cdf:	da 44 24 40          	fiadd  DWORD PTR [esp+0x40]
+  477ce3:	d9 1c 24             	fstp   DWORD PTR [esp]
+  477ce6:	51                   	push   ecx
+  477ce7:	e8 24 d7 fd ff       	call   0x455410
+  477cec:	83 c4 20             	add    esp,0x20
+  477cef:	d9 44 24 2c          	fld    DWORD PTR [esp+0x2c]
+  477cf3:	d8 25 68 a2 48 00    	fsub   DWORD PTR ds:0x48a268
+  477cf9:	83 c6 10             	add    esi,0x10
+  477cfc:	d9 54 24 2c          	fst    DWORD PTR [esp+0x2c]
+  477d00:	dc 1d 50 a2 48 00    	fcomp  QWORD PTR ds:0x48a250
+  477d06:	df e0                	fnstsw ax
+  477d08:	f6 c4 41             	test   ah,0x41
+  477d0b:	0f 84 29 ff ff ff    	je     0x477c3a
+  477d11:	8b 47 50             	mov    eax,DWORD PTR [edi+0x50]
+  477d14:	5f                   	pop    edi
+  477d15:	5e                   	pop    esi
+  477d16:	83 c4 20             	add    esp,0x20
+  477d19:	c3                   	ret

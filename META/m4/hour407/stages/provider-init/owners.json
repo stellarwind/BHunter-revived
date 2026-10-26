@@ -1,0 +1,30 @@
+[
+  {
+    "address": "00475ef0",
+    "function": "bh_provider_startup",
+    "source": "src/bh_provider_startup.c",
+    "role": "engine_candidate",
+    "family": "parent3",
+    "scenarios": [
+      "provider-startup"
+    ],
+    "ranges": [
+      {
+        "start": "00475ef0",
+        "end_exclusive": "0047602d",
+        "bytes": 317,
+        "instructions": 111,
+        "sha256": "04ead963f1958a97a70dc90a484ce522ffc224855377d956cce864f967e943ad"
+      }
+    ],
+    "provenance_confidence": "Whole actual startup provider/modem initialization owner; exact COM identities/application GUID/vtable slots verified; native imports/reused allocation not counted, engine attribution unresolved",
+    "abi": "x86 cdecl; real DirectPlay3A/Lobby2A and actual six-argument provider/four-argument modem callbacks; explicit owning contexts; same-thread retained COM init",
+    "limits": [
+      "Actual peer/lobby creation and provider enumeration validated; modem initialization HRESULT-2005466886, player address HRESULT-2005466816,0successfulconnections/0sessions.",
+      "Successful InitializeConnection/GetPlayerAddress/EnumAddress branches remain unforced host limitations.",
+      "Source invalid/repeated state, failed allocation/lobby guards and zero-initialized size output differ only outside original valid native contracts.",
+      "Catalog copies outlive transient interfaces; dispose copied blobs and balance successful CoInitialize with actual same-thread network shutdown.",
+      "Whole provider initialization, not DirectPlay gameplay or full application startup; no original/game/input/audio/UI execution."
+    ]
+  }
+]
