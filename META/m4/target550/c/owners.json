@@ -1,0 +1,28 @@
+[
+  {
+    "original_va": "004363f0",
+    "function": "bh_script_actor_curve",
+    "source": "src/bh_script_actor_path.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete indirect route interpolation owner installed by36fa0; distinct RET boundary. No CRT, compiler helper, import or shared tail; original authorship unresolved.",
+    "boundary": {
+      "start": "004363f0",
+      "end_exclusive": "00436669",
+      "bytes": 633,
+      "instructions": 211,
+      "sha256": "1f4fa4e001d4dd4aefa1d0ee2dd3341ed6f146fc4506bebcae627d302cae4fd7"
+    },
+    "validation": {
+      "abi": "x86 cdecl6argument route callback. Borrowed BHVec3 input/output; no globals or owned storage.",
+      "limits": [
+        "PC53 nearest/masked moderate finite control vectors and phase. PC24 remains unresolved. CRT sin/cos may differ from original x87 FSIN/FCOS at last bits; no raw or differential match claimed.",
+        "Analytic interior1000sample sweep and exact endpoint/extrapolation, output alias fixtures. Original code, game, startup and gameplay not executed.",
+        "Real topology, draw, ticks, query and43bec0constructor are independently recovered in c2..c6.43a920/43bca0 remain open.36670is an already-admitted owner reused through a count-zero wrapper, excluded here."
+      ]
+    },
+    "evidence": [
+      "META/m4/target550/c/standalone-build.json",
+      "META/m4/target550/c/original/004363f0.disasm.json"
+    ]
+  }
+]

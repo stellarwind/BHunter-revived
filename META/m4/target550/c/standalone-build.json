@@ -1,0 +1,138 @@
+{
+  "scenario": "script-actor-path",
+  "checks": 6001,
+  "failures": 0,
+  "original_code_required": false,
+  "target": "bhunter-script-actor-path-check.exe",
+  "commands": [
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Gy",
+        "/DBH_SCRIPT_ACTOR_PATH_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\target550-c\\bh_script_actor_path.obj",
+        "src/bh_script_actor_path.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_script_actor_path.c\n"
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Gy",
+        "/DBH_SCRIPT_ACTOR_PATH_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\target550-c\\bh_callback_helpers.obj",
+        "src/bh_callback_helpers.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_callback_helpers.c\n"
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Gy",
+        "/DBH_SCRIPT_ACTOR_PATH_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\target550-c\\bh_round.obj",
+        "src/bh_round.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_round.c\n"
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Gy",
+        "/DBH_SCRIPT_ACTOR_PATH_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\target550-c\\bh_fp.obj",
+        "src/bh_fp.c"
+      ],
+      "exit_code": 0,
+      "output": "bh_fp.c\n"
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\analysis\\toolchain-sp3\\bin\\CL.EXE",
+        "/nologo",
+        "/c",
+        "/ML",
+        "/O2",
+        "/G5",
+        "/Gy",
+        "/DBH_SCRIPT_ACTOR_PATH_STANDALONE",
+        "/FoD:\\Decomp\\Bhunter\\build\\target550-c\\script_actor_path.obj",
+        "tests/script_actor_path.c"
+      ],
+      "exit_code": 0,
+      "output": "script_actor_path.c\n"
+    },
+    {
+      "command": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/opt:ref",
+        "/out:D:\\Decomp\\Bhunter\\build\\target550-c\\bhunter-script-actor-path-check.exe",
+        "D:\\Decomp\\Bhunter\\build\\target550-c\\bh_script_actor_path.obj",
+        "D:\\Decomp\\Bhunter\\build\\target550-c\\bh_callback_helpers.obj",
+        "D:\\Decomp\\Bhunter\\build\\target550-c\\bh_round.obj",
+        "D:\\Decomp\\Bhunter\\build\\target550-c\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\build\\target550-c\\script_actor_path.obj",
+        "kernel32.lib"
+      ],
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "command": [
+        "D:\\Decomp\\Bhunter\\build\\target550-c\\bhunter-script-actor-path-check.exe"
+      ],
+      "exit_code": 0,
+      "output": "{\"scenario\":\"script-actor-path\",\"checks\":6001,\"failures\":0,\"original_code_required\":false}\n"
+    },
+    {
+      "command": [
+        "D:\\Decomp\\MSCVC\\MSVC5\\TOOLS\\DEVSTUDIO\\VC\\bin\\LINK.EXE",
+        "/nologo",
+        "/subsystem:console",
+        "/opt:ref",
+        "/out:D:\\Decomp\\Bhunter\\build\\target550-c\\missing.exe",
+        "D:\\Decomp\\Bhunter\\build\\target550-c\\bh_callback_helpers.obj",
+        "D:\\Decomp\\Bhunter\\build\\target550-c\\bh_round.obj",
+        "D:\\Decomp\\Bhunter\\build\\target550-c\\bh_fp.obj",
+        "D:\\Decomp\\Bhunter\\build\\target550-c\\script_actor_path.obj",
+        "kernel32.lib"
+      ],
+      "exit_code": 25,
+      "output": "script_actor_path.obj : error LNK2001: unresolved external symbol _bh_script_actor_linear\nscript_actor_path.obj : error LNK2001: unresolved external symbol _bh_script_actor_curve\nD:\\Decomp\\Bhunter\\build\\target550-c\\missing.exe : fatal error LNK1120: 2 unresolved externals\n"
+    }
+  ],
+  "missing_module_link_control": true,
+  "original_code_executed": false,
+  "sources": {
+    "src/bh_script_actor_path.c": "8497613c651976b85548493a8e6ac62e242e112e5f9c1654c2d53d7f4e9c8f4f",
+    "src/bh_callback_helpers.c": "819ff773fd229ebd3710f5a0acd95bf581a537cb550d50ba7c6a89fb3063457d",
+    "src/bh_round.c": "ff848010705702e25cf85f5ba1d9c30a024d1ea8bf93227240285b9c54fc8ef4",
+    "src/bh_fp.c": "cc8400a29fd082f96ffd9b483f490a44992717b25eac0cb32e2e108ba446f3f8",
+    "tests/script_actor_path.c": "e4be435f22b08fbab921c8be3bb123163e1d70bf1fee1c97ad8b3ebd0821621d"
+  }
+}

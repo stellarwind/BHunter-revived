@@ -1,0 +1,29 @@
+[
+  {
+    "original_va": "00427180",
+    "function": "bh_network_effect_receive",
+    "source": "src/bh_network_effect_receive.c",
+    "role": "game",
+    "provenance_confidence": "Whole checksummed remote effect-update receiver, actual position decode and real entity dispatch; full RET boundary, no CRT/import/EH/sharedtail.",
+    "boundary": {
+      "start": "00427180",
+      "end_exclusive": "0042733f",
+      "bytes": 447,
+      "instructions": 143,
+      "sha256": "3ef39e21de6379d177d4873f3e35c8b06cec600b96e411492cdba365bc504549"
+    },
+    "validation": {
+      "abi": "Pinned x86 cdecl. Whole checksummed remoteeffectpacketreceiver with actualpositiondecode/realentitypoolquery/effectquery definitions.",
+      "limits": [
+        "45checks actualpacketcodec/navigationposition/effectquerycallback; complete compositeidentity ack/move, counters, vectorquantization, actor>=8 cursor, invalidworld/checksum/truncation branches.",
+        "No sessions, transportreceives, game/input ororiginalcode. Actualeffectquery andall installed effecttickdefinitions linked; kind1fixture relocates real effect without running tick/gameplay. Originalunusedpacketword3 sourcezeroed; no actualcallback consumes it.",
+        "Focused linked source checks; parentfreshfullintegration required. Retaineddependencyobject hashes recorded; playablegame completion notclaimed."
+      ]
+    },
+    "evidence": [
+      "META/m4/target600/c8/standalone-build.json",
+      "META/m4/target600/c8/README.md",
+      "META/m4/target600/c8/original/00427180.disasm.json"
+    ]
+  }
+]

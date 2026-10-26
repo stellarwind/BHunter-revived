@@ -1,0 +1,86 @@
+[
+  {
+    "original_va": "004357d0",
+    "function": "bh_actor_damage_tick",
+    "source": "src/bh_actor_damage.c",
+    "role": "game",
+    "provenance_confidence": "Whole actor damage/death behavior or entity query callback. Actual constructor-installed query and query-installed step reviewed. Distinct ordinary owner with internal RETs, no CRT/compiler/import/shared-tail count.",
+    "boundary": {
+      "start": "004357d0",
+      "end_exclusive": "00435e7d",
+      "bytes": 1709,
+      "instructions": 449,
+      "sha256": "b067f36aff6b0b79e63a5ab9853a30cb90a2e44e74b30a76a9c627ab9cf1e016"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/target600-b3/bhunter-actor-damage-check.exe",
+    "validation": {
+      "abi": "Actual x86 entity callback ABI. Verified raw entity offsets and signed16 tick arithmetic; explicit borrowed pool,room,sound,particle,debris,loot,target contexts replace globals. Private context pointer in otherwise unused payload+600.",
+      "limits": [
+        "PC53/nearest finite moderate state only; PC24 and x87 numerical boundaries unvalidated. No raw/differential byte match.",
+        "Original death target angles are unwritten stack input: source requires explicit borrowed legacy_death_angles, tested with nonzero finite rotation; no assertion of original orientation fidelity.",
+        "Borrowed owners and synchronous callback list topology/lifetimes must remain stable. Constructors43a920/43b2d0 remain missing; this family admits only complete tick/query, not those constructors.",
+        "All direct callee and installed callback definitions are actual source owners: particle025c0,debris03120,slot423400,target43d7c0,curve4341a0,route355c0/35790/release35720,sound/entity. Existing admitted owners count zero.",
+        "Source-only tests exercise actual moving target with generated collision BSP plus real fragments/smoke/streaming sound. No original code/game, native playback, automation or display modes executed."
+      ],
+      "fixtures": [
+        {
+          "scenario": "actor-damage",
+          "checks": 31,
+          "failures": 0,
+          "original_code_required": false
+        }
+      ],
+      "raw_byte_match": false,
+      "original_code_executed": false
+    },
+    "evidence": [
+      "META/m4/target600/b3/README.md",
+      "META/m4/target600/b3/standalone-build.json",
+      "META/m4/target600/b3/original/004357d0.disasm.json"
+    ]
+  },
+  {
+    "original_va": "00435e80",
+    "function": "bh_actor_damage_query",
+    "source": "src/bh_actor_damage.c",
+    "role": "game",
+    "provenance_confidence": "Whole actor damage/death behavior or entity query callback. Actual constructor-installed query and query-installed step reviewed. Distinct ordinary owner with internal RETs, no CRT/compiler/import/shared-tail count.",
+    "boundary": {
+      "start": "00435e80",
+      "end_exclusive": "004363a0",
+      "bytes": 1312,
+      "instructions": 382,
+      "sha256": "af8b4dceb2e36e6dcbe60e6b56c2e91a63ea0a987e3af00db230c18102e90118"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/target600-b3/bhunter-actor-damage-check.exe",
+    "validation": {
+      "abi": "Actual x86 entity callback ABI. Verified raw entity offsets and signed16 tick arithmetic; explicit borrowed pool,room,sound,particle,debris,loot,target contexts replace globals. Private context pointer in otherwise unused payload+600.",
+      "limits": [
+        "PC53/nearest finite moderate state only; PC24 and x87 numerical boundaries unvalidated. No raw/differential byte match.",
+        "Original death target angles are unwritten stack input: source requires explicit borrowed legacy_death_angles, tested with nonzero finite rotation; no assertion of original orientation fidelity.",
+        "Borrowed owners and synchronous callback list topology/lifetimes must remain stable. Constructors43a920/43b2d0 remain missing; this family admits only complete tick/query, not those constructors.",
+        "All direct callee and installed callback definitions are actual source owners: particle025c0,debris03120,slot423400,target43d7c0,curve4341a0,route355c0/35790/release35720,sound/entity. Existing admitted owners count zero.",
+        "Source-only tests exercise actual moving target with generated collision BSP plus real fragments/smoke/streaming sound. No original code/game, native playback, automation or display modes executed."
+      ],
+      "fixtures": [
+        {
+          "scenario": "actor-damage",
+          "checks": 31,
+          "failures": 0,
+          "original_code_required": false
+        }
+      ],
+      "raw_byte_match": false,
+      "original_code_executed": false
+    },
+    "evidence": [
+      "META/m4/target600/b3/README.md",
+      "META/m4/target600/b3/standalone-build.json",
+      "META/m4/target600/b3/original/00435e80.disasm.json"
+    ]
+  }
+]

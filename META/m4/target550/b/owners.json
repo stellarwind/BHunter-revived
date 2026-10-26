@@ -1,0 +1,178 @@
+[
+  {
+    "original_va": "0045bfe0",
+    "function": "bh_render_device_policy",
+    "source": "src/bh_render_startup.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary native renderer resource/mode owner or actual EnumDevices policy callback with distinct RET; not CRT/import/compiler helper/shared tail. Historical engine versus application authorship unresolved.",
+    "boundary": {
+      "start": "0045bfe0",
+      "end_exclusive": "0045bfe8",
+      "bytes": 8,
+      "instructions": 2,
+      "sha256": "7f1156407afe7233570fb117811084e8305401fffa3083e49cc9db8650d2c26b"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/render-startup/bhunter-render-startup-check.exe",
+    "validation": {
+      "abi": "Actual x86 C SDK interfaces, six-argument stdcall callback. Corrected original hardware6/software7 cdecl arguments, final depth arg absent from stale decompilation; source adds explicit lifetime owner.",
+      "limits": [
+        "Source-only explicit owner of actual legacy native interfaces. No original code/game process, input or screen capture.",
+        "Software startup allocates actual depth/color/palette resources and recovers original texture formats and software tables; missing software raster kernels remain missing and startup success is not playable-game completion.",
+        "Native HAL positive path and valid fullscreen mode/screen/backbuffer success remain unvalidated. Actual host HAL depth creation fails88760064 and invalid0x0x1 mode fails before buffer creation.",
+        "Source guards reject live owner reuse, unsupported depth/dimensions, invalid display format, allocation/format/table failures; source dispose clears owned pointers and releases all retained native references. Original unchecked/ignored native calls remain best effort when explicitly documented.",
+        "PC53 nearest finite arithmetic tested; original PC24 precision transitions remain unresolved.",
+        "One early test wrongly assumed DDSCL_NORMAL prohibited SetDisplayMode(640,480,16). Host returned S_OK before primary-surface creation failed. The assumption/test was removed; final tests request only impossible0x0x1 display mode. No claim of unchanged desktop mode is made for that earlier diagnostic.",
+        "Count-zero lifetime correction tracks only successful AddAttachedSurface calls, retaining target references before startup commit. Disposal releases 3D users, detaches source-added depth, then releases depth/targets. Native detach failure retains remaining ownership and diagnostics for explicit retry; positive detach/foreign-attachment controls use actual owned offscreen surfaces, no HAL/display mode. Native failed-detach retry remains unvalidated."
+      ],
+      "fixtures": [
+        {
+          "scenario": "render-startup",
+          "checks": 56,
+          "failures": 0,
+          "original_code_required": false
+        }
+      ],
+      "original_code_executed": false,
+      "raw_byte_match": false
+    },
+    "evidence": [
+      "META/m4/target550/b/README.md",
+      "META/m4/target550/b/standalone-build.json",
+      "META/m4/target550/b/original/0045bfe0.disasm.json"
+    ]
+  },
+  {
+    "original_va": "0045bff0",
+    "function": "bh_render_startup_hardware",
+    "source": "src/bh_render_startup.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary native renderer resource/mode owner or actual EnumDevices policy callback with distinct RET; not CRT/import/compiler helper/shared tail. Historical engine versus application authorship unresolved.",
+    "boundary": {
+      "start": "0045bff0",
+      "end_exclusive": "0045c509",
+      "bytes": 1305,
+      "instructions": 394,
+      "sha256": "b15ae9eb5e6175dda251912123f40d98c598e512e56aa25bc1fe3de351d871c0"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/render-startup/bhunter-render-startup-check.exe",
+    "validation": {
+      "abi": "Actual x86 C SDK interfaces, six-argument stdcall callback. Corrected original hardware6/software7 cdecl arguments, final depth arg absent from stale decompilation; source adds explicit lifetime owner.",
+      "limits": [
+        "Source-only explicit owner of actual legacy native interfaces. No original code/game process, input or screen capture.",
+        "Software startup allocates actual depth/color/palette resources and recovers original texture formats and software tables; missing software raster kernels remain missing and startup success is not playable-game completion.",
+        "Native HAL positive path and valid fullscreen mode/screen/backbuffer success remain unvalidated. Actual host HAL depth creation fails88760064 and invalid0x0x1 mode fails before buffer creation.",
+        "Source guards reject live owner reuse, unsupported depth/dimensions, invalid display format, allocation/format/table failures; source dispose clears owned pointers and releases all retained native references. Original unchecked/ignored native calls remain best effort when explicitly documented.",
+        "PC53 nearest finite arithmetic tested; original PC24 precision transitions remain unresolved.",
+        "One early test wrongly assumed DDSCL_NORMAL prohibited SetDisplayMode(640,480,16). Host returned S_OK before primary-surface creation failed. The assumption/test was removed; final tests request only impossible0x0x1 display mode. No claim of unchanged desktop mode is made for that earlier diagnostic.",
+        "Count-zero lifetime correction tracks only successful AddAttachedSurface calls, retaining target references before startup commit. Disposal releases 3D users, detaches source-added depth, then releases depth/targets. Native detach failure retains remaining ownership and diagnostics for explicit retry; positive detach/foreign-attachment controls use actual owned offscreen surfaces, no HAL/display mode. Native failed-detach retry remains unvalidated."
+      ],
+      "fixtures": [
+        {
+          "scenario": "render-startup",
+          "checks": 56,
+          "failures": 0,
+          "original_code_required": false
+        }
+      ],
+      "original_code_executed": false,
+      "raw_byte_match": false
+    },
+    "evidence": [
+      "META/m4/target550/b/README.md",
+      "META/m4/target550/b/standalone-build.json",
+      "META/m4/target550/b/original/0045bff0.disasm.json"
+    ]
+  },
+  {
+    "original_va": "0045c540",
+    "function": "bh_render_startup_software",
+    "source": "src/bh_render_startup.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary native renderer resource/mode owner or actual EnumDevices policy callback with distinct RET; not CRT/import/compiler helper/shared tail. Historical engine versus application authorship unresolved.",
+    "boundary": {
+      "start": "0045c540",
+      "end_exclusive": "0045c9da",
+      "bytes": 1178,
+      "instructions": 336,
+      "sha256": "35177e0ca74ba899f1542bd6771af3f8d4ff65b4a7c0f7314b50184b7f8c8ebf"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/render-startup/bhunter-render-startup-check.exe",
+    "validation": {
+      "abi": "Actual x86 C SDK interfaces, six-argument stdcall callback. Corrected original hardware6/software7 cdecl arguments, final depth arg absent from stale decompilation; source adds explicit lifetime owner.",
+      "limits": [
+        "Source-only explicit owner of actual legacy native interfaces. No original code/game process, input or screen capture.",
+        "Software startup allocates actual depth/color/palette resources and recovers original texture formats and software tables; missing software raster kernels remain missing and startup success is not playable-game completion.",
+        "Native HAL positive path and valid fullscreen mode/screen/backbuffer success remain unvalidated. Actual host HAL depth creation fails88760064 and invalid0x0x1 mode fails before buffer creation.",
+        "Source guards reject live owner reuse, unsupported depth/dimensions, invalid display format, allocation/format/table failures; source dispose clears owned pointers and releases all retained native references. Original unchecked/ignored native calls remain best effort when explicitly documented.",
+        "PC53 nearest finite arithmetic tested; original PC24 precision transitions remain unresolved.",
+        "One early test wrongly assumed DDSCL_NORMAL prohibited SetDisplayMode(640,480,16). Host returned S_OK before primary-surface creation failed. The assumption/test was removed; final tests request only impossible0x0x1 display mode. No claim of unchanged desktop mode is made for that earlier diagnostic.",
+        "Count-zero lifetime correction tracks only successful AddAttachedSurface calls, retaining target references before startup commit. Disposal releases 3D users, detaches source-added depth, then releases depth/targets. Native detach failure retains remaining ownership and diagnostics for explicit retry; positive detach/foreign-attachment controls use actual owned offscreen surfaces, no HAL/display mode. Native failed-detach retry remains unvalidated."
+      ],
+      "fixtures": [
+        {
+          "scenario": "render-startup",
+          "checks": 56,
+          "failures": 0,
+          "original_code_required": false
+        }
+      ],
+      "original_code_executed": false,
+      "raw_byte_match": false
+    },
+    "evidence": [
+      "META/m4/target550/b/README.md",
+      "META/m4/target550/b/standalone-build.json",
+      "META/m4/target550/b/original/0045c540.disasm.json"
+    ]
+  },
+  {
+    "original_va": "004715e0",
+    "function": "bh_render_mode_startup",
+    "source": "src/bh_render_startup.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary native renderer resource/mode owner or actual EnumDevices policy callback with distinct RET; not CRT/import/compiler helper/shared tail. Historical engine versus application authorship unresolved.",
+    "boundary": {
+      "start": "004715e0",
+      "end_exclusive": "00471be0",
+      "bytes": 1536,
+      "instructions": 557,
+      "sha256": "6cc52e3f0b28c57def0fc5c6ca70774139f4cfd497c2e45f1a789dde066cf49e"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/render-startup/bhunter-render-startup-check.exe",
+    "validation": {
+      "abi": "Actual x86 C SDK interfaces, six-argument stdcall callback. Corrected original hardware6/software7 cdecl arguments, final depth arg absent from stale decompilation; source adds explicit lifetime owner.",
+      "limits": [
+        "Source-only explicit owner of actual legacy native interfaces. No original code/game process, input or screen capture.",
+        "Software startup allocates actual depth/color/palette resources and recovers original texture formats and software tables; missing software raster kernels remain missing and startup success is not playable-game completion.",
+        "Native HAL positive path and valid fullscreen mode/screen/backbuffer success remain unvalidated. Actual host HAL depth creation fails88760064 and invalid0x0x1 mode fails before buffer creation.",
+        "Source guards reject live owner reuse, unsupported depth/dimensions, invalid display format, allocation/format/table failures; source dispose clears owned pointers and releases all retained native references. Original unchecked/ignored native calls remain best effort when explicitly documented.",
+        "PC53 nearest finite arithmetic tested; original PC24 precision transitions remain unresolved.",
+        "One early test wrongly assumed DDSCL_NORMAL prohibited SetDisplayMode(640,480,16). Host returned S_OK before primary-surface creation failed. The assumption/test was removed; final tests request only impossible0x0x1 display mode. No claim of unchanged desktop mode is made for that earlier diagnostic.",
+        "Count-zero lifetime correction tracks only successful AddAttachedSurface calls, retaining target references before startup commit. Disposal releases 3D users, detaches source-added depth, then releases depth/targets. Native detach failure retains remaining ownership and diagnostics for explicit retry; positive detach/foreign-attachment controls use actual owned offscreen surfaces, no HAL/display mode. Native failed-detach retry remains unvalidated."
+      ],
+      "fixtures": [
+        {
+          "scenario": "render-startup",
+          "checks": 56,
+          "failures": 0,
+          "original_code_required": false
+        }
+      ],
+      "original_code_executed": false,
+      "raw_byte_match": false
+    },
+    "evidence": [
+      "META/m4/target550/b/README.md",
+      "META/m4/target550/b/standalone-build.json",
+      "META/m4/target550/b/original/004715e0.disasm.json"
+    ]
+  }
+]

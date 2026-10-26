@@ -33,6 +33,8 @@ static int draw_one(BHRenderExecute *e,const BHDrawCommand *c,unsigned long *nex
     case BH_DRAW_PATH_HEADER:return e->path?bh_path_queue_execute(e->path,e->draw,c,next):-3;
     case BH_DRAW_FADE:return e->fade?bh_fade_execute(e->fade,c,next):-3;
     case BH_DRAW_FLARE:return e->flare?bh_flare_execute(e->flare,(BHDrawCommand*)c,next):-3;
+    case BH_DRAW_LIGHT:return e->light?bh_menu_light_execute(e->light,c,next):-3;
+    case BH_DRAW_GDI_TEXT:return e->gdi?bh_gdi_text_execute(e->gdi,c,next):-3;
     default:return -2;
     }
 }
@@ -73,7 +75,7 @@ int __cdecl bh_render_execute(BHRenderExecute *e) {
         const BHDrawCommand *c;
         if(at>=e->draw->count||++steps>e->draw->count){failed(e,BH_RENDER_EXECUTE_TOPOLOGY);return 0;}
         c=e->draw->commands+at;
-        if(c->kind>=18||c->kind==BH_DRAW_PATH_POINT){failed(e,BH_RENDER_EXECUTE_SELECTOR);return 0;}
+        if(c->kind>=20||c->kind==BH_DRAW_PATH_POINT){failed(e,BH_RENDER_EXECUTE_SELECTOR);return 0;}
         next=c->next;
         status=draw_one(e,c,&next);
         if(status==-3){failed(e,BH_RENDER_EXECUTE_BINDING);return 0;}

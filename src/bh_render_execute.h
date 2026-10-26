@@ -16,6 +16,8 @@
 #include "bh_segment_queue.h"
 #include "bh_fade.h"
 #include "bh_flash_flare.h"
+#include "bh_menu_present.h"
+#include "bh_gdi_text.h"
 
 typedef enum BHRenderExecuteError {
     BH_RENDER_EXECUTE_OK,BH_RENDER_EXECUTE_ARGUMENT,
@@ -48,9 +50,11 @@ typedef struct BHRenderExecute {
     BHSegmentQueueContext *segment;
     BHFadeContext *fade;
     BHFlareSubmit *flare;
+    BHLightConfig *light;
+    BHGdiText *gdi;
     unsigned long display_mode; /* original 004df250; 1 clears white */
     unsigned long text_calls,draw_calls,flushes,native_calls,failures;
-    unsigned long kinds[18];
+    unsigned long kinds[20];
     HRESULT last_hresult;
     BHRenderExecuteError error;
 } BHRenderExecute;

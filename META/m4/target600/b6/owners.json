@@ -1,0 +1,44 @@
+[
+  {
+    "original_va": "00403870",
+    "function": "bh_effect_orbit_tick",
+    "source": "src/bh_effect_orbit_tick.c",
+    "role": "game",
+    "provenance_confidence": "Whole ordinary orbital projectile callback installed by406800constructor. SixRET paths across complete3152byte owner; no compiler/CRT/import/shared tail or packet helper counted.",
+    "boundary": {
+      "start": "00403870",
+      "end_exclusive": "004044c0",
+      "bytes": 3152,
+      "instructions": 859,
+      "sha256": "5f870fde656d6a6eb3fda73fb5b4e218ec1b707238cf7f6e5d830c504ccb04fb"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/target600-b6/bhunter-effect-orbit-tick-check.exe",
+    "validation": {
+      "abi": "Actual32-bit cdecl entity callback. Core pointer608 and generation612 preserved; core->orbit explicit borrowed owner. Original entity offsets e8/ec,f8/104,128,130/134,138/13c/140/144 retained. All direct/installed callbacks actual source definitions.",
+      "limits": [
+        "PC53 nearest finite moderate values; PC24, zero-distance remote homing and x87 last-bit precision behavior remain unvalidated. Original raw byte match not claimed.",
+        "Borrowed real pool/segment/world-response receiver, explosion/debris/particles/contact/marker/trail/sound/network owners remain stable through synchronous queries; source generation guards stop mutation outside the admitted domain.",
+        "67checks cover expiry packet9/checksum/explosion, real damage-query tracked and room proximity, grace, homing/miss sound, actual mesh solid marker/trailpair, identity pass-through and liquid impact/event17 removal broadcast. Codec/transport uses initialized native NULLpeer, no network session.",
+        "No game/original-code execution, native playback, screen capture/input or automation; constructor and other effect owners admitted separately. Count-zero bind/network/impact adapters excluded."
+      ],
+      "fixtures": [
+        {
+          "scenario": "effect-orbit-tick",
+          "checks": 67,
+          "failures": 0,
+          "original_code_required": false
+        }
+      ],
+      "raw_byte_match": false,
+      "original_code_executed": false
+    },
+    "evidence": [
+      "META/m4/target600/b6/README.md",
+      "META/m4/target600/b6/standalone-build.json",
+      "META/m4/target600/b6/original/00438ff0.disasm.json",
+      "META/m4/target600/b6/original/literals.json"
+    ]
+  }
+]

@@ -1,0 +1,56 @@
+[
+  {
+    "original_va": "00426eb0",
+    "function": "bh_network_scores_broadcast",
+    "source": "src/bh_network_scores.c",
+    "role": "game",
+    "provenance_confidence": "Whole native scorepacket orchestration and score mutation owners; callbacks use actual roster, actual text producer275c0 and native transport. Distinct RET boundaries; no CRT/EH/import/shared tail.",
+    "boundary": {
+      "start": "00426eb0",
+      "end_exclusive": "00426f88",
+      "bytes": 216,
+      "instructions": 73,
+      "sha256": "560b628d8ea1afed74fecf59fdf8e59e469624f54e1f61326143809c6f19928e"
+    },
+    "validation": {
+      "abi": "x86 cdecl, actual BHHudScores roster and entity+11c signed16 score; explicit borrowed transport/text ownership. Local score wraps32bits. No guessed callbacks or vtable.",
+      "limits": [
+        "1020 focused checks, including all90attacker/victim combinations with independent expectations; actual packet checksum/receiver, queued text and unopened native DirectPlay failure. No provider/session/peer or network gameplay.",
+        "No-session Send HRESULT is diagnostic; full snapshot/text writes still execute. Successful peer delivery and actual rendered scoreboard unvalidated.",
+        "Standalone retains exacthash admitted dependencies; parent fresh complete source integration required before admission."
+      ]
+    },
+    "evidence": [
+      "META/m4/target600/c2/standalone-build.json",
+      "META/m4/target600/c2/README.md",
+      "META/m4/target600/c2/original/00426eb0.disasm.json"
+    ]
+  },
+  {
+    "original_va": "00426f90",
+    "function": "bh_network_scores_death",
+    "source": "src/bh_network_scores.c",
+    "role": "game",
+    "provenance_confidence": "Whole native scorepacket orchestration and score mutation owners; callbacks use actual roster, actual text producer275c0 and native transport. Distinct RET boundaries; no CRT/EH/import/shared tail.",
+    "boundary": {
+      "start": "00426f90",
+      "end_exclusive": "00427174",
+      "bytes": 484,
+      "instructions": 158,
+      "sha256": "37a9f8c33d80adf53da1b491abd5348aae8ed378114db5df1e79de2c9695cbc5"
+    },
+    "validation": {
+      "abi": "x86 cdecl, actual BHHudScores roster and entity+11c signed16 score; explicit borrowed transport/text ownership. Local score wraps32bits. No guessed callbacks or vtable.",
+      "limits": [
+        "1020 focused checks, including all90attacker/victim combinations with independent expectations; actual packet checksum/receiver, queued text and unopened native DirectPlay failure. No provider/session/peer or network gameplay.",
+        "No-session Send HRESULT is diagnostic; full snapshot/text writes still execute. Successful peer delivery and actual rendered scoreboard unvalidated.",
+        "Standalone retains exacthash admitted dependencies; parent fresh complete source integration required before admission."
+      ]
+    },
+    "evidence": [
+      "META/m4/target600/c2/standalone-build.json",
+      "META/m4/target600/c2/README.md",
+      "META/m4/target600/c2/original/00426f90.disasm.json"
+    ]
+  }
+]

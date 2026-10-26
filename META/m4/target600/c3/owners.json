@@ -1,0 +1,29 @@
+[
+  {
+    "original_va": "00415530",
+    "function": "bh_player_force_control_b",
+    "source": "src/bh_player_force_control.c",
+    "role": "game",
+    "provenance_confidence": "Whole source player forcecontrol variant with real basis solver/sample application and complete plume visual tail. Own RET boundary, no imports/CRT/EH/shared tail.",
+    "boundary": {
+      "start": "00415530",
+      "end_exclusive": "00416112",
+      "bytes": 3042,
+      "instructions": 937,
+      "sha256": "eaa93221bc5c012c2e9093f0cc58969874cb998cdee734d0e7d8688762dba7d9"
+    },
+    "validation": {
+      "abi": "Pinned x86 cdecl. Borrowed actual BHActorBasisContext and authoritative BHPhysicsStepBody/BHPhysicsState; source-owned original player fields carry3control scalars, inertia, instability and15channel/24endpoint visuals. Shared CRT rand stream and caller-owned instability counter retain lifetime.",
+      "limits": [
+        "874focused source-only checks across all4complete controller owners; actual basis construction, real pair selection/group application, pool entities, physics publication, stable gravity/drag analytic values, all visual endpoints and skip smoothing, stochastic2/3draw cadence,75coupled control/velocity fixtures. No source input polling or game execution.",
+        "PC53 nearest/masked moderatefinite input profile. Explicitbinary32 stores retained at phase boundaries. Real CRT pow reused for reviewed x87 CIpow exponents3/2. Code matching, original differential behavior, PC24, extreme/nonfinite inputs and rendered plume fidelity remain unvalidated.",
+        "Complete source physics control and visual ownership; higher-level player construction/tick and actual gameplay remain incomplete. Snapshot standalone dependencyobjects recorded; parent fresh complete integration required."
+      ]
+    },
+    "evidence": [
+      "META/m4/target600/c3/standalone-build.json",
+      "META/m4/target600/c3/README.md",
+      "META/m4/target600/c3/original/00415530.disasm.json"
+    ]
+  }
+]

@@ -1,0 +1,291 @@
+{
+  "scope": "Independent raw-code/constants and source-fidelity review of parent15 owners only; no game/original code or source edits",
+  "reviewer": "markers child",
+  "rows": [
+    {
+      "address": "00476070",
+      "function": "bh_network_address",
+      "family": "parent",
+      "bytes": 730,
+      "instructions": 193,
+      "raw_sha256": "7ce90be23001b5cacb0920a0098fe118f70bb3b618da2b780f143bfa7845529e",
+      "boundary_verified": true,
+      "role_review": "Distinct ordinary application/API/callback owner, no CRT/compiler/import/shared-tail accounting",
+      "source_review": "Control flow, raw constants, original pointer/field mappings and side-effect order compared manually; source invalid-input guards retained separately."
+    },
+    {
+      "address": "00476360",
+      "function": "bh_network_session_callback",
+      "family": "parent",
+      "bytes": 136,
+      "instructions": 55,
+      "raw_sha256": "07432ca613b04f85d44660e3592931592780fcc188d420cbd699c01feb681193",
+      "boundary_verified": true,
+      "role_review": "Distinct ordinary application/API/callback owner, no CRT/compiler/import/shared-tail accounting",
+      "source_review": "Control flow, raw constants, original pointer/field mappings and side-effect order compared manually; source invalid-input guards retained separately."
+    },
+    {
+      "address": "004763f0",
+      "function": "bh_network_session_continue",
+      "family": "parent",
+      "bytes": 26,
+      "instructions": 9,
+      "raw_sha256": "86fea331ff8b68f46cc95c7ab0d284e82ec7206e20ef9352a27a18ab05e96bd1",
+      "boundary_verified": true,
+      "role_review": "Distinct ordinary application/API/callback owner, no CRT/compiler/import/shared-tail accounting",
+      "source_review": "Control flow, raw constants, original pointer/field mappings and side-effect order compared manually; source invalid-input guards retained separately."
+    },
+    {
+      "address": "00476410",
+      "function": "bh_network_connection",
+      "family": "parent",
+      "bytes": 323,
+      "instructions": 98,
+      "raw_sha256": "94c8055d2473e039c5d60db97877314e1d5ab5ae2e2c530e5ce5389e38ce5575",
+      "boundary_verified": true,
+      "role_review": "Distinct ordinary application/API/callback owner, no CRT/compiler/import/shared-tail accounting",
+      "source_review": "Control flow, raw constants, original pointer/field mappings and side-effect order compared manually; source invalid-input guards retained separately."
+    },
+    {
+      "address": "00476560",
+      "function": "bh_network_sessions_refresh",
+      "family": "parent",
+      "bytes": 182,
+      "instructions": 54,
+      "raw_sha256": "6c0d606215ce492c5314e5faede6e22835254ee87b22de5a95b20ef4dc3ebbd1",
+      "boundary_verified": true,
+      "role_review": "Distinct ordinary application/API/callback owner, no CRT/compiler/import/shared-tail accounting",
+      "source_review": "Control flow, raw constants, original pointer/field mappings and side-effect order compared manually; source invalid-input guards retained separately."
+    },
+    {
+      "address": "00476620",
+      "function": "bh_network_connection_dispose",
+      "family": "parent",
+      "bytes": 183,
+      "instructions": 49,
+      "raw_sha256": "b403d1b6cada9079ce83172e1f583e6cf5202afa7fcec4b9d9ccf0d49474cfca",
+      "boundary_verified": true,
+      "role_review": "Distinct ordinary application/API/callback owner, no CRT/compiler/import/shared-tail accounting",
+      "source_review": "Control flow, raw constants, original pointer/field mappings and side-effect order compared manually; source invalid-input guards retained separately."
+    },
+    {
+      "address": "00449c20",
+      "function": "bh_cd_play_range",
+      "family": "media",
+      "bytes": 150,
+      "instructions": 45,
+      "raw_sha256": "98348789fd321b387dcce97b11e9d7a9a60701b8ef2ceb931a537fc1cef540d9",
+      "boundary_verified": true,
+      "role_review": "Distinct ordinary application/API/callback owner, no CRT/compiler/import/shared-tail accounting",
+      "source_review": "Control flow, raw constants, original pointer/field mappings and side-effect order compared manually; source invalid-input guards retained separately."
+    },
+    {
+      "address": "00449cc0",
+      "function": "bh_cd_stop",
+      "family": "media",
+      "bytes": 36,
+      "instructions": 10,
+      "raw_sha256": "be7c8a35c8b473ee3c7fb87c682fcba65e1bcc1c03c96680f83a36d62518ca5b",
+      "boundary_verified": true,
+      "role_review": "Distinct ordinary application/API/callback owner, no CRT/compiler/import/shared-tail accounting",
+      "source_review": "Control flow, raw constants, original pointer/field mappings and side-effect order compared manually; source invalid-input guards retained separately."
+    },
+    {
+      "address": "00449d40",
+      "function": "bh_cd_set_volume",
+      "family": "media",
+      "bytes": 88,
+      "instructions": 28,
+      "raw_sha256": "145909231b603e8dcfb13dc5eb7c1d86c8219b0043f900b975e3298d78b60920",
+      "boundary_verified": true,
+      "role_review": "Distinct ordinary application/API/callback owner, no CRT/compiler/import/shared-tail accounting",
+      "source_review": "Control flow, raw constants, original pointer/field mappings and side-effect order compared manually; source invalid-input guards retained separately."
+    },
+    {
+      "address": "00449df0",
+      "function": "bh_wave_set_volume",
+      "family": "media",
+      "bytes": 88,
+      "instructions": 28,
+      "raw_sha256": "e4625dee2e949ef2f14b6c0a25d443d0cea15f439860724d8d78e523d90a23d5",
+      "boundary_verified": true,
+      "role_review": "Distinct ordinary application/API/callback owner, no CRT/compiler/import/shared-tail accounting",
+      "source_review": "Control flow, raw constants, original pointer/field mappings and side-effect order compared manually; source invalid-input guards retained separately."
+    },
+    {
+      "address": "00478890",
+      "function": "bh_gdi_text_queue",
+      "family": "gdi_text",
+      "bytes": 150,
+      "instructions": 48,
+      "raw_sha256": "ccbb6b1e65988e0110bf23b0616ff46718fc722f691a1bf17cf1611f54af245b",
+      "boundary_verified": true,
+      "role_review": "Distinct ordinary application/API/callback owner, no CRT/compiler/import/shared-tail accounting",
+      "source_review": "Control flow, raw constants, original pointer/field mappings and side-effect order compared manually; source invalid-input guards retained separately."
+    },
+    {
+      "address": "00477d20",
+      "function": "bh_gdi_text_execute",
+      "family": "gdi_text",
+      "bytes": 278,
+      "instructions": 99,
+      "raw_sha256": "f8dcd7f63c93b892bd1872bd8d130dd71f1e8b00de06e0e205ee72095a8c6f04",
+      "boundary_verified": true,
+      "role_review": "Distinct ordinary application/API/callback owner, no CRT/compiler/import/shared-tail accounting",
+      "source_review": "Control flow, raw constants, original pointer/field mappings and side-effect order compared manually; source invalid-input guards retained separately."
+    },
+    {
+      "address": "0040e050",
+      "function": "bh_editor_message_queue",
+      "family": "gdi_text",
+      "bytes": 23,
+      "instructions": 7,
+      "raw_sha256": "0d6175050119dc81b60700a9799a15c8e83af12ec2143bd276daee406c399d0f",
+      "boundary_verified": true,
+      "role_review": "Distinct ordinary application/API/callback owner, no CRT/compiler/import/shared-tail accounting",
+      "source_review": "Control flow, raw constants, original pointer/field mappings and side-effect order compared manually; source invalid-input guards retained separately."
+    },
+    {
+      "address": "00477380",
+      "function": "bh_draw_command_next",
+      "family": "gdi_text",
+      "bytes": 8,
+      "instructions": 3,
+      "raw_sha256": "54aa520e91d5733f75f88095f69c3d265b8dde26fc725793799e924d15116c5f",
+      "boundary_verified": true,
+      "role_review": "Distinct ordinary application/API/callback owner, no CRT/compiler/import/shared-tail accounting",
+      "source_review": "Control flow, raw constants, original pointer/field mappings and side-effect order compared manually; source invalid-input guards retained separately."
+    },
+    {
+      "address": "00402cc0",
+      "function": "bh_delayed_expiry_tick",
+      "family": "delayed_expiry",
+      "bytes": 83,
+      "instructions": 21,
+      "raw_sha256": "2fb86b8b24c39a37f921b4c449f35b4a5ca6c3f208d73d4bdd9ec109d7f83b65",
+      "boundary_verified": true,
+      "role_review": "Distinct ordinary application/API/callback owner, no CRT/compiler/import/shared-tail accounting",
+      "source_review": "Control flow, raw constants, original pointer/field mappings and side-effect order compared manually; source invalid-input guards retained separately."
+    }
+  ],
+  "sources": {
+    "src/bh_network_sessions.c": "9cb188b523940f52b0207d2e8decc5eb83b9eceda1b2ca0c742c3b3336ad8fe5",
+    "src/bh_media_control.c": "f24cac1b6c124436f96b517c06ac4d077f17a688145eefccf51584daf988e418",
+    "src/bh_gdi_text.c": "9131be76f563523b3bb3237b92c6146017a173c0b0eb9bc023ef16a6c167ddd7",
+    "src/bh_delayed_expiry.c": "4cf9a56a0c37fa65d6c3361174bf68725be8c5e26dbf0c47de5594e323f5d55f"
+  },
+  "constants": [
+    {
+      "address": "0048a088",
+      "raw": "41fe3e13dc32d0119cfb00a0c90a43cb",
+      "guid": "133efe41-32dc-11d0-9cfb-00a0c90a43cb"
+    },
+    {
+      "address": "0048a098",
+      "raw": "206debd12389d0119d9700a0c90a43cb",
+      "guid": "d1eb6d20-8923-11d0-9d97-00a0c90a43cb"
+    },
+    {
+      "address": "0048a118",
+      "raw": "80afb41b03a3d0119c4f00a0c905425e",
+      "guid": "1bb4af80-a303-11d0-9c4f-00a0c905425e"
+    },
+    {
+      "address": "0048a128",
+      "raw": "10f8e82fa5b2d011a7870000f803abfc",
+      "guid": "2fe8f810-b2a5-11d0-a787-0000f803abfc"
+    },
+    {
+      "address": "0048a188",
+      "raw": "c016d907afe0cf119c4e00a0c905425e",
+      "guid": "07d916c0-e0af-11cf-9c4e-00a0c905425e"
+    },
+    {
+      "address": "0048a1a8",
+      "raw": "a089ec78afe0cf119c4e00a0c905425e",
+      "guid": "78ec89a0-e0af-11cf-9c4e-00a0c905425e"
+    },
+    {
+      "address": "0048a1c8",
+      "raw": "00c2dcf6fea2d0119c4f00a0c905425e",
+      "guid": "f6dcc200-a2fe-11d0-9c4f-00a0c905425e"
+    },
+    {
+      "address": "0048a1e8",
+      "raw": "a04da5c4afe0cf119c4e00a0c905425e",
+      "guid": "c4a54da0-e0af-11cf-9c4e-00a0c905425e"
+    },
+    {
+      "address": "0048a208",
+      "raw": "00cef0f2afe0cf119c4e00a0c905425e",
+      "guid": "f2f0ce00-e0af-11cf-9c4e-00a0c905425e"
+    },
+    {
+      "address": "0048a218",
+      "raw": "001c8dfefaabd21196350020182a833a",
+      "guid": "fe8d1c00-abfa-11d2-9635-0020182a833a"
+    },
+    {
+      "address": "0048a0a8",
+      "raw": "00c45b682c9dcf11a9cd00aa006886e3",
+      "guid": "685bc400-9d2c-11cf-a9cd-00aa006886e3"
+    },
+    {
+      "address": "0048a0b8",
+      "raw": "e05ee9367785cf11960c0080c7534e82",
+      "guid": "36e95ee0-8577-11cf-960c-0080c7534e82"
+    },
+    {
+      "address": "0048a0c8",
+      "raw": "60681d0fd988cf119c4e00a0c905425e",
+      "guid": "0f1d6860-88d9-11cf-9c4e-00a0c905425e"
+    },
+    {
+      "address": "0048a0d8",
+      "raw": "60a7ea4468cbcf119c4e00a0c905425e",
+      "guid": "44eaa760-cb68-11cf-9c4e-00a0c905425e"
+    },
+    {
+      "address": "00489e48",
+      "raw": "00000000",
+      "float": 0.0
+    },
+    {
+      "address": "00489e38",
+      "raw": "0000803f",
+      "float": 1.0
+    },
+    {
+      "address": "00489e4c",
+      "raw": "00ff7f47",
+      "float": 65535.0
+    },
+    {
+      "address": "004929c8",
+      "text": "Comic Sans MS"
+    },
+    {
+      "address": "00490060",
+      "text": "No objects, press 'N' to create new"
+    }
+  ],
+  "findings": [
+    {
+      "kind": "source_error_path_divergence",
+      "source": "src/bh_network_sessions.c",
+      "function": "bh_network_connection",
+      "raw_anchor": "00476488..00476496",
+      "observation": "Original always calls InitializeConnection(peer,provider.connection,0) if compound reserved pointerNULL. Initial reviewed source returns0 before API if both pointersNULL; initialization_result remains zero. Test mirrors source guard. Parent notified to preserve native call or state explicit guarded-domain limit.",
+      "severity": "bounded error-path fidelity; no native success fabricated in test return"
+    },
+    {
+      "kind": "candidate_rejected_by_native_control",
+      "source": "src/bh_gdi_text.c",
+      "function": "bh_gdi_text_dispose",
+      "observation": "Independent native source-linked offscreen control executes actual queued GDI text, retains font handle, calls real source dispose and re-queries handle. GetObject60 before,0 after, font pointerNULL and zero native failures: font release succeeds on this host. No actual leak established; candidate rejected for current host.",
+      "severity": "no actionable defect found",
+      "evidence": "META/m4/target500/reviews/font-lifetime-result.json"
+    }
+  ],
+  "conclusion": "No other concrete mismatch found in reviewed valid-domain behavior. Raw bodies, callback ABIs, jump-table ownership, network GUIDs, material numeric volume literals, GDI text/font literals and strict/unordered delayed-expiry semantics verified. Current/clean parent source builds remain separately required."
+}

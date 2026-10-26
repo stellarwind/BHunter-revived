@@ -1,0 +1,8 @@
+[
+  {
+    "address": "004398c0",
+    "code": "\r\n/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */\r\n\r\nvoid __cdecl FUN_004398c0(float param_1)\r\n\r\n{\r\n  float fVar1;\r\n  float fVar2;\r\n  \r\n  FUN_00437ae0((int)param_1);\r\n  fVar2 = *(float *)((int)param_1 + 0x180) - (float)_DAT_00489208;\r\n  *(float *)((int)param_1 + 0x180) = fVar2;\r\n  if (*(float *)((int)param_1 + 0x184) <= fVar2) {\r\n    fVar1 = *(float *)((int)param_1 + 0x184);\r\n    FUN_00438ff0(param_1);\r\n    *(float *)((int)param_1 + 0x180) = fVar2 - fVar1;\r\n    return;\r\n  }\r\n  return;\r\n}\r\n\r\n",
+    "name": "FUN_004398c0",
+    "signature": "undefined FUN_004398c0(float param_1)"
+  }
+]

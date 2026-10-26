@@ -1,0 +1,105 @@
+{
+  "passed": true,
+  "scope": "Read-only strategic restoration audit; no source/ledger/catalog changes or new admissions.",
+  "admitted_original_functions": 453,
+  "nominal_catalog_remaining": 274,
+  "verified_pending_runtime_bodies": 28,
+  "nominal_remaining_after_runtime_review": 246,
+  "unlisted_callback_entries_requiring_boundary_review": [
+    "00443ff0",
+    "0040fe80",
+    "0043c220"
+  ],
+  "new_implementations": 0,
+  "catalog_changed": false,
+  "source_checkpoint": {
+    "passed": true,
+    "baseline_functions": 443,
+    "complete_new_functions": 10,
+    "active_original_functions": 453,
+    "translation_units": 425,
+    "missing_module_controls": 206,
+    "real_checks": 4900025,
+    "clean_checks": 4394082,
+    "focused_scenarios": [
+      "input-mode",
+      "input-text",
+      "menu-object",
+      "menu-profile",
+      "physics-effects",
+      "physics-step",
+      "script-explosion",
+      "target-step"
+    ],
+    "refreshed_original_variants": 7,
+    "refreshed_support_variants": 3,
+    "stages": [
+      {
+        "stage": "menu",
+        "new_functions": 1,
+        "active_functions": 444,
+        "validation_sha256": "fcd0b557bfd8794efebc881883efc972fdff45ef3269fb0564109aaf3708ddd3"
+      },
+      {
+        "stage": "closures",
+        "new_functions": 5,
+        "active_functions": 449,
+        "validation_sha256": "fe34ee966e9902eb474a4910e474761df74d8d1d85308014712e914fef1d62db"
+      },
+      {
+        "stage": "final",
+        "new_functions": 3,
+        "active_functions": 452,
+        "validation_sha256": "4271535dd6b8dbaa253351693827b4aff8c5e36c1f7e12131fdef92b9acb0b74"
+      },
+      {
+        "stage": "target",
+        "new_functions": 1,
+        "active_functions": 453,
+        "validation_sha256": "0ae989c118410c62df831fab1d4a9cac445f815f2c6b0ac5a541ba79837d9b52"
+      }
+    ],
+    "original_code_executed": false,
+    "game_launches": 0,
+    "gameplay_executed": false,
+    "desktop_capture": false
+  },
+  "input_hashes": {
+    "META/function-status.json": "9bd197fe871934b03d1307f29d0d086d912047494c886cf0e78d3a9807848b8f",
+    "META/m1/role-catalog.json": "38634f786a701fb4f3d5057bd8d0661550f0ad4a397f9c7c6bda1c2051e69dad",
+    "analysis/function-map.tsv": "aa1291b9f71782ee73ed50af6d7756c06ac27b73b5c346f6aab2da30b1aa081c",
+    "analysis/call-edges.tsv": "075e6bf05e2b07e5821e302406e48dba1dde710dece7378e92e9216f8070bcbe",
+    "RESTORATION_PLAN.md": "cdf3547768e243c5ba08bccf5e5cc80bf4eeef25d94e13900f6eb40c51e6b8cc",
+    "META/PROGRESS.md": "8022e68e22866f3a6cc18233366d6f9b8ac6613f073a502696cba738b2f83f85",
+    "META/m4/hour443/validation.json": "c31d4778bad21e06ea2278d58701b845efeefd770221d15824fb4c77f128a567"
+  },
+  "audit_file_hashes": {
+    "META/m4/remaining-audit453/crt-review.json": "e78e81f17c5f385089760fbb97cbfe96e3815144bfdc07d2448dd3f5ae6464ea",
+    "META/m4/remaining-audit453/graph.json": "bba7522569da90819e7eaaef4d54c26dccec4b4468b16c6bf52a102fae011385",
+    "META/m4/remaining-audit453/README.md": "ad83d9e45fa662dec6fe727619e08d72b130cac6d2524c8f73015c32a40c0510",
+    "META/m4/remaining-audit453/a/findings.json": "f8278a24cf4f226dbdca9868795f505a2d08180b01779bb2cf8de5e425677ec0",
+    "META/m4/remaining-audit453/a/findings.md": "2017c930d97912de7052534a7e2cfdbd8f2d98ae6d56154ca5cde21209a435c6",
+    "META/m4/remaining-audit453/a/inspect.py": "34b25921f8eca2a4d929ab847e6392646dd52ced20bce6115d72307a6bd7a11b",
+    "META/m4/remaining-audit453/b/00407a20.asm.txt": "8714a4b3e7f25c42755de466630618dec9de9bf2d64db04e7fee4014d09e1b37",
+    "META/m4/remaining-audit453/b/00407b40.asm.txt": "65b033bc2df9a09c5d64e2f81472428f7dc00546d9ece4ed57c221b33206b6ab",
+    "META/m4/remaining-audit453/b/0041e566.asm.txt": "430be52d29a6cd42cfe747b9baf488dad98af8ea4d44f84f434b53bcbc1c7886",
+    "META/m4/remaining-audit453/b/audit.json": "47e9529bcc614ab1be5ece8d975ff9304fa87970ffeacf9314a71a6619639bac",
+    "META/m4/remaining-audit453/b/README.md": "9ae7657dd2ed4fc6454889e6f135ca4688ac99fc98e4c5a7bdac9f2b47742446",
+    "META/m4/remaining-audit453/c/0045bfe0.disasm.json": "5f5b7717c417828df3e49f37b7aea2ac7c8fac2820c8137df5b6adeed2e76914",
+    "META/m4/remaining-audit453/c/00477f60.disasm.json": "74780ffb654f6de10c57b0a0c613561188d6123d3d1a6914f322d23378ccd14e",
+    "META/m4/remaining-audit453/c/00478890.disasm.json": "7016fadedcfe9e373def79b4e56932ff2432d620051b051c4f22bede3cbff517",
+    "META/m4/remaining-audit453/c/audit.json": "ad3415f63db8691938b9242aac7fc8f637a6b8a7ec60df09763130461c222bb3",
+    "META/m4/remaining-audit453/c/input-hashes.json": "8f0a876018b28bb36df6d5df94aadd4074dfc192037cc74503587ab4694c10cb",
+    "META/m4/remaining-audit453/c/README.md": "a6b2c046614f399ae4d8de1d9e1401e88bd4b17fb5ed1c758346cac2df8de44c"
+  },
+  "game_launches": 0,
+  "original_code_executed": false,
+  "physical_input": false,
+  "new_play_calls": 0,
+  "native_send_calls": 0,
+  "limits": [
+    "Direct graph is incomplete for indirect callbacks and table dispatch.",
+    "28role matches are recorded for reconciliation, not silently applied to the existing catalogue.",
+    "VM full boundary and data ownership remain provisional."
+  ]
+}

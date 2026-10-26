@@ -1,5 +1,7 @@
 """Prevent incomplete denominators, variant inflation and false game admission."""
 import unittest
+import json
+from pathlib import Path
 from mkstatus import summarize, bar, render
 
 
@@ -74,6 +76,23 @@ class ProgressAccountingTests(unittest.TestCase):
         roles = catalog('game'); roles['records'] *= 2
         with self.assertRaisesRegex(ValueError, 'Duplicate catalog address'):
             summarize({'records': []}, roles)
+
+    def test_repository_catalog_covers_current_restored_callbacks(self):
+        root = Path(__file__).resolve().parents[1]
+        ledger = json.loads((root/'META/function-status.json').read_text(encoding='utf-8-sig'))
+        roles = json.loads((root/ledger['role_catalog']).read_text(encoding='utf-8-sig'))
+        current = {r['original_va'] for r in ledger['records']
+                   if r['implementation'] in {'func', 'bm'}
+                   and r['integration'] in {'linked_harness', 'linked_game', 'scenario_exercised', 'release_admitted'}
+                   and not r.get('historical_variant')
+                   and not r.get('validation', {}).get('superseded_by')}
+        self.assertEqual(summarize(ledger, roles)['recovered'], len(current))
+        by_address = {r['address']: r for r in roles['records']}
+        for va in ('0040fe80', '0043c220', '004376e0'):
+            self.assertIn(va, current)
+            self.assertEqual(by_address[va]['boundary_review'], 'complete_callback_owner_verified_from_immutable_PE')
+        self.assertEqual(by_address['00437770']['role'], 'shared_tail')
+        self.assertEqual(by_address['00437770']['owner'], '004376e0')
 
     def test_render_uses_full_denominator_and_explains_limits(self):
         s = summarize({'records': [record('done')]}, catalog('game', 'unknown'))

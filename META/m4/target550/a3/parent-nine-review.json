@@ -1,0 +1,82 @@
+{
+  "reviewer": "player550 independent agent",
+  "scope": "Parent three native network owners and six menu music/quit transition owners; complete raw/static review only",
+  "original_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+  "raw_verified": [
+    {
+      "original_va": "004766e0",
+      "bytes": 465,
+      "instructions": 142,
+      "sha256": "9cd2120e9ebced2987412d3c5812bb52025c57ee445217581fe287be5da70020"
+    },
+    {
+      "original_va": "004768c0",
+      "bytes": 343,
+      "instructions": 116,
+      "sha256": "ac708ac60a5fc5f5cd0c016b1169dd3a609d41ac64c85af6783b62d9075abdd0"
+    },
+    {
+      "original_va": "00476a20",
+      "bytes": 527,
+      "instructions": 161,
+      "sha256": "114b3fa43573aaa7eb0fbe975710fd22bb938d779250b73eaad410285e24f13f"
+    },
+    {
+      "original_va": "0042cb40",
+      "bytes": 98,
+      "instructions": 27,
+      "sha256": "221c024a66d9987dc33bb282915ade4531b6adeaa72b6f9e4fcb9cc0777aa161"
+    },
+    {
+      "original_va": "0042cbb0",
+      "bytes": 779,
+      "instructions": 217,
+      "sha256": "231a553406fd2911f81299b23126f24f46b7d7c5f9d571f5d163da5be569a389"
+    },
+    {
+      "original_va": "0042cec0",
+      "bytes": 52,
+      "instructions": 14,
+      "sha256": "74c418077bb446d78a36747195df1087ada4ed362e61b624b6fe2ab763348e34"
+    },
+    {
+      "original_va": "0042cf00",
+      "bytes": 164,
+      "instructions": 45,
+      "sha256": "ea2c8cc18dba68b6815e757e54dc72ec20ee171d76b81c0f9bbb11796544e291"
+    },
+    {
+      "original_va": "0042cfb0",
+      "bytes": 184,
+      "instructions": 49,
+      "sha256": "9802f9c93f0816e641df85aaf75d052881d83ec0e38fdb2aeaafd38cc78fd100"
+    },
+    {
+      "original_va": "0042d070",
+      "bytes": 82,
+      "instructions": 15,
+      "sha256": "a38d054568a74d65e1ec8241e4e60da8a7a76c4bc07152503265e4b626085103"
+    }
+  ],
+  "source_hashes": {
+    "src/bh_network_game.c": "b1eedf156d42ee53e483caf2388b14ab18c03ea185b47c9091a930bf4e57a0f7",
+    "src/bh_network_game.h": "1b6c8c9e1479f7ae72f27172554d29327b201c507d6829345d4d32e4e960a3db",
+    "src/bh_menu_transition.c": "38cea30174c8bd6ddd6395cfc15ed2ea077455f3eac98854e97e3315491696cf",
+    "src/bh_menu_transition.h": "d131300328cbae83555342e3679881fddaffe6fe6d450c99abc87e7042ceba19",
+    "tests/network_game.c": "b3b0e61913385e79abf0ac18bafd92921a09e4e241e1e33f2e1c23a15983c388",
+    "tests/menu_transition.c": "857d7b66c4efb24481700131164b637ad574de0f43e8025d513d13ac6dd30827"
+  },
+  "findings": [],
+  "confirmed": [
+    "Exact native host0xc4/0x82/server0x100/max8 and enumeration stop0xa1; join GUID/0x81/CONNECTING retry; lazy1024 buffer and original post-player allocation failure effects.",
+    "Receive actual SDK offsets match original create id+8/name+32; free/reallocate-before retry; roster mutation and callback-before-count ordering, low-byte transforms and current local ID reload retained.",
+    "Fade alpha retained float clamp/unordered behavior, strict oldtime<-4 expiry, quit independent RGB retained-double factor255 truncation, exact threshold2.5 and RET callback representation.",
+    "Music warning source bytes match pinned original newlines; arena-only append and successful-copy-only panel+e8 clamp. Retry5/counter wrap/first and tenth warnings; actual startup/CD/wave min.2 order; real source range2,2,0x15,0x32,repeat1.",
+    "Quit original hardware ushort/save/read volume/camera17 before allocation; allocation failure keeps prior effects. Actual getter/readback errors and absence remain dependency-scoped, not invented runtime success."
+  ],
+  "limits": [
+    "No original/game code or new native actions executed for this review. Focused fixture results are author supplied and not rerun here.",
+    "Native successful sessions/CD/volume mutation and PC24 remain unvalidated. SDK peer fixtures are isolated tests, distinct from real native failure evidence.",
+    "Source finite moderate quit-time guard is explicit; malformed/NaN __ftol behavior is intentionally not generalized. Context/peer/buffer owners must not be rebound/disposed by callbacks as documented."
+  ]
+}

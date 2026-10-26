@@ -1,0 +1,102 @@
+[
+  {
+    "original_va": "00432370",
+    "function": "bh_weapon_path_blend",
+    "source": "src/bh_weapon_path.c",
+    "role": "game",
+    "provenance_confidence": "Whole ordinary projectile constructor or installed simulation/draw callback; constructor/call-site reviewed, no CRT/import/compiler/shared tail ownership.",
+    "behavior": "Complete four-vector smoothly blended path interpolation with original float store boundaries and output alias handling.",
+    "boundary": {
+      "start": "00432370",
+      "end_exclusive": "0043249f",
+      "bytes": 303,
+      "instructions": 101,
+      "sha256": "3d27a4f5761b0ffc5fb76351eba12acf2bddb77ccdd467c503d4559360cf12bc",
+      "ranges": [
+        {
+          "start": "00432370",
+          "end_exclusive": "0043249f"
+        }
+      ]
+    },
+    "owned_data_count": 0,
+    "independent_data_function_count": 0,
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/weapon-path/bhunter-weapon-path-check.exe",
+    "validation": {
+      "abi": "x86 cdecl explicit source contexts and actual original BHEntity fields/callback ABI. Initialized real source pool/world/segment/render/voice dependencies; no guessed vtables or replacement callback stubs.",
+      "fixtures": {
+        "scenario": "weapon-path",
+        "checks": 32,
+        "failures": 0,
+        "original_code_required": false,
+        "play_calls": 0
+      },
+      "original_code_executed": false,
+      "game_executed": false,
+      "raw_byte_match": false,
+      "limits": [
+        "Source-only focused checks; no original code/game execution, no native playback or gameplay loop. Parent fresh full/clean build and independent review required before admission.",
+        "PC53 nearest masked finite moderate fixtures; PC24, unusual exceptional inputs and actual game/physical-device fidelity remain unvalidated. Borrowed owners/context/entities stay live throughout synchronous callbacks.",
+        "Original EXE/BIN/MDF/MDS remain immutable; no instruction-match claim. Function boundaries are raw byte ranges and ordinary callback/caller roles, excluding compiler/runtime/shared-tail/data owners."
+      ]
+    },
+    "evidence": [
+      "META/m4/target600/a2/README.md",
+      "META/m4/target600/a2/standalone-build.json",
+      "META/m4/target600/a2/constants.json",
+      "META/m4/target600/a2/original/00432370.disasm.json"
+    ]
+  },
+  {
+    "original_va": "004325d0",
+    "function": "bh_weapon_path_point",
+    "source": "src/bh_weapon_path.c",
+    "role": "game",
+    "provenance_confidence": "Whole ordinary projectile constructor or installed simulation/draw callback; constructor/call-site reviewed, no CRT/import/compiler/shared tail ownership.",
+    "behavior": "Weapon eligibility/target/charge gate, actual player basis/control construction, synchronous event3 target sample and normalized target control through complete path interpolation.",
+    "boundary": {
+      "start": "004325d0",
+      "end_exclusive": "00432796",
+      "bytes": 454,
+      "instructions": 135,
+      "sha256": "a21854b055365d7c0800f551ae7558019709e43e825a184a6cd0bb27b59beaf1",
+      "ranges": [
+        {
+          "start": "004325d0",
+          "end_exclusive": "00432796"
+        }
+      ]
+    },
+    "owned_data_count": 0,
+    "independent_data_function_count": 0,
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/weapon-path/bhunter-weapon-path-check.exe",
+    "validation": {
+      "abi": "x86 cdecl explicit source contexts and actual original BHEntity fields/callback ABI. Initialized real source pool/world/segment/render/voice dependencies; no guessed vtables or replacement callback stubs.",
+      "fixtures": {
+        "scenario": "weapon-path",
+        "checks": 32,
+        "failures": 0,
+        "original_code_required": false,
+        "play_calls": 0
+      },
+      "original_code_executed": false,
+      "game_executed": false,
+      "raw_byte_match": false,
+      "limits": [
+        "Source-only focused checks; no original code/game execution, no native playback or gameplay loop. Parent fresh full/clean build and independent review required before admission.",
+        "PC53 nearest masked finite moderate fixtures; PC24, unusual exceptional inputs and actual game/physical-device fidelity remain unvalidated. Borrowed owners/context/entities stay live throughout synchronous callbacks.",
+        "Original EXE/BIN/MDF/MDS remain immutable; no instruction-match claim. Function boundaries are raw byte ranges and ordinary callback/caller roles, excluding compiler/runtime/shared-tail/data owners."
+      ]
+    },
+    "evidence": [
+      "META/m4/target600/a2/README.md",
+      "META/m4/target600/a2/standalone-build.json",
+      "META/m4/target600/a2/constants.json",
+      "META/m4/target600/a2/original/004325d0.disasm.json"
+    ]
+  }
+]

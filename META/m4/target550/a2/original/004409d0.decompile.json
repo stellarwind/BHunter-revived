@@ -1,0 +1,8 @@
+[
+  {
+    "address": "004409d0",
+    "code": "\r\nvoid __cdecl\r\nFUN_004409d0(undefined4 param_1,undefined4 param_2,undefined4 *param_3,undefined4 *param_4,\r\n            undefined4 param_5,int param_6)\r\n\r\n{\r\n  int iVar1;\r\n  undefined4 local_28;\r\n  undefined4 uStack_24;\r\n  undefined4 uStack_20;\r\n  undefined4 uStack_1c;\r\n  \r\n  iVar1 = FUN_00476f20();\r\n  if (iVar1 != 0) {\r\n    *(undefined4 *)(iVar1 + 0xe8) = param_5;\r\n    *(int *)(iVar1 + 300) = param_6;\r\n    *(undefined4 *)(iVar1 + 0x11c) = DAT_004dfb34;\r\n    DAT_004dfb34 = 0;\r\n    *(undefined4 *)(iVar1 + 0x130) = param_2;\r\n    *(undefined4 *)(iVar1 + 0xc) = *param_3;\r\n    *(undefined4 *)(iVar1 + 0x10) = param_3[1];\r\n    *(undefined4 *)(iVar1 + 0x14) = param_3[2];\r\n    *(undefined4 *)(iVar1 + 0x48) = *param_4;\r\n    *(undefined4 *)(iVar1 + 0x4c) = param_4[1];\r\n    *(undefined4 *)(iVar1 + 0x50) = param_4[2];\r\n    *(undefined4 *)(iVar1 + 0x118) = 0xffffffff;\r\n    *(code **)(iVar1 + 0xcc) = FUN_0043f630;\r\n    *(code **)(iVar1 + 200) = FUN_0043e710;\r\n    FUN_00476e90(iVar1,&LAB_00440810);\r\n    *(undefined4 *)(iVar1 + 0x124) = param_1;\r\n    *(undefined4 *)(iVar1 + 0x128) = param_2;\r\n    if (param_6 != 0) {\r\n      local_28 = 3;\r\n      (**(code **)(param_6 + 0xd0))(param_6,&local_28);\r\n      *(undefined4 *)(iVar1 + 0x100) = uStack_24;\r\n      *(undefined4 *)(iVar1 + 0x104) = uStack_20;\r\n      *(undefined4 *)(iVar1 + 0x108) = uStack_1c;\r\n    }\r\n    *(undefined4 *)(iVar1 + 0x120) = 0;\r\n  }\r\n  return;\r\n}\r\n\r\n",
+    "name": "FUN_004409d0",
+    "signature": "undefined FUN_004409d0(undefined4 param_1, undefined4 param_2, undefined4 * param_3, undefined4 * param_4, undefined4 param_5, int param_6)"
+  }
+]

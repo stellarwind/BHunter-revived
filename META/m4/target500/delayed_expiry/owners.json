@@ -1,0 +1,22 @@
+[
+  {
+    "original_va": "00402cc0",
+    "function": "bh_delayed_expiry_tick",
+    "source": "src/bh_delayed_expiry.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary application render/queue or effect callback with distinct original RET boundary and real owning API. Not import, runtime, compiler scaffolding or independently counted shared tail; historical authorship unresolved.",
+    "boundary": {
+      "start": "00402cc0",
+      "end_exclusive": "00402d13",
+      "bytes": 83,
+      "instructions": 21,
+      "sha256": "2fb86b8b24c39a37f921b4c449f35b4a5ca6c3f208d73d4bdd9ec109d7f83b65"
+    },
+    "validation": {
+      "abi": "Pinned x86 cdecl; explicit typed source context for globals and actual entity pool/native surface.",
+      "limits": [
+        "PC53 nearest arithmetic; PC24 unresolved. Callback entity and borrowed pool retain their actual source lifetimes."
+      ]
+    }
+  }
+]

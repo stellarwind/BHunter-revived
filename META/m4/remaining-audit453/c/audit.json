@@ -1,0 +1,634 @@
+{
+  "scope": "Read-only native startup/render/resource/menu/network strategic audit at453; no implementation, decompilation, game execution, input, playback or native networking.",
+  "baseline_unique_linked_func": 453,
+  "method": "Static direct graph is inventory dated2026-10-23, enriched with retained callback-pointer evidence and current source contracts; verified CRT/compiler/import/shared-tail owners excluded, unknown provenance retained. Inventory ranges are candidate bounds, not fresh complete-body certification.",
+  "ranked_candidates": [
+    {
+      "rank": 1,
+      "title": "Whole renderer initialization and fallback selection",
+      "owners": [
+        {
+          "original_va": "0045bff0",
+          "inventory_bytes": 1305,
+          "inventory_instructions": 394,
+          "catalog_role": "engine_candidate",
+          "admitted": false,
+          "distinct_direct_callers": [
+            "004715e0"
+          ],
+          "missing_direct_nonexcluded_owners": []
+        },
+        {
+          "original_va": "0045c540",
+          "inventory_bytes": 1178,
+          "inventory_instructions": 336,
+          "catalog_role": "unknown",
+          "admitted": false,
+          "distinct_direct_callers": [
+            "004715e0"
+          ],
+          "missing_direct_nonexcluded_owners": []
+        },
+        {
+          "original_va": "004715e0",
+          "inventory_bytes": 1536,
+          "inventory_instructions": 557,
+          "catalog_role": "engine_candidate",
+          "admitted": false,
+          "distinct_direct_callers": [
+            "004723c0"
+          ],
+          "missing_direct_nonexcluded_owners": [
+            "0045bff0",
+            "0045c540"
+          ]
+        }
+      ],
+      "inventory_code_bytes": 4019,
+      "direct_missing_closure_owners": 3,
+      "role": "engine/platform candidate; explicit native renderer initializer plus software initializer and owning platform selection/error wrapper; not verified CRT/import/shared tail",
+      "milestone": "Replace diagnostic offscreen-device construction with actual original renderer initialization, selected hardware/software mode, surfaces/device/default startup bindings and original failure/fallback ordering.",
+      "why_high_leverage": "All named original direct callees below the two initializers are already admitted. The wrapper is a direct WinMain dependency. This is a genuine code seam even though fan-in is only one at each level.",
+      "risk": "Vtable/API calls and installed callback/data dependencies are not represented by call-edges.tsv; classify complete boundaries and all SDK descriptors before assignment. Positive device paths and original display/cooperative-level behavior need bounded owned native checks. Successful software initialization does not restore raster kernels. Callback-enriched metadata shows this actual8-byte leaf;3 owners is the substantive family, not a claim to omit its real signature/behavior.",
+      "existing_source_overlap": [
+        "src/bh_scene_view.h explicitly diagnostic adapter, not any of these original owners",
+        "Native material/state, texture formats/pools, frame buffers, draw queues and software tables already restored; bind these rather than reimplement."
+      ],
+      "evidence": [
+        "analysis/subsystems.tsv",
+        "analysis/function-map.tsv",
+        "analysis/call-edges.tsv",
+        "src/bh_scene_view.h",
+        "META/m4/render-material/REVIEW.md",
+        "META/m4/software-tables/REVIEW.md"
+      ],
+      "installed_callback": {
+        "original_va": "0045bfe0",
+        "inventory_bytes": 8,
+        "inventory_instructions": 2,
+        "role": "Verified narrow enumeration-policy callback, raw MOV EAX,1; RET24; handle with owning initializer, not a standalone leverage/count-padding recommendation",
+        "evidence": "META/m4/remaining-audit453/c/0045bfe0.disasm.json"
+      },
+      "inventory_bytes_including_callback": 4027
+    },
+    {
+      "rank": 2,
+      "title": "Actual menu presentation and its queued-light producer/consumer",
+      "owners": [
+        {
+          "original_va": "0042abd0",
+          "inventory_bytes": 1805,
+          "inventory_instructions": 502,
+          "catalog_role": "unknown",
+          "admitted": false,
+          "distinct_direct_callers": [],
+          "missing_direct_nonexcluded_owners": [
+            "00478d40"
+          ]
+        },
+        {
+          "original_va": "00478d40",
+          "inventory_bytes": 227,
+          "inventory_instructions": 71,
+          "catalog_role": "unknown",
+          "admitted": false,
+          "distinct_direct_callers": [
+            "0042abd0"
+          ],
+          "missing_direct_nonexcluded_owners": []
+        },
+        {
+          "original_va": "00477f60",
+          "inventory_bytes": 50,
+          "inventory_instructions": 23,
+          "catalog_role": "unknown",
+          "admitted": false,
+          "distinct_direct_callers": [],
+          "missing_direct_nonexcluded_owners": [],
+          "behavior": "Actual command handler forwards8 payload arguments to admitted00459400 bh_light_configure and returns current node+50 next pointer."
+        }
+      ],
+      "inventory_code_bytes": 2082,
+      "direct_missing_closure_owners": 2,
+      "role": "engine/UI candidate; installed refresh/presentation callback plus real queue helper; authorship unknown, not a proven library",
+      "milestone": "Render the actual source-built menu presentation with restored menu entities, real rows/pages/atlas resources and actual queue consumers. Then tackle whole menu step rather than more isolated preference setters.",
+      "why_high_leverage": "The 1805-byte refresh owner has exactly one missing named direct callee,227-byte00478d40. Historical pointer metadata installs refresh0042abd0 with active step0042b2e0 from world/menu entry owners. Row construction, UTF16/FIFO painting and key/text/profile commits now exist. Callback enrichment finds78d40 installs missing50-byte477f60 consumer, so truthful family is3 owners/2082bytes, not2. The helper is a queued light-state producer, not another text atlas writer.",
+      "risk": "Direct-call closure is provisional: original row callback and resource lifetimes, animation/global menu/camera state, and queued command ABI need full review. Complete menus still need30 distinct registered action/edit owners; a supplied fake handler or reconstructed static screenshot would not close them.",
+      "follow_on": [
+        {
+          "original_va": "0042b2e0",
+          "inventory_bytes": 2955,
+          "inventory_instructions": 797,
+          "catalog_role": "unknown",
+          "admitted": false,
+          "distinct_direct_callers": [],
+          "missing_direct_nonexcluded_owners": [
+            "00476560"
+          ]
+        },
+        {
+          "original_va": "00476560",
+          "inventory_bytes": 182,
+          "inventory_instructions": 54,
+          "catalog_role": "unknown",
+          "admitted": false,
+          "distinct_direct_callers": [
+            "0042b2e0"
+          ],
+          "missing_direct_nonexcluded_owners": []
+        },
+        {
+          "original_va": "00476360",
+          "inventory_bytes": 136,
+          "inventory_instructions": 55,
+          "catalog_role": "unknown",
+          "admitted": false,
+          "distinct_direct_callers": [],
+          "missing_direct_nonexcluded_owners": []
+        }
+      ],
+      "follow_on_inventory_bytes": 3273,
+      "follow_on_note": "00476360 is an installed EnumSessions callback omitted by direct call graph. Menu step can call registered row actions; the30 missing registered handlers are not included in this3-owner direct/codepointer subtotal.",
+      "evidence": [
+        "META/m3/menu-review/0042b2e0.asm.txt",
+        "META/m3/menu-review/0042b2e0.c.txt",
+        "META/m3/network-review/code-pointers.tsv",
+        "META/m3/menu-inventory.json",
+        "src/bh_menu_object.h",
+        "src/bh_menu_row.h",
+        "src/bh_input_text.h",
+        "META/m3/network-review/code-pointers.tsv",
+        "META/m4/remaining-audit453/c/00477f60.disasm.json"
+      ],
+      "direct_and_installed_callback_closure_owners": 3
+    },
+    {
+      "rank": 3,
+      "title": "DirectPlay compound-address and connection/session catalog closure",
+      "owners": [
+        {
+          "original_va": "00476070",
+          "inventory_bytes": 730,
+          "inventory_instructions": 193,
+          "catalog_role": "unknown",
+          "admitted": false,
+          "distinct_direct_callers": [
+            "00476410"
+          ],
+          "missing_direct_nonexcluded_owners": []
+        },
+        {
+          "original_va": "00476410",
+          "inventory_bytes": 323,
+          "inventory_instructions": 98,
+          "catalog_role": "engine_candidate",
+          "admitted": false,
+          "distinct_direct_callers": [
+            "0042e9e0",
+            "0042eb30",
+            "0042eea0",
+            "0042f0c0"
+          ],
+          "missing_direct_nonexcluded_owners": [
+            "00476070"
+          ]
+        },
+        {
+          "original_va": "00476360",
+          "inventory_bytes": 136,
+          "inventory_instructions": 55,
+          "catalog_role": "unknown",
+          "admitted": false,
+          "distinct_direct_callers": [],
+          "missing_direct_nonexcluded_owners": []
+        },
+        {
+          "original_va": "00476560",
+          "inventory_bytes": 182,
+          "inventory_instructions": 54,
+          "catalog_role": "unknown",
+          "admitted": false,
+          "distinct_direct_callers": [
+            "0042b2e0"
+          ],
+          "missing_direct_nonexcluded_owners": []
+        }
+      ],
+      "inventory_code_bytes": 1371,
+      "direct_and_installed_callback_closure_owners": 4,
+      "role": "platform/network candidate; actual compound address builder, COM connection initialization, enumeration callback and refresh; historical authorship unresolved",
+      "milestone": "Close the source-owned connection/session-list boundary used by four menu controllers and the main menu step. It is not multiplayer gameplay completion.",
+      "why_high_leverage": "00476410 has4 distinct pending direct callers. Its direct missing owner is730-byte00476070; codepointer evidence additionally requires136-byte00476360. The samecallback is installed by182-byte00476560, the direct blocker of the active menu step.",
+      "risk": "Unlike admitted provider enumeration/init00475ef0, these owners actually InitializeConnection and EnumSessions. Current audit does no native calls. Whole positive session enumeration/host/join/peer gameplay remains unvalidated; no empty callback/no-peer success stub may establish closure. Lower priority than a local single-player menu/world milestone.",
+      "evidence": [
+        "META/m3/network-review/00476070.asm.txt",
+        "META/m3/network-review/00476070.c.txt",
+        "META/m3/network-review/00476410.asm.txt",
+        "META/m3/network-review/00476410.c.txt",
+        "META/m3/network-review/code-pointers.tsv",
+        "src/bh_provider_startup.h",
+        "src/bh_network_transport.h"
+      ]
+    }
+  ],
+  "already_recovered_do_not_reassign": [
+    "0044f550 image loader",
+    "0047b950 sound resource loader",
+    "0047b500 sound startup",
+    "00471260 force-feedback startup",
+    "00475ef0 provider initialization",
+    "0042c300 menu object",
+    "0042c4c0/0042c7d0 row construction/refresh",
+    "0042be70/0042bf80 capture and0042de70 profile ownership"
+  ],
+  "resource_assembly_frontier": {
+    "startup": {
+      "original_va": "00479200",
+      "inventory_bytes": 1800,
+      "inventory_instructions": 428,
+      "catalog_role": "game",
+      "admitted": false,
+      "distinct_direct_callers": [
+        "004723c0"
+      ],
+      "missing_direct_nonexcluded_owners": [
+        "004474c0"
+      ]
+    },
+    "world": {
+      "original_va": "004474c0",
+      "inventory_bytes": 9584,
+      "inventory_instructions": 2572,
+      "catalog_role": "game",
+      "admitted": false,
+      "distinct_direct_callers": [
+        "00479200"
+      ],
+      "missing_direct_nonexcluded_owners": [
+        "004100d0",
+        "00411f00",
+        "00421d20",
+        "0042a9e0"
+      ]
+    },
+    "finding": "Old notes listing seven missing00479200 startup callees are obsolete. Current direct graph leaves only004474c0 missing beneath00479200; world has four missing non-runtime named direct callees, but contains many installed callback/constructor/data dependencies. Neither owner is merely a registration adapter or a small closed family.",
+    "missing_world_direct": [
+      "004100d0",
+      "00411f00",
+      "00421d20",
+      "0042a9e0"
+    ],
+    "existing_policy_limit": "Current source components still borrow explicit resource identities, mode, palettes, row arrays and texture policy. Correctly sequencing their real construction/disposal can advance a milestone with no new function count; whole original bootstrap remains missing code."
+  },
+  "menu_inventory": {
+    "source": "META/m3/menu-inventory.json",
+    "phase": "bootstrap-return",
+    "menus": 18,
+    "rows": 118,
+    "distinct_action_callbacks": 23,
+    "distinct_edit_callbacks": 11,
+    "admitted_actions": 4,
+    "admitted_edits": 0,
+    "missing_actions": [
+      {
+        "original_va": "0042d070",
+        "example_labels": [
+          "YES"
+        ]
+      },
+      {
+        "original_va": "0042f350",
+        "example_labels": [
+          "BACK",
+          "BACK"
+        ]
+      },
+      {
+        "original_va": "0042d0d0",
+        "example_labels": [
+          "3D\nacceleration",
+          "graphics\ndevice",
+          "software\nresolution"
+        ]
+      },
+      {
+        "original_va": "0042f2b0",
+        "example_labels": [
+          "BACK"
+        ]
+      },
+      {
+        "original_va": "0042db60",
+        "example_labels": [
+          "sound fx\nlouder",
+          "sound fx\nsofter",
+          "cd music\nlouder"
+        ]
+      },
+      {
+        "original_va": "0042df90",
+        "example_labels": [
+          "input\nconfiguration",
+          "NEW",
+          "DELETE"
+        ]
+      },
+      {
+        "original_va": "0042e410",
+        "example_labels": [
+          "keyboard\nmove up",
+          "keyboard\nmove down",
+          "keyboard\nmove left"
+        ]
+      },
+      {
+        "original_va": "0042e640",
+        "example_labels": [
+          "fire\nprimary",
+          "fire\nprimary",
+          "fire\nprimary"
+        ]
+      },
+      {
+        "original_va": "0042e790",
+        "example_labels": [
+          "fire\nsecondary",
+          "fire\nsecondary",
+          "fire\nsecondary"
+        ]
+      },
+      {
+        "original_va": "0042e150",
+        "example_labels": [
+          "DONE"
+        ]
+      },
+      {
+        "original_va": "0042e8f0",
+        "example_labels": [
+          "cockpit\ncamera",
+          "tail view\ncamera",
+          "trace\ncamera"
+        ]
+      },
+      {
+        "original_va": "0042f280",
+        "example_labels": [
+          "BACK"
+        ]
+      },
+      {
+        "original_va": "0042f360",
+        "example_labels": [
+          "new game"
+        ]
+      },
+      {
+        "original_va": "0042f390",
+        "example_labels": [
+          "join game",
+          "join game",
+          "join game"
+        ]
+      },
+      {
+        "original_va": "0042eb30",
+        "example_labels": [
+          "BACK",
+          "MODEM",
+          "call number"
+        ]
+      },
+      {
+        "original_va": "0042f0c0",
+        "example_labels": [
+          "BACK",
+          "com port",
+          "baud rate"
+        ]
+      },
+      {
+        "original_va": "0042eea0",
+        "example_labels": [
+          "BACK",
+          "ip number or\nhost name",
+          "CONNECT"
+        ]
+      },
+      {
+        "original_va": "0042ca30",
+        "example_labels": [
+          "BARLETTA",
+          "STINGER",
+          "VIPER"
+        ]
+      },
+      {
+        "original_va": "0042ca10",
+        "example_labels": [
+          "prologue",
+          "episode 1",
+          "episode 2"
+        ]
+      }
+    ],
+    "missing_edits": [
+      {
+        "original_va": "0042d1b0",
+        "example_labels": [
+          "3D\nacceleration",
+          "graphics\ndevice",
+          "software\nresolution"
+        ]
+      },
+      {
+        "original_va": "0042d290",
+        "example_labels": [
+          "sound fx\nlouder",
+          "sound fx\nsofter",
+          "cd music\nlouder"
+        ]
+      },
+      {
+        "original_va": "0042e300",
+        "example_labels": [
+          "input\nconfiguration",
+          "NEW"
+        ]
+      },
+      {
+        "original_va": "0042d380",
+        "example_labels": [
+          "keyboard\nmove up",
+          "keyboard\nmove down",
+          "keyboard\nmove left"
+        ]
+      },
+      {
+        "original_va": "0042d550",
+        "example_labels": [
+          "fire\nprimary",
+          "fire\nprimary",
+          "fire\nprimary"
+        ]
+      },
+      {
+        "original_va": "0042d620",
+        "example_labels": [
+          "fire\nsecondary",
+          "fire\nsecondary",
+          "fire\nsecondary"
+        ]
+      },
+      {
+        "original_va": "0042d6f0",
+        "example_labels": [
+          "cockpit\ncamera",
+          "tail view\ncamera",
+          "trace\ncamera"
+        ]
+      },
+      {
+        "original_va": "0042d920",
+        "example_labels": [
+          "join game",
+          "join game",
+          "join game"
+        ]
+      },
+      {
+        "original_va": "0042d990",
+        "example_labels": [
+          "MODEM",
+          "call number"
+        ]
+      },
+      {
+        "original_va": "0042daa0",
+        "example_labels": [
+          "com port",
+          "baud rate",
+          "stop bits"
+        ]
+      },
+      {
+        "original_va": "0042da40",
+        "example_labels": [
+          "ip number or\nhost name"
+        ]
+      }
+    ],
+    "limits": "Historical original-data inventory only. No M3 replay or menu/game automation is requested or needed."
+  },
+  "graph_false_positive": {
+    "owner": {
+      "original_va": "0046dda0",
+      "inventory_bytes": 1492,
+      "inventory_instructions": 389,
+      "catalog_role": "unknown",
+      "admitted": false,
+      "distinct_direct_callers": [
+        "0046e390",
+        "0046e430",
+        "0046e530"
+      ],
+      "missing_direct_nonexcluded_owners": []
+    },
+    "wrappers": [
+      {
+        "original_va": "0046e390",
+        "inventory_bytes": 155,
+        "inventory_instructions": 55,
+        "catalog_role": "unknown",
+        "admitted": false,
+        "distinct_direct_callers": [
+          "00454fc0",
+          "00455410",
+          "00455960",
+          "00456d30",
+          "00457590",
+          "00458310",
+          "0045db80"
+        ],
+        "missing_direct_nonexcluded_owners": [
+          "0046dda0"
+        ]
+      },
+      {
+        "original_va": "0046e430",
+        "inventory_bytes": 244,
+        "inventory_instructions": 85,
+        "catalog_role": "unknown",
+        "admitted": false,
+        "distinct_direct_callers": [
+          "00455f70"
+        ],
+        "missing_direct_nonexcluded_owners": [
+          "0046dda0"
+        ]
+      },
+      {
+        "original_va": "0046e530",
+        "inventory_bytes": 197,
+        "inventory_instructions": 63,
+        "catalog_role": "unknown",
+        "admitted": false,
+        "distinct_direct_callers": [
+          "0045db80"
+        ],
+        "missing_direct_nonexcluded_owners": [
+          "0046dda0"
+        ]
+      }
+    ],
+    "finding": "0 missing direct calls does not establish closure: dynamic selected software raster leaf004e2ddc and handwritten kernels remain unresolved. Depth subdividers46d630/46d9d0 are now admitted; earlier blocker prose calling those missing is stale.",
+    "raster_inventory_pending_functions": 28,
+    "raster_inventory_pending_bytes": 60924,
+    "raster_limit": "28 inventory records /60924 bytes are broad range statistics, NOT a classified minimal leaf closure or28 assigned game owners. All are catalog unknown; classify boundaries/provenance before code assignment.",
+    "wip_overlap": "46e390 native-only primitive and46e430 native-only attribute implementations are WIP adapters;46e530 hardware-only horizon bridge is also an adapter. Do not duplicate native branches or count whole wrappers without software path.",
+    "evidence": [
+      "META/m4/collision-resource/horizon-dispatch-blocker.json",
+      "META/m4/horizon/REVIEW.md",
+      "src/bh_native_primitive.h",
+      "src/bh_native_attribute.h",
+      "src/bh_depth_subdivide.h",
+      "src/bh_horizon.h"
+    ]
+  },
+  "low_priority_vein": {
+    "owner": {
+      "original_va": "00478890",
+      "inventory_bytes": 150,
+      "inventory_instructions": 48,
+      "catalog_role": "unknown",
+      "admitted": false,
+      "distinct_direct_callers": [
+        "0040c660",
+        "0040d140",
+        "0040e050",
+        "00428dc0"
+      ],
+      "missing_direct_nonexcluded_owners": []
+    },
+    "finding": "150-byte producer allocates84-byte command nodes, links root+2a4, stores signed16 X/Y, BGR-repackedcolor, and strncpy59 bytes at+0c; installs missing278-byte00477d20 consumer. That consumer uses real GDI Comic Sans MS/CreateFontA/TextOutA/SelectObject/SetBkMode/SetTextColor. Truthful family is428bytes plus real queue/HDC ownership. Directgraph0missing does not close it. Callers chiefly editor/status/ping; defer unless the selected milestone needs those overlays.",
+    "pending_callers": [
+      "0040c660",
+      "0040d140",
+      "0040e050",
+      "00428dc0"
+    ],
+    "installed_missing_consumer": {
+      "original_va": "00477d20",
+      "inventory_bytes": 278,
+      "inventory_instructions": 99,
+      "catalog_role": "unknown",
+      "admitted": false
+    },
+    "evidence": [
+      "META/m4/remaining-audit453/c/00478890.disasm.json",
+      "analysis/function-map.tsv",
+      "META/m3/network-review/code-pointers.tsv"
+    ]
+  },
+  "ranking_limit": "Local ranking for native startup/render/resource/menu/network scope; actor/world/VM veins are covered by other audit agents. No arbitrary direct-graph closure is called source-ready; registered callbacks, shared runtime provenance and resource lifetime must be accounted."
+}

@@ -1,0 +1,8 @@
+[
+  {
+    "address": "00432370",
+    "code": "\r\n/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */\r\n\r\nvoid __cdecl\r\nFUN_00432370(float *param_1,float *param_2,float *param_3,float *param_4,float *param_5,\r\n            float param_6)\r\n\r\n{\r\n  float fVar1;\r\n  float fVar2;\r\n  float fVar3;\r\n  float fVar4;\r\n  float fVar5;\r\n  float fVar6;\r\n  float fVar7;\r\n  float fVar8;\r\n  float fVar9;\r\n  float fVar10;\r\n  float fVar11;\r\n  \r\n  fVar9 = (float)_DAT_00489220 - param_6;\r\n  fVar2 = fVar9 * fVar9 * fVar9;\r\n  fVar1 = param_2[1];\r\n  fVar10 = fVar9 * fVar9 * _DAT_004892c0 - (fVar2 + fVar2);\r\n  fVar11 = (float)_DAT_00489220 - fVar10;\r\n  fVar2 = param_3[1];\r\n  fVar3 = param_2[2];\r\n  fVar4 = param_3[2];\r\n  fVar5 = param_5[1];\r\n  fVar6 = param_4[1];\r\n  fVar7 = param_4[2];\r\n  fVar8 = param_5[2];\r\n  *param_1 = (fVar9 * *param_2 + param_6 * *param_3) * fVar10 +\r\n             (param_6 * *param_5 + fVar9 * *param_4) * fVar11;\r\n  param_1[1] = (fVar2 * param_6 + fVar1 * fVar9) * fVar10 +\r\n               (fVar6 * fVar9 + fVar5 * param_6) * fVar11;\r\n  param_1[2] = (fVar4 * param_6 + fVar3 * fVar9) * fVar10 +\r\n               (fVar8 * param_6 + fVar7 * fVar9) * fVar11;\r\n  return;\r\n}\r\n\r\n",
+    "name": "FUN_00432370",
+    "signature": "undefined FUN_00432370(float * param_1, float * param_2, float * param_3, float * param_4, float * param_5, float param_6)"
+  }
+]

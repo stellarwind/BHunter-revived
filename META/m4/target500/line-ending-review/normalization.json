@@ -1,0 +1,117 @@
+{
+  "reason": "Git clean checkout normalizes CRLF. Normalize only mismatching current new/edited source files to the exact bytes independently compiled and exercised by the clean build. Pinned comparison/math sources untouched. Prior candidate source bytes and real evidence retained; a fresh real full build validates current variant without byte-match transfer.",
+  "files": [
+    {
+      "source": "tests/checkpoint.c",
+      "prior_sha256": "c28b10945106262dca79ec2b7aee1d337ee6139099b21e62c302e8999b9bef7c",
+      "prior_source_snapshot": "META/m4/target500/line-ending-review/sources/c28b10945106262dca79ec2b7aee1d337ee6139099b21e62c302e8999b9bef7c-checkpoint.c.txt",
+      "normalized_sha256": "c7074d980414ae0d814049c96c6d1b7bdac48696899645a2466ed848050d956b",
+      "clean_compiled_sha256": "c7074d980414ae0d814049c96c6d1b7bdac48696899645a2466ed848050d956b"
+    },
+    {
+      "source": "tests/hit_marker.c",
+      "prior_sha256": "3231a16dc883a7056eabd3467750f1202ff83e44c2e020fbe69ef65c17b397fd",
+      "prior_source_snapshot": "META/m4/target500/line-ending-review/sources/3231a16dc883a7056eabd3467750f1202ff83e44c2e020fbe69ef65c17b397fd-hit_marker.c.txt",
+      "normalized_sha256": "ea0194bcefb25ecc812d312151fe665577742ec063827b4419280d37b80fc74d",
+      "clean_compiled_sha256": "ea0194bcefb25ecc812d312151fe665577742ec063827b4419280d37b80fc74d"
+    },
+    {
+      "source": "src/bh_menu_present.c",
+      "prior_sha256": "6ff4da5bc4783a99022225e5fe92dc86add7b6057bc725f442d5f025d0cf560f",
+      "prior_source_snapshot": "META/m4/target500/line-ending-review/sources/6ff4da5bc4783a99022225e5fe92dc86add7b6057bc725f442d5f025d0cf560f-bh_menu_present.c.txt",
+      "normalized_sha256": "54d85500b4013bce31bcd4b968ef9c68ca93286a22408c96dfab260b3053c57f",
+      "clean_compiled_sha256": "54d85500b4013bce31bcd4b968ef9c68ca93286a22408c96dfab260b3053c57f"
+    },
+    {
+      "source": "tests/menu_present.c",
+      "prior_sha256": "d4d7832956719c14f1388b2234e36e05d4e15b73ce3c58a6b39972022c9761e1",
+      "prior_source_snapshot": "META/m4/target500/line-ending-review/sources/d4d7832956719c14f1388b2234e36e05d4e15b73ce3c58a6b39972022c9761e1-menu_present.c.txt",
+      "normalized_sha256": "752393b7494655803d8c8cdd9ce07eb657cf38532be8003f107374f08952c751",
+      "clean_compiled_sha256": "752393b7494655803d8c8cdd9ce07eb657cf38532be8003f107374f08952c751"
+    },
+    {
+      "source": "src/bh_target_construct.c",
+      "prior_sha256": "d0a554d39d0d19659c546a9ba9bc8f31e53581feee37d2b3c0b411f8660d7d82",
+      "prior_source_snapshot": "META/m4/target500/line-ending-review/sources/d0a554d39d0d19659c546a9ba9bc8f31e53581feee37d2b3c0b411f8660d7d82-bh_target_construct.c.txt",
+      "normalized_sha256": "b5dcf84229d7b90b233c64165335f19c71f07db8598f7b2fa8ce7b600981eb3f",
+      "clean_compiled_sha256": "b5dcf84229d7b90b233c64165335f19c71f07db8598f7b2fa8ce7b600981eb3f"
+    },
+    {
+      "source": "tests/target_construct.c",
+      "prior_sha256": "7748c977e5fbd833b221bb8e88ea9bd08a0e8a1af3d320b7491cd00dd62b17e6",
+      "prior_source_snapshot": "META/m4/target500/line-ending-review/sources/7748c977e5fbd833b221bb8e88ea9bd08a0e8a1af3d320b7491cd00dd62b17e6-target_construct.c.txt",
+      "normalized_sha256": "08b4fc5edaca6263867d3a962410b44169d9d4f23306e022ed8531bf7896afd0",
+      "clean_compiled_sha256": "08b4fc5edaca6263867d3a962410b44169d9d4f23306e022ed8531bf7896afd0"
+    },
+    {
+      "source": "src/bh_homing_projectile.c",
+      "prior_sha256": "d957e1b28e62efee427ef2bcfc376e4e124c15dd165ee7f45b8594c08b9b0225",
+      "prior_source_snapshot": "META/m4/target500/line-ending-review/sources/d957e1b28e62efee427ef2bcfc376e4e124c15dd165ee7f45b8594c08b9b0225-bh_homing_projectile.c.txt",
+      "normalized_sha256": "d274b480e4973d669674ce35f8bfa7aa2c20d6a2cc20b047c1ee3a38db46b332",
+      "clean_compiled_sha256": "d274b480e4973d669674ce35f8bfa7aa2c20d6a2cc20b047c1ee3a38db46b332"
+    },
+    {
+      "source": "tests/homing_projectile.c",
+      "prior_sha256": "7ae1525a6464662b85b0698da2f45804ef7742d868476e2cb115f19246c26bf5",
+      "prior_source_snapshot": "META/m4/target500/line-ending-review/sources/7ae1525a6464662b85b0698da2f45804ef7742d868476e2cb115f19246c26bf5-homing_projectile.c.txt",
+      "normalized_sha256": "9c1f8d4b46a026447135fbfbcd2a05304b92c5b56217ef5ad19880b4855f2890",
+      "clean_compiled_sha256": "9c1f8d4b46a026447135fbfbcd2a05304b92c5b56217ef5ad19880b4855f2890"
+    },
+    {
+      "source": "src/bh_ballistic_projectile.c",
+      "prior_sha256": "e3c76317fcafb1f7bc35f2a3b626189decdc84e33a5b57f2feae741b44cf3ac4",
+      "prior_source_snapshot": "META/m4/target500/line-ending-review/sources/e3c76317fcafb1f7bc35f2a3b626189decdc84e33a5b57f2feae741b44cf3ac4-bh_ballistic_projectile.c.txt",
+      "normalized_sha256": "e6f92af8778d27e14267a54fa83c1bf65ef698fee6c452706b137b66439c9d23",
+      "clean_compiled_sha256": "e6f92af8778d27e14267a54fa83c1bf65ef698fee6c452706b137b66439c9d23"
+    },
+    {
+      "source": "tests/ballistic_projectile.c",
+      "prior_sha256": "ec2adc42b4709fddbfc02844530eb74a90ac90fc47aee029fba904065bcac830",
+      "prior_source_snapshot": "META/m4/target500/line-ending-review/sources/ec2adc42b4709fddbfc02844530eb74a90ac90fc47aee029fba904065bcac830-ballistic_projectile.c.txt",
+      "normalized_sha256": "ed47bfa4cb68a0d6a132a6b60eb73a0c971779a56b5ae9258d2bd2aacf8ad951",
+      "clean_compiled_sha256": "ed47bfa4cb68a0d6a132a6b60eb73a0c971779a56b5ae9258d2bd2aacf8ad951"
+    },
+    {
+      "source": "tests/effect_cleanup.c",
+      "prior_sha256": "d7db2f1e4cc148e9e753751372652d1628e7ee7685afcc16c1b98cc40ab37ddb",
+      "prior_source_snapshot": "META/m4/target500/line-ending-review/sources/d7db2f1e4cc148e9e753751372652d1628e7ee7685afcc16c1b98cc40ab37ddb-effect_cleanup.c.txt",
+      "normalized_sha256": "cf0b973bf9aa40ef9a158cb9c14f423004a6ee1a3eba688cc8a197b356236d0b",
+      "clean_compiled_sha256": "cf0b973bf9aa40ef9a158cb9c14f423004a6ee1a3eba688cc8a197b356236d0b"
+    },
+    {
+      "source": "src/bh_weapon_pulse.c",
+      "prior_sha256": "5fe8756de7fe35ec8aac3a9f05b2807b3e01731da731b42c2c3679edc8c540ee",
+      "prior_source_snapshot": "META/m4/target500/line-ending-review/sources/5fe8756de7fe35ec8aac3a9f05b2807b3e01731da731b42c2c3679edc8c540ee-bh_weapon_pulse.c.txt",
+      "normalized_sha256": "f5dd6611a88d101cba08f467548c2202de65642486903fe9e400dee99b685587",
+      "clean_compiled_sha256": "f5dd6611a88d101cba08f467548c2202de65642486903fe9e400dee99b685587"
+    },
+    {
+      "source": "tests/weapon_pulse.c",
+      "prior_sha256": "027674ba6af4576ffe0ad17288ec2b1035ef4c9939e88f693a48d37d253b5c41",
+      "prior_source_snapshot": "META/m4/target500/line-ending-review/sources/027674ba6af4576ffe0ad17288ec2b1035ef4c9939e88f693a48d37d253b5c41-weapon_pulse.c.txt",
+      "normalized_sha256": "eb49f76eb6756d2d4996e22c6d46140bc3b23e0a1a5542ade43b97cbe14575c9",
+      "clean_compiled_sha256": "eb49f76eb6756d2d4996e22c6d46140bc3b23e0a1a5542ade43b97cbe14575c9"
+    },
+    {
+      "source": "tests/menu_edits.c",
+      "prior_sha256": "396cb2858d8ad5fe9f532fb31fe6cf80dae1ea49a40260eb92ef4830f7218944",
+      "prior_source_snapshot": "META/m4/target500/line-ending-review/sources/396cb2858d8ad5fe9f532fb31fe6cf80dae1ea49a40260eb92ef4830f7218944-menu_edits.c.txt",
+      "normalized_sha256": "357806c51b8ee89f0b786c25a08f11b775dcf9e0fd8c5c7b30759391ddfa8583",
+      "clean_compiled_sha256": "357806c51b8ee89f0b786c25a08f11b775dcf9e0fd8c5c7b30759391ddfa8583"
+    },
+    {
+      "source": "src/bh_menu_edit_names.h",
+      "prior_sha256": "d1920149863dd5bee4e0abebca42ff91f37225703281810ba4c5aa84f16565cc",
+      "prior_source_snapshot": "META/m4/target500/line-ending-review/sources/d1920149863dd5bee4e0abebca42ff91f37225703281810ba4c5aa84f16565cc-bh_menu_edit_names.h.txt",
+      "normalized_sha256": "6b688e29b1071a244b777a14daada1182b73d9df130bf88878881721afae5e84",
+      "clean_compiled_sha256": "6b688e29b1071a244b777a14daada1182b73d9df130bf88878881721afae5e84"
+    },
+    {
+      "source": "src/bh_target_construct.h",
+      "prior_sha256": "ad4f8af3c2449e2c927dfccda52399a8a88053e445ee84d7d69e5861af8f7506",
+      "prior_source_snapshot": "META/m4/target500/line-ending-review/sources/ad4f8af3c2449e2c927dfccda52399a8a88053e445ee84d7d69e5861af8f7506-bh_target_construct.h.txt",
+      "normalized_sha256": "5c73de1ea65e971760303274f3e29cca66df8fad586c48d835f3642cbce8a3d3",
+      "clean_compiled_sha256": "5c73de1ea65e971760303274f3e29cca66df8fad586c48d835f3642cbce8a3d3"
+    }
+  ]
+}

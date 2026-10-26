@@ -1,0 +1,29 @@
+[
+  {
+    "original_va": "0043bec0",
+    "function": "bh_script_actor_construct",
+    "source": "src/bh_script_actor_construct.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary actor construction installs recovered draw/tick/query callbacks and calls real route promotion. Full raw body833B includes final RET at43c200; older map832B omitted final RET. Not CRT/compiler/import/shared tail; historical authorship unresolved.",
+    "boundary": {
+      "start": "0043bec0",
+      "end_exclusive": "0043c201",
+      "bytes": 833,
+      "instructions": 172,
+      "sha256": "9c353d0c80a87f7860827f3e9e0d837cda4bc2479b37d41528e274d48bc0f4cc"
+    },
+    "owned_data": "META/m4/target550/c6/dispatch-data.json",
+    "validation": {
+      "abi": "Pinned x86 cdecl(position,type), source adds explicit context and entity handle return. Actual world lookup/pool/list/query/draw/tick/sound/particle source owners, typed count-zero callback adapters and borrowed loaded resource handles; no guessed globals/vtables.",
+      "limits": [
+        "Defined source type domain0..3, finite moderate worlds/paths and PC53 nearest/masked. Invalid types reject before allocation/RNG; original switch default retained unspecified recycled resource/draw fields and is not a safe defined source contract.",
+        "56source checks cover all4types, real callbacks through query/draw/tick, actual cleanup/pool reuse and two CRT-random transitions after allocation. Original code/game/input/native render/audio not executed.",
+        "PC24, native gameplay timing/render fidelity remain unvalidated.43a920/43bca0other constructor family remains open;43bec0closure is fully real source."
+      ]
+    },
+    "evidence": [
+      "META/m4/target550/c6/standalone-build.json",
+      "META/m4/target550/c6/0043bec0.disasm.json"
+    ]
+  }
+]

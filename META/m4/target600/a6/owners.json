@@ -1,0 +1,52 @@
+[
+  {
+    "original_va": "00430d80",
+    "function": "bh_weapon_homing_track",
+    "source": "src/bh_weapon_homing_track.c",
+    "role": "game",
+    "provenance_confidence": "Whole ordinary projectile constructor or installed simulation/draw callback; constructor/call-site reviewed, no CRT/import/compiler/shared tail ownership.",
+    "behavior": "Whole independent cooldown/delay/target tracking method, original acquisition/retention angular gates, signed charge, real actor chain callbacks and actual world visibility traces.",
+    "boundary": {
+      "start": "00430d80",
+      "end_exclusive": "00431043",
+      "bytes": 707,
+      "instructions": 214,
+      "sha256": "d838c44436c5c90743996f47699ec1dd6d40fb51f5ec09ccac830385a5a5d30e",
+      "ranges": [
+        {
+          "start": "00430d80",
+          "end_exclusive": "00431043"
+        }
+      ]
+    },
+    "owned_data_count": 0,
+    "independent_data_function_count": 0,
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/homing-track/bhunter-homing-track-check.exe",
+    "validation": {
+      "abi": "x86 cdecl explicit source contexts and actual original BHEntity fields/callback ABI. Initialized real source pool/world/segment/render/voice dependencies; no guessed vtables or replacement callback stubs.",
+      "fixtures": {
+        "scenario": "homing-track",
+        "checks": 17,
+        "failures": 0,
+        "original_code_required": false,
+        "play_calls": 0
+      },
+      "original_code_executed": false,
+      "game_executed": false,
+      "raw_byte_match": false,
+      "limits": [
+        "Source-only focused checks; no original code/game execution, no native playback or gameplay loop. Parent fresh full/clean build and independent review required before admission.",
+        "PC53 nearest masked finite moderate fixtures; PC24, unusual exceptional inputs and actual game/physical-device fidelity remain unvalidated. Borrowed owners/context/entities stay live throughout synchronous callbacks.",
+        "Original EXE/BIN/MDF/MDS remain immutable; no instruction-match claim. Function boundaries are raw byte ranges and ordinary callback/caller roles, excluding compiler/runtime/shared-tail/data owners."
+      ]
+    },
+    "evidence": [
+      "META/m4/target600/a6/README.md",
+      "META/m4/target600/a6/standalone-build.json",
+      "META/m4/target600/a6/constants.json",
+      "META/m4/target600/a6/original/00430d80.disasm.json"
+    ]
+  }
+]

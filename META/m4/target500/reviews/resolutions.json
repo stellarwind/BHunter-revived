@@ -1,0 +1,11 @@
+{
+  "network_null_provider": "Removed early guard; actual native InitializeConnection(NULL,0) now executes and its real HRESULT is checked by focused source fixture. Parent standalone56 checks pass after correction.",
+  "gdi_font": "Native deletion control proves actual resource destroyed; count-zero disposal additionally retains font and records failure if DeleteObject ever fails.",
+  "target_room_hint": "Corrected registry rebuild to retain actual entity+c4 for managed/base roster actors; real bound-world tests pass, including sleep/owner/last-sound state and retirement.",
+  "evidence": [
+    "META/m4/target500/parent/standalone-build.json",
+    "META/m4/target500/gdi_text/standalone-build.json",
+    "META/m4/target500/reviews/font-lifetime-result.json"
+  ],
+  "target_mass": "Preserve FILD integer for first inertia product before reloading rounded mass for Y/Z. Added mass16777217 discriminator: X29024586 versus Y/Z29024584. Latest focused53 clean/58 real checks pass; prior unadmitted variant retained separately."
+}

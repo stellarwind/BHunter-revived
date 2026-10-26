@@ -1,0 +1,78 @@
+[
+  {
+    "original_va": "004766e0",
+    "function": "bh_network_host",
+    "source": "src/bh_network_game.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary native multiplayer/session ownership or registered menu/music callback. Full raw/caller/side-effect review; not CRT/import/compiler or shared-tail code. Historical game/engine authorship unresolved.",
+    "boundary": {
+      "start": "004766e0",
+      "end_exclusive": "004768b1",
+      "bytes": 465,
+      "instructions": 142,
+      "sha256": "9cd2120e9ebced2987412d3c5812bb52025c57ee445217581fe287be5da70020"
+    },
+    "validation": {
+      "abi": "x86 cdecl with explicit borrowed real source state and native SDK definitions; original globals mapped through shared owning contexts.",
+      "limits": [
+        "Native session/player success and physical audio/gameplay remain unvalidated. Isolated SDK-declared peer fixture drives positive receive/state branches separately from real native uninitialized-interface calls."
+      ]
+    },
+    "evidence": [
+      "META/m4/target550/parent/README.md",
+      "META/m4/target550/parent/standalone-build.json",
+      "META/m4/target550/parent/004766e0.disasm.json"
+    ]
+  },
+  {
+    "original_va": "004768c0",
+    "function": "bh_network_join",
+    "source": "src/bh_network_game.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary native multiplayer/session ownership or registered menu/music callback. Full raw/caller/side-effect review; not CRT/import/compiler or shared-tail code. Historical game/engine authorship unresolved.",
+    "boundary": {
+      "start": "004768c0",
+      "end_exclusive": "00476a17",
+      "bytes": 343,
+      "instructions": 116,
+      "sha256": "ac708ac60a5fc5f5cd0c016b1169dd3a609d41ac64c85af6783b62d9075abdd0"
+    },
+    "validation": {
+      "abi": "x86 cdecl with explicit borrowed real source state and native SDK definitions; original globals mapped through shared owning contexts.",
+      "limits": [
+        "Native session/player success and physical audio/gameplay remain unvalidated. Isolated SDK-declared peer fixture drives positive receive/state branches separately from real native uninitialized-interface calls."
+      ]
+    },
+    "evidence": [
+      "META/m4/target550/parent/README.md",
+      "META/m4/target550/parent/standalone-build.json",
+      "META/m4/target550/parent/004768c0.disasm.json"
+    ]
+  },
+  {
+    "original_va": "00476a20",
+    "function": "bh_network_receive",
+    "source": "src/bh_network_game.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary native multiplayer/session ownership or registered menu/music callback. Full raw/caller/side-effect review; not CRT/import/compiler or shared-tail code. Historical game/engine authorship unresolved.",
+    "boundary": {
+      "start": "00476a20",
+      "end_exclusive": "00476c2f",
+      "bytes": 527,
+      "instructions": 161,
+      "sha256": "114b3fa43573aaa7eb0fbe975710fd22bb938d779250b73eaad410285e24f13f"
+    },
+    "validation": {
+      "abi": "x86 cdecl with explicit borrowed real source state and native SDK definitions; original globals mapped through shared owning contexts.",
+      "limits": [
+        "Native session/player success and physical audio/gameplay remain unvalidated. Isolated SDK-declared peer fixture drives positive receive/state branches separately from real native uninitialized-interface calls."
+      ]
+    },
+    "evidence": [
+      "META/m4/target550/parent/README.md",
+      "META/m4/target550/parent/standalone-build.json",
+      "META/m4/target550/parent/00476a20.disasm.json"
+    ],
+    "owned_data": "META/m4/target550/parent/switch-data.json"
+  }
+]

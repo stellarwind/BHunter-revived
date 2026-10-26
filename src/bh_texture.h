@@ -61,6 +61,10 @@ typedef struct BHTextureContext {
    class dimensions/minima are pinned data; format enumeration is explicit. */
 int __cdecl bh_texture_context_init(BHTextureContext *context,LPDIRECTDRAW draw,
     LPDIRECT3DDEVICE2 device,const BHSceneAllocator *allocator);
+/* Explicit original software branch: owns a draw reference and format/arena
+   state without a fabricated native device. */
+int __cdecl bh_texture_context_init_software(BHTextureContext *context,
+    LPDIRECTDRAW draw,const BHSceneAllocator *allocator);
 void __cdecl bh_texture_context_dispose(BHTextureContext *context);
 HRESULT CALLBACK bh_texture_format_callback(LPDDSURFACEDESC desc,LPVOID format); /* 0044e490 */
 int __cdecl bh_texture_formats(BHTextureContext *context); /* 0044e510 */

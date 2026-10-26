@@ -53,5 +53,10 @@ int __cdecl bh_config_valid(const BHConfig *config);
    caller supplies name/flags and current selection. Profiles and baselines
    remain borrowed until config disposal or replacement by a successful load. */
 BHInputProfile *__cdecl bh_config_profile_clone_after(BHConfig *,BHInputProfile *current);
+/* Count-zero owning menu adapter. Removes a nondefault member only when more
+   than one remains, returns its live previous selection, updates allocation
+   tracking/ring/head and frees through the actual allocator. Failure leaves
+   ring intact. No borrowed baseline may be freed while referenced. */
+BHInputProfile *__cdecl bh_config_profile_remove(BHConfig *,BHInputProfile *);
 
 #endif

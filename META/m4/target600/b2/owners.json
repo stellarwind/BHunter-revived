@@ -1,0 +1,42 @@
+[
+  {
+    "original_va": "004397e0",
+    "function": "bh_actor_vehicle_release",
+    "source": "src/bh_actor_vehicle_lifetime.c",
+    "role": "game",
+    "provenance_confidence": "Complete actor removal callback installed by43a1d0 event20. Ordinary distinct owner with final RET; not CRT/compiler support/import/shared tail. Static callbacks and full original raw instructions reviewed.",
+    "boundary": {
+      "start": "004397e0",
+      "end_exclusive": "004398b4",
+      "bytes": 212,
+      "instructions": 56,
+      "sha256": "e990ece21e668eefd3b264bf42ee6f98c4c2ab6bb27c6864a92bbedc15aa1bef"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/target600-b2/bhunter-actor-vehicle-lifetime-check.exe",
+    "validation": {
+      "abi": "32-bit cdecl entity callback represented with explicit borrowed lifetime owner. Verified entity ec/f0 global and f4/f8 room links, current world at1a4, sound104; existing actual entity query/stop/release owners.",
+      "limits": [
+        "Constructor/tick/query family remains missing and is not counted. Existing435790/437a30 owners reused count zero.",
+        "Borrowed room/global/pool owners must remain alive. Broadcast recipients must preserve list topology during synchronous dispatch; source validates initial ownership before effects.",
+        "Native audio playback and gameplay not tested; source streaming resource/voice, actual event17 query watchers, independent head/middle/tail and double-release rejection exercised. No original code/game execution."
+      ],
+      "fixtures": [
+        {
+          "scenario": "actor-vehicle-lifetime",
+          "checks": 20,
+          "failures": 0,
+          "original_code_required": false
+        }
+      ],
+      "raw_byte_match": false,
+      "original_code_executed": false
+    },
+    "evidence": [
+      "META/m4/target600/b2/README.md",
+      "META/m4/target600/b2/standalone-build.json",
+      "META/m4/target600/b2/original/004397e0.disasm.json"
+    ]
+  }
+]

@@ -1,0 +1,1 @@
+Historical unadmitted candidate before retained-integer mass correction. Exact source snapshots map to frozen source hashes and focused46/51checks. Those fixtures did not exercise mass>2^24. Do not transfer their results to corrected current source. No admission or byte-match evidence is claimed.

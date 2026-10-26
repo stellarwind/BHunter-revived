@@ -1,0 +1,58 @@
+[
+  {
+    "original_va": "00402830",
+    "function": "bh_effect_puff_random_draw",
+    "source": "src/bh_effect_puff.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Whole distinct original effect entity owner; actual constructor-installed callbacks and application-owned resource/global call sites. Not import/CRT/compiler/shared tail. Historical game/engine authorship unresolved.",
+    "boundary": {
+      "start": "00402830",
+      "end_exclusive": "004029ce",
+      "bytes": 414,
+      "instructions": 133,
+      "sha256": "668f6b36ed700e10ab4e5d96b07639ef2149514a59fb9caca4084175e6fe0dae"
+    },
+    "validation": {
+      "abi": "32-bit x86 cdecl with explicit borrowed source pool/world/queue/response/sound/identity owners; verified RET callbacks represented NULL.",
+      "limits": [
+        "Finite moderate PC53 nearest/masked functional reconstruction; CRT sin/cos/atan2 within focused numeric tolerances, no byte match or PC24 claim.",
+        "All original entity fields retained. Contexts/resources/entities stay live through synchronous callbacks; source malformed binding and mutation guards are explicit adapters.",
+        "Actual delayed-expiry, pooled particles/debris/explosions/markers/trails, source sound requests, codec and optional unopened transport; no physical playback or gameplay.",
+        "Original uint32 overflow/local puff random generator and global shared CRT random cadence retained. Supported split child-count domain1..33 described in split evidence."
+      ]
+    },
+    "evidence": [
+      "META/m4/target600/parent/original/00402830.disasm.json",
+      "META/m4/target600/parent/README.md",
+      "META/m4/target600/parent/puff-build.json"
+    ]
+  },
+  {
+    "original_va": "004029d0",
+    "function": "bh_effect_puff_ring_draw",
+    "source": "src/bh_effect_puff.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Whole distinct original effect entity owner; actual constructor-installed callbacks and application-owned resource/global call sites. Not import/CRT/compiler/shared tail. Historical game/engine authorship unresolved.",
+    "boundary": {
+      "start": "004029d0",
+      "end_exclusive": "00402aed",
+      "bytes": 285,
+      "instructions": 92,
+      "sha256": "5c822f90050501d134590877e639180d44f73635272e22825ccae0482250bb06"
+    },
+    "validation": {
+      "abi": "32-bit x86 cdecl with explicit borrowed source pool/world/queue/response/sound/identity owners; verified RET callbacks represented NULL.",
+      "limits": [
+        "Finite moderate PC53 nearest/masked functional reconstruction; CRT sin/cos/atan2 within focused numeric tolerances, no byte match or PC24 claim.",
+        "All original entity fields retained. Contexts/resources/entities stay live through synchronous callbacks; source malformed binding and mutation guards are explicit adapters.",
+        "Actual delayed-expiry, pooled particles/debris/explosions/markers/trails, source sound requests, codec and optional unopened transport; no physical playback or gameplay.",
+        "Original uint32 overflow/local puff random generator and global shared CRT random cadence retained. Supported split child-count domain1..33 described in split evidence."
+      ]
+    },
+    "evidence": [
+      "META/m4/target600/parent/original/004029d0.disasm.json",
+      "META/m4/target600/parent/README.md",
+      "META/m4/target600/parent/puff-build.json"
+    ]
+  }
+]

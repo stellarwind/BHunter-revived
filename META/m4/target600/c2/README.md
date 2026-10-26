@@ -1,0 +1,7 @@
+# Network scoreboard ownership
+
+Whole00426eb0 broadcasts the eight-slot type12 score snapshot, using local low16 score for the local index and zero for absent peers, then calls the actual recovered score-text producer004275c0. Whole00426f90 identifies the last matching victim slot, applies the local-player override, and either mutates/wraps scores before a snapshot (mode2) or sends the two-byte type11 report to recipient1. Shared source packet framing and the actual native DirectPlay sender implement checksum/padding/Send; failed Send does not suppress score text. No fake callbacks or transport methods are supplied.
+
+Run `python META/m4/target600/c2/build.py`: real TUs compile/link with actual codec/HUD/text/atlas/native transport definitions, 1020checks pass, and omission of the new module fails the link. The target retains exact hashes of previously admitted dependency objects; fresh parent integration remains necessary. Checks cover all90 attacker/victim combinations, signed32/16 wrap, duplicate/null slots, local identity overrides, exact packet bytes/checksum, queue text, and direct versus wrapped native unopened-interface failures. No provider, session, peer or gameplay is started. Successful delivery and rendered text remain unvalidated.
+
+Both new fixture entrypoints use `unsigned long *count` for real integration aggregation. Exact raw function bodies and SHA256 boundaries are retained in owners.json and original/. Original assets are immutable and no original code executes.

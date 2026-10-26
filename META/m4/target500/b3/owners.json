@@ -1,0 +1,50 @@
+[
+  {
+    "original_va": "00403850",
+    "function": "bh_effect_sound_cleanup",
+    "source": "src/bh_effect_cleanup.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Whole distinct cdecl application effect cleanup callback; actual sound-stop and entity-release calls, not CRT/import/EH/compiler helper/shared tail. Historical engine authorship unresolved.",
+    "boundary": {
+      "start": "00403850",
+      "end_exclusive": "0040386f",
+      "bytes": 31,
+      "instructions": 11,
+      "sha256": "3f46e3e9a0266c6d1d850d7aa528f68ef5f5ba2c18cef6e725e3c28e2baebd89"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/target500-effect-cleanup/effect-cleanup.exe",
+    "validation": {
+      "abi": "x86 cdecl; original sound handle+128, explicit stable source context at private payload+604.",
+      "fixtures": [
+        {
+          "scenario": "effect-cleanup",
+          "checks": 19,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0
+        },
+        {
+          "scenario": "effect-cleanup",
+          "checks": 19,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0
+        }
+      ],
+      "limits": [
+        "Count-zero source context/bind installs actual whole cleanup owner; full constructor403870 remains unimplemented.",
+        "Actual sound queue/pool lifetimes are borrowed; no native Play or original/game execution.",
+        "Focused linked real dependencies and missing-module control pass; parent full and clean integration still required."
+      ],
+      "raw_byte_match": false,
+      "original_code_executed": false
+    },
+    "evidence": [
+      "META/m4/target500/b3/README.md",
+      "META/m4/target500/b3/focused-validation.json",
+      "META/m4/target500/b3/original/00403850.disasm.json"
+    ]
+  }
+]

@@ -1,0 +1,202 @@
+[
+  {
+    "original_va": "004305f0",
+    "function": "bh_weapon_fire_ballistic",
+    "source": "src/bh_weapon_fire.c",
+    "role": "game",
+    "provenance_confidence": "Whole ordinary projectile constructor or installed simulation/draw callback; constructor/call-site reviewed, no CRT/import/compiler/shared tail ownership.",
+    "behavior": "Whole alternating-muzzle ballistic weapon phase/ammo/fire/packet/recoil method with real projectile constructor.",
+    "boundary": {
+      "start": "004305f0",
+      "end_exclusive": "004309a8",
+      "bytes": 952,
+      "instructions": 274,
+      "sha256": "d46c603c4da2ff7388ec3bad4b0fa7faec319ca3529453cb20ba6b9ca2bf80e2",
+      "ranges": [
+        {
+          "start": "004305f0",
+          "end_exclusive": "004309a8"
+        }
+      ]
+    },
+    "owned_data_count": 0,
+    "independent_data_function_count": 0,
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/weapon-fire/bhunter-weapon-fire-check.exe",
+    "validation": {
+      "abi": "x86 cdecl explicit source contexts and actual original BHEntity fields/callback ABI. Initialized real source pool/world/segment/render/voice dependencies; no guessed vtables or replacement callback stubs.",
+      "fixtures": {
+        "scenario": "weapon-fire",
+        "checks": 52,
+        "failures": 0,
+        "original_code_required": false,
+        "play_calls": 0
+      },
+      "original_code_executed": false,
+      "game_executed": false,
+      "raw_byte_match": false,
+      "limits": [
+        "Source-only focused checks; no original code/game execution, no native playback or gameplay loop. Parent fresh full/clean build and independent review required before admission.",
+        "PC53 nearest masked finite moderate fixtures; PC24, unusual exceptional inputs and actual game/physical-device fidelity remain unvalidated. Borrowed owners/context/entities stay live throughout synchronous callbacks.",
+        "Original EXE/BIN/MDF/MDS remain immutable; no instruction-match claim. Function boundaries are raw byte ranges and ordinary callback/caller roles, excluding compiler/runtime/shared-tail/data owners."
+      ]
+    },
+    "evidence": [
+      "META/m4/target600/a5/README.md",
+      "META/m4/target600/a5/standalone-build.json",
+      "META/m4/target600/a5/constants.json",
+      "META/m4/target600/a5/original/004305f0.disasm.json"
+    ]
+  },
+  {
+    "original_va": "00430a30",
+    "function": "bh_weapon_fire_homing",
+    "source": "src/bh_weapon_fire.c",
+    "role": "game",
+    "provenance_confidence": "Whole ordinary projectile constructor or installed simulation/draw callback; constructor/call-site reviewed, no CRT/import/compiler/shared tail ownership.",
+    "behavior": "Whole every-fourth-phase homing weapon firing, target construction, shared random velocity spread, original recoil and peer target packet identity.",
+    "boundary": {
+      "start": "00430a30",
+      "end_exclusive": "00430d80",
+      "bytes": 848,
+      "instructions": 241,
+      "sha256": "e9d635960e10b811266aeb1e50ebe6acd78484944e898244cce9462c2128cdce",
+      "ranges": [
+        {
+          "start": "00430a30",
+          "end_exclusive": "00430d80"
+        }
+      ]
+    },
+    "owned_data_count": 0,
+    "independent_data_function_count": 0,
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/weapon-fire/bhunter-weapon-fire-check.exe",
+    "validation": {
+      "abi": "x86 cdecl explicit source contexts and actual original BHEntity fields/callback ABI. Initialized real source pool/world/segment/render/voice dependencies; no guessed vtables or replacement callback stubs.",
+      "fixtures": {
+        "scenario": "weapon-fire",
+        "checks": 52,
+        "failures": 0,
+        "original_code_required": false,
+        "play_calls": 0
+      },
+      "original_code_executed": false,
+      "game_executed": false,
+      "raw_byte_match": false,
+      "limits": [
+        "Source-only focused checks; no original code/game execution, no native playback or gameplay loop. Parent fresh full/clean build and independent review required before admission.",
+        "PC53 nearest masked finite moderate fixtures; PC24, unusual exceptional inputs and actual game/physical-device fidelity remain unvalidated. Borrowed owners/context/entities stay live throughout synchronous callbacks.",
+        "Original EXE/BIN/MDF/MDS remain immutable; no instruction-match claim. Function boundaries are raw byte ranges and ordinary callback/caller roles, excluding compiler/runtime/shared-tail/data owners."
+      ]
+    },
+    "evidence": [
+      "META/m4/target600/a5/README.md",
+      "META/m4/target600/a5/standalone-build.json",
+      "META/m4/target600/a5/constants.json",
+      "META/m4/target600/a5/original/00430a30.disasm.json"
+    ]
+  },
+  {
+    "original_va": "00431db0",
+    "function": "bh_weapon_area_start",
+    "source": "src/bh_weapon_fire.c",
+    "role": "game",
+    "provenance_confidence": "Whole ordinary projectile constructor or installed simulation/draw callback; constructor/call-site reviewed, no CRT/import/compiler/shared tail ownership.",
+    "behavior": "Whole idle burst arming with ammo consumption, real source cue, one-time original message and shot envelope.",
+    "boundary": {
+      "start": "00431db0",
+      "end_exclusive": "00431efa",
+      "bytes": 330,
+      "instructions": 93,
+      "sha256": "833f83d024c8684b12eaf7f193ee5fc08d1e1cddaa025836b32aeee7f56aad83",
+      "ranges": [
+        {
+          "start": "00431db0",
+          "end_exclusive": "00431efa"
+        }
+      ]
+    },
+    "owned_data_count": 0,
+    "independent_data_function_count": 0,
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/weapon-fire/bhunter-weapon-fire-check.exe",
+    "validation": {
+      "abi": "x86 cdecl explicit source contexts and actual original BHEntity fields/callback ABI. Initialized real source pool/world/segment/render/voice dependencies; no guessed vtables or replacement callback stubs.",
+      "fixtures": {
+        "scenario": "weapon-fire",
+        "checks": 52,
+        "failures": 0,
+        "original_code_required": false,
+        "play_calls": 0
+      },
+      "original_code_executed": false,
+      "game_executed": false,
+      "raw_byte_match": false,
+      "limits": [
+        "Source-only focused checks; no original code/game execution, no native playback or gameplay loop. Parent fresh full/clean build and independent review required before admission.",
+        "PC53 nearest masked finite moderate fixtures; PC24, unusual exceptional inputs and actual game/physical-device fidelity remain unvalidated. Borrowed owners/context/entities stay live throughout synchronous callbacks.",
+        "Original EXE/BIN/MDF/MDS remain immutable; no instruction-match claim. Function boundaries are raw byte ranges and ordinary callback/caller roles, excluding compiler/runtime/shared-tail/data owners."
+      ]
+    },
+    "evidence": [
+      "META/m4/target600/a5/README.md",
+      "META/m4/target600/a5/standalone-build.json",
+      "META/m4/target600/a5/constants.json",
+      "META/m4/target600/a5/original/00431db0.disasm.json"
+    ]
+  },
+  {
+    "original_va": "00431f00",
+    "function": "bh_weapon_area_tick",
+    "source": "src/bh_weapon_fire.c",
+    "role": "game",
+    "provenance_confidence": "Whole ordinary projectile constructor or installed simulation/draw callback; constructor/call-site reviewed, no CRT/import/compiler/shared tail ownership.",
+    "behavior": "Whole five-phase area pulse delivery with real constructor, symmetric strength envelope, paired initial cues and alternating recoil.",
+    "boundary": {
+      "start": "00431f00",
+      "end_exclusive": "0043204c",
+      "bytes": 332,
+      "instructions": 98,
+      "sha256": "7c28260c8b091b5f66dc83f4299319a6d32524ae2cd79d8701da0a42d042482e",
+      "ranges": [
+        {
+          "start": "00431f00",
+          "end_exclusive": "0043204c"
+        }
+      ]
+    },
+    "owned_data_count": 0,
+    "independent_data_function_count": 0,
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/weapon-fire/bhunter-weapon-fire-check.exe",
+    "validation": {
+      "abi": "x86 cdecl explicit source contexts and actual original BHEntity fields/callback ABI. Initialized real source pool/world/segment/render/voice dependencies; no guessed vtables or replacement callback stubs.",
+      "fixtures": {
+        "scenario": "weapon-fire",
+        "checks": 52,
+        "failures": 0,
+        "original_code_required": false,
+        "play_calls": 0
+      },
+      "original_code_executed": false,
+      "game_executed": false,
+      "raw_byte_match": false,
+      "limits": [
+        "Source-only focused checks; no original code/game execution, no native playback or gameplay loop. Parent fresh full/clean build and independent review required before admission.",
+        "PC53 nearest masked finite moderate fixtures; PC24, unusual exceptional inputs and actual game/physical-device fidelity remain unvalidated. Borrowed owners/context/entities stay live throughout synchronous callbacks.",
+        "Original EXE/BIN/MDF/MDS remain immutable; no instruction-match claim. Function boundaries are raw byte ranges and ordinary callback/caller roles, excluding compiler/runtime/shared-tail/data owners."
+      ]
+    },
+    "evidence": [
+      "META/m4/target600/a5/README.md",
+      "META/m4/target600/a5/standalone-build.json",
+      "META/m4/target600/a5/constants.json",
+      "META/m4/target600/a5/original/00431f00.disasm.json"
+    ]
+  }
+]

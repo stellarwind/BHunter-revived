@@ -1,0 +1,46 @@
+[
+  {
+    "original_va": "0043ea90",
+    "function": "bh_ballistic_projectile_tick",
+    "source": "src/bh_ballistic_projectile.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete distinct ordinary projectile/entity world/actor querying, material absorption/ricochet and effects/damage/sound lifetime owner; not CRT/compiler/import or independent shared-tail. Historical game-versus-engine authorship unknown.",
+    "behavior": "Whole ballistic step: retained lifetime expiry, cached source segment/proximity collision, material liquid path, random incidence absorption/ricochet, exact effects/marker/packet delivery, loop audio update/stop and retirement",
+    "boundary": {
+      "start": "0043ea90",
+      "end_exclusive": "0043f629",
+      "bytes": 2969,
+      "instructions": 765,
+      "sha256": "2bd1407bca42ef71b12869ea101e112570fd82c310d279599369ee4c7ecfb7fe"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/ballistic-projectile/bhunter-ballistic-projectile-check.exe",
+    "validation": {
+      "abi": "x86 cdecl callback over original entity scalar/cache/source/voice fields, private context payload608/bound generation612; borrowed shared source effect/world bindings countzero",
+      "fixtures": {
+        "scenario": "ballistic-projectile",
+        "checks": 73,
+        "failures": 0,
+        "original_code_required": false,
+        "play_calls": 0
+      },
+      "original_code_executed": false,
+      "game_executed": false,
+      "raw_byte_match": false,
+      "limits": [
+        "Actual borrowed real world-segment/room actors, geometry workspaces, pooled world response entities and source effects/audio/marker contexts; constructor, actual full startup/world assembly and playable firing remain incomplete.",
+        "Context/receiver/geometry/list storage stays stable through callbacks; arbitrary mutation/recycling of referenced source/target by callbacks excluded. Real lifetime guards reject detected retirement, and original read-after-release payload captured before source release.",
+        "Finite moderate PC53 nearest/masked arithmetic; retained NaN lifetime expiry tested. Zero normalize-to directions leave undefined original scratch; source reports numerical error rather than inventing a contact normal. PC24 and runtime precision transitions unresolved.",
+        "Standalone real12-TU compile/link,73 relevant checks and omitted-module link control pass; parent current full/clean integration required for admission.",
+        "No original code/game, automated gameplay, physical input, UI capture, native playback or network operation."
+      ]
+    },
+    "evidence": [
+      "META/m4/target500/a3/README.md",
+      "META/m4/target500/a3/standalone-build.json",
+      "META/m4/target500/a3/constants.json",
+      "META/m4/target500/a3/original/0043ea90.disasm.json"
+    ]
+  }
+]

@@ -122,6 +122,21 @@ BHInputProfile *__cdecl bh_config_profile_clone_after(BHConfig *config,BHInputPr
     return profile;
 }
 
+BHInputProfile *__cdecl bh_config_profile_remove(BHConfig *config,BHInputProfile *current) {
+    ProfileNode *node,*previous=NULL,*scan;BHInputProfile *selected;
+    if(!config||!current||!bh_config_valid(config)||!member(config,current)||!current->flags||config->profile_count<=1){fail(config,BH_CONFIG_ARGUMENT);return NULL;}
+    node=(ProfileNode*)config->owned_nodes;
+    while(node && &node->profile!=current){previous=node;node=node->allocation_next;}
+    if(!node){fail(config,BH_CONFIG_CONTAINER);return NULL;}
+    if(node->owned_baseline)for(scan=(ProfileNode*)config->owned_nodes;scan;scan=scan->allocation_next)
+        if(scan!=node&&scan->profile.baseline==node->owned_baseline){fail(config,BH_CONFIG_CONTAINER);return NULL;}
+    selected=current->previous;current->previous->next=current->next;current->next->previous=current->previous;
+    if(config->profiles==current)config->profiles=selected;
+    if(previous)previous->allocation_next=node->allocation_next;else config->owned_nodes=node->allocation_next;
+    if(node->owned_baseline)config->allocator.release(node->owned_baseline,config->allocator.user);
+    config->allocator.release(node,config->allocator.user);--config->profile_count;config->error=BH_CONFIG_OK;return selected;
+}
+
 int __cdecl bh_config_load(BHConfig *config,const char *path) {
     BHConfig next;
     FILE *file;

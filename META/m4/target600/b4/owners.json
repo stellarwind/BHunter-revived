@@ -1,0 +1,45 @@
+[
+  {
+    "original_va": "00438ff0",
+    "function": "bh_actor_pursuit_route",
+    "source": "src/bh_actor_pursuit_route.c",
+    "role": "game",
+    "provenance_confidence": "Complete city/pursuit actor route behavior called by actual398c0/39910ticks. Distinct ordinary owner with early and final RET; CRT/stack/import/shared tails excluded.Complete static callee and raw operand review.",
+    "boundary": {
+      "start": "00438ff0",
+      "end_exclusive": "004397cf",
+      "bytes": 2015,
+      "instructions": 535,
+      "sha256": "96d49e1382d3d84999de2d5acdb6890579f3c2acbdb8cc7a3bf70222a5e1c4a6"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/target600-b4/bhunter-actor-pursuit-route-check.exe",
+    "validation": {
+      "abi": "x86 cdecl entity behavior represented by explicit borrowed context. Real room/portal graph and original per-world city identifiers bound separately. Retains actual query16motion, raw class/clock fields and source navigation routes.",
+      "limits": [
+        "PC53 nearest finite moderate controls, positive speed/product and source duration conversion range. PC24/x87 bit matching unvalidated.",
+        "Navigation node/city arrays, world room list, source pool/query targets and source message arena stay borrowed/stable. Queries must preserve their actor lifetime and supply complete motion.",
+        "Original city name formats and numerical literals reread directly from immutable PE. City labels>160bytes reject source overflow. Signed32clock difference wraps before signed throttle comparison.",
+        "Whole source route owner independently admitted;398c0normal attack tick/39910damage tick still need437ae0attack closure. Existing target selection, route/clamp/length/choice/guided/promotion and sound/message owners reused count zero.",
+        "32focused source checks include real damagequery motion target/selector, exact CRT draw ordering, forced return, actual world-list promotion, city report and streaming sound expiry. No original code/game/playback/display/input/automation executed."
+      ],
+      "fixtures": [
+        {
+          "scenario": "actor-pursuit-route",
+          "checks": 32,
+          "failures": 0,
+          "original_code_required": false
+        }
+      ],
+      "raw_byte_match": false,
+      "original_code_executed": false
+    },
+    "evidence": [
+      "META/m4/target600/b4/README.md",
+      "META/m4/target600/b4/standalone-build.json",
+      "META/m4/target600/b4/original/00438ff0.disasm.json",
+      "META/m4/target600/b4/original/literals.json"
+    ]
+  }
+]

@@ -11,7 +11,7 @@ int bh_render_execute_checkpoint(unsigned long *count){
     BHDrawQueue queue;BHTextQueue text;BHTextureContext textures;
     BHRenderState state;BHFrameDisplay display;BHRenderExecute execute;
     BHSceneView view;BHViewConfig projection;BHMainCamera camera;
-    BHVec3 position,angles;DDPIXELFORMAT pixel;float valid_fov;
+    BHVec3 position,angles;DDPIXELFORMAT pixel;float valid_fov;BHLightConfig light;BHGdiText gdi;
     unsigned char *depth;FILE *bmp;unsigned char rgb[3];
     memset(&queue,0,sizeof(queue));memset(&text,0,sizeof(text));
     memset(&textures,0,sizeof(textures));memset(&state,0,sizeof(state));
@@ -50,6 +50,11 @@ int bh_render_execute_checkpoint(unsigned long *count){
     CHECK(execute.draw_calls==10&&execute.kinds[BH_DRAW_STATE]==6,
           "valid callback failure does not suppress later draw records");
     projection.fov=valid_fov;
+    memset(&light,0,sizeof(light));execute.light=&light;
+    CHECK(bh_menu_light_queue(&queue,0,1,2,3,4,5,6,7,8)==1,"real menu light producer");
+    CHECK(bh_render_execute(&execute)&&execute.kinds[BH_DRAW_LIGHT]==1,"menu light through actual render executor");
+    execute.light=NULL;CHECK(!bh_render_execute(&execute)&&execute.error==BH_RENDER_EXECUTE_BINDING,"light requires actual source binding");
+    CHECK(bh_draw_queue_begin(&queue)&&bh_camera_queue_pose(&queue,&position,&angles)==1,"restore camera queue after light");
     /* The original 32-bit epoch wraps. Source-bound native path is exercised
        below; software mode deliberately preserves it. */
     queue.commands[8].next=10;queue.commands[10].kind=BH_DRAW_PATH_POINT;
@@ -76,6 +81,12 @@ int bh_render_execute_checkpoint(unsigned long *count){
     CHECK(bmp!=NULL,"native output exists");
     if(bmp){fseek(bmp,54,SEEK_SET);CHECK(fread(rgb,1,3,bmp)==3&&
         rgb[0]==255&&rgb[1]==255&&rgb[2]==255,"white selector visible in native pixels");fclose(bmp);}
+    memset(&gdi,0,sizeof(gdi));gdi.display=&display;execute.gdi=&gdi;
+    textures.software=1;display.auxiliary_pixels=depth;display.auxiliary_bytes=640UL*480UL*2UL;display.auxiliary_pitch=1280;
+    CHECK(bh_draw_queue_begin(&queue)&&bh_gdi_text_queue(&queue,10,10,"Source queue",0xffffff)==1,"GDI text queued for complete executor");
+    CHECK(bh_render_execute(&execute)&&execute.kinds[BH_DRAW_GDI_TEXT]==1&&gdi.native_calls==2&&!gdi.failures,"real executor dispatches native GDI consumer");
+    execute.gdi=NULL;CHECK(!bh_render_execute(&execute)&&execute.error==BH_RENDER_EXECUTE_BINDING,"GDI consumer requires source owner");
+    bh_gdi_text_dispose(&gdi);
 done:
     if(view.device)bh_scene_view_dispose(&view);
     if(queue.commands)bh_draw_queue_dispose(&queue);

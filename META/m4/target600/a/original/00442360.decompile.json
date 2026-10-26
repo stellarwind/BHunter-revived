@@ -1,0 +1,8 @@
+[
+  {
+    "address": "00442360",
+    "code": "\r\n/* WARNING: Globals starting with '_' overlap smaller symbols at the same address */\r\n\r\nvoid __cdecl\r\nFUN_00442360(undefined4 param_1,undefined4 *param_2,float *param_3,undefined4 param_4,\r\n            undefined4 param_5)\r\n\r\n{\r\n  float fVar1;\r\n  int iVar2;\r\n  int iVar3;\r\n  \r\n  iVar2 = FUN_00476f20();\r\n  if (iVar2 != 0) {\r\n    *(undefined4 *)(iVar2 + 0xe8) = param_5;\r\n    *(undefined4 *)(iVar2 + 0xec) = 0x41a00000;\r\n    *(undefined4 *)(iVar2 + 0xf4) = DAT_004dfb34;\r\n    DAT_004dfb34 = 0;\r\n    *(undefined4 *)(iVar2 + 0xc) = *param_2;\r\n    *(undefined4 *)(iVar2 + 0x10) = param_2[1];\r\n    *(undefined4 *)(iVar2 + 0x14) = param_2[2];\r\n    *(float *)(iVar2 + 0x48) = *param_3 * _DAT_004897f4;\r\n    *(float *)(iVar2 + 0x4c) = param_3[1] * _DAT_004897f4;\r\n    fVar1 = param_3[2] * _DAT_004897f4;\r\n    *(code **)(iVar2 + 0xcc) = FUN_00441d80;\r\n    *(code **)(iVar2 + 200) = FUN_00441ce0;\r\n    *(float *)(iVar2 + 0x50) = fVar1;\r\n    FUN_00476e90(iVar2,&LAB_00442330);\r\n    iVar3 = FUN_0047bd40(DAT_004962f0,1.0,1.0,param_2,(float *)(iVar2 + 0x48));\r\n    *(int *)(iVar2 + 0xf0) = iVar3;\r\n    *(undefined4 *)(iVar2 + 0xfc) = param_4;\r\n    *(undefined4 *)(iVar2 + 0xf8) = param_1;\r\n    *(undefined4 *)(iVar2 + 0x104) = param_4;\r\n  }\r\n  return;\r\n}\r\n\r\n",
+    "name": "FUN_00442360",
+    "signature": "undefined FUN_00442360(undefined4 param_1, undefined4 * param_2, float * param_3, undefined4 param_4, undefined4 param_5)"
+  }
+]

@@ -1854,6 +1854,28 @@
       ]
     },
     {
+      "address": "0040fe80",
+      "name": "bh_block_damage_query",
+      "body_ranges": [
+        "0040fe80-0040ffe9"
+      ],
+      "role": "engine_candidate",
+      "owner": "bh_vm_queries",
+      "provenance_confidence": "Actual callback pointer installs inside retained VM proven by immutable PE, whole cdecl event-query behavior. Ordinary application/engine callback, not CRT/import/compiler helper/shared tail. Historical game versus engine authorship unresolved.",
+      "boundary_review": "complete_callback_owner_verified_from_immutable_PE",
+      "behavior": "Whole installed event/query callback; full source integration and validation recorded in implementation ledger.",
+      "abi": "x86 cdecl entity+borrowed packet; exact event fields and raw state offsets. Persistent count-zero contexts at payload+600/+596, no guessed global pointers.",
+      "assigned_next": false,
+      "callback_review": "verified_installed_callback",
+      "evidence": [
+        "META/m4/target500/b2/README.md",
+        "META/m4/target500/b2/focused-validation.json",
+        "META/m4/target500/b2/original/0040fe80.disasm.json",
+        "META/m4/target500/validation.json",
+        "META/function-status.json"
+      ]
+    },
+    {
       "address": "00410020",
       "name": "FUN_00410020",
       "body_ranges": [
@@ -5460,22 +5482,47 @@
       ]
     },
     {
+      "address": "004376e0",
+      "name": "bh_script_actor_query",
+      "body_ranges": [
+        "004376e0-004379fe"
+      ],
+      "role": "engine_candidate",
+      "owner": "bh_script_actor_query",
+      "provenance_confidence": "Whole installed actor query callback. Raw prologue saves4registers, switch table resolves all18event selectors to5behaviors/default.37770is internal event4branch with no new prologue, excluded as independent function. Distinct complete RET ending379fe; not CRT/compiler/import; historical authorship unresolved.",
+      "boundary_review": "complete_callback_owner_verified_from_immutable_PE",
+      "behavior": "Whole installed event/query callback; full source integration and validation recorded in implementation ledger.",
+      "abi": "Pinned x86 cdecl(entity,packet);40byte packet with event/position/velocity/acceleration. Source explicit borrowed real pool/route/context binding. Count-zero cleanup bridge calls real435720source owner.",
+      "assigned_next": false,
+      "callback_review": "verified_installed_callback",
+      "evidence": [
+        "META/m4/target550/c5/standalone-build.json",
+        "META/m4/target550/c5/004376e0.disasm.json",
+        "META/m4/target550/c5/README.md",
+        "META/m4/target550/validation.json",
+        "META/function-status.json"
+      ]
+    },
+    {
       "address": "00437770",
       "name": "FUN_00437770",
       "body_ranges": [
         "00437770-004377d1"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "shared_tail",
+      "owner": "004376e0",
+      "provenance_confidence": "Verified internal event4 branch inside complete installed callback004376e0; not an independent original owner.",
+      "boundary_review": "internal_branch_of_complete_004376e0",
+      "behavior": "Owned event4 branch of bh_script_actor_query; independent function count zero.",
       "abi": "provisional inferred signature: undefined FUN_00437770(void)",
       "assigned_next": false,
-      "callback_review": "candidate_only",
+      "callback_review": "internal_branch_not_callback",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/target550/c5/README.md",
+        "META/m4/target550/c5/004376e0.disasm.json",
+        "META/function-status.json"
       ]
     },
     {
@@ -5723,6 +5770,28 @@
       "evidence": [
         "analysis/function-map.tsv",
         "META/m1/review/boundaries.tsv"
+      ]
+    },
+    {
+      "address": "0043c220",
+      "name": "bh_radar_entity_query",
+      "body_ranges": [
+        "0043c220-0043c3bc"
+      ],
+      "role": "engine_candidate",
+      "owner": "bh_vm_queries",
+      "provenance_confidence": "Actual callback pointer installs inside retained VM proven by immutable PE, whole cdecl event-query behavior. Ordinary application/engine callback, not CRT/import/compiler helper/shared tail. Historical game versus engine authorship unresolved.",
+      "boundary_review": "complete_callback_owner_verified_from_immutable_PE",
+      "behavior": "Whole installed event/query callback; full source integration and validation recorded in implementation ledger.",
+      "abi": "x86 cdecl entity+borrowed packet; exact event fields and raw state offsets. Persistent count-zero contexts at payload+600/+596, no guessed global pointers.",
+      "assigned_next": false,
+      "callback_review": "verified_installed_callback",
+      "evidence": [
+        "META/m4/target500/b2/README.md",
+        "META/m4/target500/b2/focused-validation.json",
+        "META/m4/target500/b2/original/0043c220.disasm.json",
+        "META/m4/target500/validation.json",
+        "META/function-status.json"
       ]
     },
     {

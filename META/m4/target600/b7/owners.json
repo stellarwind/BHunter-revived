@@ -1,0 +1,86 @@
+[
+  {
+    "original_va": "00437ae0",
+    "function": "bh_actor_attack",
+    "source": "src/bh_actor_attack.c",
+    "role": "game",
+    "provenance_confidence": "Whole ordinary game actor attack/normal tick owner. Actual target-query/constructor-installed behavior and complete direct/installed callback closure reviewed; CRT/import/compiler helpers/shared tails excluded.",
+    "boundary": {
+      "start": "00437ae0",
+      "end_exclusive": "00438fe3",
+      "bytes": 5379,
+      "instructions": 1356,
+      "sha256": "68af29fe173bc1d0005ddb398856ddf5d07eba327fff58c8a3461ccd3d18c13f"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/target600-b7/bhunter-actor-attack-check.exe",
+    "validation": {
+      "abi": "x86 cdecl actor behavior with explicit borrowed owner;398c0 retains actual one-actor callback. Original short burst/cooldown1dc..1e2, route-phase/world/controls, target1b8, pursuit1b4/1d4 retain their fields. Count-zero tick context at payload+596.",
+      "limits": [
+        "PC53 nearest finite moderate state and positive route duration; PC24, zero direction/distance and x87 last-bit boundaries unvalidated. No raw/differential byte match.",
+        "Original hitscan contact severity stack word is unwritten: explicit legacy_contact_severity caller binding retained (nonzero.125 fixture). No original unknown scratch value asserted.",
+        "Borrowed real route/navigation/target query, core constructors, ballistic/homing/area contexts, geometry/receivers, sound/particles/contact/marker/debris/flare/trails retain stable lifetimes through synchronous calls.",
+        "83source checks execute all three normal and all three special weapon branches with actual projectile/callback allocations, alignment/cooldown/odd frames, hitscan miss/solid/liquid complete effects, forced steering, and whole398c0 phase remainder through actual438ff0 forced return.",
+        "No original code/game/input/automation/network session/playback or display calls. Parent shared effect constructor/tick and weapon area/projectile closure are real linked definitions, not placeholders. Constructors43a920/43b2d0/43bca0 and vehicle39910/3a1d0 remain open."
+      ],
+      "fixtures": [
+        {
+          "scenario": "actor-attack",
+          "checks": 83,
+          "failures": 0,
+          "original_code_required": false
+        }
+      ],
+      "raw_byte_match": false,
+      "original_code_executed": false
+    },
+    "evidence": [
+      "META/m4/target600/b7/README.md",
+      "META/m4/target600/b7/standalone-build.json",
+      "META/m4/target600/b7/original/00437ae0.disasm.json"
+    ]
+  },
+  {
+    "original_va": "004398c0",
+    "function": "bh_actor_vehicle_tick",
+    "source": "src/bh_actor_attack.c",
+    "role": "game",
+    "provenance_confidence": "Whole ordinary game actor attack/normal tick owner. Actual target-query/constructor-installed behavior and complete direct/installed callback closure reviewed; CRT/import/compiler helpers/shared tails excluded.",
+    "boundary": {
+      "start": "004398c0",
+      "end_exclusive": "00439910",
+      "bytes": 80,
+      "instructions": 24,
+      "sha256": "c2bc8d9b73bc05d7605a538a2b1e79416bc17b87783cc1b8be13601e3216787c"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/target600-b7/bhunter-actor-attack-check.exe",
+    "validation": {
+      "abi": "x86 cdecl actor behavior with explicit borrowed owner;398c0 retains actual one-actor callback. Original short burst/cooldown1dc..1e2, route-phase/world/controls, target1b8, pursuit1b4/1d4 retain their fields. Count-zero tick context at payload+596.",
+      "limits": [
+        "PC53 nearest finite moderate state and positive route duration; PC24, zero direction/distance and x87 last-bit boundaries unvalidated. No raw/differential byte match.",
+        "Original hitscan contact severity stack word is unwritten: explicit legacy_contact_severity caller binding retained (nonzero.125 fixture). No original unknown scratch value asserted.",
+        "Borrowed real route/navigation/target query, core constructors, ballistic/homing/area contexts, geometry/receivers, sound/particles/contact/marker/debris/flare/trails retain stable lifetimes through synchronous calls.",
+        "83source checks execute all three normal and all three special weapon branches with actual projectile/callback allocations, alignment/cooldown/odd frames, hitscan miss/solid/liquid complete effects, forced steering, and whole398c0 phase remainder through actual438ff0 forced return.",
+        "No original code/game/input/automation/network session/playback or display calls. Parent shared effect constructor/tick and weapon area/projectile closure are real linked definitions, not placeholders. Constructors43a920/43b2d0/43bca0 and vehicle39910/3a1d0 remain open."
+      ],
+      "fixtures": [
+        {
+          "scenario": "actor-attack",
+          "checks": 83,
+          "failures": 0,
+          "original_code_required": false
+        }
+      ],
+      "raw_byte_match": false,
+      "original_code_executed": false
+    },
+    "evidence": [
+      "META/m4/target600/b7/README.md",
+      "META/m4/target600/b7/standalone-build.json",
+      "META/m4/target600/b7/original/004398c0.disasm.json"
+    ]
+  }
+]

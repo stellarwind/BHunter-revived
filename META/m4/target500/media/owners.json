@@ -1,0 +1,86 @@
+[
+  {
+    "original_va": "00449c20",
+    "function": "bh_cd_play_range",
+    "source": "src/bh_media_control.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary native API ownership/callback application behavior; not CRT, import, compiler helper or shared tail. Historical authorship unresolved.",
+    "boundary": {
+      "start": "00449c20",
+      "end_exclusive": "00449cb6",
+      "bytes": 150,
+      "instructions": 45,
+      "sha256": "98348789fd321b387dcce97b11e9d7a9a60701b8ef2ceb931a537fc1cef540d9"
+    },
+    "validation": {
+      "abi": "Pinned x86; native SDK interfaces and callback stdcall; source explicit borrowed context replaces original globals.",
+      "limits": [
+        "Positive physical CD playback and successful endpoint volume writes unexecuted; tests use absent or deliberately invalid devices.",
+        "Source-only linked harness; startup and playable game remain incomplete."
+      ]
+    }
+  },
+  {
+    "original_va": "00449cc0",
+    "function": "bh_cd_stop",
+    "source": "src/bh_media_control.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary native API ownership/callback application behavior; not CRT, import, compiler helper or shared tail. Historical authorship unresolved.",
+    "boundary": {
+      "start": "00449cc0",
+      "end_exclusive": "00449ce4",
+      "bytes": 36,
+      "instructions": 10,
+      "sha256": "be7c8a35c8b473ee3c7fb87c682fcba65e1bcc1c03c96680f83a36d62518ca5b"
+    },
+    "validation": {
+      "abi": "Pinned x86; native SDK interfaces and callback stdcall; source explicit borrowed context replaces original globals.",
+      "limits": [
+        "Positive physical CD playback and successful endpoint volume writes unexecuted; tests use absent or deliberately invalid devices.",
+        "Source-only linked harness; startup and playable game remain incomplete."
+      ]
+    }
+  },
+  {
+    "original_va": "00449d40",
+    "function": "bh_cd_set_volume",
+    "source": "src/bh_media_control.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary native API ownership/callback application behavior; not CRT, import, compiler helper or shared tail. Historical authorship unresolved.",
+    "boundary": {
+      "start": "00449d40",
+      "end_exclusive": "00449d98",
+      "bytes": 88,
+      "instructions": 28,
+      "sha256": "145909231b603e8dcfb13dc5eb7c1d86c8219b0043f900b975e3298d78b60920"
+    },
+    "validation": {
+      "abi": "Pinned x86; native SDK interfaces and callback stdcall; source explicit borrowed context replaces original globals.",
+      "limits": [
+        "Positive physical CD playback and successful endpoint volume writes unexecuted; tests use absent or deliberately invalid devices.",
+        "Source-only linked harness; startup and playable game remain incomplete."
+      ]
+    }
+  },
+  {
+    "original_va": "00449df0",
+    "function": "bh_wave_set_volume",
+    "source": "src/bh_media_control.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary native API ownership/callback application behavior; not CRT, import, compiler helper or shared tail. Historical authorship unresolved.",
+    "boundary": {
+      "start": "00449df0",
+      "end_exclusive": "00449e48",
+      "bytes": 88,
+      "instructions": 28,
+      "sha256": "e4625dee2e949ef2f14b6c0a25d443d0cea15f439860724d8d78e523d90a23d5"
+    },
+    "validation": {
+      "abi": "Pinned x86; native SDK interfaces and callback stdcall; source explicit borrowed context replaces original globals.",
+      "limits": [
+        "Positive physical CD playback and successful endpoint volume writes unexecuted; tests use absent or deliberately invalid devices.",
+        "Source-only linked harness; startup and playable game remain incomplete."
+      ]
+    }
+  }
+]

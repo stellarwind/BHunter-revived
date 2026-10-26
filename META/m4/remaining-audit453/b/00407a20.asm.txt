@@ -1,0 +1,59 @@
+
+GAME_DATA/BHUNTER.EXE:     file format pei-i386
+
+
+Disassembly of section .text:
+
+00407a20 <.text+0x6a20>:
+  407a20:	8b 4c 24 04          	mov    ecx,DWORD PTR [esp+0x4]
+  407a24:	d9 81 08 01 00 00    	fld    DWORD PTR [ecx+0x108]
+  407a2a:	d9 54 24 04          	fst    DWORD PTR [esp+0x4]
+  407a2e:	d8 1d 00 92 48 00    	fcomp  DWORD PTR ds:0x489200
+  407a34:	df e0                	fnstsw ax
+  407a36:	f6 c4 41             	test   ah,0x41
+  407a39:	0f 85 88 00 00 00    	jne    0x407ac7
+  407a3f:	8b 81 10 01 00 00    	mov    eax,DWORD PTR [ecx+0x110]
+  407a45:	8b 91 0c 01 00 00    	mov    edx,DWORD PTR [ecx+0x10c]
+  407a4b:	68 00 00 00 3f       	push   0x3f000000
+  407a50:	50                   	push   eax
+  407a51:	8b 44 24 0c          	mov    eax,DWORD PTR [esp+0xc]
+  407a55:	68 00 00 00 3f       	push   0x3f000000
+  407a5a:	d9 81 1c 01 00 00    	fld    DWORD PTR [ecx+0x11c]
+  407a60:	52                   	push   edx
+  407a61:	68 00 00 80 3f       	push   0x3f800000
+  407a66:	6a 00                	push   0x0
+  407a68:	6a 00                	push   0x0
+  407a6a:	50                   	push   eax
+  407a6b:	50                   	push   eax
+  407a6c:	51                   	push   ecx
+  407a6d:	a1 84 00 4f 00       	mov    eax,ds:0x4f0084
+  407a72:	d9 1c 24             	fstp   DWORD PTR [esp]
+  407a75:	d9 81 18 01 00 00    	fld    DWORD PTR [ecx+0x118]
+  407a7b:	51                   	push   ecx
+  407a7c:	d9 1c 24             	fstp   DWORD PTR [esp]
+  407a7f:	d9 81 14 01 00 00    	fld    DWORD PTR [ecx+0x114]
+  407a85:	51                   	push   ecx
+  407a86:	d9 1c 24             	fstp   DWORD PTR [esp]
+  407a89:	d9 81 28 01 00 00    	fld    DWORD PTR [ecx+0x128]
+  407a8f:	51                   	push   ecx
+  407a90:	d9 1c 24             	fstp   DWORD PTR [esp]
+  407a93:	d9 81 24 01 00 00    	fld    DWORD PTR [ecx+0x124]
+  407a99:	51                   	push   ecx
+  407a9a:	d9 1c 24             	fstp   DWORD PTR [esp]
+  407a9d:	d9 81 20 01 00 00    	fld    DWORD PTR [ecx+0x120]
+  407aa3:	51                   	push   ecx
+  407aa4:	d9 1c 24             	fstp   DWORD PTR [esp]
+  407aa7:	d9 41 14             	fld    DWORD PTR [ecx+0x14]
+  407aaa:	51                   	push   ecx
+  407aab:	d9 1c 24             	fstp   DWORD PTR [esp]
+  407aae:	d9 41 10             	fld    DWORD PTR [ecx+0x10]
+  407ab1:	51                   	push   ecx
+  407ab2:	d9 1c 24             	fstp   DWORD PTR [esp]
+  407ab5:	d9 41 0c             	fld    DWORD PTR [ecx+0xc]
+  407ab8:	51                   	push   ecx
+  407ab9:	d9 1c 24             	fstp   DWORD PTR [esp]
+  407abc:	50                   	push   eax
+  407abd:	6a 00                	push   0x0
+  407abf:	e8 6c 0c 07 00       	call   0x478730
+  407ac4:	83 c4 50             	add    esp,0x50
+  407ac7:	c3                   	ret

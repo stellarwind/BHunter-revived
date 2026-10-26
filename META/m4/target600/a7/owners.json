@@ -1,0 +1,52 @@
+[
+  {
+    "original_va": "00433b30",
+    "function": "bh_weapon_pulse_launch",
+    "source": "src/bh_weapon_pulse_launch.c",
+    "role": "game",
+    "provenance_confidence": "Whole ordinary projectile constructor or installed simulation/draw callback; constructor/call-site reviewed, no CRT/import/compiler/shared tail ownership.",
+    "behavior": "Whole pulse-weapon cooldown/ammo launch with source cue, actual up offset and split-velocity constructor, shared sync identity, recoil and network envelope.",
+    "boundary": {
+      "start": "00433b30",
+      "end_exclusive": "00433db3",
+      "bytes": 643,
+      "instructions": 183,
+      "sha256": "d678b09175be69c6cca270cb95440083fb009b0a1de59d9ab8718ff0ff694851",
+      "ranges": [
+        {
+          "start": "00433b30",
+          "end_exclusive": "00433db3"
+        }
+      ]
+    },
+    "owned_data_count": 0,
+    "independent_data_function_count": 0,
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/pulse-launch/bhunter-pulse-launch-check.exe",
+    "validation": {
+      "abi": "x86 cdecl explicit source contexts and actual original BHEntity fields/callback ABI. Initialized real source pool/world/segment/render/voice dependencies; no guessed vtables or replacement callback stubs.",
+      "fixtures": {
+        "scenario": "pulse-launch",
+        "checks": 19,
+        "failures": 0,
+        "original_code_required": false,
+        "play_calls": 0
+      },
+      "original_code_executed": false,
+      "game_executed": false,
+      "raw_byte_match": false,
+      "limits": [
+        "Source-only focused checks; no original code/game execution, no native playback or gameplay loop. Parent fresh full/clean build and independent review required before admission.",
+        "PC53 nearest masked finite moderate fixtures; PC24, unusual exceptional inputs and actual game/physical-device fidelity remain unvalidated. Borrowed owners/context/entities stay live throughout synchronous callbacks.",
+        "Original EXE/BIN/MDF/MDS remain immutable; no instruction-match claim. Function boundaries are raw byte ranges and ordinary callback/caller roles, excluding compiler/runtime/shared-tail/data owners."
+      ]
+    },
+    "evidence": [
+      "META/m4/target600/a7/README.md",
+      "META/m4/target600/a7/standalone-build.json",
+      "META/m4/target600/a7/constants.json",
+      "META/m4/target600/a7/original/00433b30.disasm.json"
+    ]
+  }
+]

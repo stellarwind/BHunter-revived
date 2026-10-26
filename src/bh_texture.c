@@ -16,18 +16,26 @@ static void __cdecl release(void *p,void *user){free(p);}
 static int error(BHTextureContext *q,BHTextureError e){if(q)q->error=e;return 0;}
 static int native(BHTextureContext *q,HRESULT hr){q->last_hresult=hr;if(hr!=DD_OK)return error(q,BH_TEXTURE_BACKEND);return 1;}
 static int owned_format(BHTextureContext *q,BHTextureFormat *f){unsigned long i;if(!q)return 0;for(i=0;i<9;++i)if(q->formats+i==f)return 1;return 0;}
-int __cdecl bh_texture_context_init(BHTextureContext *q,LPDIRECTDRAW draw,
-    LPDIRECT3DDEVICE2 device,const BHSceneAllocator *allocator) {
+static int context_init(BHTextureContext *q,LPDIRECTDRAW draw,
+    LPDIRECT3DDEVICE2 device,const BHSceneAllocator *allocator,int software) {
     static const unsigned long minimum[9]={16,8,1,8,4,1,4,2,1};unsigned long i;
-    if(!q || !draw || !device || (allocator && (!allocator->allocate || !allocator->release)))return 0;
+    if(!q || !draw || (!software && !device) || (allocator && (!allocator->allocate || !allocator->release)))return 0;
     memset(q,0,sizeof(*q));q->draw=draw;q->device=device;q->search=-1;
-    IDirectDraw_AddRef(draw);IDirect3DDevice2_AddRef(device);
+    q->software=software;IDirectDraw_AddRef(draw);if(device)IDirect3DDevice2_AddRef(device);
     if(allocator)q->allocator=*allocator;else{q->allocator.allocate=allocate;q->allocator.release=release;}
     for(i=0;i<9;++i) {
         BHTextureFormat *f=q->formats+i;f->width=f->height=32UL<<(i/3);
         f->requested_depth=8+(i%3)*8;f->kind=1;f->minimum=minimum[i];f->pixel.dwSize=sizeof(f->pixel);
     }
     return 1;
+}
+int __cdecl bh_texture_context_init(BHTextureContext *q,LPDIRECTDRAW draw,
+    LPDIRECT3DDEVICE2 device,const BHSceneAllocator *allocator) {
+    return context_init(q,draw,device,allocator,0);
+}
+int __cdecl bh_texture_context_init_software(BHTextureContext *q,
+    LPDIRECTDRAW draw,const BHSceneAllocator *allocator) {
+    return context_init(q,draw,NULL,allocator,1);
 }
 void __cdecl bh_texture_context_dispose(BHTextureContext *q) {
     unsigned long i;BHTextureSlot *s,*next;BHTextureImage *image,*next_image;
@@ -63,7 +71,7 @@ HRESULT CALLBACK bh_texture_format_callback(LPDDSURFACEDESC desc,LPVOID context)
 }
 int __cdecl bh_texture_formats(BHTextureContext *q) {
     unsigned long i;int ok=1;
-    if(!q || !q->device)return error(q,BH_TEXTURE_ARGUMENT);q->error=BH_TEXTURE_OK;
+    if(!q || (!q->software && !q->device))return error(q,BH_TEXTURE_ARGUMENT);q->error=BH_TEXTURE_OK;
     for(i=0;i<9;++i) {
         if(q->software) {q->formats[i].pixel.dwSize=32;q->formats[i].pixel.dwFlags=0x60;q->formats[i].pixel.dwRGBBitCount=8;}
         else if(!native(q,IDirect3DDevice2_EnumTextureFormats(q->device,bh_texture_format_callback,q->formats+i)))ok=0;

@@ -1,0 +1,83 @@
+[
+  {
+    "original_va": "00414880",
+    "function": "bh_player_force_control_a",
+    "source": "src/bh_player_force_control.c",
+    "role": "game",
+    "provenance_confidence": "Complete player stabilizer/force-control owner, with all smoothing and visual endpoints. Distinct RET boundary; no CRT/EH/import/shared tails.",
+    "boundary": {
+      "start": "00414880",
+      "end_exclusive": "0041552b",
+      "bytes": 3243,
+      "instructions": 1001,
+      "sha256": "18803978f4b8c328881627a2d49184c0989655f39c0b71bdf4c4bdb35abaa385"
+    },
+    "validation": {
+      "abi": "Pinned x86 cdecl. Borrowed actual BHActorBasisContext and authoritative BHPhysicsStepBody/BHPhysicsState; source-owned original player fields carry3control scalars, inertia, instability and15channel/24endpoint visuals. Shared CRT rand stream and caller-owned instability counter retain lifetime.",
+      "limits": [
+        "874focused source-only checks across all4complete controller owners; actual basis construction, real pair selection/group application, pool entities, physics publication, stable gravity/drag analytic values, all visual endpoints and skip smoothing, stochastic2/3draw cadence,75coupled control/velocity fixtures. No source input polling or game execution.",
+        "PC53 nearest/masked moderatefinite input profile. Explicitbinary32 stores retained at phase boundaries. Real CRT pow reused for reviewed x87 CIpow exponents3/2. Code matching, original differential behavior, PC24, extreme/nonfinite inputs and rendered plume fidelity remain unvalidated.",
+        "Complete source physics control and visual ownership; higher-level player construction/tick and actual gameplay remain incomplete. Snapshot standalone dependencyobjects recorded; parent fresh complete integration required."
+      ]
+    },
+    "evidence": [
+      "META/m4/target600/c3/standalone-build.json",
+      "META/m4/target600/c3/README.md",
+      "META/m4/target600/c4/original/00414880.disasm.json"
+    ]
+  },
+  {
+    "original_va": "00416120",
+    "function": "bh_player_force_control_c",
+    "source": "src/bh_player_force_control.c",
+    "role": "game",
+    "provenance_confidence": "Complete player stabilizer/force-control owner, with all smoothing and visual endpoints. Distinct RET boundary; no CRT/EH/import/shared tails.",
+    "boundary": {
+      "start": "00416120",
+      "end_exclusive": "00416eac",
+      "bytes": 3468,
+      "instructions": 1058,
+      "sha256": "c9363242ffcc66ace3c836b53af8790022eea51d76a7677cf51f36f11d0210fa"
+    },
+    "validation": {
+      "abi": "Pinned x86 cdecl. Borrowed actual BHActorBasisContext and authoritative BHPhysicsStepBody/BHPhysicsState; source-owned original player fields carry3control scalars, inertia, instability and15channel/24endpoint visuals. Shared CRT rand stream and caller-owned instability counter retain lifetime.",
+      "limits": [
+        "874focused source-only checks across all4complete controller owners; actual basis construction, real pair selection/group application, pool entities, physics publication, stable gravity/drag analytic values, all visual endpoints and skip smoothing, stochastic2/3draw cadence,75coupled control/velocity fixtures. No source input polling or game execution.",
+        "PC53 nearest/masked moderatefinite input profile. Explicitbinary32 stores retained at phase boundaries. Real CRT pow reused for reviewed x87 CIpow exponents3/2. Code matching, original differential behavior, PC24, extreme/nonfinite inputs and rendered plume fidelity remain unvalidated.",
+        "Complete source physics control and visual ownership; higher-level player construction/tick and actual gameplay remain incomplete. Snapshot standalone dependencyobjects recorded; parent fresh complete integration required."
+      ]
+    },
+    "evidence": [
+      "META/m4/target600/c3/standalone-build.json",
+      "META/m4/target600/c3/README.md",
+      "META/m4/target600/c4/original/00416120.disasm.json"
+    ]
+  },
+  {
+    "original_va": "00416eb0",
+    "function": "bh_player_force_control_d",
+    "source": "src/bh_player_force_control.c",
+    "role": "game",
+    "provenance_confidence": "Complete player stabilizer/force-control owner, with all smoothing and visual endpoints. Distinct RET boundary; no CRT/EH/import/shared tails.",
+    "boundary": {
+      "start": "00416eb0",
+      "end_exclusive": "00417c4e",
+      "bytes": 3486,
+      "instructions": 1065,
+      "sha256": "1160931151b3688b993492b683c1c23901e4c3d62afecd32f410f940699d13ef"
+    },
+    "validation": {
+      "abi": "Pinned x86 cdecl. Borrowed actual BHActorBasisContext and authoritative BHPhysicsStepBody/BHPhysicsState; source-owned original player fields carry3control scalars, inertia, instability and15channel/24endpoint visuals. Shared CRT rand stream and caller-owned instability counter retain lifetime.",
+      "limits": [
+        "874focused source-only checks across all4complete controller owners; actual basis construction, real pair selection/group application, pool entities, physics publication, stable gravity/drag analytic values, all visual endpoints and skip smoothing, stochastic2/3draw cadence,75coupled control/velocity fixtures. No source input polling or game execution.",
+        "PC53 nearest/masked moderatefinite input profile. Explicitbinary32 stores retained at phase boundaries. Real CRT pow reused for reviewed x87 CIpow exponents3/2. Code matching, original differential behavior, PC24, extreme/nonfinite inputs and rendered plume fidelity remain unvalidated.",
+        "Complete source physics control and visual ownership; higher-level player construction/tick and actual gameplay remain incomplete. Snapshot standalone dependencyobjects recorded; parent fresh complete integration required."
+      ]
+    },
+    "evidence": [
+      "META/m4/target600/c3/standalone-build.json",
+      "META/m4/target600/c3/README.md",
+      "META/m4/target600/c4/original/00416eb0.disasm.json"
+    ]
+  }
+]

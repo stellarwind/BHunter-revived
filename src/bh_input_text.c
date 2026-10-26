@@ -20,10 +20,13 @@ static void paint(BHInputTextCapture *c){unsigned long i,n=(unsigned long)strlen
     if(!bh_menu_row_refresh(c->rows,(unsigned long)c->menu->selection,NULL,c->display))c->error=1;
 }
 static void __cdecl text_tick(BHEntity *e){BHInputTextCapture *c;memcpy(&c,e->payload,4);if(c&&c->entity==e)bh_input_text_step(c);}
-int __cdecl bh_input_text_begin(BHInputTextCapture *c){BHEntity *e;if(!c||c->entity||!valid(c))return 0;
+static int begin(BHInputTextCapture *c,int initial_paint){BHEntity *e;if(!c||c->entity||!valid(c))return 0;
     e=bh_entity_acquire(c->pool);if(!e)return 0;set_phase(e,0);memcpy(e->payload,&c,4);e->step=text_tick;c->entity=e;c->error=0;
-    if(!bh_input_set_enabled(c->input,c->snapshot,1)){bh_entity_release(c->pool,e);c->entity=NULL;return 0;}return 1;
+    if(initial_paint)paint(c);
+    if(!bh_input_set_enabled(c->input,c->snapshot,1)){bh_entity_release(c->pool,e);c->entity=NULL;return 0;}return !c->error;
 }
+int __cdecl bh_input_text_begin(BHInputTextCapture *c){return begin(c,0);}
+int __cdecl bh_input_text_begin_painted(BHInputTextCapture *c){return begin(c,1);}
 int __cdecl bh_input_text_step(BHInputTextCapture *c){BHEntity *e;unsigned long p;long key;BHInputTextCommit commit;BHMenuSettingsRefresh refresh;
     if(!c||!c->entity||!valid(c))return 0;e=c->entity;c->error=0;
     if(!bh_player_input_apply_packet_checked(c->state,c->input->state,sizeof(c->input->state))){c->error=1;return 0;}

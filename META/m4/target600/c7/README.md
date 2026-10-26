@@ -1,0 +1,5 @@
+# Whole player aim shaping
+
+Whole00417c50 is `bh_player_aim_update`, borrowing the authoritative physics pose and real player's two aim fields. It preserves the threefold scale, seventh-power soft limiting,15degree angular scale, staged world-basis projection, local direction output and exact zero-control forward copy. Verified CRT __CIpow0047df70 is reused as pow and excluded from gameplay counts. Source sin/cos replace original x87 FSIN/FCOS; no instruction or exact last-bit match is claimed.
+
+`python META/m4/target600/c7/build.py` passes1093checks, including361paired controls against an independent finite-series shape oracle and a rotated actual physics basis. Rounded scaled+/-1 retains the original masked singularity: world direction is NaN while pinned VC5's unordered C3 gates preserve local forward output. The source does not silently repair that singularity. Omission fails the link. Current domain is PC53 nearest/masked and moderate finite inputs; PC24, exact trig bits and real aiming remain unvalidated. No input/game/original code runs. Raw735byte owner and SHA256 are retained; parent fresh integration remains required.

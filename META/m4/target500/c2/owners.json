@@ -1,0 +1,927 @@
+[
+  {
+    "original_va": "0042d1b0",
+    "function": "bh_menu_edit_video",
+    "source": "src/bh_menu_edits.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary registered menu row refresh/action body, raw callback identity verified by retained menu inventory and immutable code. Distinct cdecl RET body, not CRT/import/EH/helper/shared tail. Historical game versus proprietary-engine authorship unresolved.",
+    "boundary": {
+      "start": "0042d1b0",
+      "end_exclusive": "0042d283",
+      "bytes": 211,
+      "instructions": 71,
+      "sha256": "7c73964160bb12d4b6880fb1e0889330469de673adb66822bf5c13b36c49a0d7"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/target500-menu-edits/menu-edits.exe",
+    "validation": {
+      "abi": "x86 cdecl explicit borrowed menu context plus signed row index. Config base496a38 maps exactly to416byte settings; actual76byte profile and188byte network field views. Counts exclude context/callback/data helpers.",
+      "fixtures": [
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        },
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        }
+      ],
+      "limits": [
+        "Functional x86 source over real owning row-refresh/text queues, config/profile, cached input capture, native volume getters and serial/session source definitions. No source-game menu bootstrap/presentation acceptance claimed.",
+        "Name tables preserve original256-key/17-joystick/5-mouse pointers as read-only strings or NULL. Out-of-table joystick/mouse and negative session index reject rather than following original invalid memory.",
+        "Source row metadata fixtures exercise actual queue production without native glyph-page rendering; existing row/atlas suites cover native rendering separately. New tests call absent-endpoint volume getters, not physical CD/wave volume changes.",
+        "Stable borrowed contexts replace original global owners; menu rows/refresh callbacks must retain source owners. Source keycapture API supplies actual registered whole step and real commits. Physical input is never collected or injected.",
+        "Original signed progress, mission index, NULL key/serial labels,20-byte truncation, axis field ordering and getter rounding retained. VM/player/world orchestration, physical device success, gameplay and PC24 remain unvalidated.",
+        "Focused linked fixtures pass; parent full current integration and independent asset-free build remain required before final admission. No original code/game execution, playback, physical input or network operations."
+      ],
+      "original_code_executed": false,
+      "raw_byte_match": false
+    },
+    "evidence": [
+      "META/m4/target500/c2/README.md",
+      "META/m4/target500/c2/focused-validation.json",
+      "META/m4/target500/c2/display-strings.json",
+      "META/m4/target500/c2/original/0042d1b0.disasm.json"
+    ]
+  },
+  {
+    "original_va": "0042d290",
+    "function": "bh_menu_edit_audio",
+    "source": "src/bh_menu_edits.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary registered menu row refresh/action body, raw callback identity verified by retained menu inventory and immutable code. Distinct cdecl RET body, not CRT/import/EH/helper/shared tail. Historical game versus proprietary-engine authorship unresolved.",
+    "boundary": {
+      "start": "0042d290",
+      "end_exclusive": "0042d373",
+      "bytes": 227,
+      "instructions": 69,
+      "sha256": "8e5b120132a5cc6745d7ccd30b287cb878ae802904df821151023d25e369d7f5"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/target500-menu-edits/menu-edits.exe",
+    "validation": {
+      "abi": "x86 cdecl explicit borrowed menu context plus signed row index. Config base496a38 maps exactly to416byte settings; actual76byte profile and188byte network field views. Counts exclude context/callback/data helpers.",
+      "fixtures": [
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        },
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        }
+      ],
+      "limits": [
+        "Functional x86 source over real owning row-refresh/text queues, config/profile, cached input capture, native volume getters and serial/session source definitions. No source-game menu bootstrap/presentation acceptance claimed.",
+        "Name tables preserve original256-key/17-joystick/5-mouse pointers as read-only strings or NULL. Out-of-table joystick/mouse and negative session index reject rather than following original invalid memory.",
+        "Source row metadata fixtures exercise actual queue production without native glyph-page rendering; existing row/atlas suites cover native rendering separately. New tests call absent-endpoint volume getters, not physical CD/wave volume changes.",
+        "Stable borrowed contexts replace original global owners; menu rows/refresh callbacks must retain source owners. Source keycapture API supplies actual registered whole step and real commits. Physical input is never collected or injected.",
+        "Original signed progress, mission index, NULL key/serial labels,20-byte truncation, axis field ordering and getter rounding retained. VM/player/world orchestration, physical device success, gameplay and PC24 remain unvalidated.",
+        "Focused linked fixtures pass; parent full current integration and independent asset-free build remain required before final admission. No original code/game execution, playback, physical input or network operations."
+      ],
+      "original_code_executed": false,
+      "raw_byte_match": false
+    },
+    "evidence": [
+      "META/m4/target500/c2/README.md",
+      "META/m4/target500/c2/focused-validation.json",
+      "META/m4/target500/c2/display-strings.json",
+      "META/m4/target500/c2/original/0042d290.disasm.json"
+    ]
+  },
+  {
+    "original_va": "0042e300",
+    "function": "bh_menu_edit_profile",
+    "source": "src/bh_menu_edits.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary registered menu row refresh/action body, raw callback identity verified by retained menu inventory and immutable code. Distinct cdecl RET body, not CRT/import/EH/helper/shared tail. Historical game versus proprietary-engine authorship unresolved.",
+    "boundary": {
+      "start": "0042e300",
+      "end_exclusive": "0042e35e",
+      "bytes": 94,
+      "instructions": 34,
+      "sha256": "2893390379f819bed5fbdb842be43bcba63668ac60fd4d6743475fe55ef13edc"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/target500-menu-edits/menu-edits.exe",
+    "validation": {
+      "abi": "x86 cdecl explicit borrowed menu context plus signed row index. Config base496a38 maps exactly to416byte settings; actual76byte profile and188byte network field views. Counts exclude context/callback/data helpers.",
+      "fixtures": [
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        },
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        }
+      ],
+      "limits": [
+        "Functional x86 source over real owning row-refresh/text queues, config/profile, cached input capture, native volume getters and serial/session source definitions. No source-game menu bootstrap/presentation acceptance claimed.",
+        "Name tables preserve original256-key/17-joystick/5-mouse pointers as read-only strings or NULL. Out-of-table joystick/mouse and negative session index reject rather than following original invalid memory.",
+        "Source row metadata fixtures exercise actual queue production without native glyph-page rendering; existing row/atlas suites cover native rendering separately. New tests call absent-endpoint volume getters, not physical CD/wave volume changes.",
+        "Stable borrowed contexts replace original global owners; menu rows/refresh callbacks must retain source owners. Source keycapture API supplies actual registered whole step and real commits. Physical input is never collected or injected.",
+        "Original signed progress, mission index, NULL key/serial labels,20-byte truncation, axis field ordering and getter rounding retained. VM/player/world orchestration, physical device success, gameplay and PC24 remain unvalidated.",
+        "Focused linked fixtures pass; parent full current integration and independent asset-free build remain required before final admission. No original code/game execution, playback, physical input or network operations."
+      ],
+      "original_code_executed": false,
+      "raw_byte_match": false
+    },
+    "evidence": [
+      "META/m4/target500/c2/README.md",
+      "META/m4/target500/c2/focused-validation.json",
+      "META/m4/target500/c2/display-strings.json",
+      "META/m4/target500/c2/original/0042e300.disasm.json"
+    ]
+  },
+  {
+    "original_va": "0042d380",
+    "function": "bh_menu_edit_motion",
+    "source": "src/bh_menu_edits.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary registered menu row refresh/action body, raw callback identity verified by retained menu inventory and immutable code. Distinct cdecl RET body, not CRT/import/EH/helper/shared tail. Historical game versus proprietary-engine authorship unresolved.",
+    "boundary": {
+      "start": "0042d380",
+      "end_exclusive": "0042d519",
+      "bytes": 409,
+      "instructions": 133,
+      "sha256": "7c92439ca2baf7e11b2e095bfcac7f217907446462b49946882bfae9ee2af9d2"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/target500-menu-edits/menu-edits.exe",
+    "validation": {
+      "abi": "x86 cdecl explicit borrowed menu context plus signed row index. Config base496a38 maps exactly to416byte settings; actual76byte profile and188byte network field views. Counts exclude context/callback/data helpers.",
+      "fixtures": [
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        },
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        }
+      ],
+      "limits": [
+        "Functional x86 source over real owning row-refresh/text queues, config/profile, cached input capture, native volume getters and serial/session source definitions. No source-game menu bootstrap/presentation acceptance claimed.",
+        "Name tables preserve original256-key/17-joystick/5-mouse pointers as read-only strings or NULL. Out-of-table joystick/mouse and negative session index reject rather than following original invalid memory.",
+        "Source row metadata fixtures exercise actual queue production without native glyph-page rendering; existing row/atlas suites cover native rendering separately. New tests call absent-endpoint volume getters, not physical CD/wave volume changes.",
+        "Stable borrowed contexts replace original global owners; menu rows/refresh callbacks must retain source owners. Source keycapture API supplies actual registered whole step and real commits. Physical input is never collected or injected.",
+        "Original signed progress, mission index, NULL key/serial labels,20-byte truncation, axis field ordering and getter rounding retained. VM/player/world orchestration, physical device success, gameplay and PC24 remain unvalidated.",
+        "Focused linked fixtures pass; parent full current integration and independent asset-free build remain required before final admission. No original code/game execution, playback, physical input or network operations."
+      ],
+      "original_code_executed": false,
+      "raw_byte_match": false
+    },
+    "evidence": [
+      "META/m4/target500/c2/README.md",
+      "META/m4/target500/c2/focused-validation.json",
+      "META/m4/target500/c2/display-strings.json",
+      "META/m4/target500/c2/original/0042d380.disasm.json"
+    ],
+    "owned_data": "META/m4/target500/c2/original/0042d380.switch.json"
+  },
+  {
+    "original_va": "0042d550",
+    "function": "bh_menu_edit_primary",
+    "source": "src/bh_menu_edits.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary registered menu row refresh/action body, raw callback identity verified by retained menu inventory and immutable code. Distinct cdecl RET body, not CRT/import/EH/helper/shared tail. Historical game versus proprietary-engine authorship unresolved.",
+    "boundary": {
+      "start": "0042d550",
+      "end_exclusive": "0042d5f3",
+      "bytes": 163,
+      "instructions": 49,
+      "sha256": "b5ddd7ba040aac71d0259b47eb64505664727aa0e5bca64ada36561d38685e96"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/target500-menu-edits/menu-edits.exe",
+    "validation": {
+      "abi": "x86 cdecl explicit borrowed menu context plus signed row index. Config base496a38 maps exactly to416byte settings; actual76byte profile and188byte network field views. Counts exclude context/callback/data helpers.",
+      "fixtures": [
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        },
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        }
+      ],
+      "limits": [
+        "Functional x86 source over real owning row-refresh/text queues, config/profile, cached input capture, native volume getters and serial/session source definitions. No source-game menu bootstrap/presentation acceptance claimed.",
+        "Name tables preserve original256-key/17-joystick/5-mouse pointers as read-only strings or NULL. Out-of-table joystick/mouse and negative session index reject rather than following original invalid memory.",
+        "Source row metadata fixtures exercise actual queue production without native glyph-page rendering; existing row/atlas suites cover native rendering separately. New tests call absent-endpoint volume getters, not physical CD/wave volume changes.",
+        "Stable borrowed contexts replace original global owners; menu rows/refresh callbacks must retain source owners. Source keycapture API supplies actual registered whole step and real commits. Physical input is never collected or injected.",
+        "Original signed progress, mission index, NULL key/serial labels,20-byte truncation, axis field ordering and getter rounding retained. VM/player/world orchestration, physical device success, gameplay and PC24 remain unvalidated.",
+        "Focused linked fixtures pass; parent full current integration and independent asset-free build remain required before final admission. No original code/game execution, playback, physical input or network operations."
+      ],
+      "original_code_executed": false,
+      "raw_byte_match": false
+    },
+    "evidence": [
+      "META/m4/target500/c2/README.md",
+      "META/m4/target500/c2/focused-validation.json",
+      "META/m4/target500/c2/display-strings.json",
+      "META/m4/target500/c2/original/0042d550.disasm.json"
+    ],
+    "owned_data": "META/m4/target500/c2/original/0042d550.switch.json"
+  },
+  {
+    "original_va": "0042d620",
+    "function": "bh_menu_edit_secondary",
+    "source": "src/bh_menu_edits.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary registered menu row refresh/action body, raw callback identity verified by retained menu inventory and immutable code. Distinct cdecl RET body, not CRT/import/EH/helper/shared tail. Historical game versus proprietary-engine authorship unresolved.",
+    "boundary": {
+      "start": "0042d620",
+      "end_exclusive": "0042d6c3",
+      "bytes": 163,
+      "instructions": 49,
+      "sha256": "6129f0ec0cd680ae384af2effcfbbdeed39b276d8e04ea1233e8e6c81724f478"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/target500-menu-edits/menu-edits.exe",
+    "validation": {
+      "abi": "x86 cdecl explicit borrowed menu context plus signed row index. Config base496a38 maps exactly to416byte settings; actual76byte profile and188byte network field views. Counts exclude context/callback/data helpers.",
+      "fixtures": [
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        },
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        }
+      ],
+      "limits": [
+        "Functional x86 source over real owning row-refresh/text queues, config/profile, cached input capture, native volume getters and serial/session source definitions. No source-game menu bootstrap/presentation acceptance claimed.",
+        "Name tables preserve original256-key/17-joystick/5-mouse pointers as read-only strings or NULL. Out-of-table joystick/mouse and negative session index reject rather than following original invalid memory.",
+        "Source row metadata fixtures exercise actual queue production without native glyph-page rendering; existing row/atlas suites cover native rendering separately. New tests call absent-endpoint volume getters, not physical CD/wave volume changes.",
+        "Stable borrowed contexts replace original global owners; menu rows/refresh callbacks must retain source owners. Source keycapture API supplies actual registered whole step and real commits. Physical input is never collected or injected.",
+        "Original signed progress, mission index, NULL key/serial labels,20-byte truncation, axis field ordering and getter rounding retained. VM/player/world orchestration, physical device success, gameplay and PC24 remain unvalidated.",
+        "Focused linked fixtures pass; parent full current integration and independent asset-free build remain required before final admission. No original code/game execution, playback, physical input or network operations."
+      ],
+      "original_code_executed": false,
+      "raw_byte_match": false
+    },
+    "evidence": [
+      "META/m4/target500/c2/README.md",
+      "META/m4/target500/c2/focused-validation.json",
+      "META/m4/target500/c2/display-strings.json",
+      "META/m4/target500/c2/original/0042d620.disasm.json"
+    ],
+    "owned_data": "META/m4/target500/c2/original/0042d620.switch.json"
+  },
+  {
+    "original_va": "0042d6f0",
+    "function": "bh_menu_edit_camera",
+    "source": "src/bh_menu_edits.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary registered menu row refresh/action body, raw callback identity verified by retained menu inventory and immutable code. Distinct cdecl RET body, not CRT/import/EH/helper/shared tail. Historical game versus proprietary-engine authorship unresolved.",
+    "boundary": {
+      "start": "0042d6f0",
+      "end_exclusive": "0042d8e8",
+      "bytes": 504,
+      "instructions": 165,
+      "sha256": "448c93880ee8c0d8080b9df94e59afcb5d06f96e9de278d837fe138e5e2ad516"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/target500-menu-edits/menu-edits.exe",
+    "validation": {
+      "abi": "x86 cdecl explicit borrowed menu context plus signed row index. Config base496a38 maps exactly to416byte settings; actual76byte profile and188byte network field views. Counts exclude context/callback/data helpers.",
+      "fixtures": [
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        },
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        }
+      ],
+      "limits": [
+        "Functional x86 source over real owning row-refresh/text queues, config/profile, cached input capture, native volume getters and serial/session source definitions. No source-game menu bootstrap/presentation acceptance claimed.",
+        "Name tables preserve original256-key/17-joystick/5-mouse pointers as read-only strings or NULL. Out-of-table joystick/mouse and negative session index reject rather than following original invalid memory.",
+        "Source row metadata fixtures exercise actual queue production without native glyph-page rendering; existing row/atlas suites cover native rendering separately. New tests call absent-endpoint volume getters, not physical CD/wave volume changes.",
+        "Stable borrowed contexts replace original global owners; menu rows/refresh callbacks must retain source owners. Source keycapture API supplies actual registered whole step and real commits. Physical input is never collected or injected.",
+        "Original signed progress, mission index, NULL key/serial labels,20-byte truncation, axis field ordering and getter rounding retained. VM/player/world orchestration, physical device success, gameplay and PC24 remain unvalidated.",
+        "Focused linked fixtures pass; parent full current integration and independent asset-free build remain required before final admission. No original code/game execution, playback, physical input or network operations."
+      ],
+      "original_code_executed": false,
+      "raw_byte_match": false
+    },
+    "evidence": [
+      "META/m4/target500/c2/README.md",
+      "META/m4/target500/c2/focused-validation.json",
+      "META/m4/target500/c2/display-strings.json",
+      "META/m4/target500/c2/original/0042d6f0.disasm.json"
+    ],
+    "owned_data": "META/m4/target500/c2/original/0042d6f0.switch.json"
+  },
+  {
+    "original_va": "0042d920",
+    "function": "bh_menu_edit_sessions",
+    "source": "src/bh_menu_edits.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary registered menu row refresh/action body, raw callback identity verified by retained menu inventory and immutable code. Distinct cdecl RET body, not CRT/import/EH/helper/shared tail. Historical game versus proprietary-engine authorship unresolved.",
+    "boundary": {
+      "start": "0042d920",
+      "end_exclusive": "0042d98e",
+      "bytes": 110,
+      "instructions": 40,
+      "sha256": "5517d6b8be456686bef1b5cbb54d6902085620ab9423e1f248a14f081daf088a"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/target500-menu-edits/menu-edits.exe",
+    "validation": {
+      "abi": "x86 cdecl explicit borrowed menu context plus signed row index. Config base496a38 maps exactly to416byte settings; actual76byte profile and188byte network field views. Counts exclude context/callback/data helpers.",
+      "fixtures": [
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        },
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        }
+      ],
+      "limits": [
+        "Functional x86 source over real owning row-refresh/text queues, config/profile, cached input capture, native volume getters and serial/session source definitions. No source-game menu bootstrap/presentation acceptance claimed.",
+        "Name tables preserve original256-key/17-joystick/5-mouse pointers as read-only strings or NULL. Out-of-table joystick/mouse and negative session index reject rather than following original invalid memory.",
+        "Source row metadata fixtures exercise actual queue production without native glyph-page rendering; existing row/atlas suites cover native rendering separately. New tests call absent-endpoint volume getters, not physical CD/wave volume changes.",
+        "Stable borrowed contexts replace original global owners; menu rows/refresh callbacks must retain source owners. Source keycapture API supplies actual registered whole step and real commits. Physical input is never collected or injected.",
+        "Original signed progress, mission index, NULL key/serial labels,20-byte truncation, axis field ordering and getter rounding retained. VM/player/world orchestration, physical device success, gameplay and PC24 remain unvalidated.",
+        "Focused linked fixtures pass; parent full current integration and independent asset-free build remain required before final admission. No original code/game execution, playback, physical input or network operations."
+      ],
+      "original_code_executed": false,
+      "raw_byte_match": false
+    },
+    "evidence": [
+      "META/m4/target500/c2/README.md",
+      "META/m4/target500/c2/focused-validation.json",
+      "META/m4/target500/c2/display-strings.json",
+      "META/m4/target500/c2/original/0042d920.disasm.json"
+    ]
+  },
+  {
+    "original_va": "0042d990",
+    "function": "bh_menu_edit_modem",
+    "source": "src/bh_menu_edits.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary registered menu row refresh/action body, raw callback identity verified by retained menu inventory and immutable code. Distinct cdecl RET body, not CRT/import/EH/helper/shared tail. Historical game versus proprietary-engine authorship unresolved.",
+    "boundary": {
+      "start": "0042d990",
+      "end_exclusive": "0042da3b",
+      "bytes": 171,
+      "instructions": 64,
+      "sha256": "f6a91dbe53c4c1ad11b0832994c1af9eb8982e0bfc79675aebc203b1204a0e44"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/target500-menu-edits/menu-edits.exe",
+    "validation": {
+      "abi": "x86 cdecl explicit borrowed menu context plus signed row index. Config base496a38 maps exactly to416byte settings; actual76byte profile and188byte network field views. Counts exclude context/callback/data helpers.",
+      "fixtures": [
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        },
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        }
+      ],
+      "limits": [
+        "Functional x86 source over real owning row-refresh/text queues, config/profile, cached input capture, native volume getters and serial/session source definitions. No source-game menu bootstrap/presentation acceptance claimed.",
+        "Name tables preserve original256-key/17-joystick/5-mouse pointers as read-only strings or NULL. Out-of-table joystick/mouse and negative session index reject rather than following original invalid memory.",
+        "Source row metadata fixtures exercise actual queue production without native glyph-page rendering; existing row/atlas suites cover native rendering separately. New tests call absent-endpoint volume getters, not physical CD/wave volume changes.",
+        "Stable borrowed contexts replace original global owners; menu rows/refresh callbacks must retain source owners. Source keycapture API supplies actual registered whole step and real commits. Physical input is never collected or injected.",
+        "Original signed progress, mission index, NULL key/serial labels,20-byte truncation, axis field ordering and getter rounding retained. VM/player/world orchestration, physical device success, gameplay and PC24 remain unvalidated.",
+        "Focused linked fixtures pass; parent full current integration and independent asset-free build remain required before final admission. No original code/game execution, playback, physical input or network operations."
+      ],
+      "original_code_executed": false,
+      "raw_byte_match": false
+    },
+    "evidence": [
+      "META/m4/target500/c2/README.md",
+      "META/m4/target500/c2/focused-validation.json",
+      "META/m4/target500/c2/display-strings.json",
+      "META/m4/target500/c2/original/0042d990.disasm.json"
+    ]
+  },
+  {
+    "original_va": "0042da40",
+    "function": "bh_menu_edit_tcpip",
+    "source": "src/bh_menu_edits.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary registered menu row refresh/action body, raw callback identity verified by retained menu inventory and immutable code. Distinct cdecl RET body, not CRT/import/EH/helper/shared tail. Historical game versus proprietary-engine authorship unresolved.",
+    "boundary": {
+      "start": "0042da40",
+      "end_exclusive": "0042da98",
+      "bytes": 88,
+      "instructions": 34,
+      "sha256": "dc9b2e353440432f91a91d518634b50d67ef6a11866e129d709de0277a49870d"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/target500-menu-edits/menu-edits.exe",
+    "validation": {
+      "abi": "x86 cdecl explicit borrowed menu context plus signed row index. Config base496a38 maps exactly to416byte settings; actual76byte profile and188byte network field views. Counts exclude context/callback/data helpers.",
+      "fixtures": [
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        },
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        }
+      ],
+      "limits": [
+        "Functional x86 source over real owning row-refresh/text queues, config/profile, cached input capture, native volume getters and serial/session source definitions. No source-game menu bootstrap/presentation acceptance claimed.",
+        "Name tables preserve original256-key/17-joystick/5-mouse pointers as read-only strings or NULL. Out-of-table joystick/mouse and negative session index reject rather than following original invalid memory.",
+        "Source row metadata fixtures exercise actual queue production without native glyph-page rendering; existing row/atlas suites cover native rendering separately. New tests call absent-endpoint volume getters, not physical CD/wave volume changes.",
+        "Stable borrowed contexts replace original global owners; menu rows/refresh callbacks must retain source owners. Source keycapture API supplies actual registered whole step and real commits. Physical input is never collected or injected.",
+        "Original signed progress, mission index, NULL key/serial labels,20-byte truncation, axis field ordering and getter rounding retained. VM/player/world orchestration, physical device success, gameplay and PC24 remain unvalidated.",
+        "Focused linked fixtures pass; parent full current integration and independent asset-free build remain required before final admission. No original code/game execution, playback, physical input or network operations."
+      ],
+      "original_code_executed": false,
+      "raw_byte_match": false
+    },
+    "evidence": [
+      "META/m4/target500/c2/README.md",
+      "META/m4/target500/c2/focused-validation.json",
+      "META/m4/target500/c2/display-strings.json",
+      "META/m4/target500/c2/original/0042da40.disasm.json"
+    ]
+  },
+  {
+    "original_va": "0042daa0",
+    "function": "bh_menu_edit_serial",
+    "source": "src/bh_menu_edits.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary registered menu row refresh/action body, raw callback identity verified by retained menu inventory and immutable code. Distinct cdecl RET body, not CRT/import/EH/helper/shared tail. Historical game versus proprietary-engine authorship unresolved.",
+    "boundary": {
+      "start": "0042daa0",
+      "end_exclusive": "0042db43",
+      "bytes": 163,
+      "instructions": 47,
+      "sha256": "ff0e63ef179243e7c8b3968a6f74cf9e42998f0405fbcac8e1b58798bd0e0f3f"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/target500-menu-edits/menu-edits.exe",
+    "validation": {
+      "abi": "x86 cdecl explicit borrowed menu context plus signed row index. Config base496a38 maps exactly to416byte settings; actual76byte profile and188byte network field views. Counts exclude context/callback/data helpers.",
+      "fixtures": [
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        },
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        }
+      ],
+      "limits": [
+        "Functional x86 source over real owning row-refresh/text queues, config/profile, cached input capture, native volume getters and serial/session source definitions. No source-game menu bootstrap/presentation acceptance claimed.",
+        "Name tables preserve original256-key/17-joystick/5-mouse pointers as read-only strings or NULL. Out-of-table joystick/mouse and negative session index reject rather than following original invalid memory.",
+        "Source row metadata fixtures exercise actual queue production without native glyph-page rendering; existing row/atlas suites cover native rendering separately. New tests call absent-endpoint volume getters, not physical CD/wave volume changes.",
+        "Stable borrowed contexts replace original global owners; menu rows/refresh callbacks must retain source owners. Source keycapture API supplies actual registered whole step and real commits. Physical input is never collected or injected.",
+        "Original signed progress, mission index, NULL key/serial labels,20-byte truncation, axis field ordering and getter rounding retained. VM/player/world orchestration, physical device success, gameplay and PC24 remain unvalidated.",
+        "Focused linked fixtures pass; parent full current integration and independent asset-free build remain required before final admission. No original code/game execution, playback, physical input or network operations."
+      ],
+      "original_code_executed": false,
+      "raw_byte_match": false
+    },
+    "evidence": [
+      "META/m4/target500/c2/README.md",
+      "META/m4/target500/c2/focused-validation.json",
+      "META/m4/target500/c2/display-strings.json",
+      "META/m4/target500/c2/original/0042daa0.disasm.json"
+    ],
+    "owned_data": "META/m4/target500/c2/original/0042daa0.switch.json"
+  },
+  {
+    "original_va": "0042ca10",
+    "function": "bh_menu_action_mission",
+    "source": "src/bh_menu_edits.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary registered menu row refresh/action body, raw callback identity verified by retained menu inventory and immutable code. Distinct cdecl RET body, not CRT/import/EH/helper/shared tail. Historical game versus proprietary-engine authorship unresolved.",
+    "boundary": {
+      "start": "0042ca10",
+      "end_exclusive": "0042ca24",
+      "bytes": 20,
+      "instructions": 4,
+      "sha256": "8f3ad5e1b7d6e881ddb8a0afd382d3778d608ffd40319198ac70dfa58539dff0"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/target500-menu-edits/menu-edits.exe",
+    "validation": {
+      "abi": "x86 cdecl explicit borrowed menu context plus signed row index. Config base496a38 maps exactly to416byte settings; actual76byte profile and188byte network field views. Counts exclude context/callback/data helpers.",
+      "fixtures": [
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        },
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        }
+      ],
+      "limits": [
+        "Functional x86 source over real owning row-refresh/text queues, config/profile, cached input capture, native volume getters and serial/session source definitions. No source-game menu bootstrap/presentation acceptance claimed.",
+        "Name tables preserve original256-key/17-joystick/5-mouse pointers as read-only strings or NULL. Out-of-table joystick/mouse and negative session index reject rather than following original invalid memory.",
+        "Source row metadata fixtures exercise actual queue production without native glyph-page rendering; existing row/atlas suites cover native rendering separately. New tests call absent-endpoint volume getters, not physical CD/wave volume changes.",
+        "Stable borrowed contexts replace original global owners; menu rows/refresh callbacks must retain source owners. Source keycapture API supplies actual registered whole step and real commits. Physical input is never collected or injected.",
+        "Original signed progress, mission index, NULL key/serial labels,20-byte truncation, axis field ordering and getter rounding retained. VM/player/world orchestration, physical device success, gameplay and PC24 remain unvalidated.",
+        "Focused linked fixtures pass; parent full current integration and independent asset-free build remain required before final admission. No original code/game execution, playback, physical input or network operations."
+      ],
+      "original_code_executed": false,
+      "raw_byte_match": false
+    },
+    "evidence": [
+      "META/m4/target500/c2/README.md",
+      "META/m4/target500/c2/focused-validation.json",
+      "META/m4/target500/c2/display-strings.json",
+      "META/m4/target500/c2/original/0042ca10.disasm.json"
+    ]
+  },
+  {
+    "original_va": "0042ca30",
+    "function": "bh_menu_action_ship",
+    "source": "src/bh_menu_edits.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary registered menu row refresh/action body, raw callback identity verified by retained menu inventory and immutable code. Distinct cdecl RET body, not CRT/import/EH/helper/shared tail. Historical game versus proprietary-engine authorship unresolved.",
+    "boundary": {
+      "start": "0042ca30",
+      "end_exclusive": "0042ca91",
+      "bytes": 97,
+      "instructions": 29,
+      "sha256": "8c4d723bb0c290ee0a18a8a5b7f62f906b710775fbc9176231d7bdfcbce79e65"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/target500-menu-edits/menu-edits.exe",
+    "validation": {
+      "abi": "x86 cdecl explicit borrowed menu context plus signed row index. Config base496a38 maps exactly to416byte settings; actual76byte profile and188byte network field views. Counts exclude context/callback/data helpers.",
+      "fixtures": [
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        },
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        }
+      ],
+      "limits": [
+        "Functional x86 source over real owning row-refresh/text queues, config/profile, cached input capture, native volume getters and serial/session source definitions. No source-game menu bootstrap/presentation acceptance claimed.",
+        "Name tables preserve original256-key/17-joystick/5-mouse pointers as read-only strings or NULL. Out-of-table joystick/mouse and negative session index reject rather than following original invalid memory.",
+        "Source row metadata fixtures exercise actual queue production without native glyph-page rendering; existing row/atlas suites cover native rendering separately. New tests call absent-endpoint volume getters, not physical CD/wave volume changes.",
+        "Stable borrowed contexts replace original global owners; menu rows/refresh callbacks must retain source owners. Source keycapture API supplies actual registered whole step and real commits. Physical input is never collected or injected.",
+        "Original signed progress, mission index, NULL key/serial labels,20-byte truncation, axis field ordering and getter rounding retained. VM/player/world orchestration, physical device success, gameplay and PC24 remain unvalidated.",
+        "Focused linked fixtures pass; parent full current integration and independent asset-free build remain required before final admission. No original code/game execution, playback, physical input or network operations."
+      ],
+      "original_code_executed": false,
+      "raw_byte_match": false
+    },
+    "evidence": [
+      "META/m4/target500/c2/README.md",
+      "META/m4/target500/c2/focused-validation.json",
+      "META/m4/target500/c2/display-strings.json",
+      "META/m4/target500/c2/original/0042ca30.disasm.json"
+    ]
+  },
+  {
+    "original_va": "0042e410",
+    "function": "bh_menu_action_motion",
+    "source": "src/bh_menu_edits.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary registered menu row refresh/action body, raw callback identity verified by retained menu inventory and immutable code. Distinct cdecl RET body, not CRT/import/EH/helper/shared tail. Historical game versus proprietary-engine authorship unresolved.",
+    "boundary": {
+      "start": "0042e410",
+      "end_exclusive": "0042e51e",
+      "bytes": 270,
+      "instructions": 88,
+      "sha256": "0bf8532020935cb3c558f5d75f5b616a78e1bae276115d9eea6b926973822f8a"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/target500-menu-edits/menu-edits.exe",
+    "validation": {
+      "abi": "x86 cdecl explicit borrowed menu context plus signed row index. Config base496a38 maps exactly to416byte settings; actual76byte profile and188byte network field views. Counts exclude context/callback/data helpers.",
+      "fixtures": [
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        },
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        }
+      ],
+      "limits": [
+        "Functional x86 source over real owning row-refresh/text queues, config/profile, cached input capture, native volume getters and serial/session source definitions. No source-game menu bootstrap/presentation acceptance claimed.",
+        "Name tables preserve original256-key/17-joystick/5-mouse pointers as read-only strings or NULL. Out-of-table joystick/mouse and negative session index reject rather than following original invalid memory.",
+        "Source row metadata fixtures exercise actual queue production without native glyph-page rendering; existing row/atlas suites cover native rendering separately. New tests call absent-endpoint volume getters, not physical CD/wave volume changes.",
+        "Stable borrowed contexts replace original global owners; menu rows/refresh callbacks must retain source owners. Source keycapture API supplies actual registered whole step and real commits. Physical input is never collected or injected.",
+        "Original signed progress, mission index, NULL key/serial labels,20-byte truncation, axis field ordering and getter rounding retained. VM/player/world orchestration, physical device success, gameplay and PC24 remain unvalidated.",
+        "Focused linked fixtures pass; parent full current integration and independent asset-free build remain required before final admission. No original code/game execution, playback, physical input or network operations."
+      ],
+      "original_code_executed": false,
+      "raw_byte_match": false
+    },
+    "evidence": [
+      "META/m4/target500/c2/README.md",
+      "META/m4/target500/c2/focused-validation.json",
+      "META/m4/target500/c2/display-strings.json",
+      "META/m4/target500/c2/original/0042e410.disasm.json"
+    ],
+    "owned_data": "META/m4/target500/c2/original/0042e410.switch.json"
+  },
+  {
+    "original_va": "0042e640",
+    "function": "bh_menu_action_primary",
+    "source": "src/bh_menu_edits.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary registered menu row refresh/action body, raw callback identity verified by retained menu inventory and immutable code. Distinct cdecl RET body, not CRT/import/EH/helper/shared tail. Historical game versus proprietary-engine authorship unresolved.",
+    "boundary": {
+      "start": "0042e640",
+      "end_exclusive": "0042e682",
+      "bytes": 66,
+      "instructions": 14,
+      "sha256": "04da406a29534115db66454482d0fdc02aade67b26660b36faf486166f04850c"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/target500-menu-edits/menu-edits.exe",
+    "validation": {
+      "abi": "x86 cdecl explicit borrowed menu context plus signed row index. Config base496a38 maps exactly to416byte settings; actual76byte profile and188byte network field views. Counts exclude context/callback/data helpers.",
+      "fixtures": [
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        },
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        }
+      ],
+      "limits": [
+        "Functional x86 source over real owning row-refresh/text queues, config/profile, cached input capture, native volume getters and serial/session source definitions. No source-game menu bootstrap/presentation acceptance claimed.",
+        "Name tables preserve original256-key/17-joystick/5-mouse pointers as read-only strings or NULL. Out-of-table joystick/mouse and negative session index reject rather than following original invalid memory.",
+        "Source row metadata fixtures exercise actual queue production without native glyph-page rendering; existing row/atlas suites cover native rendering separately. New tests call absent-endpoint volume getters, not physical CD/wave volume changes.",
+        "Stable borrowed contexts replace original global owners; menu rows/refresh callbacks must retain source owners. Source keycapture API supplies actual registered whole step and real commits. Physical input is never collected or injected.",
+        "Original signed progress, mission index, NULL key/serial labels,20-byte truncation, axis field ordering and getter rounding retained. VM/player/world orchestration, physical device success, gameplay and PC24 remain unvalidated.",
+        "Focused linked fixtures pass; parent full current integration and independent asset-free build remain required before final admission. No original code/game execution, playback, physical input or network operations."
+      ],
+      "original_code_executed": false,
+      "raw_byte_match": false
+    },
+    "evidence": [
+      "META/m4/target500/c2/README.md",
+      "META/m4/target500/c2/focused-validation.json",
+      "META/m4/target500/c2/display-strings.json",
+      "META/m4/target500/c2/original/0042e640.disasm.json"
+    ]
+  },
+  {
+    "original_va": "0042e790",
+    "function": "bh_menu_action_secondary",
+    "source": "src/bh_menu_edits.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary registered menu row refresh/action body, raw callback identity verified by retained menu inventory and immutable code. Distinct cdecl RET body, not CRT/import/EH/helper/shared tail. Historical game versus proprietary-engine authorship unresolved.",
+    "boundary": {
+      "start": "0042e790",
+      "end_exclusive": "0042e7d2",
+      "bytes": 66,
+      "instructions": 14,
+      "sha256": "0f66314097ae86e748a5237fe986a2629f222e193a328d53f4f57e6499802dd0"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/target500-menu-edits/menu-edits.exe",
+    "validation": {
+      "abi": "x86 cdecl explicit borrowed menu context plus signed row index. Config base496a38 maps exactly to416byte settings; actual76byte profile and188byte network field views. Counts exclude context/callback/data helpers.",
+      "fixtures": [
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        },
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        }
+      ],
+      "limits": [
+        "Functional x86 source over real owning row-refresh/text queues, config/profile, cached input capture, native volume getters and serial/session source definitions. No source-game menu bootstrap/presentation acceptance claimed.",
+        "Name tables preserve original256-key/17-joystick/5-mouse pointers as read-only strings or NULL. Out-of-table joystick/mouse and negative session index reject rather than following original invalid memory.",
+        "Source row metadata fixtures exercise actual queue production without native glyph-page rendering; existing row/atlas suites cover native rendering separately. New tests call absent-endpoint volume getters, not physical CD/wave volume changes.",
+        "Stable borrowed contexts replace original global owners; menu rows/refresh callbacks must retain source owners. Source keycapture API supplies actual registered whole step and real commits. Physical input is never collected or injected.",
+        "Original signed progress, mission index, NULL key/serial labels,20-byte truncation, axis field ordering and getter rounding retained. VM/player/world orchestration, physical device success, gameplay and PC24 remain unvalidated.",
+        "Focused linked fixtures pass; parent full current integration and independent asset-free build remain required before final admission. No original code/game execution, playback, physical input or network operations."
+      ],
+      "original_code_executed": false,
+      "raw_byte_match": false
+    },
+    "evidence": [
+      "META/m4/target500/c2/README.md",
+      "META/m4/target500/c2/focused-validation.json",
+      "META/m4/target500/c2/display-strings.json",
+      "META/m4/target500/c2/original/0042e790.disasm.json"
+    ]
+  },
+  {
+    "original_va": "0042e8f0",
+    "function": "bh_menu_action_camera",
+    "source": "src/bh_menu_edits.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary registered menu row refresh/action body, raw callback identity verified by retained menu inventory and immutable code. Distinct cdecl RET body, not CRT/import/EH/helper/shared tail. Historical game versus proprietary-engine authorship unresolved.",
+    "boundary": {
+      "start": "0042e8f0",
+      "end_exclusive": "0042e9cc",
+      "bytes": 220,
+      "instructions": 70,
+      "sha256": "8cae9f7ad909159b7793038ff2997b144d145b08bb88cb1987a8757cc25fa5e5"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/target500-menu-edits/menu-edits.exe",
+    "validation": {
+      "abi": "x86 cdecl explicit borrowed menu context plus signed row index. Config base496a38 maps exactly to416byte settings; actual76byte profile and188byte network field views. Counts exclude context/callback/data helpers.",
+      "fixtures": [
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        },
+        {
+          "scenario": "menu-edits",
+          "checks": 124,
+          "failures": 0,
+          "original_code_required": false,
+          "play_calls": 0,
+          "physical_input_calls": 0
+        }
+      ],
+      "limits": [
+        "Functional x86 source over real owning row-refresh/text queues, config/profile, cached input capture, native volume getters and serial/session source definitions. No source-game menu bootstrap/presentation acceptance claimed.",
+        "Name tables preserve original256-key/17-joystick/5-mouse pointers as read-only strings or NULL. Out-of-table joystick/mouse and negative session index reject rather than following original invalid memory.",
+        "Source row metadata fixtures exercise actual queue production without native glyph-page rendering; existing row/atlas suites cover native rendering separately. New tests call absent-endpoint volume getters, not physical CD/wave volume changes.",
+        "Stable borrowed contexts replace original global owners; menu rows/refresh callbacks must retain source owners. Source keycapture API supplies actual registered whole step and real commits. Physical input is never collected or injected.",
+        "Original signed progress, mission index, NULL key/serial labels,20-byte truncation, axis field ordering and getter rounding retained. VM/player/world orchestration, physical device success, gameplay and PC24 remain unvalidated.",
+        "Focused linked fixtures pass; parent full current integration and independent asset-free build remain required before final admission. No original code/game execution, playback, physical input or network operations."
+      ],
+      "original_code_executed": false,
+      "raw_byte_match": false
+    },
+    "evidence": [
+      "META/m4/target500/c2/README.md",
+      "META/m4/target500/c2/focused-validation.json",
+      "META/m4/target500/c2/display-strings.json",
+      "META/m4/target500/c2/original/0042e8f0.disasm.json"
+    ],
+    "owned_data": "META/m4/target500/c2/original/0042e8f0.switch.json"
+  }
+]

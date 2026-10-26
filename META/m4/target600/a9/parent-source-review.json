@@ -1,0 +1,38 @@
+{
+  "review": "Independent complete static behavior review against retained exact raw/decompile bodies",
+  "reviewed_originals": [
+    "00405270",
+    "00406800",
+    "004069d0",
+    "00406b10",
+    "00406c30",
+    "00405ef0",
+    "00406300",
+    "00402830",
+    "004029d0"
+  ],
+  "sources": {
+    "src/bh_effect_accelerated.c": "e5246be4225caf277f53ad43b7113d669158d89d3c2a398369132698073b72cc",
+    "src/bh_effect_projectile.c": "09847d5424cc122c638e5392ac5b70faf80f378aca5093a3e53e5e5c97258e3b",
+    "src/bh_effect_puff.c": "c4cc726de6ccc7947d0e3d7428606c5a7a87e86155690f795c54eab58ad93576",
+    "src/bh_effect_network.c": "8c293ddb72d4969cb84b2e26c98a5e10810844224c8204590d345006ef281d25"
+  },
+  "findings": [
+    {
+      "priority": "P1",
+      "source": "src/bh_effect_accelerated.c",
+      "issue": "Kind2 collision network call passes NULL direction, but bh_effect_network_emit rejects NULL at entry. Original pushes zero495e30. Caller must pass &zero so packet9 is actually framed and sent.",
+      "status": "reported_to_parent"
+    }
+  ],
+  "verified": [
+    "405270 expiry/grace/20secondcap, two sparks including both lifetime RNG factors1/32768, optional smoke random branch, exact speed-volume coefficient.02, liquid priority, suppressed collision passthrough, marker/trail, detonation tail,2secondcue and five puff sizes/delays/lifetimes plus seeds.",
+    "Queries17/18/20 and orbital3 complete; original130 matching versus134 send identity confirmed distinct. Kind4 retained velocity magnitude, three random components, flash and real particle constructor order preserved.",
+    "Four constructors field offsets, split/shard differences (loop vs invalid/ignore), random phase, shared attribution/sync consumption, orbit scales1/30,1/15,.1 plus paired trail args preserve original behavior.",
+    "Puff random generator uses signed arithmetic shift and wrap; three component advances plus one angle advance per48points; ring64 angles increment by subtraction of original negativeconstant, exact width/height factors. No stored seed mutation."
+  ],
+  "limits": [
+    "No original execution, no gameplay. PC53 finite moderate functional review; x87 edge rounding and callback mutation safety outside stated borrowed-live contract remain bounded limitations.",
+    "Parent owns source repairs, reruns and final full/clean admission. No parent source edited by this review."
+  ]
+}

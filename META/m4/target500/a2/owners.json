@@ -1,0 +1,46 @@
+[
+  {
+    "original_va": "0043f630",
+    "function": "bh_homing_projectile_tick",
+    "source": "src/bh_homing_projectile.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete distinct ordinary projectile/entity/target guidance, actual world/actor geometry querying and effects/damage owner; not CRT/compiler/import or separately counted shared-tail. Historical engine/game authorship unknown.",
+    "behavior": "Whole homing step with expiry, predictive guidance, actual segment/proximity collision, surface flags, real effects/sound/marker ownership, damage and retirement",
+    "boundary": {
+      "start": "0043f630",
+      "end_exclusive": "00440025",
+      "bytes": 2549,
+      "instructions": 692,
+      "sha256": "b175c4f8d0eed751c588d87093b278977539583a52487d5e0042485aaecec6dc"
+    },
+    "implementation": "func",
+    "integration": "standalone_linked_pending_parent_integration",
+    "target": "build/homing-projectile/bhunter-homing-projectile-check.exe",
+    "validation": {
+      "abi": "x86 cdecl callback, real entity original fields e8/100..108/11c/124..130, private context payload608 and bound generation612; world response registry count-zero adapter",
+      "fixtures": {
+        "scenario": "homing-projectile",
+        "checks": 111,
+        "failures": 0,
+        "original_code_required": false,
+        "play_calls": 0
+      },
+      "original_code_executed": false,
+      "game_executed": false,
+      "raw_byte_match": false,
+      "limits": [
+        "Borrowed actual world-segment/room actors, geometry/query workspaces, pooled world response entities and source effects/audio/marker contexts; full original constructor/startup/world orchestration remains incomplete.",
+        "Contexts/receiver/geometry/list storage remains stable through callbacks; arbitrary mutation/recycling of another projectile or referenced actor by callbacks excluded. Actual lifetime guards reject detected retirement. Real source snapshots capture original read-after-release payload before release rather than dereference dead allocation.",
+        "Finite moderate PC53 nearest/masked arithmetic; NaN lifetime expiry explicitly tested. Original zero-vector normalize-to scratch is undefined, so source reports numerical error instead of creating a contact normal. PC24 transitions remain unresolved.",
+        "Standalone real12-TU compile, actual definitions/link,111 checks and missing-module control pass. Parent current full and independent asset-free integration required before admission.",
+        "No original code/game, automated gameplay, physical input, UI capture, native playback or network operation."
+      ]
+    },
+    "evidence": [
+      "META/m4/target500/a2/README.md",
+      "META/m4/target500/a2/standalone-build.json",
+      "META/m4/target500/a2/constants.json",
+      "META/m4/target500/a2/original/0043f630.disasm.json"
+    ]
+  }
+]

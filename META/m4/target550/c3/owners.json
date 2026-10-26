@@ -1,0 +1,54 @@
+[
+  {
+    "original_va": "004374b0",
+    "function": "bh_script_actor_clock_tick",
+    "source": "src/bh_script_actor_tick.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Whole ordinary actor room/route ownership or sound-tick behavior; direct call and installed code pointer confirmed. Exact distinct RET boundary; no CRT, compiler support, import or shared-tail admission. Historical authorship unresolved.",
+    "boundary": {
+      "start": "004374b0",
+      "end_exclusive": "004375a2",
+      "bytes": 242,
+      "instructions": 66,
+      "sha256": "6dd8ccf49c5651c43ee6d2d079e6a4ea441da2796c42c45b4578de76b68e3c4b"
+    },
+    "validation": {
+      "abi": "Pinned x86 cdecl; explicit borrowed real BHActorRouteContext clock/sound/room bindings replace globals; recovered path callbacks and actual source sound/entity fields.",
+      "limits": [
+        "PC53 nearest/masked moderate finite paths and positive speed/scale. PC24 and native game timing/audio remain unvalidated. Source topology guards reject invalid links before mutation; original invalid topology was unchecked.",
+        "Sound fixtures use real queue/resource/voice owners in streaming-list mode without native playback; no fabricated callbacks, original-code loading or game execution.",
+        "Constructors43a920/43bca0/43bec0, draw366d0/36cd0 restored separately in c4; query376e0 remains open."
+      ]
+    },
+    "evidence": [
+      "META/m4/target550/c3/standalone-build.json",
+      "META/m4/target550/c3/original/004374b0.disasm.json"
+    ]
+  },
+  {
+    "original_va": "004375b0",
+    "function": "bh_script_actor_phase_tick",
+    "source": "src/bh_script_actor_tick.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Whole ordinary actor room/route ownership or sound-tick behavior; direct call and installed code pointer confirmed. Exact distinct RET boundary; no CRT, compiler support, import or shared-tail admission. Historical authorship unresolved.",
+    "boundary": {
+      "start": "004375b0",
+      "end_exclusive": "004376d3",
+      "bytes": 291,
+      "instructions": 82,
+      "sha256": "55baff31b752413812f83efb87b90b464794880c70517f93ee35719d2ebda434"
+    },
+    "validation": {
+      "abi": "Pinned x86 cdecl; explicit borrowed real BHActorRouteContext clock/sound/room bindings replace globals; recovered path callbacks and actual source sound/entity fields.",
+      "limits": [
+        "PC53 nearest/masked moderate finite paths and positive speed/scale. PC24 and native game timing/audio remain unvalidated. Source topology guards reject invalid links before mutation; original invalid topology was unchecked.",
+        "Sound fixtures use real queue/resource/voice owners in streaming-list mode without native playback; no fabricated callbacks, original-code loading or game execution.",
+        "Constructors43a920/43bca0/43bec0, draw366d0/36cd0 restored separately in c4; query376e0 remains open."
+      ]
+    },
+    "evidence": [
+      "META/m4/target550/c3/standalone-build.json",
+      "META/m4/target550/c3/original/004375b0.disasm.json"
+    ]
+  }
+]

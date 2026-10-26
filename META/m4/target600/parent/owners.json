@@ -1,0 +1,62 @@
+[
+  {
+    "original_va": "00405ef0",
+    "function": "bh_effect_orbit_query",
+    "source": "src/bh_effect_projectile.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary effect/projectile synchronization/query callback with distinct originalcode range and originalswitch dispatch. Not import/CRT/compiler/sharedtail. Game/engine authorship unresolved.",
+    "boundary": {
+      "start": "00405ef0",
+      "end_exclusive": "004062cb",
+      "bytes": 987,
+      "instructions": 260,
+      "sha256": "c522ede403fed49082d6049cf282d489d5219e0ea12258985314bf1e29ac810b"
+    },
+    "validation": {
+      "abi": "32-bit x86 cdecl(entity,packet), originalfields/packetfloatbits retained. Typedsourcecontext binds actualpool/cleanup/particle/flash/debris/sound owners.",
+      "limits": [
+        "PC53 nearest/masked moderate finite vectors; FSIN/FCOS uses functional CRT sin/cos with documented finite-fixture tolerance, no byte match or PC24 claim.",
+        "Borrowed owners/entities remain stable during synchronous emission; packet is nonoverlapping40byte storage. Real helper/caller globalRNG consumptions independently checked.",
+        "No source constructor/tick recovered by this family; deferred cleanup uses actual existing403850. VerifiedRET queries/refresh map toNULL.",
+        "Original generation increment on syncmode0 updates source cached generation too; no release/recycle is introduced.",
+        "No nativeplayback/network or gameplay/original code execution."
+      ]
+    },
+    "evidence": [
+      "META/m4/target600/parent/README.md",
+      "META/m4/target600/parent/query-build.json",
+      "META/m4/target600/parent/original/00405ef0.disasm.json"
+    ],
+    "owned_data": "META/m4/target600/parent/00405ef0-switch.json"
+  },
+  {
+    "original_va": "00406300",
+    "function": "bh_effect_linear_query",
+    "source": "src/bh_effect_projectile.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary effect/projectile synchronization/query callback with distinct originalcode range and originalswitch dispatch. Not import/CRT/compiler/sharedtail. Game/engine authorship unresolved.",
+    "boundary": {
+      "start": "00406300",
+      "end_exclusive": "004067e1",
+      "bytes": 1249,
+      "instructions": 334,
+      "sha256": "8ca550efc2eff7da39d17902252d573ded9fe76906634b5dc70a99e7b74b2e83"
+    },
+    "validation": {
+      "abi": "32-bit x86 cdecl(entity,packet), originalfields/packetfloatbits retained. Typedsourcecontext binds actualpool/cleanup/particle/flash/debris/sound owners.",
+      "limits": [
+        "PC53 nearest/masked moderate finite vectors; FSIN/FCOS uses functional CRT sin/cos with documented finite-fixture tolerance, no byte match or PC24 claim.",
+        "Borrowed owners/entities remain stable during synchronous emission; packet is nonoverlapping40byte storage. Real helper/caller globalRNG consumptions independently checked.",
+        "No source constructor/tick recovered by this family; deferred cleanup uses actual existing403850. VerifiedRET queries/refresh map toNULL.",
+        "Original generation increment on syncmode0 updates source cached generation too; no release/recycle is introduced.",
+        "No nativeplayback/network or gameplay/original code execution."
+      ]
+    },
+    "evidence": [
+      "META/m4/target600/parent/README.md",
+      "META/m4/target600/parent/query-build.json",
+      "META/m4/target600/parent/original/00406300.disasm.json"
+    ],
+    "owned_data": "META/m4/target600/parent/00406300-switch.json"
+  }
+]

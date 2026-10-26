@@ -1,0 +1,86 @@
+[
+  {
+    "original_va": "00478890",
+    "function": "bh_gdi_text_queue",
+    "source": "src/bh_gdi_text.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary application render/queue or effect callback with distinct original RET boundary and real owning API. Not import, runtime, compiler scaffolding or independently counted shared tail; historical authorship unresolved.",
+    "boundary": {
+      "start": "00478890",
+      "end_exclusive": "00478926",
+      "bytes": 150,
+      "instructions": 48,
+      "sha256": "ccbb6b1e65988e0110bf23b0616ff46718fc722f691a1bf17cf1611f54af245b"
+    },
+    "validation": {
+      "abi": "Pinned x86 cdecl; explicit typed source context for globals and actual entity pool/native surface.",
+      "limits": [
+        "GDI command strings restricted to58bytes+NUL; original strncpy59 left longer inputs nonterminated. Exact original immutable font and editor-message strings are retained.",
+        "Only owned offscreen surfaces exercised; no screen capture, gameplay or fullscreen lost-surface success."
+      ]
+    }
+  },
+  {
+    "original_va": "00477d20",
+    "function": "bh_gdi_text_execute",
+    "source": "src/bh_gdi_text.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary application render/queue or effect callback with distinct original RET boundary and real owning API. Not import, runtime, compiler scaffolding or independently counted shared tail; historical authorship unresolved.",
+    "boundary": {
+      "start": "00477d20",
+      "end_exclusive": "00477e36",
+      "bytes": 278,
+      "instructions": 99,
+      "sha256": "f8dcd7f63c93b892bd1872bd8d130dd71f1e8b00de06e0e205ee72095a8c6f04"
+    },
+    "validation": {
+      "abi": "Pinned x86 cdecl; explicit typed source context for globals and actual entity pool/native surface.",
+      "limits": [
+        "GDI command strings restricted to58bytes+NUL; original strncpy59 left longer inputs nonterminated. Exact original immutable font and editor-message strings are retained.",
+        "Only owned offscreen surfaces exercised; no screen capture, gameplay or fullscreen lost-surface success."
+      ]
+    }
+  },
+  {
+    "original_va": "0040e050",
+    "function": "bh_editor_message_queue",
+    "source": "src/bh_gdi_text.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary application render/queue or effect callback with distinct original RET boundary and real owning API. Not import, runtime, compiler scaffolding or independently counted shared tail; historical authorship unresolved.",
+    "boundary": {
+      "start": "0040e050",
+      "end_exclusive": "0040e067",
+      "bytes": 23,
+      "instructions": 7,
+      "sha256": "0d6175050119dc81b60700a9799a15c8e83af12ec2143bd276daee406c399d0f"
+    },
+    "validation": {
+      "abi": "Pinned x86 cdecl; explicit typed source context for globals and actual entity pool/native surface.",
+      "limits": [
+        "GDI command strings restricted to58bytes+NUL; original strncpy59 left longer inputs nonterminated. Exact original immutable font and editor-message strings are retained.",
+        "Only owned offscreen surfaces exercised; no screen capture, gameplay or fullscreen lost-surface success."
+      ]
+    }
+  },
+  {
+    "original_va": "00477380",
+    "function": "bh_draw_command_next",
+    "source": "src/bh_gdi_text.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Complete ordinary application render/queue or effect callback with distinct original RET boundary and real owning API. Not import, runtime, compiler scaffolding or independently counted shared tail; historical authorship unresolved.",
+    "boundary": {
+      "start": "00477380",
+      "end_exclusive": "00477388",
+      "bytes": 8,
+      "instructions": 3,
+      "sha256": "54aa520e91d5733f75f88095f69c3d265b8dde26fc725793799e924d15116c5f"
+    },
+    "validation": {
+      "abi": "Pinned x86 cdecl; explicit typed source context for globals and actual entity pool/native surface.",
+      "limits": [
+        "GDI command strings restricted to58bytes+NUL; original strncpy59 left longer inputs nonterminated. Exact original immutable font and editor-message strings are retained.",
+        "Only owned offscreen surfaces exercised; no screen capture, gameplay or fullscreen lost-surface success."
+      ]
+    }
+  }
+]
