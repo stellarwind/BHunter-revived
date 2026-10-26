@@ -1,0 +1,18 @@
+#include "../src/bh_screen_region.h"
+#include "../src/bh_pcx_reader.h"
+#include "../src/bh_fp.h"
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+static unsigned long checks,failed,vertices,shade;static BHClipVertex corners[12];
+#define CHECK(x,m) do{++checks;if(!(x)){++failed;printf("FAIL screen-region %s line%d\n",m,__LINE__);}}while(0)
+static int __cdecl capture(BHClipVertex *p,BHTextureImage *image,unsigned long color,void *user){BHClipVertex *first=p;(void)image;(void)user;vertices=0;shade=color;do{if(vertices==12)return 0;corners[vertices++]=*p;p=p->next;}while(p!=first);return 1;}
+int bh_screen_region_checkpoint(unsigned long *count){BHViewConfig view;BHScreenClipContext clip;BHScreenQuadContext c;BHTextureImage image;BHMathEnvironment env;BHPcxReader reader;unsigned char bytes[897],pixel;FILE *file;unsigned long i,j;float u0,u1,v0,v1;
+ checks=failed=0;CHECK(bh_math_environment_enter(&env),"PC53");memset(&view,0,sizeof(view));view.left=view.top=0;view.right=view.bottom=64;view.near_z=.125f;memset(&c,0,sizeof(c));memset(&image,0,sizeof(image));c.view=&view;c.clip=&clip;c.emit=capture;c.base_color=0x80000000UL;CHECK(bh_screen_clip_init(&clip,.125f,100,0,64,0,64),"real screen clip");
+ for(i=0;i<8;++i){CHECK(bh_screen_region_draw(&c,&image,32,32,40,20,0,(unsigned char)i,.5f,.125f,.25f,.5f,.25f,3.5f)&&c.emitted&&vertices==4&&shade==0x807f7f7fUL,"whole region shade and real clip");u0=i&1?.875f:.125f;u1=i&1?.625f:.375f;v0=i&2?.5f:.5f;v1=i&2?.25f:.75f;CHECK(corners[0].u==u0&&corners[0].v==v0&&corners[2].u==u1&&corners[2].v==v1&&corners[1].u==((i&4)?u1:u0)&&corners[3].v==((i&4)?v1:v0),"start/extent with all eight flips/transpose");CHECK(corners[0].sx==12&&corners[0].sy==22&&corners[2].sx==52&&corners[2].sy==42,"independent non-square corners");for(j=0;j<4;++j)CHECK(corners[j].point.z==3.5f,"caller depth copied to every output vertex");}
+ CHECK(bh_screen_region_draw(&c,&image,32,32,40,20,1.5707963267948966f,0,1,0,1,0,1,7)&&fabs(corners[0].sx-42)<.0001&&fabs(corners[0].sy-12)<.0001&&fabs(corners[1].sx-22)<.0001,"rotated original geometry");CHECK(bh_screen_region_draw(&c,&image,0,32,40,20,0,0,1,.25f,.5f,.125f,.75f,9)&&c.emitted&&vertices==4,"actual partial clip");for(i=0;i<vertices;++i)CHECK(corners[i].sx>=0&&corners[i].point.z==9&&corners[i].u>=.5f&&corners[i].u<=.75f,"scratch UV interpolation and explicit emitted depth");CHECK(bh_screen_region_draw(&c,&image,-100,32,4,4,0,0,1,0,1,0,1,0)&&c.culled&&!c.emitted,"strict radius cull");clip.near_z=.25f;CHECK(bh_screen_region_draw(&c,&image,32,32,40,20,0,0,1,0,1,0,1,1)&&c.culled&&!c.emitted,"live view depth rejected by actual clip");clip.near_z=.125f;
+ memset(bytes,0,sizeof(bytes));bytes[0]=10;bytes[2]=1;bytes[3]=8;bytes[128]=17;file=fopen("screen-region-close.pcx","wb");CHECK(file!=0,"fixture");fwrite(bytes,1,sizeof(bytes),file);fclose(file);bh_pcx_reader_init(&reader);CHECK(bh_pcx_reader_open(&reader,"screen-region-close.pcx")&&bh_pcx_reader_next(&reader,&pixel)&&pixel==17,"actual whole PCX reader and owned VFILE");CHECK(bh_pcx_reader_close(&reader)&&!reader.file&&reader.width==0&&!reader.pending,"whole0044f1b0 closes real owned VFILE with explicit source reset");CHECK(bh_pcx_reader_open(&reader,"screen-region-close.pcx")&&bh_pcx_reader_close(&reader),"actual re-open and second independent close");CHECK(bh_pcx_reader_close(&reader)&&!bh_pcx_reader_close(0),"bounded source empty/null adaptation");remove("screen-region-close.pcx");bh_math_environment_leave(&env);if(count)*count=checks;printf("{\"scenario\":\"screen-region\",\"checks\":%lu,\"failures\":%lu,\"original_code_required\":false}\n",checks,failed);return failed!=0;
+}
+#ifdef BH_SCREEN_REGION_STANDALONE
+int main(void){return bh_screen_region_checkpoint(0);}
+#endif

@@ -1,0 +1,42 @@
+{
+  "passed": true,
+  "baseline_functions": 606,
+  "new_owners": 28,
+  "active_original_functions": 634,
+  "real_total": {
+    "scenario": "m2-foundations",
+    "checks": 5525660,
+    "failures": 0,
+    "archive_entries": 1229,
+    "original_code_required": false
+  },
+  "fixture": {
+    "scenario": "software-raster",
+    "checks": 206692,
+    "failures": 0,
+    "original_code_required": false
+  },
+  "sources": {
+    "src/bh_software_raster.c": "eb5678c20ca2795fc3fca9edf5b0a6513baf6d6bc5ac6e6de53644c597c44667",
+    "src/bh_software_raster.h": "c42bf10c52317c858b916bc0ad780b07060437b428cba63f45c1c84d4a2af522",
+    "tests/software_raster.c": "6f8bc259a86d3173d27b66ab909742f643c98aaa0d32e047e1a06164f48cb0b6",
+    "tests/checkpoint.c": "e480696fd4fdfeb5804303afc4926950962716724776d93e924875af91abe2e2",
+    "tools/m0.py": "2f1816568596c2a9b5d31cea6ab45d77116a628d475e4601f5f710195fef9fed"
+  },
+  "source_snapshots": {
+    "src/bh_software_raster.c": "META/m4/target656/raster/sources/eb5678c20ca2795fc3fca9edf5b0a6513baf6d6bc5ac6e6de53644c597c44667-bh_software_raster.c.txt",
+    "src/bh_software_raster.h": "META/m4/target656/raster/sources/c42bf10c52317c858b916bc0ad780b07060437b428cba63f45c1c84d4a2af522-bh_software_raster.h.txt",
+    "tests/software_raster.c": "META/m4/target656/raster/sources/6f8bc259a86d3173d27b66ab909742f643c98aaa0d32e047e1a06164f48cb0b6-software_raster.c.txt",
+    "tests/checkpoint.c": "META/m4/target656/raster/sources/e480696fd4fdfeb5804303afc4926950962716724776d93e924875af91abe2e2-checkpoint.c.txt",
+    "tools/m0.py": "META/m4/target656/raster/sources/2f1816568596c2a9b5d31cea6ab45d77116a628d475e4601f5f710195fef9fed-m0.py.txt"
+  },
+  "limits": [
+    "28 distinct whole original raster callbacks share source scan conversion and explicit pixel policies; the shared C core and source wrappers add no further counts. All28 have the same374-operation x87/control conversion mnemonic profile; full original boundaries/bytes retained.",
+    "PC53/nearest/masked finite positive-depth input. Explicit binary32 stores, retained reciprocal/du/z values, asymmetric top/bottom determinants, y+1 sampling, no X subpixel adjustment, integer gradient row increments, parity and unsigned32 wrap preserved. PC24/runtime precision transitions remain unvalidated.",
+    "Original square tightly packed power-of-two texture contract retained. Source validates reciprocal ring and framebuffer bounds and rejects invalid signed32 conversion domain; no clipping or original-code mapper added.",
+    "Actual software and horizon lookup owners are linked. Analytic rectangle/triangle masks, all28 policies, signed pitches, depth equality/rejection/always-write, zero raw/mapped indices, all blend planes, gradient rows, nonplanar UV/depth row increments and actual32px texture arithmetic tested.",
+    "No game/original code, physical input, native hardware draws or gameplay automation. Source-only harness, not M4/playable game admission."
+  ],
+  "original_code_executed": false,
+  "game_launches": 0
+}

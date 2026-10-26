@@ -1,0 +1,27 @@
+{
+  "baseline": 656,
+  "module": "world_reset",
+  "scenario": "world-reset",
+  "sources": [
+    "src/bh_world_reset.c",
+    "src/bh_world_reset.h",
+    "src/bh_script_timer.c",
+    "src/bh_script_timer.h",
+    "tests/world_reset.c",
+    "tests/script_parse_fixture.h",
+    "tests/actor_construct_fixture.h",
+    "tests/actor_response_fixture.h"
+  ],
+  "context_sources": {
+    "src/bh_script_timer.c": [
+      "script-timers",
+      "world-reset"
+    ]
+  },
+  "limits": [
+    "Complete world reset only; no missing world loader/editor callback is replaced or installed. Explicit live entity/semantic geometry/definition bindings in reciprocal traversal order remain borrowed.",
+    "Four by32 loot words cleared; exact position-only bounds shift, transforms, flags, origin, damage owner and next-node priority stores recovered. X/Y shift uses stored binary32, Z retains PC53. Portals/variables/list links retained.",
+    "Actual source lifetime, unconditional timer and complete VM owners used. Only leading location opcode20 executes immediately; source timer helper exposure adds zero functions. Prior timer source snapshot is frozen, all six actual timer owners receive fresh source context variants and existing85 plus new153 checks.",
+    "PC53 finite source fixtures execute immediate/deferred actual VM actions, exact RNG draw ordering, actual one-shot pool retirement, matrix roundtrip/negative coordinates, full128-word reset, retained variables, no-script and malformed-ring branches. No original code, game, input automation or screenshots."
+  ]
+}

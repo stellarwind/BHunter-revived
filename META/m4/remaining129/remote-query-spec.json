@@ -1,0 +1,45 @@
+{
+  "baseline": 605,
+  "module": "remote_query",
+  "scenario": "remote-query",
+  "owners": [
+    {
+      "original_va": "00423e70",
+      "bytes": 697,
+      "function": "bh_remote_query",
+      "source": "src/bh_remote_query.c",
+      "role": "game",
+      "provenance_confidence": "Whole remote actor event query/damage packet/dual-list retirement callback; actual codec, transport and entity pool definitions; switch data belongs to this owner and adds zero independent functions."
+    }
+  ],
+  "sources": [
+    "src/bh_remote_query.c",
+    "src/bh_remote_query.h",
+    "tests/remote_query.c"
+  ],
+  "constants": [
+    {
+      "address": "00489a58",
+      "hex": "d7a3703d0ad7ff3f"
+    },
+    {
+      "address": "00489a68",
+      "hex": "0000000000006040"
+    },
+    {
+      "address": "00489998",
+      "hex": "0000000000208c40"
+    },
+    {
+      "address": "0042412c",
+      "hex": "b43f4200443f4200583f420002414200983e420022414200000505010505050505050505050505050203050504"
+    }
+  ],
+  "limits": [
+    "Original switch table0042412c..00424158 belongs to this function and adds zero independent functions.",
+    "Uses actual source packet framing/position codec/transport. Tests retain an unopened transport and exercise zero native Send calls; actual peer gameplay remains unvalidated.",
+    "PC53 finite severity >=-1000000 source contract; the original upper1.99 cap, low-byte truncation and omission of unknown attacker identity are retained.",
+    "Source guards reject bad bindings, invalid slot or incoherent reciprocal lists. Event20 clears roster, unlinks both lists and releases real pool storage; it does not invent a Stop/query call absent from original.",
+    "M3 skipped and M4/gameplay incomplete; no original code or gameplay automation."
+  ]
+}

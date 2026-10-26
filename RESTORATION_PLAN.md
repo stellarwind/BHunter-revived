@@ -1,3 +1,5 @@
+> Preservation branch: exact pre-preview 679-owner source checkpoint. See [PRESERVATION.md](PRESERVATION.md). The older status text below is historical.
+
 # BHunter restoration plan
 
 **Goal:** a faithfully playable, source-built BHunter on modern Windows, with all verified original features covered and the original executable retained only as an optional test oracle. Full decompilation means recovering the game's and required proprietary engine's behavior in maintainable source, reusing identified libraries rather than reimplementing their internals. It does not mean reproducing Microsoft's CRT source or matching every instruction.

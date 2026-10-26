@@ -1,3 +1,5 @@
+> Preservation branch: exact pre-preview 679-owner source checkpoint. See [PRESERVATION.md](PRESERVATION.md). The older status text below is historical.
+
 # Source integration build
 
 Current checkpoint (2026-10-26): **453/727 linked original owners, 425 translation units, 206 missing-module controls**. The final real-data build passes **4,900,025 checks**; the independent asset-free checkout passes **4,394,082**. Current evidence: [hour443](META/m4/hour443/README.md). Earlier totals below are historical checkpoints.

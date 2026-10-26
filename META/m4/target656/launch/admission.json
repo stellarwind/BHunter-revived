@@ -1,0 +1,18 @@
+{
+  "baseline": 645,
+  "module": "actor_launch",
+  "scenario": "actor-launch",
+  "sources": [
+    "src/bh_actor_launch.c",
+    "src/bh_actor_launch.h",
+    "tests/actor_launch.c",
+    "tests/actor_construct_fixture.h",
+    "tests/actor_response_fixture.h"
+  ],
+  "limits": [
+    "Actual packet codecs/source actor constructors and real transport used. No peer is installed in fixtures; no successful network Send, session or gameplay asserted.",
+    "Two CRT draws precede mode suppression. Type0/3 mode2 signed token/5000 and speed FTOL quantization, wire25/aligned28, sender clock, little-endian seed/tag and signed received bytes retained.",
+    "Bounded packet/capacity and explicit navigation-index adaptation. Receive successful position/counters precede constructor; borrowed route clock override is restored on source construction failure. No fabricated globals or callbacks.",
+    "Fixtures cover all mode branches, actual selected queries/retirement, exact transmitted payload/header, independent checksum corruption/truncation and negative token/tag semantics, received timestamp and constructor failure. No original/game code or gameplay execution."
+  ]
+}

@@ -1,3 +1,5 @@
+> Preservation branch: exact pre-preview 679-owner source checkpoint. See [PRESERVATION.md](PRESERVATION.md). The older status text below is historical.
+
 # BHunter Revived
 
 Restoring BHunter as a faithfully playable, source-built game on modern Windows.

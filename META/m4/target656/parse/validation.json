@@ -1,0 +1,47 @@
+{
+  "passed": true,
+  "baseline_functions": 649,
+  "new_owners": 4,
+  "active_original_functions": 653,
+  "real_total": {
+    "scenario": "m2-foundations",
+    "checks": 5527768,
+    "failures": 0,
+    "archive_entries": 1229,
+    "original_code_required": false
+  },
+  "fixture": {
+    "scenario": "script-parse",
+    "checks": 52,
+    "failures": 0,
+    "original_code_required": false
+  },
+  "sources": {
+    "src/bh_script_parse.c": "62cac84a5b13b1d97cf22108f9d1e2e58695247b0a9889e97485943087fda03e",
+    "src/bh_script_parse.h": "57f8e6ed5e86fd80328b8a17cc8b3633f8f05adc8170f0ed8be3ff9f4191cd3c",
+    "tests/script_parse.c": "cd8428e58f1c20d65f6b4448cd6ef641431f543f55fab81bb8b55a4f9bb38216",
+    "tests/script_parse_fixture.h": "de598077e9279ad0096de5c6121b45d94f05cdf63b91cf9c7d1baafaa654814c",
+    "tests/actor_construct_fixture.h": "fee3e0fc75f0910beefca97d5455a5ef0fb57b6f06b56bca486ab4c2e7bd5077",
+    "tests/actor_response_fixture.h": "e573c609e847cdfce32feb384d72d45024311c33c150b1b96aeddcc52c417c5f",
+    "tests/checkpoint.c": "70199fa132c3759eeaa54dd6bb831bb69d7b8f096445c8af42c59f59e8fc01da",
+    "tools/m0.py": "8b205fed1683eead13216168f23549a27da0600dfa58176b37c50a0cc22ac69a"
+  },
+  "source_snapshots": {
+    "src/bh_script_parse.c": "META/m4/target656/parse/sources/62cac84a5b13b1d97cf22108f9d1e2e58695247b0a9889e97485943087fda03e-bh_script_parse.c.txt",
+    "src/bh_script_parse.h": "META/m4/target656/parse/sources/57f8e6ed5e86fd80328b8a17cc8b3633f8f05adc8170f0ed8be3ff9f4191cd3c-bh_script_parse.h.txt",
+    "tests/script_parse.c": "META/m4/target656/parse/sources/cd8428e58f1c20d65f6b4448cd6ef641431f543f55fab81bb8b55a4f9bb38216-script_parse.c.txt",
+    "tests/script_parse_fixture.h": "META/m4/target656/parse/sources/de598077e9279ad0096de5c6121b45d94f05cdf63b91cf9c7d1baafaa654814c-script_parse_fixture.h.txt",
+    "tests/actor_construct_fixture.h": "META/m4/target656/parse/sources/fee3e0fc75f0910beefca97d5455a5ef0fb57b6f06b56bca486ab4c2e7bd5077-actor_construct_fixture.h.txt",
+    "tests/actor_response_fixture.h": "META/m4/target656/parse/sources/e573c609e847cdfce32feb384d72d45024311c33c150b1b96aeddcc52c417c5f-actor_response_fixture.h.txt",
+    "tests/checkpoint.c": "META/m4/target656/parse/sources/70199fa132c3759eeaa54dd6bb831bb69d7b8f096445c8af42c59f59e8fc01da-checkpoint.c.txt",
+    "tools/m0.py": "META/m4/target656/parse/sources/8b205fed1683eead13216168f23549a27da0600dfa58176b37c50a0cc22ac69a-m0.py.txt"
+  },
+  "limits": [
+    "Whole sidecar parser and sound/flag/five-arg builders; exact command order/prefix lengths, symbolic first-free variables, absolute line+4 grid parsing, nested timer/wait fired-vs-next slots, root vs nested flags and owner flag opcodes retained.",
+    "Actual VFILE, two argument owners, native sound loader, timer/timer2/wait and all25-opcode VM definitions link and execute. Parser builds real entities/callbacks, never retained script text or fake handlers. Source slots replace pointer-to-global stack arithmetic.",
+    "Uninitialized malformed original scan locals become initialized/bounded source errors. Names32/line512/path bounds/depth32 are source guards. Definition and typed VM/timer/resource/sound contexts remain borrowed. Missing sidecar applies defaults and succeeds as original.",
+    "Fixtures construct nested timers/wait/VM chains, actual native silent DirectSound buffer without Play, every22 command prefix, real scheduled timer-to-VM waypoint, variable selectors, root/nested flags, failed resource/malformed line and missing sidecar. No original code, game execution, gameplay automation or audio playback."
+  ],
+  "original_code_executed": false,
+  "game_launches": 0
+}

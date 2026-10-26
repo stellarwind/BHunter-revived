@@ -1,0 +1,40 @@
+{
+  "passed": true,
+  "baseline_functions": 668,
+  "new_owners": 2,
+  "active_original_functions": 670,
+  "real_total": {
+    "scenario": "m2-foundations",
+    "checks": 5528805,
+    "failures": 0,
+    "archive_entries": 1229,
+    "original_code_required": false
+  },
+  "fixture": {
+    "scenario": "remote-packets",
+    "checks": 44,
+    "failures": 0,
+    "original_code_required": false
+  },
+  "sources": {
+    "src/bh_remote_packets.c": "61f1fa709cf704a4b9af4593dc6c740221db6aeec8784ad8b6ac71babccafdbc",
+    "src/bh_remote_packets.h": "19180edff471320256a1602d37bfba76dc18b95e99cd9f94aaf151142831b6c9",
+    "tests/remote_packets.c": "11422ccfafdf1451bb6f10912dacc3e037806814c600882e916f16b44ef97e43",
+    "tests/checkpoint.c": "d4835fd7289bcead0d15a17903756baffebd5d1982565006402ee113298c66d3",
+    "tools/m0.py": "b0a2fdf91a67abacbe6316029e1bccd115ec6d2c05e155d44e6f826810d8f1bd"
+  },
+  "source_snapshots": {
+    "src/bh_remote_packets.c": "META/m4/finish/remote-packets/sources/61f1fa709cf704a4b9af4593dc6c740221db6aeec8784ad8b6ac71babccafdbc-bh_remote_packets.c.txt",
+    "src/bh_remote_packets.h": "META/m4/finish/remote-packets/sources/19180edff471320256a1602d37bfba76dc18b95e99cd9f94aaf151142831b6c9-bh_remote_packets.h.txt",
+    "tests/remote_packets.c": "META/m4/finish/remote-packets/sources/11422ccfafdf1451bb6f10912dacc3e037806814c600882e916f16b44ef97e43-remote_packets.c.txt",
+    "tests/checkpoint.c": "META/m4/finish/remote-packets/sources/d4835fd7289bcead0d15a17903756baffebd5d1982565006402ee113298c66d3-checkpoint.c.txt",
+    "tools/m0.py": "META/m4/finish/remote-packets/sources/b0a2fdf91a67abacbe6316029e1bccd115ec6d2c05e155d44e6f826810d8f1bd-m0.py.txt"
+  },
+  "limits": [
+    "Whole spawn packet: checksum/padding/counters, localDPID ack/tick/slot, remote allocation, last duplicate roster match, three zeroed pose banks and timestamps, capped fixed20-byte name, sparse original fields, global/room reciprocal lists, source render/tick/query closure and nine channel initialization. Original custom+e8 draw identity remains data and typed source draw binding; common+C8 is left original NULL.",
+    "Whole shot packet retains signed16 lag<61 including future, original pending/processed/bad quirks, count/spacing/type/target decoding, type5 lifetime60/30, single-shot sync identity, overdue immediate repetition and queued count/interval/countdown. Actual shot owner may deliberately overwrite sync for ballistic while split preserves full packet identity; both tested.",
+    "Real source renderer/update/query/prediction/codec/projectile/effect/voice/list retirement executed. Typed caller-owned coherent contexts and actor lifetimes; malformed/truncated/index/occupied-spawn guards replace original undefined access/leak. Packet framing diagnostics are separately recorded from original handler counters. No original code, game launch, automated gameplay/input, screenshot, real peer/audio playback or agents."
+  ],
+  "original_code_executed": false,
+  "game_launches": 0
+}

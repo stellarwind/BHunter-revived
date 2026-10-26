@@ -1,0 +1,43 @@
+{
+  "passed": true,
+  "baseline_functions": 641,
+  "new_owners": 2,
+  "active_original_functions": 643,
+  "real_total": {
+    "scenario": "m2-foundations",
+    "checks": 5526822,
+    "failures": 0,
+    "archive_entries": 1229,
+    "original_code_required": false
+  },
+  "fixture": {
+    "scenario": "actor-response",
+    "checks": 32,
+    "failures": 0,
+    "original_code_required": false
+  },
+  "sources": {
+    "src/bh_actor_response.c": "9148b9eaeed1c5ee007161ae8b00dae06d9a0fbf81ec201ce5bdc3dfb259c97d",
+    "src/bh_actor_response.h": "8ec9c6ae0f5ee6ae1bdd8336d9079a08549f73ab20a32eb6405a8a1dea7e4531",
+    "tests/actor_response.c": "d677aeecf1204a698380b0ee9e5193f8ecc6f6622c04c208b5145e8ec984c9ab",
+    "tests/actor_response_fixture.h": "e573c609e847cdfce32feb384d72d45024311c33c150b1b96aeddcc52c417c5f",
+    "tests/checkpoint.c": "8a9beb556f4b8325234737b72a610c60fff87c71ed832ac1462e7fb934892b84",
+    "tools/m0.py": "fa8d94b868f102c0442e79d46e265d4d08c9aa0aaf317d6935b843263d4b9f1b"
+  },
+  "source_snapshots": {
+    "src/bh_actor_response.c": "META/m4/target656/response/sources/9148b9eaeed1c5ee007161ae8b00dae06d9a0fbf81ec201ce5bdc3dfb259c97d-bh_actor_response.c.txt",
+    "src/bh_actor_response.h": "META/m4/target656/response/sources/8ec9c6ae0f5ee6ae1bdd8336d9079a08549f73ab20a32eb6405a8a1dea7e4531-bh_actor_response.h.txt",
+    "tests/actor_response.c": "META/m4/target656/response/sources/d677aeecf1204a698380b0ee9e5193f8ecc6f6622c04c208b5145e8ec984c9ab-actor_response.c.txt",
+    "tests/actor_response_fixture.h": "META/m4/target656/response/sources/e573c609e847cdfce32feb384d72d45024311c33c150b1b96aeddcc52c417c5f-actor_response_fixture.h.txt",
+    "tests/checkpoint.c": "META/m4/target656/response/sources/8a9beb556f4b8325234737b72a610c60fff87c71ed832ac1462e7fb934892b84-checkpoint.c.txt",
+    "tools/m0.py": "META/m4/target656/response/sources/fa8d94b868f102c0442e79d46e265d4d08c9aa0aaf317d6935b843263d4b9f1b-m0.py.txt"
+  },
+  "limits": [
+    "Whole original recoil/death tick and all query events recovered with actual admitted dependency owners. Query phase/duration differs from ordinary actor network-tick phase.",
+    "Both real room/global intrusive lists and source pool borrowed; callbacks must preserve owners during synchronous broadcast. Context payload+588 and normal tick context+596 are explicit source adapters, counted zero.",
+    "Finite PC53 nonzero positive duration/speed, explicit legacy unwritten death angles required; no PC24 or original numerical equivalence asserted. Type6 player-only scaled capped damage and double decay, fade, rescaled timestamps, exact effect/RNG ordering, asymmetric immediate/deferred cleanup retained.",
+    "Source fixtures execute real smoke/debris/loot/moving target/deferred cue construction and source lifetime, recoil, ray metadata/motion and chooser branches. No game execution, automation, audio device playback or original code."
+  ],
+  "original_code_executed": false,
+  "game_launches": 0
+}

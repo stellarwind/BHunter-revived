@@ -1,3 +1,5 @@
+> Preservation branch: exact pre-preview 679-owner source checkpoint. See [PRESERVATION.md](../PRESERVATION.md). The older status text below is historical.
+
 # BHunter restoration progress
 
 Updated 2026-10-26. Plan: `../RESTORATION_PLAN.md`.

@@ -4354,18 +4354,21 @@
       "body_ranges": [
         "0042f350-0042f354"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "shared_tail",
+      "owner": "config_save_forwarding_alias",
+      "provenance_confidence": "All five bytes verified E9 rel32 to admitted original00402370. No prologue, additional state, call or independent behavior.",
+      "boundary_review": "verified_forwarding_alias",
+      "behavior": "Pure forwarding alias to actual source bh_config_save; source function counted once at00402370. Alias contributes zero.",
       "abi": "provisional inferred signature: undefined __stdcall thunk_FUN_00402370(void)",
       "assigned_next": false,
       "callback_review": "candidate_only",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
-      ]
+        "META/m1/review/boundaries.tsv",
+        "META/m4/finish/aliases/0042f350.json"
+      ],
+      "alias_of": "00402370",
+      "original_function_count": 0
     },
     {
       "address": "0042f360",
@@ -6929,6 +6932,26 @@
       "evidence": [
         "analysis/function-map.tsv",
         "META/m1/review/boundaries.tsv"
+      ]
+    },
+    {
+      "address": "00443ff0",
+      "name": "bh_script_vm_query",
+      "body_ranges": [
+        "00443ff0-004456e2"
+      ],
+      "role": "game",
+      "owner": "script_activation_vm",
+      "provenance_confidence": "Whole25-opcode activation VM already admitted during target656. Full5875-byte immutable boundary and real linked source fixtures; owned switch data remains separate.",
+      "boundary_review": "whole_boundary_verified_outside_old_catalogue",
+      "behavior": "Complete source activation/query VM with real subordinate constructors and callbacks; one distinct owner. Added to the role catalogue after independent source-boundary recovery.",
+      "abi": "Original entity/query callback; source explicit BHScriptVMContext and checked source query bridge.",
+      "assigned_next": false,
+      "callback_review": "source_implemented",
+      "added_after_original_catalog": true,
+      "evidence": [
+        "META/m4/target656/vm/validation.json",
+        "META/m4/target656/vm/original/00443ff0.disasm.json"
       ]
     },
     {
@@ -13423,17 +13446,18 @@
       "body_ranges": [
         "0047db50-0047db87"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __heap_alloc. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: undefined __cdecl FUN_0047db50(int param_1)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -13465,17 +13489,18 @@
       "body_ranges": [
         "0047dbe0-0047dc02"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __fsopen, __wfsopen. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: undefined __cdecl FUN_0047dbe0(LPCSTR param_1, char * param_2, uint param_3)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -13614,17 +13639,18 @@
       "body_ranges": [
         "0047de90-0047debc"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __rmdir, __wremove, __wrmdir, _remove. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: undefined4 __cdecl FUN_0047de90(LPCSTR param_1)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -13633,17 +13659,18 @@
       "body_ranges": [
         "0047dec0-0047dee9"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: _isdigit. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: uint __cdecl FUN_0047dec0(int param_1)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -13652,17 +13679,18 @@
       "body_ranges": [
         "0047def0-0047df19"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: _isspace. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: uint __cdecl FUN_0047def0(int param_1)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -13713,17 +13741,18 @@
       "body_ranges": [
         "0047df92-0047e164"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "shared_tail",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "Every observed range is contained in freshly reverified complete library sections 0047df70. Internal library labels are not independent game functions.",
       "abi": "provisional inferred signature: undefined1[10] __cdecl FUN_0047df92(int param_1, uint param_2, int param_3, uint param_4)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -13732,17 +13761,18 @@
       "body_ranges": [
         "0047e165-0047e18c"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "shared_tail",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "Every observed range is contained in freshly reverified complete library sections 0047df70. Internal library labels are not independent game functions.",
       "abi": "provisional inferred signature: undefined __stdcall FUN_0047e165(void)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -13814,17 +13844,19 @@
       "body_ranges": [
         "0047e3ca-0047e3d3"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC intrinsic math wrapper",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "Verified __CIfmod intrinsic wrapper; full50-byte companion code and80-byte named fmod descriptor match VC5 object, masking only actual relocations. Exact semantic alias now proven; reuse CRT fmod.",
       "abi": "provisional inferred signature: undefined __fastcall FUN_0047e3ca(undefined4 param_1)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json",
+        "META/m4/finish/remote-position/math-alias.json"
       ]
     },
     {
@@ -13965,17 +13997,18 @@
       "body_ranges": [
         "0047e8d0-0047e8f5"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __amsg_exit, _fast_error_exit. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: void __cdecl __amsg_exit(int param_1)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -13984,17 +14017,18 @@
       "body_ranges": [
         "0047e900-0047e925"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __amsg_exit, _fast_error_exit. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: undefined __cdecl FUN_0047e900(int param_1)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -14047,17 +14081,18 @@
       "body_ranges": [
         "0047e9a0-0047e9c8"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __ms_p5_mp_test_fdiv. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: undefined __stdcall FUN_0047e9a0(void)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -14066,17 +14101,18 @@
       "body_ranges": [
         "0047e9d0-0047ea2c"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __forcdecpt. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: undefined __cdecl FUN_0047e9d0(char * param_1)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -14106,17 +14142,18 @@
       "body_ranges": [
         "0047eaa0-0047eabb"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __positive. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: undefined FUN_0047eaa0(void)",
       "assigned_next": false,
       "callback_review": "candidate_only",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -14209,17 +14246,18 @@
       "body_ranges": [
         "0047ee10-0047ee3a"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __cftoe_g. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: undefined __cdecl FUN_0047ee10(undefined4 param_1, undefined1 * param_2, int param_3, int param_4)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -14228,17 +14266,18 @@
       "body_ranges": [
         "0047ee40-0047ee65"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __cftof_g. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: undefined __cdecl FUN_0047ee40(undefined4 param_1, char * param_2, uint param_3)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -14373,17 +14412,18 @@
       "body_ranges": [
         "0047f380-0047f3af"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __cinit. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: undefined __stdcall FUN_0047f380(void)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -14392,17 +14432,18 @@
       "body_ranges": [
         "0047f3b0-0047f3c1"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: _exit. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: undefined __cdecl FUN_0047f3b0(UINT param_1)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -14411,17 +14452,18 @@
       "body_ranges": [
         "0047f3d0-0047f3e1"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __exit. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: noreturn void __cdecl __exit(int _Code)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -14430,17 +14472,18 @@
       "body_ranges": [
         "0047f3f0-0047f493"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: _doexit. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: undefined __cdecl FUN_0047f3f0(UINT param_1, int param_2, int param_3)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -14533,17 +14576,18 @@
       "body_ranges": [
         "0047f7a0-0047f7d6"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __heap_init. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: undefined4 __stdcall FUN_0047f7a0(void)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -14573,17 +14617,18 @@
       "body_ranges": [
         "0047f950-0047f9aa"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: ___sbh_release_region. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: undefined __cdecl FUN_0047f950(undefined * * param_1)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -14970,17 +15015,18 @@
       "body_ranges": [
         "00481090-004810f6"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __dosmaperr. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: undefined __cdecl FUN_00481090(undefined * param_1)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -15073,17 +15119,18 @@
       "body_ranges": [
         "00481f50-00481f67"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __un_inc. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: undefined __cdecl FUN_00481f50(uint param_1, int * param_2)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -15092,17 +15139,18 @@
       "body_ranges": [
         "00481f70-00481fb7"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __whiteout. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: uint __cdecl FUN_00481f70(int * param_1, int * param_2)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -15113,17 +15161,18 @@
         "0048211e-00482160",
         "004822d6-004822da"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "shared_tail",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "Every observed range is contained in freshly reverified complete library sections 00481fc0,00481fc0,004821d0. Internal library labels are not independent game functions.",
       "abi": "provisional inferred signature: undefined5 __fastcall FUN_0048211e(undefined4 param_1, undefined1 param_2)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -15174,17 +15223,18 @@
       "body_ranges": [
         "004822c8-004822cc"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "shared_tail",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "Every observed range is contained in freshly reverified complete library sections 004821d0. Internal library labels are not independent game functions.",
       "abi": "provisional inferred signature: undefined __stdcall FUN_004822c8(void)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -15382,17 +15432,18 @@
       "body_ranges": [
         "00482850-004828aa"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __commit. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: undefined4 __cdecl FUN_00482850(uint param_1)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -15485,17 +15536,18 @@
       "body_ranges": [
         "00482a6e-00482a74"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "shared_tail",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "Every observed range is contained in freshly reverified complete library sections 004829c0. Internal library labels are not independent game functions.",
       "abi": "provisional inferred signature: undefined __stdcall FUN_00482a6e(void)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -15504,17 +15556,18 @@
       "body_ranges": [
         "00482a75-00482ba4"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "shared_tail",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "Every observed range is contained in freshly reverified complete library sections 004829c0. Internal library labels are not independent game functions.",
       "abi": "provisional inferred signature: undefined __stdcall FUN_00482a75(void)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -15692,17 +15745,18 @@
         "00483c00-00483c04",
         "00483c16-00483ccb"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "shared_tail",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "Every observed range is contained in freshly reverified complete library sections 00483c00,00483c00. Internal library labels are not independent game functions.",
       "abi": "provisional inferred signature: uint * __cdecl FUN_00483c16(uint * param_1)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -15711,17 +15765,18 @@
       "body_ranges": [
         "00483e60-00483e71"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __ismbblead. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: undefined __cdecl FUN_00483e60(uint param_1)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -15856,17 +15911,18 @@
       "body_ranges": [
         "004845d0-0048461c"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: _getSystemCP. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: int __cdecl FUN_004845d0(int param_1)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -15896,17 +15952,18 @@
       "body_ranges": [
         "00484680-004846b1"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: _setSBCS. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: undefined __stdcall FUN_00484680(void)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -15936,17 +15993,18 @@
       "body_ranges": [
         "004848a0-004848aa"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: ___initmbctable. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: undefined __stdcall FUN_004848a0(void)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -16087,17 +16145,18 @@
       "body_ranges": [
         "00484a80-00484abc"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __FF_MSGBANNER. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: undefined __stdcall FUN_00484a80(void)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -16127,17 +16186,18 @@
       "body_ranges": [
         "00484ca0-00484cda"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __control87. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: uint __thiscall FUN_00484ca0(void * this, uint param_1, uint param_2)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -16146,17 +16206,18 @@
       "body_ranges": [
         "00484ce0-00484cf7"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __controlfp. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: undefined __cdecl FUN_00484ce0(void * param_1, uint param_2)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -16312,17 +16373,18 @@
       "body_ranges": [
         "004850d0-004850de"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __FillZeroMan. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: undefined __cdecl FUN_004850d0(undefined4 * param_1)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -16394,17 +16456,18 @@
       "body_ranges": [
         "00485390-004853a7"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __ld12tod, __ld12tof. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: undefined __cdecl FUN_00485390(ushort * param_1, uint * param_2)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -16413,17 +16476,18 @@
       "body_ranges": [
         "004853b0-004853c7"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __ld12tod, __ld12tof. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: undefined __cdecl FUN_004853b0(ushort * param_1, uint * param_2)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -16453,17 +16517,18 @@
       "body_ranges": [
         "00485410-00485447"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __atodbl, __atoflt. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: undefined __cdecl FUN_00485410(uint * param_1, byte * param_2)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -16576,17 +16641,18 @@
       "body_ranges": [
         "00485970-0048597a"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __fptrap. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: undefined __stdcall FUN_00485970(void)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -16658,17 +16724,18 @@
       "body_ranges": [
         "00485b90-00485bd3"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __get_osfhandle. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: undefined4 __cdecl FUN_00485b90(uint param_1)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -16719,17 +16786,18 @@
       "body_ranges": [
         "00486000-00486027"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __isatty. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: byte __cdecl FUN_00486000(uint param_1)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -16864,17 +16932,18 @@
       "body_ranges": [
         "00486420-0048643e"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __allshl. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: longlong __fastcall __allshl(byte param_1, int param_2)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -17072,17 +17141,18 @@
       "body_ranges": [
         "00486920-00486987"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: ___add_12. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: undefined __cdecl FUN_00486920(uint * param_1, uint * param_2)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -17259,17 +17329,18 @@
       "body_ranges": [
         "00487e00-00487e25"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __set_errno. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: undefined __cdecl FUN_00487e00(int param_1)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -17278,17 +17349,18 @@
       "body_ranges": [
         "00487e30-00487e32"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC _matherr",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "Three-byte body alone is nonunique; identity additionally established by actual __matherr relocation from the fully verified CRT math-error caller.",
       "abi": "provisional inferred signature: undefined4 __stdcall FUN_00487e30(void)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -17297,17 +17369,18 @@
       "body_ranges": [
         "00487e40-00487e4f"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "library_verified",
+      "owner": "VC5 SP3 LIBC",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "All observed ranges match library code, masking only actual COFF relocation operands. Candidate symbols: __statfp. Symbol aliases are not uniquely attributed.",
       "abi": "provisional inferred signature: int __stdcall FUN_00487e40(void)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {
@@ -17442,17 +17515,18 @@
       "body_ranges": [
         "004882d0-004882d5"
       ],
-      "role": "unknown",
-      "owner": "unassigned_dependency_review",
-      "provenance_confidence": "unreviewed attribution; mapped body is an observation, not an admission",
-      "boundary_review": "observed_only",
-      "behavior": "Unknown; may include proprietary engine, compiler/runtime or shared behavior; inspect before assignment",
+      "role": "import_thunk",
+      "owner": "KERNEL32.RtlUnwind",
+      "provenance_confidence": "verified library/import boundary; see explicit proof and alias limits",
+      "boundary_review": "reviewed",
+      "behavior": "Actual FF25 IAT thunk; PE import lookup at004890f0 resolves RtlUnwind.",
       "abi": "provisional inferred signature: void __stdcall RtlUnwind(PVOID TargetFrame, PVOID TargetIp, PEXCEPTION_RECORD ExceptionRecord, PVOID ReturnValue)",
       "assigned_next": false,
       "callback_review": "not_tagged_candidate",
       "evidence": [
         "analysis/function-map.tsv",
-        "META/m1/review/boundaries.tsv"
+        "META/m1/review/boundaries.tsv",
+        "META/m4/remaining129/runtime-review.json"
       ]
     },
     {

@@ -1,0 +1,18 @@
+[
+  {
+    "original_va": "00454fc0",
+    "bytes": 1103,
+    "function": "bh_screen_region_draw",
+    "source": "src/bh_screen_region.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Whole screen-region renderer; related full-image renderer independently owned. Actual clip and emitter API closure; CRT sin/cos and FTOL behavior reused with bounded conversions."
+  },
+  {
+    "original_va": "0044f1b0",
+    "bytes": 15,
+    "function": "bh_pcx_reader_close",
+    "source": "src/bh_pcx_reader.c",
+    "role": "engine_candidate",
+    "provenance_confidence": "Whole PUSH PCX-owned stream, CALL actual VFILE close, ADD stack, RET. Independent wrapper called by PCX loading; verified same stream as0044f0a0 and0044efa0. Existing adapter now admitted after whole boundary and real lifecycle review; explicit null/reset/error adaptation retained."
+  }
+]

@@ -1,0 +1,41 @@
+{
+  "passed": true,
+  "baseline_functions": 604,
+  "active_original_functions": 605,
+  "whole_new_owners": 1,
+  "source_sha256": {
+    "src/bh_source_files.c": "cdc03fa4279f36bcd5e72c735877651ee1d33f4025c0b056f1fd964a884fbe32",
+    "src/bh_source_files.h": "2e6b28b2a5534c169704b6c592199d53a3b126d659bd461384db34eb317316eb",
+    "tests/source_files.c": "3623334abfdebae7b625eac0de69cb9a6b07894a83fbc592df71e566189686d3",
+    "tests/checkpoint.c": "0f18d0db44d538e114c076688c683ad776ba92c4ddea8d93ee5d3d3d0403c24c",
+    "tools/m0.py": "7e3a3abd5b0350e636a32606b2d51933263bd07700918f5b892a49fa363f45ea"
+  },
+  "source_snapshots": {
+    "src/bh_source_files.c": "META/m4/remaining129/sources/cdc03fa4279f36bcd5e72c735877651ee1d33f4025c0b056f1fd964a884fbe32-bh_source_files.c.txt",
+    "src/bh_source_files.h": "META/m4/remaining129/sources/2e6b28b2a5534c169704b6c592199d53a3b126d659bd461384db34eb317316eb-bh_source_files.h.txt",
+    "tests/source_files.c": "META/m4/remaining129/sources/3623334abfdebae7b625eac0de69cb9a6b07894a83fbc592df71e566189686d3-source_files.c.txt",
+    "tests/checkpoint.c": "META/m4/remaining129/sources/0f18d0db44d538e114c076688c683ad776ba92c4ddea8d93ee5d3d3d0403c24c-checkpoint.c.txt",
+    "tools/m0.py": "META/m4/remaining129/sources/7e3a3abd5b0350e636a32606b2d51933263bd07700918f5b892a49fa363f45ea-m0.py.txt"
+  },
+  "real_total": {
+    "scenario": "m2-foundations",
+    "checks": 5318968,
+    "failures": 0,
+    "archive_entries": 1229,
+    "original_code_required": false
+  },
+  "scenario": {
+    "scenario": "source-files",
+    "checks": 71,
+    "failures": 0,
+    "original_code_required": false
+  },
+  "limits": [
+    "Fixtures create/remove one private per-process HKCU key and synthetic temporary files; actual game HKLM key, registry configuration and original files are unchanged.",
+    "Original checks only copyright.txt; BIP_B1/B2 names are computed but not read. Incomplete dword suffixes intentionally ignored.",
+    "Source closes original leaked registry handle and rejects malformed/empty/oversize registry values, failed allocation and short reads; these are explicit source safety/lifetime adaptations.",
+    "Win32 normalized the first malformed REG_SZ fixture; final tests use raw unterminated REG_BINARY bytes. The failed historical test result remains in build/remaining129-build4.log."
+  ],
+  "original_code_executed": false,
+  "game_launches": 0
+}
