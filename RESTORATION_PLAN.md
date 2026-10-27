@@ -1,5 +1,13 @@
 # BHunter restoration plan
 
+ALL TEST HAPPEN IN A CUSTOM TEST LEVEL. NEVER EVER TRY SCRIPTED SCENARIOS IN THE REAL GAME!! AND EVEN IF YOU NEED THOSE ASK HUMAN TO RECORD KEYS
+
+2026-10-27 correction: do not build or run automated training/mission
+playthroughs, flight controllers or menu-driving scripts. The user explicitly
+rejected that approach. Add required gameplay scenarios to the separate test
+box level. Do not interpret requests for coverage as permission to automate
+the actual game. The mistakenly added training controller has been removed.
+
 2026-10-27 superseding authorization: the user requested a separate small box
 level build that skips menus, exercises AI, collisions, shooting, objectives and
 pickups, and permits bounded automated playthroughs of that diagnostic level.

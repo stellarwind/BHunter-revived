@@ -29,9 +29,11 @@ def main():
     mesh(OUT/'bsp/boxa.bsp',(-40,-20,-80),(40,20,0),(2,1))
     mesh(OUT/'bsp/boxb.bsp',(-40,-20,0),(40,20,80),(2,0))
     mesh(OUT/'bsp/boxpost.bsp',(-4,-20,-4),(4,8,4),inside=False)
-    (OUT/'bsp/blocks.txt').write_text('boxa.bsp\nboxb.bsp\nboxpost.bsp\nend\n')
+    mesh(OUT/'bsp/boxmark.bsp',(-.2,-.2,-.2),(.2,.2,.2),inside=False)
+    (OUT/'bsp/blocks.txt').write_text('boxa.bsp\nboxb.bsp\nboxpost.bsp\nboxmark.bsp\nend\n')
+    (OUT/'bsp/boxmark.txt').write_text('grid 1\ncollision off\nrender off\n')
     for n in ['boxa','boxb','boxpost']:(OUT/('bsp/'+n+'.txt')).write_text('grid 1\ncollision on\nrender on\n')
-    placements=[('boxa.bsp',0,0,0,0),('boxpost.bsp',20,0,-30,0),('boxb.bsp',0,0,0,0)]
+    placements=[('boxa.bsp',0,0,0,0),('boxpost.bsp',20,0,-30,0),('boxb.bsp',0,0,0,0),('boxmark.bsp',0,0,5,0)]
     (OUT/'test.lev').write_bytes(pack('i',len(placements))+b''.join(n.encode().ljust(16,b'\0')+pack('4i',x,y,z,f) for n,x,y,z,f in placements))
     # A unique invalid cache is unnecessary: the original archive cache is rejected
     # on dimensions and the actual navigation builder computes this graph.

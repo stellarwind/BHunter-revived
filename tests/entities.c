@@ -15,6 +15,7 @@ static BHEntityPool *current;
 static BHEntity *trace[32],*future,*newborn;
 static unsigned long calls,event3;static int mutation_mode,busy_rejected;
 static long user_packet=7;
+static void __cdecl refresh(BHEntity *entity,void *packet);
 static void __cdecl callback(BHEntity *entity,void *packet){
     if(packet!=&user_packet && packet){BHEntityPositionPacket *p=(BHEntityPositionPacket*)packet;if(p->event==3){++event3;p->position.x=0;p->position.y=0;p->position.z=0;return;}}
     if(calls<32)trace[calls]=entity;++calls;
@@ -26,6 +27,7 @@ static void __cdecl step(BHEntity *entity){
     if(mutation_mode==2 && !newborn){newborn=bh_entity_acquire(current);CHECK(newborn!=NULL,"step creates new head");if(newborn)newborn->step=step;}
     if(mutation_mode==3){mutation_mode=0;CHECK(bh_entity_release(current,future),"step releases cached future");}
     if(mutation_mode==4){busy_rejected=!bh_entities_dispose(current) && current->error==BH_ENTITY_BUSY;}
+    if(mutation_mode==5){mutation_mode=0;CHECK(bh_entity_release(current,future),"release successor for reuse");newborn=bh_entity_acquire(current);CHECK(newborn==future,"real pool reuses cached successor address");newborn->step=step;newborn->refresh=refresh;}
 }
 static void __cdecl refresh(BHEntity *entity,void *packet){CHECK(packet==NULL,"original refresh second argument zero");step(entity);}
 static void __cdecl nesting(BHEntity *entity,void *packet){++calls;if(calls<18 && !bh_entities_query(current,0,0,NULL,0,&user_packet))busy_rejected=current->error==BH_ENTITY_BUSY;}
@@ -73,9 +75,24 @@ static void lists_and_dispatch(void){
     mutation_mode=1;calls=0;CHECK(bh_entities_step(&pool) && calls==4 && !pool.used && bh_entities_valid(&pool),"self release preserves cached active successors");
     mutation_mode=0;a=bh_entity_acquire(&pool);b=bh_entity_acquire(&pool);c=bh_entity_acquire(&pool);a->step=b->step=c->step=step;
     future=b;mutation_mode=3;calls=0;CHECK(!bh_entities_step(&pool) && pool.error==BH_ENTITY_MUTATION && calls==1 && bh_entities_valid(&pool),"future-slot lifetime change stops traversal explicitly");
+    CHECK(pool.failure_count==1 && pool.failure_current==c && pool.failure_next==b && pool.failure_callback==(unsigned long)step && !pool.failure_refresh && !pool.failure_next_active && pool.failure_actual_generation==pool.failure_expected_generation+1,"mutation diagnostic identifies callback and released successor");
+    CHECK(bh_entities_refresh(&pool) && pool.failure_count==1 && pool.failure_next==b,"refresh preserves earlier step failure evidence");
     mutation_mode=0;bh_entity_set_query(&pool,c,nesting);calls=0;busy_rejected=0;
     CHECK(bh_entities_query(&pool,0,0,NULL,0,&user_packet) && busy_rejected && pool.dispatch_depth==0,"bounded nested queries unwind safely");
     bh_entities_dispose(&pool);
+}
+static void recycled_successor(void){
+    BHEntityPool pool;BHEntity *a,*b,*c;unsigned long pass;
+    for(pass=0;pass<2;++pass){
+        current=&pool;CHECK(bh_entities_init(&pool,8,NULL),"recycle traversal arena");
+        a=bh_entity_acquire(&pool);b=bh_entity_acquire(&pool);c=bh_entity_acquire(&pool);
+        a->step=b->step=c->step=step;a->refresh=b->refresh=c->refresh=refresh;
+        future=b;newborn=NULL;mutation_mode=5;calls=0;
+        CHECK(pass?bh_entities_refresh(&pool):bh_entities_step(&pool),"active recycled successor continues original saved-pointer traversal");
+        CHECK(calls==4&&trace[0]==c&&trace[1]==b&&trace[2]==c&&trace[3]==a,"original +e0 loads visit replacement then relinked current then tail");
+        CHECK(b->generation==3&&pool.error==BH_ENTITY_OK&&bh_entities_valid(&pool),"recycled generation is valid and pool remains consistent");
+        bh_entities_dispose(&pool);
+    }
 }
 typedef struct QueryCase {unsigned long words[7];int hit;} QueryCase;
 static const QueryCase query_cases[]={
@@ -118,4 +135,4 @@ static void capacity_and_real(const char *archive){
     printf("{\"scenario\":\"entities-real-data\",\"initial_capacity\":9600,\"placement_slots\":%lu,\"gameplay_callbacks_installed\":false}\n",i);
     bh_entities_dispose(&pool);bh_scene_level_dispose(&level);bh_vfile_shutdown();
 }
-int bh_entities_checkpoint(const char *archive,unsigned long *total){checks=0;failures=0;allocation();lists_and_dispatch();spatial();capacity_and_real(archive);*total=checks;printf("{\"scenario\":\"entity-pool\",\"checks\":%lu,\"failures\":%d,\"original_code_required\":false}\n",checks,failures);return failures?1:0;}
+int bh_entities_checkpoint(const char *archive,unsigned long *total){checks=0;failures=0;allocation();lists_and_dispatch();recycled_successor();spatial();capacity_and_real(archive);*total=checks;printf("{\"scenario\":\"entity-pool\",\"checks\":%lu,\"failures\":%d,\"original_code_required\":false}\n",checks,failures);return failures?1:0;}

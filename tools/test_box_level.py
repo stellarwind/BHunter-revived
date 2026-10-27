@@ -4,12 +4,14 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'build/box-test'
 def run_once():
-    start=time.monotonic();result=dict(passed=False,hardware_only=True,software_renderer_executed=False,original_code_executed=False,automatic_gameplay=True,scope='user-authorized isolated box level with all ten weapons',timeout_seconds=75)
+    start=time.monotonic();result=dict(passed=False,hardware_only=True,software_renderer_executed=False,original_code_executed=False,automatic_gameplay=True,scope='user-authorized isolated box level with relocated two-target training chain',timeout_seconds=120)
+    config=OUT/'source-preview.cfg'
+    if config.exists():config.replace(OUT/'previous-box-profile.cfg')
     exe=OUT/'BHunter-box.exe';result['executable_sha256']=hashlib.sha256(exe.read_bytes()).hexdigest()
     trace=OUT/'box-trace.csv'
     if trace.exists():trace.replace(OUT/'box-trace-previous.csv')
     try:
-        p=subprocess.run([str(exe),'--box-auto'],cwd=OUT,timeout=75,capture_output=True)
+        p=subprocess.run([str(exe),'--box-auto'],cwd=OUT,timeout=120,capture_output=True)
         result['exit_code']=p.returncode
     except subprocess.TimeoutExpired:result['timeout']=True
     result['seconds']=time.monotonic()-start
@@ -31,15 +33,26 @@ def run_once():
         checks['objective_completed']=last['objective']=='1'
         checks['wreck_spawned_pickup']=last['drop_seen']=='1'
         checks['wreck_pickup_collected']=last['drop_taken']=='1'
-        checks['all_weapon_pickups_collected']=int(last['collected_mask'])==1023
-        checks['all_weapons_fired']=int(last['fired_mask'])==1023
-        checks['all_projectile_families_spawned']=int(last['spawned_mask'])==493
-        checks['all_weapon_selections']=all(any(int(r['primary' if i<5 else 'secondary'])==i for r in rows if 921+i*120<=int(r['tick'])<=1020+i*120) for i in range(10))
+        checks['station_sensor']=last['station']=='1'
+        checks['missiles_collected']=last['missiles_picked']=='1'
+        checks['second_target_spawned']=last['second_seen']=='1'
+        checks['missiles_locked']=last['locked']=='1'
+        checks['missile_projectiles']=int(last['missile_projectiles'])>0
+        checks['second_target_destroyed']=last['complete']=='1' and last['second_alive']=='0'
+        checks['episode_unlocked']=int(last['progress'])>=1
+        checks['next_assignment_live']=last['next_mission']=='1'
+        def first(key):
+            return next((int(r['tick']) for r in rows if int(float(r[key]))>0),None)
+        order=[first(k) for k in ('objective','missiles_picked','station','second_seen','complete','next_mission')]
+        checks['ordered_training_chain']=all(v is not None for v in order) and order[0]<order[1]<order[4]<order[5] and order[0]<order[2]<=order[3]<order[4]
+        checks['pickup_before_missile_use']=first('missiles_picked') is not None and first('missile_projectiles') is not None and first('missiles_picked')<first('missile_projectiles')
+        checks['real_pickup_depleted']=last['missile_removed']=='1'
+        checks['sensor_successor_reuse']=int(last['recycled_successors'])>0
+        checks['fresh_progression']=int(rows[0]['progress'])==0
+        result['milestone_ticks']=dict(zip(('first_kill','pickup','station','second_spawn','second_kill','next_assignment'),order))
         result['last']=last
-        names=['ion gun','lead buster','magnetic plasma','nitro crackers','stun ray','homie missile','sonic blast','tnt mine','fat lady','static coating']
-        result['weapons']=[dict(index=i,name=name,picked=bool(int(last['collected_mask'])&(1<<i)),fired=bool(int(last['fired_mask'])&(1<<i)),projectile_observed=bool(int(last['spawned_mask'])&(1<<i)) if i not in (1,4,9) else None) for i,name in enumerate(names)]
     result['checks']=checks
-    result['passed']=result.get('exit_code')==0 and len(rows)==2100 and bool(checks) and all(checks.values())
+    result['passed']=result.get('exit_code')==0 and 0<len(rows)<=6000 and bool(checks) and all(checks.values())
     result['startup_log']=(OUT/'startup.log').read_text() if (OUT/'startup.log').exists() else ''
     result['limits']=['Source playthrough; original numerical/PC24 equivalence is not implied by scenario success.']
     result['trace_sha256']=hashlib.sha256(trace.read_bytes()).hexdigest() if trace.exists() else None

@@ -92,13 +92,24 @@ static int enter(BHEntityPool *pool,int nested){
     ++pool->dispatch_depth;pool->error=BH_ENTITY_OK;return 1;
 }
 static int dispatch(BHEntityPool *pool,int refresh){
-    BHEntity *entity,*next;unsigned long generation;
+    BHEntity *entity,*next;unsigned long generation,callback;
     if(!enter(pool,0))return 0;
     if(!refresh && pool->focused){entity=pool->focus;if(!active(pool,entity)){--pool->dispatch_depth;return fail(pool,BH_ENTITY_ARGUMENT);}if(entity->step)entity->step(entity);--pool->dispatch_depth;return 1;}
     entity=pool->active;
     while(entity){next=entity->next;generation=next?next->generation:0;
+        callback=refresh?(unsigned long)entity->refresh:(unsigned long)entity->step;
         if(refresh){if(entity->refresh)entity->refresh(entity,NULL);}else if(entity->step)entity->step(entity);
-        if(!successor(pool,next,generation)){--pool->dispatch_depth;return 0;}entity=next;
+        /* Original00477325/0047734c resumes the cached pointer, not its
+           generation. A script may release/reacquire that slot during the
+           callback; dispatch its current callback/links as the original does.
+           An unreallocated inactive successor remains a source boundary. */
+        if(next&&!active(pool,next)){
+            fail(pool,BH_ENTITY_MUTATION);
+            pool->failure_current=entity;pool->failure_next=next;pool->failure_callback=callback;
+            pool->failure_expected_generation=generation;pool->failure_actual_generation=next?next->generation:0;
+            pool->failure_refresh=refresh;pool->failure_next_active=active(pool,next);++pool->failure_count;
+            --pool->dispatch_depth;return 0;
+        }if(next&&next->generation!=generation)++pool->recycled_successors;entity=next;
     }
     --pool->dispatch_depth;return 1;
 }

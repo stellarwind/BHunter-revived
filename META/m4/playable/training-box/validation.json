@@ -1,0 +1,46 @@
+{
+  "passed": true,
+  "scope": "Custom test box only",
+  "gameplay_in_actual_training": false,
+  "software_renderer_executed": false,
+  "original_code_executed": false,
+  "executable_sha256": "3185e6c11fba8f991317b3473fff5ff1344cf0eae24bc4f08da03350d1f5ef40",
+  "sources": {
+    "src/bh_entities.c": "65fd110c5edf8ed95c2d3aeb45a70b17e03c305b32a642e4e65b05ce031a5ade",
+    "src/bh_entities.h": "dd35eb70b30e88e0bbaaf60f54cab61725b295413227d593507534e8d909fba7",
+    "src/bh_game_app.c": "3272cae448663e3271d764ea2b46f101e663fd53bd3d39f1f7505d50ff5215eb",
+    "src/bh_game_box.inc": "b4d7776e9dc08f9222e2d9037338916f3823de97423b0ffd2090e2e101d686d5",
+    "tools/build_box_level.py": "143a616087daf474f1f49b1e1e16924383f7c3ed9f3d25c15f413045f47c3441",
+    "tools/test_box_level.py": "495bc6a6b9d5fdf2bb551ebdc2014193ff4a18d701da5d2e7bbf820339d9aa73",
+    "tools/check_box_reuse_control.py": "7a9ec233a73774f159056e42ff15048e5f6d1a66fcf4ba6e63320d9034ba3054",
+    "tools/record_training_box.py": "fbe0c242ce948026e93d617d7f5444f02b9f8d3676135615da2bd556c6fbb779"
+  },
+  "dependencies": "Real pool dispatch, pickup, player inventory, radar marker, proximity sensor, waitfor, VM launch, moving actors, weapon targeting/projectiles, damage, mission story/progress and ten-second timer relay.",
+  "results": [
+    {
+      "first_kill": 136,
+      "pickup": 174,
+      "station": 170,
+      "second_spawn": 170,
+      "second_kill": 551,
+      "next_assignment": 851
+    },
+    {
+      "first_kill": 136,
+      "pickup": 174,
+      "station": 170,
+      "second_spawn": 170,
+      "second_kill": 551,
+      "next_assignment": 851
+    }
+  ],
+  "negative_control_tick": 170,
+  "limits": [
+    "Box relocates original script chain into two connected rooms with one small center-line anchor; sensor uses radius4 instead of original room bounds.",
+    "Box initializes first target directly; later targets/pickup/sensor/marker are created by production VM/wait callbacks. Player controls drive collection and firing; no injected damage, ammo or completion.",
+    "Both runs have one active successor reuse. Old guard fails at tick170 generation1->3, matching the human failure class.",
+    "Fixed runs complete881ticks with identical recorded traces; no full original-game numerical/PC24 equivalence or visual correctness claim.",
+    "A nonfatal original degenerate-curve draw diagnostic remains; no software-renderer tests ran.",
+    "Earlier all-weapon test evidence remains historical; this run covers the two-target training chain and next-assignment spawn."
+  ]
+}

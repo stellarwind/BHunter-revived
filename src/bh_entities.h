@@ -36,6 +36,12 @@ typedef struct BHEntityPool {
     void *chunks; /* source-private ownership, not original game globals */
     unsigned long dispatch_depth;
     int focused;
+    /* Source-only last traversal failure; survives later successful passes. */
+    BHEntity *failure_current,*failure_next;
+    unsigned long failure_callback,failure_expected_generation,failure_actual_generation;
+    unsigned long failure_count;
+    unsigned long recycled_successors; /* passive step/refresh reuse diagnostic */
+    int failure_refresh,failure_next_active;
 } BHEntityPool;
 
 /* Complete original pool/dispatch behaviors with explicit context and NULL
@@ -54,7 +60,8 @@ int __cdecl bh_entities_step(BHEntityPool *pool); /* 004772f0 */
 int __cdecl bh_entities_refresh(BHEntityPool *pool); /* 00477330 */
 /* Source ownership/focus/validation adapters. Dispose rejects active dispatch.
    Callbacks may release the current slot or add new head slots. Changing a
-   cached successor's lifetime stops dispatch explicitly with MUTATION. Nested
+   cached successor to an inactive slot stops dispatch with MUTATION; active
+   recycled slots retain the original saved-pointer step/refresh order. Nested
    queries are allowed to depth 16; nested step/refresh are rejected. */
 int __cdecl bh_entities_dispose(BHEntityPool *pool);
 int __cdecl bh_entities_focus(BHEntityPool *pool,BHEntity *entity);

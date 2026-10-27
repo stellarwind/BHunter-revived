@@ -48,10 +48,11 @@ int __cdecl bh_frame_service_tick(BHFrameService *s){
     active=s->frames->active;s->draw->commands=(BHDrawCommand*)buffer;s->draw->capacity=3500;
     if(!bh_draw_queue_begin(s->draw))failure(s,BH_FRAME_SERVICE_BUFFER);
     began=s->profile?GetTickCount():0;
-    ++s->step_calls;if(!bh_entities_step(s->entities))failure(s,BH_FRAME_SERVICE_ENTITY);
+    s->step_error=BH_ENTITY_OK;s->refresh_error=BH_ENTITY_OK;
+    ++s->step_calls;if(!bh_entities_step(s->entities)){s->step_error=s->entities->error;failure(s,BH_FRAME_SERVICE_ENTITY);}
     s->step_ms=s->profile?GetTickCount()-began:0;
     began=s->profile?GetTickCount():0;
-    ++s->refresh_calls;if(!bh_entities_refresh(s->entities))failure(s,BH_FRAME_SERVICE_ENTITY);
+    ++s->refresh_calls;if(!bh_entities_refresh(s->entities)){s->refresh_error=s->entities->error;failure(s,BH_FRAME_SERVICE_ENTITY);}
     s->refresh_ms=s->profile?GetTickCount()-began:0;
     s->last_dt=0.033333335071802139f;
     began=s->profile?GetTickCount():0;

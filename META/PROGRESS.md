@@ -4,6 +4,74 @@ Updated 2026-10-27. Plan: `../RESTORATION_PLAN.md`.
 
 ## Current checkpoint
 
+Custom-box training sequence completed and executed, 2026-10-27. User's exact
+note is now at the top of AGENTS.md and RESTORATION_PLAN.md: ALL TEST HAPPEN IN
+A CUSTOM TEST LEVEL. NEVER EVER TRY SCRIPTED SCENARIOS IN THE REAL GAME!! AND
+EVEN IF YOU NEED THOSE ASK HUMAN TO RECORD KEYS.
+
+Two hardware-only881-tick box runs pass with identical recorded traces. First
+target kill136; station sensor/second-target spawn170; five missiles collected174;
+faster second target killed551; original ten-second relay starts next assignment
+at851. Checks require actual pickup depletion, lock, missile projectile presence,
+both death events, progression0->1, live next target, and continued frame updates.
+The pickup/sensor timers are independent: station activation may precede the
+actual pickup by four ticks; collection precedes missile firing and second kill.
+
+The relocated POWERUP/MARKER/SENSOR2/LAUNCH2/RELAY dependency chain uses production
+VM/wait/sensor/marker/actor/weapon/story owners. The disappearing marker causes
+the actual cached successor to recycle1->3. A separately compiled old-guard
+variant fails in THIS BOX at170 with step=MUTATION and active successor, matching
+the human log. Production source was not changed for that negative control;
+the fixed box executable is restored and hash-verified. No actual training or
+mission automation, software-renderer test, or reference gameplay ran.
+
+Evidence: `m4/playable/training-box/validation.json`, paired traces, original
+script/placement/instruction contracts, negative-control log/build, and source
+snapshots. Per-implementation ledger refreshed. The straight box is a relocated
+scenario, not full original-level or PC24 equivalence. A nonfatal degenerate-curve
+draw diagnostic remains. Earlier all-weapon evidence remains historical; latest
+box test covers this two-target chain. M4 remains incomplete.
+
+### Previous checkpoint
+
+User correction, 2026-10-27: removed the mistakenly introduced actual-training
+flight controller, runner, input hooks, story observer, command-line option and
+generated training-run artifacts. No automated training/mission playthroughs.
+Required scenario coverage belongs in the separate test box level. The removal
+build compiles/links only; no game launch is requested for this cleanup.
+
+The rocket-pickup crash work is retained separately. The new human log identifies
+bh_script_proximity_tick recycling the cached successor from generation1 to3
+while leaving it active. Step/refresh now follow that active recycled pointer,
+as original00477325/0047734c do; inactive-successor rejection remains an explicit
+source boundary. Reuse/order regressions fail before and pass after the change.
+Focused source checks passed; actual training completion and next-mission
+coverage have NOT been established. Add connected scenarios to the box next.
+
+### Previous checkpoint
+
+Rocket-launcher training exit investigation, 2026-10-27: the new human run
+`frame-times-13ab1c86-26520.csv` exits with frame-service ENTITY(4), sound=0,
+player/query/weapon=0. This is not attributed to the earlier sound failure.
+Preserved log, CSV and exact executable in `m4/playable/rocket-pickup-exit/`.
+The source cached-successor lifetime guard is a candidate: original step/refresh
+cache +e0 then continue without a generation gate. Fresh Ghidra instruction
+records are checked against immutable EXE bytes. Exact failing owner remains
+unknown; no traversal-policy or gameplay change is claimed.
+
+Added source-only callback/current/successor/generation failure diagnostics,
+and separate step/refresh errors before later passes overwrite pool.error.
+Mutation and persistence controls pass in the focused non-renderer target;
+299-TU game build and hardware-only static startup pass. Per-implementation
+diagnostic evidence added to function-status.json without promoting historical
+matching evidence. No gameplay automation or software-renderer execution.
+Next observation: user retries the second training rocket-launcher pickup using
+`play-hardware.cmd`; inspect the resulting Entity traversal failure line and
+resolve its callback against the preserved diagnostic-game.map. This report
+is NOT fixed yet; M4 remains incomplete.
+
+### Previous checkpoint
+
 All-weapon diagnostic and sound-failure continuation, 2026-10-27. Box automation
 now runs2100 ticks: the existing combat/objective/pickup route, then ten staged
 weapon pickups followed by real keyboard selection and primary/secondary fire.

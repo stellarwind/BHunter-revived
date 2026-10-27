@@ -1,6 +1,21 @@
 /* Isolated diagnostic level adapter. Not an original gameplay implementation.
    Only level setup and recorded input are synthetic; all mechanic owners are real. */
 static BHGameApp *box_observer;
+static struct BoxTraining {
+ BHEntity *second,*missiles;unsigned long second_generation,missile_generation;
+ unsigned long station,complete,next_mission,picked,second_seen,missile_projectiles,locked,complete_tick,next_live,missile_removed;
+ long ammo;float charge;
+} box_training;
+static BHEntity *box_action(BHGameApp *a,long op,long a0,long a1,long a2,long a3,long a4,BHEntity *next){
+ long args[5],selectors[5]={-1,-1,-1,-1,-1};BHEntity *e;BHScriptVMState state;
+ args[0]=a0;args[1]=a1;args[2]=a2;args[3]=a3;args[4]=a4;
+ e=bh_script_vm_create(&a->vm,0,op,args,selectors);if(e&&next){bh_script_vm_read(e,&state);state.next=next;if(!bh_script_vm_bind(&a->vm,e,&state))return 0;}return e;
+}
+static int box_wait(BHGameApp *a,long event,BHEntity *action,BHEntity *actor){
+ BHEntity *e=bh_entity_acquire(&a->pool);BHScriptWaitState s;BHScriptWaitPacket p;
+ if(!e||!action)return 0;memset(&s,0,sizeof(s));s.fired=action;s.remaining=1;s.expected=event;s.variable_remaining=s.variable_expected=-1;
+ if(!bh_script_wait_bind(&a->lifetime.timers,e,&s))return 0;p.event=8;p.actor=actor;p.expected=0;e->query(e,&p);return !a->lifetime.timers.error;
+}
 static unsigned long box_emissions(BHGameApp *a,unsigned long index){
  if(index==1)return a->weapon_pulse.shots;
  if(index==4)return a->weapon_arc_fire.shots;
@@ -9,12 +24,16 @@ static unsigned long box_emissions(BHGameApp *a,unsigned long index){
 }
 static void __cdecl box_event(BHEntity *e,void *raw) {
  long *p=(long*)raw;(void)e;
- if(box_observer&&p[0]==14&&p[2]==9002){box_observer->box_objective=1;bh_message_enqueue(&box_observer->messages,"1BOX OBJECTIVE COMPLETE\nTarget destroyed. Collect its drop.");}
+ if(!box_observer||p[0]!=14)return;
+ if(p[2]==2013)box_observer->box_objective=1;
+ if(p[2]==2020)box_training.station=1;
+ if(p[2]==2021){box_training.complete=1;box_training.complete_tick=box_observer->box_ticks;}
+ if(p[2]==2030)box_training.next_mission=1;
 }
 static int box_setup(BHGameApp *a) {
- unsigned long i;BHEntity *e,*wait,*action;BHWeaponObjectState *weapon;BHVec3 p={0,0,-45};BHScriptWaitState state;BHScriptWaitPacket activation;
- long args[5]={0,9002,0,0,0},selectors[5]={-1,-1,-1,-1,-1};
- if(!a->box_level)return 1;if(!a->hardware||a->editor_world.count!=3||a->navigation.node_count!=2)return failure(a,14,"Box level requires isolated assets and HAL");
+ unsigned long i;BHEntity *e,*action;BHWeaponObjectState *weapon;BHVec3 p={0,0,-45};
+ if(!a->box_level)return 1;if(!a->hardware||a->editor_world.count!=4||a->navigation.node_count!=2)return failure(a,14,"Box level requires isolated assets and HAL");
+ memset(&box_training,0,sizeof(box_training));
  srand(1979);box_observer=a;
  for(i=0;i<BH_BOOTSTRAP_MENUS;++i){e=a->bootstrap.menus[i].object.entity;e->step=0;e->refresh=0;bh_input_set_enabled(a->bootstrap.menus[i].object.input,&a->snapshot,0);}
  a->player_state.mode=1;a->player_state.world_mode=2;a->player_state.paused=0;a->player_state.ending=0;a->editor_world.mode=2;
@@ -33,47 +52,42 @@ static int box_setup(BHGameApp *a) {
  if(!a->box_auto)for(i=0;i<10;++i){p.x=-30+15*(long)(i%5);p.y=0;p.z=20+20*(long)(i/5);if(!bh_pickup_spawn(&a->pickups,&p,i,1,1,1,0,0))return failure(a,14,"Box weapon pickup creation failed");}
  /* Actual route AI, damage, wreck and loot pipeline; fixed seed is level data. */
  memset(a->availability[3],0,sizeof(a->availability[3]));a->availability[3][0]=1;a->availability[3][31]=1;
- a->box_ai=bh_actor_construct_room(&a->actor_construct,a->rooms[2].world,6,5000,10,9001,12345);
+ a->box_ai=bh_actor_construct_room(&a->actor_construct,a->rooms[2].world,6,5000,10,2013,12345);
  if(!a->box_ai||a->actor_construct.error)return failure(a,14,"Box AI creation failed");
  a->box_target_generation=a->box_ai->generation;
  /* Original waitfor -> VM broadcast chain, with a diagnostic result observer. */
- action=bh_script_vm_create(&a->vm,0,18,args,selectors);wait=bh_entity_acquire(&a->pool);e=bh_entity_acquire(&a->pool);
- if(!action||!wait||!e||!bh_entity_set_query(&a->pool,e,box_event))return failure(a,14,"Box objective allocation failed");
- memset(&state,0,sizeof(state));state.fired=action;state.remaining=1;state.expected=9001;state.variable_remaining=state.variable_expected=-1;
- if(!bh_script_wait_bind(&a->lifetime.timers,wait,&state))return failure(a,14,"Box waitfor binding failed");
- activation.event=8;activation.actor=a->nodes[2]->entity;activation.expected=0;wait->query(wait,&activation);
+ /* Original POWERUP/SENSOR2/LAUNCH2 chain, relocated into a straight box.
+    Target1 death -> five missiles + station sensor -> faster target -> relay. */
+ action=box_action(a,10,1,4,0,2020,0,0);
+ action=box_action(a,24,2020,0,0,0,0,action);
+ action=box_action(a,13,5,5,5,0,0,action);
+ if(!box_wait(a,2013,action,a->nodes[3]->entity))return failure(a,14,"Box missile/sensor wait failed");
+ action=box_action(a,17,1,6,5,30,2021,0);
+ if(!box_wait(a,2020,action,a->nodes[2]->entity))return failure(a,14,"Box second target wait failed");
+ {BHScriptTimerState timer;BHEntity *relay;action=box_action(a,18,0,2030,0,0,0,0);relay=bh_entity_acquire(&a->pool);memset(&timer,0,sizeof(timer));timer.fired=action;timer.remaining=1;timer.low=timer.high=10;timer.variable_remaining=timer.variable_low=timer.variable_high=-1;
+ if(!relay||!bh_script_timer_bind(&a->lifetime.timers,relay,&timer,1)||!box_wait(a,2021,relay,a->nodes[2]->entity))return failure(a,14,"Box completion relay failed");}
+ action=box_action(a,17,1,11,50,35,2031,0);
+ if(!box_wait(a,2030,action,a->nodes[2]->entity))return failure(a,14,"Box next assignment wait failed");
+ e=bh_entity_acquire(&a->pool);if(!e||!bh_entity_set_query(&a->pool,e,box_event))return failure(a,14,"Box event observer failed");
  if(a->lifetime.timers.error)return failure(a,14,"Box objective activation failed");
  bh_weapon_registry_resolve(&a->weapons.registry,0,&e,&weapon);
  a->box_trace=fopen("box-trace.csv","w");if(!a->box_trace)return failure(a,14,"Box trace open failed");
- fprintf(a->box_trace,"tick,x,y,z,vx,vy,vz,contacts,shots,damage_packets,ammo,pickup_alive,ai_alive,ai_x,ai_y,ai_z,objective,drop_seen,drop_taken,drop_x,drop_y,drop_z,collected_mask,fired_mask,primary,secondary,spawned_mask\n");
- bh_message_enqueue(&a->messages,"1BOX TEST\nW/S: thrust/brake\nArrows: steering\nCtrl/Space: primary/secondary\n1-5/6-0: select weapon\nAll weapons in far room.\nEsc: exit this test.");
+ fprintf(a->box_trace,"tick,x,y,z,vx,vy,vz,contacts,shots,damage_packets,ammo,pickup_alive,ai_alive,ai_x,ai_y,ai_z,objective,drop_seen,drop_taken,drop_x,drop_y,drop_z,collected_mask,fired_mask,primary,secondary,spawned_mask,station,missiles_picked,missile_ammo,second_seen,second_alive,complete,next_mission,missile_projectiles,locked,charge,progress,missile_removed,recycled_successors\n");
+ bh_message_enqueue(&a->messages,"1BOX TEST\nW/S: thrust/brake\nArrows: steering\nCtrl/Space: primary/secondary\n1-5/6-0: select weapon\nDestroy first target.\nCollect missiles ahead.\nDestroy faster target.\nEsc: exit this test.");
  stage(a,"Box level: direct gameplay; actual AI, projectiles, pickup and objective callbacks");return 1;
 }
 static void box_inputs(BHGameApp *a) {
  BHEntityPositionPacket p;BHVec3 d,right,up,forward;double x,y,z,yaw,pitch,distance;int aim=0,combat=0;
- unsigned long index,phase;BHEntity *weapon;BHWeaponObjectState *state;
  if(!a->box_auto)return;
  memset(a->snapshot.current,0,sizeof(a->snapshot.current));
  a->snapshot.axes[0]=a->snapshot.axes[1]=0;
- if(a->box_ticks>=900){
-  index=(a->box_ticks-900)/120;phase=(a->box_ticks-900)%120;if(index>=10)return;
-  if(!bh_weapon_registry_resolve(&a->weapons.registry,index,&weapon,&state)){failure(a,14,"Box weapon registry failed");return;}
-  if(!phase){
-   a->box_ammo_before=state->common.ammo;
-   a->box_weapon_pickup=bh_pickup_spawn(&a->pickups,&a->player->position,index,1,1,1,0,0);
-   if(!a->box_weapon_pickup){failure(a,14,"Box staged weapon pickup failed");return;}
-   a->box_weapon_generation=a->box_weapon_pickup->generation;
-  }
-  if(phase==20)a->snapshot.current[index==9?'0':'1'+index]=0x80;
-  if(phase==59){a->box_fire_ammo=state->common.ammo;a->box_emit_before=box_emissions(a,index);}
-  if(phase>=60&&phase<80)a->snapshot.current[index<5?VK_CONTROL:VK_SPACE]=0x80;
-  return;
- }
  if(a->box_ticks<35)a->snapshot.current['W']=0x80;
  if(a->box_ticks>=35){
   if(a->box_ai->generation==a->box_target_generation&&a->box_ai->query){
    p.event=3;a->box_ai->query(a->box_ai,&p);aim=combat=1;
   }else if(a->box_drop&&a->box_drop->generation==a->box_drop_generation){p.position=a->box_drop->position;aim=1;}
+  else if(!box_training.picked){p.position.x=0;p.position.y=0;p.position.z=5;aim=1;}
+  else if(box_training.second&&box_training.second->generation==box_training.second_generation&&box_training.second->query){p.event=3;box_training.second->query(box_training.second,&p);aim=1;combat=2;}
   if(aim){
    d.x=p.position.x-a->player->position.x;d.y=p.position.y-a->player->position.y;d.z=p.position.z-a->player->position.z;
    memcpy(&right,(char*)a->player+0x18,12);memcpy(&up,(char*)a->player+0x24,12);memcpy(&forward,(char*)a->player+0x30,12);
@@ -84,23 +98,21 @@ static void box_inputs(BHGameApp *a) {
    distance=sqrt(x*x+y*y+z*z);
    if(!combat&&z>0&&fabs(yaw)<.3&&fabs(pitch)<.3&&distance>4)a->snapshot.current['W']=0x80;
   }
-  if(combat)a->snapshot.current[VK_CONTROL]=0x80;
+  if(combat==1)a->snapshot.current[VK_CONTROL]=0x80;
+  if(combat==2&&box_training.charge>=48&&a->box_ticks%60<4)a->snapshot.current[VK_SPACE]=0x80;
  }
 }
 static void box_observe(BHGameApp *a) {
- BHEntity *e,*drop;BHWeaponObjectState *weapon;BHEntityPositionPacket p;BHVec3 dp={0,0,0};int alive,pickup;
+ BHEntity *e,*drop,*missile_weapon;BHWeaponObjectState *weapon,*missile_state;BHEntityPositionPacket p;BHVec3 dp={0,0,0};int alive,pickup,second_alive=0;unsigned long tag;short progress;
  if(!a->box_level)return;++a->box_ticks;
- if(a->box_auto&&a->box_ticks>900){unsigned long index=(a->box_ticks-901)/120,phase=(a->box_ticks-901)%120;BHEntity *selected;BHWeaponObjectState *state;float boost;
-  if(index<10&&bh_weapon_registry_resolve(&a->weapons.registry,index,&selected,&state)){
-   if(a->box_weapon_pickup->generation!=a->box_weapon_generation&&state->common.available_ec&&state->common.ammo>a->box_ammo_before)a->box_collected_mask|=1UL<<index;
-   memcpy(&boost,(char*)a->player+0x240,4);
-   if(phase>=60&&state->common.ammo<a->box_fire_ammo&&((index==9&&boost>0)||(index!=9&&box_emissions(a,index)>a->box_emit_before)))a->box_fired_mask|=1UL<<index;
-   if(phase>=60)for(e=a->pool.active;e;e=e->next){
-    if((index==0&&e->step==bh_ballistic_projectile_tick)||(index==2&&e->step==bh_homing_projectile_tick)||(index==3&&e->step==bh_effect_split_tick)||(index==5&&e->step==bh_effect_orbit_tick)||(index==6&&e->step==bh_area_projectile_tick)||(index==7&&e->step==bh_pulse_projectile_tick)||(index==8&&e->step==bh_effect_accelerated_tick))a->box_spawned_mask|=1UL<<index;
-   }
-   if(phase==119&&(!(a->box_collected_mask&(1UL<<index))||!(a->box_fired_mask&(1UL<<index)))){char text[160];sprintf(text,"Box weapon%lu incomplete: collected=%lx fired=%lx ammo=%ld selection=%u",index,a->box_collected_mask,a->box_fired_mask,state->common.ammo,*((unsigned char*)a->player+0x2b6+(index>=5)));failure(a,14,text);}
-  }
+ if(!box_training.missiles)for(drop=a->pickups.head;drop;drop=bh_pickup_state(drop)->global_next)if(bh_pickup_state(drop)->type==5){box_training.missiles=drop;box_training.missile_generation=drop->generation;break;}
+ if(box_training.missiles&&box_training.missiles->generation!=box_training.missile_generation)box_training.missile_removed=1;
+ for(e=a->pool.active;e;e=e->next){
+  if(e->query==bh_actor_response_query||e->query==bh_actor_damage_query){memcpy(&tag,(char*)e+0x11c,4);if(tag==2021){box_training.second=e;box_training.second_generation=e->generation;box_training.second_seen=1;second_alive=1;}if(tag==2031)box_training.next_live=1;}
+  if(e->step==bh_effect_orbit_tick)++box_training.missile_projectiles;
  }
+ if(bh_weapon_registry_resolve(&a->weapons.registry,5,&missile_weapon,&missile_state)){box_training.ammo=missile_state->common.ammo;box_training.charge=(float)missile_state->common.hud.charge;if(box_training.ammo>0)box_training.picked=1;if(box_training.charge>=48)box_training.locked=1;}
+ memcpy(&progress,a->config.settings+2,2);
  alive=a->box_ai->generation==a->box_target_generation&&a->box_ai->query!=NULL;
  pickup=a->box_pickup->generation==a->box_pickup_generation;
  memset(&p,0,sizeof(p));p.event=3;if(alive)a->box_ai->query(a->box_ai,&p);
@@ -112,7 +124,8 @@ static void box_observe(BHGameApp *a) {
   if(a->box_drop->generation==a->box_drop_generation)dp=a->box_drop->position;
   else if(weapon->common.ammo>a->box_drop_ammo)a->box_drop_taken=1;
  }
- fprintf(a->box_trace,"%lu,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%lu,%lu,%lu,%ld,%d,%d,%.9g,%.9g,%.9g,%d,%d,%d,%.9g,%.9g,%.9g,%lu,%lu,%u,%u,%lu\n",a->box_ticks,a->player->position.x,a->player->position.y,a->player->position.z,a->player_motion.velocity.x,a->player_motion.velocity.y,a->player_motion.velocity.z,a->physics.contacts,a->weapon_fire.shots,a->ballistic.bindings.damage_packets,weapon->common.ammo,pickup,alive,p.position.x,p.position.y,p.position.z,a->box_objective,a->box_drop_seen,a->box_drop_taken,dp.x,dp.y,dp.z,a->box_collected_mask,a->box_fired_mask,*((unsigned char*)a->player+0x2b6),*((unsigned char*)a->player+0x2b7),a->box_spawned_mask);
+ fprintf(a->box_trace,"%lu,%.9g,%.9g,%.9g,%.9g,%.9g,%.9g,%lu,%lu,%lu,%ld,%d,%d,%.9g,%.9g,%.9g,%d,%d,%d,%.9g,%.9g,%.9g,%lu,%lu,%u,%u,%lu,%lu,%lu,%ld,%lu,%d,%lu,%lu,%lu,%lu,%.0f,%d,%lu,%lu\n",a->box_ticks,a->player->position.x,a->player->position.y,a->player->position.z,a->player_motion.velocity.x,a->player_motion.velocity.y,a->player_motion.velocity.z,a->physics.contacts,a->weapon_fire.shots,a->ballistic.bindings.damage_packets,weapon->common.ammo,pickup,alive,p.position.x,p.position.y,p.position.z,a->box_objective,a->box_drop_seen,a->box_drop_taken,dp.x,dp.y,dp.z,a->box_collected_mask,a->box_fired_mask,*((unsigned char*)a->player+0x2b6),*((unsigned char*)a->player+0x2b7),a->box_spawned_mask,box_training.station,box_training.picked,box_training.ammo,box_training.second_seen,second_alive,box_training.complete,box_training.next_mission&&box_training.next_live,box_training.missile_projectiles,box_training.locked,box_training.charge,progress,box_training.missile_removed,a->pool.recycled_successors);
  fflush(a->box_trace);
- if(a->box_auto&&a->box_ticks>=2100)a->quit=1;
+ if(a->box_auto&&box_training.next_mission&&box_training.next_live&&a->box_ticks>box_training.complete_tick+330)a->quit=1;
+ if(a->box_auto&&a->box_ticks>=6000){failure(a,14,"Box training sequence did not complete within6000ticks");a->quit=1;}
 }

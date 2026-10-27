@@ -40,6 +40,7 @@ def main():
     selected |= {'tests/script_attached_sound.c', 'tests/script_timer.c', 'tests/segment_query.c', 'tests/effect_projectile.c', 'tests/effect_orbit_tick.c', 'tests/script_lifetime.c', 'tests/bh_pulse_projectile.c', 'tests/homing_projectile.c', 'tests/bh_effect_split.c', 'tests/script_motion.c', 'tests/bh_area_projectile.c', 'tests/projectile_lifetime.c', 'tests/projectile_create.c'}
     objects = []
     selected.add('tests/sound_tick.c')
+    selected.add('tests/entities.c')
 
     def run(argv, cwd=out):
         process = subprocess.run([str(a) for a in argv], cwd=cwd, env=env,

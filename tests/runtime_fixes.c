@@ -24,6 +24,7 @@ int bh_script_actor_route_checkpoint(unsigned long *);
 int bh_script_vm_checkpoint(unsigned long *);
 int bh_script_wait_checkpoint(unsigned long *);
 int bh_pickup_checkpoint(unsigned long *);
+int bh_entities_checkpoint(const char *,unsigned long *);
 int bh_pickup_basic_checkpoint(unsigned long *);
 int bh_world_segment_checkpoint(unsigned long *);
 int bh_actor_attack_checkpoint(unsigned long *);
@@ -65,6 +66,7 @@ int main(int argc,char **argv) {
     failed+=bh_script_vm_checkpoint(&n);checks+=n;
     failed+=bh_script_wait_checkpoint(&n);checks+=n;
     failed+=bh_pickup_checkpoint(&n);checks+=n;
+    failed+=bh_entities_checkpoint(NULL,&n);checks+=n;
     failed+=bh_pickup_basic_checkpoint(&n);checks+=n;
     failed+=bh_world_segment_checkpoint(&n);checks+=n;
     failed+=bh_actor_attack_checkpoint(&n);checks+=n;
