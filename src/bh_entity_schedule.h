@@ -6,31 +6,38 @@
 #include "bh_view_camera.h"
 
 typedef struct BHEntityScheduleRoom BHEntityScheduleRoom;
-struct BHEntityScheduleRoom {
+struct BHEntityScheduleRoom
+{
     BHPickupRoom *room; /* borrowed source room and its two entity lists */
-    unsigned long resource,resource_flags;
+    unsigned long resource, resource_flags;
     BHVec3 angles;
     BHEntityScheduleRoom *next; /* source +124 traversal, NULL terminates */
     BHEntityScheduleRoom *portal_targets[6];
     unsigned long linked_active; /* original +1c8: zero terminates linked traversal */
-    unsigned long last_frame,frame_remaining;
-    int frame_active,frame_seen;
+    unsigned long last_frame, frame_remaining;
+    int frame_active, frame_seen;
     /* Optional source bridge for original world step/+104 activity. The
        entity and timer activity storage must outlive this scheduled room. */
     BHEntity *activity_entity;
     long *activity;
 };
-typedef enum BHEntityScheduleError {
-    BH_SCHEDULE_OK,BH_SCHEDULE_ARGUMENT,BH_SCHEDULE_TOPOLOGY,
-    BH_SCHEDULE_CLIP,BH_SCHEDULE_QUEUE,BH_SCHEDULE_DEPTH
+typedef enum BHEntityScheduleError
+{
+    BH_SCHEDULE_OK,
+    BH_SCHEDULE_ARGUMENT,
+    BH_SCHEDULE_TOPOLOGY,
+    BH_SCHEDULE_CLIP,
+    BH_SCHEDULE_QUEUE,
+    BH_SCHEDULE_DEPTH
 } BHEntityScheduleError;
-typedef struct BHEntityScheduleContext {
+typedef struct BHEntityScheduleContext
+{
     BHDrawQueue *queue;
     BHViewConfig *viewport;
     const BHViewCamera *camera;
     const BHVec3 *overlay_position; /* original player +160, distinct from render eye */
     unsigned long frame;
-    unsigned long max_rooms,max_entities,max_depth;
+    unsigned long max_rooms, max_entities, max_depth;
     BHEntityScheduleError error;
 } BHEntityScheduleContext;
 
@@ -38,13 +45,12 @@ typedef struct BHEntityScheduleContext {
    recovered six-plane convex clip owner. Input is four camera-projected points
    in cyclic order. The result ring borrows vertices and scratch from caller;
    next invocation invalidates it. A NULL result with BH_CLIP_OK is culled. */
-BHClipVertex *__cdecl bh_entity_schedule_clip_portal(BHClipContext *clip,
-    BHClipVertex vertices[4],const BHVec3 projected[4]);
+BHClipVertex *__cdecl bh_entity_schedule_clip_portal(BHClipContext *clip, BHClipVertex vertices[4],
+                                                     const BHVec3 projected[4]);
 /* 00409f20: each tick decrements the 30-frame refresh callback installed by
    the schedule pass, then removes it at zero. */
 void __cdecl bh_entity_schedule_tick(BHEntityScheduleRoom *room);
 /* 00409f40: resource/child/linked-room/overlay/portal order. All room and
    entity bindings are borrowed; the caller owns their stable lifetime. */
-int __cdecl bh_entity_schedule(BHEntityScheduleContext *context,
-    BHEntityScheduleRoom *room);
+int __cdecl bh_entity_schedule(BHEntityScheduleContext *context, BHEntityScheduleRoom *room);
 #endif

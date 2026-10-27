@@ -5,19 +5,21 @@
 
 /* Exact32-byte start-pose table entry at original004df6c0. The final two
    words belong to other level/spawn consumers and reset preserves them. */
-typedef struct BHPlayerCameraStart {
-    BHVec3 position,angles;
+typedef struct BHPlayerCameraStart
+{
+    BHVec3 position, angles;
     unsigned long metadata[2];
 } BHPlayerCameraStart;
 /* Explicit borrowed equivalents of global focus, start table, player count,
    local player index and shared camera callback state. The player must use
    the original x86 BHEntity layout and own its embedded camera at+e8.
    starts and camera must not overlap player. */
-typedef struct BHPlayerCameraContext {
+typedef struct BHPlayerCameraContext
+{
     BHEntity *player;
     const BHPlayerCameraStart *starts;
     unsigned long start_count;
-    long player_count,local_player_index;
+    long player_count, local_player_index;
     BHCameraStateContext *camera;
 } BHPlayerCameraContext;
 
@@ -31,5 +33,5 @@ BHCameraState *__cdecl bh_player_camera_state(BHEntity *player);
    Caller supplies initialized camera/mode storage and finite start poses.
    Source bounds/nonfinite/binding guards reject before actor mutation;
    callback side effects retain their original synchronous semantics. */
-int __cdecl bh_player_camera_reset(BHPlayerCameraContext *,unsigned long index);
+int __cdecl bh_player_camera_reset(BHPlayerCameraContext *, unsigned long index);
 #endif

@@ -1,7 +1,8 @@
 #ifndef BH_HUD_STATUS_H
 #define BH_HUD_STATUS_H
 /* Shared observed bindings for the complete world/flat status HUD owners. */
-typedef struct BHHudWeaponAmmo {
+typedef struct BHHudWeaponAmmo
+{
     unsigned char opaque[0x10c];
     long amount;
 } BHHudWeaponAmmo;
@@ -13,11 +14,12 @@ typedef struct BHHudWeaponAmmo {
    amount at +10c. Table/objects/state survive synchronous calls; they must
    not overlap the draw queue. This view supplies no weapon callbacks or
    constructors and owns no weapon allocation/projectile lifetime. */
-typedef struct BHHudStatusState {
-    float gauge_a,gauge_b;
+typedef struct BHHudStatusState
+{
+    float gauge_a, gauge_b;
     const BHHudWeaponAmmo *const *weapons;
     unsigned long weapon_count;
-    unsigned char primary,secondary,flags,countdown_a,countdown_b;
-    long counter_a,counter_b,pending;
+    unsigned char primary, secondary, flags, countdown_a, countdown_b;
+    long counter_a, counter_b, pending;
 } BHHudStatusState;
 #endif

@@ -13,15 +13,21 @@
 #include "bh_sound_queue.h"
 #include "bh_fade.h"
 
-typedef enum BHPlayerSceneError {
-    BH_PLAYER_SCENE_OK,BH_PLAYER_SCENE_ARGUMENT,BH_PLAYER_SCENE_BINDING,
-    BH_PLAYER_SCENE_WEAPON,BH_PLAYER_SCENE_OWNER,BH_PLAYER_SCENE_QUEUE
+typedef enum BHPlayerSceneError
+{
+    BH_PLAYER_SCENE_OK,
+    BH_PLAYER_SCENE_ARGUMENT,
+    BH_PLAYER_SCENE_BINDING,
+    BH_PLAYER_SCENE_WEAPON,
+    BH_PLAYER_SCENE_OWNER,
+    BH_PLAYER_SCENE_QUEUE
 } BHPlayerSceneError;
 
 /* Every field is borrowed from an existing source owner. The scene callback
    never constructs player, weapon, image, scene or renderer storage. The
    pointers to mutable globals remain live across synchronous callbacks. */
-typedef struct BHPlayerScene {
+typedef struct BHPlayerScene
+{
     BHEntity *player;
     BHDrawQueue *queue;
     BHSoundQueue *sound;
@@ -39,15 +45,15 @@ typedef struct BHPlayerScene {
     BHWeaponHudTargetContext *target;
     BHEntity **actor_head;
     BHEntity **pickup_head;
-    const long *mode_count,*frame_count,*display_width,*display_height;
+    const long *mode_count, *frame_count, *display_width, *display_height;
     const long *confirmation_gate;
-    unsigned long material_image,horizon_image,aim_image,aim_overlay_image;
-    unsigned long particle_image,confirmation_image,trail_image,overlay_image;
+    unsigned long material_image, horizon_image, aim_image, aim_overlay_image;
+    unsigned long particle_image, confirmation_image, trail_image, overlay_image;
     unsigned long cockpit_resource;
     unsigned long pickup_limit;
     /* random_calls counts this owner's direct draws plus arc draws. The
        background owner also consumes the shared CRT stream internally. */
-    unsigned long attempted,queued,dropped,random_calls;
+    unsigned long attempted, queued, dropped, random_calls;
     BHPlayerSceneError error;
 } BHPlayerScene;
 

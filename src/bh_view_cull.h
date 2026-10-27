@@ -14,6 +14,6 @@
    Lazy reads match original: mask0/depthNULL requires neither context; config
    is read only when a depth bit is present, camera only for active planes or
    requested depth. No pointer is retained, no original code is executed. */
-unsigned long __cdecl bh_view_cull_sphere(const BHViewConfig *,const BHMainCamera *,
-    float x,float y,float z,float radius,unsigned long mask,float *depth);
+unsigned long __cdecl bh_view_cull_sphere(const BHViewConfig *, const BHMainCamera *, float x, float y, float z,
+                                          float radius, unsigned long mask, float *depth);
 #endif

@@ -13,6 +13,6 @@
    and consumes no RNG. Caller retains all world/model/neighbor/actor lifetimes.
    Returns0 for missing pointers or inconsistent/>6 source portal counts before
    mutation,1 after publishing selected slot. Output must not alias inputs. */
-int __cdecl bh_route_choose_exit(BHEntity *actor,const BHWorldGeometry *room,
-    const BHWorldGeometry *preferred,long excluded,long *selected);
+int __cdecl bh_route_choose_exit(BHEntity *actor, const BHWorldGeometry *room, const BHWorldGeometry *preferred,
+                                 long excluded, long *selected);
 #endif

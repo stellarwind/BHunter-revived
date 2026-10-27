@@ -1,10 +1,14 @@
 #ifndef BH_SOURCE_FILES_H
 #define BH_SOURCE_FILES_H
 #include <windows.h>
-typedef struct BHSourceFiles {
-    HKEY root;const char *subkey;unsigned long expected_checksum;
-    unsigned long checksum,bytes,blocks;
-    LONG registry_result;int error;
+typedef struct BHSourceFiles
+{
+    HKEY root;
+    const char *subkey;
+    unsigned long expected_checksum;
+    unsigned long checksum, bytes, blocks;
+    LONG registry_result;
+    int error;
 } BHSourceFiles;
 /* Count-zero defaults adapter: original HKLM Paths/SourceDir and checksum. */
 void __cdecl bh_source_files_init(BHSourceFiles *);

@@ -2,21 +2,27 @@
 #define BH_HUD_MARKERS_H
 #include "bh_radar.h"
 
-typedef enum BHHudMarkersError {
-    BH_HUD_MARKERS_OK,BH_HUD_MARKERS_ARGUMENT,BH_HUD_MARKERS_CALLBACK,
-    BH_HUD_MARKERS_KIND,BH_HUD_MARKERS_LIMIT,BH_HUD_MARKERS_QUEUE,
+typedef enum BHHudMarkersError
+{
+    BH_HUD_MARKERS_OK,
+    BH_HUD_MARKERS_ARGUMENT,
+    BH_HUD_MARKERS_CALLBACK,
+    BH_HUD_MARKERS_KIND,
+    BH_HUD_MARKERS_LIMIT,
+    BH_HUD_MARKERS_QUEUE,
     BH_HUD_MARKERS_NUMERICAL
 } BHHudMarkersError;
 
 /* Borrowed bindings for the actual 004dfb28 actor list, renderer and atlases.
    This owner creates no actors or callbacks. All bindings, query outputs and
    the current actor's lifetime must survive synchronous queries and draws. */
-typedef struct BHHudMarkers {
+typedef struct BHHudMarkers
+{
     BHPickupDrawContext *projection;
     BHRadarContext *radar;
-    unsigned long brackets_image,status_image;
+    unsigned long brackets_image, status_image;
     long display_width;
-    unsigned long limit,visited,attempted,queued,dropped,projected;
+    unsigned long limit, visited, attempted, queued, dropped, projected;
     BHHudMarkersError error;
 } BHHudMarkers;
 
@@ -32,6 +38,6 @@ typedef struct BHHudMarkers {
    player_flags borrows the original player byte+2b8, not the radar visibility
    word. It is read after each query so callback mutations remain observable.
    PC53/nearest/masked finite input profile; PC24 remains unvalidated. */
-int __cdecl bh_hud_markers_draw(BHHudMarkers *,BHEntity *head,
-    const BHVec3 *player_position,const unsigned char *player_flags);
+int __cdecl bh_hud_markers_draw(BHHudMarkers *, BHEntity *head, const BHVec3 *player_position,
+                                const unsigned char *player_flags);
 #endif

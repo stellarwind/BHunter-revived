@@ -3,14 +3,27 @@
 #include "bh_remote_tick.h"
 #include "bh_remote_query.h"
 #include "bh_network_game.h"
-typedef struct BHRemotePackets {
- BHEntityPool *pool;BHEntity **remote,**head;unsigned long *count;
- BHNetworkGame *network;BHRemoteQuery *query;BHRemoteRender *render;
- BHRemoteTick *tick;unsigned long *simulation_tick;long *local_slot;
- BHEntity *local;BHWorldGeometry **spawn_world;BHPickupRoom *rooms;
- unsigned long room_count,engine_sounds[8];const BHNavigation *navigation;
- unsigned long pending,processed,bad;BHPacketStats framing;BHPacketReader reader;
- unsigned long spawns,immediate,queued;int error;
+typedef struct BHRemotePackets
+{
+    BHEntityPool *pool;
+    BHEntity **remote, **head;
+    unsigned long *count;
+    BHNetworkGame *network;
+    BHRemoteQuery *query;
+    BHRemoteRender *render;
+    BHRemoteTick *tick;
+    unsigned long *simulation_tick;
+    long *local_slot;
+    BHEntity *local;
+    BHWorldGeometry **spawn_world;
+    BHPickupRoom *rooms;
+    unsigned long room_count, engine_sounds[8];
+    const BHNavigation *navigation;
+    unsigned long pending, processed, bad;
+    BHPacketStats framing;
+    BHPacketReader reader;
+    unsigned long spawns, immediate, queued;
+    int error;
 } BHRemotePackets;
 /* Whole00427920 and00427340. Each validates the real mutable packet envelope,
    retaining original pending/processed/bad counter quirks independently from
@@ -23,7 +36,7 @@ typedef struct BHRemotePackets {
    immediate single-shot sync and bounded repeated shots/queued tail.
    Source guards reject truncated fields, invalid slot/type and occupied spawn
    slot rather than original overflow/leak. No original code or game playback. */
-int __cdecl bh_remote_spawn_packet(BHRemotePackets *,void *,unsigned long size,unsigned long capacity);
-int __cdecl bh_remote_shot_packet(BHRemotePackets *,void *,unsigned long size,unsigned long capacity);
-int __cdecl bh_remote_entity_draw(BHRemotePackets *,BHEntity *);
+int __cdecl bh_remote_spawn_packet(BHRemotePackets *, void *, unsigned long size, unsigned long capacity);
+int __cdecl bh_remote_shot_packet(BHRemotePackets *, void *, unsigned long size, unsigned long capacity);
+int __cdecl bh_remote_entity_draw(BHRemotePackets *, BHEntity *);
 #endif

@@ -5,30 +5,377 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-static const GUID draw2_iid={0xb3a6f3e0,0x2b43,0x11cf,{0xa2,0xde,0,0xaa,0,0xb9,0x33,0x56}};
-static void error(BHApplicationBootstrap *c,const char *text){unsigned long n=(unsigned long)strlen(c->errors),left=(unsigned long)sizeof(c->errors)-n-1;if(left){strncpy(c->errors+n,text,left);c->errors[n+left]=0;}n=(unsigned long)strlen(c->errors);if(n+1<sizeof(c->errors)){c->errors[n]='\n';c->errors[n+1]=0;}}
-static int dialog(BHApplicationBootstrap *c,HWND w,const char *message,const char *title,UINT flags){if(c->no_dialogs)return IDCANCEL;++c->dialogs;return MessageBoxA(w,message,title,flags);}
-unsigned long __cdecl bh_application_mode_plan(int hardware,int low,BHStartupMode out[9]){unsigned long n=0,i,k;static const unsigned long bits[3]={16,32,24};static const unsigned long heights[2][3]={{480,240,200},{240,480,200}};if(!out)return 0;if(hardware)for(i=0;i<3;++i){out[n].width=640;out[n].height=480;out[n].bits=bits[i];out[n].software=0;out[n].resolution=-1;++n;}for(i=0;i<3;++i)for(k=0;k<2;++k){out[n].height=heights[low!=0][i];out[n].width=out[n].height==480?640:320;out[n].bits=k?8:16;out[n].software=1;out[n].resolution=out[n].height==480?1:0;++n;}return n;}
-int __cdecl bh_application_pacing(double elapsed,double delay,DWORD *milliseconds){double value;if(!milliseconds||!_finite(elapsed)||!_finite(delay)||delay<0||delay>4294967295.0)return 0;value=elapsed<=0?delay:elapsed<delay?delay-elapsed:0;*milliseconds=(DWORD)(__int64)value;return 1;}
-static LRESULT CALLBACK procedure(HWND window,UINT message,WPARAM key,LPARAM bits){BHApplicationBootstrap *c=(BHApplicationBootstrap*)GetWindowLongA(window,GWL_USERDATA);if(message==WM_NCCREATE){CREATESTRUCTA *created=(CREATESTRUCTA*)bits;c=(BHApplicationBootstrap*)created->lpCreateParams;SetWindowLongA(window,GWL_USERDATA,(LONG)c);}if(!c||!c->dispatch)return DefWindowProcA(window,message,key,bits);return bh_window_dispatch(c->dispatch,window,message,key,bits);}
-static void configuration(BHApplicationBootstrap *c){unsigned long value;memcpy(&value,c->config->settings,4);c->configured=(long)value;memcpy(&value,c->config->settings+4,4);c->hardware=value&1;memcpy(&value,c->config->settings+8,4);c->resolution=(long)value;}
-static void write_flag(BHApplicationBootstrap *c,unsigned long at,long value){memcpy(c->config->settings+at,&value,4);}
-static int choose(BHApplicationBootstrap *c){long i,j;char text[2048],line[256];unsigned long n;int answer;c->selected=0;if(c->catalog.secondary_count<0||c->catalog.secondary_count>7)return 0;if(c->configured){for(i=0;i<=c->catalog.secondary_count;++i)if(!_stricmp(c->catalog.label[i],(const char*)c->config->settings+12))c->selected=i;return 1;}if(c->no_dialogs)return 0;i=c->catalog.secondary_count;if(i==1){sprintf(text,"Do you wish to use\n%s ?",c->catalog.label[1]);if(dialog(c,c->window,text,"Extra graphic device found!",MB_YESNO)==IDYES)c->selected=1;}else if(i>1){while(!c->selected&&i>0){strcpy(text,"Devices found:\n");for(j=c->catalog.secondary_count;j>=0;--j){sprintf(line,"(%d) %s\n",j,c->catalog.label[j]);n=(unsigned long)strlen(text);if(n+strlen(line)>=sizeof(text))return 0;strcat(text,line);}sprintf(line,"\nDo you wish to use (%d)\n%s ?",i,c->catalog.label[i]);if(strlen(text)+strlen(line)>=sizeof(text))return 0;strcat(text,line);if(dialog(c,c->window,text,"Extra graphic devices found!",MB_YESNO)==IDYES)c->selected=i;--i;}}strcpy((char*)c->config->settings+12,c->catalog.label[c->selected]);answer=dialog(c,c->window,"Use hardware renderer if available?\n(Not recommended if you encounter problems)","3D Acceleration",MB_YESNO);c->hardware=answer!=IDNO;c->resolution=1;if(!c->hardware&&dialog(c,c->window,"Use low resolution (if available)\nfor better performance?","Software Renderer",MB_YESNO)!=IDNO)c->resolution=0;write_flag(c,4,c->hardware);write_flag(c,8,c->resolution);return 1;}
-static void native_release(BHApplicationBootstrap *c){if(c->draw2){IDirectDraw2_RestoreDisplayMode(c->draw2);IDirectDraw2_SetCooperativeLevel(c->draw2,c->window,DDSCL_NORMAL);IDirectDraw2_Release(c->draw2);c->draw2=0;}if(c->draw){IDirectDraw_SetCooperativeLevel(c->draw,c->window,DDSCL_NORMAL);IDirectDraw_Release(c->draw);c->draw=0;}}
-static DWORD fatal(BHApplicationBootstrap *c,int code,const char *reason){c->error=code;if(reason)error(c,reason);bh_render_mode_dispose(&c->render);native_release(c);if(c->window){ShowWindow(c->window,SW_HIDE);if(c->errors[0])dialog(c,c->window,c->errors,"Fatal Error!",0);DestroyWindow(c->window);c->window=0;}return 0;}
-static int modes(BHApplicationBootstrap *c){BHStartupMode plan[9];unsigned long i,n;n=bh_application_mode_plan(c->hardware,c->resolution==0,plan);for(i=0;i<n;++i){++c->mode_attempts;if(plan[i].software){c->hardware=0;c->resolution=plan[i].resolution;write_flag(c,4,0);write_flag(c,8,c->resolution);}if(bh_render_mode_startup(&c->render,c->draw2,c->draw,plan[i].width,plan[i].height,plan[i].bits,plan[i].software))return 1;}error(c,c->render.errors);return 0;}
-DWORD __cdecl bh_application_bootstrap(BHApplicationBootstrap *c,HINSTANCE instance,HINSTANCE previous,const char *command,int show){WNDCLASSEXA type;BHDeviceName names[8];BHDisplaySelection selected;BHWindowDispatch *dispatch;MSG message;DWORD tick,sleep_ms;unsigned long i;long result;double began,elapsed,delay;HANDLE mutex;(void)command;
- if(!c||!c->source||!c->paths||!c->config||!c->engine||!c->dispatch||!c->worker||!c->callback)return 0;c->error=0;c->instance=instance;
- for(;;){++c->source_attempts;if(bh_source_files_check(c->source))break;if(c->no_dialogs){c->error=2;return 0;}if(dialog(c,0,"Please insert BHunter CD!","Error!",MB_OKCANCEL)==IDCANCEL)return 0;}
- InitCommonControls();dispatch=c->dispatch;if(!c->engine->frames)return fatal(c,1,0);dispatch->frames=c->engine->frames;if(!dispatch->frames->message){dispatch->frames->message=bh_window_default_message;dispatch->frames->message_user=0;}dispatch->display_state=&c->worker->display_state;dispatch->capture_request=&c->worker->request_capture;dispatch->thread_active=&c->thread_active;dispatch->hide_cursor=&c->hide_cursor;dispatch->thread=&c->thread;dispatch->draw=&c->draw;dispatch->primary=&c->render.screen;dispatch->back=&c->render.render;
- if(!previous){memset(&type,0,sizeof(type));type.cbSize=sizeof(type);type.style=CS_DBLCLKS;type.lpfnWndProc=procedure;type.hInstance=instance;type.hIcon=LoadIconA(instance,MAKEINTRESOURCEA(0x66));type.hIconSm=LoadIconA(instance,MAKEINTRESOURCEA(0x66));type.hCursor=LoadCursorA(instance,MAKEINTRESOURCEA(0x7f00));type.hbrBackground=(HBRUSH)GetStockObject(4);type.lpszClassName="BHunter";if(!RegisterClassExA(&type))return 0;}
- c->window=CreateWindowExA(0,"BHunter","BHunter",0x80080000UL,0,0,GetSystemMetrics(0),GetSystemMetrics(1),0,0,instance,c);if(!c->window)return 0;ShowWindow(c->window,show);UpdateWindow(c->window);result=bh_paths_discover(c->paths);if(!result){dialog(c,c->window,"Please run this program from your original BHunter CD.","Installation Error",0);return fatal(c,3,0);}if(result==1)return fatal(c,3,0);if(result==3)c->installed=1;
- memset(&c->catalog,0,sizeof(c->catalog));DirectDrawEnumerateA(bh_display_catalog_callback,&c->catalog);for(i=0;i<=(unsigned long)c->catalog.secondary_count&&i<8;++i)strcpy(names[i].name,c->catalog.label[i]);if(!bh_config_bootstrap(c->config,c->paths->ini,names,(unsigned long)c->catalog.secondary_count+1))return fatal(c,4,"Configuration error");configuration(c);if(!choose(c))return fatal(c,4,"Configuration error");memset(&selected,0,sizeof(selected));selected.requested=c->catalog.label[c->selected];DirectDrawEnumerateA(bh_display_select_callback,&selected);c->draw=selected.draw;if(!c->draw)return fatal(c,5,"No DirectDraw");c->last_hresult=IDirectDraw_SetCooperativeLevel(c->draw,c->window,DDSCL_EXCLUSIVE|DDSCL_FULLSCREEN);if(c->last_hresult!=DD_OK)return fatal(c,6,"DirectDraw error");c->last_hresult=IDirectDraw_QueryInterface(c->draw,&draw2_iid,(void**)&c->draw2);if(c->last_hresult!=DD_OK)return fatal(c,7,"This application requires DirectX5.0 or newer");c->last_hresult=IDirectDraw2_SetCooperativeLevel(c->draw2,c->window,DDSCL_EXCLUSIVE|DDSCL_FULLSCREEN);if(c->last_hresult!=DD_OK)return fatal(c,8,"Fullscreen mode not available");if(!modes(c))return fatal(c,9,"No suitable screen mode");
- mutex=CreateMutexA(0,FALSE,"RenderMutex");if(!mutex)return fatal(c,10,"Couldn't create render mutex");if(c->engine->frames->mutex)CloseHandle(c->engine->frames->mutex);c->engine->frames->mutex=mutex;c->engine->archive=c->paths->archive;c->engine->d3d=c->render.engine.d3d;if(!bh_engine_bootstrap(c->engine,instance,c->window))return fatal(c,11,"Init of simulation failed");if(!bh_frame_callback_start(c->callback))return fatal(c,12,"Init of renderer failed");
- if(c->bounded_startup)return 1;
- c->worker->frames=c->engine->frames;c->worker->callback=c->callback;c->worker->primary=c->render.screen;c->worker->back=c->render.render;c->worker->width=(long)c->render.engine.width;c->worker->height=(long)c->render.engine.height;c->thread=CreateThread(0,0,bh_frame_worker_run,c->worker,0,&c->thread_id);if(!c->thread)return fatal(c,13,"Couldn't start new thread");SetThreadPriority(c->thread,THREAD_PRIORITY_BELOW_NORMAL);c->thread_active=1;c->worker->ready=1;if(c->startup_allocation){free(c->startup_allocation);c->startup_allocation=0;}
- c->last_tick=GetTickCount();delay=c->engine->frames->delay_ms;c->previous_time=(double)c->last_tick-delay;for(;;){tick=GetTickCount();began=(double)tick;elapsed=((double)tick-c->previous_time)-delay;c->previous_time=(double)tick;
-  while(PeekMessageA(&message,0,0,0,PM_NOREMOVE)){result=GetMessageA(&message,0,0,0);if(result==0)return (DWORD)message.wParam;if(result<0)return fatal(c,14,"Message retrieval error");DispatchMessageA(&message);}
-  if(c->worker->display_state==3){c->frame_seconds=(elapsed+delay)*.001;bh_engine_frame_produce(c->engine);}tick=GetTickCount();elapsed=((double)tick-began)+elapsed;if(!bh_application_pacing(elapsed,delay,&sleep_ms))return fatal(c,15,"Invalid frame timing");if(sleep_ms&&!c->worker->stop){++c->sleeps;Sleep(sleep_ms);}++c->iterations;
- }
+static const GUID draw2_iid = {0xb3a6f3e0, 0x2b43, 0x11cf, {0xa2, 0xde, 0, 0xaa, 0, 0xb9, 0x33, 0x56}};
+static void error(BHApplicationBootstrap *c, const char *text)
+{
+    unsigned long n = (unsigned long)strlen(c->errors), left = (unsigned long)sizeof(c->errors) - n - 1;
+    if (left)
+    {
+        strncpy(c->errors + n, text, left);
+        c->errors[n + left] = 0;
+    }
+    n = (unsigned long)strlen(c->errors);
+    if (n + 1 < sizeof(c->errors))
+    {
+        c->errors[n] = '\n';
+        c->errors[n + 1] = 0;
+    }
+}
+static int dialog(BHApplicationBootstrap *c, HWND w, const char *message, const char *title, UINT flags)
+{
+    if (c->no_dialogs)
+        return IDCANCEL;
+    ++c->dialogs;
+    return MessageBoxA(w, message, title, flags);
+}
+unsigned long __cdecl bh_application_mode_plan(int hardware, int low, BHStartupMode out[9])
+{
+    unsigned long n = 0, i, k;
+    static const unsigned long bits[3] = {16, 32, 24};
+    static const unsigned long heights[2][3] = {{480, 240, 200}, {240, 480, 200}};
+    if (!out)
+        return 0;
+    if (hardware)
+        for (i = 0; i < 3; ++i)
+        {
+            out[n].width = 640;
+            out[n].height = 480;
+            out[n].bits = bits[i];
+            out[n].software = 0;
+            out[n].resolution = -1;
+            ++n;
+        }
+    for (i = 0; i < 3; ++i)
+        for (k = 0; k < 2; ++k)
+        {
+            out[n].height = heights[low != 0][i];
+            out[n].width = out[n].height == 480 ? 640 : 320;
+            out[n].bits = k ? 8 : 16;
+            out[n].software = 1;
+            out[n].resolution = out[n].height == 480 ? 1 : 0;
+            ++n;
+        }
+    return n;
+}
+int __cdecl bh_application_pacing(double elapsed, double delay, DWORD *milliseconds)
+{
+    double value;
+    if (!milliseconds || !_finite(elapsed) || !_finite(delay) || delay < 0 || delay > 4294967295.0)
+        return 0;
+    value = elapsed <= 0 ? delay : elapsed < delay ? delay - elapsed : 0;
+    *milliseconds = (DWORD)(__int64)value;
+    return 1;
+}
+static LRESULT CALLBACK procedure(HWND window, UINT message, WPARAM key, LPARAM bits)
+{
+    BHApplicationBootstrap *c = (BHApplicationBootstrap *)GetWindowLongA(window, GWL_USERDATA);
+    if (message == WM_NCCREATE)
+    {
+        CREATESTRUCTA *created = (CREATESTRUCTA *)bits;
+        c = (BHApplicationBootstrap *)created->lpCreateParams;
+        SetWindowLongA(window, GWL_USERDATA, (LONG)c);
+    }
+    if (!c || !c->dispatch)
+        return DefWindowProcA(window, message, key, bits);
+    return bh_window_dispatch(c->dispatch, window, message, key, bits);
+}
+static void configuration(BHApplicationBootstrap *c)
+{
+    unsigned long value;
+    memcpy(&value, c->config->settings, 4);
+    c->configured = (long)value;
+    memcpy(&value, c->config->settings + 4, 4);
+    c->hardware = value & 1;
+    memcpy(&value, c->config->settings + 8, 4);
+    c->resolution = (long)value;
+}
+static void write_flag(BHApplicationBootstrap *c, unsigned long at, long value)
+{
+    memcpy(c->config->settings + at, &value, 4);
+}
+static int choose(BHApplicationBootstrap *c)
+{
+    long i, j;
+    char text[2048], line[256];
+    unsigned long n;
+    int answer;
+    c->selected = 0;
+    if (c->catalog.secondary_count < 0 || c->catalog.secondary_count > 7)
+        return 0;
+    if (c->configured)
+    {
+        for (i = 0; i <= c->catalog.secondary_count; ++i)
+            if (!_stricmp(c->catalog.label[i], (const char *)c->config->settings + 12))
+                c->selected = i;
+        return 1;
+    }
+    if (c->no_dialogs)
+        return 0;
+    i = c->catalog.secondary_count;
+    if (i == 1)
+    {
+        sprintf(text, "Do you wish to use\n%s ?", c->catalog.label[1]);
+        if (dialog(c, c->window, text, "Extra graphic device found!", MB_YESNO) == IDYES)
+            c->selected = 1;
+    }
+    else if (i > 1)
+    {
+        while (!c->selected && i > 0)
+        {
+            strcpy(text, "Devices found:\n");
+            for (j = c->catalog.secondary_count; j >= 0; --j)
+            {
+                sprintf(line, "(%d) %s\n", j, c->catalog.label[j]);
+                n = (unsigned long)strlen(text);
+                if (n + strlen(line) >= sizeof(text))
+                    return 0;
+                strcat(text, line);
+            }
+            sprintf(line, "\nDo you wish to use (%d)\n%s ?", i, c->catalog.label[i]);
+            if (strlen(text) + strlen(line) >= sizeof(text))
+                return 0;
+            strcat(text, line);
+            if (dialog(c, c->window, text, "Extra graphic devices found!", MB_YESNO) == IDYES)
+                c->selected = i;
+            --i;
+        }
+    }
+    strcpy((char *)c->config->settings + 12, c->catalog.label[c->selected]);
+    answer = dialog(c, c->window, "Use hardware renderer if available?\n(Not recommended if you encounter problems)",
+                    "3D Acceleration", MB_YESNO);
+    c->hardware = answer != IDNO;
+    c->resolution = 1;
+    if (!c->hardware && dialog(c, c->window, "Use low resolution (if available)\nfor better performance?",
+                               "Software Renderer", MB_YESNO) != IDNO)
+        c->resolution = 0;
+    write_flag(c, 4, c->hardware);
+    write_flag(c, 8, c->resolution);
+    return 1;
+}
+static void native_release(BHApplicationBootstrap *c)
+{
+    if (c->draw2)
+    {
+        IDirectDraw2_RestoreDisplayMode(c->draw2);
+        IDirectDraw2_SetCooperativeLevel(c->draw2, c->window, DDSCL_NORMAL);
+        IDirectDraw2_Release(c->draw2);
+        c->draw2 = 0;
+    }
+    if (c->draw)
+    {
+        IDirectDraw_SetCooperativeLevel(c->draw, c->window, DDSCL_NORMAL);
+        IDirectDraw_Release(c->draw);
+        c->draw = 0;
+    }
+}
+static DWORD fatal(BHApplicationBootstrap *c, int code, const char *reason)
+{
+    c->error = code;
+    if (reason)
+        error(c, reason);
+    bh_render_mode_dispose(&c->render);
+    native_release(c);
+    if (c->window)
+    {
+        ShowWindow(c->window, SW_HIDE);
+        if (c->errors[0])
+            dialog(c, c->window, c->errors, "Fatal Error!", 0);
+        DestroyWindow(c->window);
+        c->window = 0;
+    }
+    return 0;
+}
+static int modes(BHApplicationBootstrap *c)
+{
+    BHStartupMode plan[9];
+    unsigned long i, n;
+    n = bh_application_mode_plan(c->hardware, c->resolution == 0, plan);
+    for (i = 0; i < n; ++i)
+    {
+        ++c->mode_attempts;
+        if (plan[i].software)
+        {
+            c->hardware = 0;
+            c->resolution = plan[i].resolution;
+            write_flag(c, 4, 0);
+            write_flag(c, 8, c->resolution);
+        }
+        if (bh_render_mode_startup(&c->render, c->draw2, c->draw, plan[i].width, plan[i].height, plan[i].bits,
+                                   plan[i].software))
+            return 1;
+    }
+    error(c, c->render.errors);
+    return 0;
+}
+DWORD __cdecl bh_application_bootstrap(BHApplicationBootstrap *c, HINSTANCE instance, HINSTANCE previous,
+                                       const char *command, int show)
+{
+    WNDCLASSEXA type;
+    BHDeviceName names[8];
+    BHDisplaySelection selected;
+    BHWindowDispatch *dispatch;
+    MSG message;
+    DWORD tick, sleep_ms;
+    unsigned long i;
+    long result;
+    double began, elapsed, delay;
+    HANDLE mutex;
+    (void)command;
+    if (!c || !c->source || !c->paths || !c->config || !c->engine || !c->dispatch || !c->worker || !c->callback)
+        return 0;
+    c->error = 0;
+    c->instance = instance;
+    for (;;)
+    {
+        ++c->source_attempts;
+        if (bh_source_files_check(c->source))
+            break;
+        if (c->no_dialogs)
+        {
+            c->error = 2;
+            return 0;
+        }
+        if (dialog(c, 0, "Please insert BHunter CD!", "Error!", MB_OKCANCEL) == IDCANCEL)
+            return 0;
+    }
+    InitCommonControls();
+    dispatch = c->dispatch;
+    if (!c->engine->frames)
+        return fatal(c, 1, 0);
+    dispatch->frames = c->engine->frames;
+    if (!dispatch->frames->message)
+    {
+        dispatch->frames->message = bh_window_default_message;
+        dispatch->frames->message_user = 0;
+    }
+    dispatch->display_state = &c->worker->display_state;
+    dispatch->capture_request = &c->worker->request_capture;
+    dispatch->thread_active = &c->thread_active;
+    dispatch->hide_cursor = &c->hide_cursor;
+    dispatch->thread = &c->thread;
+    dispatch->draw = &c->draw;
+    dispatch->primary = &c->render.screen;
+    dispatch->back = &c->render.render;
+    if (!previous)
+    {
+        memset(&type, 0, sizeof(type));
+        type.cbSize = sizeof(type);
+        type.style = CS_DBLCLKS;
+        type.lpfnWndProc = procedure;
+        type.hInstance = instance;
+        type.hIcon = LoadIconA(instance, MAKEINTRESOURCEA(0x66));
+        type.hIconSm = LoadIconA(instance, MAKEINTRESOURCEA(0x66));
+        type.hCursor = LoadCursorA(instance, MAKEINTRESOURCEA(0x7f00));
+        type.hbrBackground = (HBRUSH)GetStockObject(4);
+        type.lpszClassName = "BHunter";
+        if (!RegisterClassExA(&type))
+            return 0;
+    }
+    c->window = CreateWindowExA(0, "BHunter", "BHunter", 0x80080000UL, 0, 0, GetSystemMetrics(0), GetSystemMetrics(1),
+                                0, 0, instance, c);
+    if (!c->window)
+        return 0;
+    ShowWindow(c->window, show);
+    UpdateWindow(c->window);
+    result = bh_paths_discover(c->paths);
+    if (!result)
+    {
+        dialog(c, c->window, "Please run this program from your original BHunter CD.", "Installation Error", 0);
+        return fatal(c, 3, 0);
+    }
+    if (result == 1)
+        return fatal(c, 3, 0);
+    if (result == 3)
+        c->installed = 1;
+    memset(&c->catalog, 0, sizeof(c->catalog));
+    DirectDrawEnumerateA(bh_display_catalog_callback, &c->catalog);
+    for (i = 0; i <= (unsigned long)c->catalog.secondary_count && i < 8; ++i)
+        strcpy(names[i].name, c->catalog.label[i]);
+    if (!bh_config_bootstrap(c->config, c->paths->ini, names, (unsigned long)c->catalog.secondary_count + 1))
+        return fatal(c, 4, "Configuration error");
+    configuration(c);
+    if (!choose(c))
+        return fatal(c, 4, "Configuration error");
+    memset(&selected, 0, sizeof(selected));
+    selected.requested = c->catalog.label[c->selected];
+    DirectDrawEnumerateA(bh_display_select_callback, &selected);
+    c->draw = selected.draw;
+    if (!c->draw)
+        return fatal(c, 5, "No DirectDraw");
+    c->last_hresult = IDirectDraw_SetCooperativeLevel(c->draw, c->window, DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN);
+    if (c->last_hresult != DD_OK)
+        return fatal(c, 6, "DirectDraw error");
+    c->last_hresult = IDirectDraw_QueryInterface(c->draw, &draw2_iid, (void **)&c->draw2);
+    if (c->last_hresult != DD_OK)
+        return fatal(c, 7, "This application requires DirectX5.0 or newer");
+    c->last_hresult = IDirectDraw2_SetCooperativeLevel(c->draw2, c->window, DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN);
+    if (c->last_hresult != DD_OK)
+        return fatal(c, 8, "Fullscreen mode not available");
+    if (!modes(c))
+        return fatal(c, 9, "No suitable screen mode");
+    mutex = CreateMutexA(0, FALSE, "RenderMutex");
+    if (!mutex)
+        return fatal(c, 10, "Couldn't create render mutex");
+    if (c->engine->frames->mutex)
+        CloseHandle(c->engine->frames->mutex);
+    c->engine->frames->mutex = mutex;
+    c->engine->archive = c->paths->archive;
+    c->engine->d3d = c->render.engine.d3d;
+    if (!bh_engine_bootstrap(c->engine, instance, c->window))
+        return fatal(c, 11, "Init of simulation failed");
+    if (!bh_frame_callback_start(c->callback))
+        return fatal(c, 12, "Init of renderer failed");
+    if (c->bounded_startup)
+        return 1;
+    c->worker->frames = c->engine->frames;
+    c->worker->callback = c->callback;
+    c->worker->primary = c->render.screen;
+    c->worker->back = c->render.render;
+    c->worker->width = (long)c->render.engine.width;
+    c->worker->height = (long)c->render.engine.height;
+    c->thread = CreateThread(0, 0, bh_frame_worker_run, c->worker, 0, &c->thread_id);
+    if (!c->thread)
+        return fatal(c, 13, "Couldn't start new thread");
+    SetThreadPriority(c->thread, THREAD_PRIORITY_BELOW_NORMAL);
+    c->thread_active = 1;
+    c->worker->ready = 1;
+    if (c->startup_allocation)
+    {
+        free(c->startup_allocation);
+        c->startup_allocation = 0;
+    }
+    c->last_tick = GetTickCount();
+    delay = c->engine->frames->delay_ms;
+    c->previous_time = (double)c->last_tick - delay;
+    for (;;)
+    {
+        tick = GetTickCount();
+        began = (double)tick;
+        elapsed = ((double)tick - c->previous_time) - delay;
+        c->previous_time = (double)tick;
+        while (PeekMessageA(&message, 0, 0, 0, PM_NOREMOVE))
+        {
+            result = GetMessageA(&message, 0, 0, 0);
+            if (result == 0)
+                return (DWORD)message.wParam;
+            if (result < 0)
+                return fatal(c, 14, "Message retrieval error");
+            DispatchMessageA(&message);
+        }
+        if (c->worker->display_state == 3)
+        {
+            c->frame_seconds = (elapsed + delay) * .001;
+            bh_engine_frame_produce(c->engine);
+        }
+        tick = GetTickCount();
+        elapsed = ((double)tick - began) + elapsed;
+        if (!bh_application_pacing(elapsed, delay, &sleep_ms))
+            return fatal(c, 15, "Invalid frame timing");
+        if (sleep_ms && !c->worker->stop)
+        {
+            ++c->sleeps;
+            Sleep(sleep_ms);
+        }
+        ++c->iterations;
+    }
 }

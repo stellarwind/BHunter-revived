@@ -7,6 +7,6 @@
    Retains original binary32 intermediate stores and PC53 grouping; moderate
    finite inputs required. Output may equal an entire input vector; partial
    overlapping vectors are unsupported. No globals or original code needed. */
-void __cdecl bh_camera_curve(float t,BHVec3 *out,const BHVec3 *first,
-    const BHVec3 *first_tangent,const BHVec3 *last_tangent,const BHVec3 *last);
+void __cdecl bh_camera_curve(float t, BHVec3 *out, const BHVec3 *first, const BHVec3 *first_tangent,
+                             const BHVec3 *last_tangent, const BHVec3 *last);
 #endif

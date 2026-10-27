@@ -4,9 +4,12 @@
 #include <mmsystem.h>
 /* Borrow actual MCI device4dfb6c, playback flag4dfb70 and track4912d0.
    This complete stop/close owner does not open a CD drive or recover playback. */
-typedef struct BHCdClose {
- MCIDEVICEID device;long playing,last_track;
- MCIERROR stop_result,close_result;unsigned long native_calls;
+typedef struct BHCdClose
+{
+    MCIDEVICEID device;
+    long playing, last_track;
+    MCIERROR stop_result, close_result;
+    unsigned long native_calls;
 } BHCdClose;
 /* Complete00449b40: device0 retains all state. Otherwise playing0 before
    real STOP, reload current device for real CLOSE, then device0/track-1.

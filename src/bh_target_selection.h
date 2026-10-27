@@ -2,7 +2,8 @@
 #define BH_TARGET_SELECTION_H
 #include "bh_entities.h"
 
-typedef struct BHTargetSelection {
+typedef struct BHTargetSelection
+{
     BHEntity *target;
     float score;
     unsigned long visited;
@@ -24,7 +25,6 @@ typedef struct BHTargetSelection {
    actor without a query; partial result/callback effects remain observable.
    These guards are source failure behavior outside the original valid domain.
    result must not alias origin or any actor/list storage. */
-int __cdecl bh_target_select(BHEntity *player,BHEntity *head,
-    const BHEntity *excluded,const BHVec3 *origin,unsigned long limit,
-    BHTargetSelection *result);
+int __cdecl bh_target_select(BHEntity *player, BHEntity *head, const BHEntity *excluded, const BHVec3 *origin,
+                             unsigned long limit, BHTargetSelection *result);
 #endif

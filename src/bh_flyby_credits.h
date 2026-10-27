@@ -1,5 +1,5 @@
 /* Literal credits read from original pointer table0048f9f8; no localization or authored replacement. */
-static const char *const flyby_credits[15]={
+static const char *const flyby_credits[15] = {
     "BHUNTER\n\nDEVELOPED\n1999 BY\nINTERACTIVE\nVISION A/S",
     "GAME DESIGN:\n\nTHOMAS GJ\\RUP",
     "ART DIRECTION\nAND DESIGN:\n\nMIKKEL FREDBORG",

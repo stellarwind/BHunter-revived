@@ -7,12 +7,13 @@
    have screen,inverse multiply,saturating add,then inner weights1..5 /6.
    Indexed blend outer is6x7x6 palette; native blend outer is coarse RGB332
    (components224/224/192 at maximum, deliberately not normalized to255). */
-typedef struct BHSoftwareTables {
+typedef struct BHSoftwareTables
+{
     unsigned char *shade_indexed; /*004e3858:128KiB, always present */
     unsigned char *blend_indexed; /*004e2df4:512KiB, indexed mode only */
     unsigned short *shade_native; /*004e2de4:256KiB, native16 mode only */
     unsigned short *blend_native; /*004e38c8:1MiB, native16 mode only */
-    unsigned long bytes_per_pixel,rgb332_mask[3];
+    unsigned long bytes_per_pixel, rgb332_mask[3];
     long rgb332_shift[3];
     BHSceneAllocator allocator;
 } BHSoftwareTables;
@@ -22,7 +23,8 @@ typedef struct BHSoftwareTables {
    have3..8 R/G bits and2..8 B bits, matching q display shifts. Source guards
    reject malformed masks (original division loops could hang), invalid/live
    owners and allocation failure. q's table initialization still latches. */
-int __cdecl bh_software_tables_initialize(BHSoftwareTables *,BHTextureContext *,unsigned long bytes_per_pixel,const unsigned long masks[3]);
+int __cdecl bh_software_tables_initialize(BHSoftwareTables *, BHTextureContext *, unsigned long bytes_per_pixel,
+                                          const unsigned long masks[3]);
 /* Explicit source lifetime adapter, not an original destructor claim. */
 void __cdecl bh_software_tables_dispose(BHSoftwareTables *);
 #endif

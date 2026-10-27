@@ -7,11 +7,11 @@
    exhaustion0, queued1. Handle is resolved at execution, borrowed meanwhile.
    The original maps other bucket values to header0; source bounds guards do
    not claim its malformed selector behavior. */
-int __cdecl bh_quad_queue(BHDrawQueue *,unsigned long bucket,unsigned long image,
-    const BHVec3 *center,const BHVec3 *up,const BHVec3 *normal,
-    float width,float height,float angle,unsigned long flags,float modulation,
-    float u,float u_extent,float v,float v_extent);
-typedef struct BHQuadQueueContext {
+int __cdecl bh_quad_queue(BHDrawQueue *, unsigned long bucket, unsigned long image, const BHVec3 *center,
+                          const BHVec3 *up, const BHVec3 *normal, float width, float height, float angle,
+                          unsigned long flags, float modulation, float u, float u_extent, float v, float v_extent);
+typedef struct BHQuadQueueContext
+{
     BHSpriteQuadContext *draw;
     BHDrawImageLookup lookup;
     void *lookup_user;
@@ -20,5 +20,5 @@ typedef struct BHQuadQueueContext {
    owner, then publishes the current next link. No command pointer is retained.
    Source lookup failure also publishes next and reports failure. Lookup must
    not mutate the command. next must not alias command/context storage. */
-int __cdecl bh_quad_queue_execute(BHQuadQueueContext *,const BHDrawCommand *,unsigned long *next);
+int __cdecl bh_quad_queue_execute(BHQuadQueueContext *, const BHDrawCommand *, unsigned long *next);
 #endif

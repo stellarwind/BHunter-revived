@@ -2,95 +2,190 @@
 #include "bh_texture_draw.h"
 #include <string.h>
 
-static void failed(BHRenderExecute *e,BHRenderExecuteError error) {
+static void failed(BHRenderExecute *e, BHRenderExecuteError error)
+{
     ++e->failures;
-    if(e->error==BH_RENDER_EXECUTE_OK)e->error=error;
+    if (e->error == BH_RENDER_EXECUTE_OK)
+        e->error = error;
 }
-static int native(BHRenderExecute *e,HRESULT result) {
-    ++e->native_calls;e->last_hresult=result;
-    if(FAILED(result)){failed(e,BH_RENDER_EXECUTE_NATIVE);return 0;}
+static int native(BHRenderExecute *e, HRESULT result)
+{
+    ++e->native_calls;
+    e->last_hresult = result;
+    if (FAILED(result))
+    {
+        failed(e, BH_RENDER_EXECUTE_NATIVE);
+        return 0;
+    }
     return 1;
 }
-static int draw_one(BHRenderExecute *e,const BHDrawCommand *c,unsigned long *next) {
-    switch(c->kind) {
-    case BH_DRAW_NOP:*next=c->next;return 1;
-    case BH_DRAW_STATE:return e->state?bh_queue_mode_execute(e->state,c,next):-3;
-    case BH_DRAW_BILLBOARD:return e->billboard?bh_draw_submit_billboard_execute(e->billboard,c,next):-3;
-    case BH_DRAW_SEGMENT:return e->segment?bh_segment_queue_execute(e->segment,c,next):-3;
-    case BH_DRAW_ORIENTED:case BH_DRAW_QUAD:
-        if(!e->plane)return -3;
-        return c->kind==BH_DRAW_QUAD?bh_quad_queue_execute(e->plane,c,next):bh_plane_quad_execute(e->plane,c,next);
-    case BH_DRAW_MODEL_RESOURCE:return e->model?bh_draw_submit_execute(e->model,c,next):-3;
+static int draw_one(BHRenderExecute *e, const BHDrawCommand *c, unsigned long *next)
+{
+    switch (c->kind)
+    {
+    case BH_DRAW_NOP:
+        *next = c->next;
+        return 1;
+    case BH_DRAW_STATE:
+        return e->state ? bh_queue_mode_execute(e->state, c, next) : -3;
+    case BH_DRAW_BILLBOARD:
+        return e->billboard ? bh_draw_submit_billboard_execute(e->billboard, c, next) : -3;
+    case BH_DRAW_SEGMENT:
+        return e->segment ? bh_segment_queue_execute(e->segment, c, next) : -3;
+    case BH_DRAW_ORIENTED:
+    case BH_DRAW_QUAD:
+        if (!e->plane)
+            return -3;
+        return c->kind == BH_DRAW_QUAD ? bh_quad_queue_execute(e->plane, c, next)
+                                       : bh_plane_quad_execute(e->plane, c, next);
+    case BH_DRAW_MODEL_RESOURCE:
+        return e->model ? bh_draw_submit_execute(e->model, c, next) : -3;
     case BH_DRAW_RECT:
-        return e->rect&&e->image_lookup?bh_pickup_rect_execute(e->rect,e->image_lookup,e->image_user,c,next):-3;
-    case BH_DRAW_TEXTURE_MASK:case BH_DRAW_CLIP_RECT:
-        return e->controls?bh_draw_controls_execute(e->controls,e->draw,c,next):-3;
-    case BH_DRAW_CAMERA:return e->view&&e->camera?bh_camera_queue_execute(e->view,e->camera,e->draw,c,next):-3;
-    case BH_DRAW_HORIZON:return e->horizon?bh_horizon_queue_execute(e->horizon,e->draw,c,next):-3;
+        return e->rect && e->image_lookup ? bh_pickup_rect_execute(e->rect, e->image_lookup, e->image_user, c, next)
+                                          : -3;
+    case BH_DRAW_TEXTURE_MASK:
+    case BH_DRAW_CLIP_RECT:
+        return e->controls ? bh_draw_controls_execute(e->controls, e->draw, c, next) : -3;
+    case BH_DRAW_CAMERA:
+        return e->view && e->camera ? bh_camera_queue_execute(e->view, e->camera, e->draw, c, next) : -3;
+    case BH_DRAW_HORIZON:
+        return e->horizon ? bh_horizon_queue_execute(e->horizon, e->draw, c, next) : -3;
     case BH_DRAW_MATERIAL_WORDS:
-        return e->image_lookup?bh_material_queue_execute(e->image_lookup,e->image_user,c,next):-3;
-    case BH_DRAW_SCREEN_QUAD:return e->screen?bh_screen_quad_execute(e->screen,c,next):-3;
-    case BH_DRAW_PATH_HEADER:return e->path?bh_path_queue_execute(e->path,e->draw,c,next):-3;
-    case BH_DRAW_FADE:return e->fade?bh_fade_execute(e->fade,c,next):-3;
-    case BH_DRAW_FLARE:return e->flare?bh_flare_execute(e->flare,(BHDrawCommand*)c,next):-3;
-    case BH_DRAW_LIGHT:return e->light?bh_menu_light_execute(e->light,c,next):-3;
-    case BH_DRAW_GDI_TEXT:return e->gdi?bh_gdi_text_execute(e->gdi,c,next):-3;
-    default:return -2;
+        return e->image_lookup ? bh_material_queue_execute(e->image_lookup, e->image_user, c, next) : -3;
+    case BH_DRAW_SCREEN_QUAD:
+        return e->screen ? bh_screen_quad_execute(e->screen, c, next) : -3;
+    case BH_DRAW_PATH_HEADER:
+        return e->path ? bh_path_queue_execute(e->path, e->draw, c, next) : -3;
+    case BH_DRAW_FADE:
+        return e->fade ? bh_fade_execute(e->fade, c, next) : -3;
+    case BH_DRAW_FLARE:
+        return e->flare ? bh_flare_execute(e->flare, (BHDrawCommand *)c, next) : -3;
+    case BH_DRAW_LIGHT:
+        return e->light ? bh_menu_light_execute(e->light, c, next) : -3;
+    case BH_DRAW_GDI_TEXT:
+        return e->gdi ? bh_gdi_text_execute(e->gdi, c, next) : -3;
+    default:
+        return -2;
     }
 }
-static int barrier(BHRenderExecute *e) {
-    BHTextureContext *textures=e->display->textures;
+static int barrier(BHRenderExecute *e)
+{
+    BHTextureContext *textures = e->display->textures;
     BHTextureImage *image;
-    unsigned long guard=0;
-    int ok=1;
-    if(textures->software)return 1;
-    if(!textures->device){failed(e,BH_RENDER_EXECUTE_BINDING);return 0;}
-    textures->frame=(long)((unsigned long)textures->frame+1UL);
-    for(image=textures->images;image;image=image->next){
-        if(++guard>1048576UL){failed(e,BH_RENDER_EXECUTE_TOPOLOGY);return 0;}
-        if(!bh_texture_draw_flush(textures,image,NULL)){failed(e,BH_RENDER_EXECUTE_CALLBACK);ok=0;}
+    unsigned long guard = 0;
+    int ok = 1;
+    if (textures->software)
+        return 1;
+    if (!textures->device)
+    {
+        failed(e, BH_RENDER_EXECUTE_BINDING);
+        return 0;
+    }
+    textures->frame = (long)((unsigned long)textures->frame + 1UL);
+    for (image = textures->images; image; image = image->next)
+    {
+        if (++guard > 1048576UL)
+        {
+            failed(e, BH_RENDER_EXECUTE_TOPOLOGY);
+            return 0;
+        }
+        if (!bh_texture_draw_flush(textures, image, NULL))
+        {
+            failed(e, BH_RENDER_EXECUTE_CALLBACK);
+            ok = 0;
+        }
         ++e->flushes;
     }
-    if(!native(e,IDirect3DDevice2_EndScene(textures->device)))ok=0;
-    if(!native(e,IDirect3DDevice2_BeginScene(textures->device)))ok=0;
+    if (!native(e, IDirect3DDevice2_EndScene(textures->device)))
+        ok = 0;
+    if (!native(e, IDirect3DDevice2_BeginScene(textures->device)))
+        ok = 0;
     return ok;
 }
-int __cdecl bh_render_execute(BHRenderExecute *e) {
-    unsigned long at,steps=0,processed=0,next;
-    int ok=1,status;
-    if(!e)return 0;
-    e->error=BH_RENDER_EXECUTE_OK;e->failures=0;
-    e->failed_index=BH_DRAW_END;e->failed_kind=e->failed_resource=0;e->failed_status=0;
-    e->failed_draw_error=e->failed_model_error=e->failed_clip_error=0;memset(e->failed_pose,0,sizeof(e->failed_pose));
-    e->text_calls=e->draw_calls=e->flushes=e->native_calls=0;
-    memset(e->kinds,0,sizeof(e->kinds));
-    if(!e->display||!e->display->textures||!e->text||!e->draw||
-       !e->draw->commands||!e->draw->count){failed(e,BH_RENDER_EXECUTE_ARGUMENT);return 0;}
-    status=e->display_mode==1?
-        bh_frame_clear_color(e->display,255,255,255):bh_frame_clear_depth(e->display);
-    if(!status){failed(e,BH_RENDER_EXECUTE_CALLBACK);ok=0;}
-    status=bh_message_text_drain(e->text,e->atlas,&processed);
-    e->text_calls=processed;
-    if(status<0){failed(e,BH_RENDER_EXECUTE_SELECTOR);return 0;}
-    at=0;
-    while(at!=BH_DRAW_END){
+int __cdecl bh_render_execute(BHRenderExecute *e)
+{
+    unsigned long at, steps = 0, processed = 0, next;
+    int ok = 1, status;
+    if (!e)
+        return 0;
+    e->error = BH_RENDER_EXECUTE_OK;
+    e->failures = 0;
+    e->failed_index = BH_DRAW_END;
+    e->failed_kind = e->failed_resource = 0;
+    e->failed_status = 0;
+    e->failed_draw_error = e->failed_model_error = e->failed_clip_error = 0;
+    memset(e->failed_pose, 0, sizeof(e->failed_pose));
+    e->text_calls = e->draw_calls = e->flushes = e->native_calls = 0;
+    memset(e->kinds, 0, sizeof(e->kinds));
+    if (!e->display || !e->display->textures || !e->text || !e->draw || !e->draw->commands || !e->draw->count)
+    {
+        failed(e, BH_RENDER_EXECUTE_ARGUMENT);
+        return 0;
+    }
+    status = e->display_mode == 1 ? bh_frame_clear_color(e->display, 255, 255, 255) : bh_frame_clear_depth(e->display);
+    if (!status)
+    {
+        failed(e, BH_RENDER_EXECUTE_CALLBACK);
+        ok = 0;
+    }
+    status = bh_message_text_drain(e->text, e->atlas, &processed);
+    e->text_calls = processed;
+    if (status < 0)
+    {
+        failed(e, BH_RENDER_EXECUTE_SELECTOR);
+        return 0;
+    }
+    at = 0;
+    while (at != BH_DRAW_END)
+    {
         const BHDrawCommand *c;
-        if(at>=e->draw->count||++steps>e->draw->count){failed(e,BH_RENDER_EXECUTE_TOPOLOGY);return 0;}
-        c=e->draw->commands+at;
-        if(c->kind>=20||c->kind==BH_DRAW_PATH_POINT){failed(e,BH_RENDER_EXECUTE_SELECTOR);return 0;}
-        next=c->next;
-        status=draw_one(e,c,&next);
-        if(status<=0&&e->failed_index==BH_DRAW_END){e->failed_index=at;e->failed_kind=c->kind;e->failed_resource=c->resource;e->failed_status=status;
-            if(c->kind==BH_DRAW_MODEL_RESOURCE&&e->model&&e->model->draw){e->failed_draw_error=e->model->draw->error;e->failed_model_error=e->model->draw->failed_model_error;e->failed_clip_error=e->model->draw->failed_clip_error;memcpy(e->failed_pose,c->words,sizeof(e->failed_pose));}}
-        if(status==-3){failed(e,BH_RENDER_EXECUTE_BINDING);return 0;}
-        if(status==-2){failed(e,BH_RENDER_EXECUTE_SELECTOR);return 0;}
+        if (at >= e->draw->count || ++steps > e->draw->count)
+        {
+            failed(e, BH_RENDER_EXECUTE_TOPOLOGY);
+            return 0;
+        }
+        c = e->draw->commands + at;
+        if (c->kind >= 20 || c->kind == BH_DRAW_PATH_POINT)
+        {
+            failed(e, BH_RENDER_EXECUTE_SELECTOR);
+            return 0;
+        }
+        next = c->next;
+        status = draw_one(e, c, &next);
+        if (status <= 0 && e->failed_index == BH_DRAW_END)
+        {
+            e->failed_index = at;
+            e->failed_kind = c->kind;
+            e->failed_resource = c->resource;
+            e->failed_status = status;
+            if (c->kind == BH_DRAW_MODEL_RESOURCE && e->model && e->model->draw)
+            {
+                e->failed_draw_error = e->model->draw->error;
+                e->failed_model_error = e->model->draw->failed_model_error;
+                e->failed_clip_error = e->model->draw->failed_clip_error;
+                memcpy(e->failed_pose, c->words, sizeof(e->failed_pose));
+            }
+        }
+        if (status == -3)
+        {
+            failed(e, BH_RENDER_EXECUTE_BINDING);
+            return 0;
+        }
+        if (status == -2)
+        {
+            failed(e, BH_RENDER_EXECUTE_SELECTOR);
+            return 0;
+        }
         /* Original00479090 consumes the callback's next-command pointer;
            callback draw results are not a frame/game success condition.
            Keep failures observable, without promoting them to game exit. */
-        if(status<=0)failed(e,BH_RENDER_EXECUTE_CALLBACK);
-        ++e->draw_calls;++e->kinds[c->kind];
-        at=next;
+        if (status <= 0)
+            failed(e, BH_RENDER_EXECUTE_CALLBACK);
+        ++e->draw_calls;
+        ++e->kinds[c->kind];
+        at = next;
     }
-    if(!barrier(e))ok=0;
+    if (!barrier(e))
+        ok = 0;
     return ok;
 }

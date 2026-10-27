@@ -3,9 +3,12 @@
 #include "bh_draw_resource.h"
 
 typedef struct BHRenderResourceEntry BHRenderResourceEntry;
-typedef enum BHRenderResourcesError {
-    BH_RENDER_RESOURCES_OK, BH_RENDER_RESOURCES_ARGUMENT,
-    BH_RENDER_RESOURCES_MODEL, BH_RENDER_RESOURCES_MEMORY,
+typedef enum BHRenderResourcesError
+{
+    BH_RENDER_RESOURCES_OK,
+    BH_RENDER_RESOURCES_ARGUMENT,
+    BH_RENDER_RESOURCES_MODEL,
+    BH_RENDER_RESOURCES_MEMORY,
     BH_RENDER_RESOURCES_FULL
 } BHRenderResourcesError;
 
@@ -17,21 +20,19 @@ typedef enum BHRenderResourcesError {
    bindings in prototype must outlive this owner. A queued command borrows its
    handle: drain the queue before disposing the owner. Handles are slot+1,
    stable until disposal, and zero is invalid. */
-typedef struct BHRenderResources {
+typedef struct BHRenderResources
+{
     BHRenderResourceEntry **entries;
-    unsigned long count,capacity;
+    unsigned long count, capacity;
     BHSceneAllocator allocator;
     BHModelContext *models;
     BHModelInstanceContext prototype;
     BHRenderResourcesError error;
 } BHRenderResources;
 
-int __cdecl bh_render_resources_init(BHRenderResources *owner,
-    BHModelContext *models,const BHModelInstanceContext *prototype,
-    const BHSceneAllocator *allocator);
-unsigned long __cdecl bh_render_resources_load_model(BHRenderResources *owner,
-    const char *name);
-const BHDrawResource *__cdecl bh_render_resources_lookup(unsigned long handle,
-    void *owner);
+int __cdecl bh_render_resources_init(BHRenderResources *owner, BHModelContext *models,
+                                     const BHModelInstanceContext *prototype, const BHSceneAllocator *allocator);
+unsigned long __cdecl bh_render_resources_load_model(BHRenderResources *owner, const char *name);
+const BHDrawResource *__cdecl bh_render_resources_lookup(unsigned long handle, void *owner);
 void __cdecl bh_render_resources_dispose(BHRenderResources *owner);
 #endif

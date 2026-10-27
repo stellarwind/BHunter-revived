@@ -9,5 +9,5 @@
    Invalid instance/owner/root or occupied device are guarded CONTINUE paths,
    preserving existing references without issuing native calls. Owner and root
    must outlive enumeration; callback does not retain the instance/userdata. */
-BOOL CALLBACK bh_input_enum_callback(LPCDIDEVICEINSTANCEA instance,LPVOID userdata);
+BOOL CALLBACK bh_input_enum_callback(LPCDIDEVICEINSTANCEA instance, LPVOID userdata);
 #endif

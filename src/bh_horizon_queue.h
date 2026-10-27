@@ -8,15 +8,19 @@
    validation. Unused command words retain their previous storage contents.
    Return1 queued,0 full,-1 invalid source binding/topology.
    Uses source semantic selector instead of original executable callback. */
-int __cdecl bh_horizon_queue(BHDrawQueue *,unsigned long texture,float texture_scale,
-    float height,float outer_radius,float inner_radius,unsigned long color);
-typedef BHTextureImage *(__cdecl *BHHorizonImageLookup)(unsigned long,void *);
-typedef struct BHHorizonQueueContext {
-    BHHorizonContext *draw;BHHorizonImageLookup lookup;void *lookup_user;
+int __cdecl bh_horizon_queue(BHDrawQueue *, unsigned long texture, float texture_scale, float height,
+                             float outer_radius, float inner_radius, unsigned long color);
+typedef BHTextureImage *(__cdecl *BHHorizonImageLookup)(unsigned long, void *);
+typedef struct BHHorizonQueueContext
+{
+    BHHorizonContext *draw;
+    BHHorizonImageLookup lookup;
+    void *lookup_user;
 } BHHorizonQueueContext;
 /* Complete00477aa0: actual mode0 barrier, full horizon owner, then next load.
    Explicit source handle resolver returns borrowed real texture storage.
    No ring/command/context overlap; lookup may not mutate command storage.
    next is published even on source barrier/draw/lookup failure. */
-int __cdecl bh_horizon_queue_execute(BHHorizonQueueContext *,const BHDrawQueue *,const BHDrawCommand *,unsigned long *next);
+int __cdecl bh_horizon_queue_execute(BHHorizonQueueContext *, const BHDrawQueue *, const BHDrawCommand *,
+                                     unsigned long *next);
 #endif

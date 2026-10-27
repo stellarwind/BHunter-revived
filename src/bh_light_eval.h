@@ -11,6 +11,8 @@
    consumed inputs or scaled channel sums outside signed32 conversion range;
    result remains unchanged on failure. FP sticky flags are not a contract.
    Result may alias input storage: all reads precede the single output store. */
-int __cdecl bh_light_evaluate_prepared(const BHLightContext *c,const BHVec3 *point,const BHVec3 *normal,float scale,unsigned long *result);
-int __cdecl bh_light_evaluate_world(const BHLightContext *c,const BHVec3 *point,const BHVec3 *normal,float scale,unsigned long *result);
+int __cdecl bh_light_evaluate_prepared(const BHLightContext *c, const BHVec3 *point, const BHVec3 *normal, float scale,
+                                       unsigned long *result);
+int __cdecl bh_light_evaluate_world(const BHLightContext *c, const BHVec3 *point, const BHVec3 *normal, float scale,
+                                    unsigned long *result);
 #endif

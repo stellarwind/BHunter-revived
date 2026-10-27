@@ -4,21 +4,23 @@
 #include <float.h>
 #include <string.h>
 
-typedef struct Frame {
+typedef struct Frame
+{
     long node;
     int faces;
 } Frame;
 
-static int fail(BHSegmentQuery *q, BHBspError error) {
+static int fail(BHSegmentQuery *q, BHBspError error)
+{
     if (q)
         q->error = error;
     return -1;
 }
-int __cdecl bh_segment_query_init(BHSegmentQuery *q, BHGeometry *geometry) {
+int __cdecl bh_segment_query_init(BHSegmentQuery *q, BHGeometry *geometry)
+{
     BHSegmentQuery next;
-    if (!q || !geometry || !geometry->bsp || !geometry->face_flags ||
-        geometry->bsp->counts[4] > 65535 || !geometry->allocator.allocate ||
-        !geometry->allocator.release)
+    if (!q || !geometry || !geometry->bsp || !geometry->face_flags || geometry->bsp->counts[4] > 65535 ||
+        !geometry->allocator.allocate || !geometry->allocator.release)
         return 0;
     memset(&next, 0, sizeof(next));
     next.geometry = geometry;
@@ -30,7 +32,8 @@ int __cdecl bh_segment_query_init(BHSegmentQuery *q, BHGeometry *geometry) {
     *q = next;
     return 1;
 }
-int __cdecl bh_segment_query_dispose(BHSegmentQuery *q) {
+int __cdecl bh_segment_query_dispose(BHSegmentQuery *q)
+{
     if (!q || q->busy)
         return 0;
     if (q->frames)
@@ -38,12 +41,12 @@ int __cdecl bh_segment_query_dispose(BHSegmentQuery *q) {
     memset(q, 0, sizeof(*q));
     return 1;
 }
-static double distance(const BHBspNode *n, const BHVec3 *p) {
-    return (((double)n->normal[0] * p->x + (double)n->normal[1] * p->y) +
-            (double)n->normal[2] * p->z) +
-           n->plane;
+static double distance(const BHBspNode *n, const BHVec3 *p)
+{
+    return (((double)n->normal[0] * p->x + (double)n->normal[1] * p->y) + (double)n->normal[2] * p->z) + n->plane;
 }
-static int polygon(BHSegmentQuery *q, long face, const BHVec3 *point, const BHVec3 *normal) {
+static int polygon(BHSegmentQuery *q, long face, const BHVec3 *point, const BHVec3 *normal)
+{
     const BHBsp *bsp = q->geometry->bsp;
     long first, edge, next;
     const BHBspVertex *a, *b;
@@ -56,7 +59,8 @@ static int polygon(BHSegmentQuery *q, long face, const BHVec3 *point, const BHVe
     first = edge = bsp->faces[face].first_edge;
     if (first < 0 || (unsigned long)first >= bsp->counts[2])
         return -1;
-    do {
+    do
+    {
         if (++steps > bsp->counts[2] || edge < 0 || (unsigned long)edge >= bsp->counts[2])
             return -1;
         next = bsp->edges[edge].next;
@@ -76,9 +80,7 @@ static int polygon(BHSegmentQuery *q, long face, const BHVec3 *point, const BHVe
         bh_round_float(&relative.y, (double)point->y - a->y);
         bh_round_float(&relative.z, (double)point->z - a->z);
         bh_vec3_cross(&delta, normal, &cross);
-        if (((double)cross.x * relative.x + (double)cross.y * relative.y) +
-                (double)cross.z * relative.z <=
-            0)
+        if (((double)cross.x * relative.x + (double)cross.y * relative.y) + (double)cross.z * relative.z <= 0)
             signs |= 2;
         else
             signs |= 1;
@@ -86,8 +88,9 @@ static int polygon(BHSegmentQuery *q, long face, const BHVec3 *point, const BHVe
     } while (edge >= 0 && signs != 3);
     return signs == 1 || signs == 2;
 }
-static int faces(BHSegmentQuery *q, const BHBspNode *node, const BHVec3 *a, const BHVec3 *b,
-                 const BHMat34 *to_world, BHSegmentHit *out) {
+static int faces(BHSegmentQuery *q, const BHBspNode *node, const BHVec3 *a, const BHVec3 *b, const BHMat34 *to_world,
+                 BHSegmentHit *out)
+{
     const BHBsp *bsp = q->geometry->bsp;
     BHVec3 point, normal;
     float da, db, denominator, y;
@@ -106,19 +109,23 @@ static int faces(BHSegmentQuery *q, const BHBspNode *node, const BHVec3 *a, cons
     normal.x = node->normal[0];
     normal.y = node->normal[1];
     normal.z = node->normal[2];
-    for (side = 0; side < 2; ++side) {
+    for (side = 0; side < 2; ++side)
+    {
         leaf = side ? node->back_leaf : node->front_leaf;
         steps = 0;
-        while (leaf >= 0) {
+        while (leaf >= 0)
+        {
             if ((unsigned long)leaf >= bsp->counts[5] || ++steps > bsp->counts[5])
                 return -1;
             result = polygon(q, bsp->leaves[leaf].face, &point, &normal);
             if (result < 0)
                 return -1;
-            if (result) {
+            if (result)
+            {
                 bh_mat34_transform_point(to_world, &point, &out->point);
                 bh_mat34_transform_direction(to_world, &normal, &out->normal);
-                if (side) {
+                if (side)
+                {
                     out->normal.x = -out->normal.x;
                     out->normal.y = -out->normal.y;
                     out->normal.z = -out->normal.z;
@@ -138,9 +145,9 @@ static int faces(BHSegmentQuery *q, const BHBspNode *node, const BHVec3 *a, cons
     }
     return 0;
 }
-int __cdecl bh_segment_query_run(BHSegmentQuery *q, const BHVec3 *start, const BHVec3 *end,
-                                 const BHMat34 *to_world, const BHMat34 *to_local,
-                                 BHSegmentHit *out) {
+int __cdecl bh_segment_query_run(BHSegmentQuery *q, const BHVec3 *start, const BHVec3 *end, const BHMat34 *to_world,
+                                 const BHMat34 *to_local, BHSegmentHit *out)
+{
     const BHBsp *bsp;
     const BHBspNode *node;
     Frame *stack, task;
@@ -150,8 +157,8 @@ int __cdecl bh_segment_query_run(BHSegmentQuery *q, const BHVec3 *start, const B
     float stored_b;
     unsigned long depth = 0, work = 0, i;
     int result;
-    if (!q || !q->frames || !q->geometry || !start || !end || !to_world || !to_local || !out ||
-        q->busy || !bh_math_environment_supported())
+    if (!q || !q->frames || !q->geometry || !start || !end || !to_world || !to_local || !out || q->busy ||
+        !bh_math_environment_supported())
         return fail(q, BH_BSP_ARGUMENT);
     for (i = 0; i < 3; ++i)
         if (!_finite(((const float *)start)[i]) || !_finite(((const float *)end)[i]))
@@ -165,20 +172,24 @@ int __cdecl bh_segment_query_run(BHSegmentQuery *q, const BHVec3 *start, const B
     bh_mat34_transform_point(to_local, start, &a);
     bh_mat34_transform_point(to_local, end, &b);
     stack = (Frame *)q->frames;
-    if (bsp->counts[4]) {
+    if (bsp->counts[4])
+    {
         stack[depth].node = 0;
         stack[depth++].faces = 0;
     }
-    while (depth) {
+    while (depth)
+    {
         task = stack[--depth];
         if (++work > 1048576 || task.node < 0 || (unsigned long)task.node >= bsp->counts[4])
             goto invalid;
         node = bsp->nodes + task.node;
-        if (task.faces) {
+        if (task.faces)
+        {
             result = faces(q, node, &a, &b, to_world, &hit);
             if (result < 0)
                 goto invalid;
-            if (result) {
+            if (result)
+            {
                 *out = hit;
                 q->busy = 0;
                 return 1;
@@ -188,11 +199,14 @@ int __cdecl bh_segment_query_run(BHSegmentQuery *q, const BHVec3 *start, const B
         da = distance(node, &a);
         db = distance(node, &b);
         bh_round_float(&stored_b, db);
-        if (da * db > 0) {
+        if (da * db > 0)
+        {
             task.node = ((double)stored_b + da < 0) ? node->back_node : node->front_node;
             if (task.node >= 0)
                 stack[depth++] = task;
-        } else {
+        }
+        else
+        {
             float stored_a;
             long near_node, far_node;
             bh_round_float(&stored_a, da);
@@ -200,13 +214,15 @@ int __cdecl bh_segment_query_run(BHSegmentQuery *q, const BHVec3 *start, const B
             far_node = stored_a >= 0 ? node->back_node : node->front_node;
             if (depth + 3 > q->capacity)
                 goto invalid;
-            if (far_node >= 0) {
+            if (far_node >= 0)
+            {
                 stack[depth].node = far_node;
                 stack[depth++].faces = 0;
             }
             stack[depth].node = task.node;
             stack[depth++].faces = 1;
-            if (near_node >= 0) {
+            if (near_node >= 0)
+            {
                 stack[depth].node = near_node;
                 stack[depth++].faces = 0;
             }

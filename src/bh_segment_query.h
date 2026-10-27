@@ -2,14 +2,16 @@
 #define BH_SEGMENT_QUERY_H
 #include "bh_geometry.h"
 
-typedef struct BHSegmentHit {
+typedef struct BHSegmentHit
+{
     float fraction;
     BHVec3 point, normal;
     long face;
     unsigned long flags;
 } BHSegmentHit;
 
-typedef struct BHSegmentQuery {
+typedef struct BHSegmentQuery
+{
     BHGeometry *geometry;
     BHSceneAllocator allocator;
     void *frames;
@@ -33,7 +35,6 @@ int __cdecl bh_segment_query_dispose(BHSegmentQuery *query);
    Query allocates nothing. Topology must stay live; bounded work rejects cycles
    or excessive repeated DAG traversal. Coplanar original arithmetic is retained
    under masked PC53, including nonfinite intermediate results. */
-int __cdecl bh_segment_query_run(BHSegmentQuery *query, const BHVec3 *start, const BHVec3 *end,
-                                 const BHMat34 *to_world, const BHMat34 *to_local,
-                                 BHSegmentHit *out);
+int __cdecl bh_segment_query_run(BHSegmentQuery *query, const BHVec3 *start, const BHVec3 *end, const BHMat34 *to_world,
+                                 const BHMat34 *to_local, BHSegmentHit *out);
 #endif

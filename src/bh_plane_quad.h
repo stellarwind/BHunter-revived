@@ -9,12 +9,12 @@
    signed color conversion and missed15th modulation argument are preserved.
    No rasterizer is supplied: synchronous emitter and all borrowed inputs
    follow BHSpriteQuadContext lifetime/nonreentrancy/PC53 finite contracts. */
-int __cdecl bh_plane_quad_draw(BHSpriteQuadContext *,BHTextureImage *,
-    const BHVec3 *center,const BHVec3 *normal,const BHVec3 *up,
-    float width,float height,float angle,unsigned char flags,float modulation);
+int __cdecl bh_plane_quad_draw(BHSpriteQuadContext *, BHTextureImage *, const BHVec3 *center, const BHVec3 *normal,
+                               const BHVec3 *up, float width, float height, float angle, unsigned char flags,
+                               float modulation);
 /* Complete00477710. Decode BH_DRAW_ORIENTED, preserve reordered up/normal,
    truncate raw flags to byte, invoke real full-image owner, then read next.
    Missing image also publishes next and fails. Output must not alias command.
    This callback binds actual image lookup; no original addresses/vtables. */
-int __cdecl bh_plane_quad_execute(BHQuadQueueContext *,const BHDrawCommand *,unsigned long *next);
+int __cdecl bh_plane_quad_execute(BHQuadQueueContext *, const BHDrawCommand *, unsigned long *next);
 #endif

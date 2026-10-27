@@ -11,6 +11,5 @@
    outputs must not alias inputs. Requires caller PC53 nearest/masked profile.
    Missing bindings/count mismatch/>6/invalid incoming direction or index return
    0 before output publication; this guards original uninitialized/OOB inputs. */
-int __cdecl bh_route_guided_exit(const BHEntity *actor,const BHWorldGeometry *room,
-    long incoming,long *selected);
+int __cdecl bh_route_guided_exit(const BHEntity *actor, const BHWorldGeometry *room, long incoming, long *selected);
 #endif

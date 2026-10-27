@@ -8,8 +8,14 @@
    stores; matrix multiply/inverse outputs must not overlap their inputs.
    Inverse operations assume an orthonormal basis for inverse semantics.
    NaN result class/status is tested; NaN payload/sign is not guaranteed. */
-typedef struct BHVec3 { float x, y, z; } BHVec3;
-typedef struct BHMat34 { float m[3][4]; } BHMat34;
+typedef struct BHVec3
+{
+    float x, y, z;
+} BHVec3;
+typedef struct BHMat34
+{
+    float m[3][4];
+} BHMat34;
 
 void __cdecl bh_mat34_multiply(const BHMat34 *a, const BHMat34 *b, BHMat34 *out);
 void __cdecl bh_vec3_cross(const BHVec3 *a, const BHVec3 *b, BHVec3 *out);

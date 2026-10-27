@@ -7,7 +7,8 @@
    Zero list/dispatcher before setup. owner/pool/state and this context outlive
    the dispatcher. Release dispatcher before disposing the list owner/context.
    list may be rebound to another live packet list; tick reloads it each time. */
-typedef struct BHEditorInput {
+typedef struct BHEditorInput
+{
     BHPlayerInputOwner *owner;
     BHEntityPool *pool;
     BHPlayerInputList *list;

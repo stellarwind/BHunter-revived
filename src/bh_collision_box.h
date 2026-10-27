@@ -11,5 +11,5 @@
    model/geometry ownership intact and reports its real BSP error. Replacing
    while geometry enumeration is active rejects. Dispose existing queries before
    success; successful build replaces owned storage and invalidates old borrows. */
-int __cdecl bh_collision_box_build(BHCollisionModel *model,const BHVec3 *extent,const BHVec3 *padding);
+int __cdecl bh_collision_box_build(BHCollisionModel *model, const BHVec3 *extent, const BHVec3 *padding);
 #endif

@@ -3,20 +3,26 @@
 #include "bh_texture_draw.h"
 #include "bh_atlas_image.h"
 
-typedef enum BHFrameRenderError {
-    BH_FRAME_RENDER_OK,BH_FRAME_RENDER_ARGUMENT,BH_FRAME_RENDER_BINDING,
-    BH_FRAME_RENDER_TOPOLOGY,BH_FRAME_RENDER_BOUNDS,BH_FRAME_RENDER_NATIVE
+typedef enum BHFrameRenderError
+{
+    BH_FRAME_RENDER_OK,
+    BH_FRAME_RENDER_ARGUMENT,
+    BH_FRAME_RENDER_BINDING,
+    BH_FRAME_RENDER_TOPOLOGY,
+    BH_FRAME_RENDER_BOUNDS,
+    BH_FRAME_RENDER_NATIVE
 } BHFrameRenderError;
-typedef struct BHFrameDisplay {
-    BHTextureContext *textures;       /* original 004edc70 / 004ede80 / device */
-    BHAtlasContext *atlas;            /* optional shared 004e9750 scan step */
-    LPDIRECTDRAWSURFACE auxiliary,color; /* original 004e9c48 / 004e9c3c */
-    unsigned char *auxiliary_pixels,*color_pixels; /* original locked pointers */
-    unsigned long auxiliary_bytes;    /* source guard for locked depth clear */
-    long auxiliary_pitch,color_pitch;
-    float left,top;                   /* original 004ede9c / 004edea0 */
-    unsigned long locked,indexed_color; /* original 004e9c50 / 004e38c4 */
-    unsigned long native_calls,flushes,failures,sleeps;
+typedef struct BHFrameDisplay
+{
+    BHTextureContext *textures;                     /* original 004edc70 / 004ede80 / device */
+    BHAtlasContext *atlas;                          /* optional shared 004e9750 scan step */
+    LPDIRECTDRAWSURFACE auxiliary, color;           /* original 004e9c48 / 004e9c3c */
+    unsigned char *auxiliary_pixels, *color_pixels; /* original locked pointers */
+    unsigned long auxiliary_bytes;                  /* source guard for locked depth clear */
+    long auxiliary_pitch, color_pitch;
+    float left, top;                     /* original 004ede9c / 004edea0 */
+    unsigned long locked, indexed_color; /* original 004e9c50 / 004e38c4 */
+    unsigned long native_calls, flushes, failures, sleeps;
     HRESULT last_hresult;
     BHFrameRenderError error;
 } BHFrameDisplay;
@@ -31,5 +37,5 @@ typedef struct BHFrameDisplay {
    RGB values 0..255 are source adapter guards; this callback only supplies 255.
    No arbitrary invalid pointer or signed-overflow behavior is recovered. */
 int __cdecl bh_frame_clear_depth(BHFrameDisplay *);
-int __cdecl bh_frame_clear_color(BHFrameDisplay *,long red,long green,long blue);
+int __cdecl bh_frame_clear_color(BHFrameDisplay *, long red, long green, long blue);
 #endif

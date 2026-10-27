@@ -9,157 +9,322 @@
 #include <string.h>
 #include <float.h>
 
-static int result(BHSceneView *v,HRESULT hr) {if(hr!=DD_OK){v->error=hr;return 0;}return 1;}
-void __cdecl bh_scene_view_dispose(BHSceneView *v) {
-    if(!v)return;
-    if(v->begun && v->device)IDirect3DDevice2_EndScene(v->device);
-    if(v->device && v->viewport)IDirect3DDevice2_DeleteViewport(v->device,v->viewport);
-    if(v->viewport)IDirect3DViewport2_Release(v->viewport);
-    if(v->device)IDirect3DDevice2_Release(v->device);
-    if(v->depth)IDirectDrawSurface_Release(v->depth);
-    if(v->color)IDirectDrawSurface_Release(v->color);
-    if(v->d3d)IDirect3D2_Release(v->d3d);
-    if(v->draw)IDirectDraw_Release(v->draw);
-    memset(v,0,sizeof(*v));
+static int result(BHSceneView *v, HRESULT hr)
+{
+    if (hr != DD_OK)
+    {
+        v->error = hr;
+        return 0;
+    }
+    return 1;
 }
-int __cdecl bh_scene_view_init(BHSceneView *v,unsigned long width,unsigned long height) {
-    DDSURFACEDESC surface;D3DVIEWPORT2 viewport;
-    if(!v || width<32 || height<32 || width>2048 || height>2048)return 0;
-    memset(v,0,sizeof(*v));v->width=width;v->height=height;
-    bh_view_config_init(&v->projection,(long)width,(long)height);
+void __cdecl bh_scene_view_dispose(BHSceneView *v)
+{
+    if (!v)
+        return;
+    if (v->begun && v->device)
+        IDirect3DDevice2_EndScene(v->device);
+    if (v->device && v->viewport)
+        IDirect3DDevice2_DeleteViewport(v->device, v->viewport);
+    if (v->viewport)
+        IDirect3DViewport2_Release(v->viewport);
+    if (v->device)
+        IDirect3DDevice2_Release(v->device);
+    if (v->depth)
+        IDirectDrawSurface_Release(v->depth);
+    if (v->color)
+        IDirectDrawSurface_Release(v->color);
+    if (v->d3d)
+        IDirect3D2_Release(v->d3d);
+    if (v->draw)
+        IDirectDraw_Release(v->draw);
+    memset(v, 0, sizeof(*v));
+}
+int __cdecl bh_scene_view_init(BHSceneView *v, unsigned long width, unsigned long height)
+{
+    DDSURFACEDESC surface;
+    D3DVIEWPORT2 viewport;
+    if (!v || width < 32 || height < 32 || width > 2048 || height > 2048)
+        return 0;
+    memset(v, 0, sizeof(*v));
+    v->width = width;
+    v->height = height;
+    bh_view_config_init(&v->projection, (long)width, (long)height);
     /* Retain analytic native-control profile; snapshot explicitly opts into original defaults. */
-    v->projection.fov=1.5707963267948966f;v->projection.near_z=.25f;v->projection.far_z=400;
-    if(!result(v,DirectDrawCreate(NULL,&v->draw,NULL)) ||
-       !result(v,IDirectDraw_SetCooperativeLevel(v->draw,GetDesktopWindow(),DDSCL_NORMAL)) ||
-       !result(v,IDirectDraw_QueryInterface(v->draw,&IID_IDirect3D2,(void **)&v->d3d)))return 0;
-    memset(&surface,0,sizeof(surface));surface.dwSize=sizeof(surface);
-    surface.dwFlags=DDSD_CAPS|DDSD_WIDTH|DDSD_HEIGHT|DDSD_PIXELFORMAT;
-    surface.dwWidth=width;surface.dwHeight=height;
-    surface.ddsCaps.dwCaps=DDSCAPS_OFFSCREENPLAIN|DDSCAPS_3DDEVICE|DDSCAPS_SYSTEMMEMORY;
-    surface.ddpfPixelFormat.dwSize=sizeof(DDPIXELFORMAT);surface.ddpfPixelFormat.dwFlags=DDPF_RGB;
-    surface.ddpfPixelFormat.dwRGBBitCount=16;surface.ddpfPixelFormat.dwRBitMask=0xf800;
-    surface.ddpfPixelFormat.dwGBitMask=0x7e0;surface.ddpfPixelFormat.dwBBitMask=0x1f;
-    if(!result(v,IDirectDraw_CreateSurface(v->draw,&surface,&v->color,NULL)))return 0;
-    surface.ddsCaps.dwCaps=DDSCAPS_ZBUFFER|DDSCAPS_SYSTEMMEMORY;
-    surface.ddpfPixelFormat.dwFlags=DDPF_ZBUFFER;surface.ddpfPixelFormat.dwZBufferBitDepth=16;
-    surface.ddpfPixelFormat.dwRBitMask=surface.ddpfPixelFormat.dwGBitMask=surface.ddpfPixelFormat.dwBBitMask=0;
-    if(!result(v,IDirectDraw_CreateSurface(v->draw,&surface,&v->depth,NULL)) ||
-       !result(v,IDirectDrawSurface_AddAttachedSurface(v->color,v->depth)) ||
-       !result(v,IDirect3D2_CreateDevice(v->d3d,&IID_IDirect3DRGBDevice,v->color,&v->device)) ||
-       !result(v,IDirect3D2_CreateViewport(v->d3d,&v->viewport,NULL)) ||
-       !result(v,IDirect3DDevice2_AddViewport(v->device,v->viewport)))return 0;
-    memset(&viewport,0,sizeof(viewport));viewport.dwSize=sizeof(viewport);
-    viewport.dwWidth=width;viewport.dwHeight=height;viewport.dvClipX=-1;viewport.dvClipY=1;
-    viewport.dvClipWidth=viewport.dvClipHeight=2;viewport.dvMinZ=0;viewport.dvMaxZ=1;
-    if(!result(v,IDirect3DViewport2_SetViewport2(v->viewport,&viewport)) ||
-       !result(v,IDirect3DDevice2_SetCurrentViewport(v->device,v->viewport)))return 0;
-    return result(v,IDirect3DDevice2_SetRenderState(v->device,D3DRENDERSTATE_ZENABLE,TRUE)) &&
-        result(v,IDirect3DDevice2_SetRenderState(v->device,D3DRENDERSTATE_ZWRITEENABLE,TRUE)) &&
-        result(v,IDirect3DDevice2_SetRenderState(v->device,D3DRENDERSTATE_CULLMODE,D3DCULL_NONE)) &&
-        result(v,IDirect3DDevice2_SetRenderState(v->device,D3DRENDERSTATE_SHADEMODE,D3DSHADE_FLAT));
+    v->projection.fov = 1.5707963267948966f;
+    v->projection.near_z = .25f;
+    v->projection.far_z = 400;
+    if (!result(v, DirectDrawCreate(NULL, &v->draw, NULL)) ||
+        !result(v, IDirectDraw_SetCooperativeLevel(v->draw, GetDesktopWindow(), DDSCL_NORMAL)) ||
+        !result(v, IDirectDraw_QueryInterface(v->draw, &IID_IDirect3D2, (void **)&v->d3d)))
+        return 0;
+    memset(&surface, 0, sizeof(surface));
+    surface.dwSize = sizeof(surface);
+    surface.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT | DDSD_PIXELFORMAT;
+    surface.dwWidth = width;
+    surface.dwHeight = height;
+    surface.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_3DDEVICE | DDSCAPS_SYSTEMMEMORY;
+    surface.ddpfPixelFormat.dwSize = sizeof(DDPIXELFORMAT);
+    surface.ddpfPixelFormat.dwFlags = DDPF_RGB;
+    surface.ddpfPixelFormat.dwRGBBitCount = 16;
+    surface.ddpfPixelFormat.dwRBitMask = 0xf800;
+    surface.ddpfPixelFormat.dwGBitMask = 0x7e0;
+    surface.ddpfPixelFormat.dwBBitMask = 0x1f;
+    if (!result(v, IDirectDraw_CreateSurface(v->draw, &surface, &v->color, NULL)))
+        return 0;
+    surface.ddsCaps.dwCaps = DDSCAPS_ZBUFFER | DDSCAPS_SYSTEMMEMORY;
+    surface.ddpfPixelFormat.dwFlags = DDPF_ZBUFFER;
+    surface.ddpfPixelFormat.dwZBufferBitDepth = 16;
+    surface.ddpfPixelFormat.dwRBitMask = surface.ddpfPixelFormat.dwGBitMask = surface.ddpfPixelFormat.dwBBitMask = 0;
+    if (!result(v, IDirectDraw_CreateSurface(v->draw, &surface, &v->depth, NULL)) ||
+        !result(v, IDirectDrawSurface_AddAttachedSurface(v->color, v->depth)) ||
+        !result(v, IDirect3D2_CreateDevice(v->d3d, &IID_IDirect3DRGBDevice, v->color, &v->device)) ||
+        !result(v, IDirect3D2_CreateViewport(v->d3d, &v->viewport, NULL)) ||
+        !result(v, IDirect3DDevice2_AddViewport(v->device, v->viewport)))
+        return 0;
+    memset(&viewport, 0, sizeof(viewport));
+    viewport.dwSize = sizeof(viewport);
+    viewport.dwWidth = width;
+    viewport.dwHeight = height;
+    viewport.dvClipX = -1;
+    viewport.dvClipY = 1;
+    viewport.dvClipWidth = viewport.dvClipHeight = 2;
+    viewport.dvMinZ = 0;
+    viewport.dvMaxZ = 1;
+    if (!result(v, IDirect3DViewport2_SetViewport2(v->viewport, &viewport)) ||
+        !result(v, IDirect3DDevice2_SetCurrentViewport(v->device, v->viewport)))
+        return 0;
+    return result(v, IDirect3DDevice2_SetRenderState(v->device, D3DRENDERSTATE_ZENABLE, TRUE)) &&
+           result(v, IDirect3DDevice2_SetRenderState(v->device, D3DRENDERSTATE_ZWRITEENABLE, TRUE)) &&
+           result(v, IDirect3DDevice2_SetRenderState(v->device, D3DRENDERSTATE_CULLMODE, D3DCULL_NONE)) &&
+           result(v, IDirect3DDevice2_SetRenderState(v->device, D3DRENDERSTATE_SHADEMODE, D3DSHADE_FLAT));
 }
-int __cdecl bh_scene_view_begin(BHSceneView *v) {
-    D3DRECT rect;DDSURFACEDESC depth;unsigned long y;
-    if(!v || !v->device || v->begun)return 0;
-    rect.x1=rect.y1=0;rect.x2=v->width;rect.y2=v->height;
-    v->triangles=v->pixels=0;
-    if(!result(v,IDirect3DViewport2_Clear(v->viewport,1,&rect,D3DCLEAR_TARGET|D3DCLEAR_ZBUFFER)))return 0;
+int __cdecl bh_scene_view_begin(BHSceneView *v)
+{
+    D3DRECT rect;
+    DDSURFACEDESC depth;
+    unsigned long y;
+    if (!v || !v->device || v->begun)
+        return 0;
+    rect.x1 = rect.y1 = 0;
+    rect.x2 = v->width;
+    rect.y2 = v->height;
+    v->triangles = v->pixels = 0;
+    if (!result(v, IDirect3DViewport2_Clear(v->viewport, 1, &rect, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER)))
+        return 0;
     /* Explicit offscreen adapter: the viewport's fixed Clear depth is1; the
        original native near/z comparison needs an initially zero Z target. */
-    if(v->original_depth) {
-        memset(&depth,0,sizeof(depth));depth.dwSize=sizeof(depth);
-        if(!result(v,IDirectDrawSurface_Lock(v->depth,NULL,&depth,DDLOCK_WAIT,NULL)))return 0;
-        for(y=0;y<v->height;++y)memset((unsigned char *)depth.lpSurface+y*depth.lPitch,0,v->width*2);
-        if(!result(v,IDirectDrawSurface_Unlock(v->depth,NULL)))return 0;
+    if (v->original_depth)
+    {
+        memset(&depth, 0, sizeof(depth));
+        depth.dwSize = sizeof(depth);
+        if (!result(v, IDirectDrawSurface_Lock(v->depth, NULL, &depth, DDLOCK_WAIT, NULL)))
+            return 0;
+        for (y = 0; y < v->height; ++y)
+            memset((unsigned char *)depth.lpSurface + y * depth.lPitch, 0, v->width * 2);
+        if (!result(v, IDirectDrawSurface_Unlock(v->depth, NULL)))
+            return 0;
     }
-    if(!result(v,IDirect3DDevice2_BeginScene(v->device)))return 0;
-    v->begun=1;return 1;
+    if (!result(v, IDirect3DDevice2_BeginScene(v->device)))
+        return 0;
+    v->begun = 1;
+    return 1;
 }
 /* Explicit diagnostic viewport binding. The original clipper consumes a
    homogeneous projected coordinate ring; camera/FOV setup remains an adapter. */
-static int polygon(BHSceneView *v,const BHVec3 *points,const float *uv,unsigned long count,
-    unsigned long rgb,BHTextureContext *textures,BHTextureImage *image) {
-    BHClipContext clip;BHClipVertex *input,*out,*p;BHMat34 orientation;BHViewCamera camera;
-    D3DTLVERTEX *fan,triangle[3];unsigned long i,n=0;int ok=1;
-    if(!v || !v->begun || !points || count<3 || count>1024)return 0;
-    input=(BHClipVertex *)calloc(count,sizeof(*input));if(!input)return 0;
-    memset(&orientation,0,sizeof(orientation));orientation.m[0][0]=orientation.m[2][2]=1;orientation.m[1][1]=v->original_depth?1:-1;
-    if(!bh_view_camera_build(&v->projection,&orientation,&camera) ||
-        !bh_clip_init(&clip,v->projection.near_z,v->projection.far_z,v->projection.left,v->projection.right,v->projection.top,v->projection.bottom)) {free(input);return 0;}
-    bh_clip_set_camera(&clip,&camera.projected);
-    for(i=0;i<count;++i) {
-        input[i].next=input+(i+1)%count;input[i].previous=input+(i+count-1)%count;
-        bh_mat34_transform_point(&camera.projected,points+i,&input[i].point);input[i].u=uv?uv[i*2]:0;input[i].v=uv?uv[i*2+1]:0;
+static int polygon(BHSceneView *v, const BHVec3 *points, const float *uv, unsigned long count, unsigned long rgb,
+                   BHTextureContext *textures, BHTextureImage *image)
+{
+    BHClipContext clip;
+    BHClipVertex *input, *out, *p;
+    BHMat34 orientation;
+    BHViewCamera camera;
+    D3DTLVERTEX *fan, triangle[3];
+    unsigned long i, n = 0;
+    int ok = 1;
+    if (!v || !v->begun || !points || count < 3 || count > 1024)
+        return 0;
+    input = (BHClipVertex *)calloc(count, sizeof(*input));
+    if (!input)
+        return 0;
+    memset(&orientation, 0, sizeof(orientation));
+    orientation.m[0][0] = orientation.m[2][2] = 1;
+    orientation.m[1][1] = v->original_depth ? 1 : -1;
+    if (!bh_view_camera_build(&v->projection, &orientation, &camera) ||
+        !bh_clip_init(&clip, v->projection.near_z, v->projection.far_z, v->projection.left, v->projection.right,
+                      v->projection.top, v->projection.bottom))
+    {
+        free(input);
+        return 0;
     }
-    out=bh_clip_polygon(&clip,input,image);
-    if(!out){free(input);return clip.error==BH_CLIP_OK;}
-    p=out;do{++n;p=p->next;}while(p!=out);
-    if(n<3){free(input);return 1;}
-    if(image && v->original_depth) {
-        BHNativePrimitive native;memset(&native,0,sizeof(native));native.textures=textures;native.near_z=v->projection.near_z;
-        ok=bh_native_primitive_emit(out,image,0xff000000UL|rgb,&native) && bh_texture_draw_flush(textures,image,NULL);
-        if(ok)v->triangles+=n-2;else v->error=textures->last_hresult;
-        free(input);return ok;
+    bh_clip_set_camera(&clip, &camera.projected);
+    for (i = 0; i < count; ++i)
+    {
+        input[i].next = input + (i + 1) % count;
+        input[i].previous = input + (i + count - 1) % count;
+        bh_mat34_transform_point(&camera.projected, points + i, &input[i].point);
+        input[i].u = uv ? uv[i * 2] : 0;
+        input[i].v = uv ? uv[i * 2 + 1] : 0;
     }
-    fan=(D3DTLVERTEX *)calloc(n,sizeof(*fan));if(!fan){free(input);return 0;}
-    p=out;for(i=0;i<n;++i) {
-        double inverse=1.0/p->point.z;fan[i].sx=p->sx;fan[i].sy=p->sy;
+    out = bh_clip_polygon(&clip, input, image);
+    if (!out)
+    {
+        free(input);
+        return clip.error == BH_CLIP_OK;
+    }
+    p = out;
+    do
+    {
+        ++n;
+        p = p->next;
+    } while (p != out);
+    if (n < 3)
+    {
+        free(input);
+        return 1;
+    }
+    if (image && v->original_depth)
+    {
+        BHNativePrimitive native;
+        memset(&native, 0, sizeof(native));
+        native.textures = textures;
+        native.near_z = v->projection.near_z;
+        ok = bh_native_primitive_emit(out, image, 0xff000000UL | rgb, &native) &&
+             bh_texture_draw_flush(textures, image, NULL);
+        if (ok)
+            v->triangles += n - 2;
+        else
+            v->error = textures->last_hresult;
+        free(input);
+        return ok;
+    }
+    fan = (D3DTLVERTEX *)calloc(n, sizeof(*fan));
+    if (!fan)
+    {
+        free(input);
+        return 0;
+    }
+    p = out;
+    for (i = 0; i < n; ++i)
+    {
+        double inverse = 1.0 / p->point.z;
+        fan[i].sx = p->sx;
+        fan[i].sy = p->sy;
         /* Native branch0046e390 stores near/z; software dispatch remains an
            explicit missing owner. Analytic controls retain conventional depth. */
-        fan[i].sz=v->original_depth?(float)((double)v->projection.near_z/p->point.z):
-            (float)(((double)v->projection.far_z/(v->projection.far_z-v->projection.near_z))*(1-v->projection.near_z*inverse));fan[i].rhw=(float)inverse;
-        fan[i].color=0xff000000UL|rgb;fan[i].tu=p->u;fan[i].tv=p->v;p=p->next;
+        fan[i].sz = v->original_depth
+                        ? (float)((double)v->projection.near_z / p->point.z)
+                        : (float)(((double)v->projection.far_z / (v->projection.far_z - v->projection.near_z)) *
+                                  (1 - v->projection.near_z * inverse));
+        fan[i].rhw = (float)inverse;
+        fan[i].color = 0xff000000UL | rgb;
+        fan[i].tu = p->u;
+        fan[i].tv = p->v;
+        p = p->next;
     }
-    if(image) {
-        ok=result(v,IDirect3DDevice2_SetRenderState(v->device,D3DRENDERSTATE_TEXTUREPERSPECTIVE,TRUE)) &&
-            result(v,IDirect3DDevice2_SetRenderState(v->device,D3DRENDERSTATE_TEXTUREMAPBLEND,D3DTBLEND_MODULATE));
-        if(ok){ok=bh_texture_draw_polygon(textures,image,fan,n) && bh_texture_draw_flush(textures,image,NULL);
-            if(ok)v->triangles+=n-2;else v->error=textures->last_hresult;}
-    } else {
-        ok=result(v,IDirect3DDevice2_SetRenderState(v->device,D3DRENDERSTATE_TEXTUREHANDLE,0));
-        for(i=1;ok && i+1<n;++i) {
-            triangle[0]=fan[0];triangle[1]=fan[i];triangle[2]=fan[i+1];
-            ok=result(v,IDirect3DDevice2_DrawPrimitive(v->device,D3DPT_TRIANGLELIST,D3DVT_TLVERTEX,triangle,3,0x0c));
-            if(ok)++v->triangles;
+    if (image)
+    {
+        ok = result(v, IDirect3DDevice2_SetRenderState(v->device, D3DRENDERSTATE_TEXTUREPERSPECTIVE, TRUE)) &&
+             result(v, IDirect3DDevice2_SetRenderState(v->device, D3DRENDERSTATE_TEXTUREMAPBLEND, D3DTBLEND_MODULATE));
+        if (ok)
+        {
+            ok = bh_texture_draw_polygon(textures, image, fan, n) && bh_texture_draw_flush(textures, image, NULL);
+            if (ok)
+                v->triangles += n - 2;
+            else
+                v->error = textures->last_hresult;
         }
     }
-    free(fan);free(input);return ok;
-}
-int __cdecl bh_scene_view_polygon(BHSceneView *v,const BHVec3 *points,unsigned long count,unsigned long rgb) {
-    return polygon(v,points,NULL,count,rgb,NULL,NULL);
-}
-int __cdecl bh_scene_view_textured_polygon(BHSceneView *v,const BHVec3 *points,const float *uv,
-    unsigned long count,BHTextureContext *textures,BHTextureImage *image) {
-    if(!textures || !image || !uv)return 0;
-    return polygon(v,points,uv,count,0xffffff,textures,image);
-}
-int __cdecl bh_scene_view_end(BHSceneView *v,const char *path) {
-    DDSURFACEDESC desc;BITMAPFILEHEADER file;BITMAPINFOHEADER info;
-    unsigned char *row;unsigned long x,y,stride;FILE *output;int ok=1;
-    if(!v || !v->begun || !path)return 0;
-    v->begun=0;if(!result(v,IDirect3DDevice2_EndScene(v->device)))return 0;
-    memset(&desc,0,sizeof(desc));desc.dwSize=sizeof(desc);
-    if(!result(v,IDirectDrawSurface_Lock(v->color,NULL,&desc,DDLOCK_WAIT|DDLOCK_READONLY,NULL)))return 0;
-    if(desc.ddpfPixelFormat.dwRGBBitCount!=16 || desc.ddpfPixelFormat.dwRBitMask!=0xf800 ||
-       desc.ddpfPixelFormat.dwGBitMask!=0x7e0 || desc.ddpfPixelFormat.dwBBitMask!=0x1f) {
-        IDirectDrawSurface_Unlock(v->color,NULL);return 0;
-    }
-    stride=(v->width*3+3)&~3UL;row=(unsigned char *)calloc(stride,1);output=fopen(path,"wb");
-    if(!row || !output)ok=0;
-    memset(&file,0,sizeof(file));memset(&info,0,sizeof(info));file.bfType=0x4d42;
-    file.bfOffBits=sizeof(file)+sizeof(info);file.bfSize=file.bfOffBits+stride*v->height;
-    info.biSize=sizeof(info);info.biWidth=v->width;info.biHeight=v->height;info.biPlanes=1;info.biBitCount=24;info.biSizeImage=stride*v->height;
-    if(ok && (fwrite(&file,sizeof(file),1,output)!=1 || fwrite(&info,sizeof(info),1,output)!=1))ok=0;
-    for(y=v->height;ok && y;--y) {
-        unsigned short *source=(unsigned short *)((unsigned char *)desc.lpSurface+(y-1)*desc.lPitch);
-        for(x=0;x<v->width;++x) {
-            unsigned long c=source[x];row[x*3]=(unsigned char)((c&31)*255/31);
-            row[x*3+1]=(unsigned char)(((c>>5)&63)*255/63);row[x*3+2]=(unsigned char)(((c>>11)&31)*255/31);
-            if(c)++v->pixels;
+    else
+    {
+        ok = result(v, IDirect3DDevice2_SetRenderState(v->device, D3DRENDERSTATE_TEXTUREHANDLE, 0));
+        for (i = 1; ok && i + 1 < n; ++i)
+        {
+            triangle[0] = fan[0];
+            triangle[1] = fan[i];
+            triangle[2] = fan[i + 1];
+            ok = result(
+                v, IDirect3DDevice2_DrawPrimitive(v->device, D3DPT_TRIANGLELIST, D3DVT_TLVERTEX, triangle, 3, 0x0c));
+            if (ok)
+                ++v->triangles;
         }
-        if(fwrite(row,stride,1,output)!=1)ok=0;
     }
-    if(output && fclose(output))ok=0;free(row);
-    if(!result(v,IDirectDrawSurface_Unlock(v->color,NULL)))ok=0;
+    free(fan);
+    free(input);
+    return ok;
+}
+int __cdecl bh_scene_view_polygon(BHSceneView *v, const BHVec3 *points, unsigned long count, unsigned long rgb)
+{
+    return polygon(v, points, NULL, count, rgb, NULL, NULL);
+}
+int __cdecl bh_scene_view_textured_polygon(BHSceneView *v, const BHVec3 *points, const float *uv, unsigned long count,
+                                           BHTextureContext *textures, BHTextureImage *image)
+{
+    if (!textures || !image || !uv)
+        return 0;
+    return polygon(v, points, uv, count, 0xffffff, textures, image);
+}
+int __cdecl bh_scene_view_end(BHSceneView *v, const char *path)
+{
+    DDSURFACEDESC desc;
+    BITMAPFILEHEADER file;
+    BITMAPINFOHEADER info;
+    unsigned char *row;
+    unsigned long x, y, stride;
+    FILE *output;
+    int ok = 1;
+    if (!v || !v->begun || !path)
+        return 0;
+    v->begun = 0;
+    if (!result(v, IDirect3DDevice2_EndScene(v->device)))
+        return 0;
+    memset(&desc, 0, sizeof(desc));
+    desc.dwSize = sizeof(desc);
+    if (!result(v, IDirectDrawSurface_Lock(v->color, NULL, &desc, DDLOCK_WAIT | DDLOCK_READONLY, NULL)))
+        return 0;
+    if (desc.ddpfPixelFormat.dwRGBBitCount != 16 || desc.ddpfPixelFormat.dwRBitMask != 0xf800 ||
+        desc.ddpfPixelFormat.dwGBitMask != 0x7e0 || desc.ddpfPixelFormat.dwBBitMask != 0x1f)
+    {
+        IDirectDrawSurface_Unlock(v->color, NULL);
+        return 0;
+    }
+    stride = (v->width * 3 + 3) & ~3UL;
+    row = (unsigned char *)calloc(stride, 1);
+    output = fopen(path, "wb");
+    if (!row || !output)
+        ok = 0;
+    memset(&file, 0, sizeof(file));
+    memset(&info, 0, sizeof(info));
+    file.bfType = 0x4d42;
+    file.bfOffBits = sizeof(file) + sizeof(info);
+    file.bfSize = file.bfOffBits + stride * v->height;
+    info.biSize = sizeof(info);
+    info.biWidth = v->width;
+    info.biHeight = v->height;
+    info.biPlanes = 1;
+    info.biBitCount = 24;
+    info.biSizeImage = stride * v->height;
+    if (ok && (fwrite(&file, sizeof(file), 1, output) != 1 || fwrite(&info, sizeof(info), 1, output) != 1))
+        ok = 0;
+    for (y = v->height; ok && y; --y)
+    {
+        unsigned short *source = (unsigned short *)((unsigned char *)desc.lpSurface + (y - 1) * desc.lPitch);
+        for (x = 0; x < v->width; ++x)
+        {
+            unsigned long c = source[x];
+            row[x * 3] = (unsigned char)((c & 31) * 255 / 31);
+            row[x * 3 + 1] = (unsigned char)(((c >> 5) & 63) * 255 / 63);
+            row[x * 3 + 2] = (unsigned char)(((c >> 11) & 31) * 255 / 31);
+            if (c)
+                ++v->pixels;
+        }
+        if (fwrite(row, stride, 1, output) != 1)
+            ok = 0;
+    }
+    if (output && fclose(output))
+        ok = 0;
+    free(row);
+    if (!result(v, IDirectDrawSurface_Unlock(v->color, NULL)))
+        ok = 0;
     return ok;
 }

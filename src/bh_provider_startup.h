@@ -3,13 +3,17 @@
 #include "bh_provider_catalog.h"
 #include "bh_serial_options.h"
 #include <dplobby.h>
-typedef struct BHProviderStartup {
-    BHProviderCatalog *catalog;BHModemNames *modems;
-    LPDIRECTPLAY3A peer;LPDIRECTPLAYLOBBY2A lobby;
+typedef struct BHProviderStartup
+{
+    BHProviderCatalog *catalog;
+    BHModemNames *modems;
+    LPDIRECTPLAY3A peer;
+    LPDIRECTPLAYLOBBY2A lobby;
     int com_initialized;
-    HRESULT com_result,peer_result,lobby_result,enumeration_result;
-    HRESULT initialization_result,address_result,address_enumeration_result;
-    unsigned long creations,enumerations,initializations,successful_initializations,address_queries,address_enumerations,releases;
+    HRESULT com_result, peer_result, lobby_result, enumeration_result;
+    HRESULT initialization_result, address_result, address_enumeration_result;
+    unsigned long creations, enumerations, initializations, successful_initializations, address_queries,
+        address_enumerations, releases;
 } BHProviderStartup;
 /* Whole00475ef0. Fresh initialized catalog, modem context and zeroed startup
    state required. Enumerates actual providers, initializes original kind2

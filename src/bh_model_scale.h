@@ -8,7 +8,7 @@
    negative following-edge value. Validate inputs independently when status
    matters (the scale owner preflights and ignores this return). Model storage
    is borrowed; any negative chain terminator is permitted. */
-long __cdecl bh_model_reverse_edges(BHModel *,long first,long count);
+long __cdecl bh_model_reverse_edges(BHModel *, long first, long count);
 /* Complete00470e00. Nonzero model.frame is a complete successful no-op.
    Every associated source draw cache MUST appear in caches; no global cache
    registry exists. Cold zero caches are permitted; duplicate/foreign caches
@@ -21,6 +21,6 @@ long __cdecl bh_model_reverse_edges(BHModel *,long first,long count);
    and PC24 are not promised. Source guards require bounded valid arrays and
    a root node; reflected face chains must terminate within edge_count slots.
    Returns0 on invalid source binding, with no model/cache mutation. */
-int __cdecl bh_model_scale(BHModel *,float sx,float sy,float sz,
-                          BHModelDrawCache *const *caches,unsigned long cache_count);
+int __cdecl bh_model_scale(BHModel *, float sx, float sy, float sz, BHModelDrawCache *const *caches,
+                           unsigned long cache_count);
 #endif

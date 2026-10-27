@@ -2,28 +2,32 @@
 #define BH_PHYSICS_STEP_H
 #include "bh_physics_response.h"
 #include "bh_physics_effects.h"
-typedef struct BHPhysicsStepBody {
+typedef struct BHPhysicsStepBody
+{
     BHEntity *entity;
     unsigned long generation;
     BHPhysicsState *physics;
     BHGeometry *geometry;                       /* own original+bc collision geometry */
-    unsigned long model_index; /* retained adapter index; actor mesh is geometry */
+    unsigned long model_index;                  /* retained adapter index; actor mesh is geometry */
     const BHMat34 *target_world, *target_local; /* actual rigid actor pose/inverse */
     BHWorldGeometry *world;
     float mass, friction;
     unsigned long flags; /* retained adapter field, not an actor enable gate */
 } BHPhysicsStepBody;
-typedef struct BHPhysicsStepWorld {
+typedef struct BHPhysicsStepWorld
+{
     BHWorldGeometry *world;
     float mass;
     BHEntity *response;   /* world owner: +48 per-tick translation and query receiver */
     unsigned short index; /* verified packet/world index */
 } BHPhysicsStepWorld;
-typedef struct BHPhysicsStepPair {
+typedef struct BHPhysicsStepPair
+{
     BHGeometry *source, *target;
     BHSweepQuery sweep;
 } BHPhysicsStepPair;
-typedef enum BHPhysicsStepError {
+typedef enum BHPhysicsStepError
+{
     BH_PHYSICS_STEP_OK,
     BH_PHYSICS_STEP_ARGUMENT,
     BH_PHYSICS_STEP_MEMORY,
@@ -34,7 +38,8 @@ typedef enum BHPhysicsStepError {
     BH_PHYSICS_STEP_BUSY,
     BH_PHYSICS_STEP_EFFECT
 } BHPhysicsStepError;
-typedef struct BHPhysicsStepContext {
+typedef struct BHPhysicsStepContext
+{
     BHEntityPool *pool;
     BHPhysicsStepBody *bodies;
     unsigned long body_count;
@@ -64,17 +69,16 @@ typedef struct BHPhysicsStepContext {
    The shared BHPhysicsState is authoritative and is the SAME component passed
    to actual response-query owners such as bh_debris_bind. Caller synchronizes
    external teleports into that component. No callbacks are fabricated here. */
-int __cdecl bh_physics_step_init(BHPhysicsStepContext *, BHEntityPool *, BHPhysicsStepBody *,
-                                 unsigned long, const BHPhysicsStepWorld *, unsigned long,
-                                 BHGeometry *const *, unsigned long, BHPhysicsEffects *,
-                                 int fallback, const BHSceneAllocator *);
+int __cdecl bh_physics_step_init(BHPhysicsStepContext *, BHEntityPool *, BHPhysicsStepBody *, unsigned long,
+                                 const BHPhysicsStepWorld *, unsigned long, BHGeometry *const *, unsigned long,
+                                 BHPhysicsEffects *, int fallback, const BHSceneAllocator *);
 /* Count-zero roster adapter. Scene ring/world bindings and geometry topology of
    surviving identities must be unchanged. Transfers unchanged sweep workspaces
    and scene validation storage; replaces actor/candidate arrays transactionally.
    Drops removed geometry borrows before callers recycle collision slots. Caller
    must not step after a rejected in-place roster edit until sync succeeds. */
-int __cdecl bh_physics_step_rebind(BHPhysicsStepContext *, BHPhysicsStepBody *,
-                                   unsigned long, BHGeometry *const *, unsigned long);
+int __cdecl bh_physics_step_rebind(BHPhysicsStepContext *, BHPhysicsStepBody *, unsigned long, BHGeometry *const *,
+                                   unsigned long);
 int __cdecl bh_physics_step_dispose(BHPhysicsStepContext *);
 /* Count-zero boundary views, for actual original common physics fields only. */
 int __cdecl bh_physics_step_read_entity(BHPhysicsState *, const BHEntity *);

@@ -2,7 +2,8 @@
 #define BH_LOADING_PROGRESS_H
 #include "bh_loading_display.h"
 
-typedef struct BHLoadingProgress {
+typedef struct BHLoadingProgress
+{
     BHLoadingDisplay *display;
     unsigned long calls;
     float fraction;

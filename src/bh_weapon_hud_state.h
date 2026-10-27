@@ -6,7 +6,8 @@
    The target/its real installed query callback survive the synchronous call;
    the query may mutate charge or replace target. Callers preserve that state
    lifetime through the post-query reads. No weapon callbacks are invented. */
-typedef struct BHWeaponHudState {
+typedef struct BHWeaponHudState
+{
     BHEntity *target;
     long charge;
 } BHWeaponHudState;

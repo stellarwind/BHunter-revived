@@ -8,18 +8,23 @@
    neighbors, not separate allocation/model instances. The actual constructed
    world component owns bounds, +114 query flags, portals and traversal mark. */
 typedef BHWorldGeometry BHAttachmentNode;
-typedef enum BHAttachmentError {
-    BH_ATTACHMENT_OK,BH_ATTACHMENT_ARGUMENT,BH_ATTACHMENT_NUMERICAL,
-    BH_ATTACHMENT_PORTAL,BH_ATTACHMENT_QUEUE
+typedef enum BHAttachmentError
+{
+    BH_ATTACHMENT_OK,
+    BH_ATTACHMENT_ARGUMENT,
+    BH_ATTACHMENT_NUMERICAL,
+    BH_ATTACHMENT_PORTAL,
+    BH_ATTACHMENT_QUEUE
 } BHAttachmentError;
-typedef struct BHAttachmentContext {
+typedef struct BHAttachmentContext
+{
     BHDrawQueue *queue;
     const BHRadarFrame *frame;
     BHVec3 player_position;
     float yaw;
     long viewport_width;
-    unsigned long default_image,flag200_image,flag400_image,flag800_image;
-    unsigned long visited,attempted,queued,dropped,culled;
+    unsigned long default_image, flag200_image, flag400_image, flag800_image;
+    unsigned long visited, attempted, queued, dropped, culled;
     BHAttachmentError error;
 } BHAttachmentContext;
 
@@ -42,5 +47,5 @@ void __cdecl bh_attachment_reset(BHAttachmentNode *);
    queue storage must not overlap them. PC53 nearest/masked finite profile;
    PC24/exceptional original behavior and original software rasterizer remain
    unvalidated. No original full-entity layout or model lifetime is invented. */
-int __cdecl bh_attachment_render(BHAttachmentContext *,BHAttachmentNode *);
+int __cdecl bh_attachment_render(BHAttachmentContext *, BHAttachmentNode *);
 #endif

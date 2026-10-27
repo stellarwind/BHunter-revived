@@ -2,7 +2,8 @@
 #define BH_PCX_READER_H
 #include "bh_pcx.h"
 
-typedef struct BHPcxReader {
+typedef struct BHPcxReader
+{
     BHVFile *file;
     unsigned char palette[768], map[256], buffer[1024];
     unsigned short width, height;

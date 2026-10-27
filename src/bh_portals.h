@@ -3,7 +3,8 @@
 
 typedef struct BHPortalNode BHPortalNode;
 /* Original 60-byte portal record. Plane is an integer, not a float. */
-typedef struct BHPortal {
+typedef struct BHPortal
+{
     unsigned long direction;
     long plane;
     float aperture[4]; /* u_min, u_max, v_min, v_max */
@@ -15,7 +16,8 @@ typedef struct BHPortal {
 /* Source-owned navigation component. The caller supplies the scene ring in
    original +124 traversal order and the model's resolved portal count. This
    is not a declaration of the original full entity or model registry ABI. */
-struct BHPortalNode {
+struct BHPortalNode
+{
     BHPortalNode *next;
     unsigned long count;
     BHPortal portals[6];
@@ -30,5 +32,5 @@ struct BHPortalNode {
    The bounded source interface validates exactly ring_count members and all
    finite ordered extents before writing. Rejection leaves the ring unchanged.
    Limits: 65535 nodes, six portals each. Requires the project's PC53 profile. */
-int __cdecl bh_portals_match(BHPortalNode *node,unsigned long ring_count);
+int __cdecl bh_portals_match(BHPortalNode *node, unsigned long ring_count);
 #endif

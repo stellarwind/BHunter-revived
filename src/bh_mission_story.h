@@ -6,13 +6,23 @@
 #include "bh_player_force_control.h"
 #include "bh_camera_state.h"
 #include "bh_weapon_factory.h"
-typedef int (__cdecl *BHStoryForceControl)(BHPlayerForceControl *,float,int);
-typedef struct BHMissionStory {
- BHMissionProgressContext *progress;BHMessageState *messages;BHEntity *player;
- BHWeaponRegistry *weapons;BHEntity **actors;unsigned long actor_limit;
- unsigned long (*availability)[32];BHSoundQueue *sound;unsigned long pickup_sound;
- BHCameraState *camera;BHStoryForceControl *force_control;long *force_gate,*ending;
- unsigned long calls,queued,broadcasts,cues;int error;
+typedef int(__cdecl *BHStoryForceControl)(BHPlayerForceControl *, float, int);
+typedef struct BHMissionStory
+{
+    BHMissionProgressContext *progress;
+    BHMessageState *messages;
+    BHEntity *player;
+    BHWeaponRegistry *weapons;
+    BHEntity **actors;
+    unsigned long actor_limit;
+    unsigned long (*availability)[32];
+    BHSoundQueue *sound;
+    unsigned long pickup_sound;
+    BHCameraState *camera;
+    BHStoryForceControl *force_control;
+    long *force_gate, *ending;
+    unsigned long calls, queued, broadcasts, cues;
+    int error;
 } BHMissionStory;
 /* Whole004225f0: event14's third signed word routes95 exact original messages,
    progression/save/cues, player-state broadcasts, finale camera/control switch,
@@ -23,7 +33,7 @@ typedef struct BHMissionStory {
    Source rejects absent bindings at their branch of use. Camera is the actual
    player+e8 subobject; weapons5..9 must equal actual player table entries.
    No gameplay/input execution or original-backed callbacks. */
-int __cdecl bh_mission_story_dispatch(BHMissionStory *,const long packet[3]);
-int __cdecl bh_mission_story_bind(BHMissionStory *,BHEntity *);
-void __cdecl bh_mission_story_query(BHEntity *,void *);
+int __cdecl bh_mission_story_dispatch(BHMissionStory *, const long packet[3]);
+int __cdecl bh_mission_story_bind(BHMissionStory *, BHEntity *);
+void __cdecl bh_mission_story_query(BHEntity *, void *);
 #endif

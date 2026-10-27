@@ -3,10 +3,15 @@
 #include "bh_editor_control.h"
 #include "bh_script_vm.h"
 #include "bh_rail_paths.h"
-typedef struct BHWorldLoad {
- BHEditorControl *editor;BHScriptVMContext *vm;BHRailPaths *rails;
- BHScriptTimerActor *states;unsigned long actor_capacity;
- unsigned long skipped,overrides,timers,immediate;int error;
+typedef struct BHWorldLoad
+{
+    BHEditorControl *editor;
+    BHScriptVMContext *vm;
+    BHRailPaths *rails;
+    BHScriptTimerActor *states;
+    unsigned long actor_capacity;
+    unsigned long skipped, overrides, timers, immediate;
+    int error;
 } BHWorldLoad;
 /* Whole004100d0. Fresh empty editor registry and explicit stable actor tables;
    vm->actors and states have actor_capacity records; both VM and timer counts
@@ -18,5 +23,5 @@ typedef struct BHWorldLoad {
    Partial effects retained on resource failure; source closes VFILE on every
    exit, bounds malformed records and rejects original all-unknown NULL crash.
    No original code loading or gameplay execution. PC53 finite model state. */
-int __cdecl bh_world_load(BHWorldLoad *,const char *name);
+int __cdecl bh_world_load(BHWorldLoad *, const char *name);
 #endif

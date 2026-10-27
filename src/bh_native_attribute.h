@@ -6,5 +6,5 @@
    grayscale conversion truncates toward zero with unsigned 32-bit wrapping.
    Software dispatch/rasterization is unfinished and explicitly rejected.
    Borrows the ring/image synchronously; user points to BHNativePrimitive. */
-int __cdecl bh_native_attribute_emit(BHClipVertex *,BHTextureImage *,unsigned long base_color,void *user);
+int __cdecl bh_native_attribute_emit(BHClipVertex *, BHTextureImage *, unsigned long base_color, void *user);
 #endif

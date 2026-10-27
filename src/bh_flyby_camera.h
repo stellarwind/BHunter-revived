@@ -5,19 +5,25 @@
 #include "bh_camera_state.h"
 #include "bh_player_camera.h"
 #include "bh_text_queue.h"
-typedef struct BHFlybyCredits {long gate;unsigned long index;} BHFlybyCredits;
-typedef struct BHFlybyCameraState {
+typedef struct BHFlybyCredits
+{
+    long gate;
+    unsigned long index;
+} BHFlybyCredits;
+typedef struct BHFlybyCameraState
+{
     BHCameraRouteState route;
-    BHVec3 position,previous_position,older_position,angles,velocity;
-    BHVec3 basis_x,basis_y,basis_z;
+    BHVec3 position, previous_position, older_position, angles, velocity;
+    BHVec3 basis_x, basis_y, basis_z;
     BHCameraState camera;
     double orbit_time;
 } BHFlybyCameraState;
-typedef struct BHFlybyCameraContext {
+typedef struct BHFlybyCameraContext
+{
     BHCameraRouteContext *route;
     BHCameraStateContext *camera;
     const BHPlayerCameraStart *starts;
-    unsigned long start_count,actor_token;
+    unsigned long start_count, actor_token;
     BHAtlasPage *credit_font;
     BHTextQueue *text;
     BHFlybyCredits *credits;
@@ -34,5 +40,5 @@ typedef struct BHFlybyCameraContext {
    command dropped on full ring,-1 invalid/dependency failure. Native glyph
    execution occurs later through the real text ring consumers. No game loop
    or original callback is loaded/executed by this owner. */
-int __cdecl bh_flyby_camera_step(BHFlybyCameraContext *,BHFlybyCameraState *);
+int __cdecl bh_flyby_camera_step(BHFlybyCameraContext *, BHFlybyCameraState *);
 #endif

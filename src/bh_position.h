@@ -2,13 +2,15 @@
 #define BH_POSITION_H
 #include "bh_navigation.h"
 
-typedef struct BHPackedPositions {
+typedef struct BHPackedPositions
+{
     const unsigned char *bytes;
     unsigned long size, cursor;
     unsigned long rejected, accepted; /* original accepted/rejected packet counters */
 } BHPackedPositions;
 
-typedef enum BHPositionResult {
+typedef enum BHPositionResult
+{
     BH_POSITION_ERROR = -1,
     BH_POSITION_REJECTED = 0,
     BH_POSITION_OK = 1

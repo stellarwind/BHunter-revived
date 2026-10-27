@@ -3,16 +3,27 @@
 #include "bh_weapon_hud_state.h"
 #include "bh_queue_reserve.h"
 
-typedef enum BHArcError {BH_ARC_OK,BH_ARC_ARGUMENT,BH_ARC_NUMERICAL,BH_ARC_CALLBACK,BH_ARC_QUEUE} BHArcError;
-typedef struct BHArcContext {
+typedef enum BHArcError
+{
+    BH_ARC_OK,
+    BH_ARC_ARGUMENT,
+    BH_ARC_NUMERICAL,
+    BH_ARC_CALLBACK,
+    BH_ARC_QUEUE
+} BHArcError;
+typedef struct BHArcContext
+{
     BHDrawQueue *queue;
     unsigned long image;
-    unsigned long attempted,queued,dropped,path_points,random_calls;
+    unsigned long attempted, queued, dropped, path_points, random_calls;
     BHArcError error;
 } BHArcContext;
 /* Observed player fields +0c position,+30 forward,+280 aim direction. These
    explicit source bindings do not assert a compact original player layout. */
-typedef struct BHWeaponHudArcPlayer {BHVec3 position,forward,aim;} BHWeaponHudArcPlayer;
+typedef struct BHWeaponHudArcPlayer
+{
+    BHVec3 position, forward, aim;
+} BHWeaponHudArcPlayer;
 
 /* Complete00432050: cubic smoothstep blend of two interpolated control lines,
    initial point plus16progress steps, original random jitter/call ordering,
@@ -26,8 +37,8 @@ typedef struct BHWeaponHudArcPlayer {BHVec3 position,forward,aim;} BHWeaponHudAr
    5=modulation,6=random tile. Unused payload remains unchanged, as original.
    Full queues drop individual attempted points; failure cannot undo a header.
    The separately recovered path queue consumer owns drawing these commands. */
-int __cdecl bh_arc_queue(BHArcContext *,const BHVec3 *start,const BHVec3 *control,
-    const BHVec3 *target_control,const BHVec3 *target,float strength);
+int __cdecl bh_arc_queue(BHArcContext *, const BHVec3 *start, const BHVec3 *control, const BHVec3 *target_control,
+                         const BHVec3 *target, float strength);
 /* Complete375B primary weapon-index4 HUD00432ff0. Capture player control points
    before target's installed event3 query; preserve query effects and read charge
    afterward. Three CRT random draws jitter the target control even if queuefull,
@@ -35,5 +46,5 @@ int __cdecl bh_arc_queue(BHArcContext *,const BHVec3 *start,const BHVec3 *contro
    No weapon constructor/target query callback is fabricated or counted. Target,
    state and player survive synchronous query; mutation is allowed but freeing
    them during the callback is outside the original lifetime contract. */
-int __cdecl bh_weapon_hud_arc(BHArcContext *,BHWeaponHudState *,const BHWeaponHudArcPlayer *);
+int __cdecl bh_weapon_hud_arc(BHArcContext *, BHWeaponHudState *, const BHWeaponHudArcPlayer *);
 #endif

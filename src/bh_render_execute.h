@@ -19,17 +19,22 @@
 #include "bh_menu_present.h"
 #include "bh_gdi_text.h"
 
-typedef enum BHRenderExecuteError {
-    BH_RENDER_EXECUTE_OK,BH_RENDER_EXECUTE_ARGUMENT,
-    BH_RENDER_EXECUTE_BINDING,BH_RENDER_EXECUTE_SELECTOR,
-    BH_RENDER_EXECUTE_TOPOLOGY,BH_RENDER_EXECUTE_CALLBACK,
+typedef enum BHRenderExecuteError
+{
+    BH_RENDER_EXECUTE_OK,
+    BH_RENDER_EXECUTE_ARGUMENT,
+    BH_RENDER_EXECUTE_BINDING,
+    BH_RENDER_EXECUTE_SELECTOR,
+    BH_RENDER_EXECUTE_TOPOLOGY,
+    BH_RENDER_EXECUTE_CALLBACK,
     BH_RENDER_EXECUTE_NATIVE
 } BHRenderExecuteError;
 /* Borrowed source identities replace the original 84-byte records' function
    pointers. A producer must retain every bound owner until this synchronous
    drain returns. PATH_POINT is contiguous payload of PATH_HEADER, never a
    callable list entry. */
-typedef struct BHRenderExecute {
+typedef struct BHRenderExecute
+{
     BHFrameDisplay *display;
     BHTextQueue *text;
     BHAtlasContext *atlas;
@@ -53,13 +58,13 @@ typedef struct BHRenderExecute {
     BHLightConfig *light;
     BHGdiText *gdi;
     unsigned long display_mode; /* original 004df250; 1 clears white */
-    unsigned long text_calls,draw_calls,flushes,native_calls,failures;
+    unsigned long text_calls, draw_calls, flushes, native_calls, failures;
     unsigned long kinds[20];
     HRESULT last_hresult;
     BHRenderExecuteError error;
-    unsigned long failed_index,failed_kind,failed_resource;
+    unsigned long failed_index, failed_kind, failed_resource;
     int failed_status;
-    int failed_draw_error,failed_model_error,failed_clip_error;
+    int failed_draw_error, failed_model_error, failed_clip_error;
     float failed_pose[7];
 } BHRenderExecute;
 /* Complete 00479090 plus its unique 00450930 tail for valid source queues.

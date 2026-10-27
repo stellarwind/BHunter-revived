@@ -9,5 +9,5 @@
    Typed room/navigation/entity owners remain borrowed. Source rejects missing
    reciprocal links, truncated packets and nonfinite/extreme damping after
    earlier effects. PC53 finite moderate data; no original/game code executes. */
-int __cdecl bh_remote_position_packet(BHRemotePackets *,void *,unsigned long size,unsigned long capacity);
+int __cdecl bh_remote_position_packet(BHRemotePackets *, void *, unsigned long size, unsigned long capacity);
 #endif

@@ -4,7 +4,7 @@
 #include "bh_entities.h"
 /* Complete004757e0. Kind4 record retains every field except its active tag;
    count becomes max(count,index+1). Caller supplies index0..255. */
-void __cdecl bh_player_input_bind_kind4(BHPlayerInputList *,long index);
+void __cdecl bh_player_input_bind_kind4(BHPlayerInputList *, long index);
 /* Complete004215c0 with explicit original004dfb28 list owner. Class at actor+fc
    selects1; real installed query receives event15 in a40-byte stack packet.
    Remaining packet words are original unspecified payload, not zero defaults.
@@ -13,5 +13,5 @@ void __cdecl bh_player_input_bind_kind4(BHPlayerInputList *,long index);
    members, including nonselected classes; callbacks already run are not undone.
    Actor lifetimes and accessible next links must remain valid through calls.
    No callback is supplied or installed by this module. */
-int __cdecl bh_player_input_broadcast(BHEntity *head,unsigned long limit,unsigned long *visited);
+int __cdecl bh_player_input_broadcast(BHEntity *head, unsigned long limit, unsigned long *visited);
 #endif

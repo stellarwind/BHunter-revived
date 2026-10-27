@@ -8,6 +8,5 @@
    Camera/config are borrowed actual source owners, replacing scattered globals.
    PC53/nearest/masked is required; output pointers must not alias the camera
    or config, though any or all three scalar pointers may equal each other. */
-int __cdecl bh_project_point_scale(const BHMainCamera *,const BHViewConfig *,
-                                  float *x,float *y,float *z);
+int __cdecl bh_project_point_scale(const BHMainCamera *, const BHViewConfig *, float *x, float *y, float *z);
 #endif

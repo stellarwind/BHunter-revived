@@ -2,14 +2,19 @@
 #define BH_HUD_FLAT_H
 #include "bh_hud.h"
 #include "bh_hud_status.h"
-typedef enum BHHudFlatError {
-    BH_HUD_FLAT_OK,BH_HUD_FLAT_ARGUMENT,BH_HUD_FLAT_NUMERICAL,BH_HUD_FLAT_QUEUE
+typedef enum BHHudFlatError
+{
+    BH_HUD_FLAT_OK,
+    BH_HUD_FLAT_ARGUMENT,
+    BH_HUD_FLAT_NUMERICAL,
+    BH_HUD_FLAT_QUEUE
 } BHHudFlatError;
-typedef struct BHHudFlatContext {
+typedef struct BHHudFlatContext
+{
     const BHHudContext *hud;
     long viewport_height;
-    unsigned long atlas_image,weapon_icons_image;
-    unsigned long attempted,queued,dropped;
+    unsigned long atlas_image, weapon_icons_image;
+    unsigned long attempted, queued, dropped;
     BHHudFlatError error;
 } BHHudFlatContext;
 /* Complete0041a3d0 flat status HUD: two background/fill bars, signed ammunition
@@ -25,5 +30,5 @@ typedef struct BHHudFlatContext {
    callback reentrancy. PC53 nearest/masked moderate finite contract. Compact
    BHHudStatusState is an explicit binding, not a restored full player layout.
    No weapon/player constructors, software dispatcher or original execution. */
-int __cdecl bh_hud_flat_draw(BHHudFlatContext *,BHHudStatusState *);
+int __cdecl bh_hud_flat_draw(BHHudFlatContext *, BHHudStatusState *);
 #endif

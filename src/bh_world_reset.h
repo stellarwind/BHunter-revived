@@ -2,16 +2,21 @@
 #define BH_WORLD_RESET_H
 #include "bh_world_edit.h"
 #include "bh_script_blocks.h"
-typedef struct BHWorldResetNode {
- BHEntity *entity;BHWorldEditPlacement *placement;
- const BHScriptDefinition *definition;
- BHVec3 *draw_angles; /* Optional borrowed renderer copy of entity +3c. */
+typedef struct BHWorldResetNode
+{
+    BHEntity *entity;
+    BHWorldEditPlacement *placement;
+    const BHScriptDefinition *definition;
+    BHVec3 *draw_angles; /* Optional borrowed renderer copy of entity +3c. */
 } BHWorldResetNode;
-typedef struct BHWorldReset {
- BHScriptVMContext *vm;
- BHWorldResetNode *nodes;unsigned long count;
- unsigned long (*loot_rows)[32];
- unsigned long timers,immediate;int error;
+typedef struct BHWorldReset
+{
+    BHScriptVMContext *vm;
+    BHWorldResetNode *nodes;
+    unsigned long count;
+    unsigned long (*loot_rows)[32];
+    unsigned long timers, immediate;
+    int error;
 } BHWorldReset;
 /* Whole00410590. Caller supplies actual live source entities and the same
    reciprocal semantic geometry ring in traversal order; bindings outlive all

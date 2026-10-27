@@ -8,24 +8,27 @@
 #include <stdlib.h>
 #include <string.h>
 typedef char physics_common_layout[sizeof(void *) == 4 && offsetof(BHEntity, position) == 12 &&
-                                           offsetof(BHEntity, origin) == 0x48 &&
-                                           offsetof(BHEntity, lifetime) == 0xb4
+                                           offsetof(BHEntity, origin) == 0x48 && offsetof(BHEntity, lifetime) == 0xb4
                                        ? 1
                                        : -1];
-static void *__cdecl allocate(unsigned long n, void *u) {
+static void *__cdecl allocate(unsigned long n, void *u)
+{
     (void)u;
     return malloc(n);
 }
-static void __cdecl release(void *p, void *u) {
+static void __cdecl release(void *p, void *u)
+{
     (void)u;
     free(p);
 }
-static int fail(BHPhysicsStepContext *c, BHPhysicsStepError error) {
+static int fail(BHPhysicsStepContext *c, BHPhysicsStepError error)
+{
     if (c)
         c->error = error;
     return 0;
 }
-static int live(BHEntityPool *pool, const BHEntity *e, unsigned long generation) {
+static int live(BHEntityPool *pool, const BHEntity *e, unsigned long generation)
+{
     BHEntity *p;
     unsigned long n = 0;
     for (p = pool->active; p && n++ < pool->capacity; p = p->next)
@@ -33,34 +36,39 @@ static int live(BHEntityPool *pool, const BHEntity *e, unsigned long generation)
             return p->generation == generation;
     return 0;
 }
-static BHPhysicsStepBody *body(BHPhysicsStepContext *c, const BHEntity *e) {
+static BHPhysicsStepBody *body(BHPhysicsStepContext *c, const BHEntity *e)
+{
     unsigned long i;
     for (i = 0; i < c->body_count; ++i)
         if (c->bodies[i].entity == e)
             return c->bodies + i;
     return NULL;
 }
-static const BHPhysicsStepWorld *world(BHPhysicsStepContext *c, const BHWorldGeometry *w) {
+static const BHPhysicsStepWorld *world(BHPhysicsStepContext *c, const BHWorldGeometry *w)
+{
     unsigned long i;
     for (i = 0; i < c->world_count; ++i)
         if (c->worlds[i].world == w)
             return c->worlds + i;
     return NULL;
 }
-static BHPhysicsStepPair *pair(BHPhysicsStepContext *c, BHGeometry *a, BHGeometry *b) {
+static BHPhysicsStepPair *pair(BHPhysicsStepContext *c, BHGeometry *a, BHGeometry *b)
+{
     unsigned long i;
     for (i = 0; i < c->pair_count; ++i)
         if (c->pairs[i].source == a && c->pairs[i].target == b)
             return c->pairs + i;
     return NULL;
 }
-int __cdecl bh_physics_step_read_entity(BHPhysicsState *s, const BHEntity *e) {
+int __cdecl bh_physics_step_read_entity(BHPhysicsState *s, const BHEntity *e)
+{
     unsigned long r, k;
     float basis[9];
     if (!s || !e)
         return 0;
     memcpy(basis, e->opaque0, 36);
-    for (r = 0; r < 3; ++r) {
+    for (r = 0; r < 3; ++r)
+    {
         for (k = 0; k < 3; ++k)
             s->pose.m[r][k] = basis[k * 3 + r];
         s->pose.m[r][3] = ((const float *)&e->position)[r];
@@ -73,14 +81,16 @@ int __cdecl bh_physics_step_read_entity(BHPhysicsState *s, const BHEntity *e) {
     memcpy(&s->euler, (const unsigned char *)e + 0x3c, 12);
     return 1;
 }
-int __cdecl bh_physics_step_publish(BHPhysicsStepBody *b) {
+int __cdecl bh_physics_step_publish(BHPhysicsStepBody *b)
+{
     unsigned long r, k;
     float basis[9];
     BHPhysicsState *s;
     BHEntity *e;
     if (!b || !(s = b->physics) || !(e = b->entity))
         return 0;
-    for (r = 0; r < 3; ++r) {
+    for (r = 0; r < 3; ++r)
+    {
         for (k = 0; k < 3; ++k)
             basis[k * 3 + r] = s->pose.m[r][k];
         ((float *)&e->position)[r] = s->pose.m[r][3];
@@ -97,7 +107,8 @@ int __cdecl bh_physics_step_publish(BHPhysicsStepBody *b) {
     e->scale = b->friction;
     return 1;
 }
-int __cdecl bh_physics_step_dispose(BHPhysicsStepContext *c) {
+int __cdecl bh_physics_step_dispose(BHPhysicsStepContext *c)
+{
     unsigned long i;
     BHSceneAllocator a;
     if (!c || c->busy)
@@ -118,7 +129,8 @@ int __cdecl bh_physics_step_dispose(BHPhysicsStepContext *c) {
     memset(c, 0, sizeof(*c));
     return 1;
 }
-static unsigned long unique(BHGeometry **list, unsigned long count, BHGeometry *g) {
+static unsigned long unique(BHGeometry **list, unsigned long count, BHGeometry *g)
+{
     unsigned long i;
     for (i = 0; i < count; ++i)
         if (list[i] == g)
@@ -126,22 +138,21 @@ static unsigned long unique(BHGeometry **list, unsigned long count, BHGeometry *
     list[count++] = g;
     return count;
 }
-int __cdecl bh_physics_step_init(BHPhysicsStepContext *c, BHEntityPool *pool, BHPhysicsStepBody *b,
-                                 unsigned long nb, const BHPhysicsStepWorld *w, unsigned long nw,
-                                 BHGeometry *const *models, unsigned long nm,
-                                 BHPhysicsEffects *effects, int fallback,
-                                 const BHSceneAllocator *a) {
+int __cdecl bh_physics_step_init(BHPhysicsStepContext *c, BHEntityPool *pool, BHPhysicsStepBody *b, unsigned long nb,
+                                 const BHPhysicsStepWorld *w, unsigned long nw, BHGeometry *const *models,
+                                 unsigned long nm, BHPhysicsEffects *effects, int fallback, const BHSceneAllocator *a)
+{
     BHPhysicsStepContext next;
     BHGeometry **sources = NULL, **targets = NULL;
     unsigned long ns = 0, nt = 0, i, j, count;
     BHSceneAllocator mem;
-    if (!c || !pool || !b || !nb || nb > 65535 || nw > 65535 || nb + nw > 65535 || (nw && !w) ||
-        !models || !nm || nm > 65535 || !effects || (a && (!a->allocate || !a->release)) ||
-        !bh_entities_valid(pool))
+    if (!c || !pool || !b || !nb || nb > 65535 || nw > 65535 || nb + nw > 65535 || (nw && !w) || !models || !nm ||
+        nm > 65535 || !effects || (a && (!a->allocate || !a->release)) || !bh_entities_valid(pool))
         return 0;
     if (a)
         mem = *a;
-    else {
+    else
+    {
         mem.allocate = allocate;
         mem.release = release;
         mem.user = NULL;
@@ -162,10 +173,10 @@ int __cdecl bh_physics_step_init(BHPhysicsStepContext *c, BHEntityPool *pool, BH
     next.actors = (BHEntity **)mem.allocate(nb * 4, mem.user);
     if (!sources || !targets || !next.actors)
         goto rejected;
-    for (i = 0; i < nb; ++i) {
-        if (!b[i].entity || !b[i].physics || !b[i].target_world || !b[i].target_local ||
-            b[i].model_index >= nm || !_finite(b[i].mass) || !_finite(b[i].friction) ||
-            !live(pool, b[i].entity, b[i].generation))
+    for (i = 0; i < nb; ++i)
+    {
+        if (!b[i].entity || !b[i].physics || !b[i].target_world || !b[i].target_local || b[i].model_index >= nm ||
+            !_finite(b[i].mass) || !_finite(b[i].friction) || !live(pool, b[i].entity, b[i].generation))
             goto rejected;
         for (j = 0; j < i; ++j)
             if (b[j].entity == b[i].entity)
@@ -174,7 +185,8 @@ int __cdecl bh_physics_step_init(BHPhysicsStepContext *c, BHEntityPool *pool, BH
         ns = unique(sources, ns, b[i].geometry);
         nt = unique(targets, nt, b[i].geometry);
     }
-    for (i = 0; i < nw; ++i) {
+    for (i = 0; i < nw; ++i)
+    {
         if (!w[i].world || !_finite(w[i].mass))
             goto rejected;
         for (j = 0; j < i; ++j)
@@ -190,7 +202,8 @@ int __cdecl bh_physics_step_init(BHPhysicsStepContext *c, BHEntityPool *pool, BH
         goto rejected;
     memset(next.pairs, 0, count * sizeof(*next.pairs));
     for (i = 0; i < ns; ++i)
-        for (j = 0; j < nt; ++j) {
+        for (j = 0; j < nt; ++j)
+        {
             BHPhysicsStepPair *p = next.pairs + next.pair_count;
             p->source = sources[i];
             p->target = targets[j];
@@ -201,8 +214,8 @@ int __cdecl bh_physics_step_init(BHPhysicsStepContext *c, BHEntityPool *pool, BH
     if (!bh_world_query_init(&next.broad, nw ? w[0].world : NULL, nw, next.actors, nb, &mem))
         goto rejected;
     next.candidate_capacity = next.broad.capacity;
-    next.candidates = (BHCollisionCandidate *)mem.allocate(
-        next.candidate_capacity * sizeof(*next.candidates), mem.user);
+    next.candidates =
+        (BHCollisionCandidate *)mem.allocate(next.candidate_capacity * sizeof(*next.candidates), mem.user);
     if (!next.candidates)
         goto rejected;
     for (i = 0; i < nb; ++i)
@@ -219,128 +232,176 @@ rejected:
     bh_physics_step_dispose(&next);
     return 0;
 }
-int __cdecl bh_physics_step_rebind(BHPhysicsStepContext *c, BHPhysicsStepBody *b,
-                                   unsigned long nb, BHGeometry *const *models,
-                                   unsigned long nm) {
+int __cdecl bh_physics_step_rebind(BHPhysicsStepContext *c, BHPhysicsStepBody *b, unsigned long nb,
+                                   BHGeometry *const *models, unsigned long nm)
+{
     BHPhysicsStepContext next;
     BHGeometry **sources = NULL, **targets = NULL;
     long *borrowed = NULL;
-    unsigned long ns=0, nt=0, i, j, count, prepared=0;
+    unsigned long ns = 0, nt = 0, i, j, count, prepared = 0;
     BHPhysicsStepPair *old;
     BHSceneAllocator mem;
-    if(!c || c->busy || c->broad.busy || !c->allocator.release || !b || !nb ||
-       nb>65535 || nb+c->world_count>65535 || !models || !nm || nm>65535)
+    if (!c || c->busy || c->broad.busy || !c->allocator.release || !b || !nb || nb > 65535 ||
+        nb + c->world_count > 65535 || !models || !nm || nm > 65535)
         return 0;
-    for(i=0;i<c->pair_count;++i)
-        if(c->pairs[i].sweep.busy || c->pairs[i].sweep.collision.busy ||
-           c->pairs[i].sweep.segment.busy) return 0;
-    mem=c->allocator;next=*c;
-    next.bodies=b;next.body_count=nb;next.models=models;next.model_count=nm;
-    next.actors=NULL;next.pairs=NULL;next.pair_count=0;next.candidates=NULL;
-    next.candidate_count=0;next.error=BH_PHYSICS_STEP_OK;
-    next.broad.hits=NULL;next.broad.work=NULL;next.broad.hit_count=0;
-    next.broad.actor_count=nb;next.broad.capacity=c->world_count+nb+1;
-    next.candidate_capacity=next.broad.capacity;
-    sources=(BHGeometry**)mem.allocate(nb*sizeof(*sources),mem.user);
-    targets=(BHGeometry**)mem.allocate((nb+c->world_count)*sizeof(*targets),mem.user);
-    next.actors=(BHEntity**)mem.allocate(nb*sizeof(*next.actors),mem.user);
-    if(!sources || !targets || !next.actors)goto rejected_rebind;
-    next.broad.actors=next.actors;
-    for(i=0;i<nb;++i) {
-        if(!b[i].entity || !b[i].physics || !b[i].target_world || !b[i].target_local ||
-           b[i].model_index>=nm || !_finite(b[i].mass) || !_finite(b[i].friction) ||
-           !live(c->pool,b[i].entity,b[i].generation))goto rejected_rebind;
-        for(j=0;j<i;++j)if(b[j].entity==b[i].entity)goto rejected_rebind;
-        next.actors[i]=b[i].entity;
-        ns=unique(sources,ns,b[i].geometry);nt=unique(targets,nt,b[i].geometry);
+    for (i = 0; i < c->pair_count; ++i)
+        if (c->pairs[i].sweep.busy || c->pairs[i].sweep.collision.busy || c->pairs[i].sweep.segment.busy)
+            return 0;
+    mem = c->allocator;
+    next = *c;
+    next.bodies = b;
+    next.body_count = nb;
+    next.models = models;
+    next.model_count = nm;
+    next.actors = NULL;
+    next.pairs = NULL;
+    next.pair_count = 0;
+    next.candidates = NULL;
+    next.candidate_count = 0;
+    next.error = BH_PHYSICS_STEP_OK;
+    next.broad.hits = NULL;
+    next.broad.work = NULL;
+    next.broad.hit_count = 0;
+    next.broad.actor_count = nb;
+    next.broad.capacity = c->world_count + nb + 1;
+    next.candidate_capacity = next.broad.capacity;
+    sources = (BHGeometry **)mem.allocate(nb * sizeof(*sources), mem.user);
+    targets = (BHGeometry **)mem.allocate((nb + c->world_count) * sizeof(*targets), mem.user);
+    next.actors = (BHEntity **)mem.allocate(nb * sizeof(*next.actors), mem.user);
+    if (!sources || !targets || !next.actors)
+        goto rejected_rebind;
+    next.broad.actors = next.actors;
+    for (i = 0; i < nb; ++i)
+    {
+        if (!b[i].entity || !b[i].physics || !b[i].target_world || !b[i].target_local || b[i].model_index >= nm ||
+            !_finite(b[i].mass) || !_finite(b[i].friction) || !live(c->pool, b[i].entity, b[i].generation))
+            goto rejected_rebind;
+        for (j = 0; j < i; ++j)
+            if (b[j].entity == b[i].entity)
+                goto rejected_rebind;
+        next.actors[i] = b[i].entity;
+        ns = unique(sources, ns, b[i].geometry);
+        nt = unique(targets, nt, b[i].geometry);
     }
     /* The same immutable scene was validated by init. Only roster membership
        changes here; do not repeat its quadratic world-ID validation. */
-    for(i=0;i<c->world_count;++i)
-        nt=unique(targets,nt,c->worlds[i].world->model?
-                  c->worlds[i].world->model->geometry:NULL);
-    if(nt && ns>0x7fffffffUL/nt/sizeof(BHPhysicsStepPair))goto rejected_rebind;
-    count=ns*nt;
-    next.pairs=(BHPhysicsStepPair*)mem.allocate(count*sizeof(*next.pairs),mem.user);
-    borrowed=(long*)mem.allocate(count*sizeof(*borrowed),mem.user);
-    if(!next.pairs || !borrowed)goto rejected_rebind;
-    memset(next.pairs,0,count*sizeof(*next.pairs));
-    for(i=0;i<ns;++i)for(j=0;j<nt;++j) {
-        BHPhysicsStepPair *p=next.pairs+prepared;
-        p->source=sources[i];p->target=targets[j];borrowed[prepared]=-1;
-        old=pair(c,p->source,p->target);
-        if(old) {p->sweep=old->sweep;borrowed[prepared]=(long)(old-c->pairs);}
-        else if(!bh_sweep_init(&p->sweep,p->source,p->target))goto rejected_rebind;
-        ++prepared;next.pair_count=prepared;
-    }
-    next.broad.hits=(BHWorldHit*)mem.allocate(next.broad.capacity*sizeof(BHWorldHit),mem.user);
-    next.broad.work=(BHWorldHit*)mem.allocate(next.broad.capacity*sizeof(BHWorldHit),mem.user);
-    next.candidates=(BHCollisionCandidate*)mem.allocate(next.candidate_capacity*sizeof(*next.candidates),mem.user);
-    if(!next.broad.hits || !next.broad.work || !next.candidates)goto rejected_rebind;
-    next.broad.hits[0].kind=BH_WORLD_HIT_END;next.broad.hits[0].object.geometry=NULL;
-    next.broad.error=BH_QUERY_OK;
+    for (i = 0; i < c->world_count; ++i)
+        nt = unique(targets, nt, c->worlds[i].world->model ? c->worlds[i].world->model->geometry : NULL);
+    if (nt && ns > 0x7fffffffUL / nt / sizeof(BHPhysicsStepPair))
+        goto rejected_rebind;
+    count = ns * nt;
+    next.pairs = (BHPhysicsStepPair *)mem.allocate(count * sizeof(*next.pairs), mem.user);
+    borrowed = (long *)mem.allocate(count * sizeof(*borrowed), mem.user);
+    if (!next.pairs || !borrowed)
+        goto rejected_rebind;
+    memset(next.pairs, 0, count * sizeof(*next.pairs));
+    for (i = 0; i < ns; ++i)
+        for (j = 0; j < nt; ++j)
+        {
+            BHPhysicsStepPair *p = next.pairs + prepared;
+            p->source = sources[i];
+            p->target = targets[j];
+            borrowed[prepared] = -1;
+            old = pair(c, p->source, p->target);
+            if (old)
+            {
+                p->sweep = old->sweep;
+                borrowed[prepared] = (long)(old - c->pairs);
+            }
+            else if (!bh_sweep_init(&p->sweep, p->source, p->target))
+                goto rejected_rebind;
+            ++prepared;
+            next.pair_count = prepared;
+        }
+    next.broad.hits = (BHWorldHit *)mem.allocate(next.broad.capacity * sizeof(BHWorldHit), mem.user);
+    next.broad.work = (BHWorldHit *)mem.allocate(next.broad.capacity * sizeof(BHWorldHit), mem.user);
+    next.candidates =
+        (BHCollisionCandidate *)mem.allocate(next.candidate_capacity * sizeof(*next.candidates), mem.user);
+    if (!next.broad.hits || !next.broad.work || !next.candidates)
+        goto rejected_rebind;
+    next.broad.hits[0].kind = BH_WORLD_HIT_END;
+    next.broad.hits[0].object.geometry = NULL;
+    next.broad.error = BH_QUERY_OK;
     /* Commit transfers only after every allocation succeeded. No failure path
        may free an old sweep or the borrowed static scene workspace. */
-    for(i=0;i<prepared;++i)if(borrowed[i]>=0)
-        memset(&c->pairs[borrowed[i]].sweep,0,sizeof(BHSweepQuery));
-    c->broad.members=c->broad.visited=c->broad.frames=NULL;
-    bh_physics_step_dispose(c);*c=next;
-    for(i=0;i<nb;++i)bh_physics_step_publish(b+i);
-    mem.release(sources,mem.user);mem.release(targets,mem.user);mem.release(borrowed,mem.user);
+    for (i = 0; i < prepared; ++i)
+        if (borrowed[i] >= 0)
+            memset(&c->pairs[borrowed[i]].sweep, 0, sizeof(BHSweepQuery));
+    c->broad.members = c->broad.visited = c->broad.frames = NULL;
+    bh_physics_step_dispose(c);
+    *c = next;
+    for (i = 0; i < nb; ++i)
+        bh_physics_step_publish(b + i);
+    mem.release(sources, mem.user);
+    mem.release(targets, mem.user);
+    mem.release(borrowed, mem.user);
     return 1;
 rejected_rebind:
-    if(borrowed)for(i=0;i<prepared;++i)if(borrowed[i]>=0)
-        memset(&next.pairs[i].sweep,0,sizeof(BHSweepQuery));
-    next.broad.members=next.broad.visited=next.broad.frames=NULL;
+    if (borrowed)
+        for (i = 0; i < prepared; ++i)
+            if (borrowed[i] >= 0)
+                memset(&next.pairs[i].sweep, 0, sizeof(BHSweepQuery));
+    next.broad.members = next.broad.visited = next.broad.frames = NULL;
     bh_physics_step_dispose(&next);
-    if(sources)mem.release(sources,mem.user);
-    if(targets)mem.release(targets,mem.user);
-    if(borrowed)mem.release(borrowed,mem.user);
+    if (sources)
+        mem.release(sources, mem.user);
+    if (targets)
+        mem.release(targets, mem.user);
+    if (borrowed)
+        mem.release(borrowed, mem.user);
     return 0;
 }
-static int candidates(BHPhysicsStepContext *c, BHPhysicsStepBody *self) {
+static int candidates(BHPhysicsStepContext *c, BHPhysicsStepBody *self)
+{
     unsigned long i;
     BHPhysicsStepPair *p;
     if (c->broad.hit_count > c->candidate_capacity)
         return fail(c, BH_PHYSICS_STEP_BINDING);
-    for (i = 0; i < c->broad.hit_count; ++i) {
+    for (i = 0; i < c->broad.hit_count; ++i)
+    {
         BHWorldHit *hit = c->broad.hits + i;
-        if (hit->kind == BH_WORLD_HIT_GEOMETRY) {
+        if (hit->kind == BH_WORLD_HIT_GEOMETRY)
+        {
             BHWorldGeometry *w = hit->object.geometry;
             const BHPhysicsStepWorld *binding = world(c, w);
             p = pair(c, self->geometry, w->model ? w->model->geometry : NULL);
-            if (!binding || !p ||
-                !bh_collision_candidate_world(c->candidates + i, w, &p->sweep))
+            if (!binding || !p || !bh_collision_candidate_world(c->candidates + i, w, &p->sweep))
                 return fail(c, BH_PHYSICS_STEP_BINDING);
             if (binding->response)
                 c->candidates[i].movement = binding->response->origin;
-        } else if (hit->kind == BH_WORLD_HIT_ACTOR) {
+        }
+        else if (hit->kind == BH_WORLD_HIT_ACTOR)
+        {
             BHPhysicsStepBody *b = body(c, hit->object.actor);
             BHMat34 inverse;
             if (!b || b->model_index >= c->model_count)
                 return fail(c, BH_PHYSICS_STEP_BINDING);
             p = pair(c, self->geometry, b->geometry);
             bh_mat34_inverse_rigid(&b->physics->pose, &inverse);
-            if (!p || !bh_collision_candidate_actor(c->candidates + i, b->entity, &p->sweep,
-                                                    &b->physics->pose, &inverse,
-                                                    &b->physics->velocity, b->flags))
+            if (!p || !bh_collision_candidate_actor(c->candidates + i, b->entity, &p->sweep, &b->physics->pose,
+                                                    &inverse, &b->physics->velocity, b->flags))
                 return fail(c, BH_PHYSICS_STEP_BINDING);
-        } else
+        }
+        else
             return fail(c, BH_PHYSICS_STEP_BINDING);
     }
     c->candidate_count = c->broad.hit_count;
     return 1;
 }
-static int selected(BHPhysicsStepContext *c, float *mass, BHEntity **recipient) {
+static int selected(BHPhysicsStepContext *c, float *mass, BHEntity **recipient)
+{
     BHWorldHit *h = &c->candidates[0].object;
     c->selected = *h;
-    if (h->kind == BH_WORLD_HIT_ACTOR) {
+    if (h->kind == BH_WORLD_HIT_ACTOR)
+    {
         BHPhysicsStepBody *b = body(c, h->object.actor);
         if (!b)
             return 0;
         *mass = b->mass;
         *recipient = b->entity;
-    } else {
+    }
+    else
+    {
         const BHPhysicsStepWorld *w = world(c, h->object.geometry);
         if (!w)
             return 0;
@@ -349,7 +410,8 @@ static int selected(BHPhysicsStepContext *c, float *mass, BHEntity **recipient) 
     }
     return 1;
 }
-int __cdecl bh_physics_step(BHPhysicsStepContext *c, BHEntity *entity, float dt) {
+int __cdecl bh_physics_step(BHPhysicsStepContext *c, BHEntity *entity, float dt)
+{
     BHPhysicsStepBody *b;
     BHPhysicsState *s;
     BHMat34 previous, pose;
@@ -360,8 +422,7 @@ int __cdecl bh_physics_step(BHPhysicsStepContext *c, BHEntity *entity, float dt)
     unsigned long i, g, recipient_generation = 0;
     float margin, second_mass;
     int hit, result, saved_fallback, complete = 0;
-    if (!c || !entity || !c->pool || !c->effects || !_finite(dt) || dt <= 0 ||
-        !bh_math_environment_supported())
+    if (!c || !entity || !c->pool || !c->effects || !_finite(dt) || dt <= 0 || !bh_math_environment_supported())
         return fail(c, BH_PHYSICS_STEP_ARGUMENT);
     if (c->busy)
         return fail(c, BH_PHYSICS_STEP_BUSY);
@@ -370,7 +431,8 @@ int __cdecl bh_physics_step(BHPhysicsStepContext *c, BHEntity *entity, float dt)
     b = body(c, entity);
     if (!b || !live(c->pool, entity, b->generation))
         return fail(c, BH_PHYSICS_STEP_BINDING);
-    for (i = 0; i < c->body_count; ++i) {
+    for (i = 0; i < c->body_count; ++i)
+    {
         if (!live(c->pool, c->bodies[i].entity, c->bodies[i].generation))
             return fail(c, BH_PHYSICS_STEP_BINDING);
         bh_physics_step_publish(c->bodies + i);
@@ -381,32 +443,36 @@ int __cdecl bh_physics_step(BHPhysicsStepContext *c, BHEntity *entity, float dt)
     g = entity->generation;
     previous = s->pose;
     pose = previous;
-    if (!bh_physics_prepare(s, dt, entity->collision_radius, &movement, &angles, &margin)) {
+    if (!bh_physics_prepare(s, dt, entity->collision_radius, &movement, &angles, &margin))
+    {
         fail(c, BH_PHYSICS_STEP_ARGUMENT);
         goto done;
     }
     s->acceleration = c->zero;
     s->angular_acceleration = c->zero;
     bh_physics_step_publish(b);
-    if (!bh_world_query_run(&c->broad, entity, b->world, &entity->position, margin, &b->world) ||
-        !candidates(c, b)) {
+    if (!bh_world_query_run(&c->broad, entity, b->world, &entity->position, margin, &b->world) || !candidates(c, b))
+    {
         if (c->error == BH_PHYSICS_STEP_OK)
             fail(c, BH_PHYSICS_STEP_COLLISION);
         goto done;
     }
     memcpy((unsigned char *)entity + 0xc4, &b->world, 4);
     memset(&c->first, 0, sizeof(c->first));
-    hit = bh_entity_collision_dispatch(c->candidates, c->candidate_count, &pose, &movement, &angles,
-                                       c->fallback, &c->first);
-    if (hit < 0) {
+    hit = bh_entity_collision_dispatch(c->candidates, c->candidate_count, &pose, &movement, &angles, c->fallback,
+                                       &c->first);
+    if (hit < 0)
+    {
         fail(c, BH_PHYSICS_STEP_COLLISION);
         goto done;
     }
     ++c->steps;
-    if (!hit) {
+    if (!hit)
+    {
         ++c->misses;
         s->pose = pose;
-        if (!bh_physics_finish(s, &previous, dt, 1)) {
+        if (!bh_physics_finish(s, &previous, dt, 1))
+        {
             fail(c, BH_PHYSICS_STEP_ARGUMENT);
             goto done;
         }
@@ -414,7 +480,8 @@ int __cdecl bh_physics_step(BHPhysicsStepContext *c, BHEntity *entity, float dt)
         complete = 1;
         goto done;
     }
-    if (!c->candidate_count || !selected(c, &second_mass, &recipient)) {
+    if (!c->candidate_count || !selected(c, &second_mass, &recipient))
+    {
         fail(c, BH_PHYSICS_STEP_BINDING);
         goto done;
     }
@@ -422,20 +489,23 @@ int __cdecl bh_physics_step(BHPhysicsStepContext *c, BHEntity *entity, float dt)
     /* Original00412788 tests selected entity+8 and skips this branch when
        kind==0 (physical actors). Only world/prop geometry uses last-clear
        recovery, with its world transform and model-catalog geometry. */
-    if (c->first.fraction == 0 && c->selected.kind == BH_WORLD_HIT_GEOMETRY) {
+    if (c->first.fraction == 0 && c->selected.kind == BH_WORLD_HIT_GEOMETRY)
+    {
         BHCollisionCandidate *target = c->candidates;
         BHCollisionHit overlap;
         memset(&overlap, 0, sizeof(overlap));
-        result =
-            bh_physics_overlap(target->sweep, &previous, &target->world, &target->local, &overlap);
-        if (result < 0) {
+        result = bh_physics_overlap(target->sweep, &previous, &target->world, &target->local, &overlap);
+        if (result < 0)
+        {
             fail(c, BH_PHYSICS_STEP_COLLISION);
             goto done;
         }
-        if (result) {
+        if (result)
+        {
             ++c->rollbacks;
             s->pose = s->last_clear;
-            if (!bh_physics_finish(s, &previous, dt, 0)) {
+            if (!bh_physics_finish(s, &previous, dt, 0))
+            {
                 fail(c, BH_PHYSICS_STEP_ARGUMENT);
                 goto done;
             }
@@ -444,11 +514,13 @@ int __cdecl bh_physics_step(BHPhysicsStepContext *c, BHEntity *entity, float dt)
             goto done;
         }
     }
-    if (!c->first.surface_present) {
+    if (!c->first.surface_present)
+    {
         fail(c, BH_PHYSICS_STEP_CONTACT);
         goto done;
     }
-    if (!bh_physics_slide(&movement, &c->first, b->friction, &slide)) {
+    if (!bh_physics_slide(&movement, &c->first, b->friction, &slide))
+    {
         fail(c, BH_PHYSICS_STEP_ARGUMENT);
         goto done;
     }
@@ -457,30 +529,35 @@ int __cdecl bh_physics_step(BHPhysicsStepContext *c, BHEntity *entity, float dt)
     memset(&c->slide, 0, sizeof(c->slide));
     c->slide.fraction = 1;
     angles = c->zero;
-    result = bh_entity_collision_dispatch(c->candidates, c->candidate_count, &pose, &slide, &angles,
-                                          c->fallback, &c->slide);
+    result =
+        bh_entity_collision_dispatch(c->candidates, c->candidate_count, &pose, &slide, &angles, c->fallback, &c->slide);
     c->fallback = saved_fallback;
-    if (result < 0) {
+    if (result < 0)
+    {
         fail(c, BH_PHYSICS_STEP_COLLISION);
         goto done;
     }
-    if (!selected(c, &second_mass, &recipient)) {
+    if (!selected(c, &second_mass, &recipient))
+    {
         fail(c, BH_PHYSICS_STEP_BINDING);
         goto done;
     }
-    if (recipient) {
+    if (recipient)
+    {
         BHPhysicsStepBody *other = body(c, recipient);
         if (other)
             recipient_generation = other->generation;
         else
             recipient_generation = recipient->generation;
-        if (!live(c->pool, recipient, recipient_generation)) {
+        if (!live(c->pool, recipient, recipient_generation))
+        {
             fail(c, BH_PHYSICS_STEP_BINDING);
             goto done;
         }
     }
-    if (!bh_physics_contact_response(&c->first, c->slide.fraction, dt, b->mass, second_mass,
-                                     &s->acceleration, &response)) {
+    if (!bh_physics_contact_response(&c->first, c->slide.fraction, dt, b->mass, second_mass, &s->acceleration,
+                                     &response))
+    {
         fail(c, BH_PHYSICS_STEP_ARGUMENT);
         goto done;
     }
@@ -490,30 +567,37 @@ int __cdecl bh_physics_step(BHPhysicsStepContext *c, BHEntity *entity, float dt)
                                 (unsigned short)(current ? current->index : 0)))
         c->error = BH_PHYSICS_STEP_EFFECT;
     ++c->contacts;
-    if (response.emit_first && entity->query) {
+    if (response.emit_first && entity->query)
+    {
         ++c->first_events;
         entity->query(entity, &response.first);
-        if (!live(c->pool, entity, g)) {
+        if (!live(c->pool, entity, g))
+        {
             fail(c, BH_PHYSICS_STEP_MUTATION);
             goto done;
         }
     }
-    if (response.emit_second && recipient) {
-        if (!live(c->pool, recipient, recipient_generation)) {
+    if (response.emit_second && recipient)
+    {
+        if (!live(c->pool, recipient, recipient_generation))
+        {
             fail(c, BH_PHYSICS_STEP_MUTATION);
             goto done;
         }
-        if (recipient->query) {
+        if (recipient->query)
+        {
             ++c->second_events;
             recipient->query(recipient, &response.second);
         }
-        if (!live(c->pool, entity, g)) {
+        if (!live(c->pool, entity, g))
+        {
             fail(c, BH_PHYSICS_STEP_MUTATION);
             goto done;
         }
     }
     s->pose = pose;
-    if (!bh_physics_finish(s, &previous, dt, 0)) {
+    if (!bh_physics_finish(s, &previous, dt, 0))
+    {
         fail(c, BH_PHYSICS_STEP_ARGUMENT);
         goto done;
     }

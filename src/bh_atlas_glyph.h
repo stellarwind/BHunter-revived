@@ -7,7 +7,7 @@
    dirty after the native attempt, even failed Lock. NULL page is original no-op
    success. Source int/error/HRESULT expose ignored native failures and guard
    invalid bindings/dimensions; no original return-value claim. */
-int __cdecl bh_atlas_page_clear(BHAtlasContext *,BHAtlasPage *,unsigned long color);
+int __cdecl bh_atlas_page_clear(BHAtlasContext *, BHAtlasPage *, unsigned long color);
 /* Complete004708d0. Raw signed coordinates, no clamping. NULL page is no-op. */
-void __cdecl bh_atlas_page_cursor(BHAtlasPage *,long x,long y);
+void __cdecl bh_atlas_page_cursor(BHAtlasPage *, long x, long y);
 #endif

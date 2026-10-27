@@ -7,20 +7,25 @@
    placement's real resource handle/flags and the two borrowed entity heads.
    004084a0 supplies world->owner (+1c8); the +124 successor is the already
    constructed scene ring. Portal neighbors remain a separate relation. */
-typedef struct BHSceneBindingInput {
+typedef struct BHSceneBindingInput
+{
     BHWorldGeometry *world;
-    BHEntity *actors,*pickups;
-    unsigned long resource,resource_flags;
+    BHEntity *actors, *pickups;
+    unsigned long resource, resource_flags;
     BHVec3 angles;
 } BHSceneBindingInput;
 
-typedef enum BHSceneBindingsError {
-    BH_BINDINGS_OK,BH_BINDINGS_ARGUMENT,BH_BINDINGS_TOPOLOGY,
+typedef enum BHSceneBindingsError
+{
+    BH_BINDINGS_OK,
+    BH_BINDINGS_ARGUMENT,
+    BH_BINDINGS_TOPOLOGY,
     BH_BINDINGS_RESOURCE
 } BHSceneBindingsError;
 
-typedef struct BHSceneBindings {
-    BHWorldGeometry *first,*cached;
+typedef struct BHSceneBindings
+{
+    BHWorldGeometry *first, *cached;
     unsigned long scene_count;
     BHPickupRoom *rooms;
     BHEntityScheduleRoom *scheduled;
@@ -33,12 +38,10 @@ typedef struct BHSceneBindings {
    lifetime. Initializes neither model
    resources nor gameplay entities. The world ring must already have been
    built and matched. Failure does not publish partially bound output. */
-int __cdecl bh_scene_bindings_init(BHSceneBindings *bindings,
-    const BHSceneBindingInput *inputs,unsigned long count,
-    BHPickupRoom *rooms,BHEntityScheduleRoom *scheduled,
-    BHRenderResources *resources,BHEntityScheduleContext *schedule_context);
+int __cdecl bh_scene_bindings_init(BHSceneBindings *bindings, const BHSceneBindingInput *inputs, unsigned long count,
+                                   BHPickupRoom *rooms, BHEntityScheduleRoom *scheduled, BHRenderResources *resources,
+                                   BHEntityScheduleContext *schedule_context);
 
-BHEntityScheduleRoom *__cdecl bh_scene_bindings_schedule(
-    const BHSceneBindings *bindings,const BHWorldGeometry *world);
+BHEntityScheduleRoom *__cdecl bh_scene_bindings_schedule(const BHSceneBindings *bindings, const BHWorldGeometry *world);
 void __cdecl bh_scene_bindings_dispose(BHSceneBindings *bindings);
 #endif

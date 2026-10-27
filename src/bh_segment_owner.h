@@ -10,13 +10,13 @@
    Return1 hit,0 miss/no-op,-1 source validation/allocation failure.
    Complete preparation calls admitted0044b130, transforms/traversal call real
    admitted0044d530. No collision metadata or transform inverse is guessed. */
-typedef struct BHSegmentOwner {
+typedef struct BHSegmentOwner
+{
     BHCollisionCache cache;
     BHGeometry geometry;
     BHSegmentQuery query;
 } BHSegmentOwner;
-int __cdecl bh_segment_owner_query(BHSegmentOwner *,const BHBsp *,
-    const BHVec3 *start,const BHVec3 *end,const BHMat34 *to_world,
-    const BHMat34 *to_local,BHSegmentHit *result);
+int __cdecl bh_segment_owner_query(BHSegmentOwner *, const BHBsp *, const BHVec3 *start, const BHVec3 *end,
+                                   const BHMat34 *to_world, const BHMat34 *to_local, BHSegmentHit *result);
 int __cdecl bh_segment_owner_dispose(BHSegmentOwner *);
 #endif

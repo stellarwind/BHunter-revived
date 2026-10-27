@@ -2,19 +2,24 @@
 #define BH_MESSAGES_H
 #include "bh_entities.h"
 
-typedef enum BHMessageError {
-    BH_MESSAGE_OK,BH_MESSAGE_ARGUMENT,BH_MESSAGE_RING_SIZE,
-    BH_MESSAGE_ARENA_FULL,BH_MESSAGE_PANEL_BINDING
+typedef enum BHMessageError
+{
+    BH_MESSAGE_OK,
+    BH_MESSAGE_ARGUMENT,
+    BH_MESSAGE_RING_SIZE,
+    BH_MESSAGE_ARENA_FULL,
+    BH_MESSAGE_PANEL_BINDING
 } BHMessageError;
 /* Source ownership of original 004d0488 ring (8 x 512) and 004ce458 arena
    (8192 bytes). The panel entity and its live +cc method identity are borrowed
    from the as-yet-separate panel lifecycle, not created by this queue. */
-typedef struct BHMessageState {
+typedef struct BHMessageState
+{
     char ring[8][512];
     char arena[8192];
     unsigned long arena_used;
-    long ring_start,ring_count,last_index;
-    long display_ticks,display_phase;
+    long ring_start, ring_count, last_index;
+    long display_ticks, display_phase;
     BHEntity *panel_entity;
     const unsigned long *panel_step_identity;
     BHMessageError error;
@@ -27,5 +32,5 @@ void __cdecl bh_message_state_init(BHMessageState *);
    overflow. On arena exhaustion, ring/display mutations remain and result 0.
    Panel +e8 is clamped to3 only for verified identity 00442950 and value>3.
    Missing panel binding is explicitly reported after queue mutations. */
-int __cdecl bh_message_enqueue(BHMessageState *,const char *text);
+int __cdecl bh_message_enqueue(BHMessageState *, const char *text);
 #endif

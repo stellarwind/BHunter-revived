@@ -4,13 +4,18 @@
 #include "bh_hud_status.h"
 typedef BHHudStatusState BHHudWorldState;
 
-typedef enum BHHudWorldError {
-    BH_HUD_WORLD_OK,BH_HUD_WORLD_ARGUMENT,BH_HUD_WORLD_NUMERICAL,BH_HUD_WORLD_QUEUE
+typedef enum BHHudWorldError
+{
+    BH_HUD_WORLD_OK,
+    BH_HUD_WORLD_ARGUMENT,
+    BH_HUD_WORLD_NUMERICAL,
+    BH_HUD_WORLD_QUEUE
 } BHHudWorldError;
-typedef struct BHHudWorldContext {
+typedef struct BHHudWorldContext
+{
     const BHHudContext *hud;
-    unsigned long atlas_image,weapon_icons_image;
-    unsigned long attempted,queued,dropped;
+    unsigned long atlas_image, weapon_icons_image;
+    unsigned long attempted, queued, dropped;
     BHHudWorldError error;
 } BHHudWorldContext;
 
@@ -22,5 +27,5 @@ typedef struct BHHudWorldContext {
    and countdown updates. Source binding/numerical guards reject before any
    publication or mutation. PC53 nearest/masked moderate finite contract;
    source bindings do not implement player/weapon constructors or callbacks. */
-int __cdecl bh_hud_world_draw(BHHudWorldContext *,BHHudWorldState *);
+int __cdecl bh_hud_world_draw(BHHudWorldContext *, BHHudWorldState *);
 #endif

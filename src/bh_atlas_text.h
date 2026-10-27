@@ -10,10 +10,10 @@
    sums all advances across lines, rather than reporting the widest line.
    Only glyphs wrap; spaces can pass the right edge. All cursor/advance adds
    retain original32-bit wrapping, including negative metrics. */
-long __cdecl bh_atlas_page_text(BHAtlasPage *,const unsigned char *text);
+long __cdecl bh_atlas_page_text(BHAtlasPage *, const unsigned char *text);
 /* Complete00470c90: sums signed widths for all valid byte glyphs including
    space. Newlines and unsupported bytes contribute0. Cursor is untouched. */
-long __cdecl bh_atlas_page_text_width(const BHAtlasPage *,const unsigned char *text);
+long __cdecl bh_atlas_page_text_width(const BHAtlasPage *, const unsigned char *text);
 /* Complete00470d40: borrowed page image identity; NULL page yieldsNULL. */
 BHTextureImage *__cdecl bh_atlas_page_image(const BHAtlasPage *);
 #endif

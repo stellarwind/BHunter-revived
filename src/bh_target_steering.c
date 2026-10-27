@@ -3,23 +3,33 @@
 #include <string.h>
 #include <float.h>
 
-void __cdecl bh_world_clamp_point(const BHWorldGeometry *world,BHVec3 *point) {
-    float low=world->minimum.x,high;
-    if(_isnan((double)point->x) || _isnan((double)low) || point->x<low)point->x=low;
-    else {
-        high=world->maximum.x;
-        if(point->x>high)point->x=high;
+void __cdecl bh_world_clamp_point(const BHWorldGeometry *world, BHVec3 *point)
+{
+    float low = world->minimum.x, high;
+    if (_isnan((double)point->x) || _isnan((double)low) || point->x < low)
+        point->x = low;
+    else
+    {
+        high = world->maximum.x;
+        if (point->x > high)
+            point->x = high;
     }
-    low=world->minimum.y;
-    if(low>point->y)point->y=low;
-    else {
-        high=world->maximum.y;
-        if(_isnan((double)high) || _isnan((double)point->y) || high<point->y)point->y=high;
+    low = world->minimum.y;
+    if (low > point->y)
+        point->y = low;
+    else
+    {
+        high = world->maximum.y;
+        if (_isnan((double)high) || _isnan((double)point->y) || high < point->y)
+            point->y = high;
     }
-    low=world->minimum.z;
-    if(low>point->z)point->z=low;
-    else {
-        high=world->maximum.z;
-        if(_isnan((double)high) || _isnan((double)point->z) || high<point->z)point->z=high;
+    low = world->minimum.z;
+    if (low > point->z)
+        point->z = low;
+    else
+    {
+        high = world->maximum.z;
+        if (_isnan((double)high) || _isnan((double)point->z) || high < point->z)
+            point->z = high;
     }
 }

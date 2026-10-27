@@ -16,18 +16,22 @@ static void __cdecl active_tick(BHEntity *entity);
 static void __cdecl always_tick(BHEntity *entity);
 static void __cdecl delete_tick(BHEntity *entity);
 
-static BHScriptTimerState *state(BHEntity *entity) {
+static BHScriptTimerState *state(BHEntity *entity)
+{
     return (BHScriptTimerState *)(entity->payload + 4);
 }
-static BHScriptTimerContext *context(BHEntity *entity) {
+static BHScriptTimerContext *context(BHEntity *entity)
+{
     BHScriptTimerContext *result;
     memcpy(&result, entity->payload + 52, sizeof(result));
     return result;
 }
-static void bind_context(BHEntity *entity, BHScriptTimerContext *ctx) {
+static void bind_context(BHEntity *entity, BHScriptTimerContext *ctx)
+{
     memcpy(entity->payload + 52, &ctx, sizeof(ctx));
 }
-static int live(const BHScriptTimerContext *ctx, const BHEntity *entity, unsigned long generation) {
+static int live(const BHScriptTimerContext *ctx, const BHEntity *entity, unsigned long generation)
+{
     BHEntity *p;
     unsigned long count = 0;
     if (!ctx || !ctx->pool)
@@ -37,29 +41,34 @@ static int live(const BHScriptTimerContext *ctx, const BHEntity *entity, unsigne
             return p->generation == generation;
     return 0;
 }
-static const BHScriptTimerActor *actor(const BHScriptTimerContext *ctx, BHEntity *entity) {
+static const BHScriptTimerActor *actor(const BHScriptTimerContext *ctx, BHEntity *entity)
+{
     unsigned long i;
     for (i = 0; i < ctx->actor_count; ++i)
         if (ctx->actors[i].entity == entity)
             return ctx->actors + i;
     return NULL;
 }
-static long signed_word(unsigned long value) {
+static long signed_word(unsigned long value)
+{
     long result;
     memcpy(&result, &value, 4);
     return result;
 }
-static double random_part(long low, long high) {
+static double random_part(long low, long high)
+{
     unsigned long product = (unsigned long)rand() * ((unsigned long)high - (unsigned long)low);
     return (double)signed_word(product) * (-1.0 / 32768.0);
 }
-int __cdecl bh_script_timers_init(BHScriptTimerContext *ctx, BHEntityPool *pool,
-                                  const BHScriptTimerActor *actors, unsigned long count) {
+int __cdecl bh_script_timers_init(BHScriptTimerContext *ctx, BHEntityPool *pool, const BHScriptTimerActor *actors,
+                                  unsigned long count)
+{
     BHScriptTimerContext next;
     unsigned long i, j;
     if (!ctx || !pool || (count && !actors) || count > 65535 || !bh_entities_valid(pool))
         return 0;
-    for (i = 0; i < count; ++i) {
+    for (i = 0; i < count; ++i)
+    {
         if (!actors[i].entity)
             return 0;
         for (j = 0; j < i; ++j)
@@ -73,36 +82,39 @@ int __cdecl bh_script_timers_init(BHScriptTimerContext *ctx, BHEntityPool *pool,
     *ctx = next;
     return 1;
 }
-BHScriptTimerState *__cdecl bh_script_timer_state(BHScriptTimerContext *ctx, BHEntity *entity) {
+BHScriptTimerState *__cdecl bh_script_timer_state(BHScriptTimerContext *ctx, BHEntity *entity)
+{
     if (!ctx || !entity || !live(ctx, entity, entity->generation) ||
-        (entity->query != template_timer && entity->query != template_timer2 &&
-         entity->query != running_query) ||
+        (entity->query != template_timer && entity->query != template_timer2 && entity->query != running_query) ||
         context(entity) != ctx)
         return NULL;
     return state(entity);
 }
-int __cdecl bh_script_timer_bind(BHScriptTimerContext *ctx, BHEntity *entity,
-                                 const BHScriptTimerState *initial, int unconditional) {
-    if (!ctx || !entity || !initial || !live(ctx, entity, entity->generation) ||
-        !bh_math_environment_supported() || initial->variable_remaining > 21 ||
-        initial->variable_low > 21 || initial->variable_high > 21)
+int __cdecl bh_script_timer_bind(BHScriptTimerContext *ctx, BHEntity *entity, const BHScriptTimerState *initial,
+                                 int unconditional)
+{
+    if (!ctx || !entity || !initial || !live(ctx, entity, entity->generation) || !bh_math_environment_supported() ||
+        initial->variable_remaining > 21 || initial->variable_low > 21 || initial->variable_high > 21)
         return 0;
     *state(entity) = *initial;
     bind_context(entity, ctx);
     entity->step = NULL;
-    if (!bh_entity_set_query(ctx->pool, entity, unconditional ? template_timer2 : template_timer)) {
+    if (!bh_entity_set_query(ctx->pool, entity, unconditional ? template_timer2 : template_timer))
+    {
         ctx->error = BH_TIMER_POOL;
         return 0;
     }
     ctx->error = BH_TIMER_OK;
     return 1;
 }
-static void __cdecl delete_tick(BHEntity *entity) {
+static void __cdecl delete_tick(BHEntity *entity)
+{
     BHScriptTimerContext *ctx = context(entity);
     if (!bh_entity_release(ctx->pool, entity))
         ctx->error = BH_TIMER_POOL;
 }
-static void __cdecl running_query(BHEntity *entity, void *packet) {
+static void __cdecl running_query(BHEntity *entity, void *packet)
+{
     BHScriptTimerPacket *event = (BHScriptTimerPacket *)packet;
     BHScriptTimerState *timer = state(entity);
     if (!event)
@@ -112,20 +124,24 @@ static void __cdecl running_query(BHEntity *entity, void *packet) {
     else if (event->event == 10 && event->actor == timer->actor)
         entity->step = delete_tick;
 }
-static void tick(BHEntity *entity, int unconditional) {
+static void tick(BHEntity *entity, int unconditional)
+{
     BHScriptTimerContext *ctx = context(entity);
     BHScriptTimerState *timer = state(entity);
     const BHScriptTimerActor *owner;
     BHScriptTimerPacket packet;
     double decremented, part;
     unsigned long generation = entity->generation;
-    if (!bh_math_environment_supported()) {
+    if (!bh_math_environment_supported())
+    {
         ctx->error = BH_TIMER_ARGUMENT;
         return;
     }
-    if (!unconditional) {
+    if (!unconditional)
+    {
         owner = actor(ctx, timer->actor);
-        if (!owner) {
+        if (!owner)
+        {
             ctx->error = BH_TIMER_ACTOR;
             return;
         }
@@ -142,21 +158,30 @@ static void tick(BHEntity *entity, int unconditional) {
     packet.actor = timer->actor;
     if (timer->fired && timer->fired->query)
         timer->fired->query(timer->fired, &packet);
-    if (!live(ctx, entity, generation)) {
+    if (!live(ctx, entity, generation))
+    {
         ctx->error = BH_TIMER_MUTATION;
         return;
     }
     part = random_part(timer->low, timer->high);
     bh_round_float(&timer->countdown, ((double)timer->countdown - part) + timer->low);
-    if (timer->remaining) {
+    if (timer->remaining)
+    {
         timer->remaining = signed_word((unsigned long)timer->remaining - 1);
         if (!timer->remaining)
             delete_tick(entity);
     }
 }
-static void __cdecl active_tick(BHEntity *entity) { tick(entity, 0); }
-static void __cdecl always_tick(BHEntity *entity) { tick(entity, 1); }
-static void activate(BHEntity *entity, void *packet, int unconditional) {
+static void __cdecl active_tick(BHEntity *entity)
+{
+    tick(entity, 0);
+}
+static void __cdecl always_tick(BHEntity *entity)
+{
+    tick(entity, 1);
+}
+static void activate(BHEntity *entity, void *packet, int unconditional)
+{
     BHScriptTimerContext *ctx = context(entity);
     BHScriptTimerState *timer = state(entity), copy;
     BHScriptTimerPacket *event = (BHScriptTimerPacket *)packet;
@@ -164,24 +189,28 @@ static void activate(BHEntity *entity, void *packet, int unconditional) {
     BHEntity *created, *next;
     if (!event)
         return;
-    if (event->event == 20 && !timer->script_loaded) {
+    if (event->event == 20 && !timer->script_loaded)
+    {
         delete_tick(entity);
         return;
     }
-    if (event->event == 4) {
+    if (event->event == 4)
+    {
         entity->step = delete_tick;
         return;
     }
     if (event->event != 8)
         return;
-    if (!bh_math_environment_supported()) {
+    if (!bh_math_environment_supported())
+    {
         ctx->error = BH_TIMER_ARGUMENT;
         return;
     }
     variables = actor(ctx, event->actor);
-    if (timer->variable_remaining >= 0 || timer->variable_low >= 0 || timer->variable_high >= 0) {
-        if (!variables || timer->variable_remaining > 21 || timer->variable_low > 21 ||
-            timer->variable_high > 21) {
+    if (timer->variable_remaining >= 0 || timer->variable_low >= 0 || timer->variable_high >= 0)
+    {
+        if (!variables || timer->variable_remaining > 21 || timer->variable_low > 21 || timer->variable_high > 21)
+        {
             ctx->error = BH_TIMER_ACTOR;
             return;
         }
@@ -194,7 +223,8 @@ static void activate(BHEntity *entity, void *packet, int unconditional) {
     }
     copy = *timer;
     created = bh_entity_acquire(ctx->pool);
-    if (!created) {
+    if (!created)
+    {
         ctx->error = BH_TIMER_POOL;
         return;
     }
@@ -204,21 +234,36 @@ static void activate(BHEntity *entity, void *packet, int unconditional) {
     state(created)->actor = event->actor;
     bh_round_float(&state(created)->countdown, (double)copy.low - random_part(copy.low, copy.high));
     created->step = unconditional ? always_tick : active_tick;
-    if (!bh_entity_set_query(ctx->pool, created, running_query)) {
+    if (!bh_entity_set_query(ctx->pool, created, running_query))
+    {
         ctx->error = BH_TIMER_POOL;
         return;
     }
     next = timer->next;
-    if (next) {
-        if (!next->query) {
+    if (next)
+    {
+        if (!next->query)
+        {
             ctx->error = BH_TIMER_ARGUMENT;
             return;
         }
         next->query(next, packet);
     }
 }
-static void __cdecl template_timer(BHEntity *entity, void *packet) { activate(entity, packet, 0); }
-static void __cdecl template_timer2(BHEntity *entity, void *packet) { activate(entity, packet, 1); }
+static void __cdecl template_timer(BHEntity *entity, void *packet)
+{
+    activate(entity, packet, 0);
+}
+static void __cdecl template_timer2(BHEntity *entity, void *packet)
+{
+    activate(entity, packet, 1);
+}
 
-BHEntityStep __cdecl bh_script_timer_delete_step(void){return delete_tick;}
-BHEntityStep __cdecl bh_script_timer_unconditional_step(void){return always_tick;}
+BHEntityStep __cdecl bh_script_timer_delete_step(void)
+{
+    return delete_tick;
+}
+BHEntityStep __cdecl bh_script_timer_unconditional_step(void)
+{
+    return always_tick;
+}

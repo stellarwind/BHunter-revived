@@ -2,12 +2,21 @@
 #define BH_PLAYER_CREATE_H
 #include "bh_player_tick.h"
 #include "bh_collision_model.h"
-typedef struct BHPlayerCreate {
- BHPlayerTick *tick;BHPlayerQueryContext *query;BHEntity **current;
- BHPlayerInputOwner *input_owner;const BHInputProfile *profile;
- BHCollisionModel *collision;const char *prefix;BHBspSearch search;
- BHCameraCorrectionOwner *correction;BHEntity **actors;unsigned long actor_capacity;
- unsigned long engine_loop,created,deferred,expired;int error;
+typedef struct BHPlayerCreate
+{
+    BHPlayerTick *tick;
+    BHPlayerQueryContext *query;
+    BHEntity **current;
+    BHPlayerInputOwner *input_owner;
+    const BHInputProfile *profile;
+    BHCollisionModel *collision;
+    const char *prefix;
+    BHBspSearch search;
+    BHCameraCorrectionOwner *correction;
+    BHEntity **actors;
+    unsigned long actor_capacity;
+    unsigned long engine_loop, created, deferred, expired;
+    int error;
 } BHPlayerCreate;
 /* Whole00421d20 and00421560. Collision/input/weapon/basis and callbacks are
    real source owners. The borrowed model and context survive the live player.
@@ -20,6 +29,7 @@ typedef struct BHPlayerCreate {
    player tick and scene use the explicit checked player callback registry,
    preserving all original force-control/plume words through+35c.
    Replacing an existing player's global query binding requires explicit close. */
-BHEntity *__cdecl bh_player_create(BHPlayerCreate *,float delay,const BHVec3 *,unsigned long vehicle,unsigned long model);
+BHEntity *__cdecl bh_player_create(BHPlayerCreate *, float delay, const BHVec3 *, unsigned long vehicle,
+                                   unsigned long model);
 void __cdecl bh_player_create_delayed(BHEntity *);
 #endif

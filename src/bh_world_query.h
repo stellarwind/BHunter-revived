@@ -3,19 +3,22 @@
 #include "bh_entities.h"
 #include "bh_route_query.h"
 
-typedef enum BHWorldHitKind {
+typedef enum BHWorldHitKind
+{
     BH_WORLD_HIT_END,
     BH_WORLD_HIT_GEOMETRY,
     BH_WORLD_HIT_ACTOR
 } BHWorldHitKind;
-typedef struct BHWorldHit {
+typedef struct BHWorldHit
+{
     BHWorldHitKind kind;
     union {
         BHWorldGeometry *geometry;
         BHEntity *actor;
     } object;
 } BHWorldHit;
-typedef enum BHWorldQueryError {
+typedef enum BHWorldQueryError
+{
     BH_QUERY_OK,
     BH_QUERY_ARGUMENT,
     BH_QUERY_MEMORY,
@@ -23,7 +26,8 @@ typedef enum BHWorldQueryError {
     BH_QUERY_CAPACITY,
     BH_QUERY_BUSY
 } BHWorldQueryError;
-typedef struct BHWorldQuery {
+typedef struct BHWorldQuery
+{
     BHWorldGeometry *first;
     unsigned long scene_count;
     BHEntity *const *actors;
@@ -42,9 +46,8 @@ typedef struct BHWorldQuery {
    flags; collision_radius is the verified common entity +c0 field, initialized
    by each real actor constructor (pool recycling does not supply that default).
    Up to 65535 members of each kind. Init failure leaves caller output unchanged. */
-int __cdecl bh_world_query_init(BHWorldQuery *query, BHWorldGeometry *first,
-                                unsigned long scene_count, BHEntity *const *actors,
-                                unsigned long actor_count, const BHSceneAllocator *allocator);
+int __cdecl bh_world_query_init(BHWorldQuery *query, BHWorldGeometry *first, unsigned long scene_count,
+                                BHEntity *const *actors, unsigned long actor_count, const BHSceneAllocator *allocator);
 int __cdecl bh_world_query_dispose(BHWorldQuery *query);
 /* 0040b300 with owned 0040abe0 DFS and 0040af20 actor broad phase.
    Select previous if it contains the point; otherwise try exact then expanded
@@ -58,6 +61,6 @@ int __cdecl bh_world_query_dispose(BHWorldQuery *query);
    Negative margin/radius retains original signed behavior. Queries allocate
    nothing, replace prior results/owner only on success, and reject topology
    mutation, foreign links, nonfinite inputs or overflow of owned capacity. */
-int __cdecl bh_world_query_run(BHWorldQuery *query, BHEntity *self, BHWorldGeometry *previous,
-                               const BHVec3 *point, float margin, BHWorldGeometry **owner);
+int __cdecl bh_world_query_run(BHWorldQuery *query, BHEntity *self, BHWorldGeometry *previous, const BHVec3 *point,
+                               float margin, BHWorldGeometry **owner);
 #endif

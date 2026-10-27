@@ -1,9 +1,12 @@
 #ifndef BH_FLYBY_CONSTRUCT_H
 #define BH_FLYBY_CONSTRUCT_H
 #include "bh_flyby_scene.h"
-typedef struct BHFlybyConstruct {
- BHFlybyScene *scene;BHEntity **current_camera;
- unsigned long settled;int error;
+typedef struct BHFlybyConstruct
+{
+    BHFlybyScene *scene;
+    BHEntity **current_camera;
+    unsigned long settled;
+    int error;
 } BHFlybyConstruct;
 /* Whole0042a9e0. Acquire a real camera entity, initialize actual borrowed
    flyby state, bind the existing real scene/camera callbacks, locate the world,

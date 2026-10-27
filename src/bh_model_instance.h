@@ -3,9 +3,14 @@
 #include "bh_main_camera.h"
 #include "bh_model_draw_lit.h"
 
-typedef enum BHModelInstanceError {
-    BH_MODEL_INSTANCE_OK, BH_MODEL_INSTANCE_ARGUMENT, BH_MODEL_INSTANCE_NUMERICAL,
-    BH_MODEL_INSTANCE_CAMERA, BH_MODEL_INSTANCE_LIGHT, BH_MODEL_INSTANCE_DRAW
+typedef enum BHModelInstanceError
+{
+    BH_MODEL_INSTANCE_OK,
+    BH_MODEL_INSTANCE_ARGUMENT,
+    BH_MODEL_INSTANCE_NUMERICAL,
+    BH_MODEL_INSTANCE_CAMERA,
+    BH_MODEL_INSTANCE_LIGHT,
+    BH_MODEL_INSTANCE_DRAW
 } BHModelInstanceError;
 
 /* Explicit bindings for 0045aa60's scattered globals. All pointers are
@@ -15,7 +20,8 @@ typedef enum BHModelInstanceError {
    light_reference is transformed from model to world space before point-light
    prepare; its borrowed source represents writable global 00495e30.
    The emitter may read opacity from this context during its synchronous call. */
-typedef struct BHModelInstanceContext {
+typedef struct BHModelInstanceContext
+{
     BHModel *model;
     BHModelDrawCache *cache;
     const BHMainCamera *camera;
@@ -26,11 +32,11 @@ typedef struct BHModelInstanceContext {
     const BHVec3 *light_reference;
     BHModelPolygonEmit emit;
     void *emit_user;
-    unsigned long texture_mask,base_color,color,frame;
+    unsigned long texture_mask, base_color, color, frame;
     float opacity;
     long point_enabled;
     BHMat34 last_camera_view;
-    unsigned long drawn,faces_marked,polygons_emitted;
+    unsigned long drawn, faces_marked, polygons_emitted;
     BHModelInstanceError error;
 } BHModelInstanceContext;
 
@@ -45,7 +51,6 @@ typedef struct BHModelInstanceContext {
    color and counters retain that partial traversal, while drawn stays zero.
    Frame wrap is rejected by the source guard because the draw cache reserves
    zero as its initial invalid token. */
-int __cdecl bh_model_instance_draw(BHModelInstanceContext *,
-    double x,double y,double z,double rotate_y,double rotate_x,double rotate_z,
-    float opacity);
+int __cdecl bh_model_instance_draw(BHModelInstanceContext *, double x, double y, double z, double rotate_y,
+                                   double rotate_x, double rotate_z, float opacity);
 #endif

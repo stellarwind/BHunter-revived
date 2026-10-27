@@ -9,5 +9,5 @@
    right,middle buttons write VK1,2,4. Other messages call real DefWindowProcA.
    Snapshot storage must remain live; no input is sent to any external window.
    NULL snapshot source guard delegates without mutation. */
-LRESULT __cdecl bh_input_message(BHInputSnapshot *,HWND,UINT,WPARAM,LPARAM);
+LRESULT __cdecl bh_input_message(BHInputSnapshot *, HWND, UINT, WPARAM, LPARAM);
 #endif

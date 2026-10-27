@@ -8,5 +8,5 @@
    unordered lower comparison; y/z choose their upper bound on an unordered
    upper comparison. Ordered equality performs no write (preserves signed0).
    Pointers must be live/accessibly sized, as in the original valid domain. */
-void __cdecl bh_world_clamp_point(const BHWorldGeometry *world,BHVec3 *point);
+void __cdecl bh_world_clamp_point(const BHWorldGeometry *world, BHVec3 *point);
 #endif

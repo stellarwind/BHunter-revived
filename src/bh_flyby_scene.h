@@ -6,17 +6,23 @@
 #include "bh_sound_queue.h"
 #include "bh_input_evaluate.h"
 
-typedef enum BHFlybySceneError {
-    BH_FLYBY_SCENE_OK,BH_FLYBY_SCENE_ARGUMENT,BH_FLYBY_SCENE_BINDING,
-    BH_FLYBY_SCENE_OWNER,BH_FLYBY_SCENE_QUEUE,BH_FLYBY_SCENE_PACKET
+typedef enum BHFlybySceneError
+{
+    BH_FLYBY_SCENE_OK,
+    BH_FLYBY_SCENE_ARGUMENT,
+    BH_FLYBY_SCENE_BINDING,
+    BH_FLYBY_SCENE_OWNER,
+    BH_FLYBY_SCENE_QUEUE,
+    BH_FLYBY_SCENE_PACKET
 } BHFlybySceneError;
 
 /* All game state is borrowed from source owners. Pointer fields corresponding
    to original globals remain live across synchronous callbacks and queries.
    The source-only registry below ties void entity callbacks to this explicit
    context; it never maps or invokes an original code address. */
-typedef struct BHFlybyScene {
-    BHEntity *camera_entity,**current_player;
+typedef struct BHFlybyScene
+{
+    BHEntity *camera_entity, **current_player;
     BHEntityPool *entities;
     BHDrawQueue *queue;
     BHSoundQueue *sound;
@@ -29,13 +35,13 @@ typedef struct BHFlybyScene {
     BHFlybyCameraState *flyby_state;
     const BHPlayerCameraStart *starts;
     unsigned long start_count;
-    const long *mode_count,*selected_waypoint,*scenario,*player_slot;
-    const long *display_width,*display_height;
+    const long *mode_count, *selected_waypoint, *scenario, *player_slot;
+    const long *display_width, *display_height;
     const float *near_z;
-    unsigned long *event_value,*mission_identity;
-    unsigned long horizon_image,full_image,corner_left_image,corner_right_image;
+    unsigned long *event_value, *mission_identity;
+    unsigned long horizon_image, full_image, corner_left_image, corner_right_image;
     unsigned long scenario_resources[3];
-    unsigned long attempted,queued,dropped,random_calls;
+    unsigned long attempted, queued, dropped, random_calls;
     BHEntity *bound_entity;
     unsigned long bound_generation;
     struct BHFlybyScene *registry_next;
@@ -54,5 +60,5 @@ int __cdecl bh_flyby_scene_draw(BHFlybyScene *);
 /* Source adapters for original 0042a9b0 and installed 00429fb0. */
 void __cdecl bh_flyby_scene_rearm_entity(BHEntity *);
 void __cdecl bh_flyby_scene_camera_step_entity(BHEntity *);
-void __cdecl bh_flyby_scene_refresh_entity(BHEntity *,void *packet);
+void __cdecl bh_flyby_scene_refresh_entity(BHEntity *, void *packet);
 #endif
