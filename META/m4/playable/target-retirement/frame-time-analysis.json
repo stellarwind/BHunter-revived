@@ -1,0 +1,116 @@
+{
+  "kind": "existing_manual_log_analysis",
+  "input": "D:\\Decomp\\Bhunter\\META\\m4\\playable\\target-retirement\\reported-session.log",
+  "sha256": "e2a95dc84911774e9363363c4a08dceba1bce8815d4773c250fb9f7f2907df55",
+  "startup_log_identical": true,
+  "csv_captures_found": [],
+  "comparator": "tools/compare_frame_times.py",
+  "comparator_run": false,
+  "comparator_not_run_reason": "No input CSV captures exist in workspace; coarse log is not comparator schema.",
+  "detailed_profile_enabled_marker_present": false,
+  "detailed_profile_saved_marker_present": false,
+  "frame_markers": 90,
+  "render_markers": 585,
+  "by_mode": {
+    "0": {
+      "markers": 10,
+      "first_frame": 1,
+      "last_frame": 150,
+      "metrics_ms_histograms": {
+        "total": {
+          "0": 9,
+          "359": 1
+        },
+        "input": {
+          "0": 10
+        },
+        "step": {
+          "0": 9,
+          "109": 1
+        },
+        "refresh": {
+          "0": 10
+        },
+        "sound": {
+          "0": 9,
+          "235": 1
+        },
+        "render": {
+          "0": 9,
+          "15": 1
+        },
+        "blit": {
+          "0": 10
+        }
+      },
+      "commands_min": 63,
+      "commands_max": 120
+    },
+    "1": {
+      "markers": 80,
+      "first_frame": 180,
+      "last_frame": 2550,
+      "metrics_ms_histograms": {
+        "total": {
+          "0": 80
+        },
+        "input": {
+          "0": 80
+        },
+        "step": {
+          "0": 80
+        },
+        "refresh": {
+          "0": 80
+        },
+        "sound": {
+          "0": 80
+        },
+        "render": {
+          "0": 80
+        },
+        "blit": {
+          "0": 80
+        }
+      },
+      "commands_min": 122,
+      "commands_max": 546
+    }
+  },
+  "render_ms_histogram": {
+    "0": 557,
+    "15": 10,
+    "16": 18
+  },
+  "last_frame_marker": {
+    "frame": 2550,
+    "mode": 1,
+    "total": 0,
+    "input": 0,
+    "step": 0,
+    "refresh": 0,
+    "sound": 0,
+    "render": 0,
+    "blit": 0,
+    "commands": 385,
+    "presentations": 17628,
+    "line": 681
+  },
+  "renderer_failure": [
+    "Source renderer failed: execute=5 index=390 kind=5 resource=000001db status=0 resource_draw=0 horizon=0 clip_error=0 polygon=0 billboard=0 quad=0 primitive=0 display=0 HRESULT=00000000"
+  ],
+  "source_evidence": {
+    "coarse_markers": "src/bh_game_app.c:436-458 GetTickCount work durations, sparse produced-frame logging; render log occurs whenever frame%30==0, including repeated presentations.",
+    "detailed_capture": "src/bh_game_app.c:82-106 QPC intervals and phase durations; CSV saved by perf_save at cleanup.",
+    "launcher": "profile-hardware.cmd passes --hardware --fullscreen --profile."
+  },
+  "limits": [
+    "Coarse integer GetTickCount durations are heavily quantized; 0 does not mean zero elapsed time.",
+    "Frame total is loop work duration, not consecutive presentation interval; many presentations reuse a produced simulation frame.",
+    "Frame markers sample first5 and each30th produced simulation frame; render markers repeat on the same simulation frame.",
+    "No timestamps, contacts, projectile counts or pause flags in this log, so idle/firing/collision categories and valid p95/p99 frame times/FPS cannot be recovered.",
+    "Presentation counter and polygon count are cumulative; their increases do not measure elapsed time or per-frame cost.",
+    "No game started and no input automated for this analysis."
+  ],
+  "durable_reported_log": "META/m4/playable/target-retirement/reported-session.txt"
+}

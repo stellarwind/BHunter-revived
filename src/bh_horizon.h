@@ -16,7 +16,12 @@ typedef struct BHHorizonContext {
     BHRenderState *state;BHHorizonColor *colors;
     BHHorizonEmit emit;void *user;
     float rgb[3];unsigned long attempted,emitted;
+    /* Original004e38c4 output bytes, distinct from004e32f4 backend Boolean.
+       Init defaults to indexed1; packed output binds2 before first draw. */
+    unsigned long color_mode;
     BHHorizonError error;
+    BHClipError first_clip_error;
+    unsigned long failed_polygon;
 } BHHorizonContext;
 /* Explicit borrowed owning bindings. Camera's projected matrix, position.x/z
    and angles.x are the original global projection/eye/yaw values. Context,

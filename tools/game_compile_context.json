@@ -1,0 +1,1217 @@
+{
+  "schema_version": 1,
+  "description": "Production per-translation-unit defines and include context copied from admitted integration build; common VC5 flags are in build_game.py.",
+  "sources": {
+    "bh_pickup_basic.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_script_wait.c": [],
+    "bh_rail_wagon.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_input_enum.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_model_scale.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_rail_paths.c": [],
+    "bh_script_args.c": [],
+    "bh_loading_blit.c": [],
+    "bh_loading_display.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_loading_progress.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_loading_image.c": [],
+    "bh_sound_load.c": [],
+    "bh_window_dispatch.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_force_feedback_start.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_cd_notify.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_frame_callback.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_present_begin.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_capture.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_display_shutdown.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_frame_worker.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_cd_close.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_force_feedback.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_network_shutdown.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_frame_service.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_frame_render.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_render_execute.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_player_reset.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_flyby_scene.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_message_panel.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_messages.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_weapon_empty.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_player_scene.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_weapon_factory.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_weapon_timer.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_weapon_latch.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_weapon_target_lifecycle.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_weapon_arc_lifecycle.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_weapon_removal.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_weapon_common.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_present.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_fade.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_segment_queue.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_path_queue.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_weapon_hud_arc.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_weapon_hud_target.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_hud_scores.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_hud_world.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_hud_flat.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_plane_quad.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_attachment.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_hud.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_hud_markers.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_queue_reserve.c": [
+      "/I{DXSDK}\\include"
+    ],
+    "bh_screen_quad.c": [
+      "/I{DXSDK}\\include"
+    ],
+    "bh_frame_buffers.c": [],
+    "bh_actor_route_lifetime.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_axis_snap.c": [],
+    "bh_actor_route.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_input_devices.c": [],
+    "bh_radar.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_route_guided.c": [],
+    "bh_input_collection.c": [],
+    "bh_route_curve_length.c": [],
+    "bh_horizon.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_target_steering.c": [],
+    "bh_route_choice.c": [],
+    "bh_input_messages.c": [],
+    "bh_quad_queue.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_depth_subdivide.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_sprite_quad.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_target_selection.c": [],
+    "bh_horizon_queue.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_material_queue.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_input_evaluate.c": [],
+    "bh_collision_cache.c": [],
+    "bh_collision_resource.c": [],
+    "bh_player_input_events.c": [],
+    "bh_horizon_color.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_flyby_camera.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_text_queue.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_atlas_text.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_camera_route.c": [],
+    "bh_camera_correction.c": [],
+    "bh_world_segment.c": [],
+    "bh_actor_basis.c": [],
+    "bh_camera_curve.c": [],
+    "bh_player_camera.c": [],
+    "bh_camera_modes.c": [],
+    "bh_player_input.c": [],
+    "bh_scene_background.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_camera_state.c": [],
+    "bh_camera_queue.c": [],
+    "bh_scene_owner.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_scene_bindings.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_pickup.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_pickup_draw.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_entity_schedule.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_draw_controls.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_draw_submit.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_render_resources.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_entity_resource_draw.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_sprite_billboard.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_sprite_oriented.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_draw_resource.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_native_attribute.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_model_instance.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_model_draw.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_model_draw_lit.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_atlas_page.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_atlas_glyph.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_attribute_clipper.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_software_tables.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_light_config.c": [],
+    "bh_geometry_radius.c": [],
+    "bh_view_cull.c": [],
+    "bh_atlas_image.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_native_primitive.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_texture_controls.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_model_path.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_texture_policy.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_model_images.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_main_camera.c": [],
+    "bh_light_eval.c": [],
+    "bh_render_state.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_render_material.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_screen_clipper.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_light.c": [],
+    "bh_view_camera.c": [],
+    "bh_clipper.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_matrix_inverse.c": [],
+    "bh_texture_draw.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_model.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_texture_image.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_texture_tables.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_render_guids.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_texture.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_scene_view.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_sound_tick.c": [],
+    "bh_sound_listener.c": [],
+    "bh_network_transport.c": [
+      "/I{DXSDK}\\include"
+    ],
+    "bh_network_codec.c": [],
+    "bh_debris_response.c": [],
+    "bh_sound_queue.c": [],
+    "bh_draw_queue.c": [],
+    "bh_contact_effects.c": [],
+    "bh_physics_response.c": [],
+    "bh_entity_collision.c": [],
+    "bh_sweep.c": [],
+    "bh_collision_query.c": [],
+    "bh_math.c": [],
+    "bh_fp.c": [],
+    "bh_vfile.c": [],
+    "bh_config.c": [],
+    "bh_paths.c": [],
+    "bh_scene.c": [],
+    "bh_bsp.c": [],
+    "bh_blocks.c": [],
+    "bh_round.c": [],
+    "bh_entities.c": [],
+    "bh_wave.c": [],
+    "bh_pcx.c": [],
+    "bh_portals.c": [],
+    "bh_geometry.c": [],
+    "bh_rotation.c": [],
+    "bh_world_geometry.c": [],
+    "bh_navigation.c": [],
+    "bh_route_query.c": [],
+    "bh_world_query.c": [],
+    "bh_position.c": [],
+    "bh_segment_query.c": [],
+    "bh_collision_model.c": [],
+    "bh_riff.c": [],
+    "bh_pcx_reader.c": [],
+    "bh_script_timer.c": [],
+    "bh_callback_helpers.c": [],
+    "bh_serial_options.c": [],
+    "bh_script_lifetime.c": [],
+    "bh_menu_settings.c": [],
+    "bh_editor_input.c": [],
+    "bh_script_attached_sound.c": [],
+    "bh_script_motion.c": [],
+    "bh_display_enum.c": [],
+    "bh_sound_startup.c": [],
+    "bh_script_particles.c": [],
+    "bh_collision_box.c": [],
+    "bh_script_sensor.c": [],
+    "bh_script_flash.c": [],
+    "bh_project_scale.c": [],
+    "bh_cd_audio.c": [],
+    "bh_provider_catalog.c": [
+      "/I{DXSDK}\\include"
+    ],
+    "bh_provider_startup.c": [
+      "/I{DXSDK}\\include"
+    ],
+    "bh_flash_flare.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500"
+    ],
+    "bh_target_draw.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500"
+    ],
+    "bh_atlas_wide.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500"
+    ],
+    "bh_force_feedback_init.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_input_format_guids.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_script_explosion.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500"
+    ],
+    "bh_input_mode.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500"
+    ],
+    "bh_physics_step.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500"
+    ],
+    "bh_physics_effects.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500"
+    ],
+    "bh_menu_profile.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500"
+    ],
+    "bh_input_text.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500"
+    ],
+    "bh_target_step.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500"
+    ],
+    "bh_menu_object.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500"
+    ],
+    "bh_effect_draw.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500"
+    ],
+    "bh_script_debris.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500"
+    ],
+    "bh_projectile_lifetime.c": [],
+    "bh_menu_row.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500"
+    ],
+    "bh_hit_marker.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500",
+      "/DBH_MENU_PRESENT_LINKED"
+    ],
+    "bh_network_sessions.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500",
+      "/DBH_MENU_PRESENT_LINKED"
+    ],
+    "bh_media_control.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500",
+      "/DBH_MENU_PRESENT_LINKED"
+    ],
+    "bh_menu_present.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500",
+      "/DBH_MENU_PRESENT_LINKED"
+    ],
+    "bh_target_construct.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500",
+      "/DBH_MENU_PRESENT_LINKED"
+    ],
+    "bh_homing_projectile.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_ballistic_projectile.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_vm_queries.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_effect_cleanup.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_gdi_text.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_delayed_expiry.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_weapon_pulse.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_menu_edits.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_player_query.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_projectile_create.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_menu_actions.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_render_startup.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_remote_prediction.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_segment_owner.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_trail.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_script_actor_path.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_script_actor_route.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_script_actor_tick.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_script_actor_draw.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_script_actor_query.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_script_actor_construct.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_network_game.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_menu_transition.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_menu_runtime.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_mission_progress.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_application_bootstrap.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_engine_bootstrap.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_game_bootstrap.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_player_tick.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_player_create.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_remote_messages.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_remote_position.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_remote_packets.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_remote_tick.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_remote_fire.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_weapon_dispatch.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_mission_story.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_screen_region.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_world_load.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_editor_control.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_editor_world.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_world_reset.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_script_blocks.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_script_parse.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_script_vm.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_actor_launch.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_actor_construct.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_actor_response.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
+    "bh_world_edit.c": [],
+    "bh_primitive_dispatch.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_software_raster.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_remote_query.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_source_files.c": [],
+    "bh_remote_render.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_force_feedback_update.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_impact_ring.c": [],
+    "bh_actor_attack.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_actor_basis_control.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_actor_damage.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_actor_pursuit_route.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_actor_vehicle_draw.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_actor_vehicle_lifetime.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_area_projectile.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_editor_numeric.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_effect_accelerated.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_effect_network.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_effect_orbit_tick.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_effect_projectile.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_effect_puff.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_effect_split_tick.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_flyby_construct.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_network_debug.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_network_effect_receive.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_network_scores.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_player_aim.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_player_force_control.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_pulse_projectile.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_pulse_visual.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_weapon_arc_fire.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_weapon_effect_fire.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_weapon_fire.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_weapon_homing_track.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_weapon_path.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ],
+    "bh_weapon_pulse_launch.c": [
+      "/I{DXSDK}\\include",
+      "/DDIRECTDRAW_VERSION=0x0500",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTINPUT_VERSION=0x0500"
+    ]
+  }
+}

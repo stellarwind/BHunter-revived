@@ -1,0 +1,621 @@
+{
+  "scope": "Current source application resource and font wiring for menu, flyby logos, player HUD, radar, target/pickup labels, dialogue, score page and shield/projectile visuals. Resource bindings are distinct from whole UI behavioral fidelity. Contact/emitter/homing family bindings added after AI/collision/effect integration audit.",
+  "resources": [
+    {
+      "field": "hud.background_image",
+      "identity": "004f00c0",
+      "reference": "META/m4/hud-attachment/original/0041b2d0.tsv",
+      "asset": "radar.bmp",
+      "reference_sha256": "dad01141b49b54886ebd430f789e3b9d593be964211f4a90d557a9919aa08658"
+    },
+    {
+      "field": "world_hud.atlas_image",
+      "identity": "004f54e4",
+      "reference": "META/m4/hud-attachment/original/00418f00.tsv",
+      "asset": "clipbrd.bmp",
+      "reference_sha256": "995742804214ff7a6547b3c2bbb3ca894f1be618132f41d6a5daa5c1677023aa"
+    },
+    {
+      "field": "world_hud.weapon_icons_image",
+      "identity": "004f0054",
+      "reference": "META/m4/hud-attachment/original/00418f00.tsv",
+      "asset": "weapons.bmp",
+      "reference_sha256": "995742804214ff7a6547b3c2bbb3ca894f1be618132f41d6a5daa5c1677023aa"
+    },
+    {
+      "field": "flat_hud.atlas_image",
+      "identity": "004f54e4",
+      "reference": "META/m4/hud-attachment/original/0041a3d0.tsv",
+      "asset": "clipbrd.bmp",
+      "reference_sha256": "55802fec1833459679d451d8799e8ab2dedccec4650d1d18548fdeb46a9d81e9"
+    },
+    {
+      "field": "flat_hud.weapon_icons_image",
+      "identity": "004f0054",
+      "reference": "META/m4/hud-attachment/original/0041a3d0.tsv",
+      "asset": "weapons.bmp",
+      "reference_sha256": "55802fec1833459679d451d8799e8ab2dedccec4650d1d18548fdeb46a9d81e9"
+    },
+    {
+      "field": "markers.brackets_image",
+      "identity": "004f00b4",
+      "reference": "META/m4/hud-attachment/original/0041bbf0.tsv",
+      "asset": "tags.bmp",
+      "reference_sha256": "b8eb2f52fa9f612c75255a3adf302e336712661621df11ecdbf04130a0a24afd"
+    },
+    {
+      "field": "markers.status_image",
+      "identity": "004cdb9c",
+      "reference": "META/m4/hud-attachment/original/0041bbf0.tsv",
+      "asset": "derived image of shared tvfont 128 page",
+      "reference_sha256": "b8eb2f52fa9f612c75255a3adf302e336712661621df11ecdbf04130a0a24afd"
+    },
+    {
+      "field": "radar.marker_image",
+      "identity": "004f54dc",
+      "reference": "META/m4/frontier-90min/original/0041b650.tsv",
+      "asset": "dots.bmp",
+      "reference_sha256": "586d7524663ec6c270be57199ae31fdee8161a15ba0ab0da377f742a9124619f"
+    },
+    {
+      "field": "radar.bar_image",
+      "identity": "004f00b4",
+      "reference": "META/m4/frontier-90min/original/0041b650.tsv",
+      "asset": "tags.bmp",
+      "reference_sha256": "586d7524663ec6c270be57199ae31fdee8161a15ba0ab0da377f742a9124619f"
+    },
+    {
+      "field": "attachment.default_image",
+      "identity": "004f00b8",
+      "reference": "META/m4/hud-attachment/original/00417f70.tsv",
+      "asset": "blue.bmp",
+      "reference_sha256": "221f73f81148ced73d529acb5d61e12b769a3ecde7554bb3bf57904c8a1112f6"
+    },
+    {
+      "field": "attachment.flag200_image",
+      "identity": "004f006c",
+      "reference": "META/m4/hud-attachment/original/00417f70.tsv",
+      "asset": "blue2.bmp",
+      "reference_sha256": "221f73f81148ced73d529acb5d61e12b769a3ecde7554bb3bf57904c8a1112f6"
+    },
+    {
+      "field": "attachment.flag400_image",
+      "identity": "004f0070",
+      "reference": "META/m4/hud-attachment/original/00417f70.tsv",
+      "asset": "blue3.bmp",
+      "reference_sha256": "221f73f81148ced73d529acb5d61e12b769a3ecde7554bb3bf57904c8a1112f6"
+    },
+    {
+      "field": "attachment.flag800_image",
+      "identity": "004f0074",
+      "reference": "META/m4/hud-attachment/original/00417f70.tsv",
+      "asset": "blue4.bmp",
+      "reference_sha256": "221f73f81148ced73d529acb5d61e12b769a3ecde7554bb3bf57904c8a1112f6"
+    },
+    {
+      "field": "pickup_draw.atlas_image",
+      "identity": "004f54e4",
+      "reference": "META/m4/pickup/original/00440c40.tsv",
+      "asset": "clipbrd.bmp",
+      "reference_sha256": "83189243be06050ec8b1d67b49fe8f404b4bbb7e8a64d3f9040623df02ad0891"
+    },
+    {
+      "field": "pickup_draw.glow_image",
+      "identity": "004f00b0",
+      "reference": "META/m4/pickup/original/004412f0.tsv",
+      "asset": "flare_yl.bmp",
+      "reference_sha256": "c189c0a0561f6d02e8619be0c3226df7e5b2ae2cd5fdbd48bde8ac1e4a750cca"
+    },
+    {
+      "field": "target_draw.atlas_image",
+      "identity": "004f54e4",
+      "reference": "META/m4/hour424/b/0043c3f0.decompile.json",
+      "asset": "clipbrd.bmp",
+      "reference_sha256": "a9618458ceff6d82ff3dcbee7011d815d2697ad3b7cb3d048bd2935ab702a379"
+    },
+    {
+      "field": "target_draw.marker_image",
+      "identity": "004f00b4",
+      "reference": "META/m4/hour424/b/0043c3f0.decompile.json",
+      "asset": "tags.bmp",
+      "reference_sha256": "a9618458ceff6d82ff3dcbee7011d815d2697ad3b7cb3d048bd2935ab702a379"
+    },
+    {
+      "field": "target_hud.atlas_image",
+      "identity": "004f00b4",
+      "reference": "META/m4/hud-attachment/original/004314f0.tsv",
+      "asset": "tags.bmp",
+      "reference_sha256": "4827483d10ea8de273efe0fa9eb6f5f031e3be1927af3edc251a2c941fdcb2b5"
+    },
+    {
+      "field": "arc_hud.image",
+      "identity": "0049632c",
+      "reference": "META/m4/hud-attachment/original/00432050.tsv",
+      "asset": "sray1.bmp",
+      "reference_sha256": "7b6d4ce122377a91a6a749bdcdb489dfe08f371be46398c791fc0e12dd189dd5"
+    },
+    {
+      "field": "score_draw.page_image",
+      "identity": "004cdb9c",
+      "reference": "META/m4/hud-attachment/original/00427710.tsv",
+      "asset": "derived image of shared tvfont 128 page",
+      "reference_sha256": "2112cdbcf7eea2a2f273954b537f6de85bcda7d8606f15b4fa8a680816daa0ff"
+    },
+    {
+      "field": "menu_present.frame_resource",
+      "identity": "00496304",
+      "reference": "META/m4/target500/c/original/0042abd0.json",
+      "asset": "butgl.bsp",
+      "reference_sha256": "42d0b6190f259d8a3675ee6c37ecd7a9b94670386cca34110e7e2eaad4b94f71"
+    },
+    {
+      "field": "weapon_ready.sound_resource",
+      "identity": "004cda10",
+      "reference": "META/m4/hud-attachment/original/00431050.tsv",
+      "asset": "sound\\\\w_shift2.wav",
+      "reference_sha256": "bec95cdffc8709b4aa040b72d15ccfd40f14e7012ecb7729d8c285c99378dd38"
+    },
+    {
+      "field": "weapon_empty.shift_sound",
+      "identity": "004cda10",
+      "reference": "META/m4/hud-continuation/weapon-factory/0042f730.disasm.json",
+      "asset": "sound\\\\w_shift2.wav",
+      "reference_sha256": "db25c1df28072ce90796ac3fc075aef2955c1d3edbf426aa8f0328eaf52ac6af"
+    },
+    {
+      "field": "weapon_target.ready_sound",
+      "identity": "004cda20",
+      "reference": "META/m4/hud-attachment/original/004310c0.tsv",
+      "asset": "sound\\\\w_shift1.wav",
+      "reference_sha256": "cec1db5f06ae1eb2fb685f22ce9df44ec19c30f2f7eaf5a8f7e67dc075a68154"
+    },
+    {
+      "field": "weapon_target.beep_sound",
+      "identity": "004cdb88",
+      "reference": "META/m4/hud-attachment/original/00431180.tsv",
+      "asset": "sound\\\\blip.wav",
+      "reference_sha256": "840629c41daeac06008d8139aebe41f24938a44665c794a949b5f912dcdc35cc"
+    },
+    {
+      "field": "weapon_target.lock_sound",
+      "identity": "004cdb8c",
+      "reference": "META/m4/hud-attachment/original/00431180.tsv",
+      "asset": "sound\\\\blip.wav",
+      "reference_sha256": "840629c41daeac06008d8139aebe41f24938a44665c794a949b5f912dcdc35cc"
+    },
+    {
+      "field": "projectile_draw.ballistic_flare",
+      "identity": "004f00ac",
+      "reference": "META/m4/target550/a2/original/0043e620.decompile.json",
+      "asset": "flare_wh.bmp",
+      "reference_sha256": "8c918d1cf5fe59d7b4d8ba1eeb17d0a2516073589de112307414e644a3972d2d"
+    },
+    {
+      "field": "projectile_draw.ballistic_trail",
+      "identity": "004f007c",
+      "reference": "META/m4/target550/a2/original/0043e620.decompile.json",
+      "asset": "firebolt.bmp",
+      "reference_sha256": "8c918d1cf5fe59d7b4d8ba1eeb17d0a2516073589de112307414e644a3972d2d"
+    },
+    {
+      "field": "projectile_draw.homing_flare",
+      "identity": "004f0094",
+      "reference": "META/m4/target550/a2/original/0043e710.decompile.json",
+      "asset": "flare_gr.bmp",
+      "reference_sha256": "ab61d1251f21706d9087c64f9c6294e8a347c66673ff823707657eef301aa64b"
+    },
+    {
+      "field": "projectile_draw.homing_trail",
+      "identity": "004f003c",
+      "reference": "META/m4/target550/a2/original/0043e710.decompile.json",
+      "asset": "plasma.bmp",
+      "reference_sha256": "ab61d1251f21706d9087c64f9c6294e8a347c66673ff823707657eef301aa64b"
+    },
+    {
+      "field": "menu.move_sound",
+      "identity": "004d1a6c",
+      "reference": "META/m4/target550/d/original/0042b2e0.disasm.json",
+      "asset": "sound\\\\menu1.wav",
+      "reference_sha256": "6f6bc2c4e231f4c1db8c44119de71c634b3f609d1023c6be43e137122f34385a"
+    },
+    {
+      "field": "menu.open_sound",
+      "identity": "004d1a6c",
+      "reference": "META/m4/target550/d/original/0042b2e0.disasm.json",
+      "asset": "sound\\\\menu1.wav",
+      "reference_sha256": "6f6bc2c4e231f4c1db8c44119de71c634b3f609d1023c6be43e137122f34385a"
+    },
+    {
+      "field": "menu.slide_sound",
+      "identity": "004d1a70",
+      "reference": "META/m4/target550/d/original/0042b2e0.disasm.json",
+      "asset": "sound\\\\menu2.wav",
+      "reference_sha256": "6f6bc2c4e231f4c1db8c44119de71c634b3f609d1023c6be43e137122f34385a"
+    },
+    {
+      "field": "menu.press_sound",
+      "identity": "004d1a68",
+      "reference": "META/m4/target550/d/original/0042b2e0.disasm.json",
+      "asset": "sound\\\\menu3.wav",
+      "reference_sha256": "6f6bc2c4e231f4c1db8c44119de71c634b3f609d1023c6be43e137122f34385a"
+    },
+    {
+      "field": "menu.release_sound",
+      "identity": "004d1a6c",
+      "reference": "META/m4/target550/d/original/0042b2e0.disasm.json",
+      "asset": "sound\\\\menu1.wav",
+      "reference_sha256": "6f6bc2c4e231f4c1db8c44119de71c634b3f609d1023c6be43e137122f34385a"
+    },
+    {
+      "field": "player_scene.material_image",
+      "identity": "004d1aa0",
+      "reference": "META/m4/scene-callers-review/original/0041c860.disasm.json",
+      "asset": "derived resource; see original owner",
+      "reference_sha256": "c8af98300a2b4ebea33f542437b382636051b5575565bfdebe07e848b7e1c11d"
+    },
+    {
+      "field": "player_scene.horizon_image",
+      "identity": "004f005c",
+      "reference": "META/m4/scene-callers-review/original/0041c860.disasm.json",
+      "asset": "bluesky.bmp",
+      "reference_sha256": "c8af98300a2b4ebea33f542437b382636051b5575565bfdebe07e848b7e1c11d"
+    },
+    {
+      "field": "player_scene.aim_image",
+      "identity": "004f0040",
+      "reference": "META/m4/scene-callers-review/original/0041c860.disasm.json",
+      "asset": "cross.bmp",
+      "reference_sha256": "c8af98300a2b4ebea33f542437b382636051b5575565bfdebe07e848b7e1c11d"
+    },
+    {
+      "field": "player_scene.aim_overlay_image",
+      "identity": "004f00d0",
+      "reference": "META/m4/scene-callers-review/original/0041c860.disasm.json",
+      "asset": "cross2.bmp",
+      "reference_sha256": "c8af98300a2b4ebea33f542437b382636051b5575565bfdebe07e848b7e1c11d"
+    },
+    {
+      "field": "player_scene.particle_image",
+      "identity": "004f54d8",
+      "reference": "META/m4/scene-callers-review/original/0041c860.disasm.json",
+      "asset": "shield.bmp",
+      "reference_sha256": "c8af98300a2b4ebea33f542437b382636051b5575565bfdebe07e848b7e1c11d"
+    },
+    {
+      "field": "player_scene.confirmation_image",
+      "identity": "004962f4",
+      "reference": "META/m4/scene-callers-review/original/0041c860.disasm.json",
+      "asset": "derived image of confirmation tvfont 64 page",
+      "reference_sha256": "c8af98300a2b4ebea33f542437b382636051b5575565bfdebe07e848b7e1c11d"
+    },
+    {
+      "field": "player_scene.trail_image",
+      "identity": "004f00cc",
+      "reference": "META/m4/scene-callers-review/original/0041c860.disasm.json",
+      "asset": "thrust.bmp",
+      "reference_sha256": "c8af98300a2b4ebea33f542437b382636051b5575565bfdebe07e848b7e1c11d"
+    },
+    {
+      "field": "player_scene.overlay_image",
+      "identity": "004f002c",
+      "reference": "META/m4/scene-callers-review/original/0041c860.disasm.json",
+      "asset": "malfunc.bmp",
+      "reference_sha256": "c8af98300a2b4ebea33f542437b382636051b5575565bfdebe07e848b7e1c11d"
+    },
+    {
+      "field": "player_scene.cockpit_resource",
+      "identity": "00496338",
+      "reference": "META/m4/scene-callers-review/original/0041c860.disasm.json",
+      "asset": "cockpit.bsp",
+      "reference_sha256": "c8af98300a2b4ebea33f542437b382636051b5575565bfdebe07e848b7e1c11d"
+    },
+    {
+      "field": "flyby.horizon_image",
+      "identity": "004f005c",
+      "reference": "META/m4/scene-callers-review/original/00428f50.disasm.json",
+      "asset": "bluesky.bmp",
+      "reference_sha256": "1254204f4e36b83f7b3cc7a83d35ff9570cd9bd6c06a314306e29ab09e900724"
+    },
+    {
+      "field": "flyby.full_image",
+      "identity": "004d4424",
+      "reference": "META/m4/scene-callers-review/original/00428f50.disasm.json",
+      "asset": "derived resource; see original owner",
+      "reference_sha256": "1254204f4e36b83f7b3cc7a83d35ff9570cd9bd6c06a314306e29ab09e900724"
+    },
+    {
+      "field": "flyby.corner_left_image",
+      "identity": "004f0068",
+      "reference": "META/m4/scene-callers-review/original/00428f50.disasm.json",
+      "asset": "ialogo.bmp",
+      "reference_sha256": "1254204f4e36b83f7b3cc7a83d35ff9570cd9bd6c06a314306e29ab09e900724"
+    },
+    {
+      "field": "flyby.corner_right_image",
+      "identity": "004f0080",
+      "reference": "META/m4/scene-callers-review/original/00428f50.disasm.json",
+      "asset": "bhlogo2.bmp",
+      "reference_sha256": "1254204f4e36b83f7b3cc7a83d35ff9570cd9bd6c06a314306e29ab09e900724"
+    },
+    {
+      "field": "flyby.scenario_resources[0]",
+      "identity": "004d1960",
+      "reference": "META/m4/scene-callers-review/original/00428f50.disasm.json",
+      "asset": "carbar00.bsp",
+      "reference_sha256": "1254204f4e36b83f7b3cc7a83d35ff9570cd9bd6c06a314306e29ab09e900724"
+    },
+    {
+      "field": "flyby.scenario_resources[1]",
+      "identity": "004d1974",
+      "reference": "META/m4/scene-callers-review/original/00428f50.disasm.json",
+      "asset": "carsti20.bsp",
+      "reference_sha256": "1254204f4e36b83f7b3cc7a83d35ff9570cd9bd6c06a314306e29ab09e900724"
+    },
+    {
+      "field": "flyby.scenario_resources[2]",
+      "identity": "004d1978",
+      "reference": "META/m4/scene-callers-review/original/00428f50.disasm.json",
+      "asset": "carvip00.bsp",
+      "reference_sha256": "1254204f4e36b83f7b3cc7a83d35ff9570cd9bd6c06a314306e29ab09e900724"
+    },
+    {
+      "field": "player_tick.resources.menu_cue",
+      "identity": "004cdb88",
+      "reference": "META/m4/finish/player/original/0041e850.disasm.json",
+      "asset": "sound\\\\blip.wav",
+      "reference_sha256": "ad0e7cf69e6a61b583dd12a286ea04ddc756011ebed6f21d36fac9cb4943d181"
+    },
+    {
+      "field": "player_tick.resources.ui_cue",
+      "identity": "00496570",
+      "reference": "META/m4/finish/player/original/0041e850.disasm.json",
+      "asset": "sound\\\\tv_char.wav",
+      "reference_sha256": "ad0e7cf69e6a61b583dd12a286ea04ddc756011ebed6f21d36fac9cb4943d181"
+    },
+    {
+      "field": "player_tick.resources.no_weapon",
+      "identity": "004cda14",
+      "reference": "META/m4/finish/player/original/0041e850.disasm.json",
+      "asset": "sound\\\\w_shift0.wav",
+      "reference_sha256": "ad0e7cf69e6a61b583dd12a286ea04ddc756011ebed6f21d36fac9cb4943d181"
+    },
+    {
+      "field": "player_tick.resources.damage_warning",
+      "identity": "004d1ab0",
+      "reference": "META/m4/finish/player/original/0041e850.disasm.json",
+      "asset": "sound\\\\tk_sil.wav",
+      "reference_sha256": "ad0e7cf69e6a61b583dd12a286ea04ddc756011ebed6f21d36fac9cb4943d181"
+    },
+    {
+      "field": "player_tick.resources.hull_warning",
+      "identity": "004d0474",
+      "reference": "META/m4/finish/player/original/0041e850.disasm.json",
+      "asset": "sound\\\\tk_eic.wav",
+      "reference_sha256": "ad0e7cf69e6a61b583dd12a286ea04ddc756011ebed6f21d36fac9cb4943d181"
+    },
+    {
+      "field": "player_tick.resources.target_cue",
+      "identity": "004cda20",
+      "reference": "META/m4/finish/player/original/0041e850.disasm.json",
+      "asset": "sound\\\\w_shift1.wav",
+      "reference_sha256": "ad0e7cf69e6a61b583dd12a286ea04ddc756011ebed6f21d36fac9cb4943d181"
+    },
+    {
+      "field": "player_tick.resources.lock_cue",
+      "identity": "004cda10",
+      "reference": "META/m4/finish/player/original/0041e850.disasm.json",
+      "asset": "sound\\\\w_shift2.wav",
+      "reference_sha256": "ad0e7cf69e6a61b583dd12a286ea04ddc756011ebed6f21d36fac9cb4943d181"
+    },
+    {
+      "field": "player_tick.resources.boost_start",
+      "identity": "004cdc98",
+      "reference": "META/m4/finish/player/original/0041e850.disasm.json",
+      "asset": "sound\\\\ray_in.wav",
+      "reference_sha256": "ad0e7cf69e6a61b583dd12a286ea04ddc756011ebed6f21d36fac9cb4943d181"
+    },
+    {
+      "field": "player_tick.resources.boost_loop",
+      "identity": "004d1904",
+      "reference": "META/m4/finish/player/original/0041e850.disasm.json",
+      "asset": "sound\\\\ray.wav",
+      "reference_sha256": "ad0e7cf69e6a61b583dd12a286ea04ddc756011ebed6f21d36fac9cb4943d181"
+    },
+    {
+      "field": "player_tick.resources.boost_end",
+      "identity": "004cdc74",
+      "reference": "META/m4/finish/player/original/0041e850.disasm.json",
+      "asset": "sound\\\\ray_out.wav",
+      "reference_sha256": "ad0e7cf69e6a61b583dd12a286ea04ddc756011ebed6f21d36fac9cb4943d181"
+    },
+    {
+      "field": "panel.tv_on_sound",
+      "identity": "004d1988",
+      "reference": "META/m4/finish/game-bootstrap/original/004474c0.decomp.c.txt",
+      "asset": "sound\\\\tv_on.wav",
+      "reference_sha256": "afebe1811dc6cfed6a909eed462f871c962bd6b4d759b792ef572ec9aae9906a"
+    },
+    {
+      "field": "panel.tv_off_sound",
+      "identity": "00496324",
+      "reference": "META/m4/finish/game-bootstrap/original/004474c0.decomp.c.txt",
+      "asset": "sound\\\\tv_off.wav",
+      "reference_sha256": "afebe1811dc6cfed6a909eed462f871c962bd6b4d759b792ef572ec9aae9906a"
+    },
+    {
+      "field": "panel.tv_char_sound",
+      "identity": "00496570",
+      "reference": "META/m4/finish/game-bootstrap/original/004474c0.decomp.c.txt",
+      "asset": "sound\\\\tv_char.wav",
+      "reference_sha256": "afebe1811dc6cfed6a909eed462f871c962bd6b4d759b792ef572ec9aae9906a"
+    },
+    {
+      "field": "panel.alert_image",
+      "identity": "004f00b4",
+      "reference": "META/m4/frontier-90min/original/0041b650.tsv",
+      "asset": "tags.bmp",
+      "reference_sha256": "586d7524663ec6c270be57199ae31fdee8161a15ba0ab0da377f742a9124619f"
+    },
+    {
+      "field": "panel.icon_images[0]",
+      "identity": "004df1d8",
+      "reference": "META/m4/finish/game-bootstrap/original/004474c0.decomp.c.txt",
+      "asset": "tv1.pcx",
+      "reference_sha256": "afebe1811dc6cfed6a909eed462f871c962bd6b4d759b792ef572ec9aae9906a"
+    },
+    {
+      "field": "panel.icon_images[1]",
+      "identity": "004df1dc",
+      "reference": "META/m4/finish/game-bootstrap/original/004474c0.decomp.c.txt",
+      "asset": "tv2.pcx",
+      "reference_sha256": "afebe1811dc6cfed6a909eed462f871c962bd6b4d759b792ef572ec9aae9906a"
+    },
+    {
+      "field": "panel.icon_images[2]",
+      "identity": "004df1e0",
+      "reference": "META/m4/finish/game-bootstrap/original/004474c0.decomp.c.txt",
+      "asset": "tv3.pcx",
+      "reference_sha256": "afebe1811dc6cfed6a909eed462f871c962bd6b4d759b792ef572ec9aae9906a"
+    },
+    {
+      "field": "panel.icon_images[3]",
+      "identity": "004df1e4",
+      "reference": "META/m4/finish/game-bootstrap/original/004474c0.decomp.c.txt",
+      "asset": "tv4.pcx",
+      "reference_sha256": "afebe1811dc6cfed6a909eed462f871c962bd6b4d759b792ef572ec9aae9906a"
+    },
+    {
+      "field": "panel.icon_images[4]",
+      "identity": "004df1e8",
+      "reference": "META/m4/finish/game-bootstrap/original/004474c0.decomp.c.txt",
+      "asset": "tv5.pcx",
+      "reference_sha256": "afebe1811dc6cfed6a909eed462f871c962bd6b4d759b792ef572ec9aae9906a"
+    },
+    {
+      "field": "panel.icon_images[5]",
+      "identity": "004df1ec",
+      "reference": "META/m4/finish/game-bootstrap/original/004474c0.decomp.c.txt",
+      "asset": "tv6.pcx",
+      "reference_sha256": "afebe1811dc6cfed6a909eed462f871c962bd6b4d759b792ef572ec9aae9906a"
+    },
+    {
+      "field": "panel.icon_images[6]",
+      "identity": "004df1f0",
+      "reference": "META/m4/finish/game-bootstrap/original/004474c0.decomp.c.txt",
+      "asset": "tv7.pcx",
+      "reference_sha256": "afebe1811dc6cfed6a909eed462f871c962bd6b4d759b792ef572ec9aae9906a"
+    },
+    {
+      "field": "panel.icon_images[7]",
+      "identity": "004df1f4",
+      "reference": "META/m4/finish/game-bootstrap/original/004474c0.decomp.c.txt",
+      "asset": "tv8.pcx",
+      "reference_sha256": "afebe1811dc6cfed6a909eed462f871c962bd6b4d759b792ef572ec9aae9906a"
+    },
+    {
+      "field": "panel.icon_images[8]",
+      "identity": "004df1f8",
+      "reference": "META/m4/finish/game-bootstrap/original/004474c0.decomp.c.txt",
+      "asset": "tv9.pcx",
+      "reference_sha256": "afebe1811dc6cfed6a909eed462f871c962bd6b4d759b792ef572ec9aae9906a"
+    },
+    {
+      "field": "panel.icon_images[9]",
+      "identity": "004df1fc",
+      "reference": "META/m4/finish/game-bootstrap/original/004474c0.decomp.c.txt",
+      "asset": "tva.pcx",
+      "reference_sha256": "afebe1811dc6cfed6a909eed462f871c962bd6b4d759b792ef572ec9aae9906a"
+    },
+    {
+      "field": "panel.icon_images[10]",
+      "identity": "004df200",
+      "reference": "META/m4/finish/game-bootstrap/original/004474c0.decomp.c.txt",
+      "asset": "tvb.pcx",
+      "reference_sha256": "afebe1811dc6cfed6a909eed462f871c962bd6b4d759b792ef572ec9aae9906a"
+    },
+    {
+      "field": "panel.icon_images[11]",
+      "identity": "004df204",
+      "reference": "META/m4/finish/game-bootstrap/original/004474c0.decomp.c.txt",
+      "asset": "tvc.pcx",
+      "reference_sha256": "afebe1811dc6cfed6a909eed462f871c962bd6b4d759b792ef572ec9aae9906a"
+    },
+    {
+      "field": "contacts.quad_texture",
+      "identity": "004f0088",
+      "reference": "META/m4/contact-effects/original/00407670.decompile.json",
+      "asset": "elecring.bmp",
+      "reference_sha256": "5bdba3077b668a022e4428918432777e7a77e44dc63a73b7068643973e4585fa"
+    },
+    {
+      "field": "contacts.line_texture",
+      "identity": "004f00a8",
+      "reference": "META/m4/contact-effects/original/00407720.decompile.json",
+      "asset": "watercl.bmp",
+      "reference_sha256": "943472d0b535a63f620409efb9597023af6bff111ef5dad97437e31963b0caf9"
+    },
+    {
+      "field": "emitters.fountain_texture",
+      "identity": "004f0028",
+      "reference": "META/m4/hour407/a/original/00443390.decompile.json",
+      "asset": "smoke.bmp",
+      "reference_sha256": "b615ad83ebb9cd1da20be0108c8b43544299100d110a31a35f9ecab7cde38ec9"
+    },
+    {
+      "field": "emitters.steam_texture",
+      "identity": "004f00a8",
+      "reference": "META/m4/hour407/a/original/004434b0.decompile.json",
+      "asset": "watercl.bmp",
+      "reference_sha256": "55dd10b4e30de06439a04d82f1b193db11980594ab85a092442d8728f97d337d"
+    },
+    {
+      "field": "homing.hit_sound",
+      "identity": "004f550c",
+      "reference": "META/m4/target500/a2/original/0043f630.decompile.json",
+      "asset": "sound\\\\electro.wav",
+      "reference_sha256": "ef7c733368eca5ef56b63d000904f996463d3c642b00d6ed6dadf643ec4a5de9"
+    },
+    {
+      "field": "homing.first_image",
+      "identity": "004f003c",
+      "reference": "META/m4/target500/a2/original/0043f630.decompile.json",
+      "asset": "plasma.bmp",
+      "reference_sha256": "ef7c733368eca5ef56b63d000904f996463d3c642b00d6ed6dadf643ec4a5de9"
+    },
+    {
+      "field": "homing.second_image",
+      "identity": "004f0094",
+      "reference": "META/m4/target500/a2/original/0043f630.decompile.json",
+      "asset": "flare_gr.bmp",
+      "reference_sha256": "ef7c733368eca5ef56b63d000904f996463d3c642b00d6ed6dadf643ec4a5de9"
+    }
+  ],
+  "expressions": {
+    "panel.flash_image": "(unsigned long)bh_atlas_page_image(a->panel.page)",
+    "score_text.page": "a->bootstrap.menu_font",
+    "score_text.queue": "&a->text",
+    "flyby_camera.credit_font": "a->bootstrap.menu_font",
+    "menu_present.eye": "&a->flyby_state.camera.position",
+    "menu_present.angles": "&a->flyby_state.camera.angles",
+    "panel.screen_width": "a->width",
+    "attachment.viewport_width": "a->width",
+    "flat_hud.viewport_height": "a->height",
+    "target_hud.viewport_width": "a->width",
+    "markers.display_width": "a->width",
+    "score_draw.display_width": "a->width",
+    "pickup_draw.display_depth": "a->width",
+    "target_draw.screen_width": "a->width"
+  },
+  "review_notes": [
+    "Original menu row model/font construction and 18 menus/118 current rows are exercised by bounded bootstrap; static row data remains the recovered bootstrap table.",
+    "Company splashes use original MIDAS/IEL/BAD images; click skipping previously human-confirmed.",
+    "Dialogue screenshot state differs: source warning is direct CD warning with no history entry. Do not move the panel to imitate a screenshot with history icons.",
+    "Score page and text context now bound; network score event/callback wiring and actual peers remain unverified and outside this UI resource audit.",
+    "Weapon lifecycle audio and network UI behavior require their own runtime fidelity review; resource/image bindings here do not establish their full behavior."
+  ],
+  "known_gaps": [
+    "Human visual confirmation after these binding changes.",
+    "Native hardware renderer and live multiplayer scoreboard behavior.",
+    "Menu/dialogue timing and pixel-equivalence at matching display settings are not claimed."
+  ]
+}

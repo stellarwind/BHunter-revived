@@ -15,6 +15,10 @@ struct BHEntityScheduleRoom {
     unsigned long linked_active; /* original +1c8: zero terminates linked traversal */
     unsigned long last_frame,frame_remaining;
     int frame_active,frame_seen;
+    /* Optional source bridge for original world step/+104 activity. The
+       entity and timer activity storage must outlive this scheduled room. */
+    BHEntity *activity_entity;
+    long *activity;
 };
 typedef enum BHEntityScheduleError {
     BH_SCHEDULE_OK,BH_SCHEDULE_ARGUMENT,BH_SCHEDULE_TOPOLOGY,

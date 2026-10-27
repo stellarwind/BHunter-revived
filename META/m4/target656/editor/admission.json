@@ -1,0 +1,16 @@
+{
+  "baseline": 638,
+  "module": "world_edit",
+  "scenario": "world-edit",
+  "sources": [
+    "src/bh_world_edit.c",
+    "src/bh_world_edit.h",
+    "tests/world_edit.c"
+  ],
+  "limits": [
+    "Uses real admitted geometry construction and first-match portal owners. Only the edited node is reconnected; reciprocal neighbors are intentionally not repaired.",
+    "Integer coordinates/orientation/angles are explicit semantic source components, not a guessed original entity layout. Every scene ring member must use this component and other portal records must already be constructed.",
+    "Modulo32 translation/rotation, signed grid truncation, attachment stopping, raw sign-vs-mod4 turn behavior and source bounds/pointer contracts retained. Finite PC53 profile; rejection can retain earlier node mutations as original valid-domain sequencing.",
+    "Synthetic independently specified cube BSP fixtures execute actual decoder/geometry/portal owners; group/single movement, clipping overlaps, asymmetric connectivity, four-turn round trip, turn0 rotation, malformed grid and signed32 wrap checks pass. No game/input automation or original code."
+  ]
+}

@@ -1,23 +1,27 @@
 # BHunter Revived
 
 Restoring BHunter as a faithfully playable, source-built game on modern Windows.
-**Not playable yet.** M3 was skipped by user direction; M4 source restoration remains incomplete.
+**Source preview available:** run `build-source.cmd`, then `play-source.cmd` for a
+manual playtest. Startup/static rendering passes; human playtesting is in progress.
+M3 was skipped by user direction; M4 source restoration remains incomplete.
+Current preview evidence: [validation](META/m4/playable/light-sign/validation.json).
+The inventory checkpoint below predates the preview ownership corrections.
 
 <!-- BHUNTER_STATUS_START -->
 
-**Source recovery:** `[###################-----]` **82.3% (600/729)**
+**Source recovery:** `[########################]` **100.0% (679/679)**
 
 | Restored & linked | In progress | Not started |
 |---:|---:|---:|
-| 600 | 5 | 122 |
+| 679 | 0 | 0 |
 
-890 mapped functions − 161 verified runtime/helpers = 729 potential game/engine functions. Classification remains provisional.
+891 mapped functions − 212 verified runtime/helpers = 679 potential game/engine functions. Classification remains provisional.
 
-**Playable game target:** 0/729 functions admitted. Function count is not effort or gameplay completion.
+**Playable game target:** 0/679 functions admitted. Function count is not effort or gameplay completion.
 
-**Latest validated block:** 50 complete owners. [Block evidence](META/m4/target600/README.md).
+**Latest validated block:** 23 complete owners. [Block evidence](META/m4/finish/README.md).
 
-**Last validated builds:** 540 translation units · 5,317,919 real-asset checks · 4,811,971 clean checks · 264 missing-module controls.
+**Last validated builds:** 601 translation units · 5,529,939 real-asset checks · 5,023,991 clean checks · 295 missing-module controls.
 
 <!-- BHUNTER_STATUS_END -->
 

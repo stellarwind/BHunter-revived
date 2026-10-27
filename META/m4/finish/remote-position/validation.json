@@ -1,0 +1,40 @@
+{
+  "passed": true,
+  "baseline_functions": 670,
+  "new_owners": 1,
+  "active_original_functions": 671,
+  "real_total": {
+    "scenario": "m2-foundations",
+    "checks": 5528850,
+    "failures": 0,
+    "archive_entries": 1229,
+    "original_code_required": false
+  },
+  "fixture": {
+    "scenario": "remote-position",
+    "checks": 45,
+    "failures": 0,
+    "original_code_required": false
+  },
+  "sources": {
+    "src/bh_remote_position.c": "040d0ecc79c07d9f4072788937fcb9981e476a9173e813be5cc8264e2fbce570",
+    "src/bh_remote_position.h": "ddd4e8a61225b20757b582e64bd66a5d51b57ed08ba4fb1cbac34624414d20dd",
+    "tests/remote_position.c": "cae4f0462ff953831a0ed5567dfba94fbb52c5f8d90dc50737b1b0733f4dd00e",
+    "tests/checkpoint.c": "23a831708e318d3287b5b119162fe73b4d33d5a0bf5ceee51386f48602924704",
+    "tools/m0.py": "b08698b8308a0f9e27b70f20653562904760407dc8c141722169d4b1385c25e1"
+  },
+  "source_snapshots": {
+    "src/bh_remote_position.c": "META/m4/finish/remote-position/sources/040d0ecc79c07d9f4072788937fcb9981e476a9173e813be5cc8264e2fbce570-bh_remote_position.c.txt",
+    "src/bh_remote_position.h": "META/m4/finish/remote-position/sources/ddd4e8a61225b20757b582e64bd66a5d51b57ed08ba4fb1cbac34624414d20dd-bh_remote_position.h.txt",
+    "tests/remote_position.c": "META/m4/finish/remote-position/sources/cae4f0462ff953831a0ed5567dfba94fbb52c5f8d90dc50737b1b0733f4dd00e-remote_position.c.txt",
+    "tests/checkpoint.c": "META/m4/finish/remote-position/sources/23a831708e318d3287b5b119162fe73b4d33d5a0bf5ceee51386f48602924704-checkpoint.c.txt",
+    "tools/m0.py": "META/m4/finish/remote-position/sources/b08698b8308a0f9e27b70f20653562904760407dc8c141722169d4b1385c25e1-m0.py.txt"
+  },
+  "limits": [
+    "Whole checksum/counters/slot/local routing; signed16 oldest/middle/newest ordering and original32-byte shifts/equal-stamp updates; actual packed-position decode/room link mutation, signed byte angles/flags, three-axis angular wrapping, finite-difference smoothing, zero denominator fallback1, velocity10/acceleration2 clamps, original pow age factors and first velocity component unrounded factor.",
+    "45 focused source checks cover sequential/equal/intermediate/old/modular arrivals, room unlink/insertion, local entity branch, signed angles across both pi signs against independent atan2(sin,cos), clamp/age numeric results, missing/invalid actor/position IDs, checksum and truncation effects. Math alias proof records full50-byte code and80-byte named fmod descriptor plus positive/negative controls. CRT helpers countzero.",
+    "Caller-owned live coherent bank/room/navigation data and PC53 finite moderate inputs. Source list/packet/nonfinite damping guards preserve prior timestamp/decoded/derivative effects; malformed/out-of-order cross-room inconsistencies remain bounded errors. No original/game code, game launch, gameplay/input automation, screenshot, real peer/audio playback or agents."
+  ],
+  "original_code_executed": false,
+  "game_launches": 0
+}

@@ -132,16 +132,18 @@ static void render_and_handoff(void) {
           "selected image bypasses backgrounds and corner overlays");
     CHECK(bh_draw_queue_begin(&f.queue),"handoff draw frame");
     f.selected=0;f.mode=1;f.scenario=0;f.slot=0;
-    ((unsigned char *)f.player)[0x18c+1]=1;
-    ((unsigned char *)f.player)[0x18c+2]=2;
-    ((unsigned char *)f.player)[0x18c+3]=7;
-    put_long(f.player,0x18c+4,1234);
+    f.input_list->state[1]=1;
+    f.input_list->state[2]=2;
+    f.input_list->state[3]=7;
+    {unsigned long value=1234;memcpy(f.input_list->state+4,&value,4);}
     CHECK(bh_flyby_scene_draw(&f.draw) && receives==2 &&
           received[0][0]==14 && received[0][1]==41 && received[0][2]==0x2707 &&
           received[1][0]==14 && received[1][1]==42 && received[1][2]==0xd48,
           "real dispatcher sends two live event packets and reloads value/selector");
     CHECK(f.input_list->flags==2 &&
-          ((BHPlayerInputState *)f.input_list->state)->values[7]==1234 &&
+          get_long(f.player,0x18c+7*4)==1234 &&
+          f.input_list->state[1]==1 && f.input_list->state[2]==2 &&
+          f.input_list->state[3]==7 &&
           get_long(f.player,0x210)==2 && get_long(f.player,0x21c)==76 &&
           f.mission_identity==0x00415530UL && f.player->position.x==0,
           "input packet, mode, scenario resource and both real camera resets mutate live owners");
@@ -157,10 +159,16 @@ static void render_and_handoff(void) {
     f.flyby_state.route.waypoint_index=0;f.flyby_state.route.phase=0;
     f.camera_entity->step(f.camera_entity);
     pose=get_vector(f.camera_entity,0x160);
-    CHECK(pose.x==f.flyby_state.position.x &&
+    CHECK(!memcmp(&pose,&f.flyby_state.camera.position,sizeof(pose)) &&
           get_long(f.camera_entity,0x284)==(long)f.flyby_state.route.waypoint_index &&
           f.draw.error==BH_FLYBY_SCENE_OK,
           "installed camera step executes recovered source update and publishes entity pose");
+    pose=get_vector(f.camera_entity,0x16c);
+    CHECK(!memcmp(&pose,&f.flyby_state.camera.angles,sizeof(pose)),
+          "rendered camera angles share the menu camera output, not actor orbit angles");
+    pose=get_vector(f.camera_entity,0x178);
+    CHECK(!memcmp(&pose,&f.flyby_state.camera.velocity,sizeof(pose)),
+          "listener uses camera output velocity");
     bh_flyby_scene_unbind(&f.draw);
     CHECK(f.camera_entity->refresh==0 && f.camera_entity->step==0,
           "teardown removes exact-generation source callbacks");

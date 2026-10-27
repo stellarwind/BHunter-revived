@@ -52,6 +52,13 @@ static void proximity(void){Fixture f;BHEntity *e;unsigned long i,particles=0,fl
  CHECK(fixture(&f,0),"strict proximity boundary fixture");f.room.actors=f.target;f.target->position.x=3;f.target->position.y=0;f.projectile->step(f.projectile);CHECK(!f.context.proximity&&f.pool.used==3&&f.projectile->position.z==1,"distance equality3 does not trigger strict squared9 test");finish(&f);
  CHECK(fixture(&f,0),"ignored actor fixture");f.room.actors=f.target;f.target->position.x=1;f.target->position.y=0;put(f.projectile,0x128,&f.target,4);f.projectile->step(f.projectile);CHECK(!f.context.proximity&&f.pool.used==3,"actual stored self exclusion applies to proximity list");finish(&f);
 }
+static void live_room_heads(void){Fixture f;BHEntity *head;
+ CHECK(fixture(&f,0),"live room-head fixture");head=NULL;f.room.actors=f.target;f.room.actors_owner=&head;f.target->position.x=2;f.target->position.y=0;
+ f.projectile->step(f.projectile);CHECK(!f.context.proximity&&f.pool.used==3,"empty live room overrides stale copied head");
+ head=f.target;if(f.pool.used==3)f.projectile->step(f.projectile);CHECK(f.context.proximity==1&&f.context.damage_packets==1,"post-binding room insertion reaches real impact and damage owners");finish(&f);
+ CHECK(fixture(&f,0),"live room removal fixture");head=f.target;f.room.actors=f.target;f.room.actors_owner=&head;f.projectile->step(f.projectile);
+ head=NULL;f.target->position.x=1;f.target->position.y=0;f.projectile->step(f.projectile);CHECK(!f.context.proximity&&f.pool.used==3,"removed room head is not cached or replaced by fallback");finish(&f);
+}
 static void geometry_hits(void){Fixture f;BHEntity*e;BHImpactState*s;unsigned long generation,i;float life=1;int expected,next;
  CHECK(fixture(&f,1),"real geometric wall fixture");f.projectile->position.x=3;f.projectile->origin.x=-180;f.projectile->origin.z=0;generation=f.projectile->generation;
  bh_geometry_set_flags(&f.mesh.geometry,0,0);f.projectile->step(f.projectile);
@@ -70,7 +77,7 @@ static void actor_and_allocation(void){Fixture f;BHWorldSegmentActor actor;float
  srand(13);for(i=0;i<5;++i)rand();expected=rand();srand(13);f.projectile->step(f.projectile);next=rand();
  CHECK(f.context.world_hits==1&&!f.markers.count&&f.pool.used==31&&f.context.damage_packets==1,"marker/particle/flash allocation failures retain contact and retirement/damage prefix");CHECK(next==expected,"failed real particle acquisitions consume no constructor random draws");finish(&f);
 }
-int __cdecl bh_homing_projectile_checkpoint(unsigned long*count){BHMathEnvironment fp;setvbuf(stdout,NULL,_IONBF,0);checks=failures=0;if(!bh_math_environment_enter(&fp))return 2;guidance_and_expiry();proximity();geometry_hits();actor_and_allocation();bh_math_environment_leave(&fp);if(count)*count=checks;printf("{\"scenario\":\"homing-projectile\",\"checks\":%lu,\"failures\":%lu,\"original_code_required\":false,\"play_calls\":0}\n",checks,failures);return failures!=0;}
+int __cdecl bh_homing_projectile_checkpoint(unsigned long*count){BHMathEnvironment fp;setvbuf(stdout,NULL,_IONBF,0);checks=failures=0;if(!bh_math_environment_enter(&fp))return 2;guidance_and_expiry();proximity();live_room_heads();geometry_hits();actor_and_allocation();bh_math_environment_leave(&fp);if(count)*count=checks;printf("{\"scenario\":\"homing-projectile\",\"checks\":%lu,\"failures\":%lu,\"original_code_required\":false,\"play_calls\":0}\n",checks,failures);return failures!=0;}
 #ifdef BH_HOMING_PROJECTILE_STANDALONE
 int main(void){unsigned long count;return bh_homing_projectile_checkpoint(&count);}
 #endif

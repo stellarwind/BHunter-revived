@@ -8,6 +8,7 @@ static unsigned long checks,failures;
 #define CHECK(x,s) do{++checks;if(!(x)){++failures;if(failures<20)printf("FAIL loading-display: %s\n",s);}}while(0)
 static void *__cdecl allocate(unsigned long n,void *u){return malloc(n);}
 static void __cdecl release(void *p,void *u){free(p);}
+static HRESULT __cdecl windowed_copy(LPDIRECTDRAWSURFACE source,void *user){LPDIRECTDRAWSURFACE target=(LPDIRECTDRAWSURFACE)user;return target?IDirectDrawSurface_BltFast(target,0,0,source,NULL,DDBLTFAST_WAIT):DDERR_INVALIDOBJECT;}
 static LPDIRECTDRAWSURFACE surface(LPDIRECTDRAW draw,unsigned long depth){
     DDSURFACEDESC d;LPDIRECTDRAWSURFACE s=NULL;memset(&d,0,sizeof(d));d.dwSize=sizeof(d);
     d.dwFlags=DDSD_CAPS|DDSD_WIDTH|DDSD_HEIGHT|DDSD_PIXELFORMAT;d.dwWidth=320;d.dwHeight=240;
@@ -91,6 +92,10 @@ static void run_format(LPDIRECTDRAW draw,unsigned long depth,const char *archive
     im.stage=1;im.redraw_count=1;im.deadline=GetTickCount()-1;before=c.wedge_calls;
     bh_loading_display(&c,1);CHECK(im.stage==2&&!_finite(c.scale)&&_isnan(c.normalized)&&c.wedge_calls==before,
         "baseline one retains masked divide-by-zero and unordered normalization instead of inventing a progress clamp");
+    im.stage=2;c.scale=1;c.baseline=0;c.previous[0]=c.previous[1]=-1;c.present=windowed_copy;c.present_user=target;c.software=0;before=c.flips;
+    CHECK(bh_loading_display(&c,0)&&c.flips==before&&c.presentations==1&&c.flip_result==DD_OK,"windowed adapter uses actual native copy without offscreen Flip");
+    CHECK(digest(color,depth)==digest(target,depth),"windowed presenter preserves every copied image byte");
+    c.present_user=NULL;CHECK(!bh_loading_display(&c,0)&&c.flip_result==DDERR_INVALIDOBJECT,"windowed native presentation failures propagate");c.present=NULL;
     im.stage=2;c.primary=NULL;before=c.locks;CHECK(!bh_loading_display(&c,0)&&c.locks==before,"source binding guard rejects missing primary without native dereference");
     c.primary=color;c.color=NULL;CHECK(bh_loading_display(&c,0)&&c.locks==before,"missing native color retains original immediate no-op");c.color=color;
     im.stage=3;CHECK(!bh_loading_display(&c,0)&&c.locks==before,"invalid source stage rejects original uninitialized-table hazard");

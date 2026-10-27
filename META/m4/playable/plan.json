@@ -1,0 +1,17 @@
+{
+  "status": "wip",
+  "objective": "Link the actual restored owners into a standalone source game, with explicit lifetimes and resource bindings",
+  "target": "build/game/BHunter-source.exe",
+  "host": "Win32 windowed presentation over restored16-bit software renderer; fullscreen original backend retained separately",
+  "no_original_code": true,
+  "max_execution": "bounded startup only; no gameplay, menus or input automation",
+  "delegated": false,
+  "baseline": 679,
+  "checks_required": [
+    "production source-only link",
+    "real asset/owner initialization",
+    "bounded startup without input collection or frame/gameplay advancement",
+    "affected source fixtures and full integration",
+    "durable implementation/context evidence"
+  ]
+}

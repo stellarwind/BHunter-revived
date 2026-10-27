@@ -169,7 +169,7 @@ static void linked_slice(void) {
     CHECK(bh_physics_overlap(&sweep,&identity_matrix,&identity_matrix,&identity_matrix,&overlap)==1 &&
         overlap.normal.x==1,"complete static overlap wrapper calls real mesh traversal");
     CHECK(bh_geometry_model_init(&model,&b.geometry,1,0),"real metadata definition");
-    memset(&world,0,sizeof(world));world.model=&model;world.transform=identity_matrix;
+    memset(&world,0,sizeof(world));world.model=&model;world.transform=identity_matrix;world.query_flags=2;
     CHECK(bh_collision_candidate_world(&candidate,&world,&sweep),"real world candidate binding");
     memset(&state,0,sizeof(state));state.pose=identity_matrix;state.pose.m[0][3]=3;state.last_clear=state.pose;
     state.velocity.x=-4.25f;state.velocity.y=1;previous=state.pose;

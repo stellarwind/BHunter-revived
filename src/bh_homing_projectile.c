@@ -62,7 +62,7 @@ void __cdecl bh_homing_projectile_tick(BHEntity*e){BHHomingProjectileContext*c=c
  if(!result){
   if(cached){for(i=0;i<c->segment->room_count;++i)if(c->segment->rooms[i].world==cached){room=c->segment->rooms+i;break;}
    if(!room){c->error=2;return;}
-   for(actor=room->actors,n=0;actor;){if(++n>c->segment->max_room_actors){c->error=2;return;}if(actor!=ignore){
+   for(actor=room->actors_owner?*room->actors_owner:room->actors,n=0;actor;){if(++n>c->segment->max_room_actors){c->error=2;return;}if(actor!=ignore){
      if(!actor->query){c->error=2;return;}position.event=3;position.position=actor->position;actor->query(actor,&position);
      if(!live(c,e,generation)){c->error=3;return;}bh_round_float(&delta.x,(double)position.position.x-old.x);bh_round_float(&delta.y,(double)position.position.y-old.y);bh_round_float(&delta.z,(double)position.position.z-old.z);
      if(length2(&delta)<9){

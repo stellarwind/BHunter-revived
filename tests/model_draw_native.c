@@ -48,7 +48,7 @@ int bh_model_draw_native_checkpoint(unsigned long *count) {
     for(mode=0;mode<5;++mode){expected=mode==1?0xff0000:mode==2?0x00ff00:mode==4?0:0x0000ff;
         CHECK(bh_model_draw_context_init(&draw,&model,&cache,&camera,&clip,mode+1,mode==4?0:0xffffffffUL,0xff0000ffUL,bh_native_primitive_emit,&native),"source traversal binds REAL native ring emitter and fresh integer epoch");
         CHECK(bh_scene_view_begin(&view),"original native zeroZ/GREATEREQUAL profile begins actual scene");prior=native.polygons;
-        if(mode==1 || mode==2 || mode==3){CHECK(bh_light_configure(&directional,mode!=3,0,0,-1,1,0,mode==1?0xff0000:0x00ff00,0),"real directional config positive-control color/enable change");
+        if(mode==1 || mode==2 || mode==3){CHECK(bh_light_configure(&directional,mode!=3,0,0,1,1,0,mode==1?0xff0000:0x00ff00,0),"real directional config positive-control color/enable change");
             CHECK(bh_model_draw_lit_context_init(&lit,&draw,&lights,&directional,&orientation,mode==3,1,0xff000000UL) && bh_model_draw_lit(&lit,0,63),"complete lit BSP owner evaluates real lights then actual face/clip/native owners");}
         else CHECK(bh_model_draw_unlit(&draw,0,63),"complete unlit BSP/face/list/cache/clip/native source composition");
         queued=image->vertex_count;

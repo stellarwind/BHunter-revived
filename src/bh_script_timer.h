@@ -65,4 +65,7 @@ BHScriptTimerState *__cdecl bh_script_timer_state(BHScriptTimerContext *context,
 /* Count-zero exposure of actual00442eb0. Caller must supply its existing
    persistent timer context binding at entity payload+52. */
 BHEntityStep __cdecl bh_script_timer_delete_step(void);
+/* Count-zero exposure of actual00442de0 for placed-world startup/reset.
+   Bind the real timer/lifetime owner before installing this callback. */
+BHEntityStep __cdecl bh_script_timer_unconditional_step(void);
 #endif

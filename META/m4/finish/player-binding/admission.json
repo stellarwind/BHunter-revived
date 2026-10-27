@@ -1,0 +1,29 @@
+{
+  "baseline": 679,
+  "module": "player_tick",
+  "scenario": "player",
+  "sources": [
+    "src/bh_player_tick.c",
+    "src/bh_player_tick.h",
+    "src/bh_player_create.c",
+    "src/bh_player_create.h",
+    "tests/player.c"
+  ],
+  "context_sources": {
+    "src/bh_player_tick.c": [
+      "player",
+      "game-bootstrap",
+      "startup-bootstrap"
+    ],
+    "src/bh_player_create.c": [
+      "player",
+      "game-bootstrap",
+      "startup-bootstrap"
+    ]
+  },
+  "limits": [
+    "Audit correction: original player force visuals occupy+2bc..35c. Previous new callback payload+520 (entity+2ec) overlapped those live plume words. Replace it with one explicit live source player callback registry, validated against actual pool membership and generation. Query owner already uses the same one-live-player contract; no original offsets or vtables are guessed.",
+    "Actual constructor refresh and step retrieve the same real owner without writing any player physics/input/plume byte. Explicit unbind required before retiring context/pool. Two consecutive installed actual source callbacks now execute full physics, force, aim, weapons and timers and verify binding survival; old source snapshots remain historical.",
+    "Three already admitted player owners receive corrected current context variants; zero new original functions and no byte-match transfer. All named dependencies remain actual source implementations. Fresh full integration and independent clean builds required. No game/original code, physical input, automated gameplay, screenshots, native audio/peer execution or agents."
+  ]
+}

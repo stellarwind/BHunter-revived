@@ -1,0 +1,558 @@
+#include "../src/bh_callback_helpers.h"
+#include "../src/bh_fp.h"
+#include "../src/bh_round.h"
+#include "../src/bh_target_construct.h"
+#include <direct.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+static unsigned long checks, failed;
+#define CHECK(x, s)                                                            \
+  do {                                                                         \
+    ++checks;                                                                  \
+    if (!(x)) {                                                                \
+      ++failed;                                                                \
+      if (failed < 20)                                                         \
+        printf("FAIL target-construct %d: %s\n", __LINE__, s);                 \
+    }                                                                          \
+  } while (0)
+static void identity(BHMat34 *m) {
+  memset(m, 0, sizeof(*m));
+  m->m[0][0] = m->m[1][1] = m->m[2][2] = 1;
+}
+typedef struct Fixture {
+  BHEntityPool pool;
+  BHEntity *e, *owner, *registry[4];
+  BHDrawQueue queue;
+  BHSoundQueue sound;
+  BHDebrisContext debris;
+  BHDebrisBody body;
+  BHPhysicsState state;
+  BHPhysicsStepContext physics;
+  BHPhysicsStepBody pb;
+  BHPhysicsEffects effects;
+  BHContactEffects contact;
+  BHGeometry *models[1];
+  BHMat34 inverse;
+  BHScriptDebrisContext fragments;
+  BHFlashFlareContext flash;
+  BHScriptExplosionContext explosions;
+  BHScriptParticleContext particles;
+  BHPickupContext pickups;
+  BHPickupRenderBinding render;
+  BHPickupDrawContext draw;
+  BHEntityResourceDrawContext special;
+  BHWorldGeometry world;
+  BHPickupRoom room;
+  unsigned long resources[20];
+  BHTargetConstructContext construct;
+  BHTargetConstructSlot slots[4];
+  BHPhysicsStepBody roster[4];
+  BHGeometry *catalog[4];
+  BHTargetDrawContext target_draw;
+  BHMainCamera camera;
+  BHViewConfig view;
+  long mode;
+} Fixture;
+static int setup(Fixture *f) {
+  BHVec3 inertia = {1, 1, 1};
+  BHSoundResource *r;
+  unsigned long i;
+  memset(f, 0, sizeof(*f));
+  if (!bh_entities_init(&f->pool, 32, NULL) ||
+      !bh_draw_queue_init(&f->queue, 64, NULL) ||
+      !bh_sound_queue_init(&f->sound, NULL, NULL, NULL))
+    return 0;
+  r = bh_sound_resource_allocate(&f->sound);
+  if (!r)
+    return 0;
+  r->streaming = 1;
+  r->base_frequency = 100;
+  f->e = bh_entity_acquire(&f->pool);
+  f->owner = bh_entity_acquire(&f->pool);
+  f->owner->position.x = 1000;
+  bh_entity_set_query(&f->pool, f->owner, bh_actor_target_removed);
+  f->registry[0] = f->e;
+  f->registry[1] = f->owner;
+  identity(&f->state.pose);
+  f->state.last_clear = f->state.pose;
+  identity(&f->inverse);
+  if (!bh_debris_context_init(&f->debris, &f->pool, &f->sound, r->index,
+                              f->registry, 4) ||
+      !bh_debris_bind(&f->debris, &f->body, f->e, &f->state, 2, 0, &inertia))
+    return 0;
+  f->body.owner = f->owner;
+  f->pb.entity = f->e;
+  f->pb.generation = f->e->generation;
+  f->pb.physics = &f->state;
+  f->pb.target_world = &f->state.pose;
+  f->pb.target_local = &f->inverse;
+  f->pb.mass = 2;
+  if (!bh_contact_effects_init(&f->contact, &f->pool, &f->queue, 1, 2, 3, 4))
+    return 0;
+  f->effects.effects = &f->contact;
+  f->effects.sound = &f->sound;
+  if (!bh_physics_step_init(&f->physics, &f->pool, &f->pb, 1, NULL, 0,
+                            f->models, 1, &f->effects, 1, NULL))
+    return 0;
+  f->fragments.pool = &f->pool;
+  f->fragments.queue = &f->queue;
+  f->fragments.image = 9;
+  f->flash.pool = &f->pool;
+  f->flash.queue = &f->queue;
+  f->flash.textures[0] = 10;
+  f->explosions.pool = &f->pool;
+  f->explosions.queue = &f->queue;
+  f->explosions.sound = &f->sound;
+  f->explosions.debris = &f->fragments;
+  f->explosions.flash = &f->flash;
+  f->explosions.sound_resource = r->index;
+  f->explosions.image = 11;
+  if (!bh_script_particles_init(&f->particles, &f->pool, &f->queue))
+    return 0;
+  f->world.navigation.next = &f->world.navigation;
+  f->world.minimum.x = f->world.minimum.y = f->world.minimum.z = -100;
+  f->world.maximum.x = f->world.maximum.y = f->world.maximum.z = 100;
+  identity(&f->world.transform);
+  f->room.world = &f->world;
+  for (i = 0; i < 20; ++i)
+    f->resources[i] = i + 1;
+  f->pickups.pool = &f->pool;
+  f->pickups.first_world = &f->world;
+  f->pickups.world_count = 1;
+  f->pickups.rooms = &f->room;
+  f->pickups.room_count = 1;
+  f->pickups.resources = f->resources;
+  f->pickups.resource_count = 20;
+  f->pickups.outside_actors = f->registry;
+  f->pickups.sound = &f->sound;
+  f->draw.queue = &f->queue;
+  f->special.queue = &f->queue;
+  f->render.default_draw = &f->draw;
+  f->render.special_draw = &f->special;
+  if (!bh_pickup_render_bind(&f->pickups, &f->render))
+    return 0;
+  f->target_draw.queue = &f->queue;
+  f->target_draw.camera = &f->camera;
+  f->target_draw.view = &f->view;
+  f->target_draw.screen_width = 640;
+  f->target_draw.player = f->owner;
+  f->construct.debris = &f->debris;
+  f->construct.physics = &f->physics;
+  f->construct.effects = &f->effects;
+  f->construct.explosions = &f->explosions;
+  f->construct.particles = &f->particles;
+  f->construct.pickups = &f->pickups;
+  f->construct.draw = &f->target_draw;
+  f->construct.mode = &f->mode;
+  f->construct.slots = f->slots;
+  f->construct.capacity = 4;
+  f->construct.roster = f->roster;
+  f->construct.models = f->catalog;
+  f->construct.resources = f->resources;
+  f->construct.resource_count = 20;
+  f->construct.prefix = "target-construct-fixture\\";
+  f->construct.search = BH_BSP_PREFIX_ONLY;
+  if (!bh_physics_step_dispose(&f->physics) || !bh_debris_unbind(&f->body) ||
+      !bh_entity_release(&f->pool, f->e))
+    return 0;
+  f->registry[0] = NULL;
+  f->e = NULL;
+  return 1;
+}
+static int model_file(void) {
+  BHCollisionModel model;
+  BHVec3 extent = {2, 4, 6}, padding = {1, 2, 3};
+  FILE *f;
+  unsigned long i;
+  const void *arrays[6];
+  static const unsigned long sizes[6] = {32, 60, 16, 12, 56, 8};
+  _mkdir("target-construct-fixture");
+  f = fopen("target-construct-fixture/HUN_LOD1.BSP", "rb");
+  if (f) {
+    fclose(f);
+    return 0;
+  }
+  if (!bh_collision_model_init(&model, NULL) ||
+      !bh_collision_box_build(&model, &extent, &padding))
+    return 0;
+  arrays[0] = model.bsp.materials;
+  arrays[1] = model.bsp.vertices;
+  arrays[2] = model.bsp.edges;
+  arrays[3] = model.bsp.faces;
+  arrays[4] = model.bsp.nodes;
+  arrays[5] = model.bsp.leaves;
+  f = fopen("target-construct-fixture/HUN_LOD1.BSP", "wb");
+  if (!f)
+    return 0;
+  for (i = 0; i < 6; ++i) {
+    fwrite(model.bsp.counts + i, 4, 1, f);
+    fwrite(arrays[i], sizes[i], model.bsp.counts[i], f);
+  }
+  fclose(f);
+  return bh_collision_model_dispose(&model);
+}
+static void finish(Fixture *f) {
+  unsigned long i;
+  for (i = 0; i < 4; ++i)
+    if (f->slots[i].body.entity)
+      bh_debris_remove(f->slots[i].body.entity);
+  CHECK(bh_target_construct_dispose(&f->construct),
+        "real collision and dynamic physics owners disposed");
+  while (f->pickups.head)
+    bh_pickup_cleanup(f->pickups.head);
+  while (f->pool.active)
+    bh_entity_release(&f->pool, f->pool.active);
+  CHECK(bh_debris_context_dispose(&f->debris) &&
+            bh_contact_effects_dispose(&f->contact) &&
+            bh_sound_queue_dispose(&f->sound) &&
+            bh_draw_queue_dispose(&f->queue) && bh_entities_dispose(&f->pool),
+        "actual dependencies release all ownership");
+}
+static void constructors(void) {
+  Fixture f;
+  BHVec3 p = {10, 20, 30}, zero = {0, 0, 0}, v = {3, 4, 5}, w = {.1f, .2f, .3f},
+         a = {.25f, -.5f, .75f}, first = {8, 16, 24}, second = {12, 24, 36},
+         anchor = {1, 2, 3};
+  BHEntity *e, *moving, *box;
+  BHTargetStepState ts;
+  BHTargetDrawState ds;
+  float inertia;
+  unsigned long used, next;
+  CHECK(setup(&f), "all real source contexts");
+  srand(19);
+  next = rand();
+  srand(19);
+  e = bh_target_construct_basic(&f.construct, &p, 3, 10);
+  CHECK(e != NULL, "whole basic target allocates, loads actual collision file "
+                   "and installs owners");
+  if (!e) {
+    finish(&f);
+    return;
+  }
+  CHECK(
+      (unsigned long)rand() == next && f.construct.roster_count == 1 &&
+          f.registry[0] == e && !f.registry[1],
+      "constructor consumes no random draw and registers exact outside order");
+  CHECK(e->position.x == 10 && e->position.y == 20 && e->position.z == 30 &&
+            e->lifetime == 10 && e->scale == .9f,
+        "common original position/mass/friction fields");
+  memcpy(&inertia, (char *)e + 0x78, 4);
+  CHECK(fabs(inertia - 17.3) < .00001 && f.slots[0].body.inertia.x == inertia,
+        "exact PE1.73 inertia shared with query component");
+  bh_target_step_read(e, &ts);
+  bh_target_draw_state_read(e, &ds);
+  CHECK(ts.countdown == 0 && ts.emission == 0 && ts.loot == -1 && !ts.token &&
+            !ts.counter && ds.resource == 4 && !ds.owner,
+        "complete basic target fields, resource identity and default loot");
+  CHECK(e->query == bh_debris_receive && e->step && e->refresh,
+        "real query and actual draw/tick callback bridges installed");
+  bh_draw_queue_begin(&f.queue);
+  e->refresh(e, NULL);
+  CHECK(f.queue.count == 10 && !f.construct.error &&
+            f.queue.commands[9].resource == 4,
+        "installed refresh invokes whole actual target model producer");
+  p.x = 100;
+  moving = bh_target_construct_moving(&f.construct, &p, &a, &v, &w, 17, 2, 10,
+                                      f.owner, 99, 13, 5);
+  CHECK(moving != NULL, "whole rotated moving constructor");
+  if (moving) {
+    bh_target_step_read(moving, &ts);
+    bh_target_draw_state_read(moving, &ds);
+    CHECK(ts.countdown == 10 && ts.emission == 0x2000 && ts.token == 99 &&
+              ts.loot == 13 && ts.counter == 5 && ds.owner == f.owner &&
+              ds.resource == 17,
+          "complete moving lifetime, flag, token, owner and loot state");
+    CHECK(f.construct.roster_count == 2 && f.registry[0] == e &&
+              f.registry[1] == moving && !f.registry[2],
+          "actual physics and outside registries share both live objects");
+    CHECK(f.slots[1].state.velocity.x == 3 &&
+              f.slots[1].state.angular_velocity.z == .3f &&
+              f.slots[1].state.euler.y == -.5f,
+          "same live physics component receives motion and original YXZ angle "
+          "fields");
+  }
+  box = bh_target_construct_box(&f.construct, &p, &zero, &v, &w, 22, 3, 8,
+                                f.owner, 77, &anchor, &first, &second, 9);
+  CHECK(box != NULL,
+        "whole procedural box constructor with no undefined focus branch");
+  if (box) {
+    bh_target_step_read(box, &ts);
+    CHECK(ts.emission == 0x800 && ts.loot == -1 && ts.counter == 9 &&
+              ts.minimum.x == -92 && ts.maximum.x == -88,
+          "unsorted local bounds and all box lifecycle fields retained");
+    CHECK(f.slots[2].collision.bsp.counts[1] == 8 &&
+              fabs(f.slots[2].collision.bsp.nodes[0].maximum[0] - 1.6) < .00001,
+          "real procedural collision extent abs(delta)*.8 and padding half");
+    bh_target_draw_state_read(box, &ds);
+    CHECK(ds.local_anchor.x == 1 && ds.local_anchor.y == 2 &&
+              ds.local_anchor.z == 3 && ds.resource == 22,
+          "real local model anchor and resource identity");
+  }
+  if (moving) {
+    bh_debris_remove(moving);
+    CHECK(bh_target_construct_sync(&f.construct) &&
+              f.construct.roster_count == 2 && f.registry[0] == e &&
+              f.registry[1] == box && !f.registry[2],
+          "retirement compacts real registry and rebuilds physics before "
+          "another target step");
+  }
+  f.slots[0].body.sleep_time = 3;
+  used = f.pool.used;
+  e->step(e);
+  CHECK(f.pool.used == used && !f.construct.error && f.physics.body_count == 2,
+        "constructed target callback safely runs actual lifetime owner after "
+        "peer retirement");
+  finish(&f);
+}
+static void placement_cases(void) {
+  Fixture f;
+  BHVec3 p = {0, 0, 0}, q = {.5f, .25f, .5f}, zero = {0, 0, 0};
+  BHEntity *first, *second, *third;
+  BHDebrisOwnerPacket detach;
+  BHTargetDrawState ds;
+  CHECK(setup(&f), "real overlap placement fixture");
+  first = bh_target_construct_basic(&f.construct, &p, 0, 2);
+  CHECK(first != NULL, "first actor supplies actual collision geometry");
+  if (first) {
+    f.construct.placement_focus = &f.construct.roster[0];
+    second = bh_target_construct_basic(&f.construct, &q, 0, 2);
+    CHECK(
+        second && second->position.x > .5f,
+        "actual overlap and cached-face rechecks displace intersecting target");
+    CHECK(!bh_target_construct_dispose(&f.construct) &&
+              f.physics.allocator.release,
+          "disposal rejects live actors without destroying physics");
+    f.construct.placement_focus = NULL;
+    if (second) {
+      bh_debris_remove(second);
+      third = bh_target_construct_basic(&f.construct, &q, 1, 3);
+      CHECK(third && f.physics.body_count == 2 && f.registry[1] == third,
+            "retired collision slot is safely reused only after old sweeps are "
+            "disposed");
+    }
+    detach.event = 17;
+    detach.owner = f.owner;
+    f.slots[0].body.owner = f.owner;
+    bh_target_draw_state_read(first, &ds);
+    ds.owner = f.owner;
+    bh_target_draw_state_write(first, &ds);
+    first->query(first, &detach);
+    first->refresh(first, NULL);
+    bh_target_draw_state_read(first, &ds);
+    CHECK(!f.slots[0].body.owner && !ds.owner,
+          "query and draw callbacks share actual owner field after event17");
+    {
+      long event = 20;
+      first->query(first, &event);
+      CHECK(first->step == bh_debris_remove && !first->query && !first->refresh,
+            "constructed object retains actual deferred retirement query "
+            "behavior");
+      first->step(first);
+    }
+    CHECK(bh_target_construct_sync(&f.construct) && f.physics.body_count == 1,
+          "deferred retirement rebuilt before remaining actor physics");
+  }
+  finish(&f);
+}
+static void wreck_expiry(void){Fixture f;BHVec3 zero={0,0,0};BHEntity *wreck;BHTargetStepState state;unsigned long generation;
+ CHECK(setup(&f),"real constructed wreck expiry dependencies");f.mode=2;
+ wreck=bh_target_construct_moving(&f.construct,&zero,&zero,&zero,&zero,22,10,.05f,NULL,0,13,0);
+ CHECK(wreck!=NULL,"stationary wreck uses actual moving-body constructor");
+ if(wreck){generation=wreck->generation;f.slots[0].body.sleep_time=3;
+  f.mode=1;wreck->step(wreck);bh_target_step_read(wreck,&state);CHECK(state.countdown==.05f&&f.slots[0].body.entity==wreck,"editor mode alone suppresses wreck expiry");
+  f.mode=2;wreck->step(wreck);bh_target_step_read(wreck,&state);CHECK(state.countdown>0&&state.countdown<.05f,"normal runtime advances stationary sleeping wreck countdown");
+  wreck->step(wreck);CHECK(!f.slots[0].body.entity&&wreck->generation!=generation&&!f.registry[0],"expiry removes wreck from actual outside registry and releases pooled entity");
+  CHECK(bh_target_construct_sync(&f.construct)&&!f.physics.body_count,"retired wreck is removed from physics roster");
+ }
+ finish(&f);
+}
+static void world_hint_cases(void) {
+  Fixture f;
+  BHPhysicsStepWorld world;
+  BHWorldGeometry *hint;
+  BHVec3 p = {10, 20, 30}, q = {30, 20, 30};
+  BHEntity *first, *second;
+  BHPhysicsState before;
+  CHECK(setup(&f), "real bound-world lifetime fixture");
+  memset(&world, 0, sizeof(world));
+  world.world = &f.world;
+  world.mass = 1;
+  f.construct.worlds = &world;
+  f.construct.world_count = 1;
+  first = bh_target_construct_basic(&f.construct, &p, 0, 2);
+  second = bh_target_construct_basic(&f.construct, &q, 1, 3);
+  CHECK(first && second, "two actual constructed actors with bound real world");
+  if (first && second) {
+    memcpy(&hint, (const char *)first + 0xc4, 4);
+    CHECK(!hint,
+          "constructor explicitly resets original room word on acquisition");
+    hint = &f.world;
+    memcpy((char *)first + 0xc4, &hint, 4);
+    f.slots[0].state.velocity.x = 4;
+    f.slots[0].state.acceleration.y = .25f;
+    f.slots[0].state.last_clear.m[2][3] = 27;
+    before = f.slots[0].state;
+    f.slots[0].body.sleep_time = 3;
+    f.slots[0].body.owner = f.owner;
+    f.slots[0].body.last_sound = 777;
+    CHECK(bh_target_construct_sync(&f.construct) &&
+              f.construct.roster[0].world == &f.world,
+          "rebuild retains actual selected world hint instead of resetting "
+          "traversal start");
+    memcpy(&hint, (const char *)first + 0xc4, 4);
+    CHECK(hint == &f.world &&
+              !memcmp(&before, &f.slots[0].state, sizeof(before)) &&
+              f.slots[0].body.owner == f.owner &&
+              f.slots[0].body.sleep_time == 3 &&
+              f.slots[0].body.last_sound == 777,
+          "same authoritative physics, previous clear pose, owner, sleep and "
+          "sound state survive rebuild");
+    bh_debris_remove(second);
+    f.mode = 1;
+    first->step(first);
+    memcpy(&hint, (const char *)first + 0xc4, 4);
+    CHECK(!f.construct.error && f.physics.body_count == 1 &&
+              f.construct.roster[0].world == &f.world && hint == &f.world &&
+              !memcmp(&before, &f.slots[0].state, sizeof(before)),
+          "peer retirement and actual mode1 callback preserve cached room and "
+          "all shared body lifetime state");
+  }
+  finish(&f);
+}
+static void retained_workspace_cases(void) {
+  Fixture f;
+  BHVec3 p={10,20,30},zero={0,0,0},extent={10,10,10};
+  BHEntity *first,*second;
+  BHPhysicsStepPair *pairs;
+  BHGeometry *geometry;
+  unsigned long before,i,generation;
+  float old_bound;
+  CHECK(setup(&f),"stable physics workspace fixture");
+  first=bh_target_construct_basic(&f.construct,&p,0,2);
+  CHECK(first!=NULL,"actual body before workspace retention");
+  if(first) {
+    before=f.construct.rebuilds;pairs=f.physics.pairs;
+    f.mode=1;
+    for(i=0;i<20;++i)first->step(first);
+    CHECK(f.construct.rebuilds==before&&f.physics.pairs==pairs,
+          "twenty paused ticks retain all swept workspaces across forty sync calls");
+    f.mode=0;f.slots[0].body.sleep_time=3;
+    for(i=0;i<20;++i)first->step(first);
+    CHECK(f.construct.rebuilds==before&&f.physics.pairs==pairs,
+          "twenty sleeping ticks retain all swept workspaces");
+    f.slots[0].state.pose.m[0][3]=17;f.slots[0].state.velocity.z=4;
+    CHECK(bh_target_construct_sync(&f.construct)&&first->position.x==17&&
+              first->origin.z==4&&f.construct.rebuilds==before,
+          "retained path still publishes authoritative pose and velocity");
+    geometry=&f.slots[0].collision.geometry;generation=first->generation;
+    old_bound=f.slots[0].collision.bsp.nodes[0].maximum[0];
+    bh_debris_remove(first);
+    second=bh_target_construct_box(&f.construct,&p,&zero,&zero,&zero,1,2,0,
+                                   NULL,0,&zero,&zero,&extent,0);
+    CHECK(second==first&&second->generation!=generation&&
+              &f.slots[0].collision.geometry==geometry&&
+              f.slots[0].collision.bsp.nodes[0].maximum[0]!=old_bound&&
+              f.construct.rebuilds>before,
+          "recycled entity and same geometry slot rebuild before replacement box topology");
+    before=f.construct.rebuilds;
+    CHECK(second&&bh_target_construct_sync(&f.construct)&&
+              f.construct.rebuilds==before&&f.physics.body_count==1,
+          "replacement roster becomes reusable after its required rebuild");
+  }
+  finish(&f);
+}
+static void retained_integer_mass(void) {
+  Fixture f;
+  BHVec3 p = {0, 0, 0}, inertia;
+  BHEntity *e;
+  CHECK(setup(&f), "retained integer mass discriminator fixture");
+  e = bh_target_construct_basic(&f.construct, &p, 0, 16777217L);
+  CHECK(e != NULL, "whole basic owner accepts original signed integer mass");
+  if (e) {
+    memcpy(&inertia, (const char *)e + 0x78, 12);
+    CHECK(
+        e->lifetime == 16777216.0f && f.slots[0].body.mass == 16777216.0f,
+        "mass store rounds binary32 while original integer remains available");
+    CHECK(inertia.x == 29024586.0f && inertia.y == 29024584.0f &&
+              inertia.z == 29024584.0f,
+          "positive discriminator: retained FILD integer X differs from float "
+          "mass Y/Z reloads");
+    CHECK(!memcmp(&inertia, &f.slots[0].body.inertia, 12),
+          "actual response query shares exact distinct inertia components");
+  }
+  finish(&f);
+}
+static void failures(void) {
+  Fixture f;
+  BHVec3 p = {0, 0, 0};
+  BHEntity *e;
+  unsigned long used;
+  CHECK(setup(&f), "source rejection fixture");
+  used = f.pool.used;
+  f.construct.prefix = "missing-target-construct-fixture/";
+  e = bh_target_construct_basic(&f.construct, &p, 0, 1);
+  CHECK(!e && f.pool.used == used && !f.registry[0],
+        "actual collision loader failure releases acquired actor and preserves "
+        "registry");
+  f.construct.prefix = "target-construct-fixture\\";
+  CHECK(!bh_target_construct_basic(&f.construct, &p, 20, 1) &&
+            f.pool.used == used,
+        "missing resource identity rejects without allocation");
+  f.construct.placement_focus = &f.pb;
+  CHECK(!bh_target_construct_box(&f.construct, &p, &p, &p, &p, 1, 1, 1, NULL, 0,
+                                 &p, &p, &p, 0) &&
+            f.pool.used == used,
+        "undefined original recycled box geometry must be explicitly bound for "
+        "focus branch");
+  f.construct.placement_focus = NULL;
+  f.construct.capacity = 0;
+  CHECK(!bh_target_construct_basic(&f.construct, &p, 0, 1) &&
+            f.pool.used == used,
+        "source capacity failure leaves actual pool untouched");
+  f.construct.capacity = 4;
+  finish(&f);
+}
+int __cdecl bh_target_construct_checkpoint(const char *archive,
+                                           unsigned long *count) {
+  BHMathEnvironment env;
+  int owns;
+  checks = failed = 0;
+  if (!bh_math_environment_enter(&env))
+    return 2;
+  owns = model_file();
+  CHECK(owns,
+        "owned synthetic file built from actual procedural source geometry");
+  if (owns) {
+    constructors();wreck_expiry();
+    placement_cases();
+    world_hint_cases();
+    retained_workspace_cases();
+    retained_integer_mass();
+    failures();
+    remove("target-construct-fixture/HUN_LOD1.BSP");
+    _rmdir("target-construct-fixture");
+  }
+  if (archive) {
+    Fixture f;
+    BHVec3 p = {0, 0, 0};
+    BHEntity *e;
+    CHECK(bh_vfile_mount(archive), "real immutable archive mounted");
+    CHECK(setup(&f), "real archive constructor fixture");
+    f.construct.prefix = "BSP\\";
+    e = bh_target_construct_basic(&f.construct, &p, 0, 7);
+    CHECK(e && f.slots[0].collision.bsp.counts[1] == 8 &&
+              f.slots[0].collision.bsp.bytes == 1408,
+          "whole constructor loads actual archived HUN_LOD1 model");
+    finish(&f);
+    bh_vfile_shutdown();
+  }
+  bh_math_environment_leave(&env);
+  if (count)
+    *count = checks;
+  printf("{\"scenario\":\"target-construct\",\"checks\":%lu,\"failures\":%lu,"
+         "\"original_code_required\":false,\"play_calls\":0}\n",
+         checks, failed);
+  return failed != 0;
+}

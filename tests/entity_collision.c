@@ -64,6 +64,7 @@ static void cases(void) {
     memset(world,0,sizeof(world));
     for(i=0;i<3;++i) {
         world[i].model=&model;identity(&world[i].transform);
+        world[i].query_flags=2;
         world[i].transform.m[0][3]=i==0 ? -10 : (float)i-1;
         world[i].navigation.next=&world[(i+1)%3].navigation;
         world[i].minimum.x=world[i].minimum.y=world[i].minimum.z=-20;
@@ -94,27 +95,33 @@ static void cases(void) {
         "independent two-wall bracket product, scaled request and last-hit swap");
     identity(&actor_world);identity(&actor_local);
     CHECK(bh_collision_candidate_actor(c,actor,&sweep,&actor_world,&actor_local,&moving,0),"explicit real actor registry inputs");
-    pose=start;saved=hit;
-    CHECK(bh_entity_collision_dispatch(c,1,&pose,&delta,&angles,0,&hit)==0 &&
-        !memcmp(&pose,&start,sizeof(pose)) && !memcmp(&hit,&saved,sizeof(hit)),"disabled single actor does not move");
+    pose=start;delta.x=-2.125f;
+    CHECK(bh_entity_collision_dispatch(c,1,&pose,&delta,&angles,0,&hit)==1 &&
+        pose.m[0][3]==1.140625f,"physical actor collision ignores world-only enable flag");
     c[0].flags=2;pose=start;delta.x=-2.125f;
     CHECK(bh_entity_collision_dispatch(c,1,&pose,&delta,&angles,0,&hit)==1 &&
         pose.m[0][3]==1.140625f && hit.motion.x==-2.125f,"stationary enabled actor uses supplied transforms");
     c[0].movement.x=.125f;pose=start;
     CHECK(bh_entity_collision_dispatch(c,1,&pose,&delta,&angles,0,&hit)==1 &&
-        pose.m[0][3]==1.15625f && hit.fraction==.875f && hit.motion.x==-3.375f &&
-        delta.x==-2.125f,"moving actor relative movement and original 1.5 contact scaling");
+        pose.m[0][3]==1.140625f && hit.fraction==.875f && hit.motion.x==-2.125f &&
+        delta.x==-2.125f,"physical actor velocity is not world per-tick translation");
     c[0].world.m[0][3]=-10;c[0].local.m[0][3]=10;c[0].movement.x=.25f;
     pose=start;delta.x=1;
     CHECK(bh_entity_collision_dispatch(c,1,&pose,&delta,&angles,0,&hit)==0 &&
-        pose.m[0][3]==3.75f,"single moving-actor miss retains original extra movement subtraction");
+        pose.m[0][3]==4,"physical actor miss applies requested movement once");
     CHECK(bh_collision_candidate_world(c+1,world,&sweep),"far static candidate");
     pose=start;
     CHECK(bh_entity_collision_dispatch(c,2,&pose,&delta,&angles,0,&hit)==0 && pose.m[0][3]==4,
         "multiple misses return final candidate pose");
     c[1]=c[0];c[1].flags=0;bh_collision_candidate_world(c,world,&sweep);pose=start;
-    CHECK(bh_entity_collision_dispatch(c,2,&pose,&delta,&angles,0,&hit)==0 && pose.m[0][3]==3,
-        "last disabled actor preserves unchanged pose in multi-miss path");
+    CHECK(bh_entity_collision_dispatch(c,2,&pose,&delta,&angles,0,&hit)==0 && pose.m[0][3]==4,
+        "last physical actor does not use world-only collision flag");
+    bh_collision_candidate_world(c,world+1,&sweep);c[0].flags=0;pose=start;delta.x=-2.125f;saved=hit;
+    CHECK(bh_entity_collision_dispatch(c,1,&pose,&delta,&angles,0,&hit)==0 &&
+        !memcmp(&pose,&start,sizeof(pose))&&!memcmp(&hit,&saved,sizeof(hit)),"disabled world retains original untouched pose and hit");
+    c[0].flags=2;c[0].movement.x=.125f;pose=start;
+    CHECK(bh_entity_collision_dispatch(c,1,&pose,&delta,&angles,0,&hit)==1 &&
+        pose.m[0][3]==1.15625f&&hit.motion.x==-3.375f,"moving world uses relative displacement and original1.5 contact scaling");
     bh_collision_candidate_world(c,world+1,&sweep);bh_collision_candidate_world(c+1,world+2,&sweep);
     pose=start;delta.x=-2.125f;angles.z=.125f;saved_delta=delta;saved_angles=angles;
     CHECK(bh_entity_collision_dispatch(c,2,&pose,&delta,&angles,0,&hit)==1 &&

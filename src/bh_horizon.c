@@ -16,7 +16,7 @@ int __cdecl bh_horizon_init(BHHorizonContext *c,const BHMainCamera *camera,BHAtt
     BHRenderState *render,BHHorizonColor *colors,BHHorizonEmit emit,void *user) {
     if(!c || !camera || !clip || !render || !render->textures || !emit ||
         (render->textures->software && (!colors || colors->textures!=render->textures)))return 0;
-    memset(c,0,sizeof(*c));c->camera=camera;c->clip=clip;c->state=render;c->colors=colors;c->emit=emit;c->user=user;return 1;
+    memset(c,0,sizeof(*c));c->camera=camera;c->clip=clip;c->state=render;c->colors=colors;c->emit=emit;c->user=user;c->color_mode=1;return 1;
 }
 /* UV normally consumes retained world sums before their binary32 stores.
    First inner X and last inner Z instead reload the stored local coordinate. */
@@ -31,7 +31,7 @@ static void polygon(BHHorizonContext *c,BHTextureImage *image,BHClipVertex **v,u
     BHClipVertex *ring;unsigned long i;
     for(i=0;i<n;++i){v[i]->next=v[(i+1)%n];v[i]->previous=v[(i+n-1)%n];}
     ++c->attempted;ring=bh_attribute_clip_polygon(c->clip,v[0],1);
-    if(!ring){if(c->clip->error!=BH_CLIP_OK)error(c,BH_HORIZON_CLIP);return;}
+    if(!ring){if(c->clip->error!=BH_CLIP_OK){if(!c->first_clip_error){c->first_clip_error=c->clip->error;c->failed_polygon=c->attempted;}error(c,BH_HORIZON_CLIP);}return;}
     if(!c->emit(ring,image,gradient,c->rgb,c->user))error(c,BH_HORIZON_EMIT);else ++c->emitted;
 }
 int __cdecl bh_horizon_draw(BHHorizonContext *c,BHTextureImage *image,float texture_scale,float height,
@@ -42,7 +42,7 @@ int __cdecl bh_horizon_draw(BHHorizonContext *c,BHTextureImage *image,float text
     if(!c || !c->camera || !c->clip || !c->state || !(q=c->state->textures) || !c->emit || !image ||
         (!q->software && !q->device) || (q->software && (!c->colors || c->colors->textures!=q)) ||
         !_finite(texture_scale) || !texture_scale || !_finite(height) || !_finite(outer_radius) || !outer_radius || !_finite(inner_radius))return 0;
-    c->error=BH_HORIZON_OK;c->attempted=c->emitted=0;
+    c->error=BH_HORIZON_OK;c->first_clip_error=BH_CLIP_OK;c->failed_polygon=0;c->attempted=c->emitted=0;
     for(i=0;i<12;++i)if(!_finite(((const float *)&c->camera->projected)[i])){error(c,BH_HORIZON_ARGUMENT);return 0;}
     if(!_finite(c->camera->position.x) || !_finite(c->camera->position.z) || !_finite(c->camera->angles.x)){error(c,BH_HORIZON_ARGUMENT);return 0;}
     if(!q->software){slow=fast=q->images;while(fast && fast->next){slow=slow->next;fast=fast->next->next;if(slow==fast){error(c,BH_HORIZON_ARGUMENT);return 0;}}}
@@ -52,7 +52,7 @@ int __cdecl bh_horizon_draw(BHHorizonContext *c,BHTextureImage *image,float text
     if(!bh_render_depth(c->state,2))error(c,BH_HORIZON_BACKEND);
     c->rgb[0]=(float)((unsigned long)(signed_color/65536L)&255UL);
     c->rgb[1]=(float)((unsigned long)(signed_color/256L)&255UL);c->rgb[2]=(float)(color&255UL);
-    if(q->software && !bh_horizon_color_prepare(c->colors,q->software,color))error(c,BH_HORIZON_COLOR);
+    if(q->software && !bh_horizon_color_prepare(c->colors,c->color_mode,color))error(c,BH_HORIZON_COLOR);
     ratio=(double)height/outer_radius;bh_round_float(&ratio_stored,ratio);
     bh_round_float(&inverse_scale,1.0/texture_scale);
     sx=(double)sine-cosine;sz=(double)cosine-negative_sine;

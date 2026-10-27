@@ -5,14 +5,14 @@
 
 /* Borrow ready source sweeps and object lifetimes. Several candidates may share
    a sweep when their source/destination geometry is identical. Actor geometry,
-   matrices, per-call movement and flags are explicit restored-owner inputs;
+   matrices and world-node per-call movement/flags are explicit owner inputs;
    no original registry or opaque entity fields are invented by this binding. */
 typedef struct BHCollisionCandidate {
     BHWorldHit object;
     BHSweepQuery *sweep;
     BHMat34 world,local;
-    BHVec3 movement;
-    unsigned long flags;
+    BHVec3 movement; /* per-tick world-node translation; ignored for actors */
+    unsigned long flags; /* world query flags; physical actors are unconditional */
 } BHCollisionCandidate;
 int __cdecl bh_collision_candidate_world(BHCollisionCandidate *out,
     BHWorldGeometry *world,BHSweepQuery *sweep);

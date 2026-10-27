@@ -1,13 +1,40 @@
 # Source integration build
 
-Current checkpoint (2026-10-26): **453/727 linked original owners, 425 translation units, 206 missing-module controls**. The final real-data build passes **4,900,025 checks**; the independent asset-free checkout passes **4,394,082**. Current evidence: [hour443](META/m4/hour443/README.md). Earlier totals below are historical checkpoints.
+Source preview (2026-10-27): run `build-source.cmd` to build the standalone
+`build/game/BHunter-source.exe`, then run `play-source.cmd` for a manual playtest.
+The target links 299 production translation units and uses `GAME_DATA/Bhunter.bin`;
+it does not load or execute the reference EXE. Keep the pinned VC5/DX SDK setup
+described below. Logs and the isolated preview configuration are under `build/game/`.
+Human playtesting is in progress; this is a restoration preview, and M4 is incomplete.
+The preview currently defaults to the restored software renderer. Hardware rendering
+has not been validated in this composition target.
+
+The current preview fixes clipped raster conversion, horizon color-table selection,
+camera output publication, menu sound ownership, sprite UV corner ordering,
+splash presentation/click skipping, scene/render viewport separation and the
+directional lighting sign on model faces. The user confirms improved baseline
+FPS, no automatic steering and visible splash/chat. Menu colors need human
+comparison after the sign correction; projectile visuals and collision slowdown
+remain open. Current integration and bounded startup evidence:
+`META/m4/playable/light-sign/validation.json`. Exact source/test snapshots retain
+the clean checkout's Git line-ending normalization separately.
+Audit with `python tools/check_playable.py`.
+The earlier finish checkpoint and its checker below describe historical source bytes.
+
+`python tools/test_game_startup.py` performs only bounded initialization, two static
+beam/boost rendering fixtures and one initial static scene render, without input
+collection, entity dispatch or application
+frames. It retains the flyby constructor's 50 settling calls. It cannot verify moving
+menus, sound termination or gameplay. Automated gameplay remains prohibited.
+
+Current checkpoint (2026-10-26): **679 distinct linked original owners,601 translation units,295 missing-module controls**. Real-data integration passes **5,529,939checks**; independent asset-free checkout passes **5,023,991**, with identical compiled source/header bytes. No inventoried owner remains; runtime/helpers/aliases count separately. Evidence: [finish](META/m4/finish/README.md). Full positive application bootstrap, playable source target and M4 remain incomplete. Earlier totals below are historical.
 
 From the repository root, reproduce the current source checks with:
 
 ```powershell
 python tools/m0.py build --archive GAME_DATA/Bhunter.bin
 python tools/check_m0_clean.py --evidence-dir build/current-clean-evidence
-python tools/check_hour443_final.py
+python tools/check_finish.py --clean-evidence build/current-clean-evidence
 python tools/mkstatus.py --check
 ```
 

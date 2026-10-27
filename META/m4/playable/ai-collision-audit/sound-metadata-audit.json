@@ -1,0 +1,590 @@
+{
+  "passed": true,
+  "source": "src/bh_bootstrap_data.h",
+  "source_sha256": "cfc7bbf29e7d5f268acc90859d1708006eb59fffc4d2037d16bdd5285eb831de",
+  "references": {
+    "META/m4/finish/game-bootstrap/original/004474c0.disasm.json": "9115a0a8029731be407a61a66afd49ec71d5da3e73b9ec5fcfd3a6c85614ae44",
+    "META/m4/finish/startup-bootstrap/original/00479200.disasm.json": "8ed239ab838e686b9f1685fc7fbd1cb3f53d7e218d4e7a4e4e968313bfe28232"
+  },
+  "load_calls": 55,
+  "voice_policy_requests": [
+    3,
+    0,
+    3,
+    1,
+    0
+  ],
+  "rejection_controls": 2,
+  "original_code_executed": false,
+  "game_launches": 0,
+  "contracts": {
+    "00496218": {
+      "name": "sound\\hitwall.wav",
+      "range": 65.0,
+      "level": 0.75,
+      "streaming": 0,
+      "denominator": 5.0,
+      "call": "004474ee"
+    },
+    "0049633c": {
+      "name": "sound\\whistle.wav",
+      "range": 40.0,
+      "level": 1.0,
+      "streaming": 1,
+      "denominator": 30.0,
+      "call": "00447511"
+    },
+    "004d1a6c": {
+      "name": "sound\\menu1.wav",
+      "range": 30.0,
+      "level": 0.5,
+      "streaming": 0,
+      "denominator": 8.0,
+      "call": "004479d7"
+    },
+    "004d1a70": {
+      "name": "sound\\menu2.wav",
+      "range": 30.0,
+      "level": 0.5,
+      "streaming": 1,
+      "denominator": 8.0,
+      "call": "004479fa"
+    },
+    "004d1a68": {
+      "name": "sound\\menu3.wav",
+      "range": 30.0,
+      "level": 0.5,
+      "streaming": 0,
+      "denominator": 8.0,
+      "call": "00447a1c"
+    },
+    "004d0480": {
+      "name": "sound\\led.wav",
+      "range": 30.0,
+      "level": 1.0,
+      "streaming": 0,
+      "denominator": 6.0,
+      "call": "004491da"
+    },
+    "004d1894": {
+      "name": "sound\\plasma.wav",
+      "range": 30.0,
+      "level": 1.0,
+      "streaming": 0,
+      "denominator": 6.0,
+      "call": "004491fc"
+    },
+    "004d1904": {
+      "name": "sound\\ray.wav",
+      "range": 20.0,
+      "level": 0.5,
+      "streaming": 1,
+      "denominator": 4.0,
+      "call": "00449228"
+    },
+    "004cdc98": {
+      "name": "sound\\ray_in.wav",
+      "range": 20.0,
+      "level": 0.5,
+      "streaming": 0,
+      "denominator": 4.0,
+      "call": "0044924a"
+    },
+    "004cdc74": {
+      "name": "sound\\ray_out.wav",
+      "range": 20.0,
+      "level": 0.5,
+      "streaming": 0,
+      "denominator": 4.0,
+      "call": "0044926c"
+    },
+    "004d199c": {
+      "name": "sound\\srayball.wav",
+      "range": 20.0,
+      "level": 1.0,
+      "streaming": 1,
+      "denominator": 15.0,
+      "call": "0044928f"
+    },
+    "004cdb88": {
+      "name": "sound\\blip.wav",
+      "range": 10.0,
+      "level": 0.5,
+      "streaming": 0,
+      "denominator": 2.0,
+      "call": "004492ad"
+    },
+    "004cdb8c": {
+      "name": "sound\\blip.wav",
+      "range": 10.0,
+      "level": 0.5,
+      "streaming": 1,
+      "denominator": 2.0,
+      "call": "004492cc"
+    },
+    "004cda14": {
+      "name": "sound\\w_shift0.wav",
+      "range": 20.0,
+      "level": 0.5,
+      "streaming": 0,
+      "denominator": 2.0,
+      "call": "004492ea"
+    },
+    "004cda20": {
+      "name": "sound\\w_shift1.wav",
+      "range": 20.0,
+      "level": 1.0,
+      "streaming": 0,
+      "denominator": 2.0,
+      "call": "00449308"
+    },
+    "004cda10": {
+      "name": "sound\\w_shift2.wav",
+      "range": 20.0,
+      "level": 1.0,
+      "streaming": 0,
+      "denominator": 2.0,
+      "call": "00449326"
+    },
+    "004ce448": {
+      "name": "sound\\sonic.wav",
+      "range": 40.0,
+      "level": 1.0,
+      "streaming": 0,
+      "denominator": 15.0,
+      "call": "00449348"
+    },
+    "004962f0": {
+      "name": "sound\\soniclop.wav",
+      "range": 40.0,
+      "level": 1.0,
+      "streaming": 1,
+      "denominator": 15.0,
+      "call": "0044936b"
+    },
+    "004d1a24": {
+      "name": "sound\\e_jet.wav",
+      "range": 12.0,
+      "level": 0.5,
+      "streaming": 1,
+      "denominator": 8.0,
+      "call": "004493b2"
+    },
+    "004d1a18": {
+      "name": "sound\\e_jet.wav",
+      "range": 12.0,
+      "level": 0.5,
+      "streaming": 1,
+      "denominator": 8.0,
+      "call": "004493b2"
+    },
+    "004d1a0c": {
+      "name": "sound\\e_jet.wav",
+      "range": 12.0,
+      "level": 0.5,
+      "streaming": 1,
+      "denominator": 8.0,
+      "call": "004493b2"
+    },
+    "004d1a00": {
+      "name": "sound\\e_jet.wav",
+      "range": 12.0,
+      "level": 0.5,
+      "streaming": 1,
+      "denominator": 8.0,
+      "call": "004493b2"
+    },
+    "004d1a04": {
+      "name": "sound\\e_metro.wav",
+      "range": 12.0,
+      "level": 0.5,
+      "streaming": 1,
+      "denominator": 8.0,
+      "call": "004493e4"
+    },
+    "004d1a48": {
+      "name": "sound\\e_metro.wav",
+      "range": 12.0,
+      "level": 0.5,
+      "streaming": 1,
+      "denominator": 8.0,
+      "call": "004493e4"
+    },
+    "004d1a44": {
+      "name": "sound\\e_metro.wav",
+      "range": 12.0,
+      "level": 0.5,
+      "streaming": 1,
+      "denominator": 8.0,
+      "call": "004493e4"
+    },
+    "004d1a40": {
+      "name": "sound\\e_metro.wav",
+      "range": 12.0,
+      "level": 0.5,
+      "streaming": 1,
+      "denominator": 8.0,
+      "call": "004493e4"
+    },
+    "004d1a08": {
+      "name": "sound\\e_turbin.wav",
+      "range": 12.0,
+      "level": 0.5,
+      "streaming": 1,
+      "denominator": 8.0,
+      "call": "00449416"
+    },
+    "004d1a14": {
+      "name": "sound\\e_mc.wav",
+      "range": 12.0,
+      "level": 0.800000011920929,
+      "streaming": 1,
+      "denominator": 8.0,
+      "call": "00449439"
+    },
+    "004d1a10": {
+      "name": "sound\\e_mc.wav",
+      "range": 12.0,
+      "level": 0.800000011920929,
+      "streaming": 1,
+      "denominator": 8.0,
+      "call": "00449439"
+    },
+    "004d1a1c": {
+      "name": "sound\\e_heavy.wav",
+      "range": 15.0,
+      "level": 0.6000000238418579,
+      "streaming": 1,
+      "denominator": 8.0,
+      "call": "00449461"
+    },
+    "004d1a60": {
+      "name": "sound\\e_heavy.wav",
+      "range": 15.0,
+      "level": 0.6000000238418579,
+      "streaming": 1,
+      "denominator": 8.0,
+      "call": "00449461"
+    },
+    "004d1a5c": {
+      "name": "sound\\e_heavy.wav",
+      "range": 15.0,
+      "level": 0.6000000238418579,
+      "streaming": 1,
+      "denominator": 8.0,
+      "call": "00449461"
+    },
+    "004d1a58": {
+      "name": "sound\\e_heavy.wav",
+      "range": 15.0,
+      "level": 0.6000000238418579,
+      "streaming": 1,
+      "denominator": 8.0,
+      "call": "00449461"
+    },
+    "004d1a20": {
+      "name": "sound\\e_police.wav",
+      "range": 20.0,
+      "level": 0.6000000238418579,
+      "streaming": 1,
+      "denominator": 8.0,
+      "call": "00449493"
+    },
+    "004d1a28": {
+      "name": "sound\\e_ship.wav",
+      "range": 12.0,
+      "level": 0.6000000238418579,
+      "streaming": 1,
+      "denominator": 8.0,
+      "call": "004494b6"
+    },
+    "004d1a54": {
+      "name": "sound\\e_ship.wav",
+      "range": 12.0,
+      "level": 0.6000000238418579,
+      "streaming": 1,
+      "denominator": 8.0,
+      "call": "004494b6"
+    },
+    "004d1a50": {
+      "name": "sound\\e_ship.wav",
+      "range": 12.0,
+      "level": 0.6000000238418579,
+      "streaming": 1,
+      "denominator": 8.0,
+      "call": "004494b6"
+    },
+    "004d1a4c": {
+      "name": "sound\\e_ship.wav",
+      "range": 12.0,
+      "level": 0.6000000238418579,
+      "streaming": 1,
+      "denominator": 8.0,
+      "call": "004494b6"
+    },
+    "004d1a38": {
+      "name": "sound\\e_truck.wav",
+      "range": 25.0,
+      "level": 1.0,
+      "streaming": 1,
+      "denominator": 8.0,
+      "call": "004494e8"
+    },
+    "004d1a34": {
+      "name": "sound\\e_truck.wav",
+      "range": 25.0,
+      "level": 1.0,
+      "streaming": 1,
+      "denominator": 8.0,
+      "call": "004494e8"
+    },
+    "004d1a30": {
+      "name": "sound\\e_truck.wav",
+      "range": 25.0,
+      "level": 1.0,
+      "streaming": 1,
+      "denominator": 8.0,
+      "call": "004494e8"
+    },
+    "004d1a2c": {
+      "name": "sound\\e_truck.wav",
+      "range": 25.0,
+      "level": 1.0,
+      "streaming": 1,
+      "denominator": 8.0,
+      "call": "004494e8"
+    },
+    "004d1a64": {
+      "name": "sound\\metro.wav",
+      "range": 25.0,
+      "level": 1.0,
+      "streaming": 1,
+      "denominator": 15.0,
+      "call": "0044953e"
+    },
+    "004d441c": {
+      "name": "sound\\gong.wav",
+      "range": 25.0,
+      "level": 1.0,
+      "streaming": 0,
+      "denominator": 8.0,
+      "call": "00449584"
+    },
+    "00496be0": {
+      "name": "sound\\incoming.wav",
+      "range": 10.0,
+      "level": 1.0,
+      "streaming": 0,
+      "denominator": 2.0,
+      "call": "004495a2"
+    },
+    "004d1918": {
+      "name": "sound\\targdest.wav",
+      "range": 10.0,
+      "level": 1.0,
+      "streaming": 0,
+      "denominator": 2.0,
+      "call": "004495c0"
+    },
+    "00496bdc": {
+      "name": "sound\\misacc.wav",
+      "range": 10.0,
+      "level": 1.0,
+      "streaming": 0,
+      "denominator": 2.0,
+      "call": "004495de"
+    },
+    "004d18e0": {
+      "name": "sound\\tk_ec.wav",
+      "range": 10.0,
+      "level": 1.0,
+      "streaming": 0,
+      "denominator": 2.0,
+      "call": "004495fc"
+    },
+    "004961e8": {
+      "name": "sound\\tk_pwi.wav",
+      "range": 10.0,
+      "level": 1.0,
+      "streaming": 0,
+      "denominator": 2.0,
+      "call": "0044961a"
+    },
+    "004962fc": {
+      "name": "sound\\tk_swi.wav",
+      "range": 10.0,
+      "level": 1.0,
+      "streaming": 0,
+      "denominator": 2.0,
+      "call": "00449638"
+    },
+    "004d1ab0": {
+      "name": "sound\\tk_sil.wav",
+      "range": 10.0,
+      "level": 1.0,
+      "streaming": 0,
+      "denominator": 2.0,
+      "call": "00449656"
+    },
+    "004d0474": {
+      "name": "sound\\tk_eic.wav",
+      "range": 10.0,
+      "level": 1.0,
+      "streaming": 0,
+      "denominator": 2.0,
+      "call": "00449674"
+    },
+    "004df234": {
+      "name": "sound\\tntmine.wav",
+      "range": 25.0,
+      "level": 1.0,
+      "streaming": 0,
+      "denominator": 5.0,
+      "call": "0044971a"
+    },
+    "004d1988": {
+      "name": "sound\\tv_on.wav",
+      "range": 2.0,
+      "level": 0.30000001192092896,
+      "streaming": 0,
+      "denominator": 1.0,
+      "call": "00449962"
+    },
+    "00496324": {
+      "name": "sound\\tv_off.wav",
+      "range": 2.0,
+      "level": 0.30000001192092896,
+      "streaming": 0,
+      "denominator": 1.0,
+      "call": "00449980"
+    },
+    "00496570": {
+      "name": "sound\\tv_char.wav",
+      "range": 2.0,
+      "level": 0.25,
+      "streaming": 0,
+      "denominator": 1.0,
+      "call": "0044999e"
+    },
+    "004f5514": {
+      "name": "sound\\beepbeep.wav",
+      "range": 4.0,
+      "level": 1.0,
+      "streaming": 1,
+      "denominator": 8.0,
+      "call": "004792e7"
+    },
+    "004f5544": {
+      "name": "sound\\eng_jet.wav",
+      "range": 25.0,
+      "level": 0.6000000238418579,
+      "streaming": 1,
+      "denominator": 15.0,
+      "call": "0047930a"
+    },
+    "004f555c": {
+      "name": "sound\\eng_fuzz.wav",
+      "range": 20.0,
+      "level": 0.30000001192092896,
+      "streaming": 1,
+      "denominator": 8.0,
+      "call": "0047932d"
+    },
+    "004f5548": {
+      "name": "sound\\col_scrb.wav",
+      "range": 30.0,
+      "level": 1.0,
+      "streaming": 0,
+      "denominator": 8.0,
+      "call": "00479350"
+    },
+    "004f5558": {
+      "name": "sound\\col_head.wav",
+      "range": 30.0,
+      "level": 1.0,
+      "streaming": 0,
+      "denominator": 8.0,
+      "call": "00479373"
+    },
+    "004f554c": {
+      "name": "sound\\col_side.wav",
+      "range": 60.0,
+      "level": 1.0,
+      "streaming": 0,
+      "denominator": 8.0,
+      "call": "00479396"
+    },
+    "004f54f8": {
+      "name": "sound\\mis_exp.wav",
+      "range": 100.0,
+      "level": 1.0,
+      "streaming": 0,
+      "denominator": 8.0,
+      "call": "004793b9"
+    },
+    "004f5564": {
+      "name": "sound\\hitwall.wav",
+      "range": 40.0,
+      "level": 0.5,
+      "streaming": 0,
+      "denominator": 4.0,
+      "call": "004793dc"
+    },
+    "004f5510": {
+      "name": "sound\\laser.wav",
+      "range": 25.0,
+      "level": 0.125,
+      "streaming": 1,
+      "denominator": 15.0,
+      "call": "004793ff"
+    },
+    "004f5540": {
+      "name": "sound\\goindown.wav",
+      "range": 80.0,
+      "level": 1.0,
+      "streaming": 0,
+      "denominator": 5.0,
+      "call": "00479422"
+    },
+    "004f5560": {
+      "name": "sound\\pickup.wav",
+      "range": 10.0,
+      "level": 1.0,
+      "streaming": 0,
+      "denominator": 4.0,
+      "call": "00479445"
+    },
+    "004f54fc": {
+      "name": "sound\\splash.wav",
+      "range": 20.0,
+      "level": 1.0,
+      "streaming": 0,
+      "denominator": 4.0,
+      "call": "00479468"
+    },
+    "004f5504": {
+      "name": "sound\\mis.wav",
+      "range": 30.0,
+      "level": 0.5,
+      "streaming": 1,
+      "denominator": 15.0,
+      "call": "00479495"
+    },
+    "004f550c": {
+      "name": "sound\\electro.wav",
+      "range": 30.0,
+      "level": 1.0,
+      "streaming": 0,
+      "denominator": 8.0,
+      "call": "004794b8"
+    },
+    "004f5508": {
+      "name": "sound\\neon.wav",
+      "range": 10.0,
+      "level": 0.5,
+      "streaming": 1,
+      "denominator": 5.0,
+      "call": "004794e5"
+    }
+  }
+}

@@ -74,8 +74,11 @@ int __cdecl bh_sprite_quad_draw(BHSpriteQuadContext *c,BHTextureImage *image,
     if(flags&1){bh_round_float(&u,1.0-u);u_end=1.0-u_end;}
     if(flags&2){bh_round_float(&v,1.0-v);v_end=1.0-v_end;}
     bh_round_float(&u1,u_end);bh_round_float(&v1,v_end);
-    quad[0].u=u;quad[0].v=v;quad[1].u=u1;quad[1].v=v;
-    quad[2].u=u1;quad[2].v=v1;quad[3].u=u;quad[3].v=v1;
+    /* Original stack vertices: A=local_b4, B=local_78, C=local_3c,
+       D=local_f0. U follows the right basis; V follows the up basis.
+       The opposite pairing rotates/stretches rectangular menu labels. */
+    quad[0].u=u;quad[0].v=v;quad[1].u=u;quad[1].v=v1;
+    quad[2].u=u1;quad[2].v=v1;quad[3].u=u1;quad[3].v=v;
     if(flags&4)for(i=0;i<4;++i){float swap=quad[i].u;quad[i].u=quad[i].v;quad[i].v=swap;}
     for(i=0;i<4;++i) {
         quad[i].next=quad+(i+(back?3:1))%4;quad[i].previous=quad+(i+(back?1:3))%4;

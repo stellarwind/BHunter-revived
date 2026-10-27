@@ -116,7 +116,7 @@ int bh_frame_service_checkpoint(unsigned long *count){
           "actual admitted effect producer retains canonical borrowed queue descriptor");
     spark=bh_contact_spark_create(&effects,&effect_position,1,0);
     CHECK(spark!=NULL&&spark->step&&spark->refresh,"real source effect constructor installs actual step and queue-producing refresh callbacks");
-    paused=1;snapshot.current['A']=0;
+    paused=1;snapshot.current['A']=0;service.profile=1;
     CHECK(bh_frame_service_tick(&service)&&counter==1&&frames.latest==1&&player.values[5]==0,
           "paused counter gate still steps refreshes sound applies key-up and publishes next frame");
     CHECK(slots[0].commands!=slots[1].commands&&slots[0].count==9&&slots[0].commands==frames.slots[0].data,

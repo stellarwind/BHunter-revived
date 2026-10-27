@@ -1,0 +1,166 @@
+{
+  "scope": "Independent AI/collision integration review; source and retained original exports only. No original/game execution or input automation.",
+  "original_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+  "city_names": [
+    {
+      "index": 0,
+      "table_address": "0048fb58",
+      "pointer": "0048fcb4",
+      "value": "Downtown"
+    },
+    {
+      "index": 1,
+      "table_address": "0048fb5c",
+      "pointer": "0048fca8",
+      "value": "Old Bronx"
+    },
+    {
+      "index": 2,
+      "table_address": "0048fb60",
+      "pointer": "0048fc98",
+      "value": "Central Stadium"
+    },
+    {
+      "index": 3,
+      "table_address": "0048fb64",
+      "pointer": "0048fc8c",
+      "value": "The Docks"
+    },
+    {
+      "index": 4,
+      "table_address": "0048fb68",
+      "pointer": "0048fc78",
+      "value": "Industrial Complex"
+    },
+    {
+      "index": 5,
+      "table_address": "0048fb6c",
+      "pointer": "0048fc6c",
+      "value": "Space Port"
+    },
+    {
+      "index": 6,
+      "table_address": "0048fb70",
+      "pointer": "0048fc58",
+      "value": "Underground City"
+    },
+    {
+      "index": 7,
+      "table_address": "0048fb74",
+      "pointer": "0048fc4c",
+      "value": "Scraptown"
+    },
+    {
+      "index": 8,
+      "table_address": "0048fb78",
+      "pointer": "0048fc40",
+      "value": "Grand Vegas"
+    },
+    {
+      "index": 9,
+      "table_address": "0048fb7c",
+      "pointer": "0048fc2c",
+      "value": "Financial District"
+    },
+    {
+      "index": 10,
+      "table_address": "0048fb80",
+      "pointer": "0048fc20",
+      "value": "Mall Town"
+    },
+    {
+      "index": 11,
+      "table_address": "0048fb84",
+      "pointer": "0048fc14",
+      "value": "Chinatown"
+    },
+    {
+      "index": 12,
+      "table_address": "0048fb88",
+      "pointer": "0048fbf4",
+      "value": "the Aqua Tunnels\nnear The Docks"
+    },
+    {
+      "index": 13,
+      "table_address": "0048fb8c",
+      "pointer": "0048fbcc",
+      "value": "Mining Tunnels\nat Industrial\nComplex"
+    },
+    {
+      "index": 14,
+      "table_address": "0048fb90",
+      "pointer": "0048fbc0",
+      "value": "City Ring"
+    },
+    {
+      "index": 15,
+      "table_address": "0048fb94",
+      "pointer": "0048fba0",
+      "value": "Bronx/Downtown\nMetro Station"
+    }
+  ],
+  "findings": [
+    {
+      "id": "death-orientation-live-gate",
+      "original_owners": [
+        "004357d0",
+        "00439910"
+      ],
+      "problem": "Death-only explicit legacy angle requirement gated every damage tick; app did not bind it. Live phase/recoil/decay stopped after hit while renderer extrapolated with clock.",
+      "change": "Guard moved into death branch before query/list retirement; nonlethal update allowed without angles. Root binds deterministic wreck orientation adapter separately.",
+      "checks": [
+        "actor-response 34 checks / 0 failures",
+        "actor-damage 33 checks / 0 failures"
+      ],
+      "evidence": [
+        "actor-response-focused.json",
+        "actor-damage-focused.json"
+      ]
+    },
+    {
+      "id": "city-metadata",
+      "original_owners": [
+        "0043a920",
+        "00438ff0"
+      ],
+      "problem": "Actor city initialized from model resource; city ID table indexed in placement order but consumer uses reordered navigation node index. City names/count and animation-frame clock were unbound.",
+      "original_contract": "Constructor actor+110 <- current world+11c; pursuit next world+11c. City strings table0048fb58 has 16 entries."
+    },
+    {
+      "id": "actor-cues",
+      "original_owners": [
+        "004357d0",
+        "00439910",
+        "004375b0"
+      ],
+      "problem": "Immediate death sound bound to delayed mission cue resource; delayed type6 mission cue and scripted gong unbound.",
+      "bindings": {
+        "actor_damage.death_sound": "004f5540",
+        "actor_response.mission_resource": "004d1918",
+        "script_actors.callbacks.pulse_resource": "004d441c"
+      }
+    }
+  ],
+  "negative_findings": [
+    {
+      "question": "Wrong clock family for route",
+      "result": "No: route timing uses original004dfac4. Player original41eaa4 increments it when mode!=0 and41eac2 updates from GetTickCount/33 in mode2. Application player_state.tick is the matching family; frame004f556c is separate animation/report clock."
+    },
+    {
+      "question": "Missing constructed target entity basis",
+      "result": "No: finish -> target_construct_sync -> physics_step_init -> bh_physics_step_publish writes entity pose/basis before constructor returns."
+    }
+  ],
+  "limits": [
+    "Focused tests link freshly compiled changed owners with recorded existing admitted dependency object bytes; fresh integration build required.",
+    "No human gameplay result yet; phasing causality follows source control/data flow, not a captured runtime reproduction.",
+    "Original wreck orientation remains undefined/uninitialized stack input; deterministic adapter is not an original-angle recovery claim.",
+    "Per-callback clock snapshot ordering, all routes/vehicle classes and x87 PC24 behavior are not exhaustively validated."
+  ],
+  "sources": {
+    "src/bh_actor_damage.c": "200ac924701ba54b7fbfb64ee03308392d5a88c7f115632c2ebb366feb873183",
+    "src/bh_actor_response.c": "87849aaa75eb8b82d10e9668791abdc61b0eaea16d9fc08fc61cd74950203857",
+    "tests/actor_damage.c": "6c255757488370b49365a0cf165d59079f1c7e2a1e3aee33596c0061da900810",
+    "tests/actor_response.c": "12a4dfaf30e6e0112303d71001ba446a3fec0b8497198829833c2823c7dbb196"
+  }
+}

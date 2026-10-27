@@ -4,6 +4,14 @@
 
 Created 2026-10-23. This is the project execution contract. Milestones complete only when their exit evidence is recorded in `META/PROGRESS.md`; estimates, compiled files and disassembly coverage do not count as completion.
 
+2026-10-26 preview update: the source-only standalone target now builds from 299
+production translation units and passes bounded initialization/static rendering.
+The user confirmed a moving flythrough and subsequently a visible menu. A sprite
+UV corner-order correction now awaits visual confirmation; the preview defaults
+to software rendering. Current evidence is in `META/m4/playable/` and
+`python tools/check_playable.py`. M4 remains incomplete. Earlier inventory/build
+totals below describe the retained finish checkpoint, not the changed preview variants.
+
 **Execution decision (user directive, 2026-10-24): skip M3 and proceed directly to M4 decompilation and source restoration.** M3 is skipped, not passed; its existing evidence is retained and its missing observations remain explicitly unvalidated. M3 completion is no longer a prerequisite for source recovery. All automatic-play plans are abandoned: no menu, tutorial, flight, combat or network gameplay automation, and no further pilot development. Any game execution is limited to a bounded startup test. User resumed implementation on 2026-10-24; M4 source restoration is active.
 
 ## 1. What we know, and what is still provisional
@@ -19,7 +27,7 @@ Created 2026-10-23. This is the project execution contract. Milestones complete 
 | Executable map | 887 function records, including 243 inferred callback candidates; 98.7% of decoded instruction bytes covered by current bodies. Neither number measures source completion |
 | Asset archive | All 1,229 `Bhunter.bin` directory entries validated. File payload formats are only partially understood |
 | APIs | DirectDraw2/Direct3D2, DirectInput 0x0500, DirectSound, MCI CD audio and active DirectPlay3A references |
-| Existing source | 600 distinct admitted linked original owners in 540 translation units; 5,317,919 real-asset / 4,811,971 clean checks, 264 missing-module controls. Latest 50 close weapon/effect/actor/control/network families. Count is source evidence, not playable-game completion. |
+| Existing source | **679 distinct admitted linked original owners; no remaining inventoried owner.** 601 translation units;5,529,939 real-asset /5,023,991 independent clean checks;295 missing-module controls. Current source/header bytes agree. Catalogue reconciliation excludes runtime/helpers and forwarding aliases, and includes the previously recovered VM. Evidence: `META/m4/finish/README.md`. Source-owner recovery is complete for this inventory; full positive application/bootstrap and playable M4 remain unvalidated. |
 | Floating point | Moderate finite fixtures match at 53/64-bit x87 precision; five reconstructed routines have 24-bit rounding differences. Actual runtime precision transitions remain unverified |
 | Third-party code | No QvLib or other reusable open-source engine library established in BHunter. Math, image loading and VFILE provenance remain open |
 

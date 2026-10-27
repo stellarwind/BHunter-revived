@@ -166,6 +166,7 @@ static int setup(Fixture *f, int actors, int worlds) {
     f->models[1] = NULL;
     for (i = 0; i < 2; ++i) {
         f->world[i].model = &f->model;
+        f->world[i].query_flags = 2;
         identity(&f->world[i].transform);
         f->world[i].transform.m[0][3] = i ? 1 : 0;
         f->world[i].minimum.x = f->world[i].minimum.y = f->world[i].minimum.z = -20;
@@ -185,13 +186,13 @@ static int setup(Fixture *f, int actors, int worlds) {
         f->bodies[i].entity = f->entities[i];
         f->bodies[i].generation = f->entities[i]->generation;
         f->bodies[i].physics = f->state + i;
-        f->bodies[i].geometry = &f->source.geometry;
+        f->bodies[i].geometry = i ? &f->target.geometry : &f->source.geometry;
         f->bodies[i].model_index = 0;
         f->bodies[i].target_world = f->target_world + i;
         f->bodies[i].target_local = f->target_local + i;
         f->bodies[i].mass = 1;
         f->bodies[i].friction = .5f;
-        f->bodies[i].flags = 2;
+        f->bodies[i].flags = 0;
         f->bodies[i].world = worlds ? f->world : NULL;
     }
     reset(f);
@@ -313,11 +314,33 @@ static void contact_cases(void) {
         finish(&f);
     }
 }
+static void world_role_cases(void) {
+    Fixture f;
+    BHEntity *node;
+    CHECK(setup(&f, 1, 1), "disabled world owner fixture");
+    f.world[0].query_flags = 0;
+    CHECK(bh_physics_step(&f.step, f.entities[0], 1) && f.step.misses == 1 &&
+              !f.step.contacts && f.state[0].pose.m[0][3] == 3,
+          "world-only enable gate retains original untouched single-candidate pose");
+    finish(&f);
+    CHECK(setup(&f, 1, 1), "moving world owner fixture");
+    node = bh_entity_acquire(&f.pool);
+    CHECK(node != NULL, "real source world response entity");
+    node->kind = 1;
+    node->origin.x = .125f;
+    f.worlds[0].response = node;
+    CHECK(bh_physics_step(&f.step, f.entities[0], 1) && f.step.contacts == 1 &&
+              f.step.first.fraction == .875f && f.step.first.motion.x == -3.375f,
+          "world response translation reaches relative sweep with original1.5 scaling");
+    CHECK(f.step.candidates[0].movement.x == .125f && f.step.candidates[0].flags == 2,
+          "world candidate binds live source translation and query flags");
+    finish(&f);
+}
 static void actor_cases(void) {
     Fixture f;
     double dx, dy, dz, impulse, expected;
     CHECK(setup(&f, 2, 0), "actual two-actor registry");
-    CHECK(f.step.pair_count == 1, "same geometry pair owns one deduplicated sweep");
+    CHECK(f.step.pair_count == 4, "each pair of actual physical-body meshes owns one sweep");
     f.state[0].pose.m[1][3] = .5f;
     f.state[0].velocity.x = -4.25f;
     f.state[0].angular_velocity.x = 1;
@@ -361,6 +384,23 @@ static void actor_cases(void) {
     CHECK(rand() == 41 && !f.step.first_events && !f.step.second_events &&
               !f.feedback.sound_requests,
           "overlap rollback precedes random effects and query delivery");
+    finish(&f);
+    CHECK(setup(&f, 2, 0), "translated rotated actor with stale borrowed inverse");
+    f.state[0].pose.m[0][3] = 0;
+    f.state[0].pose.m[1][3] = 3;
+    f.state[0].velocity.x = 0;
+    f.state[0].velocity.y = -2.125f;
+    f.state[1].pose.m[0][0] = f.state[1].pose.m[1][1] = 0;
+    f.state[1].pose.m[0][1] = -1;
+    f.state[1].pose.m[1][0] = 1;
+    f.state[1].pose.m[1][3] = .25f;
+    CHECK(bh_physics_step(&f.step, f.entities[0], 1) && f.step.contacts == 1 &&
+              f.step.first.surface.normal.y == 1 && f.state[0].pose.m[1][3] == 2.46875f,
+          "physical actor sweep rebuilds pose/inverse from current authoritative body");
+    CHECK(f.step.candidates[0].world.m[1][3] == .25f &&
+              f.step.candidates[0].local.m[0][3] == -.25f &&
+              f.target_local[1].m[0][3] == 0,
+          "candidate owns fresh inverse rather than unchanged caller identity matrix");
     finish(&f);
     CHECK(setup(&f, 1, 0), "lifetime fixture");
     CHECK(bh_debris_unbind(f.debris_body) && bh_entity_release(&f.pool, f.entities[0]),
@@ -463,6 +503,7 @@ int __cdecl bh_physics_step_checkpoint(unsigned long *count) {
         return 2;
     empty_cases();
     contact_cases();
+    world_role_cases();
     actor_cases();
     reordered_case();
     loud_case();

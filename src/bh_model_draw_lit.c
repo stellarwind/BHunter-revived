@@ -38,7 +38,9 @@ static int shade(BHModelDrawLitContext *c,const BHBspNode *node) {
     }
     if(c->directional->enabled){alignment=(((double)normal.x*c->local_direction.x+(double)normal.y*c->local_direction.y)+(double)normal.z*c->local_direction.z)*c->scale;
         side=((double)normal.z*draw->view->position.z+(double)normal.y*draw->view->position.y)+(double)normal.x*draw->view->position.x+node->plane;
-        if(!(side<0))alignment=-alignment;if(alignment<0)alignment=0;
+        /* 0045a403 takes the negative-side branch to0045a5d8; that path
+           negates the dot at0045a6b6. Nonnegative side has no FCHS. */
+        if(side<0)alignment=-alignment;if(alignment<0)alignment=0;
         if(!truncate_channel((alignment*c->directional->directional[0]+red)+c->directional->ambient[0],&red) ||
             !truncate_channel((alignment*c->directional->directional[1]+green)+c->directional->ambient[1],&green) ||
             !truncate_channel((alignment*c->directional->directional[2]+blue)+c->directional->ambient[2],&blue))return fail(c,BH_MODEL_DRAW_LIT_NUMERICAL);

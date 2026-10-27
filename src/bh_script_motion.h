@@ -1,12 +1,25 @@
 #ifndef BH_SCRIPT_MOTION_H
 #define BH_SCRIPT_MOTION_H
 #include "bh_script_lifetime.h"
+#include "bh_world_geometry.h"
 typedef enum BHScriptMotionError {BH_MOTION_OK,BH_MOTION_ARGUMENT,
     BH_MOTION_LIFETIME,BH_MOTION_ATTACHMENTS,BH_MOTION_NUMERICAL} BHScriptMotionError;
 typedef struct BHScriptMotionContext {
     BHScriptLifetimeContext *lifetime;
     BHScriptMotionError error;
+    /* Optional application composition: these are the SAME placed objects as
+       the raw motion targets. Publish original writes before the next callback
+       can query semantic collision/scene state. No geometry is rebuilt. */
+    const struct BHScriptMotionBinding *bindings;
+    unsigned long binding_count;
 } BHScriptMotionContext;
+typedef struct BHScriptMotionBinding {
+    BHEntity *entity;
+    BHWorldGeometry *world;
+    BHVec3 *draw_angles;
+    /* Semantic shared pickup/marker list; NULL retains raw entity+12c. */
+    BHEntity **attachments_owner;
+} BHScriptMotionBinding;
 /* Field view for the script's movable target class only. This is distinct from
    autonomous route actors whose unrelated payload fields share these offsets.
    Actual storage remains in the owned BHEntity; no competing full layout. */

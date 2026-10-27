@@ -120,7 +120,7 @@ static int bh_world_segment_room_trace(BHWorldSegmentContext *q,const BHWorldHit
         limit=*end;neighbor=crossing(w,&a,end,&limit);hit_point=limit;found=0;
         bh_round_float(&length,sqrt(distance_squared((double)limit.x-a.x,(double)limit.y-a.y,(double)limit.z-a.z)));
         if(radius>0) {
-            bh_round_float(&rr,(double)radius*radius);actor=binding->actors;steps=0;packet.event=3;
+            bh_round_float(&rr,(double)radius*radius);actor=binding->actors_owner?*binding->actors_owner:binding->actors;steps=0;packet.event=3;
             while(actor) {
                 if(++steps>q->max_room_actors)return fail(q,BH_WORLD_SEGMENT_TOPOLOGY);
                 if(actor->kind)return fail(q,BH_WORLD_SEGMENT_ARGUMENT);
@@ -224,6 +224,7 @@ int __cdecl bh_world_segment_run(BHWorldSegmentContext *q,const BHWorldHit *self
     if(!cached || !out)return fail(q,BH_WORLD_SEGMENT_ARGUMENT);
     if(q->busy)return fail(q,BH_WORLD_SEGMENT_BUSY);
     if(!finite_vec(start) || !finite_vec(end) || !_finite(radius) || !bh_math_environment_supported())return fail(q,BH_WORLD_SEGMENT_ARGUMENT);
+    if(q->refresh_actors&&!q->refresh_actors(q,q->refresh_user))return fail(q,BH_WORLD_SEGMENT_DEPENDENCY);
     old=*cached;if(old && !room(q,old))return fail(q,BH_WORLD_SEGMENT_TOPOLOGY);
     original=*out;hit=original;hit.material_flags=0;owner=old;
     if(!owner || !contains(owner,start)) {
@@ -248,3 +249,4 @@ int __cdecl bh_world_segment_run(BHWorldSegmentContext *q,const BHWorldHit *self
     } else out->material_flags=0;
     return a || b;
 }
+

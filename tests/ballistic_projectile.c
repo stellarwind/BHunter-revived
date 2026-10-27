@@ -50,6 +50,13 @@ static void proximity(void){Fixture f;unsigned long i,count=0,flash_count=0;BHEn
  CHECK(count==3&&flash_count==1&&f.ballistic.bindings.damage_packets==1,"whole proximity installs real particle/flash and query behavior");finish(&f);
  CHECK(fixture(&f,0),"strict proximity boundary");f.room.actors=f.target;f.target->position.x=3;f.target->position.y=0;f.projectile->step(f.projectile);CHECK(!f.ballistic.bindings.proximity&&f.pool.used==3&&bh_sound_voice(&f.sound,f.handle),"strict squared9 equality keeps projectile and updates loop");finish(&f);
 }
+static void live_room_heads(void){Fixture f;BHEntity *head;
+ CHECK(fixture(&f,0),"live room-head fixture");head=NULL;f.room.actors=f.target;f.room.actors_owner=&head;f.target->position.x=2;f.target->position.y=0;
+ f.projectile->step(f.projectile);CHECK(!f.ballistic.bindings.proximity&&f.pool.used==3,"empty live room overrides stale copied head");
+ head=f.target;if(f.pool.used==3)f.projectile->step(f.projectile);CHECK(f.ballistic.bindings.proximity==1&&f.ballistic.bindings.damage_packets==1,"post-binding room insertion reaches real impact and damage owners");finish(&f);
+ CHECK(fixture(&f,0),"live room removal fixture");head=f.target;f.room.actors=f.target;f.room.actors_owner=&head;f.projectile->step(f.projectile);
+ head=NULL;f.target->position.x=1;f.target->position.y=0;f.projectile->step(f.projectile);CHECK(!f.ballistic.bindings.proximity&&f.pool.used==3,"removed room head is not cached or replaced by fallback");finish(&f);
+}
 static void absorb_and_liquid(void){Fixture f;BHEntity*e;BHImpactState*s;unsigned int seed;int expected,next;unsigned long i,count;
  CHECK(fixture(&f,1),"real solid absorption fixture");f.projectile->position.x=3;f.projectile->origin.x=-180;f.projectile->origin.z=0;seed=seed_for(0);srand(seed);for(i=0;i<8;++i)rand();expected=rand();srand(seed);f.projectile->step(f.projectile);next=rand();
  CHECK(f.ballistic.bindings.world_hits==1&&!f.ballistic.bounces&&f.markers.count==1&&f.pool.used==7,"whole absorption creates marker and complete impact burst");CHECK(!bh_sound_voice(&f.sound,f.handle)&&next==expected,"absorption stops loop and consumes decision plus7 particle draws");e=f.markers.newest;CHECK(e&&number(e,0x108)==.7f&&number(e,0x10c)==0&&number(e,0x110)==0&&nearf(e->position.x,.15),"actual absorption marker preserves size.7/quadrant0/+normal*.1");count=0;for(e=f.pool.active;e;e=e->next)if(e->step==bh_script_particle_tick){++count;CHECK(nearf(e->position.x,.55),"solid particle burst uses normal offset.5");}CHECK(count==3&&nearf(f.physics.acceleration.x,-45),"real contact packet reaches actual physics response");finish(&f);
@@ -64,7 +71,7 @@ static void ricochet(void){Fixture f;BHEntity*e,*ignore;BHImpactState*s;BHSparkS
  for(e=f.pool.active;e;e=e->next){if((s=bh_contact_impact_state(&f.contacts,e))){++quad_count;CHECK(s->duration==.5f&&(s->size==6||s->size==10),"actual ricochet quad fields");}if((spark=bh_contact_spark_state(&f.contacts,e))){++spark_count;CHECK(spark->lifetime==1,"actual spark lifetime owner");}}
  CHECK(quad_count==2&&spark_count==3,"actual callback identities resolve all constructed effects");finish(&f);
 }
-int __cdecl bh_ballistic_projectile_checkpoint(unsigned long*count){BHMathEnvironment fp;checks=failures=0;if(!bh_math_environment_enter(&fp))return 2;free_motion_and_expiry();proximity();absorb_and_liquid();ricochet();bh_math_environment_leave(&fp);if(count)*count=checks;printf("{\"scenario\":\"ballistic-projectile\",\"checks\":%lu,\"failures\":%lu,\"original_code_required\":false,\"play_calls\":0}\n",checks,failures);return failures!=0;}
+int __cdecl bh_ballistic_projectile_checkpoint(unsigned long*count){BHMathEnvironment fp;checks=failures=0;if(!bh_math_environment_enter(&fp))return 2;free_motion_and_expiry();proximity();live_room_heads();absorb_and_liquid();ricochet();bh_math_environment_leave(&fp);if(count)*count=checks;printf("{\"scenario\":\"ballistic-projectile\",\"checks\":%lu,\"failures\":%lu,\"original_code_required\":false,\"play_calls\":0}\n",checks,failures);return failures!=0;}
 #ifdef BH_BALLISTIC_PROJECTILE_STANDALONE
 int main(void){unsigned long count;return bh_ballistic_projectile_checkpoint(&count);}
 #endif

@@ -51,7 +51,23 @@ static void failures_case(void){BHEntityPool pool;BHDrawQueue q;BHHitMarkerConte
  CHECK(!bh_hit_marker_create(&c,&p,&p,1,0,owner)&&c.error==BH_HIT_MARKER_POOL,"real pool growth failure");CHECK(c.count==0&&!c.oldest&&!c.newest&&!link(owner,0x12c)&&pool.used==1,"allocation failure leaves both lists unmodified");
  CHECK(!bh_hit_marker_create(&c,NULL,&p,1,0,owner)&&c.error==BH_HIT_MARKER_ARGUMENT,"explicit source boundary guard");bh_draw_queue_dispose(&q);bh_entities_dispose(&pool);CHECK(m.allocated==m.released,"actual failed fixture has balanced ownership");
 }
-int __cdecl bh_hit_marker_checkpoint(unsigned long*count){BHMathEnvironment fp;checks=failures=0;if(!bh_math_environment_enter(&fp))return 2;construction();normal_boundaries();fifo();failures_case();bh_math_environment_leave(&fp);if(count)*count=checks;printf("{\"scenario\":\"hit-marker\",\"checks\":%lu,\"failures\":%lu,\"original_code_required\":false,\"play_calls\":0}\n",checks,failures);return failures!=0;}
+typedef struct SharedHead{BHEntity *owner,*head;}SharedHead;
+static BHEntity **__cdecl shared_head(BHEntity *owner,void *user){SharedHead *shared=user;return owner==shared->owner?&shared->head:NULL;}
+static void set_link(BHEntity *e,unsigned long off,BHEntity *p){memcpy((char*)e+off,&p,4);}
+static void shared_room_head(void){BHEntityPool pool;BHDrawQueue q;BHHitMarkerContext c;SharedHead shared;BHEntity *owner,*pickup,*new_pickup,*raw_sentinel,*marker,*first=NULL;BHVec3 p={0,0,0},n={0,1,0};unsigned long i,generation=0;
+ memset(&c,0,sizeof(c));memset(&shared,0,sizeof(shared));CHECK(bh_entities_init(&pool,207,NULL)&&bh_draw_queue_init(&q,10,NULL),"shared-head actual pool/queue");owner=bh_entity_acquire(&pool);pickup=bh_entity_acquire(&pool);new_pickup=bh_entity_acquire(&pool);raw_sentinel=bh_entity_acquire(&pool);
+ shared.owner=owner;shared.head=pickup;set_link(owner,0x12c,raw_sentinel);c.pool=&pool;c.queue=&q;c.image=73;c.owner_head=shared_head;c.owner_head_user=&shared;
+ for(i=0;i<201;++i){marker=bh_hit_marker_create(&c,&p,&n,2,0,owner);CHECK(marker&&shared.head==marker&&link(owner,0x12c)==raw_sentinel,"semantic room head takes precedence over raw owner head");if(!i){first=marker;generation=first->generation;CHECK(link(marker,0xec)==pickup&&link(pickup,0xf0)==marker,"pickup-like older node and marker share original ec/f0 chain");}}
+ CHECK(c.count==200&&first->generation==generation+1&&link(pickup,0xf0)&&link(link(pickup,0xf0),0xec)==pickup,"FIFO eviction repairs shared mixed-list interior links");
+ /* A pickup may be inserted after the newest marker by its own owner. */
+ set_link(new_pickup,0xec,shared.head);set_link(shared.head,0xf0,new_pickup);shared.head=new_pickup;
+ marker=bh_hit_marker_create(&c,&p,&n,2,0,owner);CHECK(marker&&link(marker,0xec)==new_pickup&&link(new_pickup,0xf0)==marker,"new marker observes a head changed by the pickup owner");
+ CHECK(bh_hit_marker_dispose(&c)&&shared.head==new_pickup&&link(new_pickup,0xec)==pickup&&link(pickup,0xf0)==new_pickup&&link(new_pickup,0xf0)==NULL,"disposal removes only markers and preserves both pickup-like nodes");
+ CHECK(pool.used==4&&link(owner,0x12c)==raw_sentinel&&bh_entities_valid(&pool),"shared-head disposal preserves unrelated raw storage and live pool membership");
+ /* NULL callback result still uses the original storage for other owners. */
+ marker=bh_hit_marker_create(&c,&p,&n,2,0,raw_sentinel);CHECK(marker&&link(raw_sentinel,0x12c)==marker,"unmapped owner retains raw+12c fallback");CHECK(bh_hit_marker_dispose(&c)&&link(raw_sentinel,0x12c)==NULL,"fallback owner unlinks correctly with bridge installed");bh_draw_queue_dispose(&q);bh_entities_dispose(&pool);
+}
+int __cdecl bh_hit_marker_checkpoint(unsigned long*count){BHMathEnvironment fp;checks=failures=0;if(!bh_math_environment_enter(&fp))return 2;construction();normal_boundaries();fifo();failures_case();shared_room_head();bh_math_environment_leave(&fp);if(count)*count=checks;printf("{\"scenario\":\"hit-marker\",\"checks\":%lu,\"failures\":%lu,\"original_code_required\":false,\"play_calls\":0}\n",checks,failures);return failures!=0;}
 #ifdef BH_HIT_MARKER_STANDALONE
 int main(void){unsigned long count;return bh_hit_marker_checkpoint(&count);}
 #endif

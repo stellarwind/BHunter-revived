@@ -1,0 +1,41 @@
+{
+  "passed": true,
+  "baseline_functions": 638,
+  "new_owners": 3,
+  "active_original_functions": 641,
+  "real_total": {
+    "scenario": "m2-foundations",
+    "checks": 5526790,
+    "failures": 0,
+    "archive_entries": 1229,
+    "original_code_required": false
+  },
+  "fixture": {
+    "scenario": "world-edit",
+    "checks": 44,
+    "failures": 0,
+    "original_code_required": false
+  },
+  "sources": {
+    "src/bh_world_edit.c": "3eff514d931314ac9f9d4b70b2a465c82b17124081fed7ed0b5afa92aaba8f6d",
+    "src/bh_world_edit.h": "fbf8e8efe3acc017609d0c05ec1e2dde9ccd261acc132143f798188bf42304c8",
+    "tests/world_edit.c": "4da2501a0b4b7cfef484c062d20958c9aa6e7e3f8e846dae0e116d0f9187cc38",
+    "tests/checkpoint.c": "0416276bb3a5423515614b7fb362c1fad562ce1c0500dcfc905da031eae59e2b",
+    "tools/m0.py": "30a8bd3e6303d53552a7d8cd0ea7b8de64c9d4dbe68f17153271051db1a6cd15"
+  },
+  "source_snapshots": {
+    "src/bh_world_edit.c": "META/m4/target656/editor/sources/3eff514d931314ac9f9d4b70b2a465c82b17124081fed7ed0b5afa92aaba8f6d-bh_world_edit.c.txt",
+    "src/bh_world_edit.h": "META/m4/target656/editor/sources/fbf8e8efe3acc017609d0c05ec1e2dde9ccd261acc132143f798188bf42304c8-bh_world_edit.h.txt",
+    "tests/world_edit.c": "META/m4/target656/editor/sources/4da2501a0b4b7cfef484c062d20958c9aa6e7e3f8e846dae0e116d0f9187cc38-world_edit.c.txt",
+    "tests/checkpoint.c": "META/m4/target656/editor/sources/0416276bb3a5423515614b7fb362c1fad562ce1c0500dcfc905da031eae59e2b-checkpoint.c.txt",
+    "tools/m0.py": "META/m4/target656/editor/sources/30a8bd3e6303d53552a7d8cd0ea7b8de64c9d4dbe68f17153271051db1a6cd15-m0.py.txt"
+  },
+  "limits": [
+    "Uses real admitted geometry construction and first-match portal owners. Only the edited node is reconnected; reciprocal neighbors are intentionally not repaired.",
+    "Integer coordinates/orientation/angles are explicit semantic source components, not a guessed original entity layout. Every scene ring member must use this component and other portal records must already be constructed.",
+    "Modulo32 translation/rotation, signed grid truncation, attachment stopping, raw sign-vs-mod4 turn behavior and source bounds/pointer contracts retained. Finite PC53 profile; rejection can retain earlier node mutations as original valid-domain sequencing.",
+    "Synthetic independently specified cube BSP fixtures execute actual decoder/geometry/portal owners; group/single movement, clipping overlaps, asymmetric connectivity, four-turn round trip, turn0 rotation, malformed grid and signed32 wrap checks pass. No game/input automation or original code."
+  ],
+  "original_code_executed": false,
+  "game_launches": 0
+}

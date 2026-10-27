@@ -1,0 +1,71 @@
+#include "bh_texture_draw.h"
+#include <string.h>
+static int fail(BHTextureContext *q,BHTextureError error){if(q)q->error=error;return 0;}
+static int native(BHTextureContext *q,HRESULT h){q->last_hresult=h;if(FAILED(h)){q->error=BH_TEXTURE_BACKEND;return 0;}return 1;}
+static int valid(const BHTextureImage *image) {
+    return image && image->runs && image->vertices && image->vertex_capacity>=3 &&
+        image->vertex_capacity<=0x1000000UL && image->vertex_count<=image->vertex_capacity &&
+        image->run_count<=image->vertex_count/3 && image->run_serial<=image->vertex_count;
+}
+D3DTLVERTEX *__cdecl bh_texture_draw_vertex(BHTextureContext *q,BHTextureImage *image) {
+    unsigned long size,capacity;unsigned long *runs;D3DTLVERTEX *vertices,*out;
+    if(!q || !q->allocator.allocate || !valid(image)){fail(q,BH_TEXTURE_ARGUMENT);return NULL;}
+    if(image->vertex_count==image->vertex_capacity) {
+        size=(image->vertex_capacity*5)/12;capacity=size*3;
+        if(capacity<=image->vertex_capacity || capacity>0x1000000UL){fail(q,BH_TEXTURE_MEMORY);return NULL;}
+        runs=(unsigned long *)q->allocator.allocate(size*4,q->allocator.user);
+        vertices=(D3DTLVERTEX *)q->allocator.allocate(size*96,q->allocator.user);
+        if(!runs || !vertices) {
+            if(runs)q->allocator.release(runs,q->allocator.user);
+            if(vertices)q->allocator.release(vertices,q->allocator.user);
+            fail(q,BH_TEXTURE_MEMORY);return NULL;
+        }
+        memcpy(runs,image->runs,image->run_count*4);
+        memcpy(vertices,image->vertices,image->vertex_count*32);
+        q->allocator.release(image->runs,q->allocator.user);q->allocator.release(image->vertices,q->allocator.user);
+        image->runs=runs;image->vertices=vertices;image->vertex_capacity=capacity;
+    }
+    out=image->vertices+image->vertex_count;++image->vertex_count;++image->run_serial;return out;
+}
+int __cdecl bh_texture_draw_flush(BHTextureContext *q,BHTextureImage *image,unsigned long *runs_drawn) {
+    D3DTEXTUREHANDLE handle;unsigned long i,at=0;int ok=1;
+    if(!q || !image)return fail(q,BH_TEXTURE_ARGUMENT);
+    if(q->software || !image->run_count)return 1;
+    if(!q->device || !valid(image))return fail(q,BH_TEXTURE_TOPOLOGY);
+    /* Source safety guard only: the original trusts its completed run table. */
+    for(i=0;i<image->run_count;++i) {
+        if(image->runs[i]<3 || image->runs[i]>image->vertex_count-at)return fail(q,BH_TEXTURE_TOPOLOGY);
+        at+=image->runs[i];
+    }
+    handle=bh_texture_resident(q,image);if(q->error!=BH_TEXTURE_OK)ok=0;
+    if(!native(q,IDirect3DDevice2_SetRenderState(q->device,D3DRENDERSTATE_TEXTUREHANDLE,handle)))ok=0;
+    if(runs_drawn)*runs_drawn+=image->run_count;
+    at=0;
+    for(i=0;i<image->run_count;++i) {
+        if(!native(q,IDirect3DDevice2_DrawPrimitive(q->device,D3DPT_TRIANGLEFAN,D3DVT_TLVERTEX,
+            image->vertices+at,image->runs[i],0x0c)))ok=0;
+        at+=image->runs[i];
+    }
+    image->run_serial=image->vertex_count=image->run_count=0;return ok;
+}
+int __cdecl bh_texture_draw_polygon(BHTextureContext *q,BHTextureImage *image,const D3DTLVERTEX *vertices,unsigned long count) {
+    unsigned long i,old_count,old_serial;unsigned long *runs;D3DTLVERTEX *arena,*out;
+    if(!q || !q->allocator.allocate || !image || !vertices || count<3 || count>0x1000000UL)return fail(q,BH_TEXTURE_ARGUMENT);
+    if(!image->vertex_capacity && !image->runs && !image->vertices && !image->vertex_count && !image->run_count && !image->run_serial) {
+        runs=(unsigned long *)q->allocator.allocate(0x80,q->allocator.user);
+        arena=(D3DTLVERTEX *)q->allocator.allocate(0xc00,q->allocator.user);
+        if(!runs || !arena) {
+            if(runs)q->allocator.release(runs,q->allocator.user);
+            if(arena)q->allocator.release(arena,q->allocator.user);return fail(q,BH_TEXTURE_MEMORY);
+        }
+        image->runs=runs;image->vertices=arena;image->vertex_capacity=96;
+    }
+    if(!valid(image) || image->run_serial || count>0x1000000UL-image->vertex_count)return fail(q,BH_TEXTURE_TOPOLOGY);
+    old_count=image->vertex_count;old_serial=image->run_serial;
+    for(i=0;i<count;++i) {
+        out=bh_texture_draw_vertex(q,image);
+        if(!out){image->vertex_count=old_count;image->run_serial=old_serial;return 0;}
+        *out=vertices[i];
+    }
+    image->runs[image->run_count++]=image->run_serial;image->run_serial=0;return 1;
+}

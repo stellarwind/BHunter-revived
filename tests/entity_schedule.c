@@ -23,9 +23,10 @@ static void setup(BHEntityScheduleContext *c,BHDrawQueue *q,BHViewConfig *v,BHVi
 static void root_and_lists(void) {
     BHDrawQueue q;BHEntityScheduleContext c;BHViewConfig v;BHViewCamera camera;
     BHWorldGeometry w;BHPickupRoom room;BHEntityScheduleRoom schedule;
-    BHEntity actors[2],pickup;
+    BHEntity actors[2],pickup,activity_entity;long active=0;
     memset(&w,0,sizeof(w));memset(&room,0,sizeof(room));memset(&schedule,0,sizeof(schedule));
     memset(actors,0,sizeof(actors));memset(&pickup,0,sizeof(pickup));
+    memset(&activity_entity,0,sizeof(activity_entity));schedule.activity_entity=&activity_entity;schedule.activity=&active;
     CHECK(bh_draw_queue_init(&q,64,NULL),"root queue initialized");setup(&c,&q,&v,&camera);
     room.world=&w;room.actors=actors;room.pickups=&pickup;w.query_flags=4;
     schedule.room=&room;schedule.resource=37;method(actors);method(actors+1);method(&pickup);
@@ -35,6 +36,8 @@ static void root_and_lists(void) {
           q.commands[9].resource==37,"root resource then actor chain and pickup draw");
     CHECK(schedule.frame_active && schedule.frame_remaining==30 && schedule.last_frame==42,
           "root installs finite frame callback");
+    CHECK(active==30&&activity_entity.step,"visible root installs real entity activity callback and publishes timer activity");
+    activity_entity.step(&activity_entity);CHECK(active==29&&schedule.frame_remaining==29,"actual world step decrements conditional timer activity");
     CHECK(bh_entity_schedule(&c,&schedule) && draws==3 && q.count==11,
           "same frame suppresses both root child lists while resource queues");
     c.frame++;CHECK(bh_entity_schedule(&c,&schedule) && draws==6,
@@ -43,6 +46,10 @@ static void root_and_lists(void) {
     CHECK(schedule.frame_active && schedule.frame_remaining==1,"tick retains callback before zero");
     bh_entity_schedule_tick(&schedule);
     CHECK(!schedule.frame_active && !schedule.frame_remaining,"thirtieth tick removes callback");
+    CHECK(active==0,"offscreen expiry stops conditional timer activity");
+    c.frame++;CHECK(bh_entity_schedule(&c,&schedule)&&active==30&&activity_entity.step,"rendered root reactivates conditional timers");
+    {unsigned long i;for(i=0;i<30;++i)activity_entity.step(&activity_entity);}
+    CHECK(!active&&!activity_entity.step,"real thirtieth world callback removes itself without stopping refresh");
     CHECK(bh_draw_queue_dispose(&q),"root queue disposed");
 }
 static void linked_and_ghost(void) {

@@ -154,6 +154,10 @@ static void pixels_copy(BHTextureContext *q,BHTextureImage *image,BHTextureSlot 
 D3DTEXTUREHANDLE __cdecl bh_texture_resident(BHTextureContext *q,BHTextureImage *image) {
     BHTextureSlot *s,*next;
     if(!q || !image || !image->source || !owned_format(q,image->format)) {error(q,BH_TEXTURE_ARGUMENT);return 0;}
+    /* Diagnostics belong to this residency operation. Optional preallocation
+       can retain a usable cache while reporting an earlier allocation error.
+       Native failures below remain sticky until the next operation. */
+    q->error=BH_TEXTURE_OK;
     s=image->resident;
     if(s) {
         if(s->palette_dirty && image->palette && s->palette){palette_copy(q,image,s);s->palette_dirty=0;}

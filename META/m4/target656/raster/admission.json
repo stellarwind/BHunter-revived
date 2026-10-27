@@ -1,0 +1,17 @@
+{
+  "baseline": 606,
+  "module": "software_raster",
+  "scenario": "software-raster",
+  "sources": [
+    "src/bh_software_raster.c",
+    "src/bh_software_raster.h",
+    "tests/software_raster.c"
+  ],
+  "limits": [
+    "28 distinct whole original raster callbacks share source scan conversion and explicit pixel policies; the shared C core and source wrappers add no further counts. All28 have the same374-operation x87/control conversion mnemonic profile; full original boundaries/bytes retained.",
+    "PC53/nearest/masked finite positive-depth input. Explicit binary32 stores, retained reciprocal/du/z values, asymmetric top/bottom determinants, y+1 sampling, no X subpixel adjustment, integer gradient row increments, parity and unsigned32 wrap preserved. PC24/runtime precision transitions remain unvalidated.",
+    "Original square tightly packed power-of-two texture contract retained. Source validates reciprocal ring and framebuffer bounds and rejects invalid signed32 conversion domain; no clipping or original-code mapper added.",
+    "Actual software and horizon lookup owners are linked. Analytic rectangle/triangle masks, all28 policies, signed pitches, depth equality/rejection/always-write, zero raw/mapped indices, all blend planes, gradient rows, nonplanar UV/depth row increments and actual32px texture arithmetic tested.",
+    "No game/original code, physical input, native hardware draws or gameplay automation. Source-only harness, not M4/playable game admission."
+  ]
+}

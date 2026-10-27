@@ -27,7 +27,7 @@ struct BHTargetConstructContext {
   BHScriptParticleContext *particles;
   BHPickupContext *pickups;
   BHTargetDrawContext *draw;
-  long *mode;
+  long *mode; /* original004df250 editor mode passed to wreck update */
   unsigned long smoke_image;
   BHTargetConstructSlot *slots;
   unsigned long capacity;

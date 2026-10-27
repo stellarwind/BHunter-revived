@@ -1,0 +1,42 @@
+{
+  "passed": true,
+  "baseline_functions": 659,
+  "new_owners": 2,
+  "active_original_functions": 661,
+  "real_total": {
+    "scenario": "m2-foundations",
+    "checks": 5528124,
+    "failures": 0,
+    "archive_entries": 1229,
+    "original_code_required": false
+  },
+  "fixture": {
+    "scenario": "editor-control",
+    "checks": 91,
+    "failures": 0,
+    "original_code_required": false
+  },
+  "sources": {
+    "src/bh_editor_control.c": "7a38601fba0860e2f484e38c9115ba88dd58fd625e0818e495c73427cd94f83a",
+    "src/bh_editor_control.h": "00a16da44ddf67ba15c7ec8cbd21314f105549134e9dc6e49438eb629afd083d",
+    "tests/editor_control.c": "e3f91c81d168684cf97c1fd3b3ea70ba515c6140d40404444dbe41f117e2a6b3",
+    "tests/editor_control_fixture.h": "5d90066c2cf045226dd307603af9feb3d06f5fdae1db9a4c2cba4806e4e58216",
+    "tests/checkpoint.c": "d53fe315f84637346f6ceba0c01e417c38e320018ccc3b2947ce9712d8580f76",
+    "tools/m0.py": "bdfec484eb578c562e952b23459a92ce050ef7167cc8406a84f26513417e3239"
+  },
+  "source_snapshots": {
+    "src/bh_editor_control.c": "META/m4/finish/editor-control/sources/7a38601fba0860e2f484e38c9115ba88dd58fd625e0818e495c73427cd94f83a-bh_editor_control.c.txt",
+    "src/bh_editor_control.h": "META/m4/finish/editor-control/sources/00a16da44ddf67ba15c7ec8cbd21314f105549134e9dc6e49438eb629afd083d-bh_editor_control.h.txt",
+    "tests/editor_control.c": "META/m4/finish/editor-control/sources/e3f91c81d168684cf97c1fd3b3ea70ba515c6140d40404444dbe41f117e2a6b3-editor_control.c.txt",
+    "tests/editor_control_fixture.h": "META/m4/finish/editor-control/sources/5d90066c2cf045226dd307603af9feb3d06f5fdae1db9a4c2cba4806e4e58216-editor_control_fixture.h.txt",
+    "tests/checkpoint.c": "META/m4/finish/editor-control/sources/d53fe315f84637346f6ceba0c01e417c38e320018ccc3b2947ce9712d8580f76-checkpoint.c.txt",
+    "tools/m0.py": "META/m4/finish/editor-control/sources/bdfec484eb578c562e952b23459a92ce050ef7167cc8406a84f26513417e3239-m0.py.txt"
+  },
+  "limits": [
+    "Complete mode/catalog/pan/orbit/zoom/grid translation, create/delete, reattach, numeric, selection, rotation/elevation and clipboard branches. Input transitions consumed at original branch positions; supplied decoded data only, no OS or game input execution.",
+    "Actual source world edit, cube decode/build/match, clone, text/sound queues, numeric entry and entity lifetime linked and exercised. Real callbacks installed; snapshots remain data and copies never execute borrowed callbacks.",
+    "Finite moderate PC53 coherent typed ring/model/entity data. Explicit bounded source guards and movement loop limit preserve preceding edits; clipboard capacity maximum50. Empty-editor sentinel installs original callbacks without inventing a selection. No original code, game launch, screenshots or agents."
+  ],
+  "original_code_executed": false,
+  "game_launches": 0
+}

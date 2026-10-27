@@ -1,0 +1,19 @@
+{
+  "passed_source_checks": true,
+  "reported_session": "reported-session.txt",
+  "reported_session_sha256": "e2a95dc84911774e9363363c4a08dceba1bce8815d4773c250fb9f7f2907df55",
+  "wreck_fix": "Editor global004df250 guard incorrectly received gameplay mode1; original entry instructions verified against immutable EXE.",
+  "renderer_failure": {
+    "fixed": false,
+    "reproduced": false,
+    "kind": 5,
+    "resource": 475,
+    "model": "player vehicle CARBAR10.BSP",
+    "behavior": "Explicit callback-error exit followed by cleanup; exact failing sub-error absent from old log.",
+    "new_diagnostics": "First failing model/clip/error and pose retained before later callback resets."
+  },
+  "static_clipping_poses_per_renderer": 220,
+  "source_only": true,
+  "automated_gameplay": false,
+  "original_code_executed": false
+}

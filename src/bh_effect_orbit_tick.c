@@ -40,7 +40,7 @@ void __cdecl bh_effect_orbit_tick(BHEntity *e){
  cached=(BHWorldGeometry*)word(e,0x138);ignore=(BHEntity*)word(e,0x13c);
  if(cached&&!identity){
   for(i=0;i<b->segment->room_count;++i)if(b->segment->rooms[i].world==cached){room=b->segment->rooms+i;break;}if(!room){c->error=2;return;}
-  for(actor=room->actors,n=0;actor;){if(++n>b->segment->max_room_actors){c->error=2;return;}if(actor!=ignore){if(!motion(c,e,actor,gen,&target_position))return;for(i=0;i<3;++i)((float*)&delta)[i]=rf((double)((float*)&target_position)[i]-((float*)&e->position)[i]);length=((double)delta.x*delta.x+(double)delta.y*delta.y)+(double)delta.z*delta.z;
+  for(actor=room->actors_owner?*room->actors_owner:room->actors,n=0;actor;){if(++n>b->segment->max_room_actors){c->error=2;return;}if(actor!=ignore){if(!motion(c,e,actor,gen,&target_position))return;for(i=0;i<3;++i)((float*)&delta)[i]=rf((double)((float*)&target_position)[i]-((float*)&e->position)[i]);length=((double)delta.x*delta.x+(double)delta.y*delta.y)+(double)delta.z*delta.z;
     if(length<9){if(!announce(c,e)){c->error=2;return;}explode(c,e);if(!live(c,e,gen)){c->error=3;return;}bh_entity_release(b->pool,e);direct(actor,rf(1.2-sqrt(length)*.1),source);++c->proximity;return;}}
    get(actor,0xf4,&actor,4);
   }

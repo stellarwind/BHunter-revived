@@ -51,7 +51,7 @@ void __cdecl bh_ballistic_projectile_tick(BHEntity*e){BHHomingProjectileContext*
  result=bh_world_segment_run(c->segment,ignore?&self:NULL,&cached,&old,&end,-1,&hit);if(result<0){c->error=2;return;}put(e,0x124,&cached,4);
  if(!result){
   if(cached){for(i=0;i<c->segment->room_count;++i)if(c->segment->rooms[i].world==cached){room=c->segment->rooms+i;break;}if(!room){c->error=2;return;}
-   for(actor=room->actors,n=0;actor;){if(++n>c->segment->max_room_actors){c->error=2;return;}if(actor!=ignore){
+   for(actor=room->actors_owner?*room->actors_owner:room->actors,n=0;actor;){if(++n>c->segment->max_room_actors){c->error=2;return;}if(actor!=ignore){
     if(!actor->query){c->error=2;return;}position.event=3;position.position=actor->position;actor->query(actor,&position);if(!live(c,e,generation)){c->error=3;return;}
     bh_round_float(&delta.x,(double)position.position.x-old.x);bh_round_float(&delta.y,(double)position.position.y-old.y);bh_round_float(&delta.z,(double)position.position.z-old.z);
     if(length2(&delta)<9){bh_sound_stop(c->sound,voice);bh_sound_request(c->sound,c->hit_sound,1,1,&old,&zero);particles(c,&old);flash(c,&old);bh_entity_release(c->pool,e);

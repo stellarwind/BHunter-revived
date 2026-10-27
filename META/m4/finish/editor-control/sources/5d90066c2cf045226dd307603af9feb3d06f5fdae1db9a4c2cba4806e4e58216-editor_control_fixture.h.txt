@@ -1,0 +1,22 @@
+#include "editor_world_fixture.h"
+typedef struct EditorFixture {
+ BHBsp bsp[2];BHGeometry geometry[2];BHScriptBlock blocks[2];BHScriptBlocks library;
+ BHEntityPool pool;BHDrawQueue queue;BHSoundQueue sound;
+ BHEditorNode nodes[3],*slots[64];BHEditorWorld world;BHScriptBrowser browser;
+ BHPlayerInputState input;BHEditorNumericContext numeric;BHEditorClipboard clipboard[50];
+ BHEditorControl control;
+} EditorFixture;
+static void field(BHEntity *e,unsigned long o,unsigned long v){memcpy((char*)e+o,&v,4);}
+static unsigned long word(BHEntity *e,unsigned long o){unsigned long v;memcpy(&v,(char*)e+o,4);return v;}
+static void real(BHEntity *e,unsigned long o,float f){memcpy((char*)e+o,&f,4);}
+static float number(BHEntity *e,unsigned long o){float f;memcpy(&f,(char*)e+o,4);return f;}
+static void axes(EditorFixture *f,short x,short y){f->input.values[8]=(unsigned short)x|((unsigned long)(unsigned short)y<<16);}
+static void quiet(EditorFixture *f){memset(&f->input,255,sizeof(f->input));axes(f,0,0);}
+static int editor_fixture(EditorFixture *f){unsigned long i;BHSoundResource *resource;memset(f,0,sizeof(*f));if(!bh_entities_init(&f->pool,16,0)||!bh_draw_queue_init(&f->queue,256,0)||!bh_sound_queue_init(&f->sound,0,0,0))return 0;resource=bh_sound_resource_allocate(&f->sound);if(!resource)return 0;resource->streaming=1;resource->base_frequency=100;
+ for(i=0;i<2;++i){if(!bh_bsp_init(f->bsp+i,0)||!cube(f->bsp+i,i==0)||!bh_geometry_init(f->geometry+i,f->bsp+i,0)||!bh_geometry_model_init(&f->blocks[i].model,f->geometry+i,2,6))return 0;f->blocks[i].resource=i+1;f->blocks[i].definition.grid=2;f->blocks[i].definition.flags=6;strcpy(f->blocks[i].definition.name,i?"stone.bsp":"segment.bsp");}f->blocks[0].definition.used_mask=1;strcpy(f->blocks[0].definition.names[0],"Delay");f->blocks[0].definition.values[0]=3;f->blocks[1].definition.values[0]=77;f->library.blocks=f->blocks;f->library.count=2;f->library.columns=5;f->library.rows=1;
+ f->world.pool=&f->pool;f->world.library=&f->library;f->world.queue=&f->queue;f->world.sound=&f->sound;f->world.nodes=f->slots;f->world.capacity=64;f->world.input=&f->input;f->world.numeric=&f->numeric;f->world.mode=1;f->world.browser=&f->browser;f->world.clipboard=f->clipboard;f->world.clipboard_capacity=50;f->world.line_image=10;f->world.selection_image=11;f->world.horizon_image=12;f->browser.library=&f->library;f->browser.queue=&f->queue;f->browser.sound=&f->sound;f->browser.height=600;f->browser.selected=-1;f->browser.active=0;f->browser.grid_image=10;f->browser.selection_image=11;f->numeric.selected=-1;f->control.world=&f->world;
+ for(i=0;i<3;++i){f->nodes[i].entity=bh_entity_acquire(&f->pool);if(!f->nodes[i].entity)return 0;f->nodes[i].model_index=i==1?1:0;f->nodes[i].placement.geometry.model=&f->blocks[f->nodes[i].model_index].model;f->nodes[i].placement.geometry.navigation.next=&f->nodes[(i+1)%3].placement.geometry.navigation;f->nodes[i].placement.geometry.previous=&f->nodes[(i+2)%3].placement.geometry;f->nodes[i].placement.coordinates[0]=i==0?0:i==1?6:20;f->nodes[i].placement.geometry.position.x=(float)f->nodes[i].placement.coordinates[0];f->nodes[i].placement.geometry.query_flags=6;f->nodes[i].entity->position=f->nodes[i].placement.geometry.position;field(f->nodes[i].entity,0x114,6);real(f->nodes[i].entity,0x13c,250);if(!bh_editor_world_attach(&f->world,f->nodes+i))return 0;}
+ for(i=0;i<3;++i)if(!bh_world_geometry_build(&f->nodes[i].placement.geometry,3))return 0;for(i=0;i<3;++i){if(!bh_portals_match(&f->nodes[i].placement.geometry.navigation,3))return 0;field(f->nodes[i].entity,0x120,(unsigned long)f->nodes[(i+2)%3].entity);field(f->nodes[i].entity,0x124,(unsigned long)f->nodes[(i+1)%3].entity);field(f->nodes[i].entity,0x1c8,(unsigned long)(i==1?f->nodes[0].entity:0));}quiet(f);return bh_editor_control_bind(&f->control,f->nodes);
+}
+static void editor_finish(EditorFixture *f){unsigned long i;CHECK(bh_editor_world_dispose(&f->world),"actual world entity/metadata lifecycle");for(i=0;i<2;++i){CHECK(bh_geometry_dispose(f->geometry+i),"source geometry freed");bh_bsp_dispose(f->bsp+i);}CHECK(bh_sound_queue_dispose(&f->sound)&&bh_draw_queue_dispose(&f->queue)&&bh_entities_dispose(&f->pool),"source pool/queue dependencies freed");}
+static void tick(EditorFixture *f,unsigned long key_index){BHEntity *e=f->world.selection?f->world.selection->entity:f->world.nodes[0]->entity;f->input.values[key_index]=1;e->step(e);}

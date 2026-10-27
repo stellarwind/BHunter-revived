@@ -9,6 +9,11 @@ typedef struct BHHitMarkerContext {
     unsigned long image,count;
     BHEntity *oldest,*newest;
     BHHitMarkerError error;
+    /* Optional application bridge for a semantic room's shared pickup/marker
+       head. Returning NULL retains the original owner+12c storage. The
+       callback and resolved head outlive all markers belonging to that owner. */
+    BHEntity **(__cdecl *owner_head)(BHEntity *owner,void *user);
+    void *owner_head_user;
 } BHHitMarkerContext;
 typedef void (__cdecl *BHHitMarkerDraw)(BHEntity *);
 /* Whole 00407b40 / 00407a20. Context must start zeroed, bind the real pool,

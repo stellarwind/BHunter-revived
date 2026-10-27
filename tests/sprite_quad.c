@@ -1,5 +1,6 @@
 #include "../src/bh_sprite_quad.h"
 #include "../src/bh_fp.h"
+#include "../src/bh_menu_present.h"
 #include "sprite_quad_cases.h"
 #include <math.h>
 #include <stdio.h>
@@ -31,7 +32,7 @@ static void geometry(void){Fixture f;BHVec3 p={0,0,4},n={0,0,-1},up={0,1,0};unsi
     const double x[4]={1,1,-1,-1},y[4]={1,-1,-1,1};
     for(flags=0;flags<16;++flags){setup(&f);CHECK(draw(&f,&p,&n,&up,2,2,0,(unsigned char)flags,1),"all UV/front flags draw");
         CHECK(f.count==4 && f.calls==1 && f.color==0xffffffffUL && f.draw.emitted==1,"one white quad");
-        for(i=0;i<4;++i){double u=i==1 || i==2?.625:.125,v=i>=2?.625:.25,a;
+        for(i=0;i<4;++i){double u=i>=2?.625:.125,v=i==1 || i==2?.625:.25,a;
             if(flags&1)u=1-u;if(flags&2)v=1-v;if(flags&4){a=u;u=v;v=a;}
             CHECK(close_to(f.observed[i].local.x,x[i]) && close_to(f.observed[i].local.y,y[i]) && f.observed[i].local.z==4,"independent world-plane corners");
             CHECK(close_to(f.observed[i].sx,x[i]/4) && close_to(f.observed[i].sy,y[i]/4) && f.observed[i].point.z==4,"real clipper projection");
@@ -43,6 +44,21 @@ static void geometry(void){Fixture f;BHVec3 p={0,0,4},n={0,0,-1},up={0,1,0};unsi
     CHECK(f.observed[0].local.x==-1 && f.observed[1].local.x==1 && f.observed[1].local.y==1,"backface reverses ring starting at same corner");
     n.z=-1;CHECK(draw(&f,&p,&n,&up,2,4,1.5707963267948966f,0,1),"quarter-turn basis rotation");
     CHECK(close_to(f.observed[0].local.x,-2) && close_to(f.observed[0].local.y,1) && close_to(f.observed[1].local.x,2) && close_to(f.observed[1].local.y,1),"analytical rotated rectangle");
+}
+static BHTextureImage *__cdecl menu_image(unsigned long handle,void *user){return handle==17?&((Fixture*)user)->image:NULL;}
+static void menu_label(void){Fixture f;BHDrawQueue q;BHMenuPresent menu;BHMenuPresentRow row;BHMenuRow frame;
+    BHVec3 eye={0,0,0},angles={0,0,0};BHQuadQueueContext consumer;unsigned long next;
+    setup(&f);memset(&q,0,sizeof(q));memset(&menu,0,sizeof(menu));memset(&row,0,sizeof(row));memset(&frame,0,sizeof(frame));
+    CHECK(bh_draw_queue_init(&q,32,NULL),"menu label real queue");
+    row.row=&frame;row.image_handle=17;menu.queue=&q;menu.eye=&eye;menu.angles=&angles;menu.rows=&row;menu.row_count=1;menu.distance=4;
+    CHECK(bh_menu_present(&menu)&&q.commands[10].kind==BH_DRAW_QUAD,"real menu emits rectangular text quad");
+    memset(&consumer,0,sizeof(consumer));consumer.draw=&f.draw;
+    /* Capture the actual queue payload through its real quad consumer below. */
+    consumer.lookup=menu_image;consumer.lookup_user=&f;
+    CHECK(bh_quad_queue_execute(&consumer,q.commands+10,&next)&&f.count==4,"menu text goes through real consumer and clipper");
+    CHECK(close_to(f.observed[0].local.x,-.5)&&close_to(f.observed[0].local.y,-.2)&&close_to(f.observed[2].local.x,.5)&&close_to(f.observed[2].local.y,.2),"unchanged 1 by .4 menu text footprint");
+    CHECK(f.observed[0].u==0&&f.observed[0].v==0&&f.observed[1].u==0&&f.observed[1].v==.5f&&f.observed[2].u==1&&f.observed[2].v==.5f&&f.observed[3].u==1&&f.observed[3].v==0,"original menu maps full page width and top half height to matching axes");
+    CHECK(bh_draw_queue_dispose(&q),"menu label queue release");
 }
 static void clipping(void){Fixture f;BHVec3 p={3.5f,0,4},n={0,0,-1},up={0,1,0};unsigned long before;
     setup(&f);CHECK(draw(&f,&p,&n,&up,4,2,0,0,1) && f.clip.used>0 && f.calls==1,"quad passes real side clipping");
@@ -88,7 +104,7 @@ static void golden(void){Fixture f;BHVec3 p,n,up;float size[2],uv[4];unsigned lo
     }
 }
 int bh_sprite_quad_checkpoint(unsigned long *count){BHMathEnvironment fp;checks=0;failures=0;if(!bh_math_environment_enter(&fp))return 2;
-    geometry();clipping();lighting();golden();CHECK(bh_math_environment_supported(),"PC53 remains established");bh_math_environment_leave(&fp);if(count)*count=checks;
+    geometry();menu_label();clipping();lighting();golden();CHECK(bh_math_environment_supported(),"PC53 remains established");bh_math_environment_leave(&fp);if(count)*count=checks;
     printf("{\"scenario\":\"sprite-quad\",\"checks\":%lu,\"failures\":%d,\"original_code_required\":false}\n",checks,failures);return failures!=0;
 }
 #ifdef BH_SPRITE_QUAD_STANDALONE

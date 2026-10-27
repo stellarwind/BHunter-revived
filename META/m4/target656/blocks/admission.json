@@ -1,0 +1,20 @@
+{
+  "baseline": 653,
+  "module": "script_blocks",
+  "scenario": "script-blocks",
+  "sources": [
+    "src/bh_script_blocks.c",
+    "src/bh_script_blocks.h",
+    "tests/script_blocks.c",
+    "tests/script_parse_fixture.h",
+    "tests/actor_construct_fixture.h",
+    "tests/actor_response_fixture.h"
+  ],
+  "limits": [
+    "Whole script registry load and both whole editor catalogue/cell preview owners. Fixed original600 block cap, real VFILE/sidecar/VM, independent rendering and collision models, bounds/material/portal flags, render-success count, sqrt page layout and real water texture flags retained.",
+    "Resources borrow actual source renderer registry; collision arrays owned/disposed by this source adapter. Earlier resource/template effects remain after failed model entries; script entities retain external pool ownership. No original code/data mapping or game loader.",
+    "Editor previews use actual camera, GDI label, resource-model and screen-quad queue owners and sound request. Signed32 private animation recurrence, retained yaw vs stored phase wrap, distinct float label scaling vs integer cell spacing, retained/stored radius asymmetry, inclusive cursor clamp and small-row offset behavior recovered from instructions. No pixel rendering/presentation or input automation in these fixtures.",
+    "Source bounds: names16, path/line512, library600, dimensions600, viewport height1..16384, finite PC53 state. Native DirectDraw/Direct3D texture owner fixture is owned and hidden; no game code, game execution, gameplay automation, peer or audio playback.",
+    "Fixtures execute actual renderer model descriptor, collision cube, sidecar templates, water PCX/flags, missing model/list/cached gate, source model bounds, actual cell label/resource pose, all browser producer kinds, deterministic angles/private RNG, selection/no-repeat cue, source scroll behavior, cyclic angle wrap, malformed/full queue and out-of-range no-op."
+  ]
+}

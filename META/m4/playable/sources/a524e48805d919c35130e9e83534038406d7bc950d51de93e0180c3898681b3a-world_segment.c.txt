@@ -1,0 +1,268 @@
+#include "../src/bh_world_segment.h"
+#include "../src/bh_camera_state.h"
+#include "../src/bh_player_camera.h"
+#include "../src/bh_fp.h"
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+
+static unsigned long checks,failures;
+#define CHECK(x,s) do {++checks;if(!(x)){++failures;printf("FAIL world-segment: %s\n",s);}} while(0)
+static int near_value(double a,double b) {return fabs(a-b)<.0001;}
+static void identity(BHMat34 *m) {memset(m,0,sizeof(*m));m->m[0][0]=m->m[1][1]=m->m[2][2]=1;}
+typedef struct Mesh {
+    BHBsp bsp;BHBspVertex vertices[4];BHBspEdge edges[4];BHBspFace face;
+    BHBspNode node;BHBspLeaf leaf;BHBspMaterial material;unsigned char storage;
+    BHGeometry geometry;BHSegmentQuery query;
+} Mesh;
+static int mesh_init(Mesh *m,float half_y) {
+    unsigned long i;memset(m,0,sizeof(*m));
+    m->bsp.vertices=m->vertices;m->bsp.edges=m->edges;m->bsp.faces=&m->face;
+    m->bsp.nodes=&m->node;m->bsp.leaves=&m->leaf;m->bsp.materials=&m->material;m->bsp.storage=&m->storage;
+    m->bsp.counts[0]=m->bsp.counts[3]=m->bsp.counts[4]=m->bsp.counts[5]=1;
+    m->bsp.counts[1]=m->bsp.counts[2]=4;
+    for(i=0;i<4;++i) {
+        m->vertices[i].y=(i==0 || i==3)?-half_y:half_y;
+        m->vertices[i].z=i<2?-10:10;m->edges[i].vertex=i;m->edges[i].next=i<3?i+1:-1;
+    }
+    m->node.normal[0]=1;m->node.front_node=m->node.back_node=-1;
+    m->node.front_leaf=0;m->node.back_leaf=-1;m->leaf.face=0;m->leaf.next=-1;
+    return bh_geometry_init(&m->geometry,&m->bsp,NULL) && bh_segment_query_init(&m->query,&m->geometry);
+}
+static void mesh_dispose(Mesh *m) {bh_segment_query_dispose(&m->query);bh_geometry_dispose(&m->geometry);}
+static void worlds(BHWorldGeometry *w,unsigned long n) {
+    unsigned long i;memset(w,0,n*sizeof(*w));
+    for(i=0;i<n;++i) {
+        w[i].navigation.next=&w[(i+1)%n].navigation;w[i].previous=w+(i+n-1)%n;
+        w[i].minimum.x=w[i].minimum.y=w[i].minimum.z=-20;
+        w[i].maximum.x=w[i].maximum.y=w[i].maximum.z=20;
+        identity(&w[i].transform);identity(&w[i].inverse);
+    }
+}
+static void move_world(BHWorldGeometry *w,float x) {
+    w->position.x=x;w->transform.m[0][3]=x;w->inverse.m[0][3]=-x;
+}
+static void actor_init(BHEntity *e,float x,float y,float radius) {
+    float basis[9]={1,0,0,0,1,0,0,0,1};memset(e,0,sizeof(*e));
+    e->position.x=x;e->position.y=y;e->collision_radius=radius;memcpy(e->opaque0,basis,sizeof(basis));
+}
+static void set_next(BHEntity *e,BHEntity *next) {memcpy(e->payload+16,&next,sizeof(next));}
+static int init(BHWorldSegmentContext *q,BHWorldGeometry *w,unsigned long count,
+    BHWorldSegmentRoom *r,const BHWorldSegmentActor *actors,unsigned long actor_count) {
+    unsigned long i;for(i=0;i<count;++i) {r[i].world=w+i;r[i].kind=1;}
+    return bh_world_segment_init(q,w,count,r,count,actors,actor_count,16);
+}
+static void geometry_and_children(void) {
+    Mesh m;BHWorldGeometry w[3],*cached;BHWorldSegmentRoom rooms[3];
+    BHWorldSegmentContext q;BHWorldSegmentHit hit,saved;BHWorldHit self;
+    BHVec3 a={3,0,0},b={-3,0,0};
+    CHECK(mesh_init(&m,10),"real BSP geometry and segment workspace");
+    worlds(w,3);memset(rooms,0,sizeof(rooms));rooms[0].query=rooms[1].query=rooms[2].query=&m.query;
+    w[0].query_flags=w[1].query_flags=w[2].query_flags=2;
+    w[1].owner=w[2].owner=w;move_world(w+1,1);move_world(w+2,2);
+    CHECK(init(&q,w,3,rooms,NULL,0),"real ring/model bindings");
+    memset(&hit,0x55,sizeof(hit));cached=w;
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&a,&b,-1,&hit)==1 &&
+        hit.object.kind==BH_WORLD_HIT_GEOMETRY && hit.object.object.geometry==w+2 &&
+        near_value(hit.point.x,2.05) && near_value(hit.fraction,.1583333333) && cached==w,
+        "room then following children shorten real BSP segment and retain initial room cache");
+    self.kind=BH_WORLD_HIT_GEOMETRY;self.object.geometry=w+2;
+    CHECK(bh_world_segment_run(&q,&self,&cached,&a,&b,-1,&hit)==1 &&
+        hit.object.object.geometry==w+1 && near_value(hit.point.x,1.05),"self child exclusion");
+    w[2].minimum.y=1;w[2].maximum.y=2;
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&a,&b,-1,&hit)==1 && hit.object.object.geometry==w+1,
+        "child AABB rejects nonoverlap");
+    w[1].query_flags=0;w[2].query_flags=0;bh_geometry_set_flags(&m.geometry,0,0x01000002);
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&a,&b,-1,&hit)==1 &&
+        hit.material_flags==0x01000002,"material signed-to-float roundtrip");
+    bh_geometry_set_flags(&m.geometry,0,0x01000006);
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&a,&b,-1,&hit)==1 && hit.material_flags==0x01000006,
+        "material roundtrip normal even flags");
+    bh_geometry_set_flags(&m.geometry,0,0x02000002);
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&a,&b,-1,&hit)==1 && hit.material_flags==0x02000000,
+        "material roundtrip actually loses low bit at binary32 spacing4");
+    bh_geometry_set_flags(&m.geometry,0,0x7ffffffe);
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&a,&b,-1,&hit)==1 &&
+        (unsigned long)hit.material_flags==0x80000000u,"float material rounds to2^31 and stores CRT ftol low32 bits");
+    bh_geometry_set_flags(&m.geometry,0,1);saved=hit;saved.material_flags=0;cached=w;
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&a,&b,-1,&hit)==0 &&
+        !memcmp(&hit,&saved,sizeof(hit)),"disabled polygon miss clears only material word");
+    cached=NULL;a.x=100;b.x=101;saved=hit;
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&a,&b,-1,&hit)==0 && !cached &&
+        !memcmp(&hit,&saved,sizeof(hit)),"no cached or located room returns miss before actor pass");
+    cached=w;a.x=100;b.x=101;
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&a,&b,-1,&hit)==0 && cached==w,
+        "failed containing-room lookup preserves previous room fallback");
+    cached=w;q.busy=1;saved=hit;
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&a,&b,-1,&hit)==-1 &&
+        !memcmp(&hit,&saved,sizeof(hit)),"busy guard preserves output");q.busy=0;
+    CHECK(bh_world_segment_run(&q,NULL,NULL,&a,&b,-1,&hit)==-1 &&
+        q.error==BH_WORLD_SEGMENT_ARGUMENT,"missing cache argument diagnosed");
+    w[0].navigation.next=NULL;saved=hit;cached=w;a.x=3;b.x=-3;
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&a,&b,-1,&hit)==-1 &&
+        q.error==BH_WORLD_SEGMENT_TOPOLOGY && !memcmp(&hit,&saved,sizeof(hit)),"broken child traversal rejects without output commit");
+    mesh_dispose(&m);
+}
+static void portals(void) {
+    Mesh m;BHWorldGeometry w[3],*cached;BHWorldSegmentRoom rooms[3];
+    BHWorldSegmentContext q;BHWorldSegmentHit hit;BHVec3 a={-2,0,0},b={2,0,0};
+    BHPortal *p;unsigned long axis,direction;
+    CHECK(mesh_init(&m,10),"portal real BSP");worlds(w,3);memset(rooms,0,sizeof(rooms));
+    rooms[1].query=rooms[2].query=&m.query;w[1].query_flags=w[2].query_flags=2;
+    move_world(w+1,1);move_world(w+2,1);w[0].navigation.count=2;
+    p=w[0].navigation.portals;memset(p,0,2*sizeof(*p));
+    p[0].direction=p[1].direction=4;p[0].neighbor=&w[2].navigation;p[1].neighbor=&w[1].navigation;
+    p[0].aperture[0]=p[0].aperture[2]=p[1].aperture[0]=p[1].aperture[2]=-1;
+    p[0].aperture[1]=p[0].aperture[3]=p[1].aperture[1]=p[1].aperture[3]=1;
+    CHECK(init(&q,w,3,rooms,NULL,0),"portal ring binding");cached=w;memset(&hit,0,sizeof(hit));
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&a,&b,-1,&hit)==1 && hit.object.object.geometry==w+2 &&
+        near_value(hit.point.x,1.05) && near_value(hit.fraction,.7625) && cached==w,
+        "first matching portal slot wins and hit fraction covers entire original segment");
+    a.y=b.y=1;
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&a,&b,-1,&hit)==0,"portal aperture border crossing is strict");
+    a.y=b.y=0;a.x=0;
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&a,&b,-1,&hit)==0,"portal start on plane is strict miss");
+    a.x=-2;b.x=0;
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&a,&b,-1,&hit)==0,"portal end on plane is strict miss");
+    /* For every axis/direction traverse to a room with a query-disabled model;
+       give that room a deliberate invalid query topology. Reaching it is an
+       observable dependency failure only after a strictly valid crossing. */
+    w[0].navigation.count=1;rooms[2].query->busy=1;
+    for(axis=0;axis<3;++axis)for(direction=0;direction<2;++direction) {
+        a.x=a.y=a.z=0;b=a;((float*)&a)[axis]=direction?-2:2;((float*)&b)[axis]=direction?2:-2;
+        p->direction=axis+(direction?4:0);cached=w;
+        CHECK(bh_world_segment_run(&q,NULL,&cached,&a,&b,-1,&hit)==-1 &&
+            q.error==BH_WORLD_SEGMENT_DEPENDENCY,"all six strict directional portal crossings reach actual segment dependency");
+    }
+    a.x=16777216.0f;b.x=16777218.0f;a.y=a.z=b.y=b.z=0;
+    p->direction=4;p->plane=16777217;cached=w;
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&a,&b,-1,&hit)==0,
+        "portal integer plane converts to binary32 before strict equality comparison");
+    rooms[2].query->busy=0;mesh_dispose(&m);
+}
+static unsigned long callback_calls;static BHEntity *callback_skip,*callback_mutate_event;
+static long callback_last_event;static BHWorldGeometry **callback_cache,*callback_observed_cache;
+static BHWorldSegmentHit *callback_out;static long callback_observed_material;
+/* Isolated fixture event3 behavior. No fixture callback is installed by source. */
+static void __cdecl actor_position(BHEntity *e,void *raw) {
+    BHEntityPositionPacket *p=(BHEntityPositionPacket*)raw;
+    ++callback_calls;callback_last_event=p->event;if(p->event==3)p->position=e->position;
+    if(callback_calls==1 && callback_cache)callback_observed_cache=*callback_cache;
+    if(callback_cache)*callback_cache=NULL;
+    if(callback_out)callback_observed_material=callback_out->material_flags;
+    if(callback_mutate_event==e)p->event=17;
+    if(callback_skip==e)set_next(e,NULL);
+}
+static void actor_queries(void) {
+    Mesh m;BHWorldGeometry w,*cached;BHWorldSegmentRoom room;
+    BHWorldSegmentContext q;BHWorldSegmentHit hit;BHWorldHit self;
+    BHEntity a,b,*live_head;BHWorldSegmentActor actors[2];BHVec3 start={3,0,0},end={-3,0,0};BHWorldSegmentHit saved;
+    CHECK(mesh_init(&m,10),"actor real BSP");worlds(&w,1);memset(&room,0,sizeof(room));
+    room.query=&m.query;w.query_flags=2;bh_geometry_set_flags(&m.geometry,0,6);
+    actor_init(&a,1,0,2);actor_init(&b,2,0,2);
+    actors[0].entity=&a;actors[1].entity=&b;actors[0].query=actors[1].query=&m.query;
+    CHECK(init(&q,&w,1,&room,actors,2),"ordered real actor/model bindings");cached=&w;memset(&hit,0,sizeof(hit));
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&start,&end,-1,&hit)==1 &&
+        hit.object.kind==BH_WORLD_HIT_ACTOR && hit.object.object.actor==&b && near_value(hit.point.x,2.05) &&
+        hit.material_flags==6,"global actor narrow phase replaces earlier geometry but preserves original material word");
+    a.position.x=2;
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&start,&end,-1,&hit)==1 && hit.object.object.actor==&a,
+        "equal-position global actors retain first array entry");
+    self.kind=BH_WORLD_HIT_ACTOR;self.object.actor=&a;
+    CHECK(bh_world_segment_run(&q,&self,&cached,&start,&end,-1,&hit)==1 && hit.object.object.actor==&b,
+        "global actor self exclusion");
+    a.position.y=b.position.y=2;
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&start,&end,-1,&hit)==1 &&
+        hit.object.kind==BH_WORLD_HIT_GEOMETRY,"global actor tangency rejected strictly");
+    q.actor_count=0;w.query_flags=0;a.position.x=1;a.position.y=0;b.position.x=0;b.position.y=0;
+    a.query=b.query=actor_position;set_next(&a,&b);room.actors=&a;callback_calls=0;callback_skip=NULL;
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&start,&end,.5f,&hit)==1 &&
+        hit.object.object.actor==&a && near_value(hit.point.x,1.5) && near_value(hit.normal.x,1) && callback_calls==2,
+        "room sphere narrow phase calls installed event3 queries and uses first entry distance");
+    live_head=&b;room.actors_owner=&live_head;callback_calls=0;
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&start,&end,.5f,&hit)==1&&hit.object.object.actor==&b&&callback_calls==1,
+        "shared room list observes a new head without rebinding or copying its old head");
+    live_head=NULL;callback_calls=0;
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&start,&end,.5f,&hit)==0&&!callback_calls,
+        "retired last room actor is absent immediately through the authoritative owner");
+    room.actors_owner=NULL;
+    callback_calls=0;callback_mutate_event=&a;
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&start,&end,.5f,&hit)==1 && callback_last_event==17,
+        "room actor event mutation persists to next callback in same packet");callback_mutate_event=NULL;
+    cached=NULL;callback_calls=0;callback_cache=&cached;callback_out=&hit;hit.material_flags=77;
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&start,&end,.5f,&hit)==1 &&
+        callback_observed_cache==&w && cached==NULL && callback_observed_material==0,
+        "resolved cache and cleared output material publish before callbacks; callback cache mutation persists");
+    callback_cache=NULL;callback_out=NULL;cached=&w;
+    callback_calls=0;self.object.actor=&a;
+    CHECK(bh_world_segment_run(&q,&self,&cached,&start,&end,.5f,&hit)==1 &&
+        hit.object.object.actor==&b && callback_calls==1,"room sphere self exclusion skips callback");
+    callback_calls=0;callback_skip=&a;
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&start,&end,.5f,&hit)==1 && callback_calls==1,
+        "room successor is loaded after callback mutation");callback_skip=NULL;set_next(&a,&a);
+    saved=hit;
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&start,&end,.5f,&hit)==-1 &&
+        q.error==BH_WORLD_SEGMENT_TOPOLOGY && !memcmp(&hit,&saved,sizeof(hit)) && cached==&w,
+        "room actor cycle bounded explicitly with source output and cache rollback");
+    a.kind=1;
+    CHECK(!init(&q,&w,1,&room,actors,2),"nonzero common-kind actor requires world binding; never guessed as actor owner");
+    mesh_dispose(&m);
+}
+static void correction(void) {
+    Mesh a,b;BHWorldGeometry w[2];BHWorldSegmentRoom rooms[2];BHWorldSegmentContext q;
+    BHCameraCorrectionOwner owner;BHVec3 target={3,0,0},eye={-3,0,0};
+    CHECK(mesh_init(&a,10) && mesh_init(&b,.01f),"camera correction real geometry dependencies");
+    worlds(w,2);memset(rooms,0,sizeof(rooms));rooms[0].query=&a.query;rooms[1].query=&b.query;
+    w[0].query_flags=2;w[1].owner=w;move_world(w+1,.4f);
+    CHECK(init(&q,w,2,rooms,NULL,0),"camera correction world binding");memset(&owner,0,sizeof(owner));owner.query=&q;
+    CHECK(bh_camera_correct(&owner,&eye,&target,NULL) && near_value(eye.x,.65) &&
+        owner.cached==w && owner.selected==w,"camera first hit, outward probe miss and selected world ownership");
+    eye.x=2;
+    CHECK(bh_camera_correct(&owner,&eye,&target,NULL) && eye.x==2 && owner.selected==w,
+        "camera unobstructed path preserves eye and selected blocker");
+    w[1].query_flags=2;eye.x=-3;eye.y=-3;target.y=3;
+    CHECK(bh_camera_correct(&owner,&eye,&target,NULL) && near_value(eye.x,.7) && near_value(eye.y,0),
+        "camera second outward trace hits thin child and uses fraction-scaled normal clearance");
+    target.y=0;eye.x=-3;eye.y=0;w[0].query_flags=0;w[1].query_flags=2;
+    bh_camera_correct_callback(&eye,&target,0,&owner);
+    CHECK(owner.error==BH_WORLD_SEGMENT_OK && owner.selected==w,"contextual bridge uses actual owner and follows child parent");
+    mesh_dispose(&b);mesh_dispose(&a);
+}
+static void camera_composition(void) {
+    Mesh mesh,actor_mesh;BHWorldGeometry world;BHWorldSegmentRoom room;
+    BHWorldSegmentActor actor_binding;BHWorldSegmentContext query;BHCameraCorrectionOwner correction;
+    BHEntity actor;BHPlayerCameraStart start;BHPlayerCameraContext reset;
+    BHCameraStateContext context;BHCameraState *camera;BHCameraInput input;
+    CHECK(mesh_init(&mesh,10) && mesh_init(&actor_mesh,10),"composed camera actual BSP query owners");
+    worlds(&world,1);world.query_flags=2;memset(&room,0,sizeof(room));room.query=&mesh.query;
+    actor_init(&actor,3,0,100);actor_binding.entity=&actor;actor_binding.query=&actor_mesh.query;
+    CHECK(init(&query,&world,1,&room,&actor_binding,1),"composed camera actual actor identity and models");
+    memset(&correction,0,sizeof(correction));correction.query=&query;memset(&context,0,sizeof(context));
+    camera=bh_player_camera_state(&actor);memset(camera,0,sizeof(*camera));bh_camera_state_init(camera,1);
+    CHECK(bh_camera_state_bind_correction(&context,bh_camera_correct_callback,&correction),
+        "bind actual recovered correction through contextual adapter");
+    memset(&input,0,sizeof(input));input.target=actor.position;input.basis_x.z=-1;
+    input.basis_y.y=1;input.basis_z.x=1;input.actor_token=(unsigned long)&actor;
+    CHECK(bh_camera_state_update(&context,camera,&input,1.0/30,0,0) &&
+        correction.error==BH_WORLD_SEGMENT_OK && correction.selected==&world &&
+        near_value(camera->position.x,.65),"actual mode1 smoothing and world correction clip camera behind wall with self actor excluded");
+    memset(&start,0,sizeof(start));start.position=actor.position;start.angles.x=1.5707963267948966f;
+    memset(&reset,0,sizeof(reset));reset.player=&actor;reset.camera=&context;reset.starts=&start;
+    reset.start_count=1;reset.player_count=1;
+    CHECK(bh_player_camera_reset(&reset,0) && correction.error==BH_WORLD_SEGMENT_OK &&
+        correction.cached==&world && correction.selected==&world && near_value(camera->position.x,.65) &&
+        camera->elapsed>1.69 && camera->elapsed<1.71,
+        "real player camera reset performs50 source updates through actual correction and BSP dependencies");
+    mesh_dispose(&actor_mesh);mesh_dispose(&mesh);
+}
+int bh_world_segment_checkpoint(unsigned long *count) {
+    BHMathEnvironment environment;checks=failures=0;
+    if(!bh_math_environment_enter(&environment))return 1;
+    geometry_and_children();portals();actor_queries();correction();camera_composition();
+    bh_math_environment_leave(&environment);if(count)*count=checks;
+    printf("{\"scenario\":\"world-segment\",\"checks\":%lu,\"failures\":%lu,\"original_code_required\":false}\n",checks,failures);
+    return failures!=0;
+}
+#ifdef BH_WORLD_SEGMENT_STANDALONE
+int main(void) {return bh_world_segment_checkpoint(NULL);}
+#endif

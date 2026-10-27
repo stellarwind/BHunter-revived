@@ -25,6 +25,12 @@ void __cdecl bh_entity_schedule_tick(BHEntityScheduleRoom *room) {
     if(!room || !room->frame_active)return;
     if(room->frame_remaining)room->frame_remaining--;
     if(!room->frame_remaining)room->frame_active=0;
+    if(room->activity)*room->activity=(long)room->frame_remaining;
+}
+static void __cdecl activity_tick(BHEntity *entity){BHEntityScheduleRoom *room;
+    memcpy(&room,entity->payload+608,4);if(!room||room->activity_entity!=entity)return;
+    bh_entity_schedule_tick(room);memcpy((char*)entity+0x104,&room->frame_remaining,4);
+    if(!room->frame_active)entity->step=NULL;
 }
 static int fail(BHEntityScheduleContext *c,BHEntityScheduleError e) {
     if(c)c->error=e;
@@ -121,6 +127,8 @@ static int schedule(BHEntityScheduleContext *c,BHEntityScheduleRoom *r,unsigned 
     world=r->room->world;
     if(!resource(c,r,0))return 0;
     r->frame_active=1;r->frame_remaining=30;
+    if(r->activity)*r->activity=30;
+    if(r->activity_entity){memcpy(r->activity_entity->payload+608,&r,4);memcpy((char*)r->activity_entity+0x104,&r->frame_remaining,4);r->activity_entity->step=activity_tick;}
     if(!r->frame_seen || r->last_frame!=c->frame) {
         r->last_frame=c->frame;r->frame_seen=1;
         if(!draw_children(c,r->room->actors,0))return 0;

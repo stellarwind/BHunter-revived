@@ -36,7 +36,7 @@ static unsigned long color_oracle(const LitFixture *f,const BHBspNode *n) {
     if(f->lit.point_enabled){dynamic=f->ambient.effective_intensity*f->lit.scale;r=clamp(((f->ambient.color>>16)&255)*dynamic);g=clamp(((f->ambient.color>>8)&255)*dynamic);b=clamp((f->ambient.color&255)*dynamic);}
     if(f->directional.enabled){side=n->normal[0]*f->view.position.x+n->normal[1]*f->view.position.y+n->normal[2]*f->view.position.z+n->plane;
         dot=(n->normal[0]*f->lit.local_direction.x+n->normal[1]*f->lit.local_direction.y+n->normal[2]*f->lit.local_direction.z)*f->lit.scale;
-        if(side>=0)dot=-dot;if(dot<0)dot=0;
+        if(side<0)dot=-dot;if(dot<0)dot=0;
         r=clamp(dot*f->directional.directional[0]+r+f->directional.ambient[0]);g=clamp(dot*f->directional.directional[1]+g+f->directional.ambient[1]);b=clamp(dot*f->directional.directional[2]+b+f->directional.ambient[2]);}
     return f->lit.base_color+((r<<16)|(g<<8)|b);
 }
@@ -66,8 +66,8 @@ static void varied(void) {
 static void controls(void) {
     LitFixture f;BHLight point;BHVec3 reference;
     CHECK(fixture(&f),"isolated lighting controls fixture");f.nodes[0].front_node=f.nodes[0].back_node=-1;f.nodes[0].normal[0]=f.nodes[0].normal[1]=0;f.nodes[0].normal[2]=1;
-    f.view.position.z=-2;f.count=0;CHECK(bh_model_draw_lit(&f.lit,0,0) && f.count==1 && f.color[0]==color_oracle(&f,f.nodes),"negative eye side uses positive directional dot");
-    bh_model_draw_cache_reset(&f.cache);f.draw.frame=2;f.view.position.z=2;f.count=0;CHECK(bh_model_draw_lit(&f.lit,0,0) && f.color[0]==color_oracle(&f,f.nodes),"nonnegative eye side negates directional dot before clamp");
+    f.view.position.z=-2;f.count=0;CHECK(bh_model_draw_lit(&f.lit,0,0) && f.count==1 && f.color[0]==color_oracle(&f,f.nodes),"negative eye side negates directional dot");
+    bh_model_draw_cache_reset(&f.cache);f.draw.frame=2;f.view.position.z=2;f.count=0;CHECK(bh_model_draw_lit(&f.lit,0,0) && f.color[0]==color_oracle(&f,f.nodes),"nonnegative eye side keeps directional dot before clamp");
     f.directional.directional[0]=1000;f.directional.directional[1]=-1000;f.directional.directional[2]=0;f.directional.ambient[0]=0;f.directional.ambient[1]=0;f.directional.ambient[2]=12.99f;f.view.position.z=-2;f.draw.frame=3;f.count=0;
     CHECK(bh_model_draw_lit(&f.lit,0,0) && f.color[0]==color_oracle(&f,f.nodes),"actual signed truncation then low/high channel clamps");
     f.directional.enabled=0;f.lit.point_enabled=0;f.lit.base_color=0xfffffff0UL;f.draw.frame=4;f.count=0;CHECK(bh_model_draw_lit(&f.lit,0,0) && f.color[0]==0xfffffff0UL,"both lighting modes disabled preserve additive base color exactly");
@@ -90,9 +90,23 @@ static void controls(void) {
     CHECK(bh_model_draw_unlit(&f.draw,0,1) && f.count==1,"real frozen unlit positive control groupsZ+(X+Y) and accepts same cancellation fixture");
     bh_model_draw_cache_dispose(&f.cache);
 }
+static void menu_sign(void){
+    LitFixture f;unsigned long i;static const float eye[3]={-2,2,0};
+    static const unsigned long expected[3]={0xffe6ffe0UL,0xff663340UL,0xff663340UL};
+    CHECK(fixture(&f),"menu lighting sign fixture uses real face/clip owners");
+    f.nodes[0].front_node=f.nodes[0].back_node=-1;
+    f.nodes[0].normal[0]=f.nodes[0].normal[1]=0;f.nodes[0].normal[2]=1;
+    f.lit.point_enabled=0;f.lit.local_direction.x=f.lit.local_direction.y=0;f.lit.local_direction.z=-1;
+    bh_light_configure(&f.directional,1,0,0,1,1,.4f,0x80ffa0,0xff80a0);
+    /* Literal channel results from original negative-side FCHS and clamp;
+       independent of the traversal oracle above, with equality control. */
+    for(i=0;i<3;++i){bh_model_draw_cache_reset(&f.cache);f.draw.frame=i+1;f.view.position.z=eye[i];f.count=0;
+        CHECK(bh_model_draw_lit(&f.lit,0,0)&&f.count==1&&f.color[0]==expected[i],"original menu light colors respect negative/nonnegative/zero side");}
+    bh_model_draw_cache_dispose(&f.cache);
+}
 int bh_model_draw_lit_checkpoint(unsigned long *count) {
     BHMathEnvironment fp;checks=0;failures=0;if(!bh_math_environment_enter(&fp))return 2;
-    varied();controls();CHECK(bh_math_environment_supported(),"lit model draw preserves caller PC53 profile");
+    varied();controls();menu_sign();CHECK(bh_math_environment_supported(),"lit model draw preserves caller PC53 profile");
     bh_math_environment_leave(&fp);*count=checks;printf("{\"scenario\":\"model-draw-lit\",\"checks\":%lu,\"failures\":%d,\"original_code_required\":false}\n",checks,failures);return failures!=0;
 }
 #ifdef BH_MODEL_DRAW_LIT_STANDALONE

@@ -1,0 +1,10 @@
+#include "bh_game_app.h"
+#include <string.h>
+int WINAPI WinMain(HINSTANCE instance,HINSTANCE previous,LPSTR command,int show){char path[MAX_PATH],*end;DWORD length;int result,check;
+ (void)previous;check=!strcmp(command,"--startup-check");if(*command&&!check)return 2;
+ length=GetModuleFileNameA(instance,path,sizeof(path));if(!length||length>=sizeof(path))return 2;
+ end=strrchr(path,'\\');if(!end)return 2;*end=0;if(!SetCurrentDirectoryA(path))return 2;
+ result=bh_game_app_run(instance,"..\\..\\GAME_DATA",check,check?SW_HIDE:show);
+ if(result&&!check)MessageBoxA(0,"The source preview stopped at an explicit dependency error. See build\\game\\startup.log for details.","BHunter source preview",MB_OK|MB_ICONERROR);
+ return result;
+}

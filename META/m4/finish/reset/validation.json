@@ -1,0 +1,51 @@
+{
+  "passed": true,
+  "baseline_functions": 656,
+  "new_owners": 1,
+  "active_original_functions": 657,
+  "real_total": {
+    "scenario": "m2-foundations",
+    "checks": 5527958,
+    "failures": 0,
+    "archive_entries": 1229,
+    "original_code_required": false
+  },
+  "fixture": {
+    "scenario": "world-reset",
+    "checks": 153,
+    "failures": 0,
+    "original_code_required": false
+  },
+  "sources": {
+    "src/bh_world_reset.c": "8e856833a0ac4a52b84d910ca0467e102d29c85c4b283a2f577c659767d9dcd6",
+    "src/bh_world_reset.h": "7f88698054fc44aa392d10b829c88f7b24cb374c27f11884dcfa771e7a19a243",
+    "src/bh_script_timer.c": "22690341da9f0c08a5e1fed770001cfd23f4732e5259839ecb7fe0fd6909f3cd",
+    "src/bh_script_timer.h": "30965144d18ffa7b4d8997ced72315c8245c8e51c65f72c003f3b312d95887cc",
+    "tests/world_reset.c": "5bbe44f9e4d1bae38dca93dadfe90305b59ea00927075c8256286ba67764219a",
+    "tests/script_parse_fixture.h": "de598077e9279ad0096de5c6121b45d94f05cdf63b91cf9c7d1baafaa654814c",
+    "tests/actor_construct_fixture.h": "fee3e0fc75f0910beefca97d5455a5ef0fb57b6f06b56bca486ab4c2e7bd5077",
+    "tests/actor_response_fixture.h": "e573c609e847cdfce32feb384d72d45024311c33c150b1b96aeddcc52c417c5f",
+    "tests/checkpoint.c": "ebb3271c24cdd0465e8a1f97e3cc33b2179c502fca5af5718ef6985ee85b64a3",
+    "tools/m0.py": "3408d0231808cc74b4e530842bb337d4700d4aa0ecd6a7a02bad4e8b4265b4bf"
+  },
+  "source_snapshots": {
+    "src/bh_world_reset.c": "META/m4/finish/reset/sources/8e856833a0ac4a52b84d910ca0467e102d29c85c4b283a2f577c659767d9dcd6-bh_world_reset.c.txt",
+    "src/bh_world_reset.h": "META/m4/finish/reset/sources/7f88698054fc44aa392d10b829c88f7b24cb374c27f11884dcfa771e7a19a243-bh_world_reset.h.txt",
+    "src/bh_script_timer.c": "META/m4/finish/reset/sources/22690341da9f0c08a5e1fed770001cfd23f4732e5259839ecb7fe0fd6909f3cd-bh_script_timer.c.txt",
+    "src/bh_script_timer.h": "META/m4/finish/reset/sources/30965144d18ffa7b4d8997ced72315c8245c8e51c65f72c003f3b312d95887cc-bh_script_timer.h.txt",
+    "tests/world_reset.c": "META/m4/finish/reset/sources/5bbe44f9e4d1bae38dca93dadfe90305b59ea00927075c8256286ba67764219a-world_reset.c.txt",
+    "tests/script_parse_fixture.h": "META/m4/finish/reset/sources/de598077e9279ad0096de5c6121b45d94f05cdf63b91cf9c7d1baafaa654814c-script_parse_fixture.h.txt",
+    "tests/actor_construct_fixture.h": "META/m4/finish/reset/sources/fee3e0fc75f0910beefca97d5455a5ef0fb57b6f06b56bca486ab4c2e7bd5077-actor_construct_fixture.h.txt",
+    "tests/actor_response_fixture.h": "META/m4/finish/reset/sources/e573c609e847cdfce32feb384d72d45024311c33c150b1b96aeddcc52c417c5f-actor_response_fixture.h.txt",
+    "tests/checkpoint.c": "META/m4/finish/reset/sources/ebb3271c24cdd0465e8a1f97e3cc33b2179c502fca5af5718ef6985ee85b64a3-checkpoint.c.txt",
+    "tools/m0.py": "META/m4/finish/reset/sources/3408d0231808cc74b4e530842bb337d4700d4aa0ecd6a7a02bad4e8b4265b4bf-m0.py.txt"
+  },
+  "limits": [
+    "Complete world reset only; no missing world loader/editor callback is replaced or installed. Explicit live entity/semantic geometry/definition bindings in reciprocal traversal order remain borrowed.",
+    "Four by32 loot words cleared; exact position-only bounds shift, transforms, flags, origin, damage owner and next-node priority stores recovered. X/Y shift uses stored binary32, Z retains PC53. Portals/variables/list links retained.",
+    "Actual source lifetime, unconditional timer and complete VM owners used. Only leading location opcode20 executes immediately; source timer helper exposure adds zero functions. Prior timer source snapshot is frozen, all six actual timer owners receive fresh source context variants and existing85 plus new153 checks.",
+    "PC53 finite source fixtures execute immediate/deferred actual VM actions, exact RNG draw ordering, actual one-shot pool retirement, matrix roundtrip/negative coordinates, full128-word reset, retained variables, no-script and malformed-ring branches. No original code, game, input automation or screenshots."
+  ],
+  "original_code_executed": false,
+  "game_launches": 0
+}

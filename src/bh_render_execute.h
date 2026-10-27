@@ -57,6 +57,10 @@ typedef struct BHRenderExecute {
     unsigned long kinds[20];
     HRESULT last_hresult;
     BHRenderExecuteError error;
+    unsigned long failed_index,failed_kind,failed_resource;
+    int failed_status;
+    int failed_draw_error,failed_model_error,failed_clip_error;
+    float failed_pose[7];
 } BHRenderExecute;
 /* Complete 00479090 plus its unique 00450930 tail for valid source queues.
    Callback failures are recorded but do not suppress later records or the

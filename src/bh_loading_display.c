@@ -93,7 +93,8 @@ int __cdecl bh_loading_display(BHLoadingDisplay *c,float progress){
     restore(c,c->color);
     if(c->software&&c->software_target){restore(c,c->software_target);
         c->copy_result=IDirectDrawSurface_BltFast(c->software_target,0,0,c->color,NULL,DDBLTFAST_WAIT);}
-    restore(c,c->primary);restore(c,c->back);++c->flips;
-    c->flip_result=IDirectDrawSurface_Flip(c->primary,NULL,DDFLIP_WAIT);
+    restore(c,c->primary);restore(c,c->back);
+    if(c->present){++c->presentations;c->flip_result=c->present(c->color,c->present_user);}
+    else{++c->flips;c->flip_result=IDirectDrawSurface_Flip(c->primary,NULL,DDFLIP_WAIT);}
     if(!ok||FAILED(c->flip_result)){++c->failures;return 0;}return 1;
 }

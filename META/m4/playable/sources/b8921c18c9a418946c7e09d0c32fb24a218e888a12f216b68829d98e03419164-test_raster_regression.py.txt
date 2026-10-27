@@ -1,0 +1,42 @@
+"""Compile and execute the isolated real software-raster source fixtures."""
+import json
+import os
+from pathlib import Path
+import subprocess
+
+ROOT = Path(__file__).resolve().parents[1]
+out = ROOT / 'build/game'
+build = json.loads((out / 'build.json').read_text())
+cl = next(c['argv'][0] for c in build['commands'] if '/c' in c['argv'])
+link = next(c['argv'] for c in build['commands'] if any(str(a).endswith('LINK.EXE') for a in c['argv']))
+vc = Path('D:/Decomp/MSCVC/MSVC5/TOOLS/DEVSTUDIO/VC')
+sp3 = Path('D:/Decomp/MSCVC/MSVC5/SP3_EXTRACTED/VS97_SP3/all/vc')
+env = dict(os.environ)
+for name in ('CL', '_CL_', 'LINK', '_LINK_'):
+    env.pop(name, None)
+env['PATH'] = os.pathsep.join([str(Path(cl).parent), 'D:/Decomp/MSCVC/MSVC5/TOOLS/DEVSTUDIO/SHAREDIDE/BIN', env['PATH']])
+env['INCLUDE'] = os.pathsep.join([str(sp3 / 'include'), str(vc / 'include')])
+env['LIB'] = os.pathsep.join([str(sp3 / 'lib'), str(vc / 'lib')])
+commands = []
+for source, obj, defines in [('tests/software_raster.c', 'raster_regression.obj', ['/DBH_RASTER_STANDALONE']),
+                             ('src/bh_software_raster.c', 'raster_source.obj', [])]:
+    commands.append([cl, '/nologo', '/c', '/ML', '/O2', '/G5', '/Oi', '/Gy',
+                     '/ID:/Decomp/dx7sdk/include', *defines, '/Fo' + str(out / obj), str(ROOT / source)])
+args = [a.replace('/subsystem:windows', '/subsystem:console').replace('BHunter-source.exe', 'raster-regression.exe').replace('BHunter-source.map', 'raster-regression.map')
+        for a in link if not str(a).endswith(('bh_game_main.obj', 'bh_software_raster.obj'))]
+args.insert(5, str(out / 'raster_regression.obj'))
+args.insert(5, str(out / 'raster_source.obj'))
+commands.extend([args, [str(out / 'raster-regression.exe')]])
+record = dict(passed=False, original_code_required=False, commands=[])
+for command in commands:
+    result = subprocess.run(command, cwd=out, env=env, text=True, capture_output=True)
+    record['commands'].append(dict(argv=command, exit_code=result.returncode, output=result.stdout + result.stderr))
+    (out / 'raster-regression.json').write_text(json.dumps(record, indent=2) + '\n')
+    if result.returncode:
+        print(result.stdout + result.stderr)
+        raise SystemExit(result.returncode)
+record['passed'] = True
+(out / 'raster-regression.json').write_text(json.dumps(record, indent=2) + '\n')
+print(record['commands'][-1]['output'])
+
+

@@ -1,0 +1,78 @@
+#ifndef BH_TARGET_CONSTRUCT_H
+#define BH_TARGET_CONSTRUCT_H
+#include "bh_collision_box.h"
+#include "bh_target_draw.h"
+#include "bh_target_step.h"
+typedef struct BHTargetConstructContext BHTargetConstructContext;
+typedef struct BHTargetConstructSlot {
+  BHTargetConstructContext *context;
+  BHDebrisBody body;
+  BHPhysicsState state;
+  BHMat34 inverse;
+  BHCollisionModel collision;
+  BHTargetStepContext step;
+  unsigned long initialized;
+} BHTargetConstructSlot;
+/* Count-zero lifetime bridge. Caller owns capacity stable slots, base_count+capacity roster entries
+   and base_model_count+capacity model entries; base bodies/models are borrowed. All outside
+   actors that participate in physics must be represented in these arrays.
+   Call sync after an external retirement before stepping a different actor.
+   The installed source callback bridge also syncs before/after the real tick.
+   No original code or callback substitutes are used. */
+struct BHTargetConstructContext {
+  BHDebrisContext *debris;
+  BHPhysicsStepContext *physics;
+  BHPhysicsEffects *effects;
+  BHScriptExplosionContext *explosions;
+  BHScriptParticleContext *particles;
+  BHPickupContext *pickups;
+  BHTargetDrawContext *draw;
+  long *mode; /* original004df250 editor mode passed to wreck update */
+  unsigned long smoke_image;
+  BHTargetConstructSlot *slots;
+  unsigned long capacity;
+  BHPhysicsStepBody *roster;
+  BHGeometry **models;
+  const BHPhysicsStepBody *base_bodies;
+  unsigned long base_count;
+  BHGeometry *const *base_models;
+  unsigned long base_model_count;
+  const BHPhysicsStepWorld *worlds;
+  unsigned long world_count;
+  const BHPhysicsStepBody *placement_focus;
+  /* 43ddc0 tests recycled +bc/+c0 BEFORE assigning its new box. Explicit
+     legacy inputs retain this undefined original dependency; absent binding
+     rejects the focus branch instead of inventing geometry/radius. */
+  BHGeometry *legacy_geometry;
+  float legacy_radius;
+  int legacy_bound;
+  const unsigned long *resources;
+  unsigned long resource_count;
+  const char *prefix;
+  BHBspSearch search;
+  unsigned long roster_count, model_count, rebuilds;
+  int error;
+};
+int __cdecl bh_target_construct_sync(BHTargetConstructContext *);
+int __cdecl bh_target_construct_dispose(BHTargetConstructContext *);
+/* Whole0043d2c0. Source returns acquired actor; original return was void. */
+BHEntity *__cdecl bh_target_construct_basic(BHTargetConstructContext *,
+                                            const BHVec3 *, long resource_index,
+                                            long mass);
+/* Whole0043d7c0. Rotation is original local Y/X/Z order. */
+BHEntity *__cdecl
+bh_target_construct_moving(BHTargetConstructContext *, const BHVec3 *,
+                           const BHVec3 *angles, const BHVec3 *velocity,
+                           const BHVec3 *spin, unsigned long resource,
+                           float mass, float countdown, BHEntity *owner,
+                           long token, long loot, long counter);
+/* Whole0043ddc0. Endpoints become inverse-basis local bounds, not a sorted
+ * AABB. */
+BHEntity *__cdecl
+bh_target_construct_box(BHTargetConstructContext *, const BHVec3 *,
+                        const BHVec3 *angles, const BHVec3 *velocity,
+                        const BHVec3 *spin, unsigned long resource, float mass,
+                        float countdown, BHEntity *owner, long token,
+                        const BHVec3 *anchor, const BHVec3 *first,
+                        const BHVec3 *second, long counter);
+#endif

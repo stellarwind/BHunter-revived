@@ -1,0 +1,18 @@
+{
+  "baseline": 657,
+  "module": "editor_world",
+  "scenario": "editor-world",
+  "sources": [
+    "src/bh_editor_world.c",
+    "src/bh_editor_world.h",
+    "tests/editor_world.c",
+    "tests/editor_world_fixture.h"
+  ],
+  "limits": [
+    "Complete editor draw and clone only; missing editor tick, enter and full world-load owners remain unimplemented. Installed refresh executes actual full draw; NULL step is verified original RET, no synthetic success callback.",
+    "Explicit editor nodes start with real shared world/edit geometry, retain original actual entity fields and borrowed source resources. Added node metadata is owned separately and counted zero; construction defers geometry rebuild to its real caller as original. Original constructor also accepts registered clipboard snapshot prototypes; copied source entity callbacks/links remain data and are never called or installed.",
+    "Actual model/camera/horizon/GDI/segment/oriented queue and source sound/geometry owners used. Mode/catalog gates, selected and selected-owner overlays, distance thresholds, orbit, portal borders/overlap/scratch, model parameters and clipboard text retained. No native render/input/game action occurs in fixtures.",
+    "Clone retains modulo32 coordinate addition, signed grid truncation, real reciprocal semantic/entity ring insertion, eight copied variables/orbit, class/damage/flags and callback initialization. Source metadata allocation errors roll back the acquired entity.",
+    "Finite moderate PC53 and caller-owned coherent typed entity/geometry/model/ring data. Source bounded guards retain preceding effects. Fixtures execute original cube material decoding/build/match, queue categories, selected/attached/catalog/distance modes, camera pose, all border directions, real clone/rebuild/draw and lifecycle. No screenshots, original/game code, gameplay automation or agents."
+  ]
+}

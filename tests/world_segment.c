@@ -153,10 +153,12 @@ static void __cdecl actor_position(BHEntity *e,void *raw) {
     if(callback_mutate_event==e)p->event=17;
     if(callback_skip==e)set_next(e,NULL);
 }
+typedef struct Registry{const BHWorldSegmentActor *actors;unsigned long count,calls;int valid;}Registry;
+static int __cdecl refresh_registry(BHWorldSegmentContext *q,void *user){Registry *r=(Registry*)user;++r->calls;if(!r->valid)return 0;q->actors=r->actors;q->actor_count=r->count;return 1;}
 static void actor_queries(void) {
     Mesh m;BHWorldGeometry w,*cached;BHWorldSegmentRoom room;
     BHWorldSegmentContext q;BHWorldSegmentHit hit;BHWorldHit self;
-    BHEntity a,b;BHWorldSegmentActor actors[2];BHVec3 start={3,0,0},end={-3,0,0};BHWorldSegmentHit saved;
+    BHEntity a,b,*live_head;BHWorldSegmentActor actors[2];Registry registry;BHVec3 start={3,0,0},end={-3,0,0};BHWorldSegmentHit saved;
     CHECK(mesh_init(&m,10),"actor real BSP");worlds(&w,1);memset(&room,0,sizeof(room));
     room.query=&m.query;w.query_flags=2;bh_geometry_set_flags(&m.geometry,0,6);
     actor_init(&a,1,0,2);actor_init(&b,2,0,2);
@@ -174,11 +176,26 @@ static void actor_queries(void) {
     a.position.y=b.position.y=2;
     CHECK(bh_world_segment_run(&q,NULL,&cached,&start,&end,-1,&hit)==1 &&
         hit.object.kind==BH_WORLD_HIT_GEOMETRY,"global actor tangency rejected strictly");
+    memset(&registry,0,sizeof(registry));registry.valid=1;registry.actors=actors;q.refresh_actors=refresh_registry;q.refresh_user=&registry;
+    a.position.y=b.position.y=0;
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&start,&end,-1,&hit)==1&&hit.object.kind==BH_WORLD_HIT_GEOMETRY&&registry.calls==1,"live registry retirement removes stale mesh descriptors before traversal");
+    registry.count=1;registry.actors=actors+1;
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&start,&end,-1,&hit)==1&&hit.object.object.actor==&b,"newly published mesh is hittable without reinitializing world query");
+    registry.valid=0;saved=hit;
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&start,&end,-1,&hit)==-1&&q.error==BH_WORLD_SEGMENT_DEPENDENCY&&!memcmp(&hit,&saved,sizeof(hit)),"failed registry refresh rejects stale collision state without output writes");
+    q.refresh_actors=NULL;q.refresh_user=NULL;
     q.actor_count=0;w.query_flags=0;a.position.x=1;a.position.y=0;b.position.x=0;b.position.y=0;
     a.query=b.query=actor_position;set_next(&a,&b);room.actors=&a;callback_calls=0;callback_skip=NULL;
     CHECK(bh_world_segment_run(&q,NULL,&cached,&start,&end,.5f,&hit)==1 &&
         hit.object.object.actor==&a && near_value(hit.point.x,1.5) && near_value(hit.normal.x,1) && callback_calls==2,
         "room sphere narrow phase calls installed event3 queries and uses first entry distance");
+    live_head=&b;room.actors_owner=&live_head;callback_calls=0;
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&start,&end,.5f,&hit)==1&&hit.object.object.actor==&b&&callback_calls==1,
+        "shared room list observes a new head without rebinding or copying its old head");
+    live_head=NULL;callback_calls=0;
+    CHECK(bh_world_segment_run(&q,NULL,&cached,&start,&end,.5f,&hit)==0&&!callback_calls,
+        "retired last room actor is absent immediately through the authoritative owner");
+    room.actors_owner=NULL;
     callback_calls=0;callback_mutate_event=&a;
     CHECK(bh_world_segment_run(&q,NULL,&cached,&start,&end,.5f,&hit)==1 && callback_last_event==17,
         "room actor event mutation persists to next callback in same packet");callback_mutate_event=NULL;

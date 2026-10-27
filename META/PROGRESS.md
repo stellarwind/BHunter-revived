@@ -1,8 +1,99 @@
 # BHunter restoration progress
 
-Updated 2026-10-26. Plan: `../RESTORATION_PLAN.md`.
+Updated 2026-10-27. Plan: `../RESTORATION_PLAN.md`.
 
 ## Current checkpoint
+
+Menu frame lighting follow-up, 2026-10-27: corrected the directional dot sign
+in `bh_model_draw_lit`. Original `0045a403` branches on negative camera side to
+the path with FCHS at `0045a6b6`; the nonnegative path has no negation. Source
+had reversed those cases, leaving visible menu faces with purple ambient light.
+Literal controls now verify the original menu colors on negative, positive and
+zero side. Native fixture lighting direction was corrected for its negative-side
+face, preserving actual red/green pixel expectations. Real-asset integration
+passes 5,530,026 checks; independent clean integration passes 5,024,071, zero
+failures. The 299-TU game build and bounded static startup pass. One functional
+owner variant is refreshed with historical source retained, adding zero owners;
+no byte match is claimed. Human menu appearance confirmation is pending.
+Evidence: `m4/playable/light-sign/validation.json`; `python tools/check_playable.py`.
+The user thinks splash skipping now works. The brief wireframe ship is present
+in the original `textures/bad.pcx` loading image, not a transient ship renderer.
+Projectile visuals and collision slowdown remain unresolved; M4 incomplete.
+
+Human preview follow-up, 2026-10-27: the user confirms visible company splashes
+and chat panel, no automatic steering and good baseline FPS after the splash/perf
+changes. Many bullets/collisions still cause slowdown; projectile size/overlap
+and dark purple menu frames remain unresolved. The original screenshot shows
+teal/green frames. The user also confirms the original first splash skips on a
+mouse click. The WIP application window adapter now consumes left-button-down
+during company stages and expires the existing display timer with redraw1;
+the existing display owner performs the transition. This is grounded in human
+observation; the original skip input-hook location is not yet established.
+The 299-TU game rebuild and bounded static startup pass, with zero input
+collection, entity dispatch or application frames. Human click verification is
+pending. Harness sources are unchanged, so prior real/clean integration results
+are retained explicitly. Current evidence: `m4/playable/splash-click/validation.json`;
+`python tools/check_playable.py` passes. No gameplay automation or original code
+execution. M4 remains incomplete.
+
+Mission effect binding follow-up: the user reported a Space-triggered exit in a
+mission and invisible bullets despite visible hit decals. The log identifies an
+oriented draw with image handle zero. The WIP application adapter now binds the
+player boost particle image to original `004f54d8`. It also supplies the real
+camera focal scale to ribbon widths and dispatches ribbon vertices through the
+scalar-shaded primitive owner `0046e430`; the former scale of1 and plain-color
+callback made trails too narrow and black. The rebuilt game passes bounded startup
+with two static source-only render fixtures: beam428 and boost1230 nonblack pixels,
+followed by the initial static scene. No input collection, entity dispatch or
+application frames occur. One WIP adapter variant is retained, adding zero original
+owners. Harness source/tests are unchanged from the menu-UV checkpoint; that
+checkpoint's integration results are retained separately from the fresh game test.
+Human mission verification is pending. Evidence:
+`m4/playable/effect-bindings/validation.json`; `python tools/check_playable.py`.
+
+Menu text UV follow-up, 2026-10-26: the user confirmed that the menu is now visible
+and its model frames render correctly, but the interior text sprites are distorted.
+The quad owner had exchanged the UV pairs on its second and fourth corners, making
+U vary along the vertical edge. Retained original stack slots confirm the corrected
+pairing. A source-only check now sends the original 1-by-0.4 menu text quad through
+the real producer, consumer and clipper; it verifies full-width U and half-page V.
+Focused sprite tests pass 660 checks; full real-asset integration passes 5,529,970
+and independent clean integration passes 5,024,022, zero failures. One original
+owner variant was refreshed with its historical source retained; no owner was added.
+Bounded static startup passes. The preview continues to default to software
+rendering; hardware rendering is unvalidated. Current follow-up evidence is under
+`m4/playable/menu-uv/`. Human appearance confirmation is pending.
+
+**Source preview integration, 2026-10-26:** `play-source.cmd` launches a standalone
+299-production-TU source target. Real-data source integration passes 5,529,958 checks;
+the independent clean checkout passes 5,024,010, zero failures. Production contexts
+agree; one test fixture has explicitly retained Git-normalized line endings.
+Bounded initialization and initial static rendering pass with no input collection,
+entity dispatch or application frames. No original code runs. The user observed a
+moving flythrough, invisible menu and persistent selection audio. The new build
+publishes final camera outputs consistently with menu placement and binds looping
+audio only to the owned slide voice; human confirmation is pending. Earlier raster
+conversion and horizon-table corrections are covered by the current tests.
+38 source variants were refreshed with historical bytes retained, adding zero owners;
+679 distinct harness owners remain. Preview composition adapters stay WIP and no
+shipping gameplay admission is claimed. M4 remains incomplete; PC24, CD audio,
+DirectPlay peers and native hardware retain their limits. Evidence:
+`m4/playable/validation.json`; audit: `python tools/check_playable.py`.
+The finish checkpoint below is historical for the subsequently changed source files.
+
+**Inventoried function recovery complete:679 distinct admitted whole source owners**, with no remaining inventoried owner. This block adds23 to656 and reconciles the obsolete729label. Real-data integration passes **5,529,939checks**; independent asset-free checkout passes **5,023,991**, zero failures, identical compiled source/header bytes,601translation units and295missing-module controls. All679active source hashes and23new whole boundaries verify. The recovered activation VM is now in the891-record catalogue; the0042f350config-save forwarding alias counts zero. Earlier library/helper exclusions remain separate. Final player review corrected an overlapping context pointer with an explicit checked registry and verified consecutive installed callbacks; historical variants are retained. Evidence/audit: `m4/finish/README.md`, `final-audit.json`, `validation.json`; `python tools/check_finish.py`.
+
+The user's remaining-function request is complete for the current inventory. **M4 and a playable shipping game remain incomplete**: full positive asset/native/application bootstrap and gameplay are unexecuted; actual source resource/scene/player/physics composition and later fidelity still require validation. PC24, CD audio, native hardware and actual peer gameplay remain open. M3 stays skipped. No game/original code, game execution, automated gameplay, physical input, screenshots or agents in this block. Next observable milestone: `m4/finish/NEXT.md`.
+
+### Historical656-function checkpoint
+
+Requested another50-function block,2026-10-26: **656 distinct admitted linked original source owners** (+50 from606), **568 translation units**, **278 missing-module controls**. Real-asset build passes **5,527,805 checks**; independent asset-free clean build passes **5,021,857**, with identical compiled source/header bytes and all656 active source hashes verified. Restored28 software raster callbacks,4 complete primitive dispatch owners,3 world-edit geometry/movement owners,4 special actor response/constructor owners,2 launch/receive owners,2 whole VM/factory owners,4 complete parser/builders and3 block loader/editor preview owners. All50 whole boundaries and77 typed constants verify;28 historical raster variants remain preserved. The requested block is complete and stops at656. Original references remain unchanged. No original/game code, game execution, gameplay automation, physical input, peer connection or audio playback. Static source TEST.LEV screenshot: `m4/target656/capture/source-software.png`; user plans SDL3 replacement, with isolated renderer retained as fidelity reference. M3 skipped; M4/playable source game, PC24, CD audio and actual peer gameplay remain incomplete. Evidence/audit: `m4/target656/README.md`, `validation.json`, `final-audit.json`; `python tools/check_target656.py`. Prior reviewed queue:24 unadmitted candidates; exclusions/aliases are not source completions. Next source contracts: `m4/target656/NEXT.md`.
+
+### Historical606-function checkpoint
+
+Remaining129 request resumed2026-10-26: **606 admitted linked original source owners** (+6 from600), **550 translation units**, **269 missing-module controls**. Real-asset build passes **5,318,968 checks**; independent asset-free clean build passes **4,813,020**, with identical compiled source/header bytes and all606 owner hashes verified. Recovered whole impact-ring draw, force-feedback update, paired remote pose prediction, remote rendering, startup SourceDir/checksum gate and remote query/damage-packet/list retirement. Fifty former unknown entries are verified VC5 library/internal-library labels or an import thunk; they add zero source functions. **73 catalogue entries remain and the user request is not complete.** Provenance exclusions and source admission are reported separately. Source-only fixtures; no original/game code, game launch, automated gameplay, device effect update or actual peer Send. M3 skipped and M4/playable game incomplete. Evidence: `m4/remaining129/README.md`, `validation.json`, `final-audit.json`, `remaining.json`; audit `python tools/check_remaining129.py`. Current next-source contracts: `m4/remaining129/NEXT.md`.
+
+### Historical600-function checkpoint
 
 Requested 600-function checkpoint, 2026-10-26: **600 distinct admitted linked original source owners** (+50 from 550), **540 translation units** and **264 missing-module link controls**. Real-asset build: **5,317,919 checks**; independent asset-free clean build: **4,811,971 checks**; zero failures, identical source/header bytes. All 600 active source hashes, 50 new whole-owner ranges and 201 constant annotations verify. New source closes projectile/weapon/effect dependencies, actor attack/update/damage/routing, basis/force controls, player aim, network scores/debug/effect receive and flyby construction. Adapters, switches and owned shared tails count zero. Final evidence: `m4/target600/README.md`, `validation.json`, `final-audit.json`, `session.json`; audit: `python tools/check_target600.py`. Original references unchanged; no original/game code, game launch, automated gameplay, physical input or desktop capture. M3 remains skipped; M4/playable source game, PC24, physical media and actual peer gameplay remain incomplete. **Work stops at exactly 600.**
 

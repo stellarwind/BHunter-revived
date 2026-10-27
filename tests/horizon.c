@@ -45,8 +45,8 @@ static void geometry(void) {
     CHECK(bits(got.v[0][0].u)==0xbd4cccccUL && bits(got.v[0][0].v)==0x3f266666UL &&
         bits(got.v[0][1].u)==0x3ee66666UL && bits(got.v[4][0].u)==0xbe999999UL,"world-space X/Z UV and binary32 inverse scale");
     CHECK(h.rgb[0]==129 && h.rgb[1]==64 && !h.rgb[2] && color.color==0xff804000UL && color.fills==1 && color.indexed,"signed-trunc RGB differs from packed unsigned table extraction");
-    got.calls=0;textures.software=2;
-    CHECK(bh_horizon_draw(&h,&image,50,5,25,12.5f,0xff804000UL) && color.packed && color.fills==2,"non-one software mode prepares real packed table");
+    got.calls=0;h.color_mode=2;
+    CHECK(bh_horizon_draw(&h,&image,50,5,25,12.5f,0xff804000UL) && color.packed && color.fills==2&&textures.software==1,"packed output depth selects its table independently of software backend Boolean");
     got.calls=0;got.fail_at=1;
     CHECK(!bh_horizon_draw(&h,&image,50,5,25,12.5f,0x804000) && h.error==BH_HORIZON_EMIT && got.calls==8 && h.emitted==7 && state.depth==1,"reported leaf failure still completes subsequent faces and restores depth");
     got.calls=0;got.fail_at=0;CHECK(bh_attribute_clip_init(&clip,1000,2000,-1000,1000,-1000,1000),"full rejection clip bounds");

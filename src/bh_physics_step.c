@@ -1,6 +1,7 @@
 #include "bh_physics_step.h"
 #include "bh_fp.h"
 #include "bh_round.h"
+#include "bh_rotation.h"
 #include <float.h>
 #include <math.h>
 #include <stddef.h>
@@ -171,7 +172,7 @@ int __cdecl bh_physics_step_init(BHPhysicsStepContext *c, BHEntityPool *pool, BH
                 goto rejected;
         next.actors[i] = b[i].entity;
         ns = unique(sources, ns, b[i].geometry);
-        nt = unique(targets, nt, models[b[i].model_index]);
+        nt = unique(targets, nt, b[i].geometry);
     }
     for (i = 0; i < nw; ++i) {
         if (!w[i].world || !_finite(w[i].mass))
@@ -227,17 +228,22 @@ static int candidates(BHPhysicsStepContext *c, BHPhysicsStepBody *self) {
         BHWorldHit *hit = c->broad.hits + i;
         if (hit->kind == BH_WORLD_HIT_GEOMETRY) {
             BHWorldGeometry *w = hit->object.geometry;
+            const BHPhysicsStepWorld *binding = world(c, w);
             p = pair(c, self->geometry, w->model ? w->model->geometry : NULL);
-            if (!world(c, w) || !p ||
+            if (!binding || !p ||
                 !bh_collision_candidate_world(c->candidates + i, w, &p->sweep))
                 return fail(c, BH_PHYSICS_STEP_BINDING);
+            if (binding->response)
+                c->candidates[i].movement = binding->response->origin;
         } else if (hit->kind == BH_WORLD_HIT_ACTOR) {
             BHPhysicsStepBody *b = body(c, hit->object.actor);
+            BHMat34 inverse;
             if (!b || b->model_index >= c->model_count)
                 return fail(c, BH_PHYSICS_STEP_BINDING);
-            p = pair(c, self->geometry, c->models[b->model_index]);
+            p = pair(c, self->geometry, b->geometry);
+            bh_mat34_inverse_rigid(&b->physics->pose, &inverse);
             if (!p || !bh_collision_candidate_actor(c->candidates + i, b->entity, &p->sweep,
-                                                    b->target_world, b->target_local,
+                                                    &b->physics->pose, &inverse,
                                                     &b->physics->velocity, b->flags))
                 return fail(c, BH_PHYSICS_STEP_BINDING);
         } else

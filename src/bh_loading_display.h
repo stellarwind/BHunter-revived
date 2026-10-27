@@ -12,6 +12,9 @@ typedef struct BHLoadingDisplay {
     unsigned long calls,locks,full_copies,wedge_calls,unlocks,flips,restores,failures;
     float normalized;
     HRESULT lock_result,unlock_result,copy_result,flip_result;
+    /* Optional windowed presentation adapter. NULL retains original Flip. */
+    HRESULT (__cdecl *present)(LPDIRECTDRAWSURFACE,void *);
+    void *present_user;unsigned long presentations;
 } BHLoadingDisplay;
 /* Whole0044aac0. Borrowed real native surfaces; caller owns their lifetime.
    Numeric caller profile is x87 PC53/nearest with masked traps, as required

@@ -7,16 +7,16 @@ typedef struct BHPhysicsStepBody {
     unsigned long generation;
     BHPhysicsState *physics;
     BHGeometry *geometry;                       /* own original+bc collision geometry */
-    unsigned long model_index;                  /* original target+f8 catalog index */
-    const BHMat34 *target_world, *target_local; /* actual original150/180 */
+    unsigned long model_index; /* retained adapter index; actor mesh is geometry */
+    const BHMat34 *target_world, *target_local; /* actual rigid actor pose/inverse */
     BHWorldGeometry *world;
     float mass, friction;
-    unsigned long flags; /* original target114 collision flags */
+    unsigned long flags; /* retained adapter field, not an actor enable gate */
 } BHPhysicsStepBody;
 typedef struct BHPhysicsStepWorld {
     BHWorldGeometry *world;
     float mass;
-    BHEntity *response;   /* optional actual source entity; NULL is RET sentinel */
+    BHEntity *response;   /* world owner: +48 per-tick translation and query receiver */
     unsigned short index; /* verified packet/world index */
 } BHPhysicsStepWorld;
 typedef struct BHPhysicsStepPair {

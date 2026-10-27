@@ -1,0 +1,15 @@
+{
+  "baseline": 670,
+  "module": "remote_position",
+  "scenario": "remote-position",
+  "sources": [
+    "src/bh_remote_position.c",
+    "src/bh_remote_position.h",
+    "tests/remote_position.c"
+  ],
+  "limits": [
+    "Whole checksum/counters/slot/local routing; signed16 oldest/middle/newest ordering and original32-byte shifts/equal-stamp updates; actual packed-position decode/room link mutation, signed byte angles/flags, three-axis angular wrapping, finite-difference smoothing, zero denominator fallback1, velocity10/acceleration2 clamps, original pow age factors and first velocity component unrounded factor.",
+    "45 focused source checks cover sequential/equal/intermediate/old/modular arrivals, room unlink/insertion, local entity branch, signed angles across both pi signs against independent atan2(sin,cos), clamp/age numeric results, missing/invalid actor/position IDs, checksum and truncation effects. Math alias proof records full50-byte code and80-byte named fmod descriptor plus positive/negative controls. CRT helpers countzero.",
+    "Caller-owned live coherent bank/room/navigation data and PC53 finite moderate inputs. Source list/packet/nonfinite damping guards preserve prior timestamp/decoded/derivative effects; malformed/out-of-order cross-room inconsistencies remain bounded errors. No original/game code, game launch, gameplay/input automation, screenshot, real peer/audio playback or agents."
+  ]
+}

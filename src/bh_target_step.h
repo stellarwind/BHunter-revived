@@ -8,7 +8,7 @@
 typedef struct BHTargetStepState {float countdown;BHVec3 minimum,maximum;long emission,token,loot,counter;} BHTargetStepState;
 typedef struct BHTargetStepContext {
  BHDebrisBody *body;BHPhysicsStepContext *physics;BHScriptExplosionContext *explosions;
- BHScriptParticleContext *particles;BHPickupContext *pickups;long *mode;
+ BHScriptParticleContext *particles;BHPickupContext *pickups;long *mode; /* original004df250 editor mode, not gameplay mode or pause */
  unsigned long smoke_image;int error;
 } BHTargetStepContext;
 /* Count-zero binding. Same actual debris body/physics state/owner/sleep word;

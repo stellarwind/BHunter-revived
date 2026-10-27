@@ -37,6 +37,9 @@ typedef struct BHFrameService {
     unsigned long packet_calls,shutdown_calls,cleanup_order[6],cleanup_count,failures;
     unsigned long changed;float last_dt;
     BHSoundTickStats sound_stats;BHFrameServiceError error;
+    /* Optional source-adapter diagnostics; zero leaves timing calls disabled. */
+    int profile;
+    DWORD input_ms,step_ms,refresh_ms,sound_ms,packet_ms;
 } BHFrameService;
 /* Whole original producer/acknowledged-shutdown callback. Normal: collect
    input, increment wrapping frame counter only when pause==0, acquire actual

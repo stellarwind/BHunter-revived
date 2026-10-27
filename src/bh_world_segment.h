@@ -13,6 +13,9 @@ typedef struct BHWorldSegmentRoom {
     BHSegmentQuery *query;
     BHEntity *actors;
     unsigned long kind; /* original common object+8, for camera blocker owner */
+    /* Optional authoritative room+128 head. When supplied, actors is only the
+       historical standalone-fixture binding; queries read this live owner. */
+    BHEntity *const *actors_owner;
 } BHWorldSegmentRoom;
 typedef struct BHWorldSegmentActor {BHEntity *entity;BHSegmentQuery *query;} BHWorldSegmentActor;
 typedef enum BHWorldSegmentError {
@@ -28,6 +31,11 @@ typedef struct BHWorldSegmentContext {
     unsigned long actor_count,max_room_actors;
     BHWorldSegmentError error;
     int busy;
+    /* Optional source registry adapter, called before a query borrows actors.
+       It may rebuild the descriptors after spawn/retirement. No callbacks may
+       mutate the registry during traversal; NULL retains fixed fixture inputs. */
+    int (__cdecl *refresh_actors)(struct BHWorldSegmentContext *,void *);
+    void *refresh_user;
 } BHWorldSegmentContext;
 typedef struct BHWorldSegmentHit {
     BHWorldHit object;
@@ -50,7 +58,8 @@ int __cdecl bh_world_segment_init(BHWorldSegmentContext *,BHWorldGeometry *first
    successor at actor+f4 is read after callback. No callback is fabricated.
    Geometry bindings, entity lifetimes and topology remain valid during query.
    All inputs finite; actor bases satisfy bh_mat34_inverse_rigid's orthonormal
-   contract. Caller uses masked PC53/nearest. No allocation occurs. */
+   contract. Caller uses masked PC53/nearest. Traversal allocates nothing;
+   the optional source registry refresh may prepare new actor workspaces. */
 int __cdecl bh_world_segment_run(BHWorldSegmentContext *,const BHWorldHit *self,
     BHWorldGeometry **cached,const BHVec3 *start,const BHVec3 *end,float radius,
     BHWorldSegmentHit *out);

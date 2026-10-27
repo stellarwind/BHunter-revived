@@ -1,0 +1,32 @@
+{
+  "baseline": 604,
+  "module": "source_files",
+  "scenario": "source-files",
+  "owners": [
+    {
+      "original_va": "00473a40",
+      "bytes": 508,
+      "function": "bh_source_files_check",
+      "source": "src/bh_source_files.c",
+      "role": "game",
+      "provenance_confidence": "Whole original startup SourceDir/copyright checksum gate; actual registry/CRT file I/O, not a runtime/import/helper owner."
+    }
+  ],
+  "sources": [
+    "src/bh_source_files.c",
+    "src/bh_source_files.h",
+    "tests/source_files.c"
+  ],
+  "constants": [
+    {
+      "address": "0049189c",
+      "hex": "085d406b"
+    }
+  ],
+  "limits": [
+    "Fixtures create/remove one private per-process HKCU key and synthetic temporary files; actual game HKLM key, registry configuration and original files are unchanged.",
+    "Original checks only copyright.txt; BIP_B1/B2 names are computed but not read. Incomplete dword suffixes intentionally ignored.",
+    "Source closes original leaked registry handle and rejects malformed/empty/oversize registry values, failed allocation and short reads; these are explicit source safety/lifetime adaptations.",
+    "Win32 normalized the first malformed REG_SZ fixture; final tests use raw unterminated REG_BINARY bytes. The failed historical test result remains in build/remaining129-build4.log."
+  ]
+}

@@ -356,6 +356,18 @@ static void placement_cases(void) {
   }
   finish(&f);
 }
+static void wreck_expiry(void){Fixture f;BHVec3 zero={0,0,0};BHEntity *wreck;BHTargetStepState state;unsigned long generation;
+ CHECK(setup(&f),"real constructed wreck expiry dependencies");f.mode=2;
+ wreck=bh_target_construct_moving(&f.construct,&zero,&zero,&zero,&zero,22,10,.05f,NULL,0,13,0);
+ CHECK(wreck!=NULL,"stationary wreck uses actual moving-body constructor");
+ if(wreck){generation=wreck->generation;f.slots[0].body.sleep_time=3;
+  f.mode=1;wreck->step(wreck);bh_target_step_read(wreck,&state);CHECK(state.countdown==.05f&&f.slots[0].body.entity==wreck,"editor mode alone suppresses wreck expiry");
+  f.mode=2;wreck->step(wreck);bh_target_step_read(wreck,&state);CHECK(state.countdown>0&&state.countdown<.05f,"normal runtime advances stationary sleeping wreck countdown");
+  wreck->step(wreck);CHECK(!f.slots[0].body.entity&&wreck->generation!=generation&&!f.registry[0],"expiry removes wreck from actual outside registry and releases pooled entity");
+  CHECK(bh_target_construct_sync(&f.construct)&&!f.physics.body_count,"retired wreck is removed from physics roster");
+ }
+ finish(&f);
+}
 static void world_hint_cases(void) {
   Fixture f;
   BHPhysicsStepWorld world;
@@ -406,6 +418,48 @@ static void world_hint_cases(void) {
               !memcmp(&before, &f.slots[0].state, sizeof(before)),
           "peer retirement and actual mode1 callback preserve cached room and "
           "all shared body lifetime state");
+  }
+  finish(&f);
+}
+static void retained_workspace_cases(void) {
+  Fixture f;
+  BHVec3 p={10,20,30},zero={0,0,0},extent={10,10,10};
+  BHEntity *first,*second;
+  BHPhysicsStepPair *pairs;
+  BHGeometry *geometry;
+  unsigned long before,i,generation;
+  float old_bound;
+  CHECK(setup(&f),"stable physics workspace fixture");
+  first=bh_target_construct_basic(&f.construct,&p,0,2);
+  CHECK(first!=NULL,"actual body before workspace retention");
+  if(first) {
+    before=f.construct.rebuilds;pairs=f.physics.pairs;
+    f.mode=1;
+    for(i=0;i<20;++i)first->step(first);
+    CHECK(f.construct.rebuilds==before&&f.physics.pairs==pairs,
+          "twenty paused ticks retain all swept workspaces across forty sync calls");
+    f.mode=0;f.slots[0].body.sleep_time=3;
+    for(i=0;i<20;++i)first->step(first);
+    CHECK(f.construct.rebuilds==before&&f.physics.pairs==pairs,
+          "twenty sleeping ticks retain all swept workspaces");
+    f.slots[0].state.pose.m[0][3]=17;f.slots[0].state.velocity.z=4;
+    CHECK(bh_target_construct_sync(&f.construct)&&first->position.x==17&&
+              first->origin.z==4&&f.construct.rebuilds==before,
+          "retained path still publishes authoritative pose and velocity");
+    geometry=&f.slots[0].collision.geometry;generation=first->generation;
+    old_bound=f.slots[0].collision.bsp.nodes[0].maximum[0];
+    bh_debris_remove(first);
+    second=bh_target_construct_box(&f.construct,&p,&zero,&zero,&zero,1,2,0,
+                                   NULL,0,&zero,&zero,&extent,0);
+    CHECK(second==first&&second->generation!=generation&&
+              &f.slots[0].collision.geometry==geometry&&
+              f.slots[0].collision.bsp.nodes[0].maximum[0]!=old_bound&&
+              f.construct.rebuilds>before,
+          "recycled entity and same geometry slot rebuild before replacement box topology");
+    before=f.construct.rebuilds;
+    CHECK(second&&bh_target_construct_sync(&f.construct)&&
+              f.construct.rebuilds==before&&f.physics.body_count==1,
+          "replacement roster becomes reusable after its required rebuild");
   }
   finish(&f);
 }
@@ -471,9 +525,10 @@ int __cdecl bh_target_construct_checkpoint(const char *archive,
   CHECK(owns,
         "owned synthetic file built from actual procedural source geometry");
   if (owns) {
-    constructors();
+    constructors();wreck_expiry();
     placement_cases();
     world_hint_cases();
+    retained_workspace_cases();
     retained_integer_mass();
     failures();
     remove("target-construct-fixture/HUN_LOD1.BSP");

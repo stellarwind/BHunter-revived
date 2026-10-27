@@ -30,7 +30,7 @@ static unsigned long random_step(unsigned long r){return ((r*0xe357UL>>16)|(r*0x
 void __cdecl bh_actor_damage_tick(BHEntity *e){
  BHActorDamageContext *c=context(e);BHActorRouteState s;BHVec3 offset,impulse,p,velocity,acceleration={0,-.002f,0},before,after,spin;
  BHPickupRoom *room=0;BHEntity *previous,*next,*owner;unsigned long i,r,resource;float damage,length,factor,t,angle,angular;long loot,token;double x,y,z;
- if(!c||!live(c,e)||!c->particles||!c->fragments||!c->targets||!c->loot_rows||!c->legacy_death_angles||!bh_math_environment_supported()){if(c)c->error=BH_ACTOR_ROUTE_ARGUMENT;return;}
+ if(!c||!live(c,e)||!c->particles||!c->fragments||!c->targets||!c->loot_rows||!bh_math_environment_supported()){if(c)c->error=BH_ACTOR_ROUTE_ARGUMENT;return;}
  bh_actor_route_read(e,&s);if(!s.duration_ticks){c->error=BH_ACTOR_ROUTE_NUMERICAL;return;}
  damage=stored((double)number(e,0x194)*.9975);set_number(e,0x194,damage);
  for(i=0;i<3;++i){((float*)&impulse)[i]=number(e,0x168+i*4);((float*)&offset)[i]=stored((double)number(e,0x15c+i*4)-((float*)&impulse)[i]*(-1.0/30.0));set_number(e,0x15c+i*4,((float*)&offset)[i]);}
@@ -42,6 +42,9 @@ void __cdecl bh_actor_damage_tick(BHEntity *e){
  t=phase(c,&s);point(t,&s,&p);add_offset(e,&p);angular=stored((double)(rand()-16384)*(1.0/16384.0));angle=stored((double)rand()*(1.0/512.0));
  bh_script_particle_create(c->particles,c->smoke_resource,3,&p,&velocity,&acceleration,.5f,angle,12,angular,.9f,.95f,2,.3f);
  if(damage>=1&&c->mode!=3){
+  /* Original wreck orientation is unwritten stack input. Require the explicit
+     adapter only when constructing a wreck, never while updating a live car. */
+  if(!c->legacy_death_angles){c->error=BH_ACTOR_ROUTE_ARGUMENT;return;}
   bh_entity_set_query(c->pool,e,0);bh_sound_stop(c->route->sound,s.sound);
   t=phase(c,&s);point(stored((double)t-1.0/30.0),&s,&before);point(t,&s,&offset);point(stored((double)t-(-1.0/30.0)),&s,&after);
   for(i=0;i<3;++i)((float*)&velocity)[i]=stored(((double)((float*)&after)[i]-((float*)&offset)[i])*15);

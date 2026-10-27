@@ -101,9 +101,12 @@ void __cdecl bh_flyby_scene_camera_step_entity(BHEntity *entity) {
     s->flyby_camera->route->selected_waypoint=(unsigned long)*s->selected_waypoint;
     result=bh_flyby_camera_step(s->flyby_camera,s->flyby_state);
     if(result<0){s->error=BH_FLYBY_SCENE_OWNER;return;}
-    write_vector(entity,0x160,&s->flyby_state->position);
-    write_vector(entity,0x16c,&s->flyby_state->angles);
-    write_vector(entity,0x178,&s->flyby_state->velocity);
+    /* +160/+16c/+178 are outputs of the camera at +e8, not the actor's
+       orbit position/angles/velocity at +0c/+3c/+48. Original 00429fb0
+       calls 0047aac0 on that camera; drawing and menu placement share it. */
+    write_vector(entity,0x160,&s->flyby_state->camera.position);
+    write_vector(entity,0x16c,&s->flyby_state->camera.angles);
+    write_vector(entity,0x178,&s->flyby_state->camera.velocity);
     write_long(entity,0x284,(long)s->flyby_state->route.waypoint_index);
 }
 void __cdecl bh_flyby_scene_rearm_entity(BHEntity *entity) {
@@ -133,6 +136,7 @@ static int reset_player(BHFlybyScene *s,unsigned long index) {
 }
 static int handoff(BHFlybyScene *s,BHEntity *camera) {
     BHEntity *player;BHPlayerInputList *list;
+    BHPlayerInputState decoded;
     long scenario,count,slot;unsigned long index;
     struct {long event,value,message;} message;
     if(!s->current_player || !(player=*s->current_player) || !s->input_profile ||
@@ -148,9 +152,16 @@ static int handoff(BHFlybyScene *s,BHEntity *camera) {
     if(!list || !bh_input_set_enabled(list,0,1))return fail(s,BH_FLYBY_SCENE_OWNER);
     player=*s->current_player;list=player_input(s,player);
     if(!list)return fail(s,BH_FLYBY_SCENE_BINDING);
-    if(!bh_player_input_apply_packet_checked((BHPlayerInputState *)list->state,
-         (const unsigned char *)player+0x18c,0x210-0x18c))
+    /* Original 00475870 takes (packet, destination). The source API takes
+       (destination, packet). +2010 is serialized input; +18c is the player's
+       decoded 36-word window, never a packet or a full 1024-byte state. */
+    memset(&decoded,0,sizeof(decoded));
+    memcpy(decoded.values,(const unsigned char *)player+0x18c,36*4);
+    if(!bh_player_input_apply_packet_checked(&decoded,list->state,sizeof(list->state)))
         return fail(s,BH_FLYBY_SCENE_PACKET);
+    for(index=36;index<256;++index)if(decoded.values[index])
+        return fail(s,BH_FLYBY_SCENE_PACKET);
+    memcpy((unsigned char *)player+0x18c,decoded.values,36*4);
     player=*s->current_player;
     if(!player)return fail(s,BH_FLYBY_SCENE_BINDING);
     write_long(player,0x210,2);

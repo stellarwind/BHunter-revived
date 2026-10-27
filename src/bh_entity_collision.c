@@ -13,7 +13,7 @@ int __cdecl bh_collision_candidate_world(BHCollisionCandidate *out,
     geometry=world->model ? world->model->geometry : NULL;
     if(sweep->b!=geometry) return 0;
     memset(&next,0,sizeof(next));next.object.kind=BH_WORLD_HIT_GEOMETRY;
-    next.object.object.geometry=world;next.sweep=sweep;next.world=world->transform;
+    next.object.object.geometry=world;next.sweep=sweep;next.world=world->transform;next.flags=world->query_flags;
     bh_mat34_inverse_rigid(&next.world,&next.local);
     *out=next;return 1;
 }
@@ -34,7 +34,9 @@ static int candidate(BHCollisionCandidate *c,BHMat34 *pose,const BHVec3 *movemen
     const BHVec3 *angles,int fallback,BHSweepHit *out,int single) {
     BHVec3 relative;
     int result,moving;
-    if(c->object.kind==BH_WORLD_HIT_ACTOR) {
+    /* Original +8==0 bodies use their own rigid mesh. Collision-enable flags
+       and per-tick relative translation belong to nonzero-kind world nodes. */
+    if(c->object.kind==BH_WORLD_HIT_GEOMETRY) {
         if(!(c->flags&2)) return 0;
         moving=c->movement.x!=0 || c->movement.y!=0 || c->movement.z!=0;
         if(moving) {

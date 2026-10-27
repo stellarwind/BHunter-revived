@@ -91,9 +91,47 @@ static void native_draws(BHSceneView *view) {
 done:
     bh_texture_context_dispose(&q);CHECK(!m.live,"native fan image and arena lifetimes balance");
 }
+static void partial_cache(BHSceneView *view) {
+    BHTextureContext q;Memory m={0,0,0};BHTextureImage *im;D3DTLVERTEX triangle[3];DDSURFACEDESC lock;
+    unsigned long i,drawn=0;HRESULT hr;
+    triangle[0]=vertex(4,4,.25f);triangle[1]=vertex(28,4,.25f);triangle[2]=vertex(4,28,.25f);
+    im=image(&q,view,&m);CHECK(im && bh_texture_slot_create(&q,im->format),"real retained slot for partial-cache draw");if(!im || !im->format->slots)goto done;
+    CHECK(bh_texture_draw_polygon(&q,im,triangle,3),"queue fan before optional allocation failure");
+    for(i=0;i<9;++i)q.formats[i].minimum=q.formats[i].references=0;
+    im->format->references=1;m.fail_at=m.calls+1;
+    CHECK(bh_texture_preallocate(&q) && q.error==BH_TEXTURE_MEMORY && im->format->count==1 && !im->format->references,
+        "optional allocation failure retains usable cache and its own diagnostic");m.fail_at=0;
+    CHECK(bh_scene_view_begin(view),"begin real draw after partial-cache allocation");
+    CHECK(bh_texture_draw_flush(&q,im,&drawn) && q.error==BH_TEXTURE_OK && drawn==1 && q.pixel_uploads==1,
+        "successful residency and drawing supersede earlier optional allocation error");
+    CHECK(bh_scene_view_end(view,"texture-partial-cache.bmp"),"complete partial-cache native draw");
+    CHECK(pixel("texture-partial-cache.bmp",8,8)==0xff0000,"retained slot still renders actual red texels");
+    /* A failure from this residency operation must remain visible even when
+       later native calls succeed. Lock the real source to reject its Blt. */
+    memset(&lock,0,sizeof(lock));lock.dwSize=sizeof(lock);
+    hr=IDirectDrawSurface_Lock(im->source,NULL,&lock,DDLOCK_WAIT,NULL);CHECK(hr==DD_OK,"lock source for real upload failure");
+    if(hr==DD_OK) {
+        im->resident->pixels_dirty=1;
+        CHECK(bh_scene_view_begin(view),"begin actual failed-upload frame");
+        CHECK(bh_texture_draw_polygon(&q,im,triangle,3),"queue fan with locked upload source");
+        CHECK(!bh_texture_draw_flush(&q,im,&drawn) && q.error==BH_TEXTURE_BACKEND,
+            "current native upload failure is not hidden by successful later draw calls");
+        CHECK(IDirectDrawSurface_Unlock(im->source,NULL)==DD_OK,"release native upload failure control");
+        /* Original dirty flag clears before Blt; explicitly request retry. */
+        im->resident->pixels_dirty=1;
+        CHECK(bh_texture_draw_polygon(&q,im,triangle,3) && bh_texture_draw_flush(&q,im,&drawn) && q.error==BH_TEXTURE_OK,
+            "successful explicit upload retry supersedes its prior native failure");
+        CHECK(bh_scene_view_end(view,"texture-upload-retry.bmp"),"complete native upload retry frame");
+    }
+done:
+    bh_texture_context_dispose(&q);CHECK(!m.live,"partial-cache fixture releases all real image owners");
+}
 int bh_texture_draw_checkpoint(unsigned long *count) {
     BHSceneView view;BHMathEnvironment fp;checks=0;failures=0;
     if(!bh_math_environment_enter(&fp))return 2;memset(&view,0,sizeof(view));CHECK(bh_scene_view_init(&view,64,64),"real offscreen native draw dependency");
-    if(view.device){arenas(&view);native_draws(&view);}bh_scene_view_dispose(&view);CHECK(bh_math_environment_supported(),"queued native rendering retains PC53 source environment");
+    if(view.device){arenas(&view);native_draws(&view);partial_cache(&view);}bh_scene_view_dispose(&view);CHECK(bh_math_environment_supported(),"queued native rendering retains PC53 source environment");
     bh_math_environment_leave(&fp);*count=checks;printf("{\"scenario\":\"texture-draw-queue\",\"checks\":%lu,\"failures\":%d,\"original_code_required\":false}\n",checks,failures);return failures!=0;
 }
+#ifdef BH_TEXTURE_DRAW_STANDALONE
+int main(void){unsigned long count;return bh_texture_draw_checkpoint(&count);}
+#endif

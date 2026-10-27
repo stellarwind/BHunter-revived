@@ -1,0 +1,16 @@
+{
+  "baseline": 659,
+  "module": "editor_control",
+  "scenario": "editor-control",
+  "sources": [
+    "src/bh_editor_control.c",
+    "src/bh_editor_control.h",
+    "tests/editor_control.c",
+    "tests/editor_control_fixture.h"
+  ],
+  "limits": [
+    "Complete mode/catalog/pan/orbit/zoom/grid translation, create/delete, reattach, numeric, selection, rotation/elevation and clipboard branches. Input transitions consumed at original branch positions; supplied decoded data only, no OS or game input execution.",
+    "Actual source world edit, cube decode/build/match, clone, text/sound queues, numeric entry and entity lifetime linked and exercised. Real callbacks installed; snapshots remain data and copies never execute borrowed callbacks.",
+    "Finite moderate PC53 coherent typed ring/model/entity data. Explicit bounded source guards and movement loop limit preserve preceding edits; clipboard capacity maximum50. Empty-editor sentinel installs original callbacks without inventing a selection. No original code, game launch, screenshots or agents."
+  ]
+}
