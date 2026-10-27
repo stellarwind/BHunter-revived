@@ -18,6 +18,7 @@ typedef struct BHInputCollection {
     float minimum[8],maximum[8];long delta[2];
     BHInputCollectionApi api;MMRESULT last_joystick[2];BOOL last_cursor,last_recenter;
     BHInputCollectionError error;
+    int disable_mouse_motion; /* explicit source preference; buttons remain live */
 } BHInputCollection;
 /* Explicit binding/default adapter, not recovery of00473d60. It initializes
    fresh snapshot/collection storage to verified startup defaults without

@@ -38,7 +38,7 @@ int __cdecl bh_weapon_target_update(BHWeaponTargetContext *c,BHEntity *w,const B
  packet.packet.event=3;
  if(!s->ammo){h=(unsigned long)s->word_100;s->hud.target=NULL;stop(c,h);s->word_100=-1;return c->error==BH_WEAPON_TARGET_OK;}
  if(!s->hud.target){
-  e=c->actors;
+  e=c->actors_owner?*c->actors_owner:c->actors;
   while(e){
    if(++visited>c->max_actors)return fail(c,BH_WEAPON_TARGET_LIMIT);
    if(!query(c,e,&packet.packet))return 0;

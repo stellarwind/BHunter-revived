@@ -25,8 +25,18 @@ static int vm_fixture(VMFixture *v){Fixture *f=&v->response.base;BHScriptMotionA
 }
 static void vm_finish(VMFixture *v){finish(&v->response.base);bh_rail_paths_dispose(&v->paths);CHECK(!v->paths.segments,"real rail source disposal");}
 static BHEntity *create(VMFixture *v,long opcode,long a,long b,long c,long d,long e){long args[5],selectors[5]={-1,-1,-1,-1,-1};args[0]=a;args[1]=b;args[2]=c;args[3]=d;args[4]=e;return bh_script_vm_create(&v->vm,0,opcode,args,selectors);}
+/* Original00443ff0 routes types20/21 to00441b80 using the full resource table. */
+static void extended_pickups(void){VMFixture v;Fixture *f=&v.response.base;unsigned long resources[22],i,used;long type;BHEntity *node,*drop;BHScriptTimerPacket event;
+ CHECK(vm_fixture(&v),"extended pickup VM fixture");for(i=0;i<22;++i)resources[i]=100+i;
+ f->pickups.resources=resources;f->pickups.resource_count=22;event.event=8;event.actor=v.host;
+ for(type=20;type<=21;++type){node=create(&v,13,type,3,2,0,0);used=f->pool.used;node->query(node,&event);drop=f->pickups.head;
+  CHECK(v.vm.error==0&&f->pool.used==used+1&&drop&&bh_pickup_state(drop)->type==type&&bh_pickup_state(drop)->resource==resources[type],"original extended type reaches actual basic constructor");
+  if(drop)bh_pickup_cleanup(drop);
+ }
+ vm_finish(&v);
+}
 int bh_script_vm_checkpoint(unsigned long *count){VMFixture v;Fixture *f=&v.response.base;BHMathEnvironment env;BHEntity *node,*child,*next;BHScriptTimerPacket event;BHScriptVMState state;BHScriptLifetimeState life;BHScriptSensorState sensor;BHScriptEmitterState emitter;unsigned long opcode,used,seed,i,gen;long args[5]={1,2,3,4,5},selectors[5]={0,-1,-1,-1,-1};BHVec3 zero={0,0,0};
- checks=failed=0;CHECK(bh_math_environment_enter(&env),"PC53");CHECK(model_file(),"actual collision fixture");
+ checks=failed=0;CHECK(bh_math_environment_enter(&env),"PC53");CHECK(model_file(),"actual collision fixture");extended_pickups();
  for(opcode=0;opcode<25;++opcode){CHECK(vm_fixture(&v),"complete actual dependency fixture");event.event=8;event.actor=v.host;
   switch(opcode){case 0:node=create(&v,0,1,4,0,0,0);break;case 1:node=create(&v,1,0,1,0,0,0);break;case 4:node=create(&v,4,2,2,0,0,0);break;case 5:node=create(&v,5,10,30,60,90,0);v.actors[0].orientation=1;break;case 6:case 9:node=create(&v,opcode,10,30,60,90,2);break;case 7:node=create(&v,7,1,0,0,0,0);break;case 8:node=create(&v,8,0,2,0,0,0);break;case 10:case 14:case 22:node=create(&v,opcode,3,4,5,6,7);break;case 11:node=create(&v,11,0,0,0,0,0);break;case 12:node=create(&v,12,10,30,60,90,0);break;case 13:node=create(&v,13,0,5,6,7,1);break;case 15:node=create(&v,15,5,0,123,10,0);break;case 16:node=create(&v,16,1,8,0,0,0);v.states[0].owner=v.states+1;break;case 17:node=create(&v,17,1,2,20,25,77);break;case 18:node=create(&v,18,20,123,0,0,0);break;case 19:node=create(&v,19,123,0,0,0,0);break;case 20:node=create(&v,20,2,30,4,0,0);break;case 23:node=create(&v,23,4,8,0,0,0);f->world.navigation.portals[0].plane=0;break;case 24:node=create(&v,24,123,0,0,0,0);break;default:node=create(&v,opcode,0,0,0,0,0);break;}
   CHECK(node&&node->query==bh_script_vm_query,"whole factory actual callback");next=create(&v,19,999,0,0,0,0);setword(node,0xec,(unsigned long)next);used=f->pool.used;srand(71);node->query(node,&event);CHECK(v.vm.error==0&&v.vm.executed==2&&word(opcode==16?f->owner:v.host,0x11c)==999,"all25 branches forward real next VM node");

@@ -1,8 +1,23 @@
 # BHunter restoration plan
 
+2026-10-27 superseding authorization: the user requested a separate small box
+level build that skips menus, exercises AI, collisions, shooting, objectives and
+pickups, and permits bounded automated playthroughs of that diagnostic level.
+This exception does not authorize broad tutorial/mission replay or software
+renderer tests. Compare relevant original instructions and connected behavior;
+isolated fixtures and source counts do not establish fidelity.
+
+
 **Goal:** a faithfully playable, source-built BHunter on modern Windows, with all verified original features covered and the original executable retained only as an optional test oracle. Full decompilation means recovering the game's and required proprietary engine's behavior in maintainable source, reusing identified libraries rather than reimplementing their internals. It does not mean reproducing Microsoft's CRT source or matching every instruction.
 
 Created 2026-10-23. This is the project execution contract. Milestones complete only when their exit evidence is recorded in `META/PROGRESS.md`; estimates, compiled files and disassembly coverage do not count as completion.
+
+2026-10-27 user direction supersedes the earlier software-preview and backend
+deferral plans: no further software-renderer testing. The next platform phase
+will migrate to SDL3 with SDL3 GPU and completely disconnect/remove the live
+software rendering path. Historical artifacts remain evidence only. Until the
+migration, validate source changes with focused non-renderer fixtures and
+hardware-only bounded startup. Mouse-driven steering is disabled by request.
 
 2026-10-26 preview update: the source-only standalone target now builds from 299
 production translation units and passes bounded initialization/static rendering.

@@ -1,0 +1,822 @@
+{
+  "reference_exe_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+  "method": "Original disassembly/decompilation versus linked source, not two source runs",
+  "owners": [
+    {
+      "system": "AI",
+      "original_va": "00421610",
+      "function": "bh_target_select",
+      "source": "src/bh_target_selection.c",
+      "source_sha256": "589b0ee1dd8f1a81a583ae2d14a8fa2209c85d6445a50a25c0029390feb7f9d2",
+      "original": {
+        "address": "00421610",
+        "path": "META/m4/frontier-90min/original/00421610.tsv",
+        "bytes": 304,
+        "instructions": 107,
+        "sha256": "790a17f255acb7ec3596279361e48c931121aee1f52e5e57a0271142796112cc"
+      },
+      "review_scope": "Player eligibility, type2 filtering, query3 positions, weighted nearest target and list order.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "AI",
+      "original_va": "004344f0",
+      "function": "bh_route_choose_exit",
+      "source": "src/bh_route_choice.c",
+      "source_sha256": "a8a25b4d2a76f892973657f2f4c292bd76752a4e864108052d651b09aadfdd37",
+      "original": {
+        "address": "004344f0",
+        "path": "META/m4/frontier-90min/original/004344f0.tsv",
+        "bytes": 344,
+        "instructions": 116,
+        "sha256": "665a2fb59c153ae188b8833c405d007f0079808be1cf44a08535f28eac1992ea"
+      },
+      "review_scope": "Preferred exit before exclusion, flags10/20, no-exit return, actor-local RNG step and rank.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "AI",
+      "original_va": "00434650",
+      "function": "bh_route_guided_exit",
+      "source": "src/bh_route_guided.c",
+      "source_sha256": "887efcd2de5a6b68fa14378c2d30d35a7704b7e49f2b74e1e5454bf1ab6e67bd",
+      "original": {
+        "address": "00434650",
+        "path": "META/m4/frontier-90min/original/00434650.tsv",
+        "bytes": 440,
+        "instructions": 138,
+        "sha256": "4ce5b12fbd2d4e1d5e9e20f1f81802e649d4666ca187143a4d6e3a3ada684251"
+      },
+      "review_scope": "Opposite portal direction, eligibility flags, up-cross-normal, minimum-score choice.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "AI",
+      "original_va": "004355c0",
+      "function": "bh_actor_route_advance",
+      "source": "src/bh_actor_route.c",
+      "source_sha256": "ff0f2fd8e7e596e4c74e3376f40f56a96e968548026e995275ca2d122e632399",
+      "original": {
+        "address": "004355c0",
+        "path": "META/m4/frontier-90min/original/004355c0.tsv",
+        "bytes": 350,
+        "instructions": 109,
+        "sha256": "29eaada70fb14d100e70aa0155dd68baebd506015cff5f7be25550b44bc16260"
+      },
+      "review_scope": "Sound countdown, incoming portal search, guided/random selection, two actor RNG lerps, promotion.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "AI",
+      "original_va": "00435790",
+      "function": "bh_actor_route_due",
+      "source": "src/bh_actor_route_lifetime.c",
+      "source_sha256": "d08799583dfec33e6488758c4d9e1b742c569a5a4521ab4055b225340123e51f",
+      "original": {
+        "address": "00435790",
+        "path": "META/m4/frontier-90min/original/00435790.tsv",
+        "bytes": 58,
+        "instructions": 17,
+        "sha256": "367ed20e8763fb75b20183f801ffe57dabd9d715ff84215c5397505b8a542d32"
+      },
+      "review_scope": "Signed16 due test and original now-plus-overrun stamp.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "AI",
+      "original_va": "00435720",
+      "function": "bh_actor_route_release",
+      "source": "src/bh_actor_route_lifetime.c",
+      "source_sha256": "d08799583dfec33e6488758c4d9e1b742c569a5a4521ab4055b225340123e51f",
+      "original": {
+        "address": "00435720",
+        "path": "META/m4/frontier-90min/original/00435720.tsv",
+        "bytes": 102,
+        "instructions": 28,
+        "sha256": "a90fbbb773d56072915864ea19d73b995da1c171ede3a8b5c8f062efa840a436"
+      },
+      "review_scope": "Sound stop, room-list unlink and pool release.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "AI",
+      "original_va": "00438ff0",
+      "function": "bh_actor_pursuit_route",
+      "source": "src/bh_actor_pursuit_route.c",
+      "source_sha256": "7d47d5e378ecd4435294dab66a2f4f9c9acd6e9ab985417a8c9e81c304b8a65f",
+      "original": {
+        "address": "00438ff0",
+        "path": "META/m4/target600/b/original/00438ff0.disasm.json",
+        "bytes": 2015,
+        "instructions": 535,
+        "sha256": "96d49e1382d3d84999de2d5acdb6890579f3c2acbdb8cc7a3bf70222a5e1c4a6"
+      },
+      "review_scope": "Retarget RNG gates, forced path temporary state, room lookup, route promotion, same-room pursuit controls.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "AI",
+      "original_va": "00437ae0",
+      "function": "bh_actor_attack",
+      "source": "src/bh_actor_attack.c",
+      "source_sha256": "502a70c6cc1f1b8b773269df3c040ebcf2a7d8b53bcaee7fabe131c115eb8c18",
+      "original": {
+        "address": "00437ae0",
+        "path": "META/m4/target600/b7/original/00437ae0.disasm.json",
+        "bytes": 5379,
+        "instructions": 1356,
+        "sha256": "68af29fe173bc1d0005ddb398856ddf5d07eba327fff58c8a3461ccd3d18c13f"
+      },
+      "review_scope": "Target query, cooldown, immunity/range/aim gates, phase cadence, three weapon branches, effect RNG order and contact/damage packets.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "AI",
+      "original_va": "004398c0",
+      "function": "bh_actor_vehicle_tick",
+      "source": "src/bh_actor_attack.c",
+      "source_sha256": "502a70c6cc1f1b8b773269df3c040ebcf2a7d8b53bcaee7fabe131c115eb8c18",
+      "original": {
+        "address": "004398c0",
+        "path": "META/m4/target600/b7/original/004398c0.disasm.json",
+        "bytes": 80,
+        "instructions": 24,
+        "sha256": "c2bc8d9b73bc05d7605a538a2b1e79416bc17b87783cc1b8be13601e3216787c"
+      },
+      "review_scope": "Attack then phase progression and pursuit transition.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "AI",
+      "original_va": "004357d0",
+      "function": "bh_actor_damage_tick",
+      "source": "src/bh_actor_damage.c",
+      "source_sha256": "b9651b0c09d23724970c746f2a06f0b3532ec90e9d99028b8a5ed4b6e0b6756f",
+      "original": {
+        "address": "004357d0",
+        "path": "META/m4/target600/b/original/004357d0.disasm.json",
+        "bytes": 1709,
+        "instructions": 449,
+        "sha256": "b067f36aff6b0b79e63a5ab9853a30cb90a2e44e74b30a76a9c627ab9cf1e016"
+      },
+      "review_scope": "Damage decay, displacement damping, route due, smoke/death gates, actor-local wreck RNG, loot and retirement. Damping corrected.",
+      "result": "corrected",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "AI",
+      "original_va": "00435e80",
+      "function": "bh_actor_damage_query",
+      "source": "src/bh_actor_damage.c",
+      "source_sha256": "b9651b0c09d23724970c746f2a06f0b3532ec90e9d99028b8a5ed4b6e0b6756f",
+      "original": {
+        "address": "00435e80",
+        "path": "META/m4/target600/b3/original/00435e80.disasm.json",
+        "bytes": 1312,
+        "instructions": 382,
+        "sha256": "af8b4dceb2e36e6dcbe60e6b56c2e91a63ea0a987e3af00db230c18102e90118"
+      },
+      "review_scope": "Event cases, pickup reply words5/6, impulse handling, damage transition, motion query and cleanup. Floating intermediates outside damping not exhaustively matched.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "AI",
+      "original_va": "00439910",
+      "function": "bh_actor_response_tick",
+      "source": "src/bh_actor_response.c",
+      "source_sha256": "3f1bfbe4e2a2742e7f36cd9fb860e7fea98aae75c1adcc1d8a8cb66edba2c6b5",
+      "original": {
+        "address": "00439910",
+        "path": "META/m4/target656/response/original/00439910.disasm.json",
+        "bytes": 2231,
+        "instructions": 578,
+        "sha256": "9af815982daafd13acd118a31f45e9be43891ba7e15810a7f26a99e73e9e058d"
+      },
+      "review_scope": "Attack, relaxation, kind6 decay, displacement damping, phase, smoke/death, loot and notifications. Damping corrected against original executed instructions.",
+      "result": "corrected",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "AI",
+      "original_va": "0043a1d0",
+      "function": "bh_actor_response_query",
+      "source": "src/bh_actor_response.c",
+      "source_sha256": "3f1bfbe4e2a2742e7f36cd9fb860e7fea98aae75c1adcc1d8a8cb66edba2c6b5",
+      "original": {
+        "address": "0043a1d0",
+        "path": "META/m4/target656/response/original/0043a1d0.disasm.json",
+        "bytes": 1793,
+        "instructions": 512,
+        "sha256": "1f2620dce9a66cb8aab15a97dd9d10bfe19e46017e16a9fc39672b21bcefbcc2"
+      },
+      "review_scope": "Event dispatch, kind6 damage cap, threat selection, impulse, pickup replies, target/motion query and retirement. Full numerical equivalence remains unverified.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "collision",
+      "original_va": "0040abe0",
+      "function": "collect (owned static DFS)",
+      "source": "src/bh_world_query.c",
+      "source_sha256": "26f0900748e1f0d7a6ecf072f1028ae305e703865cfa34765592ff0f3235fe48",
+      "original": {
+        "address": "0040abe0",
+        "bytes": 795,
+        "sha256": "c83b07b91069e0c8af03220ecc4875106fb68e8427d6969def5bbed35dad66a8",
+        "reference": "GAME_DATA/BHUNTER.EXE",
+        "assembly_artifacts": [
+          "META/m4/world-queries/original/0040abe0.asm.txt"
+        ],
+        "export_validation": "Original reference body hashed; assembly text reviewed, not claimed as machine-readable byte-validated export."
+      },
+      "review_scope": "Root/child/portal DFS order, visited flags, inclusive geometry bounds.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "collision",
+      "original_va": "0040af20",
+      "function": "actors (owned strict actor collector)",
+      "source": "src/bh_world_query.c",
+      "source_sha256": "26f0900748e1f0d7a6ecf072f1028ae305e703865cfa34765592ff0f3235fe48",
+      "original": {
+        "address": "0040af20",
+        "bytes": 251,
+        "sha256": "125aab6f7d3be5f86828050c707d2c0f804aa19c581aa9485e3caf669612432a",
+        "reference": "GAME_DATA/BHUNTER.EXE",
+        "assembly_artifacts": [
+          "META/m4/world-queries/original/0040af20.asm.txt"
+        ],
+        "export_validation": "Original reference body hashed; assembly text reviewed, not claimed as machine-readable byte-validated export."
+      },
+      "review_scope": "Excluded actor, strict radius/bounds comparisons, global actor order and terminating sentinel.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "collision",
+      "original_va": "0040b300",
+      "function": "bh_world_query_run",
+      "source": "src/bh_world_query.c",
+      "source_sha256": "26f0900748e1f0d7a6ecf072f1028ae305e703865cfa34765592ff0f3235fe48",
+      "original": {
+        "address": "0040b300",
+        "bytes": 263,
+        "sha256": "c48d17adc1326000035260d4be23151214d8ef56f78a52592f9f694250f17908",
+        "reference": "GAME_DATA/BHUNTER.EXE",
+        "assembly_artifacts": [
+          "META/m4/world-queries/original/0040b300.asm.txt"
+        ],
+        "export_validation": "Original reference body hashed; assembly text reviewed, not claimed as machine-readable byte-validated export."
+      },
+      "review_scope": "Cached room containment, zero-margin then radius lookup, previous-room fallback, geometry before actors.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "collision",
+      "original_va": "0040b410",
+      "function": "bh_entity_collision_dispatch",
+      "source": "src/bh_entity_collision.c",
+      "source_sha256": "0ef1b85be9b059647b6a108c4a4c858d422510054222183a1ee3b47b7cc72bee",
+      "original": {
+        "address": "0040b410",
+        "path": "META/m4/entity-collision/original/0040b410.disassembly.json",
+        "bytes": 1582,
+        "instructions": 483,
+        "sha256": "1d1877bb852a84e25bbead92fd496c2264d60afb6567e565eef1d66cca6beacd"
+      },
+      "review_scope": "Zero/single/multiple candidates, moving-world relative motion, undo on miss, earliest selection and candidate swap.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "collision",
+      "original_va": "0044da20",
+      "function": "bh_sweep_run",
+      "source": "src/bh_sweep.c",
+      "source_sha256": "829392439f2e0886f45079d69f1e884730cfc1b9faaade22ab8872324fff751a",
+      "original": {
+        "address": "0044da20",
+        "path": "META/m4/swept-collision/original/0044da20.disassembly.json",
+        "bytes": 1595,
+        "instructions": 458,
+        "sha256": "c7bd1f3bd6740240fb53b423d4d21eeb321710cf04f6d5e841629a0e9c7e8151"
+      },
+      "review_scope": "Full-pose overlap, segment fallback with recursion disabled, three bisections, cached-face fallback, clear pose and contact motion.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "collision",
+      "original_va": "0044c200",
+      "function": "bh_collision_query_node",
+      "source": "src/bh_collision_query.c",
+      "source_sha256": "1973040655dfb2f871dd6212bf44db3c5cf14057627ee23e26b08c798f907c8e",
+      "original": {
+        "address": "0044c200",
+        "path": "META/m4/collision-traversal/original/0044c200.disassembly.json",
+        "bytes": 2591,
+        "instructions": 759,
+        "sha256": "6867712195dfaa204ed94643b887fc4cf977474d69b6112b45a7073167dcbc66"
+      },
+      "review_scope": "Node sphere/plane pruning, source-face suppression, face traversal and recursive front-before-back order. Arithmetic not fully instruction-matched.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "collision",
+      "original_va": "0044d2f0",
+      "function": "bh_collision_query_run",
+      "source": "src/bh_collision_query.c",
+      "source_sha256": "1973040655dfb2f871dd6212bf44db3c5cf14057627ee23e26b08c798f907c8e",
+      "original": {
+        "address": "0044d2f0",
+        "path": "META/m4/collision-traversal/original/0044d2f0.disassembly.json",
+        "bytes": 391,
+        "instructions": 147,
+        "sha256": "6a1d604d73531a281ab64af5d162d10bd667ab2233ab6e1ca2dbd5b17777b0f1"
+      },
+      "review_scope": "Node0 traversal and result publication.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "collision",
+      "original_va": "0044d480",
+      "function": "bh_physics_overlap",
+      "source": "src/bh_physics_response.c",
+      "source_sha256": "273ba0f8cae1356e757558e88649d6a73f4f8d9fdde8b62027eb535e5556e382",
+      "original": {
+        "address": "0044d480",
+        "path": "META/m4/physics-response/original/0044d480.disassembly.json",
+        "bytes": 120,
+        "instructions": 35,
+        "sha256": "53c4ffe80f1e51a898de1f19b7a6fe43b49b9adc31a5b643c43aa50eefa5c47f"
+      },
+      "review_scope": "Null geometry rejection and local*pose transform before collision query.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "collision",
+      "original_va": "0040ba40",
+      "function": "bh_world_segment_room_trace",
+      "source": "src/bh_world_segment.c",
+      "source_sha256": "710c40b6f7a5bc163d15413c2cab184891dfed6ac493d368678da194ec401819",
+      "original": {
+        "address": "0040ba40",
+        "path": "META/m4/scene-callers/original/0040ba40.tsv",
+        "bytes": 2625,
+        "instructions": 809,
+        "sha256": "64894df58c5da1a2d10dfd80eec35ecc31e035adf8b79158f19e434ce70471c9"
+      },
+      "review_scope": "First strict portal crossing, aperture, radius actor query, room mesh then child meshes, recursion only without local hit.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "collision",
+      "original_va": "0040b020",
+      "function": "bh_world_segment_actor_trace",
+      "source": "src/bh_world_segment.c",
+      "source_sha256": "710c40b6f7a5bc163d15413c2cab184891dfed6ac493d368678da194ec401819",
+      "original": {
+        "address": "0040b020",
+        "path": "META/m4/scene-callers/original/0040b020.tsv",
+        "bytes": 729,
+        "instructions": 232,
+        "sha256": "cc36bd8ed8fc2381408b9b42e9e2a4b7bb5c0467ad5ce6776060d84b39915f14"
+      },
+      "review_scope": "Global actor sphere projection, strict intersection, mesh test, nearest selection, material flag preservation.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "collision",
+      "original_va": "0040c4a0",
+      "function": "bh_world_segment_run",
+      "source": "src/bh_world_segment.c",
+      "source_sha256": "710c40b6f7a5bc163d15413c2cab184891dfed6ac493d368678da194ec401819",
+      "original": {
+        "address": "0040c4a0",
+        "path": "META/m4/scene-callers/original/0040c4a0.tsv",
+        "bytes": 448,
+        "instructions": 173,
+        "sha256": "fb5fea4e1deadb218a5b04c4cf9f20c0f1799b77390504abc164a23ae5befb47"
+      },
+      "review_scope": "Cached-room/locate fallback, normalization, room pass then global actor pass, hit fraction. Projection sum order checked against x87, not decompiler order.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "collision",
+      "original_va": "004124d0",
+      "function": "bh_physics_step",
+      "source": "src/bh_physics_step.c",
+      "source_sha256": "6e4346fba8baab7880452aa543a1aab3fb2ced9861fe7bdd880f76d6e1fef58f",
+      "original": {
+        "address": "004124d0",
+        "path": "META/m4/hour443/b/004124d0.disassembly.json",
+        "bytes": 3916,
+        "instructions": 1015,
+        "sha256": "a230b4b4d11bf78467b9562ebe7dab5dd8d2b6e904c670699d4a80c730e20cee"
+      },
+      "review_scope": "Integration and acceleration reset, broad phase, first sweep, world-only last-clear recovery, slide, material response, mass sharing, contact callbacks and final pose. Scalar FP equivalence not exhaustively matched.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "shooting",
+      "original_va": "004305f0",
+      "function": "bh_weapon_fire_ballistic",
+      "source": "src/bh_weapon_fire.c",
+      "source_sha256": "355acaf9295f14137d2297cafb23b410a98581da62595ab42b44ef7e594e603b",
+      "original": {
+        "address": "004305f0",
+        "path": "META/m4/target600/a5/original/004305f0.disasm.json",
+        "bytes": 952,
+        "instructions": 274,
+        "sha256": "d46c603c4da2ff7388ec3bad4b0fa7faec319ca3529453cb20ba6b9ca2bf80e2"
+      },
+      "review_scope": "Ballistic cadence, ammo decrement, alternating muzzle, three spread RNG draws, creation/sound/network/recoil and phase increment.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "shooting",
+      "original_va": "00430a30",
+      "function": "bh_weapon_fire_homing",
+      "source": "src/bh_weapon_fire.c",
+      "source_sha256": "355acaf9295f14137d2297cafb23b410a98581da62595ab42b44ef7e594e603b",
+      "original": {
+        "address": "00430a30",
+        "path": "META/m4/target600/a5/original/00430a30.disasm.json",
+        "bytes": 848,
+        "instructions": 241,
+        "sha256": "e9d635960e10b811266aeb1e50ebe6acd78484944e898244cce9462c2128cdce"
+      },
+      "review_scope": "Homing cadence, ammo, muzzle/target, RNG, projectile creation, sound/network/recoil.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "shooting",
+      "original_va": "00431db0",
+      "function": "bh_weapon_area_start",
+      "source": "src/bh_weapon_fire.c",
+      "source_sha256": "355acaf9295f14137d2297cafb23b410a98581da62595ab42b44ef7e594e603b",
+      "original": {
+        "address": "00431db0",
+        "path": "META/m4/target600/a5/original/00431db0.disasm.json",
+        "bytes": 330,
+        "instructions": 93,
+        "sha256": "833f83d024c8684b12eaf7f193ee5fc08d1e1cddaa025836b32aeee7f56aad83"
+      },
+      "review_scope": "Area activation gating, ammo and five-tick duration.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "shooting",
+      "original_va": "00431f00",
+      "function": "bh_weapon_area_tick",
+      "source": "src/bh_weapon_fire.c",
+      "source_sha256": "355acaf9295f14137d2297cafb23b410a98581da62595ab42b44ef7e594e603b",
+      "original": {
+        "address": "00431f00",
+        "path": "META/m4/target600/a5/original/00431f00.disasm.json",
+        "bytes": 332,
+        "instructions": 98,
+        "sha256": "7c28260c8b091b5f66dc83f4299319a6d32524ae2cd79d8701da0a42d042482e"
+      },
+      "review_scope": "Five strengths, alternating recoil, projectile emission and duration decrement.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "shooting",
+      "original_va": "0043ea90",
+      "function": "bh_ballistic_projectile_tick",
+      "source": "src/bh_ballistic_projectile.c",
+      "source_sha256": "9d097c37fbacd25948c08d03215bfcb0b29b4e74c423efb9215a6a0ce037b74d",
+      "original": {
+        "address": "0043ea90",
+        "path": "META/m4/target500/a3/original/0043ea90.disasm.json",
+        "bytes": 2969,
+        "instructions": 765,
+        "sha256": "2bd1407bca42ef71b12869ea101e112570fd82c310d279599369ee4c7ecfb7fe"
+      },
+      "review_scope": "Lifespan, segment/no-hit proximity, material branches, ricochet, absorb, effects/RNG, contact then damage, cleanup. Source degenerate-vector guard differs from original unwritten normalization output; unresolved.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "objectives",
+      "original_va": "00443270",
+      "function": "bh_script_wait_template",
+      "source": "src/bh_script_wait.c",
+      "source_sha256": "6d2c581164d3ec4d3adbc681350db962cb3442c2fd3bb3e7fa5274ea853f7788",
+      "original": {
+        "address": "00443270",
+        "path": "META/m4/loading-display/next-review/00443270.disasm.json",
+        "bytes": 221,
+        "instructions": 80,
+        "sha256": "b42d09d44adeea441b21c4d72b0626dcb3988bdc26f504052ddf737810bb2933"
+      },
+      "review_scope": "Wait template variable resolution, child48-byte state copy, loaded/actor overwrite, callback registration and forwarding.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "objectives",
+      "original_va": "00442f40",
+      "function": "bh_script_wait_child",
+      "source": "src/bh_script_wait.c",
+      "source_sha256": "6d2c581164d3ec4d3adbc681350db962cb3442c2fd3bb3e7fa5274ea853f7788",
+      "original": {
+        "address": "00442f40",
+        "path": "META/m4/loading-display/next-review/00442f40.disasm.json",
+        "bytes": 202,
+        "instructions": 63,
+        "sha256": "c7c10a05cf7d5459d8f04ffa8ce9d853eee5e4febde1fc932e2eb3279eb068a8"
+      },
+      "review_scope": "Wait event matching, callback-before-decrement, zero unlimited, deferred delete and unloaded teardown; read actual instructions because decompile export is an error.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "objectives",
+      "original_va": "004457c0",
+      "function": "bh_script_vm_create",
+      "source": "src/bh_script_vm.c",
+      "source_sha256": "fc18167808ad1ca47424b775cc373b7255332bb59d5191f002c86e2bae2b10ae",
+      "original": {
+        "address": "004457c0",
+        "path": "META/m4/loading-display/next-review/004457c0.disasm.json",
+        "bytes": 221,
+        "instructions": 56,
+        "sha256": "80c255602655eb702cd7d64a1fd55f891e5e72fa230b1cf4a3675c11f3739667"
+      },
+      "review_scope": "VM selector sum+5, loaded state, next pointer, origin, allocation/bind and output.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "objectives",
+      "original_va": "00443ff0",
+      "function": "bh_script_vm_query",
+      "source": "src/bh_script_vm.c",
+      "source_sha256": "fc18167808ad1ca47424b775cc373b7255332bb59d5191f002c86e2bae2b10ae",
+      "original": {
+        "address": "00443ff0",
+        "path": "META/m4/resume400/a/original/00443ff0.disasm.json",
+        "bytes": 287,
+        "instructions": 76,
+        "sha256": "08ae0947d9253f1de2734821c624a9a254f6c23943a86943e3e3d97e1f004502"
+      },
+      "review_scope": "Event4/20 teardown, event8 selector substitution, opcode dispatch, original13 pickup type partition, broadcast/owner/radar/portal operations. Source depth/count guards remain explicit adapter limits.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "objectives",
+      "original_va": "00443ac0",
+      "function": "bh_script_proximity_tick",
+      "source": "src/bh_script_sensor.c",
+      "source_sha256": "0e776079267b3283190904bc56361d3c7d8eb041cfb599833cc4ac4526c4ee19",
+      "original": {
+        "address": "00443ac0",
+        "bytes": 628,
+        "sha256": "583ae26713b5a73b1d564930492dd404973fdf8d3114cdec4cb4119ce8f87f77",
+        "reference": "GAME_DATA/BHUNTER.EXE",
+        "assembly_artifacts": [
+          "META/m4/hour407/b/00443ac0.asm.txt",
+          "META/m3/sensor-review/00443ac0.asm.txt"
+        ],
+        "export_validation": "Original reference body hashed; assembly text reviewed, not claimed as machine-readable byte-validated export."
+      },
+      "review_scope": "Quarter-second schedule, player-only radar scan, radius versus owner bounds, latch, broadcast14, decrement/release.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "objectives",
+      "original_va": "00443d40",
+      "function": "bh_script_damage_tick",
+      "source": "src/bh_script_sensor.c",
+      "source_sha256": "0e776079267b3283190904bc56361d3c7d8eb041cfb599833cc4ac4526c4ee19",
+      "original": {
+        "address": "00443d40",
+        "bytes": 310,
+        "sha256": "d14c4c5da7d49a5e9fa55dd6763e295a0c7ae81a965e4201cdba041542d945c4",
+        "reference": "GAME_DATA/BHUNTER.EXE",
+        "assembly_artifacts": [
+          "META/m4/hour407/b/00443d40.asm.txt"
+        ],
+        "export_validation": "Original reference body hashed; assembly text reviewed, not claimed as machine-readable byte-validated export."
+      },
+      "review_scope": "Latch reset, one-second schedule, retained .98 health threshold, event14, +4 seconds, event17 on last count, release; checked instructions.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "objectives",
+      "original_va": "00422570",
+      "function": "bh_mission_progress",
+      "source": "src/bh_mission_progress.c",
+      "source_sha256": "3b7169eda4aa4919e953631bd264e1eeb44f6439ef1a804465798db756cde4ef",
+      "original": {
+        "address": "00422570",
+        "path": "META/m4/target550/c7/00422570.disasm.json",
+        "bytes": 118,
+        "instructions": 27,
+        "sha256": "3295155e020ce3b8cdfaa385851a631c72e8fadb6b989b8e73d6af22c966a794"
+      },
+      "review_scope": "Signed16 progression comparison/save and delayed4-second first/unlocked sound.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "objectives",
+      "original_va": "004225f0",
+      "function": "bh_mission_story_dispatch",
+      "source": "src/bh_mission_story.c",
+      "source_sha256": "3e23c2ff2f73f0a5ba80504809ca4ce7f8ccb9f9913087b3a3fdfd4b3298a32c",
+      "original": {
+        "address": "004225f0",
+        "path": "META/m4/finish/mission-story/original/004225f0.disasm.json",
+        "bytes": 3507,
+        "instructions": 936,
+        "sha256": "1b282ee1d865dbca59dc04f8edc6abd816ba8d4ccc30eb523530873ad662c697"
+      },
+      "review_scope": "Story message action table, progression/unlocks, ending/control transitions, availability and heavy-ammo clearing. Strings previously recovered; no new string-byte claim.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "pickups",
+      "original_va": "00441b80",
+      "function": "bh_pickup_basic_spawn",
+      "source": "src/bh_pickup_basic.c",
+      "source_sha256": "bfa9b1b829ce8a2fa567fe05bbe8f02338c450c03337d11f21ae6dff6cd109e9",
+      "original": {
+        "address": "00441b80",
+        "path": "META/m4/script-frontier/00441b80.disasm.json",
+        "bytes": 340,
+        "instructions": 77,
+        "sha256": "0869724d27ad41249953d153dfedd5270dbbcd2095dc73e485a100ac18c63f6b"
+      },
+      "review_scope": "Resource lookup and constructor initialization. Removed invented type<10 restriction; original VM sends20/21 unchanged.",
+      "result": "corrected",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "pickups",
+      "original_va": "00441a00",
+      "function": "bh_pickup_spawn",
+      "source": "src/bh_pickup.c",
+      "source_sha256": "fa568982e172ffdc6c921e54efdf515989615d180b0a3211b51fdb79e87389af",
+      "original": {
+        "address": "00441a00",
+        "path": "META/m4/entity-resource-draw/original/00441a00.tsv",
+        "bytes": 384,
+        "instructions": 96,
+        "sha256": "fa723897c0c4ce587a1595d554f850a09cde887246456ef48dfe19f9474b92bf"
+      },
+      "review_scope": "Resource fallback, two RNG calls, offer min, draw callback, room/global insertion and event binding.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "pickups",
+      "original_va": "004415a0",
+      "function": "bh_pickup_tick",
+      "source": "src/bh_pickup.c",
+      "source_sha256": "fa568982e172ffdc6c921e54efdf515989615d180b0a3211b51fdb79e87389af",
+      "original": {
+        "address": "004415a0",
+        "path": "META/m4/pickup/original/004415a0.tsv",
+        "bytes": 1111,
+        "instructions": 309,
+        "sha256": "6f65bb633c3ca9afc1c121ad53291231e99c330220f0ffa72be05654a596cfab"
+      },
+      "review_scope": "Timer, type filtering, query3/query13, strict6-unit offer, packet reply offsets, remaining/offer, sound and cleanup. Original-derived rounding-boundary fixture passes current compiled source; no speculative distance rewrite.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "pickups",
+      "original_va": "00441570",
+      "function": "bh_pickup_query",
+      "source": "src/bh_pickup.c",
+      "source_sha256": "fa568982e172ffdc6c921e54efdf515989615d180b0a3211b51fdb79e87389af",
+      "original": {
+        "address": "00441570",
+        "path": "META/m4/pickup/original/00441570.tsv",
+        "bytes": 48,
+        "instructions": 11,
+        "sha256": "e280019e2175d6f2e1999e5a78ddf0df8f6575df538ba75e32e85e7479ee97ff"
+      },
+      "review_scope": "Event20 defers cleanup, disables refresh/query.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "pickups",
+      "original_va": "004414d0",
+      "function": "bh_pickup_cleanup",
+      "source": "src/bh_pickup.c",
+      "source_sha256": "fa568982e172ffdc6c921e54efdf515989615d180b0a3211b51fdb79e87389af",
+      "original": {
+        "address": "004414d0",
+        "path": "META/m4/pickup/original/004414d0.tsv",
+        "bytes": 151,
+        "instructions": 40,
+        "sha256": "e86ced68a7a040359d106e78859b07cc0ff16a3b6d5eb479f2d971128f98c433"
+      },
+      "review_scope": "Room/global doubly linked unlink and pool release.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    },
+    {
+      "system": "pickups",
+      "original_va": "0041d7c0",
+      "function": "bh_player_query_dispatch",
+      "source": "src/bh_player_query.c",
+      "source_sha256": "b7d4fc929740a9d739a428266b5d1d549f275411c4eb46b957aea9e9006e3aef",
+      "original": {
+        "address": "0041d7c0",
+        "path": "META/m4/target550/a/original/0041d7c0.disasm.json",
+        "bytes": 3749,
+        "instructions": 1110,
+        "sha256": "4a3c86fc2d75ec55600bdd1aabf9e7e5d5c3ed995b289e9969b08da642a73bde"
+      },
+      "review_scope": "Pickup event13 consumer contract only: accepted+14/consumed+18 and inventory response. Other player query events are outside this review row.",
+      "result": "reviewed_with_stated_limits",
+      "whole_function_byte_match": false,
+      "whole_function_differential_execution": false
+    }
+  ],
+  "original_owners_added": 0,
+  "limits": [
+    "Function-by-function static flow/ABI review is distinct from byte matching. No whole-function or whole-game1:1 equivalence claim; review scope is explicit for every owner.",
+    "Independent dynamic evidence is limited to original00439910 damping instructions underPC53 and their instruction-identical arithmetic in004357d0;256 finite input cases, six output words each. PC24 remains unresolved.",
+    "Original ballistic zero-vector normalization leaves output unwritten; source fails that degenerate path. Original wreck orientation is also unwritten input supplied by an explicit adapter. These are unresolved fidelity boundaries, not proven matches.",
+    "Source validation/generation/topology/capacity/depth guards are adapters. Full numerical/RNG/mutation equivalence outside the reviewed scopes, other projectile families, CD audio and peer gameplay remain unverified.",
+    "No software-renderer tests or automated gameplay ran. Hardware static startup is integration evidence only. Historical paired box traces do not compare against the original and do not validate this executable."
+  ]
+}

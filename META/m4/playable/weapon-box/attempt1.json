@@ -1,0 +1,73 @@
+{
+  "passed": false,
+  "deterministic_trace_match": false,
+  "runs": [
+    {
+      "passed": false,
+      "hardware_only": true,
+      "software_renderer_executed": false,
+      "original_code_executed": false,
+      "automatic_gameplay": true,
+      "scope": "user-authorized isolated box level with all ten weapons",
+      "timeout_seconds": 75,
+      "executable_sha256": "8613e353fc505d7b038654f6a3f626678e1caf86d5ed38c81221f85347de1bae",
+      "exit_code": 12,
+      "seconds": 20.190869000041857,
+      "ticks": 1930,
+      "last": {
+        "tick": "1930",
+        "x": "6.56608438",
+        "y": "-12.4822464",
+        "z": "36.805397",
+        "vx": "-34.5356522",
+        "vy": "-26.1096115",
+        "vz": "55.0076942",
+        "contacts": "5",
+        "shots": "70",
+        "damage_packets": "6",
+        "ammo": "589",
+        "pickup_alive": "0",
+        "ai_alive": "0",
+        "ai_x": "0",
+        "ai_y": "0",
+        "ai_z": "0",
+        "objective": "1",
+        "drop_seen": "1",
+        "drop_taken": "1",
+        "drop_x": "0",
+        "drop_y": "0",
+        "drop_z": "0",
+        "collected_mask": "511",
+        "fired_mask": "511",
+        "primary": "4",
+        "secondary": "8"
+      },
+      "checks": {
+        "finite_state": true,
+        "inside_box": true,
+        "outside_solid_post": true,
+        "pickup_removed": true,
+        "pickup_increased_inventory": true,
+        "collision_contact": true,
+        "shots_emitted": true,
+        "damage_delivered": true,
+        "ai_moved": true,
+        "target_destroyed": true,
+        "objective_completed": true,
+        "wreck_spawned_pickup": true,
+        "wreck_pickup_collected": true,
+        "all_weapon_pickups_collected": false,
+        "all_weapons_fired": false,
+        "all_weapon_selections": false
+      },
+      "startup_log": "Restored source startup; no original executable loaded\nFullscreen Direct3D2 HAL renderer ready\nBuilding scene/query registries\nBinding live player/physics/scene\nBinding constructed menus\nBinding loaded resource consumers\nLoaded model handles: count=66 reported_failure_handle475=missing\n\nLOADERR:PORTAL.PCX\nReal-data startup complete; no input collection or application frame executed\nBox level: direct gameplay; actual AI, projectiles, pickup and objective callbacks\nFrame timing enabled: samples buffered in memory until exit, growing4096-sample blocks; no fixed presentation limit\nManual preview running; keyboard/mouse belong to the active game window\nSource frame producer failure: service=5 sound=4 hresult=80070057 native=80070057 player=0 query=0 weapon=0 method=0047d680 target=0 arc=0 pulse=0 fire=0 tick=1929\nFrame timing saved: frame-times-13a0fe60-4132.csv (1929 samples, 0 dropped)\nSource owners released\n",
+      "limits": [
+        "Source playthrough; original numerical/PC24 equivalence is not implied by scenario success."
+      ],
+      "trace_sha256": "85bafd46248d2746f11c703eb1efb449292f7d35b6c1183ac2039581897426c9"
+    }
+  ],
+  "limits": [
+    "Repeatability of recorded source state is not original-game equivalence or a complete state/RNG comparison."
+  ]
+}

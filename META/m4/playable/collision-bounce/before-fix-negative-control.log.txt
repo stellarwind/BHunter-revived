@@ -1,0 +1,18 @@
+Traceback (most recent call last):
+  File "D:\Decomp\Bhunter\tools\check_runtime_fixes.py", line 88, in <module>
+    main()
+    ~~~~^^
+  File "D:\Decomp\Bhunter\tools\check_runtime_fixes.py", line 77, in main
+    output = run([out / 'runtime-fixes.exe', *args])
+  File "D:\Decomp\Bhunter\tools\check_runtime_fixes.py", line 42, in run
+    raise RuntimeError(process.stdout + process.stderr)
+RuntimeError: Physics roster source benchmark: worlds5815 iterations3 full_init_ms=16.547400 rebind_ms=0.093700
+FAIL physics step 565: car bounce impulse survives query-to-physics state handoff
+FAIL physics step 567: car callback spin damping survives physics finish
+FAIL physics step 569: off-center car contact retains angular kick for next tick
+{"scenario":"physics-step","checks":307,"failures":3,"original_code_required":false,"play_calls":0,"native_send_calls":0}
+{"scenario":"target-construct","checks":70,"failures":0,"original_code_required":false,"play_calls":0}
+{"input_readonly_joystick_hresult":165,"native_recenter_calls":0}
+{"scenario":"input-collection","checks":1172,"failures":0,"native_recenter_calls":0,"original_code_required":false}
+{"scenario":"runtime-fixes","checks":1549,"failures":3,"software_renderer_executed":false,"gameplay_automation":false}
+

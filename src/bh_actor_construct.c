@@ -20,7 +20,7 @@ static BHEntity *construct(BHActorConstructContext *c,BHWorldGeometry *world,uns
  e->position=zero;memcpy((char*)e+0x3c,&zero,12);e->flags|=0x100;memcpy(e->opaque2b,&world,4);
  memset(&s,0,sizeof(s));s.current=s.next=world;center.x=rf(((double)world->minimum.x+world->maximum.x)*.5);center.y=rf(((double)world->minimum.y+world->maximum.y)*.5);center.z=rf(((double)world->minimum.z+world->maximum.z)*.5);for(i=0;i<4;++i)s.controls[i]=center;s.portal_center=center;
  head=binding->room->actors;word(e,0xf4,(unsigned long)head);word(e,0xf8,0);if(head)word(head,0xf8,(unsigned long)e);binding->room->actors=e;
- memset((char*)e+0x15c,0,24);real(e,0x194,0);s.duration=s.phase=1;r=next_random(seed);s.u=rf(.25-(r&32767)*(-1.0/65536.0));r=next_random(r);s.v=rf(.25-(r&32767)*(-1.0/65536.0));s.tick=(unsigned short)(response->damage->route->tick-30);s.duration_ticks=30;
+ memset((char*)e+0x15c,0,24);real(e,0x194,0);s.duration=s.phase=1;r=next_random(seed);s.u=rf(.25-(r&32767)*(-1.0/65536.0));r=next_random(r);s.v=rf(.25-(r&32767)*(-1.0/65536.0));s.tick=(unsigned short)(bh_actor_route_now(response->damage->route)-30);s.duration_ticks=30;
  if(speed==0){r=next_random(r);speed=rf(15.0-(r&32767)*(-1.0/1024.0));}s.speed=speed;s.jitter=.2f;s.speed_scale=1;s.sound=BH_SOUND_INVALID;s.sound_frames=0;
  word(e,0x100,token?(unsigned long)token:(unsigned long)-5000);word(e,0x11c,death_tag);real(e,0x19c,1);word(e,0x1ac,0);real(e,0x1b4,0);word(e,0x1b8,0);word(e,0x110,binding->bound_resource);word(e,0xfc,type);word(e,0x118,0);memcpy(e->payload+4,&draw,4);
  r=next_random(r);index=((r&32767)*23)>>15;if(index>7)++index;if(index>14)++index;word(e,0x114,c->models[index]);word(e,0x10c,c->sounds[index]);

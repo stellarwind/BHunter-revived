@@ -17,7 +17,7 @@ static BHActorResponseContext *context(BHEntity *e){BHActorResponseContext *c;me
 static int live(BHActorResponseContext *c,BHEntity *e){BHEntity *p;unsigned long n=0;for(p=c->vehicles->pool->active;p&&n++<c->vehicles->pool->capacity;p=p->next)if(p==e)return 1;return 0;}
 static void point(BHActorRouteState *s,float t,BHVec3 *p){bh_camera_curve(t,p,s->controls,s->controls+1,s->controls+2,s->controls+3);}
 static void offset(BHEntity *e,BHVec3 *p){unsigned long i;for(i=0;i<3;++i)((float*)p)[i]=rf((double)number(e,0x15c+4*i)+((float*)p)[i]);}
-static int timing(BHActorResponseContext *c,BHActorRouteState *s,double duration,double phase){double ticks=duration*30,start=(short)c->damage->route->tick-phase*30;if(!_finite(ticks)||!_finite(start)||fabs(ticks)>=9223372036854775808.0||fabs(start)>=9223372036854775808.0){c->error=3;return 0;}s->duration=rf(duration);s->phase=rf(phase);s->duration_ticks=(unsigned short)(__int64)ticks;s->tick=(unsigned short)(__int64)start;return 1;}
+static int timing(BHActorResponseContext *c,BHActorRouteState *s,double duration,double phase){double ticks=duration*30,start=(short)bh_actor_route_now(c->damage->route)-phase*30;if(!_finite(ticks)||!_finite(start)||fabs(ticks)>=9223372036854775808.0||fabs(start)>=9223372036854775808.0){c->error=3;return 0;}s->duration=rf(duration);s->phase=rf(phase);s->duration_ticks=(unsigned short)(__int64)ticks;s->tick=(unsigned short)(__int64)start;return 1;}
 static int rescale(BHActorResponseContext *c,BHActorRouteState *s,float factor){double t=(double)s->phase/s->duration,d=((double)s->speed*s->speed_scale*s->duration)/((double)s->speed*factor);s->speed_scale=factor;return timing(c,s,d,t*d);}
 static int unlink_actor(BHActorResponseContext *c,BHEntity *e){BHActorRouteState s;BHPickupRoom *r=0;BHEntity *p,*n;unsigned long i;bh_actor_route_read(e,&s);for(i=0;i<c->damage->route->room_count;++i)if(c->damage->route->rooms[i].world==s.current){r=c->damage->route->rooms+i;break;}if(!r||!c->vehicles->count){c->error=2;return 0;}
  p=(BHEntity*)word(e,0xf8);n=(BHEntity*)word(e,0xf4);if((p?(BHEntity*)word(p,0xf4):r->actors)!=e||(n&&(BHEntity*)word(n,0xf8)!=e)){c->error=2;return 0;}if(p)setword(p,0xf4,(unsigned long)n);else r->actors=n;if(n)setword(n,0xf8,(unsigned long)p);
@@ -53,16 +53,21 @@ void __cdecl bh_actor_response_query(BHEntity *e,void *packet){
 }
 void __cdecl bh_actor_response_tick(BHEntity *e){
  BHActorResponseContext *c=context(e);BHActorDamageContext *d;BHActorRouteState s;BHVec3 displacement,impulse,p,before,at,after,velocity,spin,acceleration={0,-.002f,0};BHScriptLifetimeState mission;
- unsigned long i,type;float damage,length,factor,t,angular,angle,left;double phase,value;long first=-1,second=-1,row,loot=0;BHEntity *a;struct{long event;BHEntity *actor;long tag;}packet;
+ unsigned long i,type;float damage,factor,t,angular,angle,left;double phase,value,retained[3],distance,damping;long first=-1,second=-1,row,loot=0;BHEntity *a;struct{long event;BHEntity *actor;long tag;}packet;
  if(!c||!live(c,e))return;c->error=0;d=c->damage;if(!d->particles||!d->fragments||!d->targets||!d->loot_rows||!c->mission||!bh_math_environment_supported()){c->error=1;return;}
  if(!bh_actor_attack(c->attack,e)){c->error=2;return;}bh_actor_route_read(e,&s);if(s.duration<=0||!s.speed){c->error=3;return;}type=word(e,0xfc);
  if(s.speed_scale!=1){factor=rf((double)s.speed_scale*.97);if(factor<1)factor=1;if(!rescale(c,&s,factor))return;}
  value=(double)number(e,0x19c)*1.008;real(e,0x19c,value>1?1:rf(value));damage=number(e,0x194);if(damage>0){value=(double)damage*.998;real(e,0x194,rf(value));if(type==6)real(e,0x194,rf(value*.998));}damage=number(e,0x194);
- for(i=0;i<3;++i){((float*)&impulse)[i]=number(e,0x168+4*i);((float*)&displacement)[i]=rf((double)number(e,0x15c+4*i)-((float*)&impulse)[i]*(-1.0/30.0));}
- length=rf(sqrt((double)displacement.x*displacement.x+(double)displacement.y*displacement.y+(double)displacement.z*displacement.z));factor=rf((.99-(double)length*length*.001)-(double)length*.01);if(factor<0)factor=0;
- for(i=0;i<3;++i){real(e,0x15c+4*i,rf((double)factor*((float*)&displacement)[i]));real(e,0x168+4*i,rf((double)((float*)&impulse)[i]*.7));}
+ /* 00439a52..00439ba7: FST retains each displacement for its product;
+    sqrt is retained for the quadratic term, binary32 for the linear term.
+    Damping is not stored before multiplication, and X retains displacement
+    while Y/Z reload their binary32 copies. Do not symmetrize these spills. */
+ for(i=0;i<3;++i){((float*)&impulse)[i]=number(e,0x168+4*i);retained[i]=(double)number(e,0x15c+4*i)-((float*)&impulse)[i]*(-1.0/30.0);((float*)&displacement)[i]=rf(retained[i]);}
+ distance=sqrt((retained[0]*displacement.x+retained[1]*displacement.y)+retained[2]*displacement.z);
+ damping=(.99-distance*distance*.001)-(double)rf(distance)*.01;if(_isnan(damping)||damping<0)damping=0;
+ for(i=0;i<3;++i){real(e,0x15c+4*i,rf(damping*(i?((float*)&displacement)[i]:retained[0])));real(e,0x168+4*i,rf((double)((float*)&impulse)[i]*.7));}
  phase=(double)s.phase-(number(e,0x19c)==1?1.0:(double)number(e,0x19c))*(-1.0/30.0);s.phase=rf(phase);
- if(number(e,0x19c)!=1){double start=(short)d->route->tick-phase*30;if(!_finite(start)||fabs(start)>=9223372036854775808.0){c->error=3;return;}s.tick=(unsigned short)(__int64)start;}bh_actor_route_write(e,&s);
+ if(number(e,0x19c)!=1){double start=(short)bh_actor_route_now(d->route)-phase*30;if(!_finite(start)||fabs(start)>=9223372036854775808.0){c->error=3;return;}s.tick=(unsigned short)(__int64)start;}bh_actor_route_write(e,&s);
  if(s.phase>=s.duration){left=rf((double)s.phase-s.duration);if(!bh_actor_pursuit_route(c->attack->pursuit,e)){c->error=2;return;}real(e,0x180,left);bh_actor_route_read(e,&s);}
  if(damage<1&&damage*5000<=rand())goto resume;
  velocity.x=rf((double)(rand()-16384)*(1.0/262144.0));velocity.y=rf((double)(rand()-16384)*(1.0/262144.0));velocity.z=rf((double)(rand()-16384)*(1.0/262144.0));t=rf((double)s.phase/s.duration);point(&s,t,&p);offset(e,&p);angular=rf((double)(rand()-16384)*(1.0/16384.0));angle=rf((double)rand()*(1.0/512.0));bh_script_particle_create(d->particles,d->smoke_resource,3,&p,&velocity,&acceleration,.5f,angle,12,angular,.9f,.95f,2,.3f);

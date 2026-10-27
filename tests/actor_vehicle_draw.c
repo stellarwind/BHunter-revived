@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include <float.h>
 static unsigned long checks,failures;
 #define CHECK(c) do{++checks;if(!(c)){++failures;printf("failure %d\n",__LINE__);}}while(0)
 int bh_actor_vehicle_draw_checkpoint(unsigned long *count){
@@ -20,6 +21,43 @@ int bh_actor_vehicle_draw_checkpoint(unsigned long *count){
  /* Clock wrap and negative extrapolation use signed sixteen-bit deltas. */
  c.glowing_model=999;c.tick=4;s.tick=65530;s.duration_ticks=30;bh_actor_route_read(&e,&s);s.tick=65530;bh_actor_route_write(&e,&s);CHECK(bh_draw_queue_begin(&q));CHECK(bh_actor_vehicle_draw(&c,&e));CHECK(v->position.x>61&&v->position.x<62);
  c.tick=65529;CHECK(bh_draw_queue_begin(&q));CHECK(bh_actor_vehicle_draw(&c,&e));CHECK(fabs(v->position.x-(-1.33333349))<.00001);
+ /* Original00434920 reads004dfac4 AFTER all entity steps, including the
+    player increment. Compare the bound source to the same arithmetic given
+    that original live tick; stale pre-step snapshot is the rejection control. */
+ {BHActorRouteContext clock;unsigned long simulation=11;float live_pose[6],oracle[6];
+  memset(&clock,0,sizeof(clock));clock.tick=10;clock.live_tick=&simulation;
+  memset(s.controls,0,sizeof(s.controls));s.controls[2].x=100;s.controls[3].x=200;s.controls[3].z=50;
+  s.tick=10;s.duration_ticks=30;s.sound=handle;bh_actor_route_write(&e,&s);
+  c.glowing_model=999;c.tick=10;c.clock=&clock;
+  CHECK(bh_draw_queue_begin(&q));CHECK(bh_actor_vehicle_draw(&c,&e));memcpy(live_pose,q.commands[9].words,24);
+  CHECK(_finite(live_pose[5]));c.clock=NULL;c.tick=11;
+  CHECK(bh_draw_queue_begin(&q));CHECK(bh_actor_vehicle_draw(&c,&e));memcpy(oracle,q.commands[9].words,24);
+  CHECK(!memcmp(live_pose,oracle,24));c.tick=10;
+  CHECK(bh_draw_queue_begin(&q));CHECK(bh_actor_vehicle_draw(&c,&e));memcpy(oracle,q.commands[9].words,24);
+  CHECK(_isnan(oracle[5]));
+  simulation=0x10000UL;s.tick=65535;bh_actor_route_write(&e,&s);c.clock=&clock;c.tick=65535;
+  CHECK(bh_draw_queue_begin(&q));CHECK(bh_actor_vehicle_draw(&c,&e));memcpy(oracle,q.commands[9].words,24);
+  CHECK(!memcmp(live_pose,oracle,24));
+  bh_actor_route_set_tick(&clock,19);CHECK(simulation==0x10013UL&&bh_actor_route_now(&clock)==19);
+  bh_actor_route_set_tick(&clock,0);CHECK(simulation==0x10000UL);c.clock=NULL;
+ }
+ /* Original arithmetic is intentionally retained: no neutral bank or epsilon.
+    Degenerate horizontal tangents produce x87 indefinite; the draw-command
+    loop must consume that undrawable result without terminating the game. */
+ {unsigned long pattern,t,seed;unsigned short ticks[5]={0,1,15,30,65535};
+  for(pattern=0;pattern<4;++pattern)for(t=0;t<5;++t){
+   memset(s.controls,0,sizeof(s.controls));
+   if(pattern==1){s.controls[1].y=10;s.controls[2].y=20;s.controls[3].y=30;}
+   if(pattern==2){s.controls[0].x=s.controls[1].x=10;s.controls[2].x=s.controls[3].x=20;}
+   if(pattern==3){s.controls[1].x=10;s.controls[2].z=10;s.controls[3].x=20;}
+   s.tick=0;s.duration_ticks=30;s.sound=handle;bh_actor_route_write(&e,&s);c.tick=ticks[t];
+   CHECK(bh_draw_queue_begin(&q));srand(23);seed=rand();srand(23);
+   CHECK(bh_actor_vehicle_draw(&c,&e));CHECK(rand()==seed);
+   memcpy(pose,q.commands[9].words,24);
+   if(pattern<2)CHECK(_isnan(pose[5]));
+   CHECK(_finite(pose[0])&&_finite(pose[1])&&_finite(pose[2]));
+  }
+ }
  s.duration_ticks=0;bh_actor_route_write(&e,&s);CHECK(!bh_actor_vehicle_draw(&c,&e)&&c.error==BH_ACTOR_ROUTE_NUMERICAL);CHECK(!bh_actor_vehicle_draw(0,&e));
  CHECK(bh_sound_stop(&sound,handle));CHECK(bh_sound_queue_dispose(&sound));CHECK(bh_draw_queue_dispose(&q));bh_math_environment_leave(&env);if(count)*count=checks;printf("{\"scenario\":\"actor-vehicle-draw\",\"checks\":%lu,\"failures\":%lu,\"original_code_required\":false}\n",checks,failures);return failures!=0;
 }

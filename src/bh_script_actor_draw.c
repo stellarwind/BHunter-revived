@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <float.h>
 static float stored(double v){float f;bh_round_float(&f,v);return f;}
 static void smoke(BHScriptActorDrawContext *c,const BHVec3 *p){
  BHVec3 velocity,acceleration={0,-.003f,0},point;float angular,angle;
@@ -21,7 +22,7 @@ int __cdecl bh_script_actor_draw(BHScriptActorDrawContext *c,BHEntity *a){
  if(!c||!c->queue||!c->particles||!a){if(c)c->error=BH_ACTOR_ROUTE_ARGUMENT;return 0;}
  if(!bh_math_environment_supported()){c->error=BH_ACTOR_ROUTE_NUMERICAL;return 0;}
  path=bh_script_actor_route_path(a);if(path!=bh_script_actor_curve&&path!=bh_script_actor_linear){c->error=BH_ACTOR_ROUTE_ARGUMENT;return 0;}
- bh_actor_route_read(a,&s);elapsed=(unsigned short)(c->tick-s.tick);memcpy(&signed_elapsed,&elapsed,2);memcpy(&signed_duration,&s.duration_ticks,2);
+ bh_actor_route_read(a,&s);elapsed=(unsigned short)((c->clock?bh_actor_route_now(c->clock):c->tick)-s.tick);memcpy(&signed_elapsed,&elapsed,2);memcpy(&signed_duration,&s.duration_ticks,2);
  t=stored((double)signed_elapsed/signed_duration);path(t,&p,s.controls,s.controls+1,s.controls+2,s.controls+3);
  path(stored((double)t-(-1.0/30.0)),&q,s.controls,s.controls+1,s.controls+2,s.controls+3);
  angles.x=stored(atan2((double)q.x-p.x,(double)q.z-p.z));
@@ -38,7 +39,7 @@ int __cdecl bh_script_actor_vehicle_draw(BHScriptActorDrawContext *c,BHEntity *a
  unsigned short elapsed;short se,sd;float t,dx,dz,px,pz,alpha,other,size;double sn,cs,bank;unsigned long resource,frames=4;
  if(!c||!c->queue||!c->particles||!a){if(c)c->error=BH_ACTOR_ROUTE_ARGUMENT;return 0;}
  if(!bh_math_environment_supported()){c->error=BH_ACTOR_ROUTE_NUMERICAL;return 0;}
- bh_actor_route_read(a,&s);elapsed=(unsigned short)(c->tick-s.tick);memcpy(&se,&elapsed,2);memcpy(&sd,&s.duration_ticks,2);t=stored((double)se/sd);
+ bh_actor_route_read(a,&s);elapsed=(unsigned short)((c->clock?bh_actor_route_now(c->clock):c->tick)-s.tick);memcpy(&se,&elapsed,2);memcpy(&sd,&s.duration_ticks,2);t=stored((double)se/sd);
  bh_camera_curve(stored((double)t-1.0/30.0),&previous,s.controls,s.controls+1,s.controls+2,s.controls+3);
  bh_camera_curve(t,&p,s.controls,s.controls+1,s.controls+2,s.controls+3);
  bh_camera_curve(stored((double)t-(-1.0/30.0)),&q,s.controls,s.controls+1,s.controls+2,s.controls+3);
@@ -48,6 +49,8 @@ int __cdecl bh_script_actor_vehicle_draw(BHScriptActorDrawContext *c,BHEntity *a
  dx=stored((double)q.x-p.x);dz=stored((double)q.z-p.z);px=stored((double)p.x-previous.x);pz=stored((double)p.z-previous.z);
  bank=(((double)pz*dx-(double)px*dz)/sqrt((double)dz*dz+(double)dx*dx))/sqrt((double)pz*pz+(double)px*px);
  angles.z=stored(bank*6.283185307179586);angles.x=stored(atan2(dx,dz));angles.y=stored(((double)p.y-q.y)*.3);
+ if(c->clock&&c->clock->nonfinite_curve&&(!_finite(angles.x)||!_finite(angles.y)||!_finite(angles.z)))
+  c->clock->nonfinite_curve(c->clock->nonfinite_user,0x4366d0,a,&s,bh_actor_route_now(c->clock),&previous,&p,&q,&angles);
  smoke(c,&p);sn=sin(angles.x);cs=cos(angles.x);memcpy(&offset,(char*)a+0x174,12);
  p.x=stored((double)p.x+((double)offset.z*sn-(double)offset.x*cs));p.y=stored((double)offset.y+p.y);p.z=stored((double)p.z+(double)offset.x*sn+(double)offset.z*cs);
  memcpy(&resource,(char*)a+0x114,4);bh_draw_submit_resource(c->queue,0,resource,&p,&angles,1);

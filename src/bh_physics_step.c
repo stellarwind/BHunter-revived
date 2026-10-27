@@ -219,6 +219,85 @@ rejected:
     bh_physics_step_dispose(&next);
     return 0;
 }
+int __cdecl bh_physics_step_rebind(BHPhysicsStepContext *c, BHPhysicsStepBody *b,
+                                   unsigned long nb, BHGeometry *const *models,
+                                   unsigned long nm) {
+    BHPhysicsStepContext next;
+    BHGeometry **sources = NULL, **targets = NULL;
+    long *borrowed = NULL;
+    unsigned long ns=0, nt=0, i, j, count, prepared=0;
+    BHPhysicsStepPair *old;
+    BHSceneAllocator mem;
+    if(!c || c->busy || c->broad.busy || !c->allocator.release || !b || !nb ||
+       nb>65535 || nb+c->world_count>65535 || !models || !nm || nm>65535)
+        return 0;
+    for(i=0;i<c->pair_count;++i)
+        if(c->pairs[i].sweep.busy || c->pairs[i].sweep.collision.busy ||
+           c->pairs[i].sweep.segment.busy) return 0;
+    mem=c->allocator;next=*c;
+    next.bodies=b;next.body_count=nb;next.models=models;next.model_count=nm;
+    next.actors=NULL;next.pairs=NULL;next.pair_count=0;next.candidates=NULL;
+    next.candidate_count=0;next.error=BH_PHYSICS_STEP_OK;
+    next.broad.hits=NULL;next.broad.work=NULL;next.broad.hit_count=0;
+    next.broad.actor_count=nb;next.broad.capacity=c->world_count+nb+1;
+    next.candidate_capacity=next.broad.capacity;
+    sources=(BHGeometry**)mem.allocate(nb*sizeof(*sources),mem.user);
+    targets=(BHGeometry**)mem.allocate((nb+c->world_count)*sizeof(*targets),mem.user);
+    next.actors=(BHEntity**)mem.allocate(nb*sizeof(*next.actors),mem.user);
+    if(!sources || !targets || !next.actors)goto rejected_rebind;
+    next.broad.actors=next.actors;
+    for(i=0;i<nb;++i) {
+        if(!b[i].entity || !b[i].physics || !b[i].target_world || !b[i].target_local ||
+           b[i].model_index>=nm || !_finite(b[i].mass) || !_finite(b[i].friction) ||
+           !live(c->pool,b[i].entity,b[i].generation))goto rejected_rebind;
+        for(j=0;j<i;++j)if(b[j].entity==b[i].entity)goto rejected_rebind;
+        next.actors[i]=b[i].entity;
+        ns=unique(sources,ns,b[i].geometry);nt=unique(targets,nt,b[i].geometry);
+    }
+    /* The same immutable scene was validated by init. Only roster membership
+       changes here; do not repeat its quadratic world-ID validation. */
+    for(i=0;i<c->world_count;++i)
+        nt=unique(targets,nt,c->worlds[i].world->model?
+                  c->worlds[i].world->model->geometry:NULL);
+    if(nt && ns>0x7fffffffUL/nt/sizeof(BHPhysicsStepPair))goto rejected_rebind;
+    count=ns*nt;
+    next.pairs=(BHPhysicsStepPair*)mem.allocate(count*sizeof(*next.pairs),mem.user);
+    borrowed=(long*)mem.allocate(count*sizeof(*borrowed),mem.user);
+    if(!next.pairs || !borrowed)goto rejected_rebind;
+    memset(next.pairs,0,count*sizeof(*next.pairs));
+    for(i=0;i<ns;++i)for(j=0;j<nt;++j) {
+        BHPhysicsStepPair *p=next.pairs+prepared;
+        p->source=sources[i];p->target=targets[j];borrowed[prepared]=-1;
+        old=pair(c,p->source,p->target);
+        if(old) {p->sweep=old->sweep;borrowed[prepared]=(long)(old-c->pairs);}
+        else if(!bh_sweep_init(&p->sweep,p->source,p->target))goto rejected_rebind;
+        ++prepared;next.pair_count=prepared;
+    }
+    next.broad.hits=(BHWorldHit*)mem.allocate(next.broad.capacity*sizeof(BHWorldHit),mem.user);
+    next.broad.work=(BHWorldHit*)mem.allocate(next.broad.capacity*sizeof(BHWorldHit),mem.user);
+    next.candidates=(BHCollisionCandidate*)mem.allocate(next.candidate_capacity*sizeof(*next.candidates),mem.user);
+    if(!next.broad.hits || !next.broad.work || !next.candidates)goto rejected_rebind;
+    next.broad.hits[0].kind=BH_WORLD_HIT_END;next.broad.hits[0].object.geometry=NULL;
+    next.broad.error=BH_QUERY_OK;
+    /* Commit transfers only after every allocation succeeded. No failure path
+       may free an old sweep or the borrowed static scene workspace. */
+    for(i=0;i<prepared;++i)if(borrowed[i]>=0)
+        memset(&c->pairs[borrowed[i]].sweep,0,sizeof(BHSweepQuery));
+    c->broad.members=c->broad.visited=c->broad.frames=NULL;
+    bh_physics_step_dispose(c);*c=next;
+    for(i=0;i<nb;++i)bh_physics_step_publish(b+i);
+    mem.release(sources,mem.user);mem.release(targets,mem.user);mem.release(borrowed,mem.user);
+    return 1;
+rejected_rebind:
+    if(borrowed)for(i=0;i<prepared;++i)if(borrowed[i]>=0)
+        memset(&next.pairs[i].sweep,0,sizeof(BHSweepQuery));
+    next.broad.members=next.broad.visited=next.broad.frames=NULL;
+    bh_physics_step_dispose(&next);
+    if(sources)mem.release(sources,mem.user);
+    if(targets)mem.release(targets,mem.user);
+    if(borrowed)mem.release(borrowed,mem.user);
+    return 0;
+}
 static int candidates(BHPhysicsStepContext *c, BHPhysicsStepBody *self) {
     unsigned long i;
     BHPhysicsStepPair *p;
@@ -340,7 +419,10 @@ int __cdecl bh_physics_step(BHPhysicsStepContext *c, BHEntity *entity, float dt)
         goto done;
     }
     c->first_selected = c->selected;
-    if (c->first.fraction == 0 && c->selected.kind == BH_WORLD_HIT_ACTOR) {
+    /* Original00412788 tests selected entity+8 and skips this branch when
+       kind==0 (physical actors). Only world/prop geometry uses last-clear
+       recovery, with its world transform and model-catalog geometry. */
+    if (c->first.fraction == 0 && c->selected.kind == BH_WORLD_HIT_GEOMETRY) {
         BHCollisionCandidate *target = c->candidates;
         BHCollisionHit overlap;
         memset(&overlap, 0, sizeof(overlap));

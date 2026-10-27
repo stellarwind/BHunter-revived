@@ -9,6 +9,12 @@ typedef char pickup_state_size[sizeof(BHPickupState)==56 ? 1:-1];
 typedef char pickup_state_offset[offsetof(BHEntity,payload)+8==0xec ? 1:-1];
 typedef char pickup_context_offset[offsetof(BHEntity,payload)+64==0x124 ? 1:-1];
 typedef char pickup_pointer_size[sizeof(void*)==4 ? 1:-1];
+/* Event13 is seven words: original004415a0 consumes the reply written by
+   original0041d7c0/0043a1d0 at +14/+18. There is no reserved sixth word. */
+typedef char pickup_reply_layout[
+    sizeof(BHPickupTakePacket)==28 &&
+    offsetof(BHPickupTakePacket,accepted)==0x14 &&
+    offsetof(BHPickupTakePacket,consumed)==0x18 ? 1:-1];
 
 BHPickupContext *__cdecl bh_pickup_context(BHEntity *entity) {
     BHPickupContext *context;

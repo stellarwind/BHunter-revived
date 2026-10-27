@@ -11,6 +11,8 @@ typedef enum BHWeaponTargetError {BH_WEAPON_TARGET_OK,BH_WEAPON_TARGET_ARGUMENT,
    Player position+0c/velocity+48 and aim+280 remain live through callbacks. */
 typedef struct BHWeaponTargetContext {
  BHSoundQueue *sound;BHWorldSegmentContext *world;BHEntity *actors;
+ /* Original004dfb28 is read at acquisition, after earlier entity callbacks. */
+ BHEntity **actors_owner;
  unsigned long ready_sound,beep_sound,lock_sound,max_actors;
  unsigned long queries,traces,sound_requests,stops,random_calls;
  BHWeaponTargetError error;

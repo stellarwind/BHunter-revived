@@ -1,5 +1,6 @@
 #include "../src/bh_physics_step.h"
 #include "../src/bh_debris_response.h"
+#include "../src/bh_player_query.h"
 #include "../src/bh_fp.h"
 #include <math.h>
 #include <stdio.h>
@@ -378,12 +379,21 @@ static void actor_cases(void) {
     f.state[0].velocity.x = -2.125f;
     srand(1);
     CHECK(bh_physics_step(&f.step, f.entities[0], 1), "zero fraction actor overlap owner");
-    CHECK(f.step.first.fraction == 0 && f.step.rollbacks == 1 && !f.step.contacts &&
-              f.state[0].pose.m[0][3] == 7 && f.state[0].last_clear.m[0][3] == 7,
-          "real original-position overlap rolls back and retains last-clear snapshot");
-    CHECK(rand() == 41 && !f.step.first_events && !f.step.second_events &&
-              !f.feedback.sound_requests,
-          "overlap rollback precedes random effects and query delivery");
+    CHECK(f.step.first.fraction == 0 && !f.step.rollbacks && f.step.contacts==1 &&
+              f.state[0].pose.m[0][3] != 7 && f.state[0].last_clear.m[0][3] == 7,
+          "original kind0 actor overlap retains contact response rather than world rollback");
+    CHECK(f.step.first_selected.kind==BH_WORLD_HIT_ACTOR,
+          "physical overlap stays in the actor contact path; zero impulses may suppress events");
+    finish(&f);
+    CHECK(setup(&f,1,1),"world/prop penetration fixture");
+    f.state[0].pose.m[0][3]=0;f.state[0].last_clear.m[0][3]=7;
+    f.state[0].velocity.x=-2.125f;srand(1);
+    CHECK(bh_physics_step(&f.step,f.entities[0],1),"zero-fraction world overlap");
+    CHECK(f.step.first.fraction==0&&f.step.rollbacks==1&&!f.step.contacts&&
+              f.state[0].pose.m[0][3]==7&&f.state[0].last_clear.m[0][3]==7,
+          "embedded car restores last-clear pose only against world/prop geometry");
+    CHECK(rand()==41&&!f.step.first_events&&!f.step.second_events&&!f.feedback.sound_requests,
+          "world overlap recovery precedes contact effects and callbacks");
     finish(&f);
     CHECK(setup(&f, 2, 0), "translated rotated actor with stale borrowed inverse");
     f.state[0].pose.m[0][3] = 0;
@@ -495,6 +505,122 @@ static void allocation_cases(void) {
           "successful binding after allocation controls");
     finish(&f);
 }
+static void rebind_cases(void) {
+    Fixture f;
+    BHPhysicsStepContext saved;
+    BHPhysicsStepBody changed[2];
+    void *workspace,*members,*frames;
+    unsigned long i,live_count,contacts;
+    CHECK(setup(&f,2,2),"rebind with real actor meshes and scene ring");
+    workspace=f.step.pairs[0].sweep.collision.workspace;
+    members=f.step.broad.members;frames=f.step.broad.frames;
+    f.step.contacts=37;f.step.steps=43;
+    saved=f.step;live_count=f.memory.live;
+    for(i=1;i<=8;++i) {
+        f.memory.count=0;f.memory.limit=i;
+        CHECK(!bh_physics_step_rebind(&f.step,f.bodies,1,f.models,2)&&
+                  !memcmp(&f.step,&saved,sizeof(saved))&&f.memory.live==live_count,
+              "every roster allocation failure preserves old scene/sweeps/counters");
+    }
+    f.memory.limit=0;
+    CHECK(bh_physics_step_rebind(&f.step,f.bodies,1,f.models,2)&&
+              f.step.body_count==1&&f.step.broad.actor_count==1&&f.step.pair_count==2,
+          "retiring an actor removes its source pairs and broad-phase membership");
+    CHECK(f.step.pairs[0].sweep.collision.workspace==workspace&&
+              f.step.broad.members==members&&f.step.broad.frames==frames&&
+              f.step.contacts==37&&f.step.steps==43,
+          "surviving sweep allocation, validated scene and lifetime counters retained");
+    CHECK(bh_physics_step_rebind(&f.step,f.bodies,2,f.models,2)&&f.step.pair_count==4&&
+              f.step.pairs[0].sweep.collision.workspace==workspace,
+          "adding another actual mesh allocates only missing sweeps");
+    saved=f.step;memcpy(changed,f.bodies,sizeof(changed));++changed[0].generation;
+    CHECK(!bh_physics_step_rebind(&f.step,changed,2,f.models,2)&&
+              !memcmp(&f.step,&saved,sizeof(saved)),"stale generations rejected transactionally");
+    changed[0]=changed[1];
+    CHECK(!bh_physics_step_rebind(&f.step,changed,2,f.models,2),"duplicate actor rejected");
+    f.step.busy=1;
+    CHECK(!bh_physics_step_rebind(&f.step,f.bodies,2,f.models,2),"cannot rebind a running collision");
+    f.step.busy=0;contacts=f.step.contacts;
+    reset(&f);
+    CHECK(bh_physics_step(&f.step,f.entities[0],1)&&f.step.contacts==contacts+1,
+          "retained sweeps execute actual collision and response after membership change");
+    finish(&f);
+}
+static void actual_player_bounce(void) {
+    Fixture f;BHPlayerQueryContext query;BHWeaponFactory factory;
+    BHWeaponReadyContext ready;BHWeaponTargetContext target;BHWeaponArcLifecycleContext arc;
+    BHScriptLifetimeContext life;BHMessageState messages;BHEntity *actors=NULL,*damage=NULL;
+    BHWorldGeometry *room;BHVec3 zero={0,0,0},inertia={1,1,1};
+    long mode=0,warning=0;unsigned long tick=0;unsigned short index=0;
+    BHPlayerQueryPacket packet;float previous_kick;
+    CHECK(setup(&f,1,1),"real car contact integration fixture");
+    memset(&query,0,sizeof(query));memset(&factory,0,sizeof(factory));
+    memset(&ready,0,sizeof(ready));memset(&target,0,sizeof(target));
+    memset(&arc,0,sizeof(arc));memset(&life,0,sizeof(life));
+    bh_message_state_init(&messages);room=f.world;
+    CHECK(bh_weapon_factory_open(&factory,&f.pool,&f.sound),"real player query registry");
+    life.sounds=&f.sound;life.timers.pool=&f.pool;
+    query.player=f.entities[0];query.weapons=&factory.registry;query.sound=&f.sound;
+    query.messages=&messages;query.ready=&ready;query.target=&target;query.arc=&arc;
+    query.lifetime=&life;query.transport=&f.network;query.actors=&actors;
+    query.fine_warning=&warning;query.damage_source=&damage;query.mode_count=&mode;
+    query.simulation_tick=&tick;query.world=&room;query.world_index=&index;query.sound_velocity=&zero;
+    query.contact_physics=f.state;
+    CHECK(bh_debris_unbind(f.debris_body),"replace debris callback with actual car owner");
+    CHECK(bh_player_query_bind(&query),"real car callback installed for physical collision");
+    memcpy((char*)f.entities[0]+0x78,&inertia,12);
+    query.contact_physics=NULL;
+    f.state[0].angular_velocity.x=1;f.state[0].pose.m[1][3]=.5f;
+    CHECK(bh_physics_step(&f.step,f.entities[0],1)&&f.state[0].acceleration.x<100&&
+              fabs(f.state[0].angular_velocity.x-.98)<.000001,
+          "negative control: omitted player-state bridge demonstrably loses bounce and spin damping");
+    reset(&f);query.contact_physics=f.state;
+    f.state[0].angular_velocity.x=1;f.state[0].pose.m[1][3]=.5f;
+    CHECK(bh_physics_step(&f.step,f.entities[0],1)&&f.step.contacts==2&&!query.error,
+          "car hits actual geometry through real sweep/contact/query/finish chain");
+    CHECK(f.state[0].acceleration.x>100,
+          "car bounce impulse survives query-to-physics state handoff");
+    CHECK(fabs(f.state[0].angular_velocity.x-.85*.98)<.000001,
+          "car callback spin damping survives physics finish");
+    CHECK(!memcmp(&f.state[0].angular_acceleration,(char*)f.entities[0]+0x6c,12),
+          "physical contact keeps entity and physics rotational force in agreement");
+    memset(&packet,0,sizeof(packet));packet.words[0]=2;
+    packet.floats[1]=f.entities[0]->position.x;
+    packet.floats[2]=f.entities[0]->position.y+1;packet.floats[3]=f.entities[0]->position.z;
+    packet.floats[4]=1;packet.floats[7]=-1;
+    previous_kick=f.state[0].angular_acceleration.z;
+    CHECK(bh_player_query_dispatch(&query,&packet)&&
+              !memcmp(&f.state[0].angular_acceleration,(char*)f.entities[0]+0x6c,12)&&
+              f.state[0].angular_acceleration.z!=previous_kick,
+          "controlled off-center car contact mirrors real rotational kick into physics");
+    CHECK(bh_player_query_unbind(&query)&&bh_weapon_factory_close(&factory),"real car query/registry cleanup");
+    finish(&f);
+}
+static void rebind_scene_cost(void) {
+    Fixture f;BHWorldGeometry *worlds;BHPhysicsStepWorld *bindings;
+    BHPhysicsStepContext c;LARGE_INTEGER freq,start,end;
+    unsigned long i,k;double init_ms=0,rebind_ms=0;void *workspace;
+    CHECK(setup(&f,1,0),"scene-scale roster cost source fixture");
+    worlds=(BHWorldGeometry*)calloc(5815,sizeof(*worlds));
+    bindings=(BHPhysicsStepWorld*)calloc(5815,sizeof(*bindings));
+    CHECK(worlds&&bindings,"scene-scale arrays allocated");
+    if(!worlds||!bindings){free(worlds);free(bindings);finish(&f);return;}
+    for(i=0;i<5815;++i){worlds[i].navigation.next=&worlds[(i+1)%5815].navigation;
+        worlds[i].model=&f.model;bindings[i].world=worlds+i;
+        bindings[i].index=(unsigned short)i;bindings[i].mass=-1;}
+    QueryPerformanceFrequency(&freq);
+    for(k=0;k<3;++k){memset(&c,0,sizeof(c));QueryPerformanceCounter(&start);
+        CHECK(bh_physics_step_init(&c,&f.pool,f.bodies,1,bindings,5815,f.models,2,&f.feedback,1,NULL),
+              "full scene validation and collision workspace build");
+        QueryPerformanceCounter(&end);init_ms+=(double)(end.QuadPart-start.QuadPart)*1000/freq.QuadPart;
+        workspace=c.pairs[0].sweep.collision.workspace;QueryPerformanceCounter(&start);
+        CHECK(bh_physics_step_rebind(&c,f.bodies,1,f.models,2),"same scene roster rebound");
+        QueryPerformanceCounter(&end);rebind_ms+=(double)(end.QuadPart-start.QuadPart)*1000/freq.QuadPart;
+        CHECK(c.pairs[0].sweep.collision.workspace==workspace,"scene-scale sweep borrow retained");
+        CHECK(bh_physics_step_dispose(&c),"scene-scale owner disposed");}
+    printf("Physics roster source benchmark: worlds5815 iterations3 full_init_ms=%.6f rebind_ms=%.6f\n",init_ms,rebind_ms);
+    free(worlds);free(bindings);finish(&f);
+}
 int __cdecl bh_physics_step_checkpoint(unsigned long *count) {
     BHMathEnvironment fp;
     checks = 0;
@@ -508,6 +634,9 @@ int __cdecl bh_physics_step_checkpoint(unsigned long *count) {
     reordered_case();
     loud_case();
     allocation_cases();
+    rebind_cases();
+    rebind_scene_cost();
+    actual_player_bounce();
     bh_math_environment_leave(&fp);
     *count = checks;
     printf("{\"scenario\":\"physics-step\",\"checks\":%lu,\"failures\":%d,\"original_code_"

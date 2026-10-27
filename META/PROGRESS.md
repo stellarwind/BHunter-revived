@@ -4,6 +4,274 @@ Updated 2026-10-27. Plan: `../RESTORATION_PLAN.md`.
 
 ## Current checkpoint
 
+All-weapon diagnostic and sound-failure continuation, 2026-10-27. Box automation
+now runs2100 ticks: the existing combat/objective/pickup route, then ten staged
+weapon pickups followed by real keyboard selection and primary/secondary fire.
+Both final hardware-only runs pass with identical recorded traces: pickup and
+firing masks1023; all seven projectile callback families observed(mask493).
+Lead buster/stun ray check emission counters and ammo; static coating checks
+ammo and the actual boost timer. No inventory/availability edits or direct fire
+callback injection. The manual box has all ten pickups in the far room;
+Ctrl/Space fire,1-5/6-0 select. Launch `build/box-test/Play box.cmd` or run
+`python tools/test_box_level.py` after rebuilding/staging the box.
+
+The expanded test reproduced a fatal frame-service error at tick1930, during
+weapon8 effects. DirectSound rejected a negative frequency with80070057. The
+original004791c4 calls sound and004791c9 overwrites EAX without checking it;
+both0047c200 SetFrequency sites also continue/cache without HRESULT gates.
+All retained original instruction bytes were checked against immutable EXE.
+Source now retains native audio failures as diagnostics and continues frame
+publication; malformed source topology/numerics remain errors. Frequency,
+Doppler, cache order and RNG are unchanged; no frequency clamp was added.
+Final box logs the same rejection(-127800) at tick1929 and completes.
+
+A connected silent-PCM/native-DirectSound fixture verifies failure reporting,
+unchanged rejected cache, actual producer packet/publication continuation,
+and separate fatal malformed-topology control. Focused source checks,299-TU
+game build, hardware static startup and evidence audit pass. A later nonfatal
+draw diagnostic remains; no visual correctness claim. The original human log
+only says frame-service failure, so the exact reported rocket-pickup exit is
+not conclusively attributed. Preserved human log/build identity, failing box
+trace, original contracts and final traces: `m4/playable/weapon-box/`.
+No software-renderer tests or original gameplay ran; originals unchanged.
+Per-implementation ledger refreshed, zero original owners added. M4 incomplete.
+
+### Previous checkpoint
+
+Ballistic launch numerical correction, 2026-10-27. Fresh hardware-only box runs
+pass before and after this change: paired900-tick traces are identical within
+each pair, and the recorded trace is unchanged across the fix. The box therefore
+does not independently detect this deviation; no original scenario equivalence
+is inferred. Actual kill/objective/drop collection, AI movement, contact and
+inventory checks pass (51 shots,6 damage packets,5 contacts,final ammo399).
+
+Original game-owned firing004305f0 retains muzzle centers across non-popping
+FST instructions0043066c/0043068b until side offsets, and retains X velocity
+through0043071b/00430725 across the first spread RNG call while Y/Z reload float
+spills. Source rounded these values prematurely. Restored those orders in
+bh_weapon_fire_ballistic without changing RNG count/cadence/recoil. An isolated
+call-free original00430627..00430731 adapter with byte-verified constants and
+exact axis positive controls captures128 finite cases underPC53. Connected
+real firing/projectile checks previously differed in48 muzzle and30 velocity
+cases; corrected source matches all six output words in all128 cases.
+
+Focused real translation-unit checks pass with/without archive,299-TU game
+build and hardware-only static startup pass. Refreshed box executable is at
+`build/box-test/BHunter-box.exe`. Evidence and failed-before controls are in
+`m4/playable/ballistic-launch/`; per-implementation records are refreshed in
+`function-status.json`. Original EXE/BIN/MDF/MDS remain unchanged. The oracle
+is test-only, calls no original subsystem, and is absent from game targets.
+No software-renderer tests or original gameplay ran. PC24, full-owner arithmetic,
+other firing families and broader fidelity remain unverified; M4 incomplete.
+
+### Previous checkpoint
+
+Original gameplay review checkpoint, 2026-10-27. The prior two source box runs
+are determinism checks, not original comparison. Latest evidence is
+`m4/playable/original-gameplay-review/validation.json`; the per-function scopes
+and original instruction references are in `function-review.json` alongside it.
+44 owners were reviewed across AI, collision, shooting, objectives and pickups.
+This is a scoped static review, not a whole-function byte-match or full1:1 claim.
+
+Three owners corrected: basic pickup00441b80 rejected types20/21 even though
+original VM00443ff0 passes those types unchanged into the22-entry resource table;
+traffic damage004357d0 and response00439910 rounded displacement/damping too soon.
+Restored the original FST/FMUL spill order, retained sqrt/quadratic term and
+unrounded damping, including the different final X versus Y/Z operands.
+An isolated original00439a52..00439ba7 instruction adapter produced171 differences
+in256 cases before correction and zero after, comparing all six output words
+underPC53. The second owner's arithmetic instruction sequence is independently
+verified identical, excluding interleaved health/tick instructions. Both real
+source callbacks check those original-captured words. No gameplay subsystem
+loader was created; the existing math mapper is untouched; the adapter is not
+linked into shipping targets. No recovered-owner count increase.
+
+Focused source checks,299-TU game build, hardware-only static startup and retained
+evidence audit pass. `build/box-test/BHunter-box.exe` refreshed to the new game;
+no new box playthrough, software-renderer tests or reference gameplay ran.
+The strict pickup-radius rounding case already matches the original on the pinned
+compiler, so no speculative arithmetic rewrite was made there.
+
+Remaining fidelity boundaries are explicit in each review: PC24 and whole-owner
+numerical equivalence, original unwritten wreck orientation and degenerate
+ballistic normalization output, source validation/depth/capacity guards, other
+projectile families, CD audio and peer gameplay. These are not marked equivalent.
+
+### Previous checkpoint
+
+Pickup packet correction and direct-entry box diagnostic completed, 2026-10-27.
+Launch `build/box-test/Play box.cmd` (W/S thrust/brake, arrows steer, Ctrl fires,
+Esc exits); `Run checks.cmd` runs two bounded hardware-only playthroughs.
+The user's latest explicit request supersedes the earlier automation ban only
+for this isolated diagnostic. No tutorial/mission or software-renderer tests ran.
+
+The pickup producer had an extra reserved word: original event13 accepted/consumed
+fields are at +0x14/+0x18, while the source read +0x18/+0x1c. Inventory could
+increase without removing the item. Immutable original instructions and player/
+actor reply owners establish the ABI. Removing that word fixes connected real
+pickup/player/inventory tests; the old layout fails four retained assertions.
+Checks cover strict six-unit radius, partial capacity, full-ammo rejection and
+final depletion/unlink. No numerical fallback or RNG change was added.
+
+The separate loose-asset box has two connected rooms, a solid post, ammo/weapon
+pickups, route AI, real projectile/damage/wreck callbacks and a waitfor/VM objective.
+Two 900-tick runs passed and produced identical CSV traces: objective at tick136,
+wreck pickup at170, collection at205, ammo299->399. Assertions also cover finite
+recorded state, room bounds, solid-post exclusion, contacts and AI movement.
+Final focused non-renderer checks (319 TUs), game link (299 TUs), normal hardware
+static startup and read-only evidence audit passed. Original assets unchanged.
+
+Evidence: `m4/playable/pickup-box/validation.json`, `original-contract.json`,
+`playthrough.json`, paired traces and generated assets under `box/`. The diagnostic
+adapter adds zero original owners; 679 owners remain. Fresh original comparison
+establishes the pickup packet contract; previous AI/collision/shooting/objective
+contract evidence is indexed, not promoted into a new whole-body match claim.
+Full original/source differential gameplay, PC24 equivalence and complete mechanic
+coverage remain unverified. Windows screenshot capture timed out; no visual
+verification claimed. M4 remains incomplete.
+
+### Previous checkpoint
+
+Live actor clock correction completed, 2026-10-27: traffic and scripted-vehicle
+route/draw consumers now read the shared player simulation clock at each call,
+instead of retaining the pre-step snapshot. Original global loads/writes were
+verified against immutable EXE bytes. A stale-clock control reproduces NaN at a
+route transition; live-clock inputs produce the finite pose without changing
+banking arithmetic or RNG. Constructor/query/damage/pursuit and packet timestamp
+consumers share the binding; packet overrides restore the low word on failure.
+The previous session compiled and linked the real dependency closure (319 TUs),
+passed focused asset-free/real-archive checks, rebuilt the 299-TU game and passed
+hardware-only static startup. This session completed the interrupted evidence
+recording and ledger refresh; no further game execution. Evidence:
+`m4/playable/live-actor-clock/producer-audit.json` and `validation.json`.
+The historical resource475 instance still lacks producer identity/route inputs;
+its exact attribution and human gameplay confirmation remain unverified.
+No clamp, replacement angle, software-renderer test or automated gameplay.
+M4 remains incomplete; 679 original owners unchanged.
+
+
+Reported source-session exit / NaN investigation, 2026-10-27: preserved the
+human log, CSV and exact reported build under `m4/playable/nan-draw/`. Log shows
+resource475, command196, finite position/yaw/pitch and indefinite roll; resource
+argument rejection1 occurs before model/clip dispatch. The source then called
+failure13 and performed cleanup. Earlier attribution to the player car/physics
+was premature: a shared model handle is not an entity/producer identity.
+
+Confirmed original-backed control-flow mismatch: byte-verified original queued
+callback004775f0 discards draw return and loads next from command+50; frame
+owner00479090 follows callback-returned pointers, then runs its owned00450930
+tail. Source accumulated callback failures into frame failure and application
+exit. Corrected that consumer policy for every callback kind. First failure,
+resource/pose and errors stay diagnostic; invalid selector/topology/missing
+bindings and native failures retain explicit source boundaries. Application
+logs the first diagnostic once. No arithmetic, epsilon, neutral angle, RNG,
+physics state or source model/texture lifetime changed.
+
+Unchanged original traffic banking00434920 reproduces NaN for degenerate
+horizontal tangents (stopped/repeated controls/vertical motion/endpoint cases).
+The original contains that unguarded arithmetic too. This is a reproduced
+producer class, NOT proven attribution of the historical command: that session
+has no producer/route snapshot. Bounded hardware startup now feeds the recorded
+pose and all seven payload fields with NaN/indefinite/+Inf/-Inf through the real
+resource/frame owners, then consumes valid commands and completes frames.
+No software-renderer or gameplay test occurred. Focused source checks preserve
+regressions; their count is not evidence of general original fidelity. Root
+report byte-verifies the control-flow argument independently of source tests.
+
+Similar denominator review records camera7/9 normalized offsets, coincident
+blast/body forces, orbit identity/proximity interactions and actor basis group
+invariants as outstanding original-contract risks. Existing flyby zero-tangent,
+vector normalization and coincident-light guards were identified separately.
+No blanket safety or 1:1 pixel/PC24/full-port claim is made. Original degenerate
+transform pixel/device effects remain unverified. Evidence and limits:
+`m4/playable/nan-draw/root-cause.json`, `validation.json`; audit
+`python tools/check_playable.py`.679 original owners unchanged;M4 incomplete.
+
+
+Collision/bounce comparison and correction, 2026-10-27: byte-verified retained
+original whole bodies004124d0,0041d7c0,0040b410 and0044da20 against the immutable
+EXE. Two confirmed discrepancies fixed. Car event2 wrote bounce acceleration,
+torque and spin damping into the entity while physics subsequently republished
+a separate component over those writes. The real player constructor now binds
+query.contact_physics; event2 mirrors its common-field changes before physics
+finish. Hardware startup verifies the identity. Original00412788/0041278d skips
+last-clear overlap recovery for kind0 physical actors, but source applied it to
+actors; recovery now applies to world/prop geometry (including tunnel meshes).
+World penetration and actor overlap have separate real-geometry controls.
+
+Final focused checks:1996 without assets and2001 with real archive, zero
+failures;306 real translation units, including response, dispatcher, sweep,
+broad phase, actual player query, physics, target lifetime and input fixtures.
+The omitted-state-bridge negative control demonstrates the original source bug
+without running original/game code. Retained initial failed log has two valid
+force/spin failures plus a torque expectation corrected from a centered contact
+to an explicit off-center packet. All final cases pass.299-TU game rebuild and
+hardware fullscreen bounded startup pass, zero collected input/entity dispatch/
+application frames. No software-renderer tests or gameplay execution.
+
+Four original variants and four support variants refreshed, zero owners added;
+679 owners remain. Original arithmetic for sliding, mass splitting, moving-prop
+translation/1.5 contact-motion scale and damping is retained; PC24/extreme-speed
+and human tunnel/prop fidelity remain unvalidated. Evidence:
+`m4/playable/collision-bounce/original-contracts.json` and `validation.json`;
+audit `python tools/check_playable.py`. M4 incomplete; SDL3/SDL3 GPU direction
+and removal of the live software path remain the next platform phase.
+
+
+Runtime fixes and user platform direction, 2026-10-27: physics roster changes
+now transactionally transfer unchanged real sweep workspaces and the validated
+static scene buffers. Removed geometry borrows end before collision-slot reuse;
+stale/duplicate generations, busy state and eight allocator failure points are
+checked. Physics lifetime counters survive rebind. The application calculates
+contact deltas independently and uses growing4096-sample blocks; hardware static
+startup verifies40001 ordered samples and independent reset accounting. Mouse
+motion is disabled before binding evaluation, including retained analog/raw/
+accumulated channels; keyboard/joystick and mouse buttons remain enabled, with
+no polling/recentering of the mouse in this mode.
+
+Final validation: a fresh301-TU focused executable passes1534 asset-free and1539
+real-archive checks, executing only physics, target construction/lifetime and
+input fixtures. The299-TU game builds and hardware fullscreen bounded startup
+passes with zero input collection/entity dispatch/application frames. Synthetic
+5815-entry scene benchmark (three iterations) measures16.23ms full-init versus
+0.081ms rebind asset-free and16.43ms versus0.089ms with archive. These are source
+fixture timings, not gameplay FPS. Earlier broad attempts failed a new fixture's
+packed-float versus integer expectation; the corrected fixture passes focused
+validation. No fresh broad-suite or independent clean-checkout pass is claimed.
+Evidence: `m4/playable/runtime-fixes/validation.json`; audit:
+`python tools/check_playable.py`. Five original source variants and four support
+variants refreshed with old snapshots retained, zero owners added;679 remain.
+Manual hitch improvement and mouse-control confirmation are pending; M4 remains
+incomplete.
+
+The user prohibits any further software-renderer tests. Do not run the broad
+m0/clean-checkout runners while they execute those scenarios. Use
+`python tools/check_runtime_fixes.py` for these non-renderer checks and hardware
+startup only. Next phase: migrate to SDL3 and SDL3 GPU and completely disconnect/
+remove the live software path, retaining historical artifacts as evidence only.
+This supersedes the earlier software-preview/backend-deferral direction and is
+also recorded in AGENTS.md and RESTORATION_PLAN.md. No SDL migration is claimed
+in this block. No gameplay automation or original-code execution occurred.
+
+
+Manual performance analysis, 2026-10-27: read the user's two hardware CSV
+captures (6,697 and 36,000 presentation samples), with no game execution or
+source changes. The long capture ends at168.923s; its exit log records3,088
+dropped samples. Fourteen producer samples change the physics roster rebuild
+count, thirteen exceeding33.333ms; the worst simulation cost is160.268ms while
+rendering takes1.5461ms. Whole-context disposal/reinitialization in
+`bh_target_construct_sync` is the next source-backed performance suspect;
+`bh_physics_step_init` repeats world uniqueness scans and eagerly allocates
+all geometry-pair sweep workspaces. Internal cost attribution remains unmeasured.
+All ten apparent contact spikes above10 coincide with rebuilds: the profiler
+differences a sum of resettable physics contacts and cumulative projectile
+counters, so these values cannot establish a collision storm. Stable-roster
+mission simulation median6.946ms, p9910.511ms; ten other stable-roster samples
+still exceed33.333ms. Immutable copies, source hashes and detailed findings:
+`m4/playable/manual-performance-20261027/analysis.json`. No implementation
+admitted or ledger status advanced; human CSV evidence does not pass M4.
+
+
 Menu frame lighting follow-up, 2026-10-27: corrected the directional dot sign
 in `bh_model_draw_lit`. Original `0045a403` branches on negative camera side to
 the path with FCHS at `0045a6b6`; the nonnegative path has no negation. Source

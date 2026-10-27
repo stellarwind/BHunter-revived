@@ -4,6 +4,7 @@
 #include "bh_round.h"
 #include "bh_fp.h"
 #include <math.h>
+#include <float.h>
 #include <stdlib.h>
 #include <string.h>
 static float stored(double v){float f;bh_round_float(&f,v);return f;}
@@ -23,19 +24,22 @@ static void immediate_release(BHActorDamageContext *c,BHEntity *e){
  bh_sound_stop(c->route->sound,s.sound);bh_entity_release(c->pool,e);
 }
 int __cdecl bh_actor_damage_bind(BHActorDamageContext *c,BHEntity *e){if(!c||!c->pool||!c->route||!c->route->sound||!e||!live(c,e))return 0;memcpy(e->payload+600,&c,4);return bh_entity_set_query(c->pool,e,bh_actor_damage_query);}
-static float phase(BHActorDamageContext *c,BHActorRouteState *s){unsigned short elapsed=(unsigned short)(c->route->tick-s->tick);short se,sd;memcpy(&se,&elapsed,2);memcpy(&sd,&s->duration_ticks,2);return stored((double)se/sd);}
+static float phase(BHActorDamageContext *c,BHActorRouteState *s){unsigned short elapsed=(unsigned short)(bh_actor_route_now(c->route)-s->tick);short se,sd;memcpy(&se,&elapsed,2);memcpy(&sd,&s->duration_ticks,2);return stored((double)se/sd);}
 static void point(float t,BHActorRouteState *s,BHVec3 *p){bh_camera_curve(t,p,s->controls,s->controls+1,s->controls+2,s->controls+3);}
 static void add_offset(BHEntity *e,BHVec3 *p){unsigned long i;for(i=0;i<3;++i)((float*)p)[i]=stored((double)number(e,0x15c+i*4)+((float*)p)[i]);}
 static unsigned long random_step(unsigned long r){return ((r*0xe357UL>>16)|(r*0xe3570000UL))^r;}
 void __cdecl bh_actor_damage_tick(BHEntity *e){
  BHActorDamageContext *c=context(e);BHActorRouteState s;BHVec3 offset,impulse,p,velocity,acceleration={0,-.002f,0},before,after,spin;
- BHPickupRoom *room=0;BHEntity *previous,*next,*owner;unsigned long i,r,resource;float damage,length,factor,t,angle,angular;long loot,token;double x,y,z;
+ BHPickupRoom *room=0;BHEntity *previous,*next,*owner;unsigned long i,r,resource;float damage,t,angle,angular;long loot,token;double retained[3],distance,damping;
  if(!c||!live(c,e)||!c->particles||!c->fragments||!c->targets||!c->loot_rows||!bh_math_environment_supported()){if(c)c->error=BH_ACTOR_ROUTE_ARGUMENT;return;}
  bh_actor_route_read(e,&s);if(!s.duration_ticks){c->error=BH_ACTOR_ROUTE_NUMERICAL;return;}
  damage=stored((double)number(e,0x194)*.9975);set_number(e,0x194,damage);
- for(i=0;i<3;++i){((float*)&impulse)[i]=number(e,0x168+i*4);((float*)&offset)[i]=stored((double)number(e,0x15c+i*4)-((float*)&impulse)[i]*(-1.0/30.0));set_number(e,0x15c+i*4,((float*)&offset)[i]);}
- x=offset.x;y=offset.y;z=offset.z;length=stored(sqrt(x*x+y*y+z*z));factor=stored((.99-(double)length*length*.001)-(double)length*.01);if(factor<0)factor=0;
- for(i=0;i<3;++i){set_number(e,0x15c+i*4,stored((double)factor*((float*)&offset)[i]));set_number(e,0x168+i*4,stored((double)((float*)&impulse)[i]*.7));}
+ /* 004357e1..0043594e has the same retained damping arithmetic as
+    00439910, including the asymmetric final X versus Y/Z spill. */
+ for(i=0;i<3;++i){((float*)&impulse)[i]=number(e,0x168+i*4);retained[i]=(double)number(e,0x15c+i*4)-((float*)&impulse)[i]*(-1.0/30.0);((float*)&offset)[i]=stored(retained[i]);set_number(e,0x15c+i*4,((float*)&offset)[i]);}
+ distance=sqrt((retained[0]*offset.x+retained[1]*offset.y)+retained[2]*offset.z);
+ damping=(.99-distance*distance*.001)-(double)stored(distance)*.01;if(_isnan(damping)||damping<0)damping=0;
+ for(i=0;i<3;++i){set_number(e,0x15c+i*4,stored(damping*(i?((float*)&offset)[i]:retained[0])));set_number(e,0x168+i*4,stored((double)((float*)&impulse)[i]*.7));}
  bh_actor_route_due(c->route,e);bh_actor_route_read(e,&s);
  if(damage<1){r=(unsigned long)rand();if(damage*5000<=r)goto resume;}
  velocity.x=stored((double)(rand()-16384)*(1.0/262144.0));velocity.y=stored((double)(rand()-16384)*(1.0/262144.0));velocity.z=stored((double)(rand()-16384)*(1.0/262144.0));

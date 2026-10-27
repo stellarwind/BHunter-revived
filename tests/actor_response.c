@@ -5,6 +5,9 @@ static void real(BHEntity *e,unsigned long o,float f){memcpy((char*)e+o,&f,4);}
 static void setword(BHEntity *e,unsigned long o,unsigned long w){memcpy((char*)e+o,&w,4);}
 static unsigned long word(BHEntity *e,unsigned long o){unsigned long w;memcpy(&w,(char*)e+o,4);return w;}
 static unsigned long rows[4][32];
+static const struct {unsigned long input[6],output[6];} damping_golden[]={
+#include "actor_damping_golden.h"
+};
 typedef struct ResponseFixture {
  Fixture base;BHActorResponseContext response;BHActorDamageContext damage;
  BHActorAttackContext attack;BHActorPursuitRouteContext pursuit;
@@ -47,6 +50,15 @@ int bh_actor_response_checkpoint(unsigned long *count){ResponseFixture r;Fixture
     notifications, both lists, and pool retirement. No device/game execution. */
  real(e,0x194,1.5f);real(e,0x19c,1);real(e,0x198,1);real(e,0x180,.5f);real(e,0x184,1);setword(e,0x1b8,0);gen=e->generation;r.damage.legacy_death_angles=NULL;bh_actor_response_tick(e);CHECK(r.response.error==1&&e->generation==gen&&e->query==bh_actor_response_query&&r.vehicles.head==e&&f->room.actors==e&&!f->slots[0].body.entity,"missing death adapter preserves live query and membership");r.damage.legacy_death_angles=&r.angles;
  real(e,0x194,1.5f);real(e,0x19c,1);real(e,0x198,1);real(e,0x180,.5f);real(e,0x184,1);setword(e,0x1b8,0);gen=e->generation;used=f->pool.used;srand(71);bh_actor_response_tick(e);CHECK(r.response.error==0&&e->generation!=gen&&!r.vehicles.count&&!r.vehicles.head&&!f->room.actors,"whole special death retirement");target=f->slots[0].body.entity;CHECK(target&&f->construct.roster_count==1&&f->pool.used>used,"real moving body and debris admitted dependencies");n=0;for(other=f->pool.active;other;other=other->next)if(other->step==bh_mission_sound_tick){++n;CHECK(field(other,0x180)==1.5f,"original delayed cue time");}CHECK(n==1,"kind6 creates real mission sound callback");
+ e=actor(&r,2);
+ for(i=0;i<sizeof(damping_golden)/sizeof(damping_golden[0]);++i){
+  real(e,0x180,0);real(e,0x194,0);real(e,0x198,1);real(e,0x19c,1);
+  memcpy((char*)e+0x15c,damping_golden[i].input,24);bh_actor_response_tick(e);
+  CHECK(r.response.error==0&&!memcmp((char*)e+0x15c,damping_golden[i].output,24),"original instruction-captured damping outputs PC53");
+  CHECK(bh_actor_damage_bind(&r.damage,e),"traffic damage owner binding");
+  memcpy((char*)e+0x15c,damping_golden[i].input,24);bh_actor_damage_tick(e);
+  CHECK(r.damage.error==0&&!memcmp((char*)e+0x15c,damping_golden[i].output,24),"original identical traffic damping block PC53");
+ }
  finish(f);remove("actor-damage-fixture/HUN_LOD1.BSP");_rmdir("actor-damage-fixture");bh_math_environment_leave(&env);if(count)*count=checks;printf("{\"scenario\":\"actor-response\",\"checks\":%lu,\"failures\":%lu,\"original_code_required\":false}\n",checks,failed);return failed!=0;
 }
 #ifdef BH_ACTOR_RESPONSE_STANDALONE

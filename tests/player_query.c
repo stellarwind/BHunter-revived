@@ -1,4 +1,6 @@
 #include "../src/bh_player_query.h"
+#include "../src/bh_pickup_basic.h"
+#include "../src/bh_pickup_draw.h"
 #include "../src/bh_callback_helpers.h"
 #include "../src/bh_fp.h"
 #include <string.h>
@@ -38,6 +40,34 @@ int __cdecl bh_player_query_checkpoint(unsigned long *count){BHEntityPool pool;B
  packet(&p,13);p.words[1]=0;p.words[2]=1;p.words[3]=1;p.words[4]=10;s[0]->common.available_ec=1;before=s[0]->common.ammo;CHECK(bh_player_query_dispatch(&c,&p)&&p.words[6]==0&&s[0]->common.ammo==before,"priced already-owned weapon rejects refill");
  for(i=0;i<10;i++){packet(&p,13);p.words[1]=i;p.words[2]=1;p.words[3]=1;s[i]->common.ammo=0;s[i]->common.available_ec=0;used=pool.used;CHECK(bh_player_query_dispatch(&c,&p)&&p.words[6]==1&&s[i]->common.available_ec==1&&s[i]->common.ammo>0,"all ten whole weapon grants and actual ready/cancel dispatch");CHECK(pool.used==used+(i==0?0:1),"switch allocates delayed cue only on selection change");}
  packet(&p,13);p.words[1]=0;p.words[2]=1;p.words[3]=1;s[0]->common.available_ec=0;s[4]->common.word_100=-1;s[4]->common.word_108=91;CHECK(bh_player_query_dispatch(&c,&p)&&((unsigned char*)player)[0x2b6]==0&&s[4]->common.word_108==0,"real arc cancellation on primary switch");
+ /* Real drop constructor -> proximity -> player event13 -> depletion/unlink.
+    Literal response offsets come from original004415a0/0041d7c0, not a mock. */
+ {
+  BHPickupContext drops;BHPickupRoom room;BHWorldGeometry drop_world;
+  BHEntity *outside[2],*item;unsigned long images[10],generation;
+  BHVec3 point={0,0,0};
+  memset(&drops,0,sizeof(drops));memset(&room,0,sizeof(room));memset(&drop_world,0,sizeof(drop_world));memset(images,0,sizeof(images));
+  drop_world.navigation.next=(BHPortalNode*)&drop_world;
+  drop_world.minimum.x=drop_world.minimum.y=drop_world.minimum.z=-100;
+  drop_world.maximum.x=drop_world.maximum.y=drop_world.maximum.z=100;
+  room.world=&drop_world;outside[0]=player;outside[1]=NULL;
+  drops.pool=&pool;drops.first_world=&drop_world;drops.world_count=1;drops.rooms=&room;drops.room_count=1;
+  drops.resources=images;drops.resource_count=10;drops.outside_actors=outside;drops.default_draw=bh_pickup_default_step;drops.draw_user=&room;
+  drops.sound=&sound;drops.take_sound=resource->index;
+  s[0]->common.available_ec=1;s[0]->common.ammo=s[0]->common.ammo_limit-2;
+  item=bh_pickup_basic_spawn(&drops,&point,0,3,3,0,0);CHECK(item!=NULL,"real dropped ammo constructor");
+  generation=item->generation;player->position=point;player->position.x=6;
+  bh_pickup_state(item)->phase=0;bh_pickup_tick(item);
+  CHECK(s[0]->common.ammo==s[0]->common.ammo_limit-2&&bh_pickup_state(item)->remaining==3,"original strict six-unit pickup boundary");
+  player->position.x=0;bh_pickup_state(item)->phase=0;bh_pickup_tick(item);
+  CHECK(s[0]->common.ammo==s[0]->common.ammo_limit&&bh_pickup_state(item)->remaining==1&&bh_pickup_state(item)->offer==1,"real player consumes only available ammo capacity");
+  bh_pickup_state(item)->phase=0;bh_pickup_tick(item);
+  CHECK(bh_pickup_state(item)->remaining==1&&item->generation==generation,"full ammunition leaves remainder collectible");
+  --s[0]->common.ammo;bh_pickup_state(item)->phase=0;used=pool.used;bh_pickup_tick(item);
+  CHECK(s[0]->common.ammo==s[0]->common.ammo_limit&&pool.used==used-1&&item->generation!=generation,"final unit grants and releases exactly once");
+  CHECK(!drops.head&&!room.pickups,"collection unlinks both pickup lists");
+  if(drops.head)bh_pickup_cleanup(drops.head);
+ }
  /* Real delayed cue callback closure, no timer/game loop automation. */
  at=pool.active;while(at){BHEntity *next=at->next;if(at->step==bh_mission_sound_tick){set(at,0x180,0);used=pool.used;at->step(at);CHECK(pool.used==used-1,"actual cue expires through real sound/lifetime owner");}at=next;}
  packet(&p,0);p.floats[1]=.2f;p.words[2]=(long)actor;set(player,0x23c,.9f);set(player,0x240,0);put(player,0x2b4,0);srand(113);for(i=0;i<3;i++)expected[i]=(rand()-0x4000)*(.2f*.001f);srand(113);for(i=0;i<3;i++)set(player,0x2a4+i*4,0);expected_calls=c.random_calls;

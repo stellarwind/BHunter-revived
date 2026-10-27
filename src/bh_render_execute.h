@@ -64,7 +64,8 @@ typedef struct BHRenderExecute {
 } BHRenderExecute;
 /* Complete 00479090 plus its unique 00450930 tail for valid source queues.
    Callback failures are recorded but do not suppress later records or the
-   native tail, mirroring original ignored return values. Invalid selectors,
+   native tail or fail the frame, mirroring original ignored return values.
+   error/failures remain diagnostic when the return value is1. Invalid selectors,
    cycles and missing bindings stop at an explicit source adapter boundary.
    Native execution requires an already begun real Direct3D2 scene. */
 int __cdecl bh_render_execute(BHRenderExecute *);

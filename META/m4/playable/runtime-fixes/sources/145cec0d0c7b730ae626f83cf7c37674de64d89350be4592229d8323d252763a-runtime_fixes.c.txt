@@ -1,0 +1,12 @@
+#include <stdio.h>
+int __cdecl bh_physics_step_checkpoint(unsigned long *);
+int __cdecl bh_target_construct_checkpoint(const char *,unsigned long *);
+int bh_input_collection_checkpoint(unsigned long *);
+int main(int argc,char **argv) {
+    unsigned long checks=0,n;int failed=0;
+    failed+=bh_physics_step_checkpoint(&n);checks+=n;
+    failed+=bh_target_construct_checkpoint(argc>1?argv[1]:NULL,&n);checks+=n;
+    failed+=bh_input_collection_checkpoint(&n);checks+=n;
+    printf("{\"scenario\":\"runtime-fixes\",\"checks\":%lu,\"failures\":%d,\"software_renderer_executed\":false,\"gameplay_automation\":false}\n",checks,failed);
+    return failed?1:0;
+}

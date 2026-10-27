@@ -1,0 +1,85 @@
+#include "bh_actor_damage.h"
+#include "bh_camera_curve.h"
+#include "bh_remote_prediction.h"
+#include "bh_round.h"
+#include "bh_fp.h"
+#include <math.h>
+#include <stdlib.h>
+#include <string.h>
+static float stored(double v){float f;bh_round_float(&f,v);return f;}
+static float number(BHEntity *e,unsigned long off){float f;memcpy(&f,(char*)e+off,4);return f;}
+static void set_number(BHEntity *e,unsigned long off,float f){memcpy((char*)e+off,&f,4);}
+static unsigned long word(BHEntity *e,unsigned long off){unsigned long v;memcpy(&v,(char*)e+off,4);return v;}
+static void set_word(BHEntity *e,unsigned long off,unsigned long v){memcpy((char*)e+off,&v,4);}
+static BHActorDamageContext *context(BHEntity *e){BHActorDamageContext *c;memcpy(&c,e->payload+600,4);return c;}
+static int live(BHActorDamageContext *c,BHEntity *e){BHEntity *a;unsigned long n=0;for(a=c->pool->active;a&&n++<c->pool->capacity;a=a->next)if(a==e)return 1;return 0;}
+static void normal_tick(BHEntity *e){BHActorDamageContext *c=context(e);bh_actor_route_due(c->route,e);}
+static void release_tick(BHEntity *e){BHActorDamageContext *c=context(e);bh_actor_route_release(c->route,c->pool,e);}
+static void immediate_release(BHActorDamageContext *c,BHEntity *e){
+ BHActorRouteState s;BHPickupRoom *room=0;BHEntity *previous,*next;unsigned long i;
+ bh_actor_route_read(e,&s);for(i=0;i<c->route->room_count;++i)if(c->route->rooms[i].world==s.current){room=c->route->rooms+i;break;}
+ if(!room){c->error=BH_ACTOR_ROUTE_TOPOLOGY;return;}
+ previous=(BHEntity*)word(e,0xf8);next=(BHEntity*)word(e,0xf4);if(previous)set_word(previous,0xf4,(unsigned long)next);else room->actors=next;if(next)set_word(next,0xf8,(unsigned long)previous);
+ bh_sound_stop(c->route->sound,s.sound);bh_entity_release(c->pool,e);
+}
+int __cdecl bh_actor_damage_bind(BHActorDamageContext *c,BHEntity *e){if(!c||!c->pool||!c->route||!c->route->sound||!e||!live(c,e))return 0;memcpy(e->payload+600,&c,4);return bh_entity_set_query(c->pool,e,bh_actor_damage_query);}
+static float phase(BHActorDamageContext *c,BHActorRouteState *s){unsigned short elapsed=(unsigned short)(bh_actor_route_now(c->route)-s->tick);short se,sd;memcpy(&se,&elapsed,2);memcpy(&sd,&s->duration_ticks,2);return stored((double)se/sd);}
+static void point(float t,BHActorRouteState *s,BHVec3 *p){bh_camera_curve(t,p,s->controls,s->controls+1,s->controls+2,s->controls+3);}
+static void add_offset(BHEntity *e,BHVec3 *p){unsigned long i;for(i=0;i<3;++i)((float*)p)[i]=stored((double)number(e,0x15c+i*4)+((float*)p)[i]);}
+static unsigned long random_step(unsigned long r){return ((r*0xe357UL>>16)|(r*0xe3570000UL))^r;}
+void __cdecl bh_actor_damage_tick(BHEntity *e){
+ BHActorDamageContext *c=context(e);BHActorRouteState s;BHVec3 offset,impulse,p,velocity,acceleration={0,-.002f,0},before,after,spin;
+ BHPickupRoom *room=0;BHEntity *previous,*next,*owner;unsigned long i,r,resource;float damage,length,factor,t,angle,angular;long loot,token;double x,y,z;
+ if(!c||!live(c,e)||!c->particles||!c->fragments||!c->targets||!c->loot_rows||!bh_math_environment_supported()){if(c)c->error=BH_ACTOR_ROUTE_ARGUMENT;return;}
+ bh_actor_route_read(e,&s);if(!s.duration_ticks){c->error=BH_ACTOR_ROUTE_NUMERICAL;return;}
+ damage=stored((double)number(e,0x194)*.9975);set_number(e,0x194,damage);
+ for(i=0;i<3;++i){((float*)&impulse)[i]=number(e,0x168+i*4);((float*)&offset)[i]=stored((double)number(e,0x15c+i*4)-((float*)&impulse)[i]*(-1.0/30.0));set_number(e,0x15c+i*4,((float*)&offset)[i]);}
+ x=offset.x;y=offset.y;z=offset.z;length=stored(sqrt(x*x+y*y+z*z));factor=stored((.99-(double)length*length*.001)-(double)length*.01);if(factor<0)factor=0;
+ for(i=0;i<3;++i){set_number(e,0x15c+i*4,stored((double)factor*((float*)&offset)[i]));set_number(e,0x168+i*4,stored((double)((float*)&impulse)[i]*.7));}
+ bh_actor_route_due(c->route,e);bh_actor_route_read(e,&s);
+ if(damage<1){r=(unsigned long)rand();if(damage*5000<=r)goto resume;}
+ velocity.x=stored((double)(rand()-16384)*(1.0/262144.0));velocity.y=stored((double)(rand()-16384)*(1.0/262144.0));velocity.z=stored((double)(rand()-16384)*(1.0/262144.0));
+ t=phase(c,&s);point(t,&s,&p);add_offset(e,&p);angular=stored((double)(rand()-16384)*(1.0/16384.0));angle=stored((double)rand()*(1.0/512.0));
+ bh_script_particle_create(c->particles,c->smoke_resource,3,&p,&velocity,&acceleration,.5f,angle,12,angular,.9f,.95f,2,.3f);
+ if(damage>=1&&c->mode!=3){
+  /* Original wreck orientation is unwritten stack input. Require the explicit
+     adapter only when constructing a wreck, never while updating a live car. */
+  if(!c->legacy_death_angles){c->error=BH_ACTOR_ROUTE_ARGUMENT;return;}
+  bh_entity_set_query(c->pool,e,0);bh_sound_stop(c->route->sound,s.sound);
+  t=phase(c,&s);point(stored((double)t-1.0/30.0),&s,&before);point(t,&s,&offset);point(stored((double)t-(-1.0/30.0)),&s,&after);
+  for(i=0;i<3;++i)((float*)&velocity)[i]=stored(((double)((float*)&after)[i]-((float*)&offset)[i])*15);
+  bh_script_debris_create(c->fragments,(rand()&7)+1,&p,8,10,1);
+  bh_sound_request(c->route->sound,c->death_sound,2,stored(.75-(double)rand()*(-1.0/65536.0)),&p,&velocity);
+  r=s.random;for(i=0;i<3;++i){r=random_step(r);((float*)&spin)[i]=stored(((double)(r&32767)-16384)*(1.0/4096.0));}r=random_step(r);set_word(e,0x1e8,r);
+  loot=0;bh_remote_choose_slot(c->loot_rows,c->loot_row_count,0,-1,-1,&loot);token=(long)word(e,0x100);owner=(BHEntity*)word(e,0x1ac);resource=word(e,0x114);
+  bh_target_construct_moving(c->targets,&p,c->legacy_death_angles,&velocity,&spin,resource,10000,stored(1.0-(double)(r&32767)*(-1.0/16384.0)),owner,token,loot,0);
+  for(i=0;i<c->route->room_count;++i)if(c->route->rooms[i].world==s.current){room=c->route->rooms+i;break;}
+  if(!room){c->error=BH_ACTOR_ROUTE_TOPOLOGY;return;}previous=(BHEntity*)word(e,0xf8);next=(BHEntity*)word(e,0xf4);if(previous)set_word(previous,0xf4,(unsigned long)next);else room->actors=next;if(next)set_word(next,0xf8,(unsigned long)previous);
+  bh_entity_release(c->pool,e);c->error=BH_ACTOR_ROUTE_OK;return;
+ }
+resume:
+ if(damage<.03&&word(e,0x198)==0x3f800000UL&&word(e,0x19c)==0x3f800000UL)e->step=normal_tick;
+ c->error=BH_ACTOR_ROUTE_OK;
+}
+void __cdecl bh_actor_damage_query(BHEntity *e,void *packet){
+ BHActorDamageContext *c=context(e);unsigned long *p=(unsigned long*)packet;float *f=(float*)packet;BHActorRouteState s;BHVec3 before,at,after,difference;
+ unsigned long i;float t,length,factor,v,old;
+ if(!c||!packet||!live(c,e))return;
+ switch(p[0]){
+ case 20:e->step=release_tick;e->refresh=0;bh_entity_set_query(c->pool,e,0);return;
+ case 4:immediate_release(c,e);return;
+ case 17:if(p[1]==word(e,0x1b8))set_word(e,0x1b8,0);if(p[1]==word(e,0x1ac))set_word(e,0x1ac,0);return;
+ case 13:p[5]=1;p[6]=p[3];return;
+ case 0:e->step=bh_actor_damage_tick;v=stored((double)f[1]+number(e,0x194));set_number(e,0x194,v);if(v>=1)set_word(e,0x1ac,p[2]);return;
+ case 2:e->step=bh_actor_damage_tick;for(i=0;i<3;++i)set_number(e,0x168+i*4,stored((double)f[4+i]*f[7]+number(e,0x168+i*4)));return;
+ case 11:v=stored((double)number(e,0x19c)-.1);if(v<.15)v=.15f;set_number(e,0x19c,v);e->step=bh_actor_damage_tick;return;
+ case 1:case 3:case 16:break;
+ default:return;
+ }
+ if(!bh_math_environment_supported()){c->error=BH_ACTOR_ROUTE_NUMERICAL;return;}bh_actor_route_read(e,&s);if(!s.duration_ticks){c->error=BH_ACTOR_ROUTE_NUMERICAL;return;}t=phase(c,&s);
+ point(t,&s,&at);
+ if(p[0]==3){add_offset(e,&at);memcpy(f+1,&at,12);return;}
+ if(p[0]==1){add_offset(e,&at);for(i=0;i<3;++i)((float*)&difference)[i]=stored((double)((float*)&at)[i]-f[1+i]);length=stored(sqrt((double)difference.x*difference.x+(double)difference.y*difference.y+(double)difference.z*difference.z));if(length>0&&length<f[5]){factor=stored((((1.0-(double)length/f[5])*f[4])*.003)/length);for(i=0;i<3;++i)set_number(e,0x168+i*4,stored((double)factor*((float*)&difference)[i]+number(e,0x168+i*4)));e->step=bh_actor_damage_tick;}return;}
+ point(stored((double)t-1.0/30.0),&s,&before);point(stored((double)t-(-1.0/30.0)),&s,&after);
+ for(i=0;i<3;++i){v=stored(((double)((float*)&after)[i]-((float*)&at)[i])*30);old=stored(((double)((float*)&at)[i]-((float*)&before)[i])*30);f[4+i]=v;f[7+i]=stored(((double)old-v)*30);f[1+i]=stored((double)number(e,0x15c+i*4)+((float*)&at)[i]);}
+}

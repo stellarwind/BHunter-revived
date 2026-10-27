@@ -1,5 +1,7 @@
 #include "../src/bh_sound_queue.h"
 #include "../src/bh_fp.h"
+#include "../src/bh_frame_service.h"
+#include "../src/bh_input_messages.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -16,6 +18,25 @@ static BHSoundResource *resource(BHSoundQueue *q,BHWave *w,int streaming,int lim
     CHECK(id!=BH_SOUND_INVALID,"source PCM -> native secondary registration");
     if(id==BH_SOUND_INVALID)return NULL;
     r=q->resources[id];r->time_scale=.125f;r->audible_range=10;return r;
+}
+static void __cdecl produce_sound_frame(void *p){bh_frame_service_tick((BHFrameService*)p);}
+static LRESULT __cdecl sound_frame_message(void *p,HWND w,UINT m,WPARAM a,LPARAM b){return bh_input_message((BHInputSnapshot*)p,w,m,a,b);}
+static void service_continuation(BHSoundQueue *q,BHSoundResource *r,BHSoundVoice *voice){
+ BHFrameService service;BHFrameBuffers frames;BHDrawQueue draw,slots[3];BHInputCollection input;BHInputSnapshot snapshot;BHPlayerInputOwner lists;BHPlayerInputList *list;BHPlayerInputState player;BHEntityPool entities;
+ volatile LONG stop=0,done=0,paused=0;volatile unsigned long counter=0;unsigned long i;
+ memset(&service,0,sizeof(service));memset(&draw,0,sizeof(draw));memset(slots,0,sizeof(slots));memset(&player,0,sizeof(player));
+ CHECK(bh_player_input_owner_init(&lists,NULL)&&bh_input_collection_init(&input,&snapshot,&lists),"service source input owners");input.disable_mouse_motion=1;
+ list=bh_player_input_create(&lists,1);CHECK(list!=NULL,"service real input packet");if(!list)return;
+ CHECK(bh_entities_init(&entities,2,NULL)&&bh_frame_buffers_bind(&frames,NULL),"service entity/frame owners");
+ CHECK(bh_frame_buffers_start(&frames,produce_sound_frame,&service,30,3500UL*sizeof(BHDrawCommand),sound_frame_message,&snapshot),"service buffers without renderer");
+ service.input=&input;service.entities=&entities;service.sound=q;service.frames=&frames;service.draw=&draw;for(i=0;i<3;++i)service.slot_draw[i]=slots+i;
+ service.player_input=&player;service.packet=list->state;service.packet_bytes=sizeof(list->state);service.paused=&paused;service.frame_counter=&counter;service.stop=&stop;service.worker_done=&done;
+ voice->frequency=-7000;voice->pending=1;r->phase=0;
+ CHECK(bh_frame_service_tick(&service)&&service.error==BH_FRAME_SERVICE_OK&&service.produced==1&&service.packet_calls==1,"original service continues and publishes after real native sound rejection");
+ CHECK(q->error==BH_SOUND_BACKEND&&service.sound_stats.last_error!=DS_OK&&service.sound_stats.frequency_failures==1&&service.sound_stats.failed_frequency==-7000&&service.sound_stats.failed_resource==r->index&&r->cached_frequency[0]==-7000,"rejected frequency remains unchanged and diagnostic is retained");
+ r->buffer_count=4;
+ CHECK(!bh_frame_service_tick(&service)&&service.error==BH_FRAME_SERVICE_SOUND&&q->error==BH_SOUND_TOPOLOGY&&service.produced==2,"invalid source topology is still a frame error");r->buffer_count=1;
+ CHECK(bh_frame_buffers_dispose(&frames)&&bh_entities_dispose(&entities),"service source owners released");bh_player_input_owner_dispose(&lists);
 }
 static void one_shot(BHSoundQueue *q,BHWave *w) {
     BHSoundResource *r=resource(q,w,0,1);BHSoundVoice *v;BHSoundTickStats s;
@@ -88,6 +109,7 @@ static void arithmetic(BHSoundQueue *q,BHWave *w) {
     CHECK(!tick(q,.25f,0,&s) && q->error==BH_SOUND_BACKEND && s.last_error!=DS_OK && s.frequency_calls==1 && r->cached_frequency[0]==-8000,
         "actual invalid native frequency reports failure but original cache mutation continues");
     CHECK(tick(q,.25f,0,&s) && !s.frequency_calls,"failed setter cache remains cached on following update, as original");
+    service_continuation(q,r,v);
     saved=r->phase;r->buffer_count=4;
     CHECK(!tick(q,.25f,0,&s) && q->error==BH_SOUND_TOPOLOGY && r->phase==saved,"malformed slot count rejects before indexing");r->buffer_count=1;
     CHECK(bh_sound_stop(q,h),"arithmetic voice cleanup");

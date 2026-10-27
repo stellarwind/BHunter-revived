@@ -1,0 +1,219 @@
+{
+  "original_code_executed": false,
+  "original_bodies_verified_against_reference": [
+    {
+      "address": "004415a0",
+      "path": "META/m4/pickup/original/004415a0.tsv",
+      "bytes": 1111,
+      "instructions": 309,
+      "sha256": "6f65bb633c3ca9afc1c121ad53291231e99c330220f0ffa72be05654a596cfab"
+    },
+    {
+      "address": "0041d7c0",
+      "path": "META/m4/target550/a/original/0041d7c0.disasm.json",
+      "bytes": 3749,
+      "instructions": 1110,
+      "sha256": "4a3c86fc2d75ec55600bdd1aabf9e7e5d5c3ed995b289e9969b08da642a73bde"
+    },
+    {
+      "address": "0043a1d0",
+      "path": "META/m4/target656/response/original/0043a1d0.disasm.json",
+      "bytes": 1793,
+      "instructions": 512,
+      "sha256": "1f2620dce9a66cb8aab15a97dd9d10bfe19e46017e16a9fc39672b21bcefbcc2"
+    },
+    {
+      "address": "00435e80",
+      "path": "META/m4/target600/b3/original/00435e80.disasm.json",
+      "bytes": 1312,
+      "instructions": 382,
+      "sha256": "af8b4dceb2e36e6dcbe60e6b56c2e91a63ea0a987e3af00db230c18102e90118"
+    },
+    {
+      "address": "0043cd00",
+      "path": "META/m4/hour443/a3/original/0043cd00.disasm.json",
+      "bytes": 1404,
+      "instructions": 431,
+      "sha256": "edd43e22f9d0798daca6114df82f4dc1ad37ffe3163aad3032bb52c1e9cedc44"
+    }
+  ],
+  "packet_anchors": {
+    "00441785": "8d442448",
+    "00441799": "8b442464",
+    "004417a4": "8b4c2460",
+    "0044185a": "8d442448",
+    "0044186e": "8b442464",
+    "00441879": "8b4c2460"
+  },
+  "contract": "Original004415a0 packet base ESP+48. After two argument pushes, acceptance load ESP+64 corresponds to packet+14; after stack restoration consumed load ESP+60 corresponds to packet+18. Player0041d7c0 and actors0043a1d0/00435e80 write words5/6. Seven words, no reserved word.",
+  "defect": "Source BHPickupTakePacket inserted a reserved word, so producer read words6/7. Real inventory could increase while pickup remained undepleted. Isolated mock used the same erroneous type and missed the cross-owner mismatch.",
+  "change": "Remove reserved word; compile-time size28/accepted+14/consumed+18 assertions. Connected real pickup -> player query -> weapon registry check covers radius boundary, partial capacity, full rejection, final depletion and room/global unlink.",
+  "negative_control": "Same connected fixture with old packet failed four assertions; retained before-fix log. Corrected real production closure passes.",
+  "reference_comparison_scope": "Fresh original instruction/ABI review for pickup, player and actor reply owners, plus immutable-byte validation of wreck owner. Existing AI/collision/weapon/objective contracts remain linked below; no fresh whole-body matching claim.",
+  "prior_family_evidence": [
+    {
+      "function": "bh_physics_overlap",
+      "original_va": "0044d480",
+      "source": "src/bh_physics_response.c",
+      "evidence": [
+        "META/m4/physics-response/review.json",
+        "META/m4/physics-response/validation.json",
+        "META/m4/physics-response/integration-real.json",
+        "META/m4/physics-response/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "function": "bh_script_wait_template",
+      "original_va": "00443270",
+      "source": "src/bh_script_wait.c",
+      "evidence": [
+        "META/m4/script-wait/00443270.disasm.json",
+        "META/m4/script-wait/README.md",
+        "META/m4/script-wait/validation.json",
+        "META/m4/script-wait/integration-real.json",
+        "META/m4/script-wait/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "function": "bh_script_wait_child",
+      "original_va": "00442f40",
+      "source": "src/bh_script_wait.c",
+      "evidence": [
+        "META/m4/script-wait/00442f40.disasm.json",
+        "META/m4/script-wait/README.md",
+        "META/m4/script-wait/validation.json",
+        "META/m4/script-wait/integration-real.json",
+        "META/m4/script-wait/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "function": "bh_target_step",
+      "original_va": "0043cd00",
+      "source": "src/bh_target_step.c",
+      "evidence": [
+        "META/m4/hour443/validation.json",
+        "META/m4/hour443/README.md",
+        "META/m4/hour443/a3/README.md",
+        "META/m4/hour443/stages/target/owners.json",
+        "META/m4/hour443/stages/target/validation.json",
+        "META/m4/hour443/stages/target/integration-real.json",
+        "META/m4/hour443/stages/target/clean/clean-checkout.json",
+        "META/m4/hour443/a3/switch-data.json"
+      ]
+    },
+    {
+      "function": "bh_weapon_fire_ballistic",
+      "original_va": "004305f0",
+      "source": "src/bh_weapon_fire.c",
+      "evidence": [
+        "META/m4/target600/a5/README.md",
+        "META/m4/target600/a5/standalone-build.json",
+        "META/m4/target600/a5/constants.json",
+        "META/m4/target600/a5/original/004305f0.disasm.json",
+        "META/m4/target600/a5/README.md",
+        "META/m4/target600/validation.json"
+      ]
+    },
+    {
+      "function": "bh_weapon_fire_homing",
+      "original_va": "00430a30",
+      "source": "src/bh_weapon_fire.c",
+      "evidence": [
+        "META/m4/target600/a5/README.md",
+        "META/m4/target600/a5/standalone-build.json",
+        "META/m4/target600/a5/constants.json",
+        "META/m4/target600/a5/original/00430a30.disasm.json",
+        "META/m4/target600/a5/README.md",
+        "META/m4/target600/validation.json"
+      ]
+    },
+    {
+      "function": "bh_weapon_area_start",
+      "original_va": "00431db0",
+      "source": "src/bh_weapon_fire.c",
+      "evidence": [
+        "META/m4/target600/a5/README.md",
+        "META/m4/target600/a5/standalone-build.json",
+        "META/m4/target600/a5/constants.json",
+        "META/m4/target600/a5/original/00431db0.disasm.json",
+        "META/m4/target600/a5/README.md",
+        "META/m4/target600/validation.json"
+      ]
+    },
+    {
+      "function": "bh_weapon_area_tick",
+      "original_va": "00431f00",
+      "source": "src/bh_weapon_fire.c",
+      "evidence": [
+        "META/m4/target600/a5/README.md",
+        "META/m4/target600/a5/standalone-build.json",
+        "META/m4/target600/a5/constants.json",
+        "META/m4/target600/a5/original/00431f00.disasm.json",
+        "META/m4/target600/a5/README.md",
+        "META/m4/target600/validation.json"
+      ]
+    },
+    {
+      "function": "bh_script_vm_query",
+      "original_va": "00443ff0",
+      "source": "src/bh_script_vm.c",
+      "evidence": [
+        "META/m4/target656/vm/validation.json",
+        "META/m4/target656/vm/original/00443ff0.disasm.json"
+      ]
+    },
+    {
+      "function": "bh_script_vm_create",
+      "original_va": "004457c0",
+      "source": "src/bh_script_vm.c",
+      "evidence": [
+        "META/m4/target656/vm/validation.json",
+        "META/m4/target656/vm/original/004457c0.disasm.json"
+      ]
+    },
+    {
+      "function": "bh_entity_collision_dispatch",
+      "original_va": "0040b410",
+      "source": "src/bh_entity_collision.c",
+      "evidence": [
+        "META/m4/playable/ai-collision-audit/validation.json",
+        "META/m4/entity-collision/review.json",
+        "META/m4/entity-collision/validation.json",
+        "META/m4/entity-collision/integration-real.json",
+        "META/m4/entity-collision/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "function": "bh_actor_route_promote",
+      "original_va": "00434f40",
+      "source": "src/bh_actor_route.c",
+      "evidence": [
+        "META/m4/playable/live-actor-clock/validation.json",
+        "META/m4/target-steering/review.json",
+        "META/m4/frontier-90min/original/00434f40.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    },
+    {
+      "function": "bh_actor_route_advance",
+      "original_va": "004355c0",
+      "source": "src/bh_actor_route.c",
+      "evidence": [
+        "META/m4/playable/live-actor-clock/validation.json",
+        "META/m4/target-steering/review.json",
+        "META/m4/frontier-90min/original/004355c0.tsv",
+        "META/m4/frontier-90min/validation.json",
+        "META/m4/frontier-90min/integration-real.json",
+        "META/m4/frontier-90min/clean/clean-checkout.json"
+      ]
+    }
+  ],
+  "limits": [
+    "No raw-byte-match or full original/source differential-playthrough claim. Static original packet instructions establish the corrected ABI; source scenario success is not independent numerical fidelity evidence.",
+    "Two fixed-seed 900-tick hardware box runs compare recorded state, not complete memory/RNG state. Human visual confirmation is pending: Windows screenshot capture timed out.",
+    "The box driver is an isolated count-zero test adapter. It supplies level data and bounded input only, using real gameplay callbacks; it is not an original implementation.",
+    "M4, 24-bit x87 equivalence, CD audio, peer gameplay and broader gameplay coverage remain incomplete. No software-renderer tests or tutorial/mission automation executed."
+  ]
+}

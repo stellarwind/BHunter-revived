@@ -35,10 +35,39 @@
 #define GAME_STARTS 32
 #define N(a) (sizeof(a)/sizeof((a)[0]))
 typedef struct BHGamePerfSample{double time_ms,interval_ms,simulation_ms,render_ms,present_ms;unsigned long frame,produced,mode,paused,commands,entities,projectiles,contacts,rebuilds;}BHGamePerfSample;
+#define PERF_BLOCK_SAMPLES 4096
+typedef struct BHGamePerfBlock {
+ struct BHGamePerfBlock *next;unsigned long count;
+ BHGamePerfSample samples[PERF_BLOCK_SAMPLES];
+} BHGamePerfBlock;
+typedef struct BHGamePerfCapture {
+ BHGamePerfBlock *head,*tail;unsigned long count,dropped,previous[7];
+} BHGamePerfCapture;
+static BHGamePerfSample *perf_append(BHGamePerfCapture *c) {
+ BHGamePerfBlock *b;
+ if(!c->tail || c->tail->count==PERF_BLOCK_SAMPLES) {
+  b=(BHGamePerfBlock*)calloc(1,sizeof(*b));
+  if(!b){++c->dropped;return NULL;}
+  if(c->tail)c->tail->next=b;else c->head=b;c->tail=b;
+ }
+ ++c->count;return c->tail->samples+c->tail->count++;
+}
+static unsigned long perf_contact_delta(BHGamePerfCapture *c,const unsigned long *current) {
+ unsigned long i,total=0;
+ for(i=0;i<7;++i){total+=current[i]>=c->previous[i]?current[i]-c->previous[i]:current[i];c->previous[i]=current[i];}
+ return total;
+}
+static void perf_dispose(BHGamePerfCapture *c) {
+ BHGamePerfBlock *b=c->head,*next;
+ while(b){next=b->next;free(b);b=next;}memset(c,0,sizeof(*c));
+}
+
 typedef struct BHGameApp {
- HWND window;HINSTANCE instance;int startup_check,hardware,fullscreen,quit,initialized,error,focus_sample;FILE *log;
+ HWND window;HINSTANCE instance;int box_level,box_auto;unsigned long box_ticks;FILE *box_trace;BHEntity *box_ai,*box_pickup,*box_drop;unsigned long box_pickup_generation,box_target_generation,box_drop_generation;int box_objective,box_drop_seen,box_drop_taken;long box_drop_ammo;
+ BHEntity *box_weapon_pickup;unsigned long box_weapon_generation,box_collected_mask,box_fired_mask,box_spawned_mask,box_emit_before;long box_ammo_before,box_fire_ammo;int sound_diagnostic_logged;
+ int startup_check,hardware,fullscreen,quit,initialized,error,focus_sample;FILE *log;
  char archive[512],config_path[512];long width,height,selected_waypoint,mission,ship,slot,input_changed,stay,network_failed,fine_warning,pending_profile;
- unsigned long frame,identity,pending_identity,sync_identity,actor_count,availability[4][32],event_value,mission_identity,instability;
+ unsigned long frame,sync_identity,actor_count,availability[4][32],event_value,mission_identity,instability;
  float yaw,latency[8];BHVec3 zero,eye,angles;BHEntity *player,*camera_entity,*damage_source,*actor_head,*actors[GAME_DYNAMIC_CAPACITY+2],*remote[8];
  BHMathEnvironment math;BHConfig config;BHInputProfile *profile;BHPlayerInputOwner inputs;BHPlayerInputState decoded,global_state;BHInputSnapshot snapshot;BHInputCollection collection;BHInputDevices devices;
  BHLoadingImages loading_images;BHLoadingDisplay loading_display;BHLoadingProgress loading_progress;
@@ -72,33 +101,54 @@ typedef struct BHGameApp {
  BHEffectDrawContext effect_draw;BHTrailContext trails;BHEffectPuffContext puffs;BHPulseVisualContext pulse_draw;BHGeometry *base_models[1];
  BHWorldSegmentActor segment_actors[GAME_DYNAMIC_CAPACITY+1];BHSegmentQuery actor_queries[GAME_DYNAMIC_CAPACITY+1];unsigned long actor_query_generations[GAME_DYNAMIC_CAPACITY+1];BHEntity *actor_query_entities[GAME_DYNAMIC_CAPACITY+1];
  unsigned char key_result[2];unsigned long empty_warning;long weapon_warning;BHWorldGeometry *query_world;unsigned short query_world_index;const BHProviderRecord *selected_provider;
- int perf_enabled;BHGamePerfSample *perf_samples;unsigned long perf_count,perf_dropped,perf_contacts,perf_projectiles;LARGE_INTEGER perf_frequency,perf_origin,perf_previous;char perf_path[128];
+ int curve_diagnostic_written;int draw_warning_logged;int perf_enabled;BHGamePerfCapture perf_capture;unsigned long perf_projectiles;LARGE_INTEGER perf_frequency,perf_origin,perf_previous;char perf_path[128];
 } BHGameApp;
 static HWND input_window;
 /* Original city-name pointer table at0048fb58, indexed by placement city ID. */
 static const char *const city_names[16]={"Downtown","Old Bronx","Central Stadium","The Docks","Industrial Complex","Space Port","Underground City","Scraptown","Grand Vegas","Financial District","Mall Town","Chinatown","the Aqua Tunnels\nnear The Docks","Mining Tunnels\nat Industrial\nComplex","City Ring","Bronx/Downtown\nMetro Station"};
 static void stage(BHGameApp *a,const char *text){if(a->log){fprintf(a->log,"%s\n",text);fflush(a->log);}printf("%s\n",text);fflush(stdout);}
+static void curve_words(FILE *f,const void *values,unsigned long count) {
+ unsigned long i,bits;const unsigned char *p=(const unsigned char*)values;
+ fputc('[',f);for(i=0;i<count;++i){memcpy(&bits,p+i*4,4);fprintf(f,"%s\"%08lx\"",i?",":"",bits);}fputc(']',f);
+}
+static void __cdecl curve_diagnostic(void *user,unsigned long owner,const BHEntity *e,
+ const BHActorRouteState *s,unsigned short now,const BHVec3 *before,const BHVec3 *at,
+ const BHVec3 *after,const BHVec3 *angles) {
+ BHGameApp *a=(BHGameApp*)user;FILE *f;char path[96],message[192];unsigned long model;int written=0;
+ if(a->curve_diagnostic_written)return;a->curve_diagnostic_written=1;
+ memcpy(&model,(const char*)e+0x114,4);sprintf(path,"nonfinite-curve-%08lx-%lu.json",GetTickCount(),GetCurrentProcessId());
+ f=fopen(path,"w");if(f){
+ fprintf(f,"{\"owner\":\"%08lx\",\"entity\":\"%08lx\",\"generation\":%lu,\"model\":%lu,\"clock32\":%lu,\"now16\":%u,\"stamp16\":%u,\"duration16\":%u,\"controls_bits\":",owner,(unsigned long)e,e->generation,model,a->player_state.tick,(unsigned int)now,(unsigned int)s->tick,(unsigned int)s->duration_ticks);
+ curve_words(f,s->controls,12);fprintf(f,",\"before_bits\":");curve_words(f,before,3);
+ fprintf(f,",\"at_bits\":");curve_words(f,at,3);fprintf(f,",\"after_bits\":");curve_words(f,after,3);
+ fprintf(f,",\"angles_bits\":");curve_words(f,angles,3);fprintf(f,"}\n");written=!ferror(f);if(fclose(f))written=0;
+ }
+ sprintf(message,"Nonfinite curve producer: owner=%08lx model=%lu evidence=%s written=%d",owner,model,path,written);stage(a,message);
+}
 static int failure(BHGameApp *a,int code,const char *text){a->error=code;stage(a,text);return 0;}
 static double perf_ms(BHGameApp *a,LARGE_INTEGER end,LARGE_INTEGER start){return (double)(end.QuadPart-start.QuadPart)*1000.0/(double)a->perf_frequency.QuadPart;}
 static int perf_start(BHGameApp *a){if(!a->perf_enabled)return 1;
  if(!QueryPerformanceFrequency(&a->perf_frequency)||a->perf_frequency.QuadPart<=0)return failure(a,12,"Frame timer unavailable");
- a->perf_samples=(BHGamePerfSample*)calloc(36000,sizeof(*a->perf_samples));if(!a->perf_samples)return failure(a,12,"Frame sample buffer allocation failed");
- QueryPerformanceCounter(&a->perf_origin);sprintf(a->perf_path,"frame-times-%08lx-%lu.csv",GetTickCount(),GetCurrentProcessId());stage(a,"Frame timing enabled: samples buffered in memory until exit, capacity36000 presentations");return 1;
+
+ QueryPerformanceCounter(&a->perf_origin);sprintf(a->perf_path,"frame-times-%08lx-%lu.csv",GetTickCount(),GetCurrentProcessId());stage(a,"Frame timing enabled: samples buffered in memory until exit, growing4096-sample blocks; no fixed presentation limit");return 1;
 }
-static void perf_record(BHGameApp *a,int produced,LARGE_INTEGER simulation_start,LARGE_INTEGER render_start,LARGE_INTEGER present_start,LARGE_INTEGER end){BHGamePerfSample *s;BHEntity *e;unsigned long contacts,count=0;
- if(!a->perf_samples)return;if(a->perf_count==36000){++a->perf_dropped;return;}s=a->perf_samples+a->perf_count++;
+static void perf_record(BHGameApp *a,int produced,LARGE_INTEGER simulation_start,LARGE_INTEGER render_start,LARGE_INTEGER present_start,LARGE_INTEGER end){BHGamePerfSample *s;BHEntity *e;unsigned long contacts[7],count=0;
+ s=perf_append(&a->perf_capture);if(!s)return;
  s->time_ms=perf_ms(a,end,a->perf_origin);s->interval_ms=a->perf_previous.QuadPart?perf_ms(a,end,a->perf_previous):0;a->perf_previous=end;
  s->simulation_ms=produced?perf_ms(a,render_start,simulation_start):0;s->render_ms=perf_ms(a,present_start,render_start);s->present_ms=perf_ms(a,end,present_start);
  s->frame=a->frame;s->produced=produced;s->mode=a->player_state.mode;s->paused=a->player_state.paused;s->commands=a->slots[a->frames.latest].count;s->entities=a->pool.used;s->rebuilds=a->targets.rebuilds;
  if(produced){a->perf_projectiles=0;for(e=a->pool.active;e&&count++<a->pool.capacity;e=e->next)if(e->query==bh_projectile_query)++a->perf_projectiles;}s->projectiles=a->perf_projectiles;
- contacts=a->physics.contacts+a->ballistic.bindings.world_hits+a->ballistic.bindings.proximity+a->homing.world_hits+a->homing.proximity+a->projectile_effects.world_hits+a->projectile_effects.proximity;
- s->contacts=contacts>=a->perf_contacts?contacts-a->perf_contacts:contacts;a->perf_contacts=contacts;
+ contacts[0]=a->physics.contacts;contacts[1]=a->ballistic.bindings.world_hits;
+ contacts[2]=a->ballistic.bindings.proximity;contacts[3]=a->homing.world_hits;
+ contacts[4]=a->homing.proximity;contacts[5]=a->projectile_effects.world_hits;
+ contacts[6]=a->projectile_effects.proximity;
+ s->contacts=perf_contact_delta(&a->perf_capture,contacts);
 }
-static void perf_save(BHGameApp *a){FILE *f;unsigned long i;BHGamePerfSample *s;char text[256];if(!a->perf_samples)return;
+static void perf_save(BHGameApp *a){FILE *f;unsigned long i;BHGamePerfSample *s;BHGamePerfBlock *block;char text[256];if(!a->perf_capture.head)return;
  f=fopen(a->perf_path,"w");if(f){fprintf(f,"time_ms,interval_ms,simulation_ms,render_ms,present_ms,frame,produced,mode,paused,commands,entities,projectiles,contacts,rebuilds\n");
-  for(i=0;i<a->perf_count;++i){s=a->perf_samples+i;fprintf(f,"%.6f,%.6f,%.6f,%.6f,%.6f,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu\n",s->time_ms,s->interval_ms,s->simulation_ms,s->render_ms,s->present_ms,s->frame,s->produced,s->mode,s->paused,s->commands,s->entities,s->projectiles,s->contacts,s->rebuilds);}fclose(f);
-  sprintf(text,"Frame timing saved: %s (%lu samples, %lu dropped)",a->perf_path,a->perf_count,a->perf_dropped);stage(a,text);
- }else stage(a,"Frame timing file could not be written");free(a->perf_samples);a->perf_samples=0;
+  for(block=a->perf_capture.head;block;block=block->next)for(i=0;i<block->count;++i){s=block->samples+i;fprintf(f,"%.6f,%.6f,%.6f,%.6f,%.6f,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu,%lu\n",s->time_ms,s->interval_ms,s->simulation_ms,s->render_ms,s->present_ms,s->frame,s->produced,s->mode,s->paused,s->commands,s->entities,s->projectiles,s->contacts,s->rebuilds);}fclose(f);
+  sprintf(text,"Frame timing saved: %s (%lu samples, %lu dropped)",a->perf_path,a->perf_capture.count,a->perf_capture.dropped);stage(a,text);
+ }else stage(a,"Frame timing file could not be written");perf_dispose(&a->perf_capture);
 }
 static BHEntity **__cdecl marker_room_head(BHEntity *owner,void *user){BHGameApp *a=(BHGameApp*)user;unsigned long i;
  for(i=0;i<a->homing.response_count;++i)if(a->world_responses[i].receiver==owner)return &a->rooms[i].pickups;return 0;
@@ -214,8 +264,9 @@ static int resources_ready(BHGameApp *a);
 static int runtime_owners(BHGameApp *a);
 static int __cdecl compose(BHGameBootstrap *bootstrap,unsigned long phase,void *user){BHGameApp *a=(BHGameApp*)user;(void)bootstrap;switch(phase){case 1:stage(a,"Building scene/query registries");return world_ready(a);case 2:stage(a,"Binding live player/physics/scene");return player_ready(a);case 3:stage(a,"Binding constructed menus");return 1;case 5:a->menu_present.frame_resource=bh_bootstrap_value(&a->bootstrap,0x496304);a->flyby_camera.credit_font=a->bootstrap.menu_font;return a->flyby_camera.credit_font!=0;case 4:stage(a,"Binding loaded resource consumers");return resources_ready(a);default:return failure(a,1,"Unknown composition phase");}}
 static int source_owners(BHGameApp *a){unsigned long i;
+ a->actor_route.live_tick=&a->player_state.tick;a->actor_route.nonfinite_curve=curve_diagnostic;a->actor_route.nonfinite_user=a;a->vehicle_draw.clock=&a->actor_route;a->script_draw.clock=&a->actor_route;
  memset(&a->display_catalog,0,sizeof(a->display_catalog));if(DirectDrawEnumerateA(bh_display_catalog_callback,&a->display_catalog)!=DD_OK)return failure(a,6,"Display enumeration failed");for(i=0;i<=(unsigned long)a->display_catalog.secondary_count&&i<8;++i)strcpy(a->device_names[i].name,a->display_catalog.label[i]);
- if(!bh_config_init(&a->config,0)||!bh_config_bootstrap(&a->config,a->config_path,a->device_names,(unsigned long)a->display_catalog.secondary_count+1)||!bh_player_input_owner_init(&a->inputs,0)||!bh_input_collection_init(&a->collection,&a->snapshot,&a->inputs)||!bh_input_devices_bind(&a->devices,&a->collection,0))return failure(a,6,"Input/config ownership initialization failed");a->profile=a->config.profiles;a->collection.api.cursor=game_cursor;a->collection.api.recenter=game_recenter;if(!a->startup_check&&!bh_input_devices_start(&a->devices,a->window))return failure(a,6,"Native input device initialization failed");
+ if(!bh_config_init(&a->config,0)||!bh_config_bootstrap(&a->config,a->config_path,a->device_names,(unsigned long)a->display_catalog.secondary_count+1)||!bh_player_input_owner_init(&a->inputs,0)||!bh_input_collection_init(&a->collection,&a->snapshot,&a->inputs)||!bh_input_devices_bind(&a->devices,&a->collection,0))return failure(a,6,"Input/config ownership initialization failed");a->profile=a->config.profiles;a->collection.disable_mouse_motion=1;a->collection.api.cursor=game_cursor;a->collection.api.recenter=game_recenter;if(!a->startup_check&&!bh_input_devices_start(&a->devices,a->window))return failure(a,6,"Native input device initialization failed");
  if(!bh_entities_init(&a->pool,0x2580,0)||!bh_sound_queue_init(&a->sound,0,0,0)||!bh_network_transport_init(&a->transport,0,0)||!bh_network_game_init(&a->network_game,&a->sessions,0)||!bh_provider_catalog_init(&a->providers,0)||!bh_rail_paths_init(&a->rails,0)||!bh_navigation_init(&a->navigation,0))return failure(a,6,"Entity/audio/navigation ownership initialization failed");
  bh_text_queue_init(&a->text);if(!bh_draw_queue_init(&a->queue,3500,0)||!bh_frame_buffers_bind(&a->frames,0)||!bh_script_particles_init(&a->particles,&a->pool,&a->queue)||!bh_contact_effects_init(&a->contacts,&a->pool,&a->queue,0,0,0,0)||!bh_collision_model_init(&a->player_collision,0)||!bh_weapon_factory_open(&a->weapons,&a->pool,&a->sound))return failure(a,6,"Draw/physics/player ownership initialization failed");
  a->sounds.queue=&a->sound;a->provider_startup.catalog=&a->providers;a->provider_startup.modems=&a->modems;a->force_start.force=&a->force;a->force_init.start=&a->force_start;a->force_update.force=&a->force;a->cd.last_track=-1;a->cd_notify.cd=&a->cd;a->cd_audio.notify=&a->cd_notify;a->cd_audio.wave_device=(HWAVEOUT)-1;a->media.audio=&a->cd_audio;
@@ -244,7 +295,7 @@ static int source_owners(BHGameApp *a){unsigned long i;
  a->flyby.entities=&a->pool;a->flyby.current_player=&a->player;a->flyby.queue=&a->queue;a->flyby.sound=&a->sound;a->flyby.background=&a->background;a->flyby.scene=&a->scene;a->flyby.input_owner=&a->inputs;a->flyby.input_profile=a->profile;a->flyby.player_camera=&a->player_camera;a->flyby.flyby_camera=&a->flyby_camera;a->flyby.flyby_state=&a->flyby_state;a->flyby.starts=a->starts;a->flyby.start_count=GAME_STARTS;a->flyby.mode_count=&a->player_state.mode;a->flyby.selected_waypoint=&a->selected_waypoint;a->flyby.scenario=&a->ship;a->flyby.player_slot=&a->mission;a->flyby.display_width=&a->width;a->flyby.display_height=&a->height;a->flyby.near_z=&a->view.near_z;a->flyby.event_value=&a->event_value;a->flyby.mission_identity=&a->mission_identity;
  a->flyby_camera.route=&a->camera_route;a->flyby_camera.camera=&a->camera_state;a->flyby_camera.starts=a->starts;a->flyby_camera.start_count=GAME_STARTS;a->flyby_camera.text=&a->text;a->flyby_camera.credits=&a->credits;a->flyby_construct.scene=&a->flyby;a->flyby_construct.current_camera=&a->camera_entity;a->camera_route.navigation=&a->navigation;a->camera_route.waypoints=a->route_starts;a->camera_route.waypoint_count=GAME_STARTS;a->selected_waypoint=10;
  a->mission_progress.config=&a->config;a->mission_progress.path=a->config_path;a->mission_progress.lifetime=&a->lifetime;a->story.progress=&a->mission_progress;a->story.messages=&a->messages;a->story.weapons=&a->weapons.registry;a->story.actors=&a->vehicle_lifetime.head;a->story.actor_limit=9600;a->story.availability=a->availability;a->story.sound=&a->sound;a->story.force_control=&a->player_state.force;a->story.force_gate=&a->stay;a->story.ending=&a->player_state.ending;
- a->bootstrap.textures=&a->render_mode.engine.textures;a->bootstrap.resources=&a->resources;a->bootstrap.sounds=&a->sounds;a->bootstrap.atlas=&a->atlas;a->bootstrap.text=&a->text;a->bootstrap.blocks=&a->blocks;a->bootstrap.world=&a->world_load;a->bootstrap.editor=&a->editor_input;a->bootstrap.navigation=&a->navigation;a->bootstrap.player=&a->player_create;a->bootstrap.story=&a->story;a->bootstrap.availability=a->availability;a->bootstrap.inputs=&a->inputs;a->bootstrap.pool=&a->pool;a->bootstrap.snapshot=&a->snapshot;a->bootstrap.config=&a->config;a->bootstrap.providers=&a->providers;a->bootstrap.modems=&a->modems;a->bootstrap.flyby=&a->flyby_construct;a->bootstrap.runtime=&a->menu;a->bootstrap.actions=&a->menu_actions;a->bootstrap.edits=&a->menu_edits;a->bootstrap.panel=&a->panel;a->bootstrap.transition=&a->transition;a->bootstrap.present=&a->menu_present;a->bootstrap.compose=compose;a->bootstrap.compose_user=a;
+ a->bootstrap.diagnostic_box=a->box_level;a->bootstrap.textures=&a->render_mode.engine.textures;a->bootstrap.resources=&a->resources;a->bootstrap.sounds=&a->sounds;a->bootstrap.atlas=&a->atlas;a->bootstrap.text=&a->text;a->bootstrap.blocks=&a->blocks;a->bootstrap.world=&a->world_load;a->bootstrap.editor=&a->editor_input;a->bootstrap.navigation=&a->navigation;a->bootstrap.player=&a->player_create;a->bootstrap.story=&a->story;a->bootstrap.availability=a->availability;a->bootstrap.inputs=&a->inputs;a->bootstrap.pool=&a->pool;a->bootstrap.snapshot=&a->snapshot;a->bootstrap.config=&a->config;a->bootstrap.providers=&a->providers;a->bootstrap.modems=&a->modems;a->bootstrap.flyby=&a->flyby_construct;a->bootstrap.runtime=&a->menu;a->bootstrap.actions=&a->menu_actions;a->bootstrap.edits=&a->menu_edits;a->bootstrap.panel=&a->panel;a->bootstrap.transition=&a->transition;a->bootstrap.present=&a->menu_present;a->bootstrap.compose=compose;a->bootstrap.compose_user=a;
  a->menu_present.queue=&a->queue;a->menu_present.eye=&a->flyby_state.camera.position;a->menu_present.angles=&a->flyby_state.camera.angles;
  resource_bindings(a);for(i=0;i<8;++i)a->background.slots[i].elapsed=-1;a->background.queue=&a->queue;
  return 1;
@@ -272,6 +323,8 @@ static int world_ready(BHGameApp *a){unsigned long i,n=a->editor_world.count;BHE
  return 1;
 }
 static int player_ready(BHGameApp *a){
+ if(a->actor_route.live_tick!=&a->player_state.tick||a->vehicle_draw.clock!=&a->actor_route||a->script_draw.clock!=&a->actor_route)return failure(a,8,"Actor consumers do not share the live simulation clock");
+ if(a->player_query.contact_physics!=&a->player_motion)return failure(a,8,"Car contact callback is not bound to live physics");
  if(!a->player||a->physics_bodies[0].entity!=a->player||a->physics_bodies[0].geometry!=&a->player_collision.geometry||bh_player_tick_context(a->player)!=&a->player_tick)return failure(a,8,"Live player ownership mismatch");
  a->base_models[0]=&a->player_collision.geometry;a->physics_bodies[0].model_index=0;
  if(!bh_physics_step_init(&a->physics,&a->pool,&a->physics_bodies[0],1,a->physics_worlds,a->editor_world.count,a->base_models,1,&a->physics_effects,0,0))return failure(a,8,"Live player physics initialization failed");
@@ -282,10 +335,19 @@ static int player_ready(BHGameApp *a){
 }
 static int resources_ready(BHGameApp *a){unsigned long i;
  if(!runtime_owners(a))return 0;
+ /* Independent original call-site keys and shared globals:00441d80,
+    00430a30,00433b30;004dfb28/34/38. Check the actual application wiring. */
+ if(a->area.hit_sound!=bh_bootstrap_value(&a->bootstrap,0x4f54f8)||
+    a->weapon_fire.homing_sound!=bh_bootstrap_value(&a->bootstrap,0x4d1894)||
+    a->weapon_fire.empty_sound!=bh_bootstrap_value(&a->bootstrap,0x4cda10))return failure(a,9,"Original weapon cue binding mismatch");
+ if(a->projectiles.next_identity!=&a->debris.origin_tag||a->area.identity!=&a->debris.origin_tag||a->pulse.identity!=&a->debris.origin_tag||
+    a->effect.debris!=&a->debris||a->effect.pending_identity!=a->pulse.sync_identity||a->pulse.sync_identity!=&a->sync_identity)return failure(a,9,"Original projectile shared identity binding mismatch");
+ if(a->weapon_target.actors_owner!=&a->vehicle_lifetime.head||a->weapon_arc.head_owner!=&a->vehicle_lifetime.head||a->pursuit.actor_head_owner!=&a->vehicle_lifetime.head)return failure(a,9,"Original live target list binding mismatch");
  if(!image(a->player_scene.particle_image,a)||a->player_scene.particle_image!=bh_bootstrap_value(&a->bootstrap,0x4f54d8)||a->oriented.emit!=scalar_polygon||a->oriented.projection_scale!=a->main_camera.focal||a->main_camera.focal<=1)return failure(a,9,"Player boost/ribbon resource or projection binding missing");
  /* Every destination must receive the value published by the bootstrap;
     identities stay keys and are never interpreted as source pointers. */
  for(i=0;i<a->binding_count;++i)if(*a->bindings[i].destination!=bh_bootstrap_value(&a->bootstrap,a->bindings[i].identity))return failure(a,9,"Resource consumer binding mismatch");
+ if(a->box_level)a->camera_entity=a->player;
  if(a->bootstrap.menus_created!=BH_BOOTSTRAP_MENUS||!a->player||!a->camera_entity||a->physics.pool!=&a->pool||!bh_entities_valid(&a->pool))return failure(a,9,"Constructed application ownership check failed");
  return 1;
 }
@@ -303,17 +365,17 @@ static int runtime_owners(BHGameApp *a){unsigned long i,j,n=a->editor_world.coun
  a->projectile_lifetime.pool=&a->pool;a->projectile_lifetime.sound=&a->sound;a->projectile_draw.queue=&a->queue;
  h->pool=&a->pool;h->segment=&a->segment;h->sound=&a->sound;h->particles=&a->particles;h->contacts=&a->contacts;h->flash=&a->flash;h->markers=&a->hit_markers;h->responses=a->world_responses;h->response_count=n;h->hit_sound=V(0x4f5564);h->liquid_sound=V(0x4f54fc);h->first_image=V(0x4f0090);h->second_image=V(0x4f0030);
  a->hit_markers.owner_head=marker_room_head;a->hit_markers.owner_head_user=a;
- a->ballistic.bindings=*h;a->ballistic.ricochet_sound=V(0x4f550c);a->projectiles.lifetime=&a->projectile_lifetime;a->projectiles.ballistic=&a->ballistic;a->projectiles.homing=&a->homing;a->projectiles.draw=&a->projectile_draw;a->projectiles.next_identity=&a->identity;a->projectiles.loop_sound=V(0x4f5504);a->projectiles.launch_sound=V(0x4f5510);
- a->area.effects=h;a->area.draw=&a->projectile_draw;a->area.identity=&a->identity;a->area.loop_sound=V(0x4962f0);a->area.hit_sound=V(0x4f5564);
- a->weapon_fire.projectiles=&a->projectiles;a->weapon_fire.area=&a->area;a->weapon_fire.sound=&a->sound;a->weapon_fire.transport=&a->transport;a->weapon_fire.messages=&a->messages;a->weapon_fire.empty_warning=&a->empty_warning;a->weapon_fire.local=a->player;a->weapon_fire.ballistic_sound=V(0x4d0480);a->weapon_fire.homing_sound=V(0x4f5504);a->weapon_fire.empty_sound=V(0x4cda14);a->weapon_fire.area_sound=V(0x4ce448);
+ a->ballistic.bindings=*h;a->ballistic.ricochet_sound=V(0x4f550c);a->projectiles.lifetime=&a->projectile_lifetime;a->projectiles.ballistic=&a->ballistic;a->projectiles.homing=&a->homing;a->projectiles.draw=&a->projectile_draw;a->projectiles.next_identity=&a->debris.origin_tag;a->projectiles.loop_sound=V(0x4f5504);a->projectiles.launch_sound=V(0x4f5510);
+ a->area.effects=h;a->area.draw=&a->projectile_draw;a->area.identity=&a->debris.origin_tag;a->area.loop_sound=V(0x4962f0);a->area.hit_sound=V(0x4f54f8);
+ a->weapon_fire.projectiles=&a->projectiles;a->weapon_fire.area=&a->area;a->weapon_fire.sound=&a->sound;a->weapon_fire.transport=&a->transport;a->weapon_fire.messages=&a->messages;a->weapon_fire.empty_warning=&a->empty_warning;a->weapon_fire.local=a->player;a->weapon_fire.ballistic_sound=V(0x4d0480);a->weapon_fire.homing_sound=V(0x4d1894);a->weapon_fire.empty_sound=V(0x4cda10);a->weapon_fire.area_sound=V(0x4ce448);
  a->weapon_pulse.effects=*h;a->weapon_pulse.debris=&a->debris;a->weapon_pulse.transport=&a->transport;a->weapon_pulse.shot_sound=V(0x4d0480);a->weapon_pulse.smoke_image=V(0x4f0028);a->weapon_pulse.flare_image=V(0x4f0030);a->weapon_pulse.trail_image=V(0x4f0060);
  a->homing=*h;a->homing.hit_sound=V(0x4f550c);a->homing.first_image=V(0x4f003c);a->homing.second_image=V(0x4f0094);
  a->weapon_ready.sound_resource=V(0x4cda10);a->weapon_empty.shift_sound=V(0x4cda10);a->weapon_target.sound=&a->sound;a->weapon_target.world=&a->segment;a->weapon_target.max_actors=a->pool.capacity;a->weapon_target.ready_sound=V(0x4cda20);a->weapon_target.beep_sound=V(0x4cdb88);a->weapon_target.lock_sound=V(0x4cdb8c);
  a->weapon_arc.sound=&a->sound;a->weapon_arc.world=&a->segment;a->weapon_arc.limit=a->pool.capacity;
  a->weapon_effect.fire=&a->weapon_fire;a->weapon_effect.projectile=&a->effect;a->weapon_effect.split_model=V(0x4cdc70);a->weapon_effect.shot_sound=V(0x4d1894);
  a->weapon_launch.fire=&a->weapon_fire;a->weapon_launch.projectile=&a->pulse;a->weapon_launch.sound=V(0x4cda20);a->weapon_arc_fire.fire=&a->weapon_fire;a->weapon_arc_fire.particles=&a->particles;a->weapon_arc_fire.flash=&a->flash;a->weapon_arc_fire.first_image=V(0x496334);a->weapon_arc_fire.second_image=V(0x4f0094);a->weapon_arc_fire.sound=V(0x4ce448);
- a->effect.effects=h;a->effect.cleanup.pool=&a->pool;a->effect.cleanup.sound=&a->sound;a->effect.debris=&a->debris;a->effect.explosion=&a->explosions;a->effect.draw=&a->effect_draw;a->effect.trails=&a->trails;a->effect.pending_identity=&a->pending_identity;a->effect.orbit=&a->orbit;a->effect.accelerated=&a->accelerated;a->effect.split=&a->split;a->effect.network=&a->effect_network;a->orbit.core=&a->effect;a->accelerated.puffs=&a->puffs;a->puffs.queue=&a->queue;a->effect_draw.queue=&a->queue;a->trails.pool=&a->pool;a->trails.queue=&a->queue;a->effect_network.transport=&a->transport;
- a->pulse.effects=h;a->pulse.lifetime=&a->projectile_lifetime;a->pulse.draw=&a->pulse_draw;a->pulse.debris=&a->debris;a->pulse.explosion=&a->explosions;a->pulse.transport=&a->transport;a->pulse.world_indices=a->pulse_indices;a->pulse.world_count=n;a->pulse.identity=&a->identity;a->pulse.sync_identity=&a->sync_identity;a->pulse_draw.queue=&a->queue;
+ a->effect.effects=h;a->effect.cleanup.pool=&a->pool;a->effect.cleanup.sound=&a->sound;a->effect.debris=&a->debris;a->effect.explosion=&a->explosions;a->effect.draw=&a->effect_draw;a->effect.trails=&a->trails;a->effect.pending_identity=&a->sync_identity;a->effect.orbit=&a->orbit;a->effect.accelerated=&a->accelerated;a->effect.split=&a->split;a->effect.network=&a->effect_network;a->orbit.core=&a->effect;a->accelerated.puffs=&a->puffs;a->puffs.queue=&a->queue;a->effect_draw.queue=&a->queue;a->trails.pool=&a->pool;a->trails.queue=&a->queue;a->effect_network.transport=&a->transport;
+ a->pulse.effects=h;a->pulse.lifetime=&a->projectile_lifetime;a->pulse.draw=&a->pulse_draw;a->pulse.debris=&a->debris;a->pulse.explosion=&a->explosions;a->pulse.transport=&a->transport;a->pulse.world_indices=a->pulse_indices;a->pulse.world_count=n;a->pulse.identity=&a->debris.origin_tag;a->pulse.sync_identity=&a->sync_identity;a->pulse_draw.queue=&a->queue;
  if(!bh_debris_context_init(&a->debris_response,&a->pool,&a->sound,V(0x496218),a->actors,N(a->actors)))return failure(a,9,"Dynamic body registry binding failed");
  a->target_draw.queue=&a->queue;a->target_draw.camera=&a->main_camera;a->target_draw.view=&a->view;a->target_draw.player=a->player;a->target_draw.screen_width=a->width;a->target_draw.atlas_image=V(0x4f54e4);a->target_draw.marker_image=V(0x4f00b4);
  a->targets.debris=&a->debris_response;a->targets.physics=&a->physics;a->targets.effects=&a->physics_effects;a->targets.explosions=&a->explosions;a->targets.particles=&a->particles;a->targets.pickups=&a->pickups;a->targets.draw=&a->target_draw;a->targets.mode=&a->editor_world.mode;a->targets.smoke_image=V(0x4f0028);a->targets.slots=a->target_slots;a->targets.capacity=GAME_DYNAMIC_CAPACITY;a->targets.roster=a->physics_bodies;a->targets.models=a->physics_models;a->targets.base_bodies=a->physics_bodies;a->targets.base_count=1;a->targets.base_models=a->base_models;a->targets.base_model_count=1;a->targets.worlds=a->physics_worlds;a->targets.world_count=n;a->targets.resources=a->pickup_resources;a->targets.resource_count=N(a->pickup_resources);a->targets.prefix="bsp\\";a->targets.search=BH_BSP_PREFIX_FIRST;
@@ -323,6 +385,7 @@ static int runtime_owners(BHGameApp *a){unsigned long i,j,n=a->editor_world.coun
  a->actor_damage.legacy_death_angles=&a->zero;
  a->actor_damage.pool=&a->pool;a->actor_damage.route=&a->actor_route;a->actor_damage.particles=&a->particles;a->actor_damage.fragments=&a->debris;a->actor_damage.targets=&a->targets;a->actor_damage.loot_rows=a->availability;a->actor_damage.loot_row_count=4;a->actor_damage.smoke_resource=V(0x4f0028);a->actor_damage.death_sound=V(0x4f5540);a->actor_response.mission_resource=V(0x4d1918);
  a->actor_attack.pursuit=&a->pursuit;a->actor_attack.effects=&a->effect;a->actor_attack.projectiles=&a->projectiles;a->actor_attack.area=&a->area;a->pursuit.route=&a->actor_route;a->pursuit.navigation=&a->navigation;a->pursuit.player=a->player;a->pursuit.actor_limit=a->pool.capacity;a->pursuit.city_ids=a->city_ids;a->pursuit.messages=&a->messages;
+ a->weapon_target.actors_owner=&a->vehicle_lifetime.head;a->weapon_arc.head_owner=&a->vehicle_lifetime.head;a->pursuit.actor_head_owner=&a->vehicle_lifetime.head;
  a->pursuit.city_names=city_names;a->pursuit.city_count=N(city_names);
  a->vehicle_draw.queue=&a->queue;a->vehicle_draw.sound=&a->sound;a->vehicle_draw.damage_resource=V(0x4f0028);a->actor_construct.response=&a->actor_response;a->actor_construct.draw=&a->vehicle_draw;a->actor_construct.first=a->segment.first;a->actor_construct.world_count=n;a->actor_construct.rooms=a->actor_rooms;a->actor_construct.room_count=n;a->actor_construct.models=a->actor_models;a->actor_construct.sounds=a->actor_sounds;a->actor_construct.resource_count=N(a->actor_models);a->actor_construct.cycle_models=a->cycle_models;a->actor_construct.cycle_count=N(a->cycle_models);a->actor_launch.actors=&a->actor_construct;a->actor_launch.transport=&a->transport;a->actor_launch.navigation=&a->navigation;
  a->script_actors.first_world=a->segment.first;a->script_actors.world_count=n;a->script_actors.callbacks.pool=&a->pool;a->script_actors.callbacks.route=&a->actor_route;a->script_actors.callbacks.draw=&a->script_draw;a->script_draw.queue=&a->queue;a->script_draw.particles=&a->particles;a->script_actors.model_resources[0]=V(0x4d1890);a->script_actors.model_resources[1]=V(0x4d19f8);a->script_actors.model_resources[2]=V(0x4d18e4);a->script_actors.model_resources[3]=V(0x4961ec);a->script_actors.sound_resource=V(0x4d1a64);a->radar_query.pool=&a->pool;a->radar_query.lifetime=&a->lifetime;
@@ -346,18 +409,21 @@ static int runtime_owners(BHGameApp *a){unsigned long i,j,n=a->editor_world.coun
 }
 #undef V
 static LRESULT __cdecl source_message(void *user,HWND w,UINT m,WPARAM key,LPARAM bits){BHGameApp *a=(BHGameApp*)user;return bh_input_message(&a->snapshot,w,m,key,bits);}
+#include "bh_game_box.inc"
 static void __cdecl source_produce(void *user){BHGameApp *a=(BHGameApp*)user;unsigned long clock=a->frame+(a->player_state.paused==0);
  if(!bh_entities_focus(&a->pool,a->player_state.paused?a->player:0)){failure(a,12,"Paused player entity focus binding failed");return;}
  /* The service increments the original frame clock before entity callbacks. */
  a->pursuit.clock=a->vehicle_draw.animation_clock=(long)clock;a->script_draw.animation_time=(float)clock;
  a->service.packet=a->bootstrap.all_keys->state;a->service.packet_bytes=sizeof(a->bootstrap.all_keys->state);
- if(!bh_frame_service_tick(&a->service))failure(a,12,"Source frame producer reported a dependency error");
+ if(!bh_frame_service_tick(&a->service)){char text[512];sprintf(text,"Source frame producer failure: service=%d sound=%d hresult=%08lx native=%08lx player=%d query=%d weapon=%d method=%08lx target=%d arc=%d pulse=%d fire=%d tick=%lu",a->service.error,a->sound.error,(unsigned long)a->sound.last_hresult,(unsigned long)a->service.sound_stats.last_error,a->player_tick.error,a->player_query.error,a->weapon_dispatch.error,a->weapon_dispatch.identity,a->weapon_target.error,a->weapon_arc.error,a->weapon_pulse.error,a->weapon_fire.error,a->box_ticks);failure(a,12,text);}
+ if(a->service.sound_stats.last_error&&!a->sound_diagnostic_logged){char text[256];sprintf(text,"Native sound diagnostic (original frame continues): hresult=%08lx frequency_failures=%lu resource=%lu slot=%lu frequency=%ld tick=%lu",(unsigned long)a->service.sound_stats.last_error,a->service.sound_stats.frequency_failures,a->service.sound_stats.failed_resource,a->service.sound_stats.failed_slot,a->service.sound_stats.failed_frequency,a->box_ticks);stage(a,text);a->sound_diagnostic_logged=1;}
 }
 static int render_frame(BHGameApp *a,BHDrawQueue *queue){int ok;BHDrawQueue *saved;DWORD began=GetTickCount();
  if(!restore_display(a))return 0;
  if(!bh_present_begin(&a->begin))return failure(a,13,"Present begin failed");
  a->display.color_pixels=a->fade.pixels;a->display.color_pitch=a->fade.pitch;a->display.auxiliary_pixels=a->begin.auxiliary_pixels;a->display.auxiliary_pitch=a->begin.auxiliary_pitch;a->display.locked=a->present.locked;
  saved=a->render.draw;a->render.draw=queue;ok=bh_render_execute(&a->render);a->render.draw=saved;
+ if(a->render.failures&&a->render.error==BH_RENDER_EXECUTE_CALLBACK&&!a->draw_warning_logged){char text[384];sprintf(text,"Source draw diagnostic (original callback loop continues): failures=%lu resource=%lu draw=%d pose=%.9g,%.9g,%.9g/%.9g,%.9g,%.9g alpha=%.9g",a->render.failures,a->render.failed_resource,a->render.failed_draw_error,a->render.failed_pose[0],a->render.failed_pose[1],a->render.failed_pose[2],a->render.failed_pose[3],a->render.failed_pose[4],a->render.failed_pose[5],a->render.failed_pose[6]);stage(a,text);a->draw_warning_logged=1;}
  a->fade.pixels=a->display.color_pixels;a->fade.pitch=a->display.color_pitch;a->present.locked=a->display.locked;
  if(!bh_present_end(&a->present))ok=0;a->display.locked=a->present.locked;
  if(a->startup_check||(!a->perf_enabled&&a->frame%30==0)){char profile[256];sprintf(profile,"Render profile: ms=%lu commands=%lu polygons=%lu texture_locks=%lu writes=%lu mouse=%ld,%ld filtered=%.5g,%.5g",GetTickCount()-began,queue->count,a->primitive.polygons,a->primitive.locks,a->primitive.raster.written,a->collection.delta[0],a->collection.delta[1],a->snapshot.mouse_axes[0],a->snapshot.mouse_axes[1]);stage(a,profile);}
@@ -374,6 +440,22 @@ static int frame_due(BHGameFrameClock *clock,DWORD now,double interval){
  if(clock->remainder>=interval)clock->remainder=0;
  return 1;
 }
+static int startup_perf_checks(BHGameApp *a) {
+ BHGamePerfCapture capture;BHGamePerfBlock *b;BHGamePerfSample *s;
+ unsigned long i,n=0,current[7]={100,100,2,3,4,5,6};int ok=1;
+ memset(&capture,0,sizeof(capture));
+ for(i=0;i<40001;++i){s=perf_append(&capture);if(!s){ok=0;break;}s->frame=i;}
+ for(b=capture.head;b;b=b->next)for(i=0;i<b->count;++i)
+  if(b->samples[i].frame!=n++)ok=0;
+ if(n!=40001 || capture.count!=40001 || capture.dropped)ok=0;
+ if(perf_contact_delta(&capture,current)!=220)ok=0;
+ current[0]=1;current[1]=101;
+ if(perf_contact_delta(&capture,current)!=2 || perf_contact_delta(&capture,current)!=0)ok=0;
+ perf_dispose(&capture);
+ if(capture.head || capture.tail || capture.count)ok=0;
+ if(!ok)return failure(a,13,"Static frame capture/reset-counter checks failed");
+ stage(a,"Static frame capture: 40001 ordered samples, block cleanup and independent contact resets passed");return 1;
+}
 static int startup_clock_checks(BHGameApp *a){BHGameFrameClock clock;unsigned long rate,pass,i,count,expected;DWORD base;double interval=1000.0/30.0-1.5;static const unsigned long rates[3]={60,75,144};
  expected=1+(unsigned long)(10000.0/interval);
  for(pass=0;pass<2;++pass)for(rate=0;rate<3;++rate){memset(&clock,0,sizeof(clock));count=0;base=pass?0xfffff000UL:0;
@@ -389,7 +471,7 @@ static int startup_effect_checks(BHGameApp *a){unsigned long pass,x,y,pixels,uni
  BHHudStatusState status;BHHudWeaponAmmo ammo[2];const BHHudWeaponAmmo *ammo_ptr[2];
  static const char *names[9]={"beam","boost","logo","panel","radar","HUD","ballistic trail","ballistic fresh flare","ballistic repeated flare"};
  memset(&status,0,sizeof(status));memset(ammo,0,sizeof(ammo));ammo[0].amount=216;ammo[1].amount=0;ammo_ptr[0]=ammo;ammo_ptr[1]=ammo+1;status.weapons=ammo_ptr;status.weapon_count=2;status.secondary=1;status.counter_a=10000;
- if(!startup_clock_checks(a))return 0;
+ if(!startup_clock_checks(a)||!startup_perf_checks(a))return 0;
  for(pass=0;pass<9;++pass){
   memset(&fill,0,sizeof(fill));fill.dwSize=sizeof(fill);
   if(IDirectDrawSurface_Blt(a->target,0,0,0,DDBLT_COLORFILL|DDBLT_WAIT,&fill)!=DD_OK)return failure(a,13,"Effect fixture clear failed");
@@ -420,11 +502,29 @@ static int startup_effect_checks(BHGameApp *a){unsigned long pass,x,y,pixels,uni
  }
  return 1;
 }
+static int startup_callback_continuation_checks(BHGameApp *a,unsigned long resource) {
+ static const unsigned long patterns[4]={0x7fc12345UL,0xffc00000UL,0x7f800000UL,0xff800000UL};
+ float recorded[7]={645.083496f,49.1670189f,10,-.671133101f,0,0,1};
+ BHVec3 zero={0,0,0},position={0,0,10};unsigned long field,k,slot;
+ if(!a->hardware)return 1;
+ for(field=0;field<7;++field)for(k=0;k<4;++k) {
+  float bad[7];slot=(field+5)%7;memcpy(bad,recorded,sizeof(bad));memcpy(bad+slot,patterns+k,4);
+  if(!bh_draw_queue_begin(&a->queue)||bh_camera_queue_pose(&a->queue,&zero,&zero)!=1||
+     bh_draw_submit_resource(&a->queue,0,resource,(BHVec3*)bad,(BHVec3*)(bad+3),bad[6])!=1||
+     bh_draw_submit_resource(&a->queue,0,resource,&position,&zero,1)!=1)return failure(a,13,"Static invalid/valid command construction failed");
+  if(!render_frame(a,&a->queue)||a->render.failures!=1||
+     a->render.error!=BH_RENDER_EXECUTE_CALLBACK||a->render.kinds[BH_DRAW_MODEL_RESOURCE]!=2||
+     a->render.failed_resource!=resource||a->resource_draw.error!=BH_DRAW_RESOURCE_OK)
+   return failure(a,13,"Original callback continuation contract failed");
+ }
+ stage(a,"Static hardware callback continuation: all seven payload fields x NaN/indefinite/+Inf/-Inf retain diagnostics, consume later valid commands and finish frame");
+ return 1;
+}
 static int startup_player_model_checks(BHGameApp *a){static const float depths[11]={0,.001f,.125f,.2f,.5f,1,2,4,8,16,32},offsets[5]={-4,-.1f,0,.1f,4};BHVec3 zero={0,0,0},position,angles={0,0,0};unsigned long i,j,k,resource;memcpy(&resource,(char*)a->player+0x21c,4);
  for(i=0;i<N(depths);++i)for(j=0;j<N(offsets);++j)for(k=0;k<4;++k){position.x=offsets[j];position.y=0;position.z=depths[i];angles.x=k*1.5707963267948966f;
   if(!bh_draw_queue_begin(&a->queue)||bh_camera_queue_pose(&a->queue,&zero,&zero)!=1||bh_draw_submit_resource(&a->queue,0,resource,&position,&angles,1)!=1||!render_frame(a,&a->queue))return 0;
  }
- stage(a,"Static player model clipping: 220 camera-plane/side/rotation poses passed");return 1;
+ stage(a,"Static player model clipping: 220 camera-plane/side/rotation poses passed");return startup_callback_continuation_checks(a,resource);
 }
 /* Keep the preview single threaded, but allow fullscreen Flip presentations
    between producer ticks, as the original independent worker does. A published
@@ -440,16 +540,16 @@ static int manual_loop(BHGameApp *a){MSG message;DWORD began,elapsed,rendered,pr
  stage(a,"Manual preview running; keyboard/mouse belong to the active game window");
  while(!a->quit&&!a->error){
   began=GetTickCount();while(PeekMessageA(&message,0,0,0,PM_REMOVE)){if(message.message==WM_QUIT){a->quit=1;break;}TranslateMessage(&message);DispatchMessageA(&message);}if(a->quit)break;
-  if(GetForegroundWindow()!=a->window||IsIconic(a->window)){a->focus_sample=0;clock.ready=0;a->perf_previous.QuadPart=0;Sleep(20);continue;}
-  if(!a->focus_sample){SetCursor(NULL);if(!game_recenter(160,100))return failure(a,12,"Windowed input recenter failed");memset(a->snapshot.mouse_axes,0,sizeof(a->snapshot.mouse_axes));memset(a->snapshot.pair4,0,sizeof(a->snapshot.pair4));a->collection.delta[0]=a->collection.delta[1]=0;a->focus_sample=1;}
-  produce=!a->fullscreen||frame_due(&clock,began,a->frames.delay_ms);
+  if(!a->box_auto&&(GetForegroundWindow()!=a->window||IsIconic(a->window))){a->focus_sample=0;clock.ready=0;a->perf_previous.QuadPart=0;Sleep(20);continue;}
+  if(!a->focus_sample){SetCursor(NULL);if(!a->collection.disable_mouse_motion&&!game_recenter(160,100))return failure(a,12,"Windowed input recenter failed");memset(a->snapshot.mouse_axes,0,sizeof(a->snapshot.mouse_axes));memset(a->snapshot.pair4,0,sizeof(a->snapshot.pair4));a->collection.delta[0]=a->collection.delta[1]=0;a->focus_sample=1;}
+  produce=a->box_auto||!a->fullscreen||frame_due(&clock,began,a->frames.delay_ms);
   if(a->perf_enabled)QueryPerformanceCounter(&simulation_start);
   if(produce){
+  if(a->box_level&&a->snapshot.current[VK_ESCAPE]){a->quit=1;break;}box_inputs(a);
   a->flyby.input_profile=a->profile;a->menu_settings.input_profile=a->profile;a->player_create.profile=a->profile;
-  a->actor_route.tick=(unsigned short)a->player_state.tick;a->vehicle_draw.tick=a->actor_route.tick;a->script_draw.tick=a->actor_route.tick;a->actor_launch.tick=a->actor_route.tick;a->actor_launch.mode=a->actor_damage.mode=a->player_state.mode;
-  a->weapon_target.actors=a->vehicle_lifetime.head;a->weapon_arc.head=a->vehicle_lifetime.head;a->pursuit.actor_head=a->vehicle_lifetime.head;
+  a->actor_launch.mode=a->actor_damage.mode=a->player_state.mode;
   a->eye=a->flyby_state.camera.position;a->angles=a->flyby_state.camera.angles;a->contacts.has_camera=1;a->contacts.camera_yaw=a->yaw=a->angles.x;
-  a->frames.produce(a->frames.produce_user);
+  a->frames.produce(a->frames.produce_user);box_observe(a);
   if(a->error)break;
   }
   if(a->player_tick.error||a->player_query.error||a->vm.error||a->lifetime.timers.error||a->menu.error||a->flyby.error||a->actor_construct.error||a->actor_response.error){char text[256];sprintf(text,"Source dependency failure: player=%d query=%d vm=%d timer=%d menu=%d flyby=%d actor=%d response=%d",a->player_tick.error,a->player_query.error,a->vm.error,a->lifetime.timers.error,a->menu.error,a->flyby.error,a->actor_construct.error,a->actor_response.error);failure(a,12,text);break;}
@@ -466,6 +566,7 @@ static int manual_loop(BHGameApp *a){MSG message;DWORD began,elapsed,rendered,pr
  return !a->error;
 }
 static void cleanup(BHGameApp *a){unsigned long i;
+ if(a->box_trace){fclose(a->box_trace);a->box_trace=0;}box_observer=0;
  perf_save(a);
  for(i=0;i<N(a->actor_queries);++i)if(a->actor_queries[i].frames)bh_segment_query_dispose(a->actor_queries+i);
  if(!a->startup_check&&a->window&&GetForegroundWindow()==a->window)SetCursor(LoadCursorA(NULL,IDC_ARROW));
@@ -494,7 +595,7 @@ static void cleanup(BHGameApp *a){unsigned long i;
  free(a->motion_bindings);free(a->world_responses);free(a->pulse_indices);free(a->actor_rooms);free(a->city_ids);free(a->rooms);free(a->scheduled);free(a->scene_inputs);free(a->segment_rooms);free(a->physics_worlds);free(a->reset_nodes);
 }
 int __cdecl bh_game_app_run(HINSTANCE instance,const char *directory,int startup_check,int show){BHGameApp *a;unsigned long bytes,crc;int result;FILE *summary;const char *material_error;BHTextureImage *loaded;
- a=(BHGameApp*)calloc(1,sizeof(*a));if(!a)return 2;a->instance=instance;a->hardware=(startup_check&2)!=0;a->fullscreen=(startup_check&4)!=0;a->perf_enabled=(startup_check&8)!=0&&!(startup_check&1);startup_check&=1;a->startup_check=startup_check;a->width=640;a->height=480;a->log=fopen(startup_check?"startup-check.log":"startup.log","w");
+ a=(BHGameApp*)calloc(1,sizeof(*a));if(!a)return 2;a->instance=instance;a->box_level=(startup_check&16)!=0;a->box_auto=(startup_check&32)!=0;a->hardware=(startup_check&2)!=0;a->fullscreen=(startup_check&4)!=0;a->perf_enabled=(startup_check&8)!=0&&!(startup_check&1);startup_check&=1;a->startup_check=startup_check;a->width=640;a->height=480;a->log=fopen(startup_check?"startup-check.log":"startup.log","w");
  if(!directory||strlen(directory)>450){if(a->log)fclose(a->log);free(a);return 2;}
  sprintf(a->archive,"%s\\Bhunter.bin",directory);strcpy(a->config_path,"source-preview.cfg");
  if(!bh_math_environment_enter(&a->math)){if(a->log)fclose(a->log);free(a);return 2;}
@@ -522,7 +623,7 @@ int __cdecl bh_game_app_run(HINSTANCE instance,const char *directory,int startup
  if(!loading_finish(a))goto done;
  a->initialized=1;stage(a,"Real-data startup complete; no input collection or application frame executed");
  summary=fopen(startup_check?"startup-check-summary.json":"startup-summary.json","w");if(summary){fprintf(summary,"{\"passed\":true,\"blocks\":%lu,\"placements\":%lu,\"navigation_nodes\":%lu,\"pool_entities\":%lu,\"menus\":%lu,\"rows\":%lu,\"resources\":%lu,\"physics_bodies\":%lu,\"flyby_constructor_settling_calls\":%lu,\"input_collection_calls\":%lu,\"entity_step_calls\":%lu,\"entity_refresh_calls\":%lu,\"application_frames\":%lu,\"native_primary_sound_play_calls\":%lu}\n",a->blocks.count,a->editor_world.count,a->navigation.node_count,a->pool.used,a->bootstrap.menus_created,a->bootstrap.rows_created,a->bootstrap.resources_loaded,a->physics.body_count,a->flyby_construct.settled,a->service.input_calls,a->service.step_calls,a->service.refresh_calls,a->frame,a->sound_stats.play_calls);fclose(summary);}
- if(!startup_check){bh_force_feedback_init(&a->force_init,instance,a->window);manual_loop(a);}
+ if(!startup_check){if(!box_setup(a))goto done;bh_force_feedback_init(&a->force_init,instance,a->window);manual_loop(a);}
 done:
  result=a->error;cleanup(a);stage(a,"Source owners released");bh_math_environment_leave(&a->math);if(a->log)fclose(a->log);free(a);return result;
 }

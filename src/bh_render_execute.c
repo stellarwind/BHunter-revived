@@ -84,7 +84,10 @@ int __cdecl bh_render_execute(BHRenderExecute *e) {
             if(c->kind==BH_DRAW_MODEL_RESOURCE&&e->model&&e->model->draw){e->failed_draw_error=e->model->draw->error;e->failed_model_error=e->model->draw->failed_model_error;e->failed_clip_error=e->model->draw->failed_clip_error;memcpy(e->failed_pose,c->words,sizeof(e->failed_pose));}}
         if(status==-3){failed(e,BH_RENDER_EXECUTE_BINDING);return 0;}
         if(status==-2){failed(e,BH_RENDER_EXECUTE_SELECTOR);return 0;}
-        if(status<=0){failed(e,BH_RENDER_EXECUTE_CALLBACK);ok=0;}
+        /* Original00479090 consumes the callback's next-command pointer;
+           callback draw results are not a frame/game success condition.
+           Keep failures observable, without promoting them to game exit. */
+        if(status<=0)failed(e,BH_RENDER_EXECUTE_CALLBACK);
         ++e->draw_calls;++e->kinds[c->kind];
         at=next;
     }

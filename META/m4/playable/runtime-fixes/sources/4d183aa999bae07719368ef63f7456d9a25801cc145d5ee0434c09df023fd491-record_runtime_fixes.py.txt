@@ -1,0 +1,114 @@
+"""Retain focused runtime evidence without claiming a passing broad suite."""
+import copy
+import json
+import re
+import shutil
+from pathlib import Path
+from record_pickup_basic import ROOT, active, read, reference, sha, write
+
+
+def main():
+    ledger, _ = reference()
+    prior = (ROOT / ledger['latest_source_session']).parent
+    folder = ROOT / 'META/m4/playable/runtime-fixes'
+    assert not (folder / 'validation.json').exists()
+    (folder / 'sources').mkdir(parents=True, exist_ok=True)
+    focused = read(ROOT / 'build/runtime-fixes/validation.json')
+    game = read(ROOT / 'build/game/build.json')
+    startup = read(ROOT / 'build/game/startup-check-hardware.json')
+    assert all(x['passed'] for x in (focused, game, startup))
+    assert game['executable_sha256'] == startup['executable_sha256'] == sha(ROOT / game['target'])
+    for build in (focused, game):
+        for name, digest in build['sources'].items():
+            assert sha(ROOT / name) == digest, name
+    evidence = dict(passed=True, validation_kind='focused_runtime_fixes',
+                    prior_session=ledger['latest_source_session'], source_snapshots={},
+                    original_owners_added=0, software_renderer_tests_after_user_restriction=0,
+                    game_build_translation_units=game['translation_units'],
+                    focused_translation_units=focused['translation_units'],
+                    original_code_executed=False, gameplay_automation=False,
+                    changes=[
+                        'Transfer unchanged sweep ownership and validated static scene buffers across physics roster changes; free removed geometry borrows before slot reuse.',
+                        'Reject stale/duplicate actors and busy collision state; allocation failures retain previous context and workspaces.',
+                        'Preserve physics lifetime counters across rebind; calculate profiler contact deltas per subsystem.',
+                        'Replace fixed36000 sample limit with growing4096 sample blocks; retain explicit allocation-failure dropped count.',
+                        'Disable all mouse motion channels before binding evaluation in the game; retain keyboard/joystick and button input; no cursor recenter while disabled.'
+                    ], limits=[
+                        'No passing full-suite or independent clean-checkout result claimed for these changed sources. Earlier broad attempts failed a new input fixture that compared packed float bits with integer1; corrected fixture passes focused checks.',
+                        'Software-renderer testing ceased at user direction. Final evidence uses focused non-renderer source fixtures and the hardware-only bounded startup result.',
+                        'Scene-scale benchmark uses5815 synthetic scene entries and actual decoded collision meshes; it is not a replay or measured gameplay speedup.',
+                        'Surviving geometry topology and world bindings must remain immutable across rebind; existing sync-before-slot-replacement ordering is retained.',
+                        'Growing capture storage consumes memory with session length; allocation failure is counted and reported. A crash can still lose unsaved in-memory samples.',
+                        'Human gameplay confirmation pending; M4, PC24, CD audio and peer gameplay remain incomplete.',
+                        'Next phase: SDL3 and SDL3 GPU; remove live software rendering, preserving historical evidence only.'
+                    ])
+    names = set(focused['sources']) | set(game['sources'])
+    changed = {name for name in names if name in {
+        'src/bh_physics_step.c', 'src/bh_physics_step.h', 'src/bh_target_construct.c',
+        'src/bh_input_collection.c', 'src/bh_input_collection.h', 'src/bh_game_app.c',
+        'tests/physics_step.c', 'tests/input_collection.c', 'tests/runtime_fixes.c'}}
+    changed |= {'tools/check_runtime_fixes.py', 'tools/record_runtime_fixes.py', 'tools/check_playable.py'}
+    for name in sorted(changed):
+        path = folder / 'sources' / (sha(ROOT / name) + '-' + Path(name).name + '.txt')
+        shutil.copyfile(ROOT / name, path)
+        evidence['source_snapshots'][name] = path.relative_to(ROOT).as_posix()
+    refreshed = []
+    owner_sources = {'src/bh_physics_step.c', 'src/bh_target_construct.c',
+                     'src/bh_input_collection.c', 'src/bh_game_app.c'}
+    for collection in ('records', 'support_implementations'):
+        for old in list(ledger[collection]):
+            validation = old.get('validation')
+            if old.get('historical_variant') or old.get('source') not in owner_sources:
+                continue
+            if isinstance(validation, dict) and validation.get('superseded_by'):
+                continue
+            name = old['source']
+            digest = old.get('source_sha256')
+            if not digest:
+                digest = read(prior / ('game-build.json' if name == 'src/bh_game_app.c' else 'integration-real.json'))['sources'][name]
+            candidates = (ROOT / 'META/m4').glob('**/sources/' + digest + '-*.txt')
+            snapshot = next(path for path in candidates if sha(path) == digest)
+            new = copy.deepcopy(old)
+            new['id'] += '-runtime-fixes'
+            new['source_sha256'] = sha(ROOT / name)
+            new['evidence'] = ['META/m4/playable/runtime-fixes/validation.json'] + old.get('evidence', [])
+            new['validation'] = dict(supersedes=old['id'], prior_contract=validation,
+                                     raw_byte_match=False, original_code_executed=False,
+                                     fixtures=['physics-step', 'target-construct', 'input-collection'],
+                                     limits=evidence['limits'])
+            if name == 'src/bh_game_app.c':
+                new['validation']['fixtures'] = ['hardware-only bounded static startup',
+                                                 '40001 ordered capture samples',
+                                                 'independent contact-counter resets']
+                new['validation']['limits'].append('Application loop itself is not executed by focused fixtures or bounded startup; manual gameplay confirmation pending.')
+            if collection == 'records' or name != 'src/bh_game_app.c':
+                new['target'] = focused['target']
+            old.update(source=snapshot.relative_to(ROOT).as_posix(), source_sha256=digest,
+                       historical_variant=True, historical_source_path=name)
+            if not isinstance(old.get('validation'), dict):
+                old['validation'] = dict(historical_contract=validation)
+            old['validation']['superseded_by'] = new['id']
+            ledger[collection].append(new)
+            refreshed.append(new['id'])
+    evidence['refreshed_variants'] = refreshed
+    assert len(active(ledger)) == 679
+    evidence['focused_totals'] = [run['checks'][-1] for run in focused['scenarios']]
+    evidence['benchmarks'] = [line for run in focused['scenarios']
+                              for line in run['output'].splitlines() if 'benchmark' in line]
+    evidence['dependencies'] = dict(
+        ownership='Existing source adapters only; no new original function or provenance admission.',
+        physics='BHPhysicsStepContext owns sweep queries and broad-phase scene buffers; roster arrays/models are borrowed from BHTargetConstructContext.',
+        integration='Real geometry, entity, collision, target, query, effect, allocator and input definitions linked into runtime-fixes.exe.',
+        capture='Application-owned block list and independent seven-counter baselines; no game data or executable patching.')
+    for name, data in [('runtime-fixes.json', focused), ('game-build.json', game),
+                       ('hardware-startup-check.json', startup), ('validation.json', evidence)]:
+        write(folder / name, data)
+    shutil.copyfile(ROOT / 'build/runtime-fixes/runtime-fixes.map', folder / 'runtime-fixes-map.txt')
+    shutil.copyfile(ROOT / 'build/game/BHunter-source.map', folder / 'game-map.txt')
+    ledger['latest_source_session'] = 'META/m4/playable/runtime-fixes/validation.json'
+    write(ROOT / 'META/function-status.json', ledger)
+    print('Retained focused runtime fixes;679 owners unchanged; no full-suite pass claimed.')
+
+
+if __name__ == '__main__':
+    main()

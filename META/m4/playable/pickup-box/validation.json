@@ -1,0 +1,87 @@
+{
+  "passed": true,
+  "validation_kind": "focused_runtime_fixes",
+  "prior_session": "META/m4/playable/live-actor-clock/validation.json",
+  "source_snapshots": {
+    "src/bh_game_app.c": "META/m4/playable/pickup-box/sources/e9ed76bc2faa6661f5d40df86c79dca9c3c225c3fb36aefed844619de20d7767-bh_game_app.c.txt",
+    "src/bh_game_bootstrap.c": "META/m4/playable/pickup-box/sources/cb0ecf044a3fde5869aaf43dad5ed1e645c3df66bc676fdd0a1fabb960aa40b8-bh_game_bootstrap.c.txt",
+    "src/bh_game_bootstrap.h": "META/m4/playable/pickup-box/sources/467227e9f7c2f75bfb1ac88a2dc3f568c994750bb2d4d607fda685e8a183e34e-bh_game_bootstrap.h.txt",
+    "src/bh_game_box.inc": "META/m4/playable/pickup-box/sources/6f9e2d4ad9599f018a449be41d7605c58f5686f05be14439c76e947ccc66c35e-bh_game_box.inc.txt",
+    "src/bh_game_main.c": "META/m4/playable/pickup-box/sources/8632bf4279de72238ab36954deea9e82da8a3abf30f77d07584f7b727611c14c-bh_game_main.c.txt",
+    "src/bh_pickup.c": "META/m4/playable/pickup-box/sources/fa568982e172ffdc6c921e54efdf515989615d180b0a3211b51fdb79e87389af-bh_pickup.c.txt",
+    "src/bh_pickup.h": "META/m4/playable/pickup-box/sources/48885a1a651849887ac659453b1383d9c7468d26ac2f36805fcf4f3c7c348edc-bh_pickup.h.txt",
+    "tests/player_query.c": "META/m4/playable/pickup-box/sources/880bbc6c62933c65e654b72bd445781c78e712823b1f9069f9e95ec3d2ecd2dc-player_query.c.txt",
+    "tools/check_playable.py": "META/m4/playable/pickup-box/sources/cf26b1aa5d36d53cc521b24181f7b6f868ccb607c620f2e94d7c8a9c853d251c-check_playable.py.txt",
+    "tools/check_runtime_fixes.py": "META/m4/playable/pickup-box/sources/1406feddd68d145620fa6574039769d05fe6727dd0d6f73335d966104e9c7911-check_runtime_fixes.py.txt",
+    "tools/record_runtime_fixes.py": "META/m4/playable/pickup-box/sources/7dffbb9ea67844d1a21625ae079aad4374aae386f99f13409a36f4506331338f-record_runtime_fixes.py.txt",
+    "tools/record_pickup_box.py": "META/m4/playable/pickup-box/sources/677b0ed2f409dcef3e13416abfb7b80fd0b778df8d4133d3a981efaee9635228-record_pickup_box.py.txt",
+    "tools/build_box_level.py": "META/m4/playable/pickup-box/sources/53c0fa4da238c334c27679df9ed5b6d04afe161036452436f3de5a1943a72215-build_box_level.py.txt",
+    "tools/test_box_level.py": "META/m4/playable/pickup-box/sources/3ed107a51421d18b6ebde6d9af2da03de3b347e6e6c36ad131d767560e36a470-test_box_level.py.txt",
+    "tools/build_game.py": "META/m4/playable/pickup-box/sources/d8d689c753e17b3ed22b6879f0160de4914167306b6c9233b7546dca262fd749-build_game.py.txt"
+  },
+  "original_owners_added": 0,
+  "software_renderer_tests_after_user_restriction": 0,
+  "game_build_translation_units": 299,
+  "focused_translation_units": 319,
+  "original_code_executed": false,
+  "gameplay_automation": true,
+  "changes": [
+    "Remove reserved word; compile-time size28/accepted+14/consumed+18 assertions. Connected real pickup -> player query -> weapon registry check covers radius boundary, partial capacity, full rejection, final depletion and room/global unlink.",
+    "Separate BHunter-box.exe boots directly into two connected box rooms, solid post, pickups, route AI and waitfor/VM objective; original assets remain immutable.",
+    "Fixed-seed input driver runs the real application loop and validates AI motion, projectiles, damage, destruction, wreck drop collection, objective and collision/bounds. Two traces match exactly."
+  ],
+  "limits": [
+    "No raw-byte-match or full original/source differential-playthrough claim. Static original packet instructions establish the corrected ABI; source scenario success is not independent numerical fidelity evidence.",
+    "Two fixed-seed 900-tick hardware box runs compare recorded state, not complete memory/RNG state. Human visual confirmation is pending: Windows screenshot capture timed out.",
+    "The box driver is an isolated count-zero test adapter. It supplies level data and bounded input only, using real gameplay callbacks; it is not an original implementation.",
+    "M4, 24-bit x87 equivalence, CD audio, peer gameplay and broader gameplay coverage remain incomplete. No software-renderer tests or tutorial/mission automation executed."
+  ],
+  "refreshed_variants": [
+    "00441a00-functional-c-pickup-box",
+    "004415a0-functional-c-pickup-box",
+    "00441570-functional-c-pickup-box",
+    "004414d0-functional-c-pickup-box",
+    "004474c0-functional-c-finish-game-bootstrap-preview-ownership-ai-collision-audit-pickup-box",
+    "finish-game-bootstrap-bh_game_bootstrap-bindings-preview-ownership-ai-collision-audit-pickup-box",
+    "preview-bh_game_main-hardware-fullscreen-ai-collision-audit-target-retirement-pickup-box",
+    "preview-bh_game_app-effect-bindings-splash-perf-splash-click-ui-bindings-hardware-fullscreen-hardware-audit-cursor-bullet-cadence-timing-ai-collision-audit-target-retirement-runtime-fixes-collision-bounce-nan-draw-live-actor-clock-pickup-box"
+  ],
+  "focused_totals": [
+    {
+      "scenario": "runtime-fixes",
+      "checks": 3411,
+      "failures": 0,
+      "software_renderer_executed": false,
+      "gameplay_automation": false
+    },
+    {
+      "scenario": "runtime-fixes",
+      "checks": 3416,
+      "failures": 0,
+      "software_renderer_executed": false,
+      "gameplay_automation": false
+    }
+  ],
+  "benchmarks": [
+    "Physics roster source benchmark: worlds5815 iterations3 full_init_ms=16.943800 rebind_ms=0.070200",
+    "Physics roster source benchmark: worlds5815 iterations3 full_init_ms=18.035000 rebind_ms=0.070400"
+  ],
+  "dependencies": {
+    "integration": "Real pickup/player query/weapon registry owners and production game loop; diagnostic .inc is a separate source adapter.",
+    "data": "Generated loose BSP/LEV assets and existing immutable archive; no reference executable code loaded."
+  },
+  "automation_scope": "Explicitly user-authorized isolated diagnostic box only",
+  "original_contract": "META/m4/playable/pickup-box/original-contract.json",
+  "box_playthrough": "META/m4/playable/pickup-box/playthrough.json",
+  "box_artifacts": {
+    "META/m4/playable/pickup-box/box/playthrough.json": "639ab5cefcdbcf8ea2e4e18bbda7fc00e83cb201da42a9f9e979f32e9a0a4fa5",
+    "META/m4/playable/pickup-box/box/box-trace-run1.csv": "1c7139afdc5c848140284cce2d1c20e3a4bfa386c962698918831193708e3882",
+    "META/m4/playable/pickup-box/box/box-trace-run2.csv": "1c7139afdc5c848140284cce2d1c20e3a4bfa386c962698918831193708e3882",
+    "META/m4/playable/pickup-box/box/level.json": "33cbb40352baab82b7719acb16d184275f08b60dde21fc6296c0c356a10844c5",
+    "META/m4/playable/pickup-box/box/test.lev": "c84fd358c8e5687c671da1e0d06a7c4e4870382b98e275d3f973e13ed1ff5074",
+    "META/m4/playable/pickup-box/box/bsp/blocks.txt": "61a586196215c3b702b2147e5d5cfb57cbfa7d88e44dca20ab762ec0c578b32b",
+    "META/m4/playable/pickup-box/box/bsp/boxa.bsp": "3994d473368cdcd9a5bcf8a984d637a827cf4bcc66f1d52df77b69770acc9130",
+    "META/m4/playable/pickup-box/box/bsp/boxb.bsp": "02adfacc305e3097e15109159dc0c3ddaae2272f8676fd4f1808344e1db85fde",
+    "META/m4/playable/pickup-box/box/bsp/boxpost.bsp": "30cc73cded7e9248c55f828b6a87db9998942636edec01626fe484e284a05528"
+  }
+}

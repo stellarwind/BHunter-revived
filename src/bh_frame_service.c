@@ -55,7 +55,10 @@ int __cdecl bh_frame_service_tick(BHFrameService *s){
     s->refresh_ms=s->profile?GetTickCount()-began:0;
     s->last_dt=0.033333335071802139f;
     began=s->profile?GetTickCount():0;
-    ++s->sound_calls;if(!bh_sound_tick(s->sound,s->last_dt,s->master_db,&s->sound_stats))failure(s,BH_FRAME_SERVICE_SOUND);
+    /* 004791c4 calls sound then overwrites EAX at004791c9. Native sound
+       rejection is diagnostic, not an original reason to stop gameplay.
+       Invalid source ownership/numerics remain explicit binding failures. */
+    ++s->sound_calls;if(!bh_sound_tick(s->sound,s->last_dt,s->master_db,&s->sound_stats)&&s->sound->error!=BH_SOUND_BACKEND)failure(s,BH_FRAME_SERVICE_SOUND);
     s->sound_ms=s->profile?GetTickCount()-began:0;
     began=s->profile?GetTickCount():0;
     ++s->packet_calls;if(!bh_player_input_apply_packet_checked(s->player_input,s->packet,s->packet_bytes))failure(s,BH_FRAME_SERVICE_PACKET);

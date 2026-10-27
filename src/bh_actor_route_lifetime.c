@@ -6,10 +6,10 @@ static void set_link(BHEntity *a,unsigned long offset,BHEntity *p){memcpy((unsig
 int __cdecl bh_actor_route_due(BHActorRouteContext *c,BHEntity *a) {
     BHActorRouteState s;unsigned short delta,stamp;
     if(!c || !a)return fail(c,BH_ACTOR_ROUTE_ARGUMENT);
-    bh_actor_route_read(a,&s);delta=(unsigned short)(c->tick-s.duration_ticks-s.tick);
+    bh_actor_route_read(a,&s);delta=(unsigned short)(bh_actor_route_now(c)-s.duration_ticks-s.tick);
     if(!(delta&0x8000)) {
         if(!bh_actor_route_advance(c,a))return 0;
-        stamp=(unsigned short)(c->tick+delta);memcpy((unsigned char*)a+0x1e4,&stamp,2);
+        stamp=(unsigned short)(bh_actor_route_now(c)+delta);memcpy((unsigned char*)a+0x1e4,&stamp,2);
     }
     c->error=BH_ACTOR_ROUTE_OK;return 1;
 }

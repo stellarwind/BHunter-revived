@@ -1,5 +1,6 @@
 #include "bh_player_query.h"
 #include "bh_round.h"
+#include "bh_physics_step.h"
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
@@ -102,7 +103,9 @@ int __cdecl bh_player_query_dispatch(BHPlayerQueryContext *c,BHPlayerQueryPacket
   if(!word(e,0x238)){if(word(e,0x234)>=50000&&old<50000){put_byte(e,0x2ba,60);put(e,0x238,1);message(c,warning50);}else if(word(e,0x234)>29999&&old<30000){if(!*c->fine_warning)message(c,warning30);*c->fine_warning=1;}}broadcast(c);}break;
  case 13:purchase(c,p);break;
  default:break;
- }return !c->error;
+ }
+ if(p->words[0]==2&&c->contact_physics&&!bh_physics_step_read_entity(c->contact_physics,e))c->error=6;
+ return !c->error;
 }
 void __cdecl bh_player_query(BHEntity *e,void *p){if(active&&active->player==e)bh_player_query_dispatch(active,(BHPlayerQueryPacket*)p);}
 int __cdecl bh_player_query_bind(BHPlayerQueryContext *c){if(!c||active||!c->weapons||!c->weapons->pool||!c->player)return 0;if(!bh_entity_set_query(c->weapons->pool,c->player,bh_player_query))return 0;active=c;return 1;}

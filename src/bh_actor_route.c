@@ -15,6 +15,13 @@ static void write_field(BHEntity *a,unsigned long offset,const void *in,unsigned
 static float stored(double value){float out;bh_round_float(&out,value);return out;}
 #define READ(member,offset) read_field(a,offset,&s->member,sizeof(s->member))
 #define WRITE(member,offset) write_field(a,offset,&s->member,sizeof(s->member))
+unsigned short __cdecl bh_actor_route_now(const BHActorRouteContext *c) {
+    return c->live_tick?(unsigned short)*c->live_tick:c->tick;
+}
+void __cdecl bh_actor_route_set_tick(BHActorRouteContext *c,unsigned short tick) {
+    if(c->live_tick)*c->live_tick=(*c->live_tick&0xffff0000UL)|tick;
+    else c->tick=tick;
+}
 int __cdecl bh_actor_route_read(const BHEntity *a,BHActorRouteState *s) {
     if(!a || !s)return 0;
     READ(current,0x1a4);READ(next,0x1a8);
@@ -110,7 +117,7 @@ int __cdecl bh_actor_route_promote(BHActorRouteContext *c,BHEntity *a,long incom
     }
     s.phase=0;s.duration=stored(length/((double)s.speed*s.speed_scale));duration=s.duration;
     if(!duration_ticks(duration,&s.duration_ticks))return fail(c,BH_ACTOR_ROUTE_NUMERICAL);
-    s.tick=c->tick;
+    s.tick=bh_actor_route_now(c);
     test_width=(double)out->scratch[1]-out->scratch[0];width=stored(test_width);
     if(test_width<30) {
         test_width=(double)out->scratch[3]-out->scratch[2];if(test_width>width)width=stored(test_width);

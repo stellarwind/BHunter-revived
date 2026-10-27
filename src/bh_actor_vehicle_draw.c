@@ -5,6 +5,7 @@
 #include "bh_round.h"
 #include "bh_fp.h"
 #include <math.h>
+#include <float.h>
 #include <stdlib.h>
 #include <string.h>
 static float stored(double x){float f;bh_round_float(&f,x);return f;}
@@ -14,7 +15,7 @@ int __cdecl bh_actor_vehicle_draw(BHActorVehicleDrawContext *c,BHEntity *e){
  double bank,clock;float fade;unsigned long resource,sound_resource,damage_frame,i;static const float xs[4]={.6f,.2f,-.2f,-.6f};static const double rates[4]={25.5,18.5,28.5,23.5};
  if(!c||!c->queue||!c->sound||!e){if(c)c->error=BH_ACTOR_ROUTE_ARGUMENT;return 0;}
  if(!bh_math_environment_supported()){c->error=BH_ACTOR_ROUTE_NUMERICAL;return 0;}
- bh_actor_route_read(e,&s);elapsed=(unsigned short)(c->tick-s.tick);memcpy(&se,&elapsed,2);memcpy(&sd,&s.duration_ticks,2);
+ bh_actor_route_read(e,&s);elapsed=(unsigned short)((c->clock?bh_actor_route_now(c->clock):c->tick)-s.tick);memcpy(&se,&elapsed,2);memcpy(&sd,&s.duration_ticks,2);
  if(!sd){c->error=BH_ACTOR_ROUTE_NUMERICAL;return 0;}
  phase=stored((double)se/sd);
  bh_camera_curve(stored((double)phase-1.0/30.0),&before,s.controls,s.controls+1,s.controls+2,s.controls+3);
@@ -25,6 +26,8 @@ int __cdecl bh_actor_vehicle_draw(BHActorVehicleDrawContext *c,BHEntity *e){
  dx=stored((double)after.x-p.x);dz=stored((double)after.z-p.z);px=stored((double)p.x-before.x);pz=stored((double)p.z-before.z);
  bank=(((double)pz*dx-(double)px*dz)/sqrt((double)dz*dz+(double)dx*dx))/sqrt((double)pz*pz+(double)px*px);
  angles.x=stored(atan2(dx,dz));angles.y=0;angles.z=stored(bank*3.141592653589793);
+ if(c->clock&&c->clock->nonfinite_curve&&(!_finite(angles.x)||!_finite(angles.y)||!_finite(angles.z)))
+  c->clock->nonfinite_curve(c->clock->nonfinite_user,0x434920,e,&s,bh_actor_route_now(c->clock),&before,&p,&after,&angles);
  memcpy(&resource,(char*)e+0x114,4);bh_draw_submit_resource(c->queue,0,resource,&p,&angles,1);
  memcpy(&fade,(char*)e+0x19c,4);
  if(fade<1){size=stored(4.0-(double)rand()*(-1.0/16384.0));alpha=stored(1.0-fade);damage_frame=(unsigned long)rand()&7;angle=stored((double)rand()*(1.0/4096.0));bh_draw_billboard(c->queue,3,c->damage_resource,&p,size,size,angle,damage_frame,alpha);}

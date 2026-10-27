@@ -57,7 +57,7 @@ int __cdecl bh_target_construct_sync(BHTargetConstructContext *c) {
   BHPhysicsStepBody *b,next;
   BHTargetConstructSlot *s;
   BHEntity *e;
-  int retain;
+  int retain, rebind;
   if (!c || !c->debris || !c->physics || !c->roster || !c->models ||
       !c->slots || !c->capacity || !c->effects ||
       (c->base_count && !c->base_bodies) ||
@@ -71,6 +71,9 @@ int __cdecl bh_target_construct_sync(BHTargetConstructContext *c) {
   retain=c->physics->allocator.release&&c->physics->pool==c->debris->pool&&
       c->physics->bodies==c->roster&&c->physics->body_count==c->roster_count&&
       c->physics->models==c->models&&c->physics->model_count==c->model_count&&
+      c->physics->worlds==c->worlds&&c->physics->world_count==c->world_count&&
+      c->physics->effects==c->effects&&c->physics->fallback==1;
+  rebind=c->physics->allocator.release&&c->physics->pool==c->debris->pool&&
       c->physics->worlds==c->worlds&&c->physics->world_count==c->world_count&&
       c->physics->effects==c->effects&&c->physics->fallback==1;
   for (i = 0; i < m; ++i) {
@@ -121,6 +124,12 @@ int __cdecl bh_target_construct_sync(BHTargetConstructContext *c) {
        workspaces are retained. Preserve init's common-field publication. */
     for(i=0;i<n;++i)if(!bh_physics_step_publish(c->roster+i)){c->error=1;return 0;}
     return 1;
+  }
+  if(rebind&&n) {
+    if(!bh_physics_step_rebind(c->physics,c->roster,n,c->models,m)) {
+      c->error=1;return 0;
+    }
+    c->roster_count=n;c->model_count=m;++c->rebuilds;return 1;
   }
   /* Boundary rebuild preserves stable state/matrix pointers and rejects stale
    * generations. */

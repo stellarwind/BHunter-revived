@@ -19,14 +19,14 @@ static int fail(BHActorPursuitRouteContext *c,BHActorRouteError err){if(c&&c->ro
 static long elapsed32(long now,long before){unsigned long v=(unsigned long)now-(unsigned long)before;long result;memcpy(&result,&v,4);return result;}
 typedef struct TargetMotion{long event;BHVec3 position,velocity,acceleration;}TargetMotion;
 static int query(BHEntity *target,TargetMotion *p){if(!target||!target->query)return 0;p->event=16;target->query(target,p);return 1;}
-static int reset_duration(BHActorPursuitRouteContext *c,BHEntity *e,BHActorRouteState *s){double ticks;float length=bh_route_curve_length(s->controls);s->phase=0;s->duration=stored(((double)length+length)/((double)s->speed*s->speed_scale));ticks=(double)s->duration*30;if(!_finite(ticks)||ticks< -9223372036854775808.0||ticks>=9223372036854775808.0)return fail(c,BH_ACTOR_ROUTE_NUMERICAL);s->duration_ticks=(unsigned short)(__int64)ticks;s->tick=c->route->tick;return bh_actor_route_write(e,s);}
+static int reset_duration(BHActorPursuitRouteContext *c,BHEntity *e,BHActorRouteState *s){double ticks;float length=bh_route_curve_length(s->controls);s->phase=0;s->duration=stored(((double)length+length)/((double)s->speed*s->speed_scale));ticks=(double)s->duration*30;if(!_finite(ticks)||ticks< -9223372036854775808.0||ticks>=9223372036854775808.0)return fail(c,BH_ACTOR_ROUTE_NUMERICAL);s->duration_ticks=(unsigned short)(__int64)ticks;s->tick=bh_actor_route_now(c->route);return bh_actor_route_write(e,s);}
 int __cdecl bh_actor_pursuit_route(BHActorPursuitRouteContext *c,BHEntity *e){
  BHActorRouteState s;BHWorldGeometry *room,*target_world=0,*preferred=0;BHEntity *target;BHTargetSelection selected;TargetMotion motion;BHVec3 saved_end,saved_tangent;
  long incoming=-1,outgoing,index,target_index,junction,old_city,new_city,forced;unsigned long i,first;float pursuit;double factor;char text[256];
  static const char *const report[4]={"1Attention,\ncrime fighters!\n\nA fugitive car\nhas been spotted\nentering\n%s","1Attention!\n\nWe have reports\non a fugitive car\nentering\n%s","1Calling all\nHunters!\n\nA fugitive car\njust entered\n%s","1Incoming\nSurveillance\nReport:\n\nA fugitive car\njust passed through\na gate at\n%s"};
  if(!c||!c->route||!c->navigation||!e||!bh_math_environment_supported())return fail(c,BH_ACTOR_ROUTE_ARGUMENT);bh_actor_route_read(e,&s);room=s.next;target=(BHEntity*)value(e,0x1b8);
  if(s.sound_frames){--s.sound_frames;write(e,0x108,&s.sound_frames,4);if(!s.sound_frames&&s.sound!=BH_SOUND_INVALID){if(!c->route->sound)return fail(c,BH_ACTOR_ROUTE_ARGUMENT);bh_sound_stop(c->route->sound,s.sound);s.sound=BH_SOUND_INVALID;write(e,0x104,&s.sound,4);}}
- if(value(e,0xfc)==1&&(!target||rand()<0x1000)){if(!bh_target_select(c->player,c->actor_head,e,s.controls+3,c->actor_limit,&selected))return fail(c,BH_ACTOR_ROUTE_ARGUMENT);target=selected.target;write(e,0x1b8,&target,4);}
+ if(value(e,0xfc)==1&&(!target||rand()<0x1000)){if(!bh_target_select(c->player,c->actor_head_owner?*c->actor_head_owner:c->actor_head,e,s.controls+3,c->actor_limit,&selected))return fail(c,BH_ACTOR_ROUTE_ARGUMENT);target=selected.target;write(e,0x1b8,&target,4);}
  forced=value(e,0x1d4);
  if(forced){
   s.controls[0]=s.controls[3];for(i=0;i<3;++i)((float*)&s.controls[1])[i]=stored(((double)((float*)&s.controls[3])[i]-((float*)&s.controls[2])[i])+((float*)&s.controls[0])[i]);

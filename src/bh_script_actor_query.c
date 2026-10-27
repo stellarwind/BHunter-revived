@@ -26,7 +26,7 @@ void __cdecl bh_script_actor_query(BHEntity *e,void *packet){
  }
  if(!bh_math_environment_supported()){c->route->error=BH_ACTOR_ROUTE_NUMERICAL;return;}
  path=bh_script_actor_route_path(e);if(path!=bh_script_actor_curve&&path!=bh_script_actor_linear){c->route->error=BH_ACTOR_ROUTE_ARGUMENT;return;}
- bh_actor_route_read(e,&s);elapsed=(unsigned short)(c->route->tick-s.tick);memcpy(&se,&elapsed,2);memcpy(&sd,&s.duration_ticks,2);t=(double)se/sd;phase=stored(t);memcpy(&offset,(char*)e+0x15c,12);
+ bh_actor_route_read(e,&s);elapsed=(unsigned short)(bh_actor_route_now(c->route)-s.tick);memcpy(&se,&elapsed,2);memcpy(&sd,&s.duration_ticks,2);t=(double)se/sd;phase=stored(t);memcpy(&offset,(char*)e+0x15c,12);
  if(p->event==3){path(phase,&p->position,s.controls,s.controls+1,s.controls+2,s.controls+3);
   p->position.x=stored((double)offset.x+p->position.x);p->position.y=stored((double)offset.y+p->position.y);p->position.z=stored((double)offset.z+p->position.z);
   p->position.y=stored((double)p->position.y-(-2.0));return;

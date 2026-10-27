@@ -20,10 +20,20 @@ typedef struct BHActorRouteContext {
     BHSoundQueue *sound;
     unsigned short tick; /* explicit original004dfac4 binding */
     BHActorRouteError error;
+    unsigned long *live_tick; /* owning application original004dfac4, read at each call */
+    /* Optional passive first-failure evidence; never changes samples or RNG. */
+    void (__cdecl *nonfinite_curve)(void *,unsigned long,const BHEntity *,
+        const BHActorRouteState *,unsigned short,const BHVec3 *,const BHVec3 *,const BHVec3 *,const BHVec3 *);
+    void *nonfinite_user;
 } BHActorRouteContext;
 /* Explicit source field-view adapters, not original function admissions. They
    copy only the verified fields. Bind worlds/actors before the owning update;
    these do not create actors or install callbacks. */
+/* Count-zero live original-global binding. Snapshot tick remains available for
+   isolated fixtures; a bound clock always takes precedence. Packet consumers
+   can temporarily set/restore its low word as the original does. */
+unsigned short __cdecl bh_actor_route_now(const BHActorRouteContext *);
+void __cdecl bh_actor_route_set_tick(BHActorRouteContext *,unsigned short);
 int __cdecl bh_actor_route_read(const BHEntity *,BHActorRouteState *);
 int __cdecl bh_actor_route_write(BHEntity *,const BHActorRouteState *);
 /* Complete00434f40. Integer incoming/outgoing portal indices (the decompiler's

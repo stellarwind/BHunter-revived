@@ -11,7 +11,7 @@ def main():
  env['PATH']=os.pathsep.join([str(compiler),str(shared),env.get('PATH','')]);env['INCLUDE']=os.pathsep.join([str(sp3/'include'),str(vc/'include')]);env['LIB']=os.pathsep.join([str(sp3/'lib'),str(vc/'lib')])
  record=dict(target='build/game/BHunter-source.exe',passed=False,original_code_required=False,commands=[],sources={})
  cache_path=out/'objects.json';cache=json.loads(cache_path.read_text()) if cache_path.exists() else {}
- headers=hashlib.sha256(b''.join(p.name.encode()+p.read_bytes() for p in sorted((ROOT/'src').glob('*.h')))).hexdigest()
+ headers=hashlib.sha256(b''.join(p.name.encode()+p.read_bytes() for p in sorted(list((ROOT/'src').glob('*.h'))+list((ROOT/'src').glob('*.inc'))))).hexdigest()
  def run(argv):
   p=subprocess.run([str(a) for a in argv],cwd=out,env=env,text=True,capture_output=True);record['commands'].append(dict(argv=[str(a) for a in argv],exit_code=p.returncode,output=p.stdout+p.stderr));(out/'build.json').write_text(json.dumps(record,indent=2)+'\n')
   if p.returncode:print(p.stdout+p.stderr);raise SystemExit(p.returncode)
@@ -29,6 +29,7 @@ def main():
    run(argv);cache[source.name]=dict(signature=signature,object_sha256=hashlib.sha256(obj.read_bytes()).hexdigest())
    cache_path.write_text(json.dumps(cache,indent=2)+'\n')
  if args.compile_one:return
+ for include in (ROOT/'src').glob('*.inc'):record['sources'][include.relative_to(ROOT).as_posix()]=hashlib.sha256(include.read_bytes()).hexdigest()
  link=[vc/'bin/LINK.EXE','/nologo','/subsystem:windows','/opt:ref','/out:'+str(out/'BHunter-source.exe'),'/map:'+str(out/'BHunter-source.map'),*objects,sdk/'lib/ddraw.lib',sdk/'lib/dinput.lib','kernel32.lib','user32.lib','gdi32.lib','dsound.lib','winmm.lib','ole32.lib','advapi32.lib','comctl32.lib']
  run(link);record['passed']=True;record['translation_units']=len(sources);record['executable_sha256']=hashlib.sha256((out/'BHunter-source.exe').read_bytes()).hexdigest();(out/'build.json').write_text(json.dumps(record,indent=2)+'\n');print('Built',out/'BHunter-source.exe','from',len(sources),'production translation units')
 if __name__=='__main__':main()

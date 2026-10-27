@@ -1,0 +1,90 @@
+"""Read-only audit of retained source-preview evidence; never launches the game."""
+from record_pickup_basic import ROOT, active, read, reference, sha
+
+
+def main():
+    ledger, raw = reference()
+    here = (ROOT / ledger['latest_source_session']).parent
+    evidence = read(here / 'validation.json')
+    if evidence.get('validation_kind') == 'focused_runtime_fixes':
+        focused = read(here / 'runtime-fixes.json')
+        game = read(here / 'game-build.json')
+        startup = read(here / 'hardware-startup-check.json')
+        assert all(x['passed'] for x in (evidence, focused, game, startup))
+        assert not focused['software_renderer_executed'] and not focused['gameplay_automation']
+        for build in (focused, game):
+            for name, digest in build['sources'].items():
+                assert sha(ROOT / name) == digest, name
+        owners = active(ledger)
+        assert len(owners) == 679
+        for owner in owners:
+            assert owner['source_sha256'] == focused['sources'][owner['source']] == sha(ROOT / owner['source'])
+        for name, snapshot in evidence['source_snapshots'].items():
+            assert sha(ROOT / name) == sha(ROOT / snapshot), name
+        assert game['executable_sha256'] == startup['executable_sha256'] == sha(ROOT / game['target'])
+        assert not startup['input_automation'] and not startup['gameplay_automation']
+        for name in ('input_collection_calls', 'entity_step_calls', 'entity_refresh_calls', 'application_frames'):
+            assert startup['summary'][name] == 0, name
+        for run in focused['scenarios']:
+            total = next(x for x in run['checks'] if x.get('scenario') == 'runtime-fixes')
+            assert not total['failures'] and not total['software_renderer_executed']
+        if evidence.get('box_playthrough'):
+            box=read(ROOT/evidence['box_playthrough'])
+            assert box['passed'] and box['deterministic_trace_match']
+            assert len(box['runs'])==2
+            for run in box['runs']:
+                assert run['passed'] and run['hardware_only'] and not run['software_renderer_executed']
+                assert run['executable_sha256']==game['executable_sha256'] and run['ticks']==900
+            for name,digest in evidence['box_artifacts'].items():assert sha(ROOT/name)==digest,name
+        if evidence.get('function_review'):
+            import hashlib
+            from record_live_actor_clock import original
+            report=read(ROOT/evidence['function_review'])
+            assert report['reference_exe_sha256']==ledger['reference_exe_sha256']
+            for row in report['owners']:
+                assert sha(ROOT/row['source'])==row['source_sha256']
+                proof=row['original']
+                if 'path' in proof:
+                    assert original(raw,row['original_va'],[ROOT/proof['path']])==proof
+                else:
+                    assert hashlib.sha256(raw(int(row['original_va'],16),proof['bytes'])).hexdigest()==proof['sha256']
+                assert not row['whole_function_byte_match'] and not row['whole_function_differential_execution']
+            for name,digest in evidence['comparison_artifacts'].items():assert sha(ROOT/name)==digest,name
+            oracle=read(here/'actor-damping.json');before=read(here/'actor-damping-before.json')
+            assert oracle['passed'] and '"different_cases":0' in oracle['output']
+            assert not before['passed'] and '"different_cases":171' in before['output']
+            assert oracle['source_sha256']==sha(ROOT/'src/bh_actor_response.c')
+            assert not evidence['shipping_original_code_executed']
+            print('Original review audit passed:44 scoped owner reviews, original damping negative/positive controls, focused source checks and hardware static startup. Whole-game1:1 remains unverified.')
+        else:
+            print('Preview audit passed: focused physics/lifetime/input checks and hardware-only bounded startup; broad-suite and manual gameplay acceptance not claimed.')
+        return
+    real = read(here / 'integration-real.json')
+    clean = read(here / 'integration-clean.json')['result']
+    game = read(here / 'game-build.json')
+    startup = read(here / 'startup-check.json')
+    assert all(b['passed'] for b in (evidence, real, clean, game, startup))
+    assert not real['test']['failures'] and not clean['test']['failures']
+    for name, digest in real['sources'].items():
+        assert sha(ROOT / name) == digest, name
+        clean_digest = clean['sources'][name]
+        if clean_digest != digest:
+            assert sha(ROOT / evidence['clean_normalized_test_snapshots'][name]) == clean_digest
+    for name, digest in game['sources'].items():
+        assert sha(ROOT / name) == digest, name
+    for name, snapshot in evidence['source_snapshots'].items():
+        assert sha(ROOT / name) == sha(ROOT / snapshot), name
+    owners = active(ledger)
+    assert len(owners) == 679
+    for r in owners:
+        assert r['source_sha256'] == real['sources'][r['source']] == sha(ROOT / r['source'])
+    assert game['executable_sha256'] == startup['executable_sha256'] == sha(ROOT / game['target'])
+    assert not game['original_code_required'] and not startup['original_code_required']
+    assert not startup['input_automation'] and not startup['gameplay_automation']
+    for name in ('input_collection_calls', 'entity_step_calls', 'entity_refresh_calls', 'application_frames'):
+        assert startup['summary'][name] == 0, name
+    print('Preview audit passed: 679 current harness owners, 299 game translation units; bounded static startup only; human retry pending.')
+
+
+if __name__ == '__main__':
+    main()

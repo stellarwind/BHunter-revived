@@ -1,0 +1,35 @@
+#include "bh_actor_route_lifetime.h"
+#include <string.h>
+static int fail(BHActorRouteContext *c,BHActorRouteError e){if(c)c->error=e;return 0;}
+static BHEntity *link_value(const BHEntity *a,unsigned long offset){BHEntity *p;memcpy(&p,(const unsigned char*)a+offset,4);return p;}
+static void set_link(BHEntity *a,unsigned long offset,BHEntity *p){memcpy((unsigned char*)a+offset,&p,4);}
+int __cdecl bh_actor_route_due(BHActorRouteContext *c,BHEntity *a) {
+    BHActorRouteState s;unsigned short delta,stamp;
+    if(!c || !a)return fail(c,BH_ACTOR_ROUTE_ARGUMENT);
+    bh_actor_route_read(a,&s);delta=(unsigned short)(bh_actor_route_now(c)-s.duration_ticks-s.tick);
+    if(!(delta&0x8000)) {
+        if(!bh_actor_route_advance(c,a))return 0;
+        stamp=(unsigned short)(bh_actor_route_now(c)+delta);memcpy((unsigned char*)a+0x1e4,&stamp,2);
+    }
+    c->error=BH_ACTOR_ROUTE_OK;return 1;
+}
+int __cdecl bh_actor_route_release(BHActorRouteContext *c,BHEntityPool *pool,BHEntity *a) {
+    BHActorRouteState s;BHPickupRoom *room=NULL;BHEntity *next,*previous,*at;unsigned long i,n;
+    if(!c || !pool || !a || !c->rooms || !c->room_count || !c->actor_limit)return fail(c,BH_ACTOR_ROUTE_ARGUMENT);
+    if(!bh_entities_valid(pool))return fail(c,BH_ACTOR_ROUTE_TOPOLOGY);
+    at=pool->active;for(i=0;i<pool->used && at && at!=a;++i)at=at->next;
+    if(at!=a)return fail(c,BH_ACTOR_ROUTE_TOPOLOGY);
+    bh_actor_route_read(a,&s);
+    for(i=0;i<c->room_count;++i)if(c->rooms[i].world==s.current){room=c->rooms+i;break;}
+    if(!room)return fail(c,BH_ACTOR_ROUTE_TOPOLOGY);
+    next=link_value(a,0xf4);previous=link_value(a,0xf8);
+    if((previous?link_value(previous,0xf4)!=a:room->actors!=a) || (next && link_value(next,0xf8)!=a))return fail(c,BH_ACTOR_ROUTE_TOPOLOGY);
+    at=room->actors;n=0;while(at && at!=a && n<c->actor_limit){at=link_value(at,0xf4);++n;}
+    if(at!=a || n>=c->actor_limit)return fail(c,BH_ACTOR_ROUTE_TOPOLOGY);
+    if(s.sound!=BH_SOUND_INVALID && !c->sound)return fail(c,BH_ACTOR_ROUTE_ARGUMENT);
+    if(s.sound!=BH_SOUND_INVALID)bh_sound_stop(c->sound,s.sound);
+    if(previous)set_link(previous,0xf4,next);else room->actors=next;
+    if(next)set_link(next,0xf8,previous);
+    if(!bh_entity_release(pool,a))return fail(c,BH_ACTOR_ROUTE_TOPOLOGY);
+    c->error=BH_ACTOR_ROUTE_OK;return 1;
+}

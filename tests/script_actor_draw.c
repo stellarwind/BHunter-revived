@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include <float.h>
 static unsigned long checks,failures;
 #define CHECK(c) do{++checks;if(!(c)){++failures;printf("failure line %d\n",__LINE__);}}while(0)
 static unsigned long seed(int emit){unsigned long i;for(i=0;i<65536;++i){srand(i);if((rand()<0x800)==emit)return i;}return 0;}
@@ -29,6 +30,17 @@ int bh_script_actor_draw_checkpoint(unsigned long *count){
  CHECK(queue.commands[10].resource==111&&queue.commands[11].resource==112&&queue.commands[10].kind==BH_DRAW_BILLBOARD);
  memcpy(pose,queue.commands[10].words,32);CHECK(pose[3]==9&&pose[4]==9&&pose[6]==.5f);
  memcpy(pose,queue.commands[11].words,32);CHECK(pose[3]==7.5f&&pose[4]==7.5f&&pose[6]==.5f);
+ {BHActorRouteContext clock;unsigned long simulation=11;float live_pose[6],oracle[6];
+  memset(&clock,0,sizeof(clock));clock.tick=10;clock.live_tick=&simulation;
+  memset(s.controls,0,sizeof(s.controls));s.controls[2].x=100;s.controls[3].x=200;s.controls[3].z=50;
+  s.tick=10;s.duration_ticks=30;bh_actor_route_write(&a,&s);c.glowing_model=0;c.tick=10;c.clock=&clock;
+  CHECK(bh_draw_queue_begin(&queue));srand(seed(0));CHECK(bh_script_actor_vehicle_draw(&c,&a));
+  memcpy(live_pose,queue.commands[9].words,24);CHECK(_finite(live_pose[5]));
+  c.clock=NULL;c.tick=11;CHECK(bh_draw_queue_begin(&queue));srand(seed(0));CHECK(bh_script_actor_vehicle_draw(&c,&a));
+  memcpy(oracle,queue.commands[9].words,24);CHECK(!memcmp(live_pose,oracle,24));
+  c.tick=10;CHECK(bh_draw_queue_begin(&queue));srand(seed(0));CHECK(bh_script_actor_vehicle_draw(&c,&a));
+  memcpy(oracle,queue.commands[9].words,24);CHECK(_isnan(oracle[5]));
+ }
  CHECK(bh_entities_dispose(&pool));CHECK(bh_draw_queue_dispose(&queue));bh_math_environment_leave(&env);if(count)*count=checks;
  printf("{\"scenario\":\"script-actor-draw\",\"checks\":%lu,\"failures\":%lu,\"original_code_required\":false}\n",checks,failures);return failures!=0;
 }

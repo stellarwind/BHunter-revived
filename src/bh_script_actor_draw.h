@@ -6,6 +6,7 @@ typedef struct BHScriptActorDrawContext {
  BHDrawQueue *queue;BHScriptParticleContext *particles;
  unsigned long smoke_resource;unsigned short tick;BHActorRouteError error;
  unsigned long glowing_model,glow_first,glow_second;float animation_time;
+ const BHActorRouteContext *clock; /* same live004dfac4 as route updates */
 } BHScriptActorDrawContext;
 /* Whole00436cd0. Actual queue/particle owners and loaded resource handles
    remain borrowed. Shared CRT rand draw order is observable. No native draw. */

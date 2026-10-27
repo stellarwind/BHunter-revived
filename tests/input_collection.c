@@ -91,6 +91,34 @@ static void mouse_and_lists(void){Fixture f;BHPlayerInputList *list,*disabled;BH
     CHECK(bh_input_collect(&f.collect,&changed) && f.snapshot.pair3[0]==464 && f.snapshot.mouse_axes[0]==1,"16-bit addition wraps before upper clamp, mouse filter saturates");
     f.recenter_result=0;CHECK(bh_input_collect(&f.collect,&changed) && !f.collect.last_recenter,"original ignored recenter failure remains nonfatal with recorded result");done(&f);
 }
+static void mouse_disabled(void) {
+    Fixture f;BHPlayerInputList *list;BHPlayerInputState state;unsigned long changed;
+    setup(&f);list=bh_player_input_create(&f.lists,1);
+    CHECK(list!=NULL,"mouse-disabled actual bindings");
+    if(!list){done(&f);return;}
+    bh_player_input_bind_axis(list,0,"TURN",0,0,VK_LEFT,VK_RIGHT,0,1);
+    bh_player_input_bind_key(list,7,"FIRE",0,0,160);
+    f.collect.disable_mouse_motion=1;
+    f.cursor_result=0;f.cursor.x=100000;f.cursor.y=-100000;
+    f.collect.delta[0]=100;f.collect.delta[1]=-100;
+    f.snapshot.mouse_axes[0]=1;f.snapshot.mouse_axes[1]=-1;
+    f.snapshot.pair3[0]=0;f.snapshot.pair3[1]=1023;
+    f.snapshot.pair4[0]=123;f.snapshot.pair4[1]=456;
+    CHECK(bh_input_collect(&f.collect,&changed)&&!f.cursor_calls&&!f.recenter_calls,
+          "disabled motion neither polls cursor nor moves it even if API unavailable");
+    memset(&state,0,sizeof(state));
+    CHECK(bh_player_input_apply_packet_checked(&state,list->state,list->state[0])&&
+              state.values[0]==0&&f.snapshot.mouse_axes[0]==0&&f.snapshot.mouse_axes[1]==0&&
+              !f.snapshot.pair4[0]&&!f.snapshot.pair4[1]&&
+              f.snapshot.pair3[0]==512&&f.snapshot.pair3[1]==512,
+          "retained analog, raw and accumulated mouse motion neutralized before evaluation");
+    f.snapshot.current[VK_RIGHT]=1;f.snapshot.current[160]=1;
+    CHECK(bh_input_collect(&f.collect,&changed)&&
+              bh_player_input_apply_packet_checked(&state,list->state,list->state[0])&&
+              state.values[0]==0x3f800000UL&&state.values[7]==1,
+          "keyboard steering and mouse button actions remain live");
+    done(&f);
+}
 static void guards_and_native(void){Fixture f;BHPlayerInputList *list;unsigned long changed=0x12345678UL;POINT point;JOYINFOEX sample;MMRESULT result;setup(&f);
     CHECK(GetCursorPos(&point),"actual native read-only cursor API executes (no recenter)");memset(&sample,0,sizeof(sample));sample.dwSize=sizeof(sample);sample.dwFlags=0x4ff;
     result=joyGetPosEx(0,&sample);printf("{\"input_readonly_joystick_hresult\":%lu,\"native_recenter_calls\":0}\n",(unsigned long)result);
@@ -101,6 +129,6 @@ static void guards_and_native(void){Fixture f;BHPlayerInputList *list;unsigned l
     done(&f);
 }
 int bh_input_collection_checkpoint(unsigned long *count){BHMathEnvironment fp;checks=0;failures=0;if(!bh_math_environment_enter(&fp))return 2;
-    axes();calibration();mouse_and_lists();guards_and_native();golden();CHECK(bh_math_environment_supported(),"input collection retainsPC53");bh_math_environment_leave(&fp);if(count)*count=checks;
+    axes();calibration();mouse_and_lists();mouse_disabled();guards_and_native();golden();CHECK(bh_math_environment_supported(),"input collection retainsPC53");bh_math_environment_leave(&fp);if(count)*count=checks;
     printf("{\"scenario\":\"input-collection\",\"checks\":%lu,\"failures\":%d,\"native_recenter_calls\":0,\"original_code_required\":false}\n",checks,failures);return failures!=0;
 }

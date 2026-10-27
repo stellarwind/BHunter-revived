@@ -11,6 +11,7 @@ typedef enum BHWeaponArcLifecycleError {
 } BHWeaponArcLifecycleError;
 typedef struct BHWeaponArcLifecycleContext {
     BHSoundQueue *sound;BHWorldSegmentContext *world;
+    BHEntity **head_owner; /* live original004dfb28 storage */
     BHEntity *head; /* actual004dfb28 list, successor at actor+f0 */
     unsigned long activate_sound,release_sound,charge16_sound,charge51_sound;
     unsigned long limit,visited,queries,world_queries,requests,updates,stops,random_calls;

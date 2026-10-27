@@ -20,7 +20,7 @@ typedef struct BHPickupRoom {
     BHEntity *pickups; /* original room +12c */
 } BHPickupRoom;
 typedef struct BHPickupTakePacket {
-    long event,type,variant,amount,token,reserved;
+    long event,type,variant,amount,token;
     long accepted,consumed;
 } BHPickupTakePacket;
 typedef struct BHPickupContext {

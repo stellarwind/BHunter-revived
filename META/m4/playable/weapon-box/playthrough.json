@@ -1,0 +1,285 @@
+{
+  "passed": true,
+  "deterministic_trace_match": true,
+  "runs": [
+    {
+      "passed": true,
+      "hardware_only": true,
+      "software_renderer_executed": false,
+      "original_code_executed": false,
+      "automatic_gameplay": true,
+      "scope": "user-authorized isolated box level with all ten weapons",
+      "timeout_seconds": 75,
+      "executable_sha256": "0c00d7e00fc9cab7fa7c0613a79336eb4d79ace2367e55fdc0707342f74a8b7d",
+      "exit_code": 0,
+      "seconds": 20.92897120001726,
+      "ticks": 2100,
+      "last": {
+        "tick": "2100",
+        "x": "-4.32369709",
+        "y": "16.5918732",
+        "z": "64.5471802",
+        "vx": "-0.403081",
+        "vy": "0.0547708496",
+        "vz": "0.726710081",
+        "contacts": "16",
+        "shots": "70",
+        "damage_packets": "6",
+        "ammo": "589",
+        "pickup_alive": "0",
+        "ai_alive": "0",
+        "ai_x": "0",
+        "ai_y": "0",
+        "ai_z": "0",
+        "objective": "1",
+        "drop_seen": "1",
+        "drop_taken": "1",
+        "drop_x": "0",
+        "drop_y": "0",
+        "drop_z": "0",
+        "collected_mask": "1023",
+        "fired_mask": "1023",
+        "primary": "4",
+        "secondary": "9",
+        "spawned_mask": "493"
+      },
+      "weapons": [
+        {
+          "index": 0,
+          "name": "ion gun",
+          "picked": true,
+          "fired": true,
+          "projectile_observed": true
+        },
+        {
+          "index": 1,
+          "name": "lead buster",
+          "picked": true,
+          "fired": true,
+          "projectile_observed": null
+        },
+        {
+          "index": 2,
+          "name": "magnetic plasma",
+          "picked": true,
+          "fired": true,
+          "projectile_observed": true
+        },
+        {
+          "index": 3,
+          "name": "nitro crackers",
+          "picked": true,
+          "fired": true,
+          "projectile_observed": true
+        },
+        {
+          "index": 4,
+          "name": "stun ray",
+          "picked": true,
+          "fired": true,
+          "projectile_observed": null
+        },
+        {
+          "index": 5,
+          "name": "homie missile",
+          "picked": true,
+          "fired": true,
+          "projectile_observed": true
+        },
+        {
+          "index": 6,
+          "name": "sonic blast",
+          "picked": true,
+          "fired": true,
+          "projectile_observed": true
+        },
+        {
+          "index": 7,
+          "name": "tnt mine",
+          "picked": true,
+          "fired": true,
+          "projectile_observed": true
+        },
+        {
+          "index": 8,
+          "name": "fat lady",
+          "picked": true,
+          "fired": true,
+          "projectile_observed": true
+        },
+        {
+          "index": 9,
+          "name": "static coating",
+          "picked": true,
+          "fired": true,
+          "projectile_observed": null
+        }
+      ],
+      "checks": {
+        "finite_state": true,
+        "inside_box": true,
+        "outside_solid_post": true,
+        "pickup_removed": true,
+        "pickup_increased_inventory": true,
+        "collision_contact": true,
+        "shots_emitted": true,
+        "damage_delivered": true,
+        "ai_moved": true,
+        "target_destroyed": true,
+        "objective_completed": true,
+        "wreck_spawned_pickup": true,
+        "wreck_pickup_collected": true,
+        "all_weapon_pickups_collected": true,
+        "all_weapons_fired": true,
+        "all_projectile_families_spawned": true,
+        "all_weapon_selections": true
+      },
+      "startup_log": "Restored source startup; no original executable loaded\nFullscreen Direct3D2 HAL renderer ready\nBuilding scene/query registries\nBinding live player/physics/scene\nBinding constructed menus\nBinding loaded resource consumers\nLoaded model handles: count=66 reported_failure_handle475=missing\n\nLOADERR:PORTAL.PCX\nReal-data startup complete; no input collection or application frame executed\nBox level: direct gameplay; actual AI, projectiles, pickup and objective callbacks\nFrame timing enabled: samples buffered in memory until exit, growing4096-sample blocks; no fixed presentation limit\nManual preview running; keyboard/mouse belong to the active game window\nNative sound diagnostic (original frame continues): hresult=80070057 frequency_failures=6 resource=1 slot=0 frequency=-127800 tick=1929\nSource draw diagnostic (original callback loop continues): failures=1 resource=0 draw=0 pose=0,0,0/0,0,0 alpha=0\nFrame timing saved: frame-times-13a6ddea-7416.csv (2100 samples, 0 dropped)\nSource owners released\n",
+      "limits": [
+        "Source playthrough; original numerical/PC24 equivalence is not implied by scenario success."
+      ],
+      "trace_sha256": "1f3fa1d6e537914a26151f61e4238047fe0709322657e61817bdeeddf88f18d0"
+    },
+    {
+      "passed": true,
+      "hardware_only": true,
+      "software_renderer_executed": false,
+      "original_code_executed": false,
+      "automatic_gameplay": true,
+      "scope": "user-authorized isolated box level with all ten weapons",
+      "timeout_seconds": 75,
+      "executable_sha256": "0c00d7e00fc9cab7fa7c0613a79336eb4d79ace2367e55fdc0707342f74a8b7d",
+      "exit_code": 0,
+      "seconds": 20.835115600028075,
+      "ticks": 2100,
+      "last": {
+        "tick": "2100",
+        "x": "-4.32369709",
+        "y": "16.5918732",
+        "z": "64.5471802",
+        "vx": "-0.403081",
+        "vy": "0.0547708496",
+        "vz": "0.726710081",
+        "contacts": "16",
+        "shots": "70",
+        "damage_packets": "6",
+        "ammo": "589",
+        "pickup_alive": "0",
+        "ai_alive": "0",
+        "ai_x": "0",
+        "ai_y": "0",
+        "ai_z": "0",
+        "objective": "1",
+        "drop_seen": "1",
+        "drop_taken": "1",
+        "drop_x": "0",
+        "drop_y": "0",
+        "drop_z": "0",
+        "collected_mask": "1023",
+        "fired_mask": "1023",
+        "primary": "4",
+        "secondary": "9",
+        "spawned_mask": "493"
+      },
+      "weapons": [
+        {
+          "index": 0,
+          "name": "ion gun",
+          "picked": true,
+          "fired": true,
+          "projectile_observed": true
+        },
+        {
+          "index": 1,
+          "name": "lead buster",
+          "picked": true,
+          "fired": true,
+          "projectile_observed": null
+        },
+        {
+          "index": 2,
+          "name": "magnetic plasma",
+          "picked": true,
+          "fired": true,
+          "projectile_observed": true
+        },
+        {
+          "index": 3,
+          "name": "nitro crackers",
+          "picked": true,
+          "fired": true,
+          "projectile_observed": true
+        },
+        {
+          "index": 4,
+          "name": "stun ray",
+          "picked": true,
+          "fired": true,
+          "projectile_observed": null
+        },
+        {
+          "index": 5,
+          "name": "homie missile",
+          "picked": true,
+          "fired": true,
+          "projectile_observed": true
+        },
+        {
+          "index": 6,
+          "name": "sonic blast",
+          "picked": true,
+          "fired": true,
+          "projectile_observed": true
+        },
+        {
+          "index": 7,
+          "name": "tnt mine",
+          "picked": true,
+          "fired": true,
+          "projectile_observed": true
+        },
+        {
+          "index": 8,
+          "name": "fat lady",
+          "picked": true,
+          "fired": true,
+          "projectile_observed": true
+        },
+        {
+          "index": 9,
+          "name": "static coating",
+          "picked": true,
+          "fired": true,
+          "projectile_observed": null
+        }
+      ],
+      "checks": {
+        "finite_state": true,
+        "inside_box": true,
+        "outside_solid_post": true,
+        "pickup_removed": true,
+        "pickup_increased_inventory": true,
+        "collision_contact": true,
+        "shots_emitted": true,
+        "damage_delivered": true,
+        "ai_moved": true,
+        "target_destroyed": true,
+        "objective_completed": true,
+        "wreck_spawned_pickup": true,
+        "wreck_pickup_collected": true,
+        "all_weapon_pickups_collected": true,
+        "all_weapons_fired": true,
+        "all_projectile_families_spawned": true,
+        "all_weapon_selections": true
+      },
+      "startup_log": "Restored source startup; no original executable loaded\nFullscreen Direct3D2 HAL renderer ready\nBuilding scene/query registries\nBinding live player/physics/scene\nBinding constructed menus\nBinding loaded resource consumers\nLoaded model handles: count=66 reported_failure_handle475=missing\n\nLOADERR:PORTAL.PCX\nReal-data startup complete; no input collection or application frame executed\nBox level: direct gameplay; actual AI, projectiles, pickup and objective callbacks\nFrame timing enabled: samples buffered in memory until exit, growing4096-sample blocks; no fixed presentation limit\nManual preview running; keyboard/mouse belong to the active game window\nNative sound diagnostic (original frame continues): hresult=80070057 frequency_failures=6 resource=1 slot=0 frequency=-127800 tick=1929\nSource draw diagnostic (original callback loop continues): failures=1 resource=0 draw=0 pose=0,0,0/0,0,0 alpha=0\nFrame timing saved: frame-times-13a72fb4-10932.csv (2100 samples, 0 dropped)\nSource owners released\n",
+      "limits": [
+        "Source playthrough; original numerical/PC24 equivalence is not implied by scenario success."
+      ],
+      "trace_sha256": "1f3fa1d6e537914a26151f61e4238047fe0709322657e61817bdeeddf88f18d0"
+    }
+  ],
+  "limits": [
+    "Repeatability of recorded source state is not original-game equivalence or a complete state/RNG comparison."
+  ]
+}

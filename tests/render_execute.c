@@ -50,11 +50,11 @@ int bh_render_execute_checkpoint(unsigned long *count){
      draw.camera=&camera;draw.config=&projection;resources[0].tag=BH_RESOURCE_TAG_MODEL;resources[0].data.model.instance=&invalid;resources[1].tag=(BHDrawResourceTag)4;
      submit.draw=&draw;submit.lookup=diagnostic_lookup;submit.lookup_user=resources;execute.model=&submit;
      CHECK(bh_draw_submit_resource(&queue,0,101,&position,&angles,.625f)==1&&bh_draw_submit_resource(&queue,0,102,&position,&angles,1)==1,"queue real model failure followed by successful resource callback");
-     CHECK(!bh_render_execute(&execute)&&execute.failed_resource==101&&execute.failed_draw_error==BH_DRAW_RESOURCE_MODEL&&execute.failed_model_error==BH_MODEL_INSTANCE_ARGUMENT&&execute.failed_pose[0]==1&&execute.failed_pose[6]==.625f&&draw.error==BH_DRAW_RESOURCE_OK,"first failure preserves actual model error and pose even after later callback clears shared diagnostics");
+     CHECK(bh_render_execute(&execute)&&execute.failed_resource==101&&execute.failed_draw_error==BH_DRAW_RESOURCE_MODEL&&execute.failed_model_error==BH_MODEL_INSTANCE_ARGUMENT&&execute.failed_pose[0]==1&&execute.failed_pose[6]==.625f&&draw.error==BH_DRAW_RESOURCE_OK,"first failure preserves actual model error and pose even after later callback clears shared diagnostics");
      execute.model=NULL;CHECK(bh_draw_queue_begin(&queue)&&bh_camera_queue_pose(&queue,&position,&angles)==1,"restore camera queue after failure snapshot control");
     }
     valid_fov=projection.fov;projection.fov=0;
-    CHECK(!bh_render_execute(&execute)&&execute.error==BH_RENDER_EXECUTE_CALLBACK,
+    CHECK(bh_render_execute(&execute)&&execute.error==BH_RENDER_EXECUTE_CALLBACK,
           "invalid camera callback failure recorded");
     CHECK(execute.draw_calls==10&&execute.kinds[BH_DRAW_STATE]==6,
           "valid callback failure does not suppress later draw records");

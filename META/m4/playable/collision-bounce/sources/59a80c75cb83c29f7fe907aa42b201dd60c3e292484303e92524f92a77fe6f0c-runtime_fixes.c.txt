@@ -1,0 +1,24 @@
+#include <stdio.h>
+#include "../src/bh_fp.h"
+int __cdecl bh_physics_step_checkpoint(unsigned long *);
+int __cdecl bh_target_construct_checkpoint(const char *,unsigned long *);
+int bh_input_collection_checkpoint(unsigned long *);
+int bh_physics_response_checkpoint(unsigned long *);
+int bh_entity_collision_checkpoint(unsigned long *);
+int bh_sweep_checkpoint(unsigned long *);
+int bh_world_query_checkpoint(unsigned long *);
+int __cdecl bh_player_query_checkpoint(unsigned long *);
+int main(int argc,char **argv) {
+    unsigned long checks=0,n;int failed=0;BHMathEnvironment env;
+    if(!bh_math_environment_enter(&env))return 2;
+    failed+=bh_physics_response_checkpoint(&n);checks+=n;
+    failed+=bh_entity_collision_checkpoint(&n);checks+=n;
+    failed+=bh_sweep_checkpoint(&n);checks+=n;
+    failed+=bh_world_query_checkpoint(&n);checks+=n;
+    n=0;failed+=!bh_player_query_checkpoint(&n);checks+=n;
+    failed+=bh_physics_step_checkpoint(&n);checks+=n;
+    failed+=bh_target_construct_checkpoint(argc>1?argv[1]:NULL,&n);checks+=n;
+    failed+=bh_input_collection_checkpoint(&n);checks+=n;
+    printf("{\"scenario\":\"runtime-fixes\",\"checks\":%lu,\"failures\":%d,\"software_renderer_executed\":false,\"gameplay_automation\":false}\n",checks,failed);
+    bh_math_environment_leave(&env);return failed?1:0;
+}

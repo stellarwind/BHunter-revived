@@ -51,7 +51,7 @@ int __cdecl bh_script_actor_route_advance(BHActorRouteContext *c,BHEntity *a){
  s.controls[2].x=rounded((double)n2.x*dot2+end.x);s.controls[2].y=rounded((double)n2.y*dot2+end.y);s.controls[2].z=rounded((double)n2.z*dot2+end.z);
  s.phase=0;s.duration=rounded((double)length/((double)s.speed*s.speed_scale));duration=(double)s.duration*30;
  if(!_finite(duration)||duration<0||duration>=9223372036854775808.0)return error(c,BH_ACTOR_ROUTE_NUMERICAL);
- s.duration_ticks=(unsigned short)(__int64)duration;s.tick=c->tick;
+ s.duration_ticks=(unsigned short)(__int64)duration;s.tick=bh_actor_route_now(c);
  if(s.sound_frames==1&&s.sound!=BH_SOUND_INVALID&&!c->sound)return error(c,BH_ACTOR_ROUTE_ARGUMENT);
  if(s.sound_frames){--s.sound_frames;if(!s.sound_frames&&s.sound!=BH_SOUND_INVALID){bh_sound_stop(c->sound,s.sound);s.sound=BH_SOUND_INVALID;}}
  if(prev)setlink(prev,0xf4,next);else old->actors=next;if(next)setlink(next,0xf8,prev);

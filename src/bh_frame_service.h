@@ -49,6 +49,8 @@ typedef struct BHFrameService {
    stop then input/CD/sound/network/force-feedback/display cleanup in that order.
    Verified RET0047d680 needs no source stub. Returns status diagnostics while
    original subsequent effects continue after dependency-reported failures.
+   Native sound API failures remain in sound_stats but do not fail the frame;
+   original004791c9 overwrites the sound return without testing it.
    player_input and packet are read after entity refresh/sound; callers must
    keep packet bound to the CURRENT input list's serialized packet when those
    callbacks replace the list. The original00475870 takes (packet,state); our

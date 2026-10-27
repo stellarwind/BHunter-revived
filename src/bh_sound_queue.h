@@ -89,6 +89,9 @@ typedef struct BHSoundTickStats {
     unsigned long clock_calls,status_calls,stop_calls,play_calls,position_calls;
     unsigned long volume_calls,pan_calls,frequency_calls,duplicate_calls,recycled;
     HRESULT last_error;
+    /* First rejected frequency for diagnostics; original cache still advances. */
+    unsigned long frequency_failures,failed_resource,failed_slot;
+    long failed_frequency;
 } BHSoundTickStats;
 /* Complete 0047c200. Resource audible_range and time_scale are explicit loaded
    metadata; phase is decremented by dt, and processing occurs only below zero.

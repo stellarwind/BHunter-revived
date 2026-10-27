@@ -1,0 +1,66 @@
+#include "bh_script_actor_draw.h"
+#include "bh_draw_submit.h"
+#include "bh_round.h"
+#include "bh_fp.h"
+#include "bh_camera_curve.h"
+#include "bh_rotation.h"
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include <float.h>
+static float stored(double v){float f;bh_round_float(&f,v);return f;}
+static void smoke(BHScriptActorDrawContext *c,const BHVec3 *p){
+ BHVec3 velocity,acceleration={0,-.003f,0},point;float angular,angle;
+ if(rand()>=0x800)return;
+ velocity.x=stored((double)(rand()-0x4000)*(1.0/131072.0));velocity.y=stored((double)(rand()-0x4000)*(1.0/131072.0));velocity.z=stored((double)(rand()-0x4000)*(1.0/131072.0));
+ point=*p;point.y=stored((double)p->y-(-2.0));angular=stored((double)(rand()-0x4000)*(1.0/16384.0));angle=stored((double)rand()*(1.0/512.0));
+ bh_script_particle_create(c->particles,c->smoke_resource,3,&point,&velocity,&acceleration,1,angle,15,angular,.9f,.95f,2.5f,.25f);
+}
+int __cdecl bh_script_actor_draw(BHScriptActorDrawContext *c,BHEntity *a){
+ BHActorRouteState s;BHScriptActorPath path;BHVec3 p,q,angles={0,0,0},offset,velocity;
+ unsigned short elapsed;short signed_elapsed,signed_duration;float t;double sn,cs;unsigned long resource,frames=4;
+ if(!c||!c->queue||!c->particles||!a){if(c)c->error=BH_ACTOR_ROUTE_ARGUMENT;return 0;}
+ if(!bh_math_environment_supported()){c->error=BH_ACTOR_ROUTE_NUMERICAL;return 0;}
+ path=bh_script_actor_route_path(a);if(path!=bh_script_actor_curve&&path!=bh_script_actor_linear){c->error=BH_ACTOR_ROUTE_ARGUMENT;return 0;}
+ bh_actor_route_read(a,&s);elapsed=(unsigned short)((c->clock?bh_actor_route_now(c->clock):c->tick)-s.tick);memcpy(&signed_elapsed,&elapsed,2);memcpy(&signed_duration,&s.duration_ticks,2);
+ t=stored((double)signed_elapsed/signed_duration);path(t,&p,s.controls,s.controls+1,s.controls+2,s.controls+3);
+ path(stored((double)t-(-1.0/30.0)),&q,s.controls,s.controls+1,s.controls+2,s.controls+3);
+ angles.x=stored(atan2((double)q.x-p.x,(double)q.z-p.z));
+ smoke(c,&p);
+ sn=sin(angles.x);cs=cos(angles.x);memcpy(&offset,(char*)a+0x174,12);
+ p.x=stored((double)p.x+((double)offset.z*sn-(double)offset.x*cs));p.y=stored((double)offset.y+p.y);
+ p.z=stored((double)p.z+(double)offset.z*cs+(double)offset.x*sn);
+ memcpy(&resource,(char*)a+0x114,4);bh_draw_submit_resource(c->queue,0,resource,&p,&angles,1);
+ velocity.x=stored(((double)q.x-p.x)*30);velocity.y=stored(((double)q.y-p.y)*30);velocity.z=stored(((double)q.z-p.z)*30);
+ memcpy((char*)a+0x48,&velocity,12);memcpy((char*)a+0x108,&frames,4);c->error=BH_ACTOR_ROUTE_OK;return 1;
+}
+int __cdecl bh_script_actor_vehicle_draw(BHScriptActorDrawContext *c,BHEntity *a){
+ BHActorRouteState s;BHVec3 p,q,previous,angles,offset,velocity,glow,local={1.5f,-5,13.75f};BHMat34 m;
+ unsigned short elapsed;short se,sd;float t,dx,dz,px,pz,alpha,other,size;double sn,cs,bank;unsigned long resource,frames=4;
+ if(!c||!c->queue||!c->particles||!a){if(c)c->error=BH_ACTOR_ROUTE_ARGUMENT;return 0;}
+ if(!bh_math_environment_supported()){c->error=BH_ACTOR_ROUTE_NUMERICAL;return 0;}
+ bh_actor_route_read(a,&s);elapsed=(unsigned short)((c->clock?bh_actor_route_now(c->clock):c->tick)-s.tick);memcpy(&se,&elapsed,2);memcpy(&sd,&s.duration_ticks,2);t=stored((double)se/sd);
+ bh_camera_curve(stored((double)t-1.0/30.0),&previous,s.controls,s.controls+1,s.controls+2,s.controls+3);
+ bh_camera_curve(t,&p,s.controls,s.controls+1,s.controls+2,s.controls+3);
+ bh_camera_curve(stored((double)t-(-1.0/30.0)),&q,s.controls,s.controls+1,s.controls+2,s.controls+3);
+ memcpy(&offset,(char*)a+0x15c,12);previous.x=stored((double)offset.x+previous.x);previous.y=stored((double)offset.y+previous.y);previous.z=stored((double)offset.z+previous.z);
+ p.x=stored((double)offset.x+p.x);p.y=stored((double)offset.y+p.y);p.z=stored((double)offset.z+p.z);
+ q.x=stored((double)offset.x+q.x);q.y=stored((double)offset.y+q.y);q.z=stored((double)offset.z+q.z);
+ dx=stored((double)q.x-p.x);dz=stored((double)q.z-p.z);px=stored((double)p.x-previous.x);pz=stored((double)p.z-previous.z);
+ bank=(((double)pz*dx-(double)px*dz)/sqrt((double)dz*dz+(double)dx*dx))/sqrt((double)pz*pz+(double)px*px);
+ angles.z=stored(bank*6.283185307179586);angles.x=stored(atan2(dx,dz));angles.y=stored(((double)p.y-q.y)*.3);
+ if(c->clock&&c->clock->nonfinite_curve&&(!_finite(angles.x)||!_finite(angles.y)||!_finite(angles.z)))
+  c->clock->nonfinite_curve(c->clock->nonfinite_user,0x4366d0,a,&s,bh_actor_route_now(c->clock),&previous,&p,&q,&angles);
+ smoke(c,&p);sn=sin(angles.x);cs=cos(angles.x);memcpy(&offset,(char*)a+0x174,12);
+ p.x=stored((double)p.x+((double)offset.z*sn-(double)offset.x*cs));p.y=stored((double)offset.y+p.y);p.z=stored((double)p.z+(double)offset.x*sn+(double)offset.z*cs);
+ memcpy(&resource,(char*)a+0x114,4);bh_draw_submit_resource(c->queue,0,resource,&p,&angles,1);
+ if(resource==c->glowing_model){
+  memset(&m,0,sizeof(m));m.m[0][0]=m.m[1][1]=m.m[2][2]=1;bh_mat34_translate_world(p.x,p.y,p.z,&m);
+  bh_mat34_rotate_y(angles.x,&m);bh_mat34_rotate_x(angles.y,&m);bh_mat34_rotate_z(angles.z,&m);bh_mat34_transform_point(&m,&local,&glow);
+  sn=sin((double)c->animation_time*.5);alpha=stored((sn*.5-(-1.0))*.5);other=stored(.5-sn*.5*.5);
+  size=stored(((double)alpha-(-1.0))*6);bh_draw_billboard(c->queue,3,c->glow_first,&glow,size,size,0,0,alpha);
+  size=stored(((double)other-(-1.0))*5);bh_draw_billboard(c->queue,3,c->glow_second,&glow,size,size,0,0,other);
+ }
+ velocity.x=stored(((double)q.x-p.x)*30);velocity.y=stored(((double)q.y-p.y)*30);velocity.z=stored(((double)q.z-p.z)*30);
+ memcpy((char*)a+0x48,&velocity,12);memcpy((char*)a+0x108,&frames,4);c->error=BH_ACTOR_ROUTE_OK;return 1;
+}

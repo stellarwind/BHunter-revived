@@ -14,6 +14,20 @@ static void put(BHEntity *e,unsigned long o,unsigned long v){memcpy((unsigned ch
 static float data(const BHDrawCommand *d,unsigned int i){float f;memcpy(&f,d->words+i,4);return f;}
 static int equal(float a,double b){return fabs((double)a-b)<.00001;}
 static void identity(BHMat34 *m){memset(m,0,sizeof(*m));m->m[0][0]=m->m[1][1]=m->m[2][2]=1;}
+static void launch_original_cases(BHWeaponFireContext *fire,BHEntity *weapon,BHEntity *source,BHEntityPool *pool){
+ static const struct {unsigned long input[18],output[6];} cases[]={
+#include "ballistic_launch_golden.h"
+ };
+ unsigned long offsets[]={12,36,48,24,72,640},i,j;BHEntity *shot;BHWeaponCommonState *state=bh_weapon_common_state(weapon);
+ for(i=0;i<128;++i){
+  for(j=0;j<6;++j)memcpy((char*)source+offsets[j],cases[i].input+j*3,12);
+  state->ammo=1;state->word_e8=(i&1)*2;srand(i+17);
+  CHECK(bh_weapon_fire_ballistic(fire,weapon,source),"original arithmetic case creates connected projectile");shot=pool->active;
+  CHECK(!memcmp(&shot->position,cases[i].output,12),"muzzle words match original retained x87 arithmetic");
+  CHECK(!memcmp(&shot->origin,cases[i].output+3,12),"velocity words match original X retention and Y/Z spills");
+  CHECK(bh_entity_release(pool,shot),"release checked projectile");
+ }
+}
 int __cdecl bh_weapon_fire_checkpoint(unsigned long *count){BHEntityPool pool;BHSoundQueue sound;BHDrawQueue queue;BHProjectileLifetime lifetime;BHProjectileDrawContext draw;BHProjectileCreateContext create;BHBallisticProjectileContext ballistic;BHHomingProjectileContext homing;BHScriptParticleContext particles;BHContactEffects contacts;BHFlashFlareContext flash;BHHitMarkerContext markers;BHWorldGeometry world;BHWorldSegmentRoom room;BHWorldSegmentContext segment;BHMathEnvironment fp;
  BHEntity *source,*target,*e,*recycled;BHVec3 p={3,6,9},v={30,60,90};BHSoundResource *resource;BHSoundVoice *voice;BHDrawCommand *d;unsigned long next=77,before,generation,handle;unsigned int i;int expected,actual;long packet[2];BHWeaponFireContext fire;BHAreaProjectileContext area;BHNetworkTransport transport;BHMessageState messages;BHMessagePanel panel;BHTextQueue text;BHAtlasPage page;BHWeaponCommonState *state;BHEntity *weapon,*shot;unsigned long warned=0;BHVec3 basis={1,0,0};
  memset(&ballistic,0,sizeof(ballistic));memset(&homing,0,sizeof(homing));memset(&draw,0,sizeof(draw));memset(&create,0,sizeof(create));memset(&world,0,sizeof(world));memset(&room,0,sizeof(room));memset(&lifetime,0,sizeof(lifetime));memset(&flash,0,sizeof(flash));memset(&markers,0,sizeof(markers));
@@ -32,7 +46,7 @@ int __cdecl bh_weapon_fire_checkpoint(unsigned long *count){BHEntityPool pool;BH
  state->ammo=2;state->hud.target=target;state->delay=0;fire.remote[2]=target;before=pool.used;CHECK(bh_weapon_fire_homing(&fire,weapon,source)&&pool.used==before+1,"actual homing constructor closure");shot=pool.active;CHECK(shot->step==bh_homing_projectile_tick&&word(shot,0x12c)==(unsigned long)target&&state->ammo==1&&state->word_e8==1,"actual target and phase");CHECK(fire.packet[9]==2&&fire.packet[10]==4&&fire.packet[11]==2&&fire.packet[12]==2,"actual eight-peer target resolution");CHECK(number(source,0x2a4)==2,"homing original four-unit recoil");before=pool.used;for(i=0;i<3;i++)CHECK(bh_weapon_fire_homing(&fire,weapon,source),"homing idle phases");CHECK(pool.used==before&&state->word_e8==4,"homing skips three phases");
  state->word_e8=0;state->ammo=0;CHECK(bh_weapon_area_start(&fire,weapon,source)&&warned==1&&messages.ring_count==1,"actual empty-ammo cue and actual panel-bound message owner");CHECK(strstr(messages.ring[0],"fresh out of ammo")!=NULL,"exact original empty-ammo message");CHECK(bh_weapon_area_start(&fire,weapon,source)&&messages.ring_count==1&&fire.empty_cues==2,"one-time message while each attempt cues");state->ammo=2;CHECK(bh_weapon_area_start(&fire,weapon,source)&&state->ammo==1&&state->word_e8==5&&fire.packet[9]==5&&fire.packet[10]==1&&fire.packet[11]==4,"actual burst arm and envelope");CHECK(bh_weapon_area_start(&fire,weapon,source)&&state->ammo==1,"active burst rejects retrigger");
  for(i=5;i;i--){before=pool.used;CHECK(bh_weapon_area_tick(&fire,weapon,source)&&pool.used==before+1&&state->word_e8==i-1,"actual burst creates one area projectile per phase");shot=pool.active;CHECK(shot->step==bh_area_projectile_tick&&shot->origin.x==300,"real source area callback and heading scaling");CHECK(number(shot,0xe8)==(i==5||i==1?.5f:i==4||i==2?.75f:1.0f),"five-point original strength envelope");}
- CHECK(fire.bursts==5,"exact five area burst deliveries");before=pool.used;CHECK(bh_weapon_area_tick(&fire,weapon,source)&&pool.used==before,"zero burst state has no effects");CHECK(bh_message_panel_close(&panel)&&bh_network_transport_dispose(&transport),"real panel and transport lifetimes close");CHECK(bh_entities_dispose(&pool)&&bh_sound_queue_dispose(&sound)&&bh_draw_queue_dispose(&queue),"actual owners dispose");bh_math_environment_leave(&fp);if(count)*count+=checks;return !failures;
+ CHECK(fire.bursts==5,"exact five area burst deliveries");before=pool.used;CHECK(bh_weapon_area_tick(&fire,weapon,source)&&pool.used==before,"zero burst state has no effects");launch_original_cases(&fire,weapon,source,&pool);CHECK(bh_message_panel_close(&panel)&&bh_network_transport_dispose(&transport),"real panel and transport lifetimes close");CHECK(bh_entities_dispose(&pool)&&bh_sound_queue_dispose(&sound)&&bh_draw_queue_dispose(&queue),"actual owners dispose");bh_math_environment_leave(&fp);if(count)*count+=checks;return !failures;
 }
 #ifdef BH_WEAPON_FIRE_STANDALONE
 int main(void){unsigned long n=0;int ok=bh_weapon_fire_checkpoint(&n);printf("weapon-fire: %lu checks, %lu failures\n",n,failures);return !ok;}

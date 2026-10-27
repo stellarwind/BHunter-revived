@@ -12,7 +12,7 @@ static long take,accepted_response;
 static void __cdecl actor_query(BHEntity *actor,void *raw) {
     long event=*(long*)raw;(void)actor;
     if(event==3){BHEntityPositionPacket *p=(BHEntityPositionPacket*)raw;
-        ++positioned;p->position.x=0;p->position.y=0;p->position.z=0;
+        ++positioned;p->position=actor->position;
     }else if(event==13){BHPickupTakePacket *p=(BHPickupTakePacket*)raw;
         ++offered;CHECK(p->type==2 && p->variant==0 && p->token==7);
         p->accepted=accepted_response;p->consumed=take;
@@ -96,6 +96,16 @@ int bh_pickup_checkpoint(unsigned long *count) {
     CHECK(third && !bh_pickup_state(third)->room && !room.pickups);
     bh_pickup_state(third)->phase=0;bh_pickup_tick(third);
     CHECK(offered==1 && positioned==0 && !context.head && pool.used==2);
+    /* Original00441730..00441772 FST/FMUL sequence gives
+       35.99999983094227 < 36, whereas squaring rounded differences gives
+       36.00000036876537. This is an original-derived boundary case. */
+    point.x=-1.8308522701263428f;point.y=-1.3621115684509277f;point.z=1.9133549928665161f;
+    a->position.x=-3.308609962463379f;a->position.y=-5.031146049499512f;a->position.z=6.4249420166015625f;
+    context.outside_actors=NULL;room.actors=a;positioned=offered=0;
+    third=bh_pickup_spawn(&context,&point,2,0,1,1,7,0);CHECK(third!=NULL);
+    bh_pickup_state(third)->phase=0;bh_pickup_tick(third);
+    CHECK(offered==1 && positioned==1 && !context.head && pool.used==2);
+    if(context.head)bh_pickup_cleanup(context.head);
     bh_entity_release(&pool,a);bh_entity_release(&pool,b);
     CHECK(bh_entities_valid(&pool));bh_entities_dispose(&pool);
     if(count)*count=checks;

@@ -1,0 +1,41 @@
+#ifndef BH_INPUT_COLLECTION_H
+#define BH_INPUT_COLLECTION_H
+#include <windows.h>
+#include <mmsystem.h>
+#include "bh_input_evaluate.h"
+/* Real Win32 APIs are the default. Overrides exist for isolated source tests;
+   they are not automatic-play controllers or substitutes in a game target. */
+typedef struct BHInputCollectionApi {
+    MMRESULT (WINAPI *joystick)(UINT,LPJOYINFOEX);
+    BOOL (WINAPI *cursor)(LPPOINT);
+    BOOL (WINAPI *recenter)(int,int);
+} BHInputCollectionApi;
+typedef enum BHInputCollectionError {BH_INPUT_COLLECTION_OK,BH_INPUT_COLLECTION_ARGUMENT,
+    BH_INPUT_COLLECTION_TOPOLOGY,BH_INPUT_COLLECTION_DEVICE,BH_INPUT_COLLECTION_EVALUATE} BHInputCollectionError;
+typedef struct BHInputCollection {
+    BHInputSnapshot *snapshot;BHPlayerInputOwner *lists;
+    long enabled[2],calibrated[2];unsigned long capabilities[2],deadzone_mask;
+    float minimum[8],maximum[8];long delta[2];
+    BHInputCollectionApi api;MMRESULT last_joystick[2];BOOL last_cursor,last_recenter;
+    BHInputCollectionError error;
+    int disable_mouse_motion; /* explicit source preference; buttons remain live */
+} BHInputCollection;
+/* Explicit binding/default adapter, not recovery of00473d60. It initializes
+   fresh snapshot/collection storage to verified startup defaults without
+   capturing devices, allocating key names or moving the user's cursor. The
+   input list owner is borrowed and must already be initialized. */
+int __cdecl bh_input_collection_init(BHInputCollection *,BHInputSnapshot *,BHPlayerInputOwner *);
+/* Complete004744f0. Poll0/1, calibrate or normalize X/Y/Z/R,4 buttons each,
+   cursor read/recenter(160,100),16-bit accumulated/raw mouse pairs, filtered
+   mouse axes, real binding evaluation and255-byte previous-state update.
+   Calibration activates after a strict >.5 observed range; the current poll
+   still only calibrates. Active lower clamp compares retained value, upper
+   clamp reloads stored float. Every enabled list evaluates before history copy.
+   Return1 with changed key-byte count0..255 on success. Source guard/native
+   failure returns0; earlier joystick/mouse/list effects may remain. Original
+   unchecked API failure used uninitialized stack data and is not reproduced.
+   Native binding physically recenters the cursor, as the game requires. Do
+   not invoke it as a diagnostic on the user's desktop. Source tests override
+   APIs explicitly and never control any game or external window. */
+int __cdecl bh_input_collect(BHInputCollection *,unsigned long *changed);
+#endif

@@ -88,7 +88,7 @@ int __cdecl bh_weapon_arc_track(BHWeaponArcLifecycleContext *c,BHEntity *weapon,
         if(s->hud.charge>32)request(c,c->release_sound,player,1,1);
         return c->error==BH_WEAPON_ARC_LIFECYCLE_OK;
     }
-    actor=c->head;
+    actor=c->head_owner?*c->head_owner:c->head;
     while(actor){
         if(c->visited>=c->limit){error(c,BH_WEAPON_ARC_LIFECYCLE_LIMIT);break;}++c->visited;
         if(!query(c,actor,&packet))break;

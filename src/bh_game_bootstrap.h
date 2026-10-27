@@ -47,6 +47,7 @@ struct BHGameBootstrap {
  float remote_age[8];char computer_name[256],player_name[21];
  unsigned long menus_created,rows_created,resources_loaded,aliases,profile_copies;
  int error;
+ int diagnostic_box; /* count-zero isolated level boot; omit flyby/fades */
 };
 /* Whole004474c0. Declarative literal data retains all original resource loads,
    aliases, sound arguments, eighteen menus and115static rows. Dynamic provider

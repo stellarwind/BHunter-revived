@@ -1,0 +1,70 @@
+{
+  "original_code_executed": false,
+  "byte_verified_functions": [
+    {
+      "path": "META/m4/hour443/b/004124d0.disassembly.json",
+      "role": "engine_candidate",
+      "address": "004124d0",
+      "bytes": 3916,
+      "instructions": 1015,
+      "sha256": "a230b4b4d11bf78467b9562ebe7dab5dd8d2b6e904c670699d4a80c730e20cee"
+    },
+    {
+      "path": "META/m4/target550/a/original/0041d7c0.disasm.json",
+      "role": "game",
+      "address": "0041d7c0",
+      "bytes": 3749,
+      "instructions": 1110,
+      "sha256": "4a3c86fc2d75ec55600bdd1aabf9e7e5d5c3ed995b289e9969b08da642a73bde"
+    },
+    {
+      "path": "META/m4/entity-collision/original/0040b410.disassembly.json",
+      "role": "engine_candidate",
+      "address": "0040b410",
+      "bytes": 1582,
+      "instructions": 483,
+      "sha256": "1d1877bb852a84e25bbead92fd496c2264d60afb6567e565eef1d66cca6beacd"
+    },
+    {
+      "path": "META/m4/swept-collision/original/0044da20.disassembly.json",
+      "role": "engine_candidate",
+      "address": "0044da20",
+      "bytes": 1595,
+      "instructions": 458,
+      "sha256": "c7bd1f3bd6740240fb53b423d4d21eeb321710cf04f6d5e841629a0e9c7e8151"
+    }
+  ],
+  "boundary_roles": "Existing whole game/engine collision owners; no CRT/library/EH/helper recovery assignments or independent shared-tail counts.",
+  "findings": [
+    {
+      "id": "lost-player-contact-state",
+      "status": "fixed",
+      "original": "004124d0 calls event2 then retains entity acceleration/spin fields through finish. 0041d7c0 case2 subtracts normal impulse scaled by friction*900, applies contact torque scaled by mass*270/2, and damps spin by.85.",
+      "source_before": "Player query modified entity+60/+6c/+54; separate BHPhysicsState was republished over those writes. Before-fix force/spin assertions confirm the loss; a third assertion incorrectly assumed a nonzero torque for its centered mesh contact and was replaced with an explicit off-center packet.",
+      "source_after": "Player constructor binds query.contact_physics. The actual event2 owner mirrors common entity state to that component before the enclosing physics finish; startup verifies the binding.",
+      "validation": "Actual decoded collision/sweep/contact chain with actual installed player query; bounce force and .85*.98 spin damping survive; controlled off-center event verifies angular-force transfer. A final negative control deliberately omits contact_physics and verifies the same real collision loses its bounce force and spin damping."
+    },
+    {
+      "id": "world-overlap-classification",
+      "status": "fixed",
+      "original": "00412788 reads selected entity+8;0041278d JZ skips last-clear recovery for kind0 physical actors. Nonzero world/prop kind uses model+f8 and matrices+150/+180 for overlap retest.",
+      "source_before": "Last-clear recovery was gated on BH_WORLD_HIT_ACTOR instead of BH_WORLD_HIT_GEOMETRY.",
+      "source_after": "Recovery applies to world/prop geometry only. World penetration restores last-clear without RNG/effects; actor overlap follows ordinary contact path, emitting callbacks only for nonzero impulses.",
+      "validation": "Distinct real mesh fixtures for an embedded world collision and an embedded physical-actor collision."
+    }
+  ],
+  "compared_contracts": [
+    "Integrate acceleration/spin over dt, reset force accumulators, then perform broad/narrow collision detection.",
+    "Original endpoint mesh tests, three bisections and optional origin-segment fallback retained; no replacement continuous solver introduced.",
+    "Tangential slide uses (movement-normal*dot)*(friction*(1-first_fraction)); second sweep disables segment fallback.",
+    "Normal push30+contact_speed*.00125 and signed impulse partition by masses retained; negative mass world objects do not receive a moving-body impulse.",
+    "Moving world geometry subtracts per-tick translation and retains original1.5 contact-motion scaling.",
+    "Final linear velocity is accepted displacement/dt*.995; angular damping.98 follows callback damping.85; original gravity sign retained.",
+    "Ordinary contacts and special surface flags2/4/8 retain separate response arithmetic; original PC24 rounding behavior remains unresolved."
+  ],
+  "limits": [
+    "Static original comparison and source-only fixtures; no original or source gameplay execution.",
+    "This is a selected collision/bounce audit, not proof of every collision mesh, portal, contact normal or extreme-speed case.",
+    "Human tunnel-wall and prop comparisons remain pending; no software-renderer tests."
+  ]
+}

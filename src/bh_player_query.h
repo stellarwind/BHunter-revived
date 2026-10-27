@@ -6,6 +6,7 @@
 #include "bh_script_lifetime.h"
 #include "bh_messages.h"
 #include "bh_network_transport.h"
+#include "bh_physics_response.h"
 typedef union BHPlayerQueryPacket {long words[10];float floats[10];} BHPlayerQueryPacket;
 typedef struct BHPlayerQueryContext {
  BHEntity *player;BHWeaponRegistry *weapons;BHSoundQueue *sound;
@@ -17,6 +18,10 @@ typedef struct BHPlayerQueryContext {
  BHWorldGeometry *const *world;const unsigned short *world_index;
  unsigned long contact_side,contact_axial,primary_cue,secondary_cue;
  BHVec3 *sound_velocity;
+ /* Count-zero contact bridge. The original callback and physics shared entity
+    fields; mirror event2 writes into the source physics component before the
+    enclosing step finishes/publishes. Borrowed from the real player owner. */
+ BHPhysicsState *contact_physics;
  unsigned long calls,random_calls,broadcasts,sound_requests,packets;
  int error;
 } BHPlayerQueryContext;

@@ -6,6 +6,7 @@ typedef struct BHActorVehicleDrawContext {
  BHDrawQueue *queue;BHSoundQueue *sound;
  unsigned long damage_resource,glowing_model,glow_first,glow_second;
  unsigned short tick;long animation_clock;BHActorRouteError error;
+ const BHActorRouteContext *clock; /* same live004dfac4 as route updates */
 } BHActorVehicleDrawContext;
 /* Whole00434920; borrowed queue/sound/resource bindings. Does not draw natively
    or play audio: actual restored queue owners retain those operations. */

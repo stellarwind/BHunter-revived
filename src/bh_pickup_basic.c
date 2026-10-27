@@ -30,7 +30,7 @@ BHEntity *__cdecl bh_pickup_basic_spawn(BHPickupContext *context,
     /* These checks validate the explicit source binding before side effects. */
     if(!context || !context->pool || !position || !context->resources ||
        !context->first_world || !context->world_count ||
-       (context->room_count && !context->rooms) || type<0 || type>=10 ||
+       (context->room_count && !context->rooms) || type<0 ||
        (unsigned long)type>=context->resource_count ||
        context->default_draw!=bh_pickup_default_step || !context->draw_user)return NULL;
     entity=bh_entity_acquire(context->pool);

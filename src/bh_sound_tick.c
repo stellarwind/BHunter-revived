@@ -56,7 +56,7 @@ static void stop(BHSoundQueue *q,BHSoundResource *r,unsigned long slot,BHSoundTi
 }
 static void parameters(BHSoundQueue *q,BHSoundResource *r,BHSoundVoice *v,unsigned long slot,
     float master,BHSoundTickStats *s) {
-    float attenuation,factor;double pan_value;long volume,pan,frequency;
+    float attenuation,factor;double pan_value;long volume,pan,frequency;HRESULT hr;
     spatial(q,r,v,&attenuation,&pan_value,&factor);
     volume=clamp(truncate_low(((double)v->volume+attenuation)+master),-10000,0);
     if(r->streaming && volume< -3500) {if(r->playing[slot])stop(q,r,slot,s);return;}
@@ -73,7 +73,9 @@ static void parameters(BHSoundQueue *q,BHSoundResource *r,BHSoundVoice *v,unsign
         ++s->pan_calls;native_result(q,s,IDirectSoundBuffer_SetPan(r->buffers[slot],pan));r->cached_pan[slot]=pan;
     }
     if(r->cached_frequency[slot]!=frequency) {
-        ++s->frequency_calls;native_result(q,s,IDirectSoundBuffer_SetFrequency(r->buffers[slot],(DWORD)frequency));r->cached_frequency[slot]=frequency;
+        ++s->frequency_calls;hr=IDirectSoundBuffer_SetFrequency(r->buffers[slot],(DWORD)frequency);
+        if(hr!=DS_OK){if(!s->frequency_failures){s->failed_resource=r->index;s->failed_slot=slot;s->failed_frequency=frequency;}++s->frequency_failures;}
+        native_result(q,s,hr);r->cached_frequency[slot]=frequency;
     }
     if(r->streaming ? !r->playing[slot]:v->pending!=0) {
         if(!r->streaming)v->pending=0;

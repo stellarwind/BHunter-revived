@@ -68,6 +68,13 @@ int __cdecl bh_physics_step_init(BHPhysicsStepContext *, BHEntityPool *, BHPhysi
                                  unsigned long, const BHPhysicsStepWorld *, unsigned long,
                                  BHGeometry *const *, unsigned long, BHPhysicsEffects *,
                                  int fallback, const BHSceneAllocator *);
+/* Count-zero roster adapter. Scene ring/world bindings and geometry topology of
+   surviving identities must be unchanged. Transfers unchanged sweep workspaces
+   and scene validation storage; replaces actor/candidate arrays transactionally.
+   Drops removed geometry borrows before callers recycle collision slots. Caller
+   must not step after a rejected in-place roster edit until sync succeeds. */
+int __cdecl bh_physics_step_rebind(BHPhysicsStepContext *, BHPhysicsStepBody *,
+                                   unsigned long, BHGeometry *const *, unsigned long);
 int __cdecl bh_physics_step_dispose(BHPhysicsStepContext *);
 /* Count-zero boundary views, for actual original common physics fields only. */
 int __cdecl bh_physics_step_read_entity(BHPhysicsState *, const BHEntity *);

@@ -1,0 +1,98 @@
+{
+  "passed": true,
+  "validation_kind": "focused_runtime_fixes",
+  "prior_session": "META/m4/playable/pickup-box/validation.json",
+  "source_snapshots": {
+    "src/bh_actor_damage.c": "META/m4/playable/original-gameplay-review/sources/b9651b0c09d23724970c746f2a06f0b3532ec90e9d99028b8a5ed4b6e0b6756f-bh_actor_damage.c.txt",
+    "src/bh_actor_response.c": "META/m4/playable/original-gameplay-review/sources/3f1bfbe4e2a2742e7f36cd9fb860e7fea98aae75c1adcc1d8a8cb66edba2c6b5-bh_actor_response.c.txt",
+    "src/bh_pickup_basic.c": "META/m4/playable/original-gameplay-review/sources/bfa9b1b829ce8a2fa567fe05bbe8f02338c450c03337d11f21ae6dff6cd109e9-bh_pickup_basic.c.txt",
+    "tests/actor_attack.c": "META/m4/playable/original-gameplay-review/sources/842fada1f2f3538717509cfc1457e083591647569468d00bc5a668d769e608a2-actor_attack.c.txt",
+    "tests/actor_damping_golden.h": "META/m4/playable/original-gameplay-review/sources/19233f876995360da84d11a7f48f771b713dee4fcc446aa232d0315797709c2b-actor_damping_golden.h.txt",
+    "tests/actor_response.c": "META/m4/playable/original-gameplay-review/sources/021da409d5fb47e5b921ef60fbd6e1f927b4c05a895e875a916c179b21137c08-actor_response.c.txt",
+    "tests/ballistic_projectile.c": "META/m4/playable/original-gameplay-review/sources/a0cb3df37a9f132da0173cd94d198adca277476af19c6ce5503ddb6d301ac47f-ballistic_projectile.c.txt",
+    "tests/bh_weapon_fire.c": "META/m4/playable/original-gameplay-review/sources/1363ee092d971f6291bd64b96dc78b536a9e83372f3344f558b11333f7ebab90-bh_weapon_fire.c.txt",
+    "tests/pickup.c": "META/m4/playable/original-gameplay-review/sources/0da81ab238ef35daff577aac920dcab509a10d7cd86b0c8e993c0fec63cff6b8-pickup.c.txt",
+    "tests/pickup_basic.c": "META/m4/playable/original-gameplay-review/sources/ef0eced544c1b7ab00658def40e0bf55bb236c593f25feaf1d2a93a119c8db24-pickup_basic.c.txt",
+    "tests/runtime_fixes.c": "META/m4/playable/original-gameplay-review/sources/d619c8d03cdb9913a6a7e2fffa7d313cdc9286d7a5910b44e6c62158acb9353a-runtime_fixes.c.txt",
+    "tests/script_vm.c": "META/m4/playable/original-gameplay-review/sources/47b81b8cff6d85d66e4941d383d4c8a7dfda0228ff56a79fb33b899c33a5c742-script_vm.c.txt",
+    "tests/script_wait.c": "META/m4/playable/original-gameplay-review/sources/5b985d1a88d8cb00a05ed8643ae13eb3a8a1aacfa62b0d82c2d1932049880463-script_wait.c.txt",
+    "tests/world_segment.c": "META/m4/playable/original-gameplay-review/sources/c0592b09e8940767081492b48044f648d98252e87400e2c441435cb5795a50b9-world_segment.c.txt",
+    "tools/check_playable.py": "META/m4/playable/original-gameplay-review/sources/829575e1e9ff54da5de4e57ddd7c3b5bd147a1c6a96575d9b025e91f4d21ef11-check_playable.py.txt",
+    "tools/check_runtime_fixes.py": "META/m4/playable/original-gameplay-review/sources/241200db53b0a8ad053ad0bf47efabd6e082515bd9ad66015720c63c7320d102-check_runtime_fixes.py.txt",
+    "tools/record_runtime_fixes.py": "META/m4/playable/original-gameplay-review/sources/7dffbb9ea67844d1a21625ae079aad4374aae386f99f13409a36f4506331338f-record_runtime_fixes.py.txt",
+    "tools/record_original_gameplay_review.py": "META/m4/playable/original-gameplay-review/sources/0cbbc823e84907d679935eec08dc688b306d46b48e0e3be0926b1954fcc9bf9f-record_original_gameplay_review.py.txt",
+    "tools/check_actor_damping_original.py": "META/m4/playable/original-gameplay-review/sources/64f1f733bb8c8bccdd74162ad499794ebcf4543242717c1ccc975d7b241e3d0a-check_actor_damping_original.py.txt",
+    "tests/actor_damping_original.c": "META/m4/playable/original-gameplay-review/sources/300138d1b0b8dbbbd805f61cfa55e9f29f56677fdefb97db67a95fd4f17f99d7-actor_damping_original.c.txt"
+  },
+  "original_owners_added": 0,
+  "software_renderer_tests_after_user_restriction": 0,
+  "game_build_translation_units": 299,
+  "focused_translation_units": 327,
+  "original_code_executed": true,
+  "gameplay_automation": false,
+  "changes": [
+    "Allow original scripted basic pickup types20/21 using the actual22-entry resource table.",
+    "Restore original retained displacement, sqrt, damping and asymmetric X/Y/Z spill order in traffic damage004357d0 and response00439910.",
+    "Add immutable-original instruction oracle with failing-before171/256 and passing-after0/256; retain captured outputs in source-only regression checks.",
+    "Expand focused connected VM, pickup, weapon, projectile, wait, segment and actor checks; add original-derived strict pickup-radius rounding boundary."
+  ],
+  "limits": [
+    "Function-by-function static flow/ABI review is distinct from byte matching. No whole-function or whole-game1:1 equivalence claim; review scope is explicit for every owner.",
+    "Independent dynamic evidence is limited to original00439910 damping instructions underPC53 and their instruction-identical arithmetic in004357d0;256 finite input cases, six output words each. PC24 remains unresolved.",
+    "Original ballistic zero-vector normalization leaves output unwritten; source fails that degenerate path. Original wreck orientation is also unwritten input supplied by an explicit adapter. These are unresolved fidelity boundaries, not proven matches.",
+    "Source validation/generation/topology/capacity/depth guards are adapters. Full numerical/RNG/mutation equivalence outside the reviewed scopes, other projectile families, CD audio and peer gameplay remain unverified.",
+    "No software-renderer tests or automated gameplay ran. Hardware static startup is integration evidence only. Historical paired box traces do not compare against the original and do not validate this executable."
+  ],
+  "refreshed_variants": [
+    "00441b80-functional-c-pickup-basic-original-gameplay-review",
+    "004357d0-functional-c-target600-ai-collision-audit-live-actor-clock-original-gameplay-review",
+    "00435e80-functional-c-target600-ai-collision-audit-live-actor-clock-original-gameplay-review",
+    "00439910-functional-c-target656-response-ai-collision-audit-live-actor-clock-original-gameplay-review",
+    "0043a1d0-functional-c-target656-response-ai-collision-audit-live-actor-clock-original-gameplay-review",
+    "target600-bh_actor_damage-source-bindings-ai-collision-audit-live-actor-clock-original-gameplay-review",
+    "target656-response-bh_actor_response-bindings-ai-collision-audit-live-actor-clock-original-gameplay-review"
+  ],
+  "focused_totals": [
+    {
+      "scenario": "runtime-fixes",
+      "checks": 4788,
+      "failures": 0,
+      "software_renderer_executed": false,
+      "gameplay_automation": false
+    },
+    {
+      "scenario": "runtime-fixes",
+      "checks": 4793,
+      "failures": 0,
+      "software_renderer_executed": false,
+      "gameplay_automation": false
+    }
+  ],
+  "benchmarks": [
+    "Physics roster source benchmark: worlds5815 iterations3 full_init_ms=16.488700 rebind_ms=0.076400",
+    "Physics roster source benchmark: worlds5815 iterations3 full_init_ms=16.742100 rebind_ms=0.107900"
+  ],
+  "dependencies": {
+    "ownership": "Existing source adapters only; no new original function or provenance admission.",
+    "physics": "BHPhysicsStepContext owns sweep queries and broad-phase scene buffers; roster arrays/models are borrowed from BHTargetConstructContext.",
+    "integration": "Real geometry, entity, collision, target, query, effect, allocator and input definitions linked into runtime-fixes.exe.",
+    "capture": "Application-owned block list and independent seven-counter baselines; no game data or executable patching."
+  },
+  "function_review": "META/m4/playable/original-gameplay-review/function-review.json",
+  "original_execution_scope": "Isolated arithmetic block 00439a52..00439ba7, not whole function or game",
+  "shipping_original_code_executed": false,
+  "comparison_artifacts": {
+    "META/m4/playable/original-gameplay-review/actor-damping-before.json": "fff46fe40672a20209122e5369740dec071ffed1b58f722f15f26cf276aac968",
+    "META/m4/playable/original-gameplay-review/actor-damping-before.log": "2e10c4c9b8b1103120b311c168069762265234fd90698575164ff46ea5cf5422",
+    "META/m4/playable/original-gameplay-review/actor-damping.json": "ae31294c9991ca93a40cc23f0ffe4ba1e3ce25b7fad03c3c20f081970605e22a",
+    "META/m4/playable/original-gameplay-review/actor-damping.log": "2ff5fcf6741a0b1f9b454cf02a3c9268d0e6c95ce733d3e4850892a07408b6f9",
+    "META/m4/playable/original-gameplay-review/actor_damping_original.h": "2bfb43b767eaf039935588bb2e70b052eff63c01efd8a984be37f68f77572f02",
+    "META/m4/playable/original-gameplay-review/function-review.json": "d34d2e30dcd9d5762939a1df2aa411847cb5616b3d8faf835286882666ae8a40",
+    "META/m4/playable/original-gameplay-review/game-build.json": "b68a51b69de58461cb59593e947508cb311a24234e0dc02d16517477b5ddb776",
+    "META/m4/playable/original-gameplay-review/game-map.txt": "d2c668684371bec1cd4b7d990024b33783c3fa0024ccb6ee637b1136c6067237",
+    "META/m4/playable/original-gameplay-review/hardware-startup-check.json": "39c501e981fd911d6d77027c5677939f0bf9e5ead2fd97f4bd0d143454cee309",
+    "META/m4/playable/original-gameplay-review/pickup-boundary-before.log": "a110563ef46e9463823c6e10deb1e70da494cdeceb86a4cb276aebb840795ba3",
+    "META/m4/playable/original-gameplay-review/runtime-fixes-map.txt": "973cc4d08cadf33ac89b96e8aad69d298e597a76102e19fd8c55a599900a1fd7",
+    "META/m4/playable/original-gameplay-review/runtime-fixes.json": "45f546a4d381ecc7b9e59afcd7188b95e2175bcac39202f2e836380b5ecd30d0"
+  }
+}

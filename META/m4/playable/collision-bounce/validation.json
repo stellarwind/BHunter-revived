@@ -1,0 +1,78 @@
+{
+  "passed": true,
+  "validation_kind": "focused_runtime_fixes",
+  "prior_session": "META/m4/playable/runtime-fixes/validation.json",
+  "source_snapshots": {
+    "src/bh_game_app.c": "META/m4/playable/collision-bounce/sources/4c6b012b57a2829cb24fa67159dcaf9cb4038c45d7c4a8a26ec630c8f2d8b270-bh_game_app.c.txt",
+    "src/bh_physics_step.c": "META/m4/playable/collision-bounce/sources/6e4346fba8baab7880452aa543a1aab3fb2ced9861fe7bdd880f76d6e1fef58f-bh_physics_step.c.txt",
+    "src/bh_player_create.c": "META/m4/playable/collision-bounce/sources/f0b721fa75018ac10a4cd16d5fcb68c32a873ace996db3c4d68edb6c346139b4-bh_player_create.c.txt",
+    "src/bh_player_query.c": "META/m4/playable/collision-bounce/sources/b7d4fc929740a9d739a428266b5d1d549f275411c4eb46b957aea9e9006e3aef-bh_player_query.c.txt",
+    "src/bh_player_query.h": "META/m4/playable/collision-bounce/sources/569b1242ce1193821a47d6da458c41c09bc649ce33bbdc5676f2e43a0e1fce1b-bh_player_query.h.txt",
+    "tests/entity_collision.c": "META/m4/playable/collision-bounce/sources/31e3bf4762f89c337004079800608d450b9163866692727f69b5fb4eb0fe6b00-entity_collision.c.txt",
+    "tests/physics_response.c": "META/m4/playable/collision-bounce/sources/ee8d4a07c7fb2dfb0c86f8a7140c13bd2692eab395485ab704bbea93b6a680f1-physics_response.c.txt",
+    "tests/physics_step.c": "META/m4/playable/collision-bounce/sources/18b3a1f2eaa029a82432490d69c987e917ef513dfa62fbda5dab6b4b80ed8cb9-physics_step.c.txt",
+    "tests/player_query.c": "META/m4/playable/collision-bounce/sources/1b49b823b600072a0d296980d4048ee90c5cf70e0e47a1849b2fb5cf5c0ae520-player_query.c.txt",
+    "tests/runtime_fixes.c": "META/m4/playable/collision-bounce/sources/59a80c75cb83c29f7fe907aa42b201dd60c3e292484303e92524f92a77fe6f0c-runtime_fixes.c.txt",
+    "tests/sweep.c": "META/m4/playable/collision-bounce/sources/ae06bbb667351a1b92342b1ad3c3d5a2a3586b8c93f64143e150a394d15d0c5c-sweep.c.txt",
+    "tests/world_query.c": "META/m4/playable/collision-bounce/sources/a39bfd9124f56b5c7c46e1defc40697222c08d30cb05dd521ca2241e5c9c0780-world_query.c.txt",
+    "tools/check_playable.py": "META/m4/playable/collision-bounce/sources/0feb4374b3d79d0d5319bd45489f6458803c6d3ba8bec4b6aed1c85393be692f-check_playable.py.txt",
+    "tools/check_runtime_fixes.py": "META/m4/playable/collision-bounce/sources/f20e484596f459883e1b2f2d9a1f8797e840ea114d1b2a57c422f60d70aa5ced-check_runtime_fixes.py.txt",
+    "tools/record_collision_bounce.py": "META/m4/playable/collision-bounce/sources/2853752a6a07b4b7d5aaf3d891e6582a4c752bfe3d13785dd4983fc388b25bb4-record_collision_bounce.py.txt",
+    "tools/record_runtime_fixes.py": "META/m4/playable/collision-bounce/sources/7dffbb9ea67844d1a21625ae079aad4374aae386f99f13409a36f4506331338f-record_runtime_fixes.py.txt"
+  },
+  "original_owners_added": 0,
+  "software_renderer_tests_after_user_restriction": 0,
+  "game_build_translation_units": 299,
+  "focused_translation_units": 306,
+  "original_code_executed": false,
+  "gameplay_automation": false,
+  "changes": [
+    "Retain car event2 bounce acceleration and angular response by binding and synchronizing the actual source physics component.",
+    "Correct zero-fraction penetration recovery to world/prop geometry, matching the original selected entity kind branch.",
+    "Add real player callback regression and distinct world/actor overlap controls; extend non-renderer checks to response, sweep, broad phase and player query."
+  ],
+  "limits": [
+    "Selected original bodies byte-verified as reference data only; no original code executed and no byte-match transfer to changed sources.",
+    "Before-fix log retains three failures: force/spin are confirmed loss; its centered-contact torque expectation was corrected to an explicit off-center packet. Final source checks include a passing negative control with the state bridge intentionally omitted.",
+    "Focused source fixtures and hardware fullscreen bounded startup only; no full-suite, independent clean-checkout, software renderer or gameplay pass claimed.",
+    "Manual tunnel-wall and prop fidelity review, PC24, CD audio and DirectPlay gameplay remain unvalidated; M4 incomplete.",
+    "Application loop itself is not executed by focused fixtures or bounded startup; manual gameplay confirmation pending."
+  ],
+  "refreshed_variants": [
+    "0041d7c0-functional-c-target550-collision-bounce",
+    "00421560-functional-c-finish-player-context-source-normalization-context-player-binding-collision-bounce",
+    "00421d20-functional-c-finish-player-context-source-normalization-context-player-binding-collision-bounce",
+    "004124d0-functional-c-hour443-final-ai-collision-audit-runtime-fixes-collision-bounce",
+    "target550-bh_player_query-source-bindings-collision-bounce",
+    "finish-player-bh_player_create-bindings-context-source-normalization-context-player-binding-collision-bounce",
+    "whole-physics-registry-binding-hour443-ai-collision-audit-runtime-fixes-collision-bounce",
+    "preview-bh_game_app-effect-bindings-splash-perf-splash-click-ui-bindings-hardware-fullscreen-hardware-audit-cursor-bullet-cadence-timing-ai-collision-audit-target-retirement-runtime-fixes-collision-bounce"
+  ],
+  "focused_totals": [
+    {
+      "scenario": "runtime-fixes",
+      "checks": 1996,
+      "failures": 0,
+      "software_renderer_executed": false,
+      "gameplay_automation": false
+    },
+    {
+      "scenario": "runtime-fixes",
+      "checks": 2001,
+      "failures": 0,
+      "software_renderer_executed": false,
+      "gameplay_automation": false
+    }
+  ],
+  "benchmarks": [
+    "Physics roster source benchmark: worlds5815 iterations3 full_init_ms=23.069600 rebind_ms=0.171100",
+    "Physics roster source benchmark: worlds5815 iterations3 full_init_ms=18.008000 rebind_ms=0.081500"
+  ],
+  "dependencies": {
+    "ownership": "Existing source adapters only; no new original function or provenance admission.",
+    "physics": "BHPhysicsStepContext owns sweep queries and broad-phase scene buffers; roster arrays/models are borrowed from BHTargetConstructContext.",
+    "integration": "Real geometry, entity, collision, target, query, effect, allocator and input definitions linked into runtime-fixes.exe.",
+    "capture": "Application-owned block list and independent seven-counter baselines; no game data or executable patching."
+  },
+  "original_contracts": "META/m4/playable/collision-bounce/original-contracts.json"
+}

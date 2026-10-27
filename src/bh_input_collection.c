@@ -42,6 +42,11 @@ int __cdecl bh_input_collect(BHInputCollection *c,unsigned long *changed){
         if(c->last_joystick[device]!=JOYERR_NOERROR)return fail(c,BH_INPUT_COLLECTION_DEVICE);
         joystick(c,device,&sample);
     }
+    if(c->disable_mouse_motion) {
+        /* Clear retained filter state before binding evaluation. Polling or
+           recentering is unnecessary when every mouse motion channel is off. */
+        for(i=0;i<2;++i){c->delta[i]=0;s->mouse_axes[i]=0;s->pair3[i]=512;s->pair4[i]=0;}
+    } else {
     c->last_cursor=c->api.cursor(&cursor);if(!c->last_cursor)return fail(c,BH_INPUT_COLLECTION_DEVICE);
     c->last_recenter=c->api.recenter(160,100);
     bits=(unsigned long)cursor.x-160UL;memcpy(c->delta,&bits,4);bits=(unsigned long)cursor.y-100UL;memcpy(c->delta+1,&bits,4);
@@ -49,6 +54,7 @@ int __cdecl bh_input_collect(BHInputCollection *c,unsigned long *changed){
         s->pair4[i]=(unsigned short)c->delta[i];filtered=((double)s->mouse_axes[i]-(double)c->delta[i]*-0.002)*.99;
         bh_round_float(s->mouse_axes+i,filtered);
         if(!(filtered>= -1))s->mouse_axes[i]=-1;else if(s->mouse_axes[i]>1)s->mouse_axes[i]=1;
+    }
     }
     for(list=c->lists->first;list;list=list->next){if(list->flags==2){list->flags=1;if(!bh_input_evaluate(list,s,1))return fail(c,BH_INPUT_COLLECTION_EVALUATE);}
         else if(list->flags && !bh_input_evaluate(list,s,0))return fail(c,BH_INPUT_COLLECTION_EVALUATE);}

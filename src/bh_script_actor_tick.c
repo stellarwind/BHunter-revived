@@ -15,7 +15,7 @@ static int tick(BHActorRouteContext *c,BHEntity *a,int phase,unsigned long pulse
   if(!c->sound)return fail(c,BH_ACTOR_ROUTE_ARGUMENT);
   path=bh_script_actor_route_path(a);if(path!=bh_script_actor_curve&&path!=bh_script_actor_linear)return fail(c,BH_ACTOR_ROUTE_ARGUMENT);
   if(phase)bh_round_float(&t,(double)s.phase/s.duration);
-  else{elapsed=(unsigned short)(c->tick-s.tick);memcpy(&signed_elapsed,&elapsed,2);memcpy(&signed_duration,&s.duration_ticks,2);bh_round_float(&t,(double)signed_elapsed/signed_duration);}
+  else{elapsed=(unsigned short)(bh_actor_route_now(c)-s.tick);memcpy(&signed_elapsed,&elapsed,2);memcpy(&signed_duration,&s.duration_ticks,2);bh_round_float(&t,(double)signed_elapsed/signed_duration);}
   path(t,&point,s.controls,s.controls+1,s.controls+2,s.controls+3);memcpy(&velocity,(char*)a+0x48,12);
   if(s.sound==BH_SOUND_INVALID){get(a,0x10c,&resource);s.sound=bh_sound_request(c->sound,resource,1,phase?.7f:1,&point,&velocity);put(a,0x104,&s.sound);}
   else bh_sound_update(c->sound,s.sound,1,phase?.7f:1,&point,&velocity);
@@ -24,8 +24,8 @@ static int tick(BHActorRouteContext *c,BHEntity *a,int phase,unsigned long pulse
     if(counter<0){bits=(unsigned long)counter+120UL;memcpy(&counter,&bits,4);put(a,0x118,&counter);}}
   }
  }
- delta=(unsigned short)(c->tick-s.duration_ticks-s.tick);
- if(!(delta&0x8000)){if(!bh_script_actor_route_advance(c,a))return 0;stamp=(unsigned short)(c->tick+delta);memcpy((char*)a+0x1e4,&stamp,2);}
+ delta=(unsigned short)(bh_actor_route_now(c)-s.duration_ticks-s.tick);
+ if(!(delta&0x8000)){if(!bh_script_actor_route_advance(c,a))return 0;stamp=(unsigned short)(bh_actor_route_now(c)+delta);memcpy((char*)a+0x1e4,&stamp,2);}
  c->error=BH_ACTOR_ROUTE_OK;return 1;
 }
 int __cdecl bh_script_actor_clock_tick(BHActorRouteContext *c,BHEntity *a){return tick(c,a,0,0);}

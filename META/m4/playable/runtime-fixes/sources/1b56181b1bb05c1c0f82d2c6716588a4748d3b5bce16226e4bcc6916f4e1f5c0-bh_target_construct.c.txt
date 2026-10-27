@@ -1,0 +1,467 @@
+#include "bh_target_construct.h"
+#include "bh_fp.h"
+#include "bh_geometry_radius.h"
+#include "bh_rotation.h"
+#include "bh_round.h"
+#include <float.h>
+#include <math.h>
+#include <string.h>
+static int live(BHEntityPool *p, BHEntity *e, unsigned long generation) {
+  BHEntity *a;
+  unsigned long n = 0;
+  for (a = p->active; a && n++ < p->capacity; a = a->next)
+    if (a == e)
+      return a->generation == generation;
+  return 0;
+}
+static float rounded(double x) {
+  float f;
+  bh_round_float(&f, x);
+  return f;
+}
+static void identity(BHMat34 *m) {
+  memset(m, 0, sizeof(*m));
+  m->m[0][0] = m->m[1][1] = m->m[2][2] = 1;
+}
+static BHTargetConstructSlot *slot(BHEntity *e) {
+  BHTargetConstructSlot *s;
+  memcpy(&s, e->payload + 608, 4);
+  return s;
+}
+static void __cdecl refresh(BHEntity *e, void *p) {
+  BHTargetConstructSlot *s = slot(e);
+  (void)p;
+  memcpy((char *)e + 0x128, &s->body.owner, 4);
+  if (bh_target_draw(s->context->draw, e) < 1)
+    s->context->error = 1;
+}
+static void __cdecl step(BHEntity *e) {
+  BHTargetConstructSlot *s = slot(e);
+  BHTargetConstructContext *c = s->context;
+  if (!bh_target_construct_sync(c))
+    return;
+  bh_target_step(e);
+  if (s->body.entity)
+    bh_mat34_inverse_rigid(&s->state.pose, &s->inverse);
+  if (!bh_target_construct_sync(c))
+    c->error = 1;
+}
+static int same_body(const BHPhysicsStepBody *a,const BHPhysicsStepBody *b) {
+  return a->entity==b->entity&&a->generation==b->generation&&
+      a->physics==b->physics&&a->geometry==b->geometry&&
+      a->target_world==b->target_world&&a->target_local==b->target_local&&
+      a->model_index==b->model_index;
+}
+int __cdecl bh_target_construct_sync(BHTargetConstructContext *c) {
+  unsigned long i, n, m;
+  BHPhysicsStepBody *b,next;
+  BHTargetConstructSlot *s;
+  BHEntity *e;
+  int retain, rebind;
+  if (!c || !c->debris || !c->physics || !c->roster || !c->models ||
+      !c->slots || !c->capacity || !c->effects ||
+      (c->base_count && !c->base_bodies) ||
+      (c->base_model_count && !c->base_models) || c->physics->busy) {
+    if (c)
+      c->error = 1;
+    return 0;
+  }
+  n = 0;
+  m = c->base_model_count;
+  retain=c->physics->allocator.release&&c->physics->pool==c->debris->pool&&
+      c->physics->bodies==c->roster&&c->physics->body_count==c->roster_count&&
+      c->physics->models==c->models&&c->physics->model_count==c->model_count&&
+      c->physics->worlds==c->worlds&&c->physics->world_count==c->world_count&&
+      c->physics->effects==c->effects&&c->physics->fallback==1;
+  rebind=c->physics->allocator.release&&c->physics->pool==c->debris->pool&&
+      c->physics->worlds==c->worlds&&c->physics->world_count==c->world_count&&
+      c->physics->effects==c->effects&&c->physics->fallback==1;
+  for (i = 0; i < m; ++i) {
+    if(retain&&(i>=c->model_count||c->models[i]!=c->base_models[i]))retain=0;
+    c->models[i] = c->base_models[i];
+  }
+  for (i = 0; i < c->base_count; ++i)
+    if (live(c->debris->pool, c->base_bodies[i].entity,
+             c->base_bodies[i].generation)) {
+      next = c->base_bodies[i];
+      if(retain&&(n>=c->roster_count||!same_body(c->roster+n,&next)))retain=0;
+      c->roster[n] = next;
+      memcpy(&c->roster[n].world, (const char *)c->base_bodies[i].entity + 0xc4,
+             4);
+      ++n;
+    }
+  for (i = 0; i < c->capacity; ++i) {
+    s = c->slots + i;
+    e = s->body.entity;
+    if (!e)
+      continue;
+    if (!live(c->debris->pool, e, s->body.generation)) {
+      s->body.entity = NULL;
+      continue;
+    }
+    b = &next;
+    memset(b, 0, sizeof(*b));
+    b->entity = e;
+    b->generation = e->generation;
+    b->physics = &s->state;
+    b->geometry = &s->collision.geometry;
+    b->target_world = &s->state.pose;
+    b->target_local = &s->inverse;
+    b->mass = s->body.mass;
+    b->friction = s->body.friction;
+    /* Physics publishes its selected room into the shared actual entity.
+       Membership rebuild must retain that hint, including sleeping actors. */
+    memcpy(&b->world, (const char *)e + 0xc4, 4);
+    b->model_index = m;
+    memcpy(&b->flags, (char *)e + 0x114, 4);
+    if(retain&&(n>=c->roster_count||!same_body(c->roster+n,b)||
+       m>=c->model_count||c->models[m]!=b->geometry))retain=0;
+    c->roster[n++]=*b;
+    c->models[m++]=b->geometry;
+  }
+  if(retain&&n==c->roster_count&&m==c->model_count) {
+    /* State, room hints and force/query changes remain live; only topology
+       workspaces are retained. Preserve init's common-field publication. */
+    for(i=0;i<n;++i)if(!bh_physics_step_publish(c->roster+i)){c->error=1;return 0;}
+    return 1;
+  }
+  if(rebind&&n) {
+    if(!bh_physics_step_rebind(c->physics,c->roster,n,c->models,m)) {
+      c->error=1;return 0;
+    }
+    c->roster_count=n;c->model_count=m;++c->rebuilds;return 1;
+  }
+  /* Boundary rebuild preserves stable state/matrix pointers and rejects stale
+   * generations. */
+  if (c->physics->allocator.release && !bh_physics_step_dispose(c->physics)) {
+    c->error = 1;
+    return 0;
+  }
+  c->roster_count = n;
+  c->model_count = m;
+  if (!n) {
+    ++c->rebuilds;
+    return 1;
+  }
+  if (!m || !bh_physics_step_init(c->physics, c->debris->pool, c->roster, n,
+                                  c->worlds, c->world_count, c->models, m,
+                                  c->effects, 1, NULL)) {
+    c->error = 1;
+    return 0;
+  }
+  ++c->rebuilds;
+  return 1;
+}
+int __cdecl bh_target_construct_dispose(BHTargetConstructContext *c) {
+  unsigned long i;
+  BHTargetConstructSlot *s;
+  if (!c || !c->physics || c->physics->busy)
+    return 0;
+  for (i = 0; i < c->capacity; ++i) {
+    s = c->slots + i;
+    if (s->body.entity)
+      return 0;
+  }
+  if (c->physics->allocator.release && !bh_physics_step_dispose(c->physics))
+    return 0;
+  for (i = 0; i < c->capacity; ++i) {
+    s = c->slots + i;
+    if (s->initialized && !bh_collision_model_dispose(&s->collision))
+      return 0;
+    memset(s, 0, sizeof(*s));
+  }
+  c->roster_count = c->model_count = 0;
+  return 1;
+}
+static int placement(BHTargetConstructContext *c, BHTargetConstructSlot *s,
+                     BHGeometry *g, float radius) {
+  const BHPhysicsStepBody *f = c->placement_focus;
+  BHSweepQuery q;
+  BHCollisionHit hit;
+  BHMat34 fm, fi;
+  BHVec3 d;
+  float distance, scale;
+  int r;
+  unsigned long count = 0;
+  BHEntity *e = s->body.entity;
+  if (!f)
+    return 1;
+  if (!f->entity || !f->physics ||
+      !live(c->debris->pool, f->entity, f->generation))
+    return 0;
+  d.x = rounded((double)e->position.x - f->entity->position.x);
+  d.y = rounded((double)e->position.y - f->entity->position.y);
+  d.z = rounded((double)e->position.z - f->entity->position.z);
+  distance = rounded(
+      sqrt(((double)d.z * d.z + (double)d.y * d.y) + (double)d.x * d.x));
+  if (!(distance < (double)f->entity->collision_radius + radius))
+    return 1;
+  scale = rounded(1.0 / distance);
+  if (!_finite(scale))
+    return 0;
+  fm = f->physics->pose;
+  bh_mat34_inverse_rigid(&fm, &fi);
+  memset(&q, 0, sizeof(q));
+  memset(&hit, 0, sizeof(hit));
+  if (!bh_sweep_init(&q, g, f->geometry))
+    return 0;
+  r = bh_physics_overlap(&q, &s->state.pose, &fm, &fi, &hit);
+  while (r > 0) {
+    do {
+      if (++count > 65536) {
+        r = -1;
+        break;
+      }
+      bh_mat34_translate_world(rounded((double)d.x * scale),
+                               rounded((double)d.y * scale),
+                               rounded((double)d.z * scale), &s->state.pose);
+      e->position.x = rounded((double)e->position.x + d.x * scale);
+      e->position.y = rounded((double)e->position.y + d.y * scale);
+      e->position.z = rounded((double)e->position.z + d.z * scale);
+      r = bh_collision_cached_contact(g->bsp, hit.a_face, &s->state.pose,
+                                      f->geometry->bsp, hit.b_face, hit.b_node,
+                                      &fm, &fi, &hit.normal, &hit.contact);
+    } while (r > 0);
+    if (r < 0)
+      break;
+    r = bh_physics_overlap(&q, &s->state.pose, &fm, &fi, &hit);
+  }
+  bh_sweep_dispose(&q);
+  return r == 0;
+}
+static BHTargetConstructSlot *begin(BHTargetConstructContext *c,
+                                    const BHVec3 *p, const BHVec3 *a,
+                                    float mass, int box) {
+  BHTargetConstructSlot *s = NULL;
+  BHEntity *e;
+  BHMat34 rotation;
+  unsigned long i, end;
+  BHVec3 inertia;
+  if (!c || !p || !a || !c->draw || !c->pickups || !c->particles ||
+      !c->explosions || !c->mode || !c->debris || !c->slots || !c->roster ||
+      !c->models || !bh_math_environment_supported() || !_finite(mass)) {
+    if (c)
+      c->error = 1;
+    return NULL;
+  }
+  c->error = 0;
+  for (end = 0; end < c->debris->registry_capacity && c->debris->registry[end];
+       ++end)
+    ;
+  if (end + 1 >= c->debris->registry_capacity) {
+    c->error = 1;
+    return NULL;
+  }
+  for (i = 0; i < c->capacity; ++i)
+    if (!c->slots[i].body.entity) {
+      s = c->slots + i;
+      break;
+    }
+  if (!s) {
+    c->error = 1;
+    return NULL;
+  }
+  if (box && c->placement_focus && !c->legacy_bound) {
+    c->error = 1;
+    return NULL;
+  }
+  /* Retired slots can still be borrowed by old sweep workspaces. End those
+     borrows before replacing the slot's collision topology. */
+  if (!bh_target_construct_sync(c))
+    return NULL;
+  if (!s->initialized) {
+    memset(s, 0, sizeof(*s));
+    if (!bh_collision_model_init(&s->collision, NULL))
+      return NULL;
+    s->initialized = 1;
+  }
+  s->context = c;
+  e = bh_entity_acquire(c->debris->pool);
+  if (!e)
+    return NULL;
+  s->body.entity = e;
+  s->body.generation = e->generation;
+  /* Every original constructor clears +c4, including recycled entity slots. */
+  memset((char *)e + 0xc4, 0, 4);
+  memset(&s->state, 0, sizeof(s->state));
+  identity(&rotation);
+  bh_mat34_rotate_y(a->x, &rotation);
+  bh_mat34_rotate_x(a->y, &rotation);
+  bh_mat34_rotate_z(a->z, &rotation);
+  s->state.pose = rotation;
+  for (i = 0; i < 3; ++i)
+    s->state.pose.m[i][3] = ((const float *)p)[i];
+  e->position = *p;
+  if (!box) {
+    if (!bh_collision_model_load(&s->collision, "HUN_LOD1.BSP", c->prefix,
+                                 c->search))
+      goto rejected;
+    e->collision_radius = rounded(bh_geometry_radius(&s->collision.bsp));
+  } else
+    e->collision_radius = c->legacy_radius;
+  if (!placement(c, s, box ? c->legacy_geometry : &s->collision.geometry,
+                 e->collision_radius))
+    goto rejected;
+  s->state.last_clear = s->state.pose;
+  s->state.euler = *a;
+  bh_mat34_inverse_rigid(&s->state.pose, &s->inverse);
+  inertia.x = inertia.y = inertia.z = rounded((double)mass * 1.73);
+  /* The real binder requires a fresh body with no entity yet. */
+  memset(&s->body, 0, sizeof(s->body));
+  if (!bh_debris_bind(c->debris, &s->body, e, &s->state, mass, .9f, &inertia))
+    goto rejected;
+  memcpy((char *)e + 0x78, &inertia, 12);
+  memcpy(e->payload + 608, &s, 4);
+  return s;
+rejected:
+  bh_entity_release(c->debris->pool, e);
+  s->body.entity = NULL;
+  c->error = 1;
+  return NULL;
+}
+static BHEntity *finish(BHTargetConstructContext *c, BHTargetConstructSlot *s,
+                        unsigned long resource, const BHVec3 *velocity,
+                        const BHVec3 *spin, float countdown, BHEntity *owner,
+                        long token, long loot, long counter, long emission,
+                        const BHVec3 *anchor, const BHVec3 *minimum,
+                        const BHVec3 *maximum) {
+  BHEntity *e = s->body.entity;
+  BHTargetStepState ts;
+  BHTargetDrawState ds;
+  unsigned long n;
+  s->state.velocity = *velocity;
+  s->state.angular_velocity = *spin;
+  s->body.owner = owner;
+  s->body.sleep_time = 0;
+  memset(&ts, 0, sizeof(ts));
+  ts.countdown = countdown;
+  ts.token = token;
+  ts.loot = loot;
+  ts.counter = counter;
+  ts.emission = emission;
+  if (minimum)
+    ts.minimum = *minimum;
+  if (maximum)
+    ts.maximum = *maximum;
+  memset(&ds, 0, sizeof(ds));
+  ds.resource = resource;
+  ds.number = token;
+  ds.flags = counter;
+  ds.owner = owner;
+  if (anchor)
+    ds.local_anchor = *anchor;
+  bh_target_draw_state_write(e, &ds);
+  bh_target_step_write(e, &ts);
+  memset((char *)e + 0xe8, 0, 4);
+  memcpy((char *)e + 0xbc, &s->collision.geometry.bsp, 4);
+  for (n = 0; n < c->debris->registry_capacity && c->debris->registry[n]; ++n)
+    ;
+  c->debris->registry[n] = e;
+  c->debris->registry[n + 1] = NULL;
+  if (!bh_target_construct_sync(c))
+    goto rejected;
+  memset(&s->step, 0, sizeof(s->step));
+  s->step.body = &s->body;
+  s->step.physics = c->physics;
+  s->step.explosions = c->explosions;
+  s->step.particles = c->particles;
+  s->step.pickups = c->pickups;
+  s->step.mode = c->mode;
+  s->step.smoke_image = c->smoke_image;
+  if (!bh_target_step_bind(&s->step, &ts))
+    goto rejected;
+  e->step = step;
+  e->refresh = refresh;
+  return e;
+rejected:
+  bh_debris_remove(e);
+  bh_target_construct_sync(c);
+  c->error = 1;
+  return NULL;
+}
+BHEntity *__cdecl bh_target_construct_basic(BHTargetConstructContext *c,
+                                            const BHVec3 *p, long index,
+                                            long mass) {
+  BHVec3 zero = {0, 0, 0};
+  BHTargetConstructSlot *s;
+  if (!c || index < 0 || (unsigned long)index >= c->resource_count ||
+      !c->resources)
+    return NULL;
+  s = begin(c, p, &zero, rounded((double)mass), 0);
+  if (!s)
+    return NULL;
+  /* Original FILD -> FST mass (without popping) -> FMUL keeps the integer
+     for X inertia. Y/Z reload the already stored binary32 mass. */
+  s->body.inertia.x = rounded((double)mass * 1.73);
+  memcpy((char *)s->body.entity + 0x78, &s->body.inertia.x, 4);
+  return finish(c, s, c->resources[index], &zero, &zero, 0, NULL, 0, -1, 0, 0,
+                &zero, NULL, NULL);
+}
+BHEntity *__cdecl bh_target_construct_moving(
+    BHTargetConstructContext *c, const BHVec3 *p, const BHVec3 *a,
+    const BHVec3 *v, const BHVec3 *w, unsigned long resource, float mass,
+    float countdown, BHEntity *owner, long token, long loot, long counter) {
+  BHVec3 zero = {0, 0, 0};
+  BHTargetConstructSlot *s;
+  if (!v || !w)
+    return NULL;
+  s = begin(c, p, a, mass, 0);
+  if (!s)
+    return NULL;
+  return finish(c, s, resource, v, w, countdown, owner, token, loot, counter,
+                0x2000, &zero, NULL, NULL);
+}
+static void local_direction(const BHMat34 *m, const BHVec3 *v, BHVec3 *out) {
+  out->x = rounded(((double)m->m[2][0] * v->z + (double)m->m[1][0] * v->y) +
+                   (double)m->m[0][0] * v->x);
+  out->y = rounded(((double)m->m[1][1] * v->y + (double)m->m[2][1] * v->z) +
+                   (double)m->m[0][1] * v->x);
+  out->z = rounded(((double)m->m[2][2] * v->z + (double)m->m[1][2] * v->y) +
+                   (double)m->m[0][2] * v->x);
+}
+static void local_point(const BHMat34 *m, const BHVec3 *v, BHVec3 *out) {
+  float x = rounded((double)v->x - m->m[0][3]);
+  double y = (double)v->y - m->m[1][3], z = (double)v->z - m->m[2][3];
+  out->x = rounded(((double)m->m[2][0] * z + (double)m->m[1][0] * y) +
+                   (double)m->m[0][0] * x);
+  out->y = rounded(((double)m->m[2][1] * z + (double)m->m[1][1] * y) +
+                   (double)m->m[0][1] * x);
+  out->z = rounded(((double)m->m[2][2] * z + (double)m->m[1][2] * y) +
+                   (double)m->m[0][2] * x);
+}
+BHEntity *__cdecl bh_target_construct_box(
+    BHTargetConstructContext *c, const BHVec3 *p, const BHVec3 *a,
+    const BHVec3 *v, const BHVec3 *w, unsigned long resource, float mass,
+    float countdown, BHEntity *owner, long token, const BHVec3 *anchor,
+    const BHVec3 *first, const BHVec3 *second, long counter) {
+  BHTargetConstructSlot *s;
+  BHVec3 an, lo, hi, extent, padding;
+  unsigned long i;
+  if (!v || !w || !anchor || !first || !second)
+    return NULL;
+  s = begin(c, p, a, mass, 1);
+  if (!s)
+    return NULL;
+  local_direction(&s->state.pose, anchor, &an);
+  local_point(&s->state.pose, first, &lo);
+  local_point(&s->state.pose, second, &hi);
+  for (i = 0; i < 3; ++i) {
+    ((float *)&extent)[i] = rounded(
+        fabs(rounded((double)((float *)&hi)[i] - ((float *)&lo)[i])) * .8);
+    ((float *)&padding)[i] = rounded((double)((float *)&extent)[i] * .5);
+  }
+  if (!bh_collision_box_build(&s->collision, &extent, &padding)) {
+    {
+      BHEntity *e = s->body.entity;
+      bh_debris_unbind(&s->body);
+      bh_entity_release(c->debris->pool, e);
+    }
+    s->body.entity = NULL;
+    c->error = 1;
+    return NULL;
+  }
+  s->body.entity->collision_radius =
+      rounded(bh_geometry_radius(&s->collision.bsp));
+  return finish(c, s, resource, v, w, countdown, owner, token, -1, counter,
+                0x800, &an, &lo, &hi);
+}
