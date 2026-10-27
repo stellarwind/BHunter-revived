@@ -19,6 +19,10 @@ int __cdecl bh_engine_bootstrap(BHEngineBootstrap *c,HINSTANCE instance,HWND win
  for(i=0;i<c->physics_body_count;++i)if(c->physics_bodies+i==player->body)break;
  if(i==c->physics_body_count)return fail(c,8);
  if(!player->physics->pool&&!bh_physics_step_init(player->physics,c->game->pool,c->physics_bodies,c->physics_body_count,c->physics_worlds,c->physics_world_count,c->physics_models,c->physics_model_count,c->physics_effects,c->physics_fallback,0))return fail(c,8);
- bh_loading_display(c->progress->display,1);error=bh_render_material_initialize(c->material,c->game->textures,c->d3d);if(c->debug&&error)printf("%s\n",error);bh_loading_progress_remove(c->progress);++c->stages;
+ bh_loading_display(c->progress->display,1);error=bh_render_material_initialize(c->material,c->game->textures,c->d3d);
+#ifdef DEBUGGING
+ if(c->debug&&error)printf("%s\n",error);
+#endif
+ bh_loading_progress_remove(c->progress);++c->stages;
  if(!bh_frame_buffers_start(c->frames,bh_engine_frame_produce,c,30,0x47c70,bh_engine_input_message,c))return fail(c,9);bh_loading_display(c->progress->display,1);bh_loading_display(c->progress->display,1);++c->stages;return 1;
 }

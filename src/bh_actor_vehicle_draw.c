@@ -26,8 +26,11 @@ int __cdecl bh_actor_vehicle_draw(BHActorVehicleDrawContext *c,BHEntity *e){
  dx=stored((double)after.x-p.x);dz=stored((double)after.z-p.z);px=stored((double)p.x-before.x);pz=stored((double)p.z-before.z);
  bank=(((double)pz*dx-(double)px*dz)/sqrt((double)dz*dz+(double)dx*dx))/sqrt((double)pz*pz+(double)px*px);
  angles.x=stored(atan2(dx,dz));angles.y=0;angles.z=stored(bank*3.141592653589793);
+
+#ifdef DEBUGGING
  if(c->clock&&c->clock->nonfinite_curve&&(!_finite(angles.x)||!_finite(angles.y)||!_finite(angles.z)))
   c->clock->nonfinite_curve(c->clock->nonfinite_user,0x434920,e,&s,bh_actor_route_now(c->clock),&before,&p,&after,&angles);
+#endif
  memcpy(&resource,(char*)e+0x114,4);bh_draw_submit_resource(c->queue,0,resource,&p,&angles,1);
  memcpy(&fade,(char*)e+0x19c,4);
  if(fade<1){size=stored(4.0-(double)rand()*(-1.0/16384.0));alpha=stored(1.0-fade);damage_frame=(unsigned long)rand()&7;angle=stored((double)rand()*(1.0/4096.0));bh_draw_billboard(c->queue,3,c->damage_resource,&p,size,size,angle,damage_frame,alpha);}

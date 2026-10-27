@@ -54068,6 +54068,97 @@
         "META/m4/loading-display/annotation-refresh.json",
         "META/m4/loading-display/next-review/PACKET_ARGUMENT_CORRECTION.md"
       ]
+    },
+    {
+      "id": "source-debugging-compile-gate-2026-10-27",
+      "function": "Source diagnostic logging and profiling build gate",
+      "role": "engine_candidate",
+      "provenance_confidence": "Source-only instrumentation adapter; not an original gameplay owner",
+      "implementation": "adapter",
+      "integration": "linked_game",
+      "target": "build/game/BHunter-source.exe",
+      "validation": {
+        "builds": [
+          "META/m4/playable/debugging-gate/debug-build.json",
+          "META/m4/playable/debugging-gate/release-build.json"
+        ],
+        "binary_inspection": "META/m4/playable/debugging-gate/validation.json",
+        "execution": "User-requested manual hardware launch; no automated input or gameplay tests"
+      },
+      "source_hashes": {
+        "src/bh_actor_vehicle_draw.c": "cca0a5adc41edf5978ffc383c8c9c017a9190761a352b515cca58775132f7c12",
+        "src/bh_engine_bootstrap.c": "cd19b17597f53fe30d5238e573de19ed6d2016cab8fb65f3b837bb68e709daeb",
+        "src/bh_frame_service.c": "d49869f06ee22fcfe7b80ce87246e524aad13ffb0b21284bb5e003ba92561e41",
+        "src/bh_game_app.c": "c33e7129696621957ee047f41035013baeacbab08cd5f21eaea13059671b5cdf",
+        "src/bh_game_main.c": "77648dbaca5cfc6d6b07e31452cdd3ecac0b211543fce19bdce5afa16fa78f97",
+        "src/bh_script_actor_draw.c": "14d19f5ea338016c9828947a3e99ace70806a6fb31411932bea9f6e6dd1272df",
+        "src/bh_script_args.c": "f62fc4418f701c1971ff941b10db5ba5c7fd9121ef03195493d9a7322c86f7aa",
+        "src/bh_sound_tick.c": "7be41000700bf41fa666ba978ab837f48e5457e079ba91a734d6c0b020083b1c",
+        "src/bh_vfile.c": "193882ced90b84bdbaca20f3560740050331682d3c5edbe6b1bee59795f098fd",
+        "tools/build_game.py": "1a43af3858ee82aafbc4fb833e1c0dbbfb2f278f36721b0aebff9b82ceaaec26"
+      },
+      "limits": [
+        "No measured stutter improvement claimed; human comparison pending.",
+        "Existing error/status counters and gameplay timing remain; tracing, capture allocation, profiling scans and logging compile only with DEBUGGING.",
+        "External DirectDraw compatibility DLL logging is outside the source compile gate."
+      ]
+    },
+    {
+      "id": "source-one-shot-failure-capture-2026-10-27",
+      "function": "bh_failure_capture_take/save and render failure observation",
+      "role": "engine_candidate",
+      "provenance_confidence": "New source diagnostic adapter; not an original gameplay owner",
+      "implementation": "adapter",
+      "integration": "linked_game",
+      "target": "build/game/BHunter-source.exe",
+      "source_hashes": {
+        "src/bh_failure_capture.c": "0e636dfbde9997bd55696f226a817a6763c759218ddc4fc91cd0251d29a12f01",
+        "src/bh_failure_capture.h": "c47543a9caa0444f390a264ddb7b80c617619acbfd009da7d175e90345ec1e73",
+        "src/bh_game_app.c": "5e558d0b313d13368ca24ad82c9e0df43f0c4e016c8df8f87937a3ed2685a715",
+        "src/bh_render_execute.c": "b4297ff5cc23a63068c6ae76073c78a6093c514173222c83149c9ffbc8b55d06",
+        "src/bh_render_execute.h": "2839097adc4c8aa1ba1f51c72f41729345ac40eb6b7ebf4aeb64a5d6af4241e9",
+        "tools/build_game.py": "c3534d300836c837a0b3e5efbce33a24e38bf4bb7f960b15024d447344c7226e",
+        "tools/check_failure_capture.py": "5e8207a9ad1113876a04450b43bac3bb8aab776cdfc6f8534f87697ba381b051"
+      },
+      "validation": {
+        "evidence": "META/m4/playable/failure-capture/validation.json",
+        "build": "META/m4/playable/failure-capture/game-build.json",
+        "symbols": "META/m4/playable/failure-capture/game.map",
+        "checks": "Focused source-only real capture/draw-queue objects; saturation, immutable first snapshot, independent failure categories, NaN bits and strict JSON output",
+        "gameplay": "None automated; opened hardware build for human retry"
+      },
+      "limits": [
+        "Capture is opt-in BH_FAILURE_CAPTURE, independent of disabled DEBUGGING.",
+        "Three fixed snapshots at most: overflow, model argument failure, and camera/clip/model draw failure. No per-frame timers, allocation, scans or file writes.",
+        "Entity census and command copies run once per failure class; file writes only on normal cleanup. Hard termination loses in-memory capture.",
+        "No claim of freeze cause or fix; unmatched failures may not trigger capture."
+      ]
+    },
+    {
+      "id": "004047c0-null-receiver-retirement-2026-10-27",
+      "original_va": "004047c0",
+      "function": "bh_effect_split_tick",
+      "role": "game",
+      "provenance_confidence": "Original projectile collision/update owner; complete instruction bytes checked against immutable EXE",
+      "implementation": "func",
+      "integration": "linked_game",
+      "target": "build/game/BHunter-source.exe",
+      "source_hashes": {
+        "src/bh_effect_split_tick.c": "e53821f4265c248d1afabe53a5ea568ec13bf91d6f3d7ac5c69033e9dc1855ef",
+        "tests/bh_effect_split.c": "f689fd8b039a7a5555bd6d7e37d40325d23f3b3e035bdc38dc7897120c961cf4",
+        "tools/check_split_retirement.py": "d53aa1fb277e6a86f43717c531767ec3870f9a7fd84e8ba1ef65364e45c442bd"
+      },
+      "validation": {
+        "original": "META/m4/playable/split-retirement/diagnosis.json",
+        "before": "META/m4/playable/split-retirement/before.json",
+        "after": "META/m4/playable/split-retirement/after.json",
+        "build": "META/m4/playable/split-retirement/game-build.json"
+      },
+      "limits": [
+        "Human snapshot establishes trail saturation but does not contain the projectile at its preceding collision. Exact triggering chain is inferred, supported by the reproduced connected source bug.",
+        "First full frame still has camera and clip resets; later saturated frames and four-second duration were not recorded.",
+        "Human visual confirmation of fix pending; no gameplay automation or software renderer tests."
+      ]
     }
   ],
   "role_catalog": "META/m1/role-catalog.json",

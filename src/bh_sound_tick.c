@@ -95,7 +95,10 @@ int __cdecl bh_sound_tick(BHSoundQueue *q,float dt,float master,BHSoundTickStats
     if((q->resource_count && !q->resources) || (q->voice_count && !q->voices)) {
         q->error=BH_SOUND_TOPOLOGY;return 0;
     }
-    q->error=BH_SOUND_OK;++stats.clock_calls;GetTickCount();
+    q->error=BH_SOUND_OK;
+#ifdef DEBUGGING
+    ++stats.clock_calls;GetTickCount();
+#endif
     if(!q->listener_active) {if(out)*out=stats;return 1;}
     for(i=0;i<q->resource_count;++i) {
         r=q->resources[i];
@@ -147,5 +150,8 @@ int __cdecl bh_sound_tick(BHSoundQueue *q,float dt,float master,BHSoundTickStats
             }
         }
     }
-    ++stats.clock_calls;GetTickCount();if(out)*out=stats;return q->error==BH_SOUND_OK;
+    #ifdef DEBUGGING
+    ++stats.clock_calls;GetTickCount();
+#endif
+    if(out)*out=stats;return q->error==BH_SOUND_OK;
 }

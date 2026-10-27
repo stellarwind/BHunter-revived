@@ -92,6 +92,7 @@ static void notify_access(unsigned long index) {
     }
 }
 
+#ifdef DEBUGGING
 static void diagnostic(unsigned int flag, const char *backend,
                        const char *name, const char *mode) {
     if (state.debug & flag) {
@@ -99,6 +100,10 @@ static void diagnostic(unsigned int flag, const char *backend,
         fflush(stdout);
     }
 }
+
+#else
+#define diagnostic(flag,backend,name,mode) ((void)0)
+#endif
 
 /* 0047d270, with validation and transactional ownership on malformed input. */
 int __cdecl bh_vfile_mount(const char *path) {
