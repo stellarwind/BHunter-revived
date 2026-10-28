@@ -1,4 +1,5 @@
 #include "bh_messages.h"
+#include "bh_mission_profile.h"
 #include <string.h>
 #include <stddef.h>
 
@@ -55,6 +56,10 @@ int __cdecl bh_message_enqueue(BHMessageState *messages, const char *text)
     messages->last_index = (long)slot;
     messages->display_ticks = 64;
     messages->display_phase = 0;
+    {
+        BH_MP_BEGIN(marker);
+        BH_MP_END(marker, "message_arrival", "portrait", (unsigned char)text[0]);
+    }
     if (length > 8192 - messages->arena_used)
     {
         messages->error = BH_MESSAGE_ARENA_FULL;

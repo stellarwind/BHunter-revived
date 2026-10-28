@@ -35,21 +35,11 @@ static unsigned long generation(BHEntity *e)
 }
 static int live(BHEntityPool *pool, const BHEntity *e, unsigned long generation)
 {
-    BHEntity *p;
-    unsigned long n = 0;
-    for (p = pool->active; p && n++ < pool->capacity; p = p->next)
-        if (p == e)
-            return p->generation == generation;
-    return 0;
+    return bh_entity_is_active(pool, e) && e->generation == generation;
 }
 static int present(BHEntityPool *pool, const BHEntity *e)
 {
-    BHEntity *p;
-    unsigned long n = 0;
-    for (p = pool->active; p && n++ < pool->capacity; p = p->next)
-        if (p == e)
-            return 1;
-    return 0;
+    return bh_entity_is_active(pool, e);
 }
 static const BHScriptTimerActor *record(BHScriptSensorContext *c, BHEntity *e)
 {

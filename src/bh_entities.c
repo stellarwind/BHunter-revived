@@ -1,4 +1,5 @@
 #include "bh_entities.h"
+#include "bh_mission_profile.h"
 #include "bh_fp.h"
 #include "bh_round.h"
 #include <stdlib.h>
@@ -62,6 +63,10 @@ static int active(const BHEntityPool *pool, const BHEntity *entity)
         return 0;
     state = membership(pool, entity);
     return state && *state;
+}
+int __cdecl bh_entity_is_active(const BHEntityPool *pool, const BHEntity *entity)
+{
+    return active(pool, entity);
 }
 static Chunk *new_chunk(BHEntityPool *pool, unsigned long count, int zero)
 {
@@ -299,7 +304,12 @@ static int dispatch(BHEntityPool *pool, int refresh)
             return fail(pool, BH_ENTITY_ARGUMENT);
         }
         if (entity->step)
+        {
+            unsigned long identity = (unsigned long)entity->step;
+            BH_MP_BEGIN(marker);
             entity->step(entity);
+            BH_MP_END(marker, "entity_step", "focused", identity);
+        }
         --pool->dispatch_depth;
         return 1;
     }
@@ -312,10 +322,18 @@ static int dispatch(BHEntityPool *pool, int refresh)
         if (refresh)
         {
             if (entity->refresh)
+            {
+                BH_MP_BEGIN(marker);
                 entity->refresh(entity, NULL);
+                BH_MP_END(marker, "entity_refresh", "", callback);
+            }
         }
         else if (entity->step)
+        {
+            BH_MP_BEGIN(marker);
             entity->step(entity);
+            BH_MP_END(marker, "entity_step", "", callback);
+        }
         /* Original00477325/0047734c resumes the cached pointer, not its
            generation. A script may release/reacquire that slot during the
            callback; dispatch its current callback/links as the original does.

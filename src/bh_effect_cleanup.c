@@ -2,15 +2,9 @@
 #include <string.h>
 int __cdecl bh_effect_cleanup_bind(BHEffectCleanupContext *c, BHEntity *e, unsigned long handle)
 {
-    BHEntity *a;
-    unsigned long n = 0;
-    int found = 0;
     if (!c || !c->pool || !c->sound || !e)
         return 0;
-    for (a = c->pool->active; a && n++ < c->pool->capacity; a = a->next)
-        if (a == e)
-            found = 1;
-    if (!found)
+    if (!bh_entity_is_active(c->pool, e))
         return 0;
     memcpy(e->payload + 604, &c, 4);
     memcpy((char *)e + 0x128, &handle, 4);

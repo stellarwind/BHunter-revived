@@ -47,12 +47,7 @@ static BHActorResponseContext *context(BHEntity *e)
 }
 static int live(BHActorResponseContext *c, BHEntity *e)
 {
-    BHEntity *p;
-    unsigned long n = 0;
-    for (p = c->vehicles->pool->active; p && n++ < c->vehicles->pool->capacity; p = p->next)
-        if (p == e)
-            return 1;
-    return 0;
+    return bh_entity_is_active(c->vehicles->pool, e);
 }
 static void point(BHActorRouteState *s, float t, BHVec3 *p)
 {

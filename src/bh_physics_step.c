@@ -29,12 +29,7 @@ static int fail(BHPhysicsStepContext *c, BHPhysicsStepError error)
 }
 static int live(BHEntityPool *pool, const BHEntity *e, unsigned long generation)
 {
-    BHEntity *p;
-    unsigned long n = 0;
-    for (p = pool->active; p && n++ < pool->capacity; p = p->next)
-        if (p == e)
-            return p->generation == generation;
-    return 0;
+    return bh_entity_is_active(pool, e) && e->generation == generation;
 }
 static BHPhysicsStepBody *body(BHPhysicsStepContext *c, const BHEntity *e)
 {

@@ -18,14 +18,7 @@ static BHDebrisBody *body_of(BHEntity *entity)
 }
 static int live(BHDebrisContext *ctx, BHEntity *entity)
 {
-    BHEntity *p;
-    unsigned long steps = 0;
-    if (!ctx || !ctx->pool)
-        return 0;
-    for (p = ctx->pool->active; p && steps++ < ctx->pool->capacity; p = p->next)
-        if (p == entity)
-            return 1;
-    return 0;
+    return ctx && bh_entity_is_active(ctx->pool, entity);
 }
 static int registry_end(BHDebrisContext *ctx, unsigned long *end)
 {

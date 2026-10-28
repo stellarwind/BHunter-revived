@@ -41,14 +41,7 @@ static int finite_vector(const BHVec3 *v)
 }
 static int live(BHContactEffects *ctx, BHEntity *entity)
 {
-    BHEntity *p;
-    unsigned long steps = 0;
-    if (!ctx || !ctx->pool)
-        return 0;
-    for (p = ctx->pool->active; p && steps++ < ctx->pool->capacity; p = p->next)
-        if (p == entity)
-            return 1;
-    return 0;
+    return ctx && bh_entity_is_active(ctx->pool, entity);
 }
 int __cdecl bh_contact_effects_init(BHContactEffects *ctx, BHEntityPool *pool, BHDrawQueue *queue,
                                     unsigned long spark_id, unsigned long quad_id, unsigned long rays_id,

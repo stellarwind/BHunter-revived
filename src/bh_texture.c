@@ -1,4 +1,5 @@
 #include "bh_texture.h"
+#include "bh_mission_profile.h"
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
@@ -311,7 +312,9 @@ static void palette_copy(BHTextureContext *q, BHTextureImage *image, BHTextureSl
 }
 static void pixels_copy(BHTextureContext *q, BHTextureImage *image, BHTextureSlot *s)
 {
+    BH_MP_BEGIN(marker);
     native(q, IDirectDrawSurface_Blt(s->surface, NULL, image->source, NULL, DDBLT_WAIT, NULL));
+    BH_MP_END(marker, "texture_upload", image->name, q->evictions);
     ++q->pixel_uploads;
 }
 D3DTEXTUREHANDLE __cdecl bh_texture_resident(BHTextureContext *q, BHTextureImage *image)
@@ -351,8 +354,10 @@ D3DTEXTUREHANDLE __cdecl bh_texture_resident(BHTextureContext *q, BHTextureImage
     s->pixels_dirty = s->palette_dirty = 0;
     if (s->frame == q->frame && s->image)
     {
+        BH_MP_BEGIN(marker);
         native(q, IDirect3DDevice2_EndScene(q->device));
         native(q, IDirect3DDevice2_BeginScene(q->device));
+        BH_MP_END(marker, "texture_flush", image->name, q->flushes);
         ++q->flushes;
     }
     if (s->image)

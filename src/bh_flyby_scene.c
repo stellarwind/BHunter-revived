@@ -61,14 +61,7 @@ static void queue_result(BHFlybyScene *s, int result)
 }
 static int active_entity(const BHEntityPool *pool, const BHEntity *target)
 {
-    const BHEntity *p;
-    unsigned long n = 0;
-    if (!pool || !target)
-        return 0;
-    for (p = pool->active; p && n < pool->used; p = p->next, ++n)
-        if (p == target)
-            return 1;
-    return 0;
+    return bh_entity_is_active(pool, target);
 }
 static BHFlybyScene *binding(const BHEntity *entity)
 {

@@ -43,21 +43,11 @@ static void failure(BHRailWagonContext *c, BHRailWagonError error)
 }
 static int live(BHRailWagonContext *c, BHEntity *e, unsigned long generation)
 {
-    BHEntity *p;
-    unsigned long n = 0;
-    for (p = c->pool->active; p && n++ < c->pool->capacity; p = p->next)
-        if (p == e)
-            return p->generation == generation;
-    return 0;
+    return bh_entity_is_active(c->pool, e) && e->generation == generation;
 }
 static int member(BHRailWagonContext *c, BHEntity *e)
 {
-    BHEntity *p;
-    unsigned long n = 0;
-    for (p = c->pool->active; p && n++ < c->pool->capacity; p = p->next)
-        if (p == e)
-            return 1;
-    return 0;
+    return bh_entity_is_active(c->pool, e);
 }
 static int wagon(BHRailWagonContext *c, BHEntity *e)
 {

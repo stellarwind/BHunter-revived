@@ -1,4 +1,5 @@
 #include "bh_frame_service.h"
+#include "bh_mission_profile.h"
 #include "bh_input_devices.h"
 #include "bh_cd_close.h"
 #include "bh_network_shutdown.h"
@@ -80,14 +81,22 @@ int __cdecl bh_frame_service_tick(BHFrameService *s)
     began = s->profile ? GetTickCount() : 0;
 #endif
     ++s->input_calls;
-    if (!bh_input_collect(s->input, &s->changed))
-        failure(s, BH_FRAME_SERVICE_INPUT);
+    {
+        BH_MP_BEGIN(marker);
+        if (!bh_input_collect(s->input, &s->changed))
+            failure(s, BH_FRAME_SERVICE_INPUT);
+        BH_MP_END(marker, "input_collect", "", s->changed);
+    }
 #ifdef DEBUGGING
     s->input_ms = s->profile ? GetTickCount() - began : 0;
 #endif
     if (!*s->paused)
         *s->frame_counter = *s->frame_counter + 1UL;
-    buffer = bh_frame_buffers_acquire(s->frames);
+    {
+        BH_MP_BEGIN(marker);
+        buffer = bh_frame_buffers_acquire(s->frames);
+        BH_MP_END(marker, "frame_acquire", "", 0);
+    }
     if (!buffer)
     {
         failure(s, BH_FRAME_SERVICE_BUFFER);
@@ -104,20 +113,28 @@ int __cdecl bh_frame_service_tick(BHFrameService *s)
     s->step_error = BH_ENTITY_OK;
     s->refresh_error = BH_ENTITY_OK;
     ++s->step_calls;
-    if (!bh_entities_step(s->entities))
     {
-        s->step_error = s->entities->error;
-        failure(s, BH_FRAME_SERVICE_ENTITY);
+        BH_MP_BEGIN(marker);
+        if (!bh_entities_step(s->entities))
+        {
+            s->step_error = s->entities->error;
+            failure(s, BH_FRAME_SERVICE_ENTITY);
+        }
+        BH_MP_END(marker, "entities_step", "", s->entities->used);
     }
 #ifdef DEBUGGING
     s->step_ms = s->profile ? GetTickCount() - began : 0;
     began = s->profile ? GetTickCount() : 0;
 #endif
     ++s->refresh_calls;
-    if (!bh_entities_refresh(s->entities))
     {
-        s->refresh_error = s->entities->error;
-        failure(s, BH_FRAME_SERVICE_ENTITY);
+        BH_MP_BEGIN(marker);
+        if (!bh_entities_refresh(s->entities))
+        {
+            s->refresh_error = s->entities->error;
+            failure(s, BH_FRAME_SERVICE_ENTITY);
+        }
+        BH_MP_END(marker, "entities_refresh", "", s->entities->used);
     }
 #ifdef DEBUGGING
     s->refresh_ms = s->profile ? GetTickCount() - began : 0;
@@ -130,8 +147,12 @@ int __cdecl bh_frame_service_tick(BHFrameService *s)
        rejection is diagnostic, not an original reason to stop gameplay.
        Invalid source ownership/numerics remain explicit binding failures. */
     ++s->sound_calls;
-    if (!bh_sound_tick(s->sound, s->last_dt, s->master_db, &s->sound_stats) && s->sound->error != BH_SOUND_BACKEND)
-        failure(s, BH_FRAME_SERVICE_SOUND);
+    {
+        BH_MP_BEGIN(marker);
+        if (!bh_sound_tick(s->sound, s->last_dt, s->master_db, &s->sound_stats) && s->sound->error != BH_SOUND_BACKEND)
+            failure(s, BH_FRAME_SERVICE_SOUND);
+        BH_MP_END(marker, "sound_tick", "", s->sound_stats.play_calls);
+    }
 #ifdef DEBUGGING
     s->sound_ms = s->profile ? GetTickCount() - began : 0;
     began = s->profile ? GetTickCount() : 0;

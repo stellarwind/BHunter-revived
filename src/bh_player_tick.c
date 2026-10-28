@@ -1191,14 +1191,9 @@ int __cdecl bh_player_tick_bind(BHPlayerTick *c, BHEntity *e)
 BHPlayerTick *__cdecl bh_player_tick_context(BHEntity *e)
 {
     BHPlayerTick *c = bound_player;
-    BHEntity *p;
-    unsigned long n = 0;
     if (!c || c->player != e || !c->pool)
         return 0;
-    for (p = c->pool->active; p && n++ < c->pool->capacity; p = p->next)
-        if (p == e)
-            return p->generation == c->generation ? c : 0;
-    return 0;
+    return bh_entity_is_active(c->pool, e) && e->generation == c->generation ? c : 0;
 }
 int __cdecl bh_player_tick_unbind(BHPlayerTick *c)
 {

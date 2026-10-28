@@ -36,14 +36,7 @@ static void bind(BHEntity *e, BHScriptTimerContext *c)
 }
 static int live(BHScriptTimerContext *c, BHEntity *e, unsigned long generation)
 {
-    BHEntity *p;
-    unsigned long n = 0;
-    if (!c || !c->pool)
-        return 0;
-    for (p = c->pool->active; p && n++ < c->pool->capacity; p = p->next)
-        if (p == e)
-            return p->generation == generation;
-    return 0;
+    return c && bh_entity_is_active(c->pool, e) && e->generation == generation;
 }
 static BHScriptTimerContext *owned(BHEntity *e, BHEntityCallback query)
 {

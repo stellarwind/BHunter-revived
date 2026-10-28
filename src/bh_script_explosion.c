@@ -39,15 +39,8 @@ static BHScriptExplosionContext *context(const BHEntity *e)
 }
 static int live(BHScriptExplosionContext *c, BHEntity *e, unsigned long generation)
 {
-    BHEntity *p;
-    unsigned long count = 0;
-    for (p = c->pool->active; p && count++ < c->pool->capacity; p = p->next)
-        if (p == e)
-        {
-            if (e->generation == generation)
-                return 1;
-            break;
-        }
+    if (bh_entity_is_active(c->pool, e) && e->generation == generation)
+        return 1;
     c->error = BH_EXPLOSION_MUTATION;
     return 0;
 }

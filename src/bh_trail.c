@@ -43,12 +43,7 @@ static void bind_context(BHEntity *e, BHTrailContext *c)
 }
 static int live(BHEntityPool *p, BHEntity *e)
 {
-    BHEntity *at;
-    unsigned long n = 0;
-    for (at = p->active; at && n++ < p->capacity; at = at->next)
-        if (at == e)
-            return 1;
-    return 0;
+    return bh_entity_is_active(p, e);
 }
 int __cdecl bh_trail_bind(BHTrailContext *c, BHEntity *e, const BHTrailParameters *p)
 {

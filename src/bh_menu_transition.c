@@ -20,13 +20,9 @@ double __cdecl bh_menu_transition_time(const BHEntity *e)
 }
 static int live(BHMenuTransition *c, BHEntity *e)
 {
-    BHEntity *p;
-    unsigned long n = 0, g;
+    unsigned long g;
     memcpy(&g, e->payload + 604, 4);
-    for (p = c->pool->active; p && n++ < c->pool->capacity; p = p->next)
-        if (p == e)
-            return e->generation == g;
-    return 0;
+    return bh_entity_is_active(c->pool, e) && e->generation == g;
 }
 int __cdecl bh_menu_transition_bind(BHMenuTransition *c, BHEntity *e, double t, long attempts)
 {

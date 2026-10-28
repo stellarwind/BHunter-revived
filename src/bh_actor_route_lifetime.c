@@ -42,12 +42,7 @@ int __cdecl bh_actor_route_release(BHActorRouteContext *c, BHEntityPool *pool, B
     unsigned long i, n;
     if (!c || !pool || !a || !c->rooms || !c->room_count || !c->actor_limit)
         return fail(c, BH_ACTOR_ROUTE_ARGUMENT);
-    if (!bh_entities_valid(pool))
-        return fail(c, BH_ACTOR_ROUTE_TOPOLOGY);
-    at = pool->active;
-    for (i = 0; i < pool->used && at && at != a; ++i)
-        at = at->next;
-    if (at != a)
+    if (!bh_entity_is_active(pool, a))
         return fail(c, BH_ACTOR_ROUTE_TOPOLOGY);
     bh_actor_route_read(a, &s);
     for (i = 0; i < c->room_count; ++i)

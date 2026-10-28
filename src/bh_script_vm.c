@@ -48,12 +48,7 @@ static BHEntity *owner(BHScriptVMActor *a)
 }
 static int live(BHEntityPool *p, BHEntity *e)
 {
-    BHEntity *at;
-    unsigned long i = 0;
-    for (at = p->active; at && i++ < p->capacity; at = at->next)
-        if (at == e)
-            return 1;
-    return 0;
+    return bh_entity_is_active(p, e);
 }
 int __cdecl bh_script_vm_read(BHEntity *e, BHScriptVMState *s)
 {

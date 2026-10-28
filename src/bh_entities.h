@@ -79,4 +79,6 @@ int __cdecl bh_entities_refresh(BHEntityPool *pool);       /* 00477330 */
 int __cdecl bh_entities_dispose(BHEntityPool *pool);
 int __cdecl bh_entities_focus(BHEntityPool *pool, BHEntity *entity);
 int __cdecl bh_entities_valid(const BHEntityPool *pool);
+/* Source ownership check using existing chunk live bits; no list traversal. */
+int __cdecl bh_entity_is_active(const BHEntityPool *pool, const BHEntity *entity);
 #endif

@@ -33,12 +33,7 @@ static BHAreaProjectileContext *context(const BHEntity *e)
 }
 static int live(BHAreaProjectileContext *c, BHEntity *e, unsigned long gen)
 {
-    BHEntity *p;
-    unsigned long i = 0;
-    for (p = c->effects->pool->active; p && i++ < c->effects->pool->capacity; p = p->next)
-        if (p == e)
-            return e->generation == gen;
-    return 0;
+    return bh_entity_is_active(c->effects->pool, e) && e->generation == gen;
 }
 static void __cdecl draw(BHEntity *e, void *packet)
 {

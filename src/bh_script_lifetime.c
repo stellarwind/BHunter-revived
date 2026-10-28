@@ -54,15 +54,9 @@ int __cdecl bh_script_lifetime_bind(BHScriptLifetimeContext *c, BHEntity *e, con
                                     BHEntityCallback query)
 {
     BHScriptTimerContext *timer;
-    BHEntity *p;
-    unsigned long i = 0;
-    int found = 0;
     if (!c || !c->timers.pool || !c->sounds || !e || !s)
         return 0;
-    for (p = c->timers.pool->active; p && i++ < c->timers.pool->capacity; p = p->next)
-        if (p == e)
-            found = 1;
-    if (!found)
+    if (!bh_entity_is_active(c->timers.pool, e))
         return 0;
     timer = &c->timers;
     memcpy(e->payload + 52, &timer, 4);

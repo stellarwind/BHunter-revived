@@ -22,16 +22,12 @@ static BHProjectileLifetime *context(BHEntity *e)
 }
 static int live(BHProjectileLifetime *c, const BHEntity *e, int bound)
 {
-    BHEntity *p;
-    unsigned long n = 0, g;
+    unsigned long g;
     if (!c || !c->pool || !c->sound || !e)
         return 0;
     if (bound)
         memcpy(&g, e->payload + 472, 4);
-    for (p = c->pool->active; p && n++ < c->pool->capacity; p = p->next)
-        if (p == e)
-            return !bound || p->generation == g;
-    return 0;
+    return bh_entity_is_active(c->pool, e) && (!bound || e->generation == g);
 }
 int __cdecl bh_projectile_query_state(const BHEntity *e, BHProjectileQueryState *s)
 {

@@ -41,12 +41,7 @@ static BHActorDamageContext *context(BHEntity *e)
 }
 static int live(BHActorDamageContext *c, BHEntity *e)
 {
-    BHEntity *a;
-    unsigned long n = 0;
-    for (a = c->pool->active; a && n++ < c->pool->capacity; a = a->next)
-        if (a == e)
-            return 1;
-    return 0;
+    return bh_entity_is_active(c->pool, e);
 }
 static void normal_tick(BHEntity *e)
 {

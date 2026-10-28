@@ -31,19 +31,7 @@ BHWeaponObjectState *__cdecl bh_weapon_object_state(BHEntity *entity)
 }
 static int live(const BHWeaponRegistry *registry, const BHWeaponRecord *record)
 {
-    BHEntity *cursor;
-    unsigned long count;
-    if (!registry || !registry->pool || !record->entity)
-        return 0;
-    cursor = registry->pool->active;
-    count = 0;
-    while (cursor && count++ < registry->pool->used)
-    {
-        if (cursor == record->entity)
-            return cursor->generation == record->generation;
-        cursor = cursor->next;
-    }
-    return 0;
+    return registry && bh_entity_is_active(registry->pool, record->entity) && record->entity->generation == record->generation;
 }
 static void __cdecl weapon_query(BHEntity *entity, void *packet)
 {

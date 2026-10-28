@@ -1,5 +1,8 @@
 # BHunter restoration rules
 
+- User direction (2026-10-28): do not write or extend Python integration tests. Keep validation focused and token usage low.
+- User direction (2026-10-28): do not create or update Markdown documentation except the latest checkpoint in `META/PROGRESS.md`. This requested rules update is the exception; retain older documentation without rewriting it.
+
 ALL TEST HAPPEN IN A CUSTOM TEST LEVEL. NEVER EVER TRY SCRIPTED SCENARIOS IN THE REAL GAME!! AND EVEN IF YOU NEED THOSE ASK HUMAN TO RECORD KEYS
 
 2026-10-27 correction: do not build or run automated training/mission

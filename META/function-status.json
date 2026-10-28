@@ -1,10 +1,224 @@
 {
   "schema_version": 1,
-  "updated": "2026-10-27",
+  "updated": "2026-10-28",
   "scope": "Starter implementation-variant ledger, not exhaustive binary inventory. Other observed regions remain unadmitted until catalogued.",
   "plan": "RESTORATION_PLAN.md",
   "reference_exe_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
   "records": [
+{
+  "id": "splash-keyboard-skip-20261028",
+  "role": "adapter",
+  "implementation": "adapter",
+  "integration": "linked_game",
+  "target": "build/game/BHunter-source.exe",
+  "source_sha256": {
+    "src/bh_game_app.c": "628dd6b192675d3cbd826eac21376c0b737cb1a9b91c491aaff8bde3fb59befb"
+  },
+  "provenance": "User requested Space/Escape/Enter alongside existing mouse skipping. Original 0044a160 initializes deadline+5000; 0044aac0 advances timer stages. Xrefs to 004dfc84 and 004e0f8c only identify those owners; 00473c40 input disassembly has no splash skip.",
+  "validation": [
+    "python tools/build_game.py --incremental --mission-profile: 300 production TUs linked",
+    "python tools/test_game_startup.py --hardware: child exit 0, completion log; wrapper failed because DEBUGGING-only summary absent"
+  ],
+  "limits": [
+    "Keyboard skip awaits human confirmation; startup-check bypasses splash input",
+    "No gameplay automation, software tests or Python test changes",
+    "Usability adapter, not original fidelity claim"
+  ]
+},
+{
+  "id": "runtime-ownership-guard-audit-20261028",
+  "role": "adapter",
+  "implementation": "adapter",
+  "function": "Repeated source-only pool ownership validation",
+  "source_sha256": {
+    "src/bh_actor_attack.c": "d8e13b29334ba55ba33e2da1c6d5e61707fe6dbaa632e32acbb0fea0f8a4602b",
+    "src/bh_actor_damage.c": "5639feb61b231e23e1f8508b920702eb48baaf6e1bc27413436bbfff09513db7",
+    "src/bh_actor_response.c": "ef870a1bae09c97f3454bc497c8e2a819c40a0b67f2000ebfedced2c17c96897",
+    "src/bh_actor_route_lifetime.c": "781ce662e37cb5066113ee683db9fdf6f68f1879cf224469dfea42444c33adbe",
+    "src/bh_actor_vehicle_lifetime.c": "4d7292241e31bd97fb9ee2d4b2e458ea110721c7704870504a309d87f47b1565",
+    "src/bh_area_projectile.c": "1934603082ae610fa988d93ddbe1c75a3859e2c73f29abbfe5a8faceead35629",
+    "src/bh_ballistic_projectile.c": "0741726f642442ddc3e2c4f715f88315710faf388c7aa29a40ac38a75d689dd3",
+    "src/bh_contact_effects.c": "6b784e437ed74617bd0d67b7a412bdda0f08296433dfc5232dc92ea1daa78b05",
+    "src/bh_debris_response.c": "855ce6415f3848683c22f102bcbfd8c2d90c5ee7a5fd6235b743d788aaf38fc1",
+    "src/bh_editor_world.c": "fbfb91e15d52443b958cfd2ca1228aad08140b3d49f48420b3d3c2a3850af5b5",
+    "src/bh_effect_cleanup.c": "ceb46b890656ba6c5004d51c7bb55d5816b59afcf52c771153ed9daa70517d3e",
+    "src/bh_effect_orbit_tick.c": "2e021ee1271e16d6bedd01240a5247bb3e44da438d97ed3b06c48b47f160f3d6",
+    "src/bh_effect_projectile.c": "a32f754059cb77d56e347043eee2f590d7491e8efef153ef770976abdf3a02d2",
+    "src/bh_effect_split_tick.c": "5ff0b38d17081ac9efc9e396d8ee0e8a07a88684da734406bea58162f42bb35a",
+    "src/bh_flyby_scene.c": "bf39b2e2f352212b887033f4a00f35114b6c373904bd3e019dbb5b2b1e7c7699",
+    "src/bh_homing_projectile.c": "880bad3f80ab35ea860d39c1f619569533031efb2ad6391b1774ed3931e2952f",
+    "src/bh_menu_transition.c": "294bcd7bd5cf7c5d7c86c269ea98045db13586d7502531583a58fcac7739c2d5",
+    "src/bh_message_panel.c": "c336eadd6b7c0f09f365d4347415bb87494682cb9b7f7ed25d42bf783bf86fad",
+    "src/bh_physics_step.c": "0ec121f803aa06429b525d0c4a96e8fe07fca38311f97391864b8596ea7d7248",
+    "src/bh_pickup.c": "d8065b100daae00eb22d9543ecc68cf6aac55114a7da4237291de2edbbe5a37a",
+    "src/bh_player_reset.c": "7dba47bb612de5abd247a7519b0f2303b0a3b0c09c88dee730f9653347dd689c",
+    "src/bh_player_tick.c": "ab0c61428f71a9282967cbff4c2ab38d051a2e2c280cfe81f820f331c5304580",
+    "src/bh_projectile_lifetime.c": "f33db21584c40d6a5487781197b848288861da5a50a99bd798d75268592924cf",
+    "src/bh_pulse_projectile.c": "0e3eb196551a12b500aec475862da2079fb1e118a114dbb3ce5108e95123ae6b",
+    "src/bh_rail_wagon.c": "1ca8dee3b381bdad7e859c1c66439685283f22a02920154df621c8b8a3fc016e",
+    "src/bh_script_actor_query.c": "9fa00f19f17d83fd44b36c35f496a10099307a6cf3718c3bf1c08b875ebfda50",
+    "src/bh_script_explosion.c": "fcac427e7447d14e0ab423ba3f16e845b52020a3848281183e259ae9e319a8c5",
+    "src/bh_script_flash.c": "63a993bd0eabc4c45fae95dafa2c130dbcaaff9c731a9468da25a028c47fa5c9",
+    "src/bh_script_lifetime.c": "6b56c42034fdb80190fd9110ad96d4120022376aa905e170091f1882c604c575",
+    "src/bh_script_motion.c": "85f0f53066a69f81833b6655235689568c2558ae73e370efdbc1ac48f15eec2b",
+    "src/bh_script_particles.c": "89f0dbc52deeadb0145f880fc036b70746f9bfdeb88ab077f2f6e5e3b9098189",
+    "src/bh_script_sensor.c": "33a687d8b7fa4771de4cfd3cd59d19d7b6e2701895cbc37e0dcbefe8bea7a016",
+    "src/bh_script_timer.c": "c0039e1ff85742766c6e2f044c36431c2d98dea00f97121bcebb4671b81e0b67",
+    "src/bh_script_wait.c": "320b98699470c3210c0b9ba4023402296c9a4889bd1e79d181d665bf781abf38",
+    "src/bh_target_construct.c": "c31acabe839f1cf7b8079f79a8ec5209ca7ca22ee69ec147ad6e3673266c0ae4",
+    "src/bh_target_step.c": "090cc63bbcf59ba9b52b421bf6c18b15884e0c06ec5dccc19bf1b4404ea21392",
+    "src/bh_trail.c": "392de3d78efd63f2ebe0fa85eda6cc76916dae2df39d669720ad9bddedaf4458",
+    "src/bh_vm_queries.c": "81105a4b2f663232e3217de631e45921dbb459503a7edcd47d1837d965043c5d",
+    "src/bh_weapon_factory.c": "88367dd312b3b1d0f7bc4bb2eeefa31653e2596b3439fd361acc249cff8b1b85",
+    "src/bh_world_reset.c": "d3bbd4e64979b1148eba288b756bddf99ad575c16323669aa7ccb5a1987238f1"
+  },
+  "integration": {
+    "status": "linked_game",
+    "translation_units": 300,
+    "target": "build/game/BHunter-source.exe",
+    "map": "build/game/mission-profile-v4.map"
+  },
+  "validation": {
+    "entities_ahead": 8500,
+    "source_checks": [
+      "tests/mission_broadcast.c: live-slot versus independent active-list membership for 8500 entities before/after broadcast deletion, growth, cross-pool/interior/null, recycled/stale-generation weapon lookup, flash bind of live/dead entity",
+      "tests/actor_route_lifetime.c: 56 checks, zero failures, real source removal at each list position and sound stop"
+    ],
+    "original_evidence": [
+      "META/m4/target656/response/original/0043a1d0.disasm.json: dispatches event without full entity scan",
+      "META/m4/target550/c5/004376e0.disasm.json: original script actor query",
+      "META/m4/frontier-90min/original/00435720.tsv: removal unlinks local links, no whole pool validation"
+    ],
+    "before_ms": 41.057,
+    "broadcast_after_ms": 0.864,
+    "change": "Use existing live-slot membership for identity-only scans; retain generation comparisons, stored-generation loads, error assignment, caller bindings and adjacent room-list checks. Replace whole-pool validation in per-flash bind and actor route release with local ownership check. Startup-only validators retained.",
+    "limitations": [
+      "Representative source check timings are not an in-game FPS or original equivalence claim",
+      "Per-module gameplay scenarios not replayed; markers retained for human observation",
+      "No changes to original gameplay searches, collision math, RNG consumption, scheduling or threading",
+      "Some cold bind-only list scans remain; no exhaustive proof of all performance bottlenecks",
+      "Malformed globally corrupted pools are no longer diagnosed by the two per-operation whole-pool audits; local validity/adjacent-link guards and explicit full validator remain"
+    ],
+    "after_ms": 0.011,
+    "hardware_startup_exit": 0,
+    "weapon_lookups": 2000
+  },
+  "updated": "2026-10-28"
+},
+{
+  "id": "mission-broadcast-liveness-20261028",
+  "function": "bh_script_vm_query source ownership check",
+  "original_va": "00443ff0",
+  "role": "game",
+  "provenance": "Original VM owner; liveness guard is source-only adapter",
+  "implementation": "func",
+  "source": "src/bh_script_vm.c",
+  "source_sha256": {
+    "src/bh_script_vm.c": "5a157f3108283498011c3c0e541e460e910320d36ab9b040305de767bff49d8c",
+    "src/bh_entities.c": "dd793e69141d36d57a5e9983ea3fee2ac77e99e7838b56706abef83ced2514b8",
+    "src/bh_entities.h": "ceff9e54d05e84bef8df8d4d94fbe7d0a284edffd9f3de030ddeed2f7c3c5504",
+    "tests/mission_broadcast.c": "08e3f7731eb6e7ea64db68c525fa1e2c34747b06bc77102750dca07767bb12ec"
+  },
+  "integration": {
+    "target": "build/game/BHunter-source.exe",
+    "status": "linked_game",
+    "map": "build/game/mission-profile-v3.map",
+    "marker_build": true
+  },
+  "validation": {
+    "change": "Expose existing active(pool,entity) chunk live-bit lookup and use it in VM live(). No list order, numeric, RNG or mission logic changes.",
+    "capture_map": "build/game/mission-profile-v2.map",
+    "original_evidence": "META/m4/target656/vm/original/00443ff0.disasm.json: 00444008..0044402a directly checks packet event/loaded flag and returns for irrelevant broadcasts, without a pool scan",
+    "finding": "Three always_tick callbacks at frame196 cost 122.950/121.789/121.178ms; each can broadcast through thousands of script VM callbacks. Added VM live() guard linearly scanned all active entities per receiver.",
+    "before_ms": 141.623,
+    "hardware_startup_exit": 0,
+    "human_capture": "build/game/mission-markers-69456234-9716.csv",
+    "check_scope": "8500 VM entities across pool growth; three actual event9/10/17 broadcasts; unchanged state/RNG; event4 deletion; null/interior/cross-pool/freed/recycled ownership",
+    "limits": "Synthetic source workload demonstrates removed overhead, not complete original gameplay fidelity. Human confirmation of chapter2 stutter reduction pending; other source liveness scans and first sound startup cost remain.",
+    "source_check": "tests/mission_broadcast.c linked to real production objects; build/game/mission-broadcast-before.exe and mission-broadcast-after.exe",
+    "after_ms": 0.785
+  },
+  "updated": "2026-10-28"
+},
+{
+  "id": "preview-mission-markers-v2-20261028",
+  "role": "adapter",
+  "implementation": "adapter",
+  "source": [
+    "src/bh_mission_profile.c",
+    "src/bh_entities.c",
+    "src/bh_frame_service.c",
+    "src/bh_sound_queue.c"
+  ],
+  "integration": {
+    "map": "build/game/mission-profile-v2.map",
+    "status": "linked_game",
+    "target": "build/game/BHunter-source.exe"
+  },
+  "validation": {
+    "limits": "Simulation pre-sound stall localized; root callback still unknown. No stutter fix claimed. Added >=1ms per-entity callback markers plus full input/acquire/step/refresh and sound duplication markers. User replay required; startup does not exercise runtime callback markers.",
+    "hardware_startup_exit": 0,
+    "human_capture": "build/game/mission-markers-69242562-15592.csv",
+    "observations": [
+      "Frame151 simulation245.469ms, message arrival221.219ms after simulation start, sound0.080ms",
+      "Frame181 simulation315.7258ms, sound0.2186ms",
+      "Frame236 simulation417.173ms, sound0.0119ms, render0.5629ms, present0.6576ms"
+    ]
+  },
+  "updated": "2026-10-28"
+},
+{
+  "id": "preview-mission-cues-markers-20261028",
+  "function": "Mission completion sound binding and optional portrait-stutter markers",
+  "role": "adapter",
+  "implementation": "adapter",
+  "source": "src/bh_game_app.c",
+  "source_sha256": {
+    "src/bh_game_app.c": "23a0466dde0f7d3bb6a6b0e50768e5649ba097f7c8c0b1ef45acf57dcdd19464",
+    "src/bh_mission_profile.c": "98c6fca501d2836a5bb3c0070ae6c11569a30d00ba6988065ece021f49b8b991",
+    "src/bh_mission_profile.h": "a811c403c4857ff17bec5f1b16045c532b789230a9c2fd31a9f6523ac9788a80",
+    "src/bh_messages.c": "5ad70bdf25e66c2b1f1820b8a0754dc742b99ba52a72fcb279ceb7c298de0faa",
+    "src/bh_message_panel.c": "4e2d0894d08bbc2e49f0ddaea571d1cc66501e78734ec375f2fa5ea0b7ea1ba4",
+    "src/bh_atlas_glyph.c": "d3f48e43a4b9bc55a85df928685faeb01b22f48ccc6505a86bcfd4615b192a39",
+    "src/bh_atlas_text.c": "4e361eafc212ca35485cdeada7fb56f868c40cc16c81f2fedfaf1efc50a5ad6e",
+    "src/bh_texture.c": "4fb324c16bb2680d90bca3c15edfa61b187829223dacba915c0d7187aba57624",
+    "src/bh_frame_service.c": "08577d3806bc6d06995a2c46f54118b3fbc424fcbb43306b1fe9c1d5761bbf89",
+    "src/bh_mission_progress.c": "b2b8888a867cddddb50b414371ee73b50203197edcdb74bd8b62548a2ff3d96e"
+  },
+  "integration": {
+    "status": "linked_game",
+    "target": "build/game/BHunter-source.exe",
+    "translation_units": 300,
+    "debugging": false,
+    "mission_profile": true
+  },
+  "validation": {
+    "hardware_startup_exit": 0,
+    "marker_csv": "build/game/mission-markers-69148062-10640.csv",
+    "marker_counts": {
+      "glyph_blt": 310,
+      "text_clear": 51,
+      "texture_upload": 28
+    },
+    "sound_original": "004225a3: 8b0de0184d00 selects chapter cue; 004225ce: 8b15dc6b4900 selects ordinary completion; checked directly against immutable EXE",
+    "original_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
+    "scheduling": "High-resolution scheduler change reverted; existing GetTickCount/frame_due behavior retained",
+    "limitations": [
+      "Human hitch reproduction and audible cue confirmation pending",
+      "No gameplay automation or software rendering tests",
+      "QPC only records diagnostics; no simulation/RNG changes",
+      "Latest 65536 marker events retained; CSV written on orderly exit; forced termination loses capture",
+      "Startup validates graphics marker output, not mission-event timing or stutter attribution"
+    ]
+  },
+  "investigation": [
+    "Mission strings and portrait/audio assets already loaded before runtime",
+    "Panel start queues clear and tv_on sound; text drawing uses synchronous DirectDraw blits",
+    "Texture residency can upload portraits/text and flush on eviction; original uses these operations too",
+    "Chapter progression may synchronously save config; ordinary message path does not"
+  ],
+  "updated": "2026-10-28"
+},
     {
       "id": "00401000-functional-c",
       "original_va": "00401000",

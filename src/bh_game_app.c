@@ -1,4 +1,5 @@
 #include "bh_game_app.h"
+#include "bh_mission_profile.h"
 #include "bh_application_bootstrap.h"
 #include "bh_primitive_dispatch.h"
 #include "bh_sprite_quad.h"
@@ -745,13 +746,18 @@ static LRESULT CALLBACK procedure(HWND window, UINT message, WPARAM key, LPARAM 
     }
     if (!a)
         return DefWindowProcA(window, message, key, bits);
-    /* Human-observed original behavior: a click advances the company splash.
-      Expire the existing display timer; redraw1 avoids stage0's redraw2 timer
-      restart and lets the real display owner perform its normal transition. */
-    if (message == WM_LBUTTONDOWN && !a->startup_check && a->loading_images.arena && a->loading_images.stage < 2)
+    /* User-requested splash skipping; original0044aac0 advances on a timer.
+      Expire that timer; redraw1 avoids stage0's redraw2 timer restart.
+      Consume key repeats without advancing another company stage. */
+    if ((message == WM_LBUTTONDOWN ||
+            (message == WM_KEYDOWN && (key == VK_SPACE || key == VK_ESCAPE || key == VK_RETURN))) &&
+        !a->startup_check && a->loading_images.arena && a->loading_images.stage < 2)
     {
-        a->loading_images.deadline = GetTickCount();
-        a->loading_images.redraw_count = 1;
+        if (message == WM_LBUTTONDOWN || !((unsigned long)bits & 0x40000000UL))
+        {
+            a->loading_images.deadline = GetTickCount();
+            a->loading_images.redraw_count = 1;
+        }
         return 0;
     }
     /* Hide only this active client area's cursor. Avoid ShowCursor's shared
@@ -2160,8 +2166,9 @@ static int runtime_owners(BHGameApp *a)
     a->actor_attack.beam_image = V(0x4f0060);
     a->panel.flash_image = (unsigned long)bh_atlas_page_image(a->panel.page);
     a->panel.alert_image = V(0x4f00b4);
-    a->mission_progress.first_sound = V(0x4d18e0);
-    a->mission_progress.unlocked_sound = V(0x496bdc);
+    /* 004225ce: ordinary completion; 004225a3: chapter progression. */
+    a->mission_progress.first_sound = V(0x496bdc);
+    a->mission_progress.unlocked_sound = V(0x4d18e0);
     return 1;
 }
 #undef V
@@ -2177,6 +2184,7 @@ static void __cdecl source_produce(void *user)
 {
     BHGameApp *a = (BHGameApp *)user;
     unsigned long clock = a->frame + (a->player_state.paused == 0);
+    bh_mp_frame(clock);
     if (!bh_entities_focus(&a->pool, a->player_state.paused ? a->player : 0))
     {
         failure(a, 12, "Paused player entity focus binding failed");
@@ -2368,6 +2376,10 @@ static int startup_clock_checks(BHGameApp *a)
     DWORD base;
     double interval = 1000.0 / 30.0 - 1.5;
     static const unsigned long rates[3] = {60, 75, 144};
+    /* Independent original call-site keys, not resource load-table positions. */
+    if (a->mission_progress.first_sound != bh_bootstrap_value(&a->bootstrap, 0x496bdc) ||
+        a->mission_progress.unlocked_sound != bh_bootstrap_value(&a->bootstrap, 0x4d18e0))
+        return failure(a, 13, "Mission completion sound bindings reversed");
     expected = 1 + (unsigned long)(10000.0 / interval);
     for (pass = 0; pass < 2; ++pass)
         for (rate = 0; rate < 3; ++rate)
@@ -2625,6 +2637,7 @@ static int manual_loop(BHGameApp *a)
     stage(a, "Manual preview running; keyboard/mouse belong to the active game window");
     while (!a->quit && !a->error)
     {
+        BH_MP_BEGIN(frame_marker);
         began = GetTickCount();
         while (PeekMessageA(&message, 0, 0, 0, PM_REMOVE))
         {
@@ -2681,7 +2694,11 @@ static int manual_loop(BHGameApp *a)
             a->angles = a->flyby_state.camera.angles;
             a->contacts.has_camera = 1;
             a->contacts.camera_yaw = a->yaw = a->angles.x;
-            a->frames.produce(a->frames.produce_user);
+            {
+                BH_MP_BEGIN(marker);
+                a->frames.produce(a->frames.produce_user);
+                BH_MP_END(marker, "simulation", "", a->frame);
+            }
 #ifdef DEBUGGING
             box_observe(a);
 #endif
@@ -2708,8 +2725,14 @@ static int manual_loop(BHGameApp *a)
 #ifdef DEBUGGING
         rendered = GetTickCount();
 #endif
-        if (!render_frame(a, a->slots + a->frames.latest))
-            break;
+        {
+            int render_ok;
+            BH_MP_BEGIN(marker);
+            render_ok = render_frame(a, a->slots + a->frames.latest);
+            BH_MP_END(marker, "render", "", a->frame);
+            if (!render_ok)
+                break;
+        }
 #ifdef DEBUGGING
         rendered = GetTickCount() - rendered;
 #endif
@@ -2727,6 +2750,7 @@ static int manual_loop(BHGameApp *a)
 #endif
         if (a->fullscreen)
         {
+            BH_MP_BEGIN(present_marker);
             if (a->target != a->render_mode.render &&
                 IDirectDrawSurface_BltFast(a->render_mode.render, 0, 0, a->target, 0, DDBLTFAST_WAIT) != DD_OK)
             {
@@ -2738,6 +2762,7 @@ static int manual_loop(BHGameApp *a)
                 failure(a, 13, "Fullscreen presentation failed");
                 break;
             }
+            BH_MP_END(present_marker, "present", "", presentations);
         }
         else if (IDirectDrawSurface_Blt(a->primary, &destination, a->target, 0, DDBLT_WAIT, 0) != DD_OK)
         {
@@ -2755,6 +2780,7 @@ static int manual_loop(BHGameApp *a)
         }
 #endif
         ++presentations;
+        BH_MP_END(frame_marker, "frame", "", presentations);
 #ifdef DEBUGGING
         if (!a->perf_enabled && produce && (a->frame <= 5 || a->frame % 30 == 0))
         {
@@ -3030,6 +3056,7 @@ int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int start
                 failure(a, 4, "Hardware image has no allocated texture slot");
                 goto done;
             }
+    bh_mp_start();
     if (startup_check)
     {
         stage(a, "Checking initial scene presentation without input or entity steps");
@@ -3086,6 +3113,7 @@ int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int start
     }
 done:
     result = a->error;
+    bh_mp_save();
     cleanup(a);
     stage(a, "Source owners released");
     bh_math_environment_leave(&a->math);

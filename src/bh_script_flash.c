@@ -19,15 +19,7 @@ float __cdecl bh_script_flash_countdown(const BHEntity *e)
 }
 int __cdecl bh_script_flash_bind(BHEntityPool *p, BHEntity *e, float countdown)
 {
-    BHEntity *at;
-    unsigned long n = 0;
-    int found = 0;
-    if (!p || !e || !bh_entities_valid(p))
-        return 0;
-    for (at = p->active; at && n++ < p->capacity; at = at->next)
-        if (at == e)
-            found = 1;
-    if (!found)
+    if (!bh_entity_is_active(p, e))
         return 0;
     memcpy(e->payload + 4, &countdown, 4);
     memcpy(e->payload + 456, &p, 4);

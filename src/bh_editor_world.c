@@ -43,12 +43,7 @@ static long signed_word(unsigned long x)
 }
 static int live(BHEditorWorld *c, BHEntity *e)
 {
-    BHEntity *a;
-    unsigned long i = 0;
-    for (a = c->pool->active; a && i++ < c->pool->capacity; a = a->next)
-        if (a == e)
-            return 1;
-    return 0;
+    return bh_entity_is_active(c->pool, e);
 }
 static int member(BHEditorWorld *c, const BHEditorNode *n)
 {

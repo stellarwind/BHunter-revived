@@ -14,8 +14,8 @@ int __cdecl bh_actor_vehicle_release(BHActorVehicleLifetimeContext *c, BHEntity 
 {
     BHActorRouteState s;
     BHPickupRoom *room = 0;
-    BHEntity *at, *previous, *next;
-    unsigned long i, n = 0;
+    BHEntity *previous, *next;
+    unsigned long i;
     struct
     {
         long event;
@@ -23,10 +23,7 @@ int __cdecl bh_actor_vehicle_release(BHActorVehicleLifetimeContext *c, BHEntity 
     } packet;
     if (!c || !c->pool || !c->route || !c->route->sound || !e || !c->count)
         return 0;
-    for (at = c->pool->active; at && at != e && n++ < c->pool->capacity; at = at->next)
-    {
-    }
-    if (at != e)
+    if (!bh_entity_is_active(c->pool, e))
         return 0;
     bh_actor_route_read(e, &s);
     for (i = 0; i < c->route->room_count; ++i)

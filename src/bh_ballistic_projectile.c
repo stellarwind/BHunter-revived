@@ -23,12 +23,7 @@ static BHHomingProjectileContext *context(BHEntity *e)
 }
 static int live(BHHomingProjectileContext *c, BHEntity *e, unsigned long generation)
 {
-    BHEntity *p;
-    unsigned long i = 0;
-    for (p = c->pool->active; p && i++ < c->pool->capacity; p = p->next)
-        if (p == e)
-            return e->generation == generation;
-    return 0;
+    return bh_entity_is_active(c->pool, e) && e->generation == generation;
 }
 static void offset(BHVec3 *out, const BHVec3 *p, const BHVec3 *n, double factor)
 {

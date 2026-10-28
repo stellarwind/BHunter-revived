@@ -44,13 +44,9 @@ static BHEffectProjectileContext *context(BHEntity *e)
 }
 static int live(BHEffectProjectileContext *c, BHEntity *e)
 {
-    BHEntity *p;
-    unsigned long i = 0, g;
+    unsigned long g;
     memcpy(&g, e->payload + 612, 4);
-    for (p = c->effects->pool->active; p && i++ < c->effects->pool->capacity; p = p->next)
-        if (p == e)
-            return e->generation == g;
-    return 0;
+    return bh_entity_is_active(c->effects->pool, e) && e->generation == g;
 }
 int __cdecl bh_effect_projectile_bind(BHEffectProjectileContext *c, BHEntity *e, int orbit)
 {

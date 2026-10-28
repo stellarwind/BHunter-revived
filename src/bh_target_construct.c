@@ -8,12 +8,7 @@
 #include <string.h>
 static int live(BHEntityPool *p, BHEntity *e, unsigned long generation)
 {
-    BHEntity *a;
-    unsigned long n = 0;
-    for (a = p->active; a && n++ < p->capacity; a = a->next)
-        if (a == e)
-            return a->generation == generation;
-    return 0;
+    return bh_entity_is_active(p, e) && e->generation == generation;
 }
 static float rounded(double x)
 {

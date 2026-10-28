@@ -1,4 +1,5 @@
 #include "bh_message_panel.h"
+#include "bh_mission_profile.h"
 #include "bh_atlas_wide.h"
 #include "bh_round.h"
 #include "bh_pickup_draw.h"
@@ -16,18 +17,7 @@ BHMessagePanelFields *__cdecl bh_message_panel_fields(BHEntity *entity)
 }
 static int live(BHMessagePanel *panel)
 {
-    BHEntity *cursor;
-    unsigned long count = 0;
-    if (!panel || !panel->pool || !panel->entity)
-        return 0;
-    cursor = panel->pool->active;
-    while (cursor && count++ < panel->pool->used)
-    {
-        if (cursor == panel->entity)
-            return cursor->generation == panel->generation;
-        cursor = cursor->next;
-    }
-    return 0;
+    return panel && bh_entity_is_active(panel->pool, panel->entity) && panel->entity->generation == panel->generation;
 }
 int __cdecl bh_message_text_plain(BHTextQueue *queue, BHAtlasPage *page, const char *text)
 {
@@ -99,7 +89,9 @@ int __cdecl bh_message_text_drain(BHTextQueue *queue, BHAtlasContext *atlas, uns
 static int request(BHMessagePanel *panel, unsigned long resource)
 {
     unsigned long handle;
+    BH_MP_BEGIN(marker);
     handle = bh_sound_request(panel->sound, resource, 1.0f, 1.0f, NULL, NULL);
+    BH_MP_END(marker, "panel_sound_request", "", resource);
     ++panel->sound_requests;
     if (handle == BH_SOUND_INVALID)
     {
@@ -181,6 +173,10 @@ static int startup(BHMessagePanel *panel, BHMessagePanelFields *fields)
     fields->cursor = panel->messages->arena + 1;
     fields->timer = .3f;
     fields->scale = 0;
+    {
+        BH_MP_BEGIN(marker);
+        BH_MP_END(marker, "panel_open", "portrait", (unsigned char)panel->messages->arena[0]);
+    }
     sound_ok = request(panel, panel->tv_on_sound);
     panel->mode_identity = 0x00442b60UL;
     clear_ok = bh_text_queue_clear(panel->text, panel->page, 0) > 0;

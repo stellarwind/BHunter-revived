@@ -32,14 +32,7 @@ static void bind_context(BHEntity *entity, BHScriptTimerContext *ctx)
 }
 static int live(const BHScriptTimerContext *ctx, const BHEntity *entity, unsigned long generation)
 {
-    BHEntity *p;
-    unsigned long count = 0;
-    if (!ctx || !ctx->pool)
-        return 0;
-    for (p = ctx->pool->active; p && count++ < ctx->pool->capacity; p = p->next)
-        if (p == entity)
-            return p->generation == generation;
-    return 0;
+    return ctx && bh_entity_is_active(ctx->pool, entity) && entity->generation == generation;
 }
 static const BHScriptTimerActor *actor(const BHScriptTimerContext *ctx, BHEntity *entity)
 {

@@ -16,12 +16,7 @@ static void setword(BHEntity *e, unsigned long o, unsigned long v)
 }
 static int live(BHEntityPool *p, BHEntity *e)
 {
-    BHEntity *at;
-    unsigned long n = 0;
-    for (at = p->active; at && n++ < p->capacity; at = at->next)
-        if (at == e)
-            return 1;
-    return 0;
+    return bh_entity_is_active(p, e);
 }
 static void identity(BHMat34 *m)
 {

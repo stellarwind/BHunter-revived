@@ -36,12 +36,7 @@ static void value(BHEntity *e, unsigned long at, float f)
 }
 static int live(BHEffectOrbitTickContext *c, BHEntity *e, unsigned long generation)
 {
-    BHEntity *p;
-    unsigned long n = 0;
-    for (p = c->core->effects->pool->active; p && n++ < c->core->effects->pool->capacity; p = p->next)
-        if (p == e)
-            return p->generation == generation;
-    return 0;
+    return bh_entity_is_active(c->core->effects->pool, e) && e->generation == generation;
 }
 int __cdecl bh_effect_orbit_tick_bind(BHEffectOrbitTickContext *c, BHEntity *e)
 {

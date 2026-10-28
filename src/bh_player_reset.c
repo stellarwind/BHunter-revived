@@ -20,19 +20,7 @@ static unsigned long get_long(BHEntity *player, unsigned int offset)
 }
 static int player_live(BHEntityPool *pool, BHEntity *player)
 {
-    BHEntity *cursor;
-    unsigned long count;
-    if (!pool || !player)
-        return 0;
-    cursor = pool->active;
-    count = 0;
-    while (cursor && count++ < pool->used)
-    {
-        if (cursor == player)
-            return 1;
-        cursor = cursor->next;
-    }
-    return 0;
+    return bh_entity_is_active(pool, player);
 }
 static void stop_field(BHPlayerReset *reset, BHEntity *player, unsigned int offset)
 {

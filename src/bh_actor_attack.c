@@ -71,13 +71,7 @@ static void offset(BHEntity *e, BHVec3 *p)
 }
 static int live(BHActorAttackContext *c, BHEntity *e, unsigned long gen)
 {
-    BHEntity *p;
-    unsigned long n = 0;
-    BHEntityPool *pool = c->effects->effects->pool;
-    for (p = pool->active; p && n++ < pool->capacity; p = p->next)
-        if (p == e)
-            return p->generation == gen;
-    return 0;
+    return bh_entity_is_active(c->effects->effects->pool, e) && e->generation == gen;
 }
 typedef struct Motion
 {

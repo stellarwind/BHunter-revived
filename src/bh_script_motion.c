@@ -21,12 +21,7 @@ static BHScriptMotionContext *context(BHEntity *e)
 }
 static int live(BHEntityPool *pool, const BHEntity *e)
 {
-    BHEntity *p;
-    unsigned long n = 0;
-    for (p = pool->active; p && n++ < pool->capacity; p = p->next)
-        if (p == e)
-            return 1;
-    return 0;
+    return bh_entity_is_active(pool, e);
 }
 int __cdecl bh_script_motion_actor_read(const BHEntity *e, BHScriptMotionActor *s)
 {

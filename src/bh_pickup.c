@@ -42,12 +42,7 @@ static BHPickupRoom *room_binding(BHPickupContext *context, BHWorldGeometry *wor
 }
 static int live(BHPickupContext *context, BHEntity *entity, unsigned long generation)
 {
-    BHEntity *at;
-    unsigned long i = 0;
-    for (at = context->pool->active; at && i++ < context->pool->capacity; at = at->next)
-        if (at == entity)
-            return at->generation == generation;
-    return 0;
+    return bh_entity_is_active(context->pool, entity) && entity->generation == generation;
 }
 static void unlink_pickup(BHPickupContext *context, BHEntity *entity)
 {

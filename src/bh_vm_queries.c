@@ -5,14 +5,7 @@
 #include <string.h>
 static int live(BHEntityPool *p, const BHEntity *e)
 {
-    BHEntity *at;
-    unsigned long n = 0;
-    if (!p)
-        return 0;
-    for (at = p->active; at && n++ < p->capacity; at = at->next)
-        if (at == e)
-            return 1;
-    return 0;
+    return bh_entity_is_active(p, e);
 }
 static void put(BHEntity *e, unsigned long o, const void *v, unsigned long n)
 {
