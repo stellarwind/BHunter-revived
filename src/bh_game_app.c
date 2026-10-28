@@ -453,8 +453,11 @@ static void __cdecl curve_diagnostic(void *user, unsigned long owner, const BHEn
         if (fclose(f))
             written = 0;
     }
+
+#ifdef DEBUGGING
     sprintf(message, "Nonfinite curve producer: owner=%08lx model=%lu evidence=%s written=%d", owner, model, path,
             written);
+#endif
     stage(a, message);
 }
 #else
@@ -548,8 +551,11 @@ static void perf_save(BHGameApp *a)
                         s->commands, s->entities, s->projectiles, s->contacts, s->rebuilds);
             }
         fclose(f);
+
+#ifdef DEBUGGING
         sprintf(text, "Frame timing saved: %s (%lu samples, %lu dropped)", a->perf_path, a->perf_capture.count,
                 a->perf_capture.dropped);
+#endif
         stage(a, text);
     }
     else
@@ -630,7 +636,10 @@ static int restore_display(BHGameApp *a)
                 hr = IDirectDrawSurface_Restore(surfaces[i]);
             if (FAILED(hr))
             {
+
+#ifdef DEBUGGING
                 sprintf(text, "Display surface recovery failed: surface=%lu HRESULT=%08lx", i, (unsigned long)hr);
+#endif
                 return failure(a, 13, text);
             }
         }
@@ -908,8 +917,11 @@ static int platform(BHGameApp *a, int show)
         if (!bh_render_mode_startup(&a->render_mode, a->draw2, a->draw, a->width, a->height, 16, !a->hardware))
         {
             char text[512];
+
+#ifdef DEBUGGING
             sprintf(text, "Fullscreen renderer startup failed: HRESULT=%08lx %s",
                     (unsigned long)a->render_mode.last_hresult, a->render_mode.errors);
+#endif
             return failure(a, 4, text);
         }
         a->primary = a->render_mode.screen;
@@ -2515,8 +2527,11 @@ static int startup_effect_checks(BHGameApp *a)
                 }
             }
         IDirectDrawSurface_Unlock(a->target, 0);
+
+#ifdef DEBUGGING
         sprintf(text, "Static %s source fixture: %lu nonblack pixels, %lu colors, hash=%08lx", names[pass], pixels,
                 unique, hash);
+#endif
         stage(a, text);
         if (pass == 6)
             trail_hash = hash;
@@ -2709,11 +2724,13 @@ static int manual_loop(BHGameApp *a)
             a->flyby.error || a->actor_construct.error || a->actor_response.error)
         {
             char text[256];
+#ifdef DEBUGGING
             sprintf(
                 text,
                 "Source dependency failure: player=%d query=%d vm=%d timer=%d menu=%d flyby=%d actor=%d response=%d",
                 a->player_tick.error, a->player_query.error, a->vm.error, a->lifetime.timers.error, a->menu.error,
                 a->flyby.error, a->actor_construct.error, a->actor_response.error);
+#endif
             failure(a, 12, text);
             break;
         }
@@ -2939,8 +2956,12 @@ int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int start
     if (!a)
         return 2;
     a->instance = instance;
+#ifdef DEBUGGING
     a->box_level = (startup_check & 16) != 0;
     a->box_auto = (startup_check & 32) != 0;
+    if (startup_check & 64)
+        a->box_auto = 2;
+#endif
     a->hardware = (startup_check & 2) != 0;
     a->fullscreen = (startup_check & 4) != 0;
 #ifdef DEBUGGING
@@ -2995,30 +3016,42 @@ int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int start
         !bh_bootstrap_resources(&a->bootstrap, 6))
     {
         char message[256];
+
+#ifdef DEBUGGING
         sprintf(message, "Engine resources failed: game=%d sound=%d texture=%d loaded=%lu", a->bootstrap.error,
                 a->sounds.error, a->render_mode.engine.textures.error, a->bootstrap.resources_loaded);
+#endif
         failure(a, 6, message);
         goto done;
     }
     if (!bh_game_bootstrap(&a->bootstrap))
     {
         char message[256];
+
+#ifdef DEBUGGING
         sprintf(message, "Bootstrap failed: game=%d blocks=%d parser=%d world=%d vm=%d player=%d flyby=%d",
                 a->bootstrap.error, a->blocks.error, a->parser.error, a->world_load.error, a->vm.error,
                 a->player_create.error, a->flyby_construct.error);
+#endif
         failure(a, a->error ? a->error : 10, message);
         goto done;
     }
     {
         unsigned long i;
         char text[160];
+
+#ifdef DEBUGGING
         sprintf(text, "Loaded model handles: count=%lu reported_failure_handle475=%s", a->resources.count,
                 bh_render_resources_lookup(475, &a->resources) ? "valid" : "missing");
+#endif
         stage(a, text);
         for (i = 0; i < N(a->actor_models); ++i)
             if (a->actor_models[i] && !bh_render_resources_lookup(a->actor_models[i], &a->resources))
             {
+
+#ifdef DEBUGGING
                 sprintf(text, "Actor model binding invalid: index=%lu handle=%lu", i, a->actor_models[i]);
+#endif
                 failure(a, 9, text);
                 goto done;
             }

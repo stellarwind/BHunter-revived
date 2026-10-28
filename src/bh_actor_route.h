@@ -28,10 +28,15 @@ typedef struct BHActorRouteContext
     unsigned short tick; /* explicit original004dfac4 binding */
     BHActorRouteError error;
     unsigned long *live_tick; /* owning application original004dfac4, read at each call */
+#ifdef DEBUGGING
     /* Optional passive first-failure evidence; never changes samples or RNG. */
     void(__cdecl *nonfinite_curve)(void *, unsigned long, const BHEntity *, const BHActorRouteState *, unsigned short,
                                    const BHVec3 *, const BHVec3 *, const BHVec3 *, const BHVec3 *);
     void *nonfinite_user;
+    /* Passive diagnostic-box capture of real route promotion inputs/results. */
+    void(__cdecl *promotion_capture)(const BHEntity *, const BHActorRouteState *,
+                                    const BHWorldGeometry *, long, long);
+#endif
 } BHActorRouteContext;
 /* Explicit source field-view adapters, not original function admissions. They
    copy only the verified fields. Bind worlds/actors before the owning update;

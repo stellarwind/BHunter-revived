@@ -150,8 +150,8 @@ void __cdecl bh_actor_response_query(BHEntity *e, void *packet)
     BHActorRouteState s;
     BHVec3 a, b, d;
     BHTargetSelection selected;
-    double severity, factor;
-    float t, length, v, old;
+    double severity, factor, ratio, previous_velocity, next_velocity;
+    float t, length, v;
     unsigned long i, type;
     if (!c || !packet || !live(c, e))
         return;
@@ -254,7 +254,8 @@ void __cdecl bh_actor_response_query(BHEntity *e, void *packet)
             setword(e, 0x1ac, p[2]);
         return;
     }
-    t = rf((double)s.phase / s.duration);
+    ratio = (double)s.phase / s.duration;
+    t = rf(ratio);
     point(&s, t, &a);
     if (p[0] == 3)
     {
@@ -288,14 +289,18 @@ void __cdecl bh_actor_response_query(BHEntity *e, void *packet)
         }
         return;
     }
-    point(&s, rf((double)t - 1.0 / 30.0), &b);
+    /* 0043a415 FST retains the quotient for the preceding sample; the
+       following sample reloads its binary32 copy at0043a449. */
+    point(&s, rf(ratio - 1.0 / 30.0), &b);
     point(&s, rf((double)t - (-1.0 / 30.0)), &d);
     for (i = 0; i < 3; ++i)
     {
-        v = rf(((double)((float *)&d)[i] - ((float *)&a)[i]) * 30);
-        old = rf(((double)((float *)&a)[i] - ((float *)&b)[i]) * 30);
-        f[4 + i] = v;
-        f[7 + i] = rf(((double)old - v) * 30);
+        next_velocity = ((double)((float *)&d)[i] - ((float *)&a)[i]) * 30;
+        previous_velocity = ((double)((float *)&a)[i] - ((float *)&b)[i]) * 30;
+        f[4 + i] = rf(next_velocity);
+        /* 0043a4ec/0043a4fe reload X/Y velocity spills;0043a53e
+           subtracts retained Z. All preceding velocities remain retained. */
+        f[7 + i] = rf((previous_velocity - (i == 2 ? next_velocity : (double)f[4 + i])) * 30);
         f[1 + i] = rf((double)number(e, 0x15c + i * 4) + ((float *)&a)[i]);
     }
 }

@@ -292,6 +292,10 @@ int __cdecl bh_actor_route_promote(BHActorRouteContext *c, BHEntity *a, long inc
     }
     if (!_finite(s.duration))
         return fail(c, BH_ACTOR_ROUTE_NUMERICAL);
+#ifdef DEBUGGING
+    if (c->promotion_capture)
+        c->promotion_capture(a, &s, world, incoming, outgoing);
+#endif
     if (previous)
         set_link(previous, 0xf4, next);
     else

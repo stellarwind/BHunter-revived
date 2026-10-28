@@ -6,6 +6,346 @@
   "reference_exe_sha256": "c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1",
   "records": [
 {
+  "id": "temporary-debug-guard-audit-20261028",
+  "role": "test_adapter",
+  "implementation": "adapter",
+  "integration": "linked_game",
+  "target": "build/game/BHunter-source.exe",
+  "sources": {
+    "src/bh_game_main.c": "4e02b497a7208ac1a9432254c8af64a91c184f818fe6cb61424f7c76ca63a709",
+    "src/bh_game_app.c": "d0241c9814a1122684f48366ee2ab96e9e12443681d97a45f02facec2d0b96b2",
+    "src/bh_actor_route.h": "7d6dc2f55a10af7f962f6297c4080a3205f2204dfd850f9ca4f1ce12f739d09f",
+    "src/bh_frame_service.c": "ce432b5e305e12f09671b9c00abac964a81218ae02caa96e8eb0ddc6c695e1af"
+  },
+  "validation": {
+    "debug_and_release_builds": "300 TUs link in both configurations",
+    "release_forbidden_strings_absent": [
+      "--box-aggression",
+      "--box-auto",
+      "--profile",
+      "box-routes.bin",
+      "box-motion.bin",
+      "nonfinite-curve-",
+      "frame-times-",
+      "mission-markers-",
+      "QueryPerformanceCounter",
+      "QueryPerformanceFrequency",
+      "reported_failure_handle475",
+      "Source dependency failure: player="
+    ],
+    "release_sha256": "1886bfcd4640ab139f9a8129851f6c40d86390a533e7c2efb9eb45aa8ec084af",
+    "scope": "Diagnostic callback layout, CLI switches, box-mode assignment, logging-only formatting and frame timing local guarded; real dependency checks retained",
+    "no_game_execution": true
+  }
+},
+{
+  "id": "tunnel-ring-box-20261028",
+  "role": "test_adapter",
+  "implementation": "adapter",
+  "integration": "scenario_exercised",
+  "target": "build/tunnel-ring/BHunter-box.exe",
+  "validation": {
+    "date": "2026-10-28",
+    "scope": "Requested ring tunnel diagnostic level",
+    "topology": "Eight rectangular degree-two tunnel sections, zero junctions, closed inner wall; normal route selection excludes incoming exit",
+    "actors": "Three neutral type6, two moving type2 targets, two type1 hunters; varied speeds24..36, fixed initial seeds",
+    "ticks": 900,
+    "rows": 6300,
+    "errors": 0,
+    "neutral_rooms_visited": [
+      8,
+      8,
+      8
+    ],
+    "moving_target_rooms_visited": [
+      8,
+      7
+    ],
+    "hunters_acquire_targets": true,
+    "retirement": "Initial run stopped at tick256 on old survival assertion. Final adapter respawns retired actors through production constructor, preserves real combat and keeps scene populated.",
+    "original_motion_differences": 0,
+    "sources": {
+      "tools/build_box_level.py": "b11cbe534e4df26c6a5a726ff407a8f2734ec8ae9355d3dff96746e48d8c0dab",
+      "src/bh_game_box.inc": "93eceebe998fd5dfe39fe4e985dc928b93c18dd5fabe21ce0aa12a97b065afaf"
+    },
+    "limits": "Rectangular ring; test-only layout/spawns/respawns, not whole-AI fidelity proof. Native model/audio behavior remains subject to earlier limits."
+  },
+  "evidence": "META/m4/playable/tunnel-ring/validation.json"
+},
+{
+  "id": "ai-junction-decision-pass-20261028",
+  "role": "test_adapter",
+  "implementation": "adapter",
+  "integration": "scenario_exercised",
+  "target": "build/box-test/BHunter-box.exe",
+  "validation": {
+    "evidence": "META/m4/playable/ai-junctions/validation.json",
+    "original_code_executed": "Only separate build/ai-decisions/ai-decisions.exe; never in game",
+    "original_owner": "004344f0",
+    "full_owner_match_cases": 65536,
+    "exit_and_rng_differences": 0,
+    "linked_source": "src/bh_route_choice.c",
+    "game_ticks": 900,
+    "motion_states": 6300,
+    "limits": [
+      "Generated route-choice cases independently execute original owner but do not prove combined pursuit/target/global CRT RNG equivalence.",
+      "routes1.bin captures actual promotion inputs/results for subsequent full-owner comparison; not yet checked against original promotion.",
+      "PC53 only. No whole-AI byte-match claim.",
+      "Native sound log reports invalid negative frequency at tick309; audio dependency remains unresolved."
+    ]
+  }
+},
+{
+  "id": "segment-collision-original-20261028",
+  "original_va": "0044d530",
+  "source": "src/bh_segment_query.c",
+  "source_sha256": "1ea150568f03abe66c8922d69a21e6f884298a9fd7326f661962ba1f72bed735",
+  "role": "engine_candidate",
+  "implementation": "func",
+  "integration": "scenario_exercised",
+  "target": "build/box-test/BHunter-box.exe",
+  "provenance": "Reviewed original owner instructions and independent bounded arithmetic/segment execution; original EXE unchanged",
+  "validation": {
+    "evidence": "META/m4/playable/ai-collision/validation.json",
+    "raw_byte_match": false,
+    "scope": {
+      "segment_cases": 49152,
+      "segment_contacts": 18701,
+      "segment_differences": 0,
+      "negative_control": "before.log:2783 differences, including coplanar NaN sign; prior source retained in before.c.txt",
+      "collision_scope": "Six actual diagnostic BSP meshes; randomized finite endpoints, inside starts, coplanar boundaries, both face-list orientations; exact result/fraction/point/normal/face/flags",
+      "steering_cases": 8192,
+      "forced_pursuit_cases": 8192,
+      "clamp_cases": 8192,
+      "firing_gate_cases": 65536,
+      "control_differences": 0,
+      "precision": "PC53 nearest/masked",
+      "game_translation_units": 300,
+      "box_runs": 2,
+      "ticks_per_run": 150,
+      "motion_states_per_run": 1050,
+      "motion_differences": 0,
+      "repeat_csv_equal": true,
+      "repeat_binary_equal": true,
+      "attack_updates": 82,
+      "beams": 25,
+      "specials": 1,
+      "recorded_ai_errors": 0,
+      "plane_probes_per_run": 7,
+      "failed_attempt": "Hidden HAL launch exited6 during loading presentation initialization; no simulation result used",
+      "release_debugging": false
+    },
+    "limits": [
+      "No whole-AI1:1 claim. Full target selection/junction decision/global RNG equivalence and connected projectile emission/hit/damage outcomes still require independent original-backed comparison.",
+      "Segment tests do not establish complete world portal traversal, actor-radius collision, swept body collision/response or death fidelity.",
+      "Shared source math dependencies and PC53 only; original runtime precision transitions remain unresolved.",
+      "Coplanar original nonfinite outputs are intentionally preserved, not repaired.",
+      "No real mission/tutorial automation, software tests or Python integration-test edits."
+    ]
+  },
+  "dependencies": "Real translation units linked in 300-TU game and focused harness; original-code adapters excluded from game"
+},
+{
+  "id": "actor-attack-controls-original-20261028",
+  "original_va": "00437ae0",
+  "source": "src/bh_actor_attack.c",
+  "source_sha256": "674cb3a2bf9d2e1b7c1c981f9dafa85b559cb90c6a2f152cf2befeeecd943a39",
+  "role": "game",
+  "implementation": "func",
+  "integration": "scenario_exercised",
+  "target": "build/box-test/BHunter-box.exe",
+  "provenance": "Reviewed original owner instructions and independent bounded arithmetic/segment execution; original EXE unchanged",
+  "validation": {
+    "evidence": "META/m4/playable/ai-collision/validation.json",
+    "raw_byte_match": false,
+    "scope": {
+      "segment_cases": 49152,
+      "segment_contacts": 18701,
+      "segment_differences": 0,
+      "negative_control": "before.log:2783 differences, including coplanar NaN sign; prior source retained in before.c.txt",
+      "collision_scope": "Six actual diagnostic BSP meshes; randomized finite endpoints, inside starts, coplanar boundaries, both face-list orientations; exact result/fraction/point/normal/face/flags",
+      "steering_cases": 8192,
+      "forced_pursuit_cases": 8192,
+      "clamp_cases": 8192,
+      "firing_gate_cases": 65536,
+      "control_differences": 0,
+      "precision": "PC53 nearest/masked",
+      "game_translation_units": 300,
+      "box_runs": 2,
+      "ticks_per_run": 150,
+      "motion_states_per_run": 1050,
+      "motion_differences": 0,
+      "repeat_csv_equal": true,
+      "repeat_binary_equal": true,
+      "attack_updates": 82,
+      "beams": 25,
+      "specials": 1,
+      "recorded_ai_errors": 0,
+      "plane_probes_per_run": 7,
+      "failed_attempt": "Hidden HAL launch exited6 during loading presentation initialization; no simulation result used",
+      "release_debugging": false
+    },
+    "limits": [
+      "No whole-AI1:1 claim. Full target selection/junction decision/global RNG equivalence and connected projectile emission/hit/damage outcomes still require independent original-backed comparison.",
+      "Segment tests do not establish complete world portal traversal, actor-radius collision, swept body collision/response or death fidelity.",
+      "Shared source math dependencies and PC53 only; original runtime precision transitions remain unresolved.",
+      "Coplanar original nonfinite outputs are intentionally preserved, not repaired.",
+      "No real mission/tutorial automation, software tests or Python integration-test edits."
+    ]
+  },
+  "dependencies": "Real translation units linked in 300-TU game and focused harness; original-code adapters excluded from game"
+},
+{
+  "id": "actor-pursuit-duration-original-20261028",
+  "original_va": "00438ff0",
+  "source": "src/bh_actor_pursuit_route.c",
+  "source_sha256": "e2e5034d78c8d630ca2498d1ce7c9db548f485ecc47555c12a7a4fead5d517b7",
+  "role": "game",
+  "implementation": "func",
+  "integration": "scenario_exercised",
+  "target": "build/box-test/BHunter-box.exe",
+  "provenance": "Reviewed original owner instructions and independent bounded arithmetic/segment execution; original EXE unchanged",
+  "validation": {
+    "evidence": "META/m4/playable/ai-collision/validation.json",
+    "raw_byte_match": false,
+    "scope": {
+      "segment_cases": 49152,
+      "segment_contacts": 18701,
+      "segment_differences": 0,
+      "negative_control": "before.log:2783 differences, including coplanar NaN sign; prior source retained in before.c.txt",
+      "collision_scope": "Six actual diagnostic BSP meshes; randomized finite endpoints, inside starts, coplanar boundaries, both face-list orientations; exact result/fraction/point/normal/face/flags",
+      "steering_cases": 8192,
+      "forced_pursuit_cases": 8192,
+      "clamp_cases": 8192,
+      "firing_gate_cases": 65536,
+      "control_differences": 0,
+      "precision": "PC53 nearest/masked",
+      "game_translation_units": 300,
+      "box_runs": 2,
+      "ticks_per_run": 150,
+      "motion_states_per_run": 1050,
+      "motion_differences": 0,
+      "repeat_csv_equal": true,
+      "repeat_binary_equal": true,
+      "attack_updates": 82,
+      "beams": 25,
+      "specials": 1,
+      "recorded_ai_errors": 0,
+      "plane_probes_per_run": 7,
+      "failed_attempt": "Hidden HAL launch exited6 during loading presentation initialization; no simulation result used",
+      "release_debugging": false
+    },
+    "limits": [
+      "No whole-AI1:1 claim. Full target selection/junction decision/global RNG equivalence and connected projectile emission/hit/damage outcomes still require independent original-backed comparison.",
+      "Segment tests do not establish complete world portal traversal, actor-radius collision, swept body collision/response or death fidelity.",
+      "Shared source math dependencies and PC53 only; original runtime precision transitions remain unresolved.",
+      "Coplanar original nonfinite outputs are intentionally preserved, not repaired.",
+      "No real mission/tutorial automation, software tests or Python integration-test edits."
+    ]
+  },
+  "dependencies": "Real translation units linked in 300-TU game and focused harness; original-code adapters excluded from game"
+},
+{
+  "id": "ai-collision-oracle-20261028",
+  "source": "tests/ai_collision_original.c",
+  "source_sha256": "6da2e3ff35839331cd6abdc30f3d34a4ee46461df57ba7951477642c2a25aad3",
+  "role": "test_adapter",
+  "implementation": "adapter",
+  "integration": "linked_harness",
+  "target": "build/ai-collision/ai-collision.exe",
+  "validation": {
+    "original_code_executed": true,
+    "game_admitted": false,
+    "evidence": "META/m4/playable/ai-collision/validation.json",
+    "scope": "Explicit bounded original instruction closure, original globals supplied only for reviewed branch inputs; no imports/game startup or general mapper. Controls closures cover steering, forced-return and fire gate; excluded firing emission branch is not claimed."
+  }
+},
+{
+  "id": "ai-controls-oracle-20261028",
+  "source": "tests/ai_controls_original.c",
+  "source_sha256": "5431fff0fc98c7d62f63cf1d3230e4050b985977ff2000cef9a31edbdb3091ca",
+  "role": "test_adapter",
+  "implementation": "adapter",
+  "integration": "linked_harness",
+  "target": "build/ai-controls/ai-controls.exe",
+  "validation": {
+    "original_code_executed": true,
+    "game_admitted": false,
+    "evidence": "META/m4/playable/ai-collision/validation.json",
+    "scope": "Explicit bounded original instruction closure, original globals supplied only for reviewed branch inputs; no imports/game startup or general mapper. Controls closures cover steering, forced-return and fire gate; excluded firing emission branch is not claimed."
+  }
+},
+{
+  "id": "ai-motion-original-oracle-20261028",
+  "role": "test_adapter",
+  "implementation": "adapter",
+  "integration": "linked_harness",
+  "target": "build/ai-motion/actor-motion.exe",
+  "source": "tests/actor_motion_original.c",
+  "source_sha256": "824fe6f99295950a78237b4b1c2f41a9bdab10d9195ca179bd00c9791afd2466",
+  "validation": {
+    "original_code_executed": true,
+    "game_admitted": false,
+    "original_function_count": 0,
+    "evidence": "META/m4/playable/ai-motion/validation.json",
+    "scope": "Isolated original query arithmetic+pure curve; read-only constants/direct curve calls relocated. Never linked into shipping target."
+  },
+  "dependencies": "Focused PowerShell driver uses real source definitions and existing linked dependency objects; current response/curve/route/entity translation units compiled fresh."
+},
+{
+  "id": "actor-response-motion-original-20261028",
+  "original_va": "0043a1d0",
+  "function": "bh_actor_response_query",
+  "role": "game",
+  "implementation": "func",
+  "source": "src/bh_actor_response.c",
+  "source_sha256": "d2a5fdff82554093fca8aa500ff71a5419326a82a5ad7cc549e4b93a48d9882c",
+  "integration": "scenario_exercised",
+  "target": "build/box-test/BHunter-box.exe",
+  "provenance": "Original instructions verified against immutable EXE; scoped motion-query arithmetic restored.",
+  "validation": {
+    "evidence": "META/m4/playable/ai-motion/validation.json",
+    "raw_byte_match": false,
+    "differential": "4096 generated states and1050 connected box states, nine exact output words each, PC53; second box repeat also matches.",
+    "negative_control": "2303/4096 before-fix mismatches",
+    "limits": [
+      "This proves tested motion-query outputs, not complete AI trajectory/decision/RNG equivalence to an original game execution.",
+      "Type1 acquisition, retaliation, junction traversal and attacks execute production owners, but only their motion-query subpath has a new original-instruction dynamic oracle.",
+      "Original runtime FP precision transitions and numerical equivalence of attack/pursuit/collision/death dependencies remain unresolved.",
+      "Production AI changes are limited to motion arithmetic; no aggression tuning, probability changes or RNG draws added.",
+      "No actual mission/tutorial automation or software-renderer tests; no Python integration tests authored or changed."
+    ]
+  },
+  "previous_variant_snapshot": "META/m4/playable/ai-motion/before-source.c.txt",
+  "dependencies": "Real entity pool, response binding, route field views and curve sampler; separately isolated original arithmetic oracle. Test adapter never linked in game."
+},
+{
+  "id": "ai-aggression-box-20261028",
+  "role": "test_adapter",
+  "implementation": "adapter",
+  "integration": "scenario_exercised",
+  "target": "build/box-test/BHunter-box.exe",
+  "provenance": "New isolated diagnostic adapter. Production AI decision code unchanged. Eight original game-owner disassemblies reviewed, reference bytes verified.",
+  "source_sha256": {
+    "src/bh_game_box.inc": "8064557d908db9f9e7e93b9d55b738b210be3ef7cae7a611a46b41af4213aea1",
+    "src/bh_game_main.c": "8a0f49e8c671ea3da95355dfcac8e1238e61a5df54888e828e5afd1fb5580872",
+    "src/bh_game_app.c": "948e71653a76ca16f018e4ea798589634341d025e626b53bc191f295fc10a94e",
+    "src/bh_actor_attack.c": "d8e13b29334ba55ba33e2da1c6d5e61707fe6dbaa632e32acbb0fea0f8a4602b",
+    "src/bh_actor_pursuit_route.c": "3cf7976383564e480147d363d1b8daf7f09406eff2d2683f07c582a1f243059c",
+    "src/bh_actor_response.c": "ef870a1bae09c97f3454bc497c8e2a819c40a0b67f2000ebfedced2c17c96897",
+    "src/bh_actor_construct.c": "e6f4a8b64c8f4ab82f7fc98875ea56ac669e1d5b12599fd07335e563b35fe9a8",
+    "src/bh_target_selection.c": "839998fe3b534802744815852f466eb34c7a626657db9b6230a787a929871012",
+    "src/bh_route_choice.c": "0af22c1d285cd758dbd7b5f2152be18b6ab8af4a5ad73d33842ed27343ba6883"
+  },
+  "validation": {
+    "evidence": "META/m4/playable/ai-aggression/review.json",
+    "five_second_runs": 2,
+    "deterministic_recorded_trace": true,
+    "original_runtime_equivalence": false,
+    "blocker": "0043a1d0 motion sample uses rounded quotient where original retains x87 quotient; trajectory impact unmeasured. Junction and type1/type2 runtime behavior not covered."
+  }
+},
+{
   "id": "splash-keyboard-skip-20261028",
   "role": "adapter",
   "implementation": "adapter",

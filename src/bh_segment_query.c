@@ -80,10 +80,11 @@ static int polygon(BHSegmentQuery *q, long face, const BHVec3 *point, const BHVe
         bh_round_float(&relative.y, (double)point->y - a->y);
         bh_round_float(&relative.z, (double)point->z - a->z);
         bh_vec3_cross(&delta, normal, &cross);
-        if (((double)cross.x * relative.x + (double)cross.y * relative.y) + (double)cross.z * relative.z <= 0)
-            signs |= 2;
-        else
+        /* 0044d7cc TEST AH,41 sends unordered to the same side as <=0. */
+        if (((double)cross.x * relative.x + (double)cross.y * relative.y) + (double)cross.z * relative.z > 0)
             signs |= 1;
+        else
+            signs |= 2;
         edge = next;
     } while (edge >= 0 && signs != 3);
     return signs == 1 || signs == 2;
@@ -136,7 +137,9 @@ static int faces(BHSegmentQuery *q, const BHBspNode *node, const BHVec3 *a, cons
                 out->face = bsp->leaves[leaf].face;
                 out->flags = q->geometry->face_flags[out->face];
                 bh_round_float(&out->fraction, (double)da / denominator);
-                if (out->fraction < 0)
+                /* 0044d98f takes unordered too, but FMUL -1 preserves the
+                   NaN sign. C unary minus emits FCHS, which would flip it. */
+                if (!_isnan(out->fraction) && out->fraction < 0)
                     out->fraction = -out->fraction;
                 return 1;
             }

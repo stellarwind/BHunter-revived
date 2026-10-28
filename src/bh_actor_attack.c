@@ -5,6 +5,7 @@
 #include "bh_round.h"
 #include "bh_fp.h"
 #include <math.h>
+#include <float.h>
 #include <stdlib.h>
 #include <string.h>
 static const BHVec3 up = {0, 1, 0}, zero = {0, 0, 0}, gravity = {0, -.002f, 0};
@@ -268,13 +269,13 @@ int __cdecl bh_actor_attack(BHActorAttackContext *c, BHEntity *e)
     Motion m;
     BHVec3 predicted, change, p, q, direction, side, travel, difference;
     BHHomingProjectileContext *b;
-    float t, pursuit, distance, inv;
+    float t, pursuit, distance;
     short frame, cooldown, secondary, primary;
     unsigned short next;
     unsigned long i, gen;
     long total;
     int forced, have_motion = 0;
-    double dot;
+    double dot, inv, distance_exact, delta[3];
     if (!c || !e || !c->pursuit || !c->effects || !c->effects->effects || !c->projectiles || !c->area ||
         !bh_math_environment_supported())
         return 0;
@@ -305,9 +306,15 @@ int __cdecl bh_actor_attack(BHActorAttackContext *c, BHEntity *e)
         bh_world_clamp_point(s.current, &predicted);
         for (i = 0; i < 3; ++i)
         {
-            ((float *)&change)[i] =
-                rf((double)pursuit * (((float *)&predicted)[i] - ((float *)&s.controls[3])[i]) * .03);
-            ((float *)&s.controls[3])[i] = rf((double)((float *)&change)[i] + ((float *)&s.controls[3])[i]);
+            double delta = (double)((float *)&predicted)[i] - ((float *)&s.controls[3])[i];
+            double adjustment;
+            /* 00437c3e spills Z difference; X/Y remain in x87. X/Y
+               endpoint sums retain adjustment, Z reloads its float copy. */
+            if (i == 2)
+                delta = rf(delta);
+            adjustment = (double)pursuit * delta * .03;
+            ((float *)&change)[i] = rf(adjustment);
+            ((float *)&s.controls[3])[i] = rf((i == 2 ? (double)((float *)&change)[i] : adjustment) + ((float *)&s.controls[3])[i]);
             ((float *)&s.controls[2])[i] = rf((double)((float *)&change)[i] + ((float *)&s.controls[2])[i]);
         }
         bh_world_clamp_point(s.current, s.controls + 3);
@@ -329,20 +336,27 @@ int __cdecl bh_actor_attack(BHActorAttackContext *c, BHEntity *e)
             return 0;
         curve(&s, t, &p);
         offset(e, &p);
+        /* FST retains each difference for its product and the range
+           comparison; only the later square root reloads distance. */
         for (i = 0; i < 3; ++i)
-            ((float *)&difference)[i] = rf((double)((float *)&m.position)[i] - ((float *)&p)[i]);
-        distance = rf((double)difference.z * difference.z + (double)difference.y * difference.y +
-                      (double)difference.x * difference.x);
-        if (distance <= 40000)
+        {
+            delta[i] = (double)((float *)&m.position)[i] - ((float *)&p)[i];
+            ((float *)&difference)[i] = rf(delta[i]);
+        }
+        distance_exact = (delta[0] * difference.x + delta[1] * difference.y) + delta[2] * difference.z;
+        distance = rf(distance_exact);
+        if (_isnan(distance_exact) || distance_exact <= 40000)
         {
             curve(&s, rf((double)t - (-1.0 / 30.0)), &q);
             for (i = 0; i < 3; ++i)
                 ((float *)&direction)[i] = rf((double)((float *)&q)[i] - ((float *)&p)[i]);
             bh_vec3_normalize(&direction);
-            inv = rf(1.0 / sqrt(distance));
-            dot = ((double)inv * difference.z * direction.z + (double)inv * difference.y * direction.y) +
-                  (double)inv * difference.x * direction.x;
-            if (.98 - (double)pursuit * .03 <= dot)
+            inv = 1.0 / sqrt(distance);
+            dot = (inv * difference.x * direction.x + inv * difference.y * direction.y) +
+                  inv * difference.z * direction.z;
+            /* Original TEST AH,41 accepts unordered too: coincident
+               target/actor positions must retain that firing decision. */
+            if (_isnan(dot) || .98 - (double)pursuit * .03 <= dot)
                 setshort_value(e, 0x1e0, 1);
         }
         return 1;

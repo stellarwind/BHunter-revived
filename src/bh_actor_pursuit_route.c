@@ -64,11 +64,13 @@ static int query(BHEntity *target, TargetMotion *p)
 }
 static int reset_duration(BHActorPursuitRouteContext *c, BHEntity *e, BHActorRouteState *s)
 {
-    double ticks;
+    double ticks, duration;
     float length = bh_route_curve_length(s->controls);
     s->phase = 0;
-    s->duration = stored(((double)length + length) / ((double)s->speed * s->speed_scale));
-    ticks = (double)s->duration * 30;
+    duration = ((double)length + length) / ((double)s->speed * s->speed_scale);
+    s->duration = stored(duration);
+    /* 0043914e/00439795 FST stores duration but retains it for tick conversion. */
+    ticks = duration * 30;
     if (!_finite(ticks) || ticks < -9223372036854775808.0 || ticks >= 9223372036854775808.0)
         return fail(c, BH_ACTOR_ROUTE_NUMERICAL);
     s->duration_ticks = (unsigned short)(__int64)ticks;

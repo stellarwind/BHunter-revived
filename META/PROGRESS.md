@@ -3,6 +3,95 @@
 Updated 2026-10-28. Plan: `../RESTORATION_PLAN.md`.
 
 ## Current checkpoint
+Temporary diagnostic audit 2026-10-28: guarded remaining curve-capture context
+fields, box/profile CLI parsing and box-mode assignment, logging-only formatting
+(including the handle475 probe), and frame timing local behind DEBUGGING.
+Existing box/ring include, captures, frame timers and mission-profile hooks are
+already compile-time guarded. Production dependency failure checks retained.
+Debug and release 300-TU builds link. Release binary lacks tested box/profile
+switches, capture paths, timing strings, QPC import names and diagnostic formatting
+strings. No game execution or Python test changes. Evidence/source hashes:
+m4/playable/debug-guard-audit/validation.json. Normal build has DEBUGGING off.
+
+Tunnel-ring level 2026-10-28: separate build/tunnel-ring diagnostic, eight
+degree-two rectangular tunnel sections surrounding a closed central void.
+Normal route selection excludes incoming exit, allowing circulation without a
+new AI state/controller. Three neutral type6 NPCs, two moving type2 targets and
+two type1 hunters use production constructors/updates with varied speeds/seeds.
+HAL run completes 900 ticks/6300 actor rows, zero recorded AI errors; all three
+neutrals visit all eight rooms, moving targets visit eight/seven, hunters acquire
+targets. All 6300 motion states match original arithmetic. Initial survival
+assertion stopped at tick256 after real combat retirement; ring now respawns
+retired actors through production constructor to keep the test populated.
+Both 300-TU builds pass; normal game restored without DEBUGGING. Launcher:
+build/tunnel-ring/Play tunnel ring.cmd (bounded automatic diagnostic demo).
+Evidence: m4/playable/tunnel-ring/validation.json. Python change only generates
+level assets; no Python tests edited, software tests or real-game automation.
+
+Extended junction pass 2026-10-28: diagnostic scene now has nine rooms, five
+junctions and four corner links forming loops. Fresh HAL run completes 900 ticks,
+visits all nine rooms, records 416 attacks/116 beams/one special and zero AI
+errors. All 6300 captured motion states match original arithmetic. New isolated
+full original 004344f0 portal-selector execution agrees with source exit and
+actor RNG in 65536 class/flag/preferred/excluded cases. Existing controls and
+segment checks still pass. No major discrepancy found in checked AI outputs.
+Promotion inputs/results captured to routes1.bin for full-owner comparison;
+combined pursuit/target/global CRT RNG equivalence remains unverified. Native
+sound log has negative-frequency failure at tick309; retained as unresolved.
+Normal 300-TU build restored without DEBUGGING. Evidence and source hashes:
+m4/playable/ai-junctions/validation.json. No Python test edits or real-game play.
+
+AI pursuit/firing/collision iteration 2026-10-28: admitted pending steering
+spill-order, retained pursuit-duration tick conversion and firing-gate arithmetic
+corrections. Focused original-instruction checks: zero differences in 8192 cases
+each for steering/forced-return/clamp and 65536 firing-gate cases. New isolated
+0044d530 segment oracle over six diagnostic-box BSP meshes found 2783 coplanar
+NaN-sign differences; source now preserves original FMUL behavior instead of
+FCHS sign reversal. All 49152 segment cases agree after correction, including
+both face-list orientations. Shared source math dependencies remain a limit.
+Two fresh HAL diagnostic-box runs complete 150 ticks each: 82 attack updates,
+25 beams, 1 special; 1050 states/run match original motion arithmetic, repeated
+CSV/binary traces identical, seven plane probes pass and no recorded AI errors.
+Hidden startup attempt failed before simulation; excluded. Both diagnostic and
+normal 300-TU builds link; normal build restored without DEBUGGING. Original EXE
+unchanged. No software tests, real-game automation or Python test edits.
+Whole-AI 1:1 still unproven: junction/target/RNG decisions, full emission/hit/damage,
+world/actor/swept collision response and runtime FP transitions need independent
+comparison. Evidence: m4/playable/ai-collision/validation.json; separate source
+variant and original-backed adapter records in function-status.json.
+
+AI motion fidelity correction2026-10-28: restored retained phase quotient and
+asymmetric X/Y/Z velocity spills in original0043a1d0 motion query. Independent
+original-instruction closure (motion branch+curve, verified read-only constants;
+no game loader) differed in2303/4096 cases before; now all9 motion words agree
+in4096 cases atPC53. Extended diagnostic box to five rooms/four-exit junction,
+four player-targeted actors, type1 hunter/type2 target, and type6 retaliation.
+Two five-second HAL runs:1050 actor states each; captured motion outputs agree
+bit-for-bit with original closure, repeated CSV/binary traces identical, no
+recorded AI errors. Hunter selects type2; controlled hit retargets neutral actor
+and produces original damage-speed response.300-TU game links. Original EXE
+unchanged. No mission/tutorial automation, software tests or Python test edits;
+Python edit only extends box asset generation. Production AI change is numerical,
+not aggression tuning. Whole-AI1:1 remains incomplete: pursuit/attack/collision
+numerics and original runtime FP transitions still need independent evidence.
+Evidence: m4/playable/ai-motion/validation.json; ledger records separate adapter
+and original-backed scope. Normal game rebuilt without DEBUGGING; box retains
+its separate diagnostic executable.
+
+AI aggression review 2026-10-28: added --box-aggression diagnostic (DEBUGGING
+only), four type11 player-targeted actors at varied positions plus neutral type6.
+Two HAL runs each completed150 ticks/five simulation seconds;750 actor rows per
+run match exactly, finite,77 attack updates, neutral never targets/fires.300-TU
+build links; original EXE hash unchanged. No real-game automation, software tests
+or Python test edits. Core constructor/acquisition/pursuit/fire/retaliation
+branch review found no reduced-aggression rule: original has narrow fire cone,
+route-return passes and damage-induced acceleration. Exact fidelity is NOT
+established: original0043a415 retains unrounded phase ratio for preceding motion
+sample; source rounds it first. Trajectory impact unmeasured; junction/type1/type2
+runtime cases remain uncovered. Detailed comparison, source hashes, raw original
+exports and both traces: m4/playable/ai-aggression/review.json. Production AI
+unchanged; no speculative aggression tuning. First hidden launch failed before
+simulation; stale trace excluded. Normal game build restored without DEBUGGING.
 
 Splash keyboard skipping 2026-10-28: Space, Esc and Enter now use the existing
 mouse-click timer-expiry path; repeated keydown is consumed without advancing.

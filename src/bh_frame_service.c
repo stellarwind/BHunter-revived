@@ -50,7 +50,9 @@ int __cdecl bh_frame_service_tick(BHFrameService *s)
     long active;
     unsigned long i;
     LONG stop;
+#ifdef DEBUGGING
     DWORD began;
+#endif
     if (!s)
         return 0;
     ++s->calls;

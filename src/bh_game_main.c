@@ -14,6 +14,7 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE previous, LPSTR command, int sh
             hardware = 1;
         else if (!strcmp(option, "--fullscreen"))
             fullscreen = 1;
+#ifdef DEBUGGING
         else if (!strcmp(option, "--box-test"))
             box = 1;
         else if (!strcmp(option, "--box-auto"))
@@ -21,8 +22,14 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE previous, LPSTR command, int sh
             box = 1;
             automatic = 1;
         }
+        else if (!strcmp(option, "--box-aggression"))
+        {
+            box = 1;
+            automatic = 2;
+        }
         else if (!strcmp(option, "--profile"))
             profile = 1;
+#endif
         else
             return 2;
     }
