@@ -1,9 +1,0 @@
-# Full player callback frontier (read-only)
-
-0041c860..0041d7bd is the complete 3934-byte/1162-instruction player scene callback. It was untyped in the analysis DB; DefinePlayerSceneBoundary.java declares exactly that contiguous PE-verified body for decompilation. This is analysis metadata, not source recovery or original execution.
-
-All direct gameplay callees are now source owners or the fade family being recovered in this block. CRT rand/ftol are excluded. Real dependencies include scene background0041c020, material queue00478060 and sound listener0047b710 in addition to HUD/markers/status/scoreboard/weapon callbacks. The actual pickup list has BHPickupState.global_next at original+118. Selected weapon bytes+2b6/+2b7 dispatch weapon+130 through the recovered ten-entry table: index4 arc, index5 target reticle, other entries verified RET sentinels.
-
-The remaining obstacle is real object construction/lifetime binding, rather than missing direct draw callees. Observed player camera position+160/angles+16c/velocity+178, effect values+23c/+240/+244/+254, aim+280/+28c, scene byte+2bb, flags+2b4 and final trail vectors+2c0..350 need bindings from actual constructed player owners. The callback mutates+254 during decay. Resource+21c and global mode004dfb08/frame004df6b4/display images/background slots must use actual owned resources and live shared state. No new compact layout or guessed globals are proposed.
-
-Main scene gate is byte+2bb==1 and mode004dfb08!=0. It sets listener/camera/horizon, material/background slots, effect fade and aiming quads, HUD/markers/pickups, selected weapon callbacks, status/scoreboard and scene owner. Its separate tail draws model resource+21c and four random segments plus optional central image for frame<75. The main section also contains a 32-random oriented-effect loop. A complete restoration must retain these branches and read/mutation timing; calling HUD alone cannot count as this owner.

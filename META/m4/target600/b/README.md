@@ -1,9 +1,0 @@
-# Actor vehicle draw 00434920
-
-Whole ordinary game draw owner: 1561 raw bytes,433instructions,00434920..00434f39. Fresh Ghidra disassembly exactly reproduces immutable PE bytes; old decompilation retained only as auxiliary source. Internal early return and final return belong to one owner. No tables or helper owners counted. Ledger checked before implementation.
-
-Source: bh_actor_vehicle_draw.c/.h, explicit borrowed queue/sound/resource/clock context and actual BHEntity payload fields. Preserves signed16tick subtraction, curve sample stores, yaw/bank, damage3CRTdraws, four independent glow rates/positions and sound request/update. Damage fade is19c, distinct from route speed_scale198. Actual real curve, rotation, queue and sound definitions link.47source checks pass; omitted module produces unresolved bh_actor_vehicle_draw. Build and source/object hashes are in standalone-build.json. No original code, gameplay, native playback or rendering executed.
-
-Validation covers healthy/damaged random consumption, real source streaming sound request/update/voice velocity, exact glow resource/size/position and sinusoidal alpha, signed16wrap/negative extrapolation and zero-duration guard. Finite moderate PC53/nearest only; PC24 and CRT versus x87 transcendental final-bit differences unvalidated. Output queues are a faithful source slice, not gameplay completion.
-
-Constructor review:43a920 old code ends43b2ab;43b2d0 is a distinct position lookup/duplicated initializer. 435790 was already admitted and cannot count again.435e80 installs missing4357d0 damage/death tick.437ae0 attack owner5379B has projectile/area dependencies,438ff0 route owner2015B has target/city-message logic,439910 tick2231B has debris/score/cleanup dependencies. None of those owners are admitted here. No partial constructor or guessed callback admitted. META/m3/target-review retains their historical listings; fresh435e80metadata creation only changed analysis database, not EXE.

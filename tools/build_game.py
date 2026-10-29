@@ -5,7 +5,10 @@ ROOT=Path(__file__).resolve().parents[1]
 def main():
  ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--compile-one');ap.add_argument('--incremental',action='store_true');ap.add_argument('--debugging',action='store_true',help='Compile optional diagnostics/profiling (DEBUGGING)');ap.add_argument('--mission-profile',action='store_true',help='Bounded in-memory mission markers without DEBUGGING');args=ap.parse_args()
  out=ROOT/'build/game';out.mkdir(parents=True,exist_ok=True)
- vc=Path('D:/Decomp/MSCVC/MSVC5/TOOLS/DEVSTUDIO/VC');sp3=Path('D:/Decomp/MSCVC/MSVC5/SP3_EXTRACTED/VS97_SP3/all/vc');compiler=ROOT/'analysis/toolchain-sp3/bin';shared=Path('D:/Decomp/MSCVC/MSVC5/TOOLS/DEVSTUDIO/SHAREDIDE/BIN');sdk=Path('D:/Decomp/dx7sdk')
+ vc=Path(os.environ.get('BH_VC_ROOT','D:/Decomp/MSCVC/MSVC5/TOOLS/DEVSTUDIO/VC'));sp3=Path(os.environ.get('BH_SP3_ROOT','D:/Decomp/MSCVC/MSVC5/SP3_EXTRACTED/VS97_SP3/all/vc'));compiler=Path(os.environ.get('BH_COMPILER_DIR',ROOT/'toolchain/vc5/bin'));shared=Path(os.environ.get('BH_SHARED_DIR',vc.parent/'SHAREDIDE/BIN'));sdk=Path(os.environ.get('BH_DXSDK_ROOT','D:/Decomp/dx7sdk'))
+ required=[compiler/'CL.EXE',compiler/'c1.dll',compiler/'c1xx.dll',compiler/'c2.exe',compiler/'MSDIS100.DLL',compiler/'MSPDB50.DLL',compiler/'MSVCP50.DLL',vc/'bin/LINK.EXE',sp3/'include/math.h',sdk/'include/ddraw.h',sdk/'lib/ddraw.lib',sdk/'lib/dinput.lib']
+ missing=[str(p) for p in required if not p.is_file()]
+ if missing:ap.error('Missing build dependencies:\n  '+'\n  '.join(missing)+'\nSee README.md for toolchain setup.')
  env=dict(os.environ)
  for n in ('CL','_CL_','LINK','_LINK_'):env.pop(n,None)
  env['PATH']=os.pathsep.join([str(compiler),str(shared),env.get('PATH','')]);env['INCLUDE']=os.pathsep.join([str(sp3/'include'),str(vc/'include')]);env['LIB']=os.pathsep.join([str(sp3/'lib'),str(vc/'lib')])

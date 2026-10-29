@@ -179,7 +179,8 @@ static int face_contact(const BHBsp *a, long a_face, const BHMat34 *a_to_b, cons
     BHVec3 first[2], second[2], direction, side, midpoint, plane_normal;
     const BHVec3 *low, *high;
     BHFaceContact hit;
-    float side_plane, offset, extent, x, y;
+    float side_plane, offset_spill, extent, x, y;
+    double offset, retained_x;
     unsigned long i;
     int result;
     if (!a || !b || !a_to_b || !b_to_world || !world_normal || !out || !b->nodes || b_node < 0 ||
@@ -203,14 +204,24 @@ static int face_contact(const BHBsp *a, long a_face, const BHMat34 *a_to_b, cons
         bh_round_float(((float *)&direction) + i, (double)((float *)&first[1])[i] - ((float *)&first[0])[i]);
     bh_vec3_cross(&direction, &plane_normal, &side);
     bh_round_float(&side_plane, -face_dot(&side, &first[0]));
-    bh_round_float(&offset, -face_dot(&direction, &first[0]));
+    /* Standalone0044cc20 keeps this offset on the x87 stack. The inline
+       traversal owner0044c200 spills it before extent/projection arithmetic. */
+    offset = -face_dot(&direction, &first[0]);
+    if (!cached)
+    {
+        bh_round_float(&offset_spill, offset);
+        offset = offset_spill;
+    }
     bh_round_float(&extent, face_dot(&direction, &first[1]) + offset);
     result = face_cut(b, b_face, NULL, &side, side_plane, 0, second, cached);
     if (result != 1)
         return result;
-    bh_round_float(&x, face_dot(&direction, &second[0]) + offset);
+    retained_x = face_dot(&direction, &second[0]) + offset;
+    bh_round_float(&x, retained_x);
     bh_round_float(&y, face_dot(&direction, &second[1]) + offset);
-    if (y <= x)
+    /* Both owners compare retained projection0 with rounded projection1;
+       later interval tests use the two rounded projection copies. */
+    if (!(retained_x < (double)y))
     {
         if (x <= 0 || extent <= y)
             return 0;

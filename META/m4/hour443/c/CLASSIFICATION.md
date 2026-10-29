@@ -1,5 +1,0 @@
-# Pre-decompilation boundary/role selection
-
-Read RESTORATION_PLAN.md, META/PROGRESS.md and prior menu-row CONTRACT before selection. Baseline443 ledger has no admitted0042c300 or0042be70/0042bf80. Existing function-map bounds classify0042c300 as447-byte whole menu/entity/input-list constructor; actual18 directcalls00447c82..00447d81 from startup004474c0. It uses actual input-list allocation/bindings/kind4 and entity allocation, all admitted. Raw complete entry-to-RET447bytes uses noCRT/import/compiler helper/shared tail and installs verified RET0047d680 as refresh/step, represented NULLunder admitted source entity contract. Application/menu role with unknown engine attribution remains engine_candidate. Parent assignment prioritizes actual menu construction.
-
-Nearby0042bf80/0042be70 are ordinary installed input-capture callbacks called from input/network menu setup; they require further decompilation/closure review before implementation admission or assignment. Do not count them automatically as constructor dependencies. No native physical input API should execute in source fixtures.

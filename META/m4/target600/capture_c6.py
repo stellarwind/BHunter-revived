@@ -1,6 +1,0 @@
-import json,hashlib,subprocess
-from pathlib import Path
-exec(Path('META/m4/target500/capture_parent.py').read_text().split('for folder,specs')[0])
-here=Path('META/m4/target600/c6');(here/'original').mkdir(parents=True,exist_ok=True);a=0x42a9e0;n=494
-rows=json.loads(subprocess.check_output(['ghidra','--project','bhunter-frame','disasm',hex(a),'-n','230'],text=True));rows=[r for r in rows if a<=int(r['address'],16)<a+n];body=raw(a,n);assert b''.join(bytes.fromhex(r['bytes']) for r in rows)==body
-(here/'original/0042a9e0.disasm.json').write_text(json.dumps(rows,indent=2)+'\n');(here/'original/0042a9e0.decompile.json').write_bytes(Path('META/m4/target600/parent/original/0042a9e0.decompile.json').read_bytes());item=dict(original_va='0042a9e0',function='bh_flyby_construct',source='src/bh_flyby_construct.c',role='game',provenance_confidence='Whole menu flyby camera acquisition/initialization/real50step settling and playerreset owner, using actual source callbacks. Distinct RET; no CRT/import/EH/sharedtail.',boundary=dict(start='0042a9e0',end_exclusive=f'{a+n:08x}',bytes=n,instructions=len(rows),sha256=hashlib.sha256(body).hexdigest()));(here/'owners.json').write_text(json.dumps([item],indent=2)+'\n')

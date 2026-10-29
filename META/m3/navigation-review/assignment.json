@@ -1,9 +1,0 @@
-{
- "scope":"Read-only scene exit construction needed for a reference route; no source admission",
- "functions":[
-  {"address":"004084a0","boundary":"004084a0-00408938","role":"engine_candidate","confidence":"medium","implementation":"not_started","evidence":["Reviewed level owner calls this for every placement before navigation initialization","Route builder consumes six entity+204 pointer fields at stride 3c; construction under review"]},
-  {"address":"00408940","boundary":"00408940-00408b06","role":"engine_candidate","confidence":"medium","implementation":"not_started","evidence":["Reviewed level owner calls this after first exit-construction pass","Existing complete non-thunk body; route-adjacency ownership under review"]}
- ],
- "excluded":["Verified CRT allocation/free/ftol and matching math dependencies remain with their owners"],
- "limits":["No inferred global node IDs from TEST.PTH local exit slots","Unknown engine provenance is not game ownership proof"]
-}

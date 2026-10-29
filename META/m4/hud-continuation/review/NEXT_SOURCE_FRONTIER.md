@@ -1,5 +1,0 @@
-# Next bounded source frontier
-
-After complete player and flyby scene owners, select player reset `00421bc0..00421d19` (346 bytes/88 instructions) as the next small gameplay family. Raw PE shows four direct calls from still-open player step `0041e850`, and the reset's only direct dependency is `0047c140` `bh_sound_stop`, already linked in `src/bh_sound_queue.c`. The reset stops and invalidates three player sound handles, clears state that feeds the restored HUD/scene, iterates ten actual weapon objects to clear active/ammo fields, sets selectors 0/9 and grants starting ammunition subject to each `+110` limit. Existing player/weapon/sound source owners make a meaningful linked state-and-sound test possible without original gameplay execution. Current-player binding and weapon pointer/generation ownership must be explicit; raw pointer guesses would invalidate the closure.
-
-This family advances the player-step lifecycle. The larger 11,530-byte `0041e850` step and 3,749-byte `0041d7c0` query remain separate. The 175-byte render producer `00479140` is tempting but has multiple open alternate-branch audio/input/worker calls, so is a less bounded immediate slice.

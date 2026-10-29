@@ -1,3 +1,0 @@
-# Independent full raw review
-
-Audit agent compared complete0045cf50 raw and source. No finite[0,1]/ordinary display-format semantic mismatch found. Confirmed retained double keep, signed-div-bias RGB extraction with separate integer conversions, captured keep/tints before cached-to-active reversal, indexed42/6/7 quantization, packed16extract/expand sums, native amount*-255/subtract alpha, four TL vertices and mode4/mode0 barriers. Domain caveat: extreme floating-to-long conversions are pinned VC5 CRT semantics, not portable C or separately validated. Source signed left shifts were corrected to unsigned wrapping; ordinary-domain cases unchanged,65 checks repeated0fail.

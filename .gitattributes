@@ -5,16 +5,3 @@
 *.md text eol=lf
 *.json text eol=lf
 *.tsv text eol=lf whitespace=-blank-at-eol
-
-# Preserve byte-pinned source snapshots, raw decompiler exports and SDK manifest.
-META/m4/**/sources/*.txt -text -diff
-META/m4/**/original/*.c.txt -text -diff
-/META/m4/primitive-queue/list-control.c.txt -text -diff
-/META/native-render-dependencies.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
-
-# Exact historical HUD/ribbon fixture variants.
-/META/m4/hud-attachment/prior-ribbon/*.txt -text -diff
-/META/m4/hud-attachment/weapon-hud-native/*.c.txt -text -diff
-
-# Exact unregistered frame-worker candidate and its focused evidence.
-/META/m4/frame-pipeline/worker/pre-registration/* -text -diff

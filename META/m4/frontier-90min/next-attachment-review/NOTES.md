@@ -1,5 +1,0 @@
-# Next family: bounded static reset contract
-
-No implementation or source admission. Complete 61-byte/21-instruction00417f30 was compared with immutable PE; xrefs are HUD0041b2d0 and recursion only. It is an engine-candidate attachment reset; unknown authorship is not a game-ownership proof.
-
-It reads node+fc. If zero, return immediately without visiting children. Otherwise clear+fc FIRST, then visit six non-NULL child pointers at node+204 with 60-byte stride, recursively in slot order. No resource is freed and no child link is cleared. Shared nodes and cycles are meaningful: clearing the flag before traversal prevents repeated recursion; do not silently impose an acyclic-tree requirement or traverse children behind an already-clear parent. Preserve this guard/order when recovering the full rendering/setup dependency family. Complete 3890-byte00417f70 and 893-byte0041b2d0 still require whole-body/layout review before implementation; their existing original maps/raw HUD export are only frontier evidence.

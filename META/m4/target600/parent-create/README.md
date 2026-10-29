@@ -1,1 +1,0 @@
-Whole parent effect family. See ../parent/README.md for shared bindings and ../parent/create-build.json for focused compiled/linked/executed evidence. All owners remain candidates until the full current and asset-free integration gates pass.

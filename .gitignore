@@ -1,6 +1,15 @@
-# Original game/media and local reverse-engineering database
+# Original game/media and local research (retained locally)
 /GAME_DATA/
+/analysis/
+/META/
+/tests/
 /ghidra-projects/
+/BHunter Level Export/
+/build.cmd
+/run-tests.cmd
+/mkstatus.cmd
+/push.cmd
+/play-original.cmd
 *.mdf
 *.mds
 *.iso
@@ -9,13 +18,10 @@
 *.zip
 *.7z
 
-# Build products, local compiler runtimes and caches
+# Proprietary toolchain, build output and caches
+/toolchain/
 /build/
 /dist/
-# Local, unmodified original HUD asset extractions used for pixel diagnosis.
-/META/m4/hud-attachment/review/asset-previews/*.pcx
-/META/m4/hud-attachment/review/asset-previews/*.PCX
-/META/m4/hud-attachment/review/asset-previews/*.png
 *.exe
 *.dll
 *.obj
@@ -31,48 +37,3 @@ __pycache__/
 .venv/
 .env
 .env.*
-
-# Preserve curated research; exclude generated compiler experiments and dumps.
-/analysis/*
-!/analysis/README.md
-!/analysis/RESEARCH.md
-!/analysis/*.py
-!/analysis/*.java
-!/analysis/compiler_probes.c
-!/analysis/assets-index.json
-!/analysis/binary-map.json
-!/analysis/call-edges.tsv
-!/analysis/crt-comparison.json
-!/analysis/crt-symbols.tsv
-!/analysis/function-map.tsv
-!/analysis/imports.json
-!/analysis/subsystems.tsv
-!/analysis/unassigned-code.tsv
-!/analysis/math/
-/analysis/math/*
-!/analysis/math/RECOVERY.md
-!/analysis/math/differential.c
-!/analysis/math/differential-results.txt
-!/analysis/math/build_and_test.ps1
-!/analysis/math/compare_builds.py
-!/analysis/astra-review/
-/analysis/astra-review/*
-!/analysis/astra-review/REVIEW.md
-!/analysis/astra-review/FINDINGS.md
-!/analysis/astra-review/FIXED_SETUP_FINDINGS.md
-!/analysis/astra-review/matched_math.cpp
-!/analysis/astra-review/matched_translation.cpp
-!/analysis/astra-review/verify_fixed_math.py
-!/analysis/astra-review/verify_translation.py
-!/analysis/astra-review/targeted_probes.py
-!/analysis/astra-review/fixed_setup_math.py
-!/analysis/astra-review/tool-versions.json
-!/analysis/evidence/
-/analysis/evidence/*
-!/analysis/evidence/*.json
-
-# Local Blender asset export; keep original game textures out of source pushes.
-/BHunter Level Export/
-
-
-/META/*

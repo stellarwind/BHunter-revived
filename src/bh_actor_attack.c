@@ -17,6 +17,13 @@ static float rf(double d)
     bh_round_float(&f, d);
     return f;
 }
+/* Preserve 00437e7f..00437eb5: inv*component precedes the direction
+   product on each axis. VC5 otherwise factors inv out of the X/Y sum.
+   This call's binary64 argument/spill is an identity in the PC53 profile. */
+static double attack_product(double a, double b)
+{
+    return a * b;
+}
 static void get(BHEntity *e, unsigned long o, void *p, unsigned long n)
 {
     memcpy(p, (char *)e + o, n);
@@ -190,7 +197,9 @@ static void beam(BHActorAttackContext *c, BHEntity *e, BHWorldGeometry *world, c
             bh_contact_spark_create(b->contacts, &point, 1, 2);
             if (hit.object.kind == BH_WORLD_HIT_GEOMETRY && !(flags & 2))
             {
-                dot = ((double)normal.z * ray.z + (double)normal.y * ray.y) + (double)normal.x * ray.x;
+                /* 004388c1..00438913 sum X/Y before Z; the decompiler's
+                   provisional Z/Y/X rendering loses that retained order. */
+                dot = ((double)normal.x * ray.x + (double)normal.y * ray.y) + (double)normal.z * ray.z;
                 if (dot > 0)
                 {
                     normal.x = -normal.x;
@@ -378,8 +387,9 @@ int __cdecl bh_actor_attack(BHActorAttackContext *c, BHEntity *e)
                 ((float *)&direction)[i] = rf((double)((float *)&q)[i] - ((float *)&p)[i]);
             bh_vec3_normalize(&direction);
             inv = 1.0 / sqrt(distance);
-            dot = (inv * difference.x * direction.x + inv * difference.y * direction.y) +
-                  inv * difference.z * direction.z;
+            dot = (attack_product(inv, difference.x) * direction.x +
+                   attack_product(inv, difference.y) * direction.y) +
+                  attack_product(inv, difference.z) * direction.z;
             /* Original TEST AH,41 accepts unordered too: coincident
                target/actor positions must retain that firing decision. */
             if (_isnan(dot) || .98 - (double)pursuit * .03 <= dot)

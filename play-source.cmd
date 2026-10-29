@@ -1,6 +1,6 @@
 @echo off
 if not exist "%~dp0build\game\BHunter-source.exe" (
-  echo Build the source preview first with build-source.cmd
+  echo Build the game first with build-source.cmd
   exit /b 2
 )
 pushd "%~dp0build\game"

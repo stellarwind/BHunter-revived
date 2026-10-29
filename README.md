@@ -1,40 +1,45 @@
-# BHunter Revived
+# BHunter
 
-Restoring BHunter as a faithfully playable, source-built game on modern Windows.
-**Source preview available:** run `build-source.cmd`, then `play-source.cmd` for a
-manual playtest. Startup/static rendering passes; human playtesting is in progress.
-M3 was skipped by user direction; M4 source restoration remains incomplete.
-Current preview evidence: [validation](META/m4/playable/light-sign/validation.json).
-The inventory checkpoint below predates the preview ownership corrections.
+![BHunter gameplay](assets/screenshot.png)
 
-<!-- BHUNTER_STATUS_START -->
+A source restoration of **BHunter**, the 1999 hovercar combat game by **InterActive Vision**, published by **Midas Interactive Entertainment**. Hunt criminals through a futuristic city and collect their bounties. [Original game details](https://gamefaqs.gamespot.com/pc/250530-bhunter/data).
 
-**Source recovery:** `[########################]` **100.0% (679/679)**
+## Install
 
-| Restored & linked | In progress | Not started |
-|---:|---:|---:|
-| 679 | 0 | 0 |
+1. Download and extract [release 0.1](https://github.com/stellarwind/BHunter-revived/releases/tag/v0.1) on Windows.
+2. Copy `Bhunter.bin` from your own original game into the `GAME_DATA` folder.
+3. Run `play-hardware.cmd` or `play-software.cmd`.
 
-891 mapped functions − 212 verified runtime/helpers = 679 potential game/engine functions. Classification remains provisional.
+Original game files are not included. DDrawCompat is bundled for modern Windows compatibility. This is an early playable release; full original-game fidelity is still being reviewed.
 
-**Playable game target:** 0/679 functions admitted. Function count is not effort or gameplay completion.
+## Build
 
-**Latest validated block:** 23 complete owners. [Block evidence](META/m4/finish/README.md).
+Requires Python 3.10+, Visual C++ 5.0 with Visual Studio 97 SP3, and the DirectX 7 SDK. Proprietary build dependencies are not included.
 
-**Last validated builds:** 601 translation units · 5,529,939 real-asset checks · 5,023,991 clean checks · 295 missing-module controls.
-
-<!-- BHUNTER_STATUS_END -->
-
-[Progress & blockers](META/PROGRESS.md) · [Build](BUILDING.md) ·
-[Restoration plan](RESTORATION_PLAN.md) · [Function ledger](META/function-status.json)
-
-Run `MKSTATUS.cmd` (or `push.cmd`) to refresh this status, commit **all non-ignored changes** (including staged files, new files and deletions), and push the current branch to its configured remote. An optional commit message can be supplied:
+Set these paths in a Command Prompt:
 
 ```bat
-MKSTATUS.cmd "Restore HUD and weapon lifecycle"
-MKSTATUS.cmd --dry-run
+set BH_VC_ROOT=C:\VC5\VC
+set BH_SP3_ROOT=C:\VS97SP3\all\vc
+set BH_SHARED_DIR=C:\VC5\SHAREDIDE\BIN
+set BH_DXSDK_ROOT=C:\DX7SDK
+set BH_COMPILER_DIR=C:\BHunter-compiler
 ```
 
-The dry run changes nothing. A normal run pushes existing local commits even when there is nothing new to commit. Errors stop the command and keep local changes/commits available for retry; it never force-pushes or automatically merges/rebases. Status includes the last recorded successful checkpoint; this command does not rerun the game or builds.
+Prepare `BH_COMPILER_DIR` with stock VC5 `CL.EXE`, SP3 `c1.dll`, `c1xx.dll`, `c2.exe` (from `enu\vc\bin`), and stock `MSDIS100.DLL`, `MSPDB50.DLL`, `MSVCP50.DLL` (from `SHAREDIDE\BIN`). The build uses the stock VC5 linker and SP3 headers/libraries.
 
-Use `MKSTATUS.cmd --check` to check the README without committing or pushing. To refresh it locally only, run `python tools/mkstatus.py`.
+```bat
+build-source.cmd
+python tools\prepare_ddrawcompat.py
+play-hardware.cmd
+```
+
+Keep your `Bhunter.bin` in `GAME_DATA`. To create a release ZIP:
+
+```bat
+python tools\package_release.py --version 0.1
+```
+
+## License
+
+Restoration code: [MIT](LICENSE). Original game assets remain the property of their respective owners. Bundled [DDrawCompat](https://github.com/narzoul/DDrawCompat/tree/v0.7.2) has its own license, included in the release.

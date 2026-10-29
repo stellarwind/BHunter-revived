@@ -1,1 +1,0 @@
-Before decompilation:00433170 is the complete79-byte/18-instruction RET-ended weapon table method+12c for index[3]. Ordinary game weapon behavior, no direct calls/CRT/import/EH/compiler or independently assignable shared-tail signature; historical authorship unresolved. Table and original body references do not establish constructor/lifetime recovery. No original execution.

@@ -1,8 +1,0 @@
-[
-  {
-    "address": "00471cc0",
-    "code": "\r\nundefined4 __fastcall FUN_00471cc0(undefined4 *param_1)\r\n\r\n{\r\n  DWORD DVar1;\r\n  int iVar2;\r\n  \r\n  DVar1 = WaitForSingleObject(DAT_004ee730,5);\r\n  while (DVar1 == 0x102) {\r\n    DVar1 = WaitForSingleObject(DAT_004ee730,5);\r\n  }\r\n  iVar2 = -1;\r\n  if ((DAT_004ee30c == 0) && (-1 < DAT_004ee310)) {\r\n    param_1 = (undefined4 *)&DAT_004ee308;\r\n    iVar2 = DAT_004ee310;\r\n  }\r\n  if ((DAT_004ee318 == 0) && (iVar2 < DAT_004ee31c)) {\r\n    param_1 = (undefined4 *)&DAT_004ee314;\r\n    iVar2 = DAT_004ee31c;\r\n  }\r\n  if ((DAT_004ee324 == 0) && (iVar2 < DAT_004ee328)) {\r\n    param_1 = &DAT_004ee320;\r\n  }\r\n  DAT_004eed5c = param_1;\r\n  param_1[1] = 1;\r\n  param_1[2] = 0xffffffff;\r\n  ReleaseMutex(DAT_004ee730);\r\n  return *param_1;\r\n}\r\n\r\n",
-    "name": "FUN_00471cc0",
-    "signature": "undefined4 FUN_00471cc0(undefined4 * param_1)"
-  }
-]

@@ -1,1 +1,0 @@
-int bh_entity_collision_checkpoint(unsigned long*);int bh_physics_step_checkpoint(unsigned long*);int bh_physics_response_checkpoint(unsigned long*);int main(void){unsigned long n=0;int r=0;r|=bh_entity_collision_checkpoint(&n);r|=bh_physics_step_checkpoint(&n);r|=bh_physics_response_checkpoint(&n);return r;}

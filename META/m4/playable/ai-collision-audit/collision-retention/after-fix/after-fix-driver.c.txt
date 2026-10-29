@@ -1,1 +1,0 @@
-int bh_target_construct_checkpoint(const char*,unsigned long*);int main(void){unsigned long n=0;return bh_target_construct_checkpoint(0,&n);}

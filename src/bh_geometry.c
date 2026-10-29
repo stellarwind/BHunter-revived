@@ -4,6 +4,9 @@
 #include <stddef.h>
 
 typedef char face_info_layout[sizeof(BHFaceInfo) == 44 && offsetof(BHFaceInfo, normal) == 28 ? 1 : -1];
+/* 0044e060 publishes one process-persistent descriptor at004e0f98. Faces
+   without a node normal retain its previous normal, even across owners. */
+static BHFaceInfo enumeration_descriptor;
 #include "bh_geometry_core.inc"
 static void *__cdecl allocate(unsigned long n, void *user)
 {
@@ -171,19 +174,23 @@ int __cdecl bh_geometry_face(BHGeometry *g, long face, BHFaceInfo *out)
 int __cdecl bh_geometry_each_face(BHGeometry *g, BHFaceCallback callback, void *user)
 {
     unsigned long i;
-    if (!g || !g->bsp || !callback || g->enumerating)
+    int active;
+    if (!g || !g->bsp || !callback)
         return fail(g, BH_BSP_ARGUMENT);
+    /* 0044e060 keeps its loop/model state on the caller's stack. Nested
+       enumeration shares the descriptor and must preserve the outer lifetime. */
+    active = g->enumerating;
     g->enumerating = 1;
     for (i = 0; i < g->bsp->counts[3]; ++i)
     {
-        if (!bh_geometry_face(g, (long)i, &g->scratch))
+        if (!bh_geometry_face(g, (long)i, &enumeration_descriptor))
         {
-            g->enumerating = 0;
+            g->enumerating = active;
             return 0;
         }
-        callback(&g->scratch, user);
+        callback(&enumeration_descriptor, user);
     }
-    g->enumerating = 0;
+    g->enumerating = active;
     g->error = BH_BSP_OK;
     return 1;
 }

@@ -52,6 +52,15 @@ static void midpoint(const BHVec3 *a, const BHVec3 *b, BHVec3 *out)
     bh_round_float(&out->y, ((double)a->y + b->y) * .5);
     bh_round_float(&out->z, ((double)a->z + b->z) * .5);
 }
+static void angle_midpoint(const BHVec3 *a, const BHVec3 *b, BHVec3 *out)
+{
+    float x_sum;
+    /* 0044dda8/0044ddb4 spill only the angle-X sum before halving. */
+    bh_round_float(&x_sum, (double)a->x + b->x);
+    bh_round_float(&out->x, (double)x_sum * .5);
+    bh_round_float(&out->y, ((double)a->y + b->y) * .5);
+    bh_round_float(&out->z, ((double)a->z + b->z) * .5);
+}
 static int mesh(BHSweepQuery *q, const BHMat34 *pose, const BHMat34 *world, const BHMat34 *local, BHMat34 *relative,
                 BHCollisionHit *out)
 {
@@ -110,7 +119,7 @@ static int sweep(BHSweepQuery *q, BHMat34 *pose, const BHVec3 *movement, const B
     for (i = 0; i < 3; ++i)
     {
         midpoint(&blocked, &clear, &mid);
-        midpoint(&blocked_angles, &clear_angles, &mid_angles);
+        angle_midpoint(&blocked_angles, &clear_angles, &mid_angles);
         *pose = start;
         apply(pose, &mid, &mid_angles);
         if (colliding)

@@ -1,7 +1,0 @@
-# Read-only next-family boundary classification
-
-Before fresh decompilation, complete raw00412190 was read:820bytes/265instructions endingRET004124c3. Its admitted input-list allocate/bind/disable calls, fixed key-code records and installation of an entity callback distinguish ordinary game input configuration from CRT/import/compiler/shared-tail behavior. Historical engine authorship is unresolved; game-specific default-binding policy is supported. It is not a post-world constructor simply because startup invokes it after world loading. Callback004100b0 still needs separate complete-boundary review.
-
-004100d0 has preexisting complete-boundary and role evidence:1216bytes/367instructions, game LEV world-building dispatch; existing bh_scene.c implements only the binary reader subset and remains WIP, not a whole admitted owner. Fresh review will identify actual remaining construction dependencies without transferring reader tests into whole-owner evidence. No source or ledger changes are authorized here.
-
-004100b0 raw seven instructions/25bytes load the input-list global, add0x2010, and call admitted packet application00475870 with packet at list+2010 and destination state global00496168 (original packet,state order; source API reverses it). This is an ordinary game packet-application entity callback (installed by00412190), not a CRT/import/shared-tail wrapper. Its complete callback boundary is eligible for fresh decompilation, separate from registration evidence.
