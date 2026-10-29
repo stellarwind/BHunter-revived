@@ -1,6 +1,22 @@
 # BHunter
 
-![BHunter gameplay](assets/screenshot.png)
+<table>
+  <tr>
+    <td align="center"><a href="screenshots/BHunter-20261029-230509-088-1.jpg"><img src="screenshots/thumbs/BHunter-20261029-230509-088-1.jpg" alt="BHunter gameplay screenshot 1" width="280"></a></td>
+    <td align="center"><a href="screenshots/BHunter-20261029-230621-253-2.jpg"><img src="screenshots/thumbs/BHunter-20261029-230621-253-2.jpg" alt="BHunter gameplay screenshot 2" width="280"></a></td>
+    <td align="center"><a href="screenshots/BHunter-20261029-230700-576-3.jpg"><img src="screenshots/thumbs/BHunter-20261029-230700-576-3.jpg" alt="BHunter gameplay screenshot 3" width="280"></a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="screenshots/BHunter-20261029-230715-224-4.jpg"><img src="screenshots/thumbs/BHunter-20261029-230715-224-4.jpg" alt="BHunter gameplay screenshot 4" width="280"></a></td>
+    <td align="center"><a href="screenshots/BHunter-20261029-230812-238-5.jpg"><img src="screenshots/thumbs/BHunter-20261029-230812-238-5.jpg" alt="BHunter gameplay screenshot 5" width="280"></a></td>
+    <td align="center"><a href="screenshots/BHunter-20261029-230838-789-6.jpg"><img src="screenshots/thumbs/BHunter-20261029-230838-789-6.jpg" alt="BHunter gameplay screenshot 6" width="280"></a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="screenshots/BHunter-20261029-230940-826-7.jpg"><img src="screenshots/thumbs/BHunter-20261029-230940-826-7.jpg" alt="BHunter gameplay screenshot 7" width="280"></a></td>
+    <td align="center"><a href="screenshots/BHunter-20261029-231029-578-8.jpg"><img src="screenshots/thumbs/BHunter-20261029-231029-578-8.jpg" alt="BHunter gameplay screenshot 8" width="280"></a></td>
+    <td align="center"><a href="screenshots/BHunter-20261029-231036-260-9.jpg"><img src="screenshots/thumbs/BHunter-20261029-231036-260-9.jpg" alt="BHunter gameplay screenshot 9" width="280"></a></td>
+  </tr>
+</table>
 
 A source restoration of **BHunter**, the 1999 hovercar combat game by **InterActive Vision**, published by **Midas Interactive Entertainment**. Hunt criminals through a futuristic city and collect their bounties. [Original game details](https://gamefaqs.gamespot.com/pc/250530-bhunter/data).
 
@@ -43,3 +59,13 @@ python tools\package_release.py --version 0.1
 ## License
 
 Restoration code: [MIT](LICENSE). Original game assets remain the property of their respective owners. Bundled [DDrawCompat](https://github.com/narzoul/DDrawCompat/tree/v0.7.2) has its own license, included in the release.
+
+## Unlock all levels
+
+Quit the game, then run with Python 3.10+:
+
+```bat
+python tools\unlock_levels.py
+```
+
+This unlocks all nine mission entries in `build/game/source-preview.cfg`, backing up the save before changing it. Other settings stay intact. For another save, add `--save "path\to\source-preview.cfg"`.

@@ -33,8 +33,10 @@ def main():
     with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as bundle:
         for name in ("BHunter-source.exe", "ddraw.dll", "DDrawCompat-LICENSE.txt"):
             bundle.write(runtime / name, prefix + "build/game/" + name)
-        for name in ("README.md", "LICENSE", "play-source.cmd", "play-hardware.cmd", "play-software.cmd", "assets/screenshot.png"):
+        for name in ("README.md", "LICENSE", "play-source.cmd", "play-hardware.cmd", "play-software.cmd", "tools/unlock_levels.py"):
             bundle.write(ROOT / name, prefix + name)
+        for screenshot in sorted((ROOT / "screenshots").rglob("*.jpg")):
+            bundle.write(screenshot, prefix + screenshot.relative_to(ROOT).as_posix())
         bundle.writestr(prefix + "GAME_DATA/", b"")
         bundle.writestr(prefix + "THIRD-PARTY.txt",
                         "DDrawCompat 0.7.2 (unmodified official binary)\n"

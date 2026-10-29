@@ -2712,7 +2712,7 @@ static int manual_loop(BHGameApp *a)
             {
                 BH_MP_BEGIN(marker);
                 a->frames.produce(a->frames.produce_user);
-                BH_MP_END(marker, "simulation", "", a->frame);
+                BH_MP_END(marker, "simulation", a->player_state.paused ? "paused" : a->player_state.mode == 0 ? "menu" : a->player_state.mode == 1 ? "singleplayer" : "network", a->frame);
             }
 #ifdef DEBUGGING
             box_observe(a);
