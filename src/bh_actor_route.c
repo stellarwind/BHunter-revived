@@ -2,7 +2,6 @@
 #include "bh_axis_snap.h"
 #include "bh_route_choice.h"
 #include "bh_route_guided.h"
-#include "bh_round.h"
 #include "bh_fp.h"
 #include <stddef.h>
 #include <string.h>
@@ -17,12 +16,6 @@ static void read_field(const BHEntity *a, unsigned long offset, void *out, unsig
 static void write_field(BHEntity *a, unsigned long offset, const void *in, unsigned long n)
 {
     memcpy((unsigned char *)a + offset, in, n);
-}
-static float stored(double value)
-{
-    float out;
-    bh_round_float(&out, value);
-    return out;
 }
 #define READ(member, offset) read_field(a, offset, &s->member, sizeof(s->member))
 #define WRITE(member, offset) write_field(a, offset, &s->member, sizeof(s->member))
@@ -117,18 +110,6 @@ static int vector_finite(const BHVec3 *v)
 {
     return _finite(v->x) && _finite(v->y) && _finite(v->z);
 }
-static void difference(BHVec3 *v, const BHVec3 *a, const BHVec3 *b)
-{
-    v->x = stored((double)a->x - b->x);
-    v->y = stored((double)a->y - b->y);
-    v->z = stored((double)a->z - b->z);
-}
-static void tangent(BHVec3 *out, const BHVec3 *point, const BHVec3 *delta)
-{
-    out->x = stored((double)point->x - (double)delta->x * (-1.3));
-    out->y = stored((double)point->y - (double)delta->y * (-1.3));
-    out->z = stored((double)point->z - (double)delta->z * (-1.3));
-}
 static int portal_valid(const BHPortal *p)
 {
     unsigned long i;
@@ -147,6 +128,7 @@ static int duration_ticks(double duration, unsigned short *out)
     *out = (unsigned short)(__int64)ticks;
     return 1;
 }
+#include "bh_actor_route_promote_core.inc"
 int __cdecl bh_actor_route_promote(BHActorRouteContext *c, BHEntity *a, long incoming, long outgoing)
 {
     BHActorRouteState s;
@@ -155,9 +137,9 @@ int __cdecl bh_actor_route_promote(BHActorRouteContext *c, BHEntity *a, long inc
     const BHPortal *in, *out;
     BHEntity *next, *previous, *at;
     unsigned long n;
-    BHVec3 delta, center;
-    float u, v, cu, cv, plane, first_length, width;
-    double length, duration, test_width;
+    BHActorRoutePromotionBinding binding;
+    BHEntity saved;
+    BHEntity *old_head, *new_head, *new_head_previous;
     if (!c || !a || !c->rooms || !c->room_count || !c->actor_limit)
         return fail(c, BH_ACTOR_ROUTE_ARGUMENT);
     if (!bh_math_environment_supported())
@@ -191,139 +173,54 @@ int __cdecl bh_actor_route_promote(BHActorRouteContext *c, BHEntity *a, long inc
         !_finite(s.u) || !_finite(s.v) || !_finite(s.speed) || s.speed <= 0 || !_finite(s.speed_scale) ||
         s.speed_scale <= 0)
         return fail(c, BH_ACTOR_ROUTE_NUMERICAL);
-    s.current = world;
-    s.next = (BHWorldGeometry *)out->neighbor;
-    s.controls[0] = s.controls[3];
-    u = stored((1.0 - (double)s.u) * out->scratch[1] + (double)s.u * out->scratch[0]);
-    v = stored((1.0 - (double)s.v) * out->scratch[3] + (double)s.v * out->scratch[2]);
-    cu = stored(((double)out->scratch[1] + out->scratch[0]) * 0.5);
-    cv = stored(((double)out->scratch[3] + out->scratch[2]) * 0.5);
-    plane = stored((double)out->plane);
-    switch (out->direction & 3UL)
+    /* Invalid numerical input remains transactional in this checked adapter.
+       The complete valid core follows the original early list/ownership stores. */
+    saved = *a;
+    old_head = old->actors;
+    new_head = current->actors;
+    new_head_previous = new_head ? actor_link(new_head, 0xf8) : NULL;
+    binding.context = c;
+    binding.old_room = old;
+    binding.room = current;
+    binding.world = world;
+    binding.incoming = in;
+    binding.outgoing = out;
+    if (!bh_actor_route_promote_core(a, &binding, incoming, outgoing))
     {
-    case 0:
-        s.controls[3].x = plane;
-        s.controls[3].y = u;
-        s.controls[3].z = v;
-        s.portal_center.x = plane;
-        s.portal_center.y = cu;
-        s.portal_center.z = cv;
-        break;
-    case 1:
-        s.controls[3].x = u;
-        s.controls[3].y = plane;
-        s.controls[3].z = v;
-        s.portal_center.x = cu;
-        s.portal_center.y = plane;
-        s.portal_center.z = cv;
-        break;
-    default:
-        s.controls[3].x = u;
-        s.controls[3].y = v;
-        s.controls[3].z = plane;
-        s.portal_center.x = cu;
-        s.portal_center.y = cv;
-        s.portal_center.z = plane;
-        break;
-    }
-    if (out->direction == (in->direction ^ 4UL) && (world->query_flags & 8))
-    {
-        s.controls[3] = s.controls[0];
-        ((float *)&s.controls[3])[out->direction & 3UL] = plane;
-        difference(&delta, s.controls + 3, s.controls);
-        s.controls[1] = s.controls[3];
-        s.controls[2] = s.controls[0];
-        length = bh_vec3_snap_axis(&delta);
-        length += length;
-    }
-    else
-    {
-        center.x = stored(((double)world->minimum.x + world->maximum.x) * 0.5);
-        center.z = stored(((double)world->minimum.z + world->maximum.z) * 0.5);
-        center.y = stored(((double)s.controls[3].y + s.controls[0].y) * 0.5);
-        difference(&delta, &center, s.controls);
-        first_length = stored(bh_vec3_snap_axis(&delta));
-        tangent(s.controls + 1, s.controls, &delta);
-        difference(&delta, &center, s.controls + 3);
-        length = bh_vec3_snap_axis(&delta) + first_length;
-        tangent(s.controls + 2, s.controls + 3, &delta);
-        if (incoming == outgoing)
-        {
-            s.controls[1].x = stored((double)s.controls[1].x - delta.z);
-            s.controls[1].y = stored((double)s.controls[1].y - 2);
-            s.controls[1].z = stored((double)s.controls[1].z + delta.x);
-            s.controls[2].x = stored((double)s.controls[2].x + delta.z);
-            s.controls[2].y = stored((double)s.controls[2].y - (-2));
-            s.controls[2].z = stored((double)s.controls[2].z - delta.x);
-        }
-    }
-    s.phase = 0;
-    s.duration = stored(length / ((double)s.speed * s.speed_scale));
-    duration = s.duration;
-    if (!duration_ticks(duration, &s.duration_ticks))
+        *a = saved;
+        old->actors = old_head;
+        current->actors = new_head;
+        if (previous) set_link(previous, 0xf4, a);
+        if (next) set_link(next, 0xf8, a);
+        if (new_head) set_link(new_head, 0xf8, new_head_previous);
         return fail(c, BH_ACTOR_ROUTE_NUMERICAL);
-    s.tick = bh_actor_route_now(c);
-    test_width = (double)out->scratch[1] - out->scratch[0];
-    width = stored(test_width);
-    if (test_width < 30)
-    {
-        test_width = (double)out->scratch[3] - out->scratch[2];
-        if (test_width > width)
-            width = stored(test_width);
-        if (width < 30)
-        {
-            test_width = (double)in->scratch[1] - in->scratch[0];
-            if (test_width > width)
-                width = stored(test_width);
-            if (width < 30)
-            {
-                test_width = (double)in->scratch[3] - in->scratch[2];
-                if (test_width > width)
-                    width = stored(test_width);
-                if (width < 30)
-                {
-                    duration = (double)s.duration / (((double)width - (-10.0)) * 0.025);
-                    s.duration = stored(duration);
-                    if (!duration_ticks(duration, &s.duration_ticks))
-                        return fail(c, BH_ACTOR_ROUTE_NUMERICAL);
-                }
-            }
-        }
     }
-    if (!_finite(s.duration))
-        return fail(c, BH_ACTOR_ROUTE_NUMERICAL);
 #ifdef DEBUGGING
     if (c->promotion_capture)
-        c->promotion_capture(a, &s, world, incoming, outgoing);
+    {
+        bh_actor_route_read(a, &s);
+        /* Passive diagnostic consumer reads the original input image. */
+        c->promotion_capture(&saved, &s, world, incoming, outgoing);
+    }
 #endif
-    if (previous)
-        set_link(previous, 0xf4, next);
-    else
-        old->actors = next;
-    if (next)
-        set_link(next, 0xf8, previous);
-    next = current->actors;
-    set_link(a, 0xf4, next);
-    current->actors = a;
-    set_link(a, 0xf8, NULL);
-    if (next)
-        set_link(next, 0xf8, a);
-    bh_actor_route_write(a, &s);
-    write_field(a, 0xc4, &s.current, 4);
     c->error = BH_ACTOR_ROUTE_OK;
     return 1;
 }
-static unsigned long random_next(unsigned long state)
+static __inline unsigned long random_next(unsigned long state)
 {
     return ((state * 0xe3570000UL) | ((state * 0xe357UL) >> 16)) ^ state;
 }
+#include "bh_actor_route_advance_core.inc"
+
 int __cdecl bh_actor_route_advance(BHActorRouteContext *c, BHEntity *a)
 {
     BHActorRouteState s;
-    BHWorldGeometry *room;
-    long incoming = -1, outgoing;
-    unsigned long i, first, second;
-    double factor;
+    BHActorRouteAdvanceBinding binding;
+    BHActorExitRoomImage image;
+    BHActorExitNeighborImage neighbors[6];
+    const BHWorldGeometry *room, *neighbor;
+    unsigned long i, j, count;
+    long incoming = -1;
     if (!c || !a || !c->rooms || !c->room_count)
         return fail(c, BH_ACTOR_ROUTE_ARGUMENT);
     if (!bh_math_environment_supported())
@@ -331,39 +228,52 @@ int __cdecl bh_actor_route_advance(BHActorRouteContext *c, BHEntity *a)
     bh_actor_route_read(a, &s);
     if (s.sound_frames == 1 && s.sound != BH_SOUND_INVALID && !c->sound)
         return fail(c, BH_ACTOR_ROUTE_ARGUMENT);
-    if (s.sound_frames)
-    {
-        --s.sound_frames;
-        write_field(a, 0x108, &s.sound_frames, 4);
-        if (!s.sound_frames && s.sound != BH_SOUND_INVALID)
-        {
-            bh_sound_stop(c->sound, s.sound);
-            s.sound = BH_SOUND_INVALID;
-            write_field(a, 0x104, &s.sound, 4);
-        }
-    }
     room = s.next;
     if (!room || !room->model || room->model->portal_count > 6 || room->navigation.count != room->model->portal_count)
-        return fail(c, BH_ACTOR_ROUTE_TOPOLOGY);
-    for (i = 0; i < room->navigation.count; ++i)
-        if ((BHWorldGeometry *)room->navigation.portals[i].neighbor == s.current || incoming < 0)
-            incoming = (long)i;
-    if (room->query_flags & 8)
     {
-        if (!bh_route_guided_exit(a, room, incoming, &outgoing))
-            return fail(c, BH_ACTOR_ROUTE_TOPOLOGY);
-    }
-    else if (!bh_route_choose_exit(a, room, NULL, incoming, &outgoing))
+        route_advance_expire_sound(c, a);
         return fail(c, BH_ACTOR_ROUTE_TOPOLOGY);
-    read_field(a, 0x1e8, &s.random, 4);
-    first = random_next(s.random);
-    second = random_next(first);
-    factor = 1.0 - (double)s.jitter;
-    s.u = stored((double)s.u * factor - ((double)(first & 0x7fff) * s.jitter) * (-1.0 / 32768.0));
-    s.v = stored((double)s.v * factor - ((double)(second & 0x7fff) * s.jitter) * (-1.0 / 32768.0));
-    s.random = second;
-    write_field(a, 0x18c, &s.u, 4);
-    write_field(a, 0x190, &s.v, 4);
-    write_field(a, 0x1e8, &s.random, 4);
-    return bh_actor_route_promote(c, a, incoming, outgoing);
+    }
+    count = room->navigation.count;
+    /* The guided owner has no valid incoming portal when count is zero. */
+    if (!count && (room->query_flags & 8))
+    {
+        route_advance_expire_sound(c, a);
+        return fail(c, BH_ACTOR_ROUTE_TOPOLOGY);
+    }
+    for (i = 0; i < count; ++i)
+        if ((const BHWorldGeometry *)room->navigation.portals[i].neighbor == s.current || incoming < 0)
+            incoming = (long)i;
+    if ((room->query_flags & 8) && (room->navigation.portals[incoming].direction > 6 ||
+                                  room->navigation.portals[incoming].direction == 3))
+    {
+        route_advance_expire_sound(c, a);
+        return fail(c, BH_ACTOR_ROUTE_TOPOLOGY);
+    }
+    image.count_record = (int)count;
+    *(unsigned long *)((char *)&image + 0x114) = room->query_flags;
+    binding.context = c;
+    binding.room = &image;
+    binding.current_identity = s.current ? (void *)&image : NULL;
+    for (i = 0; i < count; ++i)
+    {
+        image.portals[i] = room->navigation.portals[i];
+        neighbor = (const BHWorldGeometry *)image.portals[i].neighbor;
+        if (neighbor)
+        {
+            for (j = 0; j < i; ++j)
+                if (room->navigation.portals[j].neighbor == room->navigation.portals[i].neighbor)
+                    break;
+            if (j == i)
+            {
+                neighbors[i].flags = neighbor->query_flags;
+                image.portals[i].neighbor = (BHPortalNode *)(neighbors + i);
+            }
+            else
+                image.portals[i].neighbor = image.portals[j].neighbor;
+            if (neighbor == s.current)
+                binding.current_identity = image.portals[i].neighbor;
+        }
+    }
+    return bh_actor_route_advance_core(a, &binding);
 }

@@ -24,4 +24,6 @@ typedef struct BHActorDamageContext
 int __cdecl bh_actor_damage_bind(BHActorDamageContext *, BHEntity *);
 void __cdecl bh_actor_damage_tick(BHEntity *);          /*004357d0*/
 void __cdecl bh_actor_damage_query(BHEntity *, void *); /*00435e80*/
+/* Numerical subpath00435bf9..00435c55, not a distinct original owner. */
+void __cdecl bh_actor_damage_death_velocity(const BHVec3 *after, const BHVec3 *at, BHVec3 *velocity);
 #endif

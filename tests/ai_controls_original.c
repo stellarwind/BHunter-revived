@@ -9,7 +9,10 @@
 #include <math.h>
 #include "../build/ai-controls/original.h"
 static BHVec3 target_point;
-static void __cdecl target_query(BHEntity *e,void *raw){long *p=raw;(void)e;if(*p==16){memset(p+1,0,36);memcpy(p+1,&target_point,12);}}
+static BHVec3 target_velocity, target_acceleration;
+static BHEntity *observed_actor;
+static float observed_tangents[6];
+static void __cdecl target_query(BHEntity *e,void *raw){long *p=raw;(void)e;if(*p==16){memset(p+1,0,36);memcpy(p+1,&target_point,12);memcpy(p+4,&target_velocity,12);memcpy(p+7,&target_acceleration,12);if(observed_actor)memcpy(observed_tangents,(char*)observed_actor+0x144,24);}}
 static unsigned long rng=1979;
 static float sample(void){rng=rng*1664525UL+1013904223UL;return (float)((long)(rng>>8)-8388608)/65536.0f;}
 static void word(void *e,unsigned long o,unsigned long v){memcpy((char*)e+o,&v,4);}
@@ -18,13 +21,18 @@ int main(void){
  BHActorAttackContext attack;BHActorPursuitRouteContext pursuit;BHActorRouteContext route;
  BHEffectProjectileContext effects;BHHomingProjectileContext homing;BHProjectileCreateContext projectiles;BHAreaProjectileContext area;
  BHNavigation nav;BHWorldGeometry world;BHActorRouteState s,got;
- unsigned char raw_world[512],*code;unsigned long i,j,steer_bad=0,pursuit_bad=0,clamp_bad=0,gate_bad=0;
+ unsigned char raw_world[512],*code;unsigned long i,j,steer_bad=0,pursuit_bad=0,clamp_bad=0,gate_bad=0,prediction_bad=0,visibility_bad=0,fire_bad=0;
+ struct FireVectors{BHVec3 point,direction,side,travel;} fire_source,fire_reference;
+ void (__cdecl *fire)(BHEntity*,float,struct FireVectors*);
+ void (__cdecl *prediction)(BHEntity*,BHEntity*);
  void (__cdecl *gate)(BHEntity*);void (__cdecl *steer)(BHEntity*,BHVec3*);void (__cdecl *original_pursuit)(BHEntity*);void (__cdecl *clamp)(void*,BHVec3*);
  memset(&attack,0,sizeof(attack));memset(&pursuit,0,sizeof(pursuit));memset(&route,0,sizeof(route));memset(&effects,0,sizeof(effects));memset(&homing,0,sizeof(homing));memset(&projectiles,0,sizeof(projectiles));memset(&area,0,sizeof(area));memset(&nav,0,sizeof(nav));memset(&world,0,sizeof(world));memset(raw_world,0,sizeof(raw_world));
  if(!bh_math_environment_enter(&env)||!bh_entities_init(&pool,16,0))return 2;
  code=VirtualAlloc(0,32768,MEM_COMMIT|MEM_RESERVE,PAGE_EXECUTE_READWRITE);if(!code)return 2;
  memset(code,0xcc,32768);install_original(code);memset(code+12292,0,4);gate=(void (__cdecl *)(BHEntity*))(code+16384);FlushInstructionCache(GetCurrentProcess(),code,32768);
  steer=(void (__cdecl *)(BHEntity*,BHVec3*))code;original_pursuit=(void (__cdecl *)(BHEntity*))(code+1024);clamp=(void (__cdecl *)(void*,BHVec3*))(code+2048);
+ prediction=(void (__cdecl *)(BHEntity*,BHEntity*))(code+28672);
+ fire=(void (__cdecl *)(BHEntity*,float,struct FireVectors*))(code+30000);
  e=bh_entity_acquire(&pool);target=bh_entity_acquire(&pool);if(!e||!target)return 2;
  bh_entity_set_query(&pool,target,target_query);homing.pool=&pool;effects.effects=&homing;attack.effects=&effects;attack.pursuit=&pursuit;attack.projectiles=&projectiles;attack.area=&area;pursuit.route=&route;pursuit.navigation=&nav;route.tick=0xbeef;
  world.minimum.x=world.minimum.y=world.minimum.z=-1000;world.maximum.x=world.maximum.y=world.maximum.z=1000;
@@ -66,8 +74,33 @@ int main(void){
   ref=*e;gate(&ref);
   if(!bh_actor_attack(&attack,e)||memcmp((char*)&ref+0x1e0,(char*)e+0x1e0,2)){if(gate_bad<3)printf("gate %lu pursuit %.9g target %.9g %.9g frame %u/%u\n",i,f,target_point.x,target_point.z,*(unsigned short*)((char*)&ref+0x1e0),*(unsigned short*)((char*)e+0x1e0));++gate_bad;}
  }
+ for(i=0;i<8192;++i){
+  float reference_tangents[6];
+  memset(&s,0,sizeof(s));s.current=s.next=&world;s.speed=(sample()+129)/8;s.speed_scale=(sample()+129)/64;s.sound=BH_SOUND_INVALID;
+  for(j=0;j<12;++j)((float*)s.controls)[j]=sample();
+  target_point.x=sample();target_point.y=sample();target_point.z=sample();
+  target_velocity.x=sample();target_velocity.y=sample();target_velocity.z=sample();
+  target_acceleration.x=sample();target_acceleration.y=sample();target_acceleration.z=sample();
+  bh_actor_route_write(e,&s);word(e,0x1b8,(unsigned long)target);word(e,0x1d4,0);ref=*e;word(&ref,0x1a4,(unsigned long)raw_world);
+  observed_actor=&ref;prediction(&ref,target);memcpy(reference_tangents,observed_tangents,24);
+  observed_actor=e;
+  if(!bh_actor_pursuit_target_controls(&pursuit,e)||memcmp((char*)&ref+0x120,(char*)e+0x120,60)||memcmp((char*)&ref+0x180,(char*)e+0x180,8)||memcmp((char*)&ref+0x1bc,(char*)e+0x1bc,28)||memcmp((char*)&ref+0x1e4,(char*)e+0x1e4,4))++prediction_bad;
+  if(memcmp(reference_tangents,observed_tangents,24))++visibility_bad;
+ }
+ observed_actor=0;
+ for(i=0;i<8192;++i){
+  float phase=sample()/64;
+  memset(&s,0,sizeof(s));s.current=s.next=&world;s.sound=BH_SOUND_INVALID;
+  for(j=0;j<12;++j)((float*)s.controls)[j]=sample();bh_actor_route_write(e,&s);
+  for(j=0;j<3;++j){float displacement=sample();memcpy((char*)e+0x15c+j*4,&displacement,4);}
+  fire(e,phase,&fire_reference);
+  bh_actor_attack_fire_vectors(e,phase,&fire_source.point,&fire_source.direction,&fire_source.side,&fire_source.travel);
+  if(memcmp(&fire_source,&fire_reference,sizeof(fire_source)))++fire_bad;
+ }
+ printf("fire_vector_cases=8192 differences=%lu\n",fire_bad);
+ printf("prediction_cases=8192 differences=%lu callback_visibility_differences=%lu\n",prediction_bad,visibility_bad);
  printf("firing_gate_cases=65536 differences=%lu\n",gate_bad);
  printf("{\"cases\":8192,\"steering_differences\":%lu,\"forced_pursuit_differences\":%lu,\"clamp_differences\":%lu}\n",steer_bad,pursuit_bad,clamp_bad);
- VirtualFree(code,0,MEM_RELEASE);bh_entities_dispose(&pool);bh_math_environment_leave(&env);return steer_bad||pursuit_bad||clamp_bad||gate_bad?1:0;
+ VirtualFree(code,0,MEM_RELEASE);bh_entities_dispose(&pool);bh_math_environment_leave(&env);return steer_bad||pursuit_bad||clamp_bad||gate_bad||prediction_bad||visibility_bad||fire_bad?1:0;
 }
 

@@ -22,6 +22,8 @@ typedef struct BHScriptLifetimeState
 int __cdecl bh_script_lifetime_bind(BHScriptLifetimeContext *, BHEntity *, const BHScriptLifetimeState *,
                                     BHEntityCallback);
 int __cdecl bh_script_lifetime_read(BHEntity *, BHScriptLifetimeState *);
+/* Source-private timer/lifetime pointers only; preserves cue time/resource/step. */
+int __cdecl bh_script_lifetime_bind_context(BHScriptLifetimeContext *, BHEntity *);
 void __cdecl bh_script_unloaded_query(BHEntity *, void *);            /*00442ec0*/
 void __cdecl bh_script_sound_expiry(BHEntity *);                      /*00443350*/
 void __cdecl bh_script_motion_query(BHEntity *, void *);              /*00443e80*/

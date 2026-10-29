@@ -38,6 +38,7 @@ static void due(BHEntity *actor) {
     f.worlds[1].navigation.portals[0].neighbor=f.worlds[1].navigation.portals[1].neighbor=NULL;
     /* The remaining portal is excluded, so source promotion fails explicitly. */
     CHECK(!bh_actor_route_due(&f.context,actor) && f.context.error==BH_ACTOR_ROUTE_TOPOLOGY,"failed real advance propagates source guard without fabricated completion");
+    bh_actor_route_read(actor,&s);CHECK(s.tick==f.state.tick,"failed checked advance does not publish a catch-up stamp");
     CHECK(!bh_actor_route_due(NULL,actor) && !bh_actor_route_due(&f.context,NULL),"due callback null guards");
 }
 static void __cdecl observed_query(BHEntity *entity,void *packet){++query_calls;}

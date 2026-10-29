@@ -59,22 +59,42 @@ static int valid_node(const BHBsp *b, long node)
 {
     return node >= 0 && (unsigned long)node < b->counts[4] && b->nodes && b->bounds;
 }
-static int spheres(BHCollisionQuery *q, long an, long bn, const BHMat34 *a_to_b)
+static int spheres(BHCollisionQuery *q, long an, long bn, const BHMat34 *a_to_b, int source_tree)
 {
     const BHBsp *a = q->a->bsp, *b = q->b->bsp;
-    BHVec3 d;
-    float radius;
+    BHVec3 point, d;
+    float checked_radius;
+    double x, y, z, radius;
     if (!valid_node(a, an) || !valid_node(b, bn))
         return query_fail(q, BH_BSP_FORMAT);
-    bh_mat34_transform_point(a_to_b, &a->bounds[an].center, &d);
-    bh_round_float(&d.x, (double)d.x - b->bounds[bn].center.x);
-    bh_round_float(&d.y, (double)d.y - b->bounds[bn].center.y);
-    bh_round_float(&d.z, (double)d.z - b->bounds[bn].center.z);
-    bh_round_float(&radius, (double)a->bounds[an].radius + b->bounds[bn].radius);
-    if (!_finite(d.x) || !_finite(d.y) || !_finite(d.z) || !_finite(radius) || radius < 0)
+    bh_mat34_transform_point(a_to_b, &a->bounds[an].center, &point);
+    /* Preserve source rejection guards independently of the original gate.
+       The rounded validation copies must not feed its retained x87 deltas. */
+    bh_round_float(&d.x, (double)point.x - b->bounds[bn].center.x);
+    bh_round_float(&d.y, (double)point.y - b->bounds[bn].center.y);
+    bh_round_float(&d.z, (double)point.z - b->bounds[bn].center.z);
+    bh_round_float(&checked_radius, (double)a->bounds[an].radius + b->bounds[bn].radius);
+    if (!_finite(d.x) || !_finite(d.y) || !_finite(d.z) || !_finite(checked_radius) || checked_radius < 0)
         return query_fail(q, BH_BSP_NUMERICAL);
-    return ((double)d.z * d.z + (double)d.y * d.y) + (double)d.x * d.x <= (double)radius * radius;
+    /* 0044d34b..0044d386 retain the differences and B+A radius sum, then
+       square/add X,Y,Z in that order. No binary32 stores precede the gate. */
+    x = (double)point.x - b->bounds[bn].center.x;
+    y = (double)point.y - b->bounds[bn].center.y;
+    z = (double)point.z - b->bounds[bn].center.z;
+    if (source_tree)
+        radius = (double)b->bounds[bn].radius + a->bounds[an].radius;
+    else
+        /* Destination owner0044c2bb loads A then B instead. */
+        radius = (double)a->bounds[an].radius + b->bounds[bn].radius;
+    return (x * x + y * y) + z * z <= radius * radius;
 }
+#ifdef BH_COLLISION_QUERY_GATE_CHECK
+/* Native validation entry only; not emitted in the production game target. */
+int __cdecl bh_collision_query_gate_check(BHCollisionQuery *q, long an, long bn, const BHMat34 *a_to_b)
+{
+    return spheres(q, an, bn, a_to_b, 1);
+}
+#endif
 static int leaf(BHCollisionQuery *q, const BHBsp *b, long index, const BHBspLeaf **out)
 {
     if (!b->leaves || !b->faces || index < 0 || (unsigned long)index >= b->counts[5])
@@ -98,7 +118,8 @@ static int node_contacts(BHCollisionQuery *q, long an, long bn, const BHMat34 *a
     unsigned long as, bs, ac, bc;
     int result;
     bh_mat34_inverse_transform_point(a_to_b, &b->bounds[bn].center, &center);
-    d = (((double)na->normal[0] * center.x + (double)na->normal[1] * center.y) + (double)na->normal[2] * center.z) +
+    /* 0044c301..0044c33d sums Y/Z before X; cancellation affects pruning. */
+    d = (((double)na->normal[1] * center.y + (double)na->normal[2] * center.z) + (double)na->normal[0] * center.x) +
         na->plane;
     if (!_finite(d))
         return query_fail(q, BH_BSP_NUMERICAL);
@@ -135,7 +156,7 @@ static int node_contacts(BHCollisionQuery *q, long an, long bn, const BHMat34 *a
                             return query_fail(q, BH_BSP_CYCLE);
                         if (!(q->b->face_flags[bl->face] & 1))
                         {
-                            result = bh_collision_face_contact(a, al->face, a_to_b, b, bl->face, bn, b_to_world,
+                            result = bh_collision_node_contact(a, al->face, a_to_b, b, bl->face, bn, b_to_world,
                                                                &oriented, &hit.contact);
                             if (result < 0)
                                 return query_fail(q, BH_BSP_FORMAT);
@@ -175,7 +196,7 @@ static int destination_tree(BHCollisionQuery *q, long an, long bn, const BHMat34
         node = q->b_stack[--depth];
         if (step(q) < 0)
             return -1;
-        result = spheres(q, an, node, a_to_b);
+        result = spheres(q, an, node, a_to_b, 0);
         if (result < 0)
             return -1;
         if (!result)
@@ -259,7 +280,7 @@ static int execute(BHCollisionQuery *q, long an, long bn, const BHMat34 *a_to_b,
         }
         if (f->phase == 0)
         {
-            result = spheres(q, f->node, bn, a_to_b);
+            result = spheres(q, f->node, bn, a_to_b, 1);
             if (result < 0)
                 break;
             if (!result)

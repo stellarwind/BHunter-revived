@@ -4,7 +4,10 @@ $out=Join-Path $root 'build/ai-controls'
 New-Item -ItemType Directory -Force -Path $out|Out-Null
 $exeBytes=[IO.File]::ReadAllBytes("$root/GAME_DATA/BHUNTER.EXE")
 if((Get-FileHash "$root/GAME_DATA/BHUNTER.EXE").Hash -ne 'C86205E299119A66E27F687679EE7E978F26FA9A6C0BFB21F664AA6E74E848B1'){throw 'Reference hash differs'}
-function Raw([int]$a,[int]$n){$o=if($a -lt 0x489000){$a-0x401000+1024}else{$a-0x489000+555520};return ,([byte[]]$exeBytes[$o..($o+$n-1)])}
+$pe=[BitConverter]::ToInt32($exeBytes,0x3c)
+$sectionAt=$pe+24+[BitConverter]::ToUInt16($exeBytes,$pe+20)
+$sections=@(for($i=0;$i-lt[BitConverter]::ToUInt16($exeBytes,$pe+6);++$i){$at=$sectionAt+40*$i;@{rva=[BitConverter]::ToUInt32($exeBytes,$at+12);size=[BitConverter]::ToUInt32($exeBytes,$at+16);disk=[BitConverter]::ToUInt32($exeBytes,$at+20)}})
+function Raw([int]$a,[int]$n){foreach($section in $sections){$offset=$a-0x400000-$section.rva;if($offset-ge0-and$offset+$n-le$section.size){$o=$section.disk+$offset;return ,([byte[]]$exeBytes[$o..($o+$n-1)])}};throw 'Reference file range missing'}
 $header=[Collections.Generic.List[string]]::new();$fixes=[Collections.Generic.List[string]]::new();$constants=@{}
 $header.Add('static void install_original(unsigned char *p){unsigned long address;long displacement;')
 function Emit([byte[]]$bytes,[int]$at){$header.Add('{unsigned char bytes[]={'+($bytes -join ',')+'};memcpy(p+'+$at+',bytes,sizeof(bytes));}')}
@@ -13,7 +16,13 @@ $prefix=[Convert]::FromHexString('5355565781ec600100008bb424740100008bbc24780100
 Emit $prefix 0
 $forcedPrefix=(Raw 0x438ff0 21)+[byte[]]@(0x57)
 Emit $forcedPrefix 1024
+$predictionPrefix=[Convert]::FromHexString('81ec4c010000535556578bb424600100008b842464010000')
+Emit $predictionPrefix 28672
+$firePrefix=[Convert]::FromHexString('81ec4c010000535556578bb424600100008b84246401000089442428')
+Emit $firePrefix 30000
 $ranges=@(
+ @(0x437f17,0x438058,(30000+$firePrefix.Length),'META/m4/playable/ai-aggression/00437ae0-asm.json'),
+ @(0x43950c,0x4397cf,(28672+$predictionPrefix.Length),'META/m4/playable/ai-aggression/00438ff0-asm.json'),
  @(0x437bf0,0x437cc5,$prefix.Length,'META/m4/playable/ai-aggression/00437ae0-asm.json'),
  @(0x439073,0x439184,(1024+$forcedPrefix.Length),'META/m4/playable/ai-aggression/00438ff0-asm.json'),
  @(0x4340f0,0x434199,2048,'META/m4/playable/ai-controls/clamp-asm.json'),
@@ -23,7 +32,11 @@ $ranges=@(
  @(0x438fd8,0x438fe3,(16384+0x438fd8-0x437ae0),'META/m4/playable/ai-aggression/00437ae0-asm.json'),
  @(0x4011f0,0x401261,24576,'META/m4/playable/ai-controls/normalize-asm.json'),
  @(0x47de20,0x47de47,7168,'META/m4/playable/ai-controls/ftol-asm.json'))
-$calls=@{0x4340f0=2048;0x4341a0=4096;0x434810=6144;0x47de20=7168;0x4011f0=24576}
+$calls=@{0x4340f0=2048;0x4341a0=4096;0x434810=6144;0x47de20=7168;0x4011f0=24576;0x4011a0=25088}
+$crossControl=Get-Content "$root/META/m4/playable/ai-byte-match/positive-control.json" -Raw|ConvertFrom-Json
+$cross=Raw 0x4011a0 67
+if(!$crossControl.matched-or$crossControl.original_length-ne67-or[Convert]::ToHexString($cross).ToLower()-ne$crossControl.original_hex){throw 'Complete cross-product positive control differs'}
+Emit $cross 25088
 foreach($range in $ranges){
  $start,$end,$destination,$file=$range
  Emit (Raw $start ($end-$start)) $destination
@@ -38,6 +51,12 @@ foreach($range in $ranges){
    if(-not$calls.ContainsKey($callee)){throw 'Unexpected pure-closure call'}
    $pos=$destination+$at-$start
    $fixes.Add('displacement='+$calls[$callee]+'-'+($pos+5)+';memcpy(p+'+($pos+1)+',&displacement,4);')
+  }
+  if($row.mnemonic-eq'PUSH'-and$row.operands[0]-eq'0x48c070'){
+   $up=Raw 0x48c070 12
+   if([BitConverter]::ToSingle($up,0)-ne0-or[BitConverter]::ToSingle($up,4)-ne1-or[BitConverter]::ToSingle($up,8)-ne0){throw 'Original up vector differs'}
+   Emit $up 25600
+   $fixes.Add('address=(unsigned long)(p+25600);memcpy(p+'+($destination+$at-$start+1)+',&address,4);')
   }
   foreach($operand in $row.operands){if($operand-match'\[0x([0-9a-fA-F]+)\]'){
    $address=[Convert]::ToInt32($Matches[1],16)
@@ -55,11 +74,14 @@ foreach($range in $ranges){
 }
 Emit ([Convert]::FromHexString('81c4600100005f5e5d5bc3')) ($prefix.Length+0x437cc5-0x437bf0)
 Emit ([byte[]]@(0xef,0xbe,0,0)) 12288
+# Return the four original stack vectors: fire, normalized direction, side,
+# and travel. This adapter only copies outputs and restores saved registers.
+Emit ([Convert]::FromHexString('8bbc24680100008d74241cb903000000f3a58d742410b903000000f3a58d742458b903000000f3a58db424a0000000b903000000f3a55f5e5d5b81c44c010000c3')) (30000+$firePrefix.Length+0x438058-0x437f17)
 $header.AddRange($fixes);$header.Add('}');[IO.File]::WriteAllLines("$out/original.h",$header)
 $vc='D:/Decomp/MSCVC/MSVC5/TOOLS/DEVSTUDIO/VC';$sp='D:/Decomp/MSCVC/MSVC5/SP3_EXTRACTED/VS97_SP3/all/vc'
 $env:PATH="$root/analysis/toolchain-sp3/bin;D:/Decomp/MSCVC/MSVC5/TOOLS/DEVSTUDIO/SHAREDIDE/BIN;$env:PATH";$env:INCLUDE="$sp/include;$vc/include";$env:LIB="$sp/lib;$vc/lib"
 foreach($name in @('CL','_CL_','LINK','_LINK_')){[Environment]::SetEnvironmentVariable($name,$null,'Process')}
-$names=@('bh_actor_attack','bh_actor_pursuit_route','bh_entities','bh_camera_curve','bh_actor_route','bh_route_curve_length','bh_target_steering')
+$names=@('bh_actor_attack','bh_actor_response','bh_actor_pursuit_route','bh_entities','bh_camera_curve','bh_actor_route','bh_route_curve_length','bh_target_steering')
 $objects=@()
 foreach($name in ($names+@('ai_controls_original'))){
  $folder=if($name-eq'ai_controls_original'){'tests'}else{'src'}

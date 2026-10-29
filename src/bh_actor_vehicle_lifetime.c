@@ -1,37 +1,40 @@
 #include "bh_actor_vehicle_lifetime.h"
 #include <string.h>
-static BHEntity *link_at(BHEntity *e, unsigned long offset)
+static __inline BHEntity *link_at(BHEntity *e, unsigned long offset)
 {
     BHEntity *p;
     memcpy(&p, (char *)e + offset, 4);
     return p;
 }
-static void set_link(BHEntity *e, unsigned long offset, BHEntity *p)
+static __inline void set_link(BHEntity *e, unsigned long offset, BHEntity *p)
 {
     memcpy((char *)e + offset, &p, 4);
 }
+static BHPickupRoom *vehicle_release_room(BHActorVehicleLifetimeContext *c, BHEntity *actor)
+{
+    BHWorldGeometry *current;
+    unsigned long i;
+    memcpy(&current, (char *)actor + 0x1a4, 4);
+    for (i = 0; i < c->route->room_count; ++i)
+        if (c->route->rooms[i].world == current)
+            return c->route->rooms + i;
+    return NULL;
+}
+static BHPickupRoom *vehicle_release_notice_room(BHActorVehicleLifetimeContext *c, BHEntity *actor, void *packet)
+{
+    bh_entities_query(c->pool, 0, 0, 0, 0, packet);
+    return vehicle_release_room(c, actor);
+}
+#include "bh_actor_vehicle_release_core.inc"
 int __cdecl bh_actor_vehicle_release(BHActorVehicleLifetimeContext *c, BHEntity *e)
 {
-    BHActorRouteState s;
     BHPickupRoom *room = 0;
     BHEntity *previous, *next;
-    unsigned long i;
-    struct
-    {
-        long event;
-        BHEntity *actor;
-    } packet;
     if (!c || !c->pool || !c->route || !c->route->sound || !e || !c->count)
         return 0;
     if (!bh_entity_is_active(c->pool, e))
         return 0;
-    bh_actor_route_read(e, &s);
-    for (i = 0; i < c->route->room_count; ++i)
-        if (c->route->rooms[i].world == s.current)
-        {
-            room = c->route->rooms + i;
-            break;
-        }
+    room = vehicle_release_room(c, e);
     if (!room)
         return 0;
     previous = link_at(e, 0xf8);
@@ -42,27 +45,5 @@ int __cdecl bh_actor_vehicle_release(BHActorVehicleLifetimeContext *c, BHEntity 
     next = link_at(e, 0xf0);
     if ((previous ? link_at(previous, 0xf0) : c->head) != e || (next && link_at(next, 0xec) != e))
         return 0;
-    if (s.sound != BH_SOUND_INVALID)
-        bh_sound_stop(c->route->sound, s.sound);
-    packet.event = 17;
-    packet.actor = e;
-    bh_entities_query(c->pool, 0, 0, 0, 0, &packet);
-    previous = link_at(e, 0xf8);
-    next = link_at(e, 0xf4);
-    if (previous)
-        set_link(previous, 0xf4, next);
-    else
-        room->actors = next;
-    if (next)
-        set_link(next, 0xf8, previous);
-    previous = link_at(e, 0xec);
-    next = link_at(e, 0xf0);
-    if (previous)
-        set_link(previous, 0xf0, next);
-    else
-        c->head = next;
-    if (next)
-        set_link(next, 0xec, previous);
-    --c->count;
-    return bh_entity_release(c->pool, e);
+    return bh_actor_vehicle_release_core(e, c);
 }

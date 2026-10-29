@@ -1,4 +1,6 @@
 #include "bh_route_query.h"
+#include "bh_actor_portal_core.inc"
+#include "bh_actor_portal_center_core.inc"
 #include "bh_fp.h"
 #include "bh_round.h"
 #include <string.h>
@@ -64,63 +66,20 @@ BHWorldGeometry *__cdecl bh_world_locate(BHWorldGeometry *first, unsigned long c
 }
 int __cdecl bh_portal_center(const BHPortal *p, BHVec3 *out)
 {
-    BHVec3 next;
-    float u, v, plane;
+    BHActorPortalImage image;
     if (!p || !out || p->direction > 6 || p->direction == 3)
         return 0;
-    bh_round_float(&u, ((double)p->scratch[1] + p->scratch[0]) * 0.5);
-    bh_round_float(&v, ((double)p->scratch[3] + p->scratch[2]) * 0.5);
-    bh_round_float(&plane, (double)p->plane);
-    switch (p->direction)
-    {
-    case 0:
-    case 4:
-        next.x = plane;
-        next.y = u;
-        next.z = v;
-        break;
-    case 1:
-    case 5:
-        next.x = u;
-        next.y = plane;
-        next.z = v;
-        break;
-    default:
-        next.x = u;
-        next.y = v;
-        next.z = plane;
-        break;
-    }
-    *out = next;
+    memcpy(image.portals, p, sizeof(*p));
+    bh_actor_portal_center_core(&image, 0, (float *)out);
     return 1;
 }
 int __cdecl bh_portal_normal(const BHPortal *p, BHVec3 *out)
 {
-    BHVec3 next = {0, 0, 0};
+    BHActorPortalImage image;
     if (!p || !out || p->direction > 6 || p->direction == 3)
         return 0;
-    switch (p->direction)
-    {
-    case 0:
-        next.x = 1;
-        break;
-    case 4:
-        next.x = -1;
-        break;
-    case 1:
-        next.y = 1;
-        break;
-    case 5:
-        next.y = -1;
-        break;
-    case 2:
-        next.z = 1;
-        break;
-    case 6:
-        next.z = -1;
-        break;
-    }
-    *out = next;
+    memcpy(image.portals, p, sizeof(*p));
+    bh_actor_portal_normal_core(&image, 0, (float *)out);
     return 1;
 }
 static double squared(double x, double y, double z)

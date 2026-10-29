@@ -222,8 +222,11 @@ static void damage_fixture(Fixture *f,BHActorDamageContext *c,BHActorRouteContex
  memset(c,0,sizeof(*c));memset(route,0,sizeof(*route));route->rooms=&f->room;route->room_count=1;route->sound=&f->sound;route->actor_limit=128;c->pool=&f->pool;c->route=route;c->particles=&f->particles;c->fragments=&f->fragments;c->targets=&f->construct;c->loot_rows=rows;c->loot_row_count=1;c->smoke_resource=15;c->death_sound=0;c->legacy_death_angles=angles;
 }
 int bh_actor_damage_checkpoint(unsigned long *count){
- Fixture f;BHActorDamageContext c;BHActorRouteContext route;BHMathEnvironment env;BHEntity *e,*target;BHVec3 angles={.1f,.2f,.3f};BHActorRouteState s;float packet[10];unsigned long *words=(unsigned long*)packet;unsigned long used,seed,expected,n,i,gen;BHTargetStepState ts;
+ Fixture f;BHActorDamageContext c;BHActorRouteContext route;BHMathEnvironment env;BHEntity *e,*target,before;BHWorldGeometry foreign;BHVec3 angles={.1f,.2f,.3f};BHActorRouteState s;float packet[10];unsigned long *words=(unsigned long*)packet;unsigned long used,seed,expected,n,i,gen;BHTargetStepState ts;
  checks=failed=0;CHECK(bh_math_environment_enter(&env),"PC53");CHECK(model_file(),"real fixture collision BSP");CHECK(setup(&f),"real dependencies");damage_fixture(&f,&c,&route,&angles);e=actor(&f,&c);CHECK(e&&e->query==bh_actor_damage_query,"actual query installed");
+ memset(&foreign,0,sizeof(foreign));bh_actor_route_read(e,&s);s.current=&foreign;bh_actor_route_write(e,&s);before=*e;used=f.pool.used;words[0]=4;bh_actor_damage_query(e,packet);
+ CHECK(c.error==BH_ACTOR_ROUTE_TOPOLOGY&&!memcmp(e,&before,sizeof(before))&&f.pool.used==used&&f.room.actors==e,"unregistered-room release rejects without actor/list/pool/query mutation");
+ s.current=f.room.world;bh_actor_route_write(e,&s);c.error=BH_ACTOR_ROUTE_OK;
  memset(packet,0,sizeof(packet));words[0]=3;bh_actor_damage_query(e,packet);CHECK(packet[1]==0&&packet[2]==0&&packet[3]==0,"query position at start");route.tick=15;words[0]=16;bh_actor_damage_query(e,packet);CHECK(fabs(packet[1]-1)<.000001&&packet[4]>2.49&&packet[4]<2.5&&fabs(packet[7])<.0001,"sampled velocity and acceleration");
  words[0]=13;words[3]=0x12345678;bh_actor_damage_query(e,packet);CHECK(words[5]==1&&words[6]==0x12345678,"ray metadata event13");
  memset(packet,0,sizeof(packet));words[0]=1;packet[1]=-1;packet[4]=100;packet[5]=4;bh_actor_damage_query(e,packet);CHECK(fabs(field(e,0x168)-.15)<.000001&&e->step==bh_actor_damage_tick,"blast attenuated impulse");

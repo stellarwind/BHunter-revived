@@ -77,14 +77,62 @@ static int reset_duration(BHActorPursuitRouteContext *c, BHEntity *e, BHActorRou
     s->tick = bh_actor_route_now(c->route);
     return bh_actor_route_write(e, s);
 }
+/* 0043950c..004397c3: target-control subpath, not an independent owner. */
+int __cdecl bh_actor_pursuit_target_controls(BHActorPursuitRouteContext *c, BHEntity *e)
+{
+    BHActorRouteState s;
+    TargetMotion motion;
+    BHVec3 saved_end, saved_tangent;
+    BHEntity *target = (BHEntity *)value(e, 0x1b8);
+    unsigned long i;
+    long forced;
+    bh_actor_route_read(e, &s);
+    for (i = 0; i < 3; ++i)
+        ((float *)&s.controls[1])[i] =
+            stored((double)((float *)&s.controls[1])[i] * .4 - ((float *)&s.controls[0])[i] * (-.6));
+    for (i = 0; i < 3; ++i)
+        ((float *)&s.controls[2])[i] =
+            stored((double)((float *)&s.controls[2])[i] * .4 - ((float *)&s.controls[3])[i] * (-.6));
+    /* 00439564..00439618 commit all six tangent words before target query.
+       Its synchronous callback must observe them in the real entity. */
+    write(e, 0x144, s.controls + 1, 12);
+    write(e, 0x150, s.controls + 2, 12);
+    if (!query(target, &motion))
+        return fail(c, BH_ACTOR_ROUTE_ARGUMENT);
+    bh_actor_route_read(e, &s);
+    saved_end = s.controls[3];
+    saved_tangent = s.controls[2];
+    write(e, 0x1bc, &saved_end, 12);
+    write(e, 0x1c8, &saved_tangent, 12);
+    for (i = 0; i < 3; ++i)
+    {
+        double predicted =
+            (double)((float *)&motion.position)[i] -
+            (((double)((float *)&motion.velocity)[i] - ((float *)&motion.acceleration)[i] * (-1.5)) * (-1.5));
+        ((float *)&s.controls[3])[i] = stored(predicted);
+        /* X reloads the 00439662 FSTP spill; Y/Z retain their 004396be /
+           004396e0 FST values until 00439748/0043974c. */
+        ((float *)&s.controls[2])[i] = stored(
+            (i ? predicted : (double)s.controls[3].x) -
+            (((double)((float *)&s.controls[0])[i] - ((float *)&saved_end)[i]) * (-.25)));
+    }
+    write(e, 0x12c, s.controls + 3, 12);
+    write(e, 0x150, s.controls + 2, 12);
+    bh_world_clamp_point(s.current, (BHVec3 *)((char *)e + 0x12c));
+    bh_world_clamp_point(s.current, (BHVec3 *)((char *)e + 0x150));
+    bh_actor_route_read(e, &s);
+    if (!reset_duration(c, e, &s))
+        return 0;
+    forced = 1;
+    write(e, 0x1d4, &forced, 4);
+    return 1;
+}
 int __cdecl bh_actor_pursuit_route(BHActorPursuitRouteContext *c, BHEntity *e)
 {
     BHActorRouteState s;
     BHWorldGeometry *room, *target_world = 0, *preferred = 0;
     BHEntity *target;
     BHTargetSelection selected;
-    TargetMotion motion;
-    BHVec3 saved_end, saved_tangent;
     long incoming = -1, outgoing, index, target_index, junction, old_city, new_city, forced;
     unsigned long i, first;
     float pursuit;
@@ -231,6 +279,7 @@ int __cdecl bh_actor_pursuit_route(BHActorPursuitRouteContext *c, BHEntity *e)
     if (!bh_actor_route_promote(c->route, e, incoming, outgoing))
         return 0;
     bh_actor_route_read(e, &s);
+    target = (BHEntity *)value(e, 0x1b8);
     if (target)
     {
         short protected_player = 0;
@@ -239,34 +288,7 @@ int __cdecl bh_actor_pursuit_route(BHActorPursuitRouteContext *c, BHEntity *e)
             read(target, 0x2b4, &protected_player, 2);
         if (target_world == s.current && (!protected_player || target != c->player))
         {
-            for (i = 0; i < 3; ++i)
-            {
-                ((float *)&s.controls[1])[i] =
-                    stored((double)((float *)&s.controls[1])[i] * .4 - ((float *)&s.controls[0])[i] * (-.6));
-                ((float *)&s.controls[2])[i] =
-                    stored((double)((float *)&s.controls[2])[i] * .4 - ((float *)&s.controls[3])[i] * (-.6));
-            }
-            if (!query(target, &motion))
-                return fail(c, BH_ACTOR_ROUTE_ARGUMENT);
-            saved_end = s.controls[3];
-            saved_tangent = s.controls[2];
-            write(e, 0x1bc, &saved_end, 12);
-            write(e, 0x1c8, &saved_tangent, 12);
-            for (i = 0; i < 3; ++i)
-            {
-                float predicted = stored(
-                    (double)((float *)&motion.position)[i] -
-                    (((double)((float *)&motion.velocity)[i] - ((float *)&motion.acceleration)[i] * (-1.5)) * (-1.5)));
-                ((float *)&s.controls[3])[i] = predicted;
-                ((float *)&s.controls[2])[i] = stored(
-                    (double)predicted - (((double)((float *)&s.controls[0])[i] - ((float *)&saved_end)[i]) * (-.25)));
-            }
-            bh_world_clamp_point(s.current, s.controls + 3);
-            bh_world_clamp_point(s.current, s.controls + 2);
-            if (!reset_duration(c, e, &s))
-                return 0;
-            forced = 1;
-            write(e, 0x1d4, &forced, 4);
+            return bh_actor_pursuit_target_controls(c, e);
         }
     }
     c->route->error = BH_ACTOR_ROUTE_OK;

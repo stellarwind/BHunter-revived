@@ -1,27 +1,37 @@
 #include "bh_axis_snap.h"
 #include <math.h>
-#include <float.h>
+#define SNAP_V(i) (*(float *)((unsigned char *)v + 4 * (i)))
 double __cdecl bh_vec3_snap_axis(BHVec3 *v)
 {
-    double length = sqrt(((double)v->y * v->y + (double)v->z * v->z) + (double)v->x * v->x);
-    float x = v->x, y = v->y, z = v->z;
-    unsigned long axis;
-    if (x < 0 || _isnan((double)x))
+    double length = sqrt((SNAP_V(1) * SNAP_V(1) + SNAP_V(2) * SNAP_V(2)) + SNAP_V(0) * SNAP_V(0));
+    float x = SNAP_V(0), y, z;
+    if (x < 0)
         x = -x;
-    if (y < 0 || _isnan((double)y))
+    y = SNAP_V(1);
+    if (y < 0)
         y = -y;
-    if (z < 0 || _isnan((double)z))
+    z = SNAP_V(2);
+    if (z < 0)
         z = -z;
-    axis = x > y && x > z ? 0 : (y > z ? 1 : 2);
-    if (((float *)v)[axis] > 0)
-        ((float *)v)[axis] = (float)length;
+    if (x > y && x > z)
+    {
+        if (SNAP_V(0) > 0) SNAP_V(0) = length; else SNAP_V(0) = -length;
+        SNAP_V(1) = 0;
+        SNAP_V(2) = 0;
+    }
+    else if (y > z)
+    {
+        if (SNAP_V(1) > 0) SNAP_V(1) = length; else SNAP_V(1) = -length;
+        SNAP_V(0) = 0;
+        SNAP_V(2) = 0;
+    }
     else
-        ((float *)v)[axis] = (float)-length;
-    if (axis != 0)
-        v->x = 0;
-    if (axis != 1)
-        v->y = 0;
-    if (axis != 2)
-        v->z = 0;
+    {
+        if (SNAP_V(2) > 0) SNAP_V(2) = length; else SNAP_V(2) = -length;
+        SNAP_V(0) = 0;
+        SNAP_V(1) = 0;
+    }
     return length;
 }
+
+#undef SNAP_V

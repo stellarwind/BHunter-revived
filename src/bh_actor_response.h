@@ -22,4 +22,8 @@ typedef struct BHActorResponseContext
 int __cdecl bh_actor_response_bind(BHActorResponseContext *, BHEntity *);
 void __cdecl bh_actor_response_query(BHEntity *, void *);
 void __cdecl bh_actor_response_tick(BHEntity *);
+/* Source extraction of the tick's arithmetic prefix; not an original owner. */
+int __cdecl bh_actor_response_motion(BHEntity *, BHActorResponseContext *);
+int __cdecl bh_actor_response_route_smoke(BHEntity *, BHActorResponseContext *, BHVec3 *);
+void __cdecl bh_actor_response_finish(BHEntity *, BHActorResponseContext *, const BHVec3 *, int);
 #endif

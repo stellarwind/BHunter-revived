@@ -12,25 +12,16 @@ static BHEntity *link_value(const BHEntity *a, unsigned long offset)
     memcpy(&p, (const unsigned char *)a + offset, 4);
     return p;
 }
-static void set_link(BHEntity *a, unsigned long offset, BHEntity *p)
-{
-    memcpy((unsigned char *)a + offset, &p, 4);
-}
+#include "bh_actor_route_release_core.inc"
+#include "bh_actor_route_due_core.inc"
 int __cdecl bh_actor_route_due(BHActorRouteContext *c, BHEntity *a)
 {
-    BHActorRouteState s;
-    unsigned short delta, stamp;
+    const unsigned short *clock;
     if (!c || !a)
         return fail(c, BH_ACTOR_ROUTE_ARGUMENT);
-    bh_actor_route_read(a, &s);
-    delta = (unsigned short)(bh_actor_route_now(c) - s.duration_ticks - s.tick);
-    if (!(delta & 0x8000))
-    {
-        if (!bh_actor_route_advance(c, a))
-            return 0;
-        stamp = (unsigned short)(bh_actor_route_now(c) + delta);
-        memcpy((unsigned char *)a + 0x1e4, &stamp, 2);
-    }
+    clock = c->live_tick ? (const unsigned short *)c->live_tick : &c->tick;
+    if (!bh_actor_route_due_core(a, c, clock))
+        return 0;
     c->error = BH_ACTOR_ROUTE_OK;
     return 1;
 }
@@ -39,6 +30,7 @@ int __cdecl bh_actor_route_release(BHActorRouteContext *c, BHEntityPool *pool, B
     BHActorRouteState s;
     BHPickupRoom *room = NULL;
     BHEntity *next, *previous, *at;
+    BHActorRouteReleaseBinding binding;
     unsigned long i, n;
     if (!c || !pool || !a || !c->rooms || !c->room_count || !c->actor_limit)
         return fail(c, BH_ACTOR_ROUTE_ARGUMENT);
@@ -68,15 +60,10 @@ int __cdecl bh_actor_route_release(BHActorRouteContext *c, BHEntityPool *pool, B
         return fail(c, BH_ACTOR_ROUTE_TOPOLOGY);
     if (s.sound != BH_SOUND_INVALID && !c->sound)
         return fail(c, BH_ACTOR_ROUTE_ARGUMENT);
-    if (s.sound != BH_SOUND_INVALID)
-        bh_sound_stop(c->sound, s.sound);
-    if (previous)
-        set_link(previous, 0xf4, next);
-    else
-        room->actors = next;
-    if (next)
-        set_link(next, 0xf8, previous);
-    if (!bh_entity_release(pool, a))
+    binding.sound = c->sound;
+    binding.pool = pool;
+    binding.room_head = &room->actors;
+    if (!bh_actor_route_release_core(a, &binding))
         return fail(c, BH_ACTOR_ROUTE_TOPOLOGY);
     c->error = BH_ACTOR_ROUTE_OK;
     return 1;

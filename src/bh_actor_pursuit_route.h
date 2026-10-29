@@ -19,4 +19,7 @@ typedef struct BHActorPursuitRouteContext
 } BHActorPursuitRouteContext;
 /* Whole00438ff0: borrowed graph/world/target/query/message owners. */
 int __cdecl bh_actor_pursuit_route(BHActorPursuitRouteContext *, BHEntity *);
+/* Internal 0043950c target-control subpath; caller already checked world/target
+   eligibility. This is part of 00438ff0, not another original function. */
+int __cdecl bh_actor_pursuit_target_controls(BHActorPursuitRouteContext *, BHEntity *);
 #endif

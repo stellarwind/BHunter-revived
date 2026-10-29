@@ -1,7 +1,5 @@
 #include "bh_target_selection.h"
-#include "bh_round.h"
 #include <math.h>
-#include <float.h>
 #include <stddef.h>
 #include <string.h>
 
@@ -15,6 +13,14 @@ typedef union BHTargetQueryPacket {
     unsigned long words[10];
 } BHTargetQueryPacket;
 typedef char target_packet_capacity[sizeof(BHTargetQueryPacket) == 40 ? 1 : -1];
+
+static __inline float selection_stored(double value)
+{
+    union { float value; volatile unsigned long bits; } written, read;
+    written.value = (float)value;
+    read.bits = written.bits;
+    return read.value;
+}
 
 int __cdecl bh_target_select(BHEntity *player, BHEntity *head, const BHEntity *excluded, const BHVec3 *origin,
                              unsigned long limit, BHTargetSelection *result)
@@ -38,8 +44,8 @@ int __cdecl bh_target_select(BHEntity *player, BHEntity *head, const BHEntity *e
             x = (double)player->position.x - origin->x;
             y = (double)player->position.y - origin->y;
             z = (double)player->position.z - origin->z;
-            bh_round_float(&stored_x, x);
-            bh_round_float(&stored_z, z);
+            stored_x = selection_stored(x);
+            stored_z = selection_stored(z);
             memcpy(&weight, player->payload + 0x150, 4);
             best = (float)(sqrt((x * stored_x + y * y) + z * stored_z) / (double)weight);
             result->target = player;
@@ -61,12 +67,12 @@ int __cdecl bh_target_select(BHEntity *player, BHEntity *head, const BHEntity *e
             x = (double)packet.position.position.x - origin->x;
             y = (double)packet.position.position.y - origin->y;
             z = (double)packet.position.position.z - origin->z;
-            bh_round_float(&stored_x, x);
-            bh_round_float(&stored_y, y);
+            stored_x = selection_stored(x);
+            stored_y = selection_stored(y);
             memcpy(&weight, head->payload + 28, 4);
             score = sqrt((x * stored_x + y * stored_y) + z * z) / (double)weight;
             /* FCOM's C0 is set for less OR unordered, not just C '<'. */
-            if (_isnan(score) || _isnan((double)best) || score < best)
+            if (!(score >= best))
             {
                 best = (float)score;
                 result->target = head;

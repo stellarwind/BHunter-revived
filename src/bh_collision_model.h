@@ -36,6 +36,11 @@ typedef struct BHFaceContact
 int __cdecl bh_collision_face_contact(const BHBsp *a, long a_face, const BHMat34 *a_to_b, const BHBsp *b, long b_face,
                                       long b_node, const BHMat34 *b_to_world, const BHVec3 *world_normal,
                                       BHFaceContact *out);
+/* Same geometry contract, owning inline0044c200 spill sequence. This variant
+   rounds the second-cut current Y product where0044cc20 retains it. */
+int __cdecl bh_collision_node_contact(const BHBsp *a, long a_face, const BHMat34 *a_to_b, const BHBsp *b, long b_face,
+                                      long b_node, const BHMat34 *b_to_world, const BHVec3 *world_normal,
+                                      BHFaceContact *out);
 /* 0044d500: recheck the cached face pair at a trial world pose. Original
    context globals become explicit inputs; compose to_local * pose before the
    complete face-contact owner. Contact output changes only on a hit. */

@@ -102,20 +102,23 @@ static int face_vertex(const BHBsp *b, long edge, const BHMat34 *transform, BHVe
     }
     return _finite(p->x) && _finite(p->y) && _finite(p->z);
 }
-static double cut_distance(const BHVec3 *n, const BHVec3 *p, float plane, int first)
+static double cut_distance(const BHVec3 *n, const BHVec3 *p, float plane, int first, int cached)
 {
-    /* The first plane evaluation adds x+y, then z; the second uses x+y+z. */
-    if (first)
+    /* Only standalone0044cc20's first cut sums X/Y before Z. Inline0044c200
+       and both second cuts sum Y/Z before X, including the initial vertex. */
+    if (first && cached)
         return ((double)n->z * p->z + ((double)n->x * p->x + (double)n->y * p->y)) + plane;
-    return face_dot(n, p) + plane;
+    return (((double)n->y * p->y + (double)n->z * p->z) + (double)n->x * p->x) + plane;
 }
 static int face_cut(const BHBsp *b, long face, const BHMat34 *transform, const BHVec3 *n, float plane, int first,
-                    BHVec3 result[2])
+                    BHVec3 result[2], int cached)
 {
     BHVec3 start, previous, current;
     long edge, next;
     unsigned long steps = 0, found = 0, axis;
     float previous_distance;
+    float previous_product, current_product;
+    double right;
     double d, inverse;
     if (!b || !b->faces || !b->edges || !b->vertices || face < 0 || (unsigned long)face >= b->counts[3])
         return -1;
@@ -123,7 +126,7 @@ static int face_cut(const BHBsp *b, long face, const BHMat34 *transform, const B
     if (!face_vertex(b, edge, transform, &start))
         return -1;
     previous = start;
-    bh_round_float(&previous_distance, cut_distance(n, &previous, plane, first));
+    bh_round_float(&previous_distance, cut_distance(n, &previous, plane, first, cached));
     do
     {
         if (++steps > b->counts[2])
@@ -133,14 +136,33 @@ static int face_cut(const BHBsp *b, long face, const BHMat34 *transform, const B
             current = start;
         else if (!face_vertex(b, next, transform, &current))
             return -1;
-        d = cut_distance(n, &current, plane, first);
+        d = cut_distance(n, &current, plane, first, cached);
         if (d * previous_distance < 0)
         {
             inverse = 1.0 / (d - previous_distance);
             for (axis = 0; axis < 3; ++axis)
+            {
+                if (!first)
+                {
+                    /* Original second-cut products have binary32 spills.
+                       Inline0044c200 rounds both current Y/Z products;
+                       standalone0044cc20 rounds only current Z. Preserve
+                       these two owning variants rather than merging them. */
+                    bh_round_float(&previous_product, d * ((float *)&previous)[axis]);
+                    right = (double)previous_distance * ((float *)&current)[axis];
+                    if (axis == 2 || (axis == 1 && !cached))
+                    {
+                        bh_round_float(&current_product, right);
+                        right = current_product;
+                    }
+                    bh_round_float(((float *)&result[found]) + axis,
+                                   ((double)previous_product - right) * inverse);
+                    continue;
+                }
                 bh_round_float(
                     ((float *)&result[found]) + axis,
                     (d * ((float *)&previous)[axis] - (double)previous_distance * ((float *)&current)[axis]) * inverse);
+            }
             if (++found == 2)
                 return 1;
         }
@@ -150,9 +172,9 @@ static int face_cut(const BHBsp *b, long face, const BHMat34 *transform, const B
     } while (edge >= 0);
     return 0;
 }
-int __cdecl bh_collision_face_contact(const BHBsp *a, long a_face, const BHMat34 *a_to_b, const BHBsp *b, long b_face,
-                                      long b_node, const BHMat34 *b_to_world, const BHVec3 *world_normal,
-                                      BHFaceContact *out)
+static int face_contact(const BHBsp *a, long a_face, const BHMat34 *a_to_b, const BHBsp *b, long b_face,
+                        long b_node, const BHMat34 *b_to_world, const BHVec3 *world_normal,
+                        BHFaceContact *out, int cached)
 {
     BHVec3 first[2], second[2], direction, side, midpoint, plane_normal;
     const BHVec3 *low, *high;
@@ -174,7 +196,7 @@ int __cdecl bh_collision_face_contact(const BHBsp *a, long a_face, const BHMat34
     }
     if (!_finite(b->nodes[b_node].plane))
         return -1;
-    result = face_cut(a, a_face, a_to_b, &plane_normal, b->nodes[b_node].plane, 1, first);
+    result = face_cut(a, a_face, a_to_b, &plane_normal, b->nodes[b_node].plane, 1, first, cached);
     if (result != 1)
         return result;
     for (i = 0; i < 3; ++i)
@@ -183,7 +205,7 @@ int __cdecl bh_collision_face_contact(const BHBsp *a, long a_face, const BHMat34
     bh_round_float(&side_plane, -face_dot(&side, &first[0]));
     bh_round_float(&offset, -face_dot(&direction, &first[0]));
     bh_round_float(&extent, face_dot(&direction, &first[1]) + offset);
-    result = face_cut(b, b_face, NULL, &side, side_plane, 0, second);
+    result = face_cut(b, b_face, NULL, &side, side_plane, 0, second, cached);
     if (result != 1)
         return result;
     bh_round_float(&x, face_dot(&direction, &second[0]) + offset);
@@ -214,6 +236,20 @@ int __cdecl bh_collision_face_contact(const BHBsp *a, long a_face, const BHMat34
     }
     *out = hit;
     return 1;
+}
+
+int __cdecl bh_collision_face_contact(const BHBsp *a, long a_face, const BHMat34 *a_to_b, const BHBsp *b, long b_face,
+                                      long b_node, const BHMat34 *b_to_world, const BHVec3 *world_normal,
+                                      BHFaceContact *out)
+{
+    return face_contact(a, a_face, a_to_b, b, b_face, b_node, b_to_world, world_normal, out, 1);
+}
+
+int __cdecl bh_collision_node_contact(const BHBsp *a, long a_face, const BHMat34 *a_to_b, const BHBsp *b, long b_face,
+                                      long b_node, const BHMat34 *b_to_world, const BHVec3 *world_normal,
+                                      BHFaceContact *out)
+{
+    return face_contact(a, a_face, a_to_b, b, b_face, b_node, b_to_world, world_normal, out, 0);
 }
 
 int __cdecl bh_collision_cached_contact(const BHBsp *a, long a_face, const BHMat34 *pose, const BHBsp *b, long b_face,

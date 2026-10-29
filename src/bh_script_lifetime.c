@@ -70,6 +70,16 @@ int __cdecl bh_script_lifetime_bind(BHScriptLifetimeContext *c, BHEntity *e, con
     put(e, 0x180, &s->mission_countdown, 4);
     return bh_entity_set_query(c->timers.pool, e, query);
 }
+int __cdecl bh_script_lifetime_bind_context(BHScriptLifetimeContext *c, BHEntity *e)
+{
+    BHScriptTimerContext *timer;
+    if (!c || !c->timers.pool || !c->sounds || !e || !bh_entity_is_active(c->timers.pool, e))
+        return 0;
+    timer = &c->timers;
+    memcpy(e->payload + 52, &timer, 4);
+    memcpy(e->payload + 400, &c, 4);
+    return 1;
+}
 int __cdecl bh_script_lifetime_read(BHEntity *e, BHScriptLifetimeState *s)
 {
     if (!e || !s)

@@ -54,7 +54,15 @@ static void expiry_cases(void){Fixture f;BHScriptLifetimeState s,read;BHEntity *
  finish(&f);
 }
 static void mission_cases(void){Fixture f;BHEntity *e,*first,*second;BHScriptLifetimeState s;BHSoundVoice *v;unsigned long i,count;float before;
- CHECK(init(&f),"mission fixture");first=bh_mission_sound_first(&f.ctx);second=bh_mission_sound_second(&f.ctx);
+ CHECK(init(&f),"mission fixture");
+ e=bh_entity_acquire(&f.pool);before=.03125f;i=1;memcpy((char*)e+0x180,&before,4);memcpy((char*)e+0x104,&i,4);e->step=bh_mission_sound_tick;
+ CHECK(bh_script_lifetime_bind_context(&f.ctx,e),"bind private cue context without legacy-state snapshot");
+ CHECK(bh_script_lifetime_read(e,&s)&&s.mission_countdown==before&&s.mission_resource==1&&e->step==bh_mission_sound_tick&&!e->query,"private binding preserves cue publication");
+ count=f.pool.used;e->step(e);v=f.sounds.resources[1]->stream_head;
+ CHECK(!present(&f,e)&&f.pool.used==count-1&&v&&v->resource==f.sounds.resources[1],"cue with private-only binding expires through actual sound and pool owners");
+ if(v)bh_sound_stop(&f.sounds,(unsigned long)v->index+((unsigned long)v->generation<<16));
+ CHECK(!bh_script_lifetime_bind_context(&f.ctx,e),"inactive cue rejects private binding");
+ first=bh_mission_sound_first(&f.ctx);second=bh_mission_sound_second(&f.ctx);
  CHECK(first&&second&&first->step==bh_mission_sound_tick&&second->step==bh_mission_sound_tick,"distinct factories install whole tick owner");
  for(i=0;i<2;++i){e=i?second:first;CHECK(bh_script_lifetime_read(e,&s)&&s.mission_countdown==4&&s.mission_resource==i,"four-second countdown and distinct actual resource binding");
   before=s.mission_countdown;e->step(e);bh_script_lifetime_read(e,&s);CHECK(s.mission_countdown<before&&present(&f,e)&&!f.sounds.resources[i]->stream_head,"positive timer retains entity without requesting sound");

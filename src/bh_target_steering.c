@@ -1,35 +1,32 @@
 #include "bh_target_steering.h"
-#include <stddef.h>
+#include "bh_actor_bounds.h"
+#include "bh_actor_bounds.inc"
 #include <string.h>
-#include <float.h>
 
 void __cdecl bh_world_clamp_point(const BHWorldGeometry *world, BHVec3 *point)
 {
-    float low = world->minimum.x, high;
-    if (_isnan((double)point->x) || _isnan((double)low) || point->x < low)
-        point->x = low;
-    else
+    struct
     {
-        high = world->maximum.x;
-        if (point->x > high)
-            point->x = high;
-    }
-    low = world->minimum.y;
-    if (low > point->y)
-        point->y = low;
-    else
+        BHActorBoundsImage image;
+        unsigned char tail[sizeof(BHVec3)];
+    } bounds;
+    unsigned long difference;
+    long offset;
+    unsigned char *local_point;
+    bounds.image.minimum = world->minimum;
+    bounds.image.maximum = world->maximum;
+    /* Mirror any point/bounds overlap inside the local ABI image, so earlier
+       coordinate stores affect later bound reads just as in 004340f0. */
+    if ((unsigned long)point < (unsigned long)&world->maximum + sizeof(BHVec3) &&
+        (unsigned long)point + sizeof(BHVec3) > (unsigned long)&world->minimum)
     {
-        high = world->maximum.y;
-        if (_isnan((double)high) || _isnan((double)point->y) || high < point->y)
-            point->y = high;
+        difference = (unsigned long)point - (unsigned long)&world->minimum;
+        memcpy(&offset, &difference, sizeof(offset));
+        local_point = (unsigned char *)&bounds + 0x1b0 + offset;
+        memcpy(local_point, point, sizeof(*point));
+        bh_actor_bounds_clamp(&bounds.image, local_point);
+        memcpy(point, local_point, sizeof(*point));
+        return;
     }
-    low = world->minimum.z;
-    if (low > point->z)
-        point->z = low;
-    else
-    {
-        high = world->maximum.z;
-        if (_isnan((double)high) || _isnan((double)point->z) || high < point->z)
-            point->z = high;
-    }
+    bh_actor_bounds_clamp(&bounds.image, point);
 }

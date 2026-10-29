@@ -4,6 +4,7 @@
 #include <stddef.h>
 
 typedef char face_info_layout[sizeof(BHFaceInfo) == 44 && offsetof(BHFaceInfo, normal) == 28 ? 1 : -1];
+#include "bh_geometry_core.inc"
 static void *__cdecl allocate(unsigned long n, void *user)
 {
     return malloc(n);
@@ -59,23 +60,29 @@ int __cdecl bh_geometry_dispose(BHGeometry *g)
 }
 int __cdecl bh_geometry_set_flags(BHGeometry *g, long face, unsigned long flags)
 {
+    BHGeometryCoreView view;
     if (!face_index(g, face))
         return fail(g, BH_BSP_ARGUMENT);
-    g->face_flags[face] = flags;
+    view.flags = g->face_flags;
+    bh_geometry_set_flags_core(&view, face, flags);
     g->error = BH_BSP_OK;
     return 1;
 }
 int __cdecl bh_geometry_get_flags(BHGeometry *g, long face, unsigned long *flags)
 {
+    BHGeometryCoreView view;
     if (!face_index(g, face) || !flags)
         return fail(g, BH_BSP_ARGUMENT);
-    *flags = g->face_flags[face];
+    view.flags = g->face_flags;
+    *flags = bh_geometry_get_flags_core(&view, face);
     g->error = BH_BSP_OK;
     return 1;
 }
 int __cdecl bh_geometry_vertex(BHGeometry *g, long face, long ordinal, BHVec3 *out)
 {
     const BHBsp *b;
+    BHGeometryCoreView view;
+    long requested = ordinal;
     long edge;
     unsigned long steps = 0;
     if (!face_index(g, face) || ordinal < 0 || !out)
@@ -90,7 +97,10 @@ int __cdecl bh_geometry_vertex(BHGeometry *g, long face, long ordinal, BHVec3 *o
     if (ordinal || edge < 0 || (unsigned long)edge >= b->counts[2] || b->edges[edge].vertex < 0 ||
         (unsigned long)b->edges[edge].vertex >= b->counts[1])
         return fail(g, BH_BSP_FORMAT);
-    memcpy(out, &b->vertices[b->edges[edge].vertex], sizeof(*out));
+    view.vertices = b->vertices;
+    view.edges = b->edges;
+    view.faces = b->faces;
+    bh_geometry_vertex_core(&view, face, requested, out);
     g->error = BH_BSP_OK;
     return 1;
 }

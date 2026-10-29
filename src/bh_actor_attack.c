@@ -1,4 +1,5 @@
 #include "bh_actor_attack.h"
+#include "bh_actor_vehicle_step.inc"
 #include "bh_camera_curve.h"
 #include "bh_target_steering.h"
 #include "bh_draw_queue.h"
@@ -8,6 +9,7 @@
 #include <float.h>
 #include <stdlib.h>
 #include <string.h>
+#include <setjmp.h>
 static const BHVec3 up = {0, 1, 0}, zero = {0, 0, 0}, gravity = {0, -.002f, 0};
 static float rf(double d)
 {
@@ -125,10 +127,10 @@ static void beam(BHActorAttackContext *c, BHEntity *e, BHWorldGeometry *world, c
     BHWorldHit self;
     BHEntity *receiver, *flash, *contact;
     BHImpactState *impact;
-    float distance = 125, alpha, spin;
+    float distance = 125, alpha;
     unsigned long i, flags, gen = e->generation;
     int result;
-    double dot;
+    double dot, spin;
     struct
     {
         long event;
@@ -250,7 +252,9 @@ static void beam(BHActorAttackContext *c, BHEntity *e, BHWorldGeometry *world, c
             }
         }
     }
-    spin = rf((double)distance * rand() * (1.0 / 32768.0));
+    /* 00438c28..00438c38 retain the scaled random distance through every
+       position product. It is not stored to binary32 before use. */
+    spin = ((double)rand() * (1.0 / 32768.0)) * distance;
     for (i = 0; i < 3; ++i)
     {
         ((float *)&point)[i] = rf((double)spin * ((float *)&ray)[i] + ((float *)fire)[i]);
@@ -261,6 +265,28 @@ static void beam(BHActorAttackContext *c, BHEntity *e, BHWorldGeometry *world, c
         ((float *)&end)[i] = rf((double)((float *)&point)[i] - ((float *)&ray)[i] * 3.0);
     bh_draw_segment(b->particles->queue, 3, c->beam_image, &point, &end, .3f, .01f, .5f, 0, 0);
     ++c->beams;
+}
+void __cdecl bh_actor_attack_fire_vectors(BHEntity *e, float t, BHVec3 *p, BHVec3 *direction,
+                                         BHVec3 *side, BHVec3 *travel)
+{
+    BHActorRouteState s;
+    BHVec3 q;
+    unsigned long i;
+    bh_actor_route_read(e, &s);
+    curve(&s, t, p);
+    curve(&s, rf((double)t - (-1.0 / 30.0)), &q);
+    offset(e, p);
+    for (i = 0; i < 3; ++i)
+    {
+        /* 00437fc6..0043802d retain each following position through its
+           FST, subtract the rounded fire point, then retain the difference
+           through the direction FST for the travel-velocity product. */
+        double delta = ((double)number(e, 0x15c + 4 * i) + ((float *)&q)[i]) - ((float *)p)[i];
+        ((float *)direction)[i] = rf(delta);
+        ((float *)travel)[i] = rf(delta * 30);
+    }
+    bh_vec3_normalize(direction);
+    bh_vec3_cross(direction, &up, side);
 }
 int __cdecl bh_actor_attack(BHActorAttackContext *c, BHEntity *e)
 {
@@ -372,17 +398,11 @@ int __cdecl bh_actor_attack(BHActorAttackContext *c, BHEntity *e)
     }
     if (next & 1)
         return 1;
-    curve(&s, t, &p);
-    curve(&s, rf((double)t - (-1.0 / 30.0)), &q);
-    offset(e, &p);
-    offset(e, &q);
-    for (i = 0; i < 3; ++i)
-    {
-        ((float *)&direction)[i] = rf((double)((float *)&q)[i] - ((float *)&p)[i]);
-        ((float *)&travel)[i] = rf((double)((float *)&direction)[i] * 30);
-    }
-    bh_vec3_normalize(&direction);
-    bh_vec3_cross(&direction, &up, &side);
+    bh_actor_attack_fire_vectors(e, t, &p, &direction, &side, &travel);
+    /* Original emitters reload these live fields after the synchronous motion
+       query (004380e8/00438176 and corresponding primary-weapon branches). */
+    get(e, 0x1a4, &s.current, 4);
+    target = (BHEntity *)word(e, 0x1b8);
     ++c->attacks;
     if (next == 2 && rand() < 0x1000)
     {
@@ -453,19 +473,16 @@ int __cdecl bh_actor_vehicle_tick_bind(BHActorAttackContext *c, BHEntity *e)
 void __cdecl bh_actor_vehicle_tick(BHEntity *e)
 {
     BHActorAttackContext *c;
-    BHActorRouteState s;
-    double phase;
+    jmp_buf frame;
+    void *previous_abort;
     memcpy(&c, e->payload + 596, 4);
-    if (!c || !bh_actor_attack(c, e))
+    if (!c)
         return;
-    bh_actor_route_read(e, &s);
-    phase = (double)s.phase - (-1.0 / 30.0);
-    real(e, 0x180, rf(phase));
-    if (phase >= s.duration)
+    previous_abort = c->step_abort;
+    if (!setjmp(frame))
     {
-        float left = rf(phase - s.duration);
-        if (!bh_actor_pursuit_route(c->pursuit, e))
-            return;
-        real(e, 0x180, left);
+        c->step_abort = frame;
+        bh_actor_vehicle_step(e);
     }
+    c->step_abort = previous_abort;
 }

@@ -109,6 +109,24 @@ static void list_positions(BHEntity **nodes) {
         linked(nodes[0],0xf8)==actor && linked(nodes[0],0xf4)==nodes[2] && linked(nodes[2],0xf8)==nodes[0],
         "same-owner promotion removes then reinserts at head without lost links");
 }
+static void promotion_rollback(BHEntity **nodes) {
+    Fixture f;BHEntity before[4],*heads[2],*actor;unsigned long same,narrow,position,i;
+    for(same=0;same<2;++same)for(narrow=0;narrow<2;++narrow)for(position=0;position<3;++position){
+        actor=nodes[position];fixture(&f,actor,0,0);
+        f.state.speed=narrow?1.0e-15f:1.0e-20f;
+        if(same)f.state.current=f.state.next;
+        bh_actor_route_write(actor,&f.state);
+        if(narrow)for(i=0;i<2;++i)memset(f.worlds[1].navigation.portals[i].scratch,0,16);
+        for(i=0;i<3;++i){link(nodes[i],0xf8,i?nodes[i-1]:NULL);link(nodes[i],0xf4,i<2?nodes[i+1]:NULL);}
+        link(nodes[3],0xf8,NULL);link(nodes[3],0xf4,NULL);
+        f.rooms[0].actors=same?NULL:nodes[0];f.rooms[1].actors=same?nodes[0]:nodes[3];
+        for(i=0;i<4;++i)before[i]=*nodes[i];heads[0]=f.rooms[0].actors;heads[1]=f.rooms[1].actors;
+        CHECK(!bh_actor_route_promote(&f.context,actor,0,1)&&f.context.error==BH_ACTOR_ROUTE_NUMERICAL,
+            "late base/narrow conversion rejection from every room-list position");
+        CHECK(f.rooms[0].actors==heads[0]&&f.rooms[1].actors==heads[1],"rejection restores both room owners, including same-room alias");
+        for(i=0;i<4;++i)CHECK(!memcmp(nodes[i],before+i,sizeof(BHEntity)),"rejection restores actor and every old/new neighbor payload/link");
+    }
+}
 static void advance(BHEntity *actor) {
     Fixture f;BHActorRouteState s;unsigned long guided,expected,first,second;BHSoundQueue sound;
     BHSoundResource *resource;BHSoundVoice *voice;unsigned long handle;unsigned short generation;
@@ -184,7 +202,7 @@ int bh_actor_route_checkpoint(unsigned long *count) {
     CHECK(bh_entities_init(&pool,4,NULL),"real source actor allocation owner");
     for(i=0;i<4;++i)nodes[i]=bh_entity_acquire(&pool);
     CHECK(nodes[0] && nodes[1] && nodes[2] && nodes[3],"four actual acquired actor slots");
-    if(nodes[0] && nodes[1] && nodes[2] && nodes[3]){promotion(nodes[0],nodes[3]);list_positions(nodes);advance(nodes[0]);numerical(nodes[0]);}
+    if(nodes[0] && nodes[1] && nodes[2] && nodes[3]){promotion(nodes[0],nodes[3]);list_positions(nodes);promotion_rollback(nodes);advance(nodes[0]);numerical(nodes[0]);}
     CHECK(bh_entities_valid(&pool),"pool-owned links remain valid independently from actual game f4/f8 lists");
     CHECK(bh_entities_dispose(&pool),"real actor pool disposal");bh_math_environment_leave(&env);
     if(count)*count=checks;

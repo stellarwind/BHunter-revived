@@ -1,12 +1,12 @@
 #include "bh_actor_launch.h"
-#include "bh_round.h"
 #include <math.h>
 #include <stdlib.h>
-static float rf(double v)
+static __inline float rf(double v)
 {
-    float f;
-    bh_round_float(&f, v);
-    return f;
+    union { float value; volatile unsigned long bits; } written, read;
+    written.value = (float)v;
+    read.bits = written.bits;
+    return read.value;
 }
 static unsigned short current_tick(BHActorLaunchContext *c)
 {
@@ -41,17 +41,20 @@ BHEntity *__cdecl bh_actor_launch(BHActorLaunchContext *c, BHWorldGeometry *w, u
         {
             if (!w)
                 return 0;
-            if (!c->transport || !c->navigation || !_finite(speed) || fabs(speed) >= 2147483648.0)
+            if (!c->transport || !c->navigation)
             {
                 c->error = 1;
                 return 0;
             }
-            token = (token / 5000) * 5000;
-            quantized = (long)(__int64)speed;
-            speed = (float)quantized;
             center.x = rf(((double)w->maximum.x + w->minimum.x) * .5);
             center.y = rf(((double)w->maximum.y + w->minimum.y) * .5);
             center.z = rf(((double)w->maximum.z + w->minimum.z) * .5);
+            token = (token / 5000) * 5000;
+            /* 0043bd61..0043bd8a: original __ftol converts to 64 bits,
+               then only EAX is stored and reloaded with FILD dword. Preserve
+               that low-word conversion, including masked invalid inputs. */
+            quantized = (long)(__int64)speed;
+            speed = (float)quantized;
             for (i = 0; i < c->navigation->node_count; ++i)
                 if (c->navigation->nodes[i].placement == w)
                 {
@@ -102,8 +105,10 @@ int __cdecl bh_actor_launch_receive(BHActorLaunchContext *c, void *bytes, unsign
         return 0;
     }
     c->error = 0;
-    if (!bh_packet_receive(&c->reader, bytes, size, capacity, c->stats) ||
-        !bh_packet_read_position(&c->reader, c->navigation, &world, &position))
+    /* These bounded source bridges return -1 for malformed input. Only 1
+       represents the original owner's successful envelope/decode path. */
+    if (bh_packet_receive(&c->reader, bytes, size, capacity, c->stats) != 1 ||
+        bh_packet_read_position(&c->reader, c->navigation, &world, &position) != 1)
     {
         c->error = 2;
         return 0;
