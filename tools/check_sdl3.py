@@ -72,7 +72,7 @@ def main():
     record=json.loads((cache/'build.json').read_text());assert record.get('passed') and record.get('debugging'),'Build --debugging first'
     gcc=shutil.which('gcc');assert gcc,'32-bit MinGW gcc required for timing checks'
     timing=out/'timing-tests.exe'
-    subprocess.run([gcc,'-O2','-I'+str(ROOT/'src'),str(ROOT/'tools/tests/sdl_timing.c'),str(ROOT/'src/bh_render_interpolation.c'),'-o',str(timing)],check=True)
+    subprocess.run([gcc,'-O2','-I'+str(ROOT/'src'),str(ROOT/'tools/tests/sdl_timing.c'),*[str(ROOT/name) for name in ('src/bh_render_interpolation.c','src/bh_rotation.c','src/bh_math.c','src/bh_round.c')],'-o',str(timing)],check=True)
     subprocess.run([str(timing)],check=True)
     portal_test=out/'portal-clip-tests.exe'
     portal_sources=['tools/tests/portal_clip.c','src/bh_portal_clip.c','src/bh_clipper.c','src/bh_matrix_inverse.c','src/bh_math.c','src/bh_round.c']
@@ -89,6 +89,7 @@ def main():
         subprocess.run([str(runtime/'BHunter-source.exe')],env=dict(os.environ,BH_MENU_SMOKE_SECONDS='8',BH_RENDER_CAPTURE_DIR=str(out/'640x480')),timeout=30,check=True)
     seams={}
     flare_replay={}
+    target_tracking={}
     for size in ('640x480','1920x1080','3840x2160'):
         log=(out/size/'startup-check.log').read_text()
         match=re.search(r'SDL portal seam pixels: stale camera=(\d+) blue gap pixels, render camera=(\d+)',log)
@@ -101,7 +102,13 @@ def main():
         assert images[11]==images[7], f'Next tick failed to publish fresh flare: {size}'
         assert images[6]!=images[7], f'Flare positive control is invisible: {size}'
         flare_replay[size]={'first_render_matches_fresh':True,'second_render_matches_trail_only':True,'new_tick_restores_fresh':True}
-    report={'scaling':compare(out),'player_pose_checks_per_resolution':48,'portal_seams':seams,'flare_replay':flare_replay}
+        for fraction in range(3):
+            actual=png(out/size/f'target-tracking-{fraction}-interpolated.png')[2]
+            expected=png(out/size/f'target-tracking-{fraction}-reference.png')[2]
+            assert actual==expected, f'Target brackets drift from render-pose reference: {size}/{fraction}'
+            bounds(normalize(out/size/f'target-tracking-{fraction}-interpolated.png')) # Visible positive control.
+        target_tracking[size]={'render_fractions':3,'pixel_differences':0}
+    report={'scaling':compare(out),'player_pose_checks_per_resolution':48,'portal_seams':seams,'flare_replay':flare_replay,'target_tracking':target_tracking}
     if args.reference_dir:report['original_renderer']=compare_reference(out,args.reference_dir)
     smoke=json.loads((runtime/'menu-smoke-summary.json').read_text());report['menu_smoke']=smoke
     assert smoke['error']==0 and smoke['music_failures']==0

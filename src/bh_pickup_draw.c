@@ -102,6 +102,7 @@ int __cdecl bh_pickup_rect_queue(BHDrawQueue *q, unsigned long bucket, unsigned 
     put_float(command->words + 9, v_extent);
     put_float(command->words + 10, depth);
     command->words[11] = flags;
+    command->words[12] = 0;
     q->error = BH_DRAW_OK;
     return 1;
 }
@@ -226,6 +227,19 @@ int __cdecl bh_pickup_rect_execute(BHPickupDrawContext *c, BHDrawImageLookup loo
     for (i = 0; i < 11; ++i)
         a[i] = get_float(command->words + i);
     flags = command->words[11] & 255UL;
+    *next = command->next;
+    if (command->words[12] == BH_RECT_WORLD_MARKER) {
+        float x = get_float(command->words + 13), y = get_float(command->words + 14);
+        float z = get_float(command->words + 15), scale;
+        if (!bh_pickup_project(c, &x, &y, &z, &scale)) return 1;
+        a[0] += x + get_float(command->words + 16) * scale;
+        a[1] += y + get_float(command->words + 17) * scale;
+        a[5] = scale * 100.0f / c->view->width;
+        if (a[5] > 1) a[5] = 1;
+        if (a[5] <= .1f) return 1;
+        a[10] = z - 8;
+        if (a[10] < c->view->near_z + .01f) a[10] = c->view->near_z + .01f;
+    }
     image = lookup(command->resource, lookup_user);
     result =
         image ? bh_pickup_rect_draw(c, image, a[0], a[1], a[2], a[3], a[4], flags, a[5], a[6], a[7], a[8], a[9], a[10])

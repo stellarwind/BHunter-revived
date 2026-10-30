@@ -1,5 +1,7 @@
 #include "bh_render_interpolation.h"
 #include "bh_flash_flare.h"
+#include "bh_rotation.h"
+#include "bh_pickup_draw.h"
 #include <float.h>
 #include <math.h>
 #include <string.h>
@@ -20,7 +22,7 @@ unsigned long __cdecl bh_interpolation_mark(void)
 static int spatial(unsigned long kind)
 {
     return kind == BH_DRAW_CAMERA || kind == BH_DRAW_MODEL_RESOURCE || kind == BH_DRAW_BILLBOARD ||
-           kind == BH_DRAW_SEGMENT || kind == BH_DRAW_ORIENTED || kind == BH_DRAW_QUAD;
+           kind == BH_DRAW_SEGMENT || kind == BH_DRAW_ORIENTED || kind == BH_DRAW_QUAD || kind == BH_DRAW_RECT;
 }
 void __cdecl bh_interpolation_stamp(unsigned long start, unsigned long identity, unsigned long generation)
 {
@@ -28,12 +30,36 @@ void __cdecl bh_interpolation_stamp(unsigned long start, unsigned long identity,
     if (!tracked || !tracked->commands || start > tracked->count)
         return;
     for (i = start; i < tracked->count; ++i)
-        if (spatial(tracked->commands[i].kind) && !identities[i].owner)
+        if (spatial(tracked->commands[i].kind) &&
+            (tracked->commands[i].kind != BH_DRAW_RECT || tracked->commands[i].words[12] == BH_RECT_WORLD_MARKER) &&
+            !identities[i].owner)
         {
             identities[i].owner = identity;
             identities[i].generation = generation;
             identities[i].ordinal = ordinal++;
         }
+}
+/* Attach a producer range after its vehicle model has been queued. The HUD's
+   current contents may change (ammo digits, radar rooms, gauges), so command
+   ordinal matching cannot describe its motion. Rebase it as one rigid object. */
+void __cdecl bh_interpolation_attach(unsigned long start, unsigned long end, unsigned long model)
+{
+    unsigned long i;
+    if (!tracked || model >= tracked->count || tracked->commands[model].kind != BH_DRAW_MODEL_RESOURCE ||
+        start > end || end > tracked->count) return;
+    for (i = start; i < end; ++i)
+        if (tracked->commands[i].kind == BH_DRAW_QUAD || tracked->commands[i].kind == BH_DRAW_ORIENTED)
+            identities[i].attachment = model + 1;
+}
+static void model_rotation(const BHDrawCommand *c, BHMat34 *m)
+{
+    static const BHMat34 identity = {{{1,0,0,0},{0,1,0,0},{0,0,1,0}}};
+    float pose[6];
+    memcpy(pose, c->words, sizeof(pose));
+    *m = identity;
+    bh_mat34_rotate_y(pose[3], m);
+    bh_mat34_rotate_x(pose[4], m);
+    bh_mat34_rotate_z(pose[5], m);
 }
 static unsigned long key(const BHDrawCommand *c, const BHDrawIdentity *id)
 {
@@ -104,7 +130,9 @@ static void blend(unsigned long *out, const unsigned long *old, float alpha, int
 }
 BHDrawQueue *__cdecl bh_interpolation_sample(BHRenderInterpolation *s, float alpha)
 {
-    unsigned long i, j, slot, count, angle_start;
+    unsigned long i, j, slot, count, angle_start, last_anchor = BH_DRAW_END;
+    BHMat34 delta;
+    BHVec3 anchor_current, anchor_rendered;
     if (!s || !s->ready)
         return 0;
     if (!_finite(alpha) || alpha < 0)
@@ -118,7 +146,9 @@ BHDrawQueue *__cdecl bh_interpolation_sample(BHRenderInterpolation *s, float alp
         unsigned long *to, *from;
         if (c->kind == BH_DRAW_FLARE)
             c->words[4] = s->flare_strength[i];
-        if (!spatial(c->kind) || (!s->current_ids[i].owner && c->kind != BH_DRAW_CAMERA))
+        if (s->current_ids[i].attachment || !spatial(c->kind) ||
+            (c->kind == BH_DRAW_RECT && c->words[12] != BH_RECT_WORLD_MARKER) ||
+            (!s->current_ids[i].owner && c->kind != BH_DRAW_CAMERA))
             continue;
         slot = key(c, s->current_ids + i);
         while (s->hash[slot])
@@ -133,8 +163,8 @@ BHDrawQueue *__cdecl bh_interpolation_sample(BHRenderInterpolation *s, float alp
         }
         if (!old)
             continue;
-        to = c->kind == BH_DRAW_CAMERA ? &c->resource : c->words;
-        from = old->kind == BH_DRAW_CAMERA ? &old->resource : old->words;
+        to = c->kind == BH_DRAW_CAMERA ? &c->resource : c->kind == BH_DRAW_RECT ? c->words + 13 : c->words;
+        from = old->kind == BH_DRAW_CAMERA ? &old->resource : old->kind == BH_DRAW_RECT ? old->words + 13 : old->words;
         /* Teleports and scene cuts must snap. Ordinary fast vehicles can still
            move up to 1000 world units per 30 Hz tick without hitting this guard. */
         for (j = 0; j < 3; ++j)
@@ -153,6 +183,38 @@ BHDrawQueue *__cdecl bh_interpolation_sample(BHRenderInterpolation *s, float alp
         if (c->kind == BH_DRAW_ORIENTED || c->kind == BH_DRAW_QUAD)
             blend(c->words + 11, old->words + 11, alpha, 1);
     }
+    /* Rebase current HUD vertices through the same sampled vehicle transform.
+       This also preserves newly appearing digits and avoids shearing on turns. */
+    for (i = 9; i < s->current_count; ++i)
+        if (s->current_ids[i].attachment) {
+            BHMat34 current, inverse, rendered;
+            BHVec3 point, result;
+            unsigned long anchor = s->current_ids[i].attachment - 1;
+            if (anchor >= s->current_count ||
+                !memcmp(s->current[anchor].words, s->output[anchor].words, 24)) continue;
+            if (anchor != last_anchor) {
+                model_rotation(s->current + anchor, &current);
+                model_rotation(s->output + anchor, &rendered);
+                memcpy(&anchor_current, s->current[anchor].words, sizeof(anchor_current));
+                memcpy(&anchor_rendered, s->output[anchor].words, sizeof(anchor_rendered));
+                bh_mat34_inverse_rigid(&current, &inverse);
+                bh_mat34_multiply(&rendered, &inverse, &delta);
+                last_anchor = anchor;
+            }
+            for (j = 0; j < 9; j += 3) {
+                memcpy(&point, s->current[i].words + j, sizeof(point));
+                /* Subtract the origin before rotating to avoid cancellation
+                   between large world coordinates and tiny cockpit offsets. */
+                if (!j) {
+                    point.x -= anchor_current.x; point.y -= anchor_current.y; point.z -= anchor_current.z;
+                }
+                bh_mat34_transform_direction(&delta, &point, &result);
+                if (!j) {
+                    result.x += anchor_rendered.x; result.y += anchor_rendered.y; result.z += anchor_rendered.z;
+                }
+                memcpy(s->output[i].words + j, &result, sizeof(result));
+            }
+        }
     s->sampled = 1;
     s->queue.commands = s->output;
     s->queue.count = s->current_count;

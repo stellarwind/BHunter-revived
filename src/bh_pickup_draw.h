@@ -1,5 +1,7 @@
 #ifndef BH_PICKUP_DRAW_H
 #define BH_PICKUP_DRAW_H
+/* RECT spare words carry a world anchor for render-time target projection. */
+#define BH_RECT_WORLD_MARKER 0x4d41524bUL
 #include "bh_entities.h"
 #include "bh_draw_submit.h"
 #include "bh_native_primitive.h"

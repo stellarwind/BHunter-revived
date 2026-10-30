@@ -1,4 +1,5 @@
 #include "../../src/bh_flash_flare.h"
+#include "../../src/bh_pickup_draw.h"
 #include "../../src/bh_render_interpolation.h"
 #include <assert.h>
 #include <math.h>
@@ -169,8 +170,64 @@ int main(void)
     assert(get(sample->commands[9].words + 4) == 50);
     bh_interpolation_rendered(s); /* Offscreen cull leaves strength unchanged. */
     assert(get(bh_interpolation_sample(s, .5f)->commands[9].words + 4) == 50);
+    /* A cockpit is rigidly attached even when new radar/gauge sprites appear.
+       Linear world-vertex interpolation would shrink/shear it on this turn;
+       ordinal matching would additionally blend the newly inserted sprite. */
+    memset(s, 0, sizeof(*s));
+    for (r = 0; r < 2; ++r) {
+        float yaw = r * 1.5707963267948966f;
+        frame(&q, 800, 1, r * 10.0f);
+        storage[9].kind = BH_DRAW_MODEL_RESOURCE;
+        put(storage[9].words + 3, yaw);
+        q.count = r ? 13 : 12;
+        memset(storage + 10, 0, (q.count - 10) * sizeof(*storage));
+        for (i = 10; i < q.count - 1; ++i) {
+            float radius = (float)(i - 9);
+            storage[i].kind = BH_DRAW_QUAD;
+            put(storage[i].words, r * 10.0f + radius * cos(yaw));
+            put(storage[i].words + 2, -radius * sin(yaw));
+            put(storage[i].words + 4, 1);
+            put(storage[i].words + 6, sin(yaw));
+            put(storage[i].words + 8, cos(yaw));
+        }
+        storage[q.count - 1].kind = BH_DRAW_RECT;
+        put(storage[q.count - 1].words, 500);
+        bh_interpolation_stamp(10, 900, 1);
+        bh_interpolation_attach(10, q.count, 9);
+        bh_interpolation_capture(s, &q, 1);
+    }
+    for (r = 0; r <= 4; ++r) {
+        float a = r * .25f, yaw = a * 1.5707963267948966f;
+        sample = bh_interpolation_sample(s, a);
+        for (i = 10; i < 12; ++i) {
+            float radius = (float)(i - 9);
+            assert(fabs(get(sample->commands[i].words) - (a * 10 + radius * cos(yaw))) < .00001);
+            assert(fabs(get(sample->commands[i].words + 2) + radius * sin(yaw)) < .00001);
+            assert(fabs(get(sample->commands[i].words + 6) - sin(yaw)) < .00001);
+            assert(fabs(get(sample->commands[i].words + 8) - cos(yaw)) < .00001);
+        }
+        assert(get(sample->commands[12].words) == 500);
+    }
+    /* Target screen coordinates are not lerped. Its world anchor is, using
+       entity identity, with atlas UVs/pixel offsets left intact. */
+    memset(s, 0, sizeof(*s));
+    for (r = 0; r < 2; ++r) {
+        frame(&q, 700, 3, 50);
+        storage[9].kind = BH_DRAW_RECT;
+        storage[9].words[12] = BH_RECT_WORLD_MARKER;
+        put(storage[9].words + 13, r * 20);
+        put(storage[9].words + 15, 100 - r * 40);
+        put(storage[9].words + 16, -2);
+        bh_interpolation_capture(s, &q, 1);
+    }
+    sample = bh_interpolation_sample(s, .5f);
+    assert(get(sample->commands[9].words + 13) == 10);
+    assert(get(sample->commands[9].words + 15) == 80);
+    assert(get(sample->commands[9].words) == 50);
+    assert(get(sample->commands[9].words + 16) == -2);
+    assert(get(storage[9].words + 13) == 20);
     free(s);
     puts("SDL timing/interpolation: cadence, catch-up, payload preservation, immutable snapshots, generations, "
-         "cuts, teleports, angle wrapping, nested draw identities and persistent flare consumer state passed");
+         "cuts, teleports, angle wrapping, nested draw identities, persistent flare consumer state, rigid cockpit attachments and world target anchors passed");
     return 0;
 }

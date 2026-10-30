@@ -1,5 +1,8 @@
 #include "bh_hud_markers.h"
 #include "bh_round.h"
+#ifdef BH_SDL_BACKEND
+#include "bh_render_interpolation.h"
+#endif
 #include <stddef.h>
 #include <float.h>
 #include <string.h>
@@ -48,6 +51,9 @@ int __cdecl bh_hud_markers_draw(BHHudMarkers *c, BHEntity *head, const BHVec3 *p
     long kind, unit;
     short status;
     unsigned long radar_kind, extended, skip;
+#ifdef BH_SDL_BACKEND
+    unsigned long marker_start, marker_index;
+#endif
     float corner_u, label_v, x, y, z, scale, alpha, size, label_width;
     double raw_alpha, raw_depth, minimum;
     if (!c || !c->projection || !c->projection->queue || !c->projection->camera || !c->projection->view || !c->radar ||
@@ -122,6 +128,9 @@ int __cdecl bh_hud_markers_draw(BHHudMarkers *c, BHEntity *head, const BHVec3 *p
                 if (raw_depth < minimum)
                     bh_round_float(&z, minimum);
                 size = (float)multiply(unit, 4);
+#ifdef BH_SDL_BACKEND
+                marker_start = c->projection->queue->count;
+#endif
                 if (!rectangle(c, c->brackets_image, (double)x - scale * 2.0, (double)y - scale * 2.0, size, size, 0,
                                alpha, corner_u, .25f, 0, .25f, z) ||
                     !rectangle(c, c->brackets_image, (double)x - (double)scale * (-2.0), (double)y - scale * 2.0, size,
@@ -152,6 +161,23 @@ int __cdecl bh_hud_markers_draw(BHHudMarkers *c, BHEntity *head, const BHVec3 *p
                                    alpha, 0, .5f, label_v, .125f, z))
                         return 0;
                 }
+#ifdef BH_SDL_BACKEND
+                /* Preserve pixel-sized corners/labels, but project their world
+                   anchor and perspective offsets with the sampled camera. */
+                for (marker_index = marker_start; marker_index < c->projection->queue->count; ++marker_index) {
+                    BHDrawCommand *command = c->projection->queue->commands + marker_index;
+                    unsigned long corner = marker_index - marker_start;
+                    float sx, sy, fx = corner < 4 && (corner & 1) ? 2.0f : -2.0f;
+                    float fy = corner < 2 ? -2.0f : 2.0f;
+                    memcpy(&sx, command->words, 4); memcpy(&sy, command->words + 1, 4);
+                    sx -= x + fx * scale; sy -= y + fy * scale;
+                    memcpy(command->words, &sx, 4); memcpy(command->words + 1, &sy, 4);
+                    command->words[12] = BH_RECT_WORLD_MARKER;
+                    memcpy(command->words + 13, &point, 12);
+                    memcpy(command->words + 16, &fx, 4); memcpy(command->words + 17, &fy, 4);
+                }
+                bh_interpolation_stamp(marker_start, (unsigned long)head, head->generation);
+#endif
             }
         }
         memcpy(&head, head->payload + 12, 4);

@@ -256,16 +256,20 @@ static void trail(BHPlayerScene *s)
     }
 }
 
-static void tail(BHPlayerScene *s)
+static unsigned long tail(BHPlayerScene *s)
 {
     BHEntity *p = s->player;
+    unsigned long anchor = BH_DRAW_END;
     unsigned long resource = word_at(p, 0x21c);
     BHVec3 position = vector_at(p, 0xc), angles = vector_at(p, 0x3c);
 #ifdef BH_SDL_BACKEND
     unsigned long render_mark = bh_interpolation_mark();
 #endif
-    if (resource)
+    if (resource) {
+        anchor = s->queue->count;
         queued(s, bh_draw_submit_resource(s->queue, 0, resource, &position, &angles, 1));
+        if (anchor == s->queue->count) anchor = BH_DRAW_END;
+    }
 #ifdef BH_SDL_BACKEND
     /* The tail is emitted after a visibility-dependent world/HUD command list.
        Its identity must follow the player, never its offset in that list. */
@@ -317,6 +321,7 @@ static void tail(BHPlayerScene *s)
 #endif
         trail(s);
     }
+    return anchor;
 }
 
 static int selected(BHPlayerScene *s, unsigned char index)
@@ -377,7 +382,7 @@ int __cdecl bh_player_scene_draw(BHPlayerScene *s)
     unsigned long i;
     int active;
 #ifdef BH_SDL_BACKEND
-    unsigned long render_mark;
+    unsigned long render_mark, attached[6], anchor;
 #endif
     if (!s || !(p = s->player) || !s->queue || !s->frame_count || !s->display_width || !s->display_height ||
         !s->mode_count)
@@ -454,9 +459,18 @@ int __cdecl bh_player_scene_draw(BHPlayerScene *s)
                 queued(s, bh_fade_queue(s->queue, amount, 0));
         }
         aim(s);
+#ifdef BH_SDL_BACKEND
+        attached[0] = bh_interpolation_mark();
+#endif
         s->hud->attachment->viewport_width = *s->display_width;
         if (!bh_hud_setup(s->hud, (const BHHudPlayer *)p))
             fail(s, BH_PLAYER_SCENE_OWNER);
+#ifdef BH_SDL_BACKEND
+        attached[1] = bh_interpolation_mark();
+#endif
+#ifdef BH_SDL_BACKEND
+        attached[2] = bh_interpolation_mark();
+#endif
         s->markers->display_width = *s->display_width;
         if (!bh_hud_markers_draw(s->markers, *s->actor_head, &p->position, (const unsigned char *)p + 0x2b8))
             fail(s, BH_PLAYER_SCENE_OWNER);
@@ -477,6 +491,9 @@ int __cdecl bh_player_scene_draw(BHPlayerScene *s)
                 pickup = next;
             }
         }
+#ifdef BH_SDL_BACKEND
+        attached[3] = bh_interpolation_mark();
+#endif
         /* Resolve each selector only when its synchronous callback is due. */
         if (!selected(s, byte_at(p, 0x2b6)))
             return 0;
@@ -487,6 +504,9 @@ int __cdecl bh_player_scene_draw(BHPlayerScene *s)
         status_state(s, &status, ammunition);
         if (!status_weapons(s, &status, ammunition))
             return 0;
+#ifdef BH_SDL_BACKEND
+        attached[4] = bh_interpolation_mark();
+#endif
         if (long_at(p, 0xe8) == 0)
         {
             if (!bh_hud_world_draw(s->world_status, &status))
@@ -498,6 +518,9 @@ int __cdecl bh_player_scene_draw(BHPlayerScene *s)
             if (!bh_hud_flat_draw(s->flat_status, &status))
                 fail(s, BH_PLAYER_SCENE_OWNER);
         }
+#ifdef BH_SDL_BACKEND
+        attached[5] = bh_interpolation_mark();
+#endif
         status_publish(s, &status);
         if (*s->mode_count > 1)
         {
@@ -519,6 +542,13 @@ int __cdecl bh_player_scene_draw(BHPlayerScene *s)
         }
         particles(s);
     }
+#ifdef BH_SDL_BACKEND
+    anchor = tail(s);
+    if (active && anchor != BH_DRAW_END)
+        for (i = 0; i < 6; i += 2)
+            bh_interpolation_attach(attached[i], attached[i + 1], anchor);
+#else
     tail(s);
+#endif
     return s->error == BH_PLAYER_SCENE_OK;
 }
