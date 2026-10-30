@@ -26,7 +26,7 @@ A source restoration of **BHunter**, the 1999 hovercar combat game by **InterAct
 
 ## Install
 
-1. Download and extract [release 0.1](https://github.com/stellarwind/BHunter-revived/releases/tag/v0.1) on Windows.
+1. Download and extract [release 0.2](https://github.com/stellarwind/BHunter-revived/releases/tag/v0.2) on Windows.
 2. Copy `Bhunter.bin` from your own original game into the `GAME_DATA` folder.
 3. Run `BHunter-source.exe`. Video settings apply immediately. Choose Windowed or Borderless, then an aspect ratio: 4:3, 16:9 or 21:9. Borderless renders at the selected resolution, with standard choices available even if the monitor does not advertise that ratio. The complete frame fits the desktop without stretching: a different monitor shape adds bars on one pair of edges. Common ultrawide resolutions use their exact pixel ratio. In Windowed mode, resize the window instead; bars preserve the selected ratio. Alt+Enter switches window mode. Window position, normal size, maximized state, aspect ratio and Borderless resolution are saved in `video-sdl3.ini`.
 
@@ -67,7 +67,7 @@ build\BHunter-source.exe
 The build stages the executable and your local `GAME_DATA` and `MUSIC_DATA` into `build/`. The CFG lives beside the executable. Run from that folder, exactly like the release. To create a release ZIP:
 
 ```bat
-python tools\package_release.py --version 0.1
+python tools\package_release.py --version 0.2
 ```
 
 The build downloads and checksum-verifies official SDL 3.4.18. The adapter is built as `BHunterGPU.dll`; its shaders are in `shaders/legacy.hlsl`. The restored game remains x86. The DirectX SDK is used for legacy data types and input; rendering creates no DirectDraw/Direct3D COM objects.

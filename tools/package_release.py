@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--version", default="0.1")
+    parser.add_argument("--version", default="0.2")
     args = parser.parse_args()
     if not re.fullmatch(r"\d+(?:\.\d+){1,2}", args.version):
         parser.error("Version must contain two or three numeric components")
