@@ -1,5 +1,7 @@
 # BHunter
 
+![BHunter cover art](assets/cover.png)
+
 <table>
   <tr>
     <td align="center"><a href="screenshots/BHunter-20261029-230509-088-1.jpg"><img src="screenshots/thumbs/BHunter-20261029-230509-088-1.jpg" alt="BHunter gameplay screenshot 1" width="280"></a></td>
@@ -25,6 +27,15 @@ A source restoration of **BHunter**, the 1999 hovercar combat game by **InterAct
 1. Download and extract [release 0.1](https://github.com/stellarwind/BHunter-revived/releases/tag/v0.1) on Windows.
 2. Copy `Bhunter.bin` from your own original game into the `GAME_DATA` folder.
 3. Run `play-hardware.cmd` or `play-software.cmd`.
+
+Supported original game: **BHunter, English retail PC edition (1999)**. The tested files are:
+
+| File | SHA-256 |
+|---|---|
+| `Bhunter.bin` | `2393a661fd647ed6de3eee34c35c30812c44f3ee15b9d44244a63720804df581` |
+| `BHUNTER.EXE` (reference only) | `c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1` |
+
+See [How to play](HOWTOPLAY.md) for controls.
 
 Original game files are not included. DDrawCompat is bundled for modern Windows compatibility. This is an early playable release; full original-game fidelity is still being reviewed.
 
@@ -56,10 +67,6 @@ Keep your `Bhunter.bin` in `GAME_DATA`. To create a release ZIP:
 python tools\package_release.py --version 0.1
 ```
 
-## License
-
-Restoration code: [MIT](LICENSE). Original game assets remain the property of their respective owners. Bundled [DDrawCompat](https://github.com/narzoul/DDrawCompat/tree/v0.7.2) has its own license, included in the release.
-
 ## Unlock all levels
 
 Quit the game, then run with Python 3.10+:
@@ -69,3 +76,11 @@ python tools\unlock_levels.py
 ```
 
 This unlocks all nine mission entries in `build/game/source-preview.cfg`, backing up the save before changing it. Other settings stay intact. For another save, add `--save "path\to\source-preview.cfg"`.
+
+## AI disclaimer
+
+This source restoration was decompiled, reconstructed and built with the assistance of OpenAI Codex. It is an unofficial restoration; exact original-game behavior is still being reviewed.
+
+## License
+
+Restoration code: [MIT](LICENSE). Original game assets remain the property of their respective owners. Bundled [DDrawCompat](https://github.com/narzoul/DDrawCompat/tree/v0.7.2) has its own license, included in the release.

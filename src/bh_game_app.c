@@ -687,8 +687,6 @@ static HRESULT __cdecl loading_present(LPDIRECTDRAWSURFACE color, void *user)
     BHGameApp *a = (BHGameApp *)user;
     RECT r;
     POINT p = {0, 0};
-    if (a->fullscreen)
-        return IDirectDrawSurface_Blt(a->primary, 0, color, 0, DDBLT_WAIT, 0);
     GetClientRect(a->window, &r);
     ClientToScreen(a->window, &p);
     OffsetRect(&r, p.x, p.y);
@@ -703,47 +701,23 @@ static int loading_begin(BHGameApp *a)
     a->loading_display.images = &a->loading_images;
     a->loading_display.color = a->target;
     a->loading_display.primary = a->primary;
+    a->loading_display.back = a->render_mode.render;
     a->loading_display.width = a->width;
     a->loading_display.height = a->height;
     a->loading_display.scale = 1;
     a->loading_display.previous[0] = a->loading_display.previous[1] = -1;
-    a->loading_display.present = loading_present;
-    a->loading_display.present_user = a;
+    /* Fullscreen retains0044aac0's native Flip and alternating histories. */
+    if (!a->fullscreen)
+    {
+        a->loading_display.present = loading_present;
+        a->loading_display.present_user = a;
+    }
     a->loading_progress.display = &a->loading_display;
     if (a->startup_check)
         return 1;
-    if (!bh_loading_display(&a->loading_display, 0) || !bh_loading_progress_install(&a->loading_progress))
+    if (!bh_loading_progress_install(&a->loading_progress))
         return failure(a, 6, "Loading presentation initialization failed");
     return 1;
-}
-static int loading_finish(BHGameApp *a)
-{
-    MSG message;
-    bh_loading_progress_remove(&a->loading_progress);
-    if (a->startup_check)
-        return 1;
-    /* Original display owner advances the two five-second company stages. */
-    while (a->loading_images.stage < 2 && !a->quit)
-    {
-        while (PeekMessageA(&message, 0, 0, 0, PM_REMOVE))
-        {
-            if (message.message == WM_QUIT)
-            {
-                a->quit = 1;
-                break;
-            }
-            TranslateMessage(&message);
-            DispatchMessageA(&message);
-        }
-        if (a->quit)
-            break;
-        if (!bh_loading_display(&a->loading_display, 1))
-            return failure(a, 6, "Company splash presentation failed");
-        Sleep(10);
-    }
-    if (!a->quit && !bh_loading_display(&a->loading_display, 1))
-        return failure(a, 6, "Final loading image presentation failed");
-    return !a->error;
 }
 static LRESULT CALLBACK procedure(HWND window, UINT message, WPARAM key, LPARAM bits)
 {
@@ -755,20 +729,6 @@ static LRESULT CALLBACK procedure(HWND window, UINT message, WPARAM key, LPARAM 
     }
     if (!a)
         return DefWindowProcA(window, message, key, bits);
-    /* User-requested splash skipping; original0044aac0 advances on a timer.
-      Expire that timer; redraw1 avoids stage0's redraw2 timer restart.
-      Consume key repeats without advancing another company stage. */
-    if ((message == WM_LBUTTONDOWN ||
-            (message == WM_KEYDOWN && (key == VK_SPACE || key == VK_ESCAPE || key == VK_RETURN))) &&
-        !a->startup_check && a->loading_images.arena && a->loading_images.stage < 2)
-    {
-        if (message == WM_LBUTTONDOWN || !((unsigned long)bits & 0x40000000UL))
-        {
-            a->loading_images.deadline = GetTickCount();
-            a->loading_images.redraw_count = 1;
-        }
-        return 0;
-    }
     /* Hide only this active client area's cursor. Avoid ShowCursor's shared
       counter: repeated mouse messages must not accumulate hide requests. */
     if (!a->startup_check)
@@ -2628,8 +2588,8 @@ static int manual_loop(BHGameApp *a)
     if (!perf_start(a))
         return 0;
 #endif
-    if (!bh_draw_queue_dispose(&a->queue) ||
-        !bh_frame_buffers_start(&a->frames, source_produce, a, 30, 3500 * sizeof(BHDrawCommand), source_message, a))
+    if (a->frames.produce != source_produce || a->frames.produce_user != a ||
+        a->frames.bytes != 3500UL * sizeof(BHDrawCommand) || !bh_draw_queue_dispose(&a->queue))
         return failure(a, 12, "Source frame ownership initialization failed");
 
 #ifdef DEBUGGING
@@ -3071,6 +3031,12 @@ int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int start
         failure(a, 9, "Confirmation beep/weapon lock sound modes are incorrect");
         goto done;
     }
+    /* Original00479896: final archive display before material allocation. */
+    if (!bh_loading_display(&a->loading_display, 1))
+    {
+        failure(a, 6, "Final loading image presentation failed");
+        goto done;
+    }
     /* Original00479200 calls material/texture allocation after004474c0 has
       loaded all assets. Before that, every class reference count is zero. */
     material_error =
@@ -3089,6 +3055,19 @@ int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int start
                 failure(a, 4, "Hardware image has no allocated texture slot");
                 goto done;
             }
+    /* Original004798d5..004798f9: detach archive progress, initialize the
+       producer buffers, then display twice. There is no logo wait/input loop. */
+    bh_loading_progress_remove(&a->loading_progress);
+    if (!bh_frame_buffers_start(&a->frames, source_produce, a, 30, 3500 * sizeof(BHDrawCommand), source_message, a))
+    {
+        failure(a, 12, "Source frame ownership initialization failed");
+        goto done;
+    }
+    if (!bh_loading_display(&a->loading_display, 1) || !bh_loading_display(&a->loading_display, 1))
+    {
+        failure(a, 6, "Final loading image presentation failed");
+        goto done;
+    }
     bh_mp_start();
     if (startup_check)
     {
@@ -3117,8 +3096,6 @@ int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int start
             goto done;
         }
     }
-    if (!loading_finish(a))
-        goto done;
     a->initialized = 1;
     stage(a, "Real-data startup complete; no input collection or application frame executed");
 #ifdef DEBUGGING
@@ -3127,11 +3104,12 @@ int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int start
     {
         fprintf(
             summary,
-            "{\"passed\":true,\"blocks\":%lu,\"placements\":%lu,\"navigation_nodes\":%lu,\"pool_entities\":%lu,\"menus\":%lu,\"rows\":%lu,\"resources\":%lu,\"physics_bodies\":%lu,\"flyby_constructor_settling_calls\":%lu,\"input_collection_calls\":%lu,\"entity_step_calls\":%lu,\"entity_refresh_calls\":%lu,\"application_frames\":%lu,\"native_primary_sound_play_calls\":%lu}\n",
+            "{\"passed\":true,\"blocks\":%lu,\"placements\":%lu,\"navigation_nodes\":%lu,\"pool_entities\":%lu,\"menus\":%lu,\"rows\":%lu,\"resources\":%lu,\"physics_bodies\":%lu,\"flyby_constructor_settling_calls\":%lu,\"input_collection_calls\":%lu,\"entity_step_calls\":%lu,\"entity_refresh_calls\":%lu,\"application_frames\":%lu,\"native_primary_sound_play_calls\":%lu,\"loading_display_calls\":%lu,\"loading_native_flips\":%lu,\"loading_adapter_presentations\":%lu,\"loading_stage\":%ld,\"frame_buffer_bytes\":%lu}\n",
             a->blocks.count, a->editor_world.count, a->navigation.node_count, a->pool.used, a->bootstrap.menus_created,
             a->bootstrap.rows_created, a->bootstrap.resources_loaded, a->physics.body_count, a->flyby_construct.settled,
             a->service.input_calls, a->service.step_calls, a->service.refresh_calls, a->frame,
-            a->sound_stats.play_calls);
+            a->sound_stats.play_calls, a->loading_display.calls, a->loading_display.flips,
+            a->loading_display.presentations, a->loading_images.stage, a->frames.bytes);
         fclose(summary);
     }
 #endif
