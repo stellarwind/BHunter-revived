@@ -10,6 +10,8 @@ typedef struct BHDrawIdentity
     unsigned long owner, generation, ordinal;
     /* One-based model command to which this world-space HUD piece is attached. */
     unsigned long attachment;
+    /* New trail heads begin at the previous position of their older node. */
+    unsigned long older_owner, older_generation;
 } BHDrawIdentity;
 typedef struct BHRenderInterpolation
 {
@@ -35,6 +37,8 @@ void __cdecl bh_interpolation_reset(void);
 unsigned long __cdecl bh_interpolation_mark(void);
 /* Nested draw owners stamp first. Enclosing callbacks preserve those identities. */
 void __cdecl bh_interpolation_stamp(unsigned long start, unsigned long identity, unsigned long generation);
+void __cdecl bh_interpolation_trail_point(unsigned long index, unsigned long owner, unsigned long generation,
+                                         unsigned long older_owner, unsigned long older_generation, unsigned long image);
 void __cdecl bh_interpolation_attach(unsigned long start, unsigned long end, unsigned long model);
 void __cdecl bh_interpolation_capture(BHRenderInterpolation *, const BHDrawQueue *, long scene);
 BHDrawQueue *__cdecl bh_interpolation_sample(BHRenderInterpolation *, float alpha);

@@ -81,7 +81,7 @@ def main():
     if not args.reuse_captures:
         for size in ('640x480','1920x1080','3840x2160'):
             captures=out/size;captures.mkdir(exist_ok=True)
-            env=dict(os.environ,BH_RENDER_CAPTURE_DIR=str(captures),BH_GPU_TEST_SIZE=size,BH_PLAYER_INTERPOLATION_CHECK='1')
+            env=dict(os.environ,BH_RENDER_CAPTURE_DIR=str(captures),BH_GPU_TEST_SIZE=size,BH_PLAYER_INTERPOLATION_CHECK='1',BH_CHEAT_CHECK='1')
             subprocess.run([str(runtime/'BHunter-source.exe'),'--startup-check'],env=env,timeout=60,check=True)
             log=(runtime/'startup-check.log').read_text();assert 'SDL menu navigation:' in log;assert 'SDL player interpolation:' in log
             shutil.copy2(runtime/'startup-check.log',captures/'startup-check.log')
@@ -90,10 +90,16 @@ def main():
     seams={}
     flare_replay={}
     target_tracking={}
+    rocket_tracking={}
     for size in ('640x480','1920x1080','3840x2160'):
         log=(out/size/'startup-check.log').read_text()
         match=re.search(r'SDL portal seam pixels: stale camera=(\d+) blue gap pixels, render camera=(\d+)',log)
         assert match, f'Missing portal seam positive/negative controls: {size}'
+        assert 'SDL IAKFA:' in log, f'Missing native cheat input-to-inventory check: {size}'
+        assert 'SDL rocket tracking: eight production emission ticks x three render fractions' in log, f'Missing rocket tracking checks: {size}'
+        for name in ('rocket-trail-fresh','rocket-trail-consumed'):
+            bounds(normalize(out/size/f'{name}.png'))
+        rocket_tracking[size]={'production_pose_checks':24,'moving_flare_consumption_preserved':True}
         before,after=map(int,match.groups());assert before>=10 and after==0
         seams[size]={'stale_camera_gap_pixels':before,'render_camera_gap_pixels':after}
         images={n:png(out/size/f'effect-{n}.png')[2] for n in (6,7,9,10,11)}
@@ -108,7 +114,7 @@ def main():
             assert actual==expected, f'Target brackets drift from render-pose reference: {size}/{fraction}'
             bounds(normalize(out/size/f'target-tracking-{fraction}-interpolated.png')) # Visible positive control.
         target_tracking[size]={'render_fractions':3,'pixel_differences':0}
-    report={'scaling':compare(out),'player_pose_checks_per_resolution':48,'portal_seams':seams,'flare_replay':flare_replay,'target_tracking':target_tracking}
+    report={'scaling':compare(out),'player_pose_checks_per_resolution':48,'portal_seams':seams,'flare_replay':flare_replay,'target_tracking':target_tracking,'rocket_tracking':rocket_tracking}
     if args.reference_dir:report['original_renderer']=compare_reference(out,args.reference_dir)
     smoke=json.loads((runtime/'menu-smoke-summary.json').read_text());report['menu_smoke']=smoke
     assert smoke['error']==0 and smoke['music_failures']==0

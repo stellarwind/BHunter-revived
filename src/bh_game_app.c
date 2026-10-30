@@ -2633,6 +2633,141 @@ static void __cdecl tracking_query(BHEntity *entity, void *packet)
 {
     ((BHEntityPositionPacket *)packet)->position = entity->position;
 }
+static int startup_cheat_checks(BHGameApp *a)
+{
+    BHEntity saved_player = *a->player, *weapon;
+    BHPlayerTickState saved_state = a->player_state;
+    BHInputSnapshot saved_snapshot = a->snapshot;
+    BHPlayerInputState saved_decoded = a->decoded;
+    BHPlayerInputList saved_input = *a->player_tick.input;
+    BHWeaponObjectState *states[10];
+    long saved_ammo[10], saved_available[10];
+    BHInputCollection collection = a->collection;
+    BHPlayerInputOwner owner = a->inputs;
+    unsigned long i, attempt, letter, changed;
+    const char *sequence = "IAKFA";
+    int ok = 1;
+    char option[8], text[128];
+    if (!GetEnvironmentVariableA("BH_CHEAT_CHECK", option, sizeof(option))) return 1;
+    for (i = 0; i < 10; ++i) {
+        if (!bh_weapon_registry_resolve(&a->weapons.registry, i, &weapon, states + i)) return 0;
+        saved_ammo[i] = states[i]->common.ammo; saved_available[i] = states[i]->common.available_ec;
+    }
+    memset(&a->snapshot, 0, sizeof(a->snapshot));
+    memset(&a->decoded, 0, sizeof(a->decoded));
+    memset((char *)a->player + 0x18c, 0, 36 * 4);
+    a->player_state.mode = 1; a->player_state.paused = 0;
+    a->player_state.confirmation = a->player_state.ending = a->player_state.death_frames = 0;
+    owner.first = a->player_tick.input; owner.first->next = NULL;
+    collection.lists = &owner; collection.disable_mouse_motion = 1;
+    collection.enabled[0] = collection.enabled[1] = 0;
+    bh_input_set_enabled(owner.first, &a->snapshot, 1);
+    for (attempt = 0; attempt < 2 && ok; ++attempt) {
+        for (i = 0; i < 10; ++i) {
+            states[i]->common.available_ec = 0;
+            /* Keep primary ammo above its automatic regeneration threshold. */
+            states[i]->common.ammo = i ? 0 : 250;
+        }
+        for (letter = 0; sequence[letter] && ok; ++letter) {
+            PostMessageA(a->window, WM_KEYDOWN, sequence[letter], 1);
+            /* Auto-repeat must not insert another letter into the cheat. */
+            PostMessageA(a->window, WM_KEYDOWN, sequence[letter], (LPARAM)0x40000001UL);
+            PostMessageA(a->window, WM_KEYUP, sequence[letter], (LPARAM)0xc0000001UL);
+            bh_sdl_poll();
+            if (!bh_input_collect(&collection, &changed) || !bh_player_tick(&a->player_tick)) {
+                sprintf(text, "IAKFA production tick failed: player error=%d", a->player_tick.error);
+                stage(a, text); ok = 0; break;
+            }
+            for (i = 0; i < 10; ++i) {
+                int complete = sequence[letter + 1] == 0;
+                if (states[i]->common.available_ec != complete ||
+                    states[i]->common.ammo != (complete ? states[i]->common.ammo_limit : i ? 0 : 250)) {
+                    sprintf(text, "IAKFA attempt %lu letter %lu weapon %lu: available=%ld ammo=%ld limit=%ld", attempt + 1, letter + 1, i,
+                            states[i]->common.available_ec, states[i]->common.ammo, states[i]->common.ammo_limit);
+                    stage(a, text); ok = 0; break;
+                }
+            }
+        }
+    }
+    *a->player = saved_player; a->player_state = saved_state; a->snapshot = saved_snapshot;
+    a->decoded = saved_decoded; *a->player_tick.input = saved_input;
+    for (i = 0; i < 10; ++i) { states[i]->common.ammo = saved_ammo[i]; states[i]->common.available_ec = saved_available[i]; }
+    if (!ok) return failure(a, 13, "IAKFA native SDL input-to-inventory regression failed");
+    stage(a, "SDL IAKFA: native messages, per-letter input collection/player ticks, partial-code rejection, auto-repeat filtering, all ten weapons and repeated use passed");
+    return 1;
+}
+static int startup_rocket_tracking_checks(BHGameApp *a)
+{
+    BHEntityPool pool;
+    BHTrailContext trail;
+    BHEntity *rocket, *generator;
+    BHVec3 zero = {0,0,0}, drift = {0,.6f,0}, eye = {0,0,-2};
+    BHDrawQueue *sample;
+    unsigned long frame, i, j, mark, head, flare, checks = 0;
+    float alpha, expected, observed, strength, previous_x = 0;
+    int ok = 1;
+    memset(&pool, 0, sizeof(pool)); memset(&trail, 0, sizeof(trail));
+    if (!bh_entities_init(&pool, 32, NULL)) return failure(a, 13, "Rocket fixture pool failed");
+    trail.pool = &pool; trail.queue = &a->queue;
+    rocket = bh_entity_acquire(&pool);
+    if (!rocket) { bh_entities_dispose(&pool); return 0; }
+    rocket->position.x = -3; rocket->position.z = 20;
+    rocket->origin.x = rocket->origin.z = 30;
+    rocket->query = tracking_query;
+    generator = bh_trail_create(&trail, a->projectile_draw.homing_trail, 3, 0, &rocket->position, rocket,
+                               60, 1, 30, 1, .4f, .2f, &drift, 1);
+    if (!generator) { bh_entities_dispose(&pool); return failure(a, 13, "Rocket trail fixture creation failed"); }
+    memset(&a->interpolation, 0, sizeof(a->interpolation));
+    bh_interpolation_bind(&a->queue);
+    for (frame = 0; frame < 8 && ok; ++frame) {
+        rocket->position.x = -3 + (float)frame; rocket->position.z = 20 + (float)frame;
+        if (!bh_entities_step(&pool)) { ok = 0; break; }
+        bh_draw_queue_begin(&a->queue); bh_interpolation_reset();
+        eye.x = frame * .2f;
+        bh_camera_queue_pose(&a->queue, &eye, &zero); bh_interpolation_stamp(9, 0x1234, 1);
+        if (!bh_entities_refresh(&pool)) { ok = 0; break; }
+        mark = bh_interpolation_mark();
+        if (bh_projectile_homing_draw(&a->projectile_draw, rocket) < 0) { ok = 0; break; }
+        bh_interpolation_stamp(mark, (unsigned long)rocket, rocket->generation * 2 + 1);
+        head = flare = BH_DRAW_END;
+        for (i = 9; i < a->queue.count; ++i) {
+            if (a->queue.commands[i].kind == BH_DRAW_PATH_HEADER) head = i + 1;
+            if (a->queue.commands[i].kind == BH_DRAW_FLARE) flare = i;
+        }
+        bh_interpolation_capture(&a->interpolation, &a->queue, 1);
+        for (j = 0; j < 3 && ok; ++j) {
+            alpha = j * .5f;
+            expected = frame ? previous_x + (rocket->position.x - previous_x) * alpha : rocket->position.x;
+            sample = bh_interpolation_sample(&a->interpolation, alpha);
+            if (flare == BH_DRAW_END) { ok = 0; break; }
+            memcpy(&observed, sample->commands[flare].words, 4);
+            if (fabs(observed - expected) > .0001f) { ok = 0; break; }
+            if (frame >= 2) {
+                if (head == BH_DRAW_END) { ok = 0; break; }
+                memcpy(&observed, &sample->commands[head].resource, 4);
+                if (fabs(observed - expected) > .0001f) { ok = 0; break; }
+            }
+            ++checks;
+            if (frame == 6 && j == 1) {
+                if (!bh_frame_clear_color(&a->display, 0,0,0) || !render_frame(a, sample) ||
+                    !capture_fixture(a, "rocket-trail-fresh")) { ok = 0; break; }
+                memcpy(&strength, sample->commands[flare].words + 4, 4);
+                if (strength != 50.f / 320) { ok = 0; break; }
+                sample = bh_interpolation_sample(&a->interpolation, .75f);
+                memcpy(&observed, sample->commands[flare].words + 4, 4);
+                if (observed != strength || !bh_frame_clear_color(&a->display, 0,0,0) ||
+                    !render_frame(a, sample) || !capture_fixture(a, "rocket-trail-consumed")) { ok = 0; break; }
+            }
+        }
+        previous_x = rocket->position.x;
+    }
+    bh_interpolation_bind(0);
+    memset(&a->interpolation, 0, sizeof(a->interpolation));
+    bh_entities_dispose(&pool);
+    if (!ok || checks != 24) return failure(a, 13, "Rocket trail/head/flare interpolation or consumption failed");
+    stage(a, "SDL rocket tracking: eight production emission ticks x three render fractions, stable growing head and consumed moving flare");
+    return 1;
+}
 static int startup_marker_tracking_checks(BHGameApp *a)
 {
     BHEntity actor;
@@ -2785,7 +2920,7 @@ static int startup_player_interpolation_checks(BHGameApp *a)
     memset(&a->interpolation, 0, sizeof(a->interpolation));
     if (mismatches || !attachments) return failure(a, 13, "Player/camera/cockpit interpolation failed under visibility churn");
     stage(a, "SDL player interpolation: 16 production scene poses x 3 render fractions, changing visibility/cockpit HUD, zero pose mismatches");
-    return startup_marker_tracking_checks(a);
+    return startup_marker_tracking_checks(a) && startup_rocket_tracking_checks(a);
 }
 #endif
 /* Simulation and audio run at 30 Hz. Render copies interpolate between the
@@ -3341,7 +3476,7 @@ int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int start
             !startup_effect_checks(a) || !startup_player_model_checks(a))
             goto done;
 #ifdef DEBUGGING
-        if (!startup_player_interpolation_checks(a) || !startup_portal_seam_checks(a)) goto done;
+        if (!startup_player_interpolation_checks(a) || !startup_portal_seam_checks(a) || !startup_cheat_checks(a)) goto done;
 #endif
         if (a->hardware && (a->render_mode.engine.textures.software || !a->render_mode.engine.device ||
                             !a->primitive.vertices || a->primitive.locks))

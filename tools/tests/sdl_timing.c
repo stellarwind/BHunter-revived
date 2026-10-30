@@ -226,8 +226,68 @@ int main(void)
     assert(get(sample->commands[9].words) == 50);
     assert(get(sample->commands[9].words + 16) == -2);
     assert(get(storage[9].words + 13) == 20);
+    /* Moving flare anchors must not reset consumed strength on the next
+       render fraction. Texture changes and entity reuse must snap. */
+    memset(s, 0, sizeof(*s));
+    for (r = 0; r < 2; ++r) {
+        frame(&q, 44, 1, r * 20);
+        storage[9].kind = BH_DRAW_FLARE;
+        storage[9].resource = 0;
+        storage[9].words[6] = 123;
+        put(storage[9].words + 4, 50);
+        bh_interpolation_capture(s, &q, 1);
+    }
+    sample = bh_interpolation_sample(s, .25f);
+    assert(get(sample->commands[9].words) == 5);
+    put(sample->commands[9].words + 4, 50.f / 320);
+    bh_interpolation_rendered(s);
+    sample = bh_interpolation_sample(s, .75f);
+    assert(get(sample->commands[9].words) == 15);
+    assert(get(sample->commands[9].words + 4) == 50.f / 320);
+    assert(get(s->current[9].words + 4) == 50);
+    storage[9].words[6] = 456;
+    bh_interpolation_capture(s, &q, 1);
+    assert(get(bh_interpolation_sample(s, 0)->commands[9].words) == 20);
+    assert(get(bh_interpolation_sample(s, 0)->commands[9].words + 4) == 50);
+    /* Head insertion and tail removal change list ordinals. Existing physical
+       nodes keep identity; the new head grows from its older node's old pose. */
+    memset(s, 0, sizeof(*s));
+    for (r = 0; r < 2; ++r) {
+        unsigned long node;
+        frame(&q, 0, 0, 0);
+        memset(storage + 9, 0, 4 * sizeof(*storage)); q.count = 13;
+        storage[9].kind = BH_DRAW_PATH_HEADER; storage[9].resource = 42; storage[9].words[0] = 3;
+        for (i = 0; i < 3; ++i) {
+            node = 102 + r - i;
+            storage[10+i].kind = BH_DRAW_PATH_POINT;
+            storage[10+i].next = i == 2 ? BH_DRAW_END : 11+i;
+            put(&storage[10+i].resource, r ? 20 - i * 10 + (i ? 2 : 0) : 10 - i * 10);
+            put(storage[10+i].words + 2, r ? 2 : 1);
+            put(storage[10+i].words + 3, i ? .5f : 0);
+            put(storage[10+i].words + 4, 123); /* UV/path distance stays current. */
+            bh_interpolation_trail_point(10+i, node, 1, node-1, 1, 42);
+        }
+        bh_interpolation_stamp(9, 999, 1); /* Enclosing refresh cannot replace node IDs. */
+        bh_interpolation_capture(s, &q, 1);
+    }
+    sample = bh_interpolation_sample(s, .5f);
+    assert(get(&sample->commands[10].resource) == 15); /* New head 10 -> 20. */
+    assert(get(&sample->commands[11].resource) == 11); /* Old head 10 -> 12. */
+    assert(get(&sample->commands[12].resource) == 1);  /* Older point 0 -> 2. */
+    assert(get(sample->commands[11].words + 3) == .25f);
+    assert(get(sample->commands[11].words + 2) == 1.5f);
+    assert(get(sample->commands[11].words + 4) == 123);
+    assert(sample->commands[9].words[0] == 3 && sample->commands[10].next == 11);
+    assert(get(&storage[10].resource) == 20);
+    /* Recycled slots and a different trail image cannot inherit old motion. */
+    bh_interpolation_trail_point(10, 102, 2, 0, 0, 42);
+    bh_interpolation_trail_point(11, 102, 1, 0, 0, 99);
+    bh_interpolation_capture(s, &q, 1);
+    sample = bh_interpolation_sample(s, 0);
+    assert(get(&sample->commands[10].resource) == 20);
+    assert(get(&sample->commands[11].resource) == 12);
     free(s);
     puts("SDL timing/interpolation: cadence, catch-up, payload preservation, immutable snapshots, generations, "
-         "cuts, teleports, angle wrapping, nested draw identities, persistent flare consumer state, rigid cockpit attachments and world target anchors passed");
+         "cuts, teleports, angle wrapping, nested draw identities, persistent flare consumer state, rigid cockpit attachments, world target anchors, growing trail topology and moving flare consumption passed");
     return 0;
 }

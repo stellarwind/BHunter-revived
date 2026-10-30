@@ -1,4 +1,7 @@
 #include "bh_trail.h"
+#ifdef BH_SDL_BACKEND
+#include "bh_render_interpolation.h"
+#endif
 #include "bh_fp.h"
 #include "bh_round.h"
 #include "bh_callback_helpers.h"
@@ -210,6 +213,13 @@ void __cdecl bh_trail_refresh(BHEntity *e, void *unused)
             get(node, 0xf0, point->words + 3, 4);
         else
             memcpy(point->words + 3, &zero, 4);
+#ifdef BH_SDL_BACKEND
+        {
+            BHEntity *older = link(node, 0xec);
+            bh_interpolation_trail_point((unsigned long)(point - c->queue->commands), (unsigned long)node,
+                                         node->generation, (unsigned long)older, older ? older->generation : 0, image);
+        }
+#endif
         ++count;
     }
     header->words[0] = count;

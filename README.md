@@ -81,7 +81,7 @@ python tools\build_game.py --debugging --incremental
 python tools\check_sdl3.py
 ```
 
-Diagnostics write to `build-cache/sdl-captures/`. They exercise main/options/video navigation, capture menu rows and VFX at 640×480, 1080p and 4K, check player/camera/cockpit interpolation while visibility and HUD contents change, compare moving target brackets pixel-for-pixel against render-pose references, reproduce and verify portal seam coverage with a moving render camera, check that interpolated frames do not resurrect consumed bullet flares, and run a bounded live menu/music check. They do not automate the desktop. Full mission/NPC visual parity remains a separate validation step.
+Diagnostics write to `build-cache/sdl-captures/`. They exercise main/options/video navigation, capture menu rows and VFX at 640×480, 1080p and 4K, check player/camera/cockpit interpolation while visibility and HUD contents change, compare moving target brackets pixel-for-pixel against render-pose references, reproduce and verify portal seam coverage with a moving render camera, check growing rocket trails and moving flare anchors while ensuring interpolated frames do not resurrect consumed bullet flares, and run a bounded live menu/music check. They do not automate the desktop. Full mission/NPC visual parity remains a separate validation step.
 
 ## Unlock all levels
 
