@@ -28,6 +28,7 @@ unsigned long __cdecl bh_simulation_advance(BHSimulationClock *, double seconds)
 void __cdecl bh_interpolation_bind(BHDrawQueue *);
 void __cdecl bh_interpolation_reset(void);
 unsigned long __cdecl bh_interpolation_mark(void);
+/* Nested draw owners stamp first. Enclosing callbacks preserve those identities. */
 void __cdecl bh_interpolation_stamp(unsigned long start, unsigned long identity, unsigned long generation);
 void __cdecl bh_interpolation_capture(BHRenderInterpolation *, const BHDrawQueue *, long scene);
 BHDrawQueue *__cdecl bh_interpolation_sample(BHRenderInterpolation *, float alpha);

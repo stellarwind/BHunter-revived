@@ -1,4 +1,7 @@
 #include "bh_player_scene.h"
+#ifdef BH_SDL_BACKEND
+#include "bh_render_interpolation.h"
+#endif
 #include "bh_camera_queue.h"
 #include "bh_horizon_queue.h"
 #include "bh_material_queue.h"
@@ -258,8 +261,16 @@ static void tail(BHPlayerScene *s)
     BHEntity *p = s->player;
     unsigned long resource = word_at(p, 0x21c);
     BHVec3 position = vector_at(p, 0xc), angles = vector_at(p, 0x3c);
+#ifdef BH_SDL_BACKEND
+    unsigned long render_mark = bh_interpolation_mark();
+#endif
     if (resource)
         queued(s, bh_draw_submit_resource(s->queue, 0, resource, &position, &angles, 1));
+#ifdef BH_SDL_BACKEND
+    /* The tail is emitted after a visibility-dependent world/HUD command list.
+       Its identity must follow the player, never its offset in that list. */
+    bh_interpolation_stamp(render_mark, (unsigned long)p, p->generation);
+#endif
     if (*s->frame_count < 75)
     {
         if (byte_at(p, 0x2b4) & 0x10)
@@ -297,7 +308,13 @@ static void tail(BHPlayerScene *s)
             else if (s->error == BH_PLAYER_SCENE_OK)
                 s->error = BH_PLAYER_SCENE_QUEUE;
         }
+#ifdef BH_SDL_BACKEND
+        render_mark = bh_interpolation_mark();
+#endif
         queued(s, bh_draw_submit_resource(s->queue, 0, s->cockpit_resource, &position, &angles, 1));
+#ifdef BH_SDL_BACKEND
+        bh_interpolation_stamp(render_mark, (unsigned long)p, p->generation);
+#endif
         trail(s);
     }
 }
@@ -359,6 +376,9 @@ int __cdecl bh_player_scene_draw(BHPlayerScene *s)
     const BHHudWeaponAmmo *ammunition[10];
     unsigned long i;
     int active;
+#ifdef BH_SDL_BACKEND
+    unsigned long render_mark;
+#endif
     if (!s || !(p = s->player) || !s->queue || !s->frame_count || !s->display_width || !s->display_height ||
         !s->mode_count)
         return fail(s, BH_PLAYER_SCENE_ARGUMENT);
@@ -387,7 +407,13 @@ int __cdecl bh_player_scene_draw(BHPlayerScene *s)
             return fail(s, BH_PLAYER_SCENE_ARGUMENT);
         if (!bh_sound_listener(s->sound, 0, 1, eye, angles, velocity))
             fail(s, BH_PLAYER_SCENE_OWNER);
+#ifdef BH_SDL_BACKEND
+        render_mark = bh_interpolation_mark();
+#endif
         queued(s, bh_camera_queue_pose(s->queue, eye, angles));
+#ifdef BH_SDL_BACKEND
+        bh_interpolation_stamp(render_mark, (unsigned long)camera, p->generation);
+#endif
         queued(s, bh_horizon_queue(s->queue, s->horizon_image, 5000, 5000, 25000, 12500, 0x804000));
         flag = (float)byte_at(p, 0x2b8);
         oscillation = stored(sin((double)flag * .02454369260617026) * .1);

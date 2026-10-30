@@ -1,4 +1,7 @@
 #include "bh_scene_background.h"
+#ifdef BH_SDL_BACKEND
+#include "bh_render_interpolation.h"
+#endif
 #include <math.h>
 #include <stddef.h>
 #include <stdlib.h>
@@ -86,6 +89,9 @@ int __cdecl bh_scene_background_step(BHSceneBackground *c, unsigned long index, 
     double elapsed, remaining, ratio_exact, bump, fade_exact, sine, cosine;
     float ratio, complement, fade, vertical;
     int out = 1;
+#ifdef BH_SDL_BACKEND
+    unsigned long mark;
+#endif
     if (!c || !c->queue || !eye || index >= 8)
         return -1;
     s = c->slots + index;
@@ -122,6 +128,9 @@ int __cdecl bh_scene_background_step(BHSceneBackground *c, unsigned long index, 
     position.z = (float)((double)s->end.z * ratio + (double)s->start.z * complement - (double)eye->z * (-.9));
     angles.x = (float)((double)s->yaw - (-3.141592653589793));
     angles.y = angles.z = 0;
+#ifdef BH_SDL_BACKEND
+    mark = bh_interpolation_mark();
+#endif
     result(&out, bh_draw_submit_resource(c->queue, 0, s->model, &position, &angles, 1));
     if (fade > 0)
     {
@@ -146,5 +155,8 @@ int __cdecl bh_scene_background_step(BHSceneBackground *c, unsigned long index, 
             flares(c, &position, 40, fade, &out);
         }
     }
+#ifdef BH_SDL_BACKEND
+    bh_interpolation_stamp(mark, (unsigned long)s, 0);
+#endif
     return out;
 }

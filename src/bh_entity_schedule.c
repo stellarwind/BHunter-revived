@@ -1,4 +1,7 @@
 #include "bh_entity_schedule.h"
+#ifdef BH_SDL_BACKEND
+#include "bh_render_interpolation.h"
+#endif
 #include "bh_draw_submit.h"
 #include "bh_draw_controls.h"
 #include <float.h>
@@ -56,7 +59,7 @@ static int queued(BHEntityScheduleContext *c, int status)
 {
     return status < 0 ? fail(c, BH_SCHEDULE_QUEUE) : 1;
 }
-static int resource(BHEntityScheduleContext *c, BHEntityScheduleRoom *room, int linked)
+static int resource_draw(BHEntityScheduleContext *c, BHEntityScheduleRoom *room, int linked)
 {
     unsigned long flags = room->room->world->query_flags, bucket;
     const BHVec3 *point = &room->room->world->position;
@@ -76,6 +79,18 @@ static int resource(BHEntityScheduleContext *c, BHEntityScheduleRoom *room, int 
     }
     return queued(c, bh_draw_submit_resource(c->queue, bucket, room->resource, point, &room->angles, 1));
 }
+static int resource(BHEntityScheduleContext *c, BHEntityScheduleRoom *room, int linked)
+{
+    int result;
+#ifdef BH_SDL_BACKEND
+    unsigned long mark = bh_interpolation_mark();
+#endif
+    result = resource_draw(c, room, linked);
+#ifdef BH_SDL_BACKEND
+    bh_interpolation_stamp(mark, (unsigned long)room->room->world, 0);
+#endif
+    return result;
+}
 static BHEntity *actor_next(BHEntity *e)
 {
     BHEntity *next;
@@ -93,6 +108,9 @@ static int draw_children(BHEntityScheduleContext *c, BHEntity *head, int pickups
     unsigned long count = 0;
     BHEntity *e = head, *next;
     BHEntityStep draw;
+#ifdef BH_SDL_BACKEND
+    unsigned long mark, identity, generation;
+#endif
     while (e)
     {
         if (++count > c->max_entities)
@@ -100,13 +118,21 @@ static int draw_children(BHEntityScheduleContext *c, BHEntity *head, int pickups
         draw = draw_method(e);
         if (!draw)
             return fail(c, BH_SCHEDULE_ARGUMENT);
+#ifdef BH_SDL_BACKEND
+        mark = bh_interpolation_mark();
+        identity = (unsigned long)e;
+        generation = e->generation;
+#endif
         draw(e); /* original +e8 indirect method */
+#ifdef BH_SDL_BACKEND
+        bh_interpolation_stamp(mark, identity, generation);
+#endif
         next = pickups ? bh_pickup_state(e)->room_next : actor_next(e);
         e = next; /* deliberately read after callback: mutation is observable */
     }
     return 1;
 }
-static int ghost(BHEntityScheduleContext *c, BHEntityScheduleRoom *r)
+static int ghost_draw(BHEntityScheduleContext *c, BHEntityScheduleRoom *r)
 {
     BHWorldGeometry *w = r->room->world;
     BHVec3 center, point;
@@ -136,6 +162,18 @@ static int ghost(BHEntityScheduleContext *c, BHEntityScheduleRoom *r)
     point.y = eye->y * blend + center.y * (1.0f - blend) - (center.y - w->position.y);
     point.z = eye->z * blend + center.z * (1.0f - blend) - (center.z - w->position.z);
     return queued(c, bh_draw_submit_resource(c->queue, 3, r->resource, &point, &r->angles, alpha));
+}
+static int ghost(BHEntityScheduleContext *c, BHEntityScheduleRoom *r)
+{
+    int result;
+#ifdef BH_SDL_BACKEND
+    unsigned long mark = bh_interpolation_mark();
+#endif
+    result = ghost_draw(c, r);
+#ifdef BH_SDL_BACKEND
+    bh_interpolation_stamp(mark, (unsigned long)r->room->world, 1);
+#endif
+    return result;
 }
 static int faces_camera(const BHPortal *p, const BHVec3 *position)
 {

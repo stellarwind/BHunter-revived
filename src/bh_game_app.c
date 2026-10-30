@@ -2559,6 +2559,81 @@ static int startup_player_model_checks(BHGameApp *a)
     stage(a, "Static player model clipping: 220 camera-plane/side/rotation poses passed");
     return startup_callback_continuation_checks(a, resource);
 }
+#ifdef DEBUGGING
+static int startup_player_interpolation_checks(BHGameApp *a)
+{
+    BHEntity saved_player;
+    BHCameraState *camera;
+    BHVec3 zero = {0, 0, 0}, hidden = {0, 0, -100000};
+    BHDrawQueue *sample;
+    unsigned long frame, j, car, camera_command, resource, mismatches = 0;
+    long saved_mode;
+    float expected, observed, previous_x = 0, previous_camera_x = 0, alpha;
+    char option[8], path[512], directory[MAX_PATH];
+    FILE *trace = 0;
+    if (!GetEnvironmentVariableA("BH_PLAYER_INTERPOLATION_CHECK", option, sizeof(option))) return 1;
+    saved_player = *a->player;
+    saved_mode = a->player_state.mode;
+    camera = bh_player_camera_state(a->player);
+    memcpy(&resource, (char *)a->player + 0x21c, 4);
+    if (GetEnvironmentVariableA("BH_RENDER_CAPTURE_DIR", directory, sizeof(directory))) {
+        sprintf(path, "%s\\player-interpolation.csv", directory);
+        trace = fopen(path, "w");
+        if (trace) fprintf(trace, "tick,commands,alpha,car_expected,car_rendered,camera_expected,camera_rendered\n");
+    }
+    a->player_state.mode = 1;
+    *((unsigned char *)a->player + 0x2bb) = 1;
+    memset(&a->interpolation, 0, sizeof(a->interpolation));
+    bh_interpolation_bind(&a->queue);
+    for (frame = 0; frame < 16; ++frame) {
+        a->player->position.x = saved_player.position.x + frame * 2;
+        camera->position.x = a->player->position.x;
+        camera->position.y = a->player->position.y - 2;
+        camera->position.z = a->player->position.z - 12;
+        camera->angles = zero;
+        bh_draw_queue_begin(&a->queue);
+        bh_interpolation_reset();
+        /* Visibility/effect churn ahead of the real player scene must not
+           change the identity of its camera, car, NPCs or cockpit. */
+        for (j = 0; j < frame % 4; ++j)
+            bh_draw_submit_resource(&a->queue, 0, resource, &hidden, &zero, 1);
+        if (!bh_player_scene_draw(&a->player_scene)) { mismatches = 1; break; }
+        bh_interpolation_stamp(9, (unsigned long)a->player, a->player->generation * 2 + 1);
+        car = camera_command = BH_DRAW_END;
+        for (j = 9; j < a->queue.count; ++j) {
+            BHDrawCommand *c = a->queue.commands + j;
+            if (c->kind == BH_DRAW_CAMERA) camera_command = j;
+            if (c->kind == BH_DRAW_MODEL_RESOURCE && c->resource == resource &&
+                !memcmp(c->words, &a->player->position, sizeof(BHVec3))) car = j;
+        }
+        if (car == BH_DRAW_END || camera_command == BH_DRAW_END) { mismatches = 1; break; }
+        bh_interpolation_capture(&a->interpolation, &a->queue, 1);
+        for (j = 0; j < 3; ++j) {
+            float expected_camera, observed_camera;
+            alpha = j * .5f;
+            sample = bh_interpolation_sample(&a->interpolation, alpha);
+            expected = frame ? previous_x + (a->player->position.x - previous_x) * alpha : a->player->position.x;
+            expected_camera = frame ? previous_camera_x + (camera->position.x - previous_camera_x) * alpha : camera->position.x;
+            memcpy(&observed, sample->commands[car].words, 4);
+            memcpy(&observed_camera, &sample->commands[camera_command].resource, 4);
+            if (fabs(observed - expected) > .001 || fabs(observed_camera - expected_camera) > .001) ++mismatches;
+            if (trace) fprintf(trace, "%lu,%lu,%.1f,%.9g,%.9g,%.9g,%.9g\n", frame, a->queue.count, alpha,
+                               expected, observed, expected_camera, observed_camera);
+            if (frame == 8 && j == 1 && (!render_frame(a, sample) || !capture_fixture(a, "player-interpolated"))) ++mismatches;
+        }
+        previous_x = a->player->position.x;
+        previous_camera_x = camera->position.x;
+    }
+    if (trace) fclose(trace);
+    *a->player = saved_player;
+    a->player_state.mode = saved_mode;
+    bh_interpolation_bind(0);
+    memset(&a->interpolation, 0, sizeof(a->interpolation));
+    if (mismatches) return failure(a, 13, "Player/camera interpolation failed under visibility churn");
+    stage(a, "SDL player interpolation: 16 production scene poses x 3 render fractions, changing visibility, zero pose mismatches");
+    return 1;
+}
+#endif
 /* Simulation and audio run at 30 Hz. Render copies interpolate between the
    last two completed ticks; all callback mutations stay in the render copy. */
 static int manual_loop(BHGameApp *a)
@@ -3111,6 +3186,9 @@ int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int start
         if (!capture_fixture(a, "level-menu") || !startup_menu_checks(a) ||
             !startup_effect_checks(a) || !startup_player_model_checks(a))
             goto done;
+#ifdef DEBUGGING
+        if (!startup_player_interpolation_checks(a)) goto done;
+#endif
         if (a->hardware && (a->render_mode.engine.textures.software || !a->render_mode.engine.device ||
                             !a->primitive.vertices || a->primitive.locks))
         {

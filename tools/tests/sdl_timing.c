@@ -28,11 +28,44 @@ static void frame(BHDrawQueue *q, unsigned long owner, unsigned long generation,
     put(q->commands[9].words + 17, .5f);
     bh_interpolation_stamp(9, owner, generation);
 }
+/* A player refresh contains camera, changing portal visibility, nested NPC
+   draws and finally the player model. A flat command ordinal is not identity. */
+static unsigned long composed_frame(BHDrawQueue *q, unsigned long scenery, float camera_x, float car_x)
+{
+    unsigned long i, at;
+    bh_interpolation_bind(q);
+    bh_interpolation_reset();
+    memset(q->commands, 0, q->capacity * sizeof(BHDrawCommand));
+    q->count = 10;
+    q->commands[9].kind = BH_DRAW_CAMERA;
+    put(&q->commands[9].resource, camera_x);
+    bh_interpolation_stamp(9, 0x1000, 5);
+    for (i = 0; i < scenery; ++i) {
+        at = q->count++;
+        q->commands[at].kind = BH_DRAW_MODEL_RESOURCE;
+        q->commands[at].resource = 99;
+        put(q->commands[at].words, 100 + i * 100);
+        bh_interpolation_stamp(at, 0x2000 + i, 0);
+    }
+    at = q->count++;
+    q->commands[at].kind = BH_DRAW_MODEL_RESOURCE;
+    q->commands[at].resource = 42; /* Same model as player, different entity. */
+    put(q->commands[at].words, car_x + 100);
+    bh_interpolation_stamp(at, 0x3000, 5);
+    at = q->count++;
+    q->commands[at].kind = BH_DRAW_MODEL_RESOURCE;
+    q->commands[at].resource = 42;
+    put(q->commands[at].words, car_x);
+    bh_interpolation_stamp(at, 0x4000, 5);
+    /* Entity dispatch stamps the enclosing refresh after its nested owners. */
+    bh_interpolation_stamp(9, 0x4000, 11);
+    return at;
+}
 int main(void)
 {
     unsigned rates[] = {30, 60, 75, 120, 144, 165, 240}, r, i;
     BHSimulationClock clock;
-    unsigned long ticks;
+    unsigned long ticks, car;
     BHDrawCommand storage[16], saved;
     BHDrawQueue q = {0}, *sample;
     BHRenderInterpolation *s = calloc(1, sizeof(*s));
@@ -90,8 +123,24 @@ int main(void)
     sample = bh_interpolation_sample(s, .5f);
     assert(get(&sample->commands[9].resource) == 15);
     assert(fabs(get(sample->commands[9].words + 2) - 3.14159265f) < .0001);
+    memset(s, 0, sizeof(*s));
+    composed_frame(&q, 1, 10, 20);
+    bh_interpolation_capture(s, &q, 1);
+    car = composed_frame(&q, 3, 20, 30);
+    bh_interpolation_capture(s, &q, 1);
+    sample = bh_interpolation_sample(s, .5f);
+    assert(get(&sample->commands[9].resource) == 15);
+    assert(get(sample->commands[car].words) == 25);
+    assert(get(sample->commands[car - 1].words) == 125);
+    assert(get(sample->commands[car].words) - get(&sample->commands[9].resource) == 10);
+    /* Consecutive samples must move camera/car together even when the number
+       of visible rooms changes and the NPC shares the player's model. */
+    for (i = 0; i <= 4; ++i) {
+        sample = bh_interpolation_sample(s, i * .25f);
+        assert(get(sample->commands[car].words) - get(&sample->commands[9].resource) == 10);
+    }
     free(s);
     puts("SDL timing/interpolation: cadence, catch-up, payload preservation, immutable snapshots, generations, "
-         "cuts, teleports and angle wrapping passed");
+         "cuts, teleports, angle wrapping and nested player/camera identity under changing visibility passed");
     return 0;
 }

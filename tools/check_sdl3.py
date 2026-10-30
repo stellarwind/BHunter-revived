@@ -1,5 +1,5 @@
 """Run SDL menu/GPU diagnostics without desktop automation or extra Python packages."""
-import argparse, csv, json, math, os, shutil, struct, subprocess, zlib
+import argparse, csv, hashlib, json, math, os, shutil, struct, subprocess, zlib
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -64,9 +64,12 @@ def compare_reference(root, reference):
     return results
 
 def main():
-    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--reuse-captures',action='store_true');parser.add_argument('--reference-dir',type=Path,help='Original renderer fixture PNG directory');args=parser.parse_args()
-    out=ROOT/'build-cache/sdl-captures';out.mkdir(parents=True,exist_ok=True)
-    record=json.loads((ROOT/'build-cache/build.json').read_text());assert record.get('passed') and record.get('debugging'),'Build --debugging first'
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--reuse-captures',action='store_true');parser.add_argument('--reference-dir',type=Path,help='Original renderer fixture PNG directory');parser.add_argument('--runtime-dir',type=Path,default=Path('build'));args=parser.parse_args()
+    runtime=(ROOT/args.runtime_dir).resolve()
+    cache=ROOT/'build-cache'
+    if runtime!=(ROOT/'build').resolve():cache=cache/'targets'/hashlib.sha256(str(runtime).encode()).hexdigest()[:12]
+    out=cache/'sdl-captures';out.mkdir(parents=True,exist_ok=True)
+    record=json.loads((cache/'build.json').read_text());assert record.get('passed') and record.get('debugging'),'Build --debugging first'
     gcc=shutil.which('gcc');assert gcc,'32-bit MinGW gcc required for timing checks'
     timing=out/'timing-tests.exe'
     subprocess.run([gcc,'-O2','-I'+str(ROOT/'src'),str(ROOT/'tools/tests/sdl_timing.c'),str(ROOT/'src/bh_render_interpolation.c'),'-o',str(timing)],check=True)
@@ -74,26 +77,26 @@ def main():
     if not args.reuse_captures:
         for size in ('640x480','1920x1080','3840x2160'):
             captures=out/size;captures.mkdir(exist_ok=True)
-            env=dict(os.environ,BH_RENDER_CAPTURE_DIR=str(captures),BH_GPU_TEST_SIZE=size)
-            subprocess.run([str(ROOT/'build/BHunter-source.exe'),'--startup-check'],env=env,timeout=60,check=True)
-            log=(ROOT/'build/startup-check.log').read_text();assert 'SDL menu navigation:' in log
-            shutil.copy2(ROOT/'build/startup-check.log',captures/'startup-check.log')
+            env=dict(os.environ,BH_RENDER_CAPTURE_DIR=str(captures),BH_GPU_TEST_SIZE=size,BH_PLAYER_INTERPOLATION_CHECK='1')
+            subprocess.run([str(runtime/'BHunter-source.exe'),'--startup-check'],env=env,timeout=60,check=True)
+            log=(runtime/'startup-check.log').read_text();assert 'SDL menu navigation:' in log;assert 'SDL player interpolation:' in log
+            shutil.copy2(runtime/'startup-check.log',captures/'startup-check.log')
             print(size, 'menu navigation and GPU fixtures passed',flush=True)
-        subprocess.run([str(ROOT/'build/BHunter-source.exe')],env=dict(os.environ,BH_MENU_SMOKE_SECONDS='8',BH_RENDER_CAPTURE_DIR=str(out/'640x480')),timeout=30,check=True)
-    report={'scaling':compare(out)}
+        subprocess.run([str(runtime/'BHunter-source.exe')],env=dict(os.environ,BH_MENU_SMOKE_SECONDS='8',BH_RENDER_CAPTURE_DIR=str(out/'640x480')),timeout=30,check=True)
+    report={'scaling':compare(out),'player_pose_checks_per_resolution':48}
     if args.reference_dir:report['original_renderer']=compare_reference(out,args.reference_dir)
-    smoke=json.loads((ROOT/'build/menu-smoke-summary.json').read_text());report['menu_smoke']=smoke
+    smoke=json.loads((runtime/'menu-smoke-summary.json').read_text());report['menu_smoke']=smoke
     assert smoke['error']==0 and smoke['music_failures']==0
     assert smoke['simulation_ticks']==smoke['sound_ticks']
     assert abs(smoke['simulation_ticks']/smoke['seconds']-30)<1
     if smoke['local_music']:assert smoke['music_position']>500 and smoke['music_plays']>=1
-    newest=max((ROOT/'build').glob('frame-times-*.csv'),key=lambda p:p.stat().st_mtime)
+    newest=max(runtime.glob('frame-times-*.csv'),key=lambda p:p.stat().st_mtime)
     rows=[r for r in csv.DictReader(newest.open()) if float(r['time_ms'])>1000]
     mean=sum(float(r['interval_ms']) for r in rows)/len(rows);report['steady_render_interval_ms']=mean
     assert 15<mean<19, f'Menu pacing differs from 60 Hz: {mean} ms'
     objdump=shutil.which('objdump');assert objdump
     for name in ('BHunter-source.exe','BHunterGPU.dll','SDL3.dll'):
-        imports=subprocess.check_output([objdump,'-p',str(ROOT/'build'/name)],text=True)
+        imports=subprocess.check_output([objdump,'-p',str(runtime/name)],text=True)
         assert 'dll name: ddraw.dll' not in imports.lower()
     (out/'results.json').write_text(json.dumps(report,indent=2)+'\n')
     print('SDL menu checks passed. Report:',out/'results.json')

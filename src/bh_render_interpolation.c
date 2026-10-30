@@ -27,7 +27,7 @@ void __cdecl bh_interpolation_stamp(unsigned long start, unsigned long identity,
     if (!tracked || !tracked->commands || start > tracked->count)
         return;
     for (i = start; i < tracked->count; ++i)
-        if (spatial(tracked->commands[i].kind))
+        if (spatial(tracked->commands[i].kind) && !identities[i].owner)
         {
             identities[i].owner = identity;
             identities[i].generation = generation;
