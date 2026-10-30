@@ -45,6 +45,7 @@ int __cdecl bh_weapon_ready_reset(BHWeaponReadyContext *c, BHEntity *weapon, con
     c->random_calls = 1;
     bh_round_float(&pitch, .9 - (double)value * (-0.000006103515625));
     handle = bh_sound_request(c->sound, c->sound_resource, .9f, pitch, &player->position, &player->origin);
-    c->error = handle == BH_SOUND_INVALID ? 2 : 0;
+    /* A lower-priority cue may be dropped while earlier selections play. */
+    c->error = handle == BH_SOUND_INVALID && c->sound->error != BH_SOUND_PRIORITY ? 2 : 0;
     return !c->error;
 }

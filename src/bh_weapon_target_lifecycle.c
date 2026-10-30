@@ -56,7 +56,7 @@ int __cdecl bh_weapon_target_ready(BHWeaponTargetContext *c, BHEntity *w, const 
     pitch = stored(.9 - (double)value * (-.000006103515625));
     ++c->sound_requests;
     h = bh_sound_request(c->sound, c->ready_sound, .8f, pitch, &p->position, &p->origin);
-    if (h == BH_SOUND_INVALID)
+    if (h == BH_SOUND_INVALID && c->sound->error != BH_SOUND_PRIORITY)
         c->error = BH_WEAPON_TARGET_SOUND;
     return c->error == BH_WEAPON_TARGET_OK;
 }

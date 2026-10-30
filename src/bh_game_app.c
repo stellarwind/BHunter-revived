@@ -3057,14 +3057,14 @@ static int manual_loop(BHGameApp *a)
         if (a->player_tick.error || a->player_query.error || a->vm.error || a->lifetime.timers.error || a->menu.error ||
             a->flyby.error || a->actor_construct.error || a->actor_response.error)
         {
-            char text[256];
-#ifdef DEBUGGING
+            char text[512];
             sprintf(
                 text,
-                "Source dependency failure: player=%d query=%d vm=%d timer=%d menu=%d flyby=%d actor=%d response=%d",
+                "Source dependency failure: player=%d query=%d vm=%d timer=%d menu=%d flyby=%d actor=%d response=%d weapon=%d method=%08lx ready=%d target=%d arc=%d sound=%d",
                 a->player_tick.error, a->player_query.error, a->vm.error, a->lifetime.timers.error, a->menu.error,
-                a->flyby.error, a->actor_construct.error, a->actor_response.error);
-#endif
+                a->flyby.error, a->actor_construct.error, a->actor_response.error,
+                a->weapon_dispatch.error, a->weapon_dispatch.identity, a->weapon_ready.error,
+                a->weapon_target.error, a->weapon_arc.error, a->sound.error);
             failure(a, 12, text);
             break;
         }
