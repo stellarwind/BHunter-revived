@@ -1,4 +1,5 @@
 #include "bh_render_interpolation.h"
+#include "bh_flash_flare.h"
 #include <float.h>
 #include <math.h>
 #include <string.h>
@@ -62,6 +63,10 @@ void __cdecl bh_interpolation_capture(BHRenderInterpolation *s, const BHDrawQueu
     s->current_count = q->count;
     s->scene = scene;
     s->ready = 1;
+    s->sampled = 0;
+    for (i = 9; i < s->current_count; ++i)
+        if (s->current[i].kind == BH_DRAW_FLARE)
+            s->flare_strength[i] = s->current[i].words[4];
     memset(s->hash, 0, sizeof(s->hash));
     for (i = 9; i < s->previous_count; ++i)
     {
@@ -111,6 +116,8 @@ BHDrawQueue *__cdecl bh_interpolation_sample(BHRenderInterpolation *s, float alp
     {
         BHDrawCommand *c = s->output + i, *old = 0;
         unsigned long *to, *from;
+        if (c->kind == BH_DRAW_FLARE)
+            c->words[4] = s->flare_strength[i];
         if (!spatial(c->kind) || (!s->current_ids[i].owner && c->kind != BH_DRAW_CAMERA))
             continue;
         slot = key(c, s->current_ids + i);
@@ -146,10 +153,22 @@ BHDrawQueue *__cdecl bh_interpolation_sample(BHRenderInterpolation *s, float alp
         if (c->kind == BH_DRAW_ORIENTED || c->kind == BH_DRAW_QUAD)
             blend(c->words + 11, old->words + 11, alpha, 1);
     }
+    s->sampled = 1;
     s->queue.commands = s->output;
     s->queue.count = s->current_count;
     s->queue.capacity = BH_INTERPOLATION_CAPACITY;
     return &s->queue;
+}
+
+void __cdecl bh_interpolation_rendered(BHRenderInterpolation *s)
+{
+    unsigned long i;
+    if (!s || !s->sampled)
+        return;
+    for (i = 9; i < s->current_count; ++i)
+        if (s->current[i].kind == BH_DRAW_FLARE)
+            s->flare_strength[i] = s->output[i].words[4];
+    s->sampled = 0;
 }
 
 unsigned long __cdecl bh_simulation_advance(BHSimulationClock *c, double now)

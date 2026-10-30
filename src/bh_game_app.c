@@ -2158,6 +2158,7 @@ static int render_frame(BHGameApp *a, BHDrawQueue *queue)
     saved = a->render.draw;
     a->render.draw = queue;
     ok = bh_render_execute(&a->render);
+    if (queue == &a->interpolation.queue) bh_interpolation_rendered(&a->interpolation);
     a->render.draw = saved;
 #ifdef DEBUGGING
     if (a->render.failures && a->render.error == BH_RENDER_EXECUTE_CALLBACK && !a->draw_warning_logged)
@@ -2382,7 +2383,7 @@ static int startup_effect_checks(BHGameApp *a)
     BHHudStatusState status;
     BHHudWeaponAmmo ammo[2];
     const BHHudWeaponAmmo *ammo_ptr[2];
-    static const char *names[9] = {"beam",
+    static const char *names[12] = {"beam",
                                    "boost",
                                    "logo",
                                    "panel",
@@ -2390,7 +2391,10 @@ static int startup_effect_checks(BHGameApp *a)
                                    "HUD",
                                    "ballistic trail",
                                    "ballistic fresh flare",
-                                   "ballistic repeated flare"};
+                                   "ballistic repeated flare",
+                                   "interpolated fresh flare",
+                                   "interpolated repeated flare",
+                                   "next tick fresh flare"};
     memset(&status, 0, sizeof(status));
     memset(ammo, 0, sizeof(ammo));
     ammo[0].amount = 216;
@@ -2407,15 +2411,16 @@ static int startup_effect_checks(BHGameApp *a)
     if (!startup_perf_checks(a))
         return 0;
 #endif
-    for (pass = 0; pass < 9; ++pass)
+    for (pass = 0; pass < 12; ++pass)
     {
         memset(&fill, 0, sizeof(fill));
         fill.dwSize = sizeof(fill);
         if (IDirectDrawSurface_Blt(a->target, 0, 0, 0, DDBLT_COLORFILL | DDBLT_WAIT, &fill) != DD_OK)
             return failure(a, 13, "Effect fixture clear failed");
-        /* Retain the actual published command bytes on the final pass, as the
-         original presentation worker does between producer ticks. */
-        if (pass != 8 && (!bh_draw_queue_begin(&a->queue) || bh_camera_queue_pose(&a->queue, &zero, &zero) != 1))
+        /* Pass 8 replays the same mutable queue; pass 10 replays its render
+           snapshot through interpolation. Both must retain flare consumption. */
+        if (pass != 8 && pass != 10 &&
+            (!bh_draw_queue_begin(&a->queue) || bh_camera_queue_pose(&a->queue, &zero, &zero) != 1))
             return failure(a, 13, "Effect fixture initialization failed");
         if (pass == 0)
         {
@@ -2450,17 +2455,19 @@ static int startup_effect_checks(BHGameApp *a)
             if (!bh_hud_flat_draw(&a->flat_hud, &status))
                 return failure(a, 13, "Static HUD fixture queue failed");
         }
-        else if (pass == 6 || pass == 7)
+        else if (pass == 6 || pass == 7 || pass == 9 || pass == 11)
         {
             if (bh_draw_segment(&a->queue, 3, a->projectile_draw.ballistic_trail, &left, &right, .3f, .3f, 1, 1, 0) !=
                 1)
                 return failure(a, 13, "Ballistic trail fixture queue failed");
-            if (pass == 7 &&
+            if ((pass == 7 || pass == 9 || pass == 11) &&
                 bh_flare_queue(&a->queue, &center, 2, 50, a->projectile_draw.ballistic_flare, 0, 0, 0, 0) != 1)
                 return failure(a, 13, "Ballistic flare fixture queue failed");
         }
-        if (!render_frame(a, &a->queue))
-            return 0;
+        if (pass >= 9) {
+            if (pass != 10) bh_interpolation_capture(&a->interpolation, &a->queue, 0);
+            if (!render_frame(a, bh_interpolation_sample(&a->interpolation, pass == 10 ? .5f : 0))) return 0;
+        } else if (!render_frame(a, &a->queue)) return 0;
         sprintf(text, "effect-%lu", pass);
         if (!capture_fixture(a, text)) return 0;
         memset(&locked, 0, sizeof(locked));
@@ -2502,6 +2509,10 @@ static int startup_effect_checks(BHGameApp *a)
         }
         if (pass == 8 && (hash != trail_hash || hash == fresh_hash))
             return failure(a, 13, "Repeated ballistic queue did not restore orange trail pixels");
+        if ((pass == 9 || pass == 11) && hash != fresh_hash)
+            return failure(a, 13, "Fresh publication lost its ballistic flare");
+        if (pass == 10 && hash != trail_hash)
+            return failure(a, 13, "Interpolated render resurrected the consumed ballistic flare");
         if (pixels < 8)
             return failure(a, 13, "Effect fixture produced no visible footprint");
         if ((pass == 2 || pass == 3 || pass == 5) && unique < 16)

@@ -1,3 +1,4 @@
+#include "../../src/bh_flash_flare.h"
 #include "../../src/bh_render_interpolation.h"
 #include <assert.h>
 #include <math.h>
@@ -40,7 +41,8 @@ static unsigned long composed_frame(BHDrawQueue *q, unsigned long scenery, float
     q->commands[9].kind = BH_DRAW_CAMERA;
     put(&q->commands[9].resource, camera_x);
     bh_interpolation_stamp(9, 0x1000, 5);
-    for (i = 0; i < scenery; ++i) {
+    for (i = 0; i < scenery; ++i)
+    {
         at = q->count++;
         q->commands[at].kind = BH_DRAW_MODEL_RESOURCE;
         q->commands[at].resource = 99;
@@ -135,12 +137,40 @@ int main(void)
     assert(get(sample->commands[car].words) - get(&sample->commands[9].resource) == 10);
     /* Consecutive samples must move camera/car together even when the number
        of visible rooms changes and the NPC shares the player's model. */
-    for (i = 0; i <= 4; ++i) {
+    for (i = 0; i <= 4; ++i)
+    {
         sample = bh_interpolation_sample(s, i * .25f);
         assert(get(sample->commands[car].words) - get(&sample->commands[9].resource) == 10);
     }
+    /* Motion snapshots stay immutable, but repeated rendering must retain the
+       flare consumer's normalized strength until the next producer tick. */
+    memset(s, 0, sizeof(*s));
+    frame(&q, 0, 0, 0);
+    storage[9].kind = BH_DRAW_FLARE;
+    put(storage[9].words + 4, 50);
+    saved = storage[9];
+    bh_interpolation_capture(s, &q, 1);
+    sample = bh_interpolation_sample(s, 0);
+    assert(get(sample->commands[9].words + 4) == 50);
+    put(sample->commands[9].words + 4, 50.f / 320);
+    bh_interpolation_rendered(s);
+    sample = bh_interpolation_sample(s, .5f);
+    assert(get(sample->commands[9].words + 4) == 50.f / 320);
+    put(sample->commands[9].words + 4, (50.f / 320) / 320);
+    bh_interpolation_rendered(s);
+    assert(!memcmp(&storage[9], &saved, sizeof(saved)));
+    assert(!memcmp(&s->current[9], &saved, sizeof(saved)));
+    /* An unexecuted sample cannot consume a newly published flare. */
+    sample = bh_interpolation_sample(s, 1);
+    put(sample->commands[9].words + 4, 0);
+    bh_interpolation_capture(s, &q, 1);
+    bh_interpolation_rendered(s);
+    sample = bh_interpolation_sample(s, 0);
+    assert(get(sample->commands[9].words + 4) == 50);
+    bh_interpolation_rendered(s); /* Offscreen cull leaves strength unchanged. */
+    assert(get(bh_interpolation_sample(s, .5f)->commands[9].words + 4) == 50);
     free(s);
     puts("SDL timing/interpolation: cadence, catch-up, payload preservation, immutable snapshots, generations, "
-         "cuts, teleports, angle wrapping and nested player/camera identity under changing visibility passed");
+         "cuts, teleports, angle wrapping, nested draw identities and persistent flare consumer state passed");
     return 0;
 }

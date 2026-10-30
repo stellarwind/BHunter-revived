@@ -1214,7 +1214,11 @@
       "/DDIRECT3D_VERSION=0x0500",
       "/DDIRECTINPUT_VERSION=0x0500"
     ],
-    "bh_render_interpolation.c": [],
+    "bh_render_interpolation.c": [
+      "/I{DXSDK}/include",
+      "/DDIRECT3D_VERSION=0x0500",
+      "/DDIRECTDRAW_VERSION=0x0500"
+    ],
     "bh_portal_clip.c": [
       "/I{DXSDK}/include",
       "/DDIRECT3D_VERSION=0x0500",

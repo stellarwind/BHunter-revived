@@ -88,13 +88,20 @@ def main():
             print(size, 'menu navigation and GPU fixtures passed',flush=True)
         subprocess.run([str(runtime/'BHunter-source.exe')],env=dict(os.environ,BH_MENU_SMOKE_SECONDS='8',BH_RENDER_CAPTURE_DIR=str(out/'640x480')),timeout=30,check=True)
     seams={}
+    flare_replay={}
     for size in ('640x480','1920x1080','3840x2160'):
         log=(out/size/'startup-check.log').read_text()
         match=re.search(r'SDL portal seam pixels: stale camera=(\d+) blue gap pixels, render camera=(\d+)',log)
         assert match, f'Missing portal seam positive/negative controls: {size}'
         before,after=map(int,match.groups());assert before>=10 and after==0
         seams[size]={'stale_camera_gap_pixels':before,'render_camera_gap_pixels':after}
-    report={'scaling':compare(out),'player_pose_checks_per_resolution':48,'portal_seams':seams}
+        images={n:png(out/size/f'effect-{n}.png')[2] for n in (6,7,9,10,11)}
+        assert images[9]==images[7], f'Fresh interpolated flare changed: {size}'
+        assert images[10]==images[6], f'Consumed flare resurrected on second render: {size}'
+        assert images[11]==images[7], f'Next tick failed to publish fresh flare: {size}'
+        assert images[6]!=images[7], f'Flare positive control is invisible: {size}'
+        flare_replay[size]={'first_render_matches_fresh':True,'second_render_matches_trail_only':True,'new_tick_restores_fresh':True}
+    report={'scaling':compare(out),'player_pose_checks_per_resolution':48,'portal_seams':seams,'flare_replay':flare_replay}
     if args.reference_dir:report['original_renderer']=compare_reference(out,args.reference_dir)
     smoke=json.loads((runtime/'menu-smoke-summary.json').read_text());report['menu_smoke']=smoke
     assert smoke['error']==0 and smoke['music_failures']==0

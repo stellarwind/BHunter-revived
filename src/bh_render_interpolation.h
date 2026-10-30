@@ -14,15 +14,18 @@ typedef struct BHRenderInterpolation
     BHDrawCommand previous[BH_INTERPOLATION_CAPACITY], current[BH_INTERPOLATION_CAPACITY],
         output[BH_INTERPOLATION_CAPACITY];
     BHDrawIdentity previous_ids[BH_INTERPOLATION_CAPACITY], current_ids[BH_INTERPOLATION_CAPACITY];
+    /* Render-consumer state belongs to a publication, not to its immutable
+       motion snapshot. Flare execution normalizes this value in place. */
+    unsigned long flare_strength[BH_INTERPOLATION_CAPACITY];
     unsigned long previous_count, current_count, hash[BH_INTERPOLATION_HASH];
     long scene;
-    int ready;
+    int ready, sampled;
     BHDrawQueue queue;
 } BHRenderInterpolation;
 typedef struct BHSimulationClock
 {
     double last, remainder;
-    int ready;
+    int ready, sampled;
 } BHSimulationClock;
 unsigned long __cdecl bh_simulation_advance(BHSimulationClock *, double seconds);
 void __cdecl bh_interpolation_bind(BHDrawQueue *);
@@ -32,4 +35,6 @@ unsigned long __cdecl bh_interpolation_mark(void);
 void __cdecl bh_interpolation_stamp(unsigned long start, unsigned long identity, unsigned long generation);
 void __cdecl bh_interpolation_capture(BHRenderInterpolation *, const BHDrawQueue *, long scene);
 BHDrawQueue *__cdecl bh_interpolation_sample(BHRenderInterpolation *, float alpha);
+/* Retain only mutable consumer fields after the sampled queue is executed. */
+void __cdecl bh_interpolation_rendered(BHRenderInterpolation *);
 #endif
