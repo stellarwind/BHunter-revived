@@ -52,7 +52,23 @@ int __cdecl bh_draw_controls_clip_rect(BHDrawQueue *q, unsigned long bucket, flo
     values[2] = width;
     values[3] = height;
     c->kind = BH_DRAW_CLIP_RECT;
+    c->resource = 0;
     memcpy(c->words, values, sizeof(values));
+    return 1;
+}
+int __cdecl bh_draw_controls_portal_clip(BHDrawQueue *q, unsigned long bucket, const BHVec3 corners[4],
+                                         unsigned long parent, float near_z, float far_z)
+{
+    BHDrawCommand *c;
+    if (!corners || (parent != BH_DRAW_END && (!q || parent >= q->count))) return -1;
+    c = append(q, bucket);
+    if (!c) return q && q->error == BH_DRAW_FULL ? 0 : -1;
+    c->kind = BH_DRAW_CLIP_RECT;
+    c->resource = BH_PORTAL_CLIP_WORLD;
+    memcpy(c->words, corners, 4 * sizeof(BHVec3));
+    c->words[12] = parent;
+    memcpy(c->words + 13, &near_z, 4);
+    memcpy(c->words + 14, &far_z, 4);
     return 1;
 }
 int __cdecl bh_draw_controls_texture_mask(BHDrawControlContext *c, unsigned long mask)
@@ -101,7 +117,13 @@ int __cdecl bh_draw_controls_execute(BHDrawControlContext *c, const BHDrawQueue 
     }
     if (!c->view)
         return 0;
-    memcpy(v, command->words, sizeof(v));
+    if (command->resource == BH_PORTAL_CLIP_WORLD) {
+        float bounds[4];
+        if (!bh_portal_clip_project(q, (unsigned long)(command - q->commands), c->camera, c->view,
+                                   c->portal_cache, bounds)) return 0;
+        v[0] = bounds[0]; v[1] = bounds[1];
+        v[2] = bounds[2] - bounds[0]; v[3] = bounds[3] - bounds[1];
+    } else memcpy(v, command->words, sizeof(v));
     ok = bh_view_clip_rect(c->view, v[0], v[1], v[2], v[3]);
     if (ok)
     {

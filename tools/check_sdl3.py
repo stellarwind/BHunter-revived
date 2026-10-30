@@ -1,5 +1,5 @@
 """Run SDL menu/GPU diagnostics without desktop automation or extra Python packages."""
-import argparse, csv, hashlib, json, math, os, shutil, struct, subprocess, zlib
+import argparse, csv, hashlib, json, math, os, re, shutil, struct, subprocess, zlib
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -74,6 +74,10 @@ def main():
     timing=out/'timing-tests.exe'
     subprocess.run([gcc,'-O2','-I'+str(ROOT/'src'),str(ROOT/'tools/tests/sdl_timing.c'),str(ROOT/'src/bh_render_interpolation.c'),'-o',str(timing)],check=True)
     subprocess.run([str(timing)],check=True)
+    portal_test=out/'portal-clip-tests.exe'
+    portal_sources=['tools/tests/portal_clip.c','src/bh_portal_clip.c','src/bh_clipper.c','src/bh_matrix_inverse.c','src/bh_math.c','src/bh_round.c']
+    subprocess.run([gcc,'-O2','-I'+str(ROOT/'src'),*[str(ROOT/name) for name in portal_sources],'-o',str(portal_test)],check=True)
+    subprocess.run([str(portal_test)],check=True)
     if not args.reuse_captures:
         for size in ('640x480','1920x1080','3840x2160'):
             captures=out/size;captures.mkdir(exist_ok=True)
@@ -83,7 +87,14 @@ def main():
             shutil.copy2(runtime/'startup-check.log',captures/'startup-check.log')
             print(size, 'menu navigation and GPU fixtures passed',flush=True)
         subprocess.run([str(runtime/'BHunter-source.exe')],env=dict(os.environ,BH_MENU_SMOKE_SECONDS='8',BH_RENDER_CAPTURE_DIR=str(out/'640x480')),timeout=30,check=True)
-    report={'scaling':compare(out),'player_pose_checks_per_resolution':48}
+    seams={}
+    for size in ('640x480','1920x1080','3840x2160'):
+        log=(out/size/'startup-check.log').read_text()
+        match=re.search(r'SDL portal seam pixels: stale camera=(\d+) blue gap pixels, render camera=(\d+)',log)
+        assert match, f'Missing portal seam positive/negative controls: {size}'
+        before,after=map(int,match.groups());assert before>=10 and after==0
+        seams[size]={'stale_camera_gap_pixels':before,'render_camera_gap_pixels':after}
+    report={'scaling':compare(out),'player_pose_checks_per_resolution':48,'portal_seams':seams}
     if args.reference_dir:report['original_renderer']=compare_reference(out,args.reference_dir)
     smoke=json.loads((runtime/'menu-smoke-summary.json').read_text());report['menu_smoke']=smoke
     assert smoke['error']==0 and smoke['music_failures']==0

@@ -223,7 +223,7 @@ static void portal_quad(const BHPortal *p, BHVec3 q[4])
         }
     }
 }
-static int schedule(BHEntityScheduleContext *c, BHEntityScheduleRoom *r, unsigned long depth)
+static int schedule(BHEntityScheduleContext *c, BHEntityScheduleRoom *r, unsigned long depth, unsigned long parent_clip)
 {
     BHEntityScheduleRoom *other;
     BHWorldGeometry *world;
@@ -233,7 +233,7 @@ static int schedule(BHEntityScheduleContext *c, BHEntityScheduleRoom *r, unsigne
     BHVec3 corners[4], projected[4];
     BHViewConfig saved;
     float left, right, top, bottom;
-    unsigned long i, j, n;
+    unsigned long i, j, n, child_clip;
     if (depth > c->max_depth)
         return fail(c, BH_SCHEDULE_DEPTH);
     if (!r || !r->room || !r->room->world)
@@ -320,13 +320,21 @@ static int schedule(BHEntityScheduleContext *c, BHEntityScheduleRoom *r, unsigne
         c->viewport->right = right;
         c->viewport->top = top;
         c->viewport->bottom = bottom;
+        child_clip = c->queue->count;
+#ifdef BH_SDL_BACKEND
+        if (!queued(c, bh_draw_controls_portal_clip(c->queue, 0, corners, parent_clip,
+                                                   c->viewport->near_z, c->viewport->far_z)) ||
+            !queued(c, bh_draw_controls_portal_clip(c->queue, 3, corners, parent_clip,
+                                                   c->viewport->near_z, c->viewport->far_z)))
+#else
         if (!queued(c, bh_draw_controls_clip_rect(c->queue, 0, left, top, right - left, bottom - top)) ||
             !queued(c, bh_draw_controls_clip_rect(c->queue, 3, left, top, right - left, bottom - top)))
+#endif
         {
             *c->viewport = saved;
             return 0;
         }
-        j = schedule(c, other, depth + 1);
+        j = schedule(c, other, depth + 1, child_clip);
         *c->viewport = saved;
         if (!j)
             return 0;
@@ -338,5 +346,5 @@ int __cdecl bh_entity_schedule(BHEntityScheduleContext *c, BHEntityScheduleRoom 
     if (!c || !c->queue || !c->viewport || !c->camera || !room || !c->max_rooms || !c->max_entities || !c->max_depth)
         return fail(c, BH_SCHEDULE_ARGUMENT);
     c->error = BH_SCHEDULE_OK;
-    return schedule(c, room, 0);
+    return schedule(c, room, 0, BH_DRAW_END);
 }

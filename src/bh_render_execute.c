@@ -47,6 +47,7 @@ static int draw_one(BHRenderExecute *e, const BHDrawCommand *c, unsigned long *n
     case BH_DRAW_CLIP_RECT:
         return e->controls ? bh_draw_controls_execute(e->controls, e->draw, c, next) : -3;
     case BH_DRAW_CAMERA:
+        if (e->controls) bh_portal_clip_reset(e->controls->portal_cache);
         return e->view && e->camera ? bh_camera_queue_execute(e->view, e->camera, e->draw, c, next) : -3;
     case BH_DRAW_HORIZON:
         return e->horizon ? bh_horizon_queue_execute(e->horizon, e->draw, c, next) : -3;
@@ -122,6 +123,7 @@ int __cdecl bh_render_execute(BHRenderExecute *e)
         failed(e, BH_RENDER_EXECUTE_ARGUMENT);
         return 0;
     }
+    if (e->controls) bh_portal_clip_reset(e->controls->portal_cache);
     status = e->display_mode == 1 ? bh_frame_clear_color(e->display, 255, 255, 255) : bh_frame_clear_depth(e->display);
     if (!status)
     {

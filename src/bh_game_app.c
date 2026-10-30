@@ -180,6 +180,7 @@ typedef struct BHGameApp
     BHPathQueueContext path_submit;
     BHSegmentQueueContext segment_submit;
     BHDrawControlContext controls;
+    BHPortalClipCache portal_cache;
     BHHorizonContext horizon;
     BHHorizonQueueContext horizon_submit;
     BHFlareSubmit flare_submit;
@@ -948,6 +949,8 @@ static int platform(BHGameApp *a, int show)
     a->segment_submit.lookup = image;
     a->segment_submit.lookup_user = a;
     a->controls.view = &a->view;
+    a->controls.camera = &a->main_camera;
+    a->controls.portal_cache = &a->portal_cache;
     a->controls.resources = &a->resources;
     a->controls.model_clip = &a->clip;
     a->controls.screen_clip = &a->screen_clip;
@@ -2560,10 +2563,65 @@ static int startup_player_model_checks(BHGameApp *a)
     return startup_callback_continuation_checks(a, resource);
 }
 #ifdef DEBUGGING
+static int startup_portal_seam_checks(BHGameApp *a)
+{
+    BHPcx pcx;
+    BHTextureImage *texture;
+    unsigned char texels[32 * 32];
+    BHVec3 zero = {0, 0, 0}, eye = {1, 0, 0}, left = {-5, 0, 10}, right = {5, 0, 10},
+           up = {0, -1, 0}, normal = {0, 0, -1},
+           portal[4] = {{0, -5, 10}, {10, -5, 10}, {10, 5, 10}, {0, 5, 10}};
+    BHMainCamera stale;
+    const BHMainCamera *saved_camera = a->controls.camera;
+    DDSURFACEDESC pixels;
+    unsigned long pass, x, color, gaps[2] = {0, 0};
+    char option[8], message[160];
+    if (!GetEnvironmentVariableA("BH_PLAYER_INTERPOLATION_CHECK", option, sizeof(option))) return 1;
+    memset(&pcx, 0, sizeof(pcx)); memset(texels, 1, sizeof(texels));
+    memset(pcx.palette, 255, sizeof(pcx.palette));
+    pcx.pixels = texels; pcx.width = pcx.height = 32; pcx.pixel_bytes = sizeof(texels);
+    texture = bh_texture_stage(&a->render_mode.engine.textures, "@@PORTAL-SEAM@@", &pcx, 0, 0);
+    if (!texture || !bh_texture_preallocate(&a->render_mode.engine.textures))
+        return failure(a, 13, "Portal seam fixture texture failed");
+    texture->runs = (unsigned long *)a->render_mode.engine.textures.allocator.allocate(0x80, a->render_mode.engine.textures.allocator.user);
+    texture->vertices = (D3DTLVERTEX *)a->render_mode.engine.textures.allocator.allocate(0xc00, a->render_mode.engine.textures.allocator.user);
+    texture->vertex_capacity = 96;
+    if (!texture->runs || !texture->vertices) return failure(a, 13, "Portal seam fixture vertex arena failed");
+    stale = a->main_camera;
+    if (!bh_main_camera_pose(&a->view, &stale, 0, 0, 0, 0, 0, 0)) return 0;
+    for (pass = 0; pass < 2; ++pass) {
+        if (!bh_draw_queue_begin(&a->queue) || !bh_frame_clear_color(&a->display, 0, 0, 255) ||
+            bh_camera_queue_pose(&a->queue, &eye, &zero) != 1 ||
+            bh_menu_light_queue(&a->queue, 0, 0, 0, 0, 0, 0, 0, 0, 0) != 1 ||
+            bh_draw_controls_clip_rect(&a->queue, 0, 0, 0, 640, 480) != 1 ||
+            bh_quad_queue(&a->queue, 0, (unsigned long)texture, &left, &up, &normal, 10, 10, 0, 8, 1, 0, 1, 0, 1) != 1 ||
+            bh_draw_controls_portal_clip(&a->queue, 0, portal, BH_DRAW_END, .01f, 25000) != 1 ||
+            bh_quad_queue(&a->queue, 0, (unsigned long)texture, &right, &up, &normal, 10, 10, 0, 8, 1, 0, 1, 0, 1) != 1 ||
+            bh_draw_controls_clip_rect(&a->queue, 0, 0, 0, 640, 480) != 1)
+            return failure(a, 13, "Portal seam fixture queue failed");
+        a->controls.camera = pass ? saved_camera : &stale;
+        if (!render_frame(a, &a->queue) || !capture_fixture(a, pass ? "portal-seam-fixed" : "portal-seam-before")) return 0;
+        memset(&pixels, 0, sizeof(pixels)); pixels.dwSize = sizeof(pixels);
+        if (IDirectDrawSurface_Lock(a->target, 0, &pixels, DDLOCK_WAIT, 0) != DD_OK) return 0;
+        /* Inspect the interior seam, excluding outer viewport raster edges. */
+        for (x = 1; x < 639; ++x) {
+            color = ((unsigned short *)((char *)pixels.lpSurface + 240 * pixels.lPitch))[x];
+            if ((color & 0xffe0UL) == 0 && (color & 31)) ++gaps[pass];
+        }
+        IDirectDrawSurface_Unlock(a->target, 0);
+    }
+    a->controls.camera = saved_camera;
+    if (gaps[0] < 10 || gaps[1]) return failure(a, 13, "Portal seam positive/negative pixel controls failed");
+    sprintf(message, "SDL portal seam pixels: stale camera=%lu blue gap pixels, render camera=%lu, same geometry and depth", gaps[0], gaps[1]);
+    stage(a, message);
+    return 1;
+}
 static int startup_player_interpolation_checks(BHGameApp *a)
 {
     BHEntity saved_player;
     BHCameraState *camera;
+    BHMainCamera tick_camera;
+    const BHMainCamera *saved_clip_camera;
     BHVec3 zero = {0, 0, 0}, hidden = {0, 0, -100000};
     BHDrawQueue *sample;
     unsigned long frame, j, car, camera_command, resource, mismatches = 0;
@@ -2619,7 +2677,19 @@ static int startup_player_interpolation_checks(BHGameApp *a)
             if (fabs(observed - expected) > .001 || fabs(observed_camera - expected_camera) > .001) ++mismatches;
             if (trace) fprintf(trace, "%lu,%lu,%.1f,%.9g,%.9g,%.9g,%.9g\n", frame, a->queue.count, alpha,
                                expected, observed, expected_camera, observed_camera);
-            if (frame == 8 && j == 1 && (!render_frame(a, sample) || !capture_fixture(a, "player-interpolated"))) ++mismatches;
+            if (frame == 8 && j == 1) {
+                /* Same interpolated geometry, deliberately stale portal camera
+                   for a before/after capture of the original seam failure. */
+                tick_camera = a->main_camera;
+                saved_clip_camera = a->controls.camera;
+                if (!bh_main_camera_pose(&a->view, &tick_camera, camera->position.x, camera->position.y,
+                                         camera->position.z, camera->angles.x, camera->angles.y, camera->angles.z)) ++mismatches;
+                a->controls.camera = &tick_camera;
+                if (!bh_frame_clear_color(&a->display, 0, 0, 0) || !render_frame(a, sample) || !capture_fixture(a, "portal-stale-camera")) ++mismatches;
+                a->controls.camera = saved_clip_camera;
+                sample = bh_interpolation_sample(&a->interpolation, alpha);
+                if (!bh_frame_clear_color(&a->display, 0, 0, 0) || !render_frame(a, sample) || !capture_fixture(a, "player-interpolated")) ++mismatches;
+            }
         }
         previous_x = a->player->position.x;
         previous_camera_x = camera->position.x;
@@ -3187,7 +3257,7 @@ int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int start
             !startup_effect_checks(a) || !startup_player_model_checks(a))
             goto done;
 #ifdef DEBUGGING
-        if (!startup_player_interpolation_checks(a)) goto done;
+        if (!startup_player_interpolation_checks(a) || !startup_portal_seam_checks(a)) goto done;
 #endif
         if (a->hardware && (a->render_mode.engine.textures.software || !a->render_mode.engine.device ||
                             !a->primitive.vertices || a->primitive.locks))
