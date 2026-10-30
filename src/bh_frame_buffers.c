@@ -50,7 +50,10 @@ int __cdecl bh_frame_buffers_start(BHFrameBuffers *c, BHFrameProduce produce, vo
     for (i = 0; i < 3; ++i)
         if (c->slots[i].data)
             return fail(c, BH_FRAME_BUFFER_BUSY);
-    delay = 1000.0 / fps - 1.5;
+    delay = 1000.0 / fps;
+#ifndef BH_SDL_BACKEND
+    delay -= 1.5;
+#endif
     if (delay < 1.0)
         delay = 1.0;
     if (!_finite(delay))

@@ -1,4 +1,7 @@
 #include "bh_entities.h"
+#ifdef BH_SDL_BACKEND
+#include "bh_render_interpolation.h"
+#endif
 #include "bh_mission_profile.h"
 #include "bh_fp.h"
 #include "bh_round.h"
@@ -293,6 +296,9 @@ static int dispatch(BHEntityPool *pool, int refresh)
 {
     BHEntity *entity, *next;
     unsigned long generation, callback;
+#ifdef BH_SDL_BACKEND
+    unsigned long render_mark, render_identity, render_generation;
+#endif
     if (!enter(pool, 0))
         return 0;
     if (!refresh && pool->focused)
@@ -318,6 +324,11 @@ static int dispatch(BHEntityPool *pool, int refresh)
     {
         next = entity->next;
         generation = next ? next->generation : 0;
+#ifdef BH_SDL_BACKEND
+        render_mark = bh_interpolation_mark();
+        render_identity = (unsigned long)entity;
+        render_generation = entity->generation * 2 + refresh;
+#endif
         callback = refresh ? (unsigned long)entity->refresh : (unsigned long)entity->step;
         if (refresh)
         {
@@ -334,6 +345,9 @@ static int dispatch(BHEntityPool *pool, int refresh)
             entity->step(entity);
             BH_MP_END(marker, "entity_step", "", callback);
         }
+#ifdef BH_SDL_BACKEND
+        bh_interpolation_stamp(render_mark, render_identity, render_generation);
+#endif
         /* Original00477325/0047734c resumes the cached pointer, not its
            generation. A script may release/reacquire that slot during the
            callback; dispatch its current callback/links as the original does.

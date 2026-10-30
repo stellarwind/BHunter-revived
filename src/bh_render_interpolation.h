@@ -1,0 +1,34 @@
+#ifndef BH_RENDER_INTERPOLATION_H
+#define BH_RENDER_INTERPOLATION_H
+#include "bh_draw_queue.h"
+#define BH_INTERPOLATION_CAPACITY 3500
+#define BH_INTERPOLATION_HASH 8192
+/* Snapshots own command bytes only. Resource handles always come from the live
+   current tick; no rendering callback can mutate either snapshot or simulation. */
+typedef struct BHDrawIdentity
+{
+    unsigned long owner, generation, ordinal;
+} BHDrawIdentity;
+typedef struct BHRenderInterpolation
+{
+    BHDrawCommand previous[BH_INTERPOLATION_CAPACITY], current[BH_INTERPOLATION_CAPACITY],
+        output[BH_INTERPOLATION_CAPACITY];
+    BHDrawIdentity previous_ids[BH_INTERPOLATION_CAPACITY], current_ids[BH_INTERPOLATION_CAPACITY];
+    unsigned long previous_count, current_count, hash[BH_INTERPOLATION_HASH];
+    long scene;
+    int ready;
+    BHDrawQueue queue;
+} BHRenderInterpolation;
+typedef struct BHSimulationClock
+{
+    double last, remainder;
+    int ready;
+} BHSimulationClock;
+unsigned long __cdecl bh_simulation_advance(BHSimulationClock *, double seconds);
+void __cdecl bh_interpolation_bind(BHDrawQueue *);
+void __cdecl bh_interpolation_reset(void);
+unsigned long __cdecl bh_interpolation_mark(void);
+void __cdecl bh_interpolation_stamp(unsigned long start, unsigned long identity, unsigned long generation);
+void __cdecl bh_interpolation_capture(BHRenderInterpolation *, const BHDrawQueue *, long scene);
+BHDrawQueue *__cdecl bh_interpolation_sample(BHRenderInterpolation *, float alpha);
+#endif

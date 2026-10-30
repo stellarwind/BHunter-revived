@@ -28,7 +28,7 @@ A source restoration of **BHunter**, the 1999 hovercar combat game by **InterAct
 
 1. Download and extract [release 0.1](https://github.com/stellarwind/BHunter-revived/releases/tag/v0.1) on Windows.
 2. Copy `Bhunter.bin` from your own original game into the `GAME_DATA` folder.
-3. Run `BHunter-source.exe` (fullscreen hardware rendering by default). Later changes in the video settings take effect after restarting.
+3. Run `BHunter-source.exe`. Video settings apply immediately; choose Windowed or Borderless and any enumerated display resolution up to 3840×2160. Alt+Enter switches window mode. Window position, normal size and maximized state are saved in `video-sdl3.ini`.
 
 Music plays from a mounted BHunter CD, or from `MUSIC_DATA/track02.wav` beside `GAME_DATA`. 
 
@@ -41,11 +41,11 @@ Supported original game: **BHunter, English retail PC edition (1999)**. The test
 
 See [How to play](HOWTOPLAY.md) for controls.
 
-Original game files are not included. DDrawCompat is bundled for modern Windows compatibility. This is an early playable release; full original-game fidelity is still being reviewed.
+Original game files are not included. Rendering and window management use SDL3 GPU (Direct3D 12 on Windows); `ddraw.dll` is no longer required. This is an early playable release; full original-game fidelity is still being reviewed.
 
 ## Build
 
-Requires Python 3.10+, Visual C++ 5.0 with Visual Studio 97 SP3, and the DirectX 7 SDK. Proprietary build dependencies are not included.
+Requires Python 3.10+, Visual C++ 5.0 with Visual Studio 97 SP3, the DirectX 7 SDK headers/DirectInput library, and a 32-bit MinGW-w64 C++17 compiler (`g++` on PATH, or `BH_GPU_CXX`). Proprietary build dependencies are not included.
 
 Set these paths in a Command Prompt:
 
@@ -61,7 +61,6 @@ Prepare `BH_COMPILER_DIR` with stock VC5 `CL.EXE`, SP3 `c1.dll`, `c1xx.dll`, `c2
 
 ```bat
 build-source.cmd
-python tools\prepare_ddrawcompat.py
 build\BHunter-source.exe
 ```
 
@@ -70,6 +69,19 @@ The build stages the executable and your local `GAME_DATA` and `MUSIC_DATA` into
 ```bat
 python tools\package_release.py --version 0.1
 ```
+
+The build downloads and checksum-verifies official SDL 3.4.18. The adapter is built as `BHunterGPU.dll`; its shaders are in `shaders/legacy.hlsl`. The restored game remains x86. The DirectX SDK is used for legacy data types and input; rendering creates no DirectDraw/Direct3D COM objects.
+
+The game uses a 640×480 logical layout in a centered 4:3 viewport, with geometry rasterized at the output resolution. This preserves HUD and 3D menu proportions. Simulation and sound updates remain at 30 Hz; rendering interpolates completed command snapshots and is capped at 60 Hz.
+
+For menu/VFX screenshots, scaling comparisons and timing checks:
+
+```bat
+python tools\build_game.py --debugging --incremental
+python tools\check_sdl3.py
+```
+
+Diagnostics write to `build-cache/sdl-captures/`. They exercise main/options/video navigation, capture menu rows and VFX at 640×480, 1080p and 4K, and run a bounded live menu/music check. They do not automate the desktop. Full mission/NPC visual parity remains a separate validation step.
 
 ## Unlock all levels
 
@@ -87,4 +99,4 @@ This source restoration was decompiled, reconstructed and built with the assista
 
 ## License
 
-Restoration code: [MIT](LICENSE). Original game assets remain the property of their respective owners. Bundled [DDrawCompat](https://github.com/narzoul/DDrawCompat/tree/v0.7.2) has its own license, included in the release.
+Restoration code: [MIT](LICENSE). Original game assets remain the property of their respective owners. Bundled [SDL3](https://github.com/libsdl-org/SDL/tree/release-3.4.18) uses the zlib license, included in the release.

@@ -139,6 +139,13 @@ static void begin_text(BHMenuActions *c, const char *initial, long limit, BHInpu
 }
 void __cdecl bh_menu_action_video(BHMenuActions *c, long row)
 {
+#ifdef BH_SDL_BACKEND
+    if (!c || !c->config)
+        return;
+    c->error = 0;
+    bh_sdl_video_cycle((int)row);
+    refresh(c, row);
+#else
     long i, index = -1, value;
     if (!c || !c->config)
         return;
@@ -171,7 +178,9 @@ void __cdecl bh_menu_action_video(BHMenuActions *c, long row)
         strcpy((char *)c->config->settings + 12, c->devices[index].name);
     }
     refresh(c, row);
+#endif
 }
+
 void __cdecl bh_menu_action_audio(BHMenuActions *c, long row)
 {
     double v;
@@ -475,6 +484,11 @@ void __cdecl bh_menu_action_disconnect(BHMenuActions *c, long unused)
 }
 void __cdecl bh_menu_action_graphics_notice(BHMenuActions *c, long unused)
 {
+#ifdef BH_SDL_BACKEND
+    (void)unused;
+    if (c) c->error = 0;
+    return;
+#else
     static const char text[] = "4Please exit and\nrestart the game\nfor any graphic\nchanges to take\neffect!\n";
     BHMessageState *m;
     float time;
@@ -500,6 +514,7 @@ void __cdecl bh_menu_action_graphics_notice(BHMenuActions *c, long unused)
             memcpy(m->panel_entity->payload + 4, &time, 4);
         }
     }
+#endif
 }
 void __cdecl bh_menu_action_host(BHMenuActions *c, long unused)
 {

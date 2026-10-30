@@ -1,4 +1,8 @@
 #include "bh_frame_service.h"
+#include <string.h>
+#ifdef BH_SDL_BACKEND
+#include "bh_render_interpolation.h"
+#endif
 #include "bh_mission_profile.h"
 #include "bh_input_devices.h"
 #include "bh_cd_close.h"
@@ -107,6 +111,9 @@ int __cdecl bh_frame_service_tick(BHFrameService *s)
     active = s->frames->active;
     s->draw->commands = (BHDrawCommand *)buffer;
     s->draw->capacity = 3500;
+#ifdef BH_SDL_BACKEND
+    bh_interpolation_reset();
+#endif
     if (!bh_draw_queue_begin(s->draw))
         failure(s, BH_FRAME_SERVICE_BUFFER);
 #ifdef DEBUGGING

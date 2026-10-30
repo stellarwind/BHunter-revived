@@ -1,4 +1,5 @@
 #include "bh_game_app.h"
+#include "bh_render_interpolation.h"
 #include "bh_mission_profile.h"
 #include "bh_application_bootstrap.h"
 #include "bh_primitive_dispatch.h"
@@ -111,6 +112,9 @@ typedef struct BHGameApp
     unsigned long box_weapon_generation, box_collected_mask, box_fired_mask, box_spawned_mask, box_emit_before;
     long box_ammo_before, box_fire_ammo;
     int sound_diagnostic_logged;
+#ifdef DEBUGGING
+    double menu_smoke_seconds, menu_smoke_origin;
+#endif
     int startup_check, hardware, fullscreen, quit, initialized, error, focus_sample;
     FILE *log;
     char archive[512], config_path[512];
@@ -133,6 +137,7 @@ typedef struct BHGameApp
     BHLoadingProgress loading_progress;
     BHFrameBuffers frames;
     BHDrawQueue queue, slots[3];
+    BHRenderInterpolation interpolation;
     BHTextQueue text;
     BHFrameService service;
     BHFrameCallback callback;
@@ -674,13 +679,19 @@ int __cdecl bh_game_assets_verify(const char *path, unsigned long *bytes, unsign
 }
 static BOOL WINAPI game_cursor(LPPOINT point)
 {
-    return GetCursorPos(point) && ScreenToClient(input_window, point);
+    RECT client;
+    if (!GetCursorPos(point) || !ScreenToClient(input_window, point) || !GetClientRect(input_window, &client)) return FALSE;
+    point->x -= (client.right - client.left) / 2 - 160;
+    point->y -= (client.bottom - client.top) / 2 - 100;
+    return TRUE;
 }
 static BOOL WINAPI game_recenter(int x, int y)
 {
     POINT p;
-    p.x = x;
-    p.y = y;
+    RECT client;
+    if (!GetClientRect(input_window, &client)) return FALSE;
+    p.x = x + (client.right - client.left) / 2 - 160;
+    p.y = y + (client.bottom - client.top) / 2 - 100;
     return ClientToScreen(input_window, &p) && SetCursorPos(p.x, p.y);
 }
 static HRESULT __cdecl loading_present(LPDIRECTDRAWSURFACE color, void *user)
@@ -720,48 +731,26 @@ static int loading_begin(BHGameApp *a)
         return failure(a, 6, "Loading presentation initialization failed");
     return 1;
 }
-static LRESULT CALLBACK procedure(HWND window, UINT message, WPARAM key, LPARAM bits)
+static void __cdecl sdl_message(HWND window, UINT message, WPARAM key, LPARAM bits, void *user)
 {
-    BHGameApp *a = (BHGameApp *)GetWindowLongA(window, GWL_USERDATA);
-    if (message == WM_NCCREATE)
-    {
-        a = (BHGameApp *)((CREATESTRUCTA *)bits)->lpCreateParams;
-        SetWindowLongA(window, GWL_USERDATA, (LONG)a);
+    BHGameApp *a = (BHGameApp *)user;
+    if (message == WM_ACTIVATEAPP && !key)
+        a->focus_sample = 0;
+    if (message == WM_SETCURSOR && LOWORD(bits) == HTCLIENT && !a->startup_check)
+        SetCursor(NULL);
+    if (message == WM_ACTIVATEAPP && !key)
+        memset(a->snapshot.current, 0, sizeof(a->snapshot.current));
+    if (message == MM_MCINOTIFY) {
+        bh_cd_notify(&a->cd_notify, (short)key, (MCIDEVICEID)bits);
+        return;
     }
-    if (!a)
-        return DefWindowProcA(window, message, key, bits);
-    /* Hide only this active client area's cursor. Avoid ShowCursor's shared
-      counter: repeated mouse messages must not accumulate hide requests. */
-    if (!a->startup_check)
-    {
-        if (message == WM_SETCURSOR && LOWORD(bits) == HTCLIENT && GetForegroundWindow() == window)
-        {
-            SetCursor(NULL);
-            return TRUE;
-        }
-        if (message == WM_ACTIVATEAPP && !key)
-        {
-            SetCursor(LoadCursorA(NULL, IDC_ARROW));
-            a->focus_sample = 0;
-        }
-        if (message == WM_DESTROY && GetForegroundWindow() == window)
-            SetCursor(LoadCursorA(NULL, IDC_ARROW));
+    switch (message) {
+    case WM_KEYDOWN: case WM_KEYUP: case WM_SYSKEYDOWN: case WM_SYSKEYUP:
+    case WM_LBUTTONDOWN: case WM_LBUTTONUP: case WM_RBUTTONDOWN: case WM_RBUTTONUP:
+    case WM_MBUTTONDOWN: case WM_MBUTTONUP:
+        bh_input_message(&a->snapshot, window, message, key, bits);
+        break;
     }
-    switch (message)
-    {
-    case WM_CLOSE:
-        a->quit = 1;
-        DestroyWindow(window);
-        return 0;
-    case WM_DESTROY:
-        a->window = 0;
-        PostQuitMessage(0);
-        return 0;
-    case WM_PAINT:
-        ValidateRect(window, 0);
-        return 0;
-    }
-    return bh_input_message(&a->snapshot, window, message, key, bits);
 }
 static BHTextureImage *__cdecl image(unsigned long handle, void *user)
 {
@@ -836,143 +825,39 @@ static int __cdecl horizon_polygon(BHClipVertex *ring, BHTextureImage *texture, 
 }
 static int platform(BHGameApp *a, int show)
 {
-    WNDCLASSEXA type;
-    RECT rect;
     DDSURFACEDESC surface;
-    HRESULT hr;
     BHSoftwareRaster raster;
-    BHDisplaySelection selected;
-    BHStartupMode plan[9];
-    unsigned long i, count;
-    static const GUID draw2_id = {0xb3a6f3e0, 0x2b43, 0x11cf, {0xa2, 0xde, 0, 0xaa, 0, 0xb9, 0x33, 0x56}};
-    memset(&type, 0, sizeof(type));
-    type.cbSize = sizeof(type);
-    type.style = CS_DBLCLKS;
-    type.lpfnWndProc = procedure;
-    type.hInstance = a->instance;
-    type.hCursor = LoadCursorA(0, IDC_ARROW);
-    type.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-    type.lpszClassName = "BHunterRestoredSource";
-    if (!RegisterClassExA(&type) && GetLastError() != ERROR_CLASS_ALREADY_EXISTS)
-        return failure(a, 3, "Window class registration failed");
-    rect.left = rect.top = 0;
-    rect.right = a->width;
-    rect.bottom = a->height;
-    if (!a->fullscreen)
-        AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);
-    a->window = CreateWindowExA(0, type.lpszClassName, "BHunter - restored source",
-                                a->fullscreen ? WS_POPUP : WS_OVERLAPPEDWINDOW, a->fullscreen ? 0 : CW_USEDEFAULT,
-                                a->fullscreen ? 0 : CW_USEDEFAULT, rect.right - rect.left, rect.bottom - rect.top, 0, 0,
-                                a->instance, a);
+    a->window = bh_sdl_open(a->startup_check, sdl_message, a);
     if (!a->window)
-        return failure(a, 3, "Window creation failed");
+        return failure(a, 3, bh_sdl_error());
     input_window = a->window;
-    /* Original004723c0 selection order, with the user-requested first-run
-       hardware default below instead of the setup questions. */
-    if (DirectDrawEnumerateA(bh_display_catalog_callback, &a->display_catalog) != DD_OK)
-        return failure(a, 6, "Display enumeration failed");
-    for (i = 0; i <= (unsigned long)a->display_catalog.secondary_count && i < 8; ++i)
-        strcpy(a->device_names[i].name, a->display_catalog.label[i]);
+    strcpy(a->device_names[0].name, "SDL3 GPU");
     if (!bh_config_init(&a->config, 0) ||
-        !bh_config_bootstrap(&a->config, a->config_path, a->device_names,
-                             (unsigned long)a->display_catalog.secondary_count + 1))
+        !bh_config_bootstrap(&a->config, a->config_path, a->device_names, 1))
         return failure(a, 6, "Config ownership initialization failed");
-    if (a->config.loaded_defaults)
-    {
-        unsigned short configured = 1;
-        long hardware = 1;
-        memcpy(a->config.settings, &configured, 2);
-        memcpy(a->config.settings + 4, &hardware, 4);
-        if (!bh_config_save(&a->config, a->config_path))
-            return failure(a, 6, "Default video configuration save failed");
-    }
     a->application.config = &a->config;
-    a->application.catalog = a->display_catalog;
     a->application.window = a->window;
-    a->application.no_dialogs = a->startup_check;
-    bh_application_video_configuration(&a->application);
-    if (!bh_application_video_choose(&a->application))
-        return failure(a, 6, "Original video configuration requires selection");
-    memset(&selected, 0, sizeof(selected));
-    selected.requested = a->display_catalog.label[a->application.selected];
-    DirectDrawEnumerateA(bh_display_select_callback, &selected);
-    a->draw = selected.draw;
-    if (!a->draw)
-        return failure(a, 4, "Selected DirectDraw creation failed");
-    if (a->fullscreen)
-    {
-        hr = IDirectDraw_SetCooperativeLevel(a->draw, a->window, DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN);
-        if (hr != DD_OK)
-            return failure(a, 4, "Fullscreen cooperative level failed");
-        hr = IDirectDraw_QueryInterface(a->draw, &draw2_id, (void **)&a->draw2);
-        if (hr != DD_OK)
-            return failure(a, 4, "DirectDraw2 interface failed");
-        count = bh_application_mode_plan(a->application.hardware, a->application.resolution == 0, plan);
-        for (i = 0; i < count; ++i)
-        {
-            if (plan[i].software)
-            {
-                long software = 0;
-                memcpy(a->config.settings + 4, &software, 4);
-                memcpy(a->config.settings + 8, &plan[i].resolution, 4);
-            }
-            if (bh_render_mode_startup(&a->render_mode, a->draw2, a->draw,
-                    plan[i].width, plan[i].height, plan[i].bits, plan[i].software))
-                break;
-        }
-        if (i == count)
-        {
-            char text[512];
-
-#ifdef DEBUGGING
-            sprintf(text, "Fullscreen renderer startup failed: HRESULT=%08lx %s",
-                    (unsigned long)a->render_mode.last_hresult, a->render_mode.errors);
-#endif
-            return failure(a, 4, text);
-        }
-        a->hardware = !plan[i].software;
-        a->width = plan[i].width;
-        a->height = plan[i].height;
-        a->primary = a->render_mode.screen;
-        IDirectDrawSurface_AddRef(a->primary);
-        a->target = a->render_mode.engine.render;
-        IDirectDrawSurface_AddRef(a->target);
-    }
-    else
-    {
-        hr = IDirectDraw_SetCooperativeLevel(a->draw, a->window, DDSCL_NORMAL);
-        if (hr != DD_OK)
-            return failure(a, 4, "Windowed cooperative level failed");
-        memset(&surface, 0, sizeof(surface));
-        surface.dwSize = sizeof(surface);
-        surface.dwFlags = DDSD_CAPS;
-        surface.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
-        hr = IDirectDraw_CreateSurface(a->draw, &surface, &a->primary, 0);
-        if (hr != DD_OK)
-            return failure(a, 4, "Primary surface creation failed");
-        if (IDirectDraw_CreateClipper(a->draw, 0, &a->window_clipper, 0) != DD_OK ||
-            IDirectDrawClipper_SetHWnd(a->window_clipper, 0, a->window) != DD_OK ||
-            IDirectDrawSurface_SetClipper(a->primary, a->window_clipper) != DD_OK)
-            return failure(a, 4, "Window clipper initialization failed");
-        memset(&surface, 0, sizeof(surface));
-        surface.dwSize = sizeof(surface);
-        surface.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT | DDSD_PIXELFORMAT;
-        surface.dwWidth = a->width;
-        surface.dwHeight = a->height;
-        surface.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_SYSTEMMEMORY;
-        surface.ddpfPixelFormat.dwSize = sizeof(DDPIXELFORMAT);
-        surface.ddpfPixelFormat.dwFlags = DDPF_RGB;
-        surface.ddpfPixelFormat.dwRGBBitCount = 16;
-        surface.ddpfPixelFormat.dwRBitMask = 0xf800;
-        surface.ddpfPixelFormat.dwGBitMask = 0x7e0;
-        surface.ddpfPixelFormat.dwBBitMask = 31;
-        hr = IDirectDraw_CreateSurface(a->draw, &surface, &a->target, 0);
-        if (hr != DD_OK)
-            return failure(a, 4, "RGB565 source target creation failed");
-        if (!bh_render_startup_software(&a->render_mode.engine, a->draw, a->target, a->target, 0, a->width, a->height,
-                                        16))
-            return failure(a, 4, "Restored software renderer initialization failed");
-    }
+    a->hardware = 1;
+    a->fullscreen = 1; /* Internal flip path; SDL independently owns window mode. */
+    if (DirectDrawCreate(0, &a->draw, 0) != DD_OK)
+        return failure(a, 4, "SDL renderer adapter creation failed");
+    memset(&surface, 0, sizeof(surface));
+    surface.dwSize = sizeof(surface);
+    surface.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT | DDSD_PIXELFORMAT;
+    surface.dwWidth = a->width;
+    surface.dwHeight = a->height;
+    surface.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
+    if (IDirectDraw_CreateSurface(a->draw, &surface, &a->primary, 0) != DD_OK)
+        return failure(a, 4, "SDL presentation target creation failed");
+    surface.ddsCaps.dwCaps = DDSCAPS_3DDEVICE;
+    if (IDirectDraw_CreateSurface(a->draw, &surface, &a->target, 0) != DD_OK ||
+        !bh_render_startup_hardware(&a->render_mode.engine, a->draw, a->target, a->primary,
+                                    a->width, a->height, 16))
+        return failure(a, 4, "SDL GPU renderer initialization failed");
+    a->render_mode.screen = a->primary;
+    a->render_mode.render = a->target;
+    IDirectDrawSurface_AddRef(a->primary);
+    IDirectDrawSurface_AddRef(a->target);
     if (a->hardware && !bh_texture_bind_display(&a->render_mode.engine.textures, &a->render_mode.engine.pixel))
         return failure(a, 4, "Hardware splash display format binding failed");
     if (!bh_view_config_init(&a->view, a->width, a->height) || !bh_main_camera_settings(&a->view, 60, .2, 25000) ||
@@ -1130,7 +1015,7 @@ static int platform(BHGameApp *a, int show)
     a->special_draw.queue = &a->queue;
     if (!a->startup_check)
     {
-        ShowWindow(a->window, show);
+        (void)show;
         UpdateWindow(a->window);
     }
     stage(a, a->hardware     ? "Fullscreen Direct3D2 HAL renderer ready"
@@ -2319,31 +2204,6 @@ static int render_frame(BHGameApp *a, BHDrawQueue *queue)
     }
     return 1;
 }
-typedef struct BHGameFrameClock
-{
-    DWORD last;
-    double remainder;
-    int ready;
-} BHGameFrameClock;
-static int frame_due(BHGameFrameClock *clock, DWORD now, double interval)
-{
-    if (!clock->ready)
-    {
-        clock->last = now;
-        clock->remainder = 0;
-        clock->ready = 1;
-        return 1;
-    }
-    clock->remainder += (DWORD)(now - clock->last);
-    clock->last = now;
-    if (clock->remainder < interval)
-        return 0;
-    clock->remainder -= interval;
-    /* Preserve sub-frame lateness; discard a simulation backlog after a stall. */
-    if (clock->remainder >= interval)
-        clock->remainder = 0;
-    return 1;
-}
 #ifdef DEBUGGING
 static int startup_perf_checks(BHGameApp *a)
 {
@@ -2386,33 +2246,124 @@ static int startup_perf_checks(BHGameApp *a)
 #endif
 static int startup_clock_checks(BHGameApp *a)
 {
-    BHGameFrameClock clock;
-    unsigned long rate, pass, i, count, expected;
-    DWORD base;
-    double interval = 1000.0 / 30.0 - 1.5;
-    static const unsigned long rates[3] = {60, 75, 144};
-    /* Independent original call-site keys, not resource load-table positions. */
+    BHSimulationClock clock;
+    unsigned long rate, i, count;
+    static const unsigned long rates[5] = {30, 60, 75, 144, 240};
     if (a->mission_progress.first_sound != bh_bootstrap_value(&a->bootstrap, 0x496bdc) ||
         a->mission_progress.unlocked_sound != bh_bootstrap_value(&a->bootstrap, 0x4d18e0))
         return failure(a, 13, "Mission completion sound bindings reversed");
-    expected = 1 + (unsigned long)(10000.0 / interval);
-    for (pass = 0; pass < 2; ++pass)
-        for (rate = 0; rate < 3; ++rate)
-        {
-            memset(&clock, 0, sizeof(clock));
-            count = 0;
-            base = pass ? 0xfffff000UL : 0;
-            for (i = 0; i <= rates[rate] * 10; ++i)
-                if (frame_due(&clock, base + (DWORD)(i * 1000UL / rates[rate]), interval))
-                    ++count;
-            if (count != expected)
-                return failure(a, 13, "Producer clock depends on presentation refresh rate");
-        }
+    for (rate = 0; rate < N(rates); ++rate) {
+        memset(&clock, 0, sizeof(clock)); count = 0;
+        for (i = 0; i <= rates[rate] * 10; ++i)
+            count += bh_simulation_advance(&clock, 100000.0 + i / (double)rates[rate]);
+        if (count != 301)
+            return failure(a, 13, "Producer clock depends on presentation refresh rate");
+    }
     memset(&clock, 0, sizeof(clock));
-    if (!frame_due(&clock, 0, interval) || !frame_due(&clock, 10000, interval) || frame_due(&clock, 10001, interval))
+    if (bh_simulation_advance(&clock, 0) != 1 || bh_simulation_advance(&clock, 10) > 8 ||
+        bh_simulation_advance(&clock, 10) != 0)
         return failure(a, 13, "Producer clock accumulated a stall backlog");
-    stage(a, "Static producer clock: equal tick counts at 60/75/144 Hz, timer rollover and stall controls passed");
+    stage(a, "SDL producer clock: exact 30 Hz at 30/60/75/144/240 presentations, bounded stall catch-up passed");
     return 1;
+}
+static int capture_fixture(BHGameApp *a, const char *name)
+{
+#ifdef DEBUGGING
+    char directory[MAX_PATH], path[MAX_PATH + 80];
+    if (GetEnvironmentVariableA("BH_RENDER_CAPTURE_DIR", directory, sizeof(directory))) {
+        sprintf(path, "%s\\%s.png", directory, name);
+        if (!bh_sdl_capture(path))
+            return failure(a, 13, "SDL GPU fixture capture failed");
+    }
+#else
+    (void)a; (void)name;
+#endif
+    return 1;
+}
+static BHBootstrapMenu *diagnostic_menu(BHGameApp *a, unsigned long identity)
+{
+    unsigned long i;
+    for (i = 0; i < BH_BOOTSTRAP_MENUS; ++i)
+        if (a->bootstrap.menus[i].identity == identity) return a->bootstrap.menus + i;
+    return 0;
+}
+static int diagnostic_press(BHBootstrapMenu *m, unsigned long key)
+{
+    memset(&m->runtime.input_state, 0, sizeof(m->runtime.input_state));
+    m->runtime.input->state[1] = 0;
+    m->runtime.distance = 4.5f;
+    m->runtime.exiting = 0;
+    m->runtime.input_state.values[key] = 1;
+    return bh_menu_runtime_step(&m->runtime);
+}
+static int startup_menu_navigation(BHGameApp *a)
+{
+    BHBootstrapMenu *main = diagnostic_menu(a, 0x495e40), *options = diagnostic_menu(a, 0x4cdb90),
+                    *video = diagnostic_menu(a, 0x496220);
+    unsigned long i, before, arena = a->messages.arena_used;
+    char first[64];
+    if (!main || !options || !video) return failure(a, 13, "Menu diagnostic identity missing");
+    main->settings.selection = 0;
+    for (i = 0; i < main->settings.row_count; ++i) {
+        before = main->settings.selection;
+        if (!diagnostic_press(main, 1) || main->settings.selection != (long)((before + 1) % main->settings.row_count))
+            return failure(a, 13, "Main menu Down/wrap navigation failed");
+    }
+    main->settings.selection = 2;
+    if (!diagnostic_press(main, 4) || main->runtime.destinations[2] != &options->runtime ||
+        options->runtime.input->flags != 2 || options->runtime.distance != 100)
+        return failure(a, 13, "Main menu Setup activation failed");
+    options->settings.selection = 0;
+    if (!diagnostic_press(options, 4) || options->runtime.destinations[0] != &video->runtime || video->runtime.input->flags != 2)
+        return failure(a, 13, "Options Video activation failed");
+    strcpy(first, bh_sdl_video_label(0));
+    video->settings.selection = 0;
+    if (!diagnostic_press(video, 4) || !strcmp(first, bh_sdl_video_label(0)))
+        return failure(a, 13, "Video window-mode action failed");
+    if (!diagnostic_press(video, 4) || strcmp(first, bh_sdl_video_label(0)))
+        return failure(a, 13, "Video window-mode round trip failed");
+    video->settings.selection = 2;
+    if (!diagnostic_press(video, 4) || video->actions.error || video->edits.error)
+        return failure(a, 13, "Video resolution action/label refresh failed");
+    if (!diagnostic_press(video, 8) || video->runtime.destinations[video->settings.selection] != &options->runtime ||
+        a->messages.arena_used != arena)
+        return failure(a, 13, "Video Back action or obsolete restart notice failed");
+    stage(a, "SDL menu navigation: Down/wrap, Setup, Video, mode round trip, resolution and Back passed");
+    return 1;
+}
+static int startup_menu_checks(BHGameApp *a)
+{
+    unsigned long i, row;
+    BHVec3 zero = {0, 0, 0};
+    BHBootstrapMenu *m;
+    BHMenuPresent saved;
+    char name[80];
+    for (i = 0; i < BH_BOOTSTRAP_MENUS; ++i) {
+        m = a->bootstrap.menus + i;
+        if (m->identity != 0x495e40 && m->identity != 0x4cdb90 && m->identity != 0x496220)
+            continue;
+        for (row = 0; row < m->settings.row_count; ++row)
+            if (m->settings.rows[row] && m->settings.rows[row]->refresh)
+                m->settings.rows[row]->refresh(&m->settings, (long)row);
+        saved = m->present;
+        m->present.eye = m->present.angles = &zero;
+        m->present.distance = 4.5f;
+        m->present.push = 1;
+        m->present.application_mode = 0;
+        for (row = 0; row < m->settings.row_count; ++row) {
+            m->present.selection = (long)row;
+            m->present.display_selection = (float)row;
+            if (!bh_frame_clear_color(&a->display, 0, 0, 0) ||
+                !bh_draw_queue_begin(&a->queue) || bh_camera_queue_pose(&a->queue, &zero, &zero) != 1 ||
+                !bh_menu_present(&m->present) || !render_frame(a, &a->queue))
+                return failure(a, 13, "3D menu row rendering failed");
+            sprintf(name, "menu-%08lx-row-%lu", m->identity, row);
+            if (!capture_fixture(a, name)) return 0;
+        }
+        m->present = saved;
+    }
+    stage(a, "SDL menu fixtures: main/options/video selections rendered through production 3D menu owners");
+    return startup_menu_navigation(a);
 }
 /* Source-only render fixtures: no input, projectile creation, entity steps,
    menus or simulation. Check actual production bindings against real pixels. */
@@ -2507,6 +2458,8 @@ static int startup_effect_checks(BHGameApp *a)
         }
         if (!render_frame(a, &a->queue))
             return 0;
+        sprintf(text, "effect-%lu", pass);
+        if (!capture_fixture(a, text)) return 0;
         memset(&locked, 0, sizeof(locked));
         locked.dwSize = sizeof(locked);
         if (IDirectDrawSurface_Lock(a->target, 0, &locked, DDLOCK_WAIT, 0) != DD_OK)
@@ -2606,19 +2559,20 @@ static int startup_player_model_checks(BHGameApp *a)
     stage(a, "Static player model clipping: 220 camera-plane/side/rotation poses passed");
     return startup_callback_continuation_checks(a, resource);
 }
-/* Keep the preview single threaded, but allow fullscreen Flip presentations
-   between producer ticks, as the original independent worker does. A published
-   queue must retain its consumer mutations until the next producer tick. */
+/* Simulation and audio run at 30 Hz. Render copies interpolate between the
+   last two completed ticks; all callback mutations stay in the render copy. */
 static int manual_loop(BHGameApp *a)
 {
-    MSG message;
-    DWORD began, elapsed;
-    BHGameFrameClock clock;
+    DWORD began;
+    BHSimulationClock clock;
     RECT destination;
     POINT origin;
-    unsigned long i, presentations = 0;
+    unsigned long i, presentations = 0, ticks, tick;
     int produce;
 #ifdef DEBUGGING
+    double smoke_elapsed;
+    MCI_STATUS_PARMS music_status;
+    FILE *smoke_summary;
     DWORD rendered, presented;
     float controls[3];
     char profile[512];
@@ -2643,6 +2597,7 @@ static int manual_loop(BHGameApp *a)
     a->service.sound = &a->sound;
     a->service.frames = &a->frames;
     a->service.draw = &a->queue;
+    bh_interpolation_bind(&a->queue);
     for (i = 0; i < 3; ++i)
         a->service.slot_draw[i] = a->slots + i;
     a->service.player_input = &a->global_state;
@@ -2653,26 +2608,35 @@ static int manual_loop(BHGameApp *a)
     a->text_capture.input = a->bootstrap.all_keys;
     a->key_capture.input = a->bootstrap.all_keys;
     stage(a, "Manual preview running; keyboard/mouse belong to the active game window");
+#ifdef DEBUGGING
+    {
+        char value[32];
+        if (GetEnvironmentVariableA("BH_MENU_SMOKE_SECONDS", value, sizeof(value))) {
+            a->menu_smoke_seconds = atof(value);
+            if (a->menu_smoke_seconds < 1 || a->menu_smoke_seconds > 30) a->menu_smoke_seconds = 5;
+            a->menu_smoke_origin = bh_sdl_seconds();
+            a->collection.disable_mouse_motion = 1;
+            a->focus_sample = 1;
+        }
+    }
+#endif
     while (!a->quit && !a->error)
     {
         BH_MP_BEGIN(frame_marker);
         began = GetTickCount();
-        while (PeekMessageA(&message, 0, 0, 0, PM_REMOVE))
-        {
-            if (message.message == WM_QUIT)
-            {
-                a->quit = 1;
-                break;
-            }
-            TranslateMessage(&message);
-            DispatchMessageA(&message);
-        }
+        if (!bh_sdl_poll())
+            a->quit = 1;
         if (a->quit)
             break;
-        if (!a->box_auto && (GetForegroundWindow() != a->window || IsIconic(a->window)))
+        if (!a->box_auto &&
+#ifdef DEBUGGING
+            !a->menu_smoke_seconds &&
+#endif
+            (GetForegroundWindow() != a->window || IsIconic(a->window)))
         {
             a->focus_sample = 0;
             clock.ready = 0;
+            a->interpolation.ready = 0;
 #ifdef DEBUGGING
             a->perf_previous.QuadPart = 0;
 #endif
@@ -2689,12 +2653,13 @@ static int manual_loop(BHGameApp *a)
             a->collection.delta[0] = a->collection.delta[1] = 0;
             a->focus_sample = 1;
         }
-        produce = a->box_auto || !a->fullscreen || frame_due(&clock, began, a->frames.delay_ms);
+        ticks = a->box_auto ? 1 : bh_simulation_advance(&clock, bh_sdl_seconds());
+        produce = ticks != 0;
 #ifdef DEBUGGING
         if (a->perf_enabled)
             QueryPerformanceCounter(&simulation_start);
 #endif
-        if (produce)
+        for (tick = 0; tick < ticks; ++tick)
         {
             if (a->box_level && a->snapshot.current[VK_ESCAPE])
             {
@@ -2722,6 +2687,8 @@ static int manual_loop(BHGameApp *a)
 #endif
             if (a->error)
                 break;
+            bh_interpolation_capture(&a->interpolation, a->slots + a->frames.latest,
+                                     a->player_state.mode * 100 + a->mission);
         }
         if (a->player_tick.error || a->player_query.error || a->vm.error || a->lifetime.timers.error || a->menu.error ||
             a->flyby.error || a->actor_construct.error || a->actor_response.error)
@@ -2748,7 +2715,7 @@ static int manual_loop(BHGameApp *a)
         {
             int render_ok;
             BH_MP_BEGIN(marker);
-            render_ok = render_frame(a, a->slots + a->frames.latest);
+            render_ok = render_frame(a, bh_interpolation_sample(&a->interpolation, (float)(clock.remainder * 30.0)));
             BH_MP_END(marker, "render", "", a->frame);
             if (!render_ok)
                 break;
@@ -2817,12 +2784,24 @@ static int manual_loop(BHGameApp *a)
             stage(a, profile);
         }
 #endif
-        if (!a->fullscreen)
-        {
-            elapsed = GetTickCount() - began;
-            if (elapsed < (DWORD)a->frames.delay_ms)
-                Sleep((DWORD)a->frames.delay_ms - elapsed);
+        if (!a->box_auto)
+            bh_sdl_pace();
+#ifdef DEBUGGING
+        if (a->menu_smoke_seconds && (smoke_elapsed = bh_sdl_seconds() - a->menu_smoke_origin) >= a->menu_smoke_seconds) {
+            memset(&music_status, 0, sizeof(music_status));
+            music_status.dwItem = MCI_STATUS_POSITION;
+            if (a->cd.device) mciSendCommandA(a->cd.device, MCI_STATUS, MCI_STATUS_ITEM | MCI_WAIT, (DWORD)&music_status);
+            smoke_summary = fopen("menu-smoke-summary.json", "w");
+            if (smoke_summary) {
+                fprintf(smoke_summary, "{\"seconds\":%.6f,\"presentations\":%lu,\"simulation_ticks\":%lu,\"sound_ticks\":%lu,\"music_device\":%u,\"local_music\":%d,\"music_position\":%lu,\"music_plays\":%lu,\"music_failures\":%lu,\"error\":%d}\n",
+                        smoke_elapsed, presentations, a->service.calls, a->service.sound_calls,
+                        a->cd.device, a->cd.local_file, (unsigned long)music_status.dwReturn, a->cd_notify.plays, a->cd_notify.failures, a->error);
+                fclose(smoke_summary);
+            }
+            capture_fixture(a, "menu-live");
+            a->quit = 1;
         }
+#endif
     }
     return !a->error;
 }
@@ -2908,6 +2887,7 @@ static void cleanup(BHGameApp *a)
     bh_network_transport_dispose(&a->transport);
     if (!a->queue.allocator.release)
         memset(&a->queue, 0, sizeof(a->queue));
+    bh_interpolation_bind(0);
     bh_frame_buffers_dispose(&a->frames);
     bh_draw_queue_dispose(&a->queue);
     bh_fade_dispose(&a->fade);
@@ -2930,9 +2910,8 @@ static void cleanup(BHGameApp *a)
         IDirectDraw_SetCooperativeLevel(a->draw, a->window, DDSCL_NORMAL);
         IDirectDraw_Release(a->draw);
     }
-    if (a->window)
-        DestroyWindow(a->window);
-    UnregisterClassA("BHunterRestoredSource", a->instance);
+    bh_sdl_close();
+    a->window = 0;
     input_window = 0;
     bh_vfile_shutdown();
     free(a->motion_bindings);
@@ -3129,7 +3108,8 @@ int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int start
             goto done;
         }
         stage(a, "Checking static source beam/boost/logo/panel bindings after scene composition");
-        if (!startup_effect_checks(a) || !startup_player_model_checks(a))
+        if (!capture_fixture(a, "level-menu") || !startup_menu_checks(a) ||
+            !startup_effect_checks(a) || !startup_player_model_checks(a))
             goto done;
         if (a->hardware && (a->render_mode.engine.textures.software || !a->render_mode.engine.device ||
                             !a->primitive.vertices || a->primitive.locks))

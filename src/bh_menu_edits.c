@@ -56,6 +56,10 @@ static void key(BHMenuEdits *c, long row, unsigned long offset, int table)
 }
 void __cdecl bh_menu_edit_video(BHMenuEdits *c, long row)
 {
+#ifdef BH_SDL_BACKEND
+    if (c && c->config && row >= 0 && row <= 2)
+        paint(c, row, bh_sdl_video_label((int)row));
+#else
     long value;
     char text[21];
     if (!c || !c->config)
@@ -81,7 +85,9 @@ void __cdecl bh_menu_edit_video(BHMenuEdits *c, long row)
         else if (value == 1)
             paint(c, 2, "640 x 480");
     }
+#endif
 }
+
 void __cdecl bh_menu_edit_audio(BHMenuEdits *c, long row)
 {
     char text[128];
