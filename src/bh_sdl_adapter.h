@@ -227,6 +227,7 @@ extern "C"
     const char *__cdecl bh_sdl_error(void);
     void __cdecl bh_sdl_video_cycle(int row);
     const char *__cdecl bh_sdl_video_label(int row);
+    void __cdecl bh_sdl_canvas_margins(float *x, float *y);
     int __cdecl bh_sdl_capture(const char *path);
 #ifdef __cplusplus
 }

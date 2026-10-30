@@ -44,6 +44,16 @@ typedef struct BHDrawQueue
     BHDrawError error;
 } BHDrawQueue;
 #define BH_DRAW_END 0xffffffffUL
+/* SDL presentation-only flags in the existing primitive flag word. They travel
+   with snapshots, so render-time anchoring follows the interpolated camera and
+   never changes command size, world positions, UVs, or legacy renderer output. */
+#ifdef BH_SDL_BACKEND
+#define BH_HUD_ANCHOR_LEFT 0x10000000UL
+#define BH_HUD_ANCHOR_RIGHT 0x20000000UL
+#else
+#define BH_HUD_ANCHOR_LEFT 0UL
+#define BH_HUD_ANCHOR_RIGHT 0UL
+#endif
 /* capacity includes nine original bucket headers. Fresh owner; dispose before
    reinitializing. begin resets headers/count, preserving unused payload words.
    Header next links form one global chain in render order, not nine rings. */

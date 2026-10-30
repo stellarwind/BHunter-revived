@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <float.h>
+#ifdef BH_SDL_BACKEND
+#include "bh_sdl_adapter.h"
+#endif
 static int native_call(BHFadeContext *c, HRESULT h)
 {
     ++c->render->native_calls;
@@ -90,6 +93,17 @@ int __cdecl bh_fade_apply(BHFadeContext *c)
         }
         v[1].sy = v[2].sy = (float)c->height;
         v[2].sx = v[3].sx = (float)c->width;
+#ifdef BH_SDL_BACKEND
+        {
+            float mx = 0, my = 0;
+            bh_sdl_canvas_margins(&mx, &my);
+            /* Bleed past the pixel-center boundary at every output scale. */
+            v[0].sx = v[1].sx = -mx - 1;
+            v[2].sx = v[3].sx = c->width + mx;
+            v[0].sy = v[3].sy = -my - 1;
+            v[1].sy = v[2].sy = c->height + my;
+        }
+#endif
         if (!native_call(c, IDirect3DDevice2_SetRenderState(t->device, D3DRENDERSTATE_TEXTUREHANDLE, 0)))
             ok = 0;
         ++c->native_draws;

@@ -112,7 +112,7 @@ static float stored(double value)
 }
 static int draw_quad(BHMessagePanel *panel, unsigned long image, float x, float y, float width, float height)
 {
-    int result = bh_screen_quad_queue(panel->draw, 7, image, x, y, width, height, 0, 0, 1.0f);
+    int result = bh_screen_quad_queue(panel->draw, 7, image, x, y, width, height, 0, BH_HUD_ANCHOR_LEFT, 1.0f);
     if (result > 0)
         ++panel->draw_commands;
     else
@@ -122,7 +122,7 @@ static int draw_quad(BHMessagePanel *panel, unsigned long image, float x, float 
 static int draw_rect(BHMessagePanel *panel, unsigned long image, float x, float y, float width, float height,
                      float alpha, float u, float v)
 {
-    int result = bh_pickup_rect_queue(panel->draw, 7, image, x, y, width, height, 0, 0, alpha, u, v, u, v,
+    int result = bh_pickup_rect_queue(panel->draw, 7, image, x, y, width, height, 0, BH_HUD_ANCHOR_LEFT, alpha, u, v, u, v,
                                       stored((double)panel->near_depth + .01));
     if (result > 0)
         ++panel->draw_commands;

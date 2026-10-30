@@ -19,7 +19,7 @@ def prepare(out):
     compiler=os.environ.get('BH_GPU_CXX',shutil.which('g++') or 'g++')
     cache=ROOT/'build-cache/sdl3';cache.mkdir(parents=True,exist_ok=True)
     import_lib=cache/'BHunterGPU.lib'
-    inputs=[ROOT/'src/bh_sdl_gpu.cpp',ROOT/'src/bh_sdl_adapter.h',ROOT/'src/shaders/legacy.hlsl',Path(__file__)]
+    inputs=[ROOT/'src/bh_sdl_gpu.cpp',ROOT/'src/bh_sdl_adapter.h',ROOT/'src/shaders/legacy.hlsl',Path(__file__),ROOT/'src/bh_video_layout.h']
     signature=hashlib.sha256(b''.join(p.read_bytes() for p in inputs)+VERSION.encode()+compiler.encode()).hexdigest()
     stamp=cache/'build.sha256'
     cached_dll=cache/'BHunterGPU.dll'

@@ -5,6 +5,8 @@ typedef struct BHViewConfig
 {
     float fov, near_z, far_z, width, height, origin_x, origin_y;
     float left, right, top, bottom;
+    /* Presentation extension; zero retains original projection and bounds. */
+    float margin_x, margin_y;
 } BHViewConfig;
 typedef struct BHViewPlane
 {

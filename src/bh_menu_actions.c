@@ -144,7 +144,9 @@ void __cdecl bh_menu_action_video(BHMenuActions *c, long row)
         return;
     c->error = 0;
     bh_sdl_video_cycle((int)row);
-    refresh(c, row);
+    refresh(c, 0);
+    refresh(c, 1);
+    refresh(c, 2);
 #else
     long i, index = -1, value;
     if (!c || !c->config)

@@ -213,7 +213,11 @@ static const BHBootstrapRowSpec row_specs[] = {
     {0x004cdb90UL, 0x004d1aa8UL, "INPUT", 0, 0x00496348UL, 0x00000000UL, 0x00000000UL},
     {0x004cdb90UL, 0x004d1aacUL, "BACK", 0, 0x00495e40UL, 0x0042f350UL, 0x00000000UL},
     {0x00496220UL, 0x004d1aa4UL, "window\nmode", 0, 0x00496220UL, 0x0042d0d0UL, 0x0042d1b0UL},
+#ifdef BH_SDL_BACKEND
+    {0x00496220UL, 0x004d1aa8UL, "aspect\nratio", 0, 0x00496220UL, 0x0042d0d0UL, 0x0042d1b0UL},
+#else
     {0x00496220UL, 0x004d1aa8UL, "graphics\ndevice", 0, 0x00496220UL, 0x0042d0d0UL, 0x0042d1b0UL},
+#endif
     {0x00496220UL, 0x004d1aa8UL, "output\nresolution", 0, 0x00496220UL, 0x0042d0d0UL, 0x0042d1b0UL},
     {0x00496220UL, 0x004d1aacUL, "BACK", 0, 0x004cdb90UL, 0x0042f2b0UL, 0x00000000UL},
     {0x004cdb94UL, 0x004d1aa4UL, "sound fx\nlouder", 0, 0x004cdb94UL, 0x0042db60UL, 0x0042d290UL},

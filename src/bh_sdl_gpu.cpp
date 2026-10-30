@@ -2,12 +2,14 @@
 // retains the restored engine's 32-bit data ABI, never creates a COM object.
 #define CINTERFACE
 #include "bh_sdl_adapter.h"
+#include "bh_video_layout.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_system.h>
 #include <algorithm>
 #include <array>
 #include <cmath>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <d3dcompiler.h>
 #include <map>
@@ -57,6 +59,8 @@ SDL_GPUSampler *sampler;
 SDL_GPUTexture *color_target, *depth_target;
 unsigned target_w, target_h;
 bool targets_fresh = false;
+float applied_margin_x = -1, applied_margin_y = -1;
+int applied_aspect = -1, applied_mode = -1;
 SDL_GPUCommandBuffer *commands;
 SDL_GPURenderPass *pass;
 std::map<unsigned long long, SDL_GPUGraphicsPipeline *> pipelines;
@@ -74,6 +78,102 @@ int normal_x = SDL_WINDOWPOS_CENTERED, normal_y = SDL_WINDOWPOS_CENTERED, normal
 bool maximized = false;
 std::vector<std::pair<int, int>> modes;
 int selected_resolution = 0;
+int selected_aspect = 0;
+struct Aspect { int numerator, denominator; const char *label; };
+const Aspect aspects[] = {{4, 3, "4:3"}, {16, 9, "16:9"}, {21, 9, "21:9"}};
+void output_size(int &w, int &h)
+{
+    SDL_GetWindowSizeInPixels(window, &w, &h);
+    if (mode && !modes.empty()) {
+        w = modes[selected_resolution].first;
+        h = modes[selected_resolution].second;
+    }
+    if (hidden) {
+        const char *size = SDL_getenv("BH_GPU_TEST_SIZE");
+        if (size) sscanf(size, "%dx%d", &w, &h);
+    }
+    w = std::max(w, 1); h = std::max(h, 1);
+}
+void canvas_margins(float &x, float &y)
+{
+    int w, h; output_size(w, h);
+    const auto &selected = aspects[selected_aspect];
+    float aspect = (float)selected.numerator / selected.denominator;
+    /* The selector groups common modes (e.g. 2560x1080 and 3440x1440 are
+       both sold as 21:9). Use the chosen mode's exact shape in Borderless,
+       never the desktop's shape, so its pixels and the UI stay square. */
+    if (mode && !modes.empty() && video_layout_aspect_matches(w, h, selected.numerator, selected.denominator))
+        aspect = (float)w / h;
+    if (hidden) {
+        /* Old capture baselines explicitly retain their original 4:3 canvas. */
+        int n = 4, d = 3;
+        const char *test = SDL_getenv("BH_GPU_TEST_ASPECT");
+        if (test && !strcmp(test, "auto")) { n = w; d = h; }
+        else if (test) sscanf(test, "%d:%d", &n, &d);
+        if (n > 0 && d > 0) aspect = (float)n / d;
+    }
+    video_layout_canvas(aspect, &x, &y);
+}
+void viewport_geometry(float &x, float &y, float &w, float &h, float &scale)
+{
+    float mx, my; canvas_margins(mx, my);
+    w = 640 + 2 * mx; h = 480 + 2 * my;
+    scale = std::min(target_w / w, target_h / h);
+    w *= scale; h *= scale;
+    x = (target_w - w) * .5f; y = (target_h - h) * .5f;
+}
+bool matching_mode(int index)
+{
+    return video_layout_aspect_matches(modes[index].first, modes[index].second,
+                  aspects[selected_aspect].numerator, aspects[selected_aspect].denominator);
+}
+void select_matching_mode()
+{
+    if (modes.empty() || matching_mode(selected_resolution)) return;
+    int best = -1;
+    long long distance = 0;
+    const auto current = modes[selected_resolution];
+    for (int i = 0; i < (int)modes.size(); ++i) if (matching_mode(i)) {
+        long long delta = std::llabs((long long)modes[i].first * modes[i].second - (long long)current.first * current.second);
+        if (best < 0 || delta < distance) { best = i; distance = delta; }
+    }
+    if (best >= 0) selected_resolution = best;
+}
+void finish_modes(int settings_version, int saved_width, int saved_height)
+{
+    if (settings_version == 1 && !modes.empty()) {
+        /* Version 1 stored an index into the sorted native display list, before
+           canonical offscreen resolutions existed. Resolve that index first. */
+        std::sort(modes.begin(), modes.end());
+        auto saved = modes[std::clamp(selected_resolution, 0, (int)modes.size()-1)];
+        saved_width = saved.first; saved_height = saved.second;
+        for (int i=0;i<(int)std::size(aspects);++i)
+            if (video_layout_aspect_matches(saved_width,saved_height,aspects[i].numerator,aspects[i].denominator)) {
+                selected_aspect=i;break;
+            }
+    }
+    /* These are offscreen render sizes, not exclusive display modes.
+       Every supported aspect must remain usable on any desktop. */
+    const std::pair<int,int> render_sizes[] = {
+        {640,480},{800,600},{1024,768},{1280,960},{1600,1200},{1920,1440},{2560,1920},{2880,2160},
+        {854,480},{960,540},{1280,720},{1366,768},{1600,900},{1920,1080},{2560,1440},{3200,1800},{3840,2160},
+        {1120,480},{1680,720},{2560,1080},{3440,1440},{3840,1600}
+    };
+    if (saved_width >= 640 && saved_height >= 480 && saved_width <= 3840 && saved_height <= 2160 &&
+        video_layout_aspect_matches(saved_width, saved_height, aspects[selected_aspect].numerator,
+                                   aspects[selected_aspect].denominator) &&
+        std::find(modes.begin(), modes.end(), std::make_pair(saved_width,saved_height)) == modes.end())
+        modes.push_back({saved_width,saved_height});
+    for (auto size : render_sizes)
+        if (std::find(modes.begin(), modes.end(), size) == modes.end()) modes.push_back(size);
+    if (modes.empty())
+        modes.push_back({normal_w, normal_h});
+    std::sort(modes.begin(), modes.end());
+    selected_resolution = std::clamp(selected_resolution, 0, (int)modes.size() - 1);
+    auto saved_mode = std::find(modes.begin(), modes.end(), std::make_pair(saved_width, saved_height));
+    if (saved_mode != modes.end()) selected_resolution = (int)(saved_mode - modes.begin());
+    select_matching_mode();
+}
 const char *settings_path = "video-sdl3.ini";
 void set_error(const char *context)
 {
@@ -140,8 +240,9 @@ void save_settings()
     FILE *f = fopen("video-sdl3.ini.tmp", "w");
     if (!f)
         return;
-    fprintf(f, "BHSDL3 1\n%d %d %d %d %d %d %d\n", normal_x, normal_y, normal_w, normal_h, mode, maximized,
-            selected_resolution);
+    auto resolution = modes.empty() ? std::make_pair(normal_w, normal_h) : modes[selected_resolution];
+    fprintf(f, "BHSDL3 3\n%d %d %d %d %d %d %d\n%d %d %d\n", normal_x, normal_y, normal_w, normal_h, mode, maximized,
+            selected_resolution, selected_aspect, resolution.first, resolution.second);
     if (fclose(f) == 0)
         MoveFileExA("video-sdl3.ini.tmp", settings_path, MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH);
 }
@@ -212,8 +313,9 @@ bool ensure_targets()
         if (size)
             sscanf(size, "%dx%d", &w, &h);
     }
-    w = std::max(1, std::min(w, 3840));
-    h = std::max(1, std::min(h, 2160));
+    float limit = std::min(1.f, std::min(3840.f / std::max(w, 1), 2160.f / std::max(h, 1)));
+    w = std::max(1, (int)std::lround(w * limit));
+    h = std::max(1, (int)std::lround(h * limit));
     if (color_target && target_w == (unsigned)w && target_h == (unsigned)h)
         return true;
     end_pass();
@@ -234,12 +336,17 @@ bool begin_pass(SDL_GPULoadOp color_load = SDL_GPU_LOADOP_LOAD, SDL_GPULoadOp de
 {
     if (!ensure_commands() || !ensure_targets())
         return false;
-    if (pass && color_load == SDL_GPU_LOADOP_LOAD && depth_load == SDL_GPU_LOADOP_LOAD)
+    float mx, my;
+    canvas_margins(mx, my);
+    if (mx != applied_margin_x || my != applied_margin_y || selected_aspect != applied_aspect || mode != applied_mode)
+        targets_fresh = true;
+    if (pass && !targets_fresh && color_load == SDL_GPU_LOADOP_LOAD && depth_load == SDL_GPU_LOADOP_LOAD)
         return true;
     if (targets_fresh)
     {
+        if (color_load != SDL_GPU_LOADOP_CLEAR)
+            clear = {0, 0, 0, 1};
         color_load = depth_load = SDL_GPU_LOADOP_CLEAR;
-        targets_fresh = false;
     }
     end_pass();
     SDL_GPUColorTargetInfo c{};
@@ -257,9 +364,14 @@ bool begin_pass(SDL_GPULoadOp color_load = SDL_GPU_LOADOP_LOAD, SDL_GPULoadOp de
     pass = SDL_BeginGPURenderPass(commands, &c, 1, &d);
     if (!pass)
         return false;
-    float scale = std::min(target_w / 640.f, target_h / 480.f);
-    SDL_GPUViewport viewport{
-        (target_w - 640 * scale) / 2, (target_h - 480 * scale) / 2, 640 * scale, 480 * scale, 0, 1};
+    targets_fresh = false;
+    applied_margin_x = mx;
+    applied_margin_y = my;
+    applied_aspect = selected_aspect;
+    applied_mode = mode;
+    float x, y, w, h, scale;
+    viewport_geometry(x, y, w, h, scale);
+    SDL_GPUViewport viewport{x, y, w, h, 0, 1};
     SDL_SetGPUViewport(pass, &viewport);
     return true;
 }
@@ -433,6 +545,9 @@ bool flush()
     SDL_GPUBufferRegion dst{buffer, 0, size};
     SDL_UploadToGPUBuffer(copy, &src, &dst, false);
     SDL_EndGPUCopyPass(copy);
+    float mx, my; canvas_margins(mx, my);
+    float canvas[4] = {320 + mx, 240 + my, 0, 0};
+    SDL_PushGPUVertexUniformData(commands, 0, canvas, sizeof(canvas));
     for (auto &b : batches)
     {
         Surface *s = b.texture ? b.texture : white;
@@ -499,6 +614,20 @@ bool draw_surface(Surface *s, bool overlay = false)
     states = saved;
     return SUCCEEDED(hr) && flush();
 }
+void present_target(SDL_GPUTexture *destination, unsigned width, unsigned height)
+{
+    SDL_GPUBlitInfo blit{};
+    blit.source.texture = color_target;
+    blit.source.w = target_w;
+    blit.source.h = target_h;
+    blit.destination.texture = destination;
+    video_layout_fit(target_w, target_h, width, height, &blit.destination.x, &blit.destination.y,
+                     &blit.destination.w, &blit.destination.h);
+    blit.load_op = SDL_GPU_LOADOP_CLEAR;
+    blit.clear_color = {0, 0, 0, 1};
+    blit.filter = SDL_GPU_FILTER_LINEAR;
+    SDL_BlitGPUTexture(commands, &blit);
+}
 bool present()
 {
     if (!flush() || !ensure_commands() || !ensure_targets())
@@ -512,18 +641,7 @@ bool present()
         return false;
     }
     if (swap)
-    {
-        SDL_GPUBlitInfo blit{};
-        blit.source.texture = color_target;
-        blit.source.w = target_w;
-        blit.source.h = target_h;
-        blit.destination.texture = swap;
-        blit.destination.w = w;
-        blit.destination.h = h;
-        blit.load_op = SDL_GPU_LOADOP_DONT_CARE;
-        blit.filter = SDL_GPU_FILTER_LINEAR;
-        SDL_BlitGPUTexture(commands, &blit);
-    }
+        present_target(swap, w, h);
     bool ok = SDL_SubmitGPUCommandBuffer(commands);
     commands = nullptr;
     return ok;
@@ -598,6 +716,7 @@ SDL_GPUShader *shader(const char *path, const char *entry, const char *profile, 
         info.num_samplers = 1;
         info.num_uniform_buffers = 1;
     }
+    else info.num_uniform_buffers = 1;
     auto *s = SDL_CreateGPUShader(device, &info);
     code->lpVtbl->Release(code);
     if (errors)
@@ -646,6 +765,7 @@ extern "C"
 {
     HWND __cdecl bh_sdl_open(int hide, BHSDLMessage callback, void *user)
     {
+        int saved_width = 0, saved_height = 0, settings_version = 0;
         hidden = hide != 0 || SDL_getenv("BH_MENU_SMOKE_SECONDS") != nullptr;
         message_callback = callback;
         message_user = user;
@@ -659,23 +779,32 @@ extern "C"
         {
             char tag[32] = {};
             int version = 0, m = 0;
-            if (fscanf(f, "%31s %d", tag, &version) == 2 && !strcmp(tag, "BHSDL3") && version == 1)
+            if (fscanf(f, "%31s %d", tag, &version) == 2 && !strcmp(tag, "BHSDL3") && version >= 1 && version <= 3)
             {
+                settings_version = version;
                 fscanf(f, "%d %d %d %d %d %d %d", &normal_x, &normal_y, &normal_w, &normal_h, &mode, &m,
                        &selected_resolution);
                 maximized = m != 0;
+                if (version >= 2) fscanf(f, "%d %d %d", &selected_aspect, &saved_width, &saved_height);
+                if (version == 2) {
+                    const int old_aspect = selected_aspect;
+                    selected_aspect = old_aspect == 2 || old_aspect == 3 ? 1 : old_aspect >= 5 ? 2 : 0;
+                }
             }
             fclose(f);
         }
         normal_w = std::clamp(normal_w, 640, 3840);
         normal_h = std::clamp(normal_h, 480, 2160);
         mode = std::clamp(mode, 0, 1);
+        selected_aspect = std::clamp(selected_aspect, 0, (int)std::size(aspects) - 1);
         if (hidden)
         {
             normal_w = 640;
             normal_h = 480;
             mode = 0;
             maximized = false;
+            selected_aspect = 0;
+            settings_version = 0;
         }
         window = SDL_CreateWindow("BHunter", normal_w, normal_h,
                                   SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY | SDL_WINDOW_HIDDEN);
@@ -698,10 +827,7 @@ extern "C"
                 modes.push_back(size);
         }
         SDL_free(available);
-        if (modes.empty())
-            modes.push_back({normal_w, normal_h});
-        std::sort(modes.begin(), modes.end());
-        selected_resolution = std::clamp(selected_resolution, 0, (int)modes.size() - 1);
+        finish_modes(settings_version, saved_width, saved_height);
         device =
             SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_DXBC, SDL_getenv("BH_GPU_DEBUG") != nullptr, "direct3d12");
         if (!device || !SDL_ClaimWindowForGPUDevice(device, window))
@@ -833,18 +959,16 @@ extern "C"
             mode = mode ? 0 : 1;
             apply_mode();
         }
-        if (row == 2 && !modes.empty())
+        if (row == 1)
         {
-            selected_resolution = (selected_resolution + 1) % modes.size();
-            if (!mode)
-            {
-                auto size = modes[selected_resolution];
-                normal_w = size.first;
-                normal_h = size.second;
-                maximized = false;
-                SDL_RestoreWindow(window);
-                SDL_SetWindowSize(window, normal_w, normal_h);
-                remember_window();
+            selected_aspect = (selected_aspect + 1) % std::size(aspects);
+            select_matching_mode();
+        }
+        if (row == 2 && mode && !modes.empty())
+        {
+            for (int i = 1; i <= (int)modes.size(); ++i) {
+                int next = (selected_resolution + i) % modes.size();
+                if (matching_mode(next)) { selected_resolution = next; break; }
             }
         }
         save_settings();
@@ -855,7 +979,9 @@ extern "C"
         if (row == 0)
             return mode ? "Borderless" : "Windowed";
         if (row == 1)
-            return "SDL3 GPU";
+            return aspects[selected_aspect].label;
+        if (!mode) return "Resize window";
+        if (!modes.empty() && !matching_mode(selected_resolution)) return "Unavailable";
         int w, h;
         SDL_GetWindowSizeInPixels(window, &w, &h);
         if (mode && !modes.empty())
@@ -865,6 +991,10 @@ extern "C"
         }
         snprintf(text, sizeof(text), "%d x %d", w, h);
         return text;
+    }
+    void __cdecl bh_sdl_canvas_margins(float *x, float *y)
+    {
+        if (window && x && y) canvas_margins(*x, *y);
     }
     int __cdecl bh_sdl_capture(const char *path)
     {
@@ -1256,13 +1386,16 @@ extern "C"
             auto pixels = readback();
             if (pixels.empty())
                 return E_FAIL;
-            float scale = std::min(target_w / 640.f, target_h / 480.f);
-            unsigned ox = (target_w - 640 * scale) / 2, oy = (target_h - 480 * scale) / 2;
+            float vx, vy, vw, vh, scale;
+            viewport_geometry(vx, vy, vw, vh, scale);
+            float mx, my; canvas_margins(mx, my);
+            float scale_x = vw / (640 + 2 * mx), scale_y = vh / (480 + 2 * my);
+            float ox = vx + mx * scale_x, oy = vy + my * scale_y;
             for (unsigned y = 0; y < s->desc.dwHeight; ++y)
                 for (unsigned x = 0; x < s->desc.dwWidth; ++x)
                 {
-                    unsigned px = std::min(target_w - 1, ox + (unsigned)(x * scale)),
-                             py = std::min(target_h - 1, oy + (unsigned)(y * scale));
+                    unsigned px = std::min(target_w - 1, (unsigned)(ox + x * scale_x)),
+                             py = std::min(target_h - 1, (unsigned)(oy + y * scale_y));
                     unsigned c = pixels[py * target_w + px];
                     unsigned short v =
                         ((c & 255) >> 3) << 11 | (((c >> 8) & 255) >> 2) << 5 | (((c >> 16) & 255) >> 3);

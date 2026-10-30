@@ -26,6 +26,7 @@
 #include "bh_display_shutdown.h"
 #include "bh_vfile.h"
 #include "bh_fp.h"
+#include "bh_rotation.h"
 #include "bh_sound_startup.h"
 #include "bh_effect_network.h"
 #include <stdio.h>
@@ -2155,6 +2156,11 @@ static int render_frame(BHGameApp *a, BHDrawQueue *queue)
     a->display.auxiliary_pixels = a->begin.auxiliary_pixels;
     a->display.auxiliary_pitch = a->begin.auxiliary_pitch;
     a->display.locked = a->present.locked;
+    bh_sdl_canvas_margins(&a->view.margin_x, &a->view.margin_y);
+    a->view.left = a->clip.left = a->screen_clip.left = a->attribute_clip.left = -a->view.margin_x;
+    a->view.right = a->clip.right = a->screen_clip.right = a->attribute_clip.right = a->width + a->view.margin_x;
+    a->view.top = a->clip.top = a->screen_clip.top = a->attribute_clip.top = -a->view.margin_y;
+    a->view.bottom = a->clip.bottom = a->screen_clip.bottom = a->attribute_clip.bottom = a->height + a->view.margin_y;
     saved = a->render.draw;
     a->render.draw = queue;
     ok = bh_render_execute(&a->render);
@@ -2326,9 +2332,49 @@ static int startup_menu_navigation(BHGameApp *a)
         return failure(a, 13, "Video window-mode action failed");
     if (!diagnostic_press(video, 4) || strcmp(first, bh_sdl_video_label(0)))
         return failure(a, 13, "Video window-mode round trip failed");
+    /* The second row replaces the fixed renderer name without crowding the
+       original four-card menu. Exercise its action and each filtered list. */
+    strcpy(first, bh_sdl_video_label(1));
+    video->settings.selection = 0;
+    if (!diagnostic_press(video, 4))
+        return failure(a, 13, "Video borderless filter setup failed");
+    for (i = 0; i < 3; ++i)
+    {
+        unsigned long j;
+        int numerator = 0, denominator = 0;
+        video->settings.selection = 1;
+        if (!diagnostic_press(video, 4) || video->actions.error || video->edits.error)
+            return failure(a, 13, "Video aspect-ratio action failed");
+        sscanf(bh_sdl_video_label(1), "%d:%d", &numerator, &denominator);
+        video->settings.selection = 2;
+        for (j = 0; j < 8; ++j)
+        {
+            int width, height;
+            double relative;
+            if (!diagnostic_press(video, 4))
+                return failure(a, 13, "Borderless resolution cycling failed");
+            if (sscanf(bh_sdl_video_label(2), "%d x %d", &width, &height) == 2)
+            {
+                if (!denominator) continue;
+                relative = fabs((double)width * denominator / height / numerator - 1);
+                if (relative > (numerator == 21 ? .03 : .003))
+                    return failure(a, 13, "Borderless resolution escaped aspect filter");
+            }
+            else if (strcmp(bh_sdl_video_label(2), "Unavailable"))
+                return failure(a, 13, "Borderless resolution label is invalid");
+        }
+    }
+    video->settings.selection = 0;
+    if (!diagnostic_press(video, 4))
+        return failure(a, 13, "Video windowed restore failed");
+    if (strcmp(first, bh_sdl_video_label(1)))
+        return failure(a, 13, "Video aspect-ratio round trip failed");
     video->settings.selection = 2;
+    strcpy(first, bh_sdl_video_label(2));
     if (!diagnostic_press(video, 4) || video->actions.error || video->edits.error)
         return failure(a, 13, "Video resolution action/label refresh failed");
+    if (strcmp(bh_sdl_video_label(0), "Windowed") == 0 && strcmp(first, bh_sdl_video_label(2)))
+        return failure(a, 13, "Windowed resolution control changed the window size");
     if (!diagnostic_press(video, 8) || video->runtime.destinations[video->settings.selection] != &options->runtime ||
         a->messages.arena_used != arena)
         return failure(a, 13, "Video Back action or obsolete restart notice failed");
@@ -2521,6 +2567,95 @@ static int startup_effect_checks(BHGameApp *a)
             return failure(a, 13, "Texture fixture lost transparent background");
     }
     return 1;
+}
+static int startup_aspect_fade_check(BHGameApp *a)
+{
+    BHVec3 zero = {0, 0, 0};
+    DDBLTFX fill;
+    int ok;
+    memset(&fill, 0, sizeof(fill));
+    fill.dwSize = sizeof(fill);
+    if (IDirectDrawSurface_Blt(a->target, 0, 0, 0, DDBLT_COLORFILL | DDBLT_WAIT, &fill) != DD_OK ||
+        !bh_draw_queue_begin(&a->queue) || bh_camera_queue_pose(&a->queue, &zero, &zero) != 1 ||
+        bh_fade_queue(&a->queue, 1, 0xffffff) != 1)
+        return failure(a, 13, "Aspect fade fixture initialization failed");
+    ok = render_frame(a, &a->queue) && capture_fixture(a, "aspect-fade");
+    bh_fade_set(&a->fade, 0, 0);
+    return ok;
+}
+static int startup_hud_anchor_checks(BHGameApp *a)
+{
+    BHHudContext saved_hud = a->hud;
+    BHRadarFrame saved_frame = a->radar_frame;
+    BHAttachmentContext saved_attachment = a->attachment;
+    BHHudPlayer player;
+    BHHudStatusState status;
+    BHHudWeaponAmmo ammo[2];
+    const BHHudWeaponAmmo *weapons[2];
+    BHVec3 zero = {0,0,0}, target = {40,0,80};
+    unsigned long group, kind, i;
+    const char *groups[] = {"primary", "secondary", "right", "center"};
+    char name[80];
+    int ok = 1;
+    memset(&player,0,sizeof(player));
+    memset(ammo,0,sizeof(ammo));
+    player.right.x = player.up.y = player.forward.z = 1;
+    ammo[0].amount = 216; ammo[1].amount = 123;
+    weapons[0] = ammo; weapons[1] = ammo+1;
+    for (kind=0;kind<2 && ok;++kind) for (group=0;group<4 && ok;++group) {
+        memset(&status,0,sizeof(status));
+        status.weapons=weapons;status.weapon_count=2;status.secondary=1;
+        status.counter_a=10000;status.counter_b=123;
+        player.flat_raw = kind==0;
+        if (!bh_draw_queue_begin(&a->queue) || bh_camera_queue_pose(&a->queue,&zero,&zero)!=1 ||
+            !bh_hud_setup(&a->hud,&player) ||
+            !(kind ? bh_hud_world_draw(&a->world_hud,&status) : bh_hud_flat_draw(&a->flat_hud,&status)) ||
+            !bh_radar_marker(&a->radar,&zero,&target,1,0,0)) {ok=0;break;}
+        for(i=9;i<a->queue.count;++i) {
+            BHDrawCommand *c=a->queue.commands+i;
+            unsigned long flags, actual;
+            float u=0,v=0;
+            if(c->kind==BH_DRAW_CAMERA) continue;
+            flags=c->kind==BH_DRAW_RECT ? c->words[11] : c->kind==BH_DRAW_SCREEN_QUAD ? c->words[6] : c->words[13];
+            if(c->kind==BH_DRAW_RECT || c->kind==BH_DRAW_QUAD) {
+                memcpy(&u,c->words+(c->kind==BH_DRAW_RECT?6:14),4);
+                memcpy(&v,c->words+(c->kind==BH_DRAW_RECT?8:16),4);
+            }
+            /* Isolate secondary icons/digits by their existing atlas regions;
+               no production-only relocation marker is needed. */
+            if((c->resource==a->flat_hud.atlas_image && v==.09765625f) ||
+               (c->resource==a->flat_hud.weapon_icons_image && u==.50390625f)) actual=1;
+            else if(c->resource==a->flat_hud.weapon_icons_image ||
+                    (c->resource==a->flat_hud.atlas_image && v==.00390625f && u<.6f)) actual=0;
+            else if(c->resource!=a->flat_hud.atlas_image || u>=.6f) actual=2;
+            else actual=3;
+            if(actual!=group) c->kind=BH_DRAW_NOP;
+        }
+        sprintf(name,"hud-%s-%s",kind?"world":"flat",groups[group]);
+        ok=bh_frame_clear_color(&a->display,0,0,0) && render_frame(a,&a->queue) && capture_fixture(a,name);
+    }
+    if(ok) {
+        BHMessagePanel saved_panel=a->panel;
+        BHMessageState saved_messages=a->messages;
+        BHMessagePanelFields saved_fields;
+        BHMessagePanelFields *fields;
+        int created=a->panel.entity==0;
+        if(created && !bh_message_panel_create(&a->panel)) ok=0;
+        else {
+            fields=bh_message_panel_fields(a->panel.entity);saved_fields=*fields;
+            bh_message_state_init(&a->messages);
+            fields->timer=1;fields->scale=1;fields->flash=0;fields->icon_image=a->panel.icon_images[0];
+            a->messages.ring_count=1;a->messages.ring[0][0]='1';a->messages.ring[0][1]=0;
+            ok=bh_draw_queue_begin(&a->queue) && bh_camera_queue_pose(&a->queue,&zero,&zero)==1 &&
+               bh_message_panel_render(&a->panel) && bh_frame_clear_color(&a->display,0,0,0) &&
+               render_frame(a,&a->queue) && capture_fixture(a,"hud-messages");
+            *fields=saved_fields;
+            if(created) bh_message_panel_close(&a->panel);
+        }
+        a->panel=saved_panel;a->messages=saved_messages;
+    }
+    a->hud=saved_hud;a->radar_frame=saved_frame;a->attachment=saved_attachment;
+    return ok ? 1 : failure(a,13,"HUD anchor fixtures failed");
 }
 static int startup_callback_continuation_checks(BHGameApp *a, unsigned long resource)
 {
@@ -2827,6 +2962,73 @@ static int startup_marker_tracking_checks(BHGameApp *a)
     stage(a, "SDL target tracking: moving target, camera yaw/dolly, three fractions versus render-pose reference");
     return 1;
 }
+static int startup_cockpit_checks(BHGameApp *a)
+{
+    BHEntity saved_player=*a->player;
+    BHCameraStateContext context=a->camera_state;
+    BHCameraState *camera=bh_player_camera_state(a->player);
+    long saved_mode=a->player_state.mode;
+    unsigned long frame,fraction,part,i,attachments=0;
+    int ok=1;
+    char name[80];
+    const char *parts[]={"assembly","mesh","instruments"};
+    float original_yaw;
+    memcpy(&original_yaw,(char *)a->player+0x3c,4);
+    a->player_state.mode=1;
+    *((unsigned char *)a->player+0x2bb)=1;
+    memset(&a->interpolation,0,sizeof(a->interpolation));
+    bh_interpolation_bind(&a->queue);
+    for(frame=0;frame<2 && ok;++frame) {
+        BHCameraInput input;
+        BHMat34 rotation={{{1,0,0,0},{0,1,0,0},{0,0,1,0}}};
+        BHVec3 axis={1,0,0};
+        memset(&input,0,sizeof(input));
+        input.target=saved_player.position;input.target.x+=frame*2;
+        input.angles.x=original_yaw+frame*.12f;
+        input.actor_token=(unsigned long)a->player;
+        bh_mat34_rotate_y(input.angles.x,&rotation);
+        bh_mat34_transform_direction(&rotation,&axis,&input.basis_x);
+        axis.x=0;axis.y=1;bh_mat34_transform_direction(&rotation,&axis,&input.basis_y);
+        axis.y=0;axis.z=1;bh_mat34_transform_direction(&rotation,&axis,&input.basis_z);
+        a->player->position=input.target;
+        memcpy((char *)a->player+0x18,&input.basis_x,12);
+        memcpy((char *)a->player+0x24,&input.basis_y,12);
+        memcpy((char *)a->player+0x30,&input.basis_z,12);
+        memcpy((char *)a->player+0x3c,&input.angles,12);
+        /* The actual recovered cockpit mode supplies the eye offset and
+           correction callback; the camera and vehicle turn/move together. */
+        bh_interpolation_reset();
+        ok=bh_camera_state_init(camera,0) && bh_camera_state_update(&context,camera,&input,1.0/30,0,0) &&
+           bh_draw_queue_begin(&a->queue) && bh_player_scene_draw(&a->player_scene);
+        if(!ok) break;
+        bh_interpolation_capture(&a->interpolation,&a->queue,1);
+        if(!frame) {
+            ok=bh_frame_clear_color(&a->display,0,0,0) && render_frame(a,&a->queue) && capture_fixture(a,"cockpit-view");
+            continue;
+        }
+        for(fraction=0;fraction<3 && ok;++fraction) for(part=0;part<3 && ok;++part) {
+            BHDrawQueue *sample=bh_interpolation_sample(&a->interpolation,fraction*.5f);
+            for(i=9;i<sample->count;++i) {
+                BHDrawCommand *c=sample->commands+i;
+                int instrument=a->interpolation.current_ids[i].attachment!=0 &&
+                               (c->kind==BH_DRAW_QUAD || c->kind==BH_DRAW_ORIENTED);
+                int mesh=c->kind==BH_DRAW_MODEL_RESOURCE && c->resource==a->player_scene.cockpit_resource;
+                if(instrument) ++attachments;
+                if(c->kind!=BH_DRAW_CAMERA && c->kind!=BH_DRAW_STATE &&
+                   !(mesh && part!=2) && !(instrument && part!=1)) c->kind=BH_DRAW_NOP;
+            }
+            sprintf(name,"cockpit-%s-%lu",parts[part],fraction);
+            ok=bh_frame_clear_color(&a->display,0,0,0) && render_frame(a,sample) && capture_fixture(a,name);
+        }
+    }
+    *a->player=saved_player;a->player_state.mode=saved_mode;
+    bh_interpolation_bind(0);memset(&a->interpolation,0,sizeof(a->interpolation));
+    if(ok && attachments) {
+        stage(a,"SDL cockpit: recovered mode0 eye, moving/turning production scene, three interpolated mesh/instrument/assembly captures");
+        return 1;
+    }
+    return failure(a,13,"Cockpit camera/attachment fixtures failed");
+}
 static int startup_player_interpolation_checks(BHGameApp *a)
 {
     BHEntity saved_player;
@@ -2909,6 +3111,9 @@ static int startup_player_interpolation_checks(BHGameApp *a)
                 sample = bh_interpolation_sample(&a->interpolation, alpha);
                 if (!bh_frame_clear_color(&a->display, 0, 0, 0) || !render_frame(a, sample) || !capture_fixture(a, "player-interpolated")) ++mismatches;
             }
+            if (frame == 9 && j == 1 &&
+                (!bh_frame_clear_color(&a->display, 0, 0, 0) || !render_frame(a, sample) ||
+                 !capture_fixture(a, "player-cockpit-interpolated"))) ++mismatches;
         }
         previous_x = a->player->position.x;
         previous_camera_x = camera->position.x;
@@ -2920,7 +3125,7 @@ static int startup_player_interpolation_checks(BHGameApp *a)
     memset(&a->interpolation, 0, sizeof(a->interpolation));
     if (mismatches || !attachments) return failure(a, 13, "Player/camera/cockpit interpolation failed under visibility churn");
     stage(a, "SDL player interpolation: 16 production scene poses x 3 render fractions, changing visibility/cockpit HUD, zero pose mismatches");
-    return startup_marker_tracking_checks(a) && startup_rocket_tracking_checks(a);
+    return startup_marker_tracking_checks(a) && startup_rocket_tracking_checks(a) && startup_cockpit_checks(a);
 }
 #endif
 /* Simulation and audio run at 30 Hz. Render copies interpolate between the
@@ -3473,7 +3678,7 @@ int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int start
         }
         stage(a, "Checking static source beam/boost/logo/panel bindings after scene composition");
         if (!capture_fixture(a, "level-menu") || !startup_menu_checks(a) ||
-            !startup_effect_checks(a) || !startup_player_model_checks(a))
+            !startup_effect_checks(a) || !startup_aspect_fade_check(a) || !startup_hud_anchor_checks(a) || !startup_player_model_checks(a))
             goto done;
 #ifdef DEBUGGING
         if (!startup_player_interpolation_checks(a) || !startup_portal_seam_checks(a) || !startup_cheat_checks(a)) goto done;

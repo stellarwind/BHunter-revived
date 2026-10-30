@@ -10,6 +10,7 @@ int __cdecl bh_view_reset_viewport(BHViewConfig *c, long width, long height)
     c->origin_x = c->origin_y = c->left = c->top = 0;
     c->width = c->right = (float)width;
     c->height = c->bottom = (float)height;
+    c->margin_x = c->margin_y = 0;
     return 1;
 }
 int __cdecl bh_view_config_init(BHViewConfig *c, long width, long height)
@@ -31,14 +32,14 @@ int __cdecl bh_view_clip_rect(BHViewConfig *c, float x, float y, float width, fl
         return 0;
     bh_round_float(&right, (double)x + width);
     bh_round_float(&bottom, (double)y + height);
-    if (x < 0)
-        x = 0;
-    if (c->width < right)
-        right = c->width;
-    if (y < 0)
-        y = 0;
-    if (c->height < bottom)
-        bottom = c->height;
+    if (x < -c->margin_x)
+        x = -c->margin_x;
+    if (c->width + c->margin_x < right)
+        right = c->width + c->margin_x;
+    if (y < -c->margin_y)
+        y = -c->margin_y;
+    if (c->height + c->margin_y < bottom)
+        bottom = c->height + c->margin_y;
     c->left = x;
     c->right = right;
     c->top = y;
@@ -90,6 +91,10 @@ int __cdecl bh_view_camera_build(const BHViewConfig *c, const BHMat34 *camera, B
         bh_round_float(&next.projected.m[1][j], focal * camera->m[1][j] + (double)offset_y * camera->m[2][j]);
     }
     bh_round_float(&vertical, (retained_cosine * c->width) / c->height);
+    if (c->margin_x > 0)
+        bh_round_float(&cosine, (double)cosine * c->width / (c->width + 2 * c->margin_x));
+    if (c->margin_y > 0)
+        bh_round_float(&vertical, (double)vertical * c->height / (c->height + 2 * c->margin_y));
     bh_mat34_inverse_rigid(camera, &next.inverse);
     local.x = local.y = local.z = 0;
     bh_mat34_transform_point(&next.inverse, &local, &next.position);
@@ -105,8 +110,8 @@ int __cdecl bh_view_camera_build(const BHViewConfig *c, const BHMat34 *camera, B
     bh_round_float(&next.planes[BH_VIEW_FAR].offset, ((double)point.z * next.planes[BH_VIEW_FAR].normal.z +
                                                       (double)point.y * next.planes[BH_VIEW_FAR].normal.y) +
                                                          (double)point.x * next.planes[BH_VIEW_FAR].normal.x);
-    plane(next.planes + BH_VIEW_RIGHT, &next.inverse, &next.position, cosine, 0, sine, 0);
-    plane(next.planes + BH_VIEW_LEFT, &next.inverse, &next.position, -cosine, 0, sine, 0);
+    plane(next.planes + BH_VIEW_RIGHT, &next.inverse, &next.position, cosine, 0, sine, c->margin_x > 0);
+    plane(next.planes + BH_VIEW_LEFT, &next.inverse, &next.position, -cosine, 0, sine, c->margin_x > 0);
     plane(next.planes + BH_VIEW_TOP, &next.inverse, &next.position, 0, -vertical, sine, 1);
     plane(next.planes + BH_VIEW_BOTTOM, &next.inverse, &next.position, 0, vertical, sine, 1);
     for (i = 0; i < 12; ++i)

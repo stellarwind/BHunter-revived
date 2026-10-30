@@ -17,12 +17,12 @@ static float stored(double x)
     bh_round_float(&f, x);
     return f;
 }
-static void rect(BHHudFlatContext *c, unsigned long image, double x, double y, float width, float height, float u,
+static void rect(BHHudFlatContext *c, unsigned long anchor, unsigned long image, double x, double y, float width, float height, float u,
                  float ue, float v, float ve)
 {
     float sx = stored(x), sy = stored(y), depth = stored((double)c->hud->frame->near_z + .01);
     int result =
-        bh_pickup_rect_queue(c->hud->attachment->queue, 8, image, sx, sy, width, height, 0, 0, 1, u, ue, v, ve, depth);
+        bh_pickup_rect_queue(c->hud->attachment->queue, 8, image, sx, sy, width, height, 0, anchor, 1, u, ue, v, ve, depth);
     ++c->attempted;
     if (result > 0)
         ++c->queued;
@@ -36,7 +36,7 @@ static void gauge(BHHudFlatContext *c, float amount, unsigned char flags, float 
 {
     double remainder, raw_height;
     float height, v, ve;
-    rect(c, c->atlas_image, x, (double)scale * top + half_background_height, width, background_height, background_u,
+    rect(c, BH_HUD_ANCHOR_RIGHT, c->atlas_image, x, (double)scale * top + half_background_height, width, background_height, background_u,
          .1171875f, .00390625f, .6953125f);
     if (amount >= 0 && ((double)amount < .8 || (flags & 8)))
     {
@@ -45,7 +45,7 @@ static void gauge(BHHudFlatContext *c, float amount, unsigned char flags, float 
         height = stored(raw_height);
         v = stored(.00390625 - (double)amount * -.6953125);
         ve = stored(remainder * .6953125);
-        rect(c, c->atlas_image, x, raw_height * .5 + ((double)bottom - remainder * 150.0) * scale, width, height,
+        rect(c, BH_HUD_ANCHOR_RIGHT, c->atlas_image, x, raw_height * .5 + ((double)bottom - remainder * 150.0) * scale, width, height,
              .87890625f, .1171875f, v, ve);
     }
 }
@@ -58,6 +58,7 @@ static void ammo(BHHudFlatContext *c, long amount, unsigned char selected, int s
 {
     long hundreds = amount / 100, remainder = amount % 100, tens = remainder / 10;
     float v;
+    unsigned long anchor = secondary ? BH_HUD_ANCHOR_RIGHT : BH_HUD_ANCHOR_LEFT;
     double half_width = ((double)scale * 12) * .5, half_height = ((double)scale * 18) * .5;
     double y = ((double)c->viewport_height - bottom) + half_height, early_y;
     static const float digit_x[2][3] = {{112, 124, 136}, {552, 564, 576}};
@@ -71,19 +72,19 @@ static void ammo(BHHudFlatContext *c, long amount, unsigned char selected, int s
     if (hundreds)
     {
         x = (double)scale * digit_x[secondary][0] - early_offset + half_width;
-        rect(c, c->atlas_image, x, early_y, digit_width, digit_height, digit_u(hundreds), .0546875f, v, .0859375f);
+        rect(c, anchor, c->atlas_image, x, early_y, digit_width, digit_height, digit_u(hundreds), .0546875f, v, .0859375f);
     }
     if (hundreds || tens)
     {
         x = (double)scale * digit_x[secondary][1] - early_offset + half_width;
-        rect(c, c->atlas_image, x, early_y, digit_width, digit_height, digit_u(tens), .0546875f, v, .0859375f);
+        rect(c, anchor, c->atlas_image, x, early_y, digit_width, digit_height, digit_u(tens), .0546875f, v, .0859375f);
     }
     x = (double)scale * digit_x[secondary][2] - (secondary ? 0.0 : x_offset) + half_width;
-    rect(c, c->atlas_image, x, y, digit_width, digit_height, digit_u(remainder % 10), .0546875f, v, .0859375f);
+    rect(c, anchor, c->atlas_image, x, y, digit_width, digit_height, digit_u(remainder % 10), .0546875f, v, .0859375f);
     icon_height = stored((double)scale * 38);
     icon_width = stored((double)scale * 96);
     icon_v = stored((.5 - (double)((long)selected - (secondary ? 5 : 0)) * -25.0) * .0078125);
-    rect(c, c->weapon_icons_image,
+    rect(c, anchor, c->weapon_icons_image,
          (double)scale * (secondary ? 456 : 148) - (secondary ? 0.0 : x_offset) + ((double)scale * 96) * .5,
          ((double)c->viewport_height - icon_height) + ((double)scale * 38) * .5, icon_width, icon_height,
          secondary ? .50390625f : .00390625f, .4921875f, icon_v, .1875f);
@@ -94,7 +95,7 @@ static void counter(BHHudFlatContext *c, long amount, unsigned char countdown, i
 {
     long divisor, digit, seen = 0;
     float x, step, width;
-    rect(c, c->atlas_image, label_x,
+    rect(c, 0, c->atlas_image, label_x,
          (second ? (double)top - (double)scale * -15.0 : raw_top) + ((double)scale * 14) * .5, label_width,
          label_height, .00390625f, .4921875f, second ? .39453125f : .28515625f, .1015625f);
     if (countdown & 8)
@@ -109,7 +110,7 @@ static void counter(BHHudFlatContext *c, long amount, unsigned char countdown, i
         amount -= divisor * digit;
         seen += digit;
         if (seen || divisor == 1)
-            rect(c, c->atlas_image, (double)x + (double)width * .5,
+            rect(c, 0, c->atlas_image, (double)x + (double)width * .5,
                  (second ? (double)top - (double)scale * -16.0 : (double)top + scale) + digit_half_width, width,
                  digit_width, digit_u(digit), .0546875f, second ? .91015625f : .19140625f, .0859375f);
         x = stored((double)x - step);

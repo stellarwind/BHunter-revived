@@ -29,9 +29,10 @@ static int project(const BHDrawQueue *q, unsigned long at, const BHMainCamera *c
     }
     else
     {
-        enclosing[0] = enclosing[1] = 0;
-        enclosing[2] = view->width;
-        enclosing[3] = view->height;
+        enclosing[0] = -view->margin_x;
+        enclosing[1] = -view->margin_y;
+        enclosing[2] = view->width + view->margin_x;
+        enclosing[3] = view->height + view->margin_y;
     }
     memset(bounds, 0, 4 * sizeof(float));
     if (enclosing[0] < enclosing[2] && enclosing[1] < enclosing[3])

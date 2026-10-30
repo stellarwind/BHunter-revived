@@ -79,13 +79,17 @@ int __cdecl bh_main_camera_build(const BHViewConfig *c, const BHMat34 *camera, B
         bh_round_float(&next.projected.m[1][j], focal * camera->m[1][j] + (double)oy * camera->m[2][j]);
     }
     bh_round_float(&vertical, ((double)cosine * c->width) / c->height);
+    if (c->margin_x > 0)
+        bh_round_float(&cosine, (double)cosine * c->width / (c->width + 2 * c->margin_x));
+    if (c->margin_y > 0)
+        bh_round_float(&vertical, (double)vertical * c->height / (c->height + 2 * c->margin_y));
     inverse_source = camera == &out->projected ? &next.projected : camera;
     bh_mat34_inverse_rigid(inverse_source, &next.inverse);
     zero.x = zero.y = zero.z = 0;
     bh_mat34_transform_point(&next.inverse, &zero, &next.position);
     main_plane(next.planes, &next, 0, 0, 1, 0);
-    main_plane(next.planes + 2, &next, cosine, 0, sine, 0);
-    main_plane(next.planes + 3, &next, -cosine, 0, sine, 0);
+    main_plane(next.planes + 2, &next, cosine, 0, sine, c->margin_x > 0);
+    main_plane(next.planes + 3, &next, -cosine, 0, sine, c->margin_x > 0);
     main_plane(next.planes + 4, &next, 0, -vertical, sine, 1);
     main_plane(next.planes + 5, &next, 0, vertical, sine, 1);
     for (i = 0; i < 12; ++i)

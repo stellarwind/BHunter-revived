@@ -72,10 +72,26 @@ int main(void)
     assert(bh_portal_clip_project(&q, 2, &camera, &view, &cache, b));
     assert(b[0] == 0 && b[2] == 0);
     assert(!memcmp(commands, unchanged, sizeof(commands)));
+    /* Root and nested portals must admit geometry in the newly revealed
+       strips, rather than silently retaining the old 640x480 bounds. */
+    portal(commands, 20, 10, BH_DRAW_END);
+    portal(commands + 1, 30, 20, 0);
+    camera_at(&camera, 0, 0);
+    view.margin_x = 106.66667f;
+    bh_portal_clip_reset(&cache);
+    assert(bh_portal_clip_project(&q, 1, &camera, &view, &cache, b));
+    assert(fabs(b[0] + view.margin_x) < .001);
+    assert(fabs(b[2] - 640 - view.margin_x) < .001);
+    view.margin_x = 0;
+    view.margin_y = 16;
+    bh_portal_clip_reset(&cache);
+    assert(bh_portal_clip_project(&q, 1, &camera, &view, &cache, b));
+    assert(fabs(b[1] + view.margin_y) < .001);
+    assert(fabs(b[3] - 480 - view.margin_y) < .001);
     commands[0].words[12] = 1;
     bh_portal_clip_reset(&cache);
     assert(!bh_portal_clip_project(&q, 0, &camera, &view, &cache, b));
     puts("Portal clips: render-camera parallax/dolly, nested bounds, per-render cache, behind-camera culling and "
-         "immutable snapshots passed");
+         "immutable snapshots and expanded aspect bounds passed");
     return 0;
 }

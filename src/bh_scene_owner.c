@@ -7,6 +7,9 @@
 #include <float.h>
 #include <math.h>
 #include <string.h>
+#ifdef BH_SDL_BACKEND
+#include "bh_sdl_adapter.h"
+#endif
 
 /* Original .rdata at 00489440: 39 9d 52 a2 46 df 91 3f (pi / 180),
    and 00489288: 00 00 00 3f (binary32 one half). */
@@ -129,6 +132,13 @@ int __cdecl bh_scene_owner_step(BHSceneOwner *owner, const BHVec3 *eye, const BH
     schedule->viewport->left = schedule->viewport->top = 0;
     schedule->viewport->right = (float)camera_width;
     schedule->viewport->bottom = (float)camera_height;
+#ifdef BH_SDL_BACKEND
+    bh_sdl_canvas_margins(&schedule->viewport->margin_x, &schedule->viewport->margin_y);
+    schedule->viewport->left -= schedule->viewport->margin_x;
+    schedule->viewport->right += schedule->viewport->margin_x;
+    schedule->viewport->top -= schedule->viewport->margin_y;
+    schedule->viewport->bottom += schedule->viewport->margin_y;
+#endif
     schedule->camera = &owner->camera;
     if (!bh_entity_schedule(schedule, scheduled))
     {
@@ -136,10 +146,12 @@ int __cdecl bh_scene_owner_step(BHSceneOwner *owner, const BHVec3 *eye, const BH
         return 0;
     }
     {
-        int first = bh_draw_controls_clip_rect(schedule->queue, 0, 0, 0, (float)owner->target_width,
-                                               (float)owner->target_height);
-        int second = bh_draw_controls_clip_rect(schedule->queue, 3, 0, 0, (float)owner->target_width,
-                                                (float)owner->target_height);
+        int first = bh_draw_controls_clip_rect(schedule->queue, 0, -schedule->viewport->margin_x,
+                        -schedule->viewport->margin_y, owner->target_width + 2 * schedule->viewport->margin_x,
+                        owner->target_height + 2 * schedule->viewport->margin_y);
+        int second = bh_draw_controls_clip_rect(schedule->queue, 3, -schedule->viewport->margin_x,
+                        -schedule->viewport->margin_y, owner->target_width + 2 * schedule->viewport->margin_x,
+                        owner->target_height + 2 * schedule->viewport->margin_y);
         if (first != 1 || second != 1)
         {
             owner->error = BH_SCENE_OWNER_QUEUE;

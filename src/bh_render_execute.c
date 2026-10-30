@@ -1,5 +1,6 @@
 #include "bh_render_execute.h"
 #include "bh_texture_draw.h"
+#include "bh_round.h"
 #include <string.h>
 
 static void failed(BHRenderExecute *e, BHRenderExecuteError error)
@@ -103,6 +104,28 @@ static int barrier(BHRenderExecute *e)
         ok = 0;
     return ok;
 }
+static int draw_anchored(BHRenderExecute *e, const BHDrawCommand *command, unsigned long *next)
+{
+#ifdef BH_SDL_BACKEND
+    unsigned long flags = command->kind == BH_DRAW_RECT ? command->words[11] :
+                          command->kind == BH_DRAW_SCREEN_QUAD ? command->words[6] : 0;
+    float shift = e->view ? e->view->margin_x : 0;
+    if (flags & BH_HUD_ANCHOR_LEFT) shift = -shift;
+    else if (!(flags & BH_HUD_ANCHOR_RIGHT)) shift = 0;
+    if (shift != 0) {
+        if (command->kind == BH_DRAW_RECT || command->kind == BH_DRAW_SCREEN_QUAD) {
+            BHDrawCommand shifted = *command;
+            float x;
+            memcpy(&x, shifted.words, sizeof(x));
+            bh_round_float(&x, (double)x + shift);
+            memcpy(shifted.words, &x, sizeof(x));
+            return draw_one(e, &shifted, next);
+        }
+
+    }
+#endif
+    return draw_one(e, command, next);
+}
 int __cdecl bh_render_execute(BHRenderExecute *e)
 {
     unsigned long at, steps = 0, processed = 0, next;
@@ -153,7 +176,7 @@ int __cdecl bh_render_execute(BHRenderExecute *e)
             return 0;
         }
         next = c->next;
-        status = draw_one(e, c, &next);
+        status = draw_anchored(e, c, &next);
         if (status <= 0 && e->failed_index == BH_DRAW_END)
         {
             e->failed_index = at;

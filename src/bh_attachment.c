@@ -173,7 +173,7 @@ static int segment(BHAttachmentContext *c, unsigned long image, RadarEndpoint *a
     bh_round_float(&span, (double)length * scale * .0025);
     if (!_finite(x) || !_finite(y) || !_finite(width) || !_finite(span) || !_finite(alpha) || !_finite(angle))
         return fail(c, BH_ATTACHMENT_NUMERICAL);
-    return submit(c, bh_screen_quad_queue(c->queue, 8, image, x, y, width, span, angle, 0, alpha));
+    return submit(c, bh_screen_quad_queue(c->queue, 8, image, x, y, width, span, angle, BH_HUD_ANCHOR_RIGHT, alpha));
 }
 static int render_node(BHAttachmentContext *c, BHAttachmentNode *node)
 {

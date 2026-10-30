@@ -184,6 +184,9 @@ int main(void)
         for (i = 10; i < q.count - 1; ++i) {
             float radius = (float)(i - 9);
             storage[i].kind = BH_DRAW_QUAD;
+            /* Presentation anchor flags must survive rigid rebasing, including
+               newly appearing sprites, without entering spatial interpolation. */
+            storage[i].words[13] = 0x10000000UL;
             put(storage[i].words, r * 10.0f + radius * cos(yaw));
             put(storage[i].words + 2, -radius * sin(yaw));
             put(storage[i].words + 4, 1);
@@ -205,6 +208,7 @@ int main(void)
             assert(fabs(get(sample->commands[i].words + 2) + radius * sin(yaw)) < .00001);
             assert(fabs(get(sample->commands[i].words + 6) - sin(yaw)) < .00001);
             assert(fabs(get(sample->commands[i].words + 8) - cos(yaw)) < .00001);
+            assert(sample->commands[i].words[13] == 0x10000000UL);
         }
         assert(get(sample->commands[12].words) == 500);
     }

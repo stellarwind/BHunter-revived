@@ -71,7 +71,7 @@ int __cdecl bh_hud_setup(BHHudContext *c, const BHHudPlayer *p)
         f->screen_y = unit * 9;
         f->screen_x = a->viewport_width - unit * 9;
         result = bh_screen_quad_queue(a->queue, 8, c->background_image, (float)f->screen_x, (float)f->screen_y,
-                                      (float)c->screen_diameter, (float)c->screen_diameter, 0, 0, 1);
+                                      (float)c->screen_diameter, (float)c->screen_diameter, 0, BH_HUD_ANCHOR_RIGHT, 1);
         ++c->attempted;
         if (result > 0)
             ++c->queued;
