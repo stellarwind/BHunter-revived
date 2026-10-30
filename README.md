@@ -1,6 +1,8 @@
 # BHunter
 
-![BHunter cover art](assets/cover.png)
+<p align="center">
+  <img src="assets/cover.png" alt="BHunter cover art">
+</p>
 
 <table>
   <tr>
@@ -26,7 +28,9 @@ A source restoration of **BHunter**, the 1999 hovercar combat game by **InterAct
 
 1. Download and extract [release 0.1](https://github.com/stellarwind/BHunter-revived/releases/tag/v0.1) on Windows.
 2. Copy `Bhunter.bin` from your own original game into the `GAME_DATA` folder.
-3. Run `play-hardware.cmd` or `play-software.cmd`.
+3. Run `BHunter-source.exe` (fullscreen hardware rendering by default). Later changes in the video settings take effect after restarting.
+
+Music plays from a mounted BHunter CD, or from `MUSIC_DATA/track02.wav` beside `GAME_DATA`. 
 
 Supported original game: **BHunter, English retail PC edition (1999)**. The tested files are:
 
@@ -58,10 +62,10 @@ Prepare `BH_COMPILER_DIR` with stock VC5 `CL.EXE`, SP3 `c1.dll`, `c1xx.dll`, `c2
 ```bat
 build-source.cmd
 python tools\prepare_ddrawcompat.py
-play-hardware.cmd
+build\BHunter-source.exe
 ```
 
-Keep your `Bhunter.bin` in `GAME_DATA`. To create a release ZIP:
+The build stages the executable and your local `GAME_DATA` and `MUSIC_DATA` into `build/`. The CFG lives beside the executable. Run from that folder, exactly like the release. To create a release ZIP:
 
 ```bat
 python tools\package_release.py --version 0.1
@@ -75,7 +79,7 @@ Quit the game, then run with Python 3.10+:
 python tools\unlock_levels.py
 ```
 
-This unlocks all nine mission entries in `build/game/source-preview.cfg`, backing up the save before changing it. Other settings stay intact. For another save, add `--save "path\to\source-preview.cfg"`.
+This unlocks all nine mission entries in `source-preview.cfg` beside the executable (`build/source-preview.cfg` for local builds), backing up the save before changing it. Other settings stay intact. For another save, add `--save "path\to\source-preview.cfg"`.
 
 ## AI disclaimer
 

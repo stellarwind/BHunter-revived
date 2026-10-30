@@ -17,4 +17,5 @@ typedef struct BHCdNotify
    Repeat MCI_PLAY(flags0x0d) with exact retained range/callback. Does not
    fabricate or open a device, normalize range or mutate playing on failure. */
 int __cdecl bh_cd_notify(BHCdNotify *, short event, MCIDEVICEID);
+int __cdecl bh_cd_play_retained(BHCdNotify *);
 #endif

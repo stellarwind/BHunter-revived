@@ -16,9 +16,9 @@ def main():
     args = parser.parse_args()
     if not re.fullmatch(r"\d+(?:\.\d+){1,2}", args.version):
         parser.error("Version must contain two or three numeric components")
-    runtime = ROOT / "build/game"
+    runtime = ROOT / "build"
     executable = runtime / "BHunter-source.exe"
-    record = json.loads((runtime / "build.json").read_text())
+    record = json.loads((ROOT / "build-cache/build.json").read_text())
     if not record.get("passed") or record.get("debugging") or record.get("mission_profile"):
         parser.error("Build a successful release configuration with build-source.cmd first")
     if record.get("executable_sha256") != hashlib.sha256(executable.read_bytes()).hexdigest():
@@ -32,15 +32,16 @@ def main():
     prefix = f"BHunter-{args.version}/"
     with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as bundle:
         for name in ("BHunter-source.exe", "ddraw.dll", "DDrawCompat-LICENSE.txt"):
-            bundle.write(runtime / name, prefix + "build/game/" + name)
-        for name in ("README.md", "HOWTOPLAY.md", "LICENSE", "play-source.cmd", "play-hardware.cmd", "play-software.cmd", "tools/unlock_levels.py", "assets/cover.png"):
+            bundle.write(runtime / name, prefix + name)
+        for name in ("README.md", "HOWTOPLAY.md", "LICENSE", "tools/unlock_levels.py", "assets/cover.png"):
             bundle.write(ROOT / name, prefix + name)
         for screenshot in sorted((ROOT / "screenshots").rglob("*.jpg")):
             bundle.write(screenshot, prefix + screenshot.relative_to(ROOT).as_posix())
         bundle.writestr(prefix + "GAME_DATA/", b"")
+        bundle.writestr(prefix + "MUSIC_DATA/", b"")
         bundle.writestr(prefix + "THIRD-PARTY.txt",
                         "DDrawCompat 0.7.2 (unmodified official binary)\n"
-                        "License: build/game/DDrawCompat-LICENSE.txt\n"
+                        "License: DDrawCompat-LICENSE.txt\n"
                         "Corresponding source: https://github.com/narzoul/DDrawCompat/tree/v0.7.2\n"
                         "Source archive: https://github.com/narzoul/DDrawCompat/archive/refs/tags/v0.7.2.zip\n")
     digest = hashlib.sha256(output.read_bytes()).hexdigest()

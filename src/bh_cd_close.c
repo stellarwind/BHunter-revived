@@ -11,6 +11,8 @@ int __cdecl bh_cd_stop_close(BHCdClose *c)
     ++c->native_calls;
     c->close_result = mciSendCommandA(c->device, MCI_CLOSE, 0, 0);
     c->device = 0;
+    c->local_file = 0;
+    c->local_length = 0;
     c->last_track = -1;
     return !c->stop_result && !c->close_result;
 }

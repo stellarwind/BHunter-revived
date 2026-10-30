@@ -53,6 +53,10 @@ typedef struct BHApplicationBootstrap
    The caller initializes all borrowed owners and source scene bindings first.
    No original executable is loaded or executed. */
 DWORD __cdecl bh_application_bootstrap(BHApplicationBootstrap *, HINSTANCE, HINSTANCE, const char *, int);
+/* Recovered004723c0 configuration/driver-choice blocks, shared with the
+   playable source entry point. These retain original first-run dialogs. */
+void __cdecl bh_application_video_configuration(BHApplicationBootstrap *);
+int __cdecl bh_application_video_choose(BHApplicationBootstrap *);
 /* Count-zero arithmetic/data adapters, shared with the actual owner. */
 unsigned long __cdecl bh_application_mode_plan(int hardware, int low, BHStartupMode out[9]);
 int __cdecl bh_application_pacing(double elapsed, double delay, DWORD *sleep_ms);

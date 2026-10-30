@@ -13,8 +13,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--save", type=Path, default=ROOT / "build/game/source-preview.cfg",
-                        help="Save/configuration file (default: build/game/source-preview.cfg)")
+    parser.add_argument("--save", type=Path, default=(ROOT / "source-preview.cfg" if (ROOT / "BHunter-source.exe").is_file() else ROOT / "build/source-preview.cfg"),
+                        help="Save/configuration file (default: beside the game executable)")
     args = parser.parse_args()
     if os.name == "nt":
         processes = subprocess.run(

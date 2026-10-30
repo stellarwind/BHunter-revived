@@ -144,14 +144,6 @@ void __cdecl bh_menu_music_tick(BHEntity *e)
     double t, v;
     if (!c || !live(c, e) || !c->media || !(a = c->media->audio))
         return;
-#ifdef BH_SKIP_CD_AUDIO_CHECK
-    /* Optional no-CD build: retire the music retry task without opening or
-       playing a CD, posting the warning, or claiming a CD is ready. */
-    c->music = NULL;
-    ++c->releases;
-    bh_entity_release(c->pool, e);
-    return;
-#endif
     t = bh_menu_transition_time(e) - 1.0 / 30.0;
     put_time(e, t);
     if (!_isnan(t) && t > 0)
@@ -160,7 +152,15 @@ void __cdecl bh_menu_music_tick(BHEntity *e)
     {
         c->cd_ready = bh_cd_audio_startup(a, c->window);
         if (!c->cd_ready)
+        {
+#ifdef BH_SKIP_CD_AUDIO_CHECK
+            c->music = NULL;
+            ++c->releases;
+            bh_entity_release(c->pool, e);
+            return;
+#endif
             retry(c, e);
+        }
         else
         {
             v = bh_cd_audio_volume(a);
@@ -178,7 +178,15 @@ void __cdecl bh_menu_music_tick(BHEntity *e)
         bh_cd_stop(c->media);
         c->range_ready = bh_cd_play_range(c->media, 2, 2, 0x15, 0x32, 1);
         if (!c->range_ready)
+        {
+#ifdef BH_SKIP_CD_AUDIO_CHECK
+            c->music = NULL;
+            ++c->releases;
+            bh_entity_release(c->pool, e);
+            return;
+#endif
             retry(c, e);
+        }
         else
         {
             c->music = NULL;

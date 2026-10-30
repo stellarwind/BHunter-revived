@@ -79,11 +79,12 @@ static LRESULT CALLBACK procedure(HWND window, UINT message, WPARAM key, LPARAM 
         return DefWindowProcA(window, message, key, bits);
     return bh_window_dispatch(c->dispatch, window, message, key, bits);
 }
-static void configuration(BHApplicationBootstrap *c)
+void __cdecl bh_application_video_configuration(BHApplicationBootstrap *c)
 {
     unsigned long value;
-    memcpy(&value, c->config->settings, 4);
-    c->configured = (long)value;
+    unsigned short configured;
+    memcpy(&configured, c->config->settings, 2);
+    c->configured = configured;
     memcpy(&value, c->config->settings + 4, 4);
     c->hardware = value & 1;
     memcpy(&value, c->config->settings + 8, 4);
@@ -93,7 +94,7 @@ static void write_flag(BHApplicationBootstrap *c, unsigned long at, long value)
 {
     memcpy(c->config->settings + at, &value, 4);
 }
-static int choose(BHApplicationBootstrap *c)
+int __cdecl bh_application_video_choose(BHApplicationBootstrap *c)
 {
     long i, j;
     char text[2048], line[256];
@@ -293,8 +294,8 @@ DWORD __cdecl bh_application_bootstrap(BHApplicationBootstrap *c, HINSTANCE inst
         strcpy(names[i].name, c->catalog.label[i]);
     if (!bh_config_bootstrap(c->config, c->paths->ini, names, (unsigned long)c->catalog.secondary_count + 1))
         return fatal(c, 4, "Configuration error");
-    configuration(c);
-    if (!choose(c))
+    bh_application_video_configuration(c);
+    if (!bh_application_video_choose(c))
         return fatal(c, 4, "Configuration error");
     memset(&selected, 0, sizeof(selected));
     selected.requested = c->catalog.label[c->selected];

@@ -145,6 +145,7 @@ typedef struct BHGameApp
     BHDeviceName device_names[8];
     char text_buffer[160];
     BHRenderMode render_mode;
+    BHApplicationBootstrap application;
     BHRenderMaterial material;
     BHViewConfig view, scene_view;
     BHMainCamera main_camera;
@@ -840,6 +841,9 @@ static int platform(BHGameApp *a, int show)
     DDSURFACEDESC surface;
     HRESULT hr;
     BHSoftwareRaster raster;
+    BHDisplaySelection selected;
+    BHStartupMode plan[9];
+    unsigned long i, count;
     static const GUID draw2_id = {0xb3a6f3e0, 0x2b43, 0x11cf, {0xa2, 0xde, 0, 0xaa, 0, 0xb9, 0x33, 0x56}};
     memset(&type, 0, sizeof(type));
     type.cbSize = sizeof(type);
@@ -863,9 +867,38 @@ static int platform(BHGameApp *a, int show)
     if (!a->window)
         return failure(a, 3, "Window creation failed");
     input_window = a->window;
-    hr = DirectDrawCreate(0, &a->draw, 0);
-    if (hr != DD_OK)
-        return failure(a, 4, "DirectDraw creation failed");
+    /* Original004723c0 selection order, with the user-requested first-run
+       hardware default below instead of the setup questions. */
+    if (DirectDrawEnumerateA(bh_display_catalog_callback, &a->display_catalog) != DD_OK)
+        return failure(a, 6, "Display enumeration failed");
+    for (i = 0; i <= (unsigned long)a->display_catalog.secondary_count && i < 8; ++i)
+        strcpy(a->device_names[i].name, a->display_catalog.label[i]);
+    if (!bh_config_init(&a->config, 0) ||
+        !bh_config_bootstrap(&a->config, a->config_path, a->device_names,
+                             (unsigned long)a->display_catalog.secondary_count + 1))
+        return failure(a, 6, "Config ownership initialization failed");
+    if (a->config.loaded_defaults)
+    {
+        unsigned short configured = 1;
+        long hardware = 1;
+        memcpy(a->config.settings, &configured, 2);
+        memcpy(a->config.settings + 4, &hardware, 4);
+        if (!bh_config_save(&a->config, a->config_path))
+            return failure(a, 6, "Default video configuration save failed");
+    }
+    a->application.config = &a->config;
+    a->application.catalog = a->display_catalog;
+    a->application.window = a->window;
+    a->application.no_dialogs = a->startup_check;
+    bh_application_video_configuration(&a->application);
+    if (!bh_application_video_choose(&a->application))
+        return failure(a, 6, "Original video configuration requires selection");
+    memset(&selected, 0, sizeof(selected));
+    selected.requested = a->display_catalog.label[a->application.selected];
+    DirectDrawEnumerateA(bh_display_select_callback, &selected);
+    a->draw = selected.draw;
+    if (!a->draw)
+        return failure(a, 4, "Selected DirectDraw creation failed");
     if (a->fullscreen)
     {
         hr = IDirectDraw_SetCooperativeLevel(a->draw, a->window, DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN);
@@ -874,7 +907,20 @@ static int platform(BHGameApp *a, int show)
         hr = IDirectDraw_QueryInterface(a->draw, &draw2_id, (void **)&a->draw2);
         if (hr != DD_OK)
             return failure(a, 4, "DirectDraw2 interface failed");
-        if (!bh_render_mode_startup(&a->render_mode, a->draw2, a->draw, a->width, a->height, 16, !a->hardware))
+        count = bh_application_mode_plan(a->application.hardware, a->application.resolution == 0, plan);
+        for (i = 0; i < count; ++i)
+        {
+            if (plan[i].software)
+            {
+                long software = 0;
+                memcpy(a->config.settings + 4, &software, 4);
+                memcpy(a->config.settings + 8, &plan[i].resolution, 4);
+            }
+            if (bh_render_mode_startup(&a->render_mode, a->draw2, a->draw,
+                    plan[i].width, plan[i].height, plan[i].bits, plan[i].software))
+                break;
+        }
+        if (i == count)
         {
             char text[512];
 
@@ -884,6 +930,9 @@ static int platform(BHGameApp *a, int show)
 #endif
             return failure(a, 4, text);
         }
+        a->hardware = !plan[i].software;
+        a->width = plan[i].width;
+        a->height = plan[i].height;
         a->primary = a->render_mode.screen;
         IDirectDrawSurface_AddRef(a->primary);
         a->target = a->render_mode.engine.render;
@@ -1235,18 +1284,10 @@ static int source_owners(BHGameApp *a)
 #endif
     a->vehicle_draw.clock = &a->actor_route;
     a->script_draw.clock = &a->actor_route;
-    memset(&a->display_catalog, 0, sizeof(a->display_catalog));
-    if (DirectDrawEnumerateA(bh_display_catalog_callback, &a->display_catalog) != DD_OK)
-        return failure(a, 6, "Display enumeration failed");
-    for (i = 0; i <= (unsigned long)a->display_catalog.secondary_count && i < 8; ++i)
-        strcpy(a->device_names[i].name, a->display_catalog.label[i]);
-    if (!bh_config_init(&a->config, 0) ||
-        !bh_config_bootstrap(&a->config, a->config_path, a->device_names,
-                             (unsigned long)a->display_catalog.secondary_count + 1) ||
-        !bh_player_input_owner_init(&a->inputs, 0) ||
+    if (!bh_player_input_owner_init(&a->inputs, 0) ||
         !bh_input_collection_init(&a->collection, &a->snapshot, &a->inputs) ||
         !bh_input_devices_bind(&a->devices, &a->collection, 0))
-        return failure(a, 6, "Input/config ownership initialization failed");
+        return failure(a, 6, "Input ownership initialization failed");
     a->profile = a->config.profiles;
     a->collection.disable_mouse_motion = 1;
     a->collection.api.cursor = game_cursor;
@@ -1274,6 +1315,7 @@ static int source_owners(BHGameApp *a)
     a->cd_notify.cd = &a->cd;
     a->cd_audio.notify = &a->cd_notify;
     a->cd_audio.wave_device = (HWAVEOUT)-1;
+    a->cd_audio.music_path = "MUSIC_DATA\\track02.wav";
     a->media.audio = &a->cd_audio;
     bh_message_state_init(&a->messages);
     a->messages.panel_entity = 0;
@@ -1512,6 +1554,7 @@ static int source_owners(BHGameApp *a)
     a->transition.messages = &a->messages;
     a->transition.config = &a->config;
     a->transition.config_path = a->config_path;
+    a->transition.hardware_flags = 1;
     a->transition.camera_index = &a->selected_waypoint;
     a->transition.quit = &a->quit;
     a->transition.window = (DWORD)a->window;
@@ -2922,8 +2965,7 @@ int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int start
     if (startup_check & 64)
         a->box_auto = 2;
 #endif
-    a->hardware = (startup_check & 2) != 0;
-    a->fullscreen = (startup_check & 4) != 0;
+    a->fullscreen = 1;
 #ifdef DEBUGGING
     a->perf_enabled = (startup_check & 8) != 0 && !(startup_check & 1);
 #endif

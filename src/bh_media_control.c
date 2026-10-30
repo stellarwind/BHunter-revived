@@ -1,5 +1,7 @@
 #include "bh_media_control.h"
 #include <float.h>
+#include <string.h>
+#include <digitalv.h>
 static BHCdNotify *notify(BHMediaControl *c)
 {
     return c && c->audio ? c->audio->notify : 0;
@@ -13,21 +15,11 @@ int __cdecl bh_cd_play_range(BHMediaControl *c, unsigned long from, unsigned lon
     if (!n->cd->device)
         return 1;
     n->from_track = from;
-    n->end_track = to;
+    n->cd->playing = repeat;
     n->minute_second = ms;
     n->frame = frame;
-    n->cd->playing = repeat;
-    n->last.dwCallback = n->callback;
-    n->last.dwFrom = from & 255UL;
-    n->last.dwTo = (((frame & 255UL) << 8) | (ms & 65535UL)) << 8 | (to & 255UL);
-    ++n->plays;
-    n->last_result = mciSendCommandA(n->cd->device, MCI_PLAY, 0x0d, (DWORD)&n->last);
-    if (n->last_result)
-    {
-        ++n->failures;
-        return 0;
-    }
-    return 1;
+    n->end_track = to;
+    return bh_cd_play_retained(n);
 }
 void __cdecl bh_cd_stop(BHMediaControl *c)
 {
@@ -57,7 +49,23 @@ static DWORD packed(float volume)
 void __cdecl bh_cd_set_volume(BHMediaControl *c, float v)
 {
     BHCdNotify *n = notify(c);
-    if (!n || !n->cd || n->cd->last_track == -1)
+    if (!n || !n->cd)
+        return;
+    if (n->cd->local_file)
+    {
+        MCI_DGV_SETAUDIO_PARMSA settings;
+        DWORD value = packed(v) & 65535UL;
+        memset(&settings, 0, sizeof(settings));
+        settings.dwItem = MCI_DGV_SETAUDIO_VOLUME;
+        settings.dwValue = value * 1000UL / 65535UL;
+        c->aux_result = mciSendCommandA(n->cd->device, MCI_SETAUDIO,
+            MCI_DGV_SETAUDIO_ITEM | MCI_DGV_SETAUDIO_VALUE, (DWORD)&settings);
+        ++c->aux_writes;
+        if (!c->aux_result)
+            n->cd->local_volume = (float)(value * (1.0 / 65535.0));
+        return;
+    }
+    if (n->cd->last_track == -1)
         return;
     c->aux_packed = packed(v);
     ++c->aux_writes;
