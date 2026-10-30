@@ -33,8 +33,6 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE previous, LPSTR command, int sh
 #ifndef DEBUGGING
     if (profile || box || automatic)
         return 2;
-#else
-    profile = 1;
 #endif
     length = GetModuleFileNameA(instance, path, sizeof(path));
     if (!length || length >= sizeof(path))

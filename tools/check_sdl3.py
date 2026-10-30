@@ -145,7 +145,7 @@ def main():
             subprocess.run([str(runtime/'BHunter-source.exe'),'--startup-check'],env=env,timeout=60,check=True)
             shutil.copy2(runtime/'startup-check.log',captures/'startup-check.log')
             print(size, 'expanded world and aspect fixtures passed',flush=True)
-        subprocess.run([str(runtime/'BHunter-source.exe')],env=dict(os.environ,BH_MENU_SMOKE_SECONDS='8',BH_RENDER_CAPTURE_DIR=str(out/'640x480')),timeout=30,check=True)
+        subprocess.run([str(runtime/'BHunter-source.exe'),'--profile'],env=dict(os.environ,BH_MENU_SMOKE_SECONDS='8',BH_RENDER_CAPTURE_DIR=str(out/'640x480')),timeout=30,check=True)
     widescreen={}
     for size in wide_sizes:
         captures=out/f'aspect-{size}'
