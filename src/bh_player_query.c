@@ -344,7 +344,8 @@ int __cdecl bh_player_query_dispatch(BHPlayerQueryContext *c, BHPlayerQueryPacke
         d.y = stored(y);
         d.z = stored(z);
         length = sqrt((z * d.z + y * d.y) + x * d.x);
-        if (length < p->floats[5])
+        // Possible division by zero here
+        if (length > 0 && length < p->floats[5])
         {
             length = stored(length);
             factor = (((double)p->floats[4] / scalar(e, 0xb4)) * (1 - length / p->floats[5]) * 30) / length;
