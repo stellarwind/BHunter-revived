@@ -10,7 +10,10 @@ typedef struct BHActorRoutePromotionBinding
 
 static __inline float promote_stored(double value)
 {
-    union { float value; volatile unsigned long bits; } written, read;
+    union {
+        float value;
+        volatile unsigned long bits;
+    } written, read;
     written.value = (float)value;
     read.bits = written.bits;
     return read.value;
@@ -34,8 +37,8 @@ static __inline void promote_tangent(BHVec3 *out, const BHVec3 *point, const BHV
 #define PROMOTE_WORLD(offset) (*(BHWorldGeometry **)((char *)a + (offset)))
 #define PROMOTE_LINK(actor, offset) (*(BHEntity **)((char *)(actor) + (offset)))
 
-int __cdecl bh_actor_route_promote_core(BHEntity *a, const BHActorRoutePromotionBinding *binding,
-                                       long incoming, long outgoing)
+int __cdecl bh_actor_route_promote_core(BHEntity *a, const BHActorRoutePromotionBinding *binding, long incoming,
+                                        long outgoing)
 {
     const BHPortal *in = binding->incoming, *out = binding->outgoing;
     BHWorldGeometry *world = binding->world;
@@ -64,9 +67,9 @@ int __cdecl bh_actor_route_promote_core(BHEntity *a, const BHActorRoutePromotion
         PROMOTE_LINK(next, 0xf8) = a;
 
     u = promote_stored((1.0 - (double)PROMOTE_FLOAT(0x18c)) * out->scratch[1] +
-               (double)PROMOTE_FLOAT(0x18c) * out->scratch[0]);
+                       (double)PROMOTE_FLOAT(0x18c) * out->scratch[0]);
     v = promote_stored((1.0 - (double)PROMOTE_FLOAT(0x190)) * out->scratch[3] +
-               (double)PROMOTE_FLOAT(0x190) * out->scratch[2]);
+                       (double)PROMOTE_FLOAT(0x190) * out->scratch[2]);
     cu = promote_stored(((double)out->scratch[1] + out->scratch[0]) * .5);
     cv = promote_stored(((double)out->scratch[3] + out->scratch[2]) * .5);
     plane = promote_stored((double)out->plane);
@@ -74,19 +77,28 @@ int __cdecl bh_actor_route_promote_core(BHEntity *a, const BHActorRoutePromotion
     switch (out->direction & 3UL)
     {
     case 0:
-        PROMOTE_FLOAT(0x13c) = cu; PROMOTE_FLOAT(0x140) = cv;
-        PROMOTE_FLOAT(0x130) = u; PROMOTE_FLOAT(0x138) = plane;
-        PROMOTE_FLOAT(0x12c) = plane; PROMOTE_FLOAT(0x134) = v;
+        PROMOTE_FLOAT(0x13c) = cu;
+        PROMOTE_FLOAT(0x140) = cv;
+        PROMOTE_FLOAT(0x130) = u;
+        PROMOTE_FLOAT(0x138) = plane;
+        PROMOTE_FLOAT(0x12c) = plane;
+        PROMOTE_FLOAT(0x134) = v;
         break;
     case 1:
-        PROMOTE_FLOAT(0x138) = cu; PROMOTE_FLOAT(0x140) = cv;
-        PROMOTE_FLOAT(0x12c) = u; PROMOTE_FLOAT(0x13c) = plane;
-        PROMOTE_FLOAT(0x130) = plane; PROMOTE_FLOAT(0x134) = v;
+        PROMOTE_FLOAT(0x138) = cu;
+        PROMOTE_FLOAT(0x140) = cv;
+        PROMOTE_FLOAT(0x12c) = u;
+        PROMOTE_FLOAT(0x13c) = plane;
+        PROMOTE_FLOAT(0x130) = plane;
+        PROMOTE_FLOAT(0x134) = v;
         break;
     default:
-        PROMOTE_FLOAT(0x138) = cu; PROMOTE_FLOAT(0x13c) = cv;
-        PROMOTE_FLOAT(0x12c) = u; PROMOTE_FLOAT(0x140) = plane;
-        PROMOTE_FLOAT(0x130) = v; PROMOTE_FLOAT(0x134) = plane;
+        PROMOTE_FLOAT(0x138) = cu;
+        PROMOTE_FLOAT(0x13c) = cv;
+        PROMOTE_FLOAT(0x12c) = u;
+        PROMOTE_FLOAT(0x140) = plane;
+        PROMOTE_FLOAT(0x130) = v;
+        PROMOTE_FLOAT(0x134) = plane;
         break;
     }
     if (out->direction == (in->direction ^ 4UL) && (world->query_flags & 8))
@@ -133,20 +145,24 @@ int __cdecl bh_actor_route_promote_core(BHEntity *a, const BHActorRoutePromotion
     if (test_width < 30)
     {
         test_width = (double)out->scratch[3] - out->scratch[2];
-        if (test_width > width) width = promote_stored(test_width);
+        if (test_width > width)
+            width = promote_stored(test_width);
         if (width < 30)
         {
             test_width = (double)in->scratch[1] - in->scratch[0];
-            if (test_width > width) width = promote_stored(test_width);
+            if (test_width > width)
+                width = promote_stored(test_width);
             if (width < 30)
             {
                 test_width = (double)in->scratch[3] - in->scratch[2];
-                if (test_width > width) width = promote_stored(test_width);
+                if (test_width > width)
+                    width = promote_stored(test_width);
                 if (width < 30)
                 {
                     duration = (double)PROMOTE_FLOAT(0x184) / (((double)width - (-10.0)) * .025);
                     PROMOTE_FLOAT(0x184) = promote_stored(duration);
-                    if (!duration_ticks(duration, &ticks)) return 0;
+                    if (!duration_ticks(duration, &ticks))
+                        return 0;
                     PROMOTE_WORD(0x1e6) = ticks;
                 }
             }

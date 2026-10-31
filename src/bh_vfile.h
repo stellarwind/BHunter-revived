@@ -51,7 +51,6 @@ char *__cdecl bh_vfile_gets(char *buffer, unsigned long window, BHVFile *file); 
 int __cdecl bh_vfile_detach_archive(void);
 void __cdecl bh_vfile_shutdown(void);
 void __cdecl bh_vfile_set_progress(BHVFileProgress callback);
-void __cdecl bh_vfile_set_debug(unsigned int flags);
 BHVFileError __cdecl bh_vfile_error(void);
 unsigned long __cdecl bh_vfile_entry_count(void);
 

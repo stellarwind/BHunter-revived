@@ -4,13 +4,15 @@
    inverse values separate below; rounding every component uniformly differs. */
 static __inline float curve_float_spill(double value)
 {
-    union { float value; volatile unsigned long bits; } stored, reloaded;
+    union {
+        float value;
+        volatile unsigned long bits;
+    } stored, reloaded;
     stored.value = (float)value;
     reloaded.bits = stored.bits;
     return reloaded.value;
 }
-void __cdecl bh_camera_curve(float t, BHVec3 *out, const BHVec3 *a, const BHVec3 *b,
-                                  const BHVec3 *c, const BHVec3 *d)
+void __cdecl bh_camera_curve(float t, BHVec3 *out, const BHVec3 *a, const BHVec3 *b, const BHVec3 *c, const BHVec3 *d)
 {
     float square, u, blend, inverse, last_z;
     double cube, blend_inverse, last_x, last_y;

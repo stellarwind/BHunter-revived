@@ -74,8 +74,7 @@ int __cdecl bh_weapon_arc_activate(BHWeaponArcLifecycleContext *c, BHEntity *wea
     value = rand();
     c->random_calls = 1;
     bh_round_float(&pitch, .9 - (double)value * (-.000006103515625));
-    if (request(c, c->activate_sound, player, .8f, pitch) == BH_SOUND_INVALID &&
-        c->sound->error == BH_SOUND_PRIORITY)
+    if (request(c, c->activate_sound, player, .8f, pitch) == BH_SOUND_INVALID && c->sound->error == BH_SOUND_PRIORITY)
         c->error = BH_WEAPON_ARC_LIFECYCLE_OK;
     s->word_108 = 0;
     return c->error == BH_WEAPON_ARC_LIFECYCLE_OK;

@@ -1,5 +1,4 @@
 #include "bh_mission_progress.h"
-#include "bh_mission_profile.h"
 #include <string.h>
 typedef char mission_abi[sizeof(short) == 2 && sizeof(long) == 4 && sizeof(void *) == 4 ? 1 : -1];
 BHEntity *__cdecl bh_mission_progress(BHMissionProgressContext *c, long progression)
@@ -22,11 +21,7 @@ BHEntity *__cdecl bh_mission_progress(BHMissionProgressContext *c, long progress
         low = (unsigned short)(unsigned long)progression;
         memcpy(c->config->settings + 2, &low, 2);
         ++c->save_attempts;
-        {
-            BH_MP_BEGIN(marker);
-            c->save_result = bh_config_save(c->config, c->path);
-            BH_MP_END(marker, "chapter_save", "", progression);
-        }
+        c->save_result = bh_config_save(c->config, c->path);
         if (!c->save_result)
             c->error = 2;
     }

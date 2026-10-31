@@ -164,17 +164,22 @@ int __cdecl bh_hud_markers_draw(BHHudMarkers *c, BHEntity *head, const BHVec3 *p
 #ifdef BH_SDL_BACKEND
                 /* Preserve pixel-sized corners/labels, but project their world
                    anchor and perspective offsets with the sampled camera. */
-                for (marker_index = marker_start; marker_index < c->projection->queue->count; ++marker_index) {
+                for (marker_index = marker_start; marker_index < c->projection->queue->count; ++marker_index)
+                {
                     BHDrawCommand *command = c->projection->queue->commands + marker_index;
                     unsigned long corner = marker_index - marker_start;
                     float sx, sy, fx = corner < 4 && (corner & 1) ? 2.0f : -2.0f;
                     float fy = corner < 2 ? -2.0f : 2.0f;
-                    memcpy(&sx, command->words, 4); memcpy(&sy, command->words + 1, 4);
-                    sx -= x + fx * scale; sy -= y + fy * scale;
-                    memcpy(command->words, &sx, 4); memcpy(command->words + 1, &sy, 4);
+                    memcpy(&sx, command->words, 4);
+                    memcpy(&sy, command->words + 1, 4);
+                    sx -= x + fx * scale;
+                    sy -= y + fy * scale;
+                    memcpy(command->words, &sx, 4);
+                    memcpy(command->words + 1, &sy, 4);
                     command->words[12] = BH_RECT_WORLD_MARKER;
                     memcpy(command->words + 13, &point, 12);
-                    memcpy(command->words + 16, &fx, 4); memcpy(command->words + 17, &fy, 4);
+                    memcpy(command->words + 16, &fx, 4);
+                    memcpy(command->words + 17, &fy, 4);
                 }
                 bh_interpolation_stamp(marker_start, (unsigned long)head, head->generation);
 #endif

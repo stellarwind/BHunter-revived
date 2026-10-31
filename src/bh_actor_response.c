@@ -137,7 +137,8 @@ void __cdecl bh_actor_response_query(BHEntity *e, void *packet)
 {
     BHActorResponseContext *c = context(e);
     unsigned long event;
-    if (!c || !packet || !live(c, e)) return;
+    if (!c || !packet || !live(c, e))
+        return;
     c->error = 0;
     event = *(unsigned long *)packet;
     if (event == 0 || event == 1 || event == 3 || event == 15 || event == 16)
@@ -176,8 +177,10 @@ void __cdecl bh_actor_response_tick(BHEntity *e)
         c->error = 3;
         return;
     }
-    if (!bh_actor_response_motion(e, c)) return;
+    if (!bh_actor_response_motion(e, c))
+        return;
     smoke = bh_actor_response_route_smoke(e, c, &death_position);
-    if (smoke < 0) return;
+    if (smoke < 0)
+        return;
     bh_actor_response_finish(e, c, &death_position, smoke);
 }

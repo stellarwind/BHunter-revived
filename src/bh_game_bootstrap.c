@@ -663,11 +663,11 @@ int __cdecl bh_game_bootstrap(BHGameBootstrap *c)
         bh_player_input_bind_key(c->all_keys, (long)i, "", 0, 0, (unsigned short)i);
     if (c->compose && !c->compose(c, 5, c->compose_user))
         return fail(c, 11);
-    if ((!c->diagnostic_box && (!c->flyby || !bh_flyby_construct(c->flyby))) || !bh_bootstrap_menus(c))
+    if ((!c->flyby || !bh_flyby_construct(c->flyby)) || !bh_bootstrap_menus(c))
         return fail(c, c->error ? c->error : 10);
     if (c->compose && !c->compose(c, 3, c->compose_user))
         return fail(c, 11);
-    if (!c->diagnostic_box && !c->transition->cd_ready)
+    if (!c->transition->cd_ready)
     {
         e = bh_entity_acquire(c->pool);
         if (!e || !bh_menu_transition_bind(c->transition, e, 2, 0))
@@ -679,7 +679,7 @@ int __cdecl bh_game_bootstrap(BHGameBootstrap *c)
     r.name = "win.bmp";
     if (!resources(c, &r, 1))
         return 0;
-    e = c->diagnostic_box ? NULL : bh_entity_acquire(c->pool);
+    e = bh_entity_acquire(c->pool);
     if (e)
     {
         if (!bh_menu_transition_bind(c->transition, e, 2, 0))

@@ -19,7 +19,7 @@ def main():
     runtime = ROOT / "build"
     executable = runtime / "BHunter-source.exe"
     record = json.loads((ROOT / "build-cache/build.json").read_text())
-    if not record.get("passed") or record.get("debugging") or record.get("mission_profile"):
+    if not record.get("passed") or record.get("debugging"):
         parser.error("Build a successful release configuration with build-source.cmd first")
     if record.get("executable_sha256") != hashlib.sha256(executable.read_bytes()).hexdigest():
         parser.error("Executable differs from the recorded build")

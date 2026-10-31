@@ -181,10 +181,6 @@ int __cdecl bh_sound_tick(BHSoundQueue *q, float dt, float master, BHSoundTickSt
         return 0;
     }
     q->error = BH_SOUND_OK;
-#ifdef DEBUGGING
-    ++stats.clock_calls;
-    GetTickCount();
-#endif
     if (!q->listener_active)
     {
         if (out)
@@ -308,10 +304,6 @@ int __cdecl bh_sound_tick(BHSoundQueue *q, float dt, float master, BHSoundTickSt
             }
         }
     }
-#ifdef DEBUGGING
-    ++stats.clock_calls;
-    GetTickCount();
-#endif
     if (out)
         *out = stats;
     return q->error == BH_SOUND_OK;

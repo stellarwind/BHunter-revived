@@ -3,9 +3,9 @@
 #define DAMAGE_TICK_FLOAT(o) (*(float *)((char *)e + (o)))
 #define DAMAGE_TICK_STORE(o, v) (*(volatile float *)((char *)e + (o)) = damage_query_stored(v))
 #define DAMAGE_TICK_VEC(o) ((BHVec3 *)((char *)e + (o)))
-#define DAMAGE_TICK_CURVE(t, p) \
-    bh_camera_curve((t), (p), DAMAGE_TICK_VEC(0x120), DAMAGE_TICK_VEC(0x144), \
-                    DAMAGE_TICK_VEC(0x150), DAMAGE_TICK_VEC(0x12c))
+#define DAMAGE_TICK_CURVE(t, p)                                                                                        \
+    bh_camera_curve((t), (p), DAMAGE_TICK_VEC(0x120), DAMAGE_TICK_VEC(0x144), DAMAGE_TICK_VEC(0x150),                  \
+                    DAMAGE_TICK_VEC(0x12c))
 static float damage_tick_phase(BHActorDamageContext *c, BHEntity *e)
 {
     unsigned short elapsed = (unsigned short)(bh_actor_route_now(c->route) - *(unsigned short *)((char *)e + 0x1e4));
@@ -25,14 +25,17 @@ void __cdecl bh_actor_damage_tick_core(BHEntity *e, BHActorDamageContext *c)
     dx = (double)DAMAGE_TICK_FLOAT(0x15c) - DAMAGE_TICK_FLOAT(0x168) * (-1.0 / 30.0);
     dy = (double)DAMAGE_TICK_FLOAT(0x160) - DAMAGE_TICK_FLOAT(0x16c) * (-1.0 / 30.0);
     dz = (double)DAMAGE_TICK_FLOAT(0x164) - DAMAGE_TICK_FLOAT(0x170) * (-1.0 / 30.0);
-    x = damage_query_stored(dx);y = damage_query_stored(dy);z = damage_query_stored(dz);
+    x = damage_query_stored(dx);
+    y = damage_query_stored(dy);
+    z = damage_query_stored(dz);
     distance = sqrt((dx * x + dy * y) + dz * z);
     DAMAGE_TICK_STORE(0x15c, x);
     length = damage_query_stored(distance);
     DAMAGE_TICK_STORE(0x160, y);
     DAMAGE_TICK_STORE(0x164, z);
     damping = (.99 - distance * distance * .001) - (double)length * .01;
-    if (!(damping >= 0)) damping = 0;
+    if (!(damping >= 0))
+        damping = 0;
     DAMAGE_TICK_STORE(0x15c, damping * dx);
     DAMAGE_TICK_STORE(0x160, damping * y);
     DAMAGE_TICK_STORE(0x164, damping * z);
@@ -43,9 +46,12 @@ void __cdecl bh_actor_damage_tick_core(BHEntity *e, BHActorDamageContext *c)
     if (DAMAGE_TICK_FLOAT(0x194) < 1)
     {
         draw = rand();
-        if ((double)DAMAGE_TICK_FLOAT(0x194) * 5000 <= draw) goto resume;
+        if ((double)DAMAGE_TICK_FLOAT(0x194) * 5000 <= draw)
+            goto resume;
     }
-    acceleration.x = 0;acceleration.y = -.002f;acceleration.z = 0;
+    acceleration.x = 0;
+    acceleration.y = -.002f;
+    acceleration.z = 0;
     velocity.x = damage_query_stored((double)(rand() - 16384) * (1.0 / 262144.0));
     velocity.y = damage_query_stored((double)(rand() - 16384) * (1.0 / 262144.0));
     velocity.z = damage_query_stored((double)(rand() - 16384) * (1.0 / 262144.0));
@@ -57,8 +63,8 @@ void __cdecl bh_actor_damage_tick_core(BHEntity *e, BHActorDamageContext *c)
     death_position = position;
     angular = damage_query_stored((double)(rand() - 16384) * (1.0 / 16384.0));
     angle = damage_query_stored((double)rand() * (1.0 / 512.0));
-    bh_script_particle_create(c->particles, c->smoke_resource, 3, &position, &velocity, &acceleration,
-                              .5f, angle, 12, angular, .9f, .95f, 2, .3f);
+    bh_script_particle_create(c->particles, c->smoke_resource, 3, &position, &velocity, &acceleration, .5f, angle, 12,
+                              angular, .9f, .95f, 2, .3f);
     if (DAMAGE_TICK_FLOAT(0x194) >= 1 && c->mode != 3)
     {
         if (!c->legacy_death_angles)
@@ -90,8 +96,8 @@ void __cdecl bh_actor_damage_tick_core(BHEntity *e, BHActorDamageContext *c)
         owner = (BHEntity *)word(e, 0x1ac);
         material = word(e, 0x114);
         strength = damage_query_stored(1.0 - (double)(random & 32767) * (-1.0 / 16384.0));
-        bh_target_construct_moving(c->targets, &death_position, c->legacy_death_angles, &velocity, &spin,
-                                   material, 10000, strength, owner, token, loot, 0);
+        bh_target_construct_moving(c->targets, &death_position, c->legacy_death_angles, &velocity, &spin, material,
+                                   10000, strength, owner, token, loot, 0);
         room = damage_query_room(c, e);
         if (!room)
         {
@@ -99,10 +105,13 @@ void __cdecl bh_actor_damage_tick_core(BHEntity *e, BHActorDamageContext *c)
             return;
         }
         previous = (BHEntity *)word(e, 0xf8);
-        if (previous) set_word(previous, 0xf4, word(e, 0xf4));
-        else room->actors = (BHEntity *)word(e, 0xf4);
+        if (previous)
+            set_word(previous, 0xf4, word(e, 0xf4));
+        else
+            room->actors = (BHEntity *)word(e, 0xf4);
         next = (BHEntity *)word(e, 0xf4);
-        if (next) set_word(next, 0xf8, word(e, 0xf8));
+        if (next)
+            set_word(next, 0xf8, word(e, 0xf8));
         bh_entity_release(c->pool, e);
         c->error = BH_ACTOR_ROUTE_OK;
         return;

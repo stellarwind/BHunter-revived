@@ -15,12 +15,10 @@ extern "C"
                                                struct IDirect3DDevice2 **device);
 #undef IDirect3D2_CreateDevice
 #define IDirect3D2_CreateDevice bh_IDirect3D2_CreateDevice
-    HRESULT __cdecl bh_IDirect3D2_CreateMaterial(void *self, struct IDirect3DMaterial2 **material,
-                                                 IUnknown *outer);
+    HRESULT __cdecl bh_IDirect3D2_CreateMaterial(void *self, struct IDirect3DMaterial2 **material, IUnknown *outer);
 #undef IDirect3D2_CreateMaterial
 #define IDirect3D2_CreateMaterial bh_IDirect3D2_CreateMaterial
-    HRESULT __cdecl bh_IDirect3D2_CreateViewport(void *self, struct IDirect3DViewport2 **viewport,
-                                                 IUnknown *outer);
+    HRESULT __cdecl bh_IDirect3D2_CreateViewport(void *self, struct IDirect3DViewport2 **viewport, IUnknown *outer);
 #undef IDirect3D2_CreateViewport
 #define IDirect3D2_CreateViewport bh_IDirect3D2_CreateViewport
     HRESULT __cdecl bh_IDirect3D2_EnumDevices(void *self, LPD3DENUMDEVICESCALLBACK cb, void *ctx);
@@ -42,15 +40,14 @@ extern "C"
 #undef IDirect3DDevice2_DeleteViewport
 #define IDirect3DDevice2_DeleteViewport bh_IDirect3DDevice2_DeleteViewport
     HRESULT __cdecl bh_IDirect3DDevice2_DrawPrimitive(void *self, D3DPRIMITIVETYPE primitive_type,
-                                                      D3DVERTEXTYPE vertex_type, void *vertices,
-                                                      DWORD vertex_count, DWORD flags);
+                                                      D3DVERTEXTYPE vertex_type, void *vertices, DWORD vertex_count,
+                                                      DWORD flags);
 #undef IDirect3DDevice2_DrawPrimitive
 #define IDirect3DDevice2_DrawPrimitive bh_IDirect3DDevice2_DrawPrimitive
     HRESULT __cdecl bh_IDirect3DDevice2_EndScene(void *self);
 #undef IDirect3DDevice2_EndScene
 #define IDirect3DDevice2_EndScene bh_IDirect3DDevice2_EndScene
-    HRESULT __cdecl bh_IDirect3DDevice2_EnumTextureFormats(void *self, LPD3DENUMTEXTUREFORMATSCALLBACK cb,
-                                                           void *ctx);
+    HRESULT __cdecl bh_IDirect3DDevice2_EnumTextureFormats(void *self, LPD3DENUMTEXTUREFORMATSCALLBACK cb, void *ctx);
 #undef IDirect3DDevice2_EnumTextureFormats
 #define IDirect3DDevice2_EnumTextureFormats bh_IDirect3DDevice2_EnumTextureFormats
     ULONG __cdecl bh_IDirect3DDevice2_Release(void *self);
@@ -122,8 +119,8 @@ extern "C"
     ULONG __cdecl bh_IDirectDrawPalette_Release(void *self);
 #undef IDirectDrawPalette_Release
 #define IDirectDrawPalette_Release bh_IDirectDrawPalette_Release
-    HRESULT __cdecl bh_IDirectDrawPalette_SetEntries(void *self, DWORD dwFlags, DWORD dwStartingEntry,
-                                                     DWORD dwCount, LPPALETTEENTRY lpEntries);
+    HRESULT __cdecl bh_IDirectDrawPalette_SetEntries(void *self, DWORD dwFlags, DWORD dwStartingEntry, DWORD dwCount,
+                                                     LPPALETTEENTRY lpEntries);
 #undef IDirectDrawPalette_SetEntries
 #define IDirectDrawPalette_SetEntries bh_IDirectDrawPalette_SetEntries
     HRESULT __cdecl bh_IDirectDrawSurface_AddAttachedSurface(void *self, LPDIRECTDRAWSURFACE lpDDSAttachedSurface);
@@ -136,9 +133,8 @@ extern "C"
                                               LPRECT lpSrcRect, DWORD dwFlags, LPDDBLTFX lpDDBltFx);
 #undef IDirectDrawSurface_Blt
 #define IDirectDrawSurface_Blt bh_IDirectDrawSurface_Blt
-    HRESULT __cdecl bh_IDirectDrawSurface_BltFast(void *self, DWORD dwX, DWORD dwY,
-                                                  LPDIRECTDRAWSURFACE lpDDSrcSurface, LPRECT lpSrcRect,
-                                                  DWORD dwTrans);
+    HRESULT __cdecl bh_IDirectDrawSurface_BltFast(void *self, DWORD dwX, DWORD dwY, LPDIRECTDRAWSURFACE lpDDSrcSurface,
+                                                  LPRECT lpSrcRect, DWORD dwTrans);
 #undef IDirectDrawSurface_BltFast
 #define IDirectDrawSurface_BltFast bh_IDirectDrawSurface_BltFast
     HRESULT __cdecl bh_IDirectDrawSurface_DeleteAttachedSurface(void *self, DWORD dwFlags,
@@ -228,7 +224,6 @@ extern "C"
     void __cdecl bh_sdl_video_cycle(int row);
     const char *__cdecl bh_sdl_video_label(int row);
     void __cdecl bh_sdl_canvas_margins(float *x, float *y);
-    int __cdecl bh_sdl_capture(const char *path);
 #ifdef __cplusplus
 }
 #endif

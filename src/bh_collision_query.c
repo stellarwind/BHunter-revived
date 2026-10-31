@@ -88,13 +88,6 @@ static int spheres(BHCollisionQuery *q, long an, long bn, const BHMat34 *a_to_b,
         radius = (double)a->bounds[an].radius + b->bounds[bn].radius;
     return (x * x + y * y) + z * z <= radius * radius;
 }
-#ifdef BH_COLLISION_QUERY_GATE_CHECK
-/* Native validation entry only; not emitted in the production game target. */
-int __cdecl bh_collision_query_gate_check(BHCollisionQuery *q, long an, long bn, const BHMat34 *a_to_b)
-{
-    return spheres(q, an, bn, a_to_b, 1);
-}
-#endif
 static int leaf(BHCollisionQuery *q, const BHBsp *b, long index, const BHBspLeaf **out)
 {
     if (!b->leaves || !b->faces || index < 0 || (unsigned long)index >= b->counts[5])

@@ -34,8 +34,8 @@ int __cdecl bh_cd_audio_startup(BHCdAudio *audio, DWORD callback)
             open.lpstrDeviceType = "cdaudio";
             open.lpstrElementName = element;
             ++audio->opens;
-            audio->open_result = mciSendCommandA(0, MCI_OPEN,
-                MCI_OPEN_TYPE | MCI_OPEN_ELEMENT | MCI_OPEN_SHAREABLE, (DWORD)&open);
+            audio->open_result =
+                mciSendCommandA(0, MCI_OPEN, MCI_OPEN_TYPE | MCI_OPEN_ELEMENT | MCI_OPEN_SHAREABLE, (DWORD)&open);
             if (audio->open_result)
                 continue;
             cd->device = open.wDeviceID;
@@ -72,8 +72,7 @@ int __cdecl bh_cd_audio_startup(BHCdAudio *audio, DWORD callback)
         if (!audio->music_path || GetFileAttributesA(audio->music_path) == 0xffffffffUL)
             return 0;
         ++audio->opens;
-        audio->open_result = mciSendCommandA(0, MCI_OPEN,
-            MCI_OPEN_TYPE | MCI_OPEN_ELEMENT, (DWORD)&open);
+        audio->open_result = mciSendCommandA(0, MCI_OPEN, MCI_OPEN_TYPE | MCI_OPEN_ELEMENT, (DWORD)&open);
         if (audio->open_result)
             return 0;
         cd->device = open.wDeviceID;
@@ -122,8 +121,7 @@ int __cdecl bh_cd_audio_startup(BHCdAudio *audio, DWORD callback)
     if (audio->wave_device == (HWAVEOUT)-1)
     {
         DWORD preferred = 0xffffffffUL, flags = 0;
-        if (waveOutMessage((HWAVEOUT)WAVE_MAPPER, 0x2015,
-                (DWORD)&preferred, (DWORD)&flags) == MMSYSERR_NOERROR &&
+        if (waveOutMessage((HWAVEOUT)WAVE_MAPPER, 0x2015, (DWORD)&preferred, (DWORD)&flags) == MMSYSERR_NOERROR &&
             preferred < waveOutGetNumDevs())
         {
             memset(&wave, 0, sizeof(wave));

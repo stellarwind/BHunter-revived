@@ -30,7 +30,6 @@ typedef char check_preload_size[sizeof(BHPreloadedName) == 256 ? 1 : -1];
 static struct
 {
     long *access_order;
-    unsigned int debug;
     long first_access_count;
     BHVFile *recycled;
     BHArchiveEntry *directory;
@@ -113,20 +112,6 @@ static void notify_access(unsigned long index)
         last_error = saved;
     }
 }
-
-#ifdef DEBUGGING
-static void diagnostic(unsigned int flag, const char *backend, const char *name, const char *mode)
-{
-    if (state.debug & flag)
-    {
-        printf("VFILE:%s:vopen(%s,%s)\n", backend, name, mode);
-        fflush(stdout);
-    }
-}
-
-#else
-#define diagnostic(flag, backend, name, mode) ((void)0)
-#endif
 
 /* 0047d270, with validation and transactional ownership on malformed input. */
 int __cdecl bh_vfile_mount(const char *path)
@@ -237,7 +222,6 @@ BHVFile *__cdecl bh_vfile_open(const char *name, const char *mode)
     {
         if (!_stricmp(name, cached->name))
         {
-            diagnostic(1, "PRELOADED", name, mode);
             cached->handle->position = 0;
             cached->handle->eof = 0;
             return cached->handle;
@@ -253,7 +237,7 @@ BHVFile *__cdecl bh_vfile_open(const char *name, const char *mode)
                     notify_access(i);
                     break;
                 }
-        diagnostic(4, "EXTERNAL ", name, mode);
+
         handle = new_handle();
         if (!handle)
         {
@@ -269,7 +253,6 @@ BHVFile *__cdecl bh_vfile_open(const char *name, const char *mode)
             if (!_stricmp(name, state.directory[i].name))
             {
                 notify_access(i);
-                diagnostic(2, "EMBEDDED ", name, mode);
                 handle = new_handle();
                 if (!handle)
                     return NULL;
@@ -647,10 +630,7 @@ void __cdecl bh_vfile_set_progress(BHVFileProgress callback)
 {
     state.progress = callback;
 }
-void __cdecl bh_vfile_set_debug(unsigned int flags)
-{
-    state.debug = flags;
-}
+
 BHVFileError __cdecl bh_vfile_error(void)
 {
     return last_error;

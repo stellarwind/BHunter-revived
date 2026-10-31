@@ -26,9 +26,8 @@ int __cdecl bh_cd_play_retained(BHCdNotify *c)
     {
         /* The local WAV is CD track two, with its pregap removed. */
         play.dwFrom = 0;
-        play.dwTo = MCI_TMSF_MINUTE(play.dwTo) * 60000UL +
-            MCI_TMSF_SECOND(play.dwTo) * 1000UL +
-            MCI_TMSF_FRAME(play.dwTo) * 1000UL / 75UL;
+        play.dwTo = MCI_TMSF_MINUTE(play.dwTo) * 60000UL + MCI_TMSF_SECOND(play.dwTo) * 1000UL +
+                    MCI_TMSF_FRAME(play.dwTo) * 1000UL / 75UL;
         if (play.dwTo > cd->local_length)
             play.dwTo = cd->local_length;
     }

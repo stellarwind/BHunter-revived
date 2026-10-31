@@ -174,14 +174,16 @@ int main(void)
        Linear world-vertex interpolation would shrink/shear it on this turn;
        ordinal matching would additionally blend the newly inserted sprite. */
     memset(s, 0, sizeof(*s));
-    for (r = 0; r < 2; ++r) {
+    for (r = 0; r < 2; ++r)
+    {
         float yaw = r * 1.5707963267948966f;
         frame(&q, 800, 1, r * 10.0f);
         storage[9].kind = BH_DRAW_MODEL_RESOURCE;
         put(storage[9].words + 3, yaw);
         q.count = r ? 13 : 12;
         memset(storage + 10, 0, (q.count - 10) * sizeof(*storage));
-        for (i = 10; i < q.count - 1; ++i) {
+        for (i = 10; i < q.count - 1; ++i)
+        {
             float radius = (float)(i - 9);
             storage[i].kind = BH_DRAW_QUAD;
             /* Presentation anchor flags must survive rigid rebasing, including
@@ -199,10 +201,12 @@ int main(void)
         bh_interpolation_attach(10, q.count, 9);
         bh_interpolation_capture(s, &q, 1);
     }
-    for (r = 0; r <= 4; ++r) {
+    for (r = 0; r <= 4; ++r)
+    {
         float a = r * .25f, yaw = a * 1.5707963267948966f;
         sample = bh_interpolation_sample(s, a);
-        for (i = 10; i < 12; ++i) {
+        for (i = 10; i < 12; ++i)
+        {
             float radius = (float)(i - 9);
             assert(fabs(get(sample->commands[i].words) - (a * 10 + radius * cos(yaw))) < .00001);
             assert(fabs(get(sample->commands[i].words + 2) + radius * sin(yaw)) < .00001);
@@ -215,7 +219,8 @@ int main(void)
     /* Target screen coordinates are not lerped. Its world anchor is, using
        entity identity, with atlas UVs/pixel offsets left intact. */
     memset(s, 0, sizeof(*s));
-    for (r = 0; r < 2; ++r) {
+    for (r = 0; r < 2; ++r)
+    {
         frame(&q, 700, 3, 50);
         storage[9].kind = BH_DRAW_RECT;
         storage[9].words[12] = BH_RECT_WORLD_MARKER;
@@ -233,7 +238,8 @@ int main(void)
     /* Moving flare anchors must not reset consumed strength on the next
        render fraction. Texture changes and entity reuse must snap. */
     memset(s, 0, sizeof(*s));
-    for (r = 0; r < 2; ++r) {
+    for (r = 0; r < 2; ++r)
+    {
         frame(&q, 44, 1, r * 20);
         storage[9].kind = BH_DRAW_FLARE;
         storage[9].resource = 0;
@@ -256,20 +262,25 @@ int main(void)
     /* Head insertion and tail removal change list ordinals. Existing physical
        nodes keep identity; the new head grows from its older node's old pose. */
     memset(s, 0, sizeof(*s));
-    for (r = 0; r < 2; ++r) {
+    for (r = 0; r < 2; ++r)
+    {
         unsigned long node;
         frame(&q, 0, 0, 0);
-        memset(storage + 9, 0, 4 * sizeof(*storage)); q.count = 13;
-        storage[9].kind = BH_DRAW_PATH_HEADER; storage[9].resource = 42; storage[9].words[0] = 3;
-        for (i = 0; i < 3; ++i) {
+        memset(storage + 9, 0, 4 * sizeof(*storage));
+        q.count = 13;
+        storage[9].kind = BH_DRAW_PATH_HEADER;
+        storage[9].resource = 42;
+        storage[9].words[0] = 3;
+        for (i = 0; i < 3; ++i)
+        {
             node = 102 + r - i;
-            storage[10+i].kind = BH_DRAW_PATH_POINT;
-            storage[10+i].next = i == 2 ? BH_DRAW_END : 11+i;
-            put(&storage[10+i].resource, r ? 20 - i * 10 + (i ? 2 : 0) : 10 - i * 10);
-            put(storage[10+i].words + 2, r ? 2 : 1);
-            put(storage[10+i].words + 3, i ? .5f : 0);
-            put(storage[10+i].words + 4, 123); /* UV/path distance stays current. */
-            bh_interpolation_trail_point(10+i, node, 1, node-1, 1, 42);
+            storage[10 + i].kind = BH_DRAW_PATH_POINT;
+            storage[10 + i].next = i == 2 ? BH_DRAW_END : 11 + i;
+            put(&storage[10 + i].resource, r ? 20 - i * 10 + (i ? 2 : 0) : 10 - i * 10);
+            put(storage[10 + i].words + 2, r ? 2 : 1);
+            put(storage[10 + i].words + 3, i ? .5f : 0);
+            put(storage[10 + i].words + 4, 123); /* UV/path distance stays current. */
+            bh_interpolation_trail_point(10 + i, node, 1, node - 1, 1, 42);
         }
         bh_interpolation_stamp(9, 999, 1); /* Enclosing refresh cannot replace node IDs. */
         bh_interpolation_capture(s, &q, 1);
@@ -291,7 +302,8 @@ int main(void)
     assert(get(&sample->commands[10].resource) == 20);
     assert(get(&sample->commands[11].resource) == 12);
     free(s);
-    puts("SDL timing/interpolation: cadence, catch-up, payload preservation, immutable snapshots, generations, "
-         "cuts, teleports, angle wrapping, nested draw identities, persistent flare consumer state, rigid cockpit attachments, world target anchors, growing trail topology and moving flare consumption passed");
+    puts(
+        "SDL timing/interpolation: cadence, catch-up, payload preservation, immutable snapshots, generations, "
+        "cuts, teleports, angle wrapping, nested draw identities, persistent flare consumer state, rigid cockpit attachments, world target anchors, growing trail topology and moving flare consumption passed");
     return 0;
 }

@@ -31,7 +31,8 @@ BHWeaponObjectState *__cdecl bh_weapon_object_state(BHEntity *entity)
 }
 static int live(const BHWeaponRegistry *registry, const BHWeaponRecord *record)
 {
-    return registry && bh_entity_is_active(registry->pool, record->entity) && record->entity->generation == record->generation;
+    return registry && bh_entity_is_active(registry->pool, record->entity) &&
+           record->entity->generation == record->generation;
 }
 static void __cdecl weapon_query(BHEntity *entity, void *packet)
 {

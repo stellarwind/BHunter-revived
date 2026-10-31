@@ -79,7 +79,8 @@ void __cdecl bh_actor_damage_tick(BHEntity *e)
     if (!c || !live(c, e) || !c->particles || !c->fragments || !c->targets || !c->loot_rows ||
         !bh_math_environment_supported())
     {
-        if (c) c->error = BH_ACTOR_ROUTE_ARGUMENT;
+        if (c)
+            c->error = BH_ACTOR_ROUTE_ARGUMENT;
         return;
     }
     if (!*(unsigned short *)((char *)e + 0x1e6))

@@ -265,10 +265,12 @@ static unsigned long tail(BHPlayerScene *s)
 #ifdef BH_SDL_BACKEND
     unsigned long render_mark = bh_interpolation_mark();
 #endif
-    if (resource) {
+    if (resource)
+    {
         anchor = s->queue->count;
         queued(s, bh_draw_submit_resource(s->queue, 0, resource, &position, &angles, 1));
-        if (anchor == s->queue->count) anchor = BH_DRAW_END;
+        if (anchor == s->queue->count)
+            anchor = BH_DRAW_END;
     }
 #ifdef BH_SDL_BACKEND
     /* The tail is emitted after a visibility-dependent world/HUD command list.

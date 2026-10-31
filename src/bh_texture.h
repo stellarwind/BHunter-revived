@@ -92,14 +92,6 @@ int __cdecl bh_texture_slot_create(BHTextureContext *context, BHTextureFormat *f
    for retained allocation/native failures on its best-effort pass. */
 int __cdecl bh_texture_preallocate(BHTextureContext *context);                                  /* 0044e780 */
 D3DTEXTUREHANDLE __cdecl bh_texture_resident(BHTextureContext *context, BHTextureImage *image); /* 004505f0 */
-/* Explicit diagnostic staging adapters. Source decoded pixels/palette -> real
-   owning native image; no full 0044f550 cache/queue/error-string claim. Returns
-   borrowed cache identity until context disposal; first name match wins.
-   Palette mode/color use recovered 0044f1c0. Unsupported native formats fail. */
-BHTextureImage *__cdecl bh_texture_stage(BHTextureContext *context, const char *name, const BHPcx *image, int mode,
-                                         unsigned long color);
-BHTextureImage *__cdecl bh_texture_load_pcx(BHTextureContext *context, const char *name, const char *prefix, int mode,
-                                            unsigned long color);
 /* Complete 0044e880 over explicit context. A nonempty path gains trailing '\\'.
    Empty prefix or out-of-range policy chooses bare-only (-1). */
 int __cdecl bh_texture_set_path(BHTextureContext *context, const char *prefix, long policy);

@@ -136,15 +136,15 @@ int __cdecl bh_radar_marker(BHRadarContext *c, const BHVec3 *player, const BHVec
         if (!_finite(width) || !_finite(screen_x) || !_finite(screen_y) || !_finite(fade))
             return fail(c, BH_RADAR_NUMERICAL);
         if (!skip_marker)
-            submitted(c, bh_pickup_rect_queue(c->queue, 8, c->marker_image, screen_x, screen_y, width, width, 0, BH_HUD_ANCHOR_RIGHT,
-                                              fade, u, .5f, v, .5f, depth));
+            submitted(c, bh_pickup_rect_queue(c->queue, 8, c->marker_image, screen_x, screen_y, width, width, 0,
+                                              BH_HUD_ANCHOR_RIGHT, fade, u, .5f, v, .5f, depth));
         if (kind == 1)
         {
             bh_round_float(&screen_x, (double)f->screen_x - ((double)x * f->screen_radius) * (-.65));
             bh_round_float(&screen_y, (double)f->screen_y - ((double)z * f->screen_radius) * .85);
             submitted(c, bh_pickup_rect_queue(c->queue, 8, c->bar_image, screen_x, screen_y,
-                                              (float)(long)((unsigned long)f->unit * 5UL), (float)f->unit, 0, BH_HUD_ANCHOR_RIGHT, radius,
-                                              0, .5f, .5f, .125f, depth));
+                                              (float)(long)((unsigned long)f->unit * 5UL), (float)f->unit, 0,
+                                              BH_HUD_ANCHOR_RIGHT, radius, 0, .5f, .5f, .125f, depth));
         }
     }
     return c->error == BH_RADAR_OK;

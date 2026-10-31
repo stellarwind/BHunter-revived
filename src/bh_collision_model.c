@@ -155,8 +155,7 @@ static int face_cut(const BHBsp *b, long face, const BHMat34 *transform, const B
                         bh_round_float(&current_product, right);
                         right = current_product;
                     }
-                    bh_round_float(((float *)&result[found]) + axis,
-                                   ((double)previous_product - right) * inverse);
+                    bh_round_float(((float *)&result[found]) + axis, ((double)previous_product - right) * inverse);
                     continue;
                 }
                 bh_round_float(
@@ -172,9 +171,8 @@ static int face_cut(const BHBsp *b, long face, const BHMat34 *transform, const B
     } while (edge >= 0);
     return 0;
 }
-static int face_contact(const BHBsp *a, long a_face, const BHMat34 *a_to_b, const BHBsp *b, long b_face,
-                        long b_node, const BHMat34 *b_to_world, const BHVec3 *world_normal,
-                        BHFaceContact *out, int cached)
+static int face_contact(const BHBsp *a, long a_face, const BHMat34 *a_to_b, const BHBsp *b, long b_face, long b_node,
+                        const BHMat34 *b_to_world, const BHVec3 *world_normal, BHFaceContact *out, int cached)
 {
     BHVec3 first[2], second[2], direction, side, midpoint, plane_normal;
     const BHVec3 *low, *high;

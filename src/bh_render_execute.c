@@ -48,7 +48,8 @@ static int draw_one(BHRenderExecute *e, const BHDrawCommand *c, unsigned long *n
     case BH_DRAW_CLIP_RECT:
         return e->controls ? bh_draw_controls_execute(e->controls, e->draw, c, next) : -3;
     case BH_DRAW_CAMERA:
-        if (e->controls) bh_portal_clip_reset(e->controls->portal_cache);
+        if (e->controls)
+            bh_portal_clip_reset(e->controls->portal_cache);
         return e->view && e->camera ? bh_camera_queue_execute(e->view, e->camera, e->draw, c, next) : -3;
     case BH_DRAW_HORIZON:
         return e->horizon ? bh_horizon_queue_execute(e->horizon, e->draw, c, next) : -3;
@@ -107,13 +108,18 @@ static int barrier(BHRenderExecute *e)
 static int draw_anchored(BHRenderExecute *e, const BHDrawCommand *command, unsigned long *next)
 {
 #ifdef BH_SDL_BACKEND
-    unsigned long flags = command->kind == BH_DRAW_RECT ? command->words[11] :
-                          command->kind == BH_DRAW_SCREEN_QUAD ? command->words[6] : 0;
+    unsigned long flags = command->kind == BH_DRAW_RECT          ? command->words[11]
+                          : command->kind == BH_DRAW_SCREEN_QUAD ? command->words[6]
+                                                                 : 0;
     float shift = e->view ? e->view->margin_x : 0;
-    if (flags & BH_HUD_ANCHOR_LEFT) shift = -shift;
-    else if (!(flags & BH_HUD_ANCHOR_RIGHT)) shift = 0;
-    if (shift != 0) {
-        if (command->kind == BH_DRAW_RECT || command->kind == BH_DRAW_SCREEN_QUAD) {
+    if (flags & BH_HUD_ANCHOR_LEFT)
+        shift = -shift;
+    else if (!(flags & BH_HUD_ANCHOR_RIGHT))
+        shift = 0;
+    if (shift != 0)
+    {
+        if (command->kind == BH_DRAW_RECT || command->kind == BH_DRAW_SCREEN_QUAD)
+        {
             BHDrawCommand shifted = *command;
             float x;
             memcpy(&x, shifted.words, sizeof(x));
@@ -121,7 +127,6 @@ static int draw_anchored(BHRenderExecute *e, const BHDrawCommand *command, unsig
             memcpy(shifted.words, &x, sizeof(x));
             return draw_one(e, &shifted, next);
         }
-
     }
 #endif
     return draw_one(e, command, next);
@@ -146,7 +151,8 @@ int __cdecl bh_render_execute(BHRenderExecute *e)
         failed(e, BH_RENDER_EXECUTE_ARGUMENT);
         return 0;
     }
-    if (e->controls) bh_portal_clip_reset(e->controls->portal_cache);
+    if (e->controls)
+        bh_portal_clip_reset(e->controls->portal_cache);
     status = e->display_mode == 1 ? bh_frame_clear_color(e->display, 255, 255, 255) : bh_frame_clear_depth(e->display);
     if (!status)
     {

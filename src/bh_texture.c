@@ -1,9 +1,7 @@
 #include "bh_texture.h"
-#include "bh_mission_profile.h"
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 
 typedef char format_size[sizeof(BHTextureFormat) == 64 ? 1 : -1];
 typedef char slot_size[sizeof(BHTextureSlot) == 28 ? 1 : -1];
@@ -312,9 +310,8 @@ static void palette_copy(BHTextureContext *q, BHTextureImage *image, BHTextureSl
 }
 static void pixels_copy(BHTextureContext *q, BHTextureImage *image, BHTextureSlot *s)
 {
-    BH_MP_BEGIN(marker);
     native(q, IDirectDrawSurface_Blt(s->surface, NULL, image->source, NULL, DDBLT_WAIT, NULL));
-    BH_MP_END(marker, "texture_upload", image->name, q->evictions);
+
     ++q->pixel_uploads;
 }
 D3DTEXTUREHANDLE __cdecl bh_texture_resident(BHTextureContext *q, BHTextureImage *image)
@@ -354,10 +351,9 @@ D3DTEXTUREHANDLE __cdecl bh_texture_resident(BHTextureContext *q, BHTextureImage
     s->pixels_dirty = s->palette_dirty = 0;
     if (s->frame == q->frame && s->image)
     {
-        BH_MP_BEGIN(marker);
         native(q, IDirect3DDevice2_EndScene(q->device));
         native(q, IDirect3DDevice2_BeginScene(q->device));
-        BH_MP_END(marker, "texture_flush", image->name, q->flushes);
+
         ++q->flushes;
     }
     if (s->image)
@@ -371,149 +367,4 @@ D3DTEXTUREHANDLE __cdecl bh_texture_resident(BHTextureContext *q, BHTextureImage
     palette_copy(q, image, s);
     pixels_copy(q, image, s);
     return s->handle;
-}
-static unsigned long converted(unsigned char r, unsigned char g, unsigned char b, const DDPIXELFORMAT *format)
-{
-    unsigned long channel[3], mask[3], i, result = 0, m;
-    int shift;
-    channel[0] = r;
-    channel[1] = g;
-    channel[2] = b;
-    mask[0] = format->dwRBitMask;
-    mask[1] = format->dwGBitMask;
-    mask[2] = format->dwBBitMask;
-    for (i = 0; i < 3; ++i)
-    {
-        shift = -8;
-        for (m = mask[i]; m; m /= 2)
-            ++shift;
-        result += ((shift < 0 ? channel[i] >> (-shift) : channel[i] << shift) & mask[i]);
-    }
-    return result;
-}
-BHTextureImage *__cdecl bh_texture_stage(BHTextureContext *q, const char *name, const BHPcx *pcx, int mode,
-                                         unsigned long color)
-{
-    BHTextureImage *image;
-    BHTextureFormat *f;
-    BHPcxPalette palette;
-    DDSURFACEDESC desc, locked;
-    PALETTEENTRY entries[256];
-    unsigned long x, y, i, bytes, value;
-    int ok = 1;
-    if (!q || !name || strlen(name) >= 28 || !pcx || !pcx->pixels || !pcx->width || !pcx->height || pcx->width > 4096 ||
-        pcx->height > 4096 || pcx->pixel_bytes != pcx->width * pcx->height)
-        return NULL;
-    for (image = q->images; image; image = image->next)
-        if (!_stricmp(name, image->name))
-            return image;
-    f = bh_texture_request_format(q, pcx->width, pcx->height, 8, 1);
-    if (!f)
-        return NULL;
-    bytes = (f->pixel.dwRGBBitCount + 7) / 8;
-    if (!bytes || bytes > 4 || (bytes == 1 && f->pixel.dwRGBBitCount != 8))
-    {
-        error(q, BH_TEXTURE_FORMAT);
-        return NULL;
-    }
-    image = (BHTextureImage *)q->allocator.allocate(sizeof(*image), q->allocator.user);
-    if (!image)
-    {
-        error(q, BH_TEXTURE_MEMORY);
-        return NULL;
-    }
-    memset(image, 0, sizeof(*image));
-    image->format = f;
-    strcpy(image->name, name);
-    memset(&desc, 0, sizeof(desc));
-    desc.dwSize = sizeof(desc);
-    desc.dwFlags = 0x1007;
-    desc.dwWidth = pcx->width;
-    desc.dwHeight = pcx->height;
-    desc.ddpfPixelFormat = f->pixel;
-    desc.ddsCaps.dwCaps = q->software ? 0x840 : 0x1800;
-    if (!native(q, IDirectDraw_CreateSurface(q->draw, &desc, &image->source, NULL)))
-        goto failed;
-    if (!bh_pcx_palette(&palette, pcx->palette, mode, color))
-        goto failed;
-    if (bytes == 1)
-    {
-        for (i = 0; i < 256; ++i)
-        {
-            entries[i].peRed = palette.rgb[i * 3];
-            entries[i].peGreen = palette.rgb[i * 3 + 1];
-            entries[i].peBlue = palette.rgb[i * 3 + 2];
-            entries[i].peFlags = 0;
-        }
-        if (!native(q, IDirectDraw_CreatePalette(q->draw, 0x44, entries, &image->palette, NULL)) ||
-            !native(q, IDirectDrawSurface_SetPalette(image->source, image->palette)))
-            goto failed;
-    }
-    memset(&locked, 0, sizeof(locked));
-    locked.dwSize = sizeof(locked);
-    if (!native(q, IDirectDrawSurface_Lock(image->source, NULL, &locked, DDLOCK_WAIT, NULL)))
-        goto failed;
-    if (locked.lPitch < (long)(pcx->width * bytes))
-        ok = 0;
-    for (y = 0; ok && y < pcx->height; ++y)
-        for (x = 0; x < pcx->width; ++x)
-        {
-            unsigned char *out = (unsigned char *)locked.lpSurface + y * locked.lPitch + x * bytes;
-            unsigned char index = palette.indices[pcx->pixels[y * pcx->width + x]];
-            value = bytes == 1 ? index
-                               : converted(palette.rgb[index * 3], palette.rgb[index * 3 + 1],
-                                           palette.rgb[index * 3 + 2], &f->pixel);
-            for (i = 0; i < bytes; ++i)
-                out[i] = (unsigned char)(value >> (i * 8));
-        }
-    if (!native(q, IDirectDrawSurface_Unlock(image->source, NULL)))
-        ok = 0;
-    if (!ok)
-        goto failed;
-    image->next = q->images;
-    q->images = image;
-    return image;
-failed:
-    if (image->palette)
-        IDirectDrawPalette_Release(image->palette);
-    if (image->source)
-        IDirectDrawSurface_Release(image->source);
-    q->allocator.release(image, q->allocator.user);
-    return NULL;
-}
-BHTextureImage *__cdecl bh_texture_load_pcx(BHTextureContext *q, const char *name, const char *prefix, int mode,
-                                            unsigned long color)
-{
-    char canonical[128], path[256];
-    unsigned long i, n;
-    BHTextureImage *image;
-    BHPcx pcx;
-    BHVFile *file;
-    if (!q || !name || !prefix || (n = strlen(name)) >= sizeof(canonical) || strlen(prefix) + n >= sizeof(path))
-        return NULL;
-    for (i = 0; i <= n; ++i)
-        canonical[i] = (char)toupper((unsigned char)name[i]);
-    if (n >= 4 && (!_stricmp(canonical + n - 4, ".GIF") || !_stricmp(canonical + n - 4, ".BMP") ||
-                   !_stricmp(canonical + n - 4, ".TGA") || !_stricmp(canonical + n - 4, ".JPG")))
-        strcpy(canonical + n - 4, ".PCX");
-    for (image = q->images; image; image = image->next)
-        if (!_stricmp(image->name, canonical))
-            return image;
-    strcpy(path, prefix);
-    strcat(path, canonical);
-    file = bh_vfile_open(path, "rb");
-    if (!file)
-    {
-        error(q, BH_TEXTURE_IO);
-        return NULL;
-    }
-    bh_pcx_init(&pcx, &q->allocator);
-    image = NULL;
-    if (bh_pcx_read(&pcx, file))
-        image = bh_texture_stage(q, canonical, &pcx, mode, color);
-    else
-        error(q, BH_TEXTURE_IO);
-    bh_vfile_close(file);
-    bh_pcx_dispose(&pcx);
-    return image;
 }

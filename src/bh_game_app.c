@@ -1,6 +1,5 @@
 #include "bh_game_app.h"
 #include "bh_render_interpolation.h"
-#include "bh_mission_profile.h"
 #include "bh_application_bootstrap.h"
 #include "bh_primitive_dispatch.h"
 #include "bh_sprite_quad.h"
@@ -102,21 +101,8 @@ typedef struct BHGameApp
 {
     HWND window;
     HINSTANCE instance;
-    int box_level, box_auto;
-    unsigned long box_ticks;
-    FILE *box_trace;
-    BHEntity *box_ai, *box_pickup, *box_drop;
-    unsigned long box_pickup_generation, box_target_generation, box_drop_generation;
-    int box_objective, box_drop_seen, box_drop_taken;
-    long box_drop_ammo;
-    BHEntity *box_weapon_pickup;
-    unsigned long box_weapon_generation, box_collected_mask, box_fired_mask, box_spawned_mask, box_emit_before;
-    long box_ammo_before, box_fire_ammo;
     int sound_diagnostic_logged;
-#ifdef DEBUGGING
-    double menu_smoke_seconds, menu_smoke_origin;
-#endif
-    int startup_check, hardware, fullscreen, quit, initialized, error, focus_sample;
+    int hardware, fullscreen, quit, initialized, error, focus_sample;
     FILE *log;
     char archive[512], config_path[512];
     long width, height, selected_waypoint, mission, ship, slot, input_changed, stay, network_failed, fine_warning,
@@ -375,7 +361,6 @@ typedef struct BHGameApp
     unsigned short query_world_index;
     const BHProviderRecord *selected_provider;
 #ifdef DEBUGGING
-    int curve_diagnostic_written;
     int draw_warning_logged;
     int perf_enabled;
     BHGamePerfCapture perf_capture;
@@ -412,61 +397,6 @@ static void stage(BHGameApp *a, const char *text)
     }
     printf("%s\n", text);
     fflush(stdout);
-}
-static void curve_words(FILE *f, const void *values, unsigned long count)
-{
-    unsigned long i, bits;
-    const unsigned char *p = (const unsigned char *)values;
-    fputc('[', f);
-    for (i = 0; i < count; ++i)
-    {
-        memcpy(&bits, p + i * 4, 4);
-        fprintf(f, "%s\"%08lx\"", i ? "," : "", bits);
-    }
-    fputc(']', f);
-}
-static void __cdecl curve_diagnostic(void *user, unsigned long owner, const BHEntity *e, const BHActorRouteState *s,
-                                     unsigned short now, const BHVec3 *before, const BHVec3 *at, const BHVec3 *after,
-                                     const BHVec3 *angles)
-{
-    BHGameApp *a = (BHGameApp *)user;
-    FILE *f;
-    char path[96], message[192];
-    unsigned long model;
-    int written = 0;
-    if (a->curve_diagnostic_written)
-        return;
-    a->curve_diagnostic_written = 1;
-    memcpy(&model, (const char *)e + 0x114, 4);
-    sprintf(path, "nonfinite-curve-%08lx-%lu.json", GetTickCount(), GetCurrentProcessId());
-    f = fopen(path, "w");
-    if (f)
-    {
-        fprintf(
-            f,
-            "{\"owner\":\"%08lx\",\"entity\":\"%08lx\",\"generation\":%lu,\"model\":%lu,\"clock32\":%lu,\"now16\":%u,\"stamp16\":%u,\"duration16\":%u,\"controls_bits\":",
-            owner, (unsigned long)e, e->generation, model, a->player_state.tick, (unsigned int)now,
-            (unsigned int)s->tick, (unsigned int)s->duration_ticks);
-        curve_words(f, s->controls, 12);
-        fprintf(f, ",\"before_bits\":");
-        curve_words(f, before, 3);
-        fprintf(f, ",\"at_bits\":");
-        curve_words(f, at, 3);
-        fprintf(f, ",\"after_bits\":");
-        curve_words(f, after, 3);
-        fprintf(f, ",\"angles_bits\":");
-        curve_words(f, angles, 3);
-        fprintf(f, "}\n");
-        written = !ferror(f);
-        if (fclose(f))
-            written = 0;
-    }
-
-#ifdef DEBUGGING
-    sprintf(message, "Nonfinite curve producer: owner=%08lx model=%lu evidence=%s written=%d", owner, model, path,
-            written);
-#endif
-    stage(a, message);
 }
 #else
 #define stage(a, text) ((void)0)
@@ -644,7 +574,6 @@ static int restore_display(BHGameApp *a)
                 hr = IDirectDrawSurface_Restore(surfaces[i]);
             if (FAILED(hr))
             {
-
 #ifdef DEBUGGING
                 sprintf(text, "Display surface recovery failed: surface=%lu HRESULT=%08lx", i, (unsigned long)hr);
 #endif
@@ -682,7 +611,8 @@ int __cdecl bh_game_assets_verify(const char *path, unsigned long *bytes, unsign
 static BOOL WINAPI game_cursor(LPPOINT point)
 {
     RECT client;
-    if (!GetCursorPos(point) || !ScreenToClient(input_window, point) || !GetClientRect(input_window, &client)) return FALSE;
+    if (!GetCursorPos(point) || !ScreenToClient(input_window, point) || !GetClientRect(input_window, &client))
+        return FALSE;
     point->x -= (client.right - client.left) / 2 - 160;
     point->y -= (client.bottom - client.top) / 2 - 100;
     return TRUE;
@@ -691,7 +621,8 @@ static BOOL WINAPI game_recenter(int x, int y)
 {
     POINT p;
     RECT client;
-    if (!GetClientRect(input_window, &client)) return FALSE;
+    if (!GetClientRect(input_window, &client))
+        return FALSE;
     p.x = x + (client.right - client.left) / 2 - 160;
     p.y = y + (client.bottom - client.top) / 2 - 100;
     return ClientToScreen(input_window, &p) && SetCursorPos(p.x, p.y);
@@ -727,8 +658,6 @@ static int loading_begin(BHGameApp *a)
         a->loading_display.present_user = a;
     }
     a->loading_progress.display = &a->loading_display;
-    if (a->startup_check)
-        return 1;
     if (!bh_loading_progress_install(&a->loading_progress))
         return failure(a, 6, "Loading presentation initialization failed");
     return 1;
@@ -738,18 +667,27 @@ static void __cdecl sdl_message(HWND window, UINT message, WPARAM key, LPARAM bi
     BHGameApp *a = (BHGameApp *)user;
     if (message == WM_ACTIVATEAPP && !key)
         a->focus_sample = 0;
-    if (message == WM_SETCURSOR && LOWORD(bits) == HTCLIENT && !a->startup_check)
+    if (message == WM_SETCURSOR && LOWORD(bits) == HTCLIENT)
         SetCursor(NULL);
     if (message == WM_ACTIVATEAPP && !key)
         memset(a->snapshot.current, 0, sizeof(a->snapshot.current));
-    if (message == MM_MCINOTIFY) {
+    if (message == MM_MCINOTIFY)
+    {
         bh_cd_notify(&a->cd_notify, (short)key, (MCIDEVICEID)bits);
         return;
     }
-    switch (message) {
-    case WM_KEYDOWN: case WM_KEYUP: case WM_SYSKEYDOWN: case WM_SYSKEYUP:
-    case WM_LBUTTONDOWN: case WM_LBUTTONUP: case WM_RBUTTONDOWN: case WM_RBUTTONUP:
-    case WM_MBUTTONDOWN: case WM_MBUTTONUP:
+    switch (message)
+    {
+    case WM_KEYDOWN:
+    case WM_KEYUP:
+    case WM_SYSKEYDOWN:
+    case WM_SYSKEYUP:
+    case WM_LBUTTONDOWN:
+    case WM_LBUTTONUP:
+    case WM_RBUTTONDOWN:
+    case WM_RBUTTONUP:
+    case WM_MBUTTONDOWN:
+    case WM_MBUTTONUP:
         bh_input_message(&a->snapshot, window, message, key, bits);
         break;
     }
@@ -763,28 +701,6 @@ static BHTextureImage *__cdecl image(unsigned long handle, void *user)
             return p;
     return 0;
 }
-#ifdef DEBUGGING
-static int emission(BHGameApp *a, int result, BHClipVertex *ring, BHTextureImage *image)
-{
-    BHClipVertex *v = ring;
-    unsigned long n = 0;
-    if (!result && a->log)
-    {
-        fprintf(a->log, "Emission failure: primitive=%d raster=%d split=%d kernel=%lu image=%s\n", a->primitive.error,
-                a->primitive.raster.error, a->primitive.split.error, a->primitive.selected_index,
-                image ? image->name : "NULL");
-        do
-        {
-            fprintf(a->log, "vertex %.9g %.9g z=%.9g uv=%.9g,%.9g\n", v->sx, v->sy, v->point.z, v->u, v->v);
-            v = v->next;
-        } while (v && v != ring && ++n < 12);
-        fflush(a->log);
-    }
-    return result;
-}
-#else
-#define emission(a, result, ring, image) (result)
-#endif
 static int __cdecl polygon(BHClipVertex *ring, BHTextureImage *texture, unsigned long color, void *user)
 {
     BHGameApp *a = (BHGameApp *)user;
@@ -794,7 +710,7 @@ static int __cdecl polygon(BHClipVertex *ring, BHTextureImage *texture, unsigned
     a->primitive.raster.depth = (unsigned short *)a->display.auxiliary_pixels;
     a->primitive.raster.depth_pitch = a->display.auxiliary_pitch;
     result = bh_primitive_emit(&a->primitive, texture, ring, color);
-    return emission(a, result, ring, texture);
+    return result;
 }
 /* 00455f70 dispatches ribbon vertices to 0046e430, whose shade comes from
    each vertex's scalar. The plain polygon callback would discard it. */
@@ -808,7 +724,7 @@ static int __cdecl scalar_polygon(BHClipVertex *ring, BHTextureImage *texture, u
     a->primitive.raster.depth = (unsigned short *)a->display.auxiliary_pixels;
     a->primitive.raster.depth_pitch = a->display.auxiliary_pitch;
     result = bh_primitive_emit_scalar(&a->primitive, texture, ring);
-    return emission(a, result, ring, texture);
+    return result;
 }
 static int __cdecl horizon_polygon(BHClipVertex *ring, BHTextureImage *texture, int gradient, const float rgb[3],
                                    void *user)
@@ -823,19 +739,18 @@ static int __cdecl horizon_polygon(BHClipVertex *ring, BHTextureImage *texture, 
     a->primitive.raster.depth = (unsigned short *)a->display.auxiliary_pixels;
     a->primitive.raster.depth_pitch = a->display.auxiliary_pitch;
     result = bh_primitive_emit_gradient(&a->primitive, texture, ring, color);
-    return emission(a, result, ring, texture);
+    return result;
 }
 static int platform(BHGameApp *a, int show)
 {
     DDSURFACEDESC surface;
     BHSoftwareRaster raster;
-    a->window = bh_sdl_open(a->startup_check, sdl_message, a);
+    a->window = bh_sdl_open(0, sdl_message, a);
     if (!a->window)
         return failure(a, 3, bh_sdl_error());
     input_window = a->window;
     strcpy(a->device_names[0].name, "SDL3 GPU");
-    if (!bh_config_init(&a->config, 0) ||
-        !bh_config_bootstrap(&a->config, a->config_path, a->device_names, 1))
+    if (!bh_config_init(&a->config, 0) || !bh_config_bootstrap(&a->config, a->config_path, a->device_names, 1))
         return failure(a, 6, "Config ownership initialization failed");
     a->application.config = &a->config;
     a->application.window = a->window;
@@ -853,8 +768,7 @@ static int platform(BHGameApp *a, int show)
         return failure(a, 4, "SDL presentation target creation failed");
     surface.ddsCaps.dwCaps = DDSCAPS_3DDEVICE;
     if (IDirectDraw_CreateSurface(a->draw, &surface, &a->target, 0) != DD_OK ||
-        !bh_render_startup_hardware(&a->render_mode.engine, a->draw, a->target, a->primary,
-                                    a->width, a->height, 16))
+        !bh_render_startup_hardware(&a->render_mode.engine, a->draw, a->target, a->primary, a->width, a->height, 16))
         return failure(a, 4, "SDL GPU renderer initialization failed");
     a->render_mode.screen = a->primary;
     a->render_mode.render = a->target;
@@ -1017,11 +931,8 @@ static int platform(BHGameApp *a, int show)
     a->render.light = &a->light;
     a->render.gdi = &a->gdi;
     a->special_draw.queue = &a->queue;
-    if (!a->startup_check)
-    {
-        (void)show;
-        UpdateWindow(a->window);
-    }
+    (void)show;
+    UpdateWindow(a->window);
     stage(a, a->hardware     ? "Fullscreen Direct3D2 HAL renderer ready"
              : a->fullscreen ? "Fullscreen restored software renderer ready"
                              : "Native window and restored software renderer ready");
@@ -1167,10 +1078,6 @@ static int source_owners(BHGameApp *a)
 {
     unsigned long i;
     a->actor_route.live_tick = &a->player_state.tick;
-#ifdef DEBUGGING
-    a->actor_route.nonfinite_curve = curve_diagnostic;
-    a->actor_route.nonfinite_user = a;
-#endif
     a->vehicle_draw.clock = &a->actor_route;
     a->script_draw.clock = &a->actor_route;
     if (!bh_player_input_owner_init(&a->inputs, 0) ||
@@ -1181,7 +1088,7 @@ static int source_owners(BHGameApp *a)
     a->collection.disable_mouse_motion = 1;
     a->collection.api.cursor = game_cursor;
     a->collection.api.recenter = game_recenter;
-    if (!a->startup_check && !bh_input_devices_start(&a->devices, a->window))
+    if (!bh_input_devices_start(&a->devices, a->window))
         return failure(a, 6, "Native input device initialization failed");
     if (!bh_entities_init(&a->pool, 0x2580, 0) || !bh_sound_queue_init(&a->sound, 0, 0, 0) ||
         !bh_network_transport_init(&a->transport, 0, 0) || !bh_network_game_init(&a->network_game, &a->sessions, 0) ||
@@ -1508,7 +1415,6 @@ static int source_owners(BHGameApp *a)
     a->story.force_control = &a->player_state.force;
     a->story.force_gate = &a->stay;
     a->story.ending = &a->player_state.ending;
-    a->bootstrap.diagnostic_box = a->box_level;
     a->bootstrap.textures = &a->render_mode.engine.textures;
     a->bootstrap.resources = &a->resources;
     a->bootstrap.sounds = &a->sounds;
@@ -1721,8 +1627,6 @@ static int resources_ready(BHGameApp *a)
     for (i = 0; i < a->binding_count; ++i)
         if (*a->bindings[i].destination != bh_bootstrap_value(&a->bootstrap, a->bindings[i].identity))
             return failure(a, 9, "Resource consumer binding mismatch");
-    if (a->box_level)
-        a->camera_entity = a->player;
     if (a->bootstrap.menus_created != BH_BOOTSTRAP_MENUS || !a->player || !a->camera_entity ||
         a->physics.pool != &a->pool || !bh_entities_valid(&a->pool))
         return failure(a, 9, "Constructed application ownership check failed");
@@ -2081,14 +1985,11 @@ static LRESULT __cdecl source_message(void *user, HWND w, UINT m, WPARAM key, LP
     BHGameApp *a = (BHGameApp *)user;
     return bh_input_message(&a->snapshot, w, m, key, bits);
 }
-#ifdef DEBUGGING
-#include "bh_game_box.inc"
-#endif
 static void __cdecl source_produce(void *user)
 {
     BHGameApp *a = (BHGameApp *)user;
     unsigned long clock = a->frame + (a->player_state.paused == 0);
-    bh_mp_frame(clock);
+
     if (!bh_entities_focus(&a->pool, a->player_state.paused ? a->player : 0))
     {
         failure(a, 12, "Paused player entity focus binding failed");
@@ -2108,7 +2009,7 @@ static void __cdecl source_produce(void *user)
             a->service.error, a->sound.error, (unsigned long)a->sound.last_hresult,
             (unsigned long)a->service.sound_stats.last_error, a->player_tick.error, a->player_query.error,
             a->weapon_dispatch.error, a->weapon_dispatch.identity, a->weapon_target.error, a->weapon_arc.error,
-            a->weapon_pulse.error, a->weapon_fire.error, a->box_ticks);
+            a->weapon_pulse.error, a->weapon_fire.error, a->frame);
         failure(a, 12, text);
     }
 #ifdef DEBUGGING
@@ -2120,7 +2021,7 @@ static void __cdecl source_produce(void *user)
             "Native sound diagnostic (original frame continues): hresult=%08lx frequency_failures=%lu resource=%lu slot=%lu frequency=%ld tick=%lu",
             (unsigned long)a->service.sound_stats.last_error, a->service.sound_stats.frequency_failures,
             a->service.sound_stats.failed_resource, a->service.sound_stats.failed_slot,
-            a->service.sound_stats.failed_frequency, a->box_ticks);
+            a->service.sound_stats.failed_frequency, a->frame);
         stage(a, text);
         a->sound_diagnostic_logged = 1;
     }
@@ -2144,9 +2045,6 @@ static int render_frame(BHGameApp *a, BHDrawQueue *queue)
 {
     int ok;
     BHDrawQueue *saved;
-#ifdef DEBUGGING
-    DWORD began = GetTickCount();
-#endif
     if (!restore_display(a))
         return 0;
     if (!bh_present_begin(&a->begin))
@@ -2164,7 +2062,8 @@ static int render_frame(BHGameApp *a, BHDrawQueue *queue)
     saved = a->render.draw;
     a->render.draw = queue;
     ok = bh_render_execute(&a->render);
-    if (queue == &a->interpolation.queue) bh_interpolation_rendered(&a->interpolation);
+    if (queue == &a->interpolation.queue)
+        bh_interpolation_rendered(&a->interpolation);
     a->render.draw = saved;
 #ifdef DEBUGGING
     if (a->render.failures && a->render.error == BH_RENDER_EXECUTE_CALLBACK && !a->draw_warning_logged)
@@ -2186,19 +2085,6 @@ static int render_frame(BHGameApp *a, BHDrawQueue *queue)
     if (!bh_present_end(&a->present))
         ok = 0;
     a->display.locked = a->present.locked;
-#ifdef DEBUGGING
-    if (a->startup_check || (!a->perf_enabled && a->frame % 30 == 0))
-    {
-        char profile[256];
-        sprintf(
-            profile,
-            "Render profile: ms=%lu commands=%lu polygons=%lu texture_locks=%lu writes=%lu mouse=%ld,%ld filtered=%.5g,%.5g",
-            GetTickCount() - began, queue->count, a->primitive.polygons, a->primitive.locks,
-            a->primitive.raster.written, a->collection.delta[0], a->collection.delta[1], a->snapshot.mouse_axes[0],
-            a->snapshot.mouse_axes[1]);
-        stage(a, profile);
-    }
-#endif
     if (!ok)
     {
         char text[512];
@@ -2214,941 +2100,18 @@ static int render_frame(BHGameApp *a, BHDrawQueue *queue)
     }
     return 1;
 }
-#ifdef DEBUGGING
-static int startup_perf_checks(BHGameApp *a)
-{
-    BHGamePerfCapture capture;
-    BHGamePerfBlock *b;
-    BHGamePerfSample *s;
-    unsigned long i, n = 0, current[7] = {100, 100, 2, 3, 4, 5, 6};
-    int ok = 1;
-    memset(&capture, 0, sizeof(capture));
-    for (i = 0; i < 40001; ++i)
-    {
-        s = perf_append(&capture);
-        if (!s)
-        {
-            ok = 0;
-            break;
-        }
-        s->frame = i;
-    }
-    for (b = capture.head; b; b = b->next)
-        for (i = 0; i < b->count; ++i)
-            if (b->samples[i].frame != n++)
-                ok = 0;
-    if (n != 40001 || capture.count != 40001 || capture.dropped)
-        ok = 0;
-    if (perf_contact_delta(&capture, current) != 220)
-        ok = 0;
-    current[0] = 1;
-    current[1] = 101;
-    if (perf_contact_delta(&capture, current) != 2 || perf_contact_delta(&capture, current) != 0)
-        ok = 0;
-    perf_dispose(&capture);
-    if (capture.head || capture.tail || capture.count)
-        ok = 0;
-    if (!ok)
-        return failure(a, 13, "Static frame capture/reset-counter checks failed");
-    stage(a, "Static frame capture: 40001 ordered samples, block cleanup and independent contact resets passed");
-    return 1;
-}
-#endif
-static int startup_clock_checks(BHGameApp *a)
-{
-    BHSimulationClock clock;
-    unsigned long rate, i, count;
-    static const unsigned long rates[5] = {30, 60, 75, 144, 240};
-    if (a->mission_progress.first_sound != bh_bootstrap_value(&a->bootstrap, 0x496bdc) ||
-        a->mission_progress.unlocked_sound != bh_bootstrap_value(&a->bootstrap, 0x4d18e0))
-        return failure(a, 13, "Mission completion sound bindings reversed");
-    for (rate = 0; rate < N(rates); ++rate) {
-        memset(&clock, 0, sizeof(clock)); count = 0;
-        for (i = 0; i <= rates[rate] * 10; ++i)
-            count += bh_simulation_advance(&clock, 100000.0 + i / (double)rates[rate]);
-        if (count != 301)
-            return failure(a, 13, "Producer clock depends on presentation refresh rate");
-    }
-    memset(&clock, 0, sizeof(clock));
-    if (bh_simulation_advance(&clock, 0) != 1 || bh_simulation_advance(&clock, 10) > 8 ||
-        bh_simulation_advance(&clock, 10) != 0)
-        return failure(a, 13, "Producer clock accumulated a stall backlog");
-    stage(a, "SDL producer clock: exact 30 Hz at 30/60/75/144/240 presentations, bounded stall catch-up passed");
-    return 1;
-}
-static int capture_fixture(BHGameApp *a, const char *name)
-{
-#ifdef DEBUGGING
-    char directory[MAX_PATH], path[MAX_PATH + 80];
-    if (GetEnvironmentVariableA("BH_RENDER_CAPTURE_DIR", directory, sizeof(directory))) {
-        sprintf(path, "%s\\%s.png", directory, name);
-        if (!bh_sdl_capture(path))
-            return failure(a, 13, "SDL GPU fixture capture failed");
-    }
-#else
-    (void)a; (void)name;
-#endif
-    return 1;
-}
-static BHBootstrapMenu *diagnostic_menu(BHGameApp *a, unsigned long identity)
-{
-    unsigned long i;
-    for (i = 0; i < BH_BOOTSTRAP_MENUS; ++i)
-        if (a->bootstrap.menus[i].identity == identity) return a->bootstrap.menus + i;
-    return 0;
-}
-static int diagnostic_press(BHBootstrapMenu *m, unsigned long key)
-{
-    memset(&m->runtime.input_state, 0, sizeof(m->runtime.input_state));
-    m->runtime.input->state[1] = 0;
-    m->runtime.distance = 4.5f;
-    m->runtime.exiting = 0;
-    m->runtime.input_state.values[key] = 1;
-    return bh_menu_runtime_step(&m->runtime);
-}
-static int startup_menu_navigation(BHGameApp *a)
-{
-    BHBootstrapMenu *main = diagnostic_menu(a, 0x495e40), *options = diagnostic_menu(a, 0x4cdb90),
-                    *video = diagnostic_menu(a, 0x496220);
-    unsigned long i, before, arena = a->messages.arena_used;
-    char first[64];
-    if (!main || !options || !video) return failure(a, 13, "Menu diagnostic identity missing");
-    main->settings.selection = 0;
-    for (i = 0; i < main->settings.row_count; ++i) {
-        before = main->settings.selection;
-        if (!diagnostic_press(main, 1) || main->settings.selection != (long)((before + 1) % main->settings.row_count))
-            return failure(a, 13, "Main menu Down/wrap navigation failed");
-    }
-    main->settings.selection = 2;
-    if (!diagnostic_press(main, 4) || main->runtime.destinations[2] != &options->runtime ||
-        options->runtime.input->flags != 2 || options->runtime.distance != 100)
-        return failure(a, 13, "Main menu Setup activation failed");
-    options->settings.selection = 0;
-    if (!diagnostic_press(options, 4) || options->runtime.destinations[0] != &video->runtime || video->runtime.input->flags != 2)
-        return failure(a, 13, "Options Video activation failed");
-    strcpy(first, bh_sdl_video_label(0));
-    video->settings.selection = 0;
-    if (!diagnostic_press(video, 4) || !strcmp(first, bh_sdl_video_label(0)))
-        return failure(a, 13, "Video window-mode action failed");
-    if (!diagnostic_press(video, 4) || strcmp(first, bh_sdl_video_label(0)))
-        return failure(a, 13, "Video window-mode round trip failed");
-    /* The second row replaces the fixed renderer name without crowding the
-       original four-card menu. Exercise its action and each filtered list. */
-    strcpy(first, bh_sdl_video_label(1));
-    video->settings.selection = 0;
-    if (!diagnostic_press(video, 4))
-        return failure(a, 13, "Video borderless filter setup failed");
-    for (i = 0; i < 3; ++i)
-    {
-        unsigned long j;
-        int numerator = 0, denominator = 0;
-        video->settings.selection = 1;
-        if (!diagnostic_press(video, 4) || video->actions.error || video->edits.error)
-            return failure(a, 13, "Video aspect-ratio action failed");
-        sscanf(bh_sdl_video_label(1), "%d:%d", &numerator, &denominator);
-        video->settings.selection = 2;
-        for (j = 0; j < 8; ++j)
-        {
-            int width, height;
-            double relative;
-            if (!diagnostic_press(video, 4))
-                return failure(a, 13, "Borderless resolution cycling failed");
-            if (sscanf(bh_sdl_video_label(2), "%d x %d", &width, &height) == 2)
-            {
-                if (!denominator) continue;
-                relative = fabs((double)width * denominator / height / numerator - 1);
-                if (relative > (numerator == 21 ? .03 : .003))
-                    return failure(a, 13, "Borderless resolution escaped aspect filter");
-            }
-            else if (strcmp(bh_sdl_video_label(2), "Unavailable"))
-                return failure(a, 13, "Borderless resolution label is invalid");
-        }
-    }
-    video->settings.selection = 0;
-    if (!diagnostic_press(video, 4))
-        return failure(a, 13, "Video windowed restore failed");
-    if (strcmp(first, bh_sdl_video_label(1)))
-        return failure(a, 13, "Video aspect-ratio round trip failed");
-    video->settings.selection = 2;
-    strcpy(first, bh_sdl_video_label(2));
-    if (!diagnostic_press(video, 4) || video->actions.error || video->edits.error)
-        return failure(a, 13, "Video resolution action/label refresh failed");
-    if (strcmp(bh_sdl_video_label(0), "Windowed") == 0 && strcmp(first, bh_sdl_video_label(2)))
-        return failure(a, 13, "Windowed resolution control changed the window size");
-    if (!diagnostic_press(video, 8) || video->runtime.destinations[video->settings.selection] != &options->runtime ||
-        a->messages.arena_used != arena)
-        return failure(a, 13, "Video Back action or obsolete restart notice failed");
-    stage(a, "SDL menu navigation: Down/wrap, Setup, Video, mode round trip, resolution and Back passed");
-    return 1;
-}
-static int startup_menu_checks(BHGameApp *a)
-{
-    unsigned long i, row;
-    BHVec3 zero = {0, 0, 0};
-    BHBootstrapMenu *m;
-    BHMenuPresent saved;
-    char name[80];
-    for (i = 0; i < BH_BOOTSTRAP_MENUS; ++i) {
-        m = a->bootstrap.menus + i;
-        if (m->identity != 0x495e40 && m->identity != 0x4cdb90 && m->identity != 0x496220)
-            continue;
-        for (row = 0; row < m->settings.row_count; ++row)
-            if (m->settings.rows[row] && m->settings.rows[row]->refresh)
-                m->settings.rows[row]->refresh(&m->settings, (long)row);
-        saved = m->present;
-        m->present.eye = m->present.angles = &zero;
-        m->present.distance = 4.5f;
-        m->present.push = 1;
-        m->present.application_mode = 0;
-        for (row = 0; row < m->settings.row_count; ++row) {
-            m->present.selection = (long)row;
-            m->present.display_selection = (float)row;
-            if (!bh_frame_clear_color(&a->display, 0, 0, 0) ||
-                !bh_draw_queue_begin(&a->queue) || bh_camera_queue_pose(&a->queue, &zero, &zero) != 1 ||
-                !bh_menu_present(&m->present) || !render_frame(a, &a->queue))
-                return failure(a, 13, "3D menu row rendering failed");
-            sprintf(name, "menu-%08lx-row-%lu", m->identity, row);
-            if (!capture_fixture(a, name)) return 0;
-        }
-        m->present = saved;
-    }
-    stage(a, "SDL menu fixtures: main/options/video selections rendered through production 3D menu owners");
-    return startup_menu_navigation(a);
-}
-/* Source-only render fixtures: no input, projectile creation, entity steps,
-   menus or simulation. Check actual production bindings against real pixels. */
-static int startup_effect_checks(BHGameApp *a)
-{
-    unsigned long pass, x, y, pixels, unique, color, hash, trail_hash = 0, fresh_hash = 0;
-    unsigned char seen[8192];
-    BHVec3 zero = {0, 0, 0}, left = {-2, 0, 20}, right = {2, 0, 20}, center = {0, 0, 20}, up = {0, -1, 0},
-           normal = {0, 0, -1};
-    DDBLTFX fill;
-    DDSURFACEDESC locked;
-    char text[160];
-    BHHudStatusState status;
-    BHHudWeaponAmmo ammo[2];
-    const BHHudWeaponAmmo *ammo_ptr[2];
-    static const char *names[12] = {"beam",
-                                   "boost",
-                                   "logo",
-                                   "panel",
-                                   "radar",
-                                   "HUD",
-                                   "ballistic trail",
-                                   "ballistic fresh flare",
-                                   "ballistic repeated flare",
-                                   "interpolated fresh flare",
-                                   "interpolated repeated flare",
-                                   "next tick fresh flare"};
-    memset(&status, 0, sizeof(status));
-    memset(ammo, 0, sizeof(ammo));
-    ammo[0].amount = 216;
-    ammo[1].amount = 0;
-    ammo_ptr[0] = ammo;
-    ammo_ptr[1] = ammo + 1;
-    status.weapons = ammo_ptr;
-    status.weapon_count = 2;
-    status.secondary = 1;
-    status.counter_a = 10000;
-    if (!startup_clock_checks(a))
-        return 0;
-#ifdef DEBUGGING
-    if (!startup_perf_checks(a))
-        return 0;
-#endif
-    for (pass = 0; pass < 12; ++pass)
-    {
-        memset(&fill, 0, sizeof(fill));
-        fill.dwSize = sizeof(fill);
-        if (IDirectDrawSurface_Blt(a->target, 0, 0, 0, DDBLT_COLORFILL | DDBLT_WAIT, &fill) != DD_OK)
-            return failure(a, 13, "Effect fixture clear failed");
-        /* Pass 8 replays the same mutable queue; pass 10 replays its render
-           snapshot through interpolation. Both must retain flare consumption. */
-        if (pass != 8 && pass != 10 &&
-            (!bh_draw_queue_begin(&a->queue) || bh_camera_queue_pose(&a->queue, &zero, &zero) != 1))
-            return failure(a, 13, "Effect fixture initialization failed");
-        if (pass == 0)
-        {
-            if (bh_draw_segment(&a->queue, 3, a->projectile_draw.ballistic_trail, &left, &right, .3f, .3f, 1, 1, 0) !=
-                1)
-                return failure(a, 13, "Beam fixture queue failed");
-        }
-        else if (pass == 1)
-        {
-            if (bh_draw_oriented(&a->queue, 3, a->player_scene.particle_image, &center, &up, &normal, 2, 2, 0, 8,
-                                 .5f) != 1)
-                return failure(a, 13, "Boost fixture queue failed");
-        }
-        else if (pass == 2)
-        {
-            if (bh_pickup_rect_queue(&a->queue, 3, a->flyby.corner_left_image, 100, 100, 128, 128, 0, 0, 1, 0, 1, 0, 1,
-                                     a->view.near_z + .01f) != 1)
-                return failure(a, 13, "Logo fixture queue failed");
-        }
-        else if (pass == 3)
-        {
-            if (bh_screen_quad_queue(&a->queue, 7, a->panel.icon_images[0], 100, 100, 128, 128, 0, 0, 1) != 1)
-                return failure(a, 13, "Panel fixture queue failed");
-        }
-        else if (pass == 4)
-        {
-            if (bh_screen_quad_queue(&a->queue, 8, a->hud.background_image, 100, 100, 128, 128, 0, 0, 1) != 1)
-                return failure(a, 13, "Radar fixture queue failed");
-        }
-        else if (pass == 5)
-        {
-            if (!bh_hud_flat_draw(&a->flat_hud, &status))
-                return failure(a, 13, "Static HUD fixture queue failed");
-        }
-        else if (pass == 6 || pass == 7 || pass == 9 || pass == 11)
-        {
-            if (bh_draw_segment(&a->queue, 3, a->projectile_draw.ballistic_trail, &left, &right, .3f, .3f, 1, 1, 0) !=
-                1)
-                return failure(a, 13, "Ballistic trail fixture queue failed");
-            if ((pass == 7 || pass == 9 || pass == 11) &&
-                bh_flare_queue(&a->queue, &center, 2, 50, a->projectile_draw.ballistic_flare, 0, 0, 0, 0) != 1)
-                return failure(a, 13, "Ballistic flare fixture queue failed");
-        }
-        if (pass >= 9) {
-            if (pass != 10) bh_interpolation_capture(&a->interpolation, &a->queue, 0);
-            if (!render_frame(a, bh_interpolation_sample(&a->interpolation, pass == 10 ? .5f : 0))) return 0;
-        } else if (!render_frame(a, &a->queue)) return 0;
-        sprintf(text, "effect-%lu", pass);
-        if (!capture_fixture(a, text)) return 0;
-        memset(&locked, 0, sizeof(locked));
-        locked.dwSize = sizeof(locked);
-        if (IDirectDrawSurface_Lock(a->target, 0, &locked, DDLOCK_WAIT, 0) != DD_OK)
-            return failure(a, 13, "Effect fixture readback failed");
-        pixels = unique = 0;
-        hash = 2166136261UL;
-        memset(seen, 0, sizeof(seen));
-        for (y = 0; y < (unsigned long)a->height; ++y)
-            for (x = 0; x < (unsigned long)a->width; ++x)
-            {
-                color = ((unsigned short *)((char *)locked.lpSurface + y * locked.lPitch))[x];
-                hash = (hash ^ color) * 16777619UL;
-                if (color)
-                {
-                    ++pixels;
-                    if (!(seen[color >> 3] & (1 << (color & 7))))
-                    {
-                        seen[color >> 3] |= 1 << (color & 7);
-                        ++unique;
-                    }
-                }
-            }
-        IDirectDrawSurface_Unlock(a->target, 0);
-
-#ifdef DEBUGGING
-        sprintf(text, "Static %s source fixture: %lu nonblack pixels, %lu colors, hash=%08lx", names[pass], pixels,
-                unique, hash);
-#endif
-        stage(a, text);
-        if (pass == 6)
-            trail_hash = hash;
-        if (pass == 7)
-        {
-            fresh_hash = hash;
-            if (fresh_hash == trail_hash)
-                return failure(a, 13, "Fresh ballistic flare positive control was invisible");
-        }
-        if (pass == 8 && (hash != trail_hash || hash == fresh_hash))
-            return failure(a, 13, "Repeated ballistic queue did not restore orange trail pixels");
-        if ((pass == 9 || pass == 11) && hash != fresh_hash)
-            return failure(a, 13, "Fresh publication lost its ballistic flare");
-        if (pass == 10 && hash != trail_hash)
-            return failure(a, 13, "Interpolated render resurrected the consumed ballistic flare");
-        if (pixels < 8)
-            return failure(a, 13, "Effect fixture produced no visible footprint");
-        if ((pass == 2 || pass == 3 || pass == 5) && unique < 16)
-            return failure(a, 13, "Texture fixture lost image color content");
-        if ((pass == 2 || pass == 4) && pixels >= 128UL * 128UL)
-            return failure(a, 13, "Texture fixture lost transparent background");
-    }
-    return 1;
-}
-static int startup_aspect_fade_check(BHGameApp *a)
-{
-    BHVec3 zero = {0, 0, 0};
-    DDBLTFX fill;
-    int ok;
-    memset(&fill, 0, sizeof(fill));
-    fill.dwSize = sizeof(fill);
-    if (IDirectDrawSurface_Blt(a->target, 0, 0, 0, DDBLT_COLORFILL | DDBLT_WAIT, &fill) != DD_OK ||
-        !bh_draw_queue_begin(&a->queue) || bh_camera_queue_pose(&a->queue, &zero, &zero) != 1 ||
-        bh_fade_queue(&a->queue, 1, 0xffffff) != 1)
-        return failure(a, 13, "Aspect fade fixture initialization failed");
-    ok = render_frame(a, &a->queue) && capture_fixture(a, "aspect-fade");
-    bh_fade_set(&a->fade, 0, 0);
-    return ok;
-}
-static int startup_hud_anchor_checks(BHGameApp *a)
-{
-    BHHudContext saved_hud = a->hud;
-    BHRadarFrame saved_frame = a->radar_frame;
-    BHAttachmentContext saved_attachment = a->attachment;
-    BHHudPlayer player;
-    BHHudStatusState status;
-    BHHudWeaponAmmo ammo[2];
-    const BHHudWeaponAmmo *weapons[2];
-    BHVec3 zero = {0,0,0}, target = {40,0,80};
-    unsigned long group, kind, i;
-    const char *groups[] = {"primary", "secondary", "right", "center"};
-    char name[80];
-    int ok = 1;
-    memset(&player,0,sizeof(player));
-    memset(ammo,0,sizeof(ammo));
-    player.right.x = player.up.y = player.forward.z = 1;
-    ammo[0].amount = 216; ammo[1].amount = 123;
-    weapons[0] = ammo; weapons[1] = ammo+1;
-    for (kind=0;kind<2 && ok;++kind) for (group=0;group<4 && ok;++group) {
-        memset(&status,0,sizeof(status));
-        status.weapons=weapons;status.weapon_count=2;status.secondary=1;
-        status.counter_a=10000;status.counter_b=123;
-        player.flat_raw = kind==0;
-        if (!bh_draw_queue_begin(&a->queue) || bh_camera_queue_pose(&a->queue,&zero,&zero)!=1 ||
-            !bh_hud_setup(&a->hud,&player) ||
-            !(kind ? bh_hud_world_draw(&a->world_hud,&status) : bh_hud_flat_draw(&a->flat_hud,&status)) ||
-            !bh_radar_marker(&a->radar,&zero,&target,1,0,0)) {ok=0;break;}
-        for(i=9;i<a->queue.count;++i) {
-            BHDrawCommand *c=a->queue.commands+i;
-            unsigned long flags, actual;
-            float u=0,v=0;
-            if(c->kind==BH_DRAW_CAMERA) continue;
-            flags=c->kind==BH_DRAW_RECT ? c->words[11] : c->kind==BH_DRAW_SCREEN_QUAD ? c->words[6] : c->words[13];
-            if(c->kind==BH_DRAW_RECT || c->kind==BH_DRAW_QUAD) {
-                memcpy(&u,c->words+(c->kind==BH_DRAW_RECT?6:14),4);
-                memcpy(&v,c->words+(c->kind==BH_DRAW_RECT?8:16),4);
-            }
-            /* Isolate secondary icons/digits by their existing atlas regions;
-               no production-only relocation marker is needed. */
-            if((c->resource==a->flat_hud.atlas_image && v==.09765625f) ||
-               (c->resource==a->flat_hud.weapon_icons_image && u==.50390625f)) actual=1;
-            else if(c->resource==a->flat_hud.weapon_icons_image ||
-                    (c->resource==a->flat_hud.atlas_image && v==.00390625f && u<.6f)) actual=0;
-            else if(c->resource!=a->flat_hud.atlas_image || u>=.6f) actual=2;
-            else actual=3;
-            if(actual!=group) c->kind=BH_DRAW_NOP;
-        }
-        sprintf(name,"hud-%s-%s",kind?"world":"flat",groups[group]);
-        ok=bh_frame_clear_color(&a->display,0,0,0) && render_frame(a,&a->queue) && capture_fixture(a,name);
-    }
-    if(ok) {
-        BHMessagePanel saved_panel=a->panel;
-        BHMessageState saved_messages=a->messages;
-        BHMessagePanelFields saved_fields;
-        BHMessagePanelFields *fields;
-        int created=a->panel.entity==0;
-        if(created && !bh_message_panel_create(&a->panel)) ok=0;
-        else {
-            fields=bh_message_panel_fields(a->panel.entity);saved_fields=*fields;
-            bh_message_state_init(&a->messages);
-            fields->timer=1;fields->scale=1;fields->flash=0;fields->icon_image=a->panel.icon_images[0];
-            a->messages.ring_count=1;a->messages.ring[0][0]='1';a->messages.ring[0][1]=0;
-            ok=bh_draw_queue_begin(&a->queue) && bh_camera_queue_pose(&a->queue,&zero,&zero)==1 &&
-               bh_message_panel_render(&a->panel) && bh_frame_clear_color(&a->display,0,0,0) &&
-               render_frame(a,&a->queue) && capture_fixture(a,"hud-messages");
-            *fields=saved_fields;
-            if(created) bh_message_panel_close(&a->panel);
-        }
-        a->panel=saved_panel;a->messages=saved_messages;
-    }
-    a->hud=saved_hud;a->radar_frame=saved_frame;a->attachment=saved_attachment;
-    return ok ? 1 : failure(a,13,"HUD anchor fixtures failed");
-}
-static int startup_callback_continuation_checks(BHGameApp *a, unsigned long resource)
-{
-    static const unsigned long patterns[4] = {0x7fc12345UL, 0xffc00000UL, 0x7f800000UL, 0xff800000UL};
-    float recorded[7] = {645.083496f, 49.1670189f, 10, -.671133101f, 0, 0, 1};
-    BHVec3 zero = {0, 0, 0}, position = {0, 0, 10};
-    unsigned long field, k, slot;
-    if (!a->hardware)
-        return 1;
-    for (field = 0; field < 7; ++field)
-        for (k = 0; k < 4; ++k)
-        {
-            float bad[7];
-            slot = (field + 5) % 7;
-            memcpy(bad, recorded, sizeof(bad));
-            memcpy(bad + slot, patterns + k, 4);
-            if (!bh_draw_queue_begin(&a->queue) || bh_camera_queue_pose(&a->queue, &zero, &zero) != 1 ||
-                bh_draw_submit_resource(&a->queue, 0, resource, (BHVec3 *)bad, (BHVec3 *)(bad + 3), bad[6]) != 1 ||
-                bh_draw_submit_resource(&a->queue, 0, resource, &position, &zero, 1) != 1)
-                return failure(a, 13, "Static invalid/valid command construction failed");
-            if (!render_frame(a, &a->queue) || a->render.failures != 1 ||
-                a->render.error != BH_RENDER_EXECUTE_CALLBACK || a->render.kinds[BH_DRAW_MODEL_RESOURCE] != 2 ||
-                a->render.failed_resource != resource || a->resource_draw.error != BH_DRAW_RESOURCE_OK)
-                return failure(a, 13, "Original callback continuation contract failed");
-        }
-    stage(
-        a,
-        "Static hardware callback continuation: all seven payload fields x NaN/indefinite/+Inf/-Inf retain diagnostics, consume later valid commands and finish frame");
-    return 1;
-}
-static int startup_player_model_checks(BHGameApp *a)
-{
-    static const float depths[11] = {0, .001f, .125f, .2f, .5f, 1, 2, 4, 8, 16, 32}, offsets[5] = {-4, -.1f, 0, .1f, 4};
-    BHVec3 zero = {0, 0, 0}, position, angles = {0, 0, 0};
-    unsigned long i, j, k, resource;
-    memcpy(&resource, (char *)a->player + 0x21c, 4);
-    for (i = 0; i < N(depths); ++i)
-        for (j = 0; j < N(offsets); ++j)
-            for (k = 0; k < 4; ++k)
-            {
-                position.x = offsets[j];
-                position.y = 0;
-                position.z = depths[i];
-                angles.x = k * 1.5707963267948966f;
-                if (!bh_draw_queue_begin(&a->queue) || bh_camera_queue_pose(&a->queue, &zero, &zero) != 1 ||
-                    bh_draw_submit_resource(&a->queue, 0, resource, &position, &angles, 1) != 1 ||
-                    !render_frame(a, &a->queue))
-                    return 0;
-            }
-    stage(a, "Static player model clipping: 220 camera-plane/side/rotation poses passed");
-    return startup_callback_continuation_checks(a, resource);
-}
-#ifdef DEBUGGING
-static int startup_portal_seam_checks(BHGameApp *a)
-{
-    BHPcx pcx;
-    BHTextureImage *texture;
-    unsigned char texels[32 * 32];
-    BHVec3 zero = {0, 0, 0}, eye = {1, 0, 0}, left = {-5, 0, 10}, right = {5, 0, 10},
-           up = {0, -1, 0}, normal = {0, 0, -1},
-           portal[4] = {{0, -5, 10}, {10, -5, 10}, {10, 5, 10}, {0, 5, 10}};
-    BHMainCamera stale;
-    const BHMainCamera *saved_camera = a->controls.camera;
-    DDSURFACEDESC pixels;
-    unsigned long pass, x, color, gaps[2] = {0, 0};
-    char option[8], message[160];
-    if (!GetEnvironmentVariableA("BH_PLAYER_INTERPOLATION_CHECK", option, sizeof(option))) return 1;
-    memset(&pcx, 0, sizeof(pcx)); memset(texels, 1, sizeof(texels));
-    memset(pcx.palette, 255, sizeof(pcx.palette));
-    pcx.pixels = texels; pcx.width = pcx.height = 32; pcx.pixel_bytes = sizeof(texels);
-    texture = bh_texture_stage(&a->render_mode.engine.textures, "@@PORTAL-SEAM@@", &pcx, 0, 0);
-    if (!texture || !bh_texture_preallocate(&a->render_mode.engine.textures))
-        return failure(a, 13, "Portal seam fixture texture failed");
-    texture->runs = (unsigned long *)a->render_mode.engine.textures.allocator.allocate(0x80, a->render_mode.engine.textures.allocator.user);
-    texture->vertices = (D3DTLVERTEX *)a->render_mode.engine.textures.allocator.allocate(0xc00, a->render_mode.engine.textures.allocator.user);
-    texture->vertex_capacity = 96;
-    if (!texture->runs || !texture->vertices) return failure(a, 13, "Portal seam fixture vertex arena failed");
-    stale = a->main_camera;
-    if (!bh_main_camera_pose(&a->view, &stale, 0, 0, 0, 0, 0, 0)) return 0;
-    for (pass = 0; pass < 2; ++pass) {
-        if (!bh_draw_queue_begin(&a->queue) || !bh_frame_clear_color(&a->display, 0, 0, 255) ||
-            bh_camera_queue_pose(&a->queue, &eye, &zero) != 1 ||
-            bh_menu_light_queue(&a->queue, 0, 0, 0, 0, 0, 0, 0, 0, 0) != 1 ||
-            bh_draw_controls_clip_rect(&a->queue, 0, 0, 0, 640, 480) != 1 ||
-            bh_quad_queue(&a->queue, 0, (unsigned long)texture, &left, &up, &normal, 10, 10, 0, 8, 1, 0, 1, 0, 1) != 1 ||
-            bh_draw_controls_portal_clip(&a->queue, 0, portal, BH_DRAW_END, .01f, 25000) != 1 ||
-            bh_quad_queue(&a->queue, 0, (unsigned long)texture, &right, &up, &normal, 10, 10, 0, 8, 1, 0, 1, 0, 1) != 1 ||
-            bh_draw_controls_clip_rect(&a->queue, 0, 0, 0, 640, 480) != 1)
-            return failure(a, 13, "Portal seam fixture queue failed");
-        a->controls.camera = pass ? saved_camera : &stale;
-        if (!render_frame(a, &a->queue) || !capture_fixture(a, pass ? "portal-seam-fixed" : "portal-seam-before")) return 0;
-        memset(&pixels, 0, sizeof(pixels)); pixels.dwSize = sizeof(pixels);
-        if (IDirectDrawSurface_Lock(a->target, 0, &pixels, DDLOCK_WAIT, 0) != DD_OK) return 0;
-        /* Inspect the interior seam, excluding outer viewport raster edges. */
-        for (x = 1; x < 639; ++x) {
-            color = ((unsigned short *)((char *)pixels.lpSurface + 240 * pixels.lPitch))[x];
-            if ((color & 0xffe0UL) == 0 && (color & 31)) ++gaps[pass];
-        }
-        IDirectDrawSurface_Unlock(a->target, 0);
-    }
-    a->controls.camera = saved_camera;
-    if (gaps[0] < 10 || gaps[1]) return failure(a, 13, "Portal seam positive/negative pixel controls failed");
-    sprintf(message, "SDL portal seam pixels: stale camera=%lu blue gap pixels, render camera=%lu, same geometry and depth", gaps[0], gaps[1]);
-    stage(a, message);
-    return 1;
-}
-/* Compare moving target brackets against the original screen-space equations
-   evaluated at the render pose, including yaw, dolly and target motion. */
-static void __cdecl tracking_query(BHEntity *entity, void *packet)
-{
-    ((BHEntityPositionPacket *)packet)->position = entity->position;
-}
-static int startup_cheat_checks(BHGameApp *a)
-{
-    BHEntity saved_player = *a->player, *weapon;
-    BHPlayerTickState saved_state = a->player_state;
-    BHInputSnapshot saved_snapshot = a->snapshot;
-    BHPlayerInputState saved_decoded = a->decoded;
-    BHPlayerInputList saved_input = *a->player_tick.input;
-    BHWeaponObjectState *states[10];
-    long saved_ammo[10], saved_available[10];
-    BHInputCollection collection = a->collection;
-    BHPlayerInputOwner owner = a->inputs;
-    unsigned long i, attempt, letter, changed;
-    const char *sequence = "IAKFA";
-    int ok = 1;
-    char option[8], text[128];
-    if (!GetEnvironmentVariableA("BH_CHEAT_CHECK", option, sizeof(option))) return 1;
-    for (i = 0; i < 10; ++i) {
-        if (!bh_weapon_registry_resolve(&a->weapons.registry, i, &weapon, states + i)) return 0;
-        saved_ammo[i] = states[i]->common.ammo; saved_available[i] = states[i]->common.available_ec;
-    }
-    memset(&a->snapshot, 0, sizeof(a->snapshot));
-    memset(&a->decoded, 0, sizeof(a->decoded));
-    memset((char *)a->player + 0x18c, 0, 36 * 4);
-    a->player_state.mode = 1; a->player_state.paused = 0;
-    a->player_state.confirmation = a->player_state.ending = a->player_state.death_frames = 0;
-    owner.first = a->player_tick.input; owner.first->next = NULL;
-    collection.lists = &owner; collection.disable_mouse_motion = 1;
-    collection.enabled[0] = collection.enabled[1] = 0;
-    bh_input_set_enabled(owner.first, &a->snapshot, 1);
-    for (attempt = 0; attempt < 2 && ok; ++attempt) {
-        for (i = 0; i < 10; ++i) {
-            states[i]->common.available_ec = 0;
-            /* Keep primary ammo above its automatic regeneration threshold. */
-            states[i]->common.ammo = i ? 0 : 250;
-        }
-        for (letter = 0; sequence[letter] && ok; ++letter) {
-            PostMessageA(a->window, WM_KEYDOWN, sequence[letter], 1);
-            /* Auto-repeat must not insert another letter into the cheat. */
-            PostMessageA(a->window, WM_KEYDOWN, sequence[letter], (LPARAM)0x40000001UL);
-            PostMessageA(a->window, WM_KEYUP, sequence[letter], (LPARAM)0xc0000001UL);
-            bh_sdl_poll();
-            if (!bh_input_collect(&collection, &changed) || !bh_player_tick(&a->player_tick)) {
-                sprintf(text, "IAKFA production tick failed: player error=%d", a->player_tick.error);
-                stage(a, text); ok = 0; break;
-            }
-            for (i = 0; i < 10; ++i) {
-                int complete = sequence[letter + 1] == 0;
-                if (states[i]->common.available_ec != complete ||
-                    states[i]->common.ammo != (complete ? states[i]->common.ammo_limit : i ? 0 : 250)) {
-                    sprintf(text, "IAKFA attempt %lu letter %lu weapon %lu: available=%ld ammo=%ld limit=%ld", attempt + 1, letter + 1, i,
-                            states[i]->common.available_ec, states[i]->common.ammo, states[i]->common.ammo_limit);
-                    stage(a, text); ok = 0; break;
-                }
-            }
-        }
-    }
-    *a->player = saved_player; a->player_state = saved_state; a->snapshot = saved_snapshot;
-    a->decoded = saved_decoded; *a->player_tick.input = saved_input;
-    for (i = 0; i < 10; ++i) { states[i]->common.ammo = saved_ammo[i]; states[i]->common.available_ec = saved_available[i]; }
-    if (!ok) return failure(a, 13, "IAKFA native SDL input-to-inventory regression failed");
-    stage(a, "SDL IAKFA: native messages, per-letter input collection/player ticks, partial-code rejection, auto-repeat filtering, all ten weapons and repeated use passed");
-    return 1;
-}
-static int startup_rocket_tracking_checks(BHGameApp *a)
-{
-    BHEntityPool pool;
-    BHTrailContext trail;
-    BHEntity *rocket, *generator;
-    BHVec3 zero = {0,0,0}, drift = {0,.6f,0}, eye = {0,0,-2};
-    BHDrawQueue *sample;
-    unsigned long frame, i, j, mark, head, flare, checks = 0;
-    float alpha, expected, observed, strength, previous_x = 0;
-    int ok = 1;
-    memset(&pool, 0, sizeof(pool)); memset(&trail, 0, sizeof(trail));
-    if (!bh_entities_init(&pool, 32, NULL)) return failure(a, 13, "Rocket fixture pool failed");
-    trail.pool = &pool; trail.queue = &a->queue;
-    rocket = bh_entity_acquire(&pool);
-    if (!rocket) { bh_entities_dispose(&pool); return 0; }
-    rocket->position.x = -3; rocket->position.z = 20;
-    rocket->origin.x = rocket->origin.z = 30;
-    rocket->query = tracking_query;
-    generator = bh_trail_create(&trail, a->projectile_draw.homing_trail, 3, 0, &rocket->position, rocket,
-                               60, 1, 30, 1, .4f, .2f, &drift, 1);
-    if (!generator) { bh_entities_dispose(&pool); return failure(a, 13, "Rocket trail fixture creation failed"); }
-    memset(&a->interpolation, 0, sizeof(a->interpolation));
-    bh_interpolation_bind(&a->queue);
-    for (frame = 0; frame < 8 && ok; ++frame) {
-        rocket->position.x = -3 + (float)frame; rocket->position.z = 20 + (float)frame;
-        if (!bh_entities_step(&pool)) { ok = 0; break; }
-        bh_draw_queue_begin(&a->queue); bh_interpolation_reset();
-        eye.x = frame * .2f;
-        bh_camera_queue_pose(&a->queue, &eye, &zero); bh_interpolation_stamp(9, 0x1234, 1);
-        if (!bh_entities_refresh(&pool)) { ok = 0; break; }
-        mark = bh_interpolation_mark();
-        if (bh_projectile_homing_draw(&a->projectile_draw, rocket) < 0) { ok = 0; break; }
-        bh_interpolation_stamp(mark, (unsigned long)rocket, rocket->generation * 2 + 1);
-        head = flare = BH_DRAW_END;
-        for (i = 9; i < a->queue.count; ++i) {
-            if (a->queue.commands[i].kind == BH_DRAW_PATH_HEADER) head = i + 1;
-            if (a->queue.commands[i].kind == BH_DRAW_FLARE) flare = i;
-        }
-        bh_interpolation_capture(&a->interpolation, &a->queue, 1);
-        for (j = 0; j < 3 && ok; ++j) {
-            alpha = j * .5f;
-            expected = frame ? previous_x + (rocket->position.x - previous_x) * alpha : rocket->position.x;
-            sample = bh_interpolation_sample(&a->interpolation, alpha);
-            if (flare == BH_DRAW_END) { ok = 0; break; }
-            memcpy(&observed, sample->commands[flare].words, 4);
-            if (fabs(observed - expected) > .0001f) { ok = 0; break; }
-            if (frame >= 2) {
-                if (head == BH_DRAW_END) { ok = 0; break; }
-                memcpy(&observed, &sample->commands[head].resource, 4);
-                if (fabs(observed - expected) > .0001f) { ok = 0; break; }
-            }
-            ++checks;
-            if (frame == 6 && j == 1) {
-                if (!bh_frame_clear_color(&a->display, 0,0,0) || !render_frame(a, sample) ||
-                    !capture_fixture(a, "rocket-trail-fresh")) { ok = 0; break; }
-                memcpy(&strength, sample->commands[flare].words + 4, 4);
-                if (strength != 50.f / 320) { ok = 0; break; }
-                sample = bh_interpolation_sample(&a->interpolation, .75f);
-                memcpy(&observed, sample->commands[flare].words + 4, 4);
-                if (observed != strength || !bh_frame_clear_color(&a->display, 0,0,0) ||
-                    !render_frame(a, sample) || !capture_fixture(a, "rocket-trail-consumed")) { ok = 0; break; }
-            }
-        }
-        previous_x = rocket->position.x;
-    }
-    bh_interpolation_bind(0);
-    memset(&a->interpolation, 0, sizeof(a->interpolation));
-    bh_entities_dispose(&pool);
-    if (!ok || checks != 24) return failure(a, 13, "Rocket trail/head/flare interpolation or consumption failed");
-    stage(a, "SDL rocket tracking: eight production emission ticks x three render fractions, stable growing head and consumed moving flare");
-    return 1;
-}
-static int startup_marker_tracking_checks(BHGameApp *a)
-{
-    BHEntity actor;
-    BHVec3 eye, angles = {0,0,0}, radar_player = {0,-10000,0};
-    BHDrawQueue *sample;
-    unsigned char flags = 0;
-    unsigned long frame, i, reference, kind = 1;
-    float alpha, x, y, z, scale, opacity, size = 16, depth, fx, fy;
-    char name[80];
-    memset(&actor, 0, sizeof(actor));
-    actor.query = tracking_query; actor.generation = 1;
-    memcpy(actor.payload + 24, &kind, 4);
-    memset(&a->interpolation, 0, sizeof(a->interpolation));
-    bh_interpolation_bind(&a->queue);
-    for (frame = 0; frame < 2; ++frame) {
-        actor.position.x = frame * 8.0f; actor.position.z = 40 - frame * 16.0f;
-        eye.x = -2 + frame * 4.0f; eye.y = 0; eye.z = frame * 4.0f;
-        angles.x = -.05f + frame * .15f;
-        if (!bh_main_camera_pose(&a->view, &a->main_camera, eye.x, eye.y, eye.z, angles.x, 0, 0)) return 0;
-        bh_draw_queue_begin(&a->queue); bh_interpolation_reset();
-        bh_camera_queue_pose(&a->queue, &eye, &angles);
-        bh_interpolation_stamp(9, 0x1234, 1);
-        if (!bh_hud_markers_draw(&a->markers, &actor, &radar_player, &flags) || a->markers.queued != 5)
-            return failure(a, 13, "Moving target fixture failed to queue five brackets/label");
-        bh_interpolation_capture(&a->interpolation, &a->queue, 1);
-    }
-    for (frame = 0; frame < 3; ++frame) {
-        alpha = frame * .5f;
-        for (reference = 0; reference < 2; ++reference) {
-            if (!reference) sample = bh_interpolation_sample(&a->interpolation, alpha);
-            else {
-                actor.position.x = alpha * 8; actor.position.z = 40 - alpha * 16;
-                eye.x = -2 + alpha * 4; eye.z = alpha * 4; angles.x = -.05f + alpha * .15f;
-                bh_main_camera_pose(&a->view, &a->main_camera, eye.x, 0, eye.z, angles.x, 0, 0);
-                x = actor.position.x; y = 0; z = actor.position.z;
-                if (!bh_pickup_project(&a->pickup_draw, &x, &y, &z, &scale)) return 0;
-                opacity = scale * 100 / 640; if (opacity > 1) opacity = 1;
-                depth = z - 8; if (depth < a->view.near_z + .01f) depth = a->view.near_z + .01f;
-                bh_draw_queue_begin(&a->queue); bh_camera_queue_pose(&a->queue, &eye, &angles);
-                for (i = 0; i < 4; ++i) {
-                    fx = (i & 1) ? 2.0f : -2.0f; fy = i < 2 ? -2.0f : 2.0f;
-                    bh_pickup_rect_queue(&a->queue, 3, a->markers.brackets_image, x + fx * scale, y + fy * scale,
-                                         size, size, i == 0 ? 0 : i == 1 ? 1.57079637f : i == 2 ? -1.57079637f : -3.14159274f,
-                                         0, opacity, 0, .25f, 0, .25f, depth);
-                }
-                bh_pickup_rect_queue(&a->queue, 3, a->markers.brackets_image, x - 2 * scale + 24, y + 2 * scale + 20,
-                                     64, size, 0, 0, opacity, 0, .5f, .25f, .125f, depth);
-                sample = &a->queue;
-            }
-            if (!bh_frame_clear_color(&a->display, 0, 0, 0) || !render_frame(a, sample)) return 0;
-            sprintf(name, "target-tracking-%lu-%s", frame, reference ? "reference" : "interpolated");
-            if (!capture_fixture(a, name)) return 0;
-        }
-    }
-    bh_interpolation_bind(0);
-    memset(&a->interpolation, 0, sizeof(a->interpolation));
-    stage(a, "SDL target tracking: moving target, camera yaw/dolly, three fractions versus render-pose reference");
-    return 1;
-}
-static int startup_cockpit_checks(BHGameApp *a)
-{
-    BHEntity saved_player=*a->player;
-    BHCameraStateContext context=a->camera_state;
-    BHCameraState *camera=bh_player_camera_state(a->player);
-    long saved_mode=a->player_state.mode;
-    unsigned long frame,fraction,part,i,attachments=0;
-    int ok=1;
-    char name[80];
-    const char *parts[]={"assembly","mesh","instruments"};
-    float original_yaw;
-    memcpy(&original_yaw,(char *)a->player+0x3c,4);
-    a->player_state.mode=1;
-    *((unsigned char *)a->player+0x2bb)=1;
-    memset(&a->interpolation,0,sizeof(a->interpolation));
-    bh_interpolation_bind(&a->queue);
-    for(frame=0;frame<2 && ok;++frame) {
-        BHCameraInput input;
-        BHMat34 rotation={{{1,0,0,0},{0,1,0,0},{0,0,1,0}}};
-        BHVec3 axis={1,0,0};
-        memset(&input,0,sizeof(input));
-        input.target=saved_player.position;input.target.x+=frame*2;
-        input.angles.x=original_yaw+frame*.12f;
-        input.actor_token=(unsigned long)a->player;
-        bh_mat34_rotate_y(input.angles.x,&rotation);
-        bh_mat34_transform_direction(&rotation,&axis,&input.basis_x);
-        axis.x=0;axis.y=1;bh_mat34_transform_direction(&rotation,&axis,&input.basis_y);
-        axis.y=0;axis.z=1;bh_mat34_transform_direction(&rotation,&axis,&input.basis_z);
-        a->player->position=input.target;
-        memcpy((char *)a->player+0x18,&input.basis_x,12);
-        memcpy((char *)a->player+0x24,&input.basis_y,12);
-        memcpy((char *)a->player+0x30,&input.basis_z,12);
-        memcpy((char *)a->player+0x3c,&input.angles,12);
-        /* The actual recovered cockpit mode supplies the eye offset and
-           correction callback; the camera and vehicle turn/move together. */
-        bh_interpolation_reset();
-        ok=bh_camera_state_init(camera,0) && bh_camera_state_update(&context,camera,&input,1.0/30,0,0) &&
-           bh_draw_queue_begin(&a->queue) && bh_player_scene_draw(&a->player_scene);
-        if(!ok) break;
-        bh_interpolation_capture(&a->interpolation,&a->queue,1);
-        if(!frame) {
-            ok=bh_frame_clear_color(&a->display,0,0,0) && render_frame(a,&a->queue) && capture_fixture(a,"cockpit-view");
-            continue;
-        }
-        for(fraction=0;fraction<3 && ok;++fraction) for(part=0;part<3 && ok;++part) {
-            BHDrawQueue *sample=bh_interpolation_sample(&a->interpolation,fraction*.5f);
-            for(i=9;i<sample->count;++i) {
-                BHDrawCommand *c=sample->commands+i;
-                int instrument=a->interpolation.current_ids[i].attachment!=0 &&
-                               (c->kind==BH_DRAW_QUAD || c->kind==BH_DRAW_ORIENTED);
-                int mesh=c->kind==BH_DRAW_MODEL_RESOURCE && c->resource==a->player_scene.cockpit_resource;
-                if(instrument) ++attachments;
-                if(c->kind!=BH_DRAW_CAMERA && c->kind!=BH_DRAW_STATE &&
-                   !(mesh && part!=2) && !(instrument && part!=1)) c->kind=BH_DRAW_NOP;
-            }
-            sprintf(name,"cockpit-%s-%lu",parts[part],fraction);
-            ok=bh_frame_clear_color(&a->display,0,0,0) && render_frame(a,sample) && capture_fixture(a,name);
-        }
-    }
-    *a->player=saved_player;a->player_state.mode=saved_mode;
-    bh_interpolation_bind(0);memset(&a->interpolation,0,sizeof(a->interpolation));
-    if(ok && attachments) {
-        stage(a,"SDL cockpit: recovered mode0 eye, moving/turning production scene, three interpolated mesh/instrument/assembly captures");
-        return 1;
-    }
-    return failure(a,13,"Cockpit camera/attachment fixtures failed");
-}
-static int startup_player_interpolation_checks(BHGameApp *a)
-{
-    BHEntity saved_player;
-    BHCameraState *camera;
-    BHMainCamera tick_camera;
-    const BHMainCamera *saved_clip_camera;
-    BHVec3 zero = {0, 0, 0}, hidden = {0, 0, -100000};
-    BHDrawQueue *sample;
-    unsigned long frame, j, k, car, camera_command, resource, attachments = 0, mismatches = 0;
-    long saved_mode;
-    float expected, observed, previous_x = 0, previous_camera_x = 0, alpha;
-    char option[8], path[512], directory[MAX_PATH];
-    FILE *trace = 0;
-    if (!GetEnvironmentVariableA("BH_PLAYER_INTERPOLATION_CHECK", option, sizeof(option))) return 1;
-    saved_player = *a->player;
-    saved_mode = a->player_state.mode;
-    camera = bh_player_camera_state(a->player);
-    memcpy(&resource, (char *)a->player + 0x21c, 4);
-    if (GetEnvironmentVariableA("BH_RENDER_CAPTURE_DIR", directory, sizeof(directory))) {
-        sprintf(path, "%s\\player-interpolation.csv", directory);
-        trace = fopen(path, "w");
-        if (trace) fprintf(trace, "tick,commands,alpha,car_expected,car_rendered,camera_expected,camera_rendered\n");
-    }
-    a->player_state.mode = 1;
-    *((unsigned char *)a->player + 0x2bb) = 1;
-    memset(&a->interpolation, 0, sizeof(a->interpolation));
-    bh_interpolation_bind(&a->queue);
-    for (frame = 0; frame < 16; ++frame) {
-        a->player->position.x = saved_player.position.x + frame * 2;
-        camera->position.x = a->player->position.x;
-        camera->position.y = a->player->position.y - 2;
-        camera->position.z = a->player->position.z - 12;
-        camera->angles = zero;
-        camera->current.mode = frame % 3 ? 1 : 0;
-        bh_draw_queue_begin(&a->queue);
-        bh_interpolation_reset();
-        /* Visibility/effect churn ahead of the real player scene must not
-           change the identity of its camera, car, NPCs or cockpit. */
-        for (j = 0; j < frame % 4; ++j)
-            bh_draw_submit_resource(&a->queue, 0, resource, &hidden, &zero, 1);
-        if (!bh_player_scene_draw(&a->player_scene)) { mismatches = 1; break; }
-        bh_interpolation_stamp(9, (unsigned long)a->player, a->player->generation * 2 + 1);
-        car = camera_command = BH_DRAW_END;
-        for (j = 9; j < a->queue.count; ++j) {
-            BHDrawCommand *c = a->queue.commands + j;
-            if (c->kind == BH_DRAW_CAMERA) camera_command = j;
-            if (c->kind == BH_DRAW_MODEL_RESOURCE && c->resource == resource &&
-                !memcmp(c->words, &a->player->position, sizeof(BHVec3))) car = j;
-        }
-        if (car == BH_DRAW_END || camera_command == BH_DRAW_END) { mismatches = 1; break; }
-        bh_interpolation_capture(&a->interpolation, &a->queue, 1);
-        for (j = 0; j < 3; ++j) {
-            float expected_camera, observed_camera;
-            alpha = j * .5f;
-            sample = bh_interpolation_sample(&a->interpolation, alpha);
-            expected = frame ? previous_x + (a->player->position.x - previous_x) * alpha : a->player->position.x;
-            expected_camera = frame ? previous_camera_x + (camera->position.x - previous_camera_x) * alpha : camera->position.x;
-            memcpy(&observed, sample->commands[car].words, 4);
-            memcpy(&observed_camera, &sample->commands[camera_command].resource, 4);
-            if (fabs(observed - expected) > .001 || fabs(observed_camera - expected_camera) > .001) ++mismatches;
-            for (k = 9; k < sample->count; ++k) if (a->interpolation.current_ids[k].attachment) {
-                float current_x, render_x;
-                memcpy(&current_x, a->interpolation.current[k].words, 4);
-                memcpy(&render_x, sample->commands[k].words, 4);
-                if (fabs((render_x - current_x) - (expected - a->player->position.x)) > .001) ++mismatches;
-                ++attachments;
-            }
-            if (trace) fprintf(trace, "%lu,%lu,%.1f,%.9g,%.9g,%.9g,%.9g\n", frame, a->queue.count, alpha,
-                               expected, observed, expected_camera, observed_camera);
-            if (frame == 8 && j == 1) {
-                /* Same interpolated geometry, deliberately stale portal camera
-                   for a before/after capture of the original seam failure. */
-                tick_camera = a->main_camera;
-                saved_clip_camera = a->controls.camera;
-                if (!bh_main_camera_pose(&a->view, &tick_camera, camera->position.x, camera->position.y,
-                                         camera->position.z, camera->angles.x, camera->angles.y, camera->angles.z)) ++mismatches;
-                a->controls.camera = &tick_camera;
-                if (!bh_frame_clear_color(&a->display, 0, 0, 0) || !render_frame(a, sample) || !capture_fixture(a, "portal-stale-camera")) ++mismatches;
-                a->controls.camera = saved_clip_camera;
-                sample = bh_interpolation_sample(&a->interpolation, alpha);
-                if (!bh_frame_clear_color(&a->display, 0, 0, 0) || !render_frame(a, sample) || !capture_fixture(a, "player-interpolated")) ++mismatches;
-            }
-            if (frame == 9 && j == 1 &&
-                (!bh_frame_clear_color(&a->display, 0, 0, 0) || !render_frame(a, sample) ||
-                 !capture_fixture(a, "player-cockpit-interpolated"))) ++mismatches;
-        }
-        previous_x = a->player->position.x;
-        previous_camera_x = camera->position.x;
-    }
-    if (trace) fclose(trace);
-    *a->player = saved_player;
-    a->player_state.mode = saved_mode;
-    bh_interpolation_bind(0);
-    memset(&a->interpolation, 0, sizeof(a->interpolation));
-    if (mismatches || !attachments) return failure(a, 13, "Player/camera/cockpit interpolation failed under visibility churn");
-    stage(a, "SDL player interpolation: 16 production scene poses x 3 render fractions, changing visibility/cockpit HUD, zero pose mismatches");
-    return startup_marker_tracking_checks(a) && startup_rocket_tracking_checks(a) && startup_cockpit_checks(a);
-}
-#endif
 /* Simulation and audio run at 30 Hz. Render copies interpolate between the
    last two completed ticks; all callback mutations stay in the render copy. */
 static int manual_loop(BHGameApp *a)
 {
-    DWORD began;
     BHSimulationClock clock;
     RECT destination;
     POINT origin;
-    unsigned long i, presentations = 0, ticks, tick;
+    unsigned long i, ticks, tick;
     int produce;
 #ifdef DEBUGGING
-    double smoke_elapsed;
-    MCI_STATUS_PARMS music_status;
-    FILE *smoke_summary;
-    DWORD rendered, presented;
-    float controls[3];
-    char profile[512];
     LARGE_INTEGER simulation_start, render_start, present_start, frame_end;
 #endif
-    if (a->startup_check)
-        return failure(a, 12, "Startup check cannot enter application frames");
     memset(&clock, 0, sizeof(clock));
 #ifdef DEBUGGING
     if (!perf_start(a))
@@ -3158,9 +2121,6 @@ static int manual_loop(BHGameApp *a)
         a->frames.bytes != 3500UL * sizeof(BHDrawCommand) || !bh_draw_queue_dispose(&a->queue))
         return failure(a, 12, "Source frame ownership initialization failed");
 
-#ifdef DEBUGGING
-    a->service.profile = 1;
-#endif
     a->service.input = &a->collection;
     a->service.entities = &a->pool;
     a->service.sound = &a->sound;
@@ -3177,31 +2137,13 @@ static int manual_loop(BHGameApp *a)
     a->text_capture.input = a->bootstrap.all_keys;
     a->key_capture.input = a->bootstrap.all_keys;
     stage(a, "Manual preview running; keyboard/mouse belong to the active game window");
-#ifdef DEBUGGING
-    {
-        char value[32];
-        if (GetEnvironmentVariableA("BH_MENU_SMOKE_SECONDS", value, sizeof(value))) {
-            a->menu_smoke_seconds = atof(value);
-            if (a->menu_smoke_seconds < 1 || a->menu_smoke_seconds > 30) a->menu_smoke_seconds = 5;
-            a->menu_smoke_origin = bh_sdl_seconds();
-            a->collection.disable_mouse_motion = 1;
-            a->focus_sample = 1;
-        }
-    }
-#endif
     while (!a->quit && !a->error)
     {
-        BH_MP_BEGIN(frame_marker);
-        began = GetTickCount();
         if (!bh_sdl_poll())
             a->quit = 1;
         if (a->quit)
             break;
-        if (!a->box_auto &&
-#ifdef DEBUGGING
-            !a->menu_smoke_seconds &&
-#endif
-            (GetForegroundWindow() != a->window || IsIconic(a->window)))
+        if (GetForegroundWindow() != a->window || IsIconic(a->window))
         {
             a->focus_sample = 0;
             clock.ready = 0;
@@ -3222,7 +2164,7 @@ static int manual_loop(BHGameApp *a)
             a->collection.delta[0] = a->collection.delta[1] = 0;
             a->focus_sample = 1;
         }
-        ticks = a->box_auto ? 1 : bh_simulation_advance(&clock, bh_sdl_seconds());
+        ticks = bh_simulation_advance(&clock, bh_sdl_seconds());
         produce = ticks != 0;
 #ifdef DEBUGGING
         if (a->perf_enabled)
@@ -3230,14 +2172,6 @@ static int manual_loop(BHGameApp *a)
 #endif
         for (tick = 0; tick < ticks; ++tick)
         {
-            if (a->box_level && a->snapshot.current[VK_ESCAPE])
-            {
-                a->quit = 1;
-                break;
-            }
-#ifdef DEBUGGING
-            box_inputs(a);
-#endif
             a->flyby.input_profile = a->profile;
             a->menu_settings.input_profile = a->profile;
             a->player_create.profile = a->profile;
@@ -3246,14 +2180,7 @@ static int manual_loop(BHGameApp *a)
             a->angles = a->flyby_state.camera.angles;
             a->contacts.has_camera = 1;
             a->contacts.camera_yaw = a->yaw = a->angles.x;
-            {
-                BH_MP_BEGIN(marker);
-                a->frames.produce(a->frames.produce_user);
-                BH_MP_END(marker, "simulation", a->player_state.paused ? "paused" : a->player_state.mode == 0 ? "menu" : a->player_state.mode == 1 ? "singleplayer" : "network", a->frame);
-            }
-#ifdef DEBUGGING
-            box_observe(a);
-#endif
+            a->frames.produce(a->frames.produce_user);
             if (a->error)
                 break;
             bh_interpolation_capture(&a->interpolation, a->slots + a->frames.latest,
@@ -3267,9 +2194,9 @@ static int manual_loop(BHGameApp *a)
                 text,
                 "Source dependency failure: player=%d query=%d vm=%d timer=%d menu=%d flyby=%d actor=%d response=%d weapon=%d method=%08lx ready=%d target=%d arc=%d sound=%d",
                 a->player_tick.error, a->player_query.error, a->vm.error, a->lifetime.timers.error, a->menu.error,
-                a->flyby.error, a->actor_construct.error, a->actor_response.error,
-                a->weapon_dispatch.error, a->weapon_dispatch.identity, a->weapon_ready.error,
-                a->weapon_target.error, a->weapon_arc.error, a->sound.error);
+                a->flyby.error, a->actor_construct.error, a->actor_response.error, a->weapon_dispatch.error,
+                a->weapon_dispatch.identity, a->weapon_ready.error, a->weapon_target.error, a->weapon_arc.error,
+                a->sound.error);
             failure(a, 12, text);
             break;
         }
@@ -3278,20 +2205,14 @@ static int manual_loop(BHGameApp *a)
             QueryPerformanceCounter(&render_start);
 #endif
 
-#ifdef DEBUGGING
-        rendered = GetTickCount();
-#endif
         {
             int render_ok;
-            BH_MP_BEGIN(marker);
+
             render_ok = render_frame(a, bh_interpolation_sample(&a->interpolation, (float)(clock.remainder * 30.0)));
-            BH_MP_END(marker, "render", "", a->frame);
+
             if (!render_ok)
                 break;
         }
-#ifdef DEBUGGING
-        rendered = GetTickCount() - rendered;
-#endif
 #ifdef DEBUGGING
         if (a->perf_enabled)
             QueryPerformanceCounter(&present_start);
@@ -3301,24 +2222,17 @@ static int manual_loop(BHGameApp *a)
         ClientToScreen(a->window, &origin);
         OffsetRect(&destination, origin.x, origin.y);
 
-#ifdef DEBUGGING
-        presented = GetTickCount();
-#endif
         if (a->fullscreen)
-        {
-            BH_MP_BEGIN(present_marker);
             if (a->target != a->render_mode.render &&
                 IDirectDrawSurface_BltFast(a->render_mode.render, 0, 0, a->target, 0, DDBLTFAST_WAIT) != DD_OK)
             {
                 failure(a, 13, "Fullscreen copy failed");
                 break;
             }
-            if (IDirectDrawSurface_Flip(a->primary, 0, DDFLIP_WAIT) != DD_OK)
-            {
-                failure(a, 13, "Fullscreen presentation failed");
-                break;
-            }
-            BH_MP_END(present_marker, "present", "", presentations);
+        if (IDirectDrawSurface_Flip(a->primary, 0, DDFLIP_WAIT) != DD_OK)
+        {
+            failure(a, 13, "Fullscreen presentation failed");
+            break;
         }
         else if (IDirectDrawSurface_Blt(a->primary, &destination, a->target, 0, DDBLT_WAIT, 0) != DD_OK)
         {
@@ -3326,51 +2240,14 @@ static int manual_loop(BHGameApp *a)
             break;
         }
 #ifdef DEBUGGING
-        presented = GetTickCount() - presented;
-#endif
-#ifdef DEBUGGING
         if (a->perf_enabled)
         {
             QueryPerformanceCounter(&frame_end);
             perf_record(a, produce, simulation_start, render_start, present_start, frame_end);
         }
 #endif
-        ++presentations;
-        BH_MP_END(frame_marker, "frame", "", presentations);
-#ifdef DEBUGGING
-        if (!a->perf_enabled && produce && (a->frame <= 5 || a->frame % 30 == 0))
-        {
-            memcpy(controls, (char *)a->player + 0x18c, 12);
-            sprintf(
-                profile,
-                "Frame profile: frame=%lu mode=%ld total=%lu input=%lu step=%lu refresh=%lu sound=%lu render=%lu blit=%lu commands=%lu mouse=%ld,%ld filtered=%.5g,%.5g controls=%.5g,%.5g,%.5g angular=%.5g,%.5g,%.5g keys_LR=%u,%u panel=%d arena=%lu ring=%ld presentations=%lu",
-                a->frame, a->player_state.mode, GetTickCount() - began, a->service.input_ms, a->service.step_ms,
-                a->service.refresh_ms, a->service.sound_ms, rendered, presented, a->queue.count, a->collection.delta[0],
-                a->collection.delta[1], a->snapshot.mouse_axes[0], a->snapshot.mouse_axes[1], controls[0], controls[1],
-                controls[2], a->player_motion.angular_velocity.x, a->player_motion.angular_velocity.y,
-                a->player_motion.angular_velocity.z, a->snapshot.current[37], a->snapshot.current[39], a->panel.error,
-                a->messages.arena_used, a->messages.ring_count, presentations);
-            stage(a, profile);
-        }
-#endif
-        if (!a->box_auto)
-            bh_sdl_pace();
-#ifdef DEBUGGING
-        if (a->menu_smoke_seconds && (smoke_elapsed = bh_sdl_seconds() - a->menu_smoke_origin) >= a->menu_smoke_seconds) {
-            memset(&music_status, 0, sizeof(music_status));
-            music_status.dwItem = MCI_STATUS_POSITION;
-            if (a->cd.device) mciSendCommandA(a->cd.device, MCI_STATUS, MCI_STATUS_ITEM | MCI_WAIT, (DWORD)&music_status);
-            smoke_summary = fopen("menu-smoke-summary.json", "w");
-            if (smoke_summary) {
-                fprintf(smoke_summary, "{\"seconds\":%.6f,\"presentations\":%lu,\"simulation_ticks\":%lu,\"sound_ticks\":%lu,\"music_device\":%u,\"local_music\":%d,\"music_position\":%lu,\"music_plays\":%lu,\"music_failures\":%lu,\"error\":%d}\n",
-                        smoke_elapsed, presentations, a->service.calls, a->service.sound_calls,
-                        a->cd.device, a->cd.local_file, (unsigned long)music_status.dwReturn, a->cd_notify.plays, a->cd_notify.failures, a->error);
-                fclose(smoke_summary);
-            }
-            capture_fixture(a, "menu-live");
-            a->quit = 1;
-        }
-#endif
+
+        bh_sdl_pace();
     }
     return !a->error;
 }
@@ -3378,20 +2255,12 @@ static void cleanup(BHGameApp *a)
 {
     unsigned long i;
 #ifdef DEBUGGING
-    if (a->box_trace)
-    {
-        fclose(a->box_trace);
-        a->box_trace = 0;
-    }
-    box_observer = 0;
-#endif
-#ifdef DEBUGGING
     perf_save(a);
 #endif
     for (i = 0; i < N(a->actor_queries); ++i)
         if (a->actor_queries[i].frames)
             bh_segment_query_dispose(a->actor_queries + i);
-    if (!a->startup_check && a->window && GetForegroundWindow() == a->window)
+    if (a->window && GetForegroundWindow() == a->window)
         SetCursor(LoadCursorA(NULL, IDC_ARROW));
     if (a->hit_markers.pool)
         bh_hit_marker_dispose(&a->hit_markers);
@@ -3495,34 +2364,25 @@ static void cleanup(BHGameApp *a)
     free(a->physics_worlds);
     free(a->reset_nodes);
 }
-int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int startup_check, int show)
+int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int profile, int show)
 {
     BHGameApp *a;
     unsigned long bytes, crc;
     int result;
-    FILE *summary;
     const char *material_error;
     BHTextureImage *loaded;
     a = (BHGameApp *)calloc(1, sizeof(*a));
     if (!a)
         return 2;
     a->instance = instance;
-#ifdef DEBUGGING
-    a->box_level = (startup_check & 16) != 0;
-    a->box_auto = (startup_check & 32) != 0;
-    if (startup_check & 64)
-        a->box_auto = 2;
-#endif
     a->fullscreen = 1;
 #ifdef DEBUGGING
-    a->perf_enabled = (startup_check & 8) != 0 && !(startup_check & 1);
+    a->perf_enabled = profile;
 #endif
-    startup_check &= 1;
-    a->startup_check = startup_check;
     a->width = 640;
     a->height = 480;
 #ifdef DEBUGGING
-    a->log = fopen(startup_check ? "startup-check.log" : "startup.log", "w");
+    a->log = fopen("startup.log", "w");
 #endif
     if (!directory || strlen(directory) > 450)
     {
@@ -3590,15 +2450,9 @@ int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int start
         unsigned long i;
         char text[160];
 
-#ifdef DEBUGGING
-        sprintf(text, "Loaded model handles: count=%lu reported_failure_handle475=%s", a->resources.count,
-                bh_render_resources_lookup(475, &a->resources) ? "valid" : "missing");
-#endif
-        stage(a, text);
         for (i = 0; i < N(a->actor_models); ++i)
             if (a->actor_models[i] && !bh_render_resources_lookup(a->actor_models[i], &a->resources))
             {
-
 #ifdef DEBUGGING
                 sprintf(text, "Actor model binding invalid: index=%lu handle=%lu", i, a->actor_models[i]);
 #endif
@@ -3658,67 +2512,15 @@ int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int start
         failure(a, 6, "Final loading image presentation failed");
         goto done;
     }
-    bh_mp_start();
-    if (startup_check)
-    {
-        stage(a, "Checking initial scene presentation without input or entity steps");
-        if (!bh_draw_queue_begin(&a->queue) || !bh_flyby_scene_draw(&a->flyby))
-        {
-            failure(a, 13, "Initial scene composition failed");
-            goto done;
-        }
-        bh_menu_runtime_refresh_entity(a->menu.root->entity, 0);
-        if (!render_frame(a, &a->queue))
-            goto done;
-        if (a->view.near_z != a->screen_clip.near_z || a->view.near_z != a->primitive.raster.near_z ||
-            a->schedule.viewport == &a->view)
-        {
-            failure(a, 13, "Scene traversal corrupted render clipping state");
-            goto done;
-        }
-        stage(a, "Checking static source beam/boost/logo/panel bindings after scene composition");
-        if (!capture_fixture(a, "level-menu") || !startup_menu_checks(a) ||
-            !startup_effect_checks(a) || !startup_aspect_fade_check(a) || !startup_hud_anchor_checks(a) || !startup_player_model_checks(a))
-            goto done;
-#ifdef DEBUGGING
-        if (!startup_player_interpolation_checks(a) || !startup_portal_seam_checks(a) || !startup_cheat_checks(a)) goto done;
-#endif
-        if (a->hardware && (a->render_mode.engine.textures.software || !a->render_mode.engine.device ||
-                            !a->primitive.vertices || a->primitive.locks))
-        {
-            failure(a, 13, "Hardware check did not use native primitives");
-            goto done;
-        }
-    }
+
     a->initialized = 1;
-    stage(a, "Real-data startup complete; no input collection or application frame executed");
-#ifdef DEBUGGING
-    summary = fopen(startup_check ? "startup-check-summary.json" : "startup-summary.json", "w");
-    if (summary)
-    {
-        fprintf(
-            summary,
-            "{\"passed\":true,\"blocks\":%lu,\"placements\":%lu,\"navigation_nodes\":%lu,\"pool_entities\":%lu,\"menus\":%lu,\"rows\":%lu,\"resources\":%lu,\"physics_bodies\":%lu,\"flyby_constructor_settling_calls\":%lu,\"input_collection_calls\":%lu,\"entity_step_calls\":%lu,\"entity_refresh_calls\":%lu,\"application_frames\":%lu,\"native_primary_sound_play_calls\":%lu,\"loading_display_calls\":%lu,\"loading_native_flips\":%lu,\"loading_adapter_presentations\":%lu,\"loading_stage\":%ld,\"frame_buffer_bytes\":%lu}\n",
-            a->blocks.count, a->editor_world.count, a->navigation.node_count, a->pool.used, a->bootstrap.menus_created,
-            a->bootstrap.rows_created, a->bootstrap.resources_loaded, a->physics.body_count, a->flyby_construct.settled,
-            a->service.input_calls, a->service.step_calls, a->service.refresh_calls, a->frame,
-            a->sound_stats.play_calls, a->loading_display.calls, a->loading_display.flips,
-            a->loading_display.presentations, a->loading_images.stage, a->frames.bytes);
-        fclose(summary);
-    }
-#endif
-    if (!startup_check)
-    {
-#ifdef DEBUGGING
-        if (!box_setup(a))
-            goto done;
-#endif
-        bh_force_feedback_init(&a->force_init, instance, a->window);
-        manual_loop(a);
-    }
+    stage(a, "Real-data startup complete");
+    bh_force_feedback_init(&a->force_init, instance, a->window);
+    manual_loop(a);
+
 done:
     result = a->error;
-    bh_mp_save();
+
     cleanup(a);
     stage(a, "Source owners released");
     bh_math_environment_leave(&a->math);

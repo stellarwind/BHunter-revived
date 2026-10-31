@@ -2,7 +2,10 @@
    callbacks/owners; source validation and clock binding stay in its wrapper. */
 static __inline float damage_query_stored(double value)
 {
-    union { float value; volatile unsigned long bits; } written, read;
+    union {
+        float value;
+        volatile unsigned long bits;
+    } written, read;
     written.value = (float)value;
     read.bits = written.bits;
     return read.value;
@@ -12,9 +15,9 @@ static __inline float damage_query_stored(double value)
 #define DAMAGE_QUERY_SHORT(offset) (*(unsigned short *)((char *)e + (offset)))
 #define DAMAGE_QUERY_VEC(offset) ((BHVec3 *)((char *)e + (offset)))
 #define DAMAGE_QUERY_LINK(actor, offset) (*(BHEntity **)((char *)(actor) + (offset)))
-#define DAMAGE_QUERY_CURVE(phase, destination) \
-    bh_camera_curve((phase), (destination), DAMAGE_QUERY_VEC(0x120), DAMAGE_QUERY_VEC(0x144), \
-                    DAMAGE_QUERY_VEC(0x150), DAMAGE_QUERY_VEC(0x12c))
+#define DAMAGE_QUERY_CURVE(phase, destination)                                                                         \
+    bh_camera_curve((phase), (destination), DAMAGE_QUERY_VEC(0x120), DAMAGE_QUERY_VEC(0x144), DAMAGE_QUERY_VEC(0x150), \
+                    DAMAGE_QUERY_VEC(0x12c))
 
 static BHPickupRoom *damage_query_room(BHActorDamageContext *c, BHEntity *e)
 {
@@ -51,16 +54,21 @@ void __cdecl bh_actor_damage_query_core(BHEntity *e, void *packet, BHActorDamage
             return;
         }
         previous = DAMAGE_QUERY_LINK(e, 0xf8);
-        if (previous) DAMAGE_QUERY_LINK(previous, 0xf4) = DAMAGE_QUERY_LINK(e, 0xf4);
-        else room->actors = DAMAGE_QUERY_LINK(e, 0xf4);
+        if (previous)
+            DAMAGE_QUERY_LINK(previous, 0xf4) = DAMAGE_QUERY_LINK(e, 0xf4);
+        else
+            room->actors = DAMAGE_QUERY_LINK(e, 0xf4);
         next = DAMAGE_QUERY_LINK(e, 0xf4);
-        if (next) DAMAGE_QUERY_LINK(next, 0xf8) = DAMAGE_QUERY_LINK(e, 0xf8);
+        if (next)
+            DAMAGE_QUERY_LINK(next, 0xf8) = DAMAGE_QUERY_LINK(e, 0xf8);
         bh_sound_stop(c->route->sound, DAMAGE_QUERY_WORD(0x104));
         bh_entity_release(c->pool, e);
         return;
     case 17:
-        if (p[1] == DAMAGE_QUERY_WORD(0x1b8)) DAMAGE_QUERY_WORD(0x1b8) = 0;
-        if (p[1] == DAMAGE_QUERY_WORD(0x1ac)) DAMAGE_QUERY_WORD(0x1ac) = 0;
+        if (p[1] == DAMAGE_QUERY_WORD(0x1b8))
+            DAMAGE_QUERY_WORD(0x1b8) = 0;
+        if (p[1] == DAMAGE_QUERY_WORD(0x1ac))
+            DAMAGE_QUERY_WORD(0x1ac) = 0;
         return;
     case 13:
         p[5] = 1;
@@ -70,7 +78,8 @@ void __cdecl bh_actor_damage_query_core(BHEntity *e, void *packet, BHActorDamage
         e->step = bh_actor_damage_tick;
         retained = (double)f[1] + DAMAGE_QUERY_FLOAT(0x194);
         DAMAGE_QUERY_FLOAT(0x194) = damage_query_stored(retained);
-        if (retained >= 1) DAMAGE_QUERY_WORD(0x1ac) = p[2];
+        if (retained >= 1)
+            DAMAGE_QUERY_WORD(0x1ac) = p[2];
         return;
     case 2:
         e->step = bh_actor_damage_tick;
@@ -81,7 +90,8 @@ void __cdecl bh_actor_damage_query_core(BHEntity *e, void *packet, BHActorDamage
     case 11:
         retained = (double)DAMAGE_QUERY_FLOAT(0x19c) - .1;
         DAMAGE_QUERY_FLOAT(0x19c) = damage_query_stored(retained);
-        if (retained < .15) DAMAGE_QUERY_FLOAT(0x19c) = .15f;
+        if (retained < .15)
+            DAMAGE_QUERY_FLOAT(0x19c) = .15f;
         e->step = bh_actor_damage_tick;
         return;
     case 1:
@@ -101,7 +111,8 @@ void __cdecl bh_actor_damage_query_core(BHEntity *e, void *packet, BHActorDamage
         f[3] = damage_query_stored((double)DAMAGE_QUERY_FLOAT(0x164) + f[3]);
         return;
     }
-    if (p[0] == 16) DAMAGE_QUERY_CURVE(damage_query_stored(ratio - 1.0 / 30.0), &before);
+    if (p[0] == 16)
+        DAMAGE_QUERY_CURVE(damage_query_stored(ratio - 1.0 / 30.0), &before);
     DAMAGE_QUERY_CURVE(t, &at);
     if (p[0] == 1)
     {

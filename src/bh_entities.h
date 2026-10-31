@@ -53,7 +53,6 @@ typedef struct BHEntityPool
     BHEntity *failure_current, *failure_next;
     unsigned long failure_callback, failure_expected_generation, failure_actual_generation;
     unsigned long failure_count;
-    unsigned long recycled_successors; /* passive step/refresh reuse diagnostic */
     int failure_refresh, failure_next_active;
 } BHEntityPool;
 

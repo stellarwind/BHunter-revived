@@ -58,8 +58,8 @@ void __cdecl bh_cd_set_volume(BHMediaControl *c, float v)
         memset(&settings, 0, sizeof(settings));
         settings.dwItem = MCI_DGV_SETAUDIO_VOLUME;
         settings.dwValue = value * 1000UL / 65535UL;
-        c->aux_result = mciSendCommandA(n->cd->device, MCI_SETAUDIO,
-            MCI_DGV_SETAUDIO_ITEM | MCI_DGV_SETAUDIO_VALUE, (DWORD)&settings);
+        c->aux_result = mciSendCommandA(n->cd->device, MCI_SETAUDIO, MCI_DGV_SETAUDIO_ITEM | MCI_DGV_SETAUDIO_VALUE,
+                                        (DWORD)&settings);
         ++c->aux_writes;
         if (!c->aux_result)
             n->cd->local_volume = (float)(value * (1.0 / 65535.0));

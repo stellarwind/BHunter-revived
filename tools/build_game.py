@@ -14,7 +14,7 @@ def stage_runtime(out):
   (out/name).unlink(missing_ok=True)
 
 def main():
- ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--compile-one');ap.add_argument('--incremental',action='store_true');ap.add_argument('--debugging',action='store_true',help='Compile optional diagnostics/profiling (DEBUGGING)');ap.add_argument('--mission-profile',action='store_true',help='Bounded in-memory mission markers without DEBUGGING');ap.add_argument('--frame-profile',action='store_true',help='Coarse frame/stage markers only; no per-entity timers or DEBUGGING');cd=ap.add_mutually_exclusive_group();cd.add_argument('--skip-cd-check',dest='skip_cd_check',action='store_true',help='Silently continue if neither CD audio nor local music is available (default)');cd.add_argument('--enable-cd-audio',dest='skip_cd_check',action='store_false',help='Enable original music failure warnings and retries; CD/local playback is always available');ap.set_defaults(skip_cd_check=True);ap.add_argument('--output-dir',type=Path,default=Path('build'),help='Self-contained runtime directory (default: build)');args=ap.parse_args()
+ ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--compile-one');ap.add_argument('--incremental',action='store_true');ap.add_argument('--debugging',action='store_true',help='Compile error logging and the --profile framerate profiler (DEBUGGING)');cd=ap.add_mutually_exclusive_group();cd.add_argument('--skip-cd-check',dest='skip_cd_check',action='store_true',help='Silently continue if neither CD audio nor local music is available (default)');cd.add_argument('--enable-cd-audio',dest='skip_cd_check',action='store_false',help='Enable original music failure warnings and retries; CD/local playback is always available');ap.set_defaults(skip_cd_check=True);ap.add_argument('--output-dir',type=Path,default=Path('build'),help='Self-contained runtime directory (default: build)');args=ap.parse_args()
  out=(ROOT/args.output_dir).resolve();out.mkdir(parents=True,exist_ok=True)
  cache_dir=ROOT/'build-cache'
  if out!=(ROOT/'build').resolve():cache_dir=cache_dir/'targets'/hashlib.sha256(str(out).encode()).hexdigest()[:12]
@@ -26,7 +26,7 @@ def main():
  env=dict(os.environ)
  for n in ('CL','_CL_','LINK','_LINK_'):env.pop(n,None)
  env['PATH']=os.pathsep.join([str(compiler),str(shared),env.get('PATH','')]);env['INCLUDE']=os.pathsep.join([str(sp3/'include'),str(vc/'include')]);env['LIB']=os.pathsep.join([str(sp3/'lib'),str(vc/'lib')])
- record=dict(target=str(out/'BHunter-source.exe'),passed=False,debugging=args.debugging,mission_profile=args.mission_profile or args.frame_profile,frame_profile=args.frame_profile,skip_cd_audio_check=args.skip_cd_check,original_code_required=False,commands=[],sources={})
+ record=dict(target=str(out/'BHunter-source.exe'),passed=False,debugging=args.debugging,skip_cd_audio_check=args.skip_cd_check,original_code_required=False,commands=[],sources={})
  objects_dir=cache_dir/'obj';objects_dir.mkdir(exist_ok=True)
  cache_path=objects_dir/'objects.json';cache=json.loads(cache_path.read_text()) if cache_path.exists() else {}
  headers=hashlib.sha256(b''.join(p.name.encode()+p.read_bytes() for p in sorted(list((ROOT/'src').glob('*.h'))+list((ROOT/'src').glob('*.inc'))))).hexdigest()
@@ -39,11 +39,10 @@ def main():
  for source in sources:
   obj=objects_dir/(source.stem+'.obj');objects.append(obj);record['sources'][source.relative_to(ROOT).as_posix()]=hashlib.sha256(source.read_bytes()).hexdigest()
   flags=contexts.get(source.name,['/I{DXSDK}/include','/DDIRECT3D_VERSION=0x0500','/DDIRECTDRAW_VERSION=0x0500','/DDIRECTINPUT_VERSION=0x0500'])
-  profile_source=args.mission_profile or (args.frame_profile and source.name in {'bh_game_app.c','bh_frame_service.c','bh_mission_profile.c'})
   adapter_flags=['/DBH_SDL_BACKEND']
   if re.search(r'IDirect(?:Draw|3D)\w*_\w+\(|DirectDraw(?:Create|EnumerateA)\(', source.read_text()) or source.name in {'bh_menu_actions.c','bh_menu_edits.c'}:
    adapter_flags+=['/I'+str(sdk/'include'),'/DDIRECT3D_VERSION=0x0500','/DDIRECTDRAW_VERSION=0x0500','/FI'+str(ROOT/'src/bh_sdl_adapter.h')]
-  argv=[compiler/'CL.EXE',*adapter_flags,'/nologo','/c','/ML','/O2','/G5','/Oi','/Gy',*(['/DDEBUGGING'] if args.debugging else []),*(['/DBH_MISSION_PROFILE'] if profile_source else []),*(['/DBH_SKIP_CD_AUDIO_CHECK'] if args.skip_cd_check and source.name=='bh_menu_transition.c' else []),*[a.replace('{DXSDK}',str(sdk)) for a in flags],'/Fo'+str(obj),source]
+  argv=[compiler/'CL.EXE',*adapter_flags,'/nologo','/c','/ML','/O2','/G5','/Oi','/Gy',*(['/DDEBUGGING'] if args.debugging else []),*(['/DBH_SKIP_CD_AUDIO_CHECK'] if args.skip_cd_check and source.name=='bh_menu_transition.c' else []),*[a.replace('{DXSDK}',str(sdk)) for a in flags],'/Fo'+str(obj),source]
   signature=hashlib.sha256((headers+record['sources'][source.relative_to(ROOT).as_posix()]+repr([str(a) for a in argv])).encode()).hexdigest()
   entry=cache.get(source.name,{})
   if args.incremental and obj.exists() and entry.get('signature')==signature and entry.get('object_sha256')==hashlib.sha256(obj.read_bytes()).hexdigest():

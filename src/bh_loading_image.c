@@ -40,9 +40,6 @@ int __cdecl bh_loading_images_bind(BHLoadingImages *c, unsigned long width, unsi
         c->allocator.allocate = allocate;
         c->allocator.release = release;
     }
-    c->names[0] = "textures\\midas.pcx";
-    c->names[1] = "textures\\iel.pcx";
-    c->names[2] = "textures\\bad.pcx";
     return 1;
 }
 void __cdecl bh_loading_images_dispose(BHLoadingImages *c)
@@ -186,22 +183,22 @@ int __cdecl bh_loading_images_init(BHLoadingImages *c)
 {
     BHLoadingImages next;
     BHLoadingImageError error;
-    if (!c || !c->allocator.allocate || !c->allocator.release || !c->names[0] || !c->names[1] || !c->names[2])
+    if (!c || !c->allocator.allocate || !c->allocator.release)
         return fail(c, BH_LOADING_IMAGE_ARGUMENT);
     next = *c;
     next.arena = (unsigned char *)c->allocator.allocate(ARENA_BYTES, c->allocator.user);
     next.arena_bytes = ARENA_BYTES;
     if (!next.arena)
         return fail(c, BH_LOADING_IMAGE_MEMORY);
-    if (!bh_loading_image_load(&next, next.names[0], 0x96000UL))
+    if (!bh_loading_image_load(&next, "textures\\midas.pcx", 0x96000UL))
         goto failed;
     memcpy(next.midas_indexed, next.indexed, 256);
     memcpy(next.midas_native, next.native, 1024);
-    if (!bh_loading_image_load(&next, next.names[1], 0xe1000UL))
+    if (!bh_loading_image_load(&next, "textures\\iel.pcx", 0xe1000UL))
         goto failed;
     memcpy(next.iel_indexed, next.indexed, 256);
     memcpy(next.iel_native, next.native, 1024);
-    if (!bh_loading_image_load(&next, next.names[2], 0))
+    if (!bh_loading_image_load(&next, "textures\\bad.pcx", 0))
         goto failed;
     ++next.tick_calls;
     next.deadline = (unsigned long)GetTickCount() + 5000UL;

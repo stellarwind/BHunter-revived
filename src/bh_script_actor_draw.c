@@ -132,11 +132,6 @@ int __cdecl bh_script_actor_vehicle_draw(BHScriptActorDrawContext *c, BHEntity *
     angles.x = stored(atan2(dx, dz));
     angles.y = stored(((double)p.y - q.y) * .3);
 
-#ifdef DEBUGGING
-    if (c->clock && c->clock->nonfinite_curve && (!_finite(angles.x) || !_finite(angles.y) || !_finite(angles.z)))
-        c->clock->nonfinite_curve(c->clock->nonfinite_user, 0x4366d0, a, &s, bh_actor_route_now(c->clock), &previous,
-                                  &p, &q, &angles);
-#endif
     smoke(c, &p);
     sn = sin(angles.x);
     cs = cos(angles.x);

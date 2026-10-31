@@ -73,30 +73,32 @@ BHSDLMessage message_callback;
 void *message_user;
 char error_text[1024];
 bool quitting, hidden;
-int normal_x = SDL_WINDOWPOS_CENTERED, normal_y = SDL_WINDOWPOS_CENTERED, normal_w = 1280, normal_h = 960,
-    mode = 0;
+int normal_x = SDL_WINDOWPOS_CENTERED, normal_y = SDL_WINDOWPOS_CENTERED, normal_w = 1280, normal_h = 960, mode = 0;
 bool maximized = false;
 std::vector<std::pair<int, int>> modes;
 int selected_resolution = 0;
 int selected_aspect = 0;
-struct Aspect { int numerator, denominator; const char *label; };
+struct Aspect
+{
+    int numerator, denominator;
+    const char *label;
+};
 const Aspect aspects[] = {{4, 3, "4:3"}, {16, 9, "16:9"}, {21, 9, "21:9"}};
 void output_size(int &w, int &h)
 {
     SDL_GetWindowSizeInPixels(window, &w, &h);
-    if (mode && !modes.empty()) {
+    if (mode && !modes.empty())
+    {
         w = modes[selected_resolution].first;
         h = modes[selected_resolution].second;
     }
-    if (hidden) {
-        const char *size = SDL_getenv("BH_GPU_TEST_SIZE");
-        if (size) sscanf(size, "%dx%d", &w, &h);
-    }
-    w = std::max(w, 1); h = std::max(h, 1);
+    w = std::max(w, 1);
+    h = std::max(h, 1);
 }
 void canvas_margins(float &x, float &y)
 {
-    int w, h; output_size(w, h);
+    int w, h;
+    output_size(w, h);
     const auto &selected = aspects[selected_aspect];
     float aspect = (float)selected.numerator / selected.denominator;
     /* The selector groups common modes (e.g. 2560x1080 and 3440x1440 are
@@ -104,74 +106,84 @@ void canvas_margins(float &x, float &y)
        never the desktop's shape, so its pixels and the UI stay square. */
     if (mode && !modes.empty() && video_layout_aspect_matches(w, h, selected.numerator, selected.denominator))
         aspect = (float)w / h;
-    if (hidden) {
-        /* Old capture baselines explicitly retain their original 4:3 canvas. */
-        int n = 4, d = 3;
-        const char *test = SDL_getenv("BH_GPU_TEST_ASPECT");
-        if (test && !strcmp(test, "auto")) { n = w; d = h; }
-        else if (test) sscanf(test, "%d:%d", &n, &d);
-        if (n > 0 && d > 0) aspect = (float)n / d;
-    }
     video_layout_canvas(aspect, &x, &y);
 }
 void viewport_geometry(float &x, float &y, float &w, float &h, float &scale)
 {
-    float mx, my; canvas_margins(mx, my);
-    w = 640 + 2 * mx; h = 480 + 2 * my;
+    float mx, my;
+    canvas_margins(mx, my);
+    w = 640 + 2 * mx;
+    h = 480 + 2 * my;
     scale = std::min(target_w / w, target_h / h);
-    w *= scale; h *= scale;
-    x = (target_w - w) * .5f; y = (target_h - h) * .5f;
+    w *= scale;
+    h *= scale;
+    x = (target_w - w) * .5f;
+    y = (target_h - h) * .5f;
 }
 bool matching_mode(int index)
 {
-    return video_layout_aspect_matches(modes[index].first, modes[index].second,
-                  aspects[selected_aspect].numerator, aspects[selected_aspect].denominator);
+    return video_layout_aspect_matches(modes[index].first, modes[index].second, aspects[selected_aspect].numerator,
+                                       aspects[selected_aspect].denominator);
 }
 void select_matching_mode()
 {
-    if (modes.empty() || matching_mode(selected_resolution)) return;
+    if (modes.empty() || matching_mode(selected_resolution))
+        return;
     int best = -1;
     long long distance = 0;
     const auto current = modes[selected_resolution];
-    for (int i = 0; i < (int)modes.size(); ++i) if (matching_mode(i)) {
-        long long delta = std::llabs((long long)modes[i].first * modes[i].second - (long long)current.first * current.second);
-        if (best < 0 || delta < distance) { best = i; distance = delta; }
-    }
-    if (best >= 0) selected_resolution = best;
+    for (int i = 0; i < (int)modes.size(); ++i)
+        if (matching_mode(i))
+        {
+            long long delta =
+                std::llabs((long long)modes[i].first * modes[i].second - (long long)current.first * current.second);
+            if (best < 0 || delta < distance)
+            {
+                best = i;
+                distance = delta;
+            }
+        }
+    if (best >= 0)
+        selected_resolution = best;
 }
 void finish_modes(int settings_version, int saved_width, int saved_height)
 {
-    if (settings_version == 1 && !modes.empty()) {
+    if (settings_version == 1 && !modes.empty())
+    {
         /* Version 1 stored an index into the sorted native display list, before
            canonical offscreen resolutions existed. Resolve that index first. */
         std::sort(modes.begin(), modes.end());
-        auto saved = modes[std::clamp(selected_resolution, 0, (int)modes.size()-1)];
-        saved_width = saved.first; saved_height = saved.second;
-        for (int i=0;i<(int)std::size(aspects);++i)
-            if (video_layout_aspect_matches(saved_width,saved_height,aspects[i].numerator,aspects[i].denominator)) {
-                selected_aspect=i;break;
+        auto saved = modes[std::clamp(selected_resolution, 0, (int)modes.size() - 1)];
+        saved_width = saved.first;
+        saved_height = saved.second;
+        for (int i = 0; i < (int)std::size(aspects); ++i)
+            if (video_layout_aspect_matches(saved_width, saved_height, aspects[i].numerator, aspects[i].denominator))
+            {
+                selected_aspect = i;
+                break;
             }
     }
     /* These are offscreen render sizes, not exclusive display modes.
        Every supported aspect must remain usable on any desktop. */
-    const std::pair<int,int> render_sizes[] = {
-        {640,480},{800,600},{1024,768},{1280,960},{1600,1200},{1920,1440},{2560,1920},{2880,2160},
-        {854,480},{960,540},{1280,720},{1366,768},{1600,900},{1920,1080},{2560,1440},{3200,1800},{3840,2160},
-        {1120,480},{1680,720},{2560,1080},{3440,1440},{3840,1600}
-    };
+    const std::pair<int, int> render_sizes[] = {
+        {640, 480},   {800, 600},  {1024, 768}, {1280, 960},  {1600, 1200}, {1920, 1440}, {2560, 1920}, {2880, 2160},
+        {854, 480},   {960, 540},  {1280, 720}, {1366, 768},  {1600, 900},  {1920, 1080}, {2560, 1440}, {3200, 1800},
+        {3840, 2160}, {1120, 480}, {1680, 720}, {2560, 1080}, {3440, 1440}, {3840, 1600}};
     if (saved_width >= 640 && saved_height >= 480 && saved_width <= 3840 && saved_height <= 2160 &&
         video_layout_aspect_matches(saved_width, saved_height, aspects[selected_aspect].numerator,
-                                   aspects[selected_aspect].denominator) &&
-        std::find(modes.begin(), modes.end(), std::make_pair(saved_width,saved_height)) == modes.end())
-        modes.push_back({saved_width,saved_height});
+                                    aspects[selected_aspect].denominator) &&
+        std::find(modes.begin(), modes.end(), std::make_pair(saved_width, saved_height)) == modes.end())
+        modes.push_back({saved_width, saved_height});
     for (auto size : render_sizes)
-        if (std::find(modes.begin(), modes.end(), size) == modes.end()) modes.push_back(size);
+        if (std::find(modes.begin(), modes.end(), size) == modes.end())
+            modes.push_back(size);
     if (modes.empty())
         modes.push_back({normal_w, normal_h});
     std::sort(modes.begin(), modes.end());
     selected_resolution = std::clamp(selected_resolution, 0, (int)modes.size() - 1);
     auto saved_mode = std::find(modes.begin(), modes.end(), std::make_pair(saved_width, saved_height));
-    if (saved_mode != modes.end()) selected_resolution = (int)(saved_mode - modes.begin());
+    if (saved_mode != modes.end())
+        selected_resolution = (int)(saved_mode - modes.begin());
     select_matching_mode();
 }
 const char *settings_path = "video-sdl3.ini";
@@ -307,12 +319,6 @@ bool ensure_targets()
         w = modes[selected_resolution].first;
         h = modes[selected_resolution].second;
     }
-    if (hidden)
-    {
-        const char *size = SDL_getenv("BH_GPU_TEST_SIZE");
-        if (size)
-            sscanf(size, "%dx%d", &w, &h);
-    }
     float limit = std::min(1.f, std::min(3840.f / std::max(w, 1), 2160.f / std::max(h, 1)));
     w = std::max(1, (int)std::lround(w * limit));
     h = std::max(1, (int)std::lround(h * limit));
@@ -405,8 +411,7 @@ SDL_GPUBlendFactor blend_factor(unsigned f)
 }
 SDL_GPUGraphicsPipeline *pipeline(const Batch &b)
 {
-    unsigned long long key =
-        b.blend | (b.src << 1) | (b.dst << 5) | (b.depth << 9) | (b.write << 13) | (b.cull << 14);
+    unsigned long long key = b.blend | (b.src << 1) | (b.dst << 5) | (b.depth << 9) | (b.write << 13) | (b.cull << 14);
     auto found = pipelines.find(key);
     if (found != pipelines.end())
         return found->second;
@@ -433,8 +438,7 @@ SDL_GPUGraphicsPipeline *pipeline(const Batch &b)
     info.primitive_type = SDL_GPU_PRIMITIVETYPE_TRIANGLELIST;
     info.vertex_input_state = {&buffer, 1, attributes, 4};
     info.rasterizer_state.fill_mode = SDL_GPU_FILLMODE_FILL;
-    info.rasterizer_state.cull_mode =
-        b.cull == D3DCULL_NONE || !b.cull ? SDL_GPU_CULLMODE_NONE : SDL_GPU_CULLMODE_BACK;
+    info.rasterizer_state.cull_mode = b.cull == D3DCULL_NONE || !b.cull ? SDL_GPU_CULLMODE_NONE : SDL_GPU_CULLMODE_BACK;
     info.rasterizer_state.front_face =
         b.cull == D3DCULL_CW ? SDL_GPU_FRONTFACE_COUNTER_CLOCKWISE : SDL_GPU_FRONTFACE_CLOCKWISE;
     info.rasterizer_state.enable_depth_clip = true;
@@ -545,7 +549,8 @@ bool flush()
     SDL_GPUBufferRegion dst{buffer, 0, size};
     SDL_UploadToGPUBuffer(copy, &src, &dst, false);
     SDL_EndGPUCopyPass(copy);
-    float mx, my; canvas_margins(mx, my);
+    float mx, my;
+    canvas_margins(mx, my);
     float canvas[4] = {320 + mx, 240 + my, 0, 0};
     SDL_PushGPUVertexUniformData(commands, 0, canvas, sizeof(canvas));
     for (auto &b : batches)
@@ -621,8 +626,8 @@ void present_target(SDL_GPUTexture *destination, unsigned width, unsigned height
     blit.source.w = target_w;
     blit.source.h = target_h;
     blit.destination.texture = destination;
-    video_layout_fit(target_w, target_h, width, height, &blit.destination.x, &blit.destination.y,
-                     &blit.destination.w, &blit.destination.h);
+    video_layout_fit(target_w, target_h, width, height, &blit.destination.x, &blit.destination.y, &blit.destination.w,
+                     &blit.destination.h);
     blit.load_op = SDL_GPU_LOADOP_CLEAR;
     blit.clear_color = {0, 0, 0, 1};
     blit.filter = SDL_GPU_FILTER_LINEAR;
@@ -694,8 +699,8 @@ SDL_GPUShader *shader(const char *path, const char *entry, const char *profile, 
     fread(source.data(), 1, n, f);
     fclose(f);
     ID3DBlob *code = nullptr, *errors = nullptr;
-    HRESULT hr = D3DCompile(source.data(), n, path, nullptr, nullptr, entry, profile,
-                            D3DCOMPILE_OPTIMIZATION_LEVEL3, 0, &code, &errors);
+    HRESULT hr = D3DCompile(source.data(), n, path, nullptr, nullptr, entry, profile, D3DCOMPILE_OPTIMIZATION_LEVEL3, 0,
+                            &code, &errors);
     if (FAILED(hr))
     {
         if (errors)
@@ -716,7 +721,8 @@ SDL_GPUShader *shader(const char *path, const char *entry, const char *profile, 
         info.num_samplers = 1;
         info.num_uniform_buffers = 1;
     }
-    else info.num_uniform_buffers = 1;
+    else
+        info.num_uniform_buffers = 1;
     auto *s = SDL_CreateGPUShader(device, &info);
     code->lpVtbl->Release(code);
     if (errors)
@@ -766,7 +772,7 @@ extern "C"
     HWND __cdecl bh_sdl_open(int hide, BHSDLMessage callback, void *user)
     {
         int saved_width = 0, saved_height = 0, settings_version = 0;
-        hidden = hide != 0 || SDL_getenv("BH_MENU_SMOKE_SECONDS") != nullptr;
+        hidden = hide != 0;
         message_callback = callback;
         message_user = user;
         if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS))
@@ -785,8 +791,10 @@ extern "C"
                 fscanf(f, "%d %d %d %d %d %d %d", &normal_x, &normal_y, &normal_w, &normal_h, &mode, &m,
                        &selected_resolution);
                 maximized = m != 0;
-                if (version >= 2) fscanf(f, "%d %d %d", &selected_aspect, &saved_width, &saved_height);
-                if (version == 2) {
+                if (version >= 2)
+                    fscanf(f, "%d %d %d", &selected_aspect, &saved_width, &saved_height);
+                if (version == 2)
+                {
                     const int old_aspect = selected_aspect;
                     selected_aspect = old_aspect == 2 || old_aspect == 3 ? 1 : old_aspect >= 5 ? 2 : 0;
                 }
@@ -828,8 +836,7 @@ extern "C"
         }
         SDL_free(available);
         finish_modes(settings_version, saved_width, saved_height);
-        device =
-            SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_DXBC, SDL_getenv("BH_GPU_DEBUG") != nullptr, "direct3d12");
+        device = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_DXBC, false, "direct3d12");
         if (!device || !SDL_ClaimWindowForGPUDevice(device, window))
         {
             set_error("Create GPU device");
@@ -966,9 +973,14 @@ extern "C"
         }
         if (row == 2 && mode && !modes.empty())
         {
-            for (int i = 1; i <= (int)modes.size(); ++i) {
+            for (int i = 1; i <= (int)modes.size(); ++i)
+            {
                 int next = (selected_resolution + i) % modes.size();
-                if (matching_mode(next)) { selected_resolution = next; break; }
+                if (matching_mode(next))
+                {
+                    selected_resolution = next;
+                    break;
+                }
             }
         }
         save_settings();
@@ -980,8 +992,10 @@ extern "C"
             return mode ? "Borderless" : "Windowed";
         if (row == 1)
             return aspects[selected_aspect].label;
-        if (!mode) return "Resize window";
-        if (!modes.empty() && !matching_mode(selected_resolution)) return "Unavailable";
+        if (!mode)
+            return "Resize window";
+        if (!modes.empty() && !matching_mode(selected_resolution))
+            return "Unavailable";
         int w, h;
         SDL_GetWindowSizeInPixels(window, &w, &h);
         if (mode && !modes.empty())
@@ -994,17 +1008,8 @@ extern "C"
     }
     void __cdecl bh_sdl_canvas_margins(float *x, float *y)
     {
-        if (window && x && y) canvas_margins(*x, *y);
-    }
-    int __cdecl bh_sdl_capture(const char *path)
-    {
-        auto pixels = readback();
-        if (pixels.empty())
-            return 0;
-        auto *s = SDL_CreateSurfaceFrom(target_w, target_h, SDL_PIXELFORMAT_RGBA32, pixels.data(), target_w * 4);
-        bool ok = SDL_SavePNG(s, path);
-        SDL_DestroySurface(s);
-        return ok;
+        if (window && x && y)
+            canvas_margins(*x, *y);
     }
     HRESULT __cdecl bh_gpu_create(GUID *, LPDIRECTDRAW *out, IUnknown *)
     {
@@ -1066,8 +1071,8 @@ extern "C"
         return DD_OK;
     }
     HRESULT __cdecl bh_IDirect3DDevice2_DrawPrimitive(void *self, D3DPRIMITIVETYPE primitive_type,
-                                                      D3DVERTEXTYPE vertex_type, void *vertices,
-                                                      DWORD vertex_count, DWORD flags)
+                                                      D3DVERTEXTYPE vertex_type, void *vertices, DWORD vertex_count,
+                                                      DWORD flags)
     {
         if (vertex_type != D3DVT_TLVERTEX || primitive_type != D3DPT_TRIANGLEFAN || vertex_count < 3 ||
             vertex_count > 65536)
@@ -1099,8 +1104,7 @@ extern "C"
     {
         return flush() ? DD_OK : E_FAIL;
     }
-    HRESULT __cdecl bh_IDirect3DDevice2_EnumTextureFormats(void *self, LPD3DENUMTEXTUREFORMATSCALLBACK cb,
-                                                           void *ctx)
+    HRESULT __cdecl bh_IDirect3DDevice2_EnumTextureFormats(void *self, LPD3DENUMTEXTUREFORMATSCALLBACK cb, void *ctx)
     {
         DDSURFACEDESC d{};
         d.dwSize = sizeof(d);
@@ -1211,8 +1215,8 @@ extern "C"
     {
         return release(self);
     }
-    HRESULT __cdecl bh_IDirectDrawPalette_SetEntries(void *self, DWORD dwFlags, DWORD dwStartingEntry,
-                                                     DWORD dwCount, LPPALETTEENTRY lpEntries)
+    HRESULT __cdecl bh_IDirectDrawPalette_SetEntries(void *self, DWORD dwFlags, DWORD dwStartingEntry, DWORD dwCount,
+                                                     LPPALETTEENTRY lpEntries)
     {
         if (dwStartingEntry + dwCount > 256)
             return E_INVALIDARG;
@@ -1269,8 +1273,8 @@ extern "C"
         if ((dwFlags & DDBLT_COLORFILL) && dst->target)
         {
             unsigned value = lpDDBltFx ? lpDDBltFx->dwFillColor : 0;
-            unsigned rgb = ((value >> 11) & 31) * 255 / 31 << 16 | ((value >> 5) & 63) * 255 / 63 << 8 |
-                           (value & 31) * 255 / 31;
+            unsigned rgb =
+                ((value >> 11) & 31) * 255 / 31 << 16 | ((value >> 5) & 63) * 255 / 63 << 8 | (value & 31) * 255 / 31;
             return clear_target(true, false, rgb) ? DD_OK : E_FAIL;
         }
         if (!flush())
@@ -1320,9 +1324,8 @@ extern "C"
         ++dst->version;
         return DD_OK;
     }
-    HRESULT __cdecl bh_IDirectDrawSurface_BltFast(void *self, DWORD dwX, DWORD dwY,
-                                                  LPDIRECTDRAWSURFACE lpDDSrcSurface, LPRECT lpSrcRect,
-                                                  DWORD dwTrans)
+    HRESULT __cdecl bh_IDirectDrawSurface_BltFast(void *self, DWORD dwX, DWORD dwY, LPDIRECTDRAWSURFACE lpDDSrcSurface,
+                                                  LPRECT lpSrcRect, DWORD dwTrans)
     {
         RECT r = {(LONG)dwX, (LONG)dwY, 0, 0};
         return bh_IDirectDrawSurface_Blt(self, &r, lpDDSrcSurface, lpSrcRect, 0, nullptr);
@@ -1332,8 +1335,7 @@ extern "C"
     {
         return DD_OK;
     }
-    HRESULT __cdecl bh_IDirectDrawSurface_Flip(void *self, LPDIRECTDRAWSURFACE lpDDSurfaceTargetOverride,
-                                               DWORD dwFlags)
+    HRESULT __cdecl bh_IDirectDrawSurface_Flip(void *self, LPDIRECTDRAWSURFACE lpDDSurfaceTargetOverride, DWORD dwFlags)
     {
         return present() ? DD_OK : E_FAIL;
     }
@@ -1388,7 +1390,8 @@ extern "C"
                 return E_FAIL;
             float vx, vy, vw, vh, scale;
             viewport_geometry(vx, vy, vw, vh, scale);
-            float mx, my; canvas_margins(mx, my);
+            float mx, my;
+            canvas_margins(mx, my);
             float scale_x = vw / (640 + 2 * mx), scale_y = vh / (480 + 2 * my);
             float ox = vx + mx * scale_x, oy = vy + my * scale_y;
             for (unsigned y = 0; y < s->desc.dwHeight; ++y)
@@ -1397,8 +1400,7 @@ extern "C"
                     unsigned px = std::min(target_w - 1, (unsigned)(ox + x * scale_x)),
                              py = std::min(target_h - 1, (unsigned)(oy + y * scale_y));
                     unsigned c = pixels[py * target_w + px];
-                    unsigned short v =
-                        ((c & 255) >> 3) << 11 | (((c >> 8) & 255) >> 2) << 5 | (((c >> 16) & 255) >> 3);
+                    unsigned short v = ((c & 255) >> 3) << 11 | (((c >> 8) & 255) >> 2) << 5 | (((c >> 16) & 255) >> 3);
                     memcpy(s->pixels.data() + y * s->desc.lPitch + x * 2, &v, 2);
                 }
         }

@@ -48,8 +48,9 @@ int __cdecl bh_actor_choose_exit_core(void *actor, void *room_image, void *prefe
     if (eligible)
     {
         unsigned int state, rank;
-        EXIT_UINT(actor, 0x1e8) = ((EXIT_UINT(actor, 0x1e8) * -0x1ca90000) |
-                                  ((EXIT_UINT(actor, 0x1e8) * 0xe357) >> 16)) ^ EXIT_UINT(actor, 0x1e8);
+        EXIT_UINT(actor, 0x1e8) =
+            ((EXIT_UINT(actor, 0x1e8) * -0x1ca90000) | ((EXIT_UINT(actor, 0x1e8) * 0xe357) >> 16)) ^
+            EXIT_UINT(actor, 0x1e8);
         state = EXIT_UINT(actor, 0x1e8);
         rank = ((state & 0x7fff) * eligible) >> 15;
         i = -1;
@@ -64,9 +65,8 @@ int __cdecl bh_actor_choose_exit_core(void *actor, void *room_image, void *prefe
     return excluded;
 }
 
-const BHActorExitModelRecord bh_actor_exit_counts[7] = {
-    {{0}, 0, {0}}, {{0}, 1, {0}}, {{0}, 2, {0}}, {{0}, 3, {0}},
-    {{0}, 4, {0}}, {{0}, 5, {0}}, {{0}, 6, {0}}};
+const BHActorExitModelRecord bh_actor_exit_counts[7] = {{{0}, 0, {0}}, {{0}, 1, {0}}, {{0}, 2, {0}}, {{0}, 3, {0}},
+                                                        {{0}, 4, {0}}, {{0}, 5, {0}}, {{0}, 6, {0}}};
 
 #undef EXIT_INT
 #undef EXIT_UINT

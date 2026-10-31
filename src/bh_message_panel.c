@@ -1,5 +1,4 @@
 #include "bh_message_panel.h"
-#include "bh_mission_profile.h"
 #include "bh_atlas_wide.h"
 #include "bh_round.h"
 #include "bh_pickup_draw.h"
@@ -89,9 +88,9 @@ int __cdecl bh_message_text_drain(BHTextQueue *queue, BHAtlasContext *atlas, uns
 static int request(BHMessagePanel *panel, unsigned long resource)
 {
     unsigned long handle;
-    BH_MP_BEGIN(marker);
+
     handle = bh_sound_request(panel->sound, resource, 1.0f, 1.0f, NULL, NULL);
-    BH_MP_END(marker, "panel_sound_request", "", resource);
+
     ++panel->sound_requests;
     if (handle == BH_SOUND_INVALID)
     {
@@ -122,8 +121,8 @@ static int draw_quad(BHMessagePanel *panel, unsigned long image, float x, float 
 static int draw_rect(BHMessagePanel *panel, unsigned long image, float x, float y, float width, float height,
                      float alpha, float u, float v)
 {
-    int result = bh_pickup_rect_queue(panel->draw, 7, image, x, y, width, height, 0, BH_HUD_ANCHOR_LEFT, alpha, u, v, u, v,
-                                      stored((double)panel->near_depth + .01));
+    int result = bh_pickup_rect_queue(panel->draw, 7, image, x, y, width, height, 0, BH_HUD_ANCHOR_LEFT, alpha, u, v, u,
+                                      v, stored((double)panel->near_depth + .01));
     if (result > 0)
         ++panel->draw_commands;
     else
@@ -173,10 +172,6 @@ static int startup(BHMessagePanel *panel, BHMessagePanelFields *fields)
     fields->cursor = panel->messages->arena + 1;
     fields->timer = .3f;
     fields->scale = 0;
-    {
-        BH_MP_BEGIN(marker);
-        BH_MP_END(marker, "panel_open", "portrait", (unsigned char)panel->messages->arena[0]);
-    }
     sound_ok = request(panel, panel->tv_on_sound);
     panel->mode_identity = 0x00442b60UL;
     clear_ok = bh_text_queue_clear(panel->text, panel->page, 0) > 0;

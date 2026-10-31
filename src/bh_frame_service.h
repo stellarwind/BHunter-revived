@@ -50,9 +50,6 @@ typedef struct BHFrameService
     float last_dt;
     BHSoundTickStats sound_stats;
     BHFrameServiceError error;
-    /* Optional source-adapter diagnostics; zero leaves timing calls disabled. */
-    int profile;
-    DWORD input_ms, step_ms, refresh_ms, sound_ms, packet_ms;
     BHEntityError step_error, refresh_error;
 } BHFrameService;
 /* Whole original producer/acknowledged-shutdown callback. Normal: collect

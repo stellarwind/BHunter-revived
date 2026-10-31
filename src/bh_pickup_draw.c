@@ -228,17 +228,22 @@ int __cdecl bh_pickup_rect_execute(BHPickupDrawContext *c, BHDrawImageLookup loo
         a[i] = get_float(command->words + i);
     flags = command->words[11] & 255UL;
     *next = command->next;
-    if (command->words[12] == BH_RECT_WORLD_MARKER) {
+    if (command->words[12] == BH_RECT_WORLD_MARKER)
+    {
         float x = get_float(command->words + 13), y = get_float(command->words + 14);
         float z = get_float(command->words + 15), scale;
-        if (!bh_pickup_project(c, &x, &y, &z, &scale)) return 1;
+        if (!bh_pickup_project(c, &x, &y, &z, &scale))
+            return 1;
         a[0] += x + get_float(command->words + 16) * scale;
         a[1] += y + get_float(command->words + 17) * scale;
         a[5] = scale * 100.0f / c->view->width;
-        if (a[5] > 1) a[5] = 1;
-        if (a[5] <= .1f) return 1;
+        if (a[5] > 1)
+            a[5] = 1;
+        if (a[5] <= .1f)
+            return 1;
         a[10] = z - 8;
-        if (a[10] < c->view->near_z + .01f) a[10] = c->view->near_z + .01f;
+        if (a[10] < c->view->near_z + .01f)
+            a[10] = c->view->near_z + .01f;
     }
     image = lookup(command->resource, lookup_user);
     result =

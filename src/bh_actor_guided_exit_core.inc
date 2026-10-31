@@ -8,7 +8,10 @@ static const BHVec3 bh_actor_guided_up = {0, 1, 0};
    without an external rounding call or inline assembly. */
 static __inline float guided_float_spill(double value)
 {
-    union { float value; volatile unsigned long bits; } stored, reloaded;
+    union {
+        float value;
+        volatile unsigned long bits;
+    } stored, reloaded;
     stored.value = (float)value;
     reloaded.bits = stored.bits;
     return reloaded.value;
@@ -19,8 +22,7 @@ static __inline float guided_float_spill(double value)
    retained x87 intermediates, including the vertical value times its spill. */
 int __cdecl bh_actor_guided_exit_core(const BHEntity *actor, void *room_image, int incoming)
 {
-    const BHActorExitModelRecord *model = bh_actor_exit_counts +
-        *(int *)((char *)room_image + 0xf8);
+    const BHActorExitModelRecord *model = bh_actor_exit_counts + *(int *)((char *)room_image + 0xf8);
     char *geometry = (char *)room_image + 0xe8;
     float best = 9.0e37f;
     BHVec3 anchor, normal, side, point;
@@ -40,8 +42,7 @@ int __cdecl bh_actor_guided_exit_core(const BHEntity *actor, void *room_image, i
         flags = *(unsigned long *)((char *)portal->neighbor + 0x114);
         if ((flags & 0x10) && *(int *)((char *)actor + 0xfc) > 0)
             continue;
-        if ((flags & 0x20) && (*(int *)((char *)actor + 0xfc) == 0 ||
-                                  *(int *)((char *)actor + 0xfc) == 6))
+        if ((flags & 0x20) && (*(int *)((char *)actor + 0xfc) == 0 || *(int *)((char *)actor + 0xfc) == 6))
             continue;
         if (portal->direction != (((BHPortal *)(geometry + 0xe4))[incoming].direction ^ 4UL))
             continue;
@@ -49,8 +50,7 @@ int __cdecl bh_actor_guided_exit_core(const BHEntity *actor, void *room_image, i
         point.x -= anchor.x;
         point.y -= anchor.y;
         point.z = guided_float_spill((double)point.z - anchor.z);
-        vertical = (point.x * bh_actor_guided_up.x + point.y * bh_actor_guided_up.y) +
-                   point.z * bh_actor_guided_up.z;
+        vertical = (point.x * bh_actor_guided_up.x + point.y * bh_actor_guided_up.y) + point.z * bh_actor_guided_up.z;
         lateral = (point.x * side.x + point.y * side.y) + point.z * side.z;
         stored_vertical = guided_float_spill(vertical);
         score = vertical * stored_vertical + lateral * lateral;

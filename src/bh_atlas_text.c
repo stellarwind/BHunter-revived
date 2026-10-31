@@ -1,5 +1,4 @@
 #include "bh_atlas_text.h"
-#include "bh_mission_profile.h"
 #include <string.h>
 
 static long add(long a, long b)
@@ -63,11 +62,7 @@ long __cdecl bh_atlas_page_text(BHAtlasPage *page, const unsigned char *text)
             destination.top = page->cursor_y;
             destination.right = add(destination.left, width);
             destination.bottom = add(destination.top, height);
-            {
-                BH_MP_BEGIN(marker);
-                IDirectDrawSurface_Blt(page->surface, &destination, page->atlas->surface, &source, DDBLT_WAIT, NULL);
-                BH_MP_END(marker, "glyph_blt", "", code);
-            }
+            IDirectDrawSurface_Blt(page->surface, &destination, page->atlas->surface, &source, DDBLT_WAIT, NULL);
             if (page->line_height < height)
                 page->line_height = height;
             total = add(total, width);

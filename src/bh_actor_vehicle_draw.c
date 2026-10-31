@@ -41,7 +41,10 @@ static __inline float natural(double x)
 }
 static __inline float stored(double x)
 {
-    union { float value; volatile unsigned long bits; } written, read;
+    union {
+        float value;
+        volatile unsigned long bits;
+    } written, read;
     written.value = (float)x;
     read.bits = written.bits;
     return read.value;
@@ -82,21 +85,12 @@ void __cdecl bh_actor_vehicle_pose_core(BHActorVehicleDrawContext *c, BHEntity *
     wide_pz = (double)p.z - before.z;
     px = stored(wide_px);
     after.y = natural((double)a->offset.y + after.y);
-    bank = ((wide_pz * dx - (double)px * dz) / sqrt(wide_dx * dx + wide_dz * dz)) /
-           sqrt(wide_px * px + wide_pz * wide_pz);
+    bank =
+        ((wide_pz * dx - (double)px * dz) / sqrt(wide_dx * dx + wide_dz * dz)) / sqrt(wide_px * px + wide_pz * wide_pz);
     angles.x = natural(atan2(dx, dz));
     angles.y = 0;
     angles.z = natural(bank * 3.141592653589793);
 
-#ifdef DEBUGGING
-    {
-    BHActorRouteState s;
-    bh_actor_route_read(e, &s);
-    if (c->clock && c->clock->nonfinite_curve && (!_finite(angles.x) || !_finite(angles.y) || !_finite(angles.z)))
-        c->clock->nonfinite_curve(c->clock->nonfinite_user, 0x434920, e, &s, bh_actor_route_now(c->clock), &before, &p,
-                                  &after, &angles);
-    }
-#endif
     bh_draw_submit_resource(c->queue, 0, a->resource, &p, &angles, 1);
     fade = a->fade;
     if (fade < 1)
@@ -109,19 +103,30 @@ void __cdecl bh_actor_vehicle_pose_core(BHActorVehicleDrawContext *c, BHEntity *
     }
     if (a->resource == c->glowing_model)
     {
-        matrix.m[0][0] = 1; matrix.m[0][1] = 0; matrix.m[0][2] = 0; matrix.m[0][3] = 0;
-        matrix.m[1][0] = 0; matrix.m[1][1] = 1; matrix.m[1][2] = 0; matrix.m[1][3] = 0;
-        matrix.m[2][0] = 0; matrix.m[2][1] = 0; matrix.m[2][2] = 1; matrix.m[2][3] = 0;
+        matrix.m[0][0] = 1;
+        matrix.m[0][1] = 0;
+        matrix.m[0][2] = 0;
+        matrix.m[0][3] = 0;
+        matrix.m[1][0] = 0;
+        matrix.m[1][1] = 1;
+        matrix.m[1][2] = 0;
+        matrix.m[1][3] = 0;
+        matrix.m[2][0] = 0;
+        matrix.m[2][1] = 0;
+        matrix.m[2][2] = 1;
+        matrix.m[2][3] = 0;
         bh_mat34_translate_world(p.x, p.y, p.z, &matrix);
         bh_mat34_rotate_y(angles.x, &matrix);
         bh_mat34_rotate_x(angles.y, &matrix);
         bh_mat34_rotate_z(angles.z, &matrix);
         clock = (double)c->animation_clock * .03125;
-#define POSE_GLOW(gx, rate, resource) \
-        local.x = (gx); local.y = -.95f; local.z = -.65f; \
-        bh_mat34_transform_point(&matrix, &local, &glow); \
-        alpha = natural((sin(clock * (rate)) - (-1.0)) * .5); \
-        bh_draw_billboard(c->queue, 3, (resource), &glow, 2, 2, 0, 0, alpha)
+#define POSE_GLOW(gx, rate, resource)                                                                                  \
+    local.x = (gx);                                                                                                    \
+    local.y = -.95f;                                                                                                   \
+    local.z = -.65f;                                                                                                   \
+    bh_mat34_transform_point(&matrix, &local, &glow);                                                                  \
+    alpha = natural((sin(clock * (rate)) - (-1.0)) * .5);                                                              \
+    bh_draw_billboard(c->queue, 3, (resource), &glow, 2, 2, 0, 0, alpha)
         POSE_GLOW(.6f, 25.5, c->glow_first);
         POSE_GLOW(.2f, 18.5, c->glow_first);
         POSE_GLOW(-.2f, 28.5, c->glow_second);

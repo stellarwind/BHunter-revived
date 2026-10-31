@@ -146,12 +146,14 @@ int __cdecl bh_scene_owner_step(BHSceneOwner *owner, const BHVec3 *eye, const BH
         return 0;
     }
     {
-        int first = bh_draw_controls_clip_rect(schedule->queue, 0, -schedule->viewport->margin_x,
-                        -schedule->viewport->margin_y, owner->target_width + 2 * schedule->viewport->margin_x,
-                        owner->target_height + 2 * schedule->viewport->margin_y);
-        int second = bh_draw_controls_clip_rect(schedule->queue, 3, -schedule->viewport->margin_x,
-                        -schedule->viewport->margin_y, owner->target_width + 2 * schedule->viewport->margin_x,
-                        owner->target_height + 2 * schedule->viewport->margin_y);
+        int first =
+            bh_draw_controls_clip_rect(schedule->queue, 0, -schedule->viewport->margin_x, -schedule->viewport->margin_y,
+                                       owner->target_width + 2 * schedule->viewport->margin_x,
+                                       owner->target_height + 2 * schedule->viewport->margin_y);
+        int second =
+            bh_draw_controls_clip_rect(schedule->queue, 3, -schedule->viewport->margin_x, -schedule->viewport->margin_y,
+                                       owner->target_width + 2 * schedule->viewport->margin_x,
+                                       owner->target_height + 2 * schedule->viewport->margin_y);
         if (first != 1 || second != 1)
         {
             owner->error = BH_SCENE_OWNER_QUEUE;

@@ -3,7 +3,10 @@
 #include <stdlib.h>
 static __inline float rf(double v)
 {
-    union { float value; volatile unsigned long bits; } written, read;
+    union {
+        float value;
+        volatile unsigned long bits;
+    } written, read;
     written.value = (float)v;
     read.bits = written.bits;
     return read.value;

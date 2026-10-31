@@ -61,22 +61,17 @@ static void nozzle_base(const BHPhysicsState *p, float x, float z, int variant, 
     for (k = 0; k < 3; ++k)
     {
         if (variant == 1)
-            sum = k == 2 ? ((double)p->pose.m[k][1] * .3f - (double)p->pose.m[k][2] * -z) -
-                              (double)p->pose.m[k][0] * -x :
-                          ((double)p->pose.m[k][2] * z - (double)p->pose.m[k][0] * -x) -
-                              (double)p->pose.m[k][1] * -.3f;
+            sum = k == 2
+                      ? ((double)p->pose.m[k][1] * .3f - (double)p->pose.m[k][2] * -z) - (double)p->pose.m[k][0] * -x
+                      : ((double)p->pose.m[k][2] * z - (double)p->pose.m[k][0] * -x) - (double)p->pose.m[k][1] * -.3f;
         else if (k == 1)
-            sum = ((double)p->pose.m[k][2] * z - (double)p->pose.m[k][1] * -.3f) -
-                  (double)p->pose.m[k][0] * -x;
+            sum = ((double)p->pose.m[k][2] * z - (double)p->pose.m[k][1] * -.3f) - (double)p->pose.m[k][0] * -x;
         else if (variant == 3)
-            sum = ((double)p->pose.m[k][0] * x - (double)p->pose.m[k][2] * -z) -
-                  (double)p->pose.m[k][1] * -.3f;
+            sum = ((double)p->pose.m[k][0] * x - (double)p->pose.m[k][2] * -z) - (double)p->pose.m[k][1] * -.3f;
         else if (k == 0)
-            sum = ((double)p->pose.m[k][1] * .3f - (double)p->pose.m[k][0] * -x) -
-                  (double)p->pose.m[k][2] * -z;
+            sum = ((double)p->pose.m[k][1] * .3f - (double)p->pose.m[k][0] * -x) - (double)p->pose.m[k][2] * -z;
         else
-            sum = ((double)p->pose.m[k][0] * x - (double)p->pose.m[k][1] * -.3f) -
-                  (double)p->pose.m[k][2] * -z;
+            sum = ((double)p->pose.m[k][0] * x - (double)p->pose.m[k][1] * -.3f) - (double)p->pose.m[k][2] * -z;
         bh_round_float(((float *)out) + k, sum + p->pose.m[k][3]);
     }
 }
@@ -191,8 +186,10 @@ static void visual(BHPlayerForceControl *c, float channels[15], const float prev
         nozzle_base(p, nozzle[i][0], nozzle[i][2], variant, &output);
         vector_store(e, 0x2fc + i * 24, &output);
         j = 1 + i * 3;
-        x = i == 0 ? (double)channels[j] - (-.5) : i == 1 ? -.5 - (double)channels[j] :
-            i == 2 ? -.7 - (double)channels[j] : (double)channels[j] - (-.7);
+        x = i == 0   ? (double)channels[j] - (-.5)
+            : i == 1 ? -.5 - (double)channels[j]
+            : i == 2 ? -.7 - (double)channels[j]
+                     : (double)channels[j] - (-.7);
         y = .3 - (double)channels[j + 1] * -2.0f;
         z = i < 2 ? (double)channels[j + 2] - (-1.5) : -1.2 - (double)channels[j + 2];
         if (i == 1)
@@ -314,8 +311,8 @@ static int stabilized(BHPlayerForceControl *c, float dt, int skip, int variant)
         cross.x = -up.z;
         cross.y = 0;
         cross.z = up.x;
-        retained_ratio = 20.0 /
-                         (sqrt((double)p->velocity.z * p->velocity.z + (double)p->velocity.x * p->velocity.x) - (-20.0));
+        retained_ratio =
+            20.0 / (sqrt((double)p->velocity.z * p->velocity.z + (double)p->velocity.x * p->velocity.x) - (-20.0));
         ratio = stored(retained_ratio);
         if (variant)
             cross.y = stored((double)cross.y - ((double)input0 * (1.5 - retained_ratio * -2.0f) *
@@ -366,8 +363,7 @@ static int stabilized(BHPlayerForceControl *c, float dt, int skip, int variant)
             /* Original FST keeps the first input correction live across
                CIpow; its scratch spill is not the subsequent operand. */
             controlled_x = (double)torque.x - (double)input1 * 2.25;
-            torque.x = stored(controlled_x - pow((double)input0, 2.0) *
-                                            (variant == 2 ? -1.0499999999999998 : -.75));
+            torque.x = stored(controlled_x - pow((double)input0, 2.0) * (variant == 2 ? -1.0499999999999998 : -.75));
             selected_factor = (double)velocity.z * input2 > 0 ? -10.0f : -30.0f;
             target.z = stored((double)velocity.z - (double)input2 * selected_factor * (variant == 2 ? 1.3 : 1.0));
         }

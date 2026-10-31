@@ -2,7 +2,6 @@
 #ifdef BH_SDL_BACKEND
 #include "bh_render_interpolation.h"
 #endif
-#include "bh_mission_profile.h"
 #include "bh_fp.h"
 #include "bh_round.h"
 #include <stdlib.h>
@@ -310,12 +309,7 @@ static int dispatch(BHEntityPool *pool, int refresh)
             return fail(pool, BH_ENTITY_ARGUMENT);
         }
         if (entity->step)
-        {
-            unsigned long identity = (unsigned long)entity->step;
-            BH_MP_BEGIN(marker);
             entity->step(entity);
-            BH_MP_END(marker, "entity_step", "focused", identity);
-        }
         --pool->dispatch_depth;
         return 1;
     }
@@ -333,18 +327,10 @@ static int dispatch(BHEntityPool *pool, int refresh)
         if (refresh)
         {
             if (entity->refresh)
-            {
-                BH_MP_BEGIN(marker);
                 entity->refresh(entity, NULL);
-                BH_MP_END(marker, "entity_refresh", "", callback);
-            }
         }
         else if (entity->step)
-        {
-            BH_MP_BEGIN(marker);
             entity->step(entity);
-            BH_MP_END(marker, "entity_step", "", callback);
-        }
 #ifdef BH_SDL_BACKEND
         bh_interpolation_stamp(render_mark, render_identity, render_generation);
 #endif
@@ -366,8 +352,6 @@ static int dispatch(BHEntityPool *pool, int refresh)
             --pool->dispatch_depth;
             return 0;
         }
-        if (next && next->generation != generation)
-            ++pool->recycled_successors;
         entity = next;
     }
     --pool->dispatch_depth;

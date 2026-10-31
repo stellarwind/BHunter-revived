@@ -20,4 +20,3 @@ void __cdecl bh_geometry_vertex_core(const BHGeometryCoreView *geometry, long fa
         edge = geometry->edges[edge].next;
     *out = *(const BHVec3 *)(geometry->vertices + geometry->edges[edge].vertex);
 }
-

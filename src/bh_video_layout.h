@@ -20,8 +20,8 @@ static int video_layout_aspect_matches(int width, int height, int numerator, int
 }
 /* Fit once into the actual output. Never stretch the chosen render aspect or
    crop its expanded world; the unused output pixels are cleared by the blit. */
-static void video_layout_fit(unsigned source_w, unsigned source_h, unsigned output_w, unsigned output_h,
-                             unsigned *x, unsigned *y, unsigned *width, unsigned *height)
+static void video_layout_fit(unsigned source_w, unsigned source_h, unsigned output_w, unsigned output_h, unsigned *x,
+                             unsigned *y, unsigned *width, unsigned *height)
 {
     *width = output_w;
     *height = output_h;
@@ -29,8 +29,10 @@ static void video_layout_fit(unsigned source_w, unsigned source_h, unsigned outp
         *height = (unsigned)((double)output_w * source_h / source_w + .5);
     else
         *width = (unsigned)((double)output_h * source_w / source_h + .5);
-    if (!*width) *width = 1;
-    if (!*height) *height = 1;
+    if (!*width)
+        *width = 1;
+    if (!*height)
+        *height = 1;
     *x = (output_w - *width) / 2;
     *y = (output_h - *height) / 2;
 }

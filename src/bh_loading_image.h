@@ -25,7 +25,6 @@ typedef struct BHLoadingImages
     unsigned long midas_native[256], iel_native[256];
     unsigned long frame_stride, deadline;
     long stage, redraw_count;
-    const char *names[3]; /* MIDAS, IEL, BAD; borrowed fixture override allowed */
     unsigned long loads, pixels_read, pixels_written, tick_calls, failures;
     unsigned long last_height, last_offset;
     BHLoadingImageError error;
@@ -49,7 +48,6 @@ int __cdecl bh_loading_image_load(BHLoadingImages *, const char *name, unsigned 
 /* Complete0044a160 successful path: allocate0x12c000, MIDAS@96000, retain its
    full LUTs, IEL@e1000 retain LUTs, BAD@0; native tick+5000 wrap, redraw2/stage0.
    Source ownership guard makes replacement transactional: failure releases the
-   new allocation and preserves the prior arena/tables, reporting explicit error.
-   Name overrides are explicit source fixtures, not startup recovery. */
+   new allocation and preserves the prior arena/tables, reporting explicit error. */
 int __cdecl bh_loading_images_init(BHLoadingImages *);
 #endif

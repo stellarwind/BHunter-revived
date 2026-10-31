@@ -60,9 +60,11 @@ int __cdecl bh_draw_controls_portal_clip(BHDrawQueue *q, unsigned long bucket, c
                                          unsigned long parent, float near_z, float far_z)
 {
     BHDrawCommand *c;
-    if (!corners || (parent != BH_DRAW_END && (!q || parent >= q->count))) return -1;
+    if (!corners || (parent != BH_DRAW_END && (!q || parent >= q->count)))
+        return -1;
     c = append(q, bucket);
-    if (!c) return q && q->error == BH_DRAW_FULL ? 0 : -1;
+    if (!c)
+        return q && q->error == BH_DRAW_FULL ? 0 : -1;
     c->kind = BH_DRAW_CLIP_RECT;
     c->resource = BH_PORTAL_CLIP_WORLD;
     memcpy(c->words, corners, 4 * sizeof(BHVec3));
@@ -117,13 +119,19 @@ int __cdecl bh_draw_controls_execute(BHDrawControlContext *c, const BHDrawQueue 
     }
     if (!c->view)
         return 0;
-    if (command->resource == BH_PORTAL_CLIP_WORLD) {
+    if (command->resource == BH_PORTAL_CLIP_WORLD)
+    {
         float bounds[4];
-        if (!bh_portal_clip_project(q, (unsigned long)(command - q->commands), c->camera, c->view,
-                                   c->portal_cache, bounds)) return 0;
-        v[0] = bounds[0]; v[1] = bounds[1];
-        v[2] = bounds[2] - bounds[0]; v[3] = bounds[3] - bounds[1];
-    } else memcpy(v, command->words, sizeof(v));
+        if (!bh_portal_clip_project(q, (unsigned long)(command - q->commands), c->camera, c->view, c->portal_cache,
+                                    bounds))
+            return 0;
+        v[0] = bounds[0];
+        v[1] = bounds[1];
+        v[2] = bounds[2] - bounds[0];
+        v[3] = bounds[3] - bounds[1];
+    }
+    else
+        memcpy(v, command->words, sizeof(v));
     ok = bh_view_clip_rect(c->view, v[0], v[1], v[2], v[3]);
     if (ok)
     {

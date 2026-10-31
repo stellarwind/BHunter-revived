@@ -190,19 +190,14 @@ int __cdecl bh_actor_route_promote(BHActorRouteContext *c, BHEntity *a, long inc
         *a = saved;
         old->actors = old_head;
         current->actors = new_head;
-        if (previous) set_link(previous, 0xf4, a);
-        if (next) set_link(next, 0xf8, a);
-        if (new_head) set_link(new_head, 0xf8, new_head_previous);
+        if (previous)
+            set_link(previous, 0xf4, a);
+        if (next)
+            set_link(next, 0xf8, a);
+        if (new_head)
+            set_link(new_head, 0xf8, new_head_previous);
         return fail(c, BH_ACTOR_ROUTE_NUMERICAL);
     }
-#ifdef DEBUGGING
-    if (c->promotion_capture)
-    {
-        bh_actor_route_read(a, &s);
-        /* Passive diagnostic consumer reads the original input image. */
-        c->promotion_capture(&saved, &s, world, incoming, outgoing);
-    }
-#endif
     c->error = BH_ACTOR_ROUTE_OK;
     return 1;
 }
@@ -244,8 +239,8 @@ int __cdecl bh_actor_route_advance(BHActorRouteContext *c, BHEntity *a)
     for (i = 0; i < count; ++i)
         if ((const BHWorldGeometry *)room->navigation.portals[i].neighbor == s.current || incoming < 0)
             incoming = (long)i;
-    if ((room->query_flags & 8) && (room->navigation.portals[incoming].direction > 6 ||
-                                  room->navigation.portals[incoming].direction == 3))
+    if ((room->query_flags & 8) &&
+        (room->navigation.portals[incoming].direction > 6 || room->navigation.portals[incoming].direction == 3))
     {
         route_advance_expire_sound(c, a);
         return fail(c, BH_ACTOR_ROUTE_TOPOLOGY);

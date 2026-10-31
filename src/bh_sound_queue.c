@@ -1,5 +1,4 @@
 #include "bh_sound_queue.h"
-#include "bh_mission_profile.h"
 #include "bh_fp.h"
 #include "bh_round.h"
 #include <stddef.h>
@@ -336,12 +335,8 @@ unsigned long __cdecl bh_sound_request(BHSoundQueue *q, unsigned long id, float 
                     fail(q, BH_SOUND_TOPOLOGY);
                     return BH_SOUND_INVALID;
                 }
-                {
-                    BH_MP_BEGIN(marker);
-                    q->last_hresult =
-                        IDirectSound_DuplicateSoundBuffer(q->device, r->buffers[0], r->buffers + r->buffer_count);
-                    BH_MP_END(marker, "sound_duplicate", "", id);
-                }
+                q->last_hresult =
+                    IDirectSound_DuplicateSoundBuffer(q->device, r->buffers[0], r->buffers + r->buffer_count);
                 if (q->last_hresult == DS_OK)
                 {
                     ++r->buffer_count;

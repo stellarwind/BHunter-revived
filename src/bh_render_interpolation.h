@@ -38,7 +38,8 @@ unsigned long __cdecl bh_interpolation_mark(void);
 /* Nested draw owners stamp first. Enclosing callbacks preserve those identities. */
 void __cdecl bh_interpolation_stamp(unsigned long start, unsigned long identity, unsigned long generation);
 void __cdecl bh_interpolation_trail_point(unsigned long index, unsigned long owner, unsigned long generation,
-                                         unsigned long older_owner, unsigned long older_generation, unsigned long image);
+                                          unsigned long older_owner, unsigned long older_generation,
+                                          unsigned long image);
 void __cdecl bh_interpolation_attach(unsigned long start, unsigned long end, unsigned long model);
 void __cdecl bh_interpolation_capture(BHRenderInterpolation *, const BHDrawQueue *, long scene);
 BHDrawQueue *__cdecl bh_interpolation_sample(BHRenderInterpolation *, float alpha);

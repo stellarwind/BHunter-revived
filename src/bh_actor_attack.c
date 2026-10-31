@@ -275,8 +275,8 @@ static void beam(BHActorAttackContext *c, BHEntity *e, BHWorldGeometry *world, c
     bh_draw_segment(b->particles->queue, 3, c->beam_image, &point, &end, .3f, .01f, .5f, 0, 0);
     ++c->beams;
 }
-void __cdecl bh_actor_attack_fire_vectors(BHEntity *e, float t, BHVec3 *p, BHVec3 *direction,
-                                         BHVec3 *side, BHVec3 *travel)
+void __cdecl bh_actor_attack_fire_vectors(BHEntity *e, float t, BHVec3 *p, BHVec3 *direction, BHVec3 *side,
+                                          BHVec3 *travel)
 {
     BHActorRouteState s;
     BHVec3 q;
@@ -349,7 +349,8 @@ int __cdecl bh_actor_attack(BHActorAttackContext *c, BHEntity *e)
                 delta = rf(delta);
             adjustment = (double)pursuit * delta * .03;
             ((float *)&change)[i] = rf(adjustment);
-            ((float *)&s.controls[3])[i] = rf((i == 2 ? (double)((float *)&change)[i] : adjustment) + ((float *)&s.controls[3])[i]);
+            ((float *)&s.controls[3])[i] =
+                rf((i == 2 ? (double)((float *)&change)[i] : adjustment) + ((float *)&s.controls[3])[i]);
             ((float *)&s.controls[2])[i] = rf((double)((float *)&change)[i] + ((float *)&s.controls[2])[i]);
         }
         bh_world_clamp_point(s.current, s.controls + 3);
@@ -387,8 +388,7 @@ int __cdecl bh_actor_attack(BHActorAttackContext *c, BHEntity *e)
                 ((float *)&direction)[i] = rf((double)((float *)&q)[i] - ((float *)&p)[i]);
             bh_vec3_normalize(&direction);
             inv = 1.0 / sqrt(distance);
-            dot = (attack_product(inv, difference.x) * direction.x +
-                   attack_product(inv, difference.y) * direction.y) +
+            dot = (attack_product(inv, difference.x) * direction.x + attack_product(inv, difference.y) * direction.y) +
                   attack_product(inv, difference.z) * direction.z;
             /* Original TEST AH,41 accepts unordered too: coincident
                target/actor positions must retain that firing decision. */

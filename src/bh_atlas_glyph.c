@@ -1,5 +1,4 @@
 #include "bh_atlas_glyph.h"
-#include "bh_mission_profile.h"
 #include <string.h>
 static unsigned long packed(unsigned long color, const DDPIXELFORMAT *pixel)
 {
@@ -52,7 +51,7 @@ int __cdecl bh_atlas_page_clear(BHAtlasContext *context, BHAtlasPage *page, unsi
     HRESULT hr;
     unsigned long bits, bytes, x, y, i;
     int ok;
-    BH_MP_BEGIN(marker);
+
     if (!page)
         return 1;
     if (!context || !(q = context->textures) || !page->atlas || !page->image || !page->surface || !page->size ||
@@ -105,7 +104,7 @@ int __cdecl bh_atlas_page_clear(BHAtlasContext *context, BHAtlasPage *page, unsi
     page->left = page->cursor_x = page->cursor_y = page->line_height = 0;
     if (page->image->resident)
         page->image->resident->pixels_dirty = 1;
-    BH_MP_END(marker, "text_clear", "", page->size);
+
     return ok;
 }
 void __cdecl bh_atlas_page_cursor(BHAtlasPage *page, long x, long y)

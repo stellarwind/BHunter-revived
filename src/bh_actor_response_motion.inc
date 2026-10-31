@@ -22,39 +22,49 @@ int __cdecl bh_actor_response_motion(BHEntity *e, BHActorResponseContext *c)
     {
         ratio = (double)RESPONSE_MOTION_FLOAT(0x180) / RESPONSE_MOTION_FLOAT(0x184);
         scale = (double)RESPONSE_MOTION_FLOAT(0x198) * .97;
-        numerator = ((double)RESPONSE_MOTION_FLOAT(0x188) * RESPONSE_MOTION_FLOAT(0x198)) * RESPONSE_MOTION_FLOAT(0x184);
+        numerator =
+            ((double)RESPONSE_MOTION_FLOAT(0x188) * RESPONSE_MOTION_FLOAT(0x198)) * RESPONSE_MOTION_FLOAT(0x184);
         stored_scale = response_query_stored(scale);
-        if (scale < 1) stored_scale = 1;
+        if (scale < 1)
+            stored_scale = 1;
         duration = numerator / ((double)RESPONSE_MOTION_FLOAT(0x188) * stored_scale);
         phase = ratio * duration;
-        if (!response_query_timing_valid(c, duration, phase)) return 0;
+        if (!response_query_timing_valid(c, duration, phase))
+            return 0;
         RESPONSE_MOTION_STORE(0x198, scale);
-        if (scale < 1) RESPONSE_MOTION_STORE(0x198, 1);
+        if (scale < 1)
+            RESPONSE_MOTION_STORE(0x198, 1);
         RESPONSE_MOTION_STORE(0x184, duration);
         RESPONSE_MOTION_STORE(0x180, phase);
         RESPONSE_MOTION_SHORT(0x1e6) = (unsigned short)(__int64)(duration * 30);
-        RESPONSE_MOTION_SHORT(0x1e4) = (unsigned short)(__int64)((short)bh_actor_route_now(c->damage->route) - phase * 30);
+        RESPONSE_MOTION_SHORT(0x1e4) =
+            (unsigned short)(__int64)((short)bh_actor_route_now(c->damage->route) - phase * 30);
     }
     fade = (double)RESPONSE_MOTION_FLOAT(0x19c) * 1.008;
     RESPONSE_MOTION_STORE(0x19c, fade);
-    if (fade > 1) RESPONSE_MOTION_STORE(0x19c, 1);
+    if (fade > 1)
+        RESPONSE_MOTION_STORE(0x19c, 1);
     if (RESPONSE_MOTION_FLOAT(0x194) > 0)
     {
         damage = (double)RESPONSE_MOTION_FLOAT(0x194) * .998;
         RESPONSE_MOTION_STORE(0x194, damage);
-        if (word(e, 0xfc) == 6) RESPONSE_MOTION_STORE(0x194, damage * .998);
+        if (word(e, 0xfc) == 6)
+            RESPONSE_MOTION_STORE(0x194, damage * .998);
     }
     dx = (double)RESPONSE_MOTION_FLOAT(0x15c) - RESPONSE_MOTION_FLOAT(0x168) * (-1.0 / 30.0);
     dy = (double)RESPONSE_MOTION_FLOAT(0x160) - RESPONSE_MOTION_FLOAT(0x16c) * (-1.0 / 30.0);
     dz = (double)RESPONSE_MOTION_FLOAT(0x164) - RESPONSE_MOTION_FLOAT(0x170) * (-1.0 / 30.0);
-    x = response_query_stored(dx);y = response_query_stored(dy);z = response_query_stored(dz);
+    x = response_query_stored(dx);
+    y = response_query_stored(dy);
+    z = response_query_stored(dz);
     distance = sqrt((dx * x + dy * y) + dz * z);
     RESPONSE_MOTION_STORE(0x15c, x);
     length = response_query_stored(distance);
     RESPONSE_MOTION_STORE(0x160, y);
     RESPONSE_MOTION_STORE(0x164, z);
     damping = (.99 - distance * distance * .001) - (double)length * .01;
-    if (!(damping >= 0)) damping = 0;
+    if (!(damping >= 0))
+        damping = 0;
     RESPONSE_MOTION_STORE(0x15c, damping * dx);
     RESPONSE_MOTION_STORE(0x160, damping * y);
     RESPONSE_MOTION_STORE(0x164, damping * z);
@@ -66,9 +76,11 @@ int __cdecl bh_actor_response_motion(BHEntity *e, BHActorResponseContext *c)
     else
     {
         phase = (double)RESPONSE_MOTION_FLOAT(0x180) - RESPONSE_MOTION_FLOAT(0x19c) * (-1.0 / 30.0);
-        if (!response_tick_phase_valid(c, phase)) return 0;
+        if (!response_tick_phase_valid(c, phase))
+            return 0;
         RESPONSE_MOTION_STORE(0x180, phase);
-        RESPONSE_MOTION_SHORT(0x1e4) = (unsigned short)(__int64)((short)bh_actor_route_now(c->damage->route) - phase * 30);
+        RESPONSE_MOTION_SHORT(0x1e4) =
+            (unsigned short)(__int64)((short)bh_actor_route_now(c->damage->route) - phase * 30);
     }
     return 1;
 }

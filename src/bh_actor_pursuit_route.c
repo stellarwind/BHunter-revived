@@ -112,9 +112,9 @@ int __cdecl bh_actor_pursuit_target_controls(BHActorPursuitRouteContext *c, BHEn
         ((float *)&s.controls[3])[i] = stored(predicted);
         /* X reloads the 00439662 FSTP spill; Y/Z retain their 004396be /
            004396e0 FST values until 00439748/0043974c. */
-        ((float *)&s.controls[2])[i] = stored(
-            (i ? predicted : (double)s.controls[3].x) -
-            (((double)((float *)&s.controls[0])[i] - ((float *)&saved_end)[i]) * (-.25)));
+        ((float *)&s.controls[2])[i] =
+            stored((i ? predicted : (double)s.controls[3].x) -
+                   (((double)((float *)&s.controls[0])[i] - ((float *)&saved_end)[i]) * (-.25)));
     }
     write(e, 0x12c, s.controls + 3, 12);
     write(e, 0x150, s.controls + 2, 12);

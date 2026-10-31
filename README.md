@@ -74,14 +74,9 @@ The build downloads and checksum-verifies official SDL 3.4.18. The adapter is bu
 
 The game uniformly scales its original 640×480 layout while wider aspects reveal additional world. In the flat HUD, credits/fines retain their centered positions; primary ammunition follows the left edge, while secondary weapons/ammunition, coating/shield gauges and radar follow the right. Message overlays follow the left edge and menus remain centered. The 3D cockpit and its instruments retain their original panel registration, perspective and relative placement as one assembly. Original 4:3 placement, UI proportions and spacing within each group are preserved. Geometry is rasterized at the selected render resolution. Simulation and sound updates remain at 30 Hz; rendering interpolates completed command snapshots and is capped at 60 Hz.
 
-For menu/VFX screenshots, scaling comparisons and timing checks:
+For the framerate profiler, build with `python tools/build_game.py --debugging --incremental`, then run `build\BHunter-source.exe --profile`. It buffers frame, simulation, rendering and presentation timings in memory and saves `frame-times-*.csv` beside the executable when the game exits.
 
-```bat
-python tools\build_game.py --debugging --incremental
-python tools\check_sdl3.py
-```
-
-Diagnostics write to `build-cache/sdl-captures/`. They exercise main/options/video navigation, capture menu rows and VFX at 640×480, 1080p and 4K, check player/camera/cockpit interpolation while visibility and HUD contents change, compare moving target brackets pixel-for-pixel against render-pose references, reproduce and verify portal seam coverage with a moving render camera, check growing rocket trails and moving flare anchors while ensuring interpolated frames do not resurrect consumed bullet flares, and run a bounded live menu/music check. They do not automate the desktop. Full mission/NPC visual parity remains a separate validation step.
+Standalone timing, portal clipping, video layout and GPU transition checks run with `python tools/check_runtime.py`. These tests live in `tools/tests/` and are not compiled into the game.
 
 ## Unlock all levels
 

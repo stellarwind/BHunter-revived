@@ -55,10 +55,12 @@ int __cdecl bh_actor_route_advance_core(BHEntity *actor, const BHActorRouteAdvan
     first = random_next(ADVANCE_UINT(actor, 0x1e8));
     second = random_next(first);
     factor = 1.0 - (double)ADVANCE_FLOAT(actor, 0x1b0);
-    *(volatile float *)((char *)actor + 0x18c) = ADVANCE_FLOAT(actor, 0x18c) * factor -
+    *(volatile float *)((char *)actor + 0x18c) =
+        ADVANCE_FLOAT(actor, 0x18c) * factor -
         ((double)(first & 0x7fff) * ADVANCE_FLOAT(actor, 0x1b0)) * (-1.0 / 32768.0);
     *(volatile unsigned long *)((char *)actor + 0x1e8) = second;
-    *(volatile float *)((char *)actor + 0x190) = ADVANCE_FLOAT(actor, 0x190) * factor -
+    *(volatile float *)((char *)actor + 0x190) =
+        ADVANCE_FLOAT(actor, 0x190) * factor -
         ((double)(second & 0x7fff) * ADVANCE_FLOAT(actor, 0x1b0)) * (-1.0 / 32768.0);
     return bh_actor_route_promote(binding->context, actor, incoming, outgoing);
 }

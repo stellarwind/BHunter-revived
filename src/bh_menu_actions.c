@@ -488,7 +488,8 @@ void __cdecl bh_menu_action_graphics_notice(BHMenuActions *c, long unused)
 {
 #ifdef BH_SDL_BACKEND
     (void)unused;
-    if (c) c->error = 0;
+    if (c)
+        c->error = 0;
     return;
 #else
     static const char text[] = "4Please exit and\nrestart the game\nfor any graphic\nchanges to take\neffect!\n";

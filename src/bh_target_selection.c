@@ -16,7 +16,10 @@ typedef char target_packet_capacity[sizeof(BHTargetQueryPacket) == 40 ? 1 : -1];
 
 static __inline float selection_stored(double value)
 {
-    union { float value; volatile unsigned long bits; } written, read;
+    union {
+        float value;
+        volatile unsigned long bits;
+    } written, read;
     written.value = (float)value;
     read.bits = written.bits;
     return read.value;

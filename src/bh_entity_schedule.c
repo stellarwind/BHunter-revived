@@ -322,10 +322,10 @@ static int schedule(BHEntityScheduleContext *c, BHEntityScheduleRoom *r, unsigne
         c->viewport->bottom = bottom;
         child_clip = c->queue->count;
 #ifdef BH_SDL_BACKEND
-        if (!queued(c, bh_draw_controls_portal_clip(c->queue, 0, corners, parent_clip,
-                                                   c->viewport->near_z, c->viewport->far_z)) ||
-            !queued(c, bh_draw_controls_portal_clip(c->queue, 3, corners, parent_clip,
-                                                   c->viewport->near_z, c->viewport->far_z)))
+        if (!queued(c, bh_draw_controls_portal_clip(c->queue, 0, corners, parent_clip, c->viewport->near_z,
+                                                    c->viewport->far_z)) ||
+            !queued(c, bh_draw_controls_portal_clip(c->queue, 3, corners, parent_clip, c->viewport->near_z,
+                                                    c->viewport->far_z)))
 #else
         if (!queued(c, bh_draw_controls_clip_rect(c->queue, 0, left, top, right - left, bottom - top)) ||
             !queued(c, bh_draw_controls_clip_rect(c->queue, 3, left, top, right - left, bottom - top)))

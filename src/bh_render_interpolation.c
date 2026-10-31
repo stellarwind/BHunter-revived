@@ -43,13 +43,18 @@ void __cdecl bh_interpolation_stamp(unsigned long start, unsigned long identity,
 /* Path payload starts in resource (xyz), so its image belongs in identity,
    not the ordinary resource comparison. Nodes retain identity as heads change. */
 void __cdecl bh_interpolation_trail_point(unsigned long index, unsigned long owner, unsigned long generation,
-                                         unsigned long older_owner, unsigned long older_generation, unsigned long image)
+                                          unsigned long older_owner, unsigned long older_generation,
+                                          unsigned long image)
 {
     BHDrawIdentity *id;
-    if (!tracked || index >= tracked->count || tracked->commands[index].kind != BH_DRAW_PATH_POINT) return;
+    if (!tracked || index >= tracked->count || tracked->commands[index].kind != BH_DRAW_PATH_POINT)
+        return;
     id = identities + index;
-    id->owner = owner; id->generation = generation; id->ordinal = image;
-    id->older_owner = older_owner; id->older_generation = older_generation;
+    id->owner = owner;
+    id->generation = generation;
+    id->ordinal = image;
+    id->older_owner = older_owner;
+    id->older_generation = older_generation;
 }
 /* Attach a producer range after its vehicle model has been queued. The HUD's
    current contents may change (ammo digits, radar rooms, gauges), so command
@@ -57,15 +62,16 @@ void __cdecl bh_interpolation_trail_point(unsigned long index, unsigned long own
 void __cdecl bh_interpolation_attach(unsigned long start, unsigned long end, unsigned long model)
 {
     unsigned long i;
-    if (!tracked || model >= tracked->count || tracked->commands[model].kind != BH_DRAW_MODEL_RESOURCE ||
-        start > end || end > tracked->count) return;
+    if (!tracked || model >= tracked->count || tracked->commands[model].kind != BH_DRAW_MODEL_RESOURCE || start > end ||
+        end > tracked->count)
+        return;
     for (i = start; i < end; ++i)
         if (tracked->commands[i].kind == BH_DRAW_QUAD || tracked->commands[i].kind == BH_DRAW_ORIENTED)
             identities[i].attachment = model + 1;
 }
 static void model_rotation(const BHDrawCommand *c, BHMat34 *m)
 {
-    static const BHMat34 identity = {{{1,0,0,0},{0,1,0,0},{0,0,1,0}}};
+    static const BHMat34 identity = {{{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}}};
     float pose[6];
     memcpy(pose, c->words, sizeof(pose));
     *m = identity;
@@ -82,8 +88,8 @@ static int same(const BHDrawCommand *a, const BHDrawCommand *b, const BHDrawIden
 {
     return a->kind == b->kind &&
            (a->kind == BH_DRAW_CAMERA || a->kind == BH_DRAW_PATH_POINT || a->resource == b->resource) &&
-           (a->kind != BH_DRAW_FLARE || !memcmp(a->words + 6, b->words + 6, 16)) &&
-           ai->owner == bi->owner && ai->generation == bi->generation && ai->ordinal == bi->ordinal;
+           (a->kind != BH_DRAW_FLARE || !memcmp(a->words + 6, b->words + 6, 16)) && ai->owner == bi->owner &&
+           ai->generation == bi->generation && ai->ordinal == bi->ordinal;
 }
 void __cdecl bh_interpolation_capture(BHRenderInterpolation *s, const BHDrawQueue *q, long scene)
 {
@@ -122,9 +128,11 @@ void __cdecl bh_interpolation_capture(BHRenderInterpolation *s, const BHDrawQueu
 static BHDrawCommand *previous_match(BHRenderInterpolation *s, const BHDrawCommand *c, const BHDrawIdentity *id)
 {
     unsigned long slot = key(c, id);
-    while (s->hash[slot]) {
+    while (s->hash[slot])
+    {
         unsigned long at = s->hash[slot] - 1;
-        if (same(c, s->previous + at, id, s->previous_ids + at)) return s->previous + at;
+        if (same(c, s->previous + at, id, s->previous_ids + at))
+            return s->previous + at;
         slot = (slot + 1) & (BH_INTERPOLATION_HASH - 1);
     }
     return 0;
@@ -175,15 +183,21 @@ BHDrawQueue *__cdecl bh_interpolation_sample(BHRenderInterpolation *s, float alp
             (!s->current_ids[i].owner && c->kind != BH_DRAW_CAMERA))
             continue;
         old = previous_match(s, c, s->current_ids + i);
-        if (!old && c->kind == BH_DRAW_PATH_POINT && s->current_ids[i].older_owner) {
+        if (!old && c->kind == BH_DRAW_PATH_POINT && s->current_ids[i].older_owner)
+        {
             BHDrawIdentity older = s->current_ids[i];
-            older.owner = older.older_owner; older.generation = older.older_generation;
+            older.owner = older.older_owner;
+            older.generation = older.older_generation;
             old = previous_match(s, c, &older);
         }
         if (!old)
             continue;
-        to = (c->kind == BH_DRAW_CAMERA || c->kind == BH_DRAW_PATH_POINT) ? &c->resource : c->kind == BH_DRAW_RECT ? c->words + 13 : c->words;
-        from = (old->kind == BH_DRAW_CAMERA || old->kind == BH_DRAW_PATH_POINT) ? &old->resource : old->kind == BH_DRAW_RECT ? old->words + 13 : old->words;
+        to = (c->kind == BH_DRAW_CAMERA || c->kind == BH_DRAW_PATH_POINT) ? &c->resource
+             : c->kind == BH_DRAW_RECT                                    ? c->words + 13
+                                                                          : c->words;
+        from = (old->kind == BH_DRAW_CAMERA || old->kind == BH_DRAW_PATH_POINT) ? &old->resource
+               : old->kind == BH_DRAW_RECT                                      ? old->words + 13
+                                                                                : old->words;
         /* Teleports and scene cuts must snap. Ordinary fast vehicles can still
            move up to 1000 world units per 30 Hz tick without hitting this guard. */
         for (j = 0; j < 3; ++j)
@@ -199,7 +213,8 @@ BHDrawQueue *__cdecl bh_interpolation_sample(BHRenderInterpolation *s, float alp
             blend(to + j, from + j, alpha, j >= angle_start);
         /* Only motion is shared by flare samples. Strength remains the exact
            per-publication consumer state above; never lerp or restore it. */
-        if (c->kind == BH_DRAW_PATH_POINT) {
+        if (c->kind == BH_DRAW_PATH_POINT)
+        {
             blend(c->words + 2, old->words + 2, alpha, 0);
             blend(c->words + 3, old->words + 3, alpha, 0);
         }
@@ -211,13 +226,15 @@ BHDrawQueue *__cdecl bh_interpolation_sample(BHRenderInterpolation *s, float alp
     /* Rebase current HUD vertices through the same sampled vehicle transform.
        This also preserves newly appearing digits and avoids shearing on turns. */
     for (i = 9; i < s->current_count; ++i)
-        if (s->current_ids[i].attachment) {
+        if (s->current_ids[i].attachment)
+        {
             BHMat34 current, inverse, rendered;
             BHVec3 point, result;
             unsigned long anchor = s->current_ids[i].attachment - 1;
-            if (anchor >= s->current_count ||
-                !memcmp(s->current[anchor].words, s->output[anchor].words, 24)) continue;
-            if (anchor != last_anchor) {
+            if (anchor >= s->current_count || !memcmp(s->current[anchor].words, s->output[anchor].words, 24))
+                continue;
+            if (anchor != last_anchor)
+            {
                 model_rotation(s->current + anchor, &current);
                 model_rotation(s->output + anchor, &rendered);
                 memcpy(&anchor_current, s->current[anchor].words, sizeof(anchor_current));
@@ -226,16 +243,23 @@ BHDrawQueue *__cdecl bh_interpolation_sample(BHRenderInterpolation *s, float alp
                 bh_mat34_multiply(&rendered, &inverse, &delta);
                 last_anchor = anchor;
             }
-            for (j = 0; j < 9; j += 3) {
+            for (j = 0; j < 9; j += 3)
+            {
                 memcpy(&point, s->current[i].words + j, sizeof(point));
                 /* Subtract the origin before rotating to avoid cancellation
                    between large world coordinates and tiny cockpit offsets. */
-                if (!j) {
-                    point.x -= anchor_current.x; point.y -= anchor_current.y; point.z -= anchor_current.z;
+                if (!j)
+                {
+                    point.x -= anchor_current.x;
+                    point.y -= anchor_current.y;
+                    point.z -= anchor_current.z;
                 }
                 bh_mat34_transform_direction(&delta, &point, &result);
-                if (!j) {
-                    result.x += anchor_rendered.x; result.y += anchor_rendered.y; result.z += anchor_rendered.z;
+                if (!j)
+                {
+                    result.x += anchor_rendered.x;
+                    result.y += anchor_rendered.y;
+                    result.z += anchor_rendered.z;
                 }
                 memcpy(s->output[i].words + j, &result, sizeof(result));
             }
