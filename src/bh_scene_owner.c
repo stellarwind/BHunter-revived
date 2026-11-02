@@ -44,7 +44,7 @@ int __cdecl bh_scene_owner_step(BHSceneOwner *owner, const BHVec3 *eye, const BH
     BHVec3 reference, relative;
     float focal, half_width, half_height;
     unsigned long row, column;
-    double tangent;
+    double tangent, relative_x, relative_y, relative_z;
     if (!owner || !owner->bindings)
         return 0;
     bindings = owner->bindings;
@@ -90,9 +90,14 @@ int __cdecl bh_scene_owner_step(BHSceneOwner *owner, const BHVec3 *eye, const BH
     reference.x = reference.y = 0;
     reference.z = 1;
     bh_mat34_inverse_transform_point(&projected, &reference, &relative);
-    relative.x -= eye->x;
-    relative.y -= eye->y;
-    relative.z -= eye->z;
+    /* 004093bf/3cd/3db publish binary32 components without popping the
+       retained differences used by the subsequent dot product. */
+    relative_x = (double)relative.x - eye->x;
+    relative_y = (double)relative.y - eye->y;
+    relative_z = (double)relative.z - eye->z;
+    bh_round_float(&relative.x, relative_x);
+    bh_round_float(&relative.y, relative_y);
+    bh_round_float(&relative.z, relative_z);
     hint = bindings->cached ? bindings->cached : bindings->first;
     room = bindings->cached;
     if (room && !inside(room, eye))
@@ -122,8 +127,7 @@ int __cdecl bh_scene_owner_step(BHSceneOwner *owner, const BHVec3 *eye, const BH
     owner->focal = focal;
     owner->near_z = near_z;
     owner->far_z = far_z;
-    bh_round_float(&owner->eye_projection_dot,
-                   ((double)relative.x * eye->x + (double)relative.y * eye->y) + (double)relative.z * eye->z);
+    bh_round_float(&owner->eye_projection_dot, (relative_x * eye->x + relative_y * eye->y) + relative_z * eye->z);
     bindings->cached = room;
     ++owner->frame;
     schedule->frame = owner->frame;
@@ -146,14 +150,14 @@ int __cdecl bh_scene_owner_step(BHSceneOwner *owner, const BHVec3 *eye, const BH
         return 0;
     }
     {
-        int first =
-            bh_draw_controls_clip_rect(schedule->queue, 0, -schedule->viewport->margin_x, -schedule->viewport->margin_y,
-                                       owner->target_width + 2 * schedule->viewport->margin_x,
-                                       owner->target_height + 2 * schedule->viewport->margin_y);
-        int second =
-            bh_draw_controls_clip_rect(schedule->queue, 3, -schedule->viewport->margin_x, -schedule->viewport->margin_y,
-                                       owner->target_width + 2 * schedule->viewport->margin_x,
-                                       owner->target_height + 2 * schedule->viewport->margin_y);
+        float left = schedule->viewport->margin_x == 0 ? 0.0f : -schedule->viewport->margin_x;
+        float top = schedule->viewport->margin_y == 0 ? 0.0f : -schedule->viewport->margin_y;
+        int first = bh_draw_controls_clip_rect(schedule->queue, 0, left, top,
+                                               owner->target_width + 2 * schedule->viewport->margin_x,
+                                               owner->target_height + 2 * schedule->viewport->margin_y);
+        int second = bh_draw_controls_clip_rect(schedule->queue, 3, left, top,
+                                                owner->target_width + 2 * schedule->viewport->margin_x,
+                                                owner->target_height + 2 * schedule->viewport->margin_y);
         if (first != 1 || second != 1)
         {
             owner->error = BH_SCENE_OWNER_QUEUE;

@@ -2008,8 +2008,6 @@ static int render_frame(BHGameApp *a, BHDrawQueue *queue)
 static int manual_loop(BHGameApp *a)
 {
     BHSimulationClock clock;
-    RECT destination;
-    POINT origin;
     unsigned long i, ticks, tick;
     int produce;
 #ifdef DEBUGGING
@@ -2112,11 +2110,6 @@ static int manual_loop(BHGameApp *a)
         if (a->perf_enabled)
             QueryPerformanceCounter(&present_start);
 #endif
-        GetClientRect(a->window, &destination);
-        origin.x = origin.y = 0;
-        ClientToScreen(a->window, &origin);
-        OffsetRect(&destination, origin.x, origin.y);
-
         if (a->fullscreen)
             if (a->target != a->render_mode.render &&
                 IDirectDrawSurface_BltFast(a->render_mode.render, 0, 0, a->target, 0, DDBLTFAST_WAIT) != DD_OK)
@@ -2125,11 +2118,6 @@ static int manual_loop(BHGameApp *a)
                 break;
             }
         if (IDirectDrawSurface_Flip(a->primary, 0, DDFLIP_WAIT) != DD_OK)
-        {
-            failure(a, 13);
-            break;
-        }
-        else if (IDirectDrawSurface_Blt(a->primary, &destination, a->target, 0, DDBLT_WAIT, 0) != DD_OK)
         {
             failure(a, 13);
             break;

@@ -4,6 +4,7 @@
 #endif
 #include "bh_draw_submit.h"
 #include "bh_draw_controls.h"
+#include "bh_round.h"
 #include <float.h>
 #include <math.h>
 #include <string.h>
@@ -135,8 +136,12 @@ static int draw_children(BHEntityScheduleContext *c, BHEntity *head, int pickups
 static int ghost_draw(BHEntityScheduleContext *c, BHEntityScheduleRoom *r)
 {
     BHWorldGeometry *w = r->room->world;
-    BHVec3 center, point;
-    float distance, blend, alpha;
+    volatile BHVec3 center;
+    BHVec3 point;
+    float distance;
+    volatile float blend, alpha;
+    volatile float dx32, dy32, offset_x, offset_y, offset_z;
+    volatile float weighted_x, weighted_y, weighted_z, blended_x, blended_y;
     const BHVec3 *eye = c->overlay_position;
     double dx, dy, dz;
     if (!(w->query_flags & 4) || !(w->query_flags & 0x180))
@@ -149,7 +154,11 @@ static int ghost_draw(BHEntityScheduleContext *c, BHEntityScheduleRoom *r)
     dx = (double)center.x - eye->x;
     dy = (double)center.y - eye->y;
     dz = (double)center.z - eye->z;
-    distance = (float)sqrt(dx * dx + dy * dy + dz * dz);
+    /* 0040a271/277 store without popping: multiply retained deltas by
+       their binary32 spills. The Z delta remains entirely in x87. */
+    dx32 = (float)dx;
+    dy32 = (float)dy;
+    bh_round_float(&distance, sqrt((dx * dx32 + dy * dy32) + dz * dz));
     if (!(30.0f < distance && distance < 180.0f))
         return 1;
     blend = 1.0f - 30.0f / distance;
@@ -158,9 +167,19 @@ static int ghost_draw(BHEntityScheduleContext *c, BHEntityScheduleRoom *r)
         alpha = (distance - 30.0f) * (1.0f / 30.0f);
     else if (150.0f < distance)
         alpha = 1.0f - (distance - 150.0f) * (1.0f / 30.0f);
-    point.x = eye->x * blend + center.x * (1.0f - blend) - (center.x - w->position.x);
-    point.y = eye->y * blend + center.y * (1.0f - blend) - (center.y - w->position.y);
-    point.z = eye->z * blend + center.z * (1.0f - blend) - (center.z - w->position.z);
+    /* Preserve the original spill graph, including its asymmetric Z sum:
+       X/Y sums reload binary32, while Z subtracts before its final store. */
+    offset_x = center.x - w->position.x;
+    offset_y = center.y - w->position.y;
+    offset_z = center.z - w->position.z;
+    weighted_x = (float)((double)center.x * (1.0 - blend));
+    weighted_y = (float)((double)center.y * (1.0 - blend));
+    weighted_z = (float)((double)center.z * (1.0 - blend));
+    blended_x = (float)((double)eye->x * blend + weighted_x);
+    blended_y = (float)((double)eye->y * blend + weighted_y);
+    point.x = blended_x - offset_x;
+    point.y = blended_y - offset_y;
+    point.z = (float)(((double)eye->z * blend + weighted_z) - offset_z);
     return queued(c, bh_draw_submit_resource(c->queue, 3, r->resource, &point, &r->angles, alpha));
 }
 static int ghost(BHEntityScheduleContext *c, BHEntityScheduleRoom *r)

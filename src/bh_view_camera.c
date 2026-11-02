@@ -33,11 +33,11 @@ int __cdecl bh_view_clip_rect(BHViewConfig *c, float x, float y, float width, fl
     bh_round_float(&right, (double)x + width);
     bh_round_float(&bottom, (double)y + height);
     if (x < -c->margin_x)
-        x = -c->margin_x;
+        x = c->margin_x == 0 ? 0.0f : -c->margin_x;
     if (c->width + c->margin_x < right)
         right = c->width + c->margin_x;
     if (y < -c->margin_y)
-        y = -c->margin_y;
+        y = c->margin_y == 0 ? 0.0f : -c->margin_y;
     if (c->height + c->margin_y < bottom)
         bottom = c->height + c->margin_y;
     c->left = x;

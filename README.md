@@ -64,11 +64,7 @@ build-source.cmd
 build\BHunter-source.exe
 ```
 
-The build stages the executable and your local `GAME_DATA` and `MUSIC_DATA` into `build/`. The CFG lives beside the executable. Run from that folder, exactly like the release. To create a release ZIP:
-
-```bat
-python tools\package_release.py --version 0.2
-```
+The build stages the executable and your local `GAME_DATA` and `MUSIC_DATA` into `build/`. The CFG lives beside the executable. Run from that folder, exactly like the release.
 
 The build downloads and checksum-verifies official SDL 3.4.18. The adapter is built as `BHunterGPU.dll`; its shaders are in `shaders/legacy.hlsl`. The restored game remains x86. The DirectX SDK is used for legacy data types and input; rendering creates no DirectDraw/Direct3D COM objects.
 
