@@ -71,11 +71,6 @@ static void polygon(BHHorizonContext *c, BHTextureImage *image, BHClipVertex **v
     {
         if (c->clip->error != BH_CLIP_OK)
         {
-            if (!c->first_clip_error)
-            {
-                c->first_clip_error = c->clip->error;
-                c->failed_polygon = c->attempted;
-            }
             error(c, BH_HORIZON_CLIP);
         }
         return;
@@ -102,8 +97,6 @@ int __cdecl bh_horizon_draw(BHHorizonContext *c, BHTextureImage *image, float te
         !_finite(inner_radius))
         return 0;
     c->error = BH_HORIZON_OK;
-    c->first_clip_error = BH_CLIP_OK;
-    c->failed_polygon = 0;
     c->attempted = c->emitted = 0;
     for (i = 0; i < 12; ++i)
         if (!_finite(((const float *)&c->camera->projected)[i]))

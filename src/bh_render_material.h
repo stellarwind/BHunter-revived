@@ -8,7 +8,7 @@ typedef struct BHRenderMaterial
 {
     LPDIRECT3DMATERIAL2 material;
     D3DMATERIALHANDLE handle;
-    HRESULT last_hresult, first_failure;
+    HRESULT last_hresult;
     unsigned long native_calls, failures;
 } BHRenderMaterial;
 /* Complete0045b1d0 over real SDK interfaces. Returns NULL when the original

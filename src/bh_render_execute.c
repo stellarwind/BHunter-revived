@@ -139,11 +139,6 @@ int __cdecl bh_render_execute(BHRenderExecute *e)
         return 0;
     e->error = BH_RENDER_EXECUTE_OK;
     e->failures = 0;
-    e->failed_index = BH_DRAW_END;
-    e->failed_kind = e->failed_resource = 0;
-    e->failed_status = 0;
-    e->failed_draw_error = e->failed_model_error = e->failed_clip_error = 0;
-    memset(e->failed_pose, 0, sizeof(e->failed_pose));
     e->text_calls = e->draw_calls = e->flushes = e->native_calls = 0;
     memset(e->kinds, 0, sizeof(e->kinds));
     if (!e->display || !e->display->textures || !e->text || !e->draw || !e->draw->commands || !e->draw->count)
@@ -183,20 +178,6 @@ int __cdecl bh_render_execute(BHRenderExecute *e)
         }
         next = c->next;
         status = draw_anchored(e, c, &next);
-        if (status <= 0 && e->failed_index == BH_DRAW_END)
-        {
-            e->failed_index = at;
-            e->failed_kind = c->kind;
-            e->failed_resource = c->resource;
-            e->failed_status = status;
-            if (c->kind == BH_DRAW_MODEL_RESOURCE && e->model && e->model->draw)
-            {
-                e->failed_draw_error = e->model->draw->error;
-                e->failed_model_error = e->model->draw->failed_model_error;
-                e->failed_clip_error = e->model->draw->failed_clip_error;
-                memcpy(e->failed_pose, c->words, sizeof(e->failed_pose));
-            }
-        }
         if (status == -3)
         {
             failed(e, BH_RENDER_EXECUTE_BINDING);

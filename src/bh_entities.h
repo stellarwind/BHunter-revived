@@ -49,11 +49,6 @@ typedef struct BHEntityPool
     void *chunks; /* source-private ownership, not original game globals */
     unsigned long dispatch_depth;
     int focused;
-    /* Source-only last traversal failure; survives later successful passes. */
-    BHEntity *failure_current, *failure_next;
-    unsigned long failure_callback, failure_expected_generation, failure_actual_generation;
-    unsigned long failure_count;
-    int failure_refresh, failure_next_active;
 } BHEntityPool;
 
 /* Complete original pool/dispatch behaviors with explicit context and NULL

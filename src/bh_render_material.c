@@ -16,8 +16,6 @@ static void native(BHRenderMaterial *owner, HRESULT hr)
     owner->last_hresult = hr;
     if (hr != DD_OK)
     {
-        if (!owner->failures)
-            owner->first_failure = hr;
         ++owner->failures;
     }
 }
@@ -52,7 +50,7 @@ const char *__cdecl bh_render_material_initialize(BHRenderMaterial *owner, BHTex
     if (i == sizeof(q->errors))
         return "Unterminated render error string.";
     owner->handle = 0;
-    owner->last_hresult = owner->first_failure = DD_OK;
+    owner->last_hresult = DD_OK;
     owner->native_calls = owner->failures = 0;
     if (!bh_texture_preallocate(q))
         append(q, " VMEMERR: Alloc texture slots failed. ");

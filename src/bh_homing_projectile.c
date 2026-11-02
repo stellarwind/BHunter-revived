@@ -31,10 +31,6 @@ static void offset(BHVec3 *out, const BHVec3 *p, const BHVec3 *n, double factor)
     bh_round_float(&out->y, (double)p->y - (double)n->y * factor);
     bh_round_float(&out->z, (double)p->z - (double)n->z * factor);
 }
-static double length2(const BHVec3 *v)
-{
-    return ((double)v->x * v->x + (double)v->y * v->y) + (double)v->z * v->z;
-}
 int __cdecl bh_homing_projectile_bind(BHHomingProjectileContext *c, BHEntity *e)
 {
     if (!c || !e || !c->pool || !c->segment || !c->sound || !c->particles || !c->contacts || !c->flash || !c->markers ||
@@ -147,7 +143,7 @@ void __cdecl bh_homing_projectile_tick(BHEntity *e)
     BHEntity *contact;
     unsigned long generation, suppress, i, n;
     float life, previous[3], *d, *v, *p, duration;
-    double remaining, factor, dot;
+    double remaining, factor, dot, dx, dy, dz;
     int result, is_world = 0;
     if (!c || !bh_math_environment_supported())
         return;
@@ -187,10 +183,15 @@ void __cdecl bh_homing_projectile_tick(BHEntity *e)
         put(e, 0x100, &position.position, 12);
         old = e->position;
         velocity = e->origin;
-        bh_round_float(&delta.x, (double)position.position.x - old.x);
-        bh_round_float(&delta.y, (double)position.position.y - old.y);
-        bh_round_float(&delta.z, (double)position.position.z - old.z);
-        factor = sqrt(length2(&delta)) * (1.0 / 15.0);
+        dx = (double)position.position.x - old.x;
+        dy = (double)position.position.y - old.y;
+        dz = (double)position.position.z - old.z;
+        bh_round_float(&delta.x, dx);
+        bh_round_float(&delta.y, dy);
+        bh_round_float(&delta.z, dz);
+        /* 0043f6fd..0043f729 stores each delta with FST, retaining its
+           unrounded value for multiplication by the binary32 copy. */
+        factor = sqrt((dx * delta.x + dy * delta.y) + dz * delta.z) * (1.0 / 15.0);
         d = &delta.x;
         p = &position.position.x;
         for (i = 0; i < 3; ++i)
@@ -266,10 +267,15 @@ void __cdecl bh_homing_projectile_tick(BHEntity *e)
                         c->error = 3;
                         return;
                     }
-                    bh_round_float(&delta.x, (double)position.position.x - old.x);
-                    bh_round_float(&delta.y, (double)position.position.y - old.y);
-                    bh_round_float(&delta.z, (double)position.position.z - old.z);
-                    if (length2(&delta) < 9)
+                    dx = (double)position.position.x - old.x;
+                    dy = (double)position.position.y - old.y;
+                    dz = (double)position.position.z - old.z;
+                    bh_round_float(&delta.x, dx);
+                    bh_round_float(&delta.y, dy);
+                    bh_round_float(&delta.z, dz);
+                    /* The proximity predicate also retains each unrounded
+                       delta for multiplication by its stored copy. */
+                    if ((dx * delta.x + dy * delta.y) + dz * delta.z < 9)
                     {
                         bh_sound_request(c->sound, c->hit_sound, .8f, .75f, &old, &zero);
                         particles(c, &old);
@@ -313,7 +319,8 @@ void __cdecl bh_homing_projectile_tick(BHEntity *e)
     }
     if (is_world && !(hit.material_flags & 2))
     {
-        dot = ((double)velocity.x * normal.x + (double)velocity.y * normal.y) + (double)velocity.z * normal.z;
+        /* 0043f9df..0043fa02 adds X/Z before Y. */
+        dot = ((double)velocity.x * normal.x + (double)velocity.z * normal.z) + (double)velocity.y * normal.y;
         if (dot > 0)
         {
             normal.x = -normal.x;

@@ -294,7 +294,6 @@ static int enter(BHEntityPool *pool, int nested)
 static int dispatch(BHEntityPool *pool, int refresh)
 {
     BHEntity *entity, *next;
-    unsigned long generation, callback;
 #ifdef BH_SDL_BACKEND
     unsigned long render_mark, render_identity, render_generation;
 #endif
@@ -317,13 +316,11 @@ static int dispatch(BHEntityPool *pool, int refresh)
     while (entity)
     {
         next = entity->next;
-        generation = next ? next->generation : 0;
 #ifdef BH_SDL_BACKEND
         render_mark = bh_interpolation_mark();
         render_identity = (unsigned long)entity;
         render_generation = entity->generation * 2 + refresh;
 #endif
-        callback = refresh ? (unsigned long)entity->refresh : (unsigned long)entity->step;
         if (refresh)
         {
             if (entity->refresh)
@@ -341,14 +338,6 @@ static int dispatch(BHEntityPool *pool, int refresh)
         if (next && !active(pool, next))
         {
             fail(pool, BH_ENTITY_MUTATION);
-            pool->failure_current = entity;
-            pool->failure_next = next;
-            pool->failure_callback = callback;
-            pool->failure_expected_generation = generation;
-            pool->failure_actual_generation = next ? next->generation : 0;
-            pool->failure_refresh = refresh;
-            pool->failure_next_active = active(pool, next);
-            ++pool->failure_count;
             --pool->dispatch_depth;
             return 0;
         }

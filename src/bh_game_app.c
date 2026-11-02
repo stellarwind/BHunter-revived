@@ -550,32 +550,6 @@ static int restore_display(BHGameApp *a)
         }
     return 1;
 }
-int __cdecl bh_game_assets_verify(const char *path, unsigned long *bytes, unsigned long *crc)
-{
-    FILE *file;
-    unsigned char block[32768];
-    unsigned long sum = 0xffffffffUL, total = 0, n, i, j;
-    if (!path || (file = fopen(path, "rb")) == 0)
-        return 0;
-    while ((n = (unsigned long)fread(block, 1, sizeof(block), file)) != 0)
-    {
-        total += n;
-        for (i = 0; i < n; ++i)
-        {
-            sum ^= block[i];
-            for (j = 0; j < 8; ++j)
-                sum = (sum >> 1) ^ ((0UL - (sum & 1)) & 0xedb88320UL);
-        }
-    }
-    i = ferror(file);
-    fclose(file);
-    sum ^= 0xffffffffUL;
-    if (bytes)
-        *bytes = total;
-    if (crc)
-        *crc = sum;
-    return !i && total == 13154037UL && sum == 0xe53a3d3fUL;
-}
 static BOOL WINAPI game_cursor(LPPOINT point)
 {
     RECT client;
@@ -2250,7 +2224,6 @@ static void cleanup(BHGameApp *a)
 int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int profile, int show)
 {
     BHGameApp *a;
-    unsigned long bytes, crc;
     int result;
     BHTextureImage *loaded;
     a = (BHGameApp *)calloc(1, sizeof(*a));
@@ -2276,11 +2249,6 @@ int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int profi
         return 2;
     }
 
-    if (!bh_game_assets_verify(a->archive, &bytes, &crc))
-    {
-        failure(a, 2);
-        goto done;
-    }
     if (!platform(a, show) || !source_owners(a))
         goto done;
     if (!bh_vfile_mount(a->archive))

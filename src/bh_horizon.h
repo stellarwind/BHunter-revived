@@ -33,8 +33,6 @@ typedef struct BHHorizonContext
        Init defaults to indexed1; packed output binds2 before first draw. */
     unsigned long color_mode;
     BHHorizonError error;
-    BHClipError first_clip_error;
-    unsigned long failed_polygon;
 } BHHorizonContext;
 /* Explicit borrowed owning bindings. Camera's projected matrix, position.x/z
    and angles.x are the original global projection/eye/yaw values. Context,

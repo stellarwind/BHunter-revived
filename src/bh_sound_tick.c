@@ -136,16 +136,6 @@ static void parameters(BHSoundQueue *q, BHSoundResource *r, BHSoundVoice *v, uns
     {
         ++s->frequency_calls;
         hr = IDirectSoundBuffer_SetFrequency(r->buffers[slot], (DWORD)frequency);
-        if (hr != DS_OK)
-        {
-            if (!s->frequency_failures)
-            {
-                s->failed_resource = r->index;
-                s->failed_slot = slot;
-                s->failed_frequency = frequency;
-            }
-            ++s->frequency_failures;
-        }
         native_result(q, s, hr);
         r->cached_frequency[slot] = frequency;
     }

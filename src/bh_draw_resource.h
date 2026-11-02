@@ -66,7 +66,6 @@ typedef struct BHDrawResourceContext
     BHSpriteOrientedContext *oriented;
     unsigned long dispatched, culled;
     BHDrawResourceError error;
-    int failed_model_error, failed_clip_error;
 } BHDrawResourceContext;
 
 int __cdecl bh_draw_resource(BHDrawResourceContext *, const BHDrawResource *, double x, double y, double z,

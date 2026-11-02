@@ -30,8 +30,6 @@ static int draw(BHDrawResourceContext *c, const BHDrawResource *resource, double
             return fail(c, BH_DRAW_RESOURCE_ARGUMENT);
         if (!bh_model_instance_draw(resource->data.model.instance, x, y, z, ry, rx, rz, modulation))
         {
-            c->failed_model_error = resource->data.model.instance->error;
-            c->failed_clip_error = resource->data.model.instance->clip ? resource->data.model.instance->clip->error : 0;
             return fail(c, BH_DRAW_RESOURCE_MODEL);
         }
         ++c->dispatched;
@@ -139,7 +137,6 @@ int __cdecl bh_draw_resource(BHDrawResourceContext *c, const BHDrawResource *res
         !_finite(rotate_y) || !_finite(rotate_x) || !_finite(rotate_z) || !_finite(modulation))
         return fail(c, BH_DRAW_RESOURCE_ARGUMENT);
     c->error = BH_DRAW_RESOURCE_OK;
-    c->failed_model_error = c->failed_clip_error = 0;
     c->dispatched = 0;
     c->culled = 0;
     return draw(c, resource, x, y, z, rotate_y, rotate_x, rotate_z, modulation, 0);

@@ -6,23 +6,40 @@
 
 <table>
   <tr>
-    <td align="center"><a href="screenshots/BHunter-20261029-230509-088-1.jpg"><img src="screenshots/thumbs/BHunter-20261029-230509-088-1.jpg" alt="BHunter gameplay screenshot 1" width="280"></a></td>
-    <td align="center"><a href="screenshots/BHunter-20261029-230621-253-2.jpg"><img src="screenshots/thumbs/BHunter-20261029-230621-253-2.jpg" alt="BHunter gameplay screenshot 2" width="280"></a></td>
-    <td align="center"><a href="screenshots/BHunter-20261029-230700-576-3.jpg"><img src="screenshots/thumbs/BHunter-20261029-230700-576-3.jpg" alt="BHunter gameplay screenshot 3" width="280"></a></td>
+    <td align="center"><a href="screenshots/1.png"><img src="screenshots/1.png" alt="BHunter screenshot 1" width="280"></a></td>
+    <td align="center"><a href="screenshots/2.png"><img src="screenshots/2.png" alt="BHunter screenshot 2" width="280"></a></td>
+    <td align="center"><a href="screenshots/3.png"><img src="screenshots/3.png" alt="BHunter screenshot 3" width="280"></a></td>
   </tr>
   <tr>
-    <td align="center"><a href="screenshots/BHunter-20261029-230715-224-4.jpg"><img src="screenshots/thumbs/BHunter-20261029-230715-224-4.jpg" alt="BHunter gameplay screenshot 4" width="280"></a></td>
-    <td align="center"><a href="screenshots/BHunter-20261029-230812-238-5.jpg"><img src="screenshots/thumbs/BHunter-20261029-230812-238-5.jpg" alt="BHunter gameplay screenshot 5" width="280"></a></td>
-    <td align="center"><a href="screenshots/BHunter-20261029-230838-789-6.jpg"><img src="screenshots/thumbs/BHunter-20261029-230838-789-6.jpg" alt="BHunter gameplay screenshot 6" width="280"></a></td>
+    <td align="center"><a href="screenshots/4.png"><img src="screenshots/4.png" alt="BHunter screenshot 4" width="280"></a></td>
+    <td align="center"><a href="screenshots/5.png"><img src="screenshots/5.png" alt="BHunter screenshot 5" width="280"></a></td>
+    <td align="center"><a href="screenshots/6.png"><img src="screenshots/6.png" alt="BHunter screenshot 6" width="280"></a></td>
   </tr>
   <tr>
-    <td align="center"><a href="screenshots/BHunter-20261029-230940-826-7.jpg"><img src="screenshots/thumbs/BHunter-20261029-230940-826-7.jpg" alt="BHunter gameplay screenshot 7" width="280"></a></td>
-    <td align="center"><a href="screenshots/BHunter-20261029-231029-578-8.jpg"><img src="screenshots/thumbs/BHunter-20261029-231029-578-8.jpg" alt="BHunter gameplay screenshot 8" width="280"></a></td>
-    <td align="center"><a href="screenshots/BHunter-20261029-231036-260-9.jpg"><img src="screenshots/thumbs/BHunter-20261029-231036-260-9.jpg" alt="BHunter gameplay screenshot 9" width="280"></a></td>
+    <td align="center"><a href="screenshots/7.png"><img src="screenshots/7.png" alt="BHunter screenshot 7" width="280"></a></td>
+    <td align="center"><a href="screenshots/8.png"><img src="screenshots/8.png" alt="BHunter screenshot 8" width="280"></a></td>
+    <td align="center"><a href="screenshots/9.png"><img src="screenshots/9.png" alt="BHunter screenshot 9" width="280"></a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="screenshots/10.png"><img src="screenshots/10.png" alt="BHunter screenshot 10" width="280"></a></td>
+    <td align="center"><a href="screenshots/11.png"><img src="screenshots/11.png" alt="BHunter screenshot 11" width="280"></a></td>
+    <td align="center"><a href="screenshots/12.png"><img src="screenshots/12.png" alt="BHunter screenshot 12" width="280"></a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="screenshots/13.png"><img src="screenshots/13.png" alt="BHunter screenshot 13" width="280"></a></td>
+    <td align="center"><a href="screenshots/14.png"><img src="screenshots/14.png" alt="BHunter screenshot 14" width="280"></a></td>
+    <td align="center"><a href="screenshots/15.png"><img src="screenshots/15.png" alt="BHunter screenshot 15" width="280"></a></td>
   </tr>
 </table>
 
 A source restoration of **BHunter**, the 1999 hovercar combat game by **InterActive Vision**, published by **Midas Interactive Entertainment**. Hunt criminals through a futuristic city and collect their bounties. [Original game details](https://gamefaqs.gamespot.com/pc/250530-bhunter/data).
+
+## Features
+
+- SDL powered window management, hardware rendering and input.
+- 60fps, interpolated from 30.
+- Up to 4k resolution, 4:3, 16:9, 21:9 aspect ratios
+- Gamepad support
 
 ## Install
 
@@ -40,8 +57,6 @@ Supported original game: **BHunter, English retail PC edition (1999)**. The test
 | `BHUNTER.EXE` (reference only) | `c86205e299119a66e27f687679ee7e978f26fa9a6c0bfb21f664aa6e74e848b1` |
 
 See [How to play](HOWTOPLAY.md) for controls.
-
-Original game files are not included. Rendering and window management use SDL3 GPU (Direct3D 12 on Windows); `ddraw.dll` is no longer required. This is an early playable release; full original-game fidelity is still being reviewed.
 
 ## Build
 
@@ -64,14 +79,6 @@ build-source.cmd
 build\BHunter-source.exe
 ```
 
-The build stages the executable and your local `GAME_DATA` and `MUSIC_DATA` into `build/`. The CFG lives beside the executable. Run from that folder, exactly like the release.
-
-The build downloads and checksum-verifies official SDL 3.4.18. The adapter is built as `BHunterGPU.dll`; its shaders are in `shaders/legacy.hlsl`. The restored game remains x86. The DirectX SDK is used for legacy data types and input; rendering creates no DirectDraw/Direct3D COM objects.
-
-The game uniformly scales its original 640×480 layout while wider aspects reveal additional world. In the flat HUD, credits/fines retain their centered positions; primary ammunition follows the left edge, while secondary weapons/ammunition, coating/shield gauges and radar follow the right. Message overlays follow the left edge and menus remain centered. The 3D cockpit and its instruments retain their original panel registration, perspective and relative placement as one assembly. Original 4:3 placement, UI proportions and spacing within each group are preserved. Geometry is rasterized at the selected render resolution. Simulation and sound updates remain at 30 Hz; rendering interpolates completed command snapshots and is capped at 60 Hz.
-
-For the framerate profiler, build with `python tools/build_game.py --debugging --incremental`, then run `build\BHunter-source.exe --profile`. It buffers frame, simulation, rendering and presentation timings in memory and saves `frame-times-*.csv` beside the executable when the game exits.
-
 ## Unlock all levels
 
 Quit the game, then run with Python 3.10+:
@@ -80,7 +87,7 @@ Quit the game, then run with Python 3.10+:
 python tools\unlock_levels.py
 ```
 
-This unlocks all nine mission entries in `source-preview.cfg` beside the executable (`build/source-preview.cfg` for local builds), backing up the save before changing it. Other settings stay intact. For another save, add `--save "path\to\source-preview.cfg"`.
+This unlocks all nine mission entries in `source-preview.cfg` beside the executable (`build/source-preview.cfg` for local builds), backing up the save before changing it.
 
 ## AI disclaimer
 
