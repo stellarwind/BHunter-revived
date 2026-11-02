@@ -913,7 +913,10 @@ extern "C"
         apply_mode();
         clear_target(true, true);
         if (!hidden)
+        {
+            SDL_HideCursor();
             SDL_ShowWindow(window);
+        }
         return (HWND)SDL_GetPointerProperty(SDL_GetWindowProperties(window), SDL_PROP_WINDOW_WIN32_HWND_POINTER,
                                             nullptr);
     }
@@ -1017,7 +1020,10 @@ extern "C"
         }
         SDL_SetWindowsMessageHook(nullptr, nullptr);
         if (window)
+        {
+            SDL_ShowCursor();
             SDL_DestroyWindow(window);
+        }
         window = nullptr;
         SDL_Quit();
     }

@@ -609,8 +609,6 @@ static void __cdecl sdl_message(HWND window, UINT message, WPARAM key, LPARAM bi
     BHGameApp *a = (BHGameApp *)user;
     if (message == WM_ACTIVATEAPP && !key)
         a->focus_sample = 0;
-    if (message == WM_SETCURSOR && LOWORD(bits) == HTCLIENT)
-        SetCursor(NULL);
     if (message == WM_ACTIVATEAPP && !key)
         memset(a->snapshot.current, 0, sizeof(a->snapshot.current));
     if (message == MM_MCINOTIFY)
@@ -2031,7 +2029,6 @@ static int manual_loop(BHGameApp *a)
         }
         if (!a->focus_sample)
         {
-            SetCursor(NULL);
             if (!a->collection.disable_mouse_motion && !game_recenter(160, 100))
                 return failure(a, 12);
             memset(a->snapshot.mouse_axes, 0, sizeof(a->snapshot.mouse_axes));
@@ -2117,8 +2114,6 @@ static void cleanup(BHGameApp *a)
     for (i = 0; i < N(a->actor_queries); ++i)
         if (a->actor_queries[i].frames)
             bh_segment_query_dispose(a->actor_queries + i);
-    if (a->window && GetForegroundWindow() == a->window)
-        SetCursor(LoadCursorA(NULL, IDC_ARROW));
     if (a->hit_markers.pool)
         bh_hit_marker_dispose(&a->hit_markers);
     bh_loading_progress_remove(&a->loading_progress);
