@@ -39,12 +39,12 @@ static void __cdecl step(BHEntity *e)
 {
     BHTargetConstructSlot *s = slot(e);
     BHTargetConstructContext *c = s->context;
-    if (!bh_target_construct_sync(c))
+    if (c->synced_retirements != c->debris->pool->retirements && !bh_target_construct_sync(c))
         return;
     bh_target_step(e);
-    if (s->body.entity)
+    if (live(c->debris->pool, e, s->body.generation))
         bh_mat34_inverse_rigid(&s->state.pose, &s->inverse);
-    if (!bh_target_construct_sync(c))
+    if (c->synced_retirements != c->debris->pool->retirements && !bh_target_construct_sync(c))
         c->error = 1;
 }
 static int same_body(const BHPhysicsStepBody *a, const BHPhysicsStepBody *b)
@@ -135,6 +135,7 @@ int __cdecl bh_target_construct_sync(BHTargetConstructContext *c)
                 c->error = 1;
                 return 0;
             }
+        c->synced_retirements = c->debris->pool->retirements;
         return 1;
     }
     if (rebind && n)
@@ -147,6 +148,7 @@ int __cdecl bh_target_construct_sync(BHTargetConstructContext *c)
         c->roster_count = n;
         c->model_count = m;
         ++c->rebuilds;
+        c->synced_retirements = c->debris->pool->retirements;
         return 1;
     }
     /* Boundary rebuild preserves stable state/matrix pointers and rejects stale
@@ -161,6 +163,7 @@ int __cdecl bh_target_construct_sync(BHTargetConstructContext *c)
     if (!n)
     {
         ++c->rebuilds;
+        c->synced_retirements = c->debris->pool->retirements;
         return 1;
     }
     if (!m || !bh_physics_step_init(c->physics, c->debris->pool, c->roster, n, c->worlds, c->world_count, c->models, m,
@@ -170,6 +173,7 @@ int __cdecl bh_target_construct_sync(BHTargetConstructContext *c)
         return 0;
     }
     ++c->rebuilds;
+    c->synced_retirements = c->debris->pool->retirements;
     return 1;
 }
 int __cdecl bh_target_construct_dispose(BHTargetConstructContext *c)

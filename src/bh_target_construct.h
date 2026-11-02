@@ -18,7 +18,8 @@ typedef struct BHTargetConstructSlot
    and base_model_count+capacity model entries; base bodies/models are borrowed. All outside
    actors that participate in physics must be represented in these arrays.
    Call sync after an external retirement before stepping a different actor.
-   The installed source callback bridge also syncs before/after the real tick.
+   The installed source callback bridge syncs after pool retirements; ordinary
+   ticks publish their own body without rebuilding the stable roster.
    No original code or callback substitutes are used. */
 struct BHTargetConstructContext
 {
@@ -53,6 +54,7 @@ struct BHTargetConstructContext
     const char *prefix;
     BHBspSearch search;
     unsigned long roster_count, model_count, rebuilds;
+    unsigned long synced_retirements;
     int error;
 };
 int __cdecl bh_target_construct_sync(BHTargetConstructContext *);

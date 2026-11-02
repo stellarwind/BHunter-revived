@@ -2,6 +2,7 @@
 #define BH_WORLD_QUERY_H
 #include "bh_entities.h"
 #include "bh_route_query.h"
+#include "bh_binding_index.h"
 
 typedef enum BHWorldHitKind
 {
@@ -39,6 +40,7 @@ typedef struct BHWorldQuery
     void *members, *visited, *frames; /* private owning workspace */
     BHWorldHit *work;
     int busy;
+    BHBindingIndex member_index;
 } BHWorldQuery;
 
 /* Fresh owner; dispose before reinitializing. Borrow the stable scene ring and
@@ -59,8 +61,9 @@ int __cdecl bh_world_query_dispose(BHWorldQuery *query);
    This is candidate collection, not narrow-phase collision or damage delivery.
    Per-query visitation replaces temporary original +fc writes and is cleared.
    Negative margin/radius retains original signed behavior. Queries allocate
-   nothing, replace prior results/owner only on success, and reject topology
-   mutation, foreign links, nonfinite inputs or overflow of owned capacity. */
+   nothing, replace prior results/owner only on success, and reject foreign visited links, nonfinite inputs or overflow of owned
+   capacity. The scene topology is validated at init and must remain stable
+   until dispose; query_flags, actor positions and radii remain live. */
 int __cdecl bh_world_query_run(BHWorldQuery *query, BHEntity *self, BHWorldGeometry *previous, const BHVec3 *point,
                                float margin, BHWorldGeometry **owner);
 #endif

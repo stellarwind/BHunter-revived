@@ -260,6 +260,7 @@ int __cdecl bh_entity_release(BHEntityPool *pool, BHEntity *entity)
     ++entity->generation;
     *membership(pool, entity) = 0;
     --pool->used;
+    ++pool->retirements;
     if (pool->focus == entity)
     {
         pool->focused = 0;

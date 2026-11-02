@@ -34,9 +34,16 @@ static int live(const BHScriptTimerContext *ctx, const BHEntity *entity, unsigne
 {
     return ctx && bh_entity_is_active(ctx->pool, entity) && entity->generation == generation;
 }
-static const BHScriptTimerActor *actor(const BHScriptTimerContext *ctx, BHEntity *entity)
+const BHScriptTimerActor *__cdecl bh_script_timer_actor(const BHScriptTimerContext *ctx, BHEntity *entity)
 {
     unsigned long i;
+    long found;
+    if (ctx->actor_index)
+    {
+        found = bh_binding_find(ctx->actor_index, entity, NULL);
+        if (found >= 0 && (unsigned long)found < ctx->actor_count && ctx->actors[found].entity == entity)
+            return ctx->actors + found;
+    }
     for (i = 0; i < ctx->actor_count; ++i)
         if (ctx->actors[i].entity == entity)
             return ctx->actors + i;
@@ -132,7 +139,7 @@ static void tick(BHEntity *entity, int unconditional)
     }
     if (!unconditional)
     {
-        owner = actor(ctx, timer->actor);
+        owner = bh_script_timer_actor(ctx, timer->actor);
         if (!owner)
         {
             ctx->error = BH_TIMER_ACTOR;
@@ -199,7 +206,7 @@ static void activate(BHEntity *entity, void *packet, int unconditional)
         ctx->error = BH_TIMER_ARGUMENT;
         return;
     }
-    variables = actor(ctx, event->actor);
+    variables = bh_script_timer_actor(ctx, event->actor);
     if (timer->variable_remaining >= 0 || timer->variable_low >= 0 || timer->variable_high >= 0)
     {
         if (!variables || timer->variable_remaining > 21 || timer->variable_low > 21 || timer->variable_high > 21)

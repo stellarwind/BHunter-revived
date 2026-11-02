@@ -43,11 +43,7 @@ static int present(BHEntityPool *pool, const BHEntity *e)
 }
 static const BHScriptTimerActor *record(BHScriptSensorContext *c, BHEntity *e)
 {
-    unsigned long i;
-    for (i = 0; i < c->lifetime->timers.actor_count; ++i)
-        if (c->lifetime->timers.actors[i].entity == e)
-            return c->lifetime->timers.actors + i;
-    return NULL;
+    return bh_script_timer_actor(&c->lifetime->timers, e);
 }
 /* VC5 may reverse a comparison to a bare C0 test and thereby accept unordered.
    Explicit NaN exclusions preserve the reviewed ordered x87 branches. */

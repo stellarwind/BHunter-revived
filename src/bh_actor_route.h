@@ -1,6 +1,7 @@
 #ifndef BH_ACTOR_ROUTE_H
 #define BH_ACTOR_ROUTE_H
 #include "bh_pickup.h"
+#include "bh_binding_index.h"
 
 /* Named view of verified fields, not a competing full entity layout. Storage
    remains in the real BHEntity. current/next borrow source world definitions;
@@ -27,6 +28,7 @@ typedef struct BHActorRouteContext
     BHSoundQueue *sound;
     unsigned short tick; /* explicit original004dfac4 binding */
     BHActorRouteError error;
+    const BHBindingIndex *room_index; /* optional scene-owned identity index */
     unsigned long *live_tick; /* owning application original004dfac4, read at each call */
 } BHActorRouteContext;
 /* Explicit source field-view adapters, not original function admissions. They
@@ -35,6 +37,7 @@ typedef struct BHActorRouteContext
 /* Count-zero live original-global binding. Snapshot tick remains available for
    isolated fixtures; a bound clock always takes precedence. Packet consumers
    can temporarily set/restore its low word as the original does. */
+BHPickupRoom *__cdecl bh_actor_route_room(BHActorRouteContext *, const BHWorldGeometry *);
 unsigned short __cdecl bh_actor_route_now(const BHActorRouteContext *);
 void __cdecl bh_actor_route_set_tick(BHActorRouteContext *, unsigned short);
 int __cdecl bh_actor_route_read(const BHEntity *, BHActorRouteState *);

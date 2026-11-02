@@ -25,9 +25,11 @@ static BHEntity *receiver(BHWeaponPulseContext *c, const BHWorldSegmentHit *h, i
     *world = h->object.kind == BH_WORLD_HIT_GEOMETRY;
     if (!*world)
         return h->object.object.actor;
-    for (i = 0; i < c->effects.response_count; ++i)
-        if (c->effects.responses[i].world == h->object.object.geometry)
-            return c->effects.responses[i].receiver;
+    {
+        const BHHomingWorldResponse *binding = bh_homing_world_response(&c->effects, h->object.object.geometry);
+        if (binding)
+            return binding->receiver;
+    }
     c->error = 2;
     return NULL;
 }

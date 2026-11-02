@@ -37,12 +37,7 @@ int __cdecl bh_actor_route_release(BHActorRouteContext *c, BHEntityPool *pool, B
     if (!bh_entity_is_active(pool, a))
         return fail(c, BH_ACTOR_ROUTE_TOPOLOGY);
     bh_actor_route_read(a, &s);
-    for (i = 0; i < c->room_count; ++i)
-        if (c->rooms[i].world == s.current)
-        {
-            room = c->rooms + i;
-            break;
-        }
+    room = bh_actor_route_room(c, s.current);
     if (!room)
         return fail(c, BH_ACTOR_ROUTE_TOPOLOGY);
     next = link_value(a, 0xf4);

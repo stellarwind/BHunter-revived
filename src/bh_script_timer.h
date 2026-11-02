@@ -1,6 +1,7 @@
 #ifndef BH_SCRIPT_TIMER_H
 #define BH_SCRIPT_TIMER_H
 #include "bh_entities.h"
+#include "bh_binding_index.h"
 
 /* The complete 48-byte state copied by original timer/timer2 activation,
    verified at entity +e8 through +114. Private source binding follows it;
@@ -42,7 +43,12 @@ typedef struct BHScriptTimerContext
     unsigned long actor_count;
     long script_loading;
     BHScriptTimerError error;
+    const BHBindingIndex *actor_index; /* optional scene-owned immutable identity index */
 } BHScriptTimerContext;
+
+/* Identity lookup only; variable values, active and owner remain live. The
+   optional index must be rebuilt if actor identities/order change. */
+const BHScriptTimerActor *__cdecl bh_script_timer_actor(const BHScriptTimerContext *, BHEntity *);
 
 /* Context, pool and actor-state table must outlive all bound timers. The table
    supplies actual caller-owned actor variables and one-level owner/activity

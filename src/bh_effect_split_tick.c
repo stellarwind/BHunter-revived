@@ -58,9 +58,13 @@ static BHEntity *receiver(BHEffectProjectileContext *c, const BHWorldSegmentHit 
     unsigned long i;
     if (hit->object.kind != BH_WORLD_HIT_GEOMETRY)
         return hit->object.object.actor;
-    for (i = 0; i < c->effects->response_count; i++)
-        if (c->effects->responses[i].world == hit->object.object.geometry)
-            return c->effects->responses[i].receiver;
+    {
+        const BHHomingWorldResponse *binding = bh_homing_world_response(c->effects, hit->object.object.geometry);
+        if (binding)
+        {
+            return binding->receiver;
+        }
+    }
     return NULL;
 }
 static int packet(BHEffectProjectileContext *c, BHEntity *e, unsigned char kind, const BHVec3 *direction)

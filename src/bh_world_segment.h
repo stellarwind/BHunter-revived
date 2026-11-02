@@ -69,6 +69,7 @@ int __cdecl bh_world_segment_init(BHWorldSegmentContext *, BHWorldGeometry *firs
    Indexing changes no traversal order. Keep workspace and room/world bindings
    alive and unchanged until reinitialization or scene disposal. Failure drops
    the index and retains the linear lookup. No allocations occur in queries. */
+BHWorldSegmentRoom *__cdecl bh_world_segment_room(BHWorldSegmentContext *, const BHWorldGeometry *);
 int __cdecl bh_world_segment_index_rooms(BHWorldSegmentContext *, BHWorldSegmentRoom **workspace,
                                          unsigned long capacity);
 /* Complete0040c4a0, owning0040ba40 and0040b020. Returns1 hit,0 miss,-1 invalid.

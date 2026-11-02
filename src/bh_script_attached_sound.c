@@ -20,11 +20,7 @@ static BHScriptLifetimeContext *context(BHEntity *e)
 }
 static const BHScriptTimerActor *actor_record(BHScriptLifetimeContext *c, BHEntity *actor)
 {
-    unsigned long i;
-    for (i = 0; i < c->timers.actor_count; ++i)
-        if (c->timers.actors[i].entity == actor)
-            return c->timers.actors + i;
-    return NULL;
+    return bh_script_timer_actor(&c->timers, actor);
 }
 int __cdecl bh_script_attached_sound_read(BHEntity *e, BHScriptAttachedSoundState *s)
 {

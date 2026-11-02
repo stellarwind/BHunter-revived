@@ -75,12 +75,7 @@ static int unlink_actor(BHActorResponseContext *c, BHEntity *e)
     BHEntity *p, *n;
     unsigned long i;
     bh_actor_route_read(e, &s);
-    for (i = 0; i < c->damage->route->room_count; ++i)
-        if (c->damage->route->rooms[i].world == s.current)
-        {
-            r = c->damage->route->rooms + i;
-            break;
-        }
+    r = bh_actor_route_room(c->damage->route, s.current);
     if (!r || !c->vehicles->count)
     {
         c->error = 2;

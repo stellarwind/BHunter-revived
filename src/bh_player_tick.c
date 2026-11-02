@@ -406,12 +406,19 @@ static int near_contacts(BHPlayerTick *c)
         return 1;
     if (!c->rooms || !c->contacts || !c->flash)
         return fail(c, 1);
-    for (i = 0; i < c->room_count; ++i)
-        if (c->rooms[i].world == world)
-        {
-            room = c->rooms + i;
-            break;
-        }
+    if (c->room_index)
+    {
+        long found = bh_binding_find(c->room_index, world, NULL);
+        if (found >= 0 && (unsigned long)found < c->room_count && c->rooms[found].world == world)
+            room = c->rooms + found;
+    }
+    if (!room)
+        for (i = 0; i < c->room_count; ++i)
+            if (c->rooms[i].world == world)
+            {
+                room = c->rooms + i;
+                break;
+            }
     if (!room)
         return fail(c, 1);
     actor = room->actors;

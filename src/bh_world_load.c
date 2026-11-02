@@ -213,6 +213,13 @@ int __cdecl bh_world_load(BHWorldLoad *c, const char *name)
         actor->orientation = n->placement.geometry.flags & 3;
         actor->resource = w->library->blocks[n->model_index].resource;
     }
+    c->index_allocator = pool->allocator;
+    if (!bh_binding_init(&c->actor_index, w->count, &c->index_allocator))
+        return end(c, file, 6);
+    for (i = 0; i < w->count; ++i)
+        if (!bh_binding_insert(&c->actor_index, c->states[i].entity, NULL, i))
+            return end(c, file, 6);
+    vm->lifetime->timers.actor_index = &c->actor_index;
     for (i = 0; i < w->count; ++i)
     {
         n = w->nodes[i];
@@ -276,4 +283,13 @@ int __cdecl bh_world_load(BHWorldLoad *c, const char *name)
                 }
     }
     return 1;
+}
+
+void __cdecl bh_world_load_dispose_index(BHWorldLoad *c)
+{
+    if (!c)
+        return;
+    if (c->vm && c->vm->lifetime && c->vm->lifetime->timers.actor_index == &c->actor_index)
+        c->vm->lifetime->timers.actor_index = NULL;
+    bh_binding_dispose(&c->actor_index, &c->index_allocator);
 }

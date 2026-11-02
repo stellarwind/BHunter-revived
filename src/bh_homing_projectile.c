@@ -56,12 +56,14 @@ static int receiver(BHHomingProjectileContext *c, const BHWorldSegmentHit *h, BH
         *out = h->object.object.actor;
         return *out != NULL;
     }
-    for (i = 0; i < c->response_count; ++i)
-        if (c->responses[i].world == h->object.object.geometry)
+    {
+        const BHHomingWorldResponse *binding = bh_homing_world_response(c, h->object.object.geometry);
+        if (binding)
         {
-            *out = c->responses[i].receiver;
+            *out = binding->receiver;
             return 1;
         }
+    }
     c->error = 2;
     return 0;
 }
@@ -234,12 +236,7 @@ void __cdecl bh_homing_projectile_tick(BHEntity *e)
     {
         if (cached)
         {
-            for (i = 0; i < c->segment->room_count; ++i)
-                if (c->segment->rooms[i].world == cached)
-                {
-                    room = c->segment->rooms + i;
-                    break;
-                }
+            room = bh_world_segment_room(c->segment, cached);
             if (!room)
             {
                 c->error = 2;

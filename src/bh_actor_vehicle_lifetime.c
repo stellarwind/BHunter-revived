@@ -15,10 +15,7 @@ static BHPickupRoom *vehicle_release_room(BHActorVehicleLifetimeContext *c, BHEn
     BHWorldGeometry *current;
     unsigned long i;
     memcpy(&current, (char *)actor + 0x1a4, 4);
-    for (i = 0; i < c->route->room_count; ++i)
-        if (c->route->rooms[i].world == current)
-            return c->route->rooms + i;
-    return NULL;
+    return bh_actor_route_room(c->route, current);
 }
 static BHPickupRoom *vehicle_release_notice_room(BHActorVehicleLifetimeContext *c, BHEntity *actor, void *packet)
 {

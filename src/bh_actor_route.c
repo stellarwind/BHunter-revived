@@ -88,9 +88,12 @@ static int fail(BHActorRouteContext *c, BHActorRouteError e)
         c->error = e;
     return 0;
 }
-static BHPickupRoom *room_binding(BHActorRouteContext *c, const BHWorldGeometry *world)
+BHPickupRoom *__cdecl bh_actor_route_room(BHActorRouteContext *c, const BHWorldGeometry *world)
 {
     unsigned long i;
+    long found = c->room_index ? bh_binding_find(c->room_index, world, NULL) : -1;
+    if (found >= 0 && (unsigned long)found < c->room_count && c->rooms[found].world == world)
+        return c->rooms + found;
     for (i = 0; i < c->room_count; ++i)
         if (c->rooms[i].world == world)
             return c->rooms + i;
@@ -145,8 +148,8 @@ int __cdecl bh_actor_route_promote(BHActorRouteContext *c, BHEntity *a, long inc
     if (!bh_math_environment_supported())
         return fail(c, BH_ACTOR_ROUTE_NUMERICAL);
     bh_actor_route_read(a, &s);
-    old = room_binding(c, s.current);
-    current = room_binding(c, s.next);
+    old = bh_actor_route_room(c, s.current);
+    current = bh_actor_route_room(c, s.next);
     world = s.next;
     if (!old || !current || !world->model || world->model->portal_count > 6 ||
         world->navigation.count != world->model->portal_count || incoming < 0 || outgoing < 0 ||
@@ -154,7 +157,7 @@ int __cdecl bh_actor_route_promote(BHActorRouteContext *c, BHEntity *a, long inc
         return fail(c, BH_ACTOR_ROUTE_TOPOLOGY);
     in = world->navigation.portals + incoming;
     out = world->navigation.portals + outgoing;
-    if (!out->neighbor || !room_binding(c, (BHWorldGeometry *)out->neighbor) || !portal_valid(in) || !portal_valid(out))
+    if (!out->neighbor || !bh_actor_route_room(c, (BHWorldGeometry *)out->neighbor) || !portal_valid(in) || !portal_valid(out))
         return fail(c, BH_ACTOR_ROUTE_TOPOLOGY);
     next = actor_link(a, 0xf4);
     previous = actor_link(a, 0xf8);

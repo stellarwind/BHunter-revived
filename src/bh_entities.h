@@ -49,6 +49,7 @@ typedef struct BHEntityPool
     void *chunks; /* source-private ownership, not original game globals */
     unsigned long dispatch_depth;
     int focused;
+    unsigned long retirements; /* adapter membership invalidation, increments on release */
 } BHEntityPool;
 
 /* Complete original pool/dispatch behaviors with explicit context and NULL

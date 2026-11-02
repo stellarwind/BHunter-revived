@@ -23,10 +23,7 @@ static BHPickupRoom *damage_query_room(BHActorDamageContext *c, BHEntity *e)
 {
     BHWorldGeometry *current = *(BHWorldGeometry **)((char *)e + 0x1a4);
     unsigned long i;
-    for (i = 0; i < c->route->room_count; ++i)
-        if (c->route->rooms[i].world == current)
-            return c->route->rooms + i;
-    return NULL;
+    return bh_actor_route_room(c->route, current);
 }
 
 void __cdecl bh_actor_damage_query_core(BHEntity *e, void *packet, BHActorDamageContext *c, unsigned short tick)

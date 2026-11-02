@@ -46,9 +46,13 @@ static BHEntity *receiver(BHAreaProjectileContext *c, const BHWorldSegmentHit *h
     unsigned long i;
     if (hit->object.kind != BH_WORLD_HIT_GEOMETRY)
         return hit->object.object.actor;
-    for (i = 0; i < c->effects->response_count; i++)
-        if (c->effects->responses[i].world == hit->object.object.geometry)
-            return c->effects->responses[i].receiver;
+    {
+        const BHHomingWorldResponse *binding = bh_homing_world_response(c->effects, hit->object.object.geometry);
+        if (binding)
+        {
+            return binding->receiver;
+        }
+    }
     return NULL;
 }
 static int packets(BHAreaProjectileContext *c, BHEntity *e, BHEntity *target, const BHVec3 *point, float impulse,
@@ -173,15 +177,13 @@ void __cdecl bh_area_projectile_tick(BHEntity *e)
     range = stored((double)radius * radius * .2);
     if (cached)
     {
-        for (i = 0; i < b->segment->room_count; i++)
-            if (b->segment->rooms[i].world == cached)
-                break;
-        if (i == b->segment->room_count)
+        BHWorldSegmentRoom *room = bh_world_segment_room(b->segment, cached);
+        if (!room)
         {
             c->error = 2;
             return;
         }
-        actor = b->segment->rooms[i].actors_owner ? *b->segment->rooms[i].actors_owner : b->segment->rooms[i].actors;
+        actor = room->actors_owner ? *room->actors_owner : room->actors;
         n = 0;
         while (actor)
         {

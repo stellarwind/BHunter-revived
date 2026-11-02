@@ -63,9 +63,13 @@ static BHEntity *response(BHHomingProjectileContext *b, const BHWorldSegmentHit 
     unsigned long i;
     if (h->object.kind != BH_WORLD_HIT_GEOMETRY)
         return h->object.object.actor;
-    for (i = 0; i < b->response_count; ++i)
-        if (b->responses[i].world == h->object.object.geometry)
-            return b->responses[i].receiver;
+    {
+        const BHHomingWorldResponse *binding = bh_homing_world_response(b, h->object.object.geometry);
+        if (binding)
+        {
+            return binding->receiver;
+        }
+    }
     return NULL;
 }
 static void puff(BHEffectProjectileContext *c, BHEntity *e, unsigned long image, float life, float delay, float size,

@@ -99,9 +99,13 @@ static BHEntity *receiver(BHEffectOrbitTickContext *c, BHWorldSegmentHit *hit)
     unsigned long i;
     if (hit->object.kind == BH_WORLD_HIT_ACTOR)
         return hit->object.object.actor;
-    for (i = 0; i < b->response_count; ++i)
-        if (b->responses[i].world == hit->object.object.geometry)
-            return b->responses[i].receiver;
+    {
+        const BHHomingWorldResponse *binding = bh_homing_world_response(b, hit->object.object.geometry);
+        if (binding)
+        {
+            return binding->receiver;
+        }
+    }
     c->error = 2;
     return 0;
 }
@@ -204,12 +208,7 @@ void __cdecl bh_effect_orbit_tick(BHEntity *e)
     ignore = (BHEntity *)word(e, 0x13c);
     if (cached && !identity)
     {
-        for (i = 0; i < b->segment->room_count; ++i)
-            if (b->segment->rooms[i].world == cached)
-            {
-                room = b->segment->rooms + i;
-                break;
-            }
+        room = bh_world_segment_room(b->segment, cached);
         if (!room)
         {
             c->error = 2;

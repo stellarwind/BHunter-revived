@@ -4,11 +4,7 @@
 
 static BHWorldSegmentRoom *binding(BHWorldSegmentContext *q, BHWorldGeometry *w)
 {
-    unsigned long i;
-    for (i = 0; i < q->room_count; ++i)
-        if (q->rooms[i].world == w)
-            return q->rooms + i;
-    return NULL;
+    return bh_world_segment_room(q, w);
 }
 int __cdecl bh_camera_correct(BHCameraCorrectionOwner *owner, BHVec3 *eye, const BHVec3 *target, BHEntity *self)
 {

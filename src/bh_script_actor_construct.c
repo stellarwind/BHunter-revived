@@ -64,12 +64,7 @@ BHEntity *__cdecl bh_script_actor_construct(BHScriptActorConstructorContext *c, 
     world = bh_world_locate(c->first_world, c->world_count, NULL, position, 0);
     if (!world)
         return NULL;
-    for (i = 0; i < route->room_count; ++i)
-        if (route->rooms[i].world == world)
-        {
-            room = route->rooms + i;
-            break;
-        }
+    room = bh_actor_route_room(route, world);
     if (!room)
         return NULL;
     e = bh_entity_acquire(callbacks->pool);

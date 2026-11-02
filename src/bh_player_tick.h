@@ -53,6 +53,7 @@ typedef struct BHPlayerTick
     BHWorldSegmentContext *world;
     BHPickupRoom *rooms;
     unsigned long room_count;
+    const BHBindingIndex *room_index; /* optional immutable scene identities */
     BHScriptLifetimeContext *lifetime;
     BHScriptParticleContext *particles;
     BHContactEffects *contacts;

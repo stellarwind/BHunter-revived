@@ -12,7 +12,7 @@ typedef char actor_radius_offset[offsetof(BHEntity, collision_radius) == 0xc0 ? 
 typedef char actor_query_offset[offsetof(BHEntity, query) == 0xd0 ? 1 : -1];
 typedef char actor_payload_offset[offsetof(BHEntity, payload) == 0xe4 ? 1 : -1];
 
-static BHWorldSegmentRoom *room(BHWorldSegmentContext *q, const BHWorldGeometry *w)
+BHWorldSegmentRoom *__cdecl bh_world_segment_room(BHWorldSegmentContext *q, const BHWorldGeometry *w)
 {
     unsigned long i;
     if (q->room_index)
@@ -101,7 +101,7 @@ int __cdecl bh_world_segment_init(BHWorldSegmentContext *q, BHWorldGeometry *fir
     p = first;
     for (i = 0; i < count; ++i)
     {
-        if (!p || (i && p == first) || !room(&next, p) || p->navigation.count > 6)
+        if (!p || (i && p == first) || !bh_world_segment_room(&next, p) || p->navigation.count > 6)
             return 0;
         for (j = 0; j < i; ++j)
             if (rooms[j].world == rooms[i].world)
@@ -116,10 +116,10 @@ int __cdecl bh_world_segment_init(BHWorldSegmentContext *q, BHWorldGeometry *fir
     for (i = 0; i < count; ++i)
     {
         p = rooms[i].world;
-        if (p->owner && !room(&next, p->owner))
+        if (p->owner && !bh_world_segment_room(&next, p->owner))
             return 0;
         for (j = 0; j < p->navigation.count; ++j)
-            if (p->navigation.portals[j].neighbor && !room(&next, (BHWorldGeometry *)p->navigation.portals[j].neighbor))
+            if (p->navigation.portals[j].neighbor && !bh_world_segment_room(&next, (BHWorldGeometry *)p->navigation.portals[j].neighbor))
                 return 0;
     }
     *q = next;
@@ -201,7 +201,7 @@ static BHWorldGeometry *crossing(BHWorldGeometry *w, const BHVec3 *a, const BHVe
 }
 static int geometry(BHWorldSegmentContext *q, BHWorldGeometry *w, const BHVec3 *a, BHVec3 *end, BHWorldSegmentHit *out)
 {
-    BHWorldSegmentRoom *binding = room(q, w);
+    BHWorldSegmentRoom *binding = bh_world_segment_room(q, w);
     BHSegmentHit hit;
     int result;
     if (!binding)
@@ -245,7 +245,7 @@ static int bh_world_segment_room_trace(BHWorldSegmentContext *q, const BHWorldHi
     {
         if (++rooms > q->world_count + 1)
             return fail(q, BH_WORLD_SEGMENT_TOPOLOGY);
-        binding = room(q, w);
+        binding = bh_world_segment_room(q, w);
         if (!binding)
             return fail(q, BH_WORLD_SEGMENT_TOPOLOGY);
         limit = *end;
@@ -319,7 +319,7 @@ static int bh_world_segment_room_trace(BHWorldSegmentContext *q, const BHWorldHi
         steps = 0;
         while (child && child->owner)
         {
-            if (++steps > q->world_count || !room(q, child))
+            if (++steps > q->world_count || !bh_world_segment_room(q, child))
                 return fail(q, BH_WORLD_SEGMENT_TOPOLOGY);
             if ((child->query_flags & 2) && !excluded(self, child, NULL) &&
                 (child->minimum.x <= a.x || child->minimum.x <= hit_point.x) &&
@@ -440,7 +440,7 @@ int __cdecl bh_world_segment_run(BHWorldSegmentContext *q, const BHWorldHit *sel
     if (q->refresh_actors && !q->refresh_actors(q, q->refresh_user))
         return fail(q, BH_WORLD_SEGMENT_DEPENDENCY);
     old = *cached;
-    if (old && !room(q, old))
+    if (old && !bh_world_segment_room(q, old))
         return fail(q, BH_WORLD_SEGMENT_TOPOLOGY);
     original = *out;
     hit = original;

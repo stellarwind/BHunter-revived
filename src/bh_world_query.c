@@ -28,12 +28,7 @@ static int fail(BHWorldQuery *q, BHWorldQueryError e)
 }
 static long index_of(const BHWorldQuery *q, const BHWorldGeometry *p)
 {
-    BHWorldGeometry **members = (BHWorldGeometry **)q->members;
-    unsigned long i;
-    for (i = 0; i < q->scene_count; ++i)
-        if (members[i] == p)
-            return (long)i;
-    return -1;
+    return bh_binding_find(&q->member_index, p, NULL);
 }
 int __cdecl bh_world_query_dispose(BHWorldQuery *q)
 {
@@ -41,6 +36,7 @@ int __cdecl bh_world_query_dispose(BHWorldQuery *q)
     if (!q || q->busy)
         return fail(q, BH_QUERY_BUSY);
     a = q->allocator;
+    bh_binding_dispose(&q->member_index, &a);
     if (q->members)
         a.release(q->members, a.user);
     if (q->visited)
@@ -82,7 +78,8 @@ int __cdecl bh_world_query_init(BHWorldQuery *q, BHWorldGeometry *first, unsigne
         next.members = next.allocator.allocate(count * sizeof(BHWorldGeometry *), next.allocator.user);
         next.visited = next.allocator.allocate(count, next.allocator.user);
         next.frames = next.allocator.allocate(count * sizeof(Frame), next.allocator.user);
-        if (!next.members || !next.visited || !next.frames)
+        if (!next.members || !next.visited || !next.frames ||
+            !bh_binding_init(&next.member_index, count, &next.allocator))
             goto rejected;
         p = first;
         for (i = 0; i < count; ++i)
@@ -90,6 +87,8 @@ int __cdecl bh_world_query_init(BHWorldQuery *q, BHWorldGeometry *first, unsigne
             if (!p || (i && p == first) || p->navigation.count > 6)
                 goto rejected;
             ((BHWorldGeometry **)next.members)[i] = p;
+            if (!bh_binding_insert(&next.member_index, p, NULL, i))
+                goto rejected;
             p = (BHWorldGeometry *)p->navigation.next;
         }
         if (p != first)
@@ -152,7 +151,7 @@ static int enter(BHWorldQuery *q, BHWorldGeometry *world, const BHVec3 *point, f
     long index = index_of(q, world);
     BHWorldGeometry *child;
     unsigned long steps = 0;
-    if (index < 0)
+    if (index < 0 || world->navigation.count > 6)
         return fail(q, BH_QUERY_TOPOLOGY);
     if (((unsigned char *)q->visited)[index])
         return 1;
@@ -234,13 +233,6 @@ int __cdecl bh_world_query_run(BHWorldQuery *q, BHEntity *self, BHWorldGeometry 
         return fail(q, BH_QUERY_ARGUMENT);
     if (previous && index_of(q, previous) < 0)
         return fail(q, BH_QUERY_TOPOLOGY);
-    for (i = 0; i < q->scene_count; ++i)
-    {
-        BHWorldGeometry *w = ((BHWorldGeometry **)q->members)[i];
-        if (w->navigation.count > 6 ||
-            w->navigation.next != &((BHWorldGeometry **)q->members)[(i + 1) % q->scene_count]->navigation)
-            return fail(q, BH_QUERY_TOPOLOGY);
-    }
     for (i = 0; i < q->actor_count; ++i)
         if (!q->actors[i] || !_finite(q->actors[i]->position.x) || !_finite(q->actors[i]->position.y) ||
             !_finite(q->actors[i]->position.z) || !_finite(q->actors[i]->collision_radius))

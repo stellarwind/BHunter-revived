@@ -43,6 +43,7 @@ static void __cdecl draw(BHEntity *e, void *unused)
 static void announce(BHPulseProjectileContext *c, BHEntity *e)
 {
     unsigned long sync, i;
+    long found;
     unsigned char payload[2];
     BHWorldGeometry *world;
     BHPacketWriter writer;
@@ -52,9 +53,13 @@ static void announce(BHPulseProjectileContext *c, BHEntity *e)
     get(e, 0x124, &world, 4);
     if (!world)
         return;
-    for (i = 0; i < c->world_count; i++)
-        if (c->world_indices[i].world == world)
-            break;
+    found = c->effects->response_index ? bh_binding_find(c->effects->response_index, world, NULL) : -1;
+    if (found >= 0 && (unsigned long)found < c->world_count && c->world_indices[found].world == world)
+        i = (unsigned long)found;
+    else
+        for (i = 0; i < c->world_count; i++)
+            if (c->world_indices[i].world == world)
+                break;
     if (i == c->world_count)
     {
         c->error = 2;

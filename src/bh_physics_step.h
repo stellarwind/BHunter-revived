@@ -61,6 +61,8 @@ typedef struct BHPhysicsStepContext
     BHSweepHit first, slide;
     BHWorldHit first_selected, selected;
     unsigned long steps, misses, contacts, rollbacks, first_events, second_events;
+    BHBindingIndex body_index, world_index, pair_index;
+    unsigned long validated_retirements;
 } BHPhysicsStepContext;
 /* Source owner adapter. Bodies/model identities/geometry topology are stable
    until dispose; state/matrix values may change between steps. Unique real
@@ -68,7 +70,8 @@ typedef struct BHPhysicsStepContext
    Broad/candidate storage is owned once; stepping allocates only actual effects.
    The shared BHPhysicsState is authoritative and is the SAME component passed
    to actual response-query owners such as bh_debris_bind. Caller synchronizes
-   external teleports into that component. No callbacks are fabricated here. */
+   external teleports into that component and publishes them before querying
+   another body. Each step publishes itself; it does not overwrite other actors. No callbacks are fabricated here. */
 int __cdecl bh_physics_step_init(BHPhysicsStepContext *, BHEntityPool *, BHPhysicsStepBody *, unsigned long,
                                  const BHPhysicsStepWorld *, unsigned long, BHGeometry *const *, unsigned long,
                                  BHPhysicsEffects *, int fallback, const BHSceneAllocator *);

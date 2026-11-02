@@ -25,7 +25,21 @@ typedef struct BHHomingProjectileContext
     unsigned long hit_sound, liquid_sound, first_image, second_image;
     unsigned long guidance, proximity, world_hits, damage_packets;
     int error;
+    const BHBindingIndex *response_index; /* optional immutable scene identities */
 } BHHomingProjectileContext;
+/* Typed live receiver lookup; the optional index stores only array positions. */
+static __inline const BHHomingWorldResponse *bh_homing_world_response(const BHHomingProjectileContext *c,
+                                                                     const BHWorldGeometry *world)
+{
+    unsigned long i;
+    long found = c->response_index ? bh_binding_find(c->response_index, world, NULL) : -1;
+    if (found >= 0 && (unsigned long)found < c->response_count && c->responses[found].world == world)
+        return c->responses + found;
+    for (i = 0; i < c->response_count; ++i)
+        if (c->responses[i].world == world)
+            return c->responses + i;
+    return NULL;
+}
 /* Count-zero binding over an actual acquired projectile. Original fields e8,
    100..108,11c,124..130 remain in its real entity storage. Lifetime/query owner
    bh_projectile_lifetime_bind may be installed separately and remains intact.

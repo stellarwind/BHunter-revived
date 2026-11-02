@@ -12,6 +12,8 @@ typedef struct BHWorldLoad
     unsigned long actor_capacity;
     unsigned long skipped, overrides, timers, immediate;
     int error;
+    BHBindingIndex actor_index;
+    BHSceneAllocator index_allocator;
 } BHWorldLoad;
 /* Whole004100d0. Fresh empty editor registry and explicit stable actor tables;
    vm->actors and states have actor_capacity records; both VM and timer counts
@@ -24,4 +26,6 @@ typedef struct BHWorldLoad
    exit, bounds malformed records and rejects original all-unknown NULL crash.
    No original code loading or gameplay execution. PC53 finite model state. */
 int __cdecl bh_world_load(BHWorldLoad *, const char *name);
+/* Release the optional actor identity workspace before retiring its context. */
+void __cdecl bh_world_load_dispose_index(BHWorldLoad *);
 #endif

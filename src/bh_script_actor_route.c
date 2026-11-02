@@ -22,11 +22,7 @@ static void setlink(BHEntity *a, unsigned long off, BHEntity *p)
 }
 static BHPickupRoom *binding(BHActorRouteContext *c, BHWorldGeometry *w)
 {
-    unsigned long i;
-    for (i = 0; i < c->room_count; ++i)
-        if (c->rooms[i].world == w)
-            return c->rooms + i;
-    return 0;
+    return bh_actor_route_room(c, w);
 }
 BHScriptActorPath __cdecl bh_script_actor_route_path(const BHEntity *a)
 {

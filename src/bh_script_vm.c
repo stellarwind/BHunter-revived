@@ -37,6 +37,15 @@ static BHEntityPool *pool(BHScriptVMContext *c)
 static BHScriptVMActor *actor(BHScriptVMContext *c, BHEntity *e)
 {
     unsigned long i;
+    long found;
+    const BHBindingIndex *index = c->lifetime->timers.actor_index;
+    if (index)
+    {
+        found = bh_binding_find(index, e, NULL);
+        if (found >= 0 && (unsigned long)found < c->actor_count &&
+            c->actors[found].state && c->actors[found].state->entity == e)
+            return c->actors + found;
+    }
     for (i = 0; i < c->actor_count; ++i)
         if (c->actors[i].state && c->actors[i].state->entity == e)
             return c->actors + i;

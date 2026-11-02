@@ -119,9 +119,13 @@ static BHEntity *response(BHActorAttackContext *c, BHWorldSegmentHit *h)
     BHHomingProjectileContext *b = c->effects->effects;
     if (h->object.kind == BH_WORLD_HIT_ACTOR)
         return h->object.object.actor;
-    for (i = 0; i < b->response_count; ++i)
-        if (b->responses[i].world == h->object.object.geometry)
-            return b->responses[i].receiver;
+    {
+        const BHHomingWorldResponse *binding = bh_homing_world_response(b, h->object.object.geometry);
+        if (binding)
+        {
+            return binding->receiver;
+        }
+    }
     c->error = 2;
     return 0;
 }

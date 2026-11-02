@@ -225,6 +225,8 @@ typedef struct BHGameApp
     BHWorldSegmentContext segment;
     BHWorldSegmentRoom *segment_rooms;
     BHWorldSegmentRoom **segment_room_index;
+    BHBindingIndex world_binding_index;
+    BHSceneAllocator binding_allocator;
     BHSceneBindings scene_bindings;
     BHSceneBindingInput *scene_inputs;
     BHPickupRoom *rooms;
@@ -477,6 +479,10 @@ static BHEntity **__cdecl marker_room_head(BHEntity *owner, void *user)
 {
     BHGameApp *a = (BHGameApp *)user;
     unsigned long i;
+    long found = bh_binding_find(&a->world_load.actor_index, owner, NULL);
+    if (found >= 0 && (unsigned long)found < a->homing.response_count &&
+        a->world_responses[found].receiver == owner)
+        return &a->rooms[found].pickups;
     for (i = 0; i < a->homing.response_count; ++i)
         if (a->world_responses[i].receiver == owner)
             return &a->rooms[i].pickups;
@@ -500,6 +506,13 @@ static int __cdecl refresh_segment_actors(BHWorldSegmentContext *q, void *user)
         geometry = 0;
         if (e == a->player)
             geometry = &a->player_collision.geometry;
+        else if (a->segment_actors[i].entity == e && a->segment_actors[i].query &&
+                 (index = (unsigned long)(a->segment_actors[i].query - a->actor_queries)) > 0 &&
+                 index <= N(a->target_slots) && a->actor_query_entities[index] == e &&
+                 a->actor_query_generations[index] == e->generation &&
+                 a->target_slots[index - 1].body.entity == e &&
+                 a->target_slots[index - 1].body.generation == e->generation)
+            geometry = &a->target_slots[index - 1].collision.geometry;
         else
             for (j = 0; j < N(a->target_slots); ++j)
                 if (a->target_slots[j].body.entity == e && a->target_slots[j].body.generation == e->generation)
@@ -1457,6 +1470,15 @@ static int world_ready(BHGameApp *a)
     if (!a->segment_room_index ||
         !bh_world_segment_index_rooms(&a->segment, a->segment_room_index, index_capacity))
         return failure(a, 7);
+    a->binding_allocator = a->pool.allocator;
+    if (!bh_binding_init(&a->world_binding_index, n, &a->binding_allocator))
+        return failure(a, 7);
+    for (i = 0; i < n; ++i)
+        if (!bh_binding_insert(&a->world_binding_index, a->segment_rooms[i].world, NULL, i))
+            return failure(a, 7);
+    a->actor_route.room_index = &a->world_binding_index;
+    a->player_tick.room_index = &a->world_binding_index;
+    a->homing.response_index = &a->world_binding_index;
     a->segment.refresh_actors = refresh_segment_actors;
     a->segment.refresh_user = a;
     for (i = 0; i < n; ++i)
@@ -2155,6 +2177,7 @@ static void cleanup(BHGameApp *a)
     }
     if (a->player_collision.bsp.allocator.release)
         bh_collision_model_dispose(&a->player_collision);
+    bh_world_load_dispose_index(&a->world_load);
     bh_script_blocks_dispose(&a->blocks);
     bh_navigation_dispose(&a->navigation);
     bh_rail_paths_dispose(&a->rails);
@@ -2219,6 +2242,7 @@ static void cleanup(BHGameApp *a)
     free(a->rooms);
     free(a->scheduled);
     free(a->scene_inputs);
+    bh_binding_dispose(&a->world_binding_index, &a->binding_allocator);
     free(a->segment_room_index);
     free(a->segment_rooms);
     free(a->physics_worlds);
