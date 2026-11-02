@@ -1,5 +1,6 @@
 #include "bh_portal_clip.h"
 #include "bh_clipper.h"
+#include "bh_portal_visibility.h"
 #include <string.h>
 static int project(const BHDrawQueue *q, unsigned long at, const BHMainCamera *camera, const BHViewConfig *view,
                    BHPortalClipCache *cache, float bounds[4], unsigned long depth)
@@ -9,7 +10,7 @@ static int project(const BHDrawQueue *q, unsigned long at, const BHMainCamera *c
     BHClipVertex vertices[4], *ring, *p;
     BHClipContext clip;
     unsigned long i, parent;
-    float near_z, far_z, enclosing[4];
+    float near_z, far_z, motion, enclosing[4];
     if (!q || !q->commands || at >= q->count || !camera || !view || depth > 64)
         return 0;
     command = q->commands + at;
@@ -40,35 +41,42 @@ static int project(const BHDrawQueue *q, unsigned long at, const BHMainCamera *c
         memcpy(corners, command->words, sizeof(corners));
         memcpy(&near_z, command->words + 13, 4);
         memcpy(&far_z, command->words + 14, 4);
+        memcpy(&motion, command->words + 15, 4);
         if (!bh_clip_init(&clip, near_z, far_z, enclosing[0], enclosing[2], enclosing[1], enclosing[3]))
             return 0;
-        memset(vertices, 0, sizeof(vertices));
-        for (i = 0; i < 4; ++i)
+        if (bh_portal_camera_touches(corners, &camera->position,
+                                     bh_portal_camera_radius(&camera->projected, near_z, enclosing, motion)))
+            memcpy(bounds, enclosing, sizeof(enclosing));
+        else
         {
-            bh_mat34_transform_point(&camera->projected, corners + i, &vertices[i].point);
-            vertices[i].next = vertices + (i + 1) % 4;
-            vertices[i].previous = vertices + (i + 3) % 4;
-        }
-        ring = bh_clip_polygon(&clip, vertices, 0);
-        if (!ring && clip.error != BH_CLIP_OK)
-            return 0;
-        if (ring)
-        {
-            bounds[0] = bounds[1] = 9e37f;
-            bounds[2] = bounds[3] = -9e37f;
-            p = ring;
-            do
+            memset(vertices, 0, sizeof(vertices));
+            for (i = 0; i < 4; ++i)
             {
-                if (p->sx < bounds[0])
-                    bounds[0] = p->sx;
-                if (p->sy < bounds[1])
-                    bounds[1] = p->sy;
-                if (bounds[2] < p->sx)
-                    bounds[2] = p->sx;
-                if (bounds[3] < p->sy)
-                    bounds[3] = p->sy;
-                p = p->next;
-            } while (p != ring);
+                bh_mat34_transform_point(&camera->projected, corners + i, &vertices[i].point);
+                vertices[i].next = vertices + (i + 1) % 4;
+                vertices[i].previous = vertices + (i + 3) % 4;
+            }
+            ring = bh_clip_polygon(&clip, vertices, 0);
+            if (!ring && clip.error != BH_CLIP_OK)
+                return 0;
+            if (ring)
+            {
+                bounds[0] = bounds[1] = 9e37f;
+                bounds[2] = bounds[3] = -9e37f;
+                p = ring;
+                do
+                {
+                    if (p->sx < bounds[0])
+                        bounds[0] = p->sx;
+                    if (p->sy < bounds[1])
+                        bounds[1] = p->sy;
+                    if (bounds[2] < p->sx)
+                        bounds[2] = p->sx;
+                    if (bounds[3] < p->sy)
+                        bounds[3] = p->sy;
+                    p = p->next;
+                } while (p != ring);
+            }
         }
     }
     if (cache && at < BH_PORTAL_CLIP_CAPACITY)

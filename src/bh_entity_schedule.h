@@ -39,6 +39,7 @@ typedef struct BHEntityScheduleContext
     unsigned long frame;
     unsigned long max_rooms, max_entities, max_depth;
     BHEntityScheduleError error;
+    float portal_camera_motion; /* SDL camera sweep since the preceding publication */
 } BHEntityScheduleContext;
 
 /* Functional 00409530 portal polygon projection/clip, sharing the already

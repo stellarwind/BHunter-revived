@@ -5,6 +5,7 @@
 #include "bh_draw_submit.h"
 #include "bh_draw_controls.h"
 #include "bh_round.h"
+#include "bh_portal_visibility.h"
 #include <float.h>
 #include <math.h>
 #include <string.h>
@@ -242,7 +243,14 @@ static void portal_quad(const BHPortal *p, BHVec3 q[4])
         }
     }
 }
-static int schedule(BHEntityScheduleContext *c, BHEntityScheduleRoom *r, unsigned long depth, unsigned long parent_clip)
+typedef struct BHPortalPath
+{
+    BHEntityScheduleRoom *room;
+    const struct BHPortalPath *previous;
+} BHPortalPath;
+
+static int schedule(BHEntityScheduleContext *c, BHEntityScheduleRoom *r, unsigned long depth, unsigned long parent_clip,
+                    const BHPortalPath *previous, double near_radius_squared)
 {
     BHEntityScheduleRoom *other;
     BHWorldGeometry *world;
@@ -253,10 +261,17 @@ static int schedule(BHEntityScheduleContext *c, BHEntityScheduleRoom *r, unsigne
     BHViewConfig saved;
     float left, right, top, bottom;
     unsigned long i, j, n, child_clip;
+    BHPortalPath path;
+#ifdef BH_SDL_BACKEND
+    const BHPortalPath *ancestor;
+    int near_camera;
+#endif
     if (depth > c->max_depth)
         return fail(c, BH_SCHEDULE_DEPTH);
     if (!r || !r->room || !r->room->world)
         return fail(c, BH_SCHEDULE_ARGUMENT);
+    path.room = r;
+    path.previous = previous;
     world = r->room->world;
     if (!resource(c, r, 0))
         return 0;
@@ -301,39 +316,65 @@ static int schedule(BHEntityScheduleContext *c, BHEntityScheduleRoom *r, unsigne
     {
         portal = world->navigation.portals + i;
         other = r->portal_targets[i];
-        if (!portal->neighbor || !other || !faces_camera(portal, &c->camera->position))
+        if (!portal->neighbor || !other)
             continue;
+#ifdef BH_SDL_BACKEND
+        /* Both render buckets need a portal window. A full queue may drop
+           commands normally; never stamp a window that was not allocated. */
+        if (c->queue->count >= c->queue->capacity || c->queue->capacity - c->queue->count < 2)
+            continue;
+#endif
         if (portal->neighbor && other->room && other->room->world &&
             portal->neighbor != &other->room->world->navigation)
             return fail(c, BH_SCHEDULE_TOPOLOGY);
         portal_quad(portal, corners);
-        for (j = 0; j < 4; ++j)
-            bh_mat34_transform_point(&c->camera->projected, corners + j, projected + j);
-        if (!bh_clip_init(&clip, c->viewport->near_z, c->viewport->far_z, c->viewport->left, c->viewport->right,
-                          c->viewport->top, c->viewport->bottom))
-            return fail(c, BH_SCHEDULE_CLIP);
-        ring = bh_entity_schedule_clip_portal(&clip, input, projected);
-        if (!ring)
-        {
-            if (clip.error != BH_CLIP_OK)
-                return fail(c, BH_SCHEDULE_CLIP);
+#ifdef BH_SDL_BACKEND
+        for (ancestor = &path; ancestor; ancestor = ancestor->previous)
+            if (ancestor->room == other)
+                break;
+        if (ancestor)
             continue;
-        }
-        left = top = 9e37f;
-        right = bottom = -9e37f;
-        v = ring;
-        do
+        near_camera = bh_portal_camera_touches(corners, &c->camera->position, near_radius_squared);
+        if (near_camera)
         {
-            if (v->sx < left)
-                left = v->sx;
-            if (right < v->sx)
-                right = v->sx;
-            if (v->sy < top)
-                top = v->sy;
-            if (bottom < v->sy)
-                bottom = v->sy;
-            v = v->next;
-        } while (v != ring);
+            left = c->viewport->left;
+            right = c->viewport->right;
+            top = c->viewport->top;
+            bottom = c->viewport->bottom;
+        }
+        else
+#endif
+        {
+            if (!faces_camera(portal, &c->camera->position))
+                continue;
+            for (j = 0; j < 4; ++j)
+                bh_mat34_transform_point(&c->camera->projected, corners + j, projected + j);
+            if (!bh_clip_init(&clip, c->viewport->near_z, c->viewport->far_z, c->viewport->left, c->viewport->right,
+                              c->viewport->top, c->viewport->bottom))
+                return fail(c, BH_SCHEDULE_CLIP);
+            ring = bh_entity_schedule_clip_portal(&clip, input, projected);
+            if (!ring)
+            {
+                if (clip.error != BH_CLIP_OK)
+                    return fail(c, BH_SCHEDULE_CLIP);
+                continue;
+            }
+            left = top = 9e37f;
+            right = bottom = -9e37f;
+            v = ring;
+            do
+            {
+                if (v->sx < left)
+                    left = v->sx;
+                if (right < v->sx)
+                    right = v->sx;
+                if (v->sy < top)
+                    top = v->sy;
+                if (bottom < v->sy)
+                    bottom = v->sy;
+                v = v->next;
+            } while (v != ring);
+        }
         saved = *c->viewport;
         c->viewport->left = left;
         c->viewport->right = right;
@@ -353,7 +394,11 @@ static int schedule(BHEntityScheduleContext *c, BHEntityScheduleRoom *r, unsigne
             *c->viewport = saved;
             return 0;
         }
-        j = schedule(c, other, depth + 1, child_clip);
+#ifdef BH_SDL_BACKEND
+        memcpy(c->queue->commands[child_clip].words + 15, &c->portal_camera_motion, 4);
+        memcpy(c->queue->commands[child_clip + 1].words + 15, &c->portal_camera_motion, 4);
+#endif
+        j = schedule(c, other, depth + 1, child_clip, &path, near_radius_squared);
         *c->viewport = saved;
         if (!j)
             return 0;
@@ -362,8 +407,19 @@ static int schedule(BHEntityScheduleContext *c, BHEntityScheduleRoom *r, unsigne
 }
 int __cdecl bh_entity_schedule(BHEntityScheduleContext *c, BHEntityScheduleRoom *room)
 {
+    double radius = 0;
     if (!c || !c->queue || !c->viewport || !c->camera || !room || !c->max_rooms || !c->max_entities || !c->max_depth)
         return fail(c, BH_SCHEDULE_ARGUMENT);
     c->error = BH_SCHEDULE_OK;
-    return schedule(c, room, 0, BH_DRAW_END);
+#ifdef BH_SDL_BACKEND
+    {
+        float bounds[4];
+        bounds[0] = c->viewport->left;
+        bounds[1] = c->viewport->top;
+        bounds[2] = c->viewport->right;
+        bounds[3] = c->viewport->bottom;
+        radius = bh_portal_camera_radius(&c->camera->projected, c->viewport->near_z, bounds, c->portal_camera_motion);
+    }
+#endif
+    return schedule(c, room, 0, BH_DRAW_END, NULL, radius);
 }

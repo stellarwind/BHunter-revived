@@ -116,6 +116,18 @@ int __cdecl bh_scene_owner_step(BHSceneOwner *owner, const BHVec3 *eye, const BH
         owner->error = BH_SCENE_OWNER_BINDING;
         return 0;
     }
+#ifdef BH_SDL_BACKEND
+    schedule->portal_camera_motion = 0;
+    if (owner->frame)
+    {
+        double dx = (double)eye->x - owner->eye.x;
+        double dy = (double)eye->y - owner->eye.y;
+        double dz = (double)eye->z - owner->eye.z;
+        /* Match the interpolation snap guard for teleports and camera cuts. */
+        if (fabs(dx) <= 1000 && fabs(dy) <= 1000 && fabs(dz) <= 1000)
+            bh_round_float(&schedule->portal_camera_motion, sqrt((dx * dx + dy * dy) + dz * dz));
+    }
+#endif
     owner->eye = *eye;
     owner->angles = *angles;
     owner->view = view;

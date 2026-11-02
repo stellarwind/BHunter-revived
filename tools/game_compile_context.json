@@ -1,8 +1,9 @@
 {
     "schema_version": 1,
     "description":
-        "Production per-translation-unit defines and include context copied from admitted integration build; common VC5 flags are in build_game.py.",
+        "Compiler defines and include settings for production game sources; common VC5 flags are in tools/build_game.py.",
     "sources": {
+        "bh_portal_visibility.c": [],
         "bh_pickup_basic.c": [
             "/I{DXSDK}\\include",
             "/DDIRECT3D_VERSION=0x0500",

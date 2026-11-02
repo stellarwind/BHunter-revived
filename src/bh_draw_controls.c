@@ -71,6 +71,7 @@ int __cdecl bh_draw_controls_portal_clip(BHDrawQueue *q, unsigned long bucket, c
     c->words[12] = parent;
     memcpy(c->words + 13, &near_z, 4);
     memcpy(c->words + 14, &far_z, 4);
+    c->words[15] = 0;
     return 1;
 }
 int __cdecl bh_draw_controls_texture_mask(BHDrawControlContext *c, unsigned long mask)
