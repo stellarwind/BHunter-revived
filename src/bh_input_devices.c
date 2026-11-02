@@ -76,6 +76,7 @@ int __cdecl bh_input_devices_start(BHInputDevices *d, HWND window)
     memset(s->history, 0, 32);
     memset(s->current, 0, 255);
     memset(s->previous, 0, 255);
+#ifndef BH_SDL_BACKEND
     for (i = 0; i < 2; ++i)
     {
         d->capture_result[i] = d->api.capture(window, (UINT)i, 100, FALSE);
@@ -86,7 +87,10 @@ int __cdecl bh_input_devices_start(BHInputDevices *d, HWND window)
             c->enabled[i] = 1;
         }
     }
+#endif
     memset(s->axes, 0, sizeof(s->axes));
+    memset(&s->gamepad, 0, sizeof(s->gamepad));
+    s->previous_gamepad_buttons = 0;
     c->last_recenter = c->api.recenter(160, 100);
     c->delta[0] = c->delta[1] = 0;
     s->pair4[0] = s->pair4[1] = 0;

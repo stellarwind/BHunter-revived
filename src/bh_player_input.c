@@ -1,4 +1,5 @@
 #include "bh_player_input.h"
+#include "bh_gamepad.h"
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
@@ -137,6 +138,21 @@ void __cdecl bh_player_input_setup(BHPlayerInputList *list, const BHInputProfile
     bh_player_input_bind_key(list, 0x20, "", 0, 0, 9);
     bh_player_input_bind_key(list, 0x22, "", 0, 0, 0x59);
     bh_player_input_bind_key(list, 0x23, "", 0, 0, 0x4e);
+#ifdef BH_SDL_BACKEND
+    list->bindings[0].flags = BH_INPUT_GAMEPAD | BH_PAD_STEER;
+    list->bindings[1].flags = BH_INPUT_GAMEPAD | BH_PAD_LIFT;
+    list->bindings[2].flags = BH_INPUT_GAMEPAD | BH_PAD_THRUST;
+    list->bindings[25].flags = BH_INPUT_GAMEPAD | BH_PAD_AIM_X;
+    list->bindings[26].flags = BH_INPUT_GAMEPAD | BH_PAD_AIM_Y;
+    list->bindings[22].flags = BH_INPUT_GAMEPAD | BH_PAD_LEFT_SHOULDER;
+    list->bindings[3].flags = BH_INPUT_GAMEPAD | BH_PAD_RIGHT_SHOULDER;
+    list->bindings[27].flags = BH_INPUT_GAMEPAD | BH_PAD_LEFT;
+    list->bindings[28].flags = BH_INPUT_GAMEPAD | BH_PAD_RIGHT;
+    list->bindings[6].flags = BH_INPUT_GAMEPAD | BH_PAD_BACK;
+    list->bindings[33].flags = BH_INPUT_GAMEPAD | BH_PAD_START;
+    list->bindings[34].flags = BH_INPUT_GAMEPAD | BH_PAD_SOUTH;
+    list->bindings[35].flags = BH_INPUT_GAMEPAD | BH_PAD_EAST;
+#endif
 }
 
 void __cdecl bh_player_input_apply_packet(BHPlayerInputState *state, const void *packet)

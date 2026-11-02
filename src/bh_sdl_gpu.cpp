@@ -53,6 +53,7 @@ struct Batch
     unsigned blend, src, dst, depth, write, key, fog, fog_color, cull;
 };
 SDL_Window *window;
+SDL_Gamepad *gamepad;
 SDL_GPUDevice *device;
 SDL_GPUShader *vs, *fs;
 SDL_GPUSampler *sampler;
@@ -741,6 +742,57 @@ Surface *make_surface(const DDSURFACEDESC &d)
     surfaces.push_back(s);
     return s;
 }
+void find_gamepad()
+{
+    if (gamepad && SDL_GamepadConnected(gamepad))
+        return;
+    if (gamepad)
+        SDL_CloseGamepad(gamepad);
+    gamepad = nullptr;
+    int count = 0;
+    auto *ids = SDL_GetGamepads(&count);
+    for (int i = 0; i < count && !gamepad; ++i)
+        gamepad = SDL_OpenGamepad(ids[i]);
+    SDL_free(ids);
+}
+void stick(SDL_GamepadAxis horizontal, SDL_GamepadAxis vertical, float &x, float &y)
+{
+    const int raw_x = SDL_GetGamepadAxis(gamepad, horizontal);
+    const int raw_y = SDL_GetGamepadAxis(gamepad, vertical);
+    x = raw_x / (raw_x < 0 ? 32768.0f : 32767.0f);
+    y = raw_y / (raw_y < 0 ? 32768.0f : 32767.0f);
+    const float length = std::sqrt(x * x + y * y);
+    const float scale = length > .18f ? (std::min(length, 1.0f) - .18f) / (.82f * length) : 0.0f;
+    x *= scale;
+    y *= scale;
+}
+float trigger(SDL_GamepadAxis axis)
+{
+    return std::clamp((SDL_GetGamepadAxis(gamepad, axis) / 32767.0f - .05f) / .95f, 0.0f, 1.0f);
+}
+void read_gamepad(BHGamepadState *state, bool focused)
+{
+    *state = {};
+    if (!focused || !gamepad || !SDL_GamepadConnected(gamepad))
+        return;
+    float x, y;
+    stick(SDL_GAMEPAD_AXIS_LEFTX, SDL_GAMEPAD_AXIS_LEFTY, x, y);
+    state->axes[BH_PAD_STEER] = x;
+    state->axes[BH_PAD_LIFT] = -y;
+    state->axes[BH_PAD_MENU_Y] = y;
+    stick(SDL_GAMEPAD_AXIS_RIGHTX, SDL_GAMEPAD_AXIS_RIGHTY, x, y);
+    state->axes[BH_PAD_AIM_X] = x;
+    state->axes[BH_PAD_AIM_Y] = -y;
+    state->axes[BH_PAD_THRUST] = trigger(SDL_GAMEPAD_AXIS_RIGHT_TRIGGER) - trigger(SDL_GAMEPAD_AXIS_LEFT_TRIGGER);
+    static const SDL_GamepadButton buttons[] = {
+        SDL_GAMEPAD_BUTTON_SOUTH,     SDL_GAMEPAD_BUTTON_EAST,          SDL_GAMEPAD_BUTTON_WEST,
+        SDL_GAMEPAD_BUTTON_NORTH,     SDL_GAMEPAD_BUTTON_LEFT_SHOULDER, SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER,
+        SDL_GAMEPAD_BUTTON_START,     SDL_GAMEPAD_BUTTON_BACK,          SDL_GAMEPAD_BUTTON_DPAD_UP,
+        SDL_GAMEPAD_BUTTON_DPAD_DOWN, SDL_GAMEPAD_BUTTON_DPAD_LEFT,     SDL_GAMEPAD_BUTTON_DPAD_RIGHT};
+    for (unsigned i = 0; i < std::size(buttons); ++i)
+        if (SDL_GetGamepadButton(gamepad, buttons[i]))
+            state->buttons |= 1UL << i;
+}
 void apply_mode()
 {
     if (mode == 0)
@@ -774,6 +826,9 @@ extern "C"
             set_error("SDL init");
             return nullptr;
         }
+        /* A missing controller subsystem must not prevent keyboard play. */
+        if (SDL_InitSubSystem(SDL_INIT_GAMEPAD))
+            find_gamepad();
         FILE *f = fopen(settings_path, "r");
         if (f)
         {
@@ -884,6 +939,10 @@ extern "C"
         {
             switch (event.type)
             {
+            case SDL_EVENT_GAMEPAD_ADDED:
+            case SDL_EVENT_GAMEPAD_REMOVED:
+                find_gamepad();
+                break;
             case SDL_EVENT_QUIT:
             case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
                 quitting = true;
@@ -908,12 +967,22 @@ extern "C"
         }
         return !quitting;
     }
+    void __cdecl bh_sdl_gamepad(BHGamepadState *state)
+    {
+        read_gamepad(state, window && (SDL_GetWindowFlags(window) & SDL_WINDOW_INPUT_FOCUS) &&
+                                !(SDL_GetWindowFlags(window) & SDL_WINDOW_MINIMIZED));
+    }
     const char *__cdecl bh_sdl_error()
     {
         return error_text;
     }
     void __cdecl bh_sdl_close()
     {
+        if (gamepad)
+        {
+            SDL_CloseGamepad(gamepad);
+            gamepad = nullptr;
+        }
         if (window)
             remember_window();
         flush();

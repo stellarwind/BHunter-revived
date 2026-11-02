@@ -816,8 +816,19 @@ static int camera_cheats(BHPlayerTick *c)
         for (i = 0; i < 6; ++i)
             if (!key(c, 6 + i))
             {
-                sethalf(e, 0x2b0, (unsigned short)modes[i]);
-                if (!camera_mode(c, modes[i]))
+                long selected_mode = modes[i];
+#ifdef BH_SDL_BACKEND
+                if (i == 0 && c->snapshot && (c->snapshot->gamepad.buttons & (1UL << BH_PAD_BACK)))
+                {
+                    unsigned long j;
+                    for (j = 0; j < 6; ++j)
+                        if (modes[j] == half(e, 0x2b0))
+                            break;
+                    selected_mode = j < 6 ? modes[(j + 1) % 6] : modes[0];
+                }
+#endif
+                sethalf(e, 0x2b0, (unsigned short)selected_mode);
+                if (!camera_mode(c, selected_mode))
                     return 0;
                 sound(c, c->resources.ui_cue, 1, 2, 0, 0);
             }

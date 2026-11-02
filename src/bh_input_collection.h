@@ -10,6 +10,7 @@ typedef struct BHInputCollectionApi
     MMRESULT(WINAPI *joystick)(UINT, LPJOYINFOEX);
     BOOL(WINAPI *cursor)(LPPOINT);
     BOOL(WINAPI *recenter)(int, int);
+    void(__cdecl *gamepad)(BHGamepadState *);
 } BHInputCollectionApi;
 typedef enum BHInputCollectionError
 {

@@ -9,6 +9,13 @@ static int key(const BHInputSnapshot *s, const unsigned char *history, unsigned 
         return history[0] != 0;
     return ((const unsigned char *)s)[index + (previous ? 255 : 0)] != 0;
 }
+static int binding_key(const BHInputSnapshot *s, const unsigned char *history, const BHInputBinding *b, int previous)
+{
+    unsigned long buttons = previous ? s->previous_gamepad_buttons : s->gamepad.buttons;
+    unsigned int index = b->flags & BH_INPUT_GAMEPAD_INDEX;
+    return key(s, history, b->key[0], previous) ||
+           ((b->flags & BH_INPUT_GAMEPAD) && index <= BH_PAD_RIGHT && (buttons & (1UL << index)));
+}
 int __cdecl bh_input_evaluate(BHPlayerInputList *list, BHInputSnapshot *snapshot, int full)
 {
     unsigned char output[0x120], down[256], up[256], history[32], head;
@@ -32,17 +39,17 @@ int __cdecl bh_input_evaluate(BHPlayerInputList *list, BHInputSnapshot *snapshot
         case 1:
             if (full)
             {
-                if (key(snapshot, history, b->key[0], 0) && (!b->modifiers || key(snapshot, history, b->modifiers, 0)))
+                if (binding_key(snapshot, history, b, 0) && (!b->modifiers || key(snapshot, history, b->modifiers, 0)))
                     down[n_down++] = (unsigned char)i;
                 else
                     up[n_up++] = (unsigned char)i;
             }
-            else if (key(snapshot, history, b->key[0], 0))
+            else if (binding_key(snapshot, history, b, 0))
             {
-                if (!key(snapshot, history, b->key[0], 1) && (!b->modifiers || key(snapshot, history, b->modifiers, 0)))
+                if (!binding_key(snapshot, history, b, 1) && (!b->modifiers || key(snapshot, history, b->modifiers, 0)))
                     down[n_down++] = (unsigned char)i;
             }
-            else if (key(snapshot, history, b->key[0], 1))
+            else if (binding_key(snapshot, history, b, 1))
                 up[n_up++] = (unsigned char)i;
             break;
         case 2:
@@ -57,6 +64,9 @@ int __cdecl bh_input_evaluate(BHPlayerInputList *list, BHInputSnapshot *snapshot
             if (j >= 1 && j <= 4 && !(j & 1))
                 mouse = -mouse;
             value = value + mouse;
+            j = b->flags & BH_INPUT_GAMEPAD_INDEX;
+            if ((b->flags & BH_INPUT_GAMEPAD) && j < BH_PAD_AXIS_COUNT)
+                value += snapshot->gamepad.axes[j];
             if (!(value >= -1))
                 value = -1;
             else if (value > 1)

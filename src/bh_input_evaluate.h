@@ -1,6 +1,7 @@
 #ifndef BH_INPUT_EVALUATE_H
 #define BH_INPUT_EVALUATE_H
 #include "bh_player_input.h"
+#include "bh_gamepad.h"
 /* Exact byte relationships of original current/previous/history globals:
    previous begins255 bytes after current; history starts510 bytes after it.
    Index255 deliberately aliases the next region, preserving original reads.
@@ -10,6 +11,8 @@ typedef struct BHInputSnapshot
     unsigned char current[255], previous[255], history[32], history_head;
     float axes[8], mouse_axes[2];
     unsigned short pair3[2], pair4[2];
+    BHGamepadState gamepad;
+    unsigned long previous_gamepad_buttons;
 } BHInputSnapshot;
 /* Complete00474020 pure binding evaluation/packet production. No device/API
    calls occur. full_state selects all key states instead of edge transitions.

@@ -121,6 +121,8 @@ int __cdecl bh_input_collect(BHInputCollection *c, unsigned long *changed)
             return fail(c, BH_INPUT_COLLECTION_TOPOLOGY);
     }
     c->error = BH_INPUT_COLLECTION_OK;
+    if (c->api.gamepad)
+        c->api.gamepad(&s->gamepad);
     for (device = 0; device < 2; ++device)
         if (c->enabled[device])
         {
@@ -185,5 +187,6 @@ int __cdecl bh_input_collect(BHInputCollection *c, unsigned long *changed)
         s->previous[i] = s->current[i];
     }
     *changed = count;
+    s->previous_gamepad_buttons = s->gamepad.buttons;
     return 1;
 }

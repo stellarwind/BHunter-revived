@@ -1047,6 +1047,7 @@ static int source_owners(BHGameApp *a)
         return failure(a, 6);
     a->profile = a->config.profiles;
     a->collection.disable_mouse_motion = 1;
+    a->collection.api.gamepad = bh_sdl_gamepad;
     a->collection.api.cursor = game_cursor;
     a->collection.api.recenter = game_recenter;
     if (!bh_input_devices_start(&a->devices, a->window))

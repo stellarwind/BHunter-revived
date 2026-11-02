@@ -2,7 +2,7 @@
 
 Choose **Game**, a vehicle, then training or an unlocked episode. Follow the incoming messages and radar to find your objectives.
 
-These are the default **Standard** profile bindings. Change them under **Setup → Input configuration → Edit**; a custom save may use different keys. Mouse steering is disabled in this restoration, but mouse buttons work.
+The keyboard and mouse controls below are the default **Standard** profile bindings. Change them under **Setup → Input configuration → Edit**; a custom save may use different keys. Mouse steering is disabled in this restoration, but mouse buttons work. Gamepad controls work alongside the selected keyboard profile.
 
 ## Flying and fighting
 
@@ -42,11 +42,33 @@ Weapons must be collected/unlocked and have usable ammunition.
 | Numpad 4 / 6 | Look left / right |
 | Numpad 2 / 8 | Look up / down |
 
-## Menus and joystick
+## Gamepad
+
+Connect a supported gamepad before starting or while the game is running. These gamepad bindings are fixed; the input configuration menu edits the keyboard profile.
+
+| Control | Action |
+|---|---|
+| Left stick left / right | Turn left / right |
+| Left stick down / up | Pitch up / down (inverted flight controls) |
+| Right stick | Aim / look around |
+| Right trigger | Accelerate with analogue thrust |
+| Left trigger | Brake / reverse with analogue thrust |
+| Left bumper (LB / L1) | Fire primary weapon |
+| Right bumper (RB / R1) | Fire secondary weapon |
+| D-pad left | Cycle primary weapons |
+| D-pad right | Cycle secondary weapons |
+| Select / Back / Share | Cycle camera views |
+| Start / Menu / Options | Ask to abandon the mission; pauses single-player. Press again to resume. |
+| Bottom face button (A / Cross) | Confirm abandonment |
+| Right face button (B / Circle) | Cancel abandonment / resume |
+
+Stick and trigger dead zones help prevent drift. Keyboard controls remain active while using a gamepad. If the pad disconnects, its thrust, aiming and firing inputs are released automatically, so you can continue on the keyboard. Reconnecting restores gamepad control automatically.
+
+## Menus
 
 Use **Up/Down** to select, **Enter/Space/left mouse** to accept, and **Esc/right mouse** to go back.
 
-The Standard profile also maps joystick 1's X/Y axes to steering, its Z axis to acceleration/braking, buttons **1/2** to primary/secondary fire, and buttons **3/4** to cycling primary/secondary weapons. Choose or edit the joystick profile in Setup. Weapon cycling has no keyboard binding by default.
+On a gamepad, use **D-pad Up/Down** or the **left stick** to select, the **bottom face button (A / Cross)** to accept, and the **right face button (B / Circle)** to go back.
 
 ## Original single-player cheats
 

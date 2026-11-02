@@ -1,6 +1,7 @@
 /* Internal SDL GPU adapter. Legacy structs are retained only as data ABI. */
 #ifndef BH_SDL_ADAPTER_H
 #define BH_SDL_ADAPTER_H
+#include "bh_gamepad.h"
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -217,6 +218,7 @@ extern "C"
     typedef void(__cdecl *BHSDLMessage)(HWND, UINT, WPARAM, LPARAM, void *);
     HWND __cdecl bh_sdl_open(int hidden, BHSDLMessage, void *);
     int __cdecl bh_sdl_poll(void);
+    void __cdecl bh_sdl_gamepad(BHGamepadState *state);
     double __cdecl bh_sdl_seconds(void);
     void __cdecl bh_sdl_pace(void);
     void __cdecl bh_sdl_close(void);

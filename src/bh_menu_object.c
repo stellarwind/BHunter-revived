@@ -1,4 +1,5 @@
 #include "bh_menu_object.h"
+#include "bh_gamepad.h"
 #include <string.h>
 static void word(BHEntity *e, unsigned long offset, unsigned long value)
 {
@@ -37,6 +38,13 @@ int __cdecl bh_menu_object_create(BHMenuObject *menu, BHEntityPool *pool, BHPlay
     bh_player_input_bind_key(list, 10, name, 0, 0, 2);
     bh_player_input_bind_kind4(list, 2);
     bh_player_input_bind_axis(list, 3, name, 0, 0, 0, 0, 3, 0);
+#ifdef BH_SDL_BACKEND
+    list->bindings[0].flags = BH_INPUT_GAMEPAD | BH_PAD_UP;
+    list->bindings[1].flags = BH_INPUT_GAMEPAD | BH_PAD_DOWN;
+    list->bindings[4].flags = BH_INPUT_GAMEPAD | BH_PAD_SOUTH;
+    list->bindings[8].flags = BH_INPUT_GAMEPAD | BH_PAD_EAST;
+    list->bindings[3].flags = BH_INPUT_GAMEPAD | BH_PAD_MENU_Y;
+#endif
     word(e, 0x1d8, 0xffffffffUL);
     word(e, 0x1d4, 0xffffffffUL);
     word(e, 0x1c4, 0xffffffffUL);
