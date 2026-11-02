@@ -40,6 +40,16 @@ void __cdecl bh_interpolation_stamp(unsigned long start, unsigned long identity,
             identities[i].ordinal = tracked->commands[i].kind == BH_DRAW_FLARE ? flare_ordinal++ : ordinal++;
         }
 }
+void __cdecl bh_interpolation_part(unsigned long index, unsigned long owner, unsigned long generation,
+                                   unsigned long part)
+{
+    if (!tracked || !tracked->commands || index >= tracked->count || index >= BH_INTERPOLATION_CAPACITY || !owner ||
+        part >= 0x80000000UL || !spatial(tracked->commands[index].kind) || identities[index].owner)
+        return;
+    identities[index].owner = owner;
+    identities[index].generation = generation;
+    identities[index].ordinal = 0x80000000UL | part;
+}
 /* Path payload starts in resource (xyz), so its image belongs in identity,
    not the ordinary resource comparison. Nodes retain identity as heads change. */
 void __cdecl bh_interpolation_trail_point(unsigned long index, unsigned long owner, unsigned long generation,

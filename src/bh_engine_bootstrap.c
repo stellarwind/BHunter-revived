@@ -3,7 +3,6 @@
 #include "bh_texture_policy.h"
 #include "bh_main_camera.h"
 #include "bh_vfile.h"
-#include <stdio.h>
 static int fail(BHEngineBootstrap *c, int n)
 {
     c->error = n;
@@ -31,7 +30,6 @@ LRESULT __cdecl bh_engine_input_message(void *user, HWND w, UINT m, WPARAM a, LP
 }
 int __cdecl bh_engine_bootstrap(BHEngineBootstrap *c, HINSTANCE instance, HWND window)
 {
-    const char *error;
     unsigned long i;
     BHPlayerTick *player;
     if (!c || !c->archive || !c->images || !c->progress || !c->devices || !c->providers || !c->force || !c->sound ||
@@ -94,11 +92,7 @@ int __cdecl bh_engine_bootstrap(BHEngineBootstrap *c, HINSTANCE instance, HWND w
                               c->physics_effects, c->physics_fallback, 0))
         return fail(c, 8);
     bh_loading_display(c->progress->display, 1);
-    error = bh_render_material_initialize(c->material, c->game->textures, c->d3d);
-#ifdef DEBUGGING
-    if (c->debug && error)
-        printf("%s\n", error);
-#endif
+    bh_render_material_initialize(c->material, c->game->textures, c->d3d);
     bh_loading_progress_remove(c->progress);
     ++c->stages;
     if (!bh_frame_buffers_start(c->frames, bh_engine_frame_produce, c, 30, 0x47c70, bh_engine_input_message, c))

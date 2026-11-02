@@ -28,7 +28,7 @@ A source restoration of **BHunter**, the 1999 hovercar combat game by **InterAct
 
 1. Download and extract [release 0.2](https://github.com/stellarwind/BHunter-revived/releases/tag/v0.2) on Windows.
 2. Copy `Bhunter.bin` from your own original game into the `GAME_DATA` folder.
-3. Run `BHunter-source.exe`. Video settings apply immediately. Choose Windowed or Borderless, then an aspect ratio: 4:3, 16:9 or 21:9. Borderless renders at the selected resolution, with standard choices available even if the monitor does not advertise that ratio. The complete frame fits the desktop without stretching: a different monitor shape adds bars on one pair of edges. Common ultrawide resolutions use their exact pixel ratio. In Windowed mode, resize the window instead; bars preserve the selected ratio. Alt+Enter switches window mode. Window position, normal size, maximized state, aspect ratio and Borderless resolution are saved in `video-sdl3.ini`.
+3. Run `BHunter-source.exe`.
 
 Music plays from a mounted BHunter CD, or from `MUSIC_DATA/track02.wav` beside `GAME_DATA`. 
 
@@ -75,8 +75,6 @@ The build downloads and checksum-verifies official SDL 3.4.18. The adapter is bu
 The game uniformly scales its original 640×480 layout while wider aspects reveal additional world. In the flat HUD, credits/fines retain their centered positions; primary ammunition follows the left edge, while secondary weapons/ammunition, coating/shield gauges and radar follow the right. Message overlays follow the left edge and menus remain centered. The 3D cockpit and its instruments retain their original panel registration, perspective and relative placement as one assembly. Original 4:3 placement, UI proportions and spacing within each group are preserved. Geometry is rasterized at the selected render resolution. Simulation and sound updates remain at 30 Hz; rendering interpolates completed command snapshots and is capped at 60 Hz.
 
 For the framerate profiler, build with `python tools/build_game.py --debugging --incremental`, then run `build\BHunter-source.exe --profile`. It buffers frame, simulation, rendering and presentation timings in memory and saves `frame-times-*.csv` beside the executable when the game exits.
-
-Standalone timing, portal clipping, video layout and GPU transition checks run with `python tools/check_runtime.py`. These tests live in `tools/tests/` and are not compiled into the game.
 
 ## Unlock all levels
 

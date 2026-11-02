@@ -190,12 +190,6 @@ const char *settings_path = "video-sdl3.ini";
 void set_error(const char *context)
 {
     snprintf(error_text, sizeof(error_text), "%s: %s", context, SDL_GetError());
-    FILE *f = fopen("sdl-gpu.log", "a");
-    if (f)
-    {
-        fprintf(f, "%s\n", error_text);
-        fclose(f);
-    }
 }
 unsigned addref(void *p)
 {

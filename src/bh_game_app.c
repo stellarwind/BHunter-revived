@@ -101,9 +101,7 @@ typedef struct BHGameApp
 {
     HWND window;
     HINSTANCE instance;
-    int sound_diagnostic_logged;
     int hardware, fullscreen, quit, initialized, error, focus_sample;
-    FILE *log;
     char archive[512], config_path[512];
     long width, height, selected_waypoint, mission, ship, slot, input_changed, stay, network_failed, fine_warning,
         pending_profile;
@@ -361,7 +359,6 @@ typedef struct BHGameApp
     unsigned short query_world_index;
     const BHProviderRecord *selected_provider;
 #ifdef DEBUGGING
-    int draw_warning_logged;
     int perf_enabled;
     BHGamePerfCapture perf_capture;
     unsigned long perf_projectiles;
@@ -387,24 +384,9 @@ static const char *const city_names[16] = {"Downtown",
                                            "Mining Tunnels\nat Industrial\nComplex",
                                            "City Ring",
                                            "Bronx/Downtown\nMetro Station"};
-#ifdef DEBUGGING
-static void stage(BHGameApp *a, const char *text)
-{
-    if (a->log)
-    {
-        fprintf(a->log, "%s\n", text);
-        fflush(a->log);
-    }
-    printf("%s\n", text);
-    fflush(stdout);
-}
-#else
-#define stage(a, text) ((void)0)
-#endif
-static int failure(BHGameApp *a, int code, const char *text)
+static int failure(BHGameApp *a, int code)
 {
     a->error = code;
-    stage(a, text);
     return 0;
 }
 #ifdef DEBUGGING
@@ -417,13 +399,10 @@ static int perf_start(BHGameApp *a)
     if (!a->perf_enabled)
         return 1;
     if (!QueryPerformanceFrequency(&a->perf_frequency) || a->perf_frequency.QuadPart <= 0)
-        return failure(a, 12, "Frame timer unavailable");
+        return failure(a, 12);
 
     QueryPerformanceCounter(&a->perf_origin);
     sprintf(a->perf_path, "frame-times-%08lx-%lu.csv", GetTickCount(), GetCurrentProcessId());
-    stage(
-        a,
-        "Frame timing enabled: samples buffered in memory until exit, growing4096-sample blocks; no fixed presentation limit");
     return 1;
 }
 static void perf_record(BHGameApp *a, int produced, LARGE_INTEGER simulation_start, LARGE_INTEGER render_start,
@@ -471,7 +450,7 @@ static void perf_save(BHGameApp *a)
     unsigned long i;
     BHGamePerfSample *s;
     BHGamePerfBlock *block;
-    char text[256];
+
     if (!a->perf_capture.head)
         return;
     f = fopen(a->perf_path, "w");
@@ -489,15 +468,7 @@ static void perf_save(BHGameApp *a)
                         s->commands, s->entities, s->projectiles, s->contacts, s->rebuilds);
             }
         fclose(f);
-
-#ifdef DEBUGGING
-        sprintf(text, "Frame timing saved: %s (%lu samples, %lu dropped)", a->perf_path, a->perf_capture.count,
-                a->perf_capture.dropped);
-#endif
-        stage(a, text);
     }
-    else
-        stage(a, "Frame timing file could not be written");
     perf_dispose(&a->perf_capture);
 }
 #endif
@@ -563,7 +534,7 @@ static int restore_display(BHGameApp *a)
     LPDIRECTDRAWSURFACE surfaces[2];
     HRESULT hr;
     unsigned long i;
-    char text[128];
+
     surfaces[0] = a->primary;
     surfaces[1] = a->target;
     for (i = 0; i < 2; ++i)
@@ -574,10 +545,7 @@ static int restore_display(BHGameApp *a)
                 hr = IDirectDrawSurface_Restore(surfaces[i]);
             if (FAILED(hr))
             {
-#ifdef DEBUGGING
-                sprintf(text, "Display surface recovery failed: surface=%lu HRESULT=%08lx", i, (unsigned long)hr);
-#endif
-                return failure(a, 13, text);
+                return failure(a, 13);
             }
         }
     return 1;
@@ -642,7 +610,7 @@ static int loading_begin(BHGameApp *a)
     if (!bh_loading_images_bind(&a->loading_images, a->width, 2, a->render_mode.engine.textures.display_right,
                                 a->render_mode.engine.textures.display_left, 0) ||
         !bh_loading_images_init(&a->loading_images))
-        return failure(a, 6, "Original loading images failed");
+        return failure(a, 6);
     a->loading_display.images = &a->loading_images;
     a->loading_display.color = a->target;
     a->loading_display.primary = a->primary;
@@ -659,7 +627,7 @@ static int loading_begin(BHGameApp *a)
     }
     a->loading_progress.display = &a->loading_display;
     if (!bh_loading_progress_install(&a->loading_progress))
-        return failure(a, 6, "Loading presentation initialization failed");
+        return failure(a, 6);
     return 1;
 }
 static void __cdecl sdl_message(HWND window, UINT message, WPARAM key, LPARAM bits, void *user)
@@ -747,17 +715,17 @@ static int platform(BHGameApp *a, int show)
     BHSoftwareRaster raster;
     a->window = bh_sdl_open(0, sdl_message, a);
     if (!a->window)
-        return failure(a, 3, bh_sdl_error());
+        return failure(a, 3);
     input_window = a->window;
     strcpy(a->device_names[0].name, "SDL3 GPU");
     if (!bh_config_init(&a->config, 0) || !bh_config_bootstrap(&a->config, a->config_path, a->device_names, 1))
-        return failure(a, 6, "Config ownership initialization failed");
+        return failure(a, 6);
     a->application.config = &a->config;
     a->application.window = a->window;
     a->hardware = 1;
     a->fullscreen = 1; /* Internal flip path; SDL independently owns window mode. */
     if (DirectDrawCreate(0, &a->draw, 0) != DD_OK)
-        return failure(a, 4, "SDL renderer adapter creation failed");
+        return failure(a, 4);
     memset(&surface, 0, sizeof(surface));
     surface.dwSize = sizeof(surface);
     surface.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT | DDSD_PIXELFORMAT;
@@ -765,27 +733,27 @@ static int platform(BHGameApp *a, int show)
     surface.dwHeight = a->height;
     surface.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
     if (IDirectDraw_CreateSurface(a->draw, &surface, &a->primary, 0) != DD_OK)
-        return failure(a, 4, "SDL presentation target creation failed");
+        return failure(a, 4);
     surface.ddsCaps.dwCaps = DDSCAPS_3DDEVICE;
     if (IDirectDraw_CreateSurface(a->draw, &surface, &a->target, 0) != DD_OK ||
         !bh_render_startup_hardware(&a->render_mode.engine, a->draw, a->target, a->primary, a->width, a->height, 16))
-        return failure(a, 4, "SDL GPU renderer initialization failed");
+        return failure(a, 4);
     a->render_mode.screen = a->primary;
     a->render_mode.render = a->target;
     IDirectDrawSurface_AddRef(a->primary);
     IDirectDrawSurface_AddRef(a->target);
     if (a->hardware && !bh_texture_bind_display(&a->render_mode.engine.textures, &a->render_mode.engine.pixel))
-        return failure(a, 4, "Hardware splash display format binding failed");
+        return failure(a, 4);
     if (!bh_view_config_init(&a->view, a->width, a->height) || !bh_main_camera_settings(&a->view, 60, .2, 25000) ||
         !bh_main_camera_pose(&a->view, &a->main_camera, 0, 0, 0, 0, 0, 0) ||
         !bh_clip_init(&a->clip, a->view.near_z, a->view.far_z, 0, (float)a->width, 0, (float)a->height) ||
         !bh_screen_clip_init(&a->screen_clip, a->view.near_z, a->view.far_z, 0, (float)a->width, 0, (float)a->height) ||
         !bh_attribute_clip_init(&a->attribute_clip, a->view.near_z, a->view.far_z, 0, (float)a->width, 0,
                                 (float)a->height))
-        return failure(a, 5, "Projection/clipping initialization failed");
+        return failure(a, 5);
     if (!bh_render_state_init(&a->render_state, &a->render_mode.engine.textures) ||
         !bh_horizon_color_init(&a->horizon_colors, &a->render_mode.engine.textures))
-        return failure(a, 5, "Render-state ownership initialization failed");
+        return failure(a, 5);
     memset(&raster, 0, sizeof(raster));
     raster.width = a->width;
     raster.height = a->height;
@@ -793,7 +761,7 @@ static int platform(BHGameApp *a, int show)
     raster.tables = &a->render_mode.engine.tables;
     raster.gradient = &a->horizon_colors;
     if (!bh_primitive_dispatch_init(&a->primitive, &a->render_state, &raster, 0, (float)a->width, 0, (float)a->height))
-        return failure(a, 5, "Primitive dispatch initialization failed");
+        return failure(a, 5);
     a->prototype.camera = &a->main_camera;
     a->prototype.config = &a->view;
     a->prototype.clip = &a->clip;
@@ -808,7 +776,7 @@ static int platform(BHGameApp *a, int show)
         !bh_model_path_set(&a->models, "bsp", 0) ||
         !bh_render_resources_init(&a->resources, &a->models, &a->prototype, 0) ||
         !bh_atlas_context_init(&a->atlas, &a->render_mode.engine.textures, 320))
-        return failure(a, 5, "Model/atlas initialization failed");
+        return failure(a, 5);
     a->billboard.camera = &a->main_camera;
     a->billboard.config = &a->view;
     a->billboard.clip = &a->screen_clip;
@@ -933,9 +901,6 @@ static int platform(BHGameApp *a, int show)
     a->special_draw.queue = &a->queue;
     (void)show;
     UpdateWindow(a->window);
-    stage(a, a->hardware     ? "Fullscreen Direct3D2 HAL renderer ready"
-             : a->fullscreen ? "Fullscreen restored software renderer ready"
-                             : "Native window and restored software renderer ready");
     return 1;
 }
 static void binding(BHGameApp *a, unsigned long identity, unsigned long *destination)
@@ -1055,23 +1020,19 @@ static int __cdecl compose(BHGameBootstrap *bootstrap, unsigned long phase, void
     switch (phase)
     {
     case 1:
-        stage(a, "Building scene/query registries");
         return world_ready(a);
     case 2:
-        stage(a, "Binding live player/physics/scene");
         return player_ready(a);
     case 3:
-        stage(a, "Binding constructed menus");
         return 1;
     case 5:
         a->menu_present.frame_resource = bh_bootstrap_value(&a->bootstrap, 0x496304);
         a->flyby_camera.credit_font = a->bootstrap.menu_font;
         return a->flyby_camera.credit_font != 0;
     case 4:
-        stage(a, "Binding loaded resource consumers");
         return resources_ready(a);
     default:
-        return failure(a, 1, "Unknown composition phase");
+        return failure(a, 1);
     }
 }
 static int source_owners(BHGameApp *a)
@@ -1083,24 +1044,24 @@ static int source_owners(BHGameApp *a)
     if (!bh_player_input_owner_init(&a->inputs, 0) ||
         !bh_input_collection_init(&a->collection, &a->snapshot, &a->inputs) ||
         !bh_input_devices_bind(&a->devices, &a->collection, 0))
-        return failure(a, 6, "Input ownership initialization failed");
+        return failure(a, 6);
     a->profile = a->config.profiles;
     a->collection.disable_mouse_motion = 1;
     a->collection.api.cursor = game_cursor;
     a->collection.api.recenter = game_recenter;
     if (!bh_input_devices_start(&a->devices, a->window))
-        return failure(a, 6, "Native input device initialization failed");
+        return failure(a, 6);
     if (!bh_entities_init(&a->pool, 0x2580, 0) || !bh_sound_queue_init(&a->sound, 0, 0, 0) ||
         !bh_network_transport_init(&a->transport, 0, 0) || !bh_network_game_init(&a->network_game, &a->sessions, 0) ||
         !bh_provider_catalog_init(&a->providers, 0) || !bh_rail_paths_init(&a->rails, 0) ||
         !bh_navigation_init(&a->navigation, 0))
-        return failure(a, 6, "Entity/audio/navigation ownership initialization failed");
+        return failure(a, 6);
     bh_text_queue_init(&a->text);
     if (!bh_draw_queue_init(&a->queue, 3500, 0) || !bh_frame_buffers_bind(&a->frames, 0) ||
         !bh_script_particles_init(&a->particles, &a->pool, &a->queue) ||
         !bh_contact_effects_init(&a->contacts, &a->pool, &a->queue, 0, 0, 0, 0) ||
         !bh_collision_model_init(&a->player_collision, 0) || !bh_weapon_factory_open(&a->weapons, &a->pool, &a->sound))
-        return failure(a, 6, "Draw/physics/player ownership initialization failed");
+        return failure(a, 6);
     a->sounds.queue = &a->sound;
     a->provider_startup.catalog = &a->providers;
     a->provider_startup.modems = &a->modems;
@@ -1150,7 +1111,7 @@ static int source_owners(BHGameApp *a)
     a->pickup_render.default_draw = &a->pickup_draw;
     a->pickup_render.special_draw = &a->special_draw;
     if (!bh_pickup_render_bind(&a->pickups, &a->pickup_render))
-        return failure(a, 6, "Pickup renderer binding failed");
+        return failure(a, 6);
     a->vm.lifetime = &a->lifetime;
     a->vm.motion = &a->motion;
     a->vm.sensors = &a->sensors;
@@ -1172,7 +1133,7 @@ static int source_owners(BHGameApp *a)
     a->parser.script_prefix = "bsp\\";
     a->parser.sound_prefix = "sound\\";
     if (!bh_script_blocks_init(&a->blocks, &a->parser, &a->resources, "bsp\\", BH_BSP_PREFIX_FIRST))
-        return failure(a, 6, "Block library initialization failed");
+        return failure(a, 6);
     a->editor_world.pool = &a->pool;
     a->editor_world.library = &a->blocks;
     a->editor_world.queue = &a->queue;
@@ -1459,7 +1420,7 @@ static int world_ready(BHGameApp *a)
     BHEditorNode *node;
     BHScriptBlock *block;
     if (!n || n > GAME_WORLD_CAPACITY || a->blocks.count > N(a->block_queries))
-        return failure(a, 7, "Invalid constructed world/block counts");
+        return failure(a, 7);
     a->motion_bindings = (BHScriptMotionBinding *)calloc(n, sizeof(*a->motion_bindings));
     a->motion.bindings = a->motion_bindings;
     a->motion.binding_count = n;
@@ -1471,16 +1432,16 @@ static int world_ready(BHGameApp *a)
     a->reset_nodes = (BHWorldResetNode *)calloc(n, sizeof(*a->reset_nodes));
     if (!a->motion_bindings || !a->rooms || !a->scheduled || !a->scene_inputs || !a->segment_rooms ||
         !a->physics_worlds || !a->reset_nodes)
-        return failure(a, 7, "World registry allocation failed");
+        return failure(a, 7);
     for (i = 0; i < a->blocks.count; ++i)
         if (a->blocks.blocks[i].collision.geometry.bsp &&
             !bh_segment_query_init(a->block_queries + i, &a->blocks.blocks[i].collision.geometry))
-            return failure(a, 7, "Block collision query initialization failed");
+            return failure(a, 7);
     for (i = 0; i < n; ++i)
     {
         node = a->nodes[i];
         if (!node || node->model_index >= a->blocks.count)
-            return failure(a, 7, "Invalid placement owner");
+            return failure(a, 7);
         block = a->blocks.blocks + node->model_index;
         a->motion_bindings[i].entity = node->entity;
         a->motion_bindings[i].world = &node->placement.geometry;
@@ -1515,7 +1476,7 @@ static int world_ready(BHGameApp *a)
         !bh_scene_owner_init(&a->scene, &a->scene_bindings, a->width, a->height) ||
         !bh_world_segment_init(&a->segment, &a->nodes[0]->placement.geometry, n, a->segment_rooms, n, 0, 0,
                                a->pool.capacity))
-        return failure(a, 7, "Scene/query topology binding failed");
+        return failure(a, 7);
     a->segment.refresh_actors = refresh_segment_actors;
     a->segment.refresh_user = a;
     for (i = 0; i < n; ++i)
@@ -1547,18 +1508,18 @@ static int player_ready(BHGameApp *a)
 {
     if (a->actor_route.live_tick != &a->player_state.tick || a->vehicle_draw.clock != &a->actor_route ||
         a->script_draw.clock != &a->actor_route)
-        return failure(a, 8, "Actor consumers do not share the live simulation clock");
+        return failure(a, 8);
     if (a->player_query.contact_physics != &a->player_motion)
-        return failure(a, 8, "Car contact callback is not bound to live physics");
+        return failure(a, 8);
     if (!a->player || a->physics_bodies[0].entity != a->player ||
         a->physics_bodies[0].geometry != &a->player_collision.geometry ||
         bh_player_tick_context(a->player) != &a->player_tick)
-        return failure(a, 8, "Live player ownership mismatch");
+        return failure(a, 8);
     a->base_models[0] = &a->player_collision.geometry;
     a->physics_bodies[0].model_index = 0;
     if (!bh_physics_step_init(&a->physics, &a->pool, &a->physics_bodies[0], 1, a->physics_worlds, a->editor_world.count,
                               a->base_models, 1, &a->physics_effects, 0, 0))
-        return failure(a, 8, "Live player physics initialization failed");
+        return failure(a, 8);
     a->schedule.overlay_position = (const BHVec3 *)((char *)a->player + 0x160);
     a->player_scene.player = a->player;
     a->player_scene.queue = &a->queue;
@@ -1608,28 +1569,28 @@ static int resources_ready(BHGameApp *a)
     if (a->area.hit_sound != bh_bootstrap_value(&a->bootstrap, 0x4f54f8) ||
         a->weapon_fire.homing_sound != bh_bootstrap_value(&a->bootstrap, 0x4d1894) ||
         a->weapon_fire.empty_sound != bh_bootstrap_value(&a->bootstrap, 0x4cda10))
-        return failure(a, 9, "Original weapon cue binding mismatch");
+        return failure(a, 9);
     if (a->projectiles.next_identity != &a->debris.origin_tag || a->area.identity != &a->debris.origin_tag ||
         a->pulse.identity != &a->debris.origin_tag || a->effect.debris != &a->debris ||
         a->effect.pending_identity != a->pulse.sync_identity || a->pulse.sync_identity != &a->sync_identity)
-        return failure(a, 9, "Original projectile shared identity binding mismatch");
+        return failure(a, 9);
     if (a->weapon_target.actors_owner != &a->vehicle_lifetime.head ||
         a->weapon_arc.head_owner != &a->vehicle_lifetime.head ||
         a->pursuit.actor_head_owner != &a->vehicle_lifetime.head)
-        return failure(a, 9, "Original live target list binding mismatch");
+        return failure(a, 9);
     if (!image(a->player_scene.particle_image, a) ||
         a->player_scene.particle_image != bh_bootstrap_value(&a->bootstrap, 0x4f54d8) ||
         a->oriented.emit != scalar_polygon || a->oriented.projection_scale != a->main_camera.focal ||
         a->main_camera.focal <= 1)
-        return failure(a, 9, "Player boost/ribbon resource or projection binding missing");
+        return failure(a, 9);
     /* Every destination must receive the value published by the bootstrap;
       identities stay keys and are never interpreted as source pointers. */
     for (i = 0; i < a->binding_count; ++i)
         if (*a->bindings[i].destination != bh_bootstrap_value(&a->bootstrap, a->bindings[i].identity))
-            return failure(a, 9, "Resource consumer binding mismatch");
+            return failure(a, 9);
     if (a->bootstrap.menus_created != BH_BOOTSTRAP_MENUS || !a->player || !a->camera_entity ||
         a->physics.pool != &a->pool || !bh_entities_valid(&a->pool))
-        return failure(a, 9, "Constructed application ownership check failed");
+        return failure(a, 9);
     return 1;
 }
 #define V(id) bh_bootstrap_value(&a->bootstrap, id)
@@ -1643,7 +1604,7 @@ static int runtime_owners(BHGameApp *a)
     a->actor_rooms = (BHActorConstructRoom *)calloc(n, sizeof(*a->actor_rooms));
     a->city_ids = (long *)calloc(n, sizeof(*a->city_ids));
     if (!a->world_responses || !a->pulse_indices || !a->actor_rooms || !a->city_ids)
-        return failure(a, 9, "Actor response registry allocation failed");
+        return failure(a, 9);
     for (i = 0; i < n; ++i)
     {
         a->world_responses[i].world = a->rooms[i].world;
@@ -1662,7 +1623,7 @@ static int runtime_owners(BHGameApp *a)
             if (a->rooms[j].world == a->navigation.nodes[i].placement)
                 break;
         if (j == n)
-            return failure(a, 9, "AI navigation city owner missing");
+            return failure(a, 9);
         memcpy(a->city_ids + i, (char *)a->nodes[j]->entity + 0x11c, 4);
     }
     for (i = 0; i < N(a->actor_models); ++i)
@@ -1799,7 +1760,7 @@ static int runtime_owners(BHGameApp *a)
     a->pulse.sync_identity = &a->sync_identity;
     a->pulse_draw.queue = &a->queue;
     if (!bh_debris_context_init(&a->debris_response, &a->pool, &a->sound, V(0x496218), a->actors, N(a->actors)))
-        return failure(a, 9, "Dynamic body registry binding failed");
+        return failure(a, 9);
     a->target_draw.queue = &a->queue;
     a->target_draw.camera = &a->main_camera;
     a->target_draw.view = &a->view;
@@ -1992,7 +1953,7 @@ static void __cdecl source_produce(void *user)
 
     if (!bh_entities_focus(&a->pool, a->player_state.paused ? a->player : 0))
     {
-        failure(a, 12, "Paused player entity focus binding failed");
+        failure(a, 12);
         return;
     }
     /* The service increments the original frame clock before entity callbacks. */
@@ -2002,44 +1963,8 @@ static void __cdecl source_produce(void *user)
     a->service.packet_bytes = sizeof(a->bootstrap.all_keys->state);
     if (!bh_frame_service_tick(&a->service))
     {
-        char text[512];
-        sprintf(
-            text,
-            "Source frame producer failure: service=%d sound=%d hresult=%08lx native=%08lx player=%d query=%d weapon=%d method=%08lx target=%d arc=%d pulse=%d fire=%d tick=%lu",
-            a->service.error, a->sound.error, (unsigned long)a->sound.last_hresult,
-            (unsigned long)a->service.sound_stats.last_error, a->player_tick.error, a->player_query.error,
-            a->weapon_dispatch.error, a->weapon_dispatch.identity, a->weapon_target.error, a->weapon_arc.error,
-            a->weapon_pulse.error, a->weapon_fire.error, a->frame);
-        failure(a, 12, text);
+        failure(a, 12);
     }
-#ifdef DEBUGGING
-    if (a->service.sound_stats.last_error && !a->sound_diagnostic_logged)
-    {
-        char text[256];
-        sprintf(
-            text,
-            "Native sound diagnostic (original frame continues): hresult=%08lx frequency_failures=%lu resource=%lu slot=%lu frequency=%ld tick=%lu",
-            (unsigned long)a->service.sound_stats.last_error, a->service.sound_stats.frequency_failures,
-            a->service.sound_stats.failed_resource, a->service.sound_stats.failed_slot,
-            a->service.sound_stats.failed_frequency, a->frame);
-        stage(a, text);
-        a->sound_diagnostic_logged = 1;
-    }
-#endif
-#ifdef DEBUGGING
-    if (a->service.error == BH_FRAME_SERVICE_ENTITY)
-    {
-        char text[512];
-        sprintf(
-            text,
-            "Entity traversal failure: frame=%lu step=%d refresh=%d count=%lu phase=%s current=%08lx callback=%08lx next=%08lx generation=%lu->%lu active=%d vm=%d timer=%d",
-            a->frame, a->service.step_error, a->service.refresh_error, a->pool.failure_count,
-            a->pool.failure_refresh ? "refresh" : "step", (unsigned long)a->pool.failure_current,
-            a->pool.failure_callback, (unsigned long)a->pool.failure_next, a->pool.failure_expected_generation,
-            a->pool.failure_actual_generation, a->pool.failure_next_active, a->vm.error, a->lifetime.timers.error);
-        stage(a, text);
-    }
-#endif
 }
 static int render_frame(BHGameApp *a, BHDrawQueue *queue)
 {
@@ -2048,7 +1973,7 @@ static int render_frame(BHGameApp *a, BHDrawQueue *queue)
     if (!restore_display(a))
         return 0;
     if (!bh_present_begin(&a->begin))
-        return failure(a, 13, "Present begin failed");
+        return failure(a, 13);
     a->display.color_pixels = a->fade.pixels;
     a->display.color_pitch = a->fade.pitch;
     a->display.auxiliary_pixels = a->begin.auxiliary_pixels;
@@ -2065,20 +1990,6 @@ static int render_frame(BHGameApp *a, BHDrawQueue *queue)
     if (queue == &a->interpolation.queue)
         bh_interpolation_rendered(&a->interpolation);
     a->render.draw = saved;
-#ifdef DEBUGGING
-    if (a->render.failures && a->render.error == BH_RENDER_EXECUTE_CALLBACK && !a->draw_warning_logged)
-    {
-        char text[384];
-        sprintf(
-            text,
-            "Source draw diagnostic (original callback loop continues): failures=%lu resource=%lu draw=%d pose=%.9g,%.9g,%.9g/%.9g,%.9g,%.9g alpha=%.9g",
-            a->render.failures, a->render.failed_resource, a->render.failed_draw_error, a->render.failed_pose[0],
-            a->render.failed_pose[1], a->render.failed_pose[2], a->render.failed_pose[3], a->render.failed_pose[4],
-            a->render.failed_pose[5], a->render.failed_pose[6]);
-        stage(a, text);
-        a->draw_warning_logged = 1;
-    }
-#endif
     a->fade.pixels = a->display.color_pixels;
     a->fade.pitch = a->display.color_pitch;
     a->present.locked = a->display.locked;
@@ -2087,16 +1998,7 @@ static int render_frame(BHGameApp *a, BHDrawQueue *queue)
     a->display.locked = a->present.locked;
     if (!ok)
     {
-        char text[512];
-        sprintf(
-            text,
-            "Source renderer failed: execute=%d index=%lu kind=%lu resource=%08lx status=%d first_draw=%d first_model=%d first_clip=%d pose=%.9g,%.9g,%.9g/%.9g,%.9g,%.9g alpha=%.9g resource_draw=%d primitive=%d display=%d HRESULT=%08lx",
-            a->render.error, a->render.failed_index, a->render.failed_kind, a->render.failed_resource,
-            a->render.failed_status, a->render.failed_draw_error, a->render.failed_model_error,
-            a->render.failed_clip_error, a->render.failed_pose[0], a->render.failed_pose[1], a->render.failed_pose[2],
-            a->render.failed_pose[3], a->render.failed_pose[4], a->render.failed_pose[5], a->render.failed_pose[6],
-            a->resource_draw.error, a->primitive.error, a->display.error, (unsigned long)a->render.last_hresult);
-        return failure(a, 13, text);
+        return failure(a, 13);
     }
     return 1;
 }
@@ -2119,7 +2021,7 @@ static int manual_loop(BHGameApp *a)
 #endif
     if (a->frames.produce != source_produce || a->frames.produce_user != a ||
         a->frames.bytes != 3500UL * sizeof(BHDrawCommand) || !bh_draw_queue_dispose(&a->queue))
-        return failure(a, 12, "Source frame ownership initialization failed");
+        return failure(a, 12);
 
     a->service.input = &a->collection;
     a->service.entities = &a->pool;
@@ -2136,7 +2038,7 @@ static int manual_loop(BHGameApp *a)
     a->service.worker_done = &a->worker.done;
     a->text_capture.input = a->bootstrap.all_keys;
     a->key_capture.input = a->bootstrap.all_keys;
-    stage(a, "Manual preview running; keyboard/mouse belong to the active game window");
+
     while (!a->quit && !a->error)
     {
         if (!bh_sdl_poll())
@@ -2158,7 +2060,7 @@ static int manual_loop(BHGameApp *a)
         {
             SetCursor(NULL);
             if (!a->collection.disable_mouse_motion && !game_recenter(160, 100))
-                return failure(a, 12, "Windowed input recenter failed");
+                return failure(a, 12);
             memset(a->snapshot.mouse_axes, 0, sizeof(a->snapshot.mouse_axes));
             memset(a->snapshot.pair4, 0, sizeof(a->snapshot.pair4));
             a->collection.delta[0] = a->collection.delta[1] = 0;
@@ -2189,15 +2091,7 @@ static int manual_loop(BHGameApp *a)
         if (a->player_tick.error || a->player_query.error || a->vm.error || a->lifetime.timers.error || a->menu.error ||
             a->flyby.error || a->actor_construct.error || a->actor_response.error)
         {
-            char text[512];
-            sprintf(
-                text,
-                "Source dependency failure: player=%d query=%d vm=%d timer=%d menu=%d flyby=%d actor=%d response=%d weapon=%d method=%08lx ready=%d target=%d arc=%d sound=%d",
-                a->player_tick.error, a->player_query.error, a->vm.error, a->lifetime.timers.error, a->menu.error,
-                a->flyby.error, a->actor_construct.error, a->actor_response.error, a->weapon_dispatch.error,
-                a->weapon_dispatch.identity, a->weapon_ready.error, a->weapon_target.error, a->weapon_arc.error,
-                a->sound.error);
-            failure(a, 12, text);
+            failure(a, 12);
             break;
         }
 #ifdef DEBUGGING
@@ -2226,17 +2120,17 @@ static int manual_loop(BHGameApp *a)
             if (a->target != a->render_mode.render &&
                 IDirectDrawSurface_BltFast(a->render_mode.render, 0, 0, a->target, 0, DDBLTFAST_WAIT) != DD_OK)
             {
-                failure(a, 13, "Fullscreen copy failed");
+                failure(a, 13);
                 break;
             }
         if (IDirectDrawSurface_Flip(a->primary, 0, DDFLIP_WAIT) != DD_OK)
         {
-            failure(a, 13, "Fullscreen presentation failed");
+            failure(a, 13);
             break;
         }
         else if (IDirectDrawSurface_Blt(a->primary, &destination, a->target, 0, DDBLT_WAIT, 0) != DD_OK)
         {
-            failure(a, 13, "Windowed presentation failed");
+            failure(a, 13);
             break;
         }
 #ifdef DEBUGGING
@@ -2369,7 +2263,6 @@ int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int profi
     BHGameApp *a;
     unsigned long bytes, crc;
     int result;
-    const char *material_error;
     BHTextureImage *loaded;
     a = (BHGameApp *)calloc(1, sizeof(*a));
     if (!a)
@@ -2381,13 +2274,8 @@ int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int profi
 #endif
     a->width = 640;
     a->height = 480;
-#ifdef DEBUGGING
-    a->log = fopen("startup.log", "w");
-#endif
     if (!directory || strlen(directory) > 450)
     {
-        if (a->log)
-            fclose(a->log);
         free(a);
         return 2;
     }
@@ -2395,29 +2283,27 @@ int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int profi
     strcpy(a->config_path, "source-preview.cfg");
     if (!bh_math_environment_enter(&a->math))
     {
-        if (a->log)
-            fclose(a->log);
         free(a);
         return 2;
     }
-    stage(a, "Restored source startup; no original executable loaded");
+
     if (!bh_game_assets_verify(a->archive, &bytes, &crc))
     {
-        failure(a, 2, "Archive missing or differs from pinned data");
+        failure(a, 2);
         goto done;
     }
     if (!platform(a, show) || !source_owners(a))
         goto done;
     if (!bh_vfile_mount(a->archive))
     {
-        failure(a, 2, "Archive mount failed");
+        failure(a, 2);
         goto done;
     }
     if (!loading_begin(a))
         goto done;
     if (!bh_sound_startup(&a->sound, a->window, &a->sound_stats))
     {
-        failure(a, 6, "Native sound initialization failed");
+        failure(a, 6);
         goto done;
     }
     bh_provider_startup(&a->provider_startup);
@@ -2425,38 +2311,21 @@ int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int profi
         !bh_texture_policy_set(&a->render_mode.engine.textures, 2, 0) || !bh_bootstrap_resources(&a->bootstrap, 5) ||
         !bh_bootstrap_resources(&a->bootstrap, 6))
     {
-        char message[256];
-
-#ifdef DEBUGGING
-        sprintf(message, "Engine resources failed: game=%d sound=%d texture=%d loaded=%lu", a->bootstrap.error,
-                a->sounds.error, a->render_mode.engine.textures.error, a->bootstrap.resources_loaded);
-#endif
-        failure(a, 6, message);
+        failure(a, 6);
         goto done;
     }
     if (!bh_game_bootstrap(&a->bootstrap))
     {
-        char message[256];
-
-#ifdef DEBUGGING
-        sprintf(message, "Bootstrap failed: game=%d blocks=%d parser=%d world=%d vm=%d player=%d flyby=%d",
-                a->bootstrap.error, a->blocks.error, a->parser.error, a->world_load.error, a->vm.error,
-                a->player_create.error, a->flyby_construct.error);
-#endif
-        failure(a, a->error ? a->error : 10, message);
+        failure(a, a->error ? a->error : 10);
         goto done;
     }
     {
         unsigned long i;
-        char text[160];
 
         for (i = 0; i < N(a->actor_models); ++i)
             if (a->actor_models[i] && !bh_render_resources_lookup(a->actor_models[i], &a->resources))
             {
-#ifdef DEBUGGING
-                sprintf(text, "Actor model binding invalid: index=%lu handle=%lu", i, a->actor_models[i]);
-#endif
-                failure(a, 9, text);
+                failure(a, 9);
                 goto done;
             }
     }
@@ -2464,7 +2333,7 @@ int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int profi
         a->segment.actors[0].entity != a->player ||
         a->segment.actors[0].query->geometry != &a->player_collision.geometry)
     {
-        failure(a, 9, "Live player segment collision registry is not bound");
+        failure(a, 9);
         goto done;
     }
     if (a->player_tick.resources.menu_cue >= a->sound.resource_count ||
@@ -2472,31 +2341,28 @@ int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int profi
         a->sound.resources[a->player_tick.resources.menu_cue]->streaming ||
         !a->sound.resources[a->weapon_target.lock_sound]->streaming)
     {
-        failure(a, 9, "Confirmation beep/weapon lock sound modes are incorrect");
+        failure(a, 9);
         goto done;
     }
     /* Original00479896: final archive display before material allocation. */
     if (!bh_loading_display(&a->loading_display, 1))
     {
-        failure(a, 6, "Final loading image presentation failed");
+        failure(a, 6);
         goto done;
     }
     /* Original00479200 calls material/texture allocation after004474c0 has
       loaded all assets. Before that, every class reference count is zero. */
-    material_error =
-        bh_render_material_initialize(&a->material, &a->render_mode.engine.textures, a->render_mode.engine.d3d);
+    bh_render_material_initialize(&a->material, &a->render_mode.engine.textures, a->render_mode.engine.d3d);
     if (a->material.failures || (a->hardware && !a->material.material))
     {
-        failure(a, 4, material_error ? material_error : "Native renderer material/state initialization failed");
+        failure(a, 4);
         goto done;
     }
-    if (material_error)
-        stage(a, material_error);
     if (a->hardware)
         for (loaded = a->render_mode.engine.textures.images; loaded; loaded = loaded->next)
             if (!loaded->format || !loaded->format->slots || !loaded->format->slots->handle)
             {
-                failure(a, 4, "Hardware image has no allocated texture slot");
+                failure(a, 4);
                 goto done;
             }
     /* Original004798d5..004798f9: detach archive progress, initialize the
@@ -2504,17 +2370,17 @@ int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int profi
     bh_loading_progress_remove(&a->loading_progress);
     if (!bh_frame_buffers_start(&a->frames, source_produce, a, 30, 3500 * sizeof(BHDrawCommand), source_message, a))
     {
-        failure(a, 12, "Source frame ownership initialization failed");
+        failure(a, 12);
         goto done;
     }
     if (!bh_loading_display(&a->loading_display, 1) || !bh_loading_display(&a->loading_display, 1))
     {
-        failure(a, 6, "Final loading image presentation failed");
+        failure(a, 6);
         goto done;
     }
 
     a->initialized = 1;
-    stage(a, "Real-data startup complete");
+
     bh_force_feedback_init(&a->force_init, instance, a->window);
     manual_loop(a);
 
@@ -2522,10 +2388,8 @@ done:
     result = a->error;
 
     cleanup(a);
-    stage(a, "Source owners released");
+
     bh_math_environment_leave(&a->math);
-    if (a->log)
-        fclose(a->log);
     free(a);
     return result;
 }

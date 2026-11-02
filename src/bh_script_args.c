@@ -46,9 +46,6 @@ char *__cdecl bh_script_arg_int(char *cursor, const BHScriptArgs *definitions, i
                 return next_token(cursor);
             }
         }
-#ifdef DEBUGGING
-        printf("SCRIPT ERROR: Model %s, parameter '%s' undefined\n", definitions->model_name, cursor);
-#endif
     }
     return next_token(cursor);
 }
@@ -75,9 +72,6 @@ char *__cdecl bh_script_arg_float(char *cursor, const BHScriptArgs *definitions,
                 return next_token(cursor);
             }
         }
-#ifdef DEBUGGING
-        printf("SCRIPT ERROR: Model %s, parameter '%s' undefined\n", definitions->model_name, cursor);
-#endif
     }
     return next_token(cursor);
 }

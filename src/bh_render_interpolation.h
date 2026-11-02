@@ -37,6 +37,9 @@ void __cdecl bh_interpolation_reset(void);
 unsigned long __cdecl bh_interpolation_mark(void);
 /* Nested draw owners stamp first. Enclosing callbacks preserve those identities. */
 void __cdecl bh_interpolation_stamp(unsigned long start, unsigned long identity, unsigned long generation);
+/* Stable producer-defined parts use a separate namespace from automatic ordinals. */
+void __cdecl bh_interpolation_part(unsigned long index, unsigned long owner, unsigned long generation,
+                                   unsigned long part);
 void __cdecl bh_interpolation_trail_point(unsigned long index, unsigned long owner, unsigned long generation,
                                           unsigned long older_owner, unsigned long older_generation,
                                           unsigned long image);

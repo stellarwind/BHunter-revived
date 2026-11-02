@@ -25,13 +25,7 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE previous, LPSTR command, int sh
     if (!SetCurrentDirectoryA(path))
         return 2;
     result = bh_game_app_run(instance, "GAME_DATA", profile, show);
-#ifdef DEBUGGING
-    if (result)
-        MessageBoxA(0, "The game stopped at a dependency error. See startup.log for details.", "BHunter",
-                    MB_OK | MB_ICONERROR);
-#else
     if (result)
         MessageBoxA(0, "The game stopped at a dependency error.", "BHunter", MB_OK | MB_ICONERROR);
-#endif
     return result;
 }

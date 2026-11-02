@@ -3,6 +3,9 @@
 #include "bh_camera_curve.h"
 #include "bh_rotation.h"
 #include "bh_fp.h"
+#ifdef BH_SDL_BACKEND
+#include "bh_render_interpolation.h"
+#endif
 #include <math.h>
 #include <float.h>
 #include <stdlib.h>
@@ -48,6 +51,20 @@ static __inline float stored(double x)
     written.value = (float)x;
     read.bits = written.bits;
     return read.value;
+}
+/* Each lamp keeps its identity when the optional damage sprite appears. */
+static void glow_sprite(BHActorVehicleDrawContext *c, BHEntity *e, unsigned long part, unsigned long resource,
+                        const BHVec3 *point, float alpha)
+{
+#ifdef BH_SDL_BACKEND
+    unsigned long index = c->queue->count;
+    if (bh_draw_billboard(c->queue, 3, resource, point, 2, 2, 0, 0, alpha) > 0)
+        bh_interpolation_part(index, (unsigned long)e, e->generation, part);
+#else
+    (void)e;
+    (void)part;
+    bh_draw_billboard(c->queue, 3, resource, point, 2, 2, 0, 0, alpha);
+#endif
 }
 void __cdecl bh_actor_vehicle_pose_core(BHActorVehicleDrawContext *c, BHEntity *e, unsigned short tick)
 {
@@ -120,17 +137,17 @@ void __cdecl bh_actor_vehicle_pose_core(BHActorVehicleDrawContext *c, BHEntity *
         bh_mat34_rotate_x(angles.y, &matrix);
         bh_mat34_rotate_z(angles.z, &matrix);
         clock = (double)c->animation_clock * .03125;
-#define POSE_GLOW(gx, rate, resource)                                                                                  \
+#define POSE_GLOW(part, gx, rate, resource)                                                                            \
     local.x = (gx);                                                                                                    \
     local.y = -.95f;                                                                                                   \
     local.z = -.65f;                                                                                                   \
     bh_mat34_transform_point(&matrix, &local, &glow);                                                                  \
     alpha = natural((sin(clock * (rate)) - (-1.0)) * .5);                                                              \
-    bh_draw_billboard(c->queue, 3, (resource), &glow, 2, 2, 0, 0, alpha)
-        POSE_GLOW(.6f, 25.5, c->glow_first);
-        POSE_GLOW(.2f, 18.5, c->glow_first);
-        POSE_GLOW(-.2f, 28.5, c->glow_second);
-        POSE_GLOW(-.6f, 23.5, c->glow_second);
+    glow_sprite(c, e, (part), (resource), &glow, alpha)
+        POSE_GLOW(0, .6f, 25.5, c->glow_first);
+        POSE_GLOW(1, .2f, 18.5, c->glow_first);
+        POSE_GLOW(2, -.2f, 28.5, c->glow_second);
+        POSE_GLOW(3, -.6f, 23.5, c->glow_second);
 #undef POSE_GLOW
     }
     a->sound_frames = 2;
