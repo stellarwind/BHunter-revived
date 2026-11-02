@@ -28,7 +28,7 @@ static void stop_field(BHPlayerReset *reset, BHEntity *player, unsigned int offs
     if (handle != BH_SOUND_INVALID)
     {
         ++reset->attempted_stops;
-        if (!bh_sound_stop(reset->sound, handle))
+        if (!bh_sound_stop(reset->sound, handle) && reset->sound->error != BH_SOUND_STALE)
             ++reset->failed_stops;
     }
     put_long(player, offset, BH_SOUND_INVALID);
@@ -86,6 +86,15 @@ int __cdecl bh_player_reset(BHPlayerReset *reset)
     put_long(player, 0x240, 0);
     for (i = 0; i < 10; i++)
     {
+        /* Target/arc charge voices belong to the weapon, not the player's
+           four sound fields. Reset before ready methods overwrite the handle. */
+        stop_field(reset, weapons[i], 0x100);
+        states[i]->common.word_e8 = 0;
+        states[i]->common.word_f0 = 0;
+        states[i]->common.word_f4 = 0;
+        states[i]->common.hud.target = NULL;
+        states[i]->common.hud.charge = 0;
+        states[i]->common.word_108 = 0;
         states[i]->common.available_ec = 0;
         states[i]->common.ammo = 0;
     }

@@ -129,6 +129,8 @@ static int return_menu(BHPlayerTick *c)
         return fail(c, 1);
     if (!camera_reset(c, 0) || !bh_player_reset(c->reset))
         return fail(c, 3);
+    /* Retain the engine request for the next game, but silence it now. */
+    bh_sound_update(c->sound, word(c->player, 0x220), 0, 1, NULL, NULL);
     c->panel->messages->ring_start = 0;
     c->panel->messages->ring_count = 0;
     c->panel->messages->last_index = -1;
@@ -337,9 +339,10 @@ static void cue(BHPlayerTick *c, unsigned long resource, float delay)
     if (!e)
         return;
     bh_script_lifetime_read(e, &life);
+    life.script_loaded = 0;
     life.mission_countdown = delay;
     life.mission_resource = resource;
-    if (!bh_script_lifetime_bind(c->lifetime, e, &life, 0))
+    if (!bh_script_lifetime_bind(c->lifetime, e, &life, bh_script_unloaded_query))
     {
         bh_entity_release(c->pool, e);
         c->error = 1;
@@ -549,7 +552,7 @@ static int ground(BHPlayerTick *c)
     int found = 0, result, n, j, random;
     float fraction, strength, cosine, sine, radius, width, fall, angle, size, rate, alpha;
     double raw_angle;
-    if (!getbyte(e, 0x2bb))
+    if (!getbyte(e, 0x2bb) || !c->state->mode)
         return 1;
     handle = word(e, 0x228);
     if (!half(e, 0x2b4))
@@ -878,8 +881,13 @@ static int damage_timers(BHPlayerTick *c)
     unsigned long i, image, handle;
     short countdown;
     speed = rf(((double)forward.x * motion.x + (double)forward.z * motion.z) + (double)forward.y * motion.y);
-    bh_sound_update(c->sound, word(e, 0x220), rf(.3 + (double)number(e, 0x2f8) * .05), rf(.5 + fabs(speed) * .01),
+    bh_sound_update(c->sound, word(e, 0x220), s->mode ? rf(.3 + (double)number(e, 0x2f8) * .05) : 0,
+                    rf(.5 + fabs(speed) * .01),
                     &e->position, &motion);
+    /* The player still ticks behind the flyby menu. It must not recreate
+       damage/boost loops after return_menu has retired their handles. */
+    if (!s->mode)
+        return 1;
     if (half(e, 0x2b4) && rand() < 16384 && s->death_frames < 95)
     {
         if (!c->particles)

@@ -31,6 +31,7 @@ typedef struct BHRemoteQuery
     const BHEffectWorldIndex *worlds;
     unsigned long world_count;
     BHNetworkTransport *transport;
+    BHSoundQueue *sound;
     unsigned short tick;
     unsigned char packet[32];
     unsigned long wire_size, sends;
@@ -39,8 +40,8 @@ typedef struct BHRemoteQuery
 } BHRemoteQuery;
 /* Whole00423e70. Events0/3/16/17/20: actual prediction/packet codec/transport,
    nine target-reference removals and dual-list/remote-slot/pool retirement.
-   All bindings remain borrowed. No sound Stop or global query is added to
-   retirement (the original owner calls neither). Output packet >=40bytes.
+   All bindings remain borrowed. Retirement stops the owned engine voice
+   before releasing its entity. Output packet >=40bytes.
    Source guards reject bad bindings/list reciprocity before list mutation. */
 int __cdecl bh_remote_query(BHRemoteQuery *, BHEntity *, BHRemoteQueryPacket *);
 #endif

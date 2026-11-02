@@ -442,6 +442,7 @@ int __cdecl bh_sound_stop(BHSoundQueue *q, unsigned long handle)
     BHSoundVoice *v;
     BHSoundResource *r;
     unsigned long i;
+    int backend_ok = 1;
     v = bh_sound_voice(q, handle);
     if (!v)
     {
@@ -461,6 +462,7 @@ int __cdecl bh_sound_stop(BHSoundQueue *q, unsigned long handle)
         r->voices[i] = NULL;
         r->playing[i] = 0;
         q->last_hresult = IDirectSoundBuffer_Stop(r->buffers[i]);
+        backend_ok = q->last_hresult == DS_OK;
     }
     else
     {
@@ -470,10 +472,24 @@ int __cdecl bh_sound_stop(BHSoundQueue *q, unsigned long handle)
             r->stream_head = v->next;
         if (v->next)
             v->next->previous = v->previous;
+        /* A loop's native buffers outlive its requests. Retire the last
+           request synchronously: a throttled tick (or no active listener)
+           must not leave a warning/projectile/menu loop playing forever. */
+        if (!r->stream_head)
+            for (i = 0; i < r->buffer_count && i < 3; ++i)
+                if (r->playing[i])
+                {
+                    q->last_hresult = IDirectSoundBuffer_Stop(r->buffers[i]);
+                    if (q->last_hresult != DS_OK)
+                        backend_ok = 0;
+                    r->playing[i] = 0;
+                }
+        /* Shared resources must reselect surviving requests on the next tick. */
+        r->phase = 0;
     }
     v->generation = (unsigned short)(v->generation + 1);
     v->next = q->free_voices;
     q->free_voices = v;
-    q->error = BH_SOUND_OK;
-    return 1;
+    q->error = backend_ok ? BH_SOUND_OK : BH_SOUND_BACKEND;
+    return backend_ok;
 }

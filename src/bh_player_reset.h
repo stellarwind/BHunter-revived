@@ -19,7 +19,8 @@ typedef struct BHPlayerReset
     BHPlayerResetError error;
 } BHPlayerReset;
 /* Complete 00421bc0. Validate live player/ten exact weapon identities first,
-   then preserve the original sound-stop and field-write order. A failed sound
+   then stop player and weapon-owned voices and clear weapon charge state.
+   The engine voice is retained for reuse after respawn. A failed sound
    stop never aborts later writes; return 0 reports it after full reset. Signed
    ammo ceilings retain negative limits rather than inventing a zero floor. */
 int __cdecl bh_player_reset(BHPlayerReset *);

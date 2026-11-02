@@ -126,6 +126,7 @@ static void __cdecl query(BHEntity *e, void *packet)
     memcpy(&c, e->payload + 536, 4);
     if (c && c->query)
     {
+        c->query->sound = c->tick->sound;
         c->query->tick = (unsigned short)*c->simulation_tick;
         bh_remote_query(c->query, e, (BHRemoteQueryPacket *)packet);
     }
@@ -237,6 +238,16 @@ static int retire(BHRemoteMessages *c, unsigned long slot)
     next = (BHEntity *)word(e, 0xf0);
     if ((previous ? (BHEntity *)word(previous, 0xf0) : *r->head) != e || (next && (BHEntity *)word(next, 0xec) != e))
         return 0;
+    /* Departure bypasses the event-20 retirement path. Stop before the
+       entity (and its only copy of the engine handle) is released. */
+    i = word(e, 0x104);
+    if (i != BH_SOUND_INVALID)
+    {
+        if (!c->sound)
+            return 0;
+        bh_sound_stop(c->sound, i);
+        setword(e, 0x104, BH_SOUND_INVALID);
+    }
     r->remote[slot] = 0;
     if (room)
     {

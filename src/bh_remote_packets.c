@@ -71,6 +71,7 @@ static void __cdecl query(BHEntity *e, void *p)
     memcpy(&c, e->payload + 536, 4);
     if (c && c->query)
     {
+        c->query->sound = c->tick->sound;
         c->query->tick = (unsigned short)*c->simulation_tick;
         bh_remote_query(c->query, e, (BHRemoteQueryPacket *)p);
     }

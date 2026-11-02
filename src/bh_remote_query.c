@@ -23,7 +23,7 @@ static int retire(BHRemoteQuery *c, BHEntity *e)
     BHWorldGeometry *world;
     BHPickupRoom *room = NULL;
     BHEntity *rp, *rn, *gp, *gn, *at;
-    unsigned long i, n = 0;
+    unsigned long i, n = 0, voice;
     short slot;
     if (!c->pool || !c->head || !c->count || !c->remote || !*c->count)
         return fail(c);
@@ -53,6 +53,15 @@ static int retire(BHRemoteQuery *c, BHEntity *e)
     }
     if ((gp ? link(gp, 0xf0) : *c->head) != e || (gn && link(gn, 0xec) != e))
         return fail(c);
+    memcpy(&voice, (char *)e + 0x104, 4);
+    if (voice != BH_SOUND_INVALID && !c->sound)
+        return fail(c);
+    if (voice != BH_SOUND_INVALID)
+    {
+        bh_sound_stop(c->sound, voice);
+        voice = BH_SOUND_INVALID;
+        memcpy((char *)e + 0x104, &voice, 4);
+    }
     if (world)
     {
         if (rp)

@@ -82,7 +82,10 @@ unsigned long __cdecl bh_sound_request(BHSoundQueue *queue, unsigned long resour
                                        const BHVec3 *position, const BHVec3 *velocity);
 int __cdecl bh_sound_update(BHSoundQueue *queue, unsigned long handle, float level, float pitch, const BHVec3 *position,
                             const BHVec3 *velocity);                  /* 0047c050: 1 updated, 0 stale, -1 invalid */
-int __cdecl bh_sound_stop(BHSoundQueue *queue, unsigned long handle); /* 0047c140 */
+/* 0047c140 with synchronous native Stop when the last loop request retires,
+   including without a listener/tick. Shared loops reselect next tick.
+   Backend failure still retires the handle and is reported as 0. */
+int __cdecl bh_sound_stop(BHSoundQueue *queue, unsigned long handle);
 /* Checked source view uses the same signed-generation validation as originals. */
 BHSoundVoice *__cdecl bh_sound_voice(BHSoundQueue *queue, unsigned long handle);
 /* 0047b710: original single listener (index 0). Nonzero enabled stores the
