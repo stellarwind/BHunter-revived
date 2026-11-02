@@ -7,18 +7,6 @@
 #include <math.h>
 #include <float.h>
 
-static int member(BHWorldGeometry *first, unsigned long count, const BHWorldGeometry *target)
-{
-    BHWorldGeometry *p = first;
-    unsigned long i;
-    for (i = 0; i < count; ++i)
-    {
-        if (p == target)
-            return 1;
-        p = (BHWorldGeometry *)p->navigation.next;
-    }
-    return 0;
-}
 static int contains(const BHWorldGeometry *p, const BHVec3 *point, float margin)
 {
     if (p->owner)
@@ -35,33 +23,27 @@ BHWorldGeometry *__cdecl bh_world_locate(BHWorldGeometry *first, unsigned long c
     if (!first || !count || count > 65535 || !point || !_finite(point->x) || !_finite(point->y) || !_finite(point->z) ||
         !_finite(margin))
         return NULL;
-    p = first;
-    for (i = 0; i < count; ++i)
-    {
-        if (!p || (i && p == first))
-            return NULL;
-        p = (BHWorldGeometry *)p->navigation.next;
-    }
-    if (p != first || (hint && !member(first, count, hint)))
-        return NULL;
+    /* 0040a8c0 trusts the scene's live links. Scene owners validate topology
+       when binding it; repeating whole-ring and membership checks here makes
+       every projectile/route lookup proportional to the entire level. */
     if (hint)
         for (i = 0; i < 6; ++i)
             if (hint->navigation.portals[i].neighbor)
             {
                 p = (BHWorldGeometry *)hint->navigation.portals[i].neighbor;
-                if (!member(first, count, p))
-                    return NULL;
                 if (contains(p, point, margin))
                     return p;
             }
     start = hint ? hint : first;
     p = start;
-    do
+    for (i = 0; p && i < count; ++i)
     {
         if (contains(p, point, margin))
             return p;
         p = (BHWorldGeometry *)p->navigation.next;
-    } while (p != start);
+        if (p == start)
+            break;
+    }
     return NULL;
 }
 int __cdecl bh_portal_center(const BHPortal *p, BHVec3 *out)

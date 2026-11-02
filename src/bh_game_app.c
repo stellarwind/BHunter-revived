@@ -224,6 +224,7 @@ typedef struct BHGameApp
     BHNavigation navigation;
     BHWorldSegmentContext segment;
     BHWorldSegmentRoom *segment_rooms;
+    BHWorldSegmentRoom **segment_room_index;
     BHSceneBindings scene_bindings;
     BHSceneBindingInput *scene_inputs;
     BHPickupRoom *rooms;
@@ -1389,7 +1390,7 @@ static int source_owners(BHGameApp *a)
    BHEntity. Resolve each relationship through the owning block/node table. */
 static int world_ready(BHGameApp *a)
 {
-    unsigned long i, n = a->editor_world.count;
+    unsigned long i, index_capacity, n = a->editor_world.count;
     BHEditorNode *node;
     BHScriptBlock *block;
     if (!n || n > GAME_WORLD_CAPACITY || a->blocks.count > N(a->block_queries))
@@ -1449,6 +1450,12 @@ static int world_ready(BHGameApp *a)
         !bh_scene_owner_init(&a->scene, &a->scene_bindings, a->width, a->height) ||
         !bh_world_segment_init(&a->segment, &a->nodes[0]->placement.geometry, n, a->segment_rooms, n, 0, 0,
                                a->pool.capacity))
+        return failure(a, 7);
+    for (index_capacity = 1; index_capacity < n * 2; index_capacity *= 2)
+        ;
+    a->segment_room_index = (BHWorldSegmentRoom **)calloc(index_capacity, sizeof(*a->segment_room_index));
+    if (!a->segment_room_index ||
+        !bh_world_segment_index_rooms(&a->segment, a->segment_room_index, index_capacity))
         return failure(a, 7);
     a->segment.refresh_actors = refresh_segment_actors;
     a->segment.refresh_user = a;
@@ -2212,6 +2219,7 @@ static void cleanup(BHGameApp *a)
     free(a->rooms);
     free(a->scheduled);
     free(a->scene_inputs);
+    free(a->segment_room_index);
     free(a->segment_rooms);
     free(a->physics_worlds);
     free(a->reset_nodes);

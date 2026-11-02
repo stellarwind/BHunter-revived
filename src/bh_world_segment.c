@@ -15,10 +15,50 @@ typedef char actor_payload_offset[offsetof(BHEntity, payload) == 0xe4 ? 1 : -1];
 static BHWorldSegmentRoom *room(BHWorldSegmentContext *q, const BHWorldGeometry *w)
 {
     unsigned long i;
+    if (q->room_index)
+    {
+        i = ((unsigned long)w >> 4) & q->room_index_mask;
+        while (q->room_index[i])
+        {
+            if (q->room_index[i]->world == w)
+                return q->room_index[i];
+            i = (i + 1) & q->room_index_mask;
+        }
+        return NULL;
+    }
     for (i = 0; i < q->room_count; ++i)
         if (q->rooms[i].world == w)
             return q->rooms + i;
     return NULL;
+}
+int __cdecl bh_world_segment_index_rooms(BHWorldSegmentContext *q, BHWorldSegmentRoom **workspace,
+                                         unsigned long capacity)
+{
+    unsigned long i, slot;
+    if (!q || q->busy)
+        return 0;
+    q->room_index = NULL;
+    q->room_index_mask = 0;
+    if (!q->rooms || !q->room_count || q->room_count > 65535 || !workspace ||
+        capacity < q->room_count * 2 || capacity > 131072 || (capacity & (capacity - 1)))
+        return 0;
+    memset(workspace, 0, capacity * sizeof(*workspace));
+    for (i = 0; i < q->room_count; ++i)
+    {
+        if (!q->rooms[i].world)
+            return 0;
+        slot = ((unsigned long)q->rooms[i].world >> 4) & (capacity - 1);
+        while (workspace[slot])
+        {
+            if (workspace[slot]->world == q->rooms[i].world)
+                return 0;
+            slot = (slot + 1) & (capacity - 1);
+        }
+        workspace[slot] = q->rooms + i;
+    }
+    q->room_index = workspace;
+    q->room_index_mask = capacity - 1;
+    return 1;
 }
 static int fail(BHWorldSegmentContext *q, BHWorldSegmentError e)
 {

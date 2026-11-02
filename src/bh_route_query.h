@@ -4,9 +4,11 @@
 
 /* 0040a8c0: inclusive AABB ownership, with neighbor-slot priority before a
    ring scan starting at hint (or first). Owned child placements are skipped.
-   Signed margin is preserved: positive expands, negative shrinks. All inputs
-   and ring members must be accessible/live; malformed ring, foreign hint or
-   nonfinite point/margin returns NULL. No nearest-room fallback is invented. */
+   Signed margin is preserved: positive expands, negative shrinks. Scene owners
+   validate links/membership at binding time. The ring, hint and portal targets
+   must remain accessible/live members until the owner releases the scene.
+   Queries do not revalidate topology; fallback traversal is bounded by count.
+   Nonfinite point/margin returns NULL. No nearest-room fallback is invented. */
 BHWorldGeometry *__cdecl bh_world_locate(BHWorldGeometry *first, unsigned long scene_count, BHWorldGeometry *hint,
                                          const BHVec3 *point, float margin);
 /* 00433f70/00434040: scratch aperture center and signed axis normal. Valid

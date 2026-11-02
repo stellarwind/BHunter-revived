@@ -46,6 +46,10 @@ typedef struct BHWorldSegmentContext
        mutate the registry during traversal; NULL retains fixed fixture inputs. */
     int(__cdecl *refresh_actors)(struct BHWorldSegmentContext *, void *);
     void *refresh_user;
+    /* Optional borrowed index of the immutable room bindings. Rebuilt by the
+       scene owner after replacing bindings; fresh init clears it. */
+    BHWorldSegmentRoom **room_index;
+    unsigned long room_index_mask;
 } BHWorldSegmentContext;
 typedef struct BHWorldSegmentHit
 {
@@ -61,6 +65,12 @@ int __cdecl bh_world_segment_init(BHWorldSegmentContext *, BHWorldGeometry *firs
                                   BHWorldSegmentRoom *rooms, unsigned long room_count,
                                   const BHWorldSegmentActor *actors, unsigned long actor_count,
                                   unsigned long max_room_actors);
+/* Bind caller-owned zeroable workspace: power-of-two capacity >= 2*room_count.
+   Indexing changes no traversal order. Keep workspace and room/world bindings
+   alive and unchanged until reinitialization or scene disposal. Failure drops
+   the index and retains the linear lookup. No allocations occur in queries. */
+int __cdecl bh_world_segment_index_rooms(BHWorldSegmentContext *, BHWorldSegmentRoom **workspace,
+                                         unsigned long capacity);
 /* Complete0040c4a0, owning0040ba40 and0040b020. Returns1 hit,0 miss,-1 invalid.
    Prior room cache is retained when lookup fails, as in original. A NULL cache
    with no containing room returns before global actors. Cache is updated once
