@@ -7,22 +7,34 @@
 #include <math.h>
 #include <float.h>
 
-static int contains(const BHWorldGeometry *p, const BHVec3 *point, float margin)
+static int contains(const BHWorldGeometry *p, const float *lower, const float *upper)
 {
     if (p->owner)
         return 0;
-    return p->minimum.x <= (double)point->x + margin && (double)point->x - margin <= p->maximum.x &&
-           p->minimum.y <= (double)point->y + margin && (double)point->y - margin <= p->maximum.y &&
-           p->minimum.z <= (double)point->z + margin && (double)point->z - margin <= p->maximum.z;
+    return p->minimum.x <= upper[0] && lower[0] <= p->maximum.x && p->minimum.y <= upper[1] &&
+           lower[1] <= p->maximum.y && p->minimum.z <= upper[2] && lower[2] <= p->maximum.z;
 }
 BHWorldGeometry *__cdecl bh_world_locate(BHWorldGeometry *first, unsigned long count, BHWorldGeometry *hint,
                                          const BHVec3 *point, float margin)
 {
     BHWorldGeometry *p, *start;
     unsigned long i;
+    float lower[3], upper[3];
     if (!first || !count || count > 65535 || !point || !_finite(point->x) || !_finite(point->y) || !_finite(point->z) ||
         !_finite(margin))
         return NULL;
+    if (margin == 0)
+    {
+        memcpy(lower, point, sizeof(lower));
+        memcpy(upper, point, sizeof(upper));
+    }
+    else
+        /* 0040aa68..0040aa7c stores the expanded bounds before either search. */
+        for (i = 0; i < 3; ++i)
+        {
+            bh_round_float(lower + i, (double)((const float *)point)[i] - margin);
+            bh_round_float(upper + i, (double)((const float *)point)[i] + margin);
+        }
     /* 0040a8c0 trusts the scene's live links. Scene owners validate topology
        when binding it; repeating whole-ring and membership checks here makes
        every projectile/route lookup proportional to the entire level. */
@@ -31,14 +43,14 @@ BHWorldGeometry *__cdecl bh_world_locate(BHWorldGeometry *first, unsigned long c
             if (hint->navigation.portals[i].neighbor)
             {
                 p = (BHWorldGeometry *)hint->navigation.portals[i].neighbor;
-                if (contains(p, point, margin))
+                if (contains(p, lower, upper))
                     return p;
             }
     start = hint ? hint : first;
     p = start;
     for (i = 0; p && i < count; ++i)
     {
-        if (contains(p, point, margin))
+        if (contains(p, lower, upper))
             return p;
         p = (BHWorldGeometry *)p->navigation.next;
         if (p == start)

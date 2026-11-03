@@ -480,8 +480,7 @@ static BHEntity **__cdecl marker_room_head(BHEntity *owner, void *user)
     BHGameApp *a = (BHGameApp *)user;
     unsigned long i;
     long found = bh_binding_find(&a->world_load.actor_index, owner, NULL);
-    if (found >= 0 && (unsigned long)found < a->homing.response_count &&
-        a->world_responses[found].receiver == owner)
+    if (found >= 0 && (unsigned long)found < a->homing.response_count && a->world_responses[found].receiver == owner)
         return &a->rooms[found].pickups;
     for (i = 0; i < a->homing.response_count; ++i)
         if (a->world_responses[i].receiver == owner)
@@ -509,8 +508,7 @@ static int __cdecl refresh_segment_actors(BHWorldSegmentContext *q, void *user)
         else if (a->segment_actors[i].entity == e && a->segment_actors[i].query &&
                  (index = (unsigned long)(a->segment_actors[i].query - a->actor_queries)) > 0 &&
                  index <= N(a->target_slots) && a->actor_query_entities[index] == e &&
-                 a->actor_query_generations[index] == e->generation &&
-                 a->target_slots[index - 1].body.entity == e &&
+                 a->actor_query_generations[index] == e->generation && a->target_slots[index - 1].body.entity == e &&
                  a->target_slots[index - 1].body.generation == e->generation)
             geometry = &a->target_slots[index - 1].collision.geometry;
         else
@@ -1467,8 +1465,7 @@ static int world_ready(BHGameApp *a)
     for (index_capacity = 1; index_capacity < n * 2; index_capacity *= 2)
         ;
     a->segment_room_index = (BHWorldSegmentRoom **)calloc(index_capacity, sizeof(*a->segment_room_index));
-    if (!a->segment_room_index ||
-        !bh_world_segment_index_rooms(&a->segment, a->segment_room_index, index_capacity))
+    if (!a->segment_room_index || !bh_world_segment_index_rooms(&a->segment, a->segment_room_index, index_capacity))
         return failure(a, 7);
     a->binding_allocator = a->pool.allocator;
     if (!bh_binding_init(&a->world_binding_index, n, &a->binding_allocator))
@@ -1478,7 +1475,7 @@ static int world_ready(BHGameApp *a)
             return failure(a, 7);
     a->actor_route.room_index = &a->world_binding_index;
     a->player_tick.room_index = &a->world_binding_index;
-    a->homing.response_index = &a->world_binding_index;
+    a->projectile_effects.response_index = &a->world_binding_index;
     a->segment.refresh_actors = refresh_segment_actors;
     a->segment.refresh_user = a;
     for (i = 0; i < n; ++i)
@@ -2312,21 +2309,6 @@ int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int profi
                 failure(a, 9);
                 goto done;
             }
-    }
-    if (!refresh_segment_actors(&a->segment, a) || a->segment.actor_count != 1 ||
-        a->segment.actors[0].entity != a->player ||
-        a->segment.actors[0].query->geometry != &a->player_collision.geometry)
-    {
-        failure(a, 9);
-        goto done;
-    }
-    if (a->player_tick.resources.menu_cue >= a->sound.resource_count ||
-        a->weapon_target.lock_sound >= a->sound.resource_count ||
-        a->sound.resources[a->player_tick.resources.menu_cue]->streaming ||
-        !a->sound.resources[a->weapon_target.lock_sound]->streaming)
-    {
-        failure(a, 9);
-        goto done;
     }
     /* Original00479896: final archive display before material allocation. */
     if (!bh_loading_display(&a->loading_display, 1))

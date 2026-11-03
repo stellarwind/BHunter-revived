@@ -145,7 +145,7 @@ void __cdecl bh_debris_receive(BHEntity *entity, void *packet)
     BHDebrisOwnerPacket owner;
     BHVec3 n, arm, impulse, torque, zero = {0, 0, 0};
     double x, y, z, length, factor, normal_factor, mass_impulse;
-    float y_force, pitch;
+    float x_force, y_force, pitch;
     long event;
     unsigned long i;
     if (!b || !packet)
@@ -218,7 +218,9 @@ void __cdecl bh_debris_receive(BHEntity *entity, void *packet)
         for (i = 0; i < 3; ++i)
             bh_round_float(((float *)&impulse) + i, ((double)((float *)&n)[i] * mass_impulse) * 270.0);
         bh_round_float(&y_force, (double)contact.normal.y * normal_factor);
-        bh_round_float(&s->acceleration.x, (double)s->acceleration.x - contact.normal.x * normal_factor);
+        /* 0043cacd/0043cad7 reload the X force from its binary32 spill. */
+        bh_round_float(&x_force, (double)contact.normal.x * normal_factor);
+        bh_round_float(&s->acceleration.x, (double)s->acceleration.x - x_force);
         bh_round_float(&s->acceleration.y, (double)s->acceleration.y - y_force);
         bh_round_float(&s->acceleration.z, (double)s->acceleration.z - contact.normal.z * normal_factor);
         bh_vec3_cross(&arm, &impulse, &torque);

@@ -4,7 +4,8 @@
 
 /* 0040a8c0: inclusive AABB ownership, with neighbor-slot priority before a
    ring scan starting at hint (or first). Owned child placements are skipped.
-   Signed margin is preserved: positive expands, negative shrinks. Scene owners
+   Signed margin is preserved: positive expands, negative shrinks. Expanded
+   bounds are stored as binary32 before comparisons. Scene owners
    validate links/membership at binding time. The ring, hint and portal targets
    must remain accessible/live members until the owner releases the scene.
    Queries do not revalidate topology; fallback traversal is bounded by count.
