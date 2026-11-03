@@ -978,6 +978,7 @@ static void resource_bindings(BHGameApp *a)
     B(0x4f0074, attachment.flag800_image);
     B(0x4f54dc, radar.marker_image);
     B(0x4f00b4, radar.bar_image);
+    B(0x4d1918, radar_query.retired_sound);
     B(0x4f00ac, projectile_draw.ballistic_flare);
     B(0x4f007c, projectile_draw.ballistic_trail);
     B(0x4f0094, projectile_draw.homing_flare);
