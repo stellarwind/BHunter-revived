@@ -1336,6 +1336,7 @@ static int source_owners(BHGameApp *a)
     a->flyby.near_z = &a->view.near_z;
     a->flyby.event_value = &a->event_value;
     a->flyby.mission_identity = &a->mission_identity;
+    a->flyby.force_control = &a->player_state.force;
     a->flyby_camera.route = &a->camera_route;
     a->flyby_camera.camera = &a->camera_state;
     a->flyby_camera.starts = a->starts;

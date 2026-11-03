@@ -39,8 +39,8 @@ int __cdecl bh_world_segment_index_rooms(BHWorldSegmentContext *q, BHWorldSegmen
         return 0;
     q->room_index = NULL;
     q->room_index_mask = 0;
-    if (!q->rooms || !q->room_count || q->room_count > 65535 || !workspace ||
-        capacity < q->room_count * 2 || capacity > 131072 || (capacity & (capacity - 1)))
+    if (!q->rooms || !q->room_count || q->room_count > 65535 || !workspace || capacity < q->room_count * 2 ||
+        capacity > 131072 || (capacity & (capacity - 1)))
         return 0;
     memset(workspace, 0, capacity * sizeof(*workspace));
     for (i = 0; i < q->room_count; ++i)
@@ -119,7 +119,8 @@ int __cdecl bh_world_segment_init(BHWorldSegmentContext *q, BHWorldGeometry *fir
         if (p->owner && !bh_world_segment_room(&next, p->owner))
             return 0;
         for (j = 0; j < p->navigation.count; ++j)
-            if (p->navigation.portals[j].neighbor && !bh_world_segment_room(&next, (BHWorldGeometry *)p->navigation.portals[j].neighbor))
+            if (p->navigation.portals[j].neighbor &&
+                !bh_world_segment_room(&next, (BHWorldGeometry *)p->navigation.portals[j].neighbor))
                 return 0;
     }
     *q = next;
@@ -149,7 +150,8 @@ static long material(unsigned long bits)
         return (long)0x80000000u;
     return (long)stored;
 }
-/* First strict crossing in slot order; aperture (+8), not matched overlap. */
+/* First strict crossing in slot order. Original 0040ba40 compares the matched
+   opening at portal+24 (+1e4 in the world object), not the model aperture. */
 static BHWorldGeometry *crossing(BHWorldGeometry *w, const BHVec3 *a, const BHVec3 *b, BHVec3 *point)
 {
     unsigned long i, axis, u, v;
@@ -188,7 +190,7 @@ static BHWorldGeometry *crossing(BHWorldGeometry *w, const BHVec3 *a, const BHVe
         upper_u = axis == 0 ? stored_u : du;
         if (axis == 2)
             dv = stored_v; /* Z crossing stores Y before both tests. */
-        if (p->aperture[0] < du && upper_u < p->aperture[1] && p->aperture[2] < dv && dv < p->aperture[3])
+        if (p->overlap[0] < du && upper_u < p->overlap[1] && p->overlap[2] < dv && dv < p->overlap[3])
         {
             ((float *)&at)[axis] = plane_float;
             ((float *)&at)[u] = stored_u;

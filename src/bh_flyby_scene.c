@@ -196,8 +196,8 @@ static int handoff(BHFlybyScene *s, BHEntity *camera)
     } message;
     if (!s->current_player || !(player = *s->current_player) || !s->input_profile || !s->input_owner ||
         !s->player_camera || !s->player_slot || !s->scenario || !s->event_value || !s->mission_identity ||
-        !s->entities || s->player_camera->starts != s->starts || s->player_camera->start_count != s->start_count ||
-        !active_entity(s->entities, player))
+        !s->force_control || !s->entities || s->player_camera->starts != s->starts ||
+        s->player_camera->start_count != s->start_count || !active_entity(s->entities, player))
         return fail(s, BH_FLYBY_SCENE_BINDING);
     list = player_input(s, player);
     if (!list)
@@ -236,6 +236,9 @@ static int handoff(BHFlybyScene *s, BHEntity *camera)
             return fail(s, BH_FLYBY_SCENE_BINDING);
         write_long(player, 0x21c, (long)s->scenario_resources[scenario]);
         *s->mission_identity = scenario == 0 ? 0x00415530UL : scenario == 1 ? 0x00416120UL : 0x00416eb0UL;
+        *s->force_control = scenario == 0   ? bh_player_force_control_b
+                            : scenario == 1 ? bh_player_force_control_c
+                                            : bh_player_force_control_d;
     }
     count = *s->mode_count;
     if (count > 1)

@@ -5,6 +5,9 @@
 #include "bh_scene_owner.h"
 #include "bh_sound_queue.h"
 #include "bh_input_evaluate.h"
+#include "bh_player_force_control.h"
+
+typedef int(__cdecl *BHFlybyForceControl)(BHPlayerForceControl *, float, int);
 
 typedef enum BHFlybySceneError
 {
@@ -39,6 +42,7 @@ typedef struct BHFlybyScene
     const long *display_width, *display_height;
     const float *near_z;
     unsigned long *event_value, *mission_identity;
+    BHFlybyForceControl *force_control;
     unsigned long horizon_image, full_image, corner_left_image, corner_right_image;
     unsigned long scenario_resources[3];
     unsigned long attempted, queued, dropped, random_calls;
