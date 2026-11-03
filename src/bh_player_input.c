@@ -149,6 +149,7 @@ void __cdecl bh_player_input_setup(BHPlayerInputList *list, const BHInputProfile
     list->bindings[27].flags = BH_INPUT_GAMEPAD | BH_PAD_LEFT;
     list->bindings[28].flags = BH_INPUT_GAMEPAD | BH_PAD_RIGHT;
     list->bindings[6].flags = BH_INPUT_GAMEPAD | BH_PAD_BACK;
+    list->bindings[32].flags = BH_INPUT_GAMEPAD | BH_PAD_NORTH;
     list->bindings[33].flags = BH_INPUT_GAMEPAD | BH_PAD_START;
     list->bindings[34].flags = BH_INPUT_GAMEPAD | BH_PAD_SOUTH;
     list->bindings[35].flags = BH_INPUT_GAMEPAD | BH_PAD_EAST;
