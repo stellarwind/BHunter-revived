@@ -124,13 +124,13 @@ static int camera_reset(BHPlayerTick *c, unsigned long index)
 static int return_menu(BHPlayerTick *c)
 {
     BHMessagePanelFields *fields;
+    BHSoundVoice *engine;
+    unsigned long engine_resource;
     unsigned long event = 20;
     if (!c->reset || !c->panel || !c->panel->entity || !c->snapshot || !c->world_reset || !c->menu)
         return fail(c, 1);
     if (!camera_reset(c, 0) || !bh_player_reset(c->reset))
         return fail(c, 3);
-    /* Retain the engine request for the next game, but silence it now. */
-    bh_sound_update(c->sound, word(c->player, 0x220), 0, 1, NULL, NULL);
     c->panel->messages->ring_start = 0;
     c->panel->messages->ring_count = 0;
     c->panel->messages->last_index = -1;
@@ -143,8 +143,16 @@ static int return_menu(BHPlayerTick *c)
     if (!bh_entity_set_query(c->pool, c->panel->entity, bh_message_panel_query) ||
         !bh_input_set_enabled(c->input, c->snapshot, 0))
         return fail(c, 3);
-    if (!bh_entities_query(c->pool, 0, 0, 0, 0, &event) || !bh_world_reset(c->world_reset) ||
-        !bh_menu_runtime_return(c->menu))
+    if (!bh_entities_query(c->pool, 0, 0, 0, 0, &event))
+        return fail(c, 3);
+    engine = bh_sound_voice(c->sound, word(c->player, 0x220));
+    engine_resource = engine && engine->resource ? engine->resource->index : BH_SOUND_INVALID;
+    if (!bh_sound_stop_all(c->sound))
+        return fail(c, 3);
+    /* The next mission reuses the player. Give its engine a fresh silent
+       request after all old effects, including unowned loops, are retired. */
+    setword(c->player, 0x220, sound(c, engine_resource, 0, 1, NULL, NULL));
+    if (!bh_world_reset(c->world_reset) || !bh_menu_runtime_return(c->menu))
         return fail(c, 3);
     c->state->mode = 0;
     return 1;
@@ -889,8 +897,7 @@ static int damage_timers(BHPlayerTick *c)
     short countdown;
     speed = rf(((double)forward.x * motion.x + (double)forward.z * motion.z) + (double)forward.y * motion.y);
     bh_sound_update(c->sound, word(e, 0x220), s->mode ? rf(.3 + (double)number(e, 0x2f8) * .05) : 0,
-                    rf(.5 + fabs(speed) * .01),
-                    &e->position, &motion);
+                    rf(.5 + fabs(speed) * .01), &e->position, &motion);
     /* The player still ticks behind the flyby menu. It must not recreate
        damage/boost loops after return_menu has retired their handles. */
     if (!s->mode)

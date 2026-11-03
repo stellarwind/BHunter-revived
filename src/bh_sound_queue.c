@@ -493,3 +493,41 @@ int __cdecl bh_sound_stop(BHSoundQueue *q, unsigned long handle)
     q->error = backend_ok ? BH_SOUND_OK : BH_SOUND_BACKEND;
     return backend_ok;
 }
+
+int __cdecl bh_sound_stop_all(BHSoundQueue *q)
+{
+    BHSoundResource *r;
+    BHSoundVoice *v;
+    unsigned long i, j;
+    int backend_ok = 1;
+    if (!q || (q->resource_count && !q->resources) || (q->voice_count && !q->voices))
+        return fail(q, BH_SOUND_ARGUMENT);
+    for (i = 0; i < q->resource_count; ++i)
+    {
+        r = q->resources[i];
+        for (j = 0; j < r->buffer_count && j < 3; ++j)
+            if (r->buffers[j])
+            {
+                q->last_hresult = IDirectSoundBuffer_Stop(r->buffers[j]);
+                if (q->last_hresult != DS_OK)
+                    backend_ok = 0;
+            }
+        r->stream_head = NULL;
+        memset(r->voices, 0, sizeof(r->voices));
+        memset(r->playing, 0, sizeof(r->playing));
+        r->phase = 0;
+    }
+    q->free_voices = NULL;
+    for (i = 0; i < q->voice_count; ++i)
+    {
+        v = q->voices[i];
+        ++v->generation;
+        v->resource = NULL;
+        v->pending = 0;
+        v->previous = NULL;
+        v->next = q->free_voices;
+        q->free_voices = v;
+    }
+    q->error = backend_ok ? BH_SOUND_OK : BH_SOUND_BACKEND;
+    return backend_ok;
+}

@@ -81,11 +81,14 @@ int __cdecl bh_sound_priority(BHSoundQueue *queue, int positioned, const BHVec3 
 unsigned long __cdecl bh_sound_request(BHSoundQueue *queue, unsigned long resource, float level, float pitch,
                                        const BHVec3 *position, const BHVec3 *velocity);
 int __cdecl bh_sound_update(BHSoundQueue *queue, unsigned long handle, float level, float pitch, const BHVec3 *position,
-                            const BHVec3 *velocity);                  /* 0047c050: 1 updated, 0 stale, -1 invalid */
+                            const BHVec3 *velocity); /* 0047c050: 1 updated, 0 stale, -1 invalid */
 /* 0047c140 with synchronous native Stop when the last loop request retires,
    including without a listener/tick. Shared loops reselect next tick.
    Backend failure still retires the handle and is reported as 0. */
 int __cdecl bh_sound_stop(BHSoundQueue *queue, unsigned long handle);
+/* Stop every effect buffer and discard queued requests, invalidating their
+   handles. Loaded samples and the separate music playback remain available. */
+int __cdecl bh_sound_stop_all(BHSoundQueue *queue);
 /* Checked source view uses the same signed-generation validation as originals. */
 BHSoundVoice *__cdecl bh_sound_voice(BHSoundQueue *queue, unsigned long handle);
 /* 0047b710: original single listener (index 0). Nonzero enabled stores the
