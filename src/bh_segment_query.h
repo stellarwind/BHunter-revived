@@ -34,7 +34,8 @@ int __cdecl bh_segment_query_dispose(BHSegmentQuery *query);
    Transforms are explicit original world/local pairs; no inverse is guessed.
    Query allocates nothing. Topology must stay live; bounded work rejects cycles
    or excessive repeated DAG traversal. Coplanar original arithmetic is retained
-   under masked PC53, including nonfinite intermediate results. */
+   under masked PC53, including nonfinite intermediate results and endpoints
+   carried from an earlier model query. */
 int __cdecl bh_segment_query_run(BHSegmentQuery *query, const BHVec3 *start, const BHVec3 *end, const BHMat34 *to_world,
                                  const BHMat34 *to_local, BHSegmentHit *out);
 #endif

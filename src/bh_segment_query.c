@@ -163,9 +163,9 @@ int __cdecl bh_segment_query_run(BHSegmentQuery *q, const BHVec3 *start, const B
     if (!q || !q->frames || !q->geometry || !start || !end || !to_world || !to_local || !out || q->busy ||
         !bh_math_environment_supported())
         return fail(q, BH_BSP_ARGUMENT);
-    for (i = 0; i < 3; ++i)
-        if (!_finite(((const float *)start)[i]) || !_finite(((const float *)end)[i]))
-            return fail(q, BH_BSP_NUMERICAL);
+    /* Original 0044d9b0 transforms both endpoints without a finite-value gate.
+       A prior coplanar hit can supply a NaN endpoint to the next model query;
+       preserve the original unordered traversal instead of aborting the hit. */
     for (i = 0; i < 12; ++i)
         if (!_finite(((const float *)to_world)[i]) || !_finite(((const float *)to_local)[i]))
             return fail(q, BH_BSP_NUMERICAL);
