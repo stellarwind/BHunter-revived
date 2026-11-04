@@ -242,7 +242,6 @@ def main():
             "@" + str(response),
             gpu_import,
             "-ldinput",
-            "-ldsound",
             "-lwinmm",
             "-lole32",
             "-ladvapi32",

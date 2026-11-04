@@ -1,6 +1,5 @@
 #include "bh_window_dispatch.h"
 #include "bh_force_feedback_start.h"
-#include "bh_cd_notify.h"
 
 LRESULT __cdecl bh_window_default_message(void *user, HWND window, UINT message, WPARAM key, LPARAM bits)
 {
@@ -125,11 +124,6 @@ LRESULT __cdecl bh_window_dispatch(BHWindowDispatch *c, HWND window, UINT messag
             *c->display_state |= 2;
             focus(c);
         }
-        break;
-    case 0x3b9:
-        ++c->cd_notifications;
-        if (!c->cd || !bh_cd_notify(c->cd, (short)key, (MCIDEVICEID)bits))
-            ++c->failures;
         break;
     }
     if (hide && *c->hide_cursor)

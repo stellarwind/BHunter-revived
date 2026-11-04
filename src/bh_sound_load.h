@@ -20,15 +20,10 @@ typedef struct BHSoundLoad
     HRESULT create_result, lock_result, unlock_result, frequency_result;
     BHSoundLoadError error;
 } BHSoundLoad;
-/* Complete0047b950, FIVE original args after explicit source context. Owns
-   VFILE/read buffer, real native buffer upload and real resource publication.
-   Native format is forwarded without a PCM decoder: bounded PCM16-byte fmt
-   uses an equivalent zero-extension; other formats retain checked cbSize data.
-   Name length<64, file<=64MiB, safe fmt/data spans and policy1..3 are guards.
-   Original Unlock errors do not suppress publication. sample_bytes records
-   FIRST lock span, no_more uses OLD voice_limit before current policy update,
-   and only current policy cache slots reset. No Play, cache lookup or parser.
-   PC53 caller; original PC24 equivalence remains unvalidated. */
+/* Original five-argument resource loader and publication policy. Reads a
+   bounded VFILE RIFF and uploads mono/stereo PCM8/PCM16 into the SDL backend.
+   Keeps scheduling metadata, random phase, cache reset and voice-limit policy.
+   Unsupported codecs fail without publishing a resource. No playback. */
 unsigned long __cdecl bh_sound_load(BHSoundLoad *, const char *name, float audible_range, float level,
                                     unsigned short streaming, float interval_denominator);
 #endif

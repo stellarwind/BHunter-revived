@@ -12,7 +12,7 @@ typedef char range_offset[offsetof(BHSoundResource, audible_range) == 0x94 ? 1 :
 static int native_result(BHSoundQueue *q, BHSoundTickStats *s, HRESULT hr)
 {
     q->last_hresult = hr;
-    if (hr != DS_OK)
+    if (hr != 0)
     {
         s->last_error = hr;
         q->error = BH_SOUND_BACKEND;
@@ -93,7 +93,7 @@ static void spatial(BHSoundQueue *q, BHSoundResource *r, BHSoundVoice *v, float 
 static void stop(BHSoundQueue *q, BHSoundResource *r, unsigned long slot, BHSoundTickStats *s)
 {
     ++s->stop_calls;
-    native_result(q, s, IDirectSoundBuffer_Stop(r->buffers[slot]));
+    native_result(q, s, bh_audio_stop(r->buffers[slot]));
     r->playing[slot] = 0;
 }
 static void parameters(BHSoundQueue *q, BHSoundResource *r, BHSoundVoice *v, unsigned long slot, float master,
@@ -123,19 +123,19 @@ static void parameters(BHSoundQueue *q, BHSoundResource *r, BHSoundVoice *v, uns
     if (r->cached_volume[slot] != volume)
     {
         ++s->volume_calls;
-        native_result(q, s, IDirectSoundBuffer_SetVolume(r->buffers[slot], volume));
+        native_result(q, s, bh_audio_volume(r->buffers[slot], volume));
         r->cached_volume[slot] = volume;
     }
     if (r->cached_pan[slot] != pan)
     {
         ++s->pan_calls;
-        native_result(q, s, IDirectSoundBuffer_SetPan(r->buffers[slot], pan));
+        native_result(q, s, bh_audio_pan(r->buffers[slot], pan));
         r->cached_pan[slot] = pan;
     }
     if (r->cached_frequency[slot] != frequency)
     {
         ++s->frequency_calls;
-        hr = IDirectSoundBuffer_SetFrequency(r->buffers[slot], (DWORD)frequency);
+        hr = bh_audio_pitch(r->buffers[slot], (DWORD)frequency);
         native_result(q, s, hr);
         r->cached_frequency[slot] = frequency;
     }
@@ -144,9 +144,9 @@ static void parameters(BHSoundQueue *q, BHSoundResource *r, BHSoundVoice *v, uns
         if (!r->streaming)
             v->pending = 0;
         ++s->position_calls;
-        native_result(q, s, IDirectSoundBuffer_SetCurrentPosition(r->buffers[slot], 0));
+        native_result(q, s, bh_audio_seek(r->buffers[slot], 0));
         ++s->play_calls;
-        native_result(q, s, IDirectSoundBuffer_Play(r->buffers[slot], 0, 0, r->streaming ? DSBPLAY_LOOPING : 0));
+        native_result(q, s, bh_audio_play(r->buffers[slot], 0, 0, r->streaming ? 1 : 0));
         r->playing[slot] = 1;
     }
 }
@@ -220,8 +220,8 @@ int __cdecl bh_sound_tick(BHSoundQueue *q, float dt, float master, BHSoundTickSt
                     break;
                 }
                 q->last_hresult =
-                    IDirectSound_DuplicateSoundBuffer(q->device, r->buffers[0], r->buffers + r->buffer_count);
-                if (q->last_hresult == DS_OK)
+                    bh_audio_duplicate(q->device, r->buffers[0], r->buffers + r->buffer_count);
+                if (q->last_hresult == 0)
                 {
                     ++r->buffer_count;
                     if (r->buffer_count == r->voice_limit)
@@ -270,8 +270,8 @@ int __cdecl bh_sound_tick(BHSoundQueue *q, float dt, float master, BHSoundTickSt
                 {
                     status = 0;
                     ++stats.status_calls;
-                    native_result(q, &stats, IDirectSoundBuffer_GetStatus(r->buffers[j], &status));
-                    if (!(status & DSBSTATUS_PLAYING))
+                    native_result(q, &stats, bh_audio_status(r->buffers[j], &status));
+                    if (!(status & 1))
                     {
                         r->playing[j] = 0;
                         ++v->generation;

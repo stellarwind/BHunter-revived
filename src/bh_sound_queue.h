@@ -1,8 +1,7 @@
 #ifndef BH_SOUND_QUEUE_H
 #define BH_SOUND_QUEUE_H
 #include <windows.h>
-#include <mmsystem.h>
-#include <dsound.h>
+#include "bh_sdl_audio.h"
 #include "bh_wave.h"
 #include "bh_math.h"
 
@@ -20,7 +19,7 @@ struct BHSoundVoice
 struct BHSoundResource
 {
     char name[64];
-    LPDIRECTSOUNDBUFFER buffers[3];
+    BHAudioBuffer * buffers[3];
     unsigned short buffer_count, no_more, streaming, index, voice_limit, playing[3];
     unsigned long sample_bytes;
     long cached_volume[3], cached_frequency[3], cached_pan[3];
@@ -46,8 +45,8 @@ typedef struct BHSoundQueue
     BHSoundResource **resources, *free_resources;
     BHSoundVoice **voices, *free_voices;
     unsigned long resource_count, resource_capacity, voice_count, voice_capacity;
-    LPDIRECTSOUND device;
-    LPDIRECTSOUNDBUFFER primary;
+    BHAudioDevice * device;
+    BHAudioBuffer * primary;
     BHSceneAllocator allocator;
     BHVec3 listener, listener_velocity, listener_right;
     long listener_active;
@@ -56,15 +55,15 @@ typedef struct BHSoundQueue
     HRESULT last_hresult;
 } BHSoundQueue;
 #define BH_SOUND_INVALID 0xffffffffUL
-/* Fresh explicit owner, AddRefs supplied native interfaces. NULL device permits
+/* Fresh explicit owner, retains supplied SDL mixer/buffer owners. NULL device permits
    pool-only operation but cannot create/duplicate buffers. Disposal implements
-   0047b5f0 Stop/Release/free for all owned arrays/buffers/interfaces. No Play. */
-int __cdecl bh_sound_queue_init(BHSoundQueue *queue, LPDIRECTSOUND device, LPDIRECTSOUNDBUFFER primary,
+   0047b5f0 stop/release/free for all owned arrays/buffers/mixer references. No Play. */
+int __cdecl bh_sound_queue_init(BHSoundQueue *queue, BHAudioDevice * device, BHAudioBuffer * primary,
                                 const BHSceneAllocator *allocator);
 int __cdecl bh_sound_queue_dispose(BHSoundQueue *queue);
 BHSoundResource *__cdecl bh_sound_resource_allocate(BHSoundQueue *queue); /* 0047b330 */
 BHSoundVoice *__cdecl bh_sound_voice_allocate(BHSoundQueue *queue);       /* 0047b410 */
-/* Source adapter from decoded PCM to real native buffer/registered resource.
+/* Source adapter from decoded PCM to SDL playback buffer/registered resource.
    Does not recover full 0047b950's option/name parser. limit is 1..3, streaming
    is the original distinct list mode; volume is caller's stored base dB.
    A zero limit uses the configured voice-limit policy (default 2).
@@ -111,7 +110,7 @@ typedef struct BHSoundTickStats
 /* Complete 0047c200. Resource audible_range and time_scale are explicit loaded
    metadata; phase is decremented by dt, and processing occurs only below zero.
    master_db binds the original software master attenuation, not device volume.
-   PC53 finite moderate state, <=3 slots and stable real native buffers/voices.
+   PC53 finite moderate state, <=3 slots and stable SDL playback buffers/voices.
    Returns 1 / 0 for clean execution / invalid state or native error. Native
    errors are reported while original cache/playing/pending mutation continues;
    this is not rollback. Optional statistics describe actual API calls.

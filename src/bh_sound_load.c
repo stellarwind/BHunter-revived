@@ -46,12 +46,8 @@ unsigned long __cdecl bh_sound_load(BHSoundLoad *c, const char *name, float rang
     long length;
     const unsigned char *format, *samples;
     unsigned long sample_bytes, format_bytes, i, frequency;
-    DSBUFFERDESC description;
-    WAVEFORMATEX pcm;
-    LPWAVEFORMATEX native_format;
-    LPDIRECTSOUNDBUFFER buffer = NULL;
-    void *first = NULL, *second = NULL;
-    DWORD first_size = 0, second_size = 0;
+    BHAudioBuffer *buffer = NULL;
+    DWORD first_size;
     BHSoundResource *resource;
     double volume;
     int random;
@@ -94,83 +90,28 @@ unsigned long __cdecl bh_sound_load(BHSoundLoad *c, const char *name, float rang
         return fail(c, BH_SOUND_LOAD_FORMAT);
     }
     format_bytes = u32(format - 4);
-    native_format = (LPWAVEFORMATEX)format;
-    if (format_bytes < 16)
-    {
-        release(c, bytes);
-        return fail(c, BH_SOUND_LOAD_FORMAT);
-    }
-    if (u16(format) == WAVE_FORMAT_PCM)
-    {
-        memset(&pcm, 0, sizeof(pcm));
-        memcpy(&pcm, format, 16);
-        native_format = &pcm;
-    }
-    else if (format_bytes < 18 || u16(format + 16) > format_bytes - 18)
-    {
-        release(c, bytes);
-        return fail(c, BH_SOUND_LOAD_FORMAT);
-    }
-    memset(&description, 0, sizeof(description));
-    description.dwSize = 20;
-    description.dwFlags = 0xe0;
-    description.dwBufferBytes = sample_bytes;
-    description.lpwfxFormat = native_format;
-    ++c->native_calls;
-    c->create_result = IDirectSound_CreateSoundBuffer(q->device, &description, &buffer, NULL);
-    if (c->create_result != DS_OK || !buffer)
-    {
-        if (buffer)
-        {
-            IDirectSoundBuffer_Release(buffer);
-            ++c->releases;
-        }
-        release(c, bytes);
-        return fail(c, BH_SOUND_LOAD_NATIVE);
+    if (format_bytes < 16 || u16(format) != 1) {
+        release(c, bytes); return fail(c, BH_SOUND_LOAD_FORMAT);
     }
     ++c->native_calls;
-    c->lock_result = IDirectSoundBuffer_Lock(buffer, 0, sample_bytes, &first, &first_size, &second, &second_size, 0);
-    if (c->lock_result != DS_OK)
-    {
-        IDirectSoundBuffer_Release(buffer);
-        ++c->releases;
-        release(c, bytes);
-        return fail(c, BH_SOUND_LOAD_NATIVE);
-    }
-    c->first_bytes = first_size;
-    c->second_bytes = second_size;
-    if (first_size > sample_bytes || second_size > sample_bytes - first_size || (first_size && !first) ||
-        (second_size && !second))
-    {
-        IDirectSoundBuffer_Unlock(buffer, first, first_size, second, second_size);
-        IDirectSoundBuffer_Release(buffer);
-        ++c->releases;
-        release(c, bytes);
-        return fail(c, BH_SOUND_LOAD_NATIVE);
-    }
-    if (first_size)
-        memcpy(first, samples, first_size);
-    if (second_size)
-        memcpy(second, samples + first_size, second_size);
-    ++c->native_calls;
-    c->unlock_result = IDirectSoundBuffer_Unlock(buffer, first, first_size, second, second_size);
-    if (c->unlock_result != DS_OK)
-    {
-        ++c->failures;
-        c->error = BH_SOUND_LOAD_NATIVE;
-    }
+    c->create_result = bh_audio_create(q->device, samples, sample_bytes,
+        u16(format + 2), u16(format + 14), u32(format + 4), &buffer);
     release(c, bytes);
+    if (c->create_result) return fail(c, BH_SOUND_LOAD_NATIVE);
+    first_size = c->first_bytes = sample_bytes;
+    c->second_bytes = 0;
+    c->lock_result = c->unlock_result = 0;
     resource = bh_sound_resource_allocate(q);
     if (!resource)
     {
-        IDirectSoundBuffer_Release(buffer);
+        bh_audio_buffer_release(buffer);
         ++c->releases;
         return fail(c, BH_SOUND_LOAD_MEMORY);
     }
     strcpy(resource->name, name);
     ++c->native_calls;
-    c->frequency_result = IDirectSoundBuffer_GetFrequency(buffer, &frequency);
-    if (c->frequency_result == DS_OK)
+    c->frequency_result = bh_audio_frequency(buffer, &frequency);
+    if (c->frequency_result == 0)
         bh_round_float(&resource->base_frequency, (double)frequency);
     else
         resource->base_frequency = 22050.0f;

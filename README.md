@@ -36,7 +36,7 @@ A source restoration of **BHunter**, the 1999 hovercar combat game by **InterAct
 
 ## Features
 
-- SDL powered window management, hardware rendering and input.
+- SDL powered window management, hardware rendering, input and audio.
 - 60fps, interpolated from 30.
 - Up to 4k resolution, 4:3, 16:9, 21:9 aspect ratios
 - Gamepad support
@@ -47,7 +47,7 @@ A source restoration of **BHunter**, the 1999 hovercar combat game by **InterAct
 2. Create a `GAME_DATA` folder beside the executable and copy `Bhunter.bin` from your own original game into it.
 3. Run `BHunter-source.exe`.
 
-Music plays from a mounted BHunter CD, or from `MUSIC_DATA/track02.wav` beside `GAME_DATA`. 
+Music plays from `MUSIC_DATA/track02.wav` beside `GAME_DATA` (the extracted PCM WAV of CD track two, without the pregap). Extract the track from your own disc; mounted-CD playback is no longer used. Game volume controls affect only BHunter.
 
 Supported original game: **BHunter, English retail PC edition (1999)**. The tested files are:
 
@@ -70,6 +70,8 @@ build\BHunter-source.exe
 ```
 
 The game and required DLLs are written directly to `build/`. Keep them together when moving the game.
+
+After building, run `python tools/test_sdl_audio.py` for deterministic mixer, voice scheduling, music range, volume isolation and device recovery checks using SDL's dummy audio driver.
 
 ## Unlock all levels
 

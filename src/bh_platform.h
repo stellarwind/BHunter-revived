@@ -20,8 +20,7 @@ extern "C"
         int down, repeat;
     } BHPlatformEvent;
     typedef void (*BHPlatformInput)(const BHPlatformEvent *, void *);
-    typedef void (*BHPlatformMusic)(unsigned status, unsigned device, void *);
-    int bh_sdl_open(int hidden, BHPlatformInput, BHPlatformMusic, void *);
+    int bh_sdl_open(int hidden, BHPlatformInput, void *);
     int bh_sdl_poll(void);
     int bh_sdl_active(void);
     int bh_sdl_mouse(int *x, int *y);

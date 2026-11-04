@@ -1,7 +1,7 @@
 #include "bh_media_control.h"
 #include <float.h>
+#include <math.h>
 #include <string.h>
-#include <digitalv.h>
 static BHCdNotify *notify(BHMediaControl *c)
 {
     return c && c->audio ? c->audio->notify : 0;
@@ -30,7 +30,7 @@ void __cdecl bh_cd_stop(BHMediaControl *c)
     if (n->cd->device)
     {
         ++c->stops;
-        c->stop_result = mciSendCommandA(n->cd->device, MCI_STOP, 0, 0);
+        c->stop_result = bh_audio_stop(n->cd->device);
     }
 }
 /* Original FNSTSW C0 first comparison sends unordered to zero. The product
@@ -51,31 +51,20 @@ void __cdecl bh_cd_set_volume(BHMediaControl *c, float v)
     BHCdNotify *n = notify(c);
     if (!n || !n->cd)
         return;
-    if (n->cd->local_file)
-    {
-        MCI_DGV_SETAUDIO_PARMSA settings;
-        DWORD value = packed(v) & 65535UL;
-        memset(&settings, 0, sizeof(settings));
-        settings.dwItem = MCI_DGV_SETAUDIO_VOLUME;
-        settings.dwValue = value * 1000UL / 65535UL;
-        c->aux_result = mciSendCommandA(n->cd->device, MCI_SETAUDIO, MCI_DGV_SETAUDIO_ITEM | MCI_DGV_SETAUDIO_VALUE,
-                                        (DWORD)&settings);
-        ++c->aux_writes;
-        if (!c->aux_result)
-            n->cd->local_volume = (float)(value * (1.0 / 65535.0));
-        return;
-    }
-    if (n->cd->last_track == -1)
-        return;
     c->aux_packed = packed(v);
     ++c->aux_writes;
-    c->aux_result = auxSetVolume((UINT)n->cd->last_track, c->aux_packed);
+    n->cd->local_volume = (float)((c->aux_packed & 65535UL) * (1.0 / 65535.0));
+    /* The public volume slider is linear; translate to mixer hundredths dB. */
+    if (n->cd->device) {
+        float gain = n->cd->local_volume;
+        c->aux_result = bh_audio_volume(n->cd->device, gain > 0 ? (long)(2000.0 * log10(gain)) : -10000);
+    }
 }
 void __cdecl bh_wave_set_volume(BHMediaControl *c, float v)
 {
-    if (!c || !c->audio || c->audio->wave_device == (HWAVEOUT)-1)
-        return;
+    if (!c || !c->audio) return;
     c->wave_packed = packed(v);
     ++c->wave_writes;
-    c->wave_result = waveOutSetVolume(c->audio->wave_device, c->wave_packed);
+    bh_audio_effects_gain((float)((c->wave_packed & 65535UL) * (1.0 / 65535.0)));
+    c->wave_result = 0;
 }

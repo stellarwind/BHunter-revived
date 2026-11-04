@@ -615,11 +615,7 @@ static void sdl_input(const BHPlatformEvent *event, void *user)
         a->focus_sample = 0;
     bh_input_event(&a->snapshot, event);
 }
-static void sdl_music(unsigned status, unsigned device, void *user)
-{
-    BHGameApp *a = (BHGameApp *)user;
-    bh_cd_notify(&a->cd_notify, (short)status, (MCIDEVICEID)device);
-}
+
 static BHTextureImage *__cdecl image(unsigned long handle, void *user)
 {
     BHGameApp *a = (BHGameApp *)user;
@@ -673,7 +669,7 @@ static int platform(BHGameApp *a)
 {
     DDSURFACEDESC surface;
     BHSoftwareRaster raster;
-    if (!bh_sdl_open(0, sdl_input, sdl_music, a))
+    if (!bh_sdl_open(0, sdl_input, a))
         return failure(a, 3);
     strcpy(a->device_names[0].name, "SDL3 GPU");
     if (!bh_config_init(&a->config, 0) || !bh_config_bootstrap(&a->config, a->config_path, a->device_names, 1))
@@ -1036,8 +1032,7 @@ static int source_owners(BHGameApp *a)
     a->cd.last_track = -1;
     a->cd_notify.cd = &a->cd;
     a->cd_audio.notify = &a->cd_notify;
-    a->cd_audio.wave_device = (HWAVEOUT)-1;
-    a->cd_audio.music_path = "MUSIC_DATA\\track02.wav";
+    a->cd_audio.music_path = "MUSIC_DATA/track02.wav";
     a->media.audio = &a->cd_audio;
     bh_message_state_init(&a->messages);
     a->messages.panel_entity = 0;
@@ -1279,7 +1274,7 @@ static int source_owners(BHGameApp *a)
     a->transition.hardware_flags = 1;
     a->transition.camera_index = &a->selected_waypoint;
     a->transition.quit = &a->quit;
-    a->transition.window = (DWORD)bh_sdl_legacy_window(); /* MCI callback owner. */
+    a->transition.window = (DWORD)bh_sdl_legacy_window();
     a->key_capture.pool = &a->pool;
     a->key_capture.snapshot = &a->snapshot;
     a->key_capture.state = &a->global_state;
@@ -2177,6 +2172,7 @@ static void cleanup(BHGameApp *a)
     bh_input_devices_dispose(&a->devices);
     bh_player_input_owner_dispose(&a->inputs);
     bh_config_dispose(&a->config);
+    bh_cd_stop_close(&a->cd);
     bh_sound_queue_dispose(&a->sound);
     bh_network_game_dispose(&a->network_game);
     if (a->provider_startup.com_initialized)

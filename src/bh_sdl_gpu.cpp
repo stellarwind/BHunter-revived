@@ -1,3 +1,4 @@
+#include "bh_sdl_audio.h"
 // SDL owns the native window, device, textures and presentation. The adapter
 // retains the restored engine's 32-bit data ABI, never creates a COM object.
 #define CINTERFACE
@@ -5,7 +6,6 @@
 #include "bh_video_layout.h"
 #include "bh_overlay_text.h"
 #include <SDL3/SDL.h>
-#include <SDL3/SDL_system.h>
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -13,7 +13,6 @@
 #include <cstdlib>
 #include <cstring>
 #include <d3dcompiler.h>
-#include <mmsystem.h>
 #include <map>
 #include <filesystem>
 #include <string>
@@ -74,7 +73,6 @@ Surface *white;
 std::vector<unsigned char> overlay_font_bytes;
 BHOverlayFont overlay_font{};
 BHPlatformInput input_callback;
-BHPlatformMusic music_callback;
 void *message_user;
 char error_text[1024];
 bool quitting, hidden;
@@ -266,13 +264,6 @@ void remember_window()
         }
     }
     save_settings();
-}
-/* Only MCI completion remains native until the audio migration. */
-bool SDLCALL message_hook(void *, MSG *msg)
-{
-    if (msg->hwnd == bh_sdl_legacy_window() && msg->message == MM_MCINOTIFY && music_callback)
-        music_callback((unsigned)msg->wParam, (unsigned)msg->lParam, message_user);
-    return true;
 }
 /* Special and OEM keys keep the original saved binding numbers. Printable
    letters follow the layout's keycode; physical OEM positions retain VK IDs. */
@@ -941,12 +932,11 @@ void apply_mode()
 } // namespace
 extern "C"
 {
-    int bh_sdl_open(int hide, BHPlatformInput callback, BHPlatformMusic music, void *user)
+    int bh_sdl_open(int hide, BHPlatformInput callback, void *user)
     {
         int saved_width = 0, saved_height = 0, settings_version = 0;
         hidden = hide != 0;
         input_callback = callback;
-        music_callback = music;
         quitting = false;
         held_keys.fill(0);
         message_user = user;
@@ -1001,7 +991,6 @@ extern "C"
         }
         SDL_SetWindowMinimumSize(window, 640, 480);
         SDL_SetWindowPosition(window, normal_x, normal_y);
-        SDL_SetWindowsMessageHook(message_hook, nullptr);
         int count = 0;
         auto **available = SDL_GetFullscreenDisplayModes(SDL_GetDisplayForWindow(window), &count);
         for (int i = 0; i < count; ++i)
@@ -1236,9 +1225,12 @@ extern "C"
     }
     int __cdecl bh_sdl_poll()
     {
+        bh_audio_poll();
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
+            if ((event.type == SDL_EVENT_AUDIO_DEVICE_ADDED || event.type == SDL_EVENT_AUDIO_DEVICE_REMOVED) && !event.adevice.recording)
+                bh_audio_device_changed();
             switch (event.type)
             {
             case SDL_EVENT_GAMEPAD_ADDED:
@@ -1364,7 +1356,6 @@ extern "C"
             SDL_DestroyGPUDevice(device);
             device = nullptr;
         }
-        SDL_SetWindowsMessageHook(nullptr, nullptr);
         if (window)
         {
             SDL_ShowCursor();

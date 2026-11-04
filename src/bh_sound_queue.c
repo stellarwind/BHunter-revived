@@ -31,7 +31,7 @@ static int vector_ok(const BHVec3 *v)
 {
     return !v || (_finite(v->x) && _finite(v->y) && _finite(v->z));
 }
-int __cdecl bh_sound_queue_init(BHSoundQueue *q, LPDIRECTSOUND device, LPDIRECTSOUNDBUFFER primary,
+int __cdecl bh_sound_queue_init(BHSoundQueue *q, BHAudioDevice * device, BHAudioBuffer * primary,
                                 const BHSceneAllocator *allocator)
 {
     BHSoundQueue next;
@@ -49,9 +49,9 @@ int __cdecl bh_sound_queue_init(BHSoundQueue *q, LPDIRECTSOUND device, LPDIRECTS
     next.primary = primary;
     next.voice_limit_policy = 2;
     if (device)
-        IDirectSound_AddRef(device);
+        bh_audio_retain(device);
     if (primary)
-        IDirectSoundBuffer_AddRef(primary);
+        bh_audio_buffer_retain(primary);
     *q = next;
     return 1;
 }
@@ -140,8 +140,8 @@ int __cdecl bh_sound_queue_dispose(BHSoundQueue *q)
         for (j = 0; j < r->buffer_count && j < 3; ++j)
             if (r->buffers[j])
             {
-                IDirectSoundBuffer_Stop(r->buffers[j]);
-                IDirectSoundBuffer_Release(r->buffers[j]);
+                bh_audio_stop(r->buffers[j]);
+                bh_audio_buffer_release(r->buffers[j]);
             }
     }
     for (i = 0; i < q->resource_count; ++i)
@@ -153,21 +153,18 @@ int __cdecl bh_sound_queue_dispose(BHSoundQueue *q)
     if (q->voices)
         q->allocator.release(q->voices, q->allocator.user);
     if (q->primary)
-        IDirectSoundBuffer_Release(q->primary);
+        bh_audio_buffer_release(q->primary);
     if (q->device)
-        IDirectSound_Release(q->device);
+        bh_audio_release(q->device);
     memset(q, 0, sizeof(*q));
     return 1;
 }
 unsigned long __cdecl bh_sound_register_wave(BHSoundQueue *q, const BHWave *wave, unsigned short streaming,
                                              unsigned short limit, float base_volume)
 {
-    WAVEFORMATEX format;
-    DSBUFFERDESC description;
-    LPDIRECTSOUNDBUFFER buffer = NULL;
+    BHAudioBuffer * buffer = NULL;
     BHSoundResource *resource;
-    void *first, *second;
-    DWORD first_size, second_size, frequency;
+    DWORD frequency;
     unsigned long i;
     if (q && !limit)
         limit = q->voice_limit_policy;
@@ -177,46 +174,13 @@ unsigned long __cdecl bh_sound_register_wave(BHSoundQueue *q, const BHWave *wave
         fail(q, BH_SOUND_ARGUMENT);
         return BH_SOUND_INVALID;
     }
-    memset(&format, 0, sizeof(format));
-    format.wFormatTag = WAVE_FORMAT_PCM;
-    format.nChannels = wave->channels;
-    format.nSamplesPerSec = wave->sample_rate;
-    format.nAvgBytesPerSec = wave->byte_rate;
-    format.nBlockAlign = wave->block_align;
-    format.wBitsPerSample = wave->bits;
-    memset(&description, 0, sizeof(description));
-    description.dwSize = sizeof(description);
-    description.dwFlags = DSBCAPS_CTRLFREQUENCY | DSBCAPS_CTRLPAN | DSBCAPS_CTRLVOLUME;
-    description.dwBufferBytes = wave->sample_bytes;
-    description.lpwfxFormat = &format;
-    q->last_hresult = IDirectSound_CreateSoundBuffer(q->device, &description, &buffer, NULL);
-    if (q->last_hresult != DS_OK)
-    {
-        fail(q, BH_SOUND_BACKEND);
-        return BH_SOUND_INVALID;
-    }
-    q->last_hresult =
-        IDirectSoundBuffer_Lock(buffer, 0, wave->sample_bytes, &first, &first_size, &second, &second_size, 0);
-    if (q->last_hresult != DS_OK)
-    {
-        IDirectSoundBuffer_Release(buffer);
-        fail(q, BH_SOUND_BACKEND);
-        return BH_SOUND_INVALID;
-    }
-    memcpy(first, wave->samples, first_size);
-    if (second_size)
-        memcpy(second, wave->samples + first_size, second_size);
-    q->last_hresult = IDirectSoundBuffer_Unlock(buffer, first, first_size, second, second_size);
-    if (q->last_hresult != DS_OK)
-    {
-        IDirectSoundBuffer_Release(buffer);
-        fail(q, BH_SOUND_BACKEND);
-        return BH_SOUND_INVALID;
-    }
+    q->last_hresult = bh_audio_create(q->device, wave->samples, wave->sample_bytes,
+        wave->channels, wave->bits, wave->sample_rate, &buffer);
+    if (q->last_hresult) { fail(q, BH_SOUND_BACKEND); return BH_SOUND_INVALID; }
     resource = bh_sound_resource_allocate(q);
     if (!resource)
     {
-        IDirectSoundBuffer_Release(buffer);
+        bh_audio_buffer_release(buffer);
         return BH_SOUND_INVALID;
     }
     resource->buffers[0] = buffer;
@@ -227,7 +191,7 @@ unsigned long __cdecl bh_sound_register_wave(BHSoundQueue *q, const BHWave *wave
     resource->voice_limit = limit;
     resource->sample_bytes = wave->sample_bytes;
     resource->base_volume = base_volume;
-    if (IDirectSoundBuffer_GetFrequency(buffer, &frequency) != DS_OK)
+    if (bh_audio_frequency(buffer, &frequency) != 0)
         frequency = 44100;
     bh_round_float(&resource->base_frequency, (double)frequency);
     resource->stream_head = NULL;
@@ -268,8 +232,8 @@ int __cdecl bh_sound_priority(BHSoundQueue *q, int positioned, const BHVec3 *pos
         if ((unsigned long)slot >= resource->buffer_count || slot >= 3 || !resource->buffers[slot] ||
             !resource->sample_bytes)
             return fail(q, BH_SOUND_ARGUMENT);
-        q->last_hresult = IDirectSoundBuffer_GetCurrentPosition(resource->buffers[slot], &play, &write);
-        if (q->last_hresult != DS_OK)
+        q->last_hresult = bh_audio_position(resource->buffers[slot], &play, &write);
+        if (q->last_hresult != 0)
             return fail(q, BH_SOUND_BACKEND);
         if (play >= resource->sample_bytes)
             return fail(q, BH_SOUND_BACKEND);
@@ -336,8 +300,8 @@ unsigned long __cdecl bh_sound_request(BHSoundQueue *q, unsigned long id, float 
                     return BH_SOUND_INVALID;
                 }
                 q->last_hresult =
-                    IDirectSound_DuplicateSoundBuffer(q->device, r->buffers[0], r->buffers + r->buffer_count);
-                if (q->last_hresult == DS_OK)
+                    bh_audio_duplicate(q->device, r->buffers[0], r->buffers + r->buffer_count);
+                if (q->last_hresult == 0)
                 {
                     ++r->buffer_count;
                     if (r->buffer_count == r->voice_limit)
@@ -461,8 +425,8 @@ int __cdecl bh_sound_stop(BHSoundQueue *q, unsigned long handle)
             return fail(q, BH_SOUND_TOPOLOGY);
         r->voices[i] = NULL;
         r->playing[i] = 0;
-        q->last_hresult = IDirectSoundBuffer_Stop(r->buffers[i]);
-        backend_ok = q->last_hresult == DS_OK;
+        q->last_hresult = bh_audio_stop(r->buffers[i]);
+        backend_ok = q->last_hresult == 0;
     }
     else
     {
@@ -479,8 +443,8 @@ int __cdecl bh_sound_stop(BHSoundQueue *q, unsigned long handle)
             for (i = 0; i < r->buffer_count && i < 3; ++i)
                 if (r->playing[i])
                 {
-                    q->last_hresult = IDirectSoundBuffer_Stop(r->buffers[i]);
-                    if (q->last_hresult != DS_OK)
+                    q->last_hresult = bh_audio_stop(r->buffers[i]);
+                    if (q->last_hresult != 0)
                         backend_ok = 0;
                     r->playing[i] = 0;
                 }
@@ -508,8 +472,8 @@ int __cdecl bh_sound_stop_all(BHSoundQueue *q)
         for (j = 0; j < r->buffer_count && j < 3; ++j)
             if (r->buffers[j])
             {
-                q->last_hresult = IDirectSoundBuffer_Stop(r->buffers[j]);
-                if (q->last_hresult != DS_OK)
+                q->last_hresult = bh_audio_stop(r->buffers[j]);
+                if (q->last_hresult != 0)
                     backend_ok = 0;
             }
         r->stream_head = NULL;

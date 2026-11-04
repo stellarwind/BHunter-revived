@@ -44,6 +44,8 @@ def prepare(out, *, gnu=True, compiler=None, symbols=False):
     inputs = [
         ROOT / "src/bh_sdl_gpu.cpp",
         ROOT / "src/bh_sdl_adapter.h",
+        ROOT / "src/bh_sdl_audio.cpp",
+        ROOT / "src/bh_sdl_audio.h",
         ROOT / "src/shaders/legacy.hlsl",
         Path(__file__),
         ROOT / "src/bh_video_layout.h",
@@ -77,7 +79,7 @@ def prepare(out, *, gnu=True, compiler=None, symbols=False):
             set(
                 re.findall(
                     r"^    (?:\w+[ \t*]+)+(bh_\w+)\([^;{}]*\)\s*\{",
-                    inputs[0].read_text(),
+                    inputs[0].read_text() + "\n" + (ROOT / "src/bh_sdl_audio.cpp").read_text(),
                     re.MULTILINE,
                 )
             )
@@ -98,6 +100,7 @@ def prepare(out, *, gnu=True, compiler=None, symbols=False):
             "-DDIRECTDRAW_VERSION=0x0500",
             "-I" + str(sdk / "include"),
             str(inputs[0]),
+            str(ROOT / "src/bh_sdl_audio.cpp"),
             str(sdk / "lib/x86/SDL3.lib"),
             "-ld3dcompiler_47",
             "-luser32",
