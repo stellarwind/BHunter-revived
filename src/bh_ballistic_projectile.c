@@ -201,7 +201,7 @@ void __cdecl bh_ballistic_projectile_tick(BHEntity *e)
                 c->error = 2;
                 return;
             }
-            for (actor = room->actors_owner ? *room->actors_owner : room->actors, n = 0; actor;)
+            for (actor = room->actors_owner ? *room->actors_owner : NULL, n = 0; actor;)
             {
                 if (++n > c->segment->max_room_actors)
                 {

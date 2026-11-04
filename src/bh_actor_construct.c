@@ -58,8 +58,9 @@ static BHEntity *construct(BHActorConstructContext *c, BHWorldGeometry *world, u
     long bounty;
     unsigned short primary, secondary;
     double v;
-    if (!c || !world || !c->response || !c->draw || !c->models || !c->sounds || c->resource_count < 25 || !c->rooms ||
-        !c->cycle_models || c->cycle_count < 4 || !bh_math_environment_supported())
+    if (!c || !world || !c->response || !c->response->damage || !c->response->damage->route ||
+        !c->response->damage->route->live_tick || !c->draw || !c->models || !c->sounds || c->resource_count < 25 ||
+        !c->rooms || !c->cycle_models || c->cycle_count < 4 || !bh_math_environment_supported())
     {
         if (c)
             c->error = 1;

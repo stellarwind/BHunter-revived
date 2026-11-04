@@ -26,7 +26,7 @@ static int tick(BHActorRouteContext *c, BHEntity *a, int phase, unsigned long pu
     long counter, sound_frames;
     unsigned short elapsed, delta, stamp;
     short signed_elapsed, signed_duration;
-    if (!c || !a)
+    if (!c || !a || !c->live_tick)
         return fail(c, BH_ACTOR_ROUTE_ARGUMENT);
     if (!bh_math_environment_supported())
         return fail(c, BH_ACTOR_ROUTE_NUMERICAL);

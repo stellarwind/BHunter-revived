@@ -41,13 +41,13 @@ typedef struct BHScriptBrowser
     BHSoundQueue *sound;
     long height, selected, active;
     float cursor_x, cursor_y, offset_x, offset_y;
-    unsigned long grid_image, selection_image, select_sound, cells;
+    unsigned long grid_image, selection_image, select_sound;
     int error;
 } BHScriptBrowser;
 /* Whole0040c660 /0040c9b0, source editor catalogue preview producers. Queue
    camera/labels/resources/quads and deferred sound only; no screen/input/game
    execution. Animation uses original wrapping private arithmetic, independent
-   of shared gameplay rand. Source counters are diagnostics, count zero.
+   of shared gameplay rand.
    Library count<=600, columns>=5, rows>=0, finite cursor/angles/bounds and
    height1..16384; original small-row scroll behavior and signed truncation
    retained. Caller drains real queue before changing/discarding resources. */

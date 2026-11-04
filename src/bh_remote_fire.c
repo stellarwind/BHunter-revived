@@ -1,4 +1,5 @@
 #include "bh_remote_fire.h"
+#include "bh_weapon_path.h"
 #include "bh_physics_response.h"
 #include "bh_rotation.h"
 #include "bh_round.h"

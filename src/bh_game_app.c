@@ -1,4 +1,5 @@
 #include "bh_game_app.h"
+#include "bh_atlas_text.h"
 #include "bh_render_interpolation.h"
 #include "bh_application_bootstrap.h"
 #include "bh_primitive_dispatch.h"
@@ -101,7 +102,9 @@ typedef struct BHGameApp
 {
     HWND window;
     HINSTANCE instance;
-    int hardware, fullscreen, quit, initialized, error, focus_sample;
+    int hardware, fullscreen;
+    long quit;
+    int initialized, error, focus_sample;
     char archive[512], config_path[512];
     long width, height, selected_waypoint, mission, ship, slot, input_changed, stay, network_failed, fine_warning,
         pending_profile;

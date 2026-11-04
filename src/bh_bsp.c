@@ -37,11 +37,11 @@ static float f32(const unsigned char *p)
     memcpy(&v, p, 4);
     return v;
 }
-static int finite(const unsigned char *p)
+static int finite_value(const unsigned char *p)
 {
     return (u32(p) & 0x7f800000UL) != 0x7f800000UL;
 }
-static int index(unsigned long v, unsigned long n, int sentinel)
+static int valid_index(unsigned long v, unsigned long n, int sentinel)
 {
     return v < n || (sentinel && v == 0xffffffffUL);
 }
@@ -184,37 +184,38 @@ int __cdecl bh_bsp_decode(BHBsp *bsp, const void *bytes, unsigned long size)
             return fail(bsp, BH_BSP_FORMAT);
     for (i = 0; i < n[1]; i++)
         for (j = 0; j < 3; j++)
-            if (!finite(data + offsets[1] + i * 60 + j * 4))
+            if (!finite_value(data + offsets[1] + i * 60 + j * 4))
                 return fail(bsp, BH_BSP_FORMAT);
     for (i = 0; i < n[2]; i++)
     {
         p = data + offsets[2] + i * 16;
-        if (!index(u32(p), n[1], 0) || !index(u32(p + 4), n[2], 1) || !finite(p + 8) || !finite(p + 12))
+        if (!valid_index(u32(p), n[1], 0) || !valid_index(u32(p + 4), n[2], 1) || !finite_value(p + 8) ||
+            !finite_value(p + 12))
             return fail(bsp, BH_BSP_FORMAT);
     }
     for (i = 0; i < n[3]; i++)
     {
         p = data + offsets[3] + i * 12;
-        if (!index(u32(p), n[0], 0) || !index(u32(p + 4), n[2], 0))
+        if (!valid_index(u32(p), n[0], 0) || !valid_index(u32(p + 4), n[2], 0))
             return fail(bsp, BH_BSP_FORMAT);
     }
     for (i = 0; i < n[4]; i++)
     {
         p = data + offsets[4] + i * 56;
         for (j = 0; j < 10; j++)
-            if (!finite(p + j * 4))
+            if (!finite_value(p + j * 4))
                 return fail(bsp, BH_BSP_FORMAT);
         for (j = 0; j < 3; j++)
             if (f32(p + j * 4) > f32(p + 12 + j * 4))
                 return fail(bsp, BH_BSP_FORMAT);
-        if (!index(u32(p + 40), n[5], 1) || !index(u32(p + 44), n[5], 1) || !index(u32(p + 48), n[4], 1) ||
-            !index(u32(p + 52), n[4], 1))
+        if (!valid_index(u32(p + 40), n[5], 1) || !valid_index(u32(p + 44), n[5], 1) ||
+            !valid_index(u32(p + 48), n[4], 1) || !valid_index(u32(p + 52), n[4], 1))
             return fail(bsp, BH_BSP_FORMAT);
     }
     for (i = 0; i < n[5]; i++)
     {
         p = data + offsets[5] + i * 8;
-        if (!index(u32(p), n[3], 0) || !index(u32(p + 4), n[5], 1))
+        if (!valid_index(u32(p), n[3], 0) || !valid_index(u32(p + 4), n[5], 1))
             return fail(bsp, BH_BSP_FORMAT);
     }
     work = (unsigned char *)bsp->allocator.allocate(6 * maximum + 4, bsp->allocator.user);

@@ -51,7 +51,7 @@ static void release_tick(BHEntity *e)
 }
 int __cdecl bh_actor_damage_bind(BHActorDamageContext *c, BHEntity *e)
 {
-    if (!c || !c->pool || !c->route || !c->route->sound || !e || !live(c, e))
+    if (!c || !c->pool || !c->route || !c->route->live_tick || !c->route->sound || !e || !live(c, e))
         return 0;
     memcpy(e->payload + 600, &c, 4);
     return bh_entity_set_query(c->pool, e, bh_actor_damage_query);

@@ -183,7 +183,7 @@ void __cdecl bh_area_projectile_tick(BHEntity *e)
             c->error = 2;
             return;
         }
-        actor = room->actors_owner ? *room->actors_owner : room->actors;
+        actor = room->actors_owner ? *room->actors_owner : NULL;
         n = 0;
         while (actor)
         {

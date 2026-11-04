@@ -34,6 +34,10 @@
 
 A source restoration of **BHunter**, the 1999 hovercar combat game by **InterActive Vision**, published by **Midas Interactive Entertainment**. Hunt criminals through a futuristic city and collect their bounties. [Original game details](https://gamefaqs.gamespot.com/pc/250530-bhunter/data).
 
+## BHunter Road to Linux — v0.3
+
+BHunter now builds with GCC, a first step toward a Linux version. This release is for **Windows**; native Linux support is still ahead. The compiler runtime is included, so no separate GCC installation is needed to play.
+
 ## Features
 
 - SDL powered window management, hardware rendering and input.
@@ -43,8 +47,8 @@ A source restoration of **BHunter**, the 1999 hovercar combat game by **InterAct
 
 ## Install
 
-1. Download and extract [release 0.2](https://github.com/stellarwind/BHunter-revived/releases/tag/v0.2) on Windows.
-2. Copy `Bhunter.bin` from your own original game into the `GAME_DATA` folder.
+1. Download and extract [v0.3 — BHunter Road to Linux](https://github.com/stellarwind/BHunter-revived/releases/tag/v0.3) on Windows.
+2. Create a `GAME_DATA` folder beside the executable and copy `Bhunter.bin` from your own original game into it.
 3. Run `BHunter-source.exe`.
 
 Music plays from a mounted BHunter CD, or from `MUSIC_DATA/track02.wav` beside `GAME_DATA`. 
@@ -60,24 +64,16 @@ See [How to play](HOWTOPLAY.md) for controls.
 
 ## Build
 
-Requires Python 3.10+, Visual C++ 5.0 with Visual Studio 97 SP3, the DirectX 7 SDK headers/DirectInput library, and a 32-bit MinGW-w64 C++17 compiler (`g++` on PATH, or `BH_GPU_CXX`). Proprietary build dependencies are not included.
+Requires Python 3.10+ and a **32-bit MinGW-w64 GCC toolchain** with `gcc` and `g++` on PATH. SDL3 is downloaded automatically on the first build.
 
-Set these paths in a Command Prompt:
-
-```bat
-set BH_VC_ROOT=C:\VC5\VC
-set BH_SP3_ROOT=C:\VS97SP3\all\vc
-set BH_SHARED_DIR=C:\VC5\SHAREDIDE\BIN
-set BH_DXSDK_ROOT=C:\DX7SDK
-set BH_COMPILER_DIR=C:\BHunter-compiler
-```
-
-Prepare `BH_COMPILER_DIR` with stock VC5 `CL.EXE`, SP3 `c1.dll`, `c1xx.dll`, `c2.exe` (from `enu\vc\bin`), and stock `MSDIS100.DLL`, `MSPDB50.DLL`, `MSVCP50.DLL` (from `SHAREDIDE\BIN`). The build uses the stock VC5 linker and SP3 headers/libraries.
+Place your original `Bhunter.bin` in `GAME_DATA` or `build/GAME_DATA`, then run:
 
 ```bat
-build-source.cmd
+build.cmd
 build\BHunter-source.exe
 ```
+
+The game and required DLLs are written directly to `build/`. Keep them together when moving the game.
 
 ## Unlock all levels
 

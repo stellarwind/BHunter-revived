@@ -101,7 +101,9 @@ int __cdecl bh_actor_launch_receive(BHActorLaunchContext *c, void *bytes, unsign
     short tag;
     unsigned short saved, tick;
     BHEntity *e;
-    if (!c || !c->actors || !c->navigation || !c->stats || !c->good)
+    if (!c || !c->actors || !c->actors->response || !c->actors->response->damage ||
+        !c->actors->response->damage->route || !c->actors->response->damage->route->live_tick || !c->navigation ||
+        !c->stats || !c->good)
     {
         if (c)
             c->error = 1;
