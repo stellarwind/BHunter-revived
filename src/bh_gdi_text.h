@@ -6,7 +6,6 @@
 typedef struct BHGdiText
 {
     BHFrameDisplay *display;
-    HFONT font;
     long relock;
     unsigned long native_calls, failures;
     HRESULT last_hresult;
@@ -14,7 +13,8 @@ typedef struct BHGdiText
 /* Text is bounded to58 ANSI bytes plus NUL; original strncpy59 leaves no
    terminator for longer inputs. Commands retain copied text and signed16XY.
    Caller owns surface and optional lock; no screen DC or capture is used.
-   Font is created lazily by whole consumer; dispose is count-zero ownership. */
+   Legacy command ABI is retained. Original Comic Sans MS glyphs and metrics
+   are baked at build time; the portable backend owns the loaded atlas. */
 int __cdecl bh_gdi_text_queue(BHDrawQueue *, short, short, const char *, unsigned long); /*478890*/
 int __cdecl bh_gdi_text_execute(BHGdiText *, const BHDrawCommand *, unsigned long *);    /*477d20*/
 int __cdecl bh_editor_message_queue(BHDrawQueue *);                                      /*40e050*/

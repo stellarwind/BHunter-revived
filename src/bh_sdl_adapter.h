@@ -150,9 +150,6 @@ extern "C"
                                                              LPDIRECTDRAWSURFACE *lplpDDAttachedSurface);
 #undef IDirectDrawSurface_GetAttachedSurface
 #define IDirectDrawSurface_GetAttachedSurface bh_IDirectDrawSurface_GetAttachedSurface
-    HRESULT __cdecl bh_IDirectDrawSurface_GetDC(void *self, HDC *lphDC);
-#undef IDirectDrawSurface_GetDC
-#define IDirectDrawSurface_GetDC bh_IDirectDrawSurface_GetDC
     HRESULT __cdecl bh_IDirectDrawSurface_GetPixelFormat(void *self, LPDDPIXELFORMAT lpDDPixelFormat);
 #undef IDirectDrawSurface_GetPixelFormat
 #define IDirectDrawSurface_GetPixelFormat bh_IDirectDrawSurface_GetPixelFormat
@@ -169,9 +166,6 @@ extern "C"
     ULONG __cdecl bh_IDirectDrawSurface_Release(void *self);
 #undef IDirectDrawSurface_Release
 #define IDirectDrawSurface_Release bh_IDirectDrawSurface_Release
-    HRESULT __cdecl bh_IDirectDrawSurface_ReleaseDC(void *self, HDC hDC);
-#undef IDirectDrawSurface_ReleaseDC
-#define IDirectDrawSurface_ReleaseDC bh_IDirectDrawSurface_ReleaseDC
     HRESULT __cdecl bh_IDirectDrawSurface_Restore(void *self);
 #undef IDirectDrawSurface_Restore
 #define IDirectDrawSurface_Restore bh_IDirectDrawSurface_Restore
@@ -215,6 +209,7 @@ extern "C"
     HRESULT __cdecl bh_gpu_enumerate(LPDDENUMCALLBACKA, void *);
 #define DirectDrawCreate bh_gpu_create
 #define DirectDrawEnumerateA bh_gpu_enumerate
+    int bh_gpu_text(void *surface, int x, int y, const char *text, unsigned long rgb);
     /* Native handles are borrowed only by deferred legacy backends. */
     HWND __cdecl bh_sdl_legacy_window(void);
     HINSTANCE __cdecl bh_sdl_legacy_instance(void);

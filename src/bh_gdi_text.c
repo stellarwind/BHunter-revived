@@ -1,4 +1,5 @@
 #include "bh_gdi_text.h"
+#include "bh_sdl_adapter.h"
 #include <string.h>
 unsigned long __cdecl bh_draw_command_next(const BHDrawCommand *c)
 {
@@ -47,37 +48,31 @@ static void native(BHGdiText *c, HRESULT hr)
 int __cdecl bh_gdi_text_execute(BHGdiText *c, const BHDrawCommand *command, unsigned long *next)
 {
     BHFrameDisplay *d;
-    HDC dc = NULL;
     DDSURFACEDESC desc;
-    HRESULT hr;
     const char *text;
+    unsigned long rgb;
+    int ok;
     if (!c || !(d = c->display) || !d->color || !command || command->kind != BH_DRAW_GDI_TEXT || !next)
         return 0;
     text = (const char *)(command->words + 1);
     if (!memchr(text, 0, 59))
         return 0;
-    if (!c->font)
-        c->font = CreateFontA(24, 0, 0, 0, 400, 0, 0, 0, 0, 0, 0, 3, 2, "Comic Sans MS");
+    *next = bh_draw_command_next(command);
     if (c->relock)
     {
-        hr = IDirectDrawSurface_Unlock(d->color, NULL);
+        HRESULT hr = IDirectDrawSurface_Unlock(d->color, NULL);
         native(c, hr);
-        if (SUCCEEDED(hr))
-            d->locked = 0;
+        if (FAILED(hr))
+            return 0;
+        d->locked = 0;
     }
-    hr = IDirectDrawSurface_GetDC(d->color, &dc);
-    native(c, hr);
-    if (SUCCEEDED(hr))
-    {
-        SetBkMode(dc, 1);
-        SelectObject(dc, c->font);
-        SetTextColor(dc, command->words[0]);
-        TextOutA(dc, (short)(command->resource & 65535), (short)(command->resource >> 16), text, lstrlenA(text));
-        hr = IDirectDrawSurface_ReleaseDC(d->color, dc);
-        native(c, hr);
-    }
+    /* Commands keep the original COLORREF byte order; the portable boundary is RGB. */
+    rgb = ((command->words[0] & 255UL) << 16) | (command->words[0] & 0xff00UL) | ((command->words[0] >> 16) & 255UL);
+    ok = bh_gpu_text(d->color, (short)command->resource, (short)(command->resource >> 16), text, rgb);
+    native(c, ok ? DD_OK : E_FAIL);
     if (c->relock)
     {
+        HRESULT hr;
         memset(&desc, 0, sizeof(desc));
         desc.dwSize = sizeof(desc);
         hr = IDirectDrawSurface_Lock(d->color, NULL, &desc, 0, NULL);
@@ -90,17 +85,13 @@ int __cdecl bh_gdi_text_execute(BHGdiText *c, const BHDrawCommand *command, unsi
             if (d->atlas)
                 d->atlas->scan_step = desc.lPitch;
         }
+        else
+            ok = 0;
     }
-    *next = bh_draw_command_next(command);
-    return 1;
+    return ok;
 }
 void __cdecl bh_gdi_text_dispose(BHGdiText *c)
 {
-    if (c && c->font)
-    {
-        if (DeleteObject(c->font))
-            c->font = NULL;
-        else
-            ++c->failures;
-    }
+    if (c)
+        c->display = NULL;
 }

@@ -4,10 +4,10 @@ import argparse
 import hashlib
 import json
 import os
-from pathlib import Path
 import re
 import shutil
 import subprocess
+from pathlib import Path
 
 from prepare_sdl3 import prepare
 
@@ -108,6 +108,7 @@ def main():
         ROOT / "tools/build_game.py",
         ROOT / "tools/build_gcc.py",
         ROOT / "tools/prepare_sdl3.py",
+        ROOT / "tools/bake_comic_font.py",
         ROOT / "tools/game_compile_context.json",
     ]
     record["sources"] = {
@@ -126,7 +127,9 @@ def main():
 
     def run(argv):
         command = [str(item) for item in argv]
-        result = subprocess.run(command, cwd=ROOT, text=True, capture_output=True)
+        result = subprocess.run(
+            command, cwd=ROOT, text=True, capture_output=True, check=False
+        )
         record["commands"].append(
             {
                 "argv": command,
@@ -244,7 +247,6 @@ def main():
             "-lole32",
             "-ladvapi32",
             "-lcomctl32",
-            "-lgdi32",
             "-luser32",
             "-o",
             out / "BHunter-source.exe",
@@ -278,6 +280,7 @@ def main():
             "SDL3.dll",
             "SDL3-LICENSE.txt",
             "shaders/legacy.hlsl",
+            "fonts/comic-sans-ms-24.bhf",
         )
     }
     record["passed"] = True
