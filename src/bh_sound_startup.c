@@ -1,3 +1,4 @@
+#include "bh_platform_clock.h"
 #include "bh_sound_startup.h"
 #include <stddef.h>
 #include <string.h>
@@ -25,7 +26,7 @@ int __cdecl bh_sound_startup(BHSoundQueue *queue, HWND window, BHSoundStartupSta
         if (attempt < 9)
         {
             ++actual.sleep_calls;
-            Sleep(100);
+            bh_platform_delay(100);
         }
     }
     if (actual.create_result != DS_OK)

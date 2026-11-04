@@ -1,4 +1,5 @@
 #include "bh_game_app.h"
+#include "bh_platform.h"
 #include "bh_atlas_text.h"
 #include "bh_render_interpolation.h"
 #include "bh_application_bootstrap.h"
@@ -100,8 +101,6 @@ static void perf_dispose(BHGamePerfCapture *c)
 #endif
 typedef struct BHGameApp
 {
-    HWND window;
-    HINSTANCE instance;
     int hardware, fullscreen;
     long quit;
     int initialized, error, focus_sample;
@@ -368,11 +367,10 @@ typedef struct BHGameApp
     int perf_enabled;
     BHGamePerfCapture perf_capture;
     unsigned long perf_projectiles;
-    LARGE_INTEGER perf_frequency, perf_origin, perf_previous;
-    char perf_path[128];
+    uint64_t perf_origin, perf_previous;
+    char perf_path[512];
 #endif
 } BHGameApp;
-static HWND input_window;
 /* Original city-name pointer table at0048fb58, indexed by placement city ID. */
 static const char *const city_names[16] = {"Downtown",
                                            "Old Bronx",
@@ -396,23 +394,25 @@ static int failure(BHGameApp *a, int code)
     return 0;
 }
 #ifdef DEBUGGING
-static double perf_ms(BHGameApp *a, LARGE_INTEGER end, LARGE_INTEGER start)
+static double perf_ms(BHGameApp *a, uint64_t end, uint64_t start)
 {
-    return (double)(end.QuadPart - start.QuadPart) * 1000.0 / (double)a->perf_frequency.QuadPart;
+    return (double)(end - start) / 1000000.0;
 }
 static int perf_start(BHGameApp *a)
 {
     if (!a->perf_enabled)
         return 1;
-    if (!QueryPerformanceFrequency(&a->perf_frequency) || a->perf_frequency.QuadPart <= 0)
-        return failure(a, 12);
-
-    QueryPerformanceCounter(&a->perf_origin);
-    sprintf(a->perf_path, "frame-times-%08lx-%lu.csv", GetTickCount(), GetCurrentProcessId());
+    a->perf_origin = bh_sdl_nanoseconds();
+    {
+        char name[96];
+        sprintf(name, "frame-times-%llu.csv", (unsigned long long)a->perf_origin);
+        if (snprintf(a->perf_path, sizeof(a->perf_path), "%s", bh_sdl_settings_file(name)) >= sizeof(a->perf_path))
+            return failure(a, 12);
+    }
     return 1;
 }
-static void perf_record(BHGameApp *a, int produced, LARGE_INTEGER simulation_start, LARGE_INTEGER render_start,
-                        LARGE_INTEGER present_start, LARGE_INTEGER end)
+static void perf_record(BHGameApp *a, int produced, uint64_t simulation_start, uint64_t render_start,
+                        uint64_t present_start, uint64_t end)
 {
     BHGamePerfSample *s;
     BHEntity *e;
@@ -421,7 +421,7 @@ static void perf_record(BHGameApp *a, int produced, LARGE_INTEGER simulation_sta
     if (!s)
         return;
     s->time_ms = perf_ms(a, end, a->perf_origin);
-    s->interval_ms = a->perf_previous.QuadPart ? perf_ms(a, end, a->perf_previous) : 0;
+    s->interval_ms = a->perf_previous ? perf_ms(a, end, a->perf_previous) : 0;
     a->perf_previous = end;
     s->simulation_ms = produced ? perf_ms(a, render_start, simulation_start) : 0;
     s->render_ms = perf_ms(a, present_start, render_start);
@@ -567,32 +567,21 @@ static int restore_display(BHGameApp *a)
 }
 static BOOL WINAPI game_cursor(LPPOINT point)
 {
-    RECT client;
-    if (!GetCursorPos(point) || !ScreenToClient(input_window, point) || !GetClientRect(input_window, &client))
+    int x, y;
+    if (!bh_sdl_mouse(&x, &y))
         return FALSE;
-    point->x -= (client.right - client.left) / 2 - 160;
-    point->y -= (client.bottom - client.top) / 2 - 100;
+    point->x = x;
+    point->y = y;
     return TRUE;
 }
 static BOOL WINAPI game_recenter(int x, int y)
 {
-    POINT p;
-    RECT client;
-    if (!GetClientRect(input_window, &client))
-        return FALSE;
-    p.x = x + (client.right - client.left) / 2 - 160;
-    p.y = y + (client.bottom - client.top) / 2 - 100;
-    return ClientToScreen(input_window, &p) && SetCursorPos(p.x, p.y);
+    return bh_sdl_warp(x, y);
 }
 static HRESULT __cdecl loading_present(LPDIRECTDRAWSURFACE color, void *user)
 {
     BHGameApp *a = (BHGameApp *)user;
-    RECT r;
-    POINT p = {0, 0};
-    GetClientRect(a->window, &r);
-    ClientToScreen(a->window, &p);
-    OffsetRect(&r, p.x, p.y);
-    return IDirectDrawSurface_Blt(a->primary, &r, color, 0, DDBLT_WAIT, 0);
+    return IDirectDrawSurface_Blt(a->primary, 0, color, 0, DDBLT_WAIT, 0);
 }
 static int loading_begin(BHGameApp *a)
 {
@@ -619,33 +608,17 @@ static int loading_begin(BHGameApp *a)
         return failure(a, 6);
     return 1;
 }
-static void __cdecl sdl_message(HWND window, UINT message, WPARAM key, LPARAM bits, void *user)
+static void sdl_input(const BHPlatformEvent *event, void *user)
 {
     BHGameApp *a = (BHGameApp *)user;
-    if (message == WM_ACTIVATEAPP && !key)
+    if (event->type == BH_PLATFORM_FOCUS && !event->down)
         a->focus_sample = 0;
-    if (message == WM_ACTIVATEAPP && !key)
-        memset(a->snapshot.current, 0, sizeof(a->snapshot.current));
-    if (message == MM_MCINOTIFY)
-    {
-        bh_cd_notify(&a->cd_notify, (short)key, (MCIDEVICEID)bits);
-        return;
-    }
-    switch (message)
-    {
-    case WM_KEYDOWN:
-    case WM_KEYUP:
-    case WM_SYSKEYDOWN:
-    case WM_SYSKEYUP:
-    case WM_LBUTTONDOWN:
-    case WM_LBUTTONUP:
-    case WM_RBUTTONDOWN:
-    case WM_RBUTTONUP:
-    case WM_MBUTTONDOWN:
-    case WM_MBUTTONUP:
-        bh_input_message(&a->snapshot, window, message, key, bits);
-        break;
-    }
+    bh_input_event(&a->snapshot, event);
+}
+static void sdl_music(unsigned status, unsigned device, void *user)
+{
+    BHGameApp *a = (BHGameApp *)user;
+    bh_cd_notify(&a->cd_notify, (short)status, (MCIDEVICEID)device);
 }
 static BHTextureImage *__cdecl image(unsigned long handle, void *user)
 {
@@ -696,19 +669,16 @@ static int __cdecl horizon_polygon(BHClipVertex *ring, BHTextureImage *texture, 
     result = bh_primitive_emit_gradient(&a->primitive, texture, ring, color);
     return result;
 }
-static int platform(BHGameApp *a, int show)
+static int platform(BHGameApp *a)
 {
     DDSURFACEDESC surface;
     BHSoftwareRaster raster;
-    a->window = bh_sdl_open(0, sdl_message, a);
-    if (!a->window)
+    if (!bh_sdl_open(0, sdl_input, sdl_music, a))
         return failure(a, 3);
-    input_window = a->window;
     strcpy(a->device_names[0].name, "SDL3 GPU");
     if (!bh_config_init(&a->config, 0) || !bh_config_bootstrap(&a->config, a->config_path, a->device_names, 1))
         return failure(a, 6);
     a->application.config = &a->config;
-    a->application.window = a->window;
     a->hardware = 1;
     a->fullscreen = 1; /* Internal flip path; SDL independently owns window mode. */
     if (DirectDrawCreate(0, &a->draw, 0) != DD_OK)
@@ -886,8 +856,6 @@ static int platform(BHGameApp *a, int show)
     a->render.light = &a->light;
     a->render.gdi = &a->gdi;
     a->special_draw.queue = &a->queue;
-    (void)show;
-    UpdateWindow(a->window);
     return 1;
 }
 static void binding(BHGameApp *a, unsigned long identity, unsigned long *destination)
@@ -1046,7 +1014,7 @@ static int source_owners(BHGameApp *a)
     a->collection.api.gamepad = bh_sdl_gamepad;
     a->collection.api.cursor = game_cursor;
     a->collection.api.recenter = game_recenter;
-    if (!bh_input_devices_start(&a->devices, a->window))
+    if (!bh_input_devices_start(&a->devices, 0))
         return failure(a, 6);
     if (!bh_entities_init(&a->pool, 0x2580, 0) || !bh_sound_queue_init(&a->sound, 0, 0, 0) ||
         !bh_network_transport_init(&a->transport, 0, 0) || !bh_network_game_init(&a->network_game, &a->sessions, 0) ||
@@ -1311,7 +1279,7 @@ static int source_owners(BHGameApp *a)
     a->transition.hardware_flags = 1;
     a->transition.camera_index = &a->selected_waypoint;
     a->transition.quit = &a->quit;
-    a->transition.window = (DWORD)a->window;
+    a->transition.window = (DWORD)bh_sdl_legacy_window(); /* MCI callback owner. */
     a->key_capture.pool = &a->pool;
     a->key_capture.snapshot = &a->snapshot;
     a->key_capture.state = &a->global_state;
@@ -1953,11 +1921,6 @@ static int runtime_owners(BHGameApp *a)
     return 1;
 }
 #undef V
-static LRESULT __cdecl source_message(void *user, HWND w, UINT m, WPARAM key, LPARAM bits)
-{
-    BHGameApp *a = (BHGameApp *)user;
-    return bh_input_message(&a->snapshot, w, m, key, bits);
-}
 static void __cdecl source_produce(void *user)
 {
     BHGameApp *a = (BHGameApp *)user;
@@ -2022,7 +1985,7 @@ static int manual_loop(BHGameApp *a)
     unsigned long i, ticks, tick;
     int produce;
 #ifdef DEBUGGING
-    LARGE_INTEGER simulation_start, render_start, present_start, frame_end;
+    uint64_t simulation_start, render_start, present_start, frame_end;
 #endif
     memset(&clock, 0, sizeof(clock));
 #ifdef DEBUGGING
@@ -2055,19 +2018,24 @@ static int manual_loop(BHGameApp *a)
             a->quit = 1;
         if (a->quit)
             break;
-        if (GetForegroundWindow() != a->window || IsIconic(a->window))
+        if (!bh_sdl_active())
         {
             a->focus_sample = 0;
             clock.ready = 0;
             a->interpolation.ready = 0;
 #ifdef DEBUGGING
-            a->perf_previous.QuadPart = 0;
+            a->perf_previous = 0;
 #endif
-            Sleep(20);
+            bh_sdl_delay(20);
             continue;
         }
         if (!a->focus_sample)
         {
+            clock.ready = 0;
+            a->interpolation.ready = 0;
+#ifdef DEBUGGING
+            a->perf_previous = 0;
+#endif
             if (!a->collection.disable_mouse_motion && !game_recenter(160, 100))
                 return failure(a, 12);
             memset(a->snapshot.mouse_axes, 0, sizeof(a->snapshot.mouse_axes));
@@ -2079,7 +2047,7 @@ static int manual_loop(BHGameApp *a)
         produce = ticks != 0;
 #ifdef DEBUGGING
         if (a->perf_enabled)
-            QueryPerformanceCounter(&simulation_start);
+            simulation_start = bh_sdl_nanoseconds();
 #endif
         for (tick = 0; tick < ticks; ++tick)
         {
@@ -2105,7 +2073,7 @@ static int manual_loop(BHGameApp *a)
         }
 #ifdef DEBUGGING
         if (a->perf_enabled)
-            QueryPerformanceCounter(&render_start);
+            render_start = bh_sdl_nanoseconds();
 #endif
 
         {
@@ -2118,7 +2086,7 @@ static int manual_loop(BHGameApp *a)
         }
 #ifdef DEBUGGING
         if (a->perf_enabled)
-            QueryPerformanceCounter(&present_start);
+            present_start = bh_sdl_nanoseconds();
 #endif
         if (a->fullscreen)
             if (a->target != a->render_mode.render &&
@@ -2135,7 +2103,7 @@ static int manual_loop(BHGameApp *a)
 #ifdef DEBUGGING
         if (a->perf_enabled)
         {
-            QueryPerformanceCounter(&frame_end);
+            frame_end = bh_sdl_nanoseconds();
             perf_record(a, produce, simulation_start, render_start, present_start, frame_end);
         }
 #endif
@@ -2232,17 +2200,15 @@ static void cleanup(BHGameApp *a)
     if (a->draw2)
     {
         IDirectDraw2_RestoreDisplayMode(a->draw2);
-        IDirectDraw2_SetCooperativeLevel(a->draw2, a->window, DDSCL_NORMAL);
+        IDirectDraw2_SetCooperativeLevel(a->draw2, 0, DDSCL_NORMAL);
         IDirectDraw2_Release(a->draw2);
     }
     if (a->draw)
     {
-        IDirectDraw_SetCooperativeLevel(a->draw, a->window, DDSCL_NORMAL);
+        IDirectDraw_SetCooperativeLevel(a->draw, 0, DDSCL_NORMAL);
         IDirectDraw_Release(a->draw);
     }
     bh_sdl_close();
-    a->window = 0;
-    input_window = 0;
     bh_vfile_shutdown();
     free(a->motion_bindings);
     free(a->world_responses);
@@ -2258,7 +2224,7 @@ static void cleanup(BHGameApp *a)
     free(a->physics_worlds);
     free(a->reset_nodes);
 }
-int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int profile, int show)
+int bh_game_app_run(const char *directory, const char *settings_path, int profile)
 {
     BHGameApp *a;
     int result;
@@ -2266,27 +2232,26 @@ int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int profi
     a = (BHGameApp *)calloc(1, sizeof(*a));
     if (!a)
         return 2;
-    a->instance = instance;
     a->fullscreen = 1;
 #ifdef DEBUGGING
     a->perf_enabled = profile;
 #endif
     a->width = 640;
     a->height = 480;
-    if (!directory || strlen(directory) > 450)
+    if (!directory || strlen(directory) > 450 || !settings_path || strlen(settings_path) >= sizeof(a->config_path))
     {
         free(a);
         return 2;
     }
     sprintf(a->archive, "%s\\Bhunter.bin", directory);
-    strcpy(a->config_path, "source-preview.cfg");
+    strcpy(a->config_path, settings_path);
     if (!bh_math_environment_enter(&a->math))
     {
         free(a);
         return 2;
     }
 
-    if (!platform(a, show) || !source_owners(a))
+    if (!platform(a) || !source_owners(a))
         goto done;
     if (!bh_vfile_mount(a->archive))
     {
@@ -2295,7 +2260,7 @@ int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int profi
     }
     if (!loading_begin(a))
         goto done;
-    if (!bh_sound_startup(&a->sound, a->window, &a->sound_stats))
+    if (!bh_sound_startup(&a->sound, bh_sdl_legacy_window(), &a->sound_stats))
     {
         failure(a, 6);
         goto done;
@@ -2347,7 +2312,7 @@ int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int profi
     /* Original004798d5..004798f9: detach archive progress, initialize the
        producer buffers, then display twice. There is no logo wait/input loop. */
     bh_loading_progress_remove(&a->loading_progress);
-    if (!bh_frame_buffers_start(&a->frames, source_produce, a, 30, 3500 * sizeof(BHDrawCommand), source_message, a))
+    if (!bh_frame_buffers_start(&a->frames, source_produce, a, 30, 3500 * sizeof(BHDrawCommand), 0, 0))
     {
         failure(a, 12);
         goto done;
@@ -2360,7 +2325,7 @@ int __cdecl bh_game_app_run(HINSTANCE instance, const char *directory, int profi
 
     a->initialized = 1;
 
-    bh_force_feedback_init(&a->force_init, instance, a->window);
+    bh_force_feedback_init(&a->force_init, bh_sdl_legacy_instance(), bh_sdl_legacy_window());
     manual_loop(a);
 
 done:

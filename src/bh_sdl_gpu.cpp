@@ -12,7 +12,9 @@
 #include <cstdlib>
 #include <cstring>
 #include <d3dcompiler.h>
+#include <mmsystem.h>
 #include <map>
+#include <filesystem>
 #include <string>
 #include <vector>
 
@@ -70,7 +72,8 @@ std::vector<Batch> batches;
 std::vector<Surface *> surfaces;
 std::array<unsigned, 256> states{};
 Surface *white;
-BHSDLMessage message_callback;
+BHPlatformInput input_callback;
+BHPlatformMusic music_callback;
 void *message_user;
 char error_text[1024];
 bool quitting, hidden;
@@ -187,7 +190,7 @@ void finish_modes(int settings_version, int saved_width, int saved_height)
         selected_resolution = (int)(saved_mode - modes.begin());
     select_matching_mode();
 }
-const char *settings_path = "video-sdl3.ini";
+std::string settings_path = "video-sdl3.ini", settings_directory;
 void set_error(const char *context)
 {
     snprintf(error_text, sizeof(error_text), "%s: %s", context, SDL_GetError());
@@ -244,14 +247,15 @@ void save_settings()
 {
     if (!window || hidden)
         return;
-    FILE *f = fopen("video-sdl3.ini.tmp", "w");
+    const auto temporary = settings_path + ".tmp";
+    FILE *f = fopen(temporary.c_str(), "w");
     if (!f)
         return;
     auto resolution = modes.empty() ? std::make_pair(normal_w, normal_h) : modes[selected_resolution];
     fprintf(f, "BHSDL3 3\n%d %d %d %d %d %d %d\n%d %d %d\n", normal_x, normal_y, normal_w, normal_h, mode, maximized,
             selected_resolution, selected_aspect, resolution.first, resolution.second);
     if (fclose(f) == 0)
-        MoveFileExA("video-sdl3.ini.tmp", settings_path, MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH);
+        SDL_RenamePath(temporary.c_str(), settings_path.c_str());
 }
 void remember_window()
 {
@@ -267,17 +271,143 @@ void remember_window()
     }
     save_settings();
 }
+/* Only MCI completion remains native until the audio migration. */
 bool SDLCALL message_hook(void *, MSG *msg)
 {
-    if (window && msg->hwnd == (HWND)SDL_GetPointerProperty(SDL_GetWindowProperties(window),
-                                                            SDL_PROP_WINDOW_WIN32_HWND_POINTER, nullptr))
-    {
-        if (msg->message == WM_SYSKEYDOWN && msg->wParam == VK_RETURN)
-            return true;
-        if (message_callback)
-            message_callback(msg->hwnd, msg->message, msg->wParam, msg->lParam, message_user);
-    }
+    if (msg->hwnd == bh_sdl_legacy_window() && msg->message == MM_MCINOTIFY && music_callback)
+        music_callback((unsigned)msg->wParam, (unsigned)msg->lParam, message_user);
     return true;
+}
+/* Special and OEM keys keep the original saved binding numbers. Printable
+   letters follow the layout's keycode; physical OEM positions retain VK IDs. */
+unsigned binding_key(SDL_Scancode scan, SDL_Keycode key)
+{
+    if (key >= SDLK_A && key <= SDLK_Z)
+        return 'A' + key - SDLK_A;
+    if (key >= SDLK_0 && key <= SDLK_9)
+        return '0' + key - SDLK_0;
+    /* Non-Latin layouts still need usable legacy letter/digit bindings. */
+    if (scan >= SDL_SCANCODE_A && scan <= SDL_SCANCODE_Z)
+        return 'A' + scan - SDL_SCANCODE_A;
+    if (scan >= SDL_SCANCODE_1 && scan <= SDL_SCANCODE_9)
+        return '1' + scan - SDL_SCANCODE_1;
+    if (scan == SDL_SCANCODE_0)
+        return '0';
+    if (scan >= SDL_SCANCODE_F1 && scan <= SDL_SCANCODE_F12)
+        return 112 + scan - SDL_SCANCODE_F1;
+    if (scan >= SDL_SCANCODE_F13 && scan <= SDL_SCANCODE_F24)
+        return 124 + scan - SDL_SCANCODE_F13;
+    if (scan >= SDL_SCANCODE_KP_1 && scan <= SDL_SCANCODE_KP_9)
+        return 97 + scan - SDL_SCANCODE_KP_1;
+    switch (scan)
+    {
+    case SDL_SCANCODE_BACKSPACE:
+        return 8;
+    case SDL_SCANCODE_TAB:
+        return 9;
+    case SDL_SCANCODE_RETURN:
+    case SDL_SCANCODE_KP_ENTER:
+        return 13;
+    case SDL_SCANCODE_LSHIFT:
+    case SDL_SCANCODE_RSHIFT:
+        return 16;
+    case SDL_SCANCODE_LCTRL:
+    case SDL_SCANCODE_RCTRL:
+        return 17;
+    case SDL_SCANCODE_LALT:
+    case SDL_SCANCODE_RALT:
+        return 18;
+    case SDL_SCANCODE_PAUSE:
+        return 19;
+    case SDL_SCANCODE_CAPSLOCK:
+        return 20;
+    case SDL_SCANCODE_ESCAPE:
+        return 27;
+    case SDL_SCANCODE_SPACE:
+        return 32;
+    case SDL_SCANCODE_PAGEUP:
+        return 33;
+    case SDL_SCANCODE_PAGEDOWN:
+        return 34;
+    case SDL_SCANCODE_END:
+        return 35;
+    case SDL_SCANCODE_HOME:
+        return 36;
+    case SDL_SCANCODE_LEFT:
+        return 37;
+    case SDL_SCANCODE_UP:
+        return 38;
+    case SDL_SCANCODE_RIGHT:
+        return 39;
+    case SDL_SCANCODE_DOWN:
+        return 40;
+    case SDL_SCANCODE_PRINTSCREEN:
+        return 44;
+    case SDL_SCANCODE_INSERT:
+        return 45;
+    case SDL_SCANCODE_DELETE:
+        return 46;
+    case SDL_SCANCODE_LGUI:
+        return 91;
+    case SDL_SCANCODE_RGUI:
+        return 92;
+    case SDL_SCANCODE_APPLICATION:
+        return 93;
+    case SDL_SCANCODE_KP_0:
+        return 96;
+    case SDL_SCANCODE_KP_MULTIPLY:
+        return 106;
+    case SDL_SCANCODE_KP_PLUS:
+        return 107;
+    case SDL_SCANCODE_KP_MINUS:
+        return 109;
+    case SDL_SCANCODE_KP_PERIOD:
+        return 110;
+    case SDL_SCANCODE_KP_DIVIDE:
+        return 111;
+    case SDL_SCANCODE_NUMLOCKCLEAR:
+        return 144;
+    case SDL_SCANCODE_SCROLLLOCK:
+        return 145;
+    case SDL_SCANCODE_SEMICOLON:
+        return 186;
+    case SDL_SCANCODE_EQUALS:
+        return 187;
+    case SDL_SCANCODE_COMMA:
+        return 188;
+    case SDL_SCANCODE_MINUS:
+        return 189;
+    case SDL_SCANCODE_PERIOD:
+        return 190;
+    case SDL_SCANCODE_SLASH:
+        return 191;
+    case SDL_SCANCODE_GRAVE:
+        return 192;
+    case SDL_SCANCODE_LEFTBRACKET:
+        return 219;
+    case SDL_SCANCODE_BACKSLASH:
+        return 220;
+    case SDL_SCANCODE_RIGHTBRACKET:
+        return 221;
+    case SDL_SCANCODE_APOSTROPHE:
+        return 222;
+    case SDL_SCANCODE_NONUSBACKSLASH:
+        return 226;
+    default:
+        return 0;
+    }
+}
+std::array<unsigned, SDL_SCANCODE_COUNT> held_keys{};
+void input_event(BHPlatformEventType type, unsigned key, bool down, bool repeat = false)
+{
+    BHPlatformEvent event{type, key, down, repeat};
+    if (input_callback)
+        input_callback(&event, message_user);
+}
+void lose_focus()
+{
+    held_keys.fill(0);
+    input_event(BH_PLATFORM_FOCUS, 0, false);
 }
 SDL_GPUTexture *make_texture(unsigned w, unsigned h, SDL_GPUTextureFormat format, SDL_GPUTextureUsageFlags usage)
 {
@@ -815,21 +945,24 @@ void apply_mode()
 } // namespace
 extern "C"
 {
-    HWND __cdecl bh_sdl_open(int hide, BHSDLMessage callback, void *user)
+    int bh_sdl_open(int hide, BHPlatformInput callback, BHPlatformMusic music, void *user)
     {
         int saved_width = 0, saved_height = 0, settings_version = 0;
         hidden = hide != 0;
-        message_callback = callback;
+        input_callback = callback;
+        music_callback = music;
+        quitting = false;
+        held_keys.fill(0);
         message_user = user;
         if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS))
         {
             set_error("SDL init");
-            return nullptr;
+            return 0;
         }
         /* A missing controller subsystem must not prevent keyboard play. */
         if (SDL_InitSubSystem(SDL_INIT_GAMEPAD))
             find_gamepad();
-        FILE *f = fopen(settings_path, "r");
+        FILE *f = fopen(settings_path.c_str(), "r");
         if (f)
         {
             char tag[32] = {};
@@ -868,7 +1001,7 @@ extern "C"
         if (!window)
         {
             set_error("Create window");
-            return nullptr;
+            return 0;
         }
         SDL_SetWindowMinimumSize(window, 640, 480);
         SDL_SetWindowPosition(window, normal_x, normal_y);
@@ -889,7 +1022,7 @@ extern "C"
         if (!device || !SDL_ClaimWindowForGPUDevice(device, window))
         {
             set_error("Create GPU device");
-            return nullptr;
+            return 0;
         }
         SDL_SetGPUSwapchainParameters(device, window, SDL_GPU_SWAPCHAINCOMPOSITION_SDR, SDL_GPU_PRESENTMODE_VSYNC);
         SDL_SetGPUAllowedFramesInFlight(device, 1);
@@ -898,7 +1031,7 @@ extern "C"
         if (!vs || !fs)
         {
             set_error("Create shaders");
-            return nullptr;
+            return 0;
         }
         SDL_GPUSamplerCreateInfo sinfo{};
         sinfo.min_filter = sinfo.mag_filter = SDL_GPU_FILTER_LINEAR;
@@ -917,8 +1050,104 @@ extern "C"
             SDL_HideCursor();
             SDL_ShowWindow(window);
         }
-        return (HWND)SDL_GetPointerProperty(SDL_GetWindowProperties(window), SDL_PROP_WINDOW_WIN32_HWND_POINTER,
-                                            nullptr);
+        return 1;
+    }
+    HWND __cdecl bh_sdl_legacy_window()
+    {
+        return window ? (HWND)SDL_GetPointerProperty(SDL_GetWindowProperties(window),
+                                                     SDL_PROP_WINDOW_WIN32_HWND_POINTER, nullptr)
+                      : nullptr;
+    }
+    HINSTANCE __cdecl bh_sdl_legacy_instance()
+    {
+        return GetModuleHandleA(nullptr);
+    }
+    int bh_sdl_active()
+    {
+        return window && (SDL_GetWindowFlags(window) & SDL_WINDOW_INPUT_FOCUS) &&
+               !(SDL_GetWindowFlags(window) & SDL_WINDOW_MINIMIZED);
+    }
+    int bh_sdl_mouse(int *x, int *y)
+    {
+        int w, h;
+        float mx, my;
+        if (!window || !x || !y || !SDL_GetWindowSize(window, &w, &h))
+            return 0;
+        SDL_GetMouseState(&mx, &my);
+        const float density = SDL_GetWindowPixelDensity(window);
+        *x = (int)((mx - w / 2) * density) + 160;
+        *y = (int)((my - h / 2) * density) + 100;
+        return 1;
+    }
+    int bh_sdl_warp(int x, int y)
+    {
+        int w, h;
+        if (!window || !SDL_GetWindowSize(window, &w, &h))
+            return 0;
+        const float density = SDL_GetWindowPixelDensity(window);
+        if (density <= 0)
+            return 0;
+        SDL_WarpMouseInWindow(window, (x - 160) / density + w / 2, (y - 100) / density + h / 2);
+        return 1;
+    }
+    unsigned bh_sdl_key_character(unsigned key)
+    {
+        if (key >= 'A' && key <= 'Z')
+            return key;
+        if (key >= '0' && key <= '9')
+            return key;
+        if (key == 32)
+            return 32;
+        if (key >= 96 && key <= 105)
+            return '0' + key - 96;
+        for (int i = 1; i < SDL_SCANCODE_COUNT; ++i)
+        {
+            auto scan = (SDL_Scancode)i;
+            auto code = SDL_GetKeyFromScancode(scan, SDL_KMOD_NONE, false);
+            if (binding_key(scan, code) == key && code >= 32 && code < 127)
+                return (unsigned)code;
+        }
+        return 0;
+    }
+    uint32_t bh_sdl_ticks()
+    {
+        return (uint32_t)SDL_GetTicks();
+    }
+    uint64_t bh_sdl_nanoseconds()
+    {
+        return SDL_GetTicksNS();
+    }
+    void bh_sdl_delay(uint32_t milliseconds)
+    {
+        SDL_Delay(milliseconds);
+    }
+    int bh_sdl_paths(const char *assets, const char *settings)
+    {
+        namespace fs = std::filesystem;
+        std::error_code error;
+        const char *base = SDL_GetBasePath();
+        if (!base)
+            return 0;
+        auto root = fs::absolute(assets ? fs::path(assets) : fs::path(base), error);
+        if (error)
+            return 0;
+        auto output = settings ? fs::absolute(fs::path(settings), error) : root;
+        if (error || !fs::is_directory(output, error) || error)
+            return 0;
+        settings_directory = output.generic_string();
+        settings_path = (output / "video-sdl3.ini").generic_string();
+        fs::current_path(root, error);
+        return !error;
+    }
+    const char *bh_sdl_settings_file(const char *name)
+    {
+        static std::string path;
+        path = (std::filesystem::path(settings_directory) / name).generic_string();
+        return path.c_str();
+    }
+    void bh_sdl_error_dialog()
+    {
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "BHunter", "The game stopped at a dependency error.", nullptr);
     }
     double __cdecl bh_sdl_seconds()
     {
@@ -951,12 +1180,59 @@ extern "C"
                 quitting = true;
                 break;
             case SDL_EVENT_KEY_DOWN:
-                if (event.key.key == SDLK_RETURN && (event.key.mod & SDL_KMOD_ALT) && !event.key.repeat)
+            case SDL_EVENT_KEY_UP: {
+                if (event.key.windowID != SDL_GetWindowID(window))
+                    break;
+                auto scan = event.key.scancode;
+                if (scan <= SDL_SCANCODE_UNKNOWN || scan >= SDL_SCANCODE_COUNT)
+                    break;
+                if (event.type == SDL_EVENT_KEY_DOWN && !event.key.repeat && event.key.key == SDLK_RETURN &&
+                    (event.key.mod & SDL_KMOD_ALT))
                 {
                     remember_window();
                     mode = mode ? 0 : 1;
                     apply_mode();
+                    break;
                 }
+                if (event.key.down)
+                {
+                    if (!held_keys[scan])
+                        held_keys[scan] = binding_key(scan, event.key.key);
+                    if (held_keys[scan])
+                        input_event(BH_PLATFORM_KEY, held_keys[scan], true, event.key.repeat);
+                }
+                else
+                {
+                    const unsigned key = held_keys[scan];
+                    held_keys[scan] = 0;
+                    /* Two physical modifiers may share a saved binding ID. */
+                    if (key && std::find(held_keys.begin(), held_keys.end(), key) == held_keys.end())
+                        input_event(BH_PLATFORM_KEY, key, false);
+                }
+                break;
+            }
+            case SDL_EVENT_MOUSE_BUTTON_DOWN:
+            case SDL_EVENT_MOUSE_BUTTON_UP:
+                if (event.button.windowID == SDL_GetWindowID(window))
+                {
+                    unsigned key = event.button.button == SDL_BUTTON_LEFT     ? 1
+                                   : event.button.button == SDL_BUTTON_RIGHT  ? 2
+                                   : event.button.button == SDL_BUTTON_MIDDLE ? 4
+                                   : event.button.button == SDL_BUTTON_X1     ? 5
+                                   : event.button.button == SDL_BUTTON_X2     ? 6
+                                                                              : 0;
+                    if (key)
+                        input_event(BH_PLATFORM_KEY, key, event.button.down);
+                }
+                break;
+            case SDL_EVENT_WINDOW_FOCUS_LOST:
+            case SDL_EVENT_WINDOW_MINIMIZED:
+                if (event.window.windowID == SDL_GetWindowID(window))
+                    lose_focus();
+                break;
+            case SDL_EVENT_WINDOW_FOCUS_GAINED:
+                if (event.window.windowID == SDL_GetWindowID(window))
+                    input_event(BH_PLATFORM_FOCUS, 0, true);
                 break;
             case SDL_EVENT_WINDOW_MOVED:
             case SDL_EVENT_WINDOW_RESIZED:

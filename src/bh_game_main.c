@@ -1,31 +1,30 @@
 #include "bh_game_app.h"
+#include "bh_platform.h"
 #include <string.h>
-int WINAPI WinMain(HINSTANCE instance, HINSTANCE previous, LPSTR command, int show)
+int main(int argc, char **argv)
 {
-    char path[MAX_PATH], *end, *option;
-    DWORD length;
-    int result, profile = 0;
-    (void)previous;
-    for (option = strtok(command, " \t"); option; option = strtok(0, " \t"))
+    const char *assets = 0, *settings = 0;
+    int i, result, profile = 0;
+    for (i = 1; i < argc; ++i)
     {
 #ifdef DEBUGGING
-        if (!strcmp(option, "--profile"))
+        if (!strcmp(argv[i], "--profile"))
+        {
             profile = 1;
-        else
+            continue;
+        }
 #endif
+        if (!strcmp(argv[i], "--asset-dir") && i + 1 < argc)
+            assets = argv[++i];
+        else if (!strcmp(argv[i], "--settings-dir") && i + 1 < argc)
+            settings = argv[++i];
+        else
             return 2;
     }
-    length = GetModuleFileNameA(instance, path, sizeof(path));
-    if (!length || length >= sizeof(path))
+    if (!bh_sdl_paths(assets, settings))
         return 2;
-    end = strrchr(path, '\\');
-    if (!end)
-        return 2;
-    *end = 0;
-    if (!SetCurrentDirectoryA(path))
-        return 2;
-    result = bh_game_app_run(instance, "GAME_DATA", profile, show);
+    result = bh_game_app_run("GAME_DATA", bh_sdl_settings_file("source-preview.cfg"), profile);
     if (result)
-        MessageBoxA(0, "The game stopped at a dependency error.", "BHunter", MB_OK | MB_ICONERROR);
+        bh_sdl_error_dialog();
     return result;
 }

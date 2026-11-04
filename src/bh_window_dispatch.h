@@ -10,7 +10,7 @@ struct BHCdNotify;
 typedef struct BHWindowDispatch
 {
     BHFrameBuffers *frames; /* live application message hook/user */
-    volatile LONG *display_state, *capture_request, *thread_active;
+    volatile LONG *display_state, *thread_active;
     const volatile LONG *hide_cursor;
     HANDLE *thread;
     LPDIRECTDRAW *draw;
@@ -27,7 +27,7 @@ typedef struct BHWindowDispatch
    explicit source ABI extension shared by BHFrameMessage; it is unused.
    Forwards all original arguments and DefWindowProcA's actual LRESULT. */
 LRESULT __cdecl bh_window_default_message(void *, HWND, UINT, WPARAM, LPARAM);
-/* Complete00471ff0 over explicit live bindings. This context-taking source
+/* Dispatcher derived from00471ff0; the legacy F12 BMP hook is removed. This context-taking source
    entry is called by an application's WNDPROC adapter; it does not install a
    window class or take user focus. Native errors record diagnostics while
    original later effects continue. TerminateThread and ShowCursor preserve the

@@ -1,6 +1,7 @@
 #ifndef BH_INPUT_MESSAGES_H
 #define BH_INPUT_MESSAGES_H
 #include <windows.h>
+#include "bh_platform.h"
 #include "bh_input_evaluate.h"
 /* Complete 00473c40 over the same explicit snapshot consumed by00474020.
    Key0xff deliberately aliases previous[0]. Initial keydown appends low-byte
@@ -10,4 +11,5 @@
    Snapshot storage must remain live; no input is sent to any external window.
    NULL snapshot source guard delegates without mutation. */
 LRESULT __cdecl bh_input_message(BHInputSnapshot *, HWND, UINT, WPARAM, LPARAM);
+void bh_input_event(BHInputSnapshot *, const BHPlatformEvent *);
 #endif

@@ -1,3 +1,4 @@
+#include "bh_platform_clock.h"
 #include "bh_loading_display.h"
 #include "bh_round.h"
 #include <string.h>
@@ -49,12 +50,12 @@ int __cdecl bh_loading_display(BHLoadingDisplay *c, float progress)
     if (im->stage == 0 && im->redraw_count == 2)
     {
         ++im->tick_calls;
-        im->deadline = GetTickCount() + 5000UL;
+        im->deadline = bh_platform_ticks() + 5000UL;
     }
     if (im->stage < 2)
     {
         ++im->tick_calls;
-        now = GetTickCount();
+        now = bh_platform_ticks();
         old_redraw = im->redraw_count;
         if (im->redraw_count)
             im->redraw_count = (long)((unsigned long)im->redraw_count - 1UL);
@@ -64,7 +65,7 @@ int __cdecl bh_loading_display(BHLoadingDisplay *c, float progress)
             if (im->stage == 1)
             {
                 ++im->tick_calls;
-                im->deadline = GetTickCount() + 5000UL;
+                im->deadline = bh_platform_ticks() + 5000UL;
                 im->redraw_count = 2;
             }
             else if (im->stage == 2)

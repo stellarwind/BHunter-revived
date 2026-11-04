@@ -1,3 +1,4 @@
+#include "bh_platform_clock.h"
 #include "bh_loading_image.h"
 #include <stdlib.h>
 #include <string.h>
@@ -201,7 +202,7 @@ int __cdecl bh_loading_images_init(BHLoadingImages *c)
     if (!bh_loading_image_load(&next, "textures\\bad.pcx", 0))
         goto failed;
     ++next.tick_calls;
-    next.deadline = (unsigned long)GetTickCount() + 5000UL;
+    next.deadline = (unsigned long)bh_platform_ticks() + 5000UL;
     next.redraw_count = 2;
     next.stage = 0;
     if (c->arena)

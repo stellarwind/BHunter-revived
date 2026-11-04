@@ -1,3 +1,4 @@
+#include "bh_platform_clock.h"
 #include "bh_frame_render.h"
 #include <float.h>
 #include <string.h>
@@ -155,7 +156,7 @@ int __cdecl bh_frame_clear_color(BHFrameDisplay *d, long red, long green, long b
             ++d->failures;
             d->error = BH_FRAME_RENDER_NATIVE;
             ok = 0;
-            Sleep(1);
+            bh_platform_delay(1);
             ++d->sleeps;
         }
         if (attempt == 500)

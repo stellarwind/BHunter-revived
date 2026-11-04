@@ -1,7 +1,7 @@
 /* Internal SDL GPU adapter. Legacy structs are retained only as data ABI. */
 #ifndef BH_SDL_ADAPTER_H
 #define BH_SDL_ADAPTER_H
-#include "bh_gamepad.h"
+#include "bh_platform.h"
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
@@ -215,14 +215,9 @@ extern "C"
     HRESULT __cdecl bh_gpu_enumerate(LPDDENUMCALLBACKA, void *);
 #define DirectDrawCreate bh_gpu_create
 #define DirectDrawEnumerateA bh_gpu_enumerate
-    typedef void(__cdecl *BHSDLMessage)(HWND, UINT, WPARAM, LPARAM, void *);
-    HWND __cdecl bh_sdl_open(int hidden, BHSDLMessage, void *);
-    int __cdecl bh_sdl_poll(void);
-    void __cdecl bh_sdl_gamepad(BHGamepadState *state);
-    double __cdecl bh_sdl_seconds(void);
-    void __cdecl bh_sdl_pace(void);
-    void __cdecl bh_sdl_close(void);
-    const char *__cdecl bh_sdl_error(void);
+    /* Native handles are borrowed only by deferred legacy backends. */
+    HWND __cdecl bh_sdl_legacy_window(void);
+    HINSTANCE __cdecl bh_sdl_legacy_instance(void);
     void __cdecl bh_sdl_video_cycle(int row);
     const char *__cdecl bh_sdl_video_label(int row);
     void __cdecl bh_sdl_canvas_margins(float *x, float *y);

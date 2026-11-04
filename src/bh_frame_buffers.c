@@ -44,9 +44,13 @@ int __cdecl bh_frame_buffers_start(BHFrameBuffers *c, BHFrameProduce produce, vo
     void *data[3];
     unsigned long i, j;
     double delay;
-    if (!c || !c->mutex || !c->allocator.allocate || !c->allocator.release || !produce || !message || !_finite(fps) ||
-        fps <= 0 || !bytes || c->writing)
+    if (!c || !c->mutex || !c->allocator.allocate || !c->allocator.release || !produce || !_finite(fps) || fps <= 0 ||
+        !bytes || c->writing)
         return fail(c, BH_FRAME_BUFFER_ARGUMENT);
+#ifndef BH_SDL_BACKEND
+    if (!message)
+        return fail(c, BH_FRAME_BUFFER_ARGUMENT);
+#endif
     for (i = 0; i < 3; ++i)
         if (c->slots[i].data)
             return fail(c, BH_FRAME_BUFFER_BUSY);

@@ -1,7 +1,6 @@
 {
     "schema_version": 1,
-    "description":
-        "Per-source definitions and include settings shared by game build toolchains.",
+    "description": "Per-source definitions and include settings shared by game build toolchains.",
     "sources": {
         "bh_portal_visibility.c": [],
         "bh_pickup_basic.c": [
@@ -68,12 +67,6 @@
             "/DDIRECTDRAW_VERSION=0x0500"
         ],
         "bh_present_begin.c": [
-            "/I{DXSDK}\\include",
-            "/DDIRECT3D_VERSION=0x0500",
-            "/DDIRECTDRAW_VERSION=0x0500",
-            "/DDIRECTINPUT_VERSION=0x0500"
-        ],
-        "bh_capture.c": [
             "/I{DXSDK}\\include",
             "/DDIRECT3D_VERSION=0x0500",
             "/DDIRECTDRAW_VERSION=0x0500",

@@ -1,3 +1,4 @@
+#include "bh_platform_clock.h"
 #include "bh_application_bootstrap.h"
 #include "bh_fp.h"
 #include <commctrl.h>
@@ -250,7 +251,6 @@ DWORD __cdecl bh_application_bootstrap(BHApplicationBootstrap *c, HINSTANCE inst
         dispatch->frames->message_user = 0;
     }
     dispatch->display_state = &c->worker->display_state;
-    dispatch->capture_request = &c->worker->request_capture;
     dispatch->thread_active = &c->thread_active;
     dispatch->hide_cursor = &c->hide_cursor;
     dispatch->thread = &c->thread;
@@ -345,12 +345,12 @@ DWORD __cdecl bh_application_bootstrap(BHApplicationBootstrap *c, HINSTANCE inst
         free(c->startup_allocation);
         c->startup_allocation = 0;
     }
-    c->last_tick = GetTickCount();
+    c->last_tick = bh_platform_ticks();
     delay = c->engine->frames->delay_ms;
     c->previous_time = (double)c->last_tick - delay;
     for (;;)
     {
-        tick = GetTickCount();
+        tick = bh_platform_ticks();
         began = (double)tick;
         elapsed = ((double)tick - c->previous_time) - delay;
         c->previous_time = (double)tick;
@@ -368,14 +368,14 @@ DWORD __cdecl bh_application_bootstrap(BHApplicationBootstrap *c, HINSTANCE inst
             c->frame_seconds = (elapsed + delay) * .001;
             bh_engine_frame_produce(c->engine);
         }
-        tick = GetTickCount();
+        tick = bh_platform_ticks();
         elapsed = ((double)tick - began) + elapsed;
         if (!bh_application_pacing(elapsed, delay, &sleep_ms))
             return fatal(c, 15, "Invalid frame timing");
         if (sleep_ms && !c->worker->stop)
         {
             ++c->sleeps;
-            Sleep(sleep_ms);
+            bh_platform_delay(sleep_ms);
         }
         ++c->iterations;
     }

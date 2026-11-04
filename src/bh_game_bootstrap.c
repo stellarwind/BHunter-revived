@@ -564,7 +564,6 @@ int __cdecl bh_game_bootstrap(BHGameBootstrap *c)
     const BHDrawResource *resource;
     BHModel *model;
     BHEntity *e;
-    DWORD bytes;
     unsigned long i;
     long width, index;
     static const char *confirm[3] = {"Abandon", "Game ?", "[Y/N]"};
@@ -651,9 +650,15 @@ int __cdecl bh_game_bootstrap(BHGameBootstrap *c)
     bh_text_queue_clear(c->text, c->graffiti, 0);
     if (!profiles(c))
         return 0;
-    bytes = sizeof(c->computer_name);
-    if (!GetComputerNameA(c->computer_name, &bytes) && !GetUserNameA(c->computer_name, &bytes))
-        strcpy(c->computer_name, "Anonymous");
+    {
+        const char *name = getenv("COMPUTERNAME");
+        if (!name || !*name)
+            name = getenv("HOSTNAME");
+        if (!name || !*name)
+            name = "Anonymous";
+        strncpy(c->computer_name, name, sizeof(c->computer_name) - 1);
+        c->computer_name[sizeof(c->computer_name) - 1] = 0;
+    }
     strncpy(c->player_name, c->computer_name, 20);
     c->player_name[20] = 0;
     c->all_keys = bh_player_input_create(c->inputs, 0);

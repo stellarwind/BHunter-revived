@@ -34,7 +34,7 @@ int __cdecl bh_input_devices_bind(BHInputDevices *, BHInputCollection *, const B
    Allocation failures leave NULL entries, continue initialization and report0.
    Fresh per-entry source ownership avoids leaking replaced localized strings.
    Startup/stop do not free input lists: caller must dispose them separately. */
-int __cdecl bh_input_devices_start(BHInputDevices *, HWND);
+int __cdecl bh_input_devices_start(BHInputDevices *, void *);
 /* Complete00473fe0. Release enabled0 then1 even after API failure, then clear
    both availability flags. Return reports API errors separately from cleanup. */
 int __cdecl bh_input_devices_stop(BHInputDevices *);

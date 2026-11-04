@@ -1,6 +1,5 @@
+#include "bh_platform_clock.h"
 #include "bh_frame_worker.h"
-#include <stdio.h>
-#include <string.h>
 
 static void failure(BHFrameWorker *w, BHFrameWorkerError e)
 {
@@ -11,7 +10,7 @@ static void failure(BHFrameWorker *w, BHFrameWorkerError e)
 static void pause_worker(BHFrameWorker *w, DWORD delay)
 {
     ++w->sleeps;
-    Sleep(delay);
+    bh_platform_delay(delay);
 }
 static void result(BHFrameWorker *w, HRESULT hr)
 {
@@ -35,45 +34,6 @@ static void restore(BHFrameWorker *w, LPDIRECTDRAWSURFACE surface)
     }
     else if (FAILED(hr))
         failure(w, BH_FRAME_WORKER_NATIVE);
-}
-static void capture(BHFrameWorker *w)
-{
-    char filename[512];
-    FILE *file = NULL;
-    int index;
-    const char *prefix = w->dump_prefix ? w->dump_prefix : "c:\\DUMP";
-    if (strlen(prefix) > 480)
-    {
-        failure(w, BH_FRAME_WORKER_CAPTURE);
-        w->request_capture = 0;
-        return;
-    }
-    /* At the cap the original closes the final readable file, then overwrites
-       that same filename. An unreadable file is treated as available too. */
-    for (index = 0; index < 10000; ++index)
-    {
-        if (file)
-            fclose(file);
-        sprintf(filename, "%s%.4d.BMP", prefix, index);
-        file = fopen(filename, "rb");
-        if (!file)
-            break;
-    }
-    if (file)
-        fclose(file);
-    if (!bh_view_reset_viewport(w->viewport, w->width, w->height))
-        failure(w, BH_FRAME_WORKER_RENDER);
-    w->render->display->left = w->viewport->left;
-    w->render->display->top = w->viewport->top;
-    w->capture->left = w->viewport->left;
-    w->capture->top = w->viewport->top;
-    w->capture->right = w->viewport->right;
-    w->capture->bottom = w->viewport->bottom;
-    pause_worker(w, 250);
-    ++w->captures;
-    if (!bh_capture_write(w->capture, filename))
-        failure(w, BH_FRAME_WORKER_CAPTURE);
-    w->request_capture = 0;
 }
 DWORD WINAPI bh_frame_worker_run(void *user)
 {
@@ -170,16 +130,6 @@ DWORD WINAPI bh_frame_worker_run(void *user)
                 fade->pixels = display->color_pixels;
                 fade->pitch = display->color_pitch;
                 present->locked = display->locked;
-            }
-            if (w->request_capture)
-            {
-                if (w->capture)
-                    capture(w);
-                else
-                {
-                    failure(w, BH_FRAME_WORKER_CAPTURE);
-                    w->request_capture = 0;
-                }
             }
             if (!bh_present_end(w->begin->present))
                 failure(w, BH_FRAME_WORKER_RENDER);

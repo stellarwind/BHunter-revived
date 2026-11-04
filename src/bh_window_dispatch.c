@@ -76,8 +76,8 @@ LRESULT __cdecl bh_window_dispatch(BHWindowDispatch *c, HWND window, UINT messag
     if (!c)
         return 0;
     ++c->calls;
-    if (!c->frames || !c->frames->message || !c->display_state || !c->capture_request || !c->thread_active ||
-        !c->hide_cursor || !c->thread || !c->draw || !c->primary || !c->back)
+    if (!c->frames || !c->frames->message || !c->display_state || !c->thread_active || !c->hide_cursor || !c->thread ||
+        !c->draw || !c->primary || !c->back)
     {
         ++c->failures;
         return 0;
@@ -108,8 +108,6 @@ LRESULT __cdecl bh_window_dispatch(BHWindowDispatch *c, HWND window, UINT messag
         break;
     case WM_KEYDOWN:
     case WM_SYSKEYDOWN:
-        if (!((unsigned long)bits & 0x40000000UL) && key == 0x7b)
-            *c->capture_request = 1;
         hide = 1;
         break;
     case WM_NCMOUSEMOVE:

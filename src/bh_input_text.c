@@ -1,4 +1,7 @@
 #include "bh_input_text.h"
+#ifdef BH_SDL_BACKEND
+#include "bh_platform.h"
+#endif
 #include <stdio.h>
 #include <string.h>
 static unsigned long phase(BHEntity *e)
@@ -156,7 +159,11 @@ int __cdecl bh_input_text_step(BHInputTextCapture *c)
             }
             else
             {
+#ifdef BH_SDL_BACKEND
+                key = (long)bh_sdl_key_character((unsigned)key);
+#else
                 key = (long)MapVirtualKeyA((UINT)key, 2);
+#endif
                 if (key < 0)
                 {
                     c->error = 1;

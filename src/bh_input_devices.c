@@ -1,4 +1,11 @@
 #include "bh_input_devices.h"
+#ifdef BH_SDL_BACKEND
+#include "bh_platform.h"
+static UINT WINAPI map_character(UINT key, UINT mode)
+{
+    return mode == 2 ? bh_sdl_key_character(key) : 0;
+}
+#endif
 #include "bh_input_key_names.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -23,7 +30,11 @@ int __cdecl bh_input_devices_bind(BHInputDevices *d, BHInputCollection *c, const
     d->collection = c;
     for (i = 0; i < 255; ++i)
         d->names[i] = bh_input_key_defaults[i];
+#ifdef BH_SDL_BACKEND
+    d->api.map_key = map_character;
+#else
     d->api.map_key = MapVirtualKeyA;
+#endif
     d->api.capture = joySetCapture;
     d->api.capabilities = joyGetDevCapsA;
     d->api.release = joyReleaseCapture;
@@ -36,7 +47,7 @@ int __cdecl bh_input_devices_bind(BHInputDevices *d, BHInputCollection *c, const
     }
     return 1;
 }
-int __cdecl bh_input_devices_start(BHInputDevices *d, HWND window)
+int __cdecl bh_input_devices_start(BHInputDevices *d, void *window)
 {
     BHInputCollection *c;
     BHInputSnapshot *s;

@@ -45,6 +45,7 @@ def prepare(out, *, gnu=True, compiler=None, symbols=False):
         Path(__file__),
         ROOT / "src/bh_video_layout.h",
         ROOT / "src/bh_gamepad.h",
+        ROOT / "src/bh_platform.h",
     ]
     compiler_version = subprocess.check_output([compiler, "--version"])
     signature = hashlib.sha256(

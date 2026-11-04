@@ -1,3 +1,4 @@
+#include "bh_platform_clock.h"
 #include "bh_player_tick.h"
 #include "bh_input_evaluate.h"
 #include "bh_round.h"
@@ -227,7 +228,7 @@ static int network(BHPlayerTick *c)
         return 1;
     ++s->tick;
     if (s->mode == 2)
-        s->tick = (s->tick & 0xffff0000UL) | (unsigned short)(GetTickCount() / 33);
+        s->tick = (s->tick & 0xffff0000UL) | (unsigned short)(bh_platform_ticks() / 33);
     if (!s->ending && !input(c))
         return 0;
     if (s->mode < 2)
@@ -393,7 +394,7 @@ static int recoil(BHPlayerTick *c)
         dx = rf((double)dx * (2.0 / 3));
         dy = rf((double)-dy * .25);
     }
-    if (!c->feedback || bh_force_feedback_update(c->feedback, GetTickCount(), dx, dy) < 0)
+    if (!c->feedback || bh_force_feedback_update(c->feedback, bh_platform_ticks(), dx, dy) < 0)
         return fail(c, 3);
     return 1;
 }
