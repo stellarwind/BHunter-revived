@@ -902,6 +902,13 @@ static void binding(BHGameApp *a, unsigned long identity, unsigned long *destina
 #define B(id, field) binding(a, id, (unsigned long *)&a->field)
 static void resource_bindings(BHGameApp *a)
 {
+    unsigned long i;
+    B(0x4cdb88, text_capture.sound_resource);
+    B(0x4cdb88, key_capture.sound_resource);
+    B(0x4cdb88, menu_actions.denial_sound);
+    /* Menus copy the action template before this sound loads. */
+    for (i = 0; i < BH_BOOTSTRAP_MENUS; ++i)
+        B(0x4cdb88, bootstrap.menus[i].actions.denial_sound);
     B(0x4cdb88, player_tick.resources.menu_cue);
     B(0x496570, player_tick.resources.ui_cue);
     B(0x4cda14, player_tick.resources.no_weapon);
@@ -971,6 +978,7 @@ static void resource_bindings(BHGameApp *a)
     B(0x4f00b4, markers.brackets_image);
     B(0x4f54e4, pickup_draw.atlas_image);
     B(0x4f00b0, pickup_draw.glow_image);
+    B(0x4f00b0, special_draw.glow_image);
     B(0x4cdb9c, markers.status_image);
     B(0x4f00b8, attachment.default_image);
     B(0x4f006c, attachment.flag200_image);
