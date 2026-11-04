@@ -112,7 +112,7 @@ int __cdecl bh_loading_display(BHLoadingDisplay *c, float progress)
     if (!pitch_bytes || pitch_bytes < needed || span > 0xffffffffUL ||
         (desc.lPitch < 0 && ((unsigned __int64)pitch_bytes * (c->height - 1) > 0x7fffffffUL ||
                              (unsigned long)desc.lpSurface < row_offset)) ||
-        (unsigned __int64)((unsigned long)desc.lpSurface - row_offset) + span > 0x100000000ui64 ||
+        (unsigned __int64)((unsigned long)desc.lpSurface - row_offset) + span > ((unsigned __int64)1 << 32) ||
         desc.dwWidth < (unsigned long)c->width || desc.dwHeight < (unsigned long)c->height)
     {
         IDirectDrawSurface_Unlock(c->color, NULL);

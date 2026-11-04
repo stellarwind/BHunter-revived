@@ -17,9 +17,9 @@ static BHEntity *link_value(const BHEntity *a, unsigned long offset)
 int __cdecl bh_actor_route_due(BHActorRouteContext *c, BHEntity *a)
 {
     const unsigned short *clock;
-    if (!c || !a)
+    if (!c || !a || !c->live_tick)
         return fail(c, BH_ACTOR_ROUTE_ARGUMENT);
-    clock = c->live_tick ? (const unsigned short *)c->live_tick : &c->tick;
+    clock = (const unsigned short *)c->live_tick;
     if (!bh_actor_route_due_core(a, c, clock))
         return 0;
     c->error = BH_ACTOR_ROUTE_OK;

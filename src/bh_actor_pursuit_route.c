@@ -143,7 +143,7 @@ int __cdecl bh_actor_pursuit_route(BHActorPursuitRouteContext *c, BHEntity *e)
         "1Attention!\n\nWe have reports\non a fugitive car\nentering\n%s",
         "1Calling all\nHunters!\n\nA fugitive car\njust entered\n%s",
         "1Incoming\nSurveillance\nReport:\n\nA fugitive car\njust passed through\na gate at\n%s"};
-    if (!c || !c->route || !c->navigation || !e || !bh_math_environment_supported())
+    if (!c || !c->route || !c->route->live_tick || !c->navigation || !e || !bh_math_environment_supported())
         return fail(c, BH_ACTOR_ROUTE_ARGUMENT);
     bh_actor_route_read(e, &s);
     room = s.next;

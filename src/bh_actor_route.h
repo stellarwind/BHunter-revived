@@ -26,17 +26,15 @@ typedef struct BHActorRouteContext
     BHPickupRoom *rooms;
     unsigned long room_count, actor_limit;
     BHSoundQueue *sound;
-    unsigned short tick; /* explicit original004dfac4 binding */
     BHActorRouteError error;
     const BHBindingIndex *room_index; /* optional scene-owned identity index */
-    unsigned long *live_tick; /* owning application original004dfac4, read at each call */
+    unsigned long *live_tick;         /* owning application original004dfac4, read at each call */
 } BHActorRouteContext;
 /* Explicit source field-view adapters, not original function admissions. They
    copy only the verified fields. Bind worlds/actors before the owning update;
    these do not create actors or install callbacks. */
-/* Count-zero live original-global binding. Snapshot tick remains available for
-   isolated fixtures; a bound clock always takes precedence. Packet consumers
-   can temporarily set/restore its low word as the original does. */
+/* Required live original-global clock binding. Packet consumers can temporarily
+   set/restore its low word as the original does. */
 BHPickupRoom *__cdecl bh_actor_route_room(BHActorRouteContext *, const BHWorldGeometry *);
 unsigned short __cdecl bh_actor_route_now(const BHActorRouteContext *);
 void __cdecl bh_actor_route_set_tick(BHActorRouteContext *, unsigned short);

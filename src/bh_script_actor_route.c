@@ -47,7 +47,7 @@ int __cdecl bh_script_actor_route_advance(BHActorRouteContext *c, BHEntity *a)
     long incoming = -1, outgoing = -1;
     double best = 9e37, test, vertical, lateral, dot1, dot2, duration, length;
     BHScriptActorPath path;
-    if (!c || !a || !c->rooms || !c->room_count || !c->actor_limit)
+    if (!c || !a || !c->live_tick || !c->rooms || !c->room_count || !c->actor_limit)
         return error(c, BH_ACTOR_ROUTE_ARGUMENT);
     if (!bh_math_environment_supported())
         return error(c, BH_ACTOR_ROUTE_NUMERICAL);

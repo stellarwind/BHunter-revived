@@ -21,14 +21,11 @@ static void write_field(BHEntity *a, unsigned long offset, const void *in, unsig
 #define WRITE(member, offset) write_field(a, offset, &s->member, sizeof(s->member))
 unsigned short __cdecl bh_actor_route_now(const BHActorRouteContext *c)
 {
-    return c->live_tick ? (unsigned short)*c->live_tick : c->tick;
+    return (unsigned short)*c->live_tick;
 }
 void __cdecl bh_actor_route_set_tick(BHActorRouteContext *c, unsigned short tick)
 {
-    if (c->live_tick)
-        *c->live_tick = (*c->live_tick & 0xffff0000UL) | tick;
-    else
-        c->tick = tick;
+    *c->live_tick = (*c->live_tick & 0xffff0000UL) | tick;
 }
 int __cdecl bh_actor_route_read(const BHEntity *a, BHActorRouteState *s)
 {
@@ -143,7 +140,7 @@ int __cdecl bh_actor_route_promote(BHActorRouteContext *c, BHEntity *a, long inc
     BHActorRoutePromotionBinding binding;
     BHEntity saved;
     BHEntity *old_head, *new_head, *new_head_previous;
-    if (!c || !a || !c->rooms || !c->room_count || !c->actor_limit)
+    if (!c || !a || !c->live_tick || !c->rooms || !c->room_count || !c->actor_limit)
         return fail(c, BH_ACTOR_ROUTE_ARGUMENT);
     if (!bh_math_environment_supported())
         return fail(c, BH_ACTOR_ROUTE_NUMERICAL);
@@ -157,7 +154,8 @@ int __cdecl bh_actor_route_promote(BHActorRouteContext *c, BHEntity *a, long inc
         return fail(c, BH_ACTOR_ROUTE_TOPOLOGY);
     in = world->navigation.portals + incoming;
     out = world->navigation.portals + outgoing;
-    if (!out->neighbor || !bh_actor_route_room(c, (BHWorldGeometry *)out->neighbor) || !portal_valid(in) || !portal_valid(out))
+    if (!out->neighbor || !bh_actor_route_room(c, (BHWorldGeometry *)out->neighbor) || !portal_valid(in) ||
+        !portal_valid(out))
         return fail(c, BH_ACTOR_ROUTE_TOPOLOGY);
     next = actor_link(a, 0xf4);
     previous = actor_link(a, 0xf8);
@@ -219,7 +217,7 @@ int __cdecl bh_actor_route_advance(BHActorRouteContext *c, BHEntity *a)
     const BHWorldGeometry *room, *neighbor;
     unsigned long i, j, count;
     long incoming = -1;
-    if (!c || !a || !c->rooms || !c->room_count)
+    if (!c || !a || !c->live_tick || !c->rooms || !c->room_count)
         return fail(c, BH_ACTOR_ROUTE_ARGUMENT);
     if (!bh_math_environment_supported())
         return fail(c, BH_ACTOR_ROUTE_NUMERICAL);

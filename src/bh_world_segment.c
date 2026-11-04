@@ -259,7 +259,7 @@ static int bh_world_segment_room_trace(BHWorldSegmentContext *q, const BHWorldHi
         if (radius > 0)
         {
             bh_round_float(&rr, (double)radius * radius);
-            actor = binding->actors_owner ? *binding->actors_owner : binding->actors;
+            actor = binding->actors_owner ? *binding->actors_owner : NULL;
             steps = 0;
             packet.event = 3;
             while (actor)

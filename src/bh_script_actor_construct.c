@@ -59,7 +59,7 @@ BHEntity *__cdecl bh_script_actor_construct(BHScriptActorConstructorContext *c, 
     callbacks = &c->callbacks;
     route = callbacks->route;
     if (!callbacks->pool || !route || !callbacks->draw || !callbacks->draw->queue || !callbacks->draw->particles ||
-        !route->rooms || !route->room_count || !bh_math_environment_supported())
+        !route->live_tick || !route->rooms || !route->room_count || !bh_math_environment_supported())
         return NULL;
     world = bh_world_locate(c->first_world, c->world_count, NULL, position, 0);
     if (!world)

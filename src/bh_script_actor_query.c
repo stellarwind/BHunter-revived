@@ -23,7 +23,7 @@ BHScriptActorContext *__cdecl bh_script_actor_context(BHEntity *e)
 }
 int __cdecl bh_script_actor_bind(BHScriptActorContext *c, BHEntity *e)
 {
-    if (!c || !c->pool || !c->route || !e || !live(c->pool, e))
+    if (!c || !c->pool || !c->route || !c->route->live_tick || !e || !live(c->pool, e))
         return 0;
     memcpy(e->payload + 560, &c, 4);
     return bh_entity_set_query(c->pool, e, bh_script_actor_query);
@@ -46,7 +46,7 @@ void __cdecl bh_script_actor_query(BHEntity *e, void *packet)
     double t, v0, v1;
     float phase, forward;
     unsigned long i;
-    if (!c || !c->pool || !c->route || !packet || !live(c->pool, e))
+    if (!c || !c->pool || !c->route || !c->route->live_tick || !packet || !live(c->pool, e))
         return;
     switch (p->event)
     {

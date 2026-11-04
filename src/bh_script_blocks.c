@@ -194,7 +194,6 @@ int __cdecl bh_script_block_preview(BHScriptBrowser *c, long index, long x, long
         c->error = 2;
         return 0;
     }
-    ++c->cells;
     return 1;
 }
 static long signed_word(unsigned long x)
@@ -231,7 +230,6 @@ int __cdecl bh_script_block_browser(BHScriptBrowser *c)
         return 0;
     }
     c->error = 0;
-    c->cells = 0;
     library = c->library;
     columns = library->columns;
     rows = library->rows;

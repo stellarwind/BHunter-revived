@@ -12,10 +12,8 @@ typedef struct BHWorldSegmentRoom
 {
     BHWorldGeometry *world;
     BHSegmentQuery *query;
-    BHEntity *actors;
     unsigned long kind; /* original common object+8, for camera blocker owner */
-    /* Optional authoritative room+128 head. When supplied, actors is only the
-       historical standalone-fixture binding; queries read this live owner. */
+    /* Live room+128 head. A NULL owner denotes a room without actors. */
     BHEntity *const *actors_owner;
 } BHWorldSegmentRoom;
 typedef struct BHWorldSegmentActor
@@ -43,7 +41,7 @@ typedef struct BHWorldSegmentContext
     int busy;
     /* Optional source registry adapter, called before a query borrows actors.
        It may rebuild the descriptors after spawn/retirement. No callbacks may
-       mutate the registry during traversal; NULL retains fixed fixture inputs. */
+       mutate the registry during traversal; NULL uses the caller-bound registry. */
     int(__cdecl *refresh_actors)(struct BHWorldSegmentContext *, void *);
     void *refresh_user;
     /* Optional borrowed index of the immutable room bindings. Rebuilt by the

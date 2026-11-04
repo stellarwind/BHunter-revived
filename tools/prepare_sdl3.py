@@ -14,7 +14,7 @@ VERSION = "3.4.18"
 SHA256 = "78d84602ae616cfe26b33a73b7d3b9b6b56e8a6650e53d92c9c6ca938f747acd"
 
 
-def prepare(out):
+def prepare(out, *, gnu=True, compiler=None, symbols=False):
     out = Path(out).resolve()
     out.mkdir(parents=True, exist_ok=True)
     deps = ROOT / "toolchain/SDL3"
@@ -32,10 +32,12 @@ def prepare(out):
     if not (sdk / "include/SDL3/SDL.h").exists():
         with zipfile.ZipFile(archive) as z:
             z.extractall(deps)
-    compiler = os.environ.get("BH_GPU_CXX", shutil.which("g++") or "g++")
+    compiler = compiler or os.environ.get("BH_GPU_CXX", shutil.which("g++") or "g++")
     cache = ROOT / "build-cache/sdl3"
+    if gnu:
+        cache = cache / "gcc"
     cache.mkdir(parents=True, exist_ok=True)
-    import_lib = cache / "BHunterGPU.lib"
+    import_lib = cache / ("libBHunterGPU.dll.a" if gnu else "BHunterGPU.lib")
     inputs = [
         ROOT / "src/bh_sdl_gpu.cpp",
         ROOT / "src/bh_sdl_adapter.h",
@@ -44,8 +46,13 @@ def prepare(out):
         ROOT / "src/bh_video_layout.h",
         ROOT / "src/bh_gamepad.h",
     ]
+    compiler_version = subprocess.check_output([compiler, "--version"])
     signature = hashlib.sha256(
-        b"".join(p.read_bytes() for p in inputs) + VERSION.encode() + compiler.encode()
+        b"".join(p.read_bytes() for p in inputs)
+        + VERSION.encode()
+        + compiler.encode()
+        + compiler_version
+        + str(symbols).encode()
     ).hexdigest()
     stamp = cache / "build.sha256"
     cached_dll = cache / "BHunterGPU.dll"
@@ -58,14 +65,15 @@ def prepare(out):
         definition = cache / "BHunterGPU.def"
         import re
 
-        symbols = sorted(set(re.findall(r"\b(bh_\w+)\(", inputs[0].read_text())))
+        export_symbols = sorted(set(re.findall(r"\b(bh_\w+)\(", inputs[0].read_text())))
         definition.write_text(
-            "LIBRARY BHunterGPU.dll\nEXPORTS\n" + "\n".join(symbols) + "\n"
+            "LIBRARY BHunterGPU.dll\nEXPORTS\n" + "\n".join(export_symbols) + "\n"
         )
         cmd = [
             compiler,
             "-std=c++17",
             "-O2",
+            *(["-g"] if symbols else []),
             "-shared",
             "-static",
             "-static-libgcc",
@@ -82,35 +90,11 @@ def prepare(out):
             str(cached_dll),
             str(definition),
         ]
+        if gnu:
+            cmd.append("-Wl,--out-implib," + str(import_lib))
         subprocess.run(cmd, check=True, cwd=ROOT)
-        lib = (
-            Path(
-                os.environ.get("BH_VC_ROOT", "D:/Decomp/MSCVC/MSVC5/TOOLS/DEVSTUDIO/VC")
-            )
-            / "bin/LIB.EXE"
-        )
-        env = dict(os.environ)
-        env["PATH"] = os.pathsep.join(
-            [
-                env.get("BH_COMPILER_DIR", str(ROOT / "toolchain/vc5/bin")),
-                env.get(
-                    "BH_SHARED_DIR", str(lib.parent.parent.parent / "SHAREDIDE/BIN")
-                ),
-                env.get("PATH", ""),
-            ]
-        )
-        subprocess.run(
-            [
-                str(lib),
-                "/nologo",
-                "/machine:ix86",
-                "/def:" + str(definition),
-                "/out:" + str(import_lib),
-            ],
-            check=True,
-            cwd=cache,
-            env=env,
-        )
+        if not gnu:
+            create_vc_import_library(cache, definition, import_lib)
         stamp.write_text(signature)
     shutil.copy2(cached_dll, out / "BHunterGPU.dll")
     shutil.copy2(sdk / "lib/x86/SDL3.dll", out / "SDL3.dll")
@@ -121,6 +105,33 @@ def prepare(out):
     for name in ("ddraw.dll", "DDrawCompat-LICENSE.txt"):
         (out / name).unlink(missing_ok=True)
     return import_lib
+
+
+def create_vc_import_library(cache, definition, import_lib):
+    lib = (
+        Path(os.environ.get("BH_VC_ROOT", "D:/Decomp/MSCVC/MSVC5/TOOLS/DEVSTUDIO/VC"))
+        / "bin/LIB.EXE"
+    )
+    env = dict(os.environ)
+    env["PATH"] = os.pathsep.join(
+        [
+            env.get("BH_COMPILER_DIR", str(ROOT / "toolchain/vc5/bin")),
+            env.get("BH_SHARED_DIR", str(lib.parent.parent.parent / "SHAREDIDE/BIN")),
+            env.get("PATH", ""),
+        ]
+    )
+    subprocess.run(
+        [
+            str(lib),
+            "/nologo",
+            "/machine:ix86",
+            "/def:" + str(definition),
+            "/out:" + str(import_lib),
+        ],
+        check=True,
+        cwd=cache,
+        env=env,
+    )
 
 
 if __name__ == "__main__":
