@@ -8,6 +8,8 @@ import urllib.request
 import zipfile
 from pathlib import Path
 
+from bake_comic_font import prepare as prepare_comic_font
+
 ROOT = Path(__file__).resolve().parents[1]
 VERSION = "3.4.18"
 # Official release archive; digest is verified before extracting downloaded code.
@@ -17,6 +19,7 @@ SHA256 = "78d84602ae616cfe26b33a73b7d3b9b6b56e8a6650e53d92c9c6ca938f747acd"
 def prepare(out, *, gnu=True, compiler=None, symbols=False):
     out = Path(out).resolve()
     out.mkdir(parents=True, exist_ok=True)
+    prepare_comic_font(out)
     deps = ROOT / "toolchain/SDL3"
     deps.mkdir(parents=True, exist_ok=True)
     archive = deps / f"SDL3-devel-{VERSION}-VC.zip"
@@ -46,6 +49,8 @@ def prepare(out, *, gnu=True, compiler=None, symbols=False):
         ROOT / "src/bh_video_layout.h",
         ROOT / "src/bh_gamepad.h",
         ROOT / "src/bh_platform.h",
+        ROOT / "src/bh_overlay_font.h",
+        ROOT / "src/bh_overlay_text.h",
     ]
     compiler_version = subprocess.check_output([compiler, "--version"])
     signature = hashlib.sha256(
@@ -66,7 +71,17 @@ def prepare(out, *, gnu=True, compiler=None, symbols=False):
         definition = cache / "BHunterGPU.def"
         import re
 
-        export_symbols = sorted(set(re.findall(r"\b(bh_\w+)\(", inputs[0].read_text())))
+        # Export definitions, not every function called by the adapter. Inline
+        # portable helpers belong to the DLL implementation, not its public ABI.
+        export_symbols = sorted(
+            set(
+                re.findall(
+                    r"^    (?:\w+[ \t*]+)+(bh_\w+)\([^;{}]*\)\s*\{",
+                    inputs[0].read_text(),
+                    re.MULTILINE,
+                )
+            )
+        )
         definition.write_text(
             "LIBRARY BHunterGPU.dll\nEXPORTS\n" + "\n".join(export_symbols) + "\n"
         )
@@ -86,7 +101,6 @@ def prepare(out, *, gnu=True, compiler=None, symbols=False):
             str(sdk / "lib/x86/SDL3.lib"),
             "-ld3dcompiler_47",
             "-luser32",
-            "-lgdi32",
             "-o",
             str(cached_dll),
             str(definition),

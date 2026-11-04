@@ -3,6 +3,7 @@
 #define CINTERFACE
 #include "bh_sdl_adapter.h"
 #include "bh_video_layout.h"
+#include "bh_overlay_text.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_system.h>
 #include <algorithm>
@@ -33,9 +34,7 @@ struct Surface : Object
 {
     DDSURFACEDESC desc{};
     std::vector<unsigned char> pixels, locked_pixels;
-    HDC dc = nullptr;
-    HBITMAP bitmap = nullptr, previous_bitmap = nullptr;
-    void *dib = nullptr;
+    Surface *text_overlay = nullptr;
     Palette *palette = nullptr;
     Surface *back = nullptr;
     SDL_GPUTexture *gpu = nullptr;
@@ -72,6 +71,8 @@ std::vector<Batch> batches;
 std::vector<Surface *> surfaces;
 std::array<unsigned, 256> states{};
 Surface *white;
+std::vector<unsigned char> overlay_font_bytes;
+BHOverlayFont overlay_font{};
 BHPlatformInput input_callback;
 BHPlatformMusic music_callback;
 void *message_user;
@@ -211,12 +212,7 @@ unsigned release(void *p)
 }
 Surface::~Surface()
 {
-    if (dc)
-    {
-        SelectObject(dc, previous_bitmap);
-        DeleteObject(bitmap);
-        DeleteDC(dc);
-    }
+    release(text_overlay);
     surfaces.erase(std::remove(surfaces.begin(), surfaces.end(), this), surfaces.end());
     if (gpu && device)
         SDL_ReleaseGPUTexture(device, gpu);
@@ -1052,6 +1048,80 @@ extern "C"
         }
         return 1;
     }
+    int bh_gpu_text(void *surface, int x, int y, const char *text, unsigned long rgb)
+    {
+        auto *destination = (Surface *)surface;
+        if (!destination || !text || !memchr(text, 0, 59))
+            return 0;
+        if (!overlay_font.mask)
+        {
+            FILE *file = fopen("fonts/comic-sans-ms-24.bhf", "rb");
+            if (!file)
+            {
+                snprintf(error_text, sizeof(error_text), "Missing Comic Sans 24 font atlas");
+                return 0;
+            }
+            if (fseek(file, 0, SEEK_END))
+            {
+                fclose(file);
+                return 0;
+            }
+            long size = ftell(file);
+            if (size < 0 || size > 17 * 1024 * 1024 || fseek(file, 0, SEEK_SET))
+            {
+                fclose(file);
+                return 0;
+            }
+            overlay_font_bytes.resize((size_t)size);
+            bool read = fread(overlay_font_bytes.data(), 1, (size_t)size, file) == (size_t)size;
+            fclose(file);
+            if (!read || !bh_overlay_font_read(&overlay_font, overlay_font_bytes.data(), overlay_font_bytes.size()))
+            {
+                snprintf(error_text, sizeof(error_text), "Invalid Comic Sans 24 font atlas");
+                return 0;
+            }
+        }
+        Surface *output = destination;
+        if (destination->target)
+        {
+            if (!destination->text_overlay)
+            {
+                DDSURFACEDESC desc{};
+                desc.dwWidth = 640;
+                desc.dwHeight = 480;
+                desc.ddpfPixelFormat = pixel_format(32);
+                desc.dwFlags = DDSD_CKSRCBLT;
+                destination->text_overlay = make_surface(desc);
+            }
+            output = destination->text_overlay;
+        }
+        /* Flush earlier draws before changing CPU storage. This also keeps
+           a texture used by an earlier batch coherent with subsequent uploads. */
+        if (!flush())
+            return 0;
+        if (destination->target)
+            std::fill(output->pixels.begin(), output->pixels.end(), 0);
+        std::array<unsigned char, 768> palette{};
+        if (output->palette)
+            for (unsigned i = 0; i < 256; ++i)
+            {
+                palette[i * 3] = output->palette->entries[i].peRed;
+                palette[i * 3 + 1] = output->palette->entries[i].peGreen;
+                palette[i * 3 + 2] = output->palette->entries[i].peBlue;
+            }
+        const auto &format = output->desc.ddpfPixelFormat;
+        BHOverlayCanvas canvas{output->pixels.data(),
+                               output->desc.dwWidth,
+                               output->desc.dwHeight,
+                               (unsigned)output->desc.lPitch,
+                               (format.dwRGBBitCount + 7) / 8,
+                               {format.dwRBitMask, format.dwGBitMask, format.dwBBitMask},
+                               output->palette ? palette.data() : nullptr};
+        if (!bh_overlay_text(&canvas, &overlay_font, x, y, text, rgb))
+            return 0;
+        ++output->version;
+        return destination->target ? draw_surface(output, true) : 1;
+    }
     HWND __cdecl bh_sdl_legacy_window()
     {
         return window ? (HWND)SDL_GetPointerProperty(SDL_GetWindowProperties(window),
@@ -1301,6 +1371,8 @@ extern "C"
             SDL_DestroyWindow(window);
         }
         window = nullptr;
+        overlay_font = {};
+        overlay_font_bytes.clear();
         SDL_Quit();
     }
     void __cdecl bh_sdl_video_cycle(int row)
@@ -1694,27 +1766,6 @@ extern "C"
         *lplpDDAttachedSurface = (LPDIRECTDRAWSURFACE)s->back;
         return DD_OK;
     }
-    HRESULT __cdecl bh_IDirectDrawSurface_GetDC(void *self, HDC *lphDC)
-    {
-        auto *s = (Surface *)self;
-        if (s->dc)
-            return E_FAIL;
-        BITMAPINFO b{};
-        b.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-        b.bmiHeader.biWidth = 640;
-        b.bmiHeader.biHeight = -480;
-        b.bmiHeader.biPlanes = 1;
-        b.bmiHeader.biBitCount = 32;
-        b.bmiHeader.biCompression = BI_RGB;
-        s->dc = CreateCompatibleDC(nullptr);
-        s->bitmap = CreateDIBSection(s->dc, &b, DIB_RGB_COLORS, &s->dib, nullptr, 0);
-        if (!s->dc || !s->bitmap)
-            return E_FAIL;
-        s->previous_bitmap = (HBITMAP)SelectObject(s->dc, s->bitmap);
-        memset(s->dib, 0, 640 * 480 * 4);
-        *lphDC = s->dc;
-        return DD_OK;
-    }
     HRESULT __cdecl bh_IDirectDrawSurface_GetPixelFormat(void *self, LPDDPIXELFORMAT lpDDPixelFormat)
     {
         *lpDDPixelFormat = ((Surface *)self)->desc.ddpfPixelFormat;
@@ -1764,29 +1815,6 @@ extern "C"
     ULONG __cdecl bh_IDirectDrawSurface_Release(void *self)
     {
         return release(self);
-    }
-    HRESULT __cdecl bh_IDirectDrawSurface_ReleaseDC(void *self, HDC hDC)
-    {
-        auto *s = (Surface *)self;
-        if (hDC != s->dc)
-            return E_INVALIDARG;
-        GdiFlush();
-        DDSURFACEDESC d{};
-        d.dwWidth = 640;
-        d.dwHeight = 480;
-        d.ddpfPixelFormat = pixel_format(32);
-        d.dwFlags = DDSD_CKSRCBLT;
-        auto *text = make_surface(d);
-        memcpy(text->pixels.data(), s->dib, text->pixels.size());
-        bool ok = draw_surface(text, true);
-        release(text);
-        SelectObject(s->dc, s->previous_bitmap);
-        DeleteObject(s->bitmap);
-        DeleteDC(s->dc);
-        s->dc = nullptr;
-        s->bitmap = nullptr;
-        s->dib = nullptr;
-        return ok ? DD_OK : E_FAIL;
     }
     HRESULT __cdecl bh_IDirectDrawSurface_Restore(void *self)
     {
