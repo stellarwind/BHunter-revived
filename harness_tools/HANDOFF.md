@@ -18,9 +18,9 @@ The manual arena has two parked real vehicles with native TARGET/SUSPECT HUD
 labels. Fixtures, event injection and environment switches exist only in
 harness-generated game copies. Production source has no new temporary diagnostic
 hooks. User answered "No further cleanup"; keep the framerate profiler.
-User visual acceptance of this final version is still pending. The attempted
-live screenshot capture timed out; user then canceled captures. Do not resume
-computer use or screenshots without a new request.
+User accepted milestone 2 on 2026-11-05 after 4K arena and ordinary-game
+playtesting, including comparison with the original GDI renderer. Follow
+AGENTS.md: no computer use or automated screenshots.
 
 ## On another Windows PC
 
@@ -58,13 +58,19 @@ checks, the expected dropped-key-release negative control, 13 subsystem suites,
 12 original-vs-portable offscreen text comparisons (zero differing RGB pixels),
 and 10 stationary-vehicle checks. After packaging self-contained fixtures, all
 13 subsystem suites passed again. This does not certify visible GPU output,
-audible quality, real hardware or mission behavior; user playtesting remains.
+audible quality, real hardware or every mission behavior.
 
-Next: have the user check font appearance and both vehicle labels in the manual
-arena, then ordinary gameplay. Address findings before declaring milestone 2
-accepted or proceeding to milestone 3. The local profiler comparison showed
-similar frame cadence, but concurrent compilation makes it unsuitable as a
-controlled performance benchmark.
+The follow-up fixed NPC message glyph backgrounds: preserve source pure black
+in font atlases instead of raising it to RGB (8,8,8) under the world-texture
+palette policy. Shaded edges remain unchanged. A real-atlas probe reproduced
+the old failure and passed the fix across three palette policies and 16/32-bit
+surfaces. Debug/release builds and the complete gate passed again. Harness
+cache lookups now resolve Windows path casing consistently.
+
+Milestone 2 is accepted; milestone 3 (sound effects and music) is next in the
+plan, when requested. The local profiler comparison showed similar frame
+cadence, but concurrent compilation makes it unsuitable as a controlled
+performance benchmark. Preserve the profiler.
 
 Only the selected reusable gate sources/fixtures are force-tracked inside the
 otherwise ignored `harness_tools/`. Keep new generated outputs ignored. Do not

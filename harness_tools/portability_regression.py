@@ -169,7 +169,7 @@ def replace_once(source, before, after):
 
 
 def build():
-    runtime = OUT / "runtime"
+    runtime = (OUT / "runtime").resolve()
     run(
         [
             sys.executable,

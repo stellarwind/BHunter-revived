@@ -212,7 +212,8 @@ The portable text path now bakes the installed Comic Sans MS font at build time
 using the original 24-pixel CreateFontA settings (quality 3, non-antialiased).
 Runtime rendering uses portable binary glyph masks, original bearings and
 advances; GDI text/font and DIB/DC execution has been removed. Menus/HUD/credits
-retain their existing atlas paths. User visual acceptance remains pending.
+retain their existing atlas paths. User accepted milestone 2 on 2026-11-05
+after 4K arena and ordinary-game playtesting with original-GDI comparison.
 
 The mandatory gate now compares the actual command consumer and adapter against
 original offscreen TextOutA output, including colors, metrics and clipping.
@@ -401,3 +402,12 @@ MS instead. Twelve offscreen original-vs-portable comparison cases pass with
 zero differing RGB pixels. These are memory buffers, not automated screenshots.
 Visual and audio checks remain with the user; minor visual differences are
 acceptable if the overall appearance is similar.
+
+Step-2 acceptance (2026-11-05): user accepted the portable text renderer after
+4K arena and ordinary-game playtesting, including original-GDI comparison.
+Fixed a font-atlas palette issue found during playtesting: exact source black
+now remains zero instead of becoming RGB (8,8,8), removing faint NPC-message
+glyph backgrounds while preserving shaded edges. The focused real-atlas check,
+debug/release builds, and complete regression gate passed. Windows harness
+cache lookup paths now resolve casing consistently. No temporary diagnostic
+hooks were added to production source; the framerate profiler remains.

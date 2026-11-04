@@ -35,7 +35,7 @@ def main():
         "--no-build", action="store_true", help="Use the existing isolated build"
     )
     args = parser.parse_args()
-    runtime = OUT / "runtime"
+    runtime = (OUT / "runtime").resolve()
     if not args.no_build:
         build()
     cache = (

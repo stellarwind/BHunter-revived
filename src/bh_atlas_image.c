@@ -205,6 +205,13 @@ BHAtlasImage *__cdecl bh_atlas_image_load(BHAtlasContext *c, const char *name, c
         fail(c, BH_TEXTURE_FORMAT);
         goto failed;
     }
+    /* Font pages use black as the neutral background when composited.
+       World-texture policies can raise source black to RGB (8,8,8), which
+       exposes each copied glyph rectangle over the cleared page. Preserve
+       exact source black without discarding the atlas's shaded edges. */
+    for (i = 0; i < 256; ++i)
+        if (!reader.palette[i * 3] && !reader.palette[i * 3 + 1] && !reader.palette[i * 3 + 2])
+            palette.indices[i] = 0;
     memcpy(reader.map, palette.indices, 256);
     bytes = (pixel->dwRGBBitCount + 7) / 8;
     memset(&desc, 0, sizeof(desc));
