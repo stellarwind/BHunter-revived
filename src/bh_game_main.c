@@ -4,7 +4,7 @@
 int main(int argc, char **argv)
 {
     const char *assets = 0, *settings = 0;
-    int i, result, profile = 0;
+    int i, result, profile = 0, dx12 = 0;
     for (i = 1; i < argc; ++i)
     {
 #ifdef DEBUGGING
@@ -14,7 +14,9 @@ int main(int argc, char **argv)
             continue;
         }
 #endif
-        if (!strcmp(argv[i], "--asset-dir") && i + 1 < argc)
+        if (!strcmp(argv[i], "--dx12"))
+            dx12 = 1;
+        else if (!strcmp(argv[i], "--asset-dir") && i + 1 < argc)
             assets = argv[++i];
         else if (!strcmp(argv[i], "--settings-dir") && i + 1 < argc)
             settings = argv[++i];
@@ -23,6 +25,7 @@ int main(int argc, char **argv)
     }
     if (!bh_sdl_paths(assets, settings))
         return 2;
+    bh_sdl_use_dx12(dx12);
     result = bh_game_app_run("GAME_DATA", bh_sdl_settings_file("source-preview.cfg"), profile);
     if (result)
         bh_sdl_error_dialog();

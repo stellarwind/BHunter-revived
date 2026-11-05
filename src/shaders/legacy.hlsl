@@ -1,5 +1,11 @@
 // Original CPU lighting and reversed near/z depth; perspective-correct UVs.
+#ifdef __spirv__
+[[vk::combinedImageSampler]]
+#endif
 Texture2D image : register(t0, space2);
+#ifdef __spirv__
+[[vk::combinedImageSampler]]
+#endif
 SamplerState imageSampler : register(s0, space2);
 cbuffer Draw : register(b0, space3)
 {

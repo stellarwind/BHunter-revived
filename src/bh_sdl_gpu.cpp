@@ -12,7 +12,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <d3dcompiler.h>
+#include "bh_gpu_shaders.h"
 #include <map>
 #include <filesystem>
 #include <string>
@@ -55,6 +55,7 @@ struct Batch
 SDL_Window *window;
 SDL_Gamepad *gamepad;
 SDL_GPUDevice *device;
+bool use_dx12;
 SDL_GPUShader *vs, *fs;
 SDL_GPUSampler *sampler;
 SDL_GPUTexture *color_target, *depth_target;
@@ -796,50 +797,18 @@ std::vector<unsigned> readback()
     SDL_ReleaseGPUTransferBuffer(device, t);
     return result;
 }
-SDL_GPUShader *shader(const char *path, const char *entry, const char *profile, SDL_GPUShaderStage stage)
+SDL_GPUShader *shader(const Uint8 *code, size_t size, const char *entry, SDL_GPUShaderFormat format,
+                      SDL_GPUShaderStage stage)
 {
-    FILE *f = fopen(path, "rb");
-    if (!f)
-    {
-        SDL_SetError("Cannot open shader %s", path);
-        return nullptr;
-    }
-    fseek(f, 0, SEEK_END);
-    long n = ftell(f);
-    rewind(f);
-    std::string source(n, '\0');
-    fread(source.data(), 1, n, f);
-    fclose(f);
-    ID3DBlob *code = nullptr, *errors = nullptr;
-    HRESULT hr = D3DCompile(source.data(), n, path, nullptr, nullptr, entry, profile, D3DCOMPILE_OPTIMIZATION_LEVEL3, 0,
-                            &code, &errors);
-    if (FAILED(hr))
-    {
-        if (errors)
-        {
-            snprintf(error_text, sizeof(error_text), "%s", (char *)errors->lpVtbl->GetBufferPointer(errors));
-            errors->lpVtbl->Release(errors);
-        }
-        return nullptr;
-    }
     SDL_GPUShaderCreateInfo info{};
-    info.code = (const Uint8 *)code->lpVtbl->GetBufferPointer(code);
-    info.code_size = code->lpVtbl->GetBufferSize(code);
+    info.code = code;
+    info.code_size = size;
     info.entrypoint = entry;
-    info.format = SDL_GPU_SHADERFORMAT_DXBC;
+    info.format = format;
     info.stage = stage;
-    if (stage == SDL_GPU_SHADERSTAGE_FRAGMENT)
-    {
-        info.num_samplers = 1;
-        info.num_uniform_buffers = 1;
-    }
-    else
-        info.num_uniform_buffers = 1;
-    auto *s = SDL_CreateGPUShader(device, &info);
-    code->lpVtbl->Release(code);
-    if (errors)
-        errors->lpVtbl->Release(errors);
-    return s;
+    info.num_samplers = stage == SDL_GPU_SHADERSTAGE_FRAGMENT ? 1 : 0;
+    info.num_uniform_buffers = 1;
+    return SDL_CreateGPUShader(device, &info);
 }
 Surface *make_surface(const DDSURFACEDESC &d)
 {
@@ -932,6 +901,11 @@ void apply_mode()
 } // namespace
 extern "C"
 {
+    void bh_sdl_use_dx12(int enabled)
+    {
+        use_dx12 = enabled != 0;
+    }
+
     int bh_sdl_open(int hide, BHPlatformInput callback, void *user)
     {
         int saved_width = 0, saved_height = 0, settings_version = 0;
@@ -1003,16 +977,28 @@ extern "C"
         }
         SDL_free(available);
         finish_modes(settings_version, saved_width, saved_height);
-        device = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_DXBC, false, "direct3d12");
+        const char *driver = use_dx12 ? "direct3d12" : "vulkan";
+        const auto format = use_dx12 ? SDL_GPU_SHADERFORMAT_DXIL : SDL_GPU_SHADERFORMAT_SPIRV;
+        device = SDL_CreateGPUDevice(format, false, driver);
         if (!device || !SDL_ClaimWindowForGPUDevice(device, window))
         {
-            set_error("Create GPU device");
+            set_error(use_dx12 ? "Create Direct3D 12 device" : "Create Vulkan device (use --dx12 to try Direct3D 12)");
             return 0;
         }
         SDL_SetGPUSwapchainParameters(device, window, SDL_GPU_SWAPCHAINCOMPOSITION_SDR, SDL_GPU_PRESENTMODE_VSYNC);
         SDL_SetGPUAllowedFramesInFlight(device, 1);
-        vs = shader("shaders/legacy.hlsl", "VSMain", "vs_5_1", SDL_GPU_SHADERSTAGE_VERTEX);
-        fs = shader("shaders/legacy.hlsl", "PSMain", "ps_5_1", SDL_GPU_SHADERSTAGE_FRAGMENT);
+        if (use_dx12)
+        {
+            vs = shader(dxil_vertex, sizeof(dxil_vertex), "VSMain", format, SDL_GPU_SHADERSTAGE_VERTEX);
+            if (vs)
+                fs = shader(dxil_fragment, sizeof(dxil_fragment), "PSMain", format, SDL_GPU_SHADERSTAGE_FRAGMENT);
+        }
+        else
+        {
+            vs = shader(spirv_vertex, sizeof(spirv_vertex), "VSMain", format, SDL_GPU_SHADERSTAGE_VERTEX);
+            if (vs)
+                fs = shader(spirv_fragment, sizeof(spirv_fragment), "PSMain", format, SDL_GPU_SHADERSTAGE_FRAGMENT);
+        }
         if (!vs || !fs)
         {
             set_error("Create shaders");

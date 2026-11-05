@@ -71,6 +71,8 @@ build\BHunter-source.exe
 
 The game and required DLLs are written directly to `build/`. Keep them together when moving the game.
 
+Vulkan is the default renderer. Run `build\BHunter-source.exe --dx12` to select Direct3D 12. The build downloads a pinned shader compiler on first use and embeds shaders for both backends in the GPU DLL.
+
 After building, run `python tools/test_sdl_audio.py` for deterministic mixer, voice scheduling, music range, volume isolation and device recovery checks using SDL's dummy audio driver.
 
 ## Unlock all levels

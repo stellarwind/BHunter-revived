@@ -20,6 +20,7 @@ extern "C"
         int down, repeat;
     } BHPlatformEvent;
     typedef void (*BHPlatformInput)(const BHPlatformEvent *, void *);
+    void bh_sdl_use_dx12(int enabled);
     int bh_sdl_open(int hidden, BHPlatformInput, void *);
     int bh_sdl_poll(void);
     int bh_sdl_active(void);
