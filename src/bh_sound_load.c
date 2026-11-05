@@ -40,7 +40,7 @@ static void release(BHSoundLoad *c, void *p)
 unsigned long __cdecl bh_sound_load(BHSoundLoad *c, const char *name, float range, float level,
                                     unsigned short streaming, float denominator)
 {
-    BHSoundQueue *q;
+    BHSoundQueue *sound_queue;
     BHVFile *file;
     unsigned char *bytes;
     long length;
@@ -54,8 +54,9 @@ unsigned long __cdecl bh_sound_load(BHSoundLoad *c, const char *name, float rang
     if (!c)
         return BH_SOUND_INVALID;
     c->error = BH_SOUND_LOAD_OK;
-    if (!(q = c->queue) || !name || strlen(name) >= 64 || !q->device || q->voice_limit_policy < 1 ||
-        q->voice_limit_policy > 3 || (!!c->file_allocator.allocate != !!c->file_allocator.release))
+    if (!(sound_queue = c->queue) || !name || strlen(name) >= 64 || !sound_queue->device ||
+        sound_queue->voice_limit_policy < 1 || sound_queue->voice_limit_policy > 3 ||
+        (!!c->file_allocator.allocate != !!c->file_allocator.release))
         return fail(c, BH_SOUND_LOAD_ARGUMENT);
     if (!bh_math_environment_supported())
         return fail(c, BH_SOUND_LOAD_NUMERICAL);
@@ -96,15 +97,15 @@ unsigned long __cdecl bh_sound_load(BHSoundLoad *c, const char *name, float rang
         return fail(c, BH_SOUND_LOAD_FORMAT);
     }
     ++c->native_calls;
-    c->create_result =
-        bh_audio_create(q->device, samples, sample_bytes, u16(format + 2), u16(format + 14), u32(format + 4), &buffer);
+    c->create_result = bh_audio_create(sound_queue->device, samples, sample_bytes, u16(format + 2), u16(format + 14),
+                                       u32(format + 4), &buffer);
     release(c, bytes);
     if (c->create_result)
         return fail(c, BH_SOUND_LOAD_NATIVE);
     first_size = c->first_bytes = sample_bytes;
     c->second_bytes = 0;
     c->lock_result = c->unlock_result = 0;
-    resource = bh_sound_resource_allocate(q);
+    resource = bh_sound_resource_allocate(sound_queue);
     if (!resource)
     {
         bh_audio_buffer_release(buffer);
@@ -123,7 +124,7 @@ unsigned long __cdecl bh_sound_load(BHSoundLoad *c, const char *name, float rang
     resource->streaming = streaming;
     resource->buffer_count = 1;
     resource->sample_bytes = first_size;
-    resource->voice_limit = q->voice_limit_policy;
+    resource->voice_limit = sound_queue->voice_limit_policy;
     resource->stream_head = NULL;
     volume = level > 0.0f ? (log((double)level) * -1000.0) / log(0.5) : -10000.0;
     if (!(volume > -10000.0))

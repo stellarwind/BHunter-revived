@@ -16,24 +16,24 @@ static int vector_ok(const BHVec3 *v)
 {
     return v && _finite(v->x) && _finite(v->y) && _finite(v->z);
 }
-int __cdecl bh_sound_listener(BHSoundQueue *q, unsigned long index, long enabled, const BHVec3 *position,
+int __cdecl bh_sound_listener(BHSoundQueue *sound_queue, unsigned long index, long enabled, const BHVec3 *position,
                               const BHVec3 *angles, const BHVec3 *velocity)
 {
     BHMat34 rotation;
     const BHVec3 right = {1, 0, 0};
-    if (!q || index != 0)
+    if (!sound_queue || index != 0)
     {
-        if (q)
-            q->error = BH_SOUND_ARGUMENT;
+        if (sound_queue)
+            sound_queue->error = BH_SOUND_ARGUMENT;
         return 0;
     }
     if (enabled &&
         (!vector_ok(position) || !vector_ok(angles) || !vector_ok(velocity) || !bh_math_environment_supported()))
     {
-        q->error = BH_SOUND_NUMERICAL;
+        sound_queue->error = BH_SOUND_NUMERICAL;
         return 0;
     }
-    q->listener_active = enabled;
+    sound_queue->listener_active = enabled;
     if (enabled)
     {
         memset(&rotation, 0, sizeof(rotation));
@@ -41,21 +41,21 @@ int __cdecl bh_sound_listener(BHSoundQueue *q, unsigned long index, long enabled
         bh_mat34_rotate_y(angles->x, &rotation);
         bh_mat34_rotate_x(angles->y, &rotation);
         bh_mat34_rotate_z(angles->z, &rotation);
-        bh_mat34_transform_point(&rotation, &right, &q->listener_right);
-        q->listener = *position;
-        q->listener_velocity = *velocity;
+        bh_mat34_transform_point(&rotation, &right, &sound_queue->listener_right);
+        sound_queue->listener = *position;
+        sound_queue->listener_velocity = *velocity;
     }
-    q->error = BH_SOUND_OK;
+    sound_queue->error = BH_SOUND_OK;
     return 1;
 }
-int __cdecl bh_sound_set_voice_limit(BHSoundQueue *q, long requested)
+int __cdecl bh_sound_set_voice_limit(BHSoundQueue *sound_queue, long requested)
 {
-    if (!q)
+    if (!sound_queue)
         return 0;
     if (requested >= 0 && requested < 4)
-        q->voice_limit_policy = (unsigned short)(requested ? requested : 2);
+        sound_queue->voice_limit_policy = (unsigned short)(requested ? requested : 2);
     else
-        q->voice_limit_policy = 3;
-    q->error = BH_SOUND_OK;
+        sound_queue->voice_limit_policy = 3;
+    sound_queue->error = BH_SOUND_OK;
     return 1;
 }

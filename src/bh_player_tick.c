@@ -125,13 +125,13 @@ static int camera_reset(BHPlayerTick *ctx, unsigned long index)
 static int return_menu(BHPlayerTick *ctx)
 {
     BHMessagePanelFields *fields;
-    BHSoundVoice *engine;
-    unsigned long engine_resource;
     unsigned long event = 20;
     if (!ctx->reset || !ctx->panel || !ctx->panel->entity || !ctx->snapshot || !ctx->world_reset || !ctx->menu)
         return fail(ctx, 1);
     if (!camera_reset(ctx, 0) || !bh_player_reset(ctx->reset))
         return fail(ctx, 3);
+    /* Keep the engine request for the next mission and mute it in the menu. */
+    bh_sound_update(ctx->sound, word(ctx->player, 0x220), 0, 1, NULL, NULL);
     ctx->panel->messages->ring_start = 0;
     ctx->panel->messages->ring_count = 0;
     ctx->panel->messages->last_index = -1;
@@ -144,16 +144,8 @@ static int return_menu(BHPlayerTick *ctx)
     if (!bh_entity_set_query(ctx->pool, ctx->panel->entity, bh_message_panel_query) ||
         !bh_input_set_enabled(ctx->input, ctx->snapshot, 0))
         return fail(ctx, 3);
-    if (!bh_entities_query(ctx->pool, 0, 0, 0, 0, &event))
-        return fail(ctx, 3);
-    engine = bh_sound_voice(ctx->sound, word(ctx->player, 0x220));
-    engine_resource = engine && engine->resource ? engine->resource->index : BH_SOUND_INVALID;
-    if (!bh_sound_stop_all(ctx->sound))
-        return fail(ctx, 3);
-    /* The next mission reuses the player. Give its engine a fresh silent
-       request after all old effects, including unowned loops, are retired. */
-    setword(ctx->player, 0x220, sound(ctx, engine_resource, 0, 1, NULL, NULL));
-    if (!bh_world_reset(ctx->world_reset) || !bh_menu_runtime_return(ctx->menu))
+    if (!bh_entities_query(ctx->pool, 0, 0, 0, 0, &event) || !bh_world_reset(ctx->world_reset) ||
+        !bh_menu_runtime_return(ctx->menu))
         return fail(ctx, 3);
     ctx->state->mode = 0;
     return 1;

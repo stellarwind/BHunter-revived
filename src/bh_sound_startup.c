@@ -1,19 +1,20 @@
 #include "bh_sound_startup.h"
 #include <string.h>
-int __cdecl bh_sound_startup(BHSoundQueue *q, HWND window, BHSoundStartupStats *stats)
+int __cdecl bh_sound_startup(BHSoundQueue *sound_queue, HWND window, BHSoundStartupStats *stats)
 {
     BHSoundStartupStats actual;
     (void)window;
-    if (!q || !q->allocator.allocate || q->device || q->resources || q->voices)
+    if (!sound_queue || !sound_queue->allocator.allocate || sound_queue->device || sound_queue->resources ||
+        sound_queue->voices)
         return 0;
     memset(&actual, 0, sizeof(actual));
-    q->listener_active = 0;
+    sound_queue->listener_active = 0;
     actual.create_calls = 1;
-    q->device = bh_audio_open();
-    actual.create_result = q->device ? 0 : -1;
-    q->last_hresult = actual.create_result;
-    q->error = q->device ? BH_SOUND_OK : BH_SOUND_BACKEND;
+    sound_queue->device = bh_audio_open();
+    actual.create_result = sound_queue->device ? 0 : -1;
+    sound_queue->last_hresult = actual.create_result;
+    sound_queue->error = sound_queue->device ? BH_SOUND_OK : BH_SOUND_BACKEND;
     if (stats)
         *stats = actual;
-    return q->device != NULL;
+    return sound_queue->device != NULL;
 }

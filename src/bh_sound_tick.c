@@ -9,13 +9,13 @@
 typedef char distance_offset[offsetof(BHSoundVoice, distance_squared) == 0x2c ? 1 : -1];
 typedef char listener_offset[offsetof(BHSoundVoice, listener_index) == 0x40 ? 1 : -1];
 typedef char range_offset[offsetof(BHSoundResource, audible_range) == 0x94 ? 1 : -1];
-static int native_result(BHSoundQueue *q, BHSoundTickStats *s, HRESULT hr)
+static int native_result(BHSoundQueue *sound_queue, BHSoundTickStats *s, HRESULT hr)
 {
-    q->last_hresult = hr;
+    sound_queue->last_hresult = hr;
     if (hr != 0)
     {
         s->last_error = hr;
-        q->error = BH_SOUND_BACKEND;
+        sound_queue->error = BH_SOUND_BACKEND;
         return 0;
     }
     return 1;
@@ -32,15 +32,15 @@ static long clamp(long value, long low, long high)
 {
     return value < low ? low : value > high ? high : value;
 }
-static void select_listener(BHSoundQueue *q, BHSoundVoice *v, BHVec3 *scratch)
+static void select_listener(BHSoundQueue *sound_queue, BHSoundVoice *v, BHVec3 *scratch)
 {
     double x, y, z, distance = 0;
     v->distance_squared = 9e37f;
     if (v->positioned)
     {
-        x = (double)v->position.x - q->listener.x;
-        y = (double)v->position.y - q->listener.y;
-        z = (double)v->position.z - q->listener.z;
+        x = (double)v->position.x - sound_queue->listener.x;
+        y = (double)v->position.y - sound_queue->listener.y;
+        z = (double)v->position.z - sound_queue->listener.z;
         bh_round_float(&scratch->x, x);
         bh_round_float(&scratch->y, y);
         bh_round_float(&scratch->z, z);
@@ -53,7 +53,7 @@ static void select_listener(BHSoundQueue *q, BHSoundVoice *v, BHVec3 *scratch)
         v->listener_index = 0;
     }
 }
-static void spatial(BHSoundQueue *q, BHSoundResource *r, BHSoundVoice *v, float *attenuation, double *pan,
+static void spatial(BHSoundQueue *sound_queue, BHSoundResource *r, BHSoundVoice *v, float *attenuation, double *pan,
                     float *factor)
 {
     double length, dot, n;
@@ -70,45 +70,47 @@ static void spatial(BHSoundQueue *q, BHSoundResource *r, BHSoundVoice *v, float 
     if (distance == 0)
         return;
     if (r->streaming)
-        dot = ((double)v->cached.y * q->listener_right.y + (double)v->cached.z * q->listener_right.z) +
-              (double)v->cached.x * q->listener_right.x;
+        dot = ((double)v->cached.y * sound_queue->listener_right.y +
+               (double)v->cached.z * sound_queue->listener_right.z) +
+              (double)v->cached.x * sound_queue->listener_right.x;
     else
-        dot = ((double)v->cached.x * q->listener_right.x + (double)v->cached.y * q->listener_right.y) +
-              (double)v->cached.z * q->listener_right.z;
+        dot = ((double)v->cached.x * sound_queue->listener_right.x +
+               (double)v->cached.y * sound_queue->listener_right.y) +
+              (double)v->cached.z * sound_queue->listener_right.z;
     n = dot / distance;
     *pan = (n * n) * (n > 0 ? 10000.0 : -10000.0);
     if (v->moving)
     {
         if (r->streaming)
-            dot = (((double)v->velocity.y - q->listener_velocity.y) * v->cached.y +
-                   ((double)v->velocity.z - q->listener_velocity.z) * v->cached.z) +
-                  ((double)v->velocity.x - q->listener_velocity.x) * v->cached.x;
+            dot = (((double)v->velocity.y - sound_queue->listener_velocity.y) * v->cached.y +
+                   ((double)v->velocity.z - sound_queue->listener_velocity.z) * v->cached.z) +
+                  ((double)v->velocity.x - sound_queue->listener_velocity.x) * v->cached.x;
         else
-            dot = (((double)v->velocity.x - q->listener_velocity.x) * v->cached.x +
-                   ((double)v->velocity.y - q->listener_velocity.y) * v->cached.y) +
-                  ((double)v->velocity.z - q->listener_velocity.z) * v->cached.z;
+            dot = (((double)v->velocity.x - sound_queue->listener_velocity.x) * v->cached.x +
+                   ((double)v->velocity.y - sound_queue->listener_velocity.y) * v->cached.y) +
+                  ((double)v->velocity.z - sound_queue->listener_velocity.z) * v->cached.z;
         bh_round_float(factor, 1.0 - (-(dot / distance)) * (-1.0 / 330.0));
     }
 }
-static void stop(BHSoundQueue *q, BHSoundResource *r, unsigned long slot, BHSoundTickStats *s)
+static void stop(BHSoundQueue *sound_queue, BHSoundResource *r, unsigned long slot, BHSoundTickStats *s)
 {
     ++s->stop_calls;
-    native_result(q, s, bh_audio_stop(r->buffers[slot]));
+    native_result(sound_queue, s, bh_audio_stop(r->buffers[slot]));
     r->playing[slot] = 0;
 }
-static void parameters(BHSoundQueue *q, BHSoundResource *r, BHSoundVoice *v, unsigned long slot, float master,
+static void parameters(BHSoundQueue *sound_queue, BHSoundResource *r, BHSoundVoice *v, unsigned long slot, float master,
                        BHSoundTickStats *s)
 {
     float attenuation, factor;
     double pan_value;
     long volume, pan, frequency;
     HRESULT hr;
-    spatial(q, r, v, &attenuation, &pan_value, &factor);
+    spatial(sound_queue, r, v, &attenuation, &pan_value, &factor);
     volume = clamp(truncate_low(((double)v->volume + attenuation) + master), -10000, 0);
     if (r->streaming && volume < -3500)
     {
         if (r->playing[slot])
-            stop(q, r, slot, s);
+            stop(sound_queue, r, slot, s);
         return;
     }
     pan = clamp(truncate_low(pan_value), -10000, 10000);
@@ -116,27 +118,27 @@ static void parameters(BHSoundQueue *q, BHSoundResource *r, BHSoundVoice *v, uns
     if (volume < -3500)
     {
         if (r->playing[slot])
-            stop(q, r, slot, s);
+            stop(sound_queue, r, slot, s);
         v->pending = 0;
         return;
     }
     if (r->cached_volume[slot] != volume)
     {
         ++s->volume_calls;
-        native_result(q, s, bh_audio_volume(r->buffers[slot], volume));
+        native_result(sound_queue, s, bh_audio_volume(r->buffers[slot], volume));
         r->cached_volume[slot] = volume;
     }
     if (r->cached_pan[slot] != pan)
     {
         ++s->pan_calls;
-        native_result(q, s, bh_audio_pan(r->buffers[slot], pan));
+        native_result(sound_queue, s, bh_audio_pan(r->buffers[slot], pan));
         r->cached_pan[slot] = pan;
     }
     if (r->cached_frequency[slot] != frequency)
     {
         ++s->frequency_calls;
         hr = bh_audio_pitch(r->buffers[slot], (DWORD)frequency);
-        native_result(q, s, hr);
+        native_result(sound_queue, s, hr);
         r->cached_frequency[slot] = frequency;
     }
     if (r->streaming ? !r->playing[slot] : v->pending != 0)
@@ -144,13 +146,13 @@ static void parameters(BHSoundQueue *q, BHSoundResource *r, BHSoundVoice *v, uns
         if (!r->streaming)
             v->pending = 0;
         ++s->position_calls;
-        native_result(q, s, bh_audio_seek(r->buffers[slot], 0));
+        native_result(sound_queue, s, bh_audio_seek(r->buffers[slot], 0));
         ++s->play_calls;
-        native_result(q, s, bh_audio_play(r->buffers[slot], 0, 0, r->streaming ? 1 : 0));
+        native_result(sound_queue, s, bh_audio_play(r->buffers[slot], 0, 0, r->streaming ? 1 : 0));
         r->playing[slot] = 1;
     }
 }
-int __cdecl bh_sound_tick(BHSoundQueue *q, float dt, float master, BHSoundTickStats *out)
+int __cdecl bh_sound_tick(BHSoundQueue *sound_queue, float dt, float master, BHSoundTickStats *out)
 {
     BHSoundTickStats stats;
     BHVec3 scratch = {0, 0, 0};
@@ -160,29 +162,27 @@ int __cdecl bh_sound_tick(BHSoundQueue *q, float dt, float master, BHSoundTickSt
     DWORD status;
     double phase;
     memset(&stats, 0, sizeof(stats));
-    if (!q || !_finite(dt) || !_finite(master) || !bh_math_environment_supported())
+    if (!sound_queue || !_finite(dt) || !_finite(master) || !bh_math_environment_supported())
         return 0;
-    /* Explicit source contexts reject malformed ownership instead of following
-       unchecked original globals. Loaded metadata is supplied by the caller;
-       the original name/options loader is a separate unfinished owner. */
-    if ((q->resource_count && !q->resources) || (q->voice_count && !q->voices))
+
+    if ((sound_queue->resource_count && !sound_queue->resources) || (sound_queue->voice_count && !sound_queue->voices))
     {
-        q->error = BH_SOUND_TOPOLOGY;
+        sound_queue->error = BH_SOUND_TOPOLOGY;
         return 0;
     }
-    q->error = BH_SOUND_OK;
-    if (!q->listener_active)
+    sound_queue->error = BH_SOUND_OK;
+    if (!sound_queue->listener_active)
     {
         if (out)
             *out = stats;
         return 1;
     }
-    for (i = 0; i < q->resource_count; ++i)
+    for (i = 0; i < sound_queue->resource_count; ++i)
     {
-        r = q->resources[i];
+        r = sound_queue->resources[i];
         if (!r || r->buffer_count < 1 || r->buffer_count > 3 || r->voice_limit < 1 || r->voice_limit > 3)
         {
-            q->error = BH_SOUND_TOPOLOGY;
+            sound_queue->error = BH_SOUND_TOPOLOGY;
             break;
         }
         for (j = 0; j < r->buffer_count; ++j)
@@ -190,12 +190,12 @@ int __cdecl bh_sound_tick(BHSoundQueue *q, float dt, float master, BHSoundTickSt
                 break;
         if (j != r->buffer_count)
         {
-            q->error = BH_SOUND_TOPOLOGY;
+            sound_queue->error = BH_SOUND_TOPOLOGY;
             break;
         }
         if (!_finite(r->phase) || !_finite(r->time_scale) || !_finite(r->audible_range))
         {
-            q->error = BH_SOUND_NUMERICAL;
+            sound_queue->error = BH_SOUND_NUMERICAL;
             break;
         }
         phase = (double)r->phase - dt;
@@ -214,13 +214,14 @@ int __cdecl bh_sound_tick(BHSoundQueue *q, float dt, float master, BHSoundTickSt
             while (!r->no_more && r->buffer_count < n)
             {
                 ++stats.duplicate_calls;
-                if (!q->device)
+                if (!sound_queue->device)
                 {
-                    q->error = BH_SOUND_TOPOLOGY;
+                    sound_queue->error = BH_SOUND_TOPOLOGY;
                     break;
                 }
-                q->last_hresult = bh_audio_duplicate(q->device, r->buffers[0], r->buffers + r->buffer_count);
-                if (q->last_hresult == 0)
+                sound_queue->last_hresult =
+                    bh_audio_duplicate(sound_queue->device, r->buffers[0], r->buffers + r->buffer_count);
+                if (sound_queue->last_hresult == 0)
                 {
                     ++r->buffer_count;
                     if (r->buffer_count == r->voice_limit)
@@ -238,12 +239,12 @@ int __cdecl bh_sound_tick(BHSoundQueue *q, float dt, float master, BHSoundTickSt
             walk = 0;
             for (v = r->stream_head; v; v = v->next)
             {
-                if (++walk > q->voice_count)
+                if (++walk > sound_queue->voice_count)
                 {
-                    q->error = BH_SOUND_TOPOLOGY;
+                    sound_queue->error = BH_SOUND_TOPOLOGY;
                     break;
                 }
-                select_listener(q, v, &scratch);
+                select_listener(sound_queue, v, &scratch);
                 best[n] = v;
                 for (k = n; k && (!best[k - 1] || best[k]->distance_squared < best[k - 1]->distance_squared); --k)
                 {
@@ -252,13 +253,13 @@ int __cdecl bh_sound_tick(BHSoundQueue *q, float dt, float master, BHSoundTickSt
                     best[k] = swap;
                 }
             }
-            if (walk > q->voice_count)
+            if (walk > sound_queue->voice_count)
                 break;
             for (j = 0; j < n; ++j)
-                parameters(q, r, best[j], j, master, &stats);
+                parameters(sound_queue, r, best[j], j, master, &stats);
             for (j = n; j < r->buffer_count; ++j)
                 if (r->playing[j])
-                    stop(q, r, j, &stats);
+                    stop(sound_queue, r, j, &stats);
         }
         else
         {
@@ -269,13 +270,13 @@ int __cdecl bh_sound_tick(BHSoundQueue *q, float dt, float master, BHSoundTickSt
                 {
                     status = 0;
                     ++stats.status_calls;
-                    native_result(q, &stats, bh_audio_status(r->buffers[j], &status));
+                    native_result(sound_queue, &stats, bh_audio_status(r->buffers[j], &status));
                     if (!(status & 1))
                     {
                         r->playing[j] = 0;
                         ++v->generation;
-                        v->next = q->free_voices;
-                        q->free_voices = v;
+                        v->next = sound_queue->free_voices;
+                        sound_queue->free_voices = v;
                         r->voices[j] = NULL;
                         ++stats.recycled;
                     }
@@ -287,13 +288,13 @@ int __cdecl bh_sound_tick(BHSoundQueue *q, float dt, float master, BHSoundTickSt
                 if (!v)
                     continue;
                 if (v->pending && r->playing[j])
-                    stop(q, r, j, &stats);
-                select_listener(q, v, &scratch);
-                parameters(q, r, v, j, master, &stats);
+                    stop(sound_queue, r, j, &stats);
+                select_listener(sound_queue, v, &scratch);
+                parameters(sound_queue, r, v, j, master, &stats);
             }
         }
     }
     if (out)
         *out = stats;
-    return q->error == BH_SOUND_OK;
+    return sound_queue->error == BH_SOUND_OK;
 }
