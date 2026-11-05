@@ -170,19 +170,6 @@ static void __cdecl submenu_first(BHMenuActions *a, long index)
     (void)index;
     bh_menu_submenu_first(a->settings);
 }
-static void __cdecl submenu_second(BHMenuActions *a, long index)
-{
-    (void)index;
-    bh_menu_submenu_second(a->settings);
-}
-static void __cdecl network_open(BHMenuActions *a, long index)
-{
-    bh_menu_network_open(a->settings, index);
-}
-static void __cdecl network_select(BHMenuActions *a, long index)
-{
-    bh_menu_network_select(a->settings, index);
-}
 static void __cdecl save(BHMenuActions *a, long index)
 {
     (void)index;
@@ -204,12 +191,6 @@ static BHMenuAction action(unsigned long id)
         return 0;
     case 0x42cae0:
         return submenu_first;
-    case 0x42cb10:
-        return submenu_second;
-    case 0x42caa0:
-        return network_open;
-    case 0x42ea70:
-        return network_select;
     case 0x42f350:
         return save;
     case 0x42d070:
@@ -222,22 +203,8 @@ static BHMenuAction action(unsigned long id)
         return bh_menu_action_profile;
     case 0x42e150:
         return bh_menu_action_profile_promote;
-    case 0x42e9e0:
-        return bh_menu_action_connect;
-    case 0x42eb30:
-        return bh_menu_action_modem;
-    case 0x42eea0:
-        return bh_menu_action_tcpip;
-    case 0x42f0c0:
-        return bh_menu_action_serial;
-    case 0x42f280:
-        return bh_menu_action_disconnect;
     case 0x42f2b0:
         return bh_menu_action_graphics_notice;
-    case 0x42f360:
-        return bh_menu_action_host;
-    case 0x42f390:
-        return bh_menu_action_join;
     default:
         return 0;
     }
@@ -293,18 +260,6 @@ static void __cdecl row_refresh(BHMenuSettingsMenu *s, long row)
     case 0x42d6f0:
         fn = bh_menu_edit_camera;
         break;
-    case 0x42d920:
-        fn = bh_menu_edit_sessions;
-        break;
-    case 0x42d990:
-        fn = bh_menu_edit_modem;
-        break;
-    case 0x42da40:
-        fn = bh_menu_edit_tcpip;
-        break;
-    case 0x42daa0:
-        fn = bh_menu_edit_serial;
-        break;
     }
     if (fn)
         fn(&m->edits, row);
@@ -326,7 +281,7 @@ static int add_row(BHGameBootstrap *c, const BHBootstrapRowSpec *r)
         return fail(c, 2);
     if (r->body)
     {
-        const char *text = r->body == BH_BOOT_PLAYER_NAME ? c->player_name : r->body;
+        const char *text = r->body;
         if (strlen(text) >= sizeof(body))
             return fail(c, 2);
         strcpy((char *)body, text);
@@ -358,10 +313,7 @@ int __cdecl bh_bootstrap_menus(BHGameBootstrap *c)
 {
     unsigned long i, j;
     BHBootstrapMenu *m;
-    BHBootstrapRowSpec r;
-    BHProviderRecord *provider;
-    if (!c || !c->pool || !c->inputs || !c->atlas || !c->text || !c->runtime || !c->actions || !c->edits ||
-        !c->providers || !c->modems)
+    if (!c || !c->pool || !c->inputs || !c->atlas || !c->text || !c->runtime || !c->actions || !c->edits)
         return c ? fail(c, 1) : 0;
     for (i = 0; i < BH_BOOTSTRAP_MENUS; ++i)
     {
@@ -403,49 +355,8 @@ int __cdecl bh_bootstrap_menus(BHGameBootstrap *c)
         ++c->menus_created;
     }
     for (i = 0; i < N(row_specs); ++i)
-    {
         if (!add_row(c, row_specs + i))
             return 0;
-        if (row_specs[i].menu == 0x4d1a80)
-        {
-            for (j = 0; j < (unsigned long)c->providers->count; ++j)
-            {
-                provider = c->providers->records + j;
-                r.menu = 0x4d1a80;
-                r.button = 0x4d1aa8;
-                r.title = "connect";
-                r.body = (const char *)provider + 156;
-                r.refresh = 0;
-                switch (provider->kind)
-                {
-                case 0:
-                case 4:
-                    r.destination = 0x4d1488;
-                    r.action = 0x42e9e0;
-                    break;
-                case 1:
-                    r.destination = 0x496330;
-                    r.action = 0x42ea70;
-                    break;
-                case 2:
-                    r.destination = c->modems->count > 0 ? 0x49656c : 0x4d1a80;
-                    r.action = c->modems->count > 0 ? 0x42ea70 : 0;
-                    break;
-                case 3:
-                    r.destination = 0x4d190c;
-                    r.action = 0x42ea70;
-                    break;
-                default:
-                    continue;
-                }
-                if (!add_row(c, &r))
-                    return 0;
-            }
-            m = menu(c, 0x4d1a80);
-            if (m->object.rows.count > 1)
-                m->rows[m->object.rows.count - 1]->identity = bh_bootstrap_value(c, 0x4d1aac);
-        }
-    }
 
     for (i = 0; i < BH_BOOTSTRAP_MENUS; ++i)
     {
@@ -454,19 +365,9 @@ int __cdecl bh_bootstrap_menus(BHGameBootstrap *c)
         c->menus[i].edits.mission_menu = &menu(c, 0x4ce450)->settings;
     }
     if (c->actions->settings)
-    {
-        c->actions->settings->submenus[0] = &menu(c, 0x4cdc9c)->settings;
-        c->actions->settings->submenus[1] = &menu(c, 0x4cdca0)->settings;
-        c->actions->settings->network_menu = &menu(c, 0x4d1a80)->settings;
-        c->actions->settings->network_choices[0] = &menu(c, 0x496330)->settings;
-        c->actions->settings->network_choices[1] = &menu(c, 0x49656c)->settings;
-        c->actions->settings->network_choices[2] = &menu(c, 0x4d190c)->settings;
-    }
-    if (c->actions->root)
-        *c->actions->root = &menu(c, 0x495e40)->root;
+        c->actions->settings->ship_menu = &menu(c, 0x4cdc9c)->settings;
     c->runtime->root = &menu(c, 0x495e40)->runtime;
-    c->runtime->ship_menus[0] = &menu(c, 0x4cdc9c)->runtime;
-    c->runtime->ship_menus[1] = &menu(c, 0x4cdca0)->runtime;
+    c->runtime->ship_menu = &menu(c, 0x4cdc9c)->runtime;
     for (i = 0; i < BH_BOOTSTRAP_MENUS; ++i)
     {
         m = c->menus + i;
@@ -501,44 +402,6 @@ static int font(BHGameBootstrap *c, BHAtlasPage **page, unsigned long identity, 
 {
     *page = bh_atlas_page_create(c->atlas, "textures\\tvfont.pcx", size);
     return *page && store(c, identity, (unsigned long)bh_atlas_page_image(*page), 1);
-}
-static int copy_string(unsigned char *to, unsigned long capacity, const char *from)
-{
-    unsigned long n = (unsigned long)strlen(from);
-    if (n >= capacity)
-        return 0;
-    memcpy(to, from, n + 1);
-    return 1;
-}
-static int profiles(BHGameBootstrap *c)
-{
-    unsigned long i;
-    long modem;
-    BHProviderRecord *p;
-    if (!c->config || !c->providers || !c->modems || c->providers->count < 0 || c->providers->count > 8)
-        return fail(c, 1);
-    for (i = 0; i < (unsigned long)c->providers->count; ++i)
-    {
-        p = c->providers->records + i;
-        if (p->kind == 1)
-        {
-            if (!copy_string(p->data, 96, (char *)c->config->settings + 140))
-                return fail(c, 2);
-        }
-        else if (p->kind == 2)
-        {
-            modem = bh_modem_name_find(c->modems, (char *)c->config->settings + 268);
-            if (modem < 0)
-                modem = 0;
-            if (!copy_string(p->data, 96, modem < c->modems->count ? c->modems->names[modem] : "") ||
-                !copy_string(p->data + 96, 64, (char *)c->config->settings + 364))
-                return fail(c, 2);
-        }
-        else if (p->kind == 3)
-            memcpy(p->data, c->config->settings + 396, 20);
-        ++c->profile_copies;
-    }
-    return 1;
 }
 static int scale_captain(BHGameBootstrap *c)
 {
@@ -618,8 +481,6 @@ int __cdecl bh_game_bootstrap(BHGameBootstrap *c)
         bh_atlas_page_cursor(c->confirmation, (long)(32 - (double)width * .5), ys[i]);
         bh_atlas_page_text(c->confirmation, (const unsigned char *)confirm[i]);
     }
-    for (i = 0; i < 8; ++i)
-        c->remote_age[i] = -1;
     if (!bh_player_create(c->player, 0, &start, 1, bh_bootstrap_value(c, 0x4d1964)))
         return fail(c, 10);
     if (c->compose && !c->compose(c, 2, c->compose_user))
@@ -648,8 +509,6 @@ int __cdecl bh_game_bootstrap(BHGameBootstrap *c)
             bh_model_image_replace(model, index, bh_atlas_page_image(c->graffiti));
         }
     bh_text_queue_clear(c->text, c->graffiti, 0);
-    if (!profiles(c))
-        return 0;
     {
         const char *name = getenv("COMPUTERNAME");
         if (!name || !*name)

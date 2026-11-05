@@ -3,7 +3,6 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-typedef char provider_size[sizeof(BHProviderRecord) == 188 && sizeof(BHMenuNetworkRecord) == 188 ? 1 : -1];
 static long get(const void *p, unsigned long o)
 {
     long v;
@@ -55,50 +54,6 @@ static void save(BHMenuActions *c)
     if (!bh_config_save(c->config, c->save_path))
         c->error = 3;
 }
-static BHProviderRecord *selected(BHMenuActions *c)
-{
-    return c && c->settings ? (BHProviderRecord *)c->settings->selected_network : NULL;
-}
-static int record(BHMenuActions *c)
-{
-    BHProviderRecord *r = selected(c);
-    unsigned long i;
-    if (!r || !c->providers || c->providers->count < 0 || c->providers->count > 8)
-        return 0;
-    for (i = 0; i < (unsigned long)c->providers->count; i++)
-        if (c->providers->records + i == r)
-            return 1;
-    return 0;
-}
-static int connection_start(BHMenuActions *c)
-{
-    if (!record(c) || !c->sessions)
-    {
-        c->error = 1;
-        return 0;
-    }
-    return bh_network_connection(c->sessions, selected(c));
-}
-static void launch(BHMenuActions *c, long page, int host, long row, float display)
-{
-    BHMenuActionsRoot *root = *c->root;
-    if (!root || !root->menu || !root->row_actions || root->action_count < 2)
-    {
-        c->error = 1;
-        return;
-    }
-    root->timeout = 2;
-    root->page = page;
-    root->row_actions[1] = host ? bh_menu_action_host : NULL;
-    root = *c->root;
-    if (!root || !root->menu)
-    {
-        c->error = 1;
-        return;
-    }
-    root->menu->selection = row;
-    root->menu->display_selection = display;
-}
 static void begin_text(BHMenuActions *c, const char *initial, long limit, BHInputTextCommit commit)
 {
     BHInputTextCapture *t = c->text, saved;
@@ -125,7 +80,6 @@ static void begin_text(BHMenuActions *c, const char *initial, long limit, BHInpu
     t->commit = commit;
     t->menu = c->menu;
     t->rows = c->rows;
-    t->settings = c->settings;
     t->profile = c->profiles;
     if (!bh_input_text_begin_painted(t))
     {
@@ -317,173 +271,6 @@ void __cdecl bh_menu_action_profile_promote(BHMenuActions *c, long unused)
     if (c->settings)
         c->settings->input_profile = clone;
 }
-void __cdecl bh_menu_action_connect(BHMenuActions *c, long index)
-{
-    if (!c || !c->settings || !c->providers || !c->root || !c->network_failed)
-        return;
-    c->error = 0;
-    if (index < 0 || index >= c->providers->count)
-    {
-        c->error = 1;
-        return;
-    }
-    if (index > 0)
-        c->settings->last_nonzero = index;
-    c->settings->selected_network = (BHMenuNetworkRecord *)(c->providers->records + index);
-    if (!connection_start(c))
-    {
-        *c->network_failed = 1;
-        return;
-    }
-    launch(c, 10, 1, 1, 1);
-}
-static int persist_text(BHMenuActions *c, int modem)
-{
-    BHProviderRecord *r = selected(c);
-    if (!record(c) || !bounded((char *)r->data, modem ? 96 : 128))
-    {
-        c->error = 1;
-        return 0;
-    }
-    if (modem)
-    {
-        if (!bounded((char *)r->data + 96, 32))
-        {
-            c->error = 1;
-            return 0;
-        }
-        strcpy((char *)c->config->settings + 268, (char *)r->data);
-        strcpy((char *)c->config->settings + 364, (char *)r->data + 96);
-    }
-    else
-        strcpy((char *)c->config->settings + 140, (char *)r->data);
-    save(c);
-    return 1;
-}
-void __cdecl bh_menu_action_modem(BHMenuActions *c, long row)
-{
-    BHProviderRecord *r;
-    long i;
-    if (!c || !c->config || !(r = selected(c)))
-        return;
-    c->error = 0;
-    switch (row)
-    {
-    case 0:
-        persist_text(c, 1);
-        break;
-    case 1:
-        if (!c->modems || c->modems->count < 1 || c->modems->count > 8)
-        {
-            c->error = 1;
-            return;
-        }
-        i = bh_modem_name_find(c->modems, (char *)r->data) + 1;
-        if (i >= c->modems->count)
-            i = 0;
-        if (!bounded(c->modems->names[i], 96))
-        {
-            c->error = 1;
-            return;
-        }
-        strcpy((char *)r->data, c->modems->names[i]);
-        refresh(c, 1);
-        break;
-    case 2:
-        begin_text(c, (char *)r->data + 96, 31, BH_TEXT_COMMIT_ADDRESS);
-        break;
-    case 3:
-        if (!persist_text(c, 1))
-            return;
-        if (!connection_start(c))
-        {
-            *c->network_failed = 1;
-            return;
-        }
-        if (!r->data[96])
-            launch(c, 2, 1, 1, 1);
-        else
-            launch(c, 10, 0, 2, 2);
-        break;
-    default:
-        break;
-    }
-}
-void __cdecl bh_menu_action_tcpip(BHMenuActions *c, long row)
-{
-    BHProviderRecord *r;
-    if (!c || !c->config || !(r = selected(c)))
-        return;
-    c->error = 0;
-    if (row == 0)
-        persist_text(c, 0);
-    else if (row == 1)
-        begin_text(c, (char *)r->data, 95, BH_TEXT_COMMIT_PHONE);
-    else if (row == 2)
-    {
-        if (!persist_text(c, 0))
-            return;
-        if (!connection_start(c))
-        {
-            *c->network_failed = 1;
-            return;
-        }
-        launch(c, 10, 1, 1, 1);
-    }
-}
-void __cdecl bh_menu_action_serial(BHMenuActions *c, long row)
-{
-    BHProviderRecord *r;
-    long value;
-    if (!c || !c->config || !(r = selected(c)))
-        return;
-    c->error = 0;
-    switch (row)
-    {
-    case 0:
-        memcpy(c->config->settings + 396, r->data, 20);
-        save(c);
-        break;
-    case 1:
-        value = get(r->data, 0);
-        put(r->data, 0, (value & 3) + 1);
-        break;
-    case 2:
-        put(r->data, 4, bh_serial_baud_next(get(r->data, 4)));
-        break;
-    case 3:
-        put(r->data, 8, bh_serial_stop_next(get(r->data, 8)));
-        break;
-    case 4:
-        put(r->data, 12, bh_serial_parity_next(get(r->data, 12)));
-        break;
-    case 5:
-        put(r->data, 16, bh_serial_flow_next(get(r->data, 16)));
-        break;
-    case 6:
-        memcpy(c->config->settings + 396, r->data, 20);
-        save(c);
-        if (!connection_start(c))
-            *c->network_failed = 1;
-        else
-            launch(c, 10, 1, 1, 1);
-        break;
-    default:
-        break;
-    }
-    refresh(c, row);
-}
-void __cdecl bh_menu_action_disconnect(BHMenuActions *c, long unused)
-{
-    BHMenuActionsRoot *r;
-    (void)unused;
-    if (!c || !c->root || !(r = *c->root) || !c->sessions)
-        return;
-    c->error = 0;
-    r->timeout = 0;
-    bh_network_connection_dispose(c->sessions);
-    c->sessions->count = 0;
-}
 void __cdecl bh_menu_action_graphics_notice(BHMenuActions *c, long unused)
 {
 #ifdef BH_SDL_BACKEND
@@ -518,37 +305,4 @@ void __cdecl bh_menu_action_graphics_notice(BHMenuActions *c, long unused)
         }
     }
 #endif
-}
-void __cdecl bh_menu_action_host(BHMenuActions *c, long unused)
-{
-    BHMenuActionsRoot *r;
-    (void)unused;
-    if (!c || !c->root || !(r = *c->root) || !c->frame_count || !c->mode)
-        return;
-    c->error = 0;
-    r->timeout = 0;
-    *c->frame_count = 0;
-    bh_network_host(c->game, c->player_name);
-    *c->mode = 2;
-}
-void __cdecl bh_menu_action_join(BHMenuActions *c, long row)
-{
-    BHMenuActionsRoot *r;
-    long index = (long)((unsigned long)row - 2UL);
-    if (!c || !c->root || !(r = *c->root) || !c->frame_count || !c->mode || !c->network_failed || !c->sessions)
-        return;
-    c->error = 0;
-    r->timeout = 0;
-    *c->frame_count = 0;
-    if (index < 0 || index >= c->sessions->count)
-    {
-        *c->network_failed = 1;
-        return;
-    }
-    if (!bh_network_join(c->game, &c->sessions->records[index].instance, c->player_name))
-    {
-        *c->network_failed = 1;
-        return;
-    }
-    *c->mode = 3;
 }

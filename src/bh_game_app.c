@@ -22,13 +22,11 @@
 #include "bh_actor_construct.h"
 #include "bh_actor_launch.h"
 #include "bh_script_actor_construct.h"
-#include "bh_network_shutdown.h"
 #include "bh_display_shutdown.h"
 #include "bh_vfile.h"
 #include "bh_fp.h"
 #include "bh_rotation.h"
 #include "bh_sound_startup.h"
-#include "bh_effect_network.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -104,10 +102,9 @@ typedef struct BHGameApp
     long quit;
     int initialized, error, focus_sample;
     char archive[512], config_path[512];
-    long width, height, selected_waypoint, mission, ship, slot, input_changed, stay, network_failed, fine_warning,
-        pending_profile;
-    unsigned long frame, sync_identity, actor_count, availability[4][32], event_value, mission_identity, instability;
-    float yaw, latency[8];
+    long width, height, selected_waypoint, mission, ship, slot, input_changed, stay, fine_warning, pending_profile;
+    unsigned long frame, actor_count, availability[4][32], event_value, mission_identity, instability;
+    float yaw;
     BHVec3 zero, eye, angles;
     BHEntity *player, *camera_entity, *damage_source, *actor_head, *actors[GAME_DYNAMIC_CAPACITY + 2], *remote[8];
     BHMathEnvironment math;
@@ -179,13 +176,6 @@ typedef struct BHGameApp
     BHSoundQueue sound;
     BHSoundStartupStats sound_stats;
     BHSoundLoad sounds;
-    BHProviderCatalog providers;
-    BHProviderStartup provider_startup;
-    BHModemNames modems;
-    BHNetworkSessions sessions;
-    BHNetworkTransport transport;
-    BHNetworkGame network_game;
-    BHNetworkShutdown network_shutdown;
     BHCdClose cd;
     BHCdNotify cd_notify;
     BHCdAudio cd_audio;
@@ -274,7 +264,6 @@ typedef struct BHGameApp
     BHFlybyCredits credits;
     BHMenuRuntimeContext menu;
     BHMenuActions menu_actions;
-    BHMenuActionsRoot *root_menu;
     BHMenuEdits menu_edits;
     BHMenuSettings menu_settings;
     BHMenuProfileContext menu_profiles;
@@ -309,7 +298,6 @@ typedef struct BHGameApp
     BHEffectOrbitTickContext orbit;
     BHEffectAcceleratedContext accelerated;
     BHEffectSplitContext split;
-    BHEffectNetworkContext effect_network;
     BHPulseProjectileContext pulse;
     BHScriptParticleContext particles;
     BHContactEffects contacts;
@@ -341,7 +329,6 @@ typedef struct BHGameApp
     BHActorPursuitRouteContext pursuit;
     BHSegmentQuery block_queries[600];
     BHHomingWorldResponse *world_responses;
-    BHPulseWorldIndex *pulse_indices;
     long *city_ids;
     BHEffectDrawContext effect_draw;
     BHTrailContext trails;
@@ -355,9 +342,6 @@ typedef struct BHGameApp
     unsigned char key_result[2];
     unsigned long empty_warning;
     long weapon_warning;
-    BHWorldGeometry *query_world;
-    unsigned short query_world_index;
-    const BHProviderRecord *selected_provider;
 #ifdef DEBUGGING
     int perf_enabled;
     BHGamePerfCapture perf_capture;
@@ -1018,8 +1002,6 @@ static int source_owners(BHGameApp *app)
     if (!bh_input_devices_start(&app->devices, 0))
         return failure(app, 6);
     if (!bh_entities_init(&app->pool, 0x2580, 0) || !bh_sound_queue_init(&app->sound, 0, 0, 0) ||
-        !bh_network_transport_init(&app->transport, 0, 0) ||
-        !bh_network_game_init(&app->network_game, &app->sessions, 0) || !bh_provider_catalog_init(&app->providers, 0) ||
         !bh_rail_paths_init(&app->rails, 0) || !bh_navigation_init(&app->navigation, 0))
         return failure(app, 6);
     bh_text_queue_init(&app->text);
@@ -1030,8 +1012,6 @@ static int source_owners(BHGameApp *app)
         !bh_weapon_factory_open(&app->weapons, &app->pool, &app->sound))
         return failure(app, 6);
     app->sounds.queue = &app->sound;
-    app->provider_startup.catalog = &app->providers;
-    app->provider_startup.modems = &app->modems;
     app->cd.last_track = -1;
     app->cd_notify.cd = &app->cd;
     app->cd_audio.notify = &app->cd_notify;
@@ -1187,11 +1167,7 @@ static int source_owners(BHGameApp *app)
     app->player_tick.contacts = &app->contacts;
     app->player_tick.flash = &app->flash;
     app->player_tick.explosions = &app->explosions;
-    app->player_tick.game = &app->network_game;
-    app->player_tick.navigation = &app->navigation;
-    app->player_tick.latency = app->latency;
     app->player_tick.camera_yaw = &app->yaw;
-    app->player_tick.damage_source = &app->damage_source;
     app->player_create.tick = &app->player_tick;
     app->player_create.query = &app->player_query;
     app->player_create.current = &app->player;
@@ -1208,25 +1184,17 @@ static int source_owners(BHGameApp *app)
     app->player_query.target = &app->weapon_target;
     app->player_query.arc = &app->weapon_arc;
     app->player_query.lifetime = &app->lifetime;
-    app->player_query.transport = &app->transport;
     app->player_query.actors = &app->vehicle_lifetime.head;
     app->player_query.fine_warning = &app->fine_warning;
     app->player_query.damage_source = &app->damage_source;
-    app->player_query.mode_count = &app->player_state.mode;
-    app->player_query.simulation_tick = &app->player_state.tick;
-    app->player_query.world = &app->query_world;
-    app->player_query.world_index = &app->query_world_index;
     app->player_query.sound_velocity = &app->zero;
     app->world_reset.vm = &app->vm;
     app->world_reset.loot_rows = app->availability;
     app->physics_effects.effects = &app->contacts;
     app->physics_effects.sound = &app->sound;
-    app->physics_effects.transport = &app->transport;
     app->menu.pool = &app->pool;
     app->menu.snapshot = &app->snapshot;
     app->menu.sound = &app->sound;
-    app->menu.sessions = &app->sessions;
-    app->menu.provider = &app->selected_provider;
     app->menu.transition = &app->transition;
     app->menu.flyby = &app->flyby;
     app->menu.mode = &app->player_state.mode;
@@ -1235,8 +1203,6 @@ static int source_owners(BHGameApp *app)
     app->menu.input_changed = &app->input_changed;
     app->menu.stay = &app->stay;
     app->menu_settings.input_profile = app->profile;
-    app->menu_settings.network_records = (BHMenuNetworkRecord *)app->providers.records;
-    app->menu_settings.network_record_count = app->providers.count;
     app->menu_actions.devices = app->device_names;
     app->menu_actions.device_count = (unsigned long)app->display_catalog.secondary_count + 1;
     app->menu_actions.config = &app->config;
@@ -1245,24 +1211,15 @@ static int source_owners(BHGameApp *app)
     app->menu_actions.profiles = &app->menu_profiles;
     app->menu_actions.text = &app->text_capture;
     app->menu_actions.media = &app->media;
-    app->menu_actions.modems = &app->modems;
-    app->menu_actions.providers = &app->providers;
-    app->menu_actions.sessions = &app->sessions;
-    app->menu_actions.game = &app->network_game;
-    app->menu_actions.root = &app->root_menu;
     app->menu_actions.messages = &app->messages;
     app->menu_actions.sound = &app->sound;
     app->menu_actions.player_name = app->bootstrap.player_name;
-    app->menu_actions.mode = &app->player_state.mode;
-    app->menu_actions.network_failed = &app->network_failed;
-    app->menu_actions.frame_count = &app->player_state.death_frames;
     app->menu_profiles.config = &app->config;
     app->menu_profiles.current = &app->profile;
     app->menu_profiles.pending_selection = &app->pending_profile;
     app->menu_edits.config = &app->config;
     app->menu_edits.settings = &app->menu_settings;
     app->menu_edits.audio = &app->cd_audio;
-    app->menu_edits.sessions = &app->sessions;
     app->menu_edits.capture = &app->key_capture;
     app->menu_edits.mode = &app->player_state.mode;
     app->menu_edits.mission = &app->mission;
@@ -1288,7 +1245,6 @@ static int source_owners(BHGameApp *app)
     app->text_capture.pool = &app->pool;
     app->text_capture.snapshot = &app->snapshot;
     app->text_capture.state = &app->global_state;
-    app->text_capture.settings = &app->menu_settings;
     app->text_capture.profile = &app->menu_profiles;
     app->text_capture.sound = &app->sound;
     app->flyby.entities = &app->pool;
@@ -1354,9 +1310,6 @@ static int source_owners(BHGameApp *app)
     app->bootstrap.inputs = &app->inputs;
     app->bootstrap.pool = &app->pool;
     app->bootstrap.snapshot = &app->snapshot;
-    app->bootstrap.config = &app->config;
-    app->bootstrap.providers = &app->providers;
-    app->bootstrap.modems = &app->modems;
     app->bootstrap.flyby = &app->flyby_construct;
     app->bootstrap.runtime = &app->menu;
     app->bootstrap.actions = &app->menu_actions;
@@ -1549,8 +1502,7 @@ static int resources_ready(BHGameApp *app)
         app->weapon_fire.empty_sound != bh_bootstrap_value(&app->bootstrap, 0x4cda10))
         return failure(app, 9);
     if (app->projectiles.next_identity != &app->debris.origin_tag || app->area.identity != &app->debris.origin_tag ||
-        app->pulse.identity != &app->debris.origin_tag || app->effect.debris != &app->debris ||
-        app->effect.pending_identity != app->pulse.sync_identity || app->pulse.sync_identity != &app->sync_identity)
+        app->pulse.identity != &app->debris.origin_tag || app->effect.debris != &app->debris)
         return failure(app, 9);
     if (app->weapon_target.actors_owner != &app->vehicle_lifetime.head ||
         app->weapon_arc.head_owner != &app->vehicle_lifetime.head ||
@@ -1578,17 +1530,14 @@ static int runtime_owners(BHGameApp *app)
     long city;
     BHHomingProjectileContext *ctx = &app->projectile_effects;
     app->world_responses = (BHHomingWorldResponse *)calloc(n, sizeof(*app->world_responses));
-    app->pulse_indices = (BHPulseWorldIndex *)calloc(n, sizeof(*app->pulse_indices));
     app->actor_rooms = (BHActorConstructRoom *)calloc(n, sizeof(*app->actor_rooms));
     app->city_ids = (long *)calloc(n, sizeof(*app->city_ids));
-    if (!app->world_responses || !app->pulse_indices || !app->actor_rooms || !app->city_ids)
+    if (!app->world_responses || !app->actor_rooms || !app->city_ids)
         return failure(app, 9);
     for (i = 0; i < n; ++i)
     {
         app->world_responses[i].world = app->rooms[i].world;
         app->world_responses[i].receiver = app->nodes[i]->entity;
-        app->pulse_indices[i].world = app->rooms[i].world;
-        app->pulse_indices[i].index = (unsigned short)i;
         app->actor_rooms[i].room = app->rooms + i;
         memcpy(&city, (char *)app->nodes[i]->entity + 0x11c, 4);
         app->actor_rooms[i].bound_resource = (unsigned long)city;
@@ -1664,17 +1613,14 @@ static int runtime_owners(BHGameApp *app)
     app->weapon_fire.projectiles = &app->projectiles;
     app->weapon_fire.area = &app->area;
     app->weapon_fire.sound = &app->sound;
-    app->weapon_fire.transport = &app->transport;
     app->weapon_fire.messages = &app->messages;
     app->weapon_fire.empty_warning = &app->empty_warning;
-    app->weapon_fire.local = app->player;
     app->weapon_fire.ballistic_sound = V(0x4d0480);
     app->weapon_fire.homing_sound = V(0x4d1894);
     app->weapon_fire.empty_sound = V(0x4cda10);
     app->weapon_fire.area_sound = V(0x4ce448);
     app->weapon_pulse.effects = *ctx;
     app->weapon_pulse.debris = &app->debris;
-    app->weapon_pulse.transport = &app->transport;
     app->weapon_pulse.shot_sound = V(0x4d0480);
     app->weapon_pulse.smoke_image = V(0x4f0028);
     app->weapon_pulse.flare_image = V(0x4f0030);
@@ -1714,28 +1660,21 @@ static int runtime_owners(BHGameApp *app)
     app->effect.explosion = &app->explosions;
     app->effect.draw = &app->effect_draw;
     app->effect.trails = &app->trails;
-    app->effect.pending_identity = &app->sync_identity;
     app->effect.orbit = &app->orbit;
     app->effect.accelerated = &app->accelerated;
     app->effect.split = &app->split;
-    app->effect.network = &app->effect_network;
     app->orbit.core = &app->effect;
     app->accelerated.puffs = &app->puffs;
     app->puffs.queue = &app->queue;
     app->effect_draw.queue = &app->queue;
     app->trails.pool = &app->pool;
     app->trails.queue = &app->queue;
-    app->effect_network.transport = &app->transport;
     app->pulse.effects = ctx;
     app->pulse.lifetime = &app->projectile_lifetime;
     app->pulse.draw = &app->pulse_draw;
     app->pulse.debris = &app->debris;
     app->pulse.explosion = &app->explosions;
-    app->pulse.transport = &app->transport;
-    app->pulse.world_indices = app->pulse_indices;
-    app->pulse.world_count = n;
     app->pulse.identity = &app->debris.origin_tag;
-    app->pulse.sync_identity = &app->sync_identity;
     app->pulse_draw.queue = &app->queue;
     if (!bh_debris_context_init(&app->debris_response, &app->pool, &app->sound, V(0x496218), app->actors,
                                 N(app->actors)))
@@ -1824,8 +1763,6 @@ static int runtime_owners(BHGameApp *app)
     app->actor_construct.cycle_models = app->cycle_models;
     app->actor_construct.cycle_count = N(app->cycle_models);
     app->actor_launch.actors = &app->actor_construct;
-    app->actor_launch.transport = &app->transport;
-    app->actor_launch.navigation = &app->navigation;
     app->script_actors.first_world = app->segment.first;
     app->script_actors.world_count = n;
     app->script_actors.callbacks.pool = &app->pool;
@@ -1853,8 +1790,6 @@ static int runtime_owners(BHGameApp *app)
     app->player_query.contact_axial = V(0x4f5558);
     app->player_query.primary_cue = V(0x4961e8);
     app->player_query.secondary_cue = V(0x4962fc);
-    app->menu_settings.network_records = (BHMenuNetworkRecord *)app->providers.records;
-    app->menu_settings.network_record_count = app->providers.count;
     /* These keys come from the consuming owners' retained original call sites,
       not from the load-table order (sound handle zero is a valid resource). */
     app->effect.blast_sound = V(0x4f5548);
@@ -2055,7 +1990,7 @@ static int manual_loop(BHGameApp *app)
             app->flyby.input_profile = app->profile;
             app->menu_settings.input_profile = app->profile;
             app->player_create.profile = app->profile;
-            app->actor_launch.mode = app->actor_damage.mode = app->player_state.mode;
+            app->actor_damage.mode = app->player_state.mode;
             app->eye = app->flyby_state.camera.position;
             app->angles = app->flyby_state.camera.angles;
             app->contacts.has_camera = 1;
@@ -2181,11 +2116,6 @@ static void cleanup(BHGameApp *app)
     bh_config_dispose(&app->config);
     bh_cd_stop_close(&app->cd);
     bh_sound_queue_dispose(&app->sound);
-    bh_network_game_dispose(&app->network_game);
-    if (app->provider_startup.com_initialized)
-        CoUninitialize();
-    bh_provider_catalog_dispose(&app->providers);
-    bh_network_transport_dispose(&app->transport);
     if (!app->queue.allocator.release)
         memset(&app->queue, 0, sizeof(app->queue));
     bh_interpolation_bind(0);
@@ -2215,7 +2145,6 @@ static void cleanup(BHGameApp *app)
     bh_vfile_shutdown();
     free(app->motion_bindings);
     free(app->world_responses);
-    free(app->pulse_indices);
     free(app->actor_rooms);
     free(app->city_ids);
     free(app->rooms);
@@ -2268,7 +2197,6 @@ int bh_game_app_run(const char *directory, const char *settings_path, int profil
         failure(app, 6);
         goto done;
     }
-    bh_provider_startup(&app->provider_startup);
     if (!bh_texture_set_path(&app->render_mode.engine.textures, "textures", 0) ||
         !bh_texture_policy_set(&app->render_mode.engine.textures, 2, 0) ||
         !bh_bootstrap_resources(&app->bootstrap, 5) || !bh_bootstrap_resources(&app->bootstrap, 6))

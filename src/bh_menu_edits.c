@@ -1,6 +1,5 @@
 #include "bh_menu_edits.h"
 #include "bh_menu_edit_names.h"
-#include "bh_serial_options.h"
 #include <stdio.h>
 #include <string.h>
 static void paint(BHMenuEdits *c, long row, const char *text)
@@ -147,101 +146,6 @@ void __cdecl bh_menu_edit_camera(BHMenuEdits *c, long row)
     else if (row == 14)
         key(c, row, 0x46, 2);
 }
-void __cdecl bh_menu_edit_sessions(BHMenuEdits *c, long row)
-{
-    char text[21];
-    long i = row - 2;
-    if (!c || !c->sessions)
-        return;
-    if (i < c->sessions->count)
-    {
-        if (i < 0 || i >= 8)
-        {
-            c->error = 1;
-            return;
-        }
-        short_text(text, c->sessions->records[i].name);
-        paint(c, row, text);
-    }
-    else
-        paint(c, row, "<Searching>");
-}
-static const unsigned char *record(BHMenuEdits *c)
-{
-    if (!c || !c->settings || !c->settings->selected_network)
-    {
-        if (c)
-            c->error = 1;
-        return NULL;
-    }
-    return c->settings->selected_network->bytes;
-}
-void __cdecl bh_menu_edit_modem(BHMenuEdits *c, long row)
-{
-    const unsigned char *r = record(c);
-    char text[21];
-    if (!r)
-        return;
-    if (row == 1)
-    {
-        short_text(text, (const char *)r + 0x1c);
-        paint(c, 1, text);
-    }
-    else if (row == 2)
-    {
-        if (!r[0x7c])
-            paint(c, 2, "<Wait for Call>");
-        else
-        {
-            short_text(text, (const char *)r + 0x7c);
-            paint(c, 2, text);
-        }
-    }
-}
-void __cdecl bh_menu_edit_tcpip(BHMenuEdits *c, long row)
-{
-    const unsigned char *r = record(c);
-    char text[21];
-    if (!r || row != 1)
-        return;
-    if (!r[0x1c])
-        paint(c, 1, "<Auto Search>");
-    else
-    {
-        short_text(text, (const char *)r + 0x1c);
-        paint(c, 1, text);
-    }
-}
-void __cdecl bh_menu_edit_serial(BHMenuEdits *c, long row)
-{
-    const unsigned char *r = record(c);
-    char text[128];
-    long value;
-    const char *label;
-    if (!r || row < 1 || row > 5)
-        return;
-    memcpy(&value, r + 0x18 + row * 4, 4);
-    switch (row)
-    {
-    case 1:
-        sprintf(text, "%d", value);
-        label = text;
-        break;
-    case 2:
-        label = bh_serial_baud_label(value);
-        break;
-    case 3:
-        label = bh_serial_stop_label(value);
-        break;
-    case 4:
-        label = bh_serial_parity_label(value);
-        break;
-    default:
-        label = bh_serial_flow_label(value);
-        break;
-    }
-    paint(c, row, label);
-}
 static void refresh(BHMenuEdits *c, long row)
 {
     BHMenuSettingsRow *r;
@@ -345,8 +249,7 @@ void __cdecl bh_menu_edit_row_callback(BHMenuSettingsMenu *m, long row)
     BHMenuEditBridge *b = (BHMenuEditBridge *)m->user;
     static void(__cdecl *const edits[11])(BHMenuEdits *, long) = {
         bh_menu_edit_video,   bh_menu_edit_audio,     bh_menu_edit_profile, bh_menu_edit_motion,
-        bh_menu_edit_primary, bh_menu_edit_secondary, bh_menu_edit_camera,  bh_menu_edit_sessions,
-        bh_menu_edit_modem,   bh_menu_edit_tcpip,     bh_menu_edit_serial};
-    if (b && b->kind >= 0 && b->kind <= BH_MENU_EDIT_SERIAL)
+        bh_menu_edit_primary, bh_menu_edit_secondary, bh_menu_edit_camera};
+    if (b && b->kind >= 0 && b->kind <= BH_MENU_EDIT_CAMERA)
         edits[b->kind](b->context, row);
 }

@@ -7,7 +7,6 @@
 #include "bh_entities.h"
 struct BHInputDevices;
 struct BHCdClose;
-struct BHNetworkShutdown;
 struct BHDisplayShutdown;
 typedef enum BHFrameServiceError
 {
@@ -40,7 +39,6 @@ typedef struct BHFrameService
     float master_db;
     struct BHInputDevices *devices;
     struct BHCdClose *cd;
-    struct BHNetworkShutdown *network;
     struct BHDisplayShutdown *display;
     unsigned long calls, produced, input_calls, step_calls, refresh_calls, sound_calls;
     unsigned long packet_calls, shutdown_calls, cleanup_order[5], cleanup_count, failures;
@@ -55,7 +53,7 @@ typedef struct BHFrameService
    frame buffer, initialize3500-command queue, step/refresh entities, deferred
    sound tick with original binary32 1/30, apply current input packet and publish.
    Shutdown: nonzero signed stop requires worker_done!=0 and stop<=1; increment
-   stop then input/CD/sound/network/display cleanup in that order.
+   stop then input/CD/sound/display cleanup in that order.
    Verified RET0047d680 needs no source stub. Returns status diagnostics while
    original subsequent effects continue after dependency-reported failures.
    Native sound API failures remain in sound_stats but do not fail the frame;

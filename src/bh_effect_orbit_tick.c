@@ -42,17 +42,13 @@ int __cdecl bh_effect_orbit_tick_bind(BHEffectOrbitTickContext *ctx, BHEntity *e
 {
     if (!ctx || !ctx->core || !entity || !ctx->core->effects || !ctx->core->effects->segment ||
         !ctx->core->effects->contacts || !ctx->core->effects->markers || !ctx->core->trails || !ctx->core->explosion ||
-        !ctx->core->network || ctx->core->explosion->debris != ctx->core->debris)
+        ctx->core->explosion->debris != ctx->core->debris)
         return 0;
     if (!bh_effect_projectile_bind(ctx->core, entity, 1))
         return 0;
     ctx->core->orbit = ctx;
     entity->step = bh_effect_orbit_tick;
     return 1;
-}
-static int announce(BHEffectOrbitTickContext *ctx, BHEntity *entity)
-{
-    return bh_effect_network_emit(ctx->core->network, entity, 0x138, 0x134, 0, &zero);
 }
 static void explode(BHEffectOrbitTickContext *ctx, BHEntity *entity)
 {
@@ -151,11 +147,6 @@ void __cdecl bh_effect_orbit_tick(BHEntity *entity)
     source = word(entity, 0x144);
     if (!(life > 0))
     {
-        if (!announce(ctx, entity))
-        {
-            ctx->error = 2;
-            return;
-        }
         explode(ctx, entity);
         if (!live(ctx, entity, gen))
         {
@@ -178,11 +169,6 @@ void __cdecl bh_effect_orbit_tick(BHEntity *entity)
         length = sqrt(((double)delta.x * delta.x + (double)delta.y * delta.y) + (double)delta.z * delta.z);
         if (length < 3 && !identity)
         {
-            if (!announce(ctx, entity))
-            {
-                ctx->error = 2;
-                return;
-            }
             explode(ctx, entity);
             if (!live(ctx, entity, gen))
             {
@@ -231,11 +217,6 @@ void __cdecl bh_effect_orbit_tick(BHEntity *entity)
                 length = ((double)delta.x * delta.x + (double)delta.y * delta.y) + (double)delta.z * delta.z;
                 if (length < 9)
                 {
-                    if (!announce(ctx, entity))
-                    {
-                        ctx->error = 2;
-                        return;
-                    }
                     explode(ctx, entity);
                     if (!live(ctx, entity, gen))
                     {
@@ -333,11 +314,6 @@ void __cdecl bh_effect_orbit_tick(BHEntity *entity)
                              .5f, 0, 0);
     }
     entity->position = hit.point;
-    if (!announce(ctx, entity))
-    {
-        ctx->error = 2;
-        return;
-    }
     explode(ctx, entity);
     if (!live(ctx, entity, gen))
     {

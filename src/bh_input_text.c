@@ -27,33 +27,14 @@ static int row_valid(BHInputTextCapture *c)
 }
 static int valid(BHInputTextCapture *c)
 {
-    unsigned long limit;
     const char *end;
     if (!c || !c->pool || !c->input || !c->snapshot || !c->state || !c->menu || !c->rows || !c->sound || !c->buffer ||
         !c->capacity || c->limit < 0 || (unsigned long)c->limit >= c->capacity)
         return 0;
-    if (c->commit == BH_TEXT_COMMIT_PROFILE)
-    {
-        if (!c->profile)
-            return 0;
-        limit = 15;
-    }
-    else if (c->commit == BH_TEXT_COMMIT_ADDRESS)
-    {
-        if (!c->settings || !c->settings->selected_network)
-            return 0;
-        limit = 63;
-    }
-    else if (c->commit == BH_TEXT_COMMIT_PHONE)
-    {
-        if (!c->settings || !c->settings->selected_network)
-            return 0;
-        limit = 95;
-    }
-    else
+    if (c->commit != BH_TEXT_COMMIT_PROFILE || !c->profile || c->limit > 15)
         return 0;
     end = (const char *)memchr(c->buffer, 0, c->capacity);
-    return end && (unsigned long)c->limit <= limit && c->length >= 0 && c->length <= c->limit &&
+    return end && c->length >= 0 && c->length <= c->limit &&
            end - c->buffer == c->length && row_valid(c) && (unsigned long)c->menu->selection < c->rows->count;
 }
 static void sound(BHInputTextCapture *c, float pitch)
@@ -117,7 +98,6 @@ int __cdecl bh_input_text_step(BHInputTextCapture *c)
     BHEntity *e;
     unsigned long p;
     long key;
-    BHInputTextCommit commit;
     BHMenuSettingsRefresh refresh;
     if (!c || !c->entity || !valid(c))
         return 0;
@@ -196,19 +176,11 @@ int __cdecl bh_input_text_step(BHInputTextCapture *c)
     prime(c->state);
     if (!bh_input_set_enabled(c->input, c->snapshot, 0))
         c->error = 1;
-    commit = c->commit;
     c->commit = BH_TEXT_COMMIT_NONE;
     if (p == 2)
     {
-        if (commit == BH_TEXT_COMMIT_PROFILE)
-        {
-            if (!bh_menu_profile_commit(c->profile, c->menu, c->buffer, c->menu->selection))
-                c->error = 1;
-        }
-        else if (commit == BH_TEXT_COMMIT_ADDRESS)
-            bh_menu_network_address(c->settings, c->menu, c->buffer, c->menu->selection);
-        else if (commit == BH_TEXT_COMMIT_PHONE)
-            bh_menu_network_phone(c->settings, c->menu, c->buffer, c->menu->selection);
+        if (!bh_menu_profile_commit(c->profile, c->menu, c->buffer, c->menu->selection))
+            c->error = 1;
     }
     else
     {

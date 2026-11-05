@@ -13,7 +13,6 @@ typedef struct BHEngineBootstrap
     BHLoadingImages *images;
     BHLoadingProgress *progress;
     BHInputDevices *devices;
-    BHProviderStartup *providers;
     BHSoundQueue *sound;
     BHSoundStartupStats sound_stats;
     BHPlayerInputOwner *inputs;
@@ -37,8 +36,7 @@ typedef struct BHEngineBootstrap
     unsigned long mounted, stages;
     int error;
 } BHEngineBootstrap;
-/* Whole00479200. Archive/loading progress, native input, sound and provider
-   setup, exact audio/image policy tables,9600entity pool, camera,
+/* Whole00479200. Archive/loading progress, native input and sound setup, exact audio/image policy tables,9600entity pool, camera,
    full game bootstrap/material and frame buffer callbacks. It starts no worker
    and invokes no frame producer. All original returns ignored by the binary
    remain diagnostics where safe; resource/binding failures become explicit

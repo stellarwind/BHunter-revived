@@ -51,24 +51,3 @@ void __cdecl bh_vec3_interpolate(float factor, BHVec3 *out, const BHVec3 *a, con
     out->y = (float)(y + a->y);
     out->z = (float)(z + a->z);
 }
-int __cdecl bh_packet_read_vector(BHPacketReader *reader, BHVec3 *out, float scale)
-{
-    double factor;
-    unsigned long i;
-    float *component;
-    if (!reader || !out || !reader->data)
-        return 0;
-    if (reader->cursor > reader->size || reader->size - reader->cursor < 3)
-    {
-        reader->error = BH_PACKET_TRUNCATED;
-        return 0;
-    }
-    factor = (double)scale * (1.0 / 128.0);
-    component = &out->x;
-    for (i = 0; i < 3; ++i)
-    {
-        int value = (int)(signed char)reader->data[reader->cursor++];
-        component[i] = (float)(value * factor);
-    }
-    return 1;
-}

@@ -6,9 +6,7 @@
 typedef enum BHInputTextCommit
 {
     BH_TEXT_COMMIT_NONE,
-    BH_TEXT_COMMIT_PROFILE,
-    BH_TEXT_COMMIT_ADDRESS,
-    BH_TEXT_COMMIT_PHONE
+    BH_TEXT_COMMIT_PROFILE
 } BHInputTextCommit;
 typedef struct BHInputTextCapture
 {
@@ -16,7 +14,6 @@ typedef struct BHInputTextCapture
     BHPlayerInputList *input;
     BHInputSnapshot *snapshot;
     BHPlayerInputState *state;
-    BHMenuSettings *settings;
     BHMenuSettingsMenu *menu;
     BHMenuProfileContext *profile;
     BHMenuRows *rows;
@@ -32,7 +29,7 @@ typedef struct BHInputTextCapture
     int error;
 } BHInputTextCapture;
 /* Count-zero setup adapter. All owners/buffer remain borrowed through release.
-   Commits dispatch to the three actual source owners, never a callback stub.
+   Commits update the input profile name.
    Real cached packet/snapshot state only: no physical input collection. */
 int __cdecl bh_input_text_begin(BHInputTextCapture *);
 /* Count-zero menu-action setup: allocate first, uppercase the existing buffer,
@@ -43,7 +40,7 @@ int __cdecl bh_input_text_begin_painted(BHInputTextCapture *);
    its return deliberately replaces the scan index. Return/Escape set a phase
    but scanning/repainting continues; actual completion happens next step.
    Current length must match a terminated buffer, limit<capacity and fit the
-   selected commit record (profile15/address63/phone95). Menu row callbacks must
+   15-character profile name. Menu row callbacks must
    retain the capture entity/context until step returns. Native translation
    follows the original ANSI low-byte append; tested host ASCII mapping only.
    Negative/dead-key indices are rejected before the original unsafe lookup. */

@@ -32,7 +32,7 @@ int __cdecl bh_engine_bootstrap(BHEngineBootstrap *c, HWND window)
 {
     unsigned long i;
     BHPlayerTick *player;
-    if (!c || !c->archive || !c->images || !c->progress || !c->devices || !c->providers || !c->sound || !c->inputs ||
+    if (!c || !c->archive || !c->images || !c->progress || !c->devices || !c->sound || !c->inputs ||
         !c->game || !c->game->pool || !c->game->textures || !c->game->resources || !c->game->resources->models ||
         !c->view || !c->material || !c->frames || !c->service || !c->snapshot)
         return c ? fail(c, 1) : 0;
@@ -59,7 +59,6 @@ int __cdecl bh_engine_bootstrap(BHEngineBootstrap *c, HWND window)
     }
     ++c->stages;
     bh_sound_startup(c->sound, window, &c->sound_stats);
-    bh_provider_startup(c->providers);
     if (!bh_bootstrap_resources(c->game, 5))
         return fail(c, 6);
     ++c->stages;

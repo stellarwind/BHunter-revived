@@ -40,48 +40,6 @@ static void __cdecl draw(BHEntity *entity, void *unused)
     (void)unused;
     bh_pulse_visual_draw(context(entity)->draw, entity);
 }
-static void announce(BHPulseProjectileContext *ctx, BHEntity *entity)
-{
-    unsigned long sync, i;
-    long found;
-    unsigned char payload[2];
-    BHWorldGeometry *world;
-    BHPacketWriter writer;
-    get(entity, 0x120, &sync, 4);
-    if (ctx->peers <= 1 || !sync)
-        return;
-    get(entity, 0x124, &world, 4);
-    if (!world)
-        return;
-    found = ctx->effects->response_index ? bh_binding_find(ctx->effects->response_index, world, NULL) : -1;
-    if (found >= 0 && (unsigned long)found < ctx->world_count && ctx->world_indices[found].world == world)
-        i = (unsigned long)found;
-    else
-        for (i = 0; i < ctx->world_count; i++)
-            if (ctx->world_indices[i].world == world)
-                break;
-    if (i == ctx->world_count)
-    {
-        ctx->error = 2;
-        return;
-    }
-    if (!bh_packet_begin(&writer, ctx->packet, sizeof(ctx->packet), 9, (unsigned short)sync) ||
-        !bh_packet_write_position(&writer, world, ctx->world_indices[i].index, &entity->position))
-    {
-        ctx->error = 2;
-        return;
-    }
-    payload[0] = (unsigned char)(sync >> 16);
-    payload[1] = 3;
-    if (!bh_packet_append(&writer, payload, 2) || !bh_packet_write_vector(&writer, &zero, 1) ||
-        !bh_packet_finish(&writer, &ctx->packet_bytes))
-    {
-        ctx->error = 2;
-        return;
-    }
-    bh_network_send(ctx->transport, 0, ctx->packet, ctx->packet_bytes, 0);
-    ++ctx->packets;
-}
 void __cdecl bh_pulse_projectile_tick(BHEntity *entity)
 {
     BHPulseProjectileContext *ctx = context(entity);
@@ -119,9 +77,6 @@ void __cdecl bh_pulse_projectile_tick(BHEntity *entity)
     }
     if (raw_life < .2 && raw_life >= .16666666666666669)
     {
-        announce(ctx, entity);
-        if (ctx->error)
-            return;
         bh_script_debris_create(ctx->debris, 30, &entity->position, 4, 50, 1);
         get(entity, 0x11c, &identity, 4);
         *ctx->identity = identity;
@@ -247,10 +202,10 @@ BHEntity *__cdecl bh_pulse_projectile_create(BHPulseProjectileContext *ctx, BHWo
     BHEntity *entity;
     BHProjectileQueryState state;
     float f;
-    unsigned long sync, i;
+    unsigned long i;
     BHHomingProjectileContext *b;
     if (!ctx || !position || !base || !velocity || !ctx->effects || !ctx->lifetime || !ctx->draw || !ctx->draw->queue ||
-        !ctx->identity || !ctx->sync_identity || !ctx->debris || !ctx->explosion || !ctx->transport ||
+        !ctx->identity || !ctx->debris || !ctx->explosion ||
         !bh_math_environment_supported())
         return NULL;
     b = ctx->effects;
@@ -284,9 +239,6 @@ BHEntity *__cdecl bh_pulse_projectile_create(BHPulseProjectileContext *ctx, BHWo
     put(entity, 0x118, &state.sound, 4);
     put(entity, 0x124, &world, 4);
     put(entity, 0x128, &source, 4);
-    sync = *ctx->sync_identity;
-    *ctx->sync_identity = 0;
-    put(entity, 0x120, &sync, 4);
     if (state.identity)
     {
         f = stored((double)state.countdown - (-.3));

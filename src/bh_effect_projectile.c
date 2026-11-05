@@ -260,7 +260,7 @@ static void scaled(BHEntity *entity, unsigned long a, const BHVec3 *v, double n)
 static int constructor_context(BHEffectProjectileContext *ctx)
 {
     return ctx && ctx->effects && ctx->effects->pool && ctx->effects->sound && ctx->draw && ctx->draw->queue &&
-           ctx->debris && ctx->pending_identity;
+           ctx->debris;
 }
 static BHEntity *acquire(BHEffectProjectileContext *ctx, BHWorldGeometry *world, BHEntity *source, const BHVec3 *p,
                          float life, float grace)
@@ -276,11 +276,6 @@ static BHEntity *acquire(BHEffectProjectileContext *ctx, BHWorldGeometry *world,
     put(entity, 0x144, &source, 4);
     put(entity, 0x138, &world, 4);
     return entity;
-}
-static void identity(BHEffectProjectileContext *ctx, BHEntity *entity)
-{
-    word(entity, 0x134, *ctx->pending_identity);
-    *ctx->pending_identity = 0;
 }
 BHEntity *__cdecl bh_effect_orbit_create(BHEffectProjectileContext *ctx, BHWorldGeometry *world, BHEntity *source,
                                          const BHVec3 *p, const BHVec3 *v, const BHVec3 *a, const BHVec3 *b,
@@ -311,7 +306,6 @@ BHEntity *__cdecl bh_effect_orbit_create(BHEffectProjectileContext *ctx, BHWorld
     word(entity, 0x128, voice);
     put(entity, 0x13c, &source, 4);
     put(entity, 0x140, &target, 4);
-    identity(ctx, entity);
     return entity;
 }
 static BHEntity *split_create(BHEffectProjectileContext *ctx, BHWorldGeometry *world, BHEntity *source, const BHVec3 *p,
@@ -320,7 +314,7 @@ static BHEntity *split_create(BHEffectProjectileContext *ctx, BHWorldGeometry *w
     BHEntity *entity;
     BHEntity *ignore;
     unsigned long voice;
-    if (!constructor_context(ctx) || !ctx->split || !ctx->network || !ctx->effects->segment ||
+    if (!constructor_context(ctx) || !ctx->split || !ctx->effects->segment ||
         !ctx->effects->contacts || !ctx->effects->markers || !ctx->explosion || !ctx->trails || !p || !v)
         return NULL;
     entity = acquire(ctx, world, source, p, life, 1);
@@ -344,7 +338,6 @@ static BHEntity *split_create(BHEffectProjectileContext *ctx, BHWorldGeometry *w
     word(entity, 0x12c, (unsigned long)count);
     value(entity, 0xf4, multiplier);
     value(entity, 0xf0, rf((double)random_value(ctx) * .0001953125));
-    identity(ctx, entity);
     return entity;
 }
 BHEntity *__cdecl bh_effect_split_create(BHEffectProjectileContext *ctx, BHWorldGeometry *world, BHEntity *entity,
@@ -364,7 +357,7 @@ BHEntity *__cdecl bh_effect_accelerated_create(BHEffectProjectileContext *ctx, B
 {
     BHEntity *entity;
     unsigned long voice;
-    if (!constructor_context(ctx) || !ctx->accelerated || !ctx->accelerated->puffs || !ctx->network ||
+    if (!constructor_context(ctx) || !ctx->accelerated || !ctx->accelerated->puffs ||
         !ctx->effects->segment || !ctx->effects->contacts || !ctx->effects->markers || !ctx->explosion ||
         !ctx->trails || !p || !v || !acc)
         return NULL;
@@ -388,7 +381,6 @@ BHEntity *__cdecl bh_effect_accelerated_create(BHEffectProjectileContext *ctx, B
     value(entity, 0xf4, 0);
     voice = bh_sound_request(ctx->effects->sound, ctx->second_loop_sound, 0, .5f, p, v);
     word(entity, 0x128, voice);
-    identity(ctx, entity);
     return entity;
 }
 

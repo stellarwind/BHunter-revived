@@ -9,11 +9,9 @@
 #include "bh_mission_story.h"
 #include "bh_menu_object.h"
 #include "bh_sound_load.h"
-#include "bh_provider_startup.h"
 #include "bh_render_material.h"
-#define BH_BOOTSTRAP_MENUS 18
+#define BH_BOOTSTRAP_MENUS 12
 #define BH_BOOTSTRAP_ROWS 32
-#define BH_BOOT_PLAYER_NAME ((const char *)1)
 typedef struct BHBootstrapBinding
 {
     unsigned long identity;
@@ -61,9 +59,6 @@ struct BHGameBootstrap
     BHPlayerInputOwner *inputs;
     BHEntityPool *pool;
     BHInputSnapshot *snapshot;
-    BHConfig *config;
-    BHProviderCatalog *providers;
-    BHModemNames *modems;
     BHFlybyConstruct *flyby;
     BHMenuRuntimeContext *runtime;
     BHMenuActions *actions;
@@ -83,14 +78,12 @@ struct BHGameBootstrap
     BHBootstrapMenu menus[BH_BOOTSTRAP_MENUS];
     BHAtlasPage *confirmation, *menu_font, *graffiti;
     BHPlayerInputList *all_keys;
-    float remote_age[8];
     char computer_name[256], player_name[21];
-    unsigned long menus_created, rows_created, resources_loaded, aliases, profile_copies;
+    unsigned long menus_created, rows_created, resources_loaded, aliases;
     int error;
 };
 /* Whole004474c0. Declarative literal data retains all original resource loads,
-   aliases, sound arguments, eighteen menus and115static rows. Dynamic provider
-   rows retain original switch/destinations. All calls use real source owners;
+   aliases, sound arguments and twelve menus with static rows.
    original identities are data lookup keys, never callable/mapped addresses.
    Context/prototypes and owned menu storage survive every installed callback.
    No tick, rendering drain, native peer or device input is executed here.

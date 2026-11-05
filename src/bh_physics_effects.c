@@ -6,10 +6,6 @@
 #include <string.h>
 
 static const BHVec3 zero = {0, 0, 0};
-static unsigned char quantize(double value)
-{
-    return (unsigned char)(__int64)value;
-}
 static void request(BHPhysicsEffects *c, unsigned long resource, float volume, float pitch, const BHVec3 *point)
 {
     ++c->sound_requests;
@@ -17,47 +13,7 @@ static void request(BHPhysicsEffects *c, unsigned long resource, float volume, f
     if (c->last_voice == BH_SOUND_INVALID)
         c->error = 1;
 }
-static void packet(BHPhysicsEffects *c, const BHWorldGeometry *world, unsigned short index, const BHVec3 *point,
-                   float level, float pitch)
-{
-    BHPacketWriter writer;
-    unsigned char bytes[4];
-    unsigned long size;
-    if (c->peer_count <= 1)
-        return;
-    if (!bh_packet_begin(&writer, c->last_packet, sizeof(c->last_packet), 6, c->sender))
-    {
-        c->error = 1;
-        return;
-    }
-    if (bh_packet_write_position(&writer, world, index, point) != 1)
-        return;
-    if (level > .5)
-    {
-        bytes[0] = (unsigned char)c->impact_sound;
-        bytes[1] = quantize((double)level * 128);
-        bytes[2] = quantize((double)pitch * 64);
-    }
-    else
-    {
-        bytes[0] = 255;
-        bytes[1] = 0;
-        bytes[2] = 64;
-    }
-    bytes[3] = quantize((double)level * 3);
-    if (!bh_packet_append(&writer, bytes, 4) || !bh_packet_finish(&writer, &size))
-    {
-        c->error = 1;
-        return;
-    }
-    c->last_packet_size = size;
-    ++c->packets;
-    c->last_send = bh_network_send(c->transport, 0, c->last_packet, size, 0);
-    if (FAILED(c->last_send))
-        c->error = 1;
-}
-int __cdecl bh_physics_effects_run(BHPhysicsEffects *c, const BHSweepHit *hit, float level,
-                                   const BHWorldGeometry *world, unsigned short index)
+int __cdecl bh_physics_effects_run(BHPhysicsEffects *c, const BHSweepHit *hit, float level)
 {
     BHEntity *effect;
     const BHVec3 *point;
@@ -73,7 +29,6 @@ int __cdecl bh_physics_effects_run(BHPhysicsEffects *c, const BHSweepHit *hit, f
     if (!(flags & 6) && (!_finite(level) || level < 0 || level > 1))
         return 0;
     c->error = 0;
-    c->last_packet_size = 0;
     if (flags & 6)
     {
         effect = bh_contact_impact_create(c->effects, point, &hit->surface.normal, flags);
@@ -97,7 +52,6 @@ int __cdecl bh_physics_effects_run(BHPhysicsEffects *c, const BHSweepHit *hit, f
         bh_round_float(&volume, ((double)level - .25) * .7);
         request(c, c->impact_sound, volume, pitch, point);
     }
-    packet(c, world, index, point, level, pitch);
     count = (long)(__int64)((double)level * 3);
     lifetime_adjust = (double)level * (-.0625);
     for (i = 0; i < count; ++i)

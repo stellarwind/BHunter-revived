@@ -202,42 +202,6 @@ static int press(BHMenuRuntime *m, int back)
         return 0;
     return 1;
 }
-static void sessions(BHMenuRuntime *m)
-{
-    BHMenuRuntimeContext *c = m->context;
-    BHMenuSettingsMenu *s = menu(m);
-    const BHProviderRecord *p;
-    GUID selected;
-    int retained = 0;
-    long i, index;
-    double next;
-    if (!(m->actions->timeout > 0))
-        return;
-    next = (double)m->actions->timeout - (1.0 / 30.0);
-    m->actions->timeout = rf(next);
-    if (next > 0)
-        return;
-    if (!c->provider || !(p = *c->provider) || !c->sessions)
-    {
-        c->error = 1;
-        return;
-    }
-    if (p->kind == 2 && !p->data[96])
-        return;
-    m->actions->timeout = rf((double)m->actions->timeout + 1);
-    index = s->selection - 2;
-    if (index >= 0 && index < c->sessions->count)
-    {
-        selected = c->sessions->records[index].instance;
-        retained = 1;
-    }
-    bh_network_sessions_refresh(c->sessions, p);
-    if (retained)
-        for (i = 0; i < c->sessions->count; ++i)
-            if (!memcmp(&selected, &c->sessions->records[i].instance, sizeof(GUID)))
-                s->selection = i + 2;
-    refresh(m);
-}
 int __cdecl bh_menu_runtime_step(BHMenuRuntime *m)
 {
     BHMenuRuntimeContext *c;
@@ -253,7 +217,7 @@ int __cdecl bh_menu_runtime_step(BHMenuRuntime *m)
     c = m->context;
     s = menu(m);
     if (!bh_math_environment_supported() || !_finite(s->display_selection) || !_finite(m->push) ||
-        !_finite(m->distance) || !_finite(m->scroll) || !_finite(m->actions->timeout))
+        !_finite(m->distance) || !_finite(m->scroll))
         return fail(c);
     if (*c->paused == 1)
         return 1;
@@ -265,10 +229,7 @@ int __cdecl bh_menu_runtime_step(BHMenuRuntime *m)
         s->selection = m->pending_selection;
     }
     m->pending_selection = -1;
-    sessions(m);
-    if (!valid(m))
-        return fail(c);
-    if ((m == c->ship_menus[0] || m == c->ship_menus[1]) && s->selection < 3)
+    if (m == c->ship_menu && s->selection < 3)
         *c->waypoint = s->selection + 14;
     if (!m->exiting && !blocked(m))
     {
@@ -421,15 +382,10 @@ int __cdecl bh_menu_runtime_return(BHMenuRuntimeContext *c)
     if (!c || !(root = c->root) || !valid(root) || root->context != c || !(f = c->flyby) || !(s = f->flyby_state) ||
         !f->flyby_camera || !f->flyby_camera->route || !f->starts || f->start_count <= 10 ||
         !(camera = f->camera_entity) || !c->transition || c->transition->pool != c->pool || f->entities != c->pool ||
-        f->selected_waypoint != c->waypoint || f->mode_count != c->mode || !c->sessions || !c->mode)
+        f->selected_waypoint != c->waypoint || f->mode_count != c->mode || !c->mode)
         return fail(c);
     if (f->bound_entity != camera || f->bound_generation != camera->generation)
         return fail(c);
-    if (*c->mode > 1)
-    {
-        bh_network_connection_dispose(c->sessions);
-        c->sessions->count = 0;
-    }
     *c->mode = 0;
     if (!activate(root))
         return 0;
