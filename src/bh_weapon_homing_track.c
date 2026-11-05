@@ -9,20 +9,20 @@ static float stored(double x)
     bh_round_float(&f, x);
     return f;
 }
-static int query(BHWeaponTargetContext *c, BHEntity *e, BHEntityPositionPacket *p)
+static int query(BHWeaponTargetContext *ctx, BHEntity *entity, BHEntityPositionPacket *p)
 {
-    if (!e || !e->query)
+    if (!entity || !entity->query)
     {
-        c->error = BH_WEAPON_TARGET_CALLBACK;
+        ctx->error = BH_WEAPON_TARGET_CALLBACK;
         return 0;
     }
-    ++c->queries;
-    e->query(e, p);
+    ++ctx->queries;
+    entity->query(entity, p);
     return 1;
 }
-int __cdecl bh_weapon_homing_track(BHWeaponTargetContext *c, BHEntity *w, const BHEntity *p)
+int __cdecl bh_weapon_homing_track(BHWeaponTargetContext *ctx, BHEntity *weapon_entity, const BHEntity *entity)
 {
-    BHWeaponCommonState *s;
+    BHWeaponCommonState *weapon_state;
     BHVec3 aim, d;
     BHEntityPositionPacket packet;
     BHEntity *target;
@@ -32,60 +32,60 @@ int __cdecl bh_weapon_homing_track(BHWeaponTargetContext *c, BHEntity *w, const 
     double x, y, z, projection, length;
     unsigned long n = 0;
     int result;
-    if (!c || !w || !p || !bh_math_environment_supported())
+    if (!ctx || !weapon_entity || !entity || !bh_math_environment_supported())
         return 0;
-    s = bh_weapon_common_state(w);
-    c->error = BH_WEAPON_TARGET_OK;
-    if (s->delay)
-        s->delay = (long)((unsigned long)s->delay - 1);
-    memcpy(&cooldown, &s->word_f0, 4);
+    weapon_state = bh_weapon_common_state(weapon_entity);
+    ctx->error = BH_WEAPON_TARGET_OK;
+    if (weapon_state->delay)
+        weapon_state->delay = (long)((unsigned long)weapon_state->delay - 1);
+    memcpy(&cooldown, &weapon_state->word_f0, 4);
     if (cooldown > 0)
     {
         cooldown = stored((double)cooldown - 1.0 / 30);
-        memcpy(&s->word_f0, &cooldown, 4);
+        memcpy(&weapon_state->word_f0, &cooldown, 4);
     }
-    memcpy(&cooldown, &s->word_f4, 4);
+    memcpy(&cooldown, &weapon_state->word_f4, 4);
     if (cooldown > 0)
     {
         cooldown = stored((double)cooldown - 1.0 / 30);
-        memcpy(&s->word_f4, &cooldown, 4);
+        memcpy(&weapon_state->word_f4, &cooldown, 4);
     }
     packet.event = 3;
-    target = s->hud.target;
+    target = weapon_state->hud.target;
     if (target)
     {
-        s->hud.charge = (long)((unsigned long)s->hud.charge + 1);
-        if (!query(c, target, &packet))
+        weapon_state->hud.charge = (long)((unsigned long)weapon_state->hud.charge + 1);
+        if (!query(ctx, target, &packet))
             return 0;
-        d.x = stored((double)packet.position.x - p->position.x);
-        d.y = stored((double)packet.position.y - p->position.y);
-        d.z = stored((double)packet.position.z - p->position.z);
-        memcpy(&aim, (const unsigned char *)p + 0x280, 12);
+        d.x = stored((double)packet.position.x - entity->position.x);
+        d.y = stored((double)packet.position.y - entity->position.y);
+        d.z = stored((double)packet.position.z - entity->position.z);
+        memcpy(&aim, (const unsigned char *)entity + 0x280, 12);
         projection = ((double)aim.x * d.x + (double)aim.y * d.y) + (double)aim.z * d.z;
         dot = stored(projection);
         length = sqrt(((double)d.z * d.z + (double)d.y * d.y) + (double)d.x * d.x);
         angle = stored(1 - (double)dot / length);
-        if (dot < 0 || dot > 150 || angle > .4 || (s->hud.charge < 2 && angle > .3))
-            s->hud.target = NULL;
+        if (dot < 0 || dot > 150 || angle > .4 || (weapon_state->hud.charge < 2 && angle > .3))
+            weapon_state->hud.target = NULL;
         return 1;
     }
-    target = c->actors_owner ? *c->actors_owner : c->actors;
+    target = ctx->actors_owner ? *ctx->actors_owner : ctx->actors;
     while (target)
     {
-        if (++n > c->max_actors)
+        if (++n > ctx->max_actors)
         {
-            c->error = BH_WEAPON_TARGET_LIMIT;
+            ctx->error = BH_WEAPON_TARGET_LIMIT;
             return 0;
         }
-        if (!query(c, target, &packet))
+        if (!query(ctx, target, &packet))
             return 0;
-        x = (double)packet.position.x - p->position.x;
-        y = (double)packet.position.y - p->position.y;
-        z = (double)packet.position.z - p->position.z;
+        x = (double)packet.position.x - entity->position.x;
+        y = (double)packet.position.y - entity->position.y;
+        z = (double)packet.position.z - entity->position.z;
         d.y = stored(y);
         d.z = stored(z);
         d.x = stored(x);
-        memcpy(&aim, (const unsigned char *)p + 0x280, 12);
+        memcpy(&aim, (const unsigned char *)entity + 0x280, 12);
         projection = ((double)aim.x * d.x + (double)aim.y * d.y) + (double)aim.z * d.z;
         dot = stored(projection);
         if (projection >= 0 && dot < best)
@@ -93,30 +93,30 @@ int __cdecl bh_weapon_homing_track(BHWeaponTargetContext *c, BHEntity *w, const 
             length = sqrt(((double)d.z * d.z + (double)d.y * d.y) + (double)d.x * d.x);
             if (1 - (double)dot / length < .3)
             {
-                if (!c->world)
+                if (!ctx->world)
                 {
-                    c->error = BH_WEAPON_TARGET_WORLD;
+                    ctx->error = BH_WEAPON_TARGET_WORLD;
                     return 0;
                 }
                 self.kind = BH_WORLD_HIT_ACTOR;
-                self.object.actor = (BHEntity *)p;
-                ++c->traces;
-                result = bh_world_segment_run(c->world, &self, (BHWorldGeometry **)&s->word_104, &p->position,
-                                              &packet.position, -1, &hit);
+                self.object.actor = (BHEntity *)entity;
+                ++ctx->traces;
+                result = bh_world_segment_run(ctx->world, &self, (BHWorldGeometry **)&weapon_state->word_104,
+                                              &entity->position, &packet.position, -1, &hit);
                 if (result < 0)
                 {
-                    c->error = BH_WEAPON_TARGET_WORLD;
+                    ctx->error = BH_WEAPON_TARGET_WORLD;
                     return 0;
                 }
                 if (!result)
                 {
-                    s->hud.target = target;
+                    weapon_state->hud.target = target;
                     best = dot;
                 }
             }
         }
         memcpy(&target, (unsigned char *)target + 0xf0, 4);
     }
-    s->hud.charge = 0;
+    weapon_state->hud.charge = 0;
     return 1;
 }

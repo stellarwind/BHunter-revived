@@ -13,37 +13,37 @@ typedef struct SensorPacket
     unsigned char unused[28];
 } SensorPacket;
 typedef char packet_layout[sizeof(SensorPacket) == 40 && offsetof(SensorPacket, expected) == 8 ? 1 : -1];
-static void get(const BHEntity *e, unsigned long at, void *out)
+static void get(const BHEntity *entity, unsigned long at, void *out)
 {
-    memcpy(out, (const unsigned char *)e + at, 4);
+    memcpy(out, (const unsigned char *)entity + at, 4);
 }
-static void put(BHEntity *e, unsigned long at, const void *value)
+static void put(BHEntity *entity, unsigned long at, const void *value)
 {
-    memcpy((unsigned char *)e + at, value, 4);
+    memcpy((unsigned char *)entity + at, value, 4);
 }
-static BHScriptSensorContext *context(BHEntity *e)
+static BHScriptSensorContext *context(BHEntity *entity)
 {
-    BHScriptSensorContext *c;
-    memcpy(&c, e->payload + 416, 4);
-    return c;
+    BHScriptSensorContext *ctx;
+    memcpy(&ctx, entity->payload + 416, 4);
+    return ctx;
 }
-static unsigned long generation(BHEntity *e)
+static unsigned long generation(BHEntity *entity)
 {
     unsigned long n;
-    memcpy(&n, e->payload + 420, 4);
+    memcpy(&n, entity->payload + 420, 4);
     return n;
 }
-static int live(BHEntityPool *pool, const BHEntity *e, unsigned long generation)
+static int live(BHEntityPool *pool, const BHEntity *entity, unsigned long generation)
 {
-    return bh_entity_is_active(pool, e) && e->generation == generation;
+    return bh_entity_is_active(pool, entity) && entity->generation == generation;
 }
-static int present(BHEntityPool *pool, const BHEntity *e)
+static int present(BHEntityPool *pool, const BHEntity *entity)
 {
-    return bh_entity_is_active(pool, e);
+    return bh_entity_is_active(pool, entity);
 }
-static const BHScriptTimerActor *record(BHScriptSensorContext *c, BHEntity *e)
+static const BHScriptTimerActor *record(BHScriptSensorContext *ctx, BHEntity *entity)
 {
-    return bh_script_timer_actor(&c->lifetime->timers, e);
+    return bh_script_timer_actor(&ctx->lifetime->timers, entity);
 }
 /* VC5 may reverse a comparison to a bare C0 test and thereby accept unordered.
    Explicit NaN exclusions preserve the reviewed ordered x87 branches. */
@@ -55,101 +55,103 @@ static int greater_equal(double a, double b)
 {
     return !_isnan(a) && !_isnan(b) && a >= b;
 }
-int __cdecl bh_script_sensor_read(BHEntity *e, BHScriptSensorState *s)
+int __cdecl bh_script_sensor_read(BHEntity *entity, BHScriptSensorState *state)
 {
-    if (!e || !s)
+    if (!entity || !state)
         return 0;
-    get(e, 0xf0, &s->actor);
-    get(e, 0xf4, &s->script_loaded);
-    get(e, 0xfc, &s->remaining);
-    get(e, 0x100, &s->threshold);
-    get(e, 0x104, &s->broadcast_radius);
-    get(e, 0x108, &s->expected);
-    get(e, 0x128, &s->countdown);
-    get(e, 0x12c, &s->latch);
+    get(entity, 0xf0, &state->actor);
+    get(entity, 0xf4, &state->script_loaded);
+    get(entity, 0xfc, &state->remaining);
+    get(entity, 0x100, &state->threshold);
+    get(entity, 0x104, &state->broadcast_radius);
+    get(entity, 0x108, &state->expected);
+    get(entity, 0x128, &state->countdown);
+    get(entity, 0x12c, &state->latch);
     return 1;
 }
-float __cdecl bh_script_sensor_damage(const BHEntity *e)
+float __cdecl bh_script_sensor_damage(const BHEntity *entity)
 {
     float value = 0;
-    if (e)
-        get(e, 0x148, &value);
+    if (entity)
+        get(entity, 0x148, &value);
     return value;
 }
-void __cdecl bh_script_sensor_set_damage(BHEntity *e, float value)
+void __cdecl bh_script_sensor_set_damage(BHEntity *entity, float value)
 {
-    if (e)
-        put(e, 0x148, &value);
+    if (entity)
+        put(entity, 0x148, &value);
 }
-static int valid(BHScriptSensorContext *c, BHEntity *e, const BHScriptSensorState *s, int bound)
+static int valid(BHScriptSensorContext *ctx, BHEntity *entity, const BHScriptSensorState *state, int bound)
 {
     unsigned long g;
     BHEntityPool *pool;
-    if (!c || !c->lifetime || !c->lifetime->timers.pool || !e || !s || (c->radar_count && !c->radar) ||
-        c->radar_count > 65535)
+    if (!ctx || !ctx->lifetime || !ctx->lifetime->timers.pool || !entity || !state ||
+        (ctx->radar_count && !ctx->radar) || ctx->radar_count > 65535)
     {
-        if (c)
-            c->error = BH_SENSOR_ARGUMENT;
+        if (ctx)
+            ctx->error = BH_SENSOR_ARGUMENT;
         return 0;
     }
-    pool = c->lifetime->timers.pool;
-    g = bound ? generation(e) : e->generation;
-    if (!live(pool, e, g) || !record(c, s->actor) || !present(pool, s->actor))
+    pool = ctx->lifetime->timers.pool;
+    g = bound ? generation(entity) : entity->generation;
+    if (!live(pool, entity, g) || !record(ctx, state->actor) || !present(pool, state->actor))
     {
-        c->error = BH_SENSOR_ACTOR;
+        ctx->error = BH_SENSOR_ACTOR;
         return 0;
     }
     if (!bh_math_environment_supported())
     {
-        c->error = BH_SENSOR_NUMERICAL;
+        ctx->error = BH_SENSOR_NUMERICAL;
         return 0;
     }
-    c->error = BH_SENSOR_OK;
+    ctx->error = BH_SENSOR_OK;
     return 1;
 }
-int __cdecl bh_script_sensor_bind(BHScriptSensorContext *c, BHEntity *e, const BHScriptSensorState *s, int damage)
+int __cdecl bh_script_sensor_bind(BHScriptSensorContext *ctx, BHEntity *entity, const BHScriptSensorState *state,
+                                  int damage)
 {
     BHScriptLifetimeState base;
-    if (!valid(c, e, s, 0))
+    if (!valid(ctx, entity, state, 0))
         return 0;
-    bh_script_lifetime_read(e, &base);
-    base.actor = s->actor;
-    base.script_loaded = s->script_loaded;
-    memcpy(&base.sound, &s->remaining, 4);
-    base.countdown = s->countdown;
-    if (!bh_script_lifetime_bind(c->lifetime, e, &base, bh_script_sensor_query))
+    bh_script_lifetime_read(entity, &base);
+    base.actor = state->actor;
+    base.script_loaded = state->script_loaded;
+    memcpy(&base.sound, &state->remaining, 4);
+    base.countdown = state->countdown;
+    if (!bh_script_lifetime_bind(ctx->lifetime, entity, &base, bh_script_sensor_query))
     {
-        c->error = BH_SENSOR_ARGUMENT;
+        ctx->error = BH_SENSOR_ARGUMENT;
         return 0;
     }
-    put(e, 0x100, &s->threshold);
-    put(e, 0x104, &s->broadcast_radius);
-    put(e, 0x108, &s->expected);
-    put(e, 0x12c, &s->latch);
-    memcpy(e->payload + 416, &c, 4);
-    memcpy(e->payload + 420, &e->generation, 4);
-    e->step = damage ? bh_script_damage_tick : bh_script_proximity_tick;
+    put(entity, 0x100, &state->threshold);
+    put(entity, 0x104, &state->broadcast_radius);
+    put(entity, 0x108, &state->expected);
+    put(entity, 0x12c, &state->latch);
+    memcpy(entity->payload + 416, &ctx, 4);
+    memcpy(entity->payload + 420, &entity->generation, 4);
+    entity->step = damage ? bh_script_damage_tick : bh_script_proximity_tick;
     return 1;
 }
 /* FST of the subtraction precedes the branch but the add-period uses the
    retained, unrounded x87 result. Unordered follows the due branch. */
-static int due(BHEntity *e, float old, double period)
+static int due(BHEntity *entity, float old, double period)
 {
     double value = (double)old - (1.0 / 30.0);
     float next;
     bh_round_float(&next, value);
-    put(e, 0x128, &next);
+    put(entity, 0x128, &next);
     if (greater(value, 0))
         return 0;
     bh_round_float(&next, value + period);
-    put(e, 0x128, &next);
+    put(entity, 0x128, &next);
     return 1;
 }
-static int broadcast(BHScriptSensorContext *c, BHEntity *e, BHEntity *actor, long radius, long expected, long event)
+static int broadcast(BHScriptSensorContext *ctx, BHEntity *entity, BHEntity *actor, long radius, long expected,
+                     long event)
 {
     SensorPacket packet;
     float r;
-    unsigned long g = generation(e);
+    unsigned long g = generation(entity);
     int result;
     BHEntity *after;
     memset(&packet, 0, sizeof(packet));
@@ -157,152 +159,152 @@ static int broadcast(BHScriptSensorContext *c, BHEntity *e, BHEntity *actor, lon
     packet.actor = actor;
     packet.expected = expected;
     bh_round_float(&r, (double)radius);
-    result = bh_entities_query(c->lifetime->timers.pool, 0, 0, event == 17 ? NULL : &actor->position,
+    result = bh_entities_query(ctx->lifetime->timers.pool, 0, 0, event == 17 ? NULL : &actor->position,
                                event == 17 ? 0 : r, &packet);
-    if (!live(c->lifetime->timers.pool, e, g))
+    if (!live(ctx->lifetime->timers.pool, entity, g))
     {
-        c->error = BH_SENSOR_MUTATION;
+        ctx->error = BH_SENSOR_MUTATION;
         return 0;
     }
-    get(e, 0xf0, &after);
+    get(entity, 0xf0, &after);
     if (after != actor)
     {
-        c->error = BH_SENSOR_MUTATION;
+        ctx->error = BH_SENSOR_MUTATION;
         return 0;
     }
     if (!result)
     {
-        c->error = BH_SENSOR_QUERY;
+        ctx->error = BH_SENSOR_QUERY;
         return 0;
     }
     return 1;
 }
-static int decrease(BHScriptSensorContext *c, BHEntity *e, int final_event)
+static int decrease(BHScriptSensorContext *ctx, BHEntity *entity, int final_event)
 {
     long remaining;
     unsigned long bits;
-    get(e, 0xfc, &remaining);
+    get(entity, 0xfc, &remaining);
     if (!remaining)
         return 0;
     bits = (unsigned long)remaining - 1UL;
     memcpy(&remaining, &bits, 4);
-    put(e, 0xfc, &remaining);
+    put(entity, 0xfc, &remaining);
     if (remaining)
         return 0;
     if (final_event)
     {
         BHEntity *actor;
-        get(e, 0xf0, &actor);
-        if (!broadcast(c, e, actor, 0, 0, 17))
+        get(entity, 0xf0, &actor);
+        if (!broadcast(ctx, entity, actor, 0, 0, 17))
             return 1;
     }
-    bh_entity_release(c->lifetime->timers.pool, e);
+    bh_entity_release(ctx->lifetime->timers.pool, entity);
     return 1;
 }
-static int in_box(const BHEntity *e, const BHEntity *p)
+static int in_box(const BHEntity *entity, const BHEntity *p)
 {
     BHVec3 low, high;
-    memcpy(&low, (const unsigned char *)e + 0x1b0, 12);
-    memcpy(&high, (const unsigned char *)e + 0x1bc, 12);
+    memcpy(&low, (const unsigned char *)entity + 0x1b0, 12);
+    memcpy(&high, (const unsigned char *)entity + 0x1bc, 12);
     /* Retain the original unequal C0 versus C0|C3 tests, including asymmetric
     unordered bound behavior. Ordinary six ordered <= comparisons differ. */
     return greater_equal(p->position.x, low.x) && !greater(p->position.x, high.x) && !greater(low.y, p->position.y) &&
            greater_equal(high.y, p->position.y) && !greater(low.z, p->position.z) &&
            greater_equal(high.z, p->position.z);
 }
-static int nearby(BHEntity *a, BHEntity *b, long threshold)
+static int nearby(BHEntity *entity, BHEntity *b, long threshold)
 {
-    double x = (double)a->position.x - b->position.x, y = (double)a->position.y - b->position.y,
-           z = (double)a->position.z - b->position.z;
+    double x = (double)entity->position.x - b->position.x, y = (double)entity->position.y - b->position.y,
+           z = (double)entity->position.z - b->position.z;
     float rx, rz;
     bh_round_float(&rx, x);
     bh_round_float(&rz, z);
     return greater((double)threshold, (x * rx + y * y) + z * rz);
 }
-void __cdecl bh_script_proximity_tick(BHEntity *e)
+void __cdecl bh_script_proximity_tick(BHEntity *entity)
 {
-    BHScriptSensorContext *c = context(e);
-    BHScriptSensorState s;
+    BHScriptSensorContext *ctx = context(entity);
+    BHScriptSensorState state;
     unsigned long i;
     const BHScriptTimerActor *owner;
     BHEntity *bounds;
     float latch = 0;
-    bh_script_sensor_read(e, &s);
-    if (!valid(c, e, &s, 1))
+    bh_script_sensor_read(entity, &state);
+    if (!valid(ctx, entity, &state, 1))
         return;
-    if (!due(e, s.countdown, .25))
+    if (!due(entity, state.countdown, .25))
         return;
-    for (i = 0; i < c->radar_count; ++i)
+    for (i = 0; i < ctx->radar_count; ++i)
     {
-        BHEntity *p = c->radar[i];
+        BHEntity *p = ctx->radar[i];
         int inside;
-        if (p != c->player)
+        if (p != ctx->player)
             continue;
-        if (!p || !present(c->lifetime->timers.pool, p))
+        if (!p || !present(ctx->lifetime->timers.pool, p))
         {
-            c->error = BH_SENSOR_ACTOR;
+            ctx->error = BH_SENSOR_ACTOR;
             return;
         }
-        get(e, 0x100, &s.threshold);
-        get(e, 0x104, &s.broadcast_radius);
-        get(e, 0x108, &s.expected);
-        if (s.threshold > 0)
-            inside = nearby(p, s.actor, s.threshold);
+        get(entity, 0x100, &state.threshold);
+        get(entity, 0x104, &state.broadcast_radius);
+        get(entity, 0x108, &state.expected);
+        if (state.threshold > 0)
+            inside = nearby(p, state.actor, state.threshold);
         else
         {
-            owner = record(c, s.actor);
+            owner = record(ctx, state.actor);
             if (owner->owner)
                 owner = owner->owner;
             bounds = owner->entity;
-            if (!bounds || !present(c->lifetime->timers.pool, bounds))
+            if (!bounds || !present(ctx->lifetime->timers.pool, bounds))
             {
-                c->error = BH_SENSOR_ACTOR;
+                ctx->error = BH_SENSOR_ACTOR;
                 return;
             }
             inside = in_box(bounds, p);
         }
         if (inside)
         {
-            get(e, 0x12c, &latch);
+            get(entity, 0x12c, &latch);
             if (greater(latch, 0))
                 return;
             latch = 1;
-            put(e, 0x12c, &latch);
-            if (!broadcast(c, e, s.actor, s.broadcast_radius, s.expected, 14))
+            put(entity, 0x12c, &latch);
+            if (!broadcast(ctx, entity, state.actor, state.broadcast_radius, state.expected, 14))
                 return;
-            if (decrease(c, e, 0))
+            if (decrease(ctx, entity, 0))
                 return;
         }
     }
     latch = 0;
-    put(e, 0x12c, &latch);
+    put(entity, 0x12c, &latch);
 }
-void __cdecl bh_script_damage_tick(BHEntity *e)
+void __cdecl bh_script_damage_tick(BHEntity *entity)
 {
-    BHScriptSensorContext *c = context(e);
-    BHScriptSensorState s;
+    BHScriptSensorContext *ctx = context(entity);
+    BHScriptSensorState state;
     double scaled;
     float damage, countdown, latch = 0;
-    bh_script_sensor_read(e, &s);
-    if (!valid(c, e, &s, 1))
+    bh_script_sensor_read(entity, &state);
+    if (!valid(ctx, entity, &state, 1))
         return;
-    if (greater(s.latch, 0))
-        bh_script_sensor_set_damage(s.actor, 0);
-    if (!due(e, s.countdown, 1))
+    if (greater(state.latch, 0))
+        bh_script_sensor_set_damage(state.actor, 0);
+    if (!due(entity, state.countdown, 1))
         return;
-    put(e, 0x12c, &latch);
-    scaled = (double)bh_script_sensor_damage(s.actor) * .98;
+    put(entity, 0x12c, &latch);
+    scaled = (double)bh_script_sensor_damage(state.actor) * .98;
     bh_round_float(&damage, scaled);
-    bh_script_sensor_set_damage(s.actor, damage);
-    if (!greater(scaled, (double)s.threshold))
+    bh_script_sensor_set_damage(state.actor, damage);
+    if (!greater(scaled, (double)state.threshold))
         return;
-    if (!broadcast(c, e, s.actor, s.broadcast_radius, s.expected, 14))
+    if (!broadcast(ctx, entity, state.actor, state.broadcast_radius, state.expected, 14))
         return;
-    get(e, 0x128, &countdown);
+    get(entity, 0x128, &countdown);
     bh_round_float(&countdown, (double)countdown + 4);
-    put(e, 0x128, &countdown);
+    put(entity, 0x128, &countdown);
     latch = 1;
-    put(e, 0x12c, &latch);
-    bh_script_sensor_set_damage(s.actor, 0);
-    decrease(c, e, 1);
+    put(entity, 0x12c, &latch);
+    bh_script_sensor_set_damage(state.actor, 0);
+    decrease(ctx, entity, 1);
 }

@@ -36,18 +36,18 @@ void __cdecl bh_weapon_path_blend(BHVec3 *out, const BHVec3 *a, const BHVec3 *b,
 }
 int __cdecl bh_weapon_path_point(BHEntity *weapon, BHEntity *player, BHVec3 *out, float t)
 {
-    BHWeaponCommonState *s;
+    BHWeaponCommonState *weapon_state;
     BHVec3 up, side, heading, start, control, target_control, difference;
     BHEntityPositionPacket sample;
     BHEntity *target;
     unsigned long enabled, i;
     if (!weapon || !player || !out || !bh_math_environment_supported())
         return 0;
-    s = bh_weapon_common_state(weapon);
-    enabled = s->word_108;
-    target = s->hud.target;
-    if (!enabled || !target || !(t >= 0) || !(t <= 1) || !((double)t <= (double)s->hud.charge * (1.0 / 48)) ||
-        !target->query)
+    weapon_state = bh_weapon_common_state(weapon);
+    enabled = weapon_state->word_108;
+    target = weapon_state->hud.target;
+    if (!enabled || !target || !(t >= 0) || !(t <= 1) ||
+        !((double)t <= (double)weapon_state->hud.charge * (1.0 / 48)) || !target->query)
         return 0;
     memcpy(&up, (unsigned char *)player + 0x24, 12);
     memcpy(&side, (unsigned char *)player + 0x30, 12);

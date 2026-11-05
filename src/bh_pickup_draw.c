@@ -38,56 +38,57 @@ static float get_float(const unsigned long *in)
 }
 
 /* 004558d0. The input pointers model its in-place projected world point. */
-int __cdecl bh_pickup_project(const BHPickupDrawContext *c, float *x, float *y, float *z, float *scale)
+int __cdecl bh_pickup_project(const BHPickupDrawContext *ctx, float *x, float *y, float *z, float *scale)
 {
     BHVec3 world, projected;
-    if (!c || !c->camera || !c->view || !x || !y || !z || !scale)
+    if (!ctx || !ctx->camera || !ctx->view || !x || !y || !z || !scale)
         return 0;
     world.x = *x;
     world.y = *y;
     world.z = *z;
-    bh_mat34_transform_point(&c->camera->projected, &world, &projected);
-    if (projected.z < c->view->near_z)
+    bh_mat34_transform_point(&ctx->camera->projected, &world, &projected);
+    if (projected.z < ctx->view->near_z)
         return 0;
     *x = projected.x / projected.z;
     *y = projected.y / projected.z;
     *z = projected.z;
-    *scale = c->camera->focal / projected.z;
+    *scale = ctx->camera->focal / projected.z;
     return 1;
 }
 
 /* 00478f60's inlined bucket append. Original command field offsets are
    +04 resource,+08 x..angle,+1c alpha,+20..+2c UV,+30 depth,+34 flags. */
-int __cdecl bh_pickup_rect_queue(BHDrawQueue *q, unsigned long bucket, unsigned long image, float x, float y,
+int __cdecl bh_pickup_rect_queue(BHDrawQueue *queue, unsigned long bucket, unsigned long image, float x, float y,
                                  float width, float height, float angle, unsigned long flags, float alpha, float u,
                                  float u_extent, float v, float v_extent, float depth)
 {
     static const unsigned long mapping[9] = {1, 2, 3, 4, 5, 0, 6, 7, 8};
     unsigned long header, tail, index;
     BHDrawCommand *command;
-    if (!q || !q->commands || q->count < 9 || q->count > q->capacity)
+    if (!queue || !queue->commands || queue->count < 9 || queue->count > queue->capacity)
     {
-        if (q)
-            q->error = BH_DRAW_ARGUMENT;
+        if (queue)
+            queue->error = BH_DRAW_ARGUMENT;
         return -1;
     }
-    if (q->count == q->capacity)
+    if (queue->count == queue->capacity)
     {
-        q->error = BH_DRAW_FULL;
+        queue->error = BH_DRAW_FULL;
         return 0;
     }
     header = bucket < 9 ? mapping[bucket] : 0;
-    tail = q->commands[header].resource;
-    if (tail >= q->count || (q->commands[tail].next != BH_DRAW_END && q->commands[tail].next >= q->count))
+    tail = queue->commands[header].resource;
+    if (tail >= queue->count ||
+        (queue->commands[tail].next != BH_DRAW_END && queue->commands[tail].next >= queue->count))
     {
-        q->error = BH_DRAW_TOPOLOGY;
+        queue->error = BH_DRAW_TOPOLOGY;
         return -1;
     }
-    index = q->count++;
-    command = q->commands + index;
-    command->next = q->commands[tail].next;
-    q->commands[tail].next = index;
-    q->commands[header].resource = index;
+    index = queue->count++;
+    command = queue->commands + index;
+    command->next = queue->commands[tail].next;
+    queue->commands[tail].next = index;
+    queue->commands[header].resource = index;
     command->kind = BH_DRAW_RECT;
     command->resource = image;
     put_float(command->words + 0, x);
@@ -103,7 +104,7 @@ int __cdecl bh_pickup_rect_queue(BHDrawQueue *q, unsigned long bucket, unsigned 
     put_float(command->words + 10, depth);
     command->words[11] = flags;
     command->words[12] = 0;
-    q->error = BH_DRAW_OK;
+    queue->error = BH_DRAW_OK;
     return 1;
 }
 
@@ -115,7 +116,7 @@ static void vertex(BHClipVertex *p, float x, float y, float u, float v)
     p->v = v;
 }
 
-int __cdecl bh_pickup_rect_draw(BHPickupDrawContext *c, BHTextureImage *image, float x, float y, float width,
+int __cdecl bh_pickup_rect_draw(BHPickupDrawContext *ctx, BHTextureImage *image, float x, float y, float width,
                                 float height, float angle, unsigned long flags, float alpha, float u, float u_extent,
                                 float v, float v_extent, float depth)
 {
@@ -125,18 +126,18 @@ int __cdecl bh_pickup_rect_draw(BHPickupDrawContext *c, BHTextureImage *image, f
     double conversion;
     long shade;
     unsigned long i, n, color;
-    if (!c || !image || !c->view || !c->clip || !c->emit || !_finite(x) || !_finite(y) || !_finite(width) ||
+    if (!ctx || !image || !ctx->view || !ctx->clip || !ctx->emit || !_finite(x) || !_finite(y) || !_finite(width) ||
         !_finite(height) || !_finite(angle) || !_finite(alpha) || !_finite(u) || !_finite(u_extent) || !_finite(v) ||
         !_finite(v_extent) || !_finite(depth))
         return 0;
-    c->rectangles++;
+    ctx->rectangles++;
     half_width = width * .5f;
     half_height = height * .5f;
     bh_round_float(&radius, sqrt((double)half_width * half_width + (double)half_height * half_height));
-    if (!(c->view->left < radius + x && x - radius < c->view->right && c->view->top < radius + y &&
-          y - radius < c->view->bottom))
+    if (!(ctx->view->left < radius + x && x - radius < ctx->view->right && ctx->view->top < radius + y &&
+          y - radius < ctx->view->bottom))
     {
-        c->culled++;
+        ctx->culled++;
         return 1;
     }
     u0 = (flags & 1) ? 1.0f - u : u;
@@ -190,12 +191,12 @@ int __cdecl bh_pickup_rect_draw(BHPickupDrawContext *c, BHTextureImage *image, f
         quad[i].next = quad + (i + 1) % 4;
         quad[i].previous = quad + (i + 3) % 4;
     }
-    ring = bh_screen_clip_polygon(c->clip, quad, c->view->near_z);
+    ring = bh_screen_clip_polygon(ctx->clip, quad, ctx->view->near_z);
     if (!ring)
     {
-        if (c->clip->error != BH_CLIP_OK)
+        if (ctx->clip->error != BH_CLIP_OK)
             return 0;
-        c->culled++;
+        ctx->culled++;
         return 1;
     }
     conversion = (double)alpha * -255.0;
@@ -212,17 +213,17 @@ int __cdecl bh_pickup_rect_draw(BHPickupDrawContext *c, BHTextureImage *image, f
         p->point.z = depth;
         p = p->next;
     } while (p != ring);
-    return c->emit(ring, image, color, c->emit_user);
+    return ctx->emit(ring, image, color, ctx->emit_user);
 }
 
-int __cdecl bh_pickup_rect_execute(BHPickupDrawContext *c, BHDrawImageLookup lookup, void *lookup_user,
+int __cdecl bh_pickup_rect_execute(BHPickupDrawContext *ctx, BHDrawImageLookup lookup, void *lookup_user,
                                    const BHDrawCommand *command, unsigned long *next)
 {
     BHTextureImage *image;
     float a[11];
     unsigned long i, flags;
     int result;
-    if (!c || !lookup || !command || !next || command->kind != BH_DRAW_RECT)
+    if (!ctx || !lookup || !command || !next || command->kind != BH_DRAW_RECT)
         return 0;
     for (i = 0; i < 11; ++i)
         a[i] = get_float(command->words + i);
@@ -232,31 +233,31 @@ int __cdecl bh_pickup_rect_execute(BHPickupDrawContext *c, BHDrawImageLookup loo
     {
         float x = get_float(command->words + 13), y = get_float(command->words + 14);
         float z = get_float(command->words + 15), scale;
-        if (!bh_pickup_project(c, &x, &y, &z, &scale))
+        if (!bh_pickup_project(ctx, &x, &y, &z, &scale))
             return 1;
         a[0] += x + get_float(command->words + 16) * scale;
         a[1] += y + get_float(command->words + 17) * scale;
-        a[5] = scale * 100.0f / c->view->width;
+        a[5] = scale * 100.0f / ctx->view->width;
         if (a[5] > 1)
             a[5] = 1;
         if (a[5] <= .1f)
             return 1;
         a[10] = z - 8;
-        if (a[10] < c->view->near_z + .01f)
-            a[10] = c->view->near_z + .01f;
+        if (a[10] < ctx->view->near_z + .01f)
+            a[10] = ctx->view->near_z + .01f;
     }
     image = lookup(command->resource, lookup_user);
-    result =
-        image ? bh_pickup_rect_draw(c, image, a[0], a[1], a[2], a[3], a[4], flags, a[5], a[6], a[7], a[8], a[9], a[10])
-              : 0;
+    result = image ? bh_pickup_rect_draw(ctx, image, a[0], a[1], a[2], a[3], a[4], flags, a[5], a[6], a[7], a[8], a[9],
+                                         a[10])
+                   : 0;
     *next = command->next;
     return result;
 }
 
-static int rect(BHPickupDrawContext *c, float x, float y, float w, float h, float alpha, float u, float u_extent,
+static int rect(BHPickupDrawContext *ctx, float x, float y, float w, float h, float alpha, float u, float u_extent,
                 float v, float v_extent, float z)
 {
-    return bh_pickup_rect_queue(c->queue, 8, c->atlas_image, x, y, w, h, 0, 0, alpha, u, u_extent, v, v_extent, z);
+    return bh_pickup_rect_queue(ctx->queue, 8, ctx->atlas_image, x, y, w, h, 0, 0, alpha, u, u_extent, v, v_extent, z);
 }
 static void digits(long value, long out[8], int *first)
 {
@@ -277,31 +278,32 @@ static float digit_u(long digit)
     return (float)((.5 - (double)digit * (-8.0)) * .0078125);
 }
 
-int __cdecl bh_pickup_label(BHPickupDrawContext *c, const BHEntity *entity, long total, long count)
+int __cdecl bh_pickup_label(BHPickupDrawContext *ctx, const BHEntity *entity, long total, long count)
 {
     float x, y, z, s, scale, alpha, step, w, u, v, du;
     long ds[8];
     int first, i, result = 1, r;
     long kind;
-    if (!c || !c->queue || !c->camera || !c->view || !entity || !c->display_depth)
+    if (!ctx || !ctx->queue || !ctx->camera || !ctx->view || !entity || !ctx->display_depth)
         return -1;
     kind = payload_long(entity, 0x1c);
     x = entity->position.x;
     y = entity->position.y - 2.5f;
     z = entity->position.z;
-    if (bh_pickup_project(c, &x, &y, &z, &s))
+    if (bh_pickup_project(ctx, &x, &y, &z, &s))
     {
         z -= 2.0f;
-        scale = (float)c->display_depth * s * (float).00009765625;
-        if (z < c->view->near_z - .01f)
-            z = c->view->near_z - .01f;
+        scale = (float)ctx->display_depth * s * (float).00009765625;
+        if (z < ctx->view->near_z - .01f)
+            z = ctx->view->near_z - .01f;
         if (z * .01f >= .5f)
             return result;
         {
             alpha = (float)(.5 - (double)z * .01);
             if (kind == 21)
             {
-                r = rect(c, x, y, scale * 38.0f, scale * 12.0f, alpha, .70703125f, .2890625f, .72265625f, .0859375f, z);
+                r = rect(ctx, x, y, scale * 38.0f, scale * 12.0f, alpha, .70703125f, .2890625f, .72265625f, .0859375f,
+                         z);
                 if (r < 0)
                     return -1;
                 result &= r;
@@ -310,7 +312,7 @@ int __cdecl bh_pickup_label(BHPickupDrawContext *c, const BHEntity *entity, long
             {
                 digits(total, ds, &first);
                 x -= (float)(8.0 - (double)(8 - first) * (-4.0)) * scale;
-                r = rect(c, x - scale * -5.0f, y, scale * 10.0f, scale * 12.0f, alpha, .08203125f, .0703125f,
+                r = rect(ctx, x - scale * -5.0f, y, scale * 10.0f, scale * 12.0f, alpha, .08203125f, .0703125f,
                          .72265625f, .0859375f, z);
                 if (r < 0)
                     return -1;
@@ -320,7 +322,7 @@ int __cdecl bh_pickup_label(BHPickupDrawContext *c, const BHEntity *entity, long
                 w = scale * 8.0f;
                 for (i = first; i < 8; ++i)
                 {
-                    r = rect(c, x, y, w, scale * 12.0f, alpha, digit_u(ds[i]), .0546875f, .09765625f, .0859375f, z);
+                    r = rect(ctx, x, y, w, scale * 12.0f, alpha, digit_u(ds[i]), .0546875f, .09765625f, .0859375f, z);
                     if (r < 0)
                         return -1;
                     result &= r;
@@ -332,18 +334,18 @@ int __cdecl bh_pickup_label(BHPickupDrawContext *c, const BHEntity *entity, long
     x = entity->position.x;
     y = entity->position.y + 2.5f;
     z = entity->position.z;
-    if (!bh_pickup_project(c, &x, &y, &z, &s))
+    if (!bh_pickup_project(ctx, &x, &y, &z, &s))
         return result;
     z -= 2.0f;
-    scale = (float)c->display_depth * s * (float).00009765625;
-    if (z < c->view->near_z - .01f)
-        z = c->view->near_z - .01f;
+    scale = (float)ctx->display_depth * s * (float).00009765625;
+    if (z < ctx->view->near_z - .01f)
+        z = ctx->view->near_z - .01f;
     if (!(z * .01f < .5f))
         return result;
     alpha = (float)(.5 - (double)z * .01);
     if (kind == 21)
     {
-        r = rect(c, x, y, scale * 23.0f, scale * 12.0f, alpha, .52734375f, .171875f, .72265625f, .0859375f, z);
+        r = rect(ctx, x, y, scale * 23.0f, scale * 12.0f, alpha, .52734375f, .171875f, .72265625f, .0859375f, z);
         if (r < 0)
             return -1;
         return result & r;
@@ -358,7 +360,7 @@ int __cdecl bh_pickup_label(BHPickupDrawContext *c, const BHEntity *entity, long
     x -= ((float)(8 - first) * scale * 4.0f) + w;
     for (i = first; i < 8; ++i)
     {
-        r = rect(c, x - scale * -4.0f, y, scale * 8.0f, scale * 12.0f, alpha, digit_u(ds[i]), .0546875f, .09765625f,
+        r = rect(ctx, x - scale * -4.0f, y, scale * 8.0f, scale * 12.0f, alpha, digit_u(ds[i]), .0546875f, .09765625f,
                  .0859375f, z);
         if (r < 0)
             return -1;
@@ -367,7 +369,7 @@ int __cdecl bh_pickup_label(BHPickupDrawContext *c, const BHEntity *entity, long
     }
     if (kind == 20)
     {
-        r = rect(c, x - scale * -5.0f, y, scale * 10.0f, scale * 12.0f, alpha, .00390625f, .0703125f, .72265625f,
+        r = rect(ctx, x - scale * -5.0f, y, scale * 10.0f, scale * 12.0f, alpha, .00390625f, .0703125f, .72265625f,
                  .0859375f, z);
         if (r < 0)
             return -1;
@@ -397,13 +399,13 @@ int __cdecl bh_pickup_label(BHPickupDrawContext *c, const BHEntity *entity, long
         v = .3046875f;
         du = .81640625f;
     }
-    r = rect(c, x, y, w, scale * 12.0f, alpha, u, v, du, .0859375f, z);
+    r = rect(ctx, x, y, w, scale * 12.0f, alpha, u, v, du, .0859375f, z);
     if (r < 0)
         return -1;
     return result & r;
 }
 
-int __cdecl bh_pickup_draw(BHPickupDrawContext *c, BHEntity *entity)
+int __cdecl bh_pickup_draw(BHPickupDrawContext *ctx, BHEntity *entity)
 {
     BHVec3 angles;
     float phase, size, alpha;
@@ -411,7 +413,7 @@ int __cdecl bh_pickup_draw(BHPickupDrawContext *c, BHEntity *entity)
     long count, total;
     unsigned long resource;
     int r0, r1, r2;
-    if (!c || !c->queue || !entity)
+    if (!ctx || !ctx->queue || !entity)
         return -1;
     phase = payload_float(entity, 0x18);
     resource = payload_word(entity, 0x30);
@@ -419,14 +421,14 @@ int __cdecl bh_pickup_draw(BHPickupDrawContext *c, BHEntity *entity)
     angles.y = (float)(sin((double)phase * .87) * .3);
     angles.z = 0;
     memcpy(entity->opaque0 + 0x24, &angles, sizeof(angles));
-    r0 = bh_draw_submit_resource(c->queue, 0, resource, &entity->position, &angles, 1.0f);
+    r0 = bh_draw_submit_resource(ctx->queue, 0, resource, &entity->position, &angles, 1.0f);
     oscillation = sin((double)phase * 5.17);
     size = (float)(oscillation - (-6.0));
     alpha = (float)(.5 - oscillation * (-.25));
-    r1 = bh_draw_billboard(c->queue, 3, c->glow_image, &entity->position, size, size, 0, 0, alpha);
+    r1 = bh_draw_billboard(ctx->queue, 3, ctx->glow_image, &entity->position, size, size, 0, 0, alpha);
     count = payload_long(entity, 0x28);
     total = payload_long(entity, 0x2c);
-    r2 = total ? bh_pickup_label(c, entity, (long)((unsigned long)total * (unsigned long)count), count) : 1;
+    r2 = total ? bh_pickup_label(ctx, entity, (long)((unsigned long)total * (unsigned long)count), count) : 1;
     if (r0 < 0 || r1 < 0 || r2 < 0)
         return -1;
     return r0 && r1 && r2;

@@ -13,48 +13,49 @@ static float stored(double v)
     bh_round_float(&f, v);
     return f;
 }
-static __inline float number(BHEntity *e, unsigned long off)
+static __inline float number(BHEntity *entity, unsigned long off)
 {
     float f;
-    memcpy(&f, (char *)e + off, 4);
+    memcpy(&f, (char *)entity + off, 4);
     return f;
 }
-static __inline unsigned long word(BHEntity *e, unsigned long off)
+static __inline unsigned long word(BHEntity *entity, unsigned long off)
 {
     unsigned long v;
-    memcpy(&v, (char *)e + off, 4);
+    memcpy(&v, (char *)entity + off, 4);
     return v;
 }
-static __inline void set_word(BHEntity *e, unsigned long off, unsigned long v)
+static __inline void set_word(BHEntity *entity, unsigned long off, unsigned long v)
 {
-    memcpy((char *)e + off, &v, 4);
+    memcpy((char *)entity + off, &v, 4);
 }
-static BHActorDamageContext *context(BHEntity *e)
+static BHActorDamageContext *context(BHEntity *entity)
 {
-    BHActorDamageContext *c;
-    memcpy(&c, e->payload + 600, 4);
-    return c;
+    BHActorDamageContext *ctx;
+    memcpy(&ctx, entity->payload + 600, 4);
+    return ctx;
 }
-static int live(BHActorDamageContext *c, BHEntity *e)
+static int live(BHActorDamageContext *ctx, BHEntity *entity)
 {
-    return bh_entity_is_active(c->pool, e);
+    return bh_entity_is_active(ctx->pool, entity);
 }
-static void normal_tick(BHEntity *e)
+static void normal_tick(BHEntity *entity)
 {
-    BHActorDamageContext *c = context(e);
-    bh_actor_route_due(c->route, e);
+    BHActorDamageContext *ctx = context(entity);
+    bh_actor_route_due(ctx->route, entity);
 }
-static void release_tick(BHEntity *e)
+static void release_tick(BHEntity *entity)
 {
-    BHActorDamageContext *c = context(e);
-    bh_actor_route_release(c->route, c->pool, e);
+    BHActorDamageContext *ctx = context(entity);
+    bh_actor_route_release(ctx->route, ctx->pool, entity);
 }
-int __cdecl bh_actor_damage_bind(BHActorDamageContext *c, BHEntity *e)
+int __cdecl bh_actor_damage_bind(BHActorDamageContext *ctx, BHEntity *entity)
 {
-    if (!c || !c->pool || !c->route || !c->route->live_tick || !c->route->sound || !e || !live(c, e))
+    if (!ctx || !ctx->pool || !ctx->route || !ctx->route->live_tick || !ctx->route->sound || !entity ||
+        !live(ctx, entity))
         return 0;
-    memcpy(e->payload + 600, &c, 4);
-    return bh_entity_set_query(c->pool, e, bh_actor_damage_query);
+    memcpy(entity->payload + 600, &ctx, 4);
+    return bh_entity_set_query(ctx->pool, entity, bh_actor_damage_query);
 }
 static unsigned long random_step(unsigned long r)
 {
@@ -73,39 +74,39 @@ void __cdecl bh_actor_damage_death_velocity(const BHVec3 *after, const BHVec3 *a
 }
 #include "bh_actor_damage_query_core.inc"
 #include "bh_actor_damage_tick_core.inc"
-void __cdecl bh_actor_damage_tick(BHEntity *e)
+void __cdecl bh_actor_damage_tick(BHEntity *entity)
 {
-    BHActorDamageContext *c = context(e);
-    if (!c || !live(c, e) || !c->particles || !c->fragments || !c->targets || !c->loot_rows ||
+    BHActorDamageContext *ctx = context(entity);
+    if (!ctx || !live(ctx, entity) || !ctx->particles || !ctx->fragments || !ctx->targets || !ctx->loot_rows ||
         !bh_math_environment_supported())
     {
-        if (c)
-            c->error = BH_ACTOR_ROUTE_ARGUMENT;
+        if (ctx)
+            ctx->error = BH_ACTOR_ROUTE_ARGUMENT;
         return;
     }
-    if (!*(unsigned short *)((char *)e + 0x1e6))
+    if (!*(unsigned short *)((char *)entity + 0x1e6))
     {
-        c->error = BH_ACTOR_ROUTE_NUMERICAL;
+        ctx->error = BH_ACTOR_ROUTE_NUMERICAL;
         return;
     }
-    bh_actor_damage_tick_core(e, c);
+    bh_actor_damage_tick_core(entity, ctx);
 }
-void __cdecl bh_actor_damage_query(BHEntity *e, void *packet)
+void __cdecl bh_actor_damage_query(BHEntity *entity, void *packet)
 {
-    BHActorDamageContext *c = context(e);
+    BHActorDamageContext *ctx = context(entity);
     unsigned long event;
     unsigned short tick = 0;
-    if (!c || !packet || !live(c, e))
+    if (!ctx || !packet || !live(ctx, entity))
         return;
     event = *(unsigned long *)packet;
     if (event == 1 || event == 3 || event == 16)
     {
-        if (!bh_math_environment_supported() || !*(unsigned short *)((char *)e + 0x1e6))
+        if (!bh_math_environment_supported() || !*(unsigned short *)((char *)entity + 0x1e6))
         {
-            c->error = BH_ACTOR_ROUTE_NUMERICAL;
+            ctx->error = BH_ACTOR_ROUTE_NUMERICAL;
             return;
         }
-        tick = bh_actor_route_now(c->route);
+        tick = bh_actor_route_now(ctx->route);
     }
-    bh_actor_damage_query_core(e, packet, c, tick);
+    bh_actor_damage_query_core(entity, packet, ctx, tick);
 }

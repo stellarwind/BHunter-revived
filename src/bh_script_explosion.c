@@ -23,72 +23,73 @@ typedef char explosion_layout[sizeof(void *) == 4 && offsetof(BHEntity, payload)
                                       sizeof(DamagePacket) == 12
                                   ? 1
                                   : -1];
-static void load(const BHEntity *e, unsigned long offset, void *out, unsigned long n)
+static void load(const BHEntity *entity, unsigned long offset, void *out, unsigned long n)
 {
-    memcpy(out, (const unsigned char *)e + offset, n);
+    memcpy(out, (const unsigned char *)entity + offset, n);
 }
-static void store(BHEntity *e, unsigned long offset, const void *in, unsigned long n)
+static void store(BHEntity *entity, unsigned long offset, const void *in, unsigned long n)
 {
-    memcpy((unsigned char *)e + offset, in, n);
+    memcpy((unsigned char *)entity + offset, in, n);
 }
-static BHScriptExplosionContext *context(const BHEntity *e)
+static BHScriptExplosionContext *context(const BHEntity *entity)
 {
-    BHScriptExplosionContext *c;
-    memcpy(&c, e->payload + 624, 4);
-    return c;
+    BHScriptExplosionContext *ctx;
+    memcpy(&ctx, entity->payload + 624, 4);
+    return ctx;
 }
-static int live(BHScriptExplosionContext *c, BHEntity *e, unsigned long generation)
+static int live(BHScriptExplosionContext *ctx, BHEntity *entity, unsigned long generation)
 {
-    if (bh_entity_is_active(c->pool, e) && e->generation == generation)
+    if (bh_entity_is_active(ctx->pool, entity) && entity->generation == generation)
         return 1;
-    c->error = BH_EXPLOSION_MUTATION;
+    ctx->error = BH_EXPLOSION_MUTATION;
     return 0;
 }
-int __cdecl bh_script_explosion_read(const BHEntity *e, BHScriptExplosionState *s)
+int __cdecl bh_script_explosion_read(const BHEntity *entity, BHScriptExplosionState *state)
 {
-    if (!e || !s)
+    if (!entity || !state)
         return 0;
-    load(e, 0xe8, &s->age, 4);
-    load(e, 0xec, &s->duration, 4);
-    load(e, 0xf4, s->direction, 96);
-    load(e, 0x154, s->angle, 32);
-    load(e, 0x174, s->spin, 32);
-    load(e, 0x194, &s->radius, 4);
-    load(e, 0x198, &s->magnitude, 4);
-    load(e, 0x19c, &s->probability, 4);
-    load(e, 0x1ac, &s->sound_resource, 4);
-    load(e, 0x1b0, &s->origin_tag, 4);
-    load(e, 0x1b4, &s->target, 4);
+    load(entity, 0xe8, &state->age, 4);
+    load(entity, 0xec, &state->duration, 4);
+    load(entity, 0xf4, state->direction, 96);
+    load(entity, 0x154, state->angle, 32);
+    load(entity, 0x174, state->spin, 32);
+    load(entity, 0x194, &state->radius, 4);
+    load(entity, 0x198, &state->magnitude, 4);
+    load(entity, 0x19c, &state->probability, 4);
+    load(entity, 0x1ac, &state->sound_resource, 4);
+    load(entity, 0x1b0, &state->origin_tag, 4);
+    load(entity, 0x1b4, &state->target, 4);
     return 1;
 }
-int __cdecl bh_script_explosion_write(BHEntity *e, const BHScriptExplosionState *s)
+int __cdecl bh_script_explosion_write(BHEntity *entity, const BHScriptExplosionState *state)
 {
-    if (!e || !s)
+    if (!entity || !state)
         return 0;
-    store(e, 0xe8, &s->age, 4);
-    store(e, 0xec, &s->duration, 4);
-    store(e, 0xf4, s->direction, 96);
-    store(e, 0x154, s->angle, 32);
-    store(e, 0x174, s->spin, 32);
-    store(e, 0x194, &s->radius, 4);
-    store(e, 0x198, &s->magnitude, 4);
-    store(e, 0x19c, &s->probability, 4);
-    store(e, 0x1ac, &s->sound_resource, 4);
-    store(e, 0x1b0, &s->origin_tag, 4);
-    store(e, 0x1b4, &s->target, 4);
+    store(entity, 0xe8, &state->age, 4);
+    store(entity, 0xec, &state->duration, 4);
+    store(entity, 0xf4, state->direction, 96);
+    store(entity, 0x154, state->angle, 32);
+    store(entity, 0x174, state->spin, 32);
+    store(entity, 0x194, &state->radius, 4);
+    store(entity, 0x198, &state->magnitude, 4);
+    store(entity, 0x19c, &state->probability, 4);
+    store(entity, 0x1ac, &state->sound_resource, 4);
+    store(entity, 0x1b0, &state->origin_tag, 4);
+    store(entity, 0x1b4, &state->target, 4);
     return 1;
 }
-static int valid(BHScriptExplosionContext *c, const BHVec3 *p, float duration, float magnitude, float probability)
+static int valid(BHScriptExplosionContext *ctx, const BHVec3 *p, float duration, float magnitude, float probability)
 {
-    return c && c->pool && c->queue && c->queue->commands && c->sound && c->debris && c->flash &&
-           c->debris->pool == c->pool && c->debris->queue == c->queue && c->flash->pool == c->pool &&
-           c->flash->queue == c->queue && p && _finite(p->x) && _finite(p->y) && _finite(p->z) && _finite(duration) &&
-           _finite(magnitude) && _finite(probability) && magnitude >= 0 && bh_math_environment_supported();
+    return ctx && ctx->pool && ctx->queue && ctx->queue->commands && ctx->sound && ctx->debris && ctx->flash &&
+           ctx->debris->pool == ctx->pool && ctx->debris->queue == ctx->queue && ctx->flash->pool == ctx->pool &&
+           ctx->flash->queue == ctx->queue && p && _finite(p->x) && _finite(p->y) && _finite(p->z) &&
+           _finite(duration) && _finite(magnitude) && _finite(probability) && magnitude >= 0 &&
+           bh_math_environment_supported();
 }
-static BHEntity *create(BHScriptExplosionContext *c, const BHVec3 *p, float duration, float magnitude,
+static BHEntity *create(BHScriptExplosionContext *ctx, const BHVec3 *p, float duration, float magnitude,
                         float probability, unsigned long sound, unsigned long target, int secondary)
 {
-    BHScriptExplosionState s;
+    BHScriptExplosionState state;
     BHEntity *flash, *e;
     BHVec3 zero = {0, 0, 0};
     BlastPacket blast;
@@ -97,79 +98,79 @@ static BHEntity *create(BHScriptExplosionContext *c, const BHVec3 *p, float dura
     float speed, size, radius, square;
     double factor, count;
     int r;
-    if (!valid(c, p, duration, magnitude, probability))
+    if (!valid(ctx, p, duration, magnitude, probability))
     {
-        if (c)
-            c->error = BH_EXPLOSION_ARGUMENT;
+        if (ctx)
+            ctx->error = BH_EXPLOSION_ARGUMENT;
         return NULL;
     }
-    c->error = BH_EXPLOSION_OK;
-    bh_sound_request(c->sound, sound, 1, 1, p, &zero);
-    flash = bh_entity_acquire(c->pool);
+    ctx->error = BH_EXPLOSION_OK;
+    bh_sound_request(ctx->sound, sound, 1, 1, p, &zero);
+    flash = bh_entity_acquire(ctx->pool);
     if (flash)
     {
         flash->position = *p;
-        bh_flash_flare_bind(c->flash, flash, .1f, 250, 4);
+        bh_flash_flare_bind(ctx->flash, flash, .1f, 250, 4);
     }
-    e = bh_entity_acquire(c->pool);
+    e = bh_entity_acquire(ctx->pool);
     if (!e)
     {
-        c->error = BH_EXPLOSION_POOL;
+        ctx->error = BH_EXPLOSION_POOL;
         return NULL;
     }
     generation = e->generation;
     e->position = *p;
-    s.age = 0;
-    s.duration = duration;
-    s.radius = 0;
-    s.magnitude = magnitude;
-    s.probability = probability;
-    s.sound_resource = sound;
-    s.target = target;
-    s.origin_tag = c->debris->origin_tag;
-    c->debris->origin_tag = 0;
+    state.age = 0;
+    state.duration = duration;
+    state.radius = 0;
+    state.magnitude = magnitude;
+    state.probability = probability;
+    state.sound_resource = sound;
+    state.target = target;
+    state.origin_tag = ctx->debris->origin_tag;
+    ctx->debris->origin_tag = 0;
     for (i = 0; i < 8; ++i)
     {
-        s.direction[i].x = (float)(rand() - 16384);
-        s.direction[i].y = (float)(rand() - 16384);
-        s.direction[i].z = (float)(rand() - 16384);
-        bh_vec3_normalize(s.direction + i);
+        state.direction[i].x = (float)(rand() - 16384);
+        state.direction[i].y = (float)(rand() - 16384);
+        state.direction[i].z = (float)(rand() - 16384);
+        bh_vec3_normalize(state.direction + i);
         r = rand();
         factor = .5 - (double)r * (-1.0 / 65536.0);
-        bh_round_float(&s.direction[i].x, factor * s.direction[i].x);
-        bh_round_float(&s.direction[i].y, factor * s.direction[i].y);
-        bh_round_float(&s.direction[i].z, factor * s.direction[i].z);
+        bh_round_float(&state.direction[i].x, factor * state.direction[i].x);
+        bh_round_float(&state.direction[i].y, factor * state.direction[i].y);
+        bh_round_float(&state.direction[i].z, factor * state.direction[i].z);
         r = rand();
-        bh_round_float(s.angle + i, (double)r * (1.0 / 4096.0));
+        bh_round_float(state.angle + i, (double)r * (1.0 / 4096.0));
         r = rand();
-        bh_round_float(s.spin + i, ((double)r - 16384.0) * .0000025);
+        bh_round_float(state.spin + i, ((double)r - 16384.0) * .0000025);
     }
-    bh_script_explosion_write(e, &s);
-    memcpy(e->payload + 624, &c, 4);
+    bh_script_explosion_write(e, &state);
+    memcpy(e->payload + 624, &ctx, 4);
     e->refresh = bh_script_explosion_refresh;
     e->step = bh_script_explosion_tick;
-    bh_entity_set_query(c->pool, e, bh_actor_target_removed);
+    bh_entity_set_query(ctx->pool, e, bh_actor_target_removed);
     blast.event = 1;
     blast.point = *p;
     bh_round_float(&square, (double)magnitude * magnitude);
     bh_round_float(&blast.energy, ((double)magnitude * magnitude) * 125.0);
     bh_round_float(&blast.radius, (double)magnitude * 5.0);
-    if (!bh_entities_query(c->pool, 0, 0, NULL, 0, &blast))
-        c->error = BH_EXPLOSION_QUERY;
-    if (!live(c, e, generation))
+    if (!bh_entities_query(ctx->pool, 0, 0, NULL, 0, &blast))
+        ctx->error = BH_EXPLOSION_QUERY;
+    if (!live(ctx, e, generation))
         return NULL;
     bh_round_float(&size, (double)magnitude * .125);
     bh_round_float(&speed, (double)magnitude * 3.0);
     r = rand();
     count = 2.0 - ((double)r * magnitude) * (-1.0 / 32768.0);
     if (!_finite(count) || count < 0 || count >= 65536)
-        c->error = BH_EXPLOSION_LIMIT;
+        ctx->error = BH_EXPLOSION_LIMIT;
     else
-        bh_script_debris_create(c->debris, (long)count, p, 4, speed, size);
-    if (!live(c, e, generation))
+        bh_script_debris_create(ctx->debris, (long)count, p, 4, speed, size);
+    if (!live(ctx, e, generation))
         return NULL;
-    load(e, 0x1b0, &s.origin_tag, 4);
-    if (!s.origin_tag)
+    load(e, 0x1b0, &state.origin_tag, 4);
+    if (!state.origin_tag)
     {
         damage.event = 0;
         load(e, 0x1b4, &damage.target, 4);
@@ -178,114 +179,114 @@ static BHEntity *create(BHScriptExplosionContext *c, const BHVec3 *p, float dura
             bh_round_float(&radius, (double)square * .05);
         else
             bh_round_float(&radius, (double)magnitude + magnitude);
-        if (!bh_entities_query(c->pool, 0, 0, p, radius, &damage))
-            c->error = BH_EXPLOSION_QUERY;
-        if (!live(c, e, generation))
+        if (!bh_entities_query(ctx->pool, 0, 0, p, radius, &damage))
+            ctx->error = BH_EXPLOSION_QUERY;
+        if (!live(ctx, e, generation))
             return NULL;
         if (secondary)
         {
             damage.amount = .5f;
             bh_round_float(&radius, (double)magnitude * .5);
-            if (!bh_entities_query(c->pool, 0, 0, p, radius, &damage))
-                c->error = BH_EXPLOSION_QUERY;
-            if (!live(c, e, generation))
+            if (!bh_entities_query(ctx->pool, 0, 0, p, radius, &damage))
+                ctx->error = BH_EXPLOSION_QUERY;
+            if (!live(ctx, e, generation))
                 return NULL;
         }
     }
     return e;
 }
-BHEntity *__cdecl bh_script_explosion_create(BHScriptExplosionContext *c, const BHVec3 *p, float duration,
+BHEntity *__cdecl bh_script_explosion_create(BHScriptExplosionContext *ctx, const BHVec3 *p, float duration,
                                              float magnitude, float probability, unsigned long target)
 {
-    return create(c, p, duration, magnitude, probability, c ? c->sound_resource : 0, target, 0);
+    return create(ctx, p, duration, magnitude, probability, ctx ? ctx->sound_resource : 0, target, 0);
 }
-BHEntity *__cdecl bh_script_explosion_secondary(BHScriptExplosionContext *c, const BHVec3 *p, float duration,
+BHEntity *__cdecl bh_script_explosion_secondary(BHScriptExplosionContext *ctx, const BHVec3 *p, float duration,
                                                 float magnitude, float probability, unsigned long sound,
                                                 unsigned long target)
 {
-    return create(c, p, duration, magnitude, probability, sound, target, 1);
+    return create(ctx, p, duration, magnitude, probability, sound, target, 1);
 }
-void __cdecl bh_script_explosion_tick(BHEntity *e)
+void __cdecl bh_script_explosion_tick(BHEntity *entity)
 {
-    BHScriptExplosionContext *c = context(e);
-    BHScriptExplosionState s;
+    BHScriptExplosionContext *ctx = context(entity);
+    BHScriptExplosionState state;
     BHVec3 v, p;
-    unsigned long generation = e->generation, i;
+    unsigned long generation = entity->generation, i;
     double age, threshold, old;
     float distance, duration, magnitude, probability;
     int r;
     if (!bh_math_environment_supported())
     {
-        c->error = BH_EXPLOSION_ARGUMENT;
+        ctx->error = BH_EXPLOSION_ARGUMENT;
         return;
     }
-    bh_script_explosion_read(e, &s);
-    age = (double)s.age - (-1.0 / 30.0);
-    bh_round_float(&s.age, age);
-    store(e, 0xe8, &s.age, 4);
-    if (!_isnan(age) && !_isnan(s.duration) && age > s.duration)
+    bh_script_explosion_read(entity, &state);
+    age = (double)state.age - (-1.0 / 30.0);
+    bh_round_float(&state.age, age);
+    store(entity, 0xe8, &state.age, 4);
+    if (!_isnan(age) && !_isnan(state.duration) && age > state.duration)
     {
-        bh_entity_release(c->pool, e);
+        bh_entity_release(ctx->pool, entity);
         return;
     }
     r = rand();
-    threshold = ((double)s.magnitude * s.probability) * 100.0;
+    threshold = ((double)state.magnitude * state.probability) * 100.0;
     if (!_isnan(threshold) && threshold > r)
     {
         r = rand();
-        bh_round_float(&distance, ((double)r * s.radius) * (1.0 / 32768.0));
+        bh_round_float(&distance, ((double)r * state.radius) * (1.0 / 32768.0));
         v.x = (float)(rand() - 16384);
         v.y = (float)(rand() - 16384);
         v.z = (float)(rand() - 16384);
         bh_vec3_normalize(&v);
-        c->debris->origin_tag = s.origin_tag;
+        ctx->debris->origin_tag = state.origin_tag;
         bh_round_float(&v.x, (double)distance * v.x);
         bh_round_float(&v.y, (double)distance * v.y);
         bh_round_float(&v.z, (double)distance * v.z);
-        bh_round_float(&p.x, (double)e->position.x + v.x);
-        bh_round_float(&p.y, (double)e->position.y + v.y);
-        bh_round_float(&p.z, (double)e->position.z + v.z);
-        bh_round_float(&duration, (double)s.duration - s.age);
-        bh_round_float(&magnitude, (double)s.magnitude * 1.5);
-        bh_round_float(&probability, (double)s.probability * .25);
-        bh_script_explosion_secondary(c, &p, duration, magnitude, probability, s.sound_resource, s.target);
-        if (!live(c, e, generation))
+        bh_round_float(&p.x, (double)entity->position.x + v.x);
+        bh_round_float(&p.y, (double)entity->position.y + v.y);
+        bh_round_float(&p.z, (double)entity->position.z + v.z);
+        bh_round_float(&duration, (double)state.duration - state.age);
+        bh_round_float(&magnitude, (double)state.magnitude * 1.5);
+        bh_round_float(&probability, (double)state.probability * .25);
+        bh_script_explosion_secondary(ctx, &p, duration, magnitude, probability, state.sound_resource, state.target);
+        if (!live(ctx, entity, generation))
             return;
-        bh_script_explosion_read(e, &s);
+        bh_script_explosion_read(entity, &state);
     }
-    old = s.magnitude;
-    bh_round_float(&s.magnitude, old * .95);
-    bh_round_float(&s.radius, (double)s.radius - old * (-1.0 / 30.0));
-    store(e, 0x198, &s.magnitude, 4);
-    store(e, 0x194, &s.radius, 4);
+    old = state.magnitude;
+    bh_round_float(&state.magnitude, old * .95);
+    bh_round_float(&state.radius, (double)state.radius - old * (-1.0 / 30.0));
+    store(entity, 0x198, &state.magnitude, 4);
+    store(entity, 0x194, &state.radius, 4);
     for (i = 0; i < 8; ++i)
     {
-        bh_round_float(s.angle + i, (double)s.spin[i] + s.angle[i]);
-        store(e, 0x154 + i * 4, s.angle + i, 4);
+        bh_round_float(state.angle + i, (double)state.spin[i] + state.angle[i]);
+        store(entity, 0x154 + i * 4, state.angle + i, 4);
     }
 }
-void __cdecl bh_script_explosion_refresh(BHEntity *e, void *packet)
+void __cdecl bh_script_explosion_refresh(BHEntity *entity, void *packet)
 {
-    BHScriptExplosionContext *c = context(e);
-    BHScriptExplosionState s;
+    BHScriptExplosionContext *ctx = context(entity);
+    BHScriptExplosionState state;
     BHVec3 p;
     float size, alpha;
     unsigned long i;
     (void)packet;
     if (!bh_math_environment_supported())
     {
-        c->error = BH_EXPLOSION_ARGUMENT;
+        ctx->error = BH_EXPLOSION_ARGUMENT;
         return;
     }
-    bh_script_explosion_read(e, &s);
-    bh_round_float(&alpha, 1.0 - (double)s.age / s.duration);
-    bh_round_float(&size, (double)s.radius * .75 - ((double)s.radius * s.radius) * (-.25));
+    bh_script_explosion_read(entity, &state);
+    bh_round_float(&alpha, 1.0 - (double)state.age / state.duration);
+    bh_round_float(&size, (double)state.radius * .75 - ((double)state.radius * state.radius) * (-.25));
     for (i = 0; i < 8; ++i)
     {
-        bh_round_float(&p.x, (double)s.direction[i].x * s.radius + e->position.x);
-        bh_round_float(&p.y, (double)s.direction[i].y * s.radius + e->position.y);
-        bh_round_float(&p.z, (double)s.direction[i].z * s.radius + e->position.z);
-        if (bh_draw_billboard(c->queue, 3, c->image, &p, size, size, s.angle[i], 0, alpha) < 0)
-            c->error = BH_EXPLOSION_QUEUE;
+        bh_round_float(&p.x, (double)state.direction[i].x * state.radius + entity->position.x);
+        bh_round_float(&p.y, (double)state.direction[i].y * state.radius + entity->position.y);
+        bh_round_float(&p.z, (double)state.direction[i].z * state.radius + entity->position.z);
+        if (bh_draw_billboard(ctx->queue, 3, ctx->image, &p, size, size, state.angle[i], 0, alpha) < 0)
+            ctx->error = BH_EXPLOSION_QUEUE;
     }
 }

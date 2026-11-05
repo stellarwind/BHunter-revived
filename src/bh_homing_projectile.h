@@ -29,7 +29,7 @@ typedef struct BHHomingProjectileContext
 } BHHomingProjectileContext;
 /* Typed live receiver lookup; the optional index stores only array positions. */
 static __inline const BHHomingWorldResponse *bh_homing_world_response(const BHHomingProjectileContext *c,
-                                                                     const BHWorldGeometry *world)
+                                                                      const BHWorldGeometry *world)
 {
     unsigned long i;
     long found = c->response_index ? bh_binding_find(c->response_index, world, NULL) : -1;

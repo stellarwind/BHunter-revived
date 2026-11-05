@@ -8,160 +8,162 @@
 #include <string.h>
 typedef char debris_layout
     [sizeof(void *) == 4 && offsetof(BHEntity, payload) == 0xe4 && offsetof(BHEntity, origin) == 0x48 ? 1 : -1];
-static BHScriptDebrisContext *context(BHEntity *e)
+static BHScriptDebrisContext *context(BHEntity *entity)
 {
-    BHScriptDebrisContext *c;
-    memcpy(&c, e->payload + 472, 4);
-    return c;
+    BHScriptDebrisContext *ctx;
+    memcpy(&ctx, entity->payload + 472, 4);
+    return ctx;
 }
-static void get(const BHEntity *e, unsigned long a, void *p)
+static void get(const BHEntity *entity, unsigned long a, void *p)
 {
-    memcpy(p, (const unsigned char *)e + a, 4);
+    memcpy(p, (const unsigned char *)entity + a, 4);
 }
-static void put(BHEntity *e, unsigned long a, const void *p)
+static void put(BHEntity *entity, unsigned long a, const void *p)
 {
-    memcpy((unsigned char *)e + a, p, 4);
+    memcpy((unsigned char *)entity + a, p, 4);
 }
-int __cdecl bh_script_debris_read(const BHEntity *e, BHScriptDebrisState *s)
+int __cdecl bh_script_debris_read(const BHEntity *entity, BHScriptDebrisState *state)
 {
-    if (!e || !s)
+    if (!entity || !state)
         return 0;
-    get(e, 0xe8, &s->lifetime);
-    get(e, 0x194, &s->angle);
-    get(e, 0x198, &s->spin);
-    get(e, 0x1a0, &s->width);
-    get(e, 0x1a4, &s->height);
-    get(e, 0x1a8, &s->frame);
-    get(e, 0x1b0, &s->origin_tag);
+    get(entity, 0xe8, &state->lifetime);
+    get(entity, 0x194, &state->angle);
+    get(entity, 0x198, &state->spin);
+    get(entity, 0x1a0, &state->width);
+    get(entity, 0x1a4, &state->height);
+    get(entity, 0x1a8, &state->frame);
+    get(entity, 0x1b0, &state->origin_tag);
     return 1;
 }
-int __cdecl bh_script_debris_write(BHEntity *e, const BHScriptDebrisState *s)
+int __cdecl bh_script_debris_write(BHEntity *entity, const BHScriptDebrisState *state)
 {
-    if (!e || !s)
+    if (!entity || !state)
         return 0;
-    put(e, 0xe8, &s->lifetime);
-    put(e, 0x194, &s->angle);
-    put(e, 0x198, &s->spin);
-    put(e, 0x1a0, &s->width);
-    put(e, 0x1a4, &s->height);
-    put(e, 0x1a8, &s->frame);
-    put(e, 0x1b0, &s->origin_tag);
+    put(entity, 0xe8, &state->lifetime);
+    put(entity, 0x194, &state->angle);
+    put(entity, 0x198, &state->spin);
+    put(entity, 0x1a0, &state->width);
+    put(entity, 0x1a4, &state->height);
+    put(entity, 0x1a8, &state->frame);
+    put(entity, 0x1b0, &state->origin_tag);
     return 1;
 }
-unsigned long __cdecl bh_script_debris_create(BHScriptDebrisContext *c, long count, const BHVec3 *p, float lifetime,
+unsigned long __cdecl bh_script_debris_create(BHScriptDebrisContext *ctx, long count, const BHVec3 *p, float lifetime,
                                               float speed, float size)
 {
-    BHEntity *e;
-    BHScriptDebrisState s;
+    BHEntity *entity;
+    BHScriptDebrisState state;
     unsigned long created = 0;
     float length;
     double factor;
     int r;
-    if (!c || !c->pool || !c->queue || !c->queue->commands || count < 0 || count > 65535 ||
+    if (!ctx || !ctx->pool || !ctx->queue || !ctx->queue->commands || count < 0 || count > 65535 ||
         !bh_math_environment_supported())
     {
-        if (c)
-            c->error = BH_DEBRIS_ARGUMENT;
+        if (ctx)
+            ctx->error = BH_DEBRIS_ARGUMENT;
         return 0;
     }
     if (!count)
     {
-        c->origin_tag = 0;
-        c->error = BH_DEBRIS_OK;
+        ctx->origin_tag = 0;
+        ctx->error = BH_DEBRIS_OK;
         return 0;
     }
     if (!p)
     {
-        c->error = BH_DEBRIS_ARGUMENT;
+        ctx->error = BH_DEBRIS_ARGUMENT;
         return 0;
     }
     while (count--)
     {
-        e = bh_entity_acquire(c->pool);
-        if (!e)
+        entity = bh_entity_acquire(ctx->pool);
+        if (!entity)
         {
-            c->error = BH_DEBRIS_POOL;
+            ctx->error = BH_DEBRIS_POOL;
             return created;
         }
-        e->position = *p;
-        s.lifetime = lifetime;
-        s.origin_tag = c->origin_tag;
-        s.frame = (unsigned long)rand() & 4;
+        entity->position = *p;
+        state.lifetime = lifetime;
+        state.origin_tag = ctx->origin_tag;
+        state.frame = (unsigned long)rand() & 4;
         r = rand();
-        e->origin.x = (float)(r - 16384);
+        entity->origin.x = (float)(r - 16384);
         r = rand();
-        e->origin.y = (float)(r - 16384);
+        entity->origin.y = (float)(r - 16384);
         r = rand();
-        e->origin.z = (float)(r - 16384);
-        bh_round_float(&length, sqrt(((double)e->origin.x * e->origin.x + (double)e->origin.y * e->origin.y) +
-                                     (double)e->origin.z * e->origin.z));
+        entity->origin.z = (float)(r - 16384);
+        bh_round_float(
+            &length, sqrt(((double)entity->origin.x * entity->origin.x + (double)entity->origin.y * entity->origin.y) +
+                          (double)entity->origin.z * entity->origin.z));
         r = rand();
         factor = (((.9 - (double)r * (-.000006103515625)) * speed) * (1.0 / 30.0)) / length;
-        bh_round_float(&e->origin.x, factor * e->origin.x);
-        bh_round_float(&e->origin.y, factor * e->origin.y);
-        bh_round_float(&e->origin.z, factor * e->origin.z);
+        bh_round_float(&entity->origin.x, factor * entity->origin.x);
+        bh_round_float(&entity->origin.y, factor * entity->origin.y);
+        bh_round_float(&entity->origin.z, factor * entity->origin.z);
         r = rand();
-        bh_round_float(&s.width, ((double)r * size) * (1.0 / 16384.0));
+        bh_round_float(&state.width, ((double)r * size) * (1.0 / 16384.0));
         r = rand();
-        bh_round_float(&s.height, ((double)r * size) * (1.0 / 16384.0));
+        bh_round_float(&state.height, ((double)r * size) * (1.0 / 16384.0));
         r = rand();
-        bh_round_float(&s.angle, (double)r * .0001953125);
+        bh_round_float(&state.angle, (double)r * .0001953125);
         r = rand();
-        bh_round_float(&s.spin, ((double)r - 16384.0) * (1.0 / 32768.0));
-        bh_script_debris_write(e, &s);
-        memcpy(e->payload + 472, &c, 4);
-        e->step = bh_script_debris_tick;
-        e->refresh = bh_script_debris_refresh;
+        bh_round_float(&state.spin, ((double)r - 16384.0) * (1.0 / 32768.0));
+        bh_script_debris_write(entity, &state);
+        memcpy(entity->payload + 472, &ctx, 4);
+        entity->step = bh_script_debris_tick;
+        entity->refresh = bh_script_debris_refresh;
         ++created;
     }
-    c->origin_tag = 0;
-    c->error = BH_DEBRIS_OK;
+    ctx->origin_tag = 0;
+    ctx->error = BH_DEBRIS_OK;
     return created;
 }
-void __cdecl bh_script_debris_tick(BHEntity *e)
+void __cdecl bh_script_debris_tick(BHEntity *entity)
 {
-    BHScriptDebrisContext *c = context(e);
-    BHScriptDebrisState s;
-    BHVec3 old = e->origin;
+    BHScriptDebrisContext *ctx = context(entity);
+    BHScriptDebrisState state;
+    BHVec3 old = entity->origin;
     double life, y, factor;
     float ry;
     if (!bh_math_environment_supported())
     {
-        c->error = BH_DEBRIS_ARGUMENT;
+        ctx->error = BH_DEBRIS_ARGUMENT;
         return;
     }
-    bh_script_debris_read(e, &s);
-    life = (double)s.lifetime - (1.0 / 30.0);
-    bh_round_float(&s.lifetime, life);
-    put(e, 0xe8, &s.lifetime);
+    bh_script_debris_read(entity, &state);
+    life = (double)state.lifetime - (1.0 / 30.0);
+    bh_round_float(&state.lifetime, life);
+    put(entity, 0xe8, &state.lifetime);
     if (_isnan(life) || life < 0)
     {
-        bh_entity_release(c->pool, e);
+        bh_entity_release(ctx->pool, entity);
         return;
     }
     y = (double)old.y - (-.010911111111111113);
     bh_round_float(&ry, y);
     factor = 1.0 - sqrt(((double)old.x * old.x + y * ry) + (double)old.z * old.z) * .0025;
-    bh_round_float(&e->position.x, (double)old.x + e->position.x);
-    bh_round_float(&e->position.y, (double)old.y + e->position.y);
-    bh_round_float(&e->position.z, (double)old.z + e->position.z);
-    e->origin.y = ry;
+    bh_round_float(&entity->position.x, (double)old.x + entity->position.x);
+    bh_round_float(&entity->position.y, (double)old.y + entity->position.y);
+    bh_round_float(&entity->position.z, (double)old.z + entity->position.z);
+    entity->origin.y = ry;
     if (_isnan(factor) || factor < .5)
         factor = .5;
-    bh_round_float(&e->origin.x, factor * old.x);
-    bh_round_float(&e->origin.y, factor * y);
-    bh_round_float(&e->origin.z, factor * old.z);
-    bh_round_float(&s.angle, (double)s.spin + s.angle);
-    put(e, 0x194, &s.angle);
+    bh_round_float(&entity->origin.x, factor * old.x);
+    bh_round_float(&entity->origin.y, factor * y);
+    bh_round_float(&entity->origin.z, factor * old.z);
+    bh_round_float(&state.angle, (double)state.spin + state.angle);
+    put(entity, 0x194, &state.angle);
 }
-void __cdecl bh_script_debris_refresh(BHEntity *e, void *packet)
+void __cdecl bh_script_debris_refresh(BHEntity *entity, void *packet)
 {
-    BHScriptDebrisContext *c = context(e);
-    BHScriptDebrisState s;
+    BHScriptDebrisContext *ctx = context(entity);
+    BHScriptDebrisState state;
     int r;
     (void)packet;
-    bh_script_debris_read(e, &s);
-    r = bh_draw_billboard(c->queue, 0, c->image, &e->position, s.width, s.height, s.angle, s.frame, 1);
+    bh_script_debris_read(entity, &state);
+    r = bh_draw_billboard(ctx->queue, 0, ctx->image, &entity->position, state.width, state.height, state.angle,
+                          state.frame, 1);
     if (r < 0)
-        c->error = BH_DEBRIS_QUEUE;
+        ctx->error = BH_DEBRIS_QUEUE;
 }

@@ -53,22 +53,22 @@ static __inline float stored(double x)
     return read.value;
 }
 /* Each lamp keeps its identity when the optional damage sprite appears. */
-static void glow_sprite(BHActorVehicleDrawContext *c, BHEntity *e, unsigned long part, unsigned long resource,
+static void glow_sprite(BHActorVehicleDrawContext *ctx, BHEntity *entity, unsigned long part, unsigned long resource,
                         const BHVec3 *point, float alpha)
 {
 #ifdef BH_SDL_BACKEND
-    unsigned long index = c->queue->count;
-    if (bh_draw_billboard(c->queue, 3, resource, point, 2, 2, 0, 0, alpha) > 0)
-        bh_interpolation_part(index, (unsigned long)e, e->generation, part);
+    unsigned long index = ctx->queue->count;
+    if (bh_draw_billboard(ctx->queue, 3, resource, point, 2, 2, 0, 0, alpha) > 0)
+        bh_interpolation_part(index, (unsigned long)entity, entity->generation, part);
 #else
-    (void)e;
+    (void)entity;
     (void)part;
-    bh_draw_billboard(c->queue, 3, resource, point, 2, 2, 0, 0, alpha);
+    bh_draw_billboard(ctx->queue, 3, resource, point, 2, 2, 0, 0, alpha);
 #endif
 }
-void __cdecl bh_actor_vehicle_pose_core(BHActorVehicleDrawContext *c, BHEntity *e, unsigned short tick)
+void __cdecl bh_actor_vehicle_pose_core(BHActorVehicleDrawContext *ctx, BHEntity *entity, unsigned short tick)
 {
-    BHActorVehiclePoseImage *a = (BHActorVehiclePoseImage *)e;
+    BHActorVehiclePoseImage *a = (BHActorVehiclePoseImage *)entity;
     BHVec3 before, p, after, angles, velocity, local, glow;
     BHMat34 matrix;
     short se;
@@ -108,7 +108,7 @@ void __cdecl bh_actor_vehicle_pose_core(BHActorVehicleDrawContext *c, BHEntity *
     angles.y = 0;
     angles.z = natural(bank * 3.141592653589793);
 
-    bh_draw_submit_resource(c->queue, 0, a->resource, &p, &angles, 1);
+    bh_draw_submit_resource(ctx->queue, 0, a->resource, &p, &angles, 1);
     fade = a->fade;
     if (fade < 1)
     {
@@ -116,9 +116,9 @@ void __cdecl bh_actor_vehicle_pose_core(BHActorVehicleDrawContext *c, BHEntity *
         alpha = natural(1.0 - fade);
         damage_frame = (unsigned long)rand() & 7;
         angle = natural((double)rand() * (1.0 / 4096.0));
-        bh_draw_billboard(c->queue, 3, c->damage_resource, &p, size, size, angle, damage_frame, alpha);
+        bh_draw_billboard(ctx->queue, 3, ctx->damage_resource, &p, size, size, angle, damage_frame, alpha);
     }
-    if (a->resource == c->glowing_model)
+    if (a->resource == ctx->glowing_model)
     {
         matrix.m[0][0] = 1;
         matrix.m[0][1] = 0;
@@ -136,18 +136,18 @@ void __cdecl bh_actor_vehicle_pose_core(BHActorVehicleDrawContext *c, BHEntity *
         bh_mat34_rotate_y(angles.x, &matrix);
         bh_mat34_rotate_x(angles.y, &matrix);
         bh_mat34_rotate_z(angles.z, &matrix);
-        clock = (double)c->animation_clock * .03125;
+        clock = (double)ctx->animation_clock * .03125;
 #define POSE_GLOW(part, gx, rate, resource)                                                                            \
     local.x = (gx);                                                                                                    \
     local.y = -.95f;                                                                                                   \
     local.z = -.65f;                                                                                                   \
     bh_mat34_transform_point(&matrix, &local, &glow);                                                                  \
     alpha = natural((sin(clock * (rate)) - (-1.0)) * .5);                                                              \
-    glow_sprite(c, e, (part), (resource), &glow, alpha)
-        POSE_GLOW(0, .6f, 25.5, c->glow_first);
-        POSE_GLOW(1, .2f, 18.5, c->glow_first);
-        POSE_GLOW(2, -.2f, 28.5, c->glow_second);
-        POSE_GLOW(3, -.6f, 23.5, c->glow_second);
+    glow_sprite(ctx, entity, (part), (resource), &glow, alpha)
+        POSE_GLOW(0, .6f, 25.5, ctx->glow_first);
+        POSE_GLOW(1, .2f, 18.5, ctx->glow_first);
+        POSE_GLOW(2, -.2f, 28.5, ctx->glow_second);
+        POSE_GLOW(3, -.6f, 23.5, ctx->glow_second);
 #undef POSE_GLOW
     }
     a->sound_frames = 2;
@@ -155,25 +155,25 @@ void __cdecl bh_actor_vehicle_pose_core(BHActorVehicleDrawContext *c, BHEntity *
     velocity.y = natural((double)a->fade * ((double)after.y - p.y) * 30);
     velocity.z = natural(((double)after.z - p.z) * a->fade * 30);
     if (a->sound == BH_SOUND_INVALID)
-        a->sound = bh_sound_request(c->sound, a->sound_resource, 1, 1, &p, &velocity);
+        a->sound = bh_sound_request(ctx->sound, a->sound_resource, 1, 1, &p, &velocity);
     else
-        bh_sound_update(c->sound, a->sound, 1, 1, &p, &velocity);
+        bh_sound_update(ctx->sound, a->sound, 1, 1, &p, &velocity);
 }
 
-int __cdecl bh_actor_vehicle_draw(BHActorVehicleDrawContext *c, BHEntity *e)
+int __cdecl bh_actor_vehicle_draw(BHActorVehicleDrawContext *ctx, BHEntity *entity)
 {
-    if (!c || !c->queue || !c->sound || !e)
+    if (!ctx || !ctx->queue || !ctx->sound || !entity)
     {
-        if (c)
-            c->error = BH_ACTOR_ROUTE_ARGUMENT;
+        if (ctx)
+            ctx->error = BH_ACTOR_ROUTE_ARGUMENT;
         return 0;
     }
-    if (!bh_math_environment_supported() || !((BHActorVehiclePoseImage *)e)->duration_ticks)
+    if (!bh_math_environment_supported() || !((BHActorVehiclePoseImage *)entity)->duration_ticks)
     {
-        c->error = BH_ACTOR_ROUTE_NUMERICAL;
+        ctx->error = BH_ACTOR_ROUTE_NUMERICAL;
         return 0;
     }
-    bh_actor_vehicle_pose_core(c, e, c->clock ? bh_actor_route_now(c->clock) : c->tick);
-    c->error = BH_ACTOR_ROUTE_OK;
+    bh_actor_vehicle_pose_core(ctx, entity, ctx->clock ? bh_actor_route_now(ctx->clock) : ctx->tick);
+    ctx->error = BH_ACTOR_ROUTE_OK;
     return 1;
 }

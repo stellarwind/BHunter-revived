@@ -11,11 +11,12 @@ const long bh_actor_basis_definition_a[25] = {1, 0, 4, 1, 6,  7, 12, 4,  3, 4, 9
                                               2, 5, 2, 8, 11, 2, 2,  11, 2, 5, 8, -1};
 const long bh_actor_basis_definition_b[22] = {1, 0, 4, 2, 5, 8, 11, 1, 13, 2, 1, 10, 2, 4, 7, 2, 6, 3, 2, 9, 12, -1};
 
-static int group_capacity(const BHActorBasisContext *c)
+static int group_capacity(const BHActorBasisContext *ctx)
 {
-    return c->samples && c->sample_count >= 14 && c->groups_a && c->groups_b && c->indices_a && c->indices_b &&
-           c->scales_a && c->scales_b && c->sample_count <= c->sample_capacity && c->a_count <= c->a_capacity &&
-           c->b_count <= c->b_capacity && c->a_capacity - c->a_count >= 7 && c->b_capacity - c->b_count >= 7;
+    return ctx->samples && ctx->sample_count >= 14 && ctx->groups_a && ctx->groups_b && ctx->indices_a &&
+           ctx->indices_b && ctx->scales_a && ctx->scales_b && ctx->sample_count <= ctx->sample_capacity &&
+           ctx->a_count <= ctx->a_capacity && ctx->b_count <= ctx->b_capacity && ctx->a_capacity - ctx->a_count >= 7 &&
+           ctx->b_capacity - ctx->b_count >= 7;
 }
 static void add(BHVec3 *sum, const BHVec3 *value)
 {
@@ -33,8 +34,8 @@ static void scaled(const BHVec3 *v, double scale, BHVec3 *out)
     bh_round_float(&out->y, (double)v->y * scale);
     bh_round_float(&out->z, (double)v->z * scale);
 }
-static void groups(BHActorBasisContext *c, const long *definition, BHActorBasisGroup *out, BHActorBasisIndices *indices,
-                   BHActorBasisScale *scales, unsigned long *count)
+static void groups(BHActorBasisContext *ctx, const long *definition, BHActorBasisGroup *out,
+                   BHActorBasisIndices *indices, BHActorBasisScale *scales, unsigned long *count)
 {
     unsigned long cursor = 0, i;
     long n, index;
@@ -52,8 +53,8 @@ static void groups(BHActorBasisContext *c, const long *definition, BHActorBasisG
             index = definition[cursor++];
             indices[*count].sample[i] = index;
             ++indices[*count].count;
-            add(&group->direction, &c->samples[index].direction);
-            add(&group->torque, &c->samples[index].torque);
+            add(&group->direction, &ctx->samples[index].direction);
+            add(&group->torque, &ctx->samples[index].torque);
         }
         a = reciprocal(&group->direction);
         b = reciprocal(&group->torque);

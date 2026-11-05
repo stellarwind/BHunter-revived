@@ -31,7 +31,7 @@ static int vector_ok(const BHVec3 *v)
 {
     return !v || (_finite(v->x) && _finite(v->y) && _finite(v->z));
 }
-int __cdecl bh_sound_queue_init(BHSoundQueue *q, BHAudioDevice * device, BHAudioBuffer * primary,
+int __cdecl bh_sound_queue_init(BHSoundQueue *q, BHAudioDevice *device, BHAudioBuffer *primary,
                                 const BHSceneAllocator *allocator)
 {
     BHSoundQueue next;
@@ -162,7 +162,7 @@ int __cdecl bh_sound_queue_dispose(BHSoundQueue *q)
 unsigned long __cdecl bh_sound_register_wave(BHSoundQueue *q, const BHWave *wave, unsigned short streaming,
                                              unsigned short limit, float base_volume)
 {
-    BHAudioBuffer * buffer = NULL;
+    BHAudioBuffer *buffer = NULL;
     BHSoundResource *resource;
     DWORD frequency;
     unsigned long i;
@@ -174,9 +174,13 @@ unsigned long __cdecl bh_sound_register_wave(BHSoundQueue *q, const BHWave *wave
         fail(q, BH_SOUND_ARGUMENT);
         return BH_SOUND_INVALID;
     }
-    q->last_hresult = bh_audio_create(q->device, wave->samples, wave->sample_bytes,
-        wave->channels, wave->bits, wave->sample_rate, &buffer);
-    if (q->last_hresult) { fail(q, BH_SOUND_BACKEND); return BH_SOUND_INVALID; }
+    q->last_hresult = bh_audio_create(q->device, wave->samples, wave->sample_bytes, wave->channels, wave->bits,
+                                      wave->sample_rate, &buffer);
+    if (q->last_hresult)
+    {
+        fail(q, BH_SOUND_BACKEND);
+        return BH_SOUND_INVALID;
+    }
     resource = bh_sound_resource_allocate(q);
     if (!resource)
     {
@@ -299,8 +303,7 @@ unsigned long __cdecl bh_sound_request(BHSoundQueue *q, unsigned long id, float 
                     fail(q, BH_SOUND_TOPOLOGY);
                     return BH_SOUND_INVALID;
                 }
-                q->last_hresult =
-                    bh_audio_duplicate(q->device, r->buffers[0], r->buffers + r->buffer_count);
+                q->last_hresult = bh_audio_duplicate(q->device, r->buffers[0], r->buffers + r->buffer_count);
                 if (q->last_hresult == 0)
                 {
                     ++r->buffer_count;

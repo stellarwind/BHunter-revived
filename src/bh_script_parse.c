@@ -24,33 +24,33 @@ static BHScriptArgs definitions(BHScriptDefinition *d)
     a.names = d->names;
     return a;
 }
-static void publish(BHScriptParse *c, BHEntity *e)
+static void publish(BHScriptParse *c, BHEntity *entity)
 {
     BHScriptParseSlot *s = c->slots + c->depth;
     if (!s->node)
-        c->definition->script = e;
+        c->definition->script = entity;
     else
-        memcpy((char *)s->node + (s->fired ? 0xe8 : 0xec), &e, 4);
-    s->node = e;
+        memcpy((char *)s->node + (s->fired ? 0xe8 : 0xec), &entity, 4);
+    s->node = entity;
     s->fired = 0;
     ++c->created;
 }
 static int append(BHScriptParse *c, long opcode, long args[5], long selectors[5])
 {
-    BHEntity *e;
+    BHEntity *entity;
     if (!c || !c->vm || !c->definition || c->depth >= 32)
     {
         if (c)
             c->error = 1;
         return 0;
     }
-    e = bh_script_vm_create(c->vm, 0, opcode, args, selectors);
-    if (!e)
+    entity = bh_script_vm_create(c->vm, 0, opcode, args, selectors);
+    if (!entity)
     {
         c->error = 2;
         return 0;
     }
-    publish(c, e);
+    publish(c, entity);
     return 1;
 }
 int __cdecl bh_script_parse_command(BHScriptParse *c, char *line, long opcode)
@@ -129,7 +129,7 @@ int __cdecl bh_script_parse_sound(BHScriptParse *c, char *line)
 static int nested(BHScriptParse *c, char *line, int kind)
 {
     BHScriptArgs a = definitions(c->definition);
-    BHEntity *e;
+    BHEntity *entity;
     char *p = arguments(line);
     BHScriptTimerState timer;
     BHScriptWaitState wait;
@@ -154,23 +154,23 @@ static int nested(BHScriptParse *c, char *line, int kind)
             return 0;
         }
     }
-    e = bh_entity_acquire(c->vm->lifetime->timers.pool);
-    if (!e)
+    entity = bh_entity_acquire(c->vm->lifetime->timers.pool);
+    if (!entity)
     {
         c->error = 2;
         return 0;
     }
-    e->position = c->vm->lifetime->timers.pool->origin;
+    entity->position = c->vm->lifetime->timers.pool->origin;
     if (kind == 2)
     {
-        memcpy(&wait, e->payload + 4, 48);
+        memcpy(&wait, entity->payload + 4, 48);
         wait.fired = wait.next = 0;
         wait.script_loaded = c->vm->script_loading;
         wait.remaining = count;
         wait.expected = expected;
         wait.variable_remaining = vc;
         wait.variable_expected = ve;
-        if (!bh_script_wait_bind(&c->vm->lifetime->timers, e, &wait))
+        if (!bh_script_wait_bind(&c->vm->lifetime->timers, entity, &wait))
         {
             c->error = 2;
             return 0;
@@ -178,7 +178,7 @@ static int nested(BHScriptParse *c, char *line, int kind)
     }
     else
     {
-        memcpy(&timer, e->payload + 4, 48);
+        memcpy(&timer, entity->payload + 4, 48);
         timer.fired = timer.next = 0;
         timer.script_loaded = c->vm->script_loading;
         timer.remaining = count;
@@ -190,15 +190,15 @@ static int nested(BHScriptParse *c, char *line, int kind)
         timer.variable_low = vl;
         timer.variable_high = vh;
         timer.countdown = 0;
-        if (!bh_script_timer_bind(&c->vm->lifetime->timers, e, &timer, kind == 1))
+        if (!bh_script_timer_bind(&c->vm->lifetime->timers, entity, &timer, kind == 1))
         {
             c->error = 2;
             return 0;
         }
     }
-    publish(c, e);
+    publish(c, entity);
     ++c->depth;
-    c->slots[c->depth].node = e;
+    c->slots[c->depth].node = entity;
     c->slots[c->depth].fired = 1;
     return 1;
 }

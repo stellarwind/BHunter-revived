@@ -40,24 +40,26 @@ int __cdecl bh_physics_overlap(BHSweepQuery *q, const BHMat34 *pose, const BHMat
     bh_mat34_multiply(local, pose, &relative);
     return bh_collision_query_run(&q->collision, 0, 0, &relative, world, out);
 }
-int __cdecl bh_physics_prepare(BHPhysicsState *s, float dt, float radius, BHVec3 *movement, BHVec3 *angles,
+int __cdecl bh_physics_prepare(BHPhysicsState *physics, float dt, float radius, BHVec3 *movement, BHVec3 *angles,
                                float *broad_margin)
 {
     BHPhysicsState next;
     BHVec3 delta, rotation;
     unsigned long i;
     float margin;
-    if (!s || !movement || !angles || !broad_margin || !_finite(dt) || dt <= 0 || !_finite(radius) ||
-        !matrix_ok(&s->pose) || !vector_ok(&s->velocity) || !vector_ok(&s->angular_velocity) ||
-        !vector_ok(&s->acceleration) || !vector_ok(&s->angular_acceleration) || !bh_math_environment_supported())
+    if (!physics || !movement || !angles || !broad_margin || !_finite(dt) || dt <= 0 || !_finite(radius) ||
+        !matrix_ok(&physics->pose) || !vector_ok(&physics->velocity) || !vector_ok(&physics->angular_velocity) ||
+        !vector_ok(&physics->acceleration) || !vector_ok(&physics->angular_acceleration) ||
+        !bh_math_environment_supported())
         return 0;
-    next = *s;
+    next = *physics;
     for (i = 0; i < 3; ++i)
     {
         bh_round_float(((float *)&next.velocity) + i,
-                       (double)((float *)&s->acceleration)[i] * dt + ((float *)&s->velocity)[i]);
+                       (double)((float *)&physics->acceleration)[i] * dt + ((float *)&physics->velocity)[i]);
         bh_round_float(((float *)&next.angular_velocity) + i,
-                       (double)((float *)&s->angular_acceleration)[i] * dt + ((float *)&s->angular_velocity)[i]);
+                       (double)((float *)&physics->angular_acceleration)[i] * dt +
+                           ((float *)&physics->angular_velocity)[i]);
         bh_round_float(((float *)&delta) + i, (double)((float *)&next.velocity)[i] * dt);
         bh_round_float(((float *)&rotation) + i, (double)((float *)&next.angular_velocity)[i] * dt);
     }
@@ -66,7 +68,7 @@ int __cdecl bh_physics_prepare(BHPhysicsState *s, float dt, float radius, BHVec3
     bh_round_float(&margin, ((double)radius - (-.5)) + sqrt(reverse_dot(&delta, &delta)));
     if (!vector_ok(&delta) || !vector_ok(&rotation) || !_finite(margin))
         return 0;
-    *s = next;
+    *physics = next;
     *movement = delta;
     *angles = rotation;
     *broad_margin = margin;
@@ -204,7 +206,7 @@ int __cdecl bh_physics_contact_response(const BHSweepHit *hit, float slide_fract
     *out = next;
     return 1;
 }
-int __cdecl bh_physics_finish(BHPhysicsState *s, const BHMat34 *previous, float dt, int no_collision)
+int __cdecl bh_physics_finish(BHPhysicsState *physics, const BHMat34 *previous, float dt, int no_collision)
 {
     BHPhysicsState next;
     BHMat34 rotation;
@@ -212,21 +214,22 @@ int __cdecl bh_physics_finish(BHPhysicsState *s, const BHMat34 *previous, float 
     BHVec3 direction;
     double inverse;
     unsigned long i;
-    if (!s || !matrix_ok(&s->pose) || !matrix_ok(previous) || !vector_ok(&s->angular_velocity) ||
-        !vector_ok(&s->acceleration) || !_finite(dt) || dt <= 0 || !bh_math_environment_supported())
+    if (!physics || !matrix_ok(&physics->pose) || !matrix_ok(previous) || !vector_ok(&physics->angular_velocity) ||
+        !vector_ok(&physics->acceleration) || !_finite(dt) || dt <= 0 || !bh_math_environment_supported())
         return 0;
-    next = *s;
+    next = *physics;
     if (no_collision)
-        next.last_clear = s->pose;
+        next.last_clear = physics->pose;
     inverse = 1.0 / dt;
     for (i = 0; i < 3; ++i)
     {
-        bh_round_float(((float *)&next.angular_velocity) + i, (double)((float *)&s->angular_velocity)[i] * .98);
-        bh_round_float(((float *)&next.velocity) + i, (((double)s->pose.m[i][3] - previous->m[i][3]) * inverse) * .995);
+        bh_round_float(((float *)&next.angular_velocity) + i, (double)((float *)&physics->angular_velocity)[i] * .98);
+        bh_round_float(((float *)&next.velocity) + i,
+                       (((double)physics->pose.m[i][3] - previous->m[i][3]) * inverse) * .995);
     }
-    bh_round_float(&next.acceleration.y, (double)s->acceleration.y - (-9.82));
-    bh_round_float(&next.euler.x, atan2((double)s->pose.m[0][2], s->pose.m[2][2]));
-    rotation = s->pose;
+    bh_round_float(&next.acceleration.y, (double)physics->acceleration.y - (-9.82));
+    bh_round_float(&next.euler.x, atan2((double)physics->pose.m[0][2], physics->pose.m[2][2]));
+    rotation = physics->pose;
     bh_mat34_rotate_world_y(-next.euler.x, &rotation);
     bh_mat34_transform_direction(&rotation, &forward, &direction);
     bh_round_float(&next.euler.y, atan2(-(double)direction.y, direction.z));
@@ -235,6 +238,6 @@ int __cdecl bh_physics_finish(BHPhysicsState *s, const BHMat34 *previous, float 
     bh_round_float(&next.euler.z, atan2((double)direction.y, direction.x));
     if (!vector_ok(&next.velocity) || !vector_ok(&next.euler))
         return 0;
-    *s = next;
+    *physics = next;
     return 1;
 }

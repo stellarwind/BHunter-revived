@@ -2,14 +2,14 @@
 #include "bh_round.h"
 #include <math.h>
 #include <string.h>
-static void get(const BHEntity *e, unsigned long a, void *p, unsigned long n)
+static void get(const BHEntity *entity, unsigned long a, void *p, unsigned long n)
 {
-    memcpy(p, (const char *)e + a, n);
+    memcpy(p, (const char *)entity + a, n);
 }
-static float scalar(const BHEntity *e, unsigned long a)
+static float scalar(const BHEntity *entity, unsigned long a)
 {
     float f;
-    get(e, a, &f, 4);
+    get(entity, a, &f, 4);
     return f;
 }
 static float rf(double x)
@@ -22,45 +22,45 @@ static unsigned long advance(unsigned long x)
 {
     return x + (((unsigned long)((long)x >> 13) * 3UL) ^ (x * 7UL));
 }
-static BHEffectPuffContext *context(BHEntity *e)
+static BHEffectPuffContext *context(BHEntity *entity)
 {
-    BHEffectPuffContext *c;
-    memcpy(&c, e->payload + 624, 4);
-    return c;
+    BHEffectPuffContext *ctx;
+    memcpy(&ctx, entity->payload + 624, 4);
+    return ctx;
 }
-int __cdecl bh_effect_puff_bind(BHEffectPuffContext *c, BHEntity *e, int ring)
+int __cdecl bh_effect_puff_bind(BHEffectPuffContext *ctx, BHEntity *entity, int ring)
 {
-    if (!c || !c->queue || !e)
+    if (!ctx || !ctx->queue || !entity)
         return 0;
-    memcpy(e->payload + 624, &c, 4);
-    e->refresh = ring ? bh_effect_puff_ring_draw : bh_effect_puff_random_draw;
+    memcpy(entity->payload + 624, &ctx, 4);
+    entity->refresh = ring ? bh_effect_puff_ring_draw : bh_effect_puff_random_draw;
     return 1;
 }
-static void draw(BHEffectPuffContext *c, unsigned long image, const BHVec3 *p, const BHVec3 *up, const BHVec3 *n,
+static void draw(BHEffectPuffContext *ctx, unsigned long image, const BHVec3 *p, const BHVec3 *up, const BHVec3 *n,
                  float w, float h, float angle, unsigned long control, float alpha)
 {
     int r;
-    ++c->attempted;
-    r = bh_draw_oriented(c->queue, 3, image, p, up, n, w, h, angle, control, alpha);
+    ++ctx->attempted;
+    r = bh_draw_oriented(ctx->queue, 3, image, p, up, n, w, h, angle, control, alpha);
     if (r > 0)
-        ++c->queued;
+        ++ctx->queued;
     else if (r < 0)
-        c->error = 1;
+        ctx->error = 1;
 }
-void __cdecl bh_effect_puff_random_draw(BHEntity *e, void *ignored)
+void __cdecl bh_effect_puff_random_draw(BHEntity *entity, void *ignored)
 {
-    BHEffectPuffContext *c = context(e);
+    BHEffectPuffContext *ctx = context(entity);
     float alpha, size, angle;
     BHVec3 v, p, up = {0, -1, 0};
     unsigned long seed, image;
     int i;
     (void)ignored;
-    if (!c || !(scalar(e, 0x198) <= 0))
+    if (!ctx || !(scalar(entity, 0x198) <= 0))
         return;
-    alpha = rf((double)scalar(e, 0xe8) / scalar(e, 0xec));
-    size = rf((1.0 - alpha) * scalar(e, 0x194));
-    get(e, 0x1a8, &seed, 4);
-    get(e, 0xf0, &image, 4);
+    alpha = rf((double)scalar(entity, 0xe8) / scalar(entity, 0xec));
+    size = rf((1.0 - alpha) * scalar(entity, 0x194));
+    get(entity, 0x1a8, &seed, 4);
+    get(entity, 0xf0, &image, 4);
     for (i = 0; i < 48; ++i)
     {
         seed = advance(seed);
@@ -71,26 +71,26 @@ void __cdecl bh_effect_puff_random_draw(BHEntity *e, void *ignored)
         v.z = (float)((long)((seed >> 16) & 32767) - 16384);
         seed = advance(seed);
         bh_vec3_normalize(&v);
-        p.x = rf((double)v.x * size + e->position.x);
-        p.y = rf((double)v.y * size + e->position.y);
-        p.z = rf((double)v.z * size + e->position.z);
+        p.x = rf((double)v.x * size + entity->position.x);
+        p.y = rf((double)v.y * size + entity->position.y);
+        p.z = rf((double)v.z * size + entity->position.z);
         angle = rf((double)((seed >> 16) & 32767) * .0001953125);
-        draw(c, image, &p, &up, &v, size, size, angle, 8, alpha);
+        draw(ctx, image, &p, &up, &v, size, size, angle, 8, alpha);
     }
 }
-void __cdecl bh_effect_puff_ring_draw(BHEntity *e, void *ignored)
+void __cdecl bh_effect_puff_ring_draw(BHEntity *entity, void *ignored)
 {
-    BHEffectPuffContext *c = context(e);
+    BHEffectPuffContext *ctx = context(entity);
     float alpha, size, angle = 0, sn, cs, w, h;
     BHVec3 p, up, n = {0, -1, 0};
     unsigned long image;
     int i;
     (void)ignored;
-    if (!c || !(scalar(e, 0x198) <= 0))
+    if (!ctx || !(scalar(entity, 0x198) <= 0))
         return;
-    alpha = rf((double)scalar(e, 0xe8) / scalar(e, 0xec));
-    size = rf((1.0 - alpha) * scalar(e, 0x194));
-    get(e, 0xf0, &image, 4);
+    alpha = rf((double)scalar(entity, 0xe8) / scalar(entity, 0xec));
+    size = rf((1.0 - alpha) * scalar(entity, 0x194));
+    get(entity, 0xf0, &image, 4);
     w = rf((double)size * .10799224746714915);
     h = rf((double)size * (1.0 / 3.0));
     for (i = 0; i < 64; ++i)
@@ -98,12 +98,12 @@ void __cdecl bh_effect_puff_ring_draw(BHEntity *e, void *ignored)
         sn = rf(sin(angle));
         cs = rf(cos(angle));
         angle = rf((double)angle + .09817477042468103);
-        p.x = rf((double)e->position.x + (double)size * cs);
-        p.y = e->position.y;
-        p.z = rf((double)size * sn + e->position.z);
+        p.x = rf((double)entity->position.x + (double)size * cs);
+        p.y = entity->position.y;
+        p.z = rf((double)size * sn + entity->position.z);
         up.x = cs;
         up.y = 0;
         up.z = sn;
-        draw(c, image, &p, &up, &n, w, h, 0, 12, alpha);
+        draw(ctx, image, &p, &up, &n, w, h, 0, 12, alpha);
     }
 }

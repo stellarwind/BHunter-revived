@@ -6,207 +6,207 @@ typedef char
     layout[sizeof(void *) == 4 && offsetof(BHEntity, origin) == 0x48 && offsetof(BHEntity, payload) == 0xe4 ? 1 : -1];
 /* Offsets below are original fields. Only the400-byte payload offset used for
    the persistent source context is private; +52 is the existing timer binding. */
-static void get(BHEntity *e, unsigned long offset, void *out, unsigned long n)
+static void get(BHEntity *entity, unsigned long offset, void *out, unsigned long n)
 {
-    memcpy(out, (unsigned char *)e + offset, n);
+    memcpy(out, (unsigned char *)entity + offset, n);
 }
-static void put(BHEntity *e, unsigned long offset, const void *value, unsigned long n)
+static void put(BHEntity *entity, unsigned long offset, const void *value, unsigned long n)
 {
-    memcpy((unsigned char *)e + offset, value, n);
+    memcpy((unsigned char *)entity + offset, value, n);
 }
-static BHScriptLifetimeContext *context(BHEntity *e)
+static BHScriptLifetimeContext *context(BHEntity *entity)
 {
-    BHScriptLifetimeContext *c;
-    memcpy(&c, e->payload + 400, 4);
-    return c;
+    BHScriptLifetimeContext *ctx;
+    memcpy(&ctx, entity->payload + 400, 4);
+    return ctx;
 }
-static long loaded(BHEntity *e)
+static long loaded(BHEntity *entity)
 {
     long v;
-    get(e, 0xf4, &v, 4);
+    get(entity, 0xf4, &v, 4);
     return v;
 }
-static BHEntity *actor(BHEntity *e)
+static BHEntity *actor(BHEntity *entity)
 {
     BHEntity *v;
-    get(e, 0xf0, &v, 4);
+    get(entity, 0xf0, &v, 4);
     return v;
 }
-static unsigned long sound(BHEntity *e)
+static unsigned long sound(BHEntity *entity)
 {
     unsigned long v;
-    get(e, 0xfc, &v, 4);
+    get(entity, 0xfc, &v, 4);
     return v;
 }
-static void release_entity(BHEntity *e)
+static void release_entity(BHEntity *entity)
 {
-    bh_entity_release(context(e)->timers.pool, e);
+    bh_entity_release(context(entity)->timers.pool, entity);
 }
-static void stop(BHEntity *e)
+static void stop(BHEntity *entity)
 {
-    bh_sound_stop(context(e)->sounds, sound(e));
+    bh_sound_stop(context(entity)->sounds, sound(entity));
 }
-static void defer(BHEntity *e)
+static void defer(BHEntity *entity)
 {
-    e->step = bh_script_timer_delete_step();
+    entity->step = bh_script_timer_delete_step();
 }
-int __cdecl bh_script_lifetime_bind(BHScriptLifetimeContext *c, BHEntity *e, const BHScriptLifetimeState *s,
+int __cdecl bh_script_lifetime_bind(BHScriptLifetimeContext *ctx, BHEntity *entity, const BHScriptLifetimeState *state,
                                     BHEntityCallback query)
 {
     BHScriptTimerContext *timer;
-    if (!c || !c->timers.pool || !c->sounds || !e || !s)
+    if (!ctx || !ctx->timers.pool || !ctx->sounds || !entity || !state)
         return 0;
-    if (!bh_entity_is_active(c->timers.pool, e))
+    if (!bh_entity_is_active(ctx->timers.pool, entity))
         return 0;
-    timer = &c->timers;
-    memcpy(e->payload + 52, &timer, 4);
-    memcpy(e->payload + 400, &c, 4);
-    put(e, 0xf0, &s->actor, 4);
-    put(e, 0xf4, &s->script_loaded, 4);
-    put(e, 0xfc, &s->sound, 4);
-    put(e, 0x104, &s->mission_resource, 4);
-    put(e, 0x128, &s->countdown, 4);
-    put(e, 0x130, &s->delta, 12);
-    put(e, 0x180, &s->mission_countdown, 4);
-    return bh_entity_set_query(c->timers.pool, e, query);
+    timer = &ctx->timers;
+    memcpy(entity->payload + 52, &timer, 4);
+    memcpy(entity->payload + 400, &ctx, 4);
+    put(entity, 0xf0, &state->actor, 4);
+    put(entity, 0xf4, &state->script_loaded, 4);
+    put(entity, 0xfc, &state->sound, 4);
+    put(entity, 0x104, &state->mission_resource, 4);
+    put(entity, 0x128, &state->countdown, 4);
+    put(entity, 0x130, &state->delta, 12);
+    put(entity, 0x180, &state->mission_countdown, 4);
+    return bh_entity_set_query(ctx->timers.pool, entity, query);
 }
-int __cdecl bh_script_lifetime_bind_context(BHScriptLifetimeContext *c, BHEntity *e)
+int __cdecl bh_script_lifetime_bind_context(BHScriptLifetimeContext *ctx, BHEntity *entity)
 {
     BHScriptTimerContext *timer;
-    if (!c || !c->timers.pool || !c->sounds || !e || !bh_entity_is_active(c->timers.pool, e))
+    if (!ctx || !ctx->timers.pool || !ctx->sounds || !entity || !bh_entity_is_active(ctx->timers.pool, entity))
         return 0;
-    timer = &c->timers;
-    memcpy(e->payload + 52, &timer, 4);
-    memcpy(e->payload + 400, &c, 4);
+    timer = &ctx->timers;
+    memcpy(entity->payload + 52, &timer, 4);
+    memcpy(entity->payload + 400, &ctx, 4);
     return 1;
 }
-int __cdecl bh_script_lifetime_read(BHEntity *e, BHScriptLifetimeState *s)
+int __cdecl bh_script_lifetime_read(BHEntity *entity, BHScriptLifetimeState *state)
 {
-    if (!e || !s)
+    if (!entity || !state)
         return 0;
-    s->actor = actor(e);
-    s->script_loaded = loaded(e);
-    s->sound = sound(e);
-    get(e, 0x104, &s->mission_resource, 4);
-    get(e, 0x128, &s->countdown, 4);
-    get(e, 0x130, &s->delta, 12);
-    get(e, 0x180, &s->mission_countdown, 4);
+    state->actor = actor(entity);
+    state->script_loaded = loaded(entity);
+    state->sound = sound(entity);
+    get(entity, 0x104, &state->mission_resource, 4);
+    get(entity, 0x128, &state->countdown, 4);
+    get(entity, 0x130, &state->delta, 12);
+    get(entity, 0x180, &state->mission_countdown, 4);
     return 1;
 }
-void __cdecl bh_script_unloaded_query(BHEntity *e, void *packet)
+void __cdecl bh_script_unloaded_query(BHEntity *entity, void *packet)
 {
     BHScriptTimerPacket *p = (BHScriptTimerPacket *)packet;
-    if (p->event == 20 && !loaded(e))
-        release_entity(e);
+    if (p->event == 20 && !loaded(entity))
+        release_entity(entity);
 }
 /* Original FCOM precedes FSTP. Test unrounded subtraction and include unordered
    (AH mask41), so NaN expires too. Ordinary <= would silently change this. */
-static int elapsed(BHEntity *e, unsigned long offset)
+static int elapsed(BHEntity *entity, unsigned long offset)
 {
     float old;
     double value;
-    get(e, offset, &old, 4);
+    get(entity, offset, &old, 4);
     value = (double)old - (1.0 / 30.0);
     bh_round_float(&old, value);
-    put(e, offset, &old, 4);
+    put(entity, offset, &old, 4);
     return !(value > 0.0);
 }
-void __cdecl bh_script_sound_expiry(BHEntity *e)
+void __cdecl bh_script_sound_expiry(BHEntity *entity)
 {
-    if (elapsed(e, 0x128))
+    if (elapsed(entity, 0x128))
     {
-        stop(e);
-        release_entity(e);
+        stop(entity);
+        release_entity(entity);
     }
 }
-void __cdecl bh_script_motion_query(BHEntity *e, void *packet)
+void __cdecl bh_script_motion_query(BHEntity *entity, void *packet)
 {
     BHScriptTimerPacket *p = (BHScriptTimerPacket *)packet;
     BHEntity *a;
     BHVec3 d;
-    if (p->event == 4 || (!loaded(e) && p->event == 20))
+    if (p->event == 4 || (!loaded(entity) && p->event == 20))
     {
-        release_entity(e);
+        release_entity(entity);
         return;
     }
-    if (p->event == 10 && p->actor == actor(e))
+    if (p->event == 10 && p->actor == actor(entity))
     {
-        a = actor(e);
-        get(e, 0x130, &d, 12);
+        a = actor(entity);
+        get(entity, 0x130, &d, 12);
         bh_round_float(&a->origin.x, (double)a->origin.x - d.x);
         bh_round_float(&a->origin.y, (double)a->origin.y - d.y);
         bh_round_float(&a->origin.z, (double)a->origin.z - d.z);
-        defer(e);
+        defer(entity);
     }
 }
-void __cdecl bh_script_sensor_query(BHEntity *e, void *packet)
+void __cdecl bh_script_sensor_query(BHEntity *entity, void *packet)
 {
     BHScriptTimerPacket *p = (BHScriptTimerPacket *)packet;
-    if (p->event == 4 || (!loaded(e) && p->event == 20))
+    if (p->event == 4 || (!loaded(entity) && p->event == 20))
     {
-        release_entity(e);
+        release_entity(entity);
         return;
     }
-    if (p->event == 10 && p->actor == actor(e))
-        defer(e);
+    if (p->event == 10 && p->actor == actor(entity))
+        defer(entity);
 }
-void __cdecl bh_script_sound_query(BHEntity *e, void *packet)
+void __cdecl bh_script_sound_query(BHEntity *entity, void *packet)
 {
     BHScriptTimerPacket *p = (BHScriptTimerPacket *)packet;
-    if (p->event == 4 || (!loaded(e) && p->event == 20))
+    if (p->event == 4 || (!loaded(entity) && p->event == 20))
     {
-        stop(e);
-        release_entity(e);
+        stop(entity);
+        release_entity(entity);
     }
 }
-void __cdecl bh_script_sound_actor_query(BHEntity *e, void *packet)
+void __cdecl bh_script_sound_actor_query(BHEntity *entity, void *packet)
 {
     BHScriptTimerPacket *p = (BHScriptTimerPacket *)packet;
     if (p->event == 4 || p->event == 20)
     {
-        stop(e);
-        release_entity(e);
+        stop(entity);
+        release_entity(entity);
         return;
     }
-    if (p->event == 9 && p->actor == actor(e))
+    if (p->event == 9 && p->actor == actor(entity))
     {
-        stop(e);
-        defer(e);
+        stop(entity);
+        defer(entity);
     }
 }
-void __cdecl bh_mission_sound_tick(BHEntity *e)
+void __cdecl bh_mission_sound_tick(BHEntity *entity)
 {
     unsigned long resource;
-    if (elapsed(e, 0x180))
+    if (elapsed(entity, 0x180))
     {
-        get(e, 0x104, &resource, 4);
-        bh_sound_request(context(e)->sounds, resource, 1, 1, NULL, NULL);
-        release_entity(e);
+        get(entity, 0x104, &resource, 4);
+        bh_sound_request(context(entity)->sounds, resource, 1, 1, NULL, NULL);
+        release_entity(entity);
     }
 }
-static BHEntity *spawn(BHScriptLifetimeContext *c, unsigned long resource)
+static BHEntity *spawn(BHScriptLifetimeContext *ctx, unsigned long resource)
 {
-    BHEntity *e;
+    BHEntity *entity;
     BHScriptTimerContext *timer;
     float countdown = 4;
-    if (!c || !c->timers.pool || !c->sounds)
+    if (!ctx || !ctx->timers.pool || !ctx->sounds)
         return NULL;
-    e = bh_entity_acquire(c->timers.pool);
-    if (!e)
+    entity = bh_entity_acquire(ctx->timers.pool);
+    if (!entity)
         return NULL;
-    timer = &c->timers;
-    memcpy(e->payload + 52, &timer, 4);
-    memcpy(e->payload + 400, &c, 4);
-    put(e, 0x180, &countdown, 4);
-    put(e, 0x104, &resource, 4);
-    e->step = bh_mission_sound_tick;
-    return e;
+    timer = &ctx->timers;
+    memcpy(entity->payload + 52, &timer, 4);
+    memcpy(entity->payload + 400, &ctx, 4);
+    put(entity, 0x180, &countdown, 4);
+    put(entity, 0x104, &resource, 4);
+    entity->step = bh_mission_sound_tick;
+    return entity;
 }
-BHEntity *__cdecl bh_mission_sound_first(BHScriptLifetimeContext *c)
+BHEntity *__cdecl bh_mission_sound_first(BHScriptLifetimeContext *ctx)
 {
-    return c ? spawn(c, c->mission_sound[0]) : NULL;
+    return ctx ? spawn(ctx, ctx->mission_sound[0]) : NULL;
 }
-BHEntity *__cdecl bh_mission_sound_second(BHScriptLifetimeContext *c)
+BHEntity *__cdecl bh_mission_sound_second(BHScriptLifetimeContext *ctx)
 {
-    return c ? spawn(c, c->mission_sound[1]) : NULL;
+    return ctx ? spawn(ctx, ctx->mission_sound[1]) : NULL;
 }

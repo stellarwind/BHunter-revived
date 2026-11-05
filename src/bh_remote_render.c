@@ -10,7 +10,7 @@ static float stored(double value)
     bh_round_float(&out, value);
     return out;
 }
-int __cdecl bh_remote_predict_pose(const BHEntity *e, unsigned short tick, BHVec3 *position, BHVec3 *angles)
+int __cdecl bh_remote_predict_pose(const BHEntity *entity, unsigned short tick, BHVec3 *position, BHVec3 *angles)
 {
     BHVec3 anchor[2], velocity[2], acceleration[2];
     unsigned short stamp, elapsed;
@@ -18,20 +18,20 @@ int __cdecl bh_remote_predict_pose(const BHEntity *e, unsigned short tick, BHVec
     unsigned long i, j;
     BHVec3 *out[2];
     double t, half_squared;
-    if (!e || !position || !angles || !bh_math_environment_supported())
+    if (!entity || !position || !angles || !bh_math_environment_supported())
         return 0;
-    memcpy(&stamp, (const char *)e + 0x17c, 2);
+    memcpy(&stamp, (const char *)entity + 0x17c, 2);
     elapsed = (unsigned short)(tick - stamp);
     dt = elapsed & 0x8000 ? (long)elapsed - 65536 : (long)elapsed;
-    memcpy(anchor, (const char *)e + 0x180, sizeof(anchor));
+    memcpy(anchor, (const char *)entity + 0x180, sizeof(anchor));
     if (dt <= 0)
     {
         *position = anchor[0];
         *angles = anchor[1];
         return 1;
     }
-    memcpy(velocity, (const char *)e + 0x48, sizeof(velocity));
-    memcpy(acceleration, (const char *)e + 0x60, sizeof(acceleration));
+    memcpy(velocity, (const char *)entity + 0x48, sizeof(velocity));
+    memcpy(acceleration, (const char *)entity + 0x60, sizeof(acceleration));
     for (j = 0; j < 2; j++)
         for (i = 0; i < 3; i++)
             if (!_finite((&anchor[j].x)[i]) || !_finite((&velocity[j].x)[i]) || !_finite((&acceleration[j].x)[i]))
@@ -48,15 +48,15 @@ int __cdecl bh_remote_predict_pose(const BHEntity *e, unsigned short tick, BHVec
             bh_round_float((&out[j]->x) + i, (double)(&acceleration[j].x)[i] * half_squared + (&out[j]->x)[i]);
     return 1;
 }
-static void queued(BHRemoteRender *c, int result)
+static void queued(BHRemoteRender *render, int result)
 {
-    ++c->attempted;
+    ++render->attempted;
     if (result == 0)
-        ++c->dropped;
+        ++render->dropped;
     else if (result < 0)
-        c->error = 1;
+        render->error = 1;
 }
-int __cdecl bh_remote_render(BHRemoteRender *c, BHEntity *e)
+int __cdecl bh_remote_render(BHRemoteRender *render, BHEntity *entity)
 {
     BHVec3 position, angles, velocity, normal, point, up = {0, -1, 0};
     unsigned long handle, resource, i, j, frames = 60;
@@ -64,33 +64,33 @@ int __cdecl bh_remote_render(BHRemoteRender *c, BHEntity *e)
     unsigned char flags;
     float angle;
     int value;
-    if (!c || !e || !c->queue || !c->sound)
+    if (!render || !entity || !render->queue || !render->sound)
         return 0;
-    c->attempted = c->dropped = 0;
-    c->error = 0;
-    memcpy(&model, (char *)e + 0x114, 2);
+    render->attempted = render->dropped = 0;
+    render->error = 0;
+    memcpy(&model, (char *)entity + 0x114, 2);
     if (model < 0 || model >= 8)
         return 0;
-    if (!bh_remote_predict_pose(e, c->tick, &position, &angles))
+    if (!bh_remote_predict_pose(entity, render->tick, &position, &angles))
         return 0;
-    queued(c, bh_draw_submit_resource(c->queue, 0, c->models[model], &position, &angles, 1));
+    queued(render, bh_draw_submit_resource(render->queue, 0, render->models[model], &position, &angles, 1));
     for (i = 0; i < 3; i++)
     {
         float component;
-        memcpy(&component, (char *)e + 0x48 + i * 4, 4);
+        memcpy(&component, (char *)entity + 0x48 + i * 4, 4);
         (&velocity.x)[i] = stored((double)component * 30.0);
     }
-    memcpy((char *)e + 0x108, &frames, 4);
-    memcpy(&handle, (char *)e + 0x104, 4);
-    memcpy(&resource, (char *)e + 0x10c, 4);
+    memcpy((char *)entity + 0x108, &frames, 4);
+    memcpy(&handle, (char *)entity + 0x104, 4);
+    memcpy(&resource, (char *)entity + 0x10c, 4);
     if (handle == BH_SOUND_INVALID)
     {
-        handle = bh_sound_request(c->sound, resource, 1, 1, &position, &velocity);
-        memcpy((char *)e + 0x104, &handle, 4);
+        handle = bh_sound_request(render->sound, resource, 1, 1, &position, &velocity);
+        memcpy((char *)entity + 0x104, &handle, 4);
     }
     else
-        bh_sound_update(c->sound, handle, 1, 1, &position, &velocity);
-    memcpy(&flags, (char *)e + 0x11a, 1);
+        bh_sound_update(render->sound, handle, 1, 1, &position, &velocity);
+    memcpy(&flags, (char *)entity + 0x11a, 1);
     if (flags & 1)
         for (j = 0; j < 24; j++)
         {
@@ -107,7 +107,8 @@ int __cdecl bh_remote_render(BHRemoteRender *c, BHEntity *e)
             }
             value = rand();
             angle = stored((double)value * .0001953125);
-            queued(c, bh_draw_oriented(c->queue, 3, c->spark_texture, &point, &up, &normal, 3, 3, angle, 8, .3f));
+            queued(render, bh_draw_oriented(render->queue, 3, render->spark_texture, &point, &up, &normal, 3, 3, angle,
+                                            8, .3f));
         }
-    return !c->error;
+    return !render->error;
 }

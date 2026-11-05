@@ -90,14 +90,17 @@ unsigned long __cdecl bh_sound_load(BHSoundLoad *c, const char *name, float rang
         return fail(c, BH_SOUND_LOAD_FORMAT);
     }
     format_bytes = u32(format - 4);
-    if (format_bytes < 16 || u16(format) != 1) {
-        release(c, bytes); return fail(c, BH_SOUND_LOAD_FORMAT);
+    if (format_bytes < 16 || u16(format) != 1)
+    {
+        release(c, bytes);
+        return fail(c, BH_SOUND_LOAD_FORMAT);
     }
     ++c->native_calls;
-    c->create_result = bh_audio_create(q->device, samples, sample_bytes,
-        u16(format + 2), u16(format + 14), u32(format + 4), &buffer);
+    c->create_result =
+        bh_audio_create(q->device, samples, sample_bytes, u16(format + 2), u16(format + 14), u32(format + 4), &buffer);
     release(c, bytes);
-    if (c->create_result) return fail(c, BH_SOUND_LOAD_NATIVE);
+    if (c->create_result)
+        return fail(c, BH_SOUND_LOAD_NATIVE);
     first_size = c->first_bytes = sample_bytes;
     c->second_bytes = 0;
     c->lock_result = c->unlock_result = 0;

@@ -2,7 +2,8 @@
 #define BH_CD_CLOSE_H
 #include <windows.h>
 #include "bh_sdl_audio.h"
-typedef struct BHCdClose {
+typedef struct BHCdClose
+{
     BHAudioBuffer *device;
     BHAudioDevice *output;
     long playing, last_track;

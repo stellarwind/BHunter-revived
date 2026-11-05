@@ -1,24 +1,24 @@
 #include "bh_remote_packets.h"
 #include <string.h>
-static unsigned long word(BHEntity *e, unsigned long o)
+static unsigned long word(BHEntity *entity, unsigned long o)
 {
     unsigned long n;
-    memcpy(&n, (char *)e + o, 4);
+    memcpy(&n, (char *)entity + o, 4);
     return n;
 }
-static void setword(BHEntity *e, unsigned long o, unsigned long n)
+static void setword(BHEntity *entity, unsigned long o, unsigned long n)
 {
-    memcpy((char *)e + o, &n, 4);
+    memcpy((char *)entity + o, &n, 4);
 }
-static short half(BHEntity *e, unsigned long o)
+static short half(BHEntity *entity, unsigned long o)
 {
     short n;
-    memcpy(&n, (char *)e + o, 2);
+    memcpy(&n, (char *)entity + o, 2);
     return n;
 }
-static void sethalf(BHEntity *e, unsigned long o, unsigned short n)
+static void sethalf(BHEntity *entity, unsigned long o, unsigned short n)
 {
-    memcpy((char *)e + o, &n, 2);
+    memcpy((char *)entity + o, &n, 2);
 }
 static short signed16(unsigned long n)
 {
@@ -27,265 +27,267 @@ static short signed16(unsigned long n)
     memcpy(&s, &u, 2);
     return s;
 }
-static int open(BHRemotePackets *c, void *p, unsigned long n, unsigned long capacity)
+static int open(BHRemotePackets *packets, void *p, unsigned long n, unsigned long capacity)
 {
-    if (!c || !p)
+    if (!packets || !p)
     {
-        if (c)
-            c->error = 1;
+        if (packets)
+            packets->error = 1;
         return 0;
     }
-    c->error = 0;
-    ++c->pending;
-    if (!bh_packet_receive(&c->reader, p, n, capacity, &c->framing))
+    packets->error = 0;
+    ++packets->pending;
+    if (!bh_packet_receive(&packets->reader, p, n, capacity, &packets->framing))
     {
-        --c->pending;
-        ++c->bad;
-        c->error = 2;
+        --packets->pending;
+        ++packets->bad;
+        packets->error = 2;
         return 0;
     }
     return 1;
 }
-static int take(BHRemotePackets *c, void *out, unsigned long n)
+static int take(BHRemotePackets *packets, void *out, unsigned long n)
 {
-    BHPacketReader *r = &c->reader;
-    if (r->cursor > r->size || n > r->size - r->cursor)
+    BHPacketReader *reader = &packets->reader;
+    if (reader->cursor > reader->size || n > reader->size - reader->cursor)
     {
-        c->error = 3;
-        r->error = BH_PACKET_TRUNCATED;
+        packets->error = 3;
+        reader->error = BH_PACKET_TRUNCATED;
         return 0;
     }
-    memcpy(out, r->data + r->cursor, n);
-    r->cursor += n;
+    memcpy(out, reader->data + reader->cursor, n);
+    reader->cursor += n;
     return 1;
 }
-static int done(BHRemotePackets *c)
+static int done(BHRemotePackets *packets)
 {
-    --c->pending;
-    ++c->processed;
-    return !c->error;
+    --packets->pending;
+    ++packets->processed;
+    return !packets->error;
 }
-static void __cdecl query(BHEntity *e, void *p)
+static void __cdecl query(BHEntity *entity, void *p)
 {
-    BHRemotePackets *c;
-    memcpy(&c, e->payload + 536, 4);
-    if (c && c->query)
+    BHRemotePackets *packets;
+    memcpy(&packets, entity->payload + 536, 4);
+    if (packets && packets->query)
     {
-        c->query->sound = c->tick->sound;
-        c->query->tick = (unsigned short)*c->simulation_tick;
-        bh_remote_query(c->query, e, (BHRemoteQueryPacket *)p);
+        packets->query->sound = packets->tick->sound;
+        packets->query->tick = (unsigned short)*packets->simulation_tick;
+        bh_remote_query(packets->query, entity, (BHRemoteQueryPacket *)p);
     }
 }
-int __cdecl bh_remote_entity_draw(BHRemotePackets *c, BHEntity *e)
+int __cdecl bh_remote_entity_draw(BHRemotePackets *packets, BHEntity *entity)
 {
     BHRemotePackets *bound;
-    if (!c || !e || !c->render || !c->simulation_tick)
+    if (!packets || !entity || !packets->render || !packets->simulation_tick)
         return 0;
-    memcpy(&bound, e->payload + 536, 4);
-    if (bound != c || word(e, 0xe8) != 0x00423c80UL || !c->remote || half(e, 0x114) < 0 || half(e, 0x114) > 7 ||
-        c->remote[half(e, 0x114)] != e)
+    memcpy(&bound, entity->payload + 536, 4);
+    if (bound != packets || word(entity, 0xe8) != 0x00423c80UL || !packets->remote || half(entity, 0x114) < 0 ||
+        half(entity, 0x114) > 7 || packets->remote[half(entity, 0x114)] != entity)
         return 0;
-    c->render->tick = (unsigned short)*c->simulation_tick;
-    return bh_remote_render(c->render, e);
+    packets->render->tick = (unsigned short)*packets->simulation_tick;
+    return bh_remote_render(packets->render, entity);
 }
-int __cdecl bh_remote_spawn_packet(BHRemotePackets *c, void *p, unsigned long n, unsigned long capacity)
+int __cdecl bh_remote_spawn_packet(BHRemotePackets *packets, void *p, unsigned long n, unsigned long capacity)
 {
     unsigned long id, i, j;
     unsigned char slot, name[20];
-    BHEntity *e, *next;
+    BHEntity *entity, *next;
     BHPickupRoom *room = 0;
     BHWorldGeometry *world;
     unsigned short stamp;
-    if (!open(c, p, n, capacity))
+    if (!open(packets, p, n, capacity))
         return 0;
-    if (!c->pool || !c->remote || !c->head || !c->count || !c->network || !c->simulation_tick || !c->local_slot ||
-        !c->query || !c->render || !c->tick || !c->tick->fire || c->tick->fire->tick != c->simulation_tick ||
-        !c->spawn_world)
+    if (!packets->pool || !packets->remote || !packets->head || !packets->count || !packets->network ||
+        !packets->simulation_tick || !packets->local_slot || !packets->query || !packets->render || !packets->tick ||
+        !packets->tick->fire || packets->tick->fire->tick != packets->simulation_tick || !packets->spawn_world)
     {
-        c->error = 1;
+        packets->error = 1;
         return 0;
     }
-    if (!take(c, &id, 4) || !take(c, &slot, 1))
+    if (!take(packets, &id, 4) || !take(packets, &slot, 1))
         return 0;
     if (slot >= 8)
     {
-        c->error = 4;
-        --c->pending;
-        ++c->bad;
+        packets->error = 4;
+        --packets->pending;
+        ++packets->bad;
         return 0;
     }
-    if (id == c->network->local_player)
+    if (id == packets->network->local_player)
     {
-        memcpy(&stamp, c->reader.data + 2, 2);
-        *c->simulation_tick = (*c->simulation_tick & 0xffff0000UL) | stamp;
-        *c->local_slot = slot;
-        return done(c);
+        memcpy(&stamp, packets->reader.data + 2, 2);
+        *packets->simulation_tick = (*packets->simulation_tick & 0xffff0000UL) | stamp;
+        *packets->local_slot = slot;
+        return done(packets);
     }
-    if (!take(c, name, 20))
+    if (!take(packets, name, 20))
         return 0;
-    if (c->remote[slot])
+    if (packets->remote[slot])
     {
-        c->error = 4;
+        packets->error = 4;
         return 0;
     }
-    world = *c->spawn_world;
+    world = *packets->spawn_world;
     if (world)
     {
-        if (!c->rooms)
+        if (!packets->rooms)
         {
-            c->error = 1;
+            packets->error = 1;
             return 0;
         }
-        for (i = 0; i < c->room_count; ++i)
-            if (c->rooms[i].world == world)
+        for (i = 0; i < packets->room_count; ++i)
+            if (packets->rooms[i].world == world)
             {
-                room = c->rooms + i;
+                room = packets->rooms + i;
                 break;
             }
         if (!room)
         {
-            c->error = 1;
+            packets->error = 1;
             return 0;
         }
     }
-    e = bh_entity_acquire(c->pool);
-    if (!e)
+    entity = bh_entity_acquire(packets->pool);
+    if (!entity)
     {
-        c->error = 5;
+        packets->error = 5;
         return 0;
     }
-    c->remote[slot] = e;
-    sethalf(e, 0x114, slot);
-    setword(e, 0x138, id);
-    sethalf(e, 0x116, 0xffff);
+    packets->remote[slot] = entity;
+    sethalf(entity, 0x114, slot);
+    setword(entity, 0x138, id);
+    sethalf(entity, 0x116, 0xffff);
     for (i = 1; i < 8; ++i)
-        if (c->network->players[i].active && c->network->players[i].id == id)
-            sethalf(e, 0x116, (unsigned short)i);
-    setword(e, 0xe8, 0x00423c80UL);
-    stamp = (unsigned short)*c->simulation_tick;
-    sethalf(e, 0x17c, stamp);
-    sethalf(e, 0x15c, (unsigned short)(stamp - 1));
-    sethalf(e, 0x13c, (unsigned short)(stamp - 2));
+        if (packets->network->players[i].active && packets->network->players[i].id == id)
+            sethalf(entity, 0x116, (unsigned short)i);
+    setword(entity, 0xe8, 0x00423c80UL);
+    stamp = (unsigned short)*packets->simulation_tick;
+    sethalf(entity, 0x17c, stamp);
+    sethalf(entity, 0x15c, (unsigned short)(stamp - 1));
+    sethalf(entity, 0x13c, (unsigned short)(stamp - 2));
     for (i = 0; i < 3; ++i)
-        memset((char *)e + 0x140 + 32 * i, 0, 24);
+        memset((char *)entity + 0x140 + 32 * i, 0, 24);
     for (j = 0; j < 19 && name[j]; ++j)
-        *((char *)e + 0x11e + j) = (char)name[j];
-    *((char *)e + 0x11e + j) = 0;
-    e->flags |= 0x100;
-    sethalf(e, 0x11a, 0);
-    sethalf(e, 0x11c, 0);
-    memset((char *)e + 0x48, 0, 48);
-    setword(e, 0xfc, 8);
-    setword(e, 0x100, 0);
-    setword(e, 0x108, 0);
-    setword(e, 0x110, BH_SOUND_INVALID);
-    setword(e, 0x104, BH_SOUND_INVALID);
-    setword(e, 0x10c, c->engine_sounds[slot]);
-    next = *c->head;
-    setword(e, 0xf0, (unsigned long)next);
-    *c->head = e;
-    setword(e, 0xec, 0);
+        *((char *)entity + 0x11e + j) = (char)name[j];
+    *((char *)entity + 0x11e + j) = 0;
+    entity->flags |= 0x100;
+    sethalf(entity, 0x11a, 0);
+    sethalf(entity, 0x11c, 0);
+    memset((char *)entity + 0x48, 0, 48);
+    setword(entity, 0xfc, 8);
+    setword(entity, 0x100, 0);
+    setword(entity, 0x108, 0);
+    setword(entity, 0x110, BH_SOUND_INVALID);
+    setword(entity, 0x104, BH_SOUND_INVALID);
+    setword(entity, 0x10c, packets->engine_sounds[slot]);
+    next = *packets->head;
+    setword(entity, 0xf0, (unsigned long)next);
+    *packets->head = entity;
+    setword(entity, 0xec, 0);
     if (next)
-        setword(next, 0xec, (unsigned long)e);
-    ++*c->count;
+        setword(next, 0xec, (unsigned long)entity);
+    ++*packets->count;
     if (room)
     {
         next = room->actors;
-        setword(e, 0xf4, (unsigned long)next);
-        room->actors = e;
-        setword(e, 0xf8, 0);
+        setword(entity, 0xf4, (unsigned long)next);
+        room->actors = entity;
+        setword(entity, 0xf8, 0);
         if (next)
-            setword(next, 0xf8, (unsigned long)e);
+            setword(next, 0xf8, (unsigned long)entity);
     }
-    setword(e, 0x198, (unsigned long)world);
-    memcpy(e->payload + 536, &c, 4);
-    if (!bh_remote_tick_bind(c->tick, e) || !bh_entity_set_query(c->pool, e, query))
+    setword(entity, 0x198, (unsigned long)world);
+    memcpy(entity->payload + 536, &packets, 4);
+    if (!bh_remote_tick_bind(packets->tick, entity) || !bh_entity_set_query(packets->pool, entity, query))
     {
-        c->error = 1;
+        packets->error = 1;
         return 0;
     }
-    setword(e, 0x134, 0);
-    sethalf(e, 0x118, 0);
+    setword(entity, 0x134, 0);
+    sethalf(entity, 0x118, 0);
     for (i = 0; i < 9; ++i)
-        sethalf(e, 0x19c + 12 * i, 0);
-    ++c->spawns;
-    return done(c);
+        sethalf(entity, 0x19c + 12 * i, 0);
+    ++packets->spawns;
+    return done(packets);
 }
-int __cdecl bh_remote_shot_packet(BHRemotePackets *c, void *p, unsigned long n, unsigned long capacity)
+int __cdecl bh_remote_shot_packet(BHRemotePackets *packets, void *p, unsigned long n, unsigned long capacity)
 {
     unsigned short sender;
     unsigned char slot, count, spacing, type, target_slot;
     unsigned long offset;
     short lag;
-    BHEntity *e, *target = 0;
-    if (!open(c, p, n, capacity))
+    BHEntity *entity, *target = 0;
+    if (!open(packets, p, n, capacity))
         return 0;
-    if (!c->simulation_tick || !c->local_slot || !c->remote || !c->tick || !c->tick->fire ||
-        !c->tick->fire->sync_identity || c->tick->fire->tick != c->simulation_tick)
+    if (!packets->simulation_tick || !packets->local_slot || !packets->remote || !packets->tick ||
+        !packets->tick->fire || !packets->tick->fire->sync_identity ||
+        packets->tick->fire->tick != packets->simulation_tick)
     {
-        c->error = 1;
+        packets->error = 1;
         return 0;
     }
-    memcpy(&sender, c->reader.data + 2, 2);
-    lag = signed16(*c->simulation_tick - sender);
+    memcpy(&sender, packets->reader.data + 2, 2);
+    lag = signed16(*packets->simulation_tick - sender);
     if (lag >= 61)
         return 1;
-    if (!take(c, &slot, 1))
+    if (!take(packets, &slot, 1))
         return 0;
     if (slot >= 8)
         return 1;
-    if (!take(c, &count, 1) || !take(c, &spacing, 1) || !take(c, &type, 1) || !take(c, &target_slot, 1))
+    if (!take(packets, &count, 1) || !take(packets, &spacing, 1) || !take(packets, &type, 1) ||
+        !take(packets, &target_slot, 1))
         return 0;
     if (type > 8)
     {
-        c->error = 4;
-        --c->pending;
-        ++c->bad;
+        packets->error = 4;
+        --packets->pending;
+        ++packets->bad;
         return 0;
     }
-    if ((long)target_slot == *c->local_slot)
-        target = c->local;
+    if ((long)target_slot == *packets->local_slot)
+        target = packets->local;
     else if (target_slot < 8)
-        target = c->remote[target_slot];
-    e = c->remote[slot];
-    if (!e)
+        target = packets->remote[target_slot];
+    entity = packets->remote[slot];
+    if (!entity)
         return 1;
     offset = 0x19c + 12 * type;
-    sethalf(e, offset + 6, count);
-    setword(e, offset + 8, (unsigned long)target);
+    sethalf(entity, offset + 6, count);
+    setword(entity, offset + 8, (unsigned long)target);
     if (type == 5)
     {
-        if (!half(e, 0x1d8))
-            sethalf(e, 0x1d8, 60);
-        else if (half(e, 0x1d8) < 30)
-            sethalf(e, 0x1d8, 30);
-        return done(c);
+        if (!half(entity, 0x1d8))
+            sethalf(entity, 0x1d8, 60);
+        else if (half(entity, 0x1d8) < 30)
+            sethalf(entity, 0x1d8, 30);
+        return done(packets);
     }
     if (count == 1)
     {
         lag = 0;
-        *c->tick->fire->sync_identity = ((unsigned long)(slot | 0x4000UL) << 16) | sender;
+        *packets->tick->fire->sync_identity = ((unsigned long)(slot | 0x4000UL) << 16) | sender;
     }
     while (lag >= 0)
     {
         if (count < 1)
-            return done(c);
-        if (!bh_remote_fire(c->tick->fire, e, (short)sender, type, target))
+            return done(packets);
+        if (!bh_remote_fire(packets->tick->fire, entity, (short)sender, type, target))
         {
-            c->error = 6;
+            packets->error = 6;
             return 0;
         }
-        ++c->immediate;
+        ++packets->immediate;
         lag = signed16((unsigned short)lag - spacing);
         --count;
         sender = (unsigned short)(sender + spacing);
     }
     if (count)
     {
-        sethalf(e, offset, (unsigned short)((unsigned short)half(e, offset) + count));
-        sethalf(e, offset + 2, spacing);
-        sethalf(e, offset + 4, (unsigned short)(0 - (unsigned short)lag));
-        c->queued += count;
+        sethalf(entity, offset, (unsigned short)((unsigned short)half(entity, offset) + count));
+        sethalf(entity, offset + 2, spacing);
+        sethalf(entity, offset + 4, (unsigned short)(0 - (unsigned short)lag));
+        packets->queued += count;
     }
-    return done(c);
+    return done(packets);
 }

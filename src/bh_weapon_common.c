@@ -23,16 +23,16 @@ int __cdecl bh_weapon_delay_tick(BHEntity *weapon)
         state->delay = (long)((unsigned long)state->delay - 1UL);
     return 1;
 }
-int __cdecl bh_weapon_ready_reset(BHWeaponReadyContext *c, BHEntity *weapon, const BHEntity *player)
+int __cdecl bh_weapon_ready_reset(BHWeaponReadyContext *ctx, BHEntity *weapon, const BHEntity *player)
 {
     BHWeaponCommonState *state = bh_weapon_common_state(weapon);
     unsigned long handle;
     float pitch;
     int value;
-    if (!c || !c->sound || !state || !player)
+    if (!ctx || !ctx->sound || !state || !player)
     {
-        if (c)
-            c->error = 1;
+        if (ctx)
+            ctx->error = 1;
         return 0;
     }
     state->word_e8 = 0;
@@ -42,10 +42,10 @@ int __cdecl bh_weapon_ready_reset(BHWeaponReadyContext *c, BHEntity *weapon, con
     state->hud.charge = 0;
     state->word_100 = -1;
     value = rand();
-    c->random_calls = 1;
+    ctx->random_calls = 1;
     bh_round_float(&pitch, .9 - (double)value * (-0.000006103515625));
-    handle = bh_sound_request(c->sound, c->sound_resource, .9f, pitch, &player->position, &player->origin);
+    handle = bh_sound_request(ctx->sound, ctx->sound_resource, .9f, pitch, &player->position, &player->origin);
     /* A lower-priority cue may be dropped while earlier selections play. */
-    c->error = handle == BH_SOUND_INVALID && c->sound->error != BH_SOUND_PRIORITY ? 2 : 0;
-    return !c->error;
+    ctx->error = handle == BH_SOUND_INVALID && ctx->sound->error != BH_SOUND_PRIORITY ? 2 : 0;
+    return !ctx->error;
 }

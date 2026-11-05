@@ -2,65 +2,65 @@
 #include "bh_round.h"
 #include <string.h>
 #include <float.h>
-static BHEntity *link(const BHEntity *e, unsigned long off)
+static BHEntity *link(const BHEntity *entity, unsigned long off)
 {
     BHEntity *p;
-    memcpy(&p, (const char *)e + off, 4);
+    memcpy(&p, (const char *)entity + off, 4);
     return p;
 }
-static void set_link(BHEntity *e, unsigned long off, BHEntity *p)
+static void set_link(BHEntity *entity, unsigned long off, BHEntity *p)
 {
-    memcpy((char *)e + off, &p, 4);
+    memcpy((char *)entity + off, &p, 4);
 }
-static int fail(BHRemoteQuery *c)
+static int fail(BHRemoteQuery *query)
 {
-    if (c)
-        c->error = 1;
+    if (query)
+        query->error = 1;
     return 0;
 }
-static int retire(BHRemoteQuery *c, BHEntity *e)
+static int retire(BHRemoteQuery *query, BHEntity *entity)
 {
     BHWorldGeometry *world;
     BHPickupRoom *room = NULL;
     BHEntity *rp, *rn, *gp, *gn, *at;
     unsigned long i, n = 0, voice;
     short slot;
-    if (!c->pool || !c->head || !c->count || !c->remote || !*c->count)
-        return fail(c);
-    for (at = c->pool->active; at && at != e && n++ < c->pool->capacity; at = at->next)
+    if (!query->pool || !query->head || !query->count || !query->remote || !*query->count)
+        return fail(query);
+    for (at = query->pool->active; at && at != entity && n++ < query->pool->capacity; at = at->next)
     {
     }
-    if (at != e)
-        return fail(c);
-    memcpy(&slot, (char *)e + 0x114, 2);
+    if (at != entity)
+        return fail(query);
+    memcpy(&slot, (char *)entity + 0x114, 2);
     if (slot < 0 || slot >= 8)
-        return fail(c);
-    memcpy(&world, (char *)e + 0x198, 4);
-    rp = link(e, 0xf8);
-    rn = link(e, 0xf4);
-    gp = link(e, 0xec);
-    gn = link(e, 0xf0);
+        return fail(query);
+    memcpy(&world, (char *)entity + 0x198, 4);
+    rp = link(entity, 0xf8);
+    rn = link(entity, 0xf4);
+    gp = link(entity, 0xec);
+    gn = link(entity, 0xf0);
     if (world)
     {
-        for (i = 0; i < c->room_count; i++)
-            if (c->rooms[i].world == world)
+        for (i = 0; i < query->room_count; i++)
+            if (query->rooms[i].world == world)
             {
-                room = c->rooms + i;
+                room = query->rooms + i;
                 break;
             }
-        if (!room || (rp ? link(rp, 0xf4) : room->actors) != e || (rn && link(rn, 0xf8) != e))
-            return fail(c);
+        if (!room || (rp ? link(rp, 0xf4) : room->actors) != entity || (rn && link(rn, 0xf8) != entity))
+            return fail(query);
     }
-    if ((gp ? link(gp, 0xf0) : *c->head) != e || (gn && link(gn, 0xec) != e))
-        return fail(c);
-    memcpy(&voice, (char *)e + 0x104, 4);
-    if (voice != BH_SOUND_INVALID && !c->sound)
-        return fail(c);
+    if ((gp ? link(gp, 0xf0) : *query->head) != entity || (gn && link(gn, 0xec) != entity))
+        return fail(query);
+    memcpy(&voice, (char *)entity + 0x104, 4);
+    if (voice != BH_SOUND_INVALID && !query->sound)
+        return fail(query);
     if (voice != BH_SOUND_INVALID)
     {
-        bh_sound_stop(c->sound, voice);
+        bh_sound_stop(query->sound, voice);
         voice = BH_SOUND_INVALID;
-        memcpy((char *)e + 0x104, &voice, 4);
+        memcpy((char *)entity + 0x104, &voice, 4);
     }
     if (world)
     {
@@ -74,14 +74,14 @@ static int retire(BHRemoteQuery *c, BHEntity *e)
     if (gp)
         set_link(gp, 0xf0, gn);
     else
-        *c->head = gn;
+        *query->head = gn;
     if (gn)
         set_link(gn, 0xec, gp);
-    --*c->count;
-    c->remote[slot] = NULL;
-    return bh_entity_release(c->pool, e);
+    --*query->count;
+    query->remote[slot] = NULL;
+    return bh_entity_release(query->pool, entity);
 }
-int __cdecl bh_remote_query(BHRemoteQuery *c, BHEntity *e, BHRemoteQueryPacket *p)
+int __cdecl bh_remote_query(BHRemoteQuery *query, BHEntity *entity, BHRemoteQueryPacket *p)
 {
     BHVec3 position;
     BHWorldGeometry *world;
@@ -91,43 +91,43 @@ int __cdecl bh_remote_query(BHRemoteQuery *c, BHEntity *e, BHRemoteQueryPacket *
     unsigned short id;
     unsigned char severity;
     float value;
-    if (!c || !e || !p)
-        return fail(c);
-    c->error = 0;
+    if (!query || !entity || !p)
+        return fail(query);
+    query->error = 0;
     switch (p->words[0])
     {
     case 0:
-        if (!c->transport || !c->remote)
-            return fail(c);
-        if (!bh_remote_predict_position(e, c->tick, &position))
-            return fail(c);
-        memcpy(&world, (char *)e + 0x198, 4);
+        if (!query->transport || !query->remote)
+            return fail(query);
+        if (!bh_remote_predict_position(entity, query->tick, &position))
+            return fail(query);
+        memcpy(&world, (char *)entity + 0x198, 4);
         if (!world)
             return 1;
-        for (i = 0; i < c->world_count; i++)
-            if (c->worlds[i].world == world)
+        for (i = 0; i < query->world_count; i++)
+            if (query->worlds[i].world == world)
                 break;
-        if (i == c->world_count)
-            return fail(c);
-        memcpy(&recipient, (char *)e + 0x138, 4);
+        if (i == query->world_count)
+            return fail(query);
+        memcpy(&recipient, (char *)entity + 0x138, 4);
         target = p->damage.attacker;
         value = p->damage.severity;
         if (!_finite(value) || value < -1000000)
-            return fail(c);
+            return fail(query);
         if (value > 1.99)
             value = 1.99f;
-        if (!bh_packet_begin(&writer, c->packet, sizeof(c->packet), 7, c->tick) ||
-            !bh_packet_write_position(&writer, world, c->worlds[i].index, &position))
-            return fail(c);
-        if (target == c->local)
+        if (!bh_packet_begin(&writer, query->packet, sizeof(query->packet), 7, query->tick) ||
+            !bh_packet_write_position(&writer, world, query->worlds[i].index, &position))
+            return fail(query);
+        if (target == query->local)
         {
-            id = (unsigned short)c->local_id;
+            id = (unsigned short)query->local_id;
             if (!bh_packet_append(&writer, &id, 2))
-                return fail(c);
+                return fail(query);
         }
         else
             for (j = 0; j < 8; j++)
-                if (c->remote[j] == target)
+                if (query->remote[j] == target)
                 {
                     /* An absent target never dereferences NULL. Valid original callers
                supply live local/remote actors; NULL is an unknown identity. */
@@ -135,36 +135,36 @@ int __cdecl bh_remote_query(BHRemoteQuery *c, BHEntity *e, BHRemoteQueryPacket *
                     {
                         memcpy(&id, (char *)target + 0x114, 2);
                         if (!bh_packet_append(&writer, &id, 2))
-                            return fail(c);
+                            return fail(query);
                     }
                     break;
                 }
         severity = (unsigned char)(long)((double)value * 128.0);
-        if (!bh_packet_append(&writer, &severity, 1) || !bh_packet_finish(&writer, &c->wire_size))
-            return fail(c);
-        c->send_result = bh_network_send(c->transport, recipient, c->packet, c->wire_size, 0);
-        ++c->sends;
+        if (!bh_packet_append(&writer, &severity, 1) || !bh_packet_finish(&writer, &query->wire_size))
+            return fail(query);
+        query->send_result = bh_network_send(query->transport, recipient, query->packet, query->wire_size, 0);
+        ++query->sends;
         return 1;
     case 3:
     case 16:
-        if (!bh_remote_predict_position(e, c->tick, &position))
-            return fail(c);
+        if (!bh_remote_predict_position(entity, query->tick, &position))
+            return fail(query);
         memcpy(p->floats + 1, &position, 12);
         if (p->words[0] == 16)
             for (j = 0; j < 2; j++)
                 for (i = 0; i < 3; i++)
                 {
-                    memcpy(&value, (char *)e + 0x48 + j * 0x18 + i * 4, 4);
+                    memcpy(&value, (char *)entity + 0x48 + j * 0x18 + i * 4, 4);
                     bh_round_float(p->floats + 4 + j * 3 + i, (double)value * (j ? 900.0 : 30.0));
                 }
         return 1;
     case 17:
         for (i = 0; i < 9; i++)
-            if (link(e, 0x1a4 + i * 12) == p->removed.actor)
-                set_link(e, 0x1a4 + i * 12, NULL);
+            if (link(entity, 0x1a4 + i * 12) == p->removed.actor)
+                set_link(entity, 0x1a4 + i * 12, NULL);
         return 1;
     case 20:
-        return retire(c, e);
+        return retire(query, entity);
     default:
         return 1;
     }

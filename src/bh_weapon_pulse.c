@@ -5,13 +5,13 @@
 #include <stdlib.h>
 #include <string.h>
 static const BHVec3 zero = {0, 0, 0}, acceleration = {0, -.002f, 0};
-static void get(const BHEntity *e, unsigned long a, void *p, unsigned long n)
+static void get(const BHEntity *entity, unsigned long a, void *p, unsigned long n)
 {
-    memcpy(p, (const unsigned char *)e + a, n);
+    memcpy(p, (const unsigned char *)entity + a, n);
 }
-static void put(BHEntity *e, unsigned long a, const void *p, unsigned long n)
+static void put(BHEntity *entity, unsigned long a, const void *p, unsigned long n)
 {
-    memcpy((unsigned char *)e + a, p, n);
+    memcpy((unsigned char *)entity + a, p, n);
 }
 static void offset(BHVec3 *out, const BHVec3 *p, const BHVec3 *n, double factor)
 {
@@ -19,21 +19,21 @@ static void offset(BHVec3 *out, const BHVec3 *p, const BHVec3 *n, double factor)
     bh_round_float(&out->y, (double)p->y - (double)n->y * factor);
     bh_round_float(&out->z, (double)p->z - (double)n->z * factor);
 }
-static BHEntity *receiver(BHWeaponPulseContext *c, const BHWorldSegmentHit *h, int *world)
+static BHEntity *receiver(BHWeaponPulseContext *ctx, const BHWorldSegmentHit *h, int *world)
 {
     unsigned long i;
     *world = h->object.kind == BH_WORLD_HIT_GEOMETRY;
     if (!*world)
         return h->object.object.actor;
     {
-        const BHHomingWorldResponse *binding = bh_homing_world_response(&c->effects, h->object.object.geometry);
+        const BHHomingWorldResponse *binding = bh_homing_world_response(&ctx->effects, h->object.object.geometry);
         if (binding)
             return binding->receiver;
     }
-    c->error = 2;
+    ctx->error = 2;
     return NULL;
 }
-static void impact_particles(BHWeaponPulseContext *c, const BHVec3 *p)
+static void impact_particles(BHWeaponPulseContext *ctx, const BHVec3 *p)
 {
     float spin, angle;
     int r;
@@ -41,29 +41,30 @@ static void impact_particles(BHWeaponPulseContext *c, const BHVec3 *p)
     bh_round_float(&spin, ((double)r - 16384) * (1.0 / 8192));
     r = rand();
     bh_round_float(&angle, (double)r * (1.0 / 4096));
-    bh_script_particle_create(c->effects.particles, c->effects.first_image, 3, p, NULL, NULL, .2f, angle, 5, spin, .8f,
-                              1, .5f, 1);
+    bh_script_particle_create(ctx->effects.particles, ctx->effects.first_image, 3, p, NULL, NULL, .2f, angle, 5, spin,
+                              .8f, 1, .5f, 1);
     r = rand();
     bh_round_float(&spin, ((double)r - 16384) * (1.0 / 8192));
     r = rand();
     bh_round_float(&angle, (double)r * (1.0 / 4096));
-    bh_script_particle_create(c->effects.particles, c->effects.first_image, 3, p, NULL, NULL, .1f, angle, 8, spin, .8f,
-                              1, .4f, 1);
-    bh_script_particle_create(c->effects.particles, c->flare_image, 3, p, NULL, NULL, .1f, 0, 12, 0, .8f, 1, .3f, 1);
+    bh_script_particle_create(ctx->effects.particles, ctx->effects.first_image, 3, p, NULL, NULL, .1f, angle, 8, spin,
+                              .8f, 1, .4f, 1);
+    bh_script_particle_create(ctx->effects.particles, ctx->flare_image, 3, p, NULL, NULL, .1f, 0, 12, 0, .8f, 1, .3f,
+                              1);
 }
-static void flash(BHWeaponPulseContext *c, const BHVec3 *p)
+static void flash(BHWeaponPulseContext *ctx, const BHVec3 *p)
 {
-    BHEntity *e = bh_entity_acquire(c->effects.pool);
-    if (e)
+    BHEntity *entity = bh_entity_acquire(ctx->effects.pool);
+    if (entity)
     {
-        e->position = *p;
-        bh_flash_flare_bind(c->effects.flash, e, .1f, 30, 1);
+        entity->position = *p;
+        bh_flash_flare_bind(ctx->effects.flash, entity, .1f, 30, 1);
     }
 }
-int __cdecl bh_weapon_pulse_fire(BHWeaponPulseContext *c, BHEntity *weapon, BHEntity *player)
+int __cdecl bh_weapon_pulse_fire(BHWeaponPulseContext *ctx, BHEntity *weapon, BHEntity *player)
 {
     BHHomingProjectileContext *b;
-    BHWeaponCommonState *s;
+    BHWeaponCommonState *weapon_state;
     BHVec3 muzzle, axis, up, heading, velocity, direction, a, end, point, normal, trail, trail_end;
     BHWorldGeometry *cached;
     BHWorldSegmentHit hit;
@@ -83,24 +84,25 @@ int __cdecl bh_weapon_pulse_fire(BHWeaponPulseContext *c, BHEntity *weapon, BHEn
     int random, world = 0, result;
     unsigned char payload[5];
     BHPacketWriter writer;
-    if (!c || !weapon || !player || !player->query || !c->debris || !c->transport || !bh_math_environment_supported())
+    if (!ctx || !weapon || !player || !player->query || !ctx->debris || !ctx->transport ||
+        !bh_math_environment_supported())
         return 0;
-    b = &c->effects;
+    b = &ctx->effects;
     if (!b->pool || !b->segment || !b->sound || !b->particles || !b->contacts || !b->flash || !b->markers)
         return 0;
-    if (b->response_count > 65535 || (b->response_count && !b->responses) || c->debris->pool != b->pool)
+    if (b->response_count > 65535 || (b->response_count && !b->responses) || ctx->debris->pool != b->pool)
         return 0;
-    s = bh_weapon_common_state(weapon);
-    phase = s->word_e8;
-    c->error = 0;
+    weapon_state = bh_weapon_common_state(weapon);
+    phase = weapon_state->word_e8;
+    ctx->error = 0;
     if (phase & 1)
     {
-        s->word_e8 = phase + 1;
+        weapon_state->word_e8 = phase + 1;
         return 1;
     }
-    if (!s->ammo)
+    if (!weapon_state->ammo)
         return 1;
-    s->ammo = (long)((unsigned long)s->ammo - 1);
+    weapon_state->ammo = (long)((unsigned long)weapon_state->ammo - 1);
     generation = player->generation;
     get(player, 0x30, &axis, 12);
     get(player, 0x24, &up, 12);
@@ -110,13 +112,13 @@ int __cdecl bh_weapon_pulse_fire(BHWeaponPulseContext *c, BHEntity *weapon, BHEn
     for (i = 0; i < 3; ++i)
         bh_round_float(out + i, ((double)r[i] - ((float *)&axis)[i] * (-1.2)) - ((float *)&up)[i] * (-.5));
     random = rand();
-    bh_sound_request(b->sound, c->shot_sound, 1, (float)(.9 - (double)random * (-.000006103515625)), &muzzle,
+    bh_sound_request(b->sound, ctx->shot_sound, 1, (float)(.9 - (double)random * (-.000006103515625)), &muzzle,
                      &player->origin);
     get(player, 0xe8, &kind, 4);
     if (kind != 0 && kind != 1)
     {
         random = rand();
-        bh_flare_queue(b->particles->queue, &muzzle, 2, 30, c->flare_image, 0, 0, 0,
+        bh_flare_queue(b->particles->queue, &muzzle, 2, 30, ctx->flare_image, 0, 0, 0,
                        (float)((double)random * (1.0 / 5200.0)));
     }
     out = &velocity.x;
@@ -132,7 +134,7 @@ int __cdecl bh_weapon_pulse_fire(BHWeaponPulseContext *c, BHEntity *weapon, BHEn
     bh_round_float(&spin, ((double)random - 16384) * (1.0 / 16384));
     random = rand();
     bh_round_float(&angle, (double)random * (1.0 / 512));
-    bh_script_particle_create(b->particles, c->smoke_image, 3, &muzzle, &velocity, &acceleration, .1f, angle, 8, spin,
+    bh_script_particle_create(b->particles, ctx->smoke_image, 3, &muzzle, &velocity, &acceleration, .1f, angle, 8, spin,
                               .9f, .95f, .5f, .2f);
     random = rand();
     recoil = 3 - (double)random * (-.0002);
@@ -158,7 +160,7 @@ int __cdecl bh_weapon_pulse_fire(BHWeaponPulseContext *c, BHEntity *weapon, BHEn
     player->query(player, &packet);
     if (player->generation != generation)
     {
-        c->error = 3;
+        ctx->error = 3;
         return 0;
     }
     direction = heading;
@@ -177,7 +179,7 @@ int __cdecl bh_weapon_pulse_fire(BHWeaponPulseContext *c, BHEntity *weapon, BHEn
         random = rand();
         bh_round_float(out + i, (3 - (double)random * (-1.0 / 8192)) * r[i] + h[i]);
     }
-    bh_draw_segment(b->particles->queue, 3, c->trail_image, &muzzle, &trail, .3f, .01f, 1, 0, 0);
+    bh_draw_segment(b->particles->queue, 3, ctx->trail_image, &muzzle, &trail, .3f, .01f, 1, 0, 0);
     offset(&end, &muzzle, &direction, -125);
     get(weapon, 0x104, &cached, 4);
     self.kind = BH_WORLD_HIT_ACTOR;
@@ -186,7 +188,7 @@ int __cdecl bh_weapon_pulse_fire(BHWeaponPulseContext *c, BHEntity *weapon, BHEn
     result = bh_world_segment_run(b->segment, &self, &cached, &muzzle, &end, 3, &hit);
     if (result < 0)
     {
-        c->error = 2;
+        ctx->error = 2;
         return 0;
     }
     put(weapon, 0x104, &cached, 4);
@@ -195,14 +197,14 @@ int __cdecl bh_weapon_pulse_fire(BHWeaponPulseContext *c, BHEntity *weapon, BHEn
         point = hit.point;
         normal = hit.normal;
         bh_round_float(&distance, (double)hit.fraction * 125);
-        target = receiver(c, &hit, &world);
-        if (c->error)
+        target = receiver(ctx, &hit, &world);
+        if (ctx->error)
             return 0;
         if (!world || !(hit.material_flags & 4))
         {
             bh_sound_request(b->sound, b->hit_sound, 1, 2, &point, &zero);
-            impact_particles(c, &point);
-            flash(c, &point);
+            impact_particles(ctx, &point);
+            flash(ctx, &point);
             bh_contact_spark_create(b->contacts, &point, .75f, 3);
             bh_contact_spark_create(b->contacts, &point, 1, 2);
             if (world && !(hit.material_flags & 2))
@@ -218,7 +220,7 @@ int __cdecl bh_weapon_pulse_fire(BHWeaponPulseContext *c, BHEntity *weapon, BHEn
                 offset(&a, &point, &normal, -.1);
                 if (!target)
                 {
-                    c->error = 2;
+                    ctx->error = 2;
                     return 0;
                 }
                 bh_hit_marker_create(b->markers, &a, &normal, .7f, 3, target);
@@ -230,7 +232,7 @@ int __cdecl bh_weapon_pulse_fire(BHWeaponPulseContext *c, BHEntity *weapon, BHEn
                 bh_round_float(out + i, ((double)random - 16384) * (1.0 / 262144));
             }
             random = rand();
-            image = (random & 1) ? c->smoke_image : b->first_image;
+            image = (random & 1) ? ctx->smoke_image : b->first_image;
             duration = (random & 1) ? 1.0f : .5f;
             factor = (random & 1) ? .75 : .5;
             random = rand();
@@ -241,7 +243,7 @@ int __cdecl bh_weapon_pulse_fire(BHWeaponPulseContext *c, BHEntity *weapon, BHEn
                                       .9f, .95f, duration, (float)factor);
             random = rand();
             if (random & 1)
-                bh_script_debris_create(c->debris, 1, &point, 3, 5, .5f);
+                bh_script_debris_create(ctx->debris, 1, &point, 3, 5, .5f);
             if (target && target->query)
             {
                 packet.event = 2;
@@ -283,30 +285,30 @@ int __cdecl bh_weapon_pulse_fire(BHWeaponPulseContext *c, BHEntity *weapon, BHEn
     for (i = 0; i < 3; ++i)
         bh_round_float(out + i, factor * r[i] + h[i]);
     offset(&trail_end, &trail, &direction, -3);
-    bh_draw_segment(b->particles->queue, 3, c->trail_image, &trail, &trail_end, .3f, .01f, .5f, 0, 0);
+    bh_draw_segment(b->particles->queue, 3, ctx->trail_image, &trail, &trail_end, .3f, .01f, .5f, 0, 0);
     offset(&trail_end, &trail, &direction, 3);
-    bh_draw_segment(b->particles->queue, 3, c->trail_image, &trail, &trail_end, .3f, .01f, .5f, 0, 0);
-    if (c->peers > 1 && !s->delay)
+    bh_draw_segment(b->particles->queue, 3, ctx->trail_image, &trail, &trail_end, .3f, .01f, .5f, 0, 0);
+    if (ctx->peers > 1 && !weapon_state->delay)
     {
-        if (c->local_id >= 0)
+        if (ctx->local_id >= 0)
         {
-            payload[0] = (unsigned char)c->local_id;
+            payload[0] = (unsigned char)ctx->local_id;
             payload[1] = 4;
             payload[2] = 2;
             payload[3] = 0;
             payload[4] = 255;
-            if (bh_packet_begin(&writer, c->packet, sizeof(c->packet), 8, c->sender) &&
-                bh_packet_append(&writer, payload, 5) && bh_packet_finish(&writer, &c->packet_bytes))
+            if (bh_packet_begin(&writer, ctx->packet, sizeof(ctx->packet), 8, ctx->sender) &&
+                bh_packet_append(&writer, payload, 5) && bh_packet_finish(&writer, &ctx->packet_bytes))
             {
-                c->last_send = bh_network_send(c->transport, 0, c->packet, c->packet_bytes, 0);
-                ++c->packets;
+                ctx->last_send = bh_network_send(ctx->transport, 0, ctx->packet, ctx->packet_bytes, 0);
+                ++ctx->packets;
             }
             else
-                c->error = 2;
+                ctx->error = 2;
         }
-        s->delay = 8;
+        weapon_state->delay = 8;
     }
-    s->word_e8 = phase + 1;
-    ++c->shots;
-    return c->error == 0;
+    weapon_state->word_e8 = phase + 1;
+    ++ctx->shots;
+    return ctx->error == 0;
 }

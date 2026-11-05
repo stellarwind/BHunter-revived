@@ -1229,7 +1229,8 @@ extern "C"
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
-            if ((event.type == SDL_EVENT_AUDIO_DEVICE_ADDED || event.type == SDL_EVENT_AUDIO_DEVICE_REMOVED) && !event.adevice.recording)
+            if ((event.type == SDL_EVENT_AUDIO_DEVICE_ADDED || event.type == SDL_EVENT_AUDIO_DEVICE_REMOVED) &&
+                !event.adevice.recording)
                 bh_audio_device_changed();
             switch (event.type)
             {

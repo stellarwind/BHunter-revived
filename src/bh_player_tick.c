@@ -15,361 +15,361 @@ static float rf(double v)
     bh_round_float(&f, v);
     return f;
 }
-static unsigned long word(BHEntity *e, unsigned long o)
+static unsigned long word(BHEntity *entity, unsigned long o)
 {
     unsigned long n;
-    memcpy(&n, (char *)e + o, 4);
+    memcpy(&n, (char *)entity + o, 4);
     return n;
 }
-static void setword(BHEntity *e, unsigned long o, unsigned long n)
+static void setword(BHEntity *entity, unsigned long o, unsigned long n)
 {
-    memcpy((char *)e + o, &n, 4);
+    memcpy((char *)entity + o, &n, 4);
 }
-static short half(BHEntity *e, unsigned long o)
+static short half(BHEntity *entity, unsigned long o)
 {
     short n;
-    memcpy(&n, (char *)e + o, 2);
+    memcpy(&n, (char *)entity + o, 2);
     return n;
 }
-static void sethalf(BHEntity *e, unsigned long o, unsigned short n)
+static void sethalf(BHEntity *entity, unsigned long o, unsigned short n)
 {
-    memcpy((char *)e + o, &n, 2);
+    memcpy((char *)entity + o, &n, 2);
 }
-static float number(BHEntity *e, unsigned long o)
+static float number(BHEntity *entity, unsigned long o)
 {
     float f;
-    memcpy(&f, (char *)e + o, 4);
+    memcpy(&f, (char *)entity + o, 4);
     return f;
 }
-static void real(BHEntity *e, unsigned long o, float f)
+static void real(BHEntity *entity, unsigned long o, float f)
 {
-    memcpy((char *)e + o, &f, 4);
+    memcpy((char *)entity + o, &f, 4);
 }
-static BHVec3 vector(BHEntity *e, unsigned long o)
+static BHVec3 vector(BHEntity *entity, unsigned long o)
 {
     BHVec3 v;
-    memcpy(&v, (char *)e + o, 12);
+    memcpy(&v, (char *)entity + o, 12);
     return v;
 }
-static void setvector(BHEntity *e, unsigned long o, const BHVec3 *v)
+static void setvector(BHEntity *entity, unsigned long o, const BHVec3 *v)
 {
-    memcpy((char *)e + o, v, 12);
+    memcpy((char *)entity + o, v, 12);
 }
-static unsigned char getbyte(BHEntity *e, unsigned long o)
+static unsigned char getbyte(BHEntity *entity, unsigned long o)
 {
-    return *((unsigned char *)e + o);
+    return *((unsigned char *)entity + o);
 }
-static void setbyte(BHEntity *e, unsigned long o, unsigned char n)
+static void setbyte(BHEntity *entity, unsigned long o, unsigned char n)
 {
-    *((unsigned char *)e + o) = n;
+    *((unsigned char *)entity + o) = n;
 }
-static int fail(BHPlayerTick *c, int n)
+static int fail(BHPlayerTick *ctx, int n)
 {
-    c->error = n;
+    ctx->error = n;
     return 0;
 }
-static int key(BHPlayerTick *c, unsigned long index)
+static int key(BHPlayerTick *ctx, unsigned long index)
 {
     unsigned char result;
-    c->decoded->values[index] = word(c->player, 0x18c + 4 * index);
-    result = bh_player_input_transition(c->decoded, index);
-    setword(c->player, 0x18c + 4 * index, c->decoded->values[index]);
+    ctx->decoded->values[index] = word(ctx->player, 0x18c + 4 * index);
+    result = bh_player_input_transition(ctx->decoded, index);
+    setword(ctx->player, 0x18c + 4 * index, ctx->decoded->values[index]);
     return result;
 }
-static int input(BHPlayerTick *c)
+static int input(BHPlayerTick *ctx)
 {
     BHPlayerInputState state;
     unsigned long i;
-    if (!c->input || !c->decoded)
-        return fail(c, 1);
-    state = *c->decoded;
-    memcpy(state.values, (char *)c->player + 0x18c, 36 * 4);
-    if (!bh_player_input_apply_packet_checked(&state, c->input->state, sizeof(c->input->state)))
-        return fail(c, 2);
+    if (!ctx->input || !ctx->decoded)
+        return fail(ctx, 1);
+    state = *ctx->decoded;
+    memcpy(state.values, (char *)ctx->player + 0x18c, 36 * 4);
+    if (!bh_player_input_apply_packet_checked(&state, ctx->input->state, sizeof(ctx->input->state)))
+        return fail(ctx, 2);
     for (i = 36; i < 256; ++i)
-        if (state.values[i] != c->decoded->values[i])
-            return fail(c, 2);
-    *c->decoded = state;
-    memcpy((char *)c->player + 0x18c, state.values, 36 * 4);
+        if (state.values[i] != ctx->decoded->values[i])
+            return fail(ctx, 2);
+    *ctx->decoded = state;
+    memcpy((char *)ctx->player + 0x18c, state.values, 36 * 4);
     return 1;
 }
-static unsigned long sound(BHPlayerTick *c, unsigned long resource, float level, float pitch, const BHVec3 *position,
+static unsigned long sound(BHPlayerTick *ctx, unsigned long resource, float level, float pitch, const BHVec3 *position,
                            const BHVec3 *velocity)
 {
-    return bh_sound_request(c->sound, resource, level, pitch, position, velocity);
+    return bh_sound_request(ctx->sound, resource, level, pitch, position, velocity);
 }
-static void restore_volume(BHPlayerTick *c)
+static void restore_volume(BHPlayerTick *ctx)
 {
-    if (c->state->paused)
+    if (ctx->state->paused)
     {
-        c->state->paused = 0;
-        bh_cd_set_volume(c->media, c->state->saved_cd_volume);
-        bh_wave_set_volume(c->media, c->state->saved_wave_volume);
+        ctx->state->paused = 0;
+        bh_cd_set_volume(ctx->media, ctx->state->saved_cd_volume);
+        bh_wave_set_volume(ctx->media, ctx->state->saved_wave_volume);
     }
 }
-static void menu_cue(BHPlayerTick *c, float a, float b)
+static void menu_cue(BHPlayerTick *ctx, float a, float b)
 {
-    sound(c, c->resources.menu_cue, 1, a, 0, 0);
-    sound(c, c->resources.menu_cue, 1, b, 0, 0);
+    sound(ctx, ctx->resources.menu_cue, 1, a, 0, 0);
+    sound(ctx, ctx->resources.menu_cue, 1, b, 0, 0);
 }
-static int camera_reset(BHPlayerTick *c, unsigned long index)
+static int camera_reset(BHPlayerTick *ctx, unsigned long index)
 {
-    if (!c->camera)
-        return fail(c, 1);
-    c->camera->player = c->player;
-    c->camera->player_count = c->state->mode;
-    if (c->network && c->network->packets)
-        c->camera->local_player_index = *c->network->packets->local_slot;
-    return bh_player_camera_reset(c->camera, index) ? 1 : fail(c, 3);
+    if (!ctx->camera)
+        return fail(ctx, 1);
+    ctx->camera->player = ctx->player;
+    ctx->camera->player_count = ctx->state->mode;
+    if (ctx->network && ctx->network->packets)
+        ctx->camera->local_player_index = *ctx->network->packets->local_slot;
+    return bh_player_camera_reset(ctx->camera, index) ? 1 : fail(ctx, 3);
 }
-static int return_menu(BHPlayerTick *c)
+static int return_menu(BHPlayerTick *ctx)
 {
     BHMessagePanelFields *fields;
     BHSoundVoice *engine;
     unsigned long engine_resource;
     unsigned long event = 20;
-    if (!c->reset || !c->panel || !c->panel->entity || !c->snapshot || !c->world_reset || !c->menu)
-        return fail(c, 1);
-    if (!camera_reset(c, 0) || !bh_player_reset(c->reset))
-        return fail(c, 3);
-    c->panel->messages->ring_start = 0;
-    c->panel->messages->ring_count = 0;
-    c->panel->messages->last_index = -1;
-    c->panel->messages->display_ticks = c->panel->messages->display_phase = 0;
-    c->panel->messages->arena_used = 0;
-    fields = bh_message_panel_fields(c->panel->entity);
+    if (!ctx->reset || !ctx->panel || !ctx->panel->entity || !ctx->snapshot || !ctx->world_reset || !ctx->menu)
+        return fail(ctx, 1);
+    if (!camera_reset(ctx, 0) || !bh_player_reset(ctx->reset))
+        return fail(ctx, 3);
+    ctx->panel->messages->ring_start = 0;
+    ctx->panel->messages->ring_count = 0;
+    ctx->panel->messages->last_index = -1;
+    ctx->panel->messages->display_ticks = ctx->panel->messages->display_phase = 0;
+    ctx->panel->messages->arena_used = 0;
+    fields = bh_message_panel_fields(ctx->panel->entity);
     fields->timer = fields->scale = 0;
-    c->panel->mode_identity = 0x00442bf0UL;
-    c->panel->entity->step = bh_message_panel_step;
-    if (!bh_entity_set_query(c->pool, c->panel->entity, bh_message_panel_query) ||
-        !bh_input_set_enabled(c->input, c->snapshot, 0))
-        return fail(c, 3);
-    if (!bh_entities_query(c->pool, 0, 0, 0, 0, &event))
-        return fail(c, 3);
-    engine = bh_sound_voice(c->sound, word(c->player, 0x220));
+    ctx->panel->mode_identity = 0x00442bf0UL;
+    ctx->panel->entity->step = bh_message_panel_step;
+    if (!bh_entity_set_query(ctx->pool, ctx->panel->entity, bh_message_panel_query) ||
+        !bh_input_set_enabled(ctx->input, ctx->snapshot, 0))
+        return fail(ctx, 3);
+    if (!bh_entities_query(ctx->pool, 0, 0, 0, 0, &event))
+        return fail(ctx, 3);
+    engine = bh_sound_voice(ctx->sound, word(ctx->player, 0x220));
     engine_resource = engine && engine->resource ? engine->resource->index : BH_SOUND_INVALID;
-    if (!bh_sound_stop_all(c->sound))
-        return fail(c, 3);
+    if (!bh_sound_stop_all(ctx->sound))
+        return fail(ctx, 3);
     /* The next mission reuses the player. Give its engine a fresh silent
        request after all old effects, including unowned loops, are retired. */
-    setword(c->player, 0x220, sound(c, engine_resource, 0, 1, NULL, NULL));
-    if (!bh_world_reset(c->world_reset) || !bh_menu_runtime_return(c->menu))
-        return fail(c, 3);
-    c->state->mode = 0;
+    setword(ctx->player, 0x220, sound(ctx, engine_resource, 0, 1, NULL, NULL));
+    if (!bh_world_reset(ctx->world_reset) || !bh_menu_runtime_return(ctx->menu))
+        return fail(ctx, 3);
+    ctx->state->mode = 0;
     return 1;
 }
-static int packet_send(BHPlayerTick *c, unsigned char type, const void *payload, unsigned long n)
+static int packet_send(BHPlayerTick *ctx, unsigned char type, const void *payload, unsigned long n)
 {
-    if (!c->network || !c->network->transport ||
-        !bh_packet_begin(&c->writer, c->packet, 64, type, (unsigned short)c->state->tick) ||
-        !bh_packet_append(&c->writer, payload, n))
-        return fail(c, 1);
-    bh_network_packet_send(c->network->transport, &c->writer, 0, 0);
-    c->packet_bytes = c->writer.cursor;
-    ++c->packets;
+    if (!ctx->network || !ctx->network->transport ||
+        !bh_packet_begin(&ctx->writer, ctx->packet, 64, type, (unsigned short)ctx->state->tick) ||
+        !bh_packet_append(&ctx->writer, payload, n))
+        return fail(ctx, 1);
+    bh_network_packet_send(ctx->network->transport, &ctx->writer, 0, 0);
+    ctx->packet_bytes = ctx->writer.cursor;
+    ++ctx->packets;
     return 1;
 }
-static int sound_packet(BHPlayerTick *c, unsigned long resource, float level, float pitch, unsigned long sparks)
+static int sound_packet(BHPlayerTick *ctx, unsigned long resource, float level, float pitch, unsigned long sparks)
 {
-    BHWorldGeometry *w;
+    BHWorldGeometry *world;
     unsigned long i;
     unsigned char tail[4];
     int result;
-    if (c->state->mode < 2)
+    if (ctx->state->mode < 2)
         return 1;
-    if (!c->navigation || !c->network || !c->network->transport)
-        return fail(c, 1);
-    w = (BHWorldGeometry *)word(c->player, 0xc4);
-    if (!w)
+    if (!ctx->navigation || !ctx->network || !ctx->network->transport)
+        return fail(ctx, 1);
+    world = (BHWorldGeometry *)word(ctx->player, 0xc4);
+    if (!world)
         return 1;
-    for (i = 0; i < c->navigation->node_count; ++i)
-        if (c->navigation->nodes[i].placement == w)
+    for (i = 0; i < ctx->navigation->node_count; ++i)
+        if (ctx->navigation->nodes[i].placement == world)
             break;
-    if (i == c->navigation->node_count)
-        return fail(c, 1);
-    if (!bh_packet_begin(&c->writer, c->packet, 64, 6, (unsigned short)c->state->tick))
-        return fail(c, 2);
-    result = bh_packet_write_position(&c->writer, w, (unsigned short)i, &c->player->position);
+    if (i == ctx->navigation->node_count)
+        return fail(ctx, 1);
+    if (!bh_packet_begin(&ctx->writer, ctx->packet, 64, 6, (unsigned short)ctx->state->tick))
+        return fail(ctx, 2);
+    result = bh_packet_write_position(&ctx->writer, world, (unsigned short)i, &ctx->player->position);
     if (result < 0)
-        return fail(c, 2);
+        return fail(ctx, 2);
     if (!result)
         return 1;
     tail[0] = (unsigned char)resource;
     tail[1] = (unsigned char)(__int64)((double)level * 128);
     tail[2] = (unsigned char)(__int64)((double)pitch * 64);
     tail[3] = (unsigned char)sparks;
-    if (!bh_packet_append(&c->writer, tail, 4))
-        return fail(c, 2);
-    bh_network_packet_send(c->network->transport, &c->writer, 0, 0);
-    ++c->packets;
-    c->packet_bytes = c->writer.cursor;
+    if (!bh_packet_append(&ctx->writer, tail, 4))
+        return fail(ctx, 2);
+    bh_network_packet_send(ctx->network->transport, &ctx->writer, 0, 0);
+    ++ctx->packets;
+    ctx->packet_bytes = ctx->writer.cursor;
     return 1;
 }
 static void __cdecl receive(void *bytes, DWORD n, void *user)
 {
-    BHPlayerTick *c = (BHPlayerTick *)user;
-    if (c->state->mode == 2)
-        bh_remote_host_message(c->network, bytes, n, c->game->capacity);
+    BHPlayerTick *ctx = (BHPlayerTick *)user;
+    if (ctx->state->mode == 2)
+        bh_remote_host_message(ctx->network, bytes, n, ctx->game->capacity);
     else
-        bh_remote_client_message(c->network, bytes, n, c->game->capacity);
+        bh_remote_client_message(ctx->network, bytes, n, ctx->game->capacity);
 }
-static int network(BHPlayerTick *c)
+static int network(BHPlayerTick *ctx)
 {
-    BHPlayerTickState *s = c->state;
+    BHPlayerTickState *state = ctx->state;
     unsigned long i, n = 0;
     unsigned char payload[15], flags;
     unsigned short tick;
     long converted;
     double sum = 0;
     BHVec3 angles;
-    BHWorldGeometry *w;
+    BHWorldGeometry *world;
     int result;
-    if (!s->mode)
+    if (!state->mode)
         return 1;
-    ++s->tick;
-    if (s->mode == 2)
-        s->tick = (s->tick & 0xffff0000UL) | (unsigned short)(bh_platform_ticks() / 33);
-    if (!s->ending && !input(c))
+    ++state->tick;
+    if (state->mode == 2)
+        state->tick = (state->tick & 0xffff0000UL) | (unsigned short)(bh_platform_ticks() / 33);
+    if (!state->ending && !input(ctx))
         return 0;
-    if (s->mode < 2)
+    if (state->mode < 2)
         return 1;
-    if (!c->network || !c->game)
-        return fail(c, 1);
-    if (s->debug)
+    if (!ctx->network || !ctx->game)
+        return fail(ctx, 1);
+    if (state->debug)
     {
-        if (!c->network_debug || !c->network->packets)
-            return fail(c, 1);
-        c->network_debug->mode = s->mode;
-        c->network_debug->frame = (short)s->tick;
-        c->network_debug->defcon = s->peers;
-        c->network_debug->good = c->network->packets->processed;
-        c->network_debug->bad = c->network->packets->bad;
-        c->network_debug->ugly = c->network->packets->pending;
-        if (!bh_network_debug_draw(c->network_debug))
-            return fail(c, 3);
+        if (!ctx->network_debug || !ctx->network->packets)
+            return fail(ctx, 1);
+        ctx->network_debug->mode = state->mode;
+        ctx->network_debug->frame = (short)state->tick;
+        ctx->network_debug->defcon = state->peers;
+        ctx->network_debug->good = ctx->network->packets->processed;
+        ctx->network_debug->bad = ctx->network->packets->bad;
+        ctx->network_debug->ugly = ctx->network->packets->pending;
+        if (!bh_network_debug_draw(ctx->network_debug))
+            return fail(ctx, 3);
     }
-    if (s->mode == 2)
+    if (state->mode == 2)
     {
-        *c->network->packets->local_slot = 0;
-        if (!(s->tick & 63))
+        *ctx->network->packets->local_slot = 0;
+        if (!(state->tick & 63))
         {
-            if (!c->latency)
-                return fail(c, 1);
+            if (!ctx->latency)
+                return fail(ctx, 1);
             for (i = 0; i < 7; ++i)
             {
-                converted = (long)(__int64)((long)(short)(unsigned short)s->tick + (double)c->latency[i]);
+                converted = (long)(__int64)((long)(short)(unsigned short)state->tick + (double)ctx->latency[i]);
                 tick = (unsigned short)converted;
                 memcpy(payload + i * 2, &tick, 2);
             }
             for (i = 1; i < 8; ++i)
-                if (c->game->players[i].active)
+                if (ctx->game->players[i].active)
                 {
-                    sum += c->latency[i];
+                    sum += ctx->latency[i];
                     ++n;
                 }
             if (!n)
-                return fail(c, 4);
-            s->peers = (unsigned long)(__int64)(sum * 1.4 / n);
-            payload[14] = (unsigned char)s->peers;
-            if (!packet_send(c, 5, payload, 15))
+                return fail(ctx, 4);
+            state->peers = (unsigned long)(__int64)(sum * 1.4 / n);
+            payload[14] = (unsigned char)state->peers;
+            if (!packet_send(ctx, 5, payload, 15))
                 return 0;
         }
     }
-    if (!bh_network_receive(c->game, receive, c))
-        return fail(c, 3);
+    if (!bh_network_receive(ctx->game, receive, ctx))
+        return fail(ctx, 3);
     return 1;
 }
-static int send_pose(BHPlayerTick *c)
+static int send_pose(BHPlayerTick *ctx)
 {
-    BHPlayerTickState *s = c->state;
-    BHEntity *e = c->player;
-    BHWorldGeometry *w;
+    BHPlayerTickState *state = ctx->state;
+    BHEntity *entity = ctx->player;
+    BHWorldGeometry *world;
     unsigned long i;
     unsigned short slot;
     unsigned char flags, angle;
     int result;
-    if (s->mode < 2)
+    if (state->mode < 2)
         return 1;
-    if (s->send_delay)
+    if (state->send_delay)
     {
-        --s->send_delay;
+        --state->send_delay;
         return 1;
     }
-    s->send_delay = (long)s->peers;
-    if (!c->network || !c->navigation)
-        return fail(c, 1);
-    if (*c->network->packets->local_slot < 0)
+    state->send_delay = (long)state->peers;
+    if (!ctx->network || !ctx->navigation)
+        return fail(ctx, 1);
+    if (*ctx->network->packets->local_slot < 0)
         return 1;
-    slot = (unsigned short)*c->network->packets->local_slot;
-    w = (BHWorldGeometry *)word(e, 0xc4);
-    if (!w)
+    slot = (unsigned short)*ctx->network->packets->local_slot;
+    world = (BHWorldGeometry *)word(entity, 0xc4);
+    if (!world)
         return 1;
-    for (i = 0; i < c->navigation->node_count; ++i)
-        if (c->navigation->nodes[i].placement == w)
+    for (i = 0; i < ctx->navigation->node_count; ++i)
+        if (ctx->navigation->nodes[i].placement == world)
             break;
-    if (i == c->navigation->node_count)
-        return fail(c, 1);
-    if (!bh_packet_begin(&c->writer, c->packet, 64, 4, (unsigned short)s->tick) ||
-        !bh_packet_append(&c->writer, &slot, 2))
-        return fail(c, 2);
-    result = bh_packet_write_position(&c->writer, w, (unsigned short)i, &e->position);
+    if (i == ctx->navigation->node_count)
+        return fail(ctx, 1);
+    if (!bh_packet_begin(&ctx->writer, ctx->packet, 64, 4, (unsigned short)state->tick) ||
+        !bh_packet_append(&ctx->writer, &slot, 2))
+        return fail(ctx, 2);
+    result = bh_packet_write_position(&ctx->writer, world, (unsigned short)i, &entity->position);
     if (result < 0)
-        return fail(c, 2);
+        return fail(ctx, 2);
     if (!result)
         return 1;
     for (i = 0; i < 3; ++i)
     {
-        angle = (unsigned char)(__int64)((double)number(e, 0x3c + i * 4) * 40.7436637878418);
-        if (!bh_packet_append(&c->writer, &angle, 1))
-            return fail(c, 2);
+        angle = (unsigned char)(__int64)((double)number(entity, 0x3c + i * 4) * 40.7436637878418);
+        if (!bh_packet_append(&ctx->writer, &angle, 1))
+            return fail(ctx, 2);
     }
-    flags = number(e, 0x240) > 0 ? 1 : 0;
-    if (word(e, 0x228) != BH_SOUND_INVALID)
+    flags = number(entity, 0x240) > 0 ? 1 : 0;
+    if (word(entity, 0x228) != BH_SOUND_INVALID)
         flags |= 2;
-    if (half(e, 0x2b4))
+    if (half(entity, 0x2b4))
         flags |= 4;
-    if (!bh_packet_append(&c->writer, &flags, 1))
-        return fail(c, 2);
-    bh_network_packet_send(c->network->transport, &c->writer, 0, 0);
-    ++c->packets;
-    c->packet_bytes = c->writer.cursor;
+    if (!bh_packet_append(&ctx->writer, &flags, 1))
+        return fail(ctx, 2);
+    bh_network_packet_send(ctx->network->transport, &ctx->writer, 0, 0);
+    ++ctx->packets;
+    ctx->packet_bytes = ctx->writer.cursor;
     return 1;
 }
-static void cue(BHPlayerTick *c, unsigned long resource, float delay)
+static void cue(BHPlayerTick *ctx, unsigned long resource, float delay)
 {
-    BHEntity *e;
+    BHEntity *entity;
     BHScriptLifetimeState life;
-    if (!c->lifetime)
+    if (!ctx->lifetime)
     {
-        c->error = 1;
+        ctx->error = 1;
         return;
     }
-    e = bh_entity_acquire(c->pool);
-    if (!e)
+    entity = bh_entity_acquire(ctx->pool);
+    if (!entity)
         return;
-    bh_script_lifetime_read(e, &life);
+    bh_script_lifetime_read(entity, &life);
     life.script_loaded = 0;
     life.mission_countdown = delay;
     life.mission_resource = resource;
-    if (!bh_script_lifetime_bind(c->lifetime, e, &life, bh_script_unloaded_query))
+    if (!bh_script_lifetime_bind(ctx->lifetime, entity, &life, bh_script_unloaded_query))
     {
-        bh_entity_release(c->pool, e);
-        c->error = 1;
+        bh_entity_release(ctx->pool, entity);
+        ctx->error = 1;
         return;
     }
-    e->step = bh_mission_sound_tick;
+    entity->step = bh_mission_sound_tick;
 }
-static int recoil(BHPlayerTick *c)
+static int recoil(BHPlayerTick *ctx)
 {
-    BHEntity *e = c->player;
-    BHVec3 position = vector(e, 0x298), speed = vector(e, 0x2a4), difference, clamped, right = vector(e, 0x18),
-           forward = vector(e, 0x30);
+    BHEntity *entity = ctx->player;
+    BHVec3 position = vector(entity, 0x298), speed = vector(entity, 0x2a4), difference, clamped,
+           right = vector(entity, 0x18), forward = vector(entity, 0x30);
     float length, dx, dy;
     unsigned long i;
     for (i = 0; i < 3; ++i)
         ((float *)&position)[i] = rf((double)((float *)&position)[i] + ((float *)&speed)[i]);
     for (i = 0; i < 3; ++i)
-        ((float *)&difference)[i] = rf((double)((float *)&e->position)[i] - ((float *)&position)[i]);
+        ((float *)&difference)[i] = rf((double)((float *)&entity->position)[i] - ((float *)&position)[i]);
     length = rf(sqrt(((double)difference.z * difference.z + (double)difference.y * difference.y) +
                      (double)difference.x * difference.x));
     clamped = difference;
@@ -381,28 +381,28 @@ static int recoil(BHPlayerTick *c)
         ((float *)&position)[i] = rf((double)((float *)&clamped)[i] + ((float *)&position)[i]);
         ((float *)&speed)[i] = rf((((double)((float *)&speed)[i] - ((float *)&difference)[i] * (-.6))) * .6);
     }
-    setvector(e, 0x298, &position);
-    setvector(e, 0x2a4, &speed);
+    setvector(entity, 0x298, &position);
+    setvector(entity, 0x2a4, &speed);
     for (i = 0; i < 3; ++i)
-        ((float *)&difference)[i] = rf((double)((float *)&position)[i] - ((float *)&e->position)[i]);
+        ((float *)&difference)[i] = rf((double)((float *)&position)[i] - ((float *)&entity->position)[i]);
     dx = rf(((double)right.y * difference.y + (double)right.z * difference.z) + (double)right.x * difference.x);
     dy = rf(((double)forward.x * difference.x + (double)forward.y * difference.y) + (double)forward.z * difference.z);
-    if (!c->state->mode)
+    if (!ctx->state->mode)
         dx = dy = 0;
     else
     {
         dx = rf((double)dx * (2.0 / 3));
         dy = rf((double)-dy * .25);
     }
-    if (!c->feedback || bh_force_feedback_update(c->feedback, bh_platform_ticks(), dx, dy) < 0)
-        return fail(c, 3);
+    if (!ctx->feedback || bh_force_feedback_update(ctx->feedback, bh_platform_ticks(), dx, dy) < 0)
+        return fail(ctx, 3);
     return 1;
 }
 
-static int near_contacts(BHPlayerTick *c)
+static int near_contacts(BHPlayerTick *ctx)
 {
-    BHEntity *e = c->player, *actor;
-    BHWorldGeometry *world = (BHWorldGeometry *)word(e, 0xc4);
+    BHEntity *entity = ctx->player, *actor;
+    BHWorldGeometry *world = (BHWorldGeometry *)word(entity, 0xc4);
     BHPickupRoom *room = 0;
     BHEntityPositionPacket position;
     BHPhysicsContactPacket contact;
@@ -413,32 +413,32 @@ static int near_contacts(BHPlayerTick *c)
     int random;
     if (!world)
         return 1;
-    if (!c->rooms || !c->contacts || !c->flash)
-        return fail(c, 1);
-    if (c->room_index)
+    if (!ctx->rooms || !ctx->contacts || !ctx->flash)
+        return fail(ctx, 1);
+    if (ctx->room_index)
     {
-        long found = bh_binding_find(c->room_index, world, NULL);
-        if (found >= 0 && (unsigned long)found < c->room_count && c->rooms[found].world == world)
-            room = c->rooms + found;
+        long found = bh_binding_find(ctx->room_index, world, NULL);
+        if (found >= 0 && (unsigned long)found < ctx->room_count && ctx->rooms[found].world == world)
+            room = ctx->rooms + found;
     }
     if (!room)
-        for (i = 0; i < c->room_count; ++i)
-            if (c->rooms[i].world == world)
+        for (i = 0; i < ctx->room_count; ++i)
+            if (ctx->rooms[i].world == world)
             {
-                room = c->rooms + i;
+                room = ctx->rooms + i;
                 break;
             }
     if (!room)
-        return fail(c, 1);
+        return fail(ctx, 1);
     actor = room->actors;
     while (actor)
     {
-        if (++n > c->pool->capacity || !actor->query)
-            return fail(c, 5);
+        if (++n > ctx->pool->capacity || !actor->query)
+            return fail(ctx, 5);
         position.event = 3;
         actor->query(actor, &position);
         for (i = 0; i < 3; ++i)
-            ((float *)&d)[i] = rf((double)((float *)&position.position)[i] - ((float *)&e->position)[i]);
+            ((float *)&d)[i] = rf((double)((float *)&position.position)[i] - ((float *)&entity->position)[i]);
         distance = rf(((double)d.z * d.z + (double)d.y * d.y) + (double)d.x * d.x);
         if (distance < .1)
             distance = .1f;
@@ -451,14 +451,14 @@ static int near_contacts(BHPlayerTick *c)
             distance = rf((double)distance * .25f);
         if (distance < 12.25)
         {
-            ++c->near_contacts;
+            ++ctx->near_contacts;
             if (kind == 9 && word(actor, 0x12c) == (unsigned long)actor && distance < 6.0025 && !word(actor, 0x134) &&
                 !word(actor, 0x138))
             {
-                setword(actor, 0x134, (unsigned long)e);
+                setword(actor, 0x134, (unsigned long)entity);
                 setword(actor, 0x138, word(actor, 0x128));
-                sound(c, c->resources.target_cue, 2, .7f, &e->position, &e->origin);
-                sound(c, c->resources.lock_cue, 2, 1, &e->position, &e->origin);
+                sound(ctx, ctx->resources.target_cue, 2, .7f, &entity->position, &entity->origin);
+                sound(ctx, ctx->resources.lock_cue, 2, 1, &entity->position, &entity->origin);
             }
             root = rf(sqrt(distance));
             coefficient = rf(1.0 / root);
@@ -470,7 +470,8 @@ static int near_contacts(BHPlayerTick *c)
             strength = rf((double)raw * raw);
             for (i = 0; i < 3; ++i)
             {
-                ((float *)&point)[i] = rf((double)((float *)&e->position)[i] - ((float *)&contact.normal)[i] * (-1.75));
+                ((float *)&point)[i] =
+                    rf((double)((float *)&entity->position)[i] - ((float *)&contact.normal)[i] * (-1.75));
                 random = rand();
                 ((float *)&point)[i] = rf((double)((float *)&point)[i] - ((double)random - 16384) * (-1.0 / 65536));
             }
@@ -487,9 +488,9 @@ static int near_contacts(BHPlayerTick *c)
                 if (contact.normal.y < -.5)
                     contact.normal.y = -.5f;
             }
-            if (!e->query)
-                return fail(c, 1);
-            e->query(e, &contact);
+            if (!entity->query)
+                return fail(ctx, 1);
+            entity->query(entity, &contact);
             for (i = 0; i < 3; ++i)
                 ((float *)&contact.normal)[i] = -((float *)&contact.normal)[i];
             contact.impulse = rf((double)strength * (-200));
@@ -497,33 +498,33 @@ static int near_contacts(BHPlayerTick *c)
             actor->query(actor, &contact);
             damage.damage.event = 0;
             damage.damage.severity = rf((double)strength * 1.5);
-            damage.damage.attacker = e;
-            if (number(e, 0x240) > 0)
+            damage.damage.attacker = entity;
+            if (number(entity, 0x240) > 0)
             {
                 damage.damage.severity = rf((double)damage.damage.severity * 3);
                 for (i = 0; i < 3; ++i)
                     ((float *)&mid)[i] =
-                        rf(((double)((float *)&e->position)[i] + ((float *)&position.position)[i]) * .5);
+                        rf(((double)((float *)&entity->position)[i] + ((float *)&position.position)[i]) * .5);
                 {
-                    BHEntity *flash = bh_entity_acquire(c->pool);
+                    BHEntity *flash = bh_entity_acquire(ctx->pool);
                     if (flash)
                     {
                         flash->position = mid;
-                        bh_flash_flare_bind(c->flash, flash, .1f, 200, 4);
+                        bh_flash_flare_bind(ctx->flash, flash, .1f, 200, 4);
                     }
                 }
-                sound(c, c->resources.electro, 1, 1.5f, &mid, &zero);
+                sound(ctx, ctx->resources.electro, 1, 1.5f, &mid, &zero);
             }
             if (word(actor, 0xfc) != 8)
                 actor->query(actor, &damage);
-            if (!sound_packet(c, c->resources.collision_side, level, rf(.8 - (double)strength * (-.4)),
+            if (!sound_packet(ctx, ctx->resources.collision_side, level, rf(.8 - (double)strength * (-.4)),
                               (unsigned long)(__int64)((double)strength * 5)))
                 return 0;
-            sound(c, c->resources.collision_side, level, rf(.8 - (double)strength * (-.4)), &point, &zero);
+            sound(ctx, ctx->resources.collision_side, level, rf(.8 - (double)strength * (-.4)), &point, &zero);
             particle = strength;
             while (particle > .1)
             {
-                bh_contact_spark_create(c->contacts, &point, particle, 1);
+                bh_contact_spark_create(ctx->contacts, &point, particle, 1);
                 particle = rf((double)particle - .2);
             }
         }
@@ -531,35 +532,35 @@ static int near_contacts(BHPlayerTick *c)
     }
     return 1;
 }
-static void __cdecl ring_refresh(BHEntity *e, void *unused)
+static void __cdecl ring_refresh(BHEntity *entity, void *unused)
 {
-    BHPlayerTick *c;
+    BHPlayerTick *ctx;
     (void)unused;
-    memcpy(&c, e->payload + 528, 4);
-    if (c && c->contacts && c->camera_yaw)
-        bh_impact_ring_draw(c->contacts->queue, c->resources.water_ring, e, c->camera_yaw);
+    memcpy(&ctx, entity->payload + 528, 4);
+    if (ctx && ctx->contacts && ctx->camera_yaw)
+        bh_impact_ring_draw(ctx->contacts->queue, ctx->resources.water_ring, entity, ctx->camera_yaw);
 }
-static void ring(BHPlayerTick *c, const BHVec3 *position, const BHVec3 *normal, float size)
+static void ring(BHPlayerTick *ctx, const BHVec3 *position, const BHVec3 *normal, float size)
 {
-    BHEntity *e;
-    BHImpactState *s;
-    if (!c->contacts || !c->camera_yaw)
+    BHEntity *entity;
+    BHImpactState *state;
+    if (!ctx->contacts || !ctx->camera_yaw)
     {
-        c->error = 1;
+        ctx->error = 1;
         return;
     }
-    e = bh_contact_impact_create(c->contacts, position, normal, 4);
-    if (!e)
+    entity = bh_contact_impact_create(ctx->contacts, position, normal, 4);
+    if (!entity)
         return;
-    s = bh_contact_impact_state(c->contacts, e);
-    s->size = size;
-    s->duration = rf((double)size * .1);
-    memcpy(e->payload + 528, &c, 4);
-    e->refresh = ring_refresh;
+    state = bh_contact_impact_state(ctx->contacts, entity);
+    state->size = size;
+    state->duration = rf((double)size * .1);
+    memcpy(entity->payload + 528, &ctx, 4);
+    entity->refresh = ring_refresh;
 }
-static int ground(BHPlayerTick *c)
+static int ground(BHPlayerTick *ctx)
 {
-    BHEntity *e = c->player;
+    BHEntity *entity = ctx->player;
     BHVec3 start, end, right, forward, up, side, a, b, d, position, velocity, acceleration;
     BHWorldGeometry *cached;
     BHWorldHit self;
@@ -568,42 +569,42 @@ static int ground(BHPlayerTick *c)
     int found = 0, result, n, j, random;
     float fraction, strength, cosine, sine, radius, width, fall, angle, size, rate, alpha;
     double raw_angle;
-    if (!getbyte(e, 0x2bb) || !c->state->mode)
+    if (!getbyte(entity, 0x2bb) || !ctx->state->mode)
         return 1;
-    handle = word(e, 0x228);
-    if (!half(e, 0x2b4))
+    handle = word(entity, 0x228);
+    if (!half(entity, 0x2b4))
     {
-        if (!c->world || !c->particles || !c->contacts)
-            return fail(c, 1);
-        up = vector(e, 0x24);
-        right = vector(e, 0x18);
-        forward = vector(e, 0x30);
+        if (!ctx->world || !ctx->particles || !ctx->contacts)
+            return fail(ctx, 1);
+        up = vector(entity, 0x24);
+        right = vector(entity, 0x18);
+        forward = vector(entity, 0x30);
         for (i = 0; i < 3; ++i)
         {
-            ((float *)&start)[i] = rf((double)((float *)&e->position)[i] - ((float *)&up)[i] * (-.3));
-            ((float *)&end)[i] = rf((double)((float *)&e->position)[i] - ((float *)&up)[i] * (-8.3));
+            ((float *)&start)[i] = rf((double)((float *)&entity->position)[i] - ((float *)&up)[i] * (-.3));
+            ((float *)&end)[i] = rf((double)((float *)&entity->position)[i] - ((float *)&up)[i] * (-8.3));
         }
-        cached = (BHWorldGeometry *)word(e, 0xc4);
+        cached = (BHWorldGeometry *)word(entity, 0xc4);
         self.kind = BH_WORLD_HIT_ACTOR;
-        self.object.actor = e;
-        result = bh_world_segment_run(c->world, &self, &cached, &start, &end, -1, &hit);
+        self.object.actor = entity;
+        result = bh_world_segment_run(ctx->world, &self, &cached, &start, &end, -1, &hit);
         if (result < 0)
-            return fail(c, 3);
+            return fail(ctx, 3);
         if (result)
         {
             fraction = hit.fraction;
             if (!_finite(fraction) || fraction < 0 || fraction > 1)
-                return fail(c, 4);
+                return fail(ctx, 4);
             strength = rf(1.0 - fraction);
             random = rand();
             n = (int)(1 - (1 - (double)fraction) * random * (-1.0 / 8192));
             if (handle == BH_SOUND_INVALID)
             {
-                handle = sound(c, c->resources.ground_loop, strength, 1, &hit.point, &e->origin);
-                setword(e, 0x228, handle);
+                handle = sound(ctx, ctx->resources.ground_loop, strength, 1, &hit.point, &entity->origin);
+                setword(entity, 0x228, handle);
             }
             else
-                bh_sound_update(c->sound, handle, strength, 1, &hit.point, &e->origin);
+                bh_sound_update(ctx->sound, handle, strength, 1, &hit.point, &entity->origin);
             for (j = n; j;)
             {
                 --j;
@@ -627,7 +628,7 @@ static int ground(BHPlayerTick *c)
                         fall = rf((double)random * (1.0 / 8192));
                         for (i = 0; i < 3; ++i)
                             ((float *)&position)[i] = rf((double)fall * ((float *)&d)[i] + ((float *)&hit.point)[i]);
-                        ring(c, &position, &hit.normal, size);
+                        ring(ctx, &position, &hit.normal, size);
                     }
                 }
                 radius = rf((1 - (double)fraction) * .25);
@@ -640,169 +641,169 @@ static int ground(BHPlayerTick *c)
                     ((float *)&position)[i] = rf((double)((float *)&d)[i] * width + ((float *)&hit.point)[i]);
                 }
                 acceleration.y = rf((double)acceleration.y + fall);
-                image = c->resources.smoke_image;
+                image = ctx->resources.smoke_image;
                 size = .5f;
                 rate = 20;
                 alpha = radius;
                 if (hit.material_flags & 4)
                 {
-                    image = c->resources.water_cloud;
+                    image = ctx->resources.water_cloud;
                     size = .7f;
                     rate = 30;
                     alpha = strength;
                 }
                 random = rand();
                 angle = rf((double)random * .00019175345108273588);
-                bh_script_particle_create(c->particles, image, 3, &position, &velocity, &acceleration, size, angle,
+                bh_script_particle_create(ctx->particles, image, 3, &position, &velocity, &acceleration, size, angle,
                                           rate, 0, .8f, .9f, rf((1 - (double)fraction) * .5), alpha);
-                ++c->ground_particles;
+                ++ctx->ground_particles;
             }
         }
     }
     if (!found && handle != BH_SOUND_INVALID)
     {
-        bh_sound_stop(c->sound, handle);
-        setword(e, 0x228, BH_SOUND_INVALID);
+        bh_sound_stop(ctx->sound, handle);
+        setword(entity, 0x228, BH_SOUND_INVALID);
     }
-    return !c->error;
+    return !ctx->error;
 }
-static int weapons(BHPlayerTick *c)
+static int weapons(BHPlayerTick *ctx)
 {
-    BHEntity *e = c->player, *w;
+    BHEntity *entity = ctx->player, *w;
     BHWeaponObjectState *state;
     unsigned long i, j, old, to, slot;
     int first, held, k;
-    if (!c->weapons || !c->weapons->factory)
-        return fail(c, 1);
+    if (!ctx->weapons || !ctx->weapons->factory)
+        return fail(ctx, 1);
     for (j = 0; j < 2; ++j)
-        if (key(c, 27 + j) == 0)
+        if (key(ctx, 27 + j) == 0)
         {
-            old = getbyte(e, 0x2b6 + j);
+            old = getbyte(entity, 0x2b6 + j);
             if (old < j * 5 || old > j * 5 + 4)
-                return fail(c, 1);
+                return fail(ctx, 1);
             to = old;
             for (i = 0; i < 5; ++i)
             {
                 to = to + 1;
                 if (to > j * 5 + 4)
                     to = j * 5;
-                setbyte(e, 0x2b6 + j, (unsigned char)to);
-                if (!bh_weapon_registry_resolve(&c->weapons->factory->registry, to, &w, &state))
-                    return fail(c, 1);
+                setbyte(entity, 0x2b6 + j, (unsigned char)to);
+                if (!bh_weapon_registry_resolve(&ctx->weapons->factory->registry, to, &w, &state))
+                    return fail(ctx, 1);
                 if (state->common.available_ec)
                     break;
             }
             if (i == 5)
-                return fail(c, 5);
+                return fail(ctx, 5);
             if (old == to)
-                sound(c, c->resources.no_weapon, 1, 1, &e->position, &e->origin);
-            else if (!bh_weapon_dispatch(c->weapons, old, BH_WEAPON_CANCEL) ||
-                     !bh_weapon_dispatch(c->weapons, to, BH_WEAPON_READY))
-                return fail(c, 3);
+                sound(ctx, ctx->resources.no_weapon, 1, 1, &entity->position, &entity->origin);
+            else if (!bh_weapon_dispatch(ctx->weapons, old, BH_WEAPON_CANCEL) ||
+                     !bh_weapon_dispatch(ctx->weapons, to, BH_WEAPON_READY))
+                return fail(ctx, 3);
         }
     for (i = 0; i < 10; ++i)
-        if (key(c, 12 + i) == 0)
+        if (key(ctx, 12 + i) == 0)
         {
             slot = i < 5 ? 0 : 1;
-            old = getbyte(e, 0x2b6 + slot);
+            old = getbyte(entity, 0x2b6 + slot);
             if (old != i)
             {
-                if (!bh_weapon_registry_resolve(&c->weapons->factory->registry, i, &w, &state))
-                    return fail(c, 1);
+                if (!bh_weapon_registry_resolve(&ctx->weapons->factory->registry, i, &w, &state))
+                    return fail(ctx, 1);
                 if (!state->common.available_ec)
-                    sound(c, c->resources.no_weapon, 1, 1, &e->position, &e->origin);
+                    sound(ctx, ctx->resources.no_weapon, 1, 1, &entity->position, &entity->origin);
                 else
                 {
-                    if (!bh_weapon_dispatch(c->weapons, old, BH_WEAPON_CANCEL))
-                        return fail(c, 3);
-                    setbyte(e, 0x2b6 + slot, (unsigned char)i);
-                    if (!bh_weapon_dispatch(c->weapons, i, BH_WEAPON_READY))
-                        return fail(c, 3);
+                    if (!bh_weapon_dispatch(ctx->weapons, old, BH_WEAPON_CANCEL))
+                        return fail(ctx, 3);
+                    setbyte(entity, 0x2b6 + slot, (unsigned char)i);
+                    if (!bh_weapon_dispatch(ctx->weapons, i, BH_WEAPON_READY))
+                        return fail(ctx, 3);
                 }
             }
         }
     for (j = 0; j < 2; ++j)
-        if (!bh_weapon_dispatch(c->weapons, getbyte(e, 0x2b6 + j), BH_WEAPON_TICK))
-            return fail(c, 3);
+        if (!bh_weapon_dispatch(ctx->weapons, getbyte(entity, 0x2b6 + j), BH_WEAPON_TICK))
+            return fail(ctx, 3);
     for (j = 0; j < 2; ++j)
     {
         first = held = 0;
         for (i = 0; i < 3; ++i)
         {
             slot = j ? (i == 0 ? 3 : i == 1 ? 5 : 4) : (i == 0 ? 22 : i == 1 ? 24 : 23);
-            k = key(c, slot);
+            k = key(ctx, slot);
             if (!k)
                 first = held = 1;
             else if (k == 2)
                 held = 1;
         }
-        if (first && !bh_weapon_dispatch(c->weapons, getbyte(e, 0x2b6 + j), BH_WEAPON_TRIGGER))
-            return fail(c, 3);
-        if (held && !bh_weapon_dispatch(c->weapons, getbyte(e, 0x2b6 + j), BH_WEAPON_FIRE))
-            return fail(c, 3);
+        if (first && !bh_weapon_dispatch(ctx->weapons, getbyte(entity, 0x2b6 + j), BH_WEAPON_TRIGGER))
+            return fail(ctx, 3);
+        if (held && !bh_weapon_dispatch(ctx->weapons, getbyte(entity, 0x2b6 + j), BH_WEAPON_FIRE))
+            return fail(ctx, 3);
     }
     return 1;
 }
-static int camera_mode(BHPlayerTick *c, long mode)
+static int camera_mode(BHPlayerTick *ctx, long mode)
 {
-    return bh_camera_state_set_mode(bh_player_camera_state(c->player), mode) ? 1 : fail(c, 3);
+    return bh_camera_state_set_mode(bh_player_camera_state(ctx->player), mode) ? 1 : fail(ctx, 3);
 }
-static int death(BHPlayerTick *c)
+static int death(BHPlayerTick *ctx)
 {
-    BHPlayerTickState *s = c->state;
-    BHEntity *e = c->player;
+    BHPlayerTickState *state = ctx->state;
+    BHEntity *entity = ctx->player;
     BHVec3 position, acceleration, v;
     float distance, best = 9e37f;
     unsigned long i, j, index = 0;
-    if (!s->death_frames)
+    if (!state->death_frames)
         return 1;
-    position = e->position;
+    position = entity->position;
     for (i = 0; i < 3; ++i)
         ((float *)&position)[i] = rf((double)((float *)&position)[i] + (rand() - 16384) * (1.0 / 16384));
-    ++s->death_frames;
-    if (s->death_frames == 75 || s->death_frames == 95)
+    ++state->death_frames;
+    if (state->death_frames == 75 || state->death_frames == 95)
     {
-        if (!c->explosions)
-            return fail(c, 1);
-        acceleration = vector(e, 0x60);
-        if (s->death_frames == 75)
+        if (!ctx->explosions)
+            return fail(ctx, 1);
+        acceleration = vector(entity, 0x60);
+        if (state->death_frames == 75)
         {
-            sound(c, c->resources.death_cue, 1, 1.5f, &e->position, &e->origin);
-            bh_script_explosion_create(c->explosions, &position, 1, 10, .85f, 0);
-            s->saved_model = word(e, 0x21c);
-            setword(e, 0x21c, c->resources.death_model);
-            bh_sound_stop(c->sound, word(e, 0x224));
-            setword(e, 0x224, BH_SOUND_INVALID);
+            sound(ctx, ctx->resources.death_cue, 1, 1.5f, &entity->position, &entity->origin);
+            bh_script_explosion_create(ctx->explosions, &position, 1, 10, .85f, 0);
+            state->saved_model = word(entity, 0x21c);
+            setword(entity, 0x21c, ctx->resources.death_model);
+            bh_sound_stop(ctx->sound, word(entity, 0x224));
+            setword(entity, 0x224, BH_SOUND_INVALID);
         }
         else
         {
-            setword(e, 0x21c, 0);
-            bh_script_explosion_create(c->explosions, &e->position, 1.2f, 14, .85f, 0);
+            setword(entity, 0x21c, 0);
+            bh_script_explosion_create(ctx->explosions, &entity->position, 1.2f, 14, .85f, 0);
         }
-        setvector(e, 0x60, &acceleration);
-        if (c->explosions->error)
-            return fail(c, 3);
+        setvector(entity, 0x60, &acceleration);
+        if (ctx->explosions->error)
+            return fail(ctx, 3);
     }
-    if (s->death_frames > 75)
+    if (state->death_frames > 75)
         for (j = 0; j < 2; ++j)
             for (i = 0; i < 3; ++i)
-                real(e, 0x48 + j * 24 + i * 4, rf((double)number(e, 0x48 + j * 24 + i * 4) * .9));
-    if (s->death_frames == 200)
+                real(entity, 0x48 + j * 24 + i * 4, rf((double)number(entity, 0x48 + j * 24 + i * 4) * .9));
+    if (state->death_frames == 200)
     {
-        if (s->mode == 1 && !s->ending)
+        if (state->mode == 1 && !state->ending)
         {
-            s->confirmation = 0;
-            return return_menu(c) ? 2 : 0;
+            state->confirmation = 0;
+            return return_menu(ctx) ? 2 : 0;
         }
-        if (!c->camera || c->camera->start_count < 8 || !c->reset)
-            return fail(c, 1);
-        setword(e, 0x21c, s->saved_model);
-        s->confirmation = s->death_frames = 0;
+        if (!ctx->camera || ctx->camera->start_count < 8 || !ctx->reset)
+            return fail(ctx, 1);
+        setword(entity, 0x21c, state->saved_model);
+        state->confirmation = state->death_frames = 0;
         for (i = 0; i < 8; ++i)
         {
             for (j = 0; j < 3; ++j)
                 ((float *)&v)[j] =
-                    rf((double)((float *)&e->position)[j] - ((const float *)&c->camera->starts[i].position)[j]);
+                    rf((double)((float *)&entity->position)[j] - ((const float *)&ctx->camera->starts[i].position)[j]);
             distance = rf(sqrt(((double)v.z * v.z + (double)v.y * v.y) + (double)v.x * v.x));
             if (distance < best)
             {
@@ -810,66 +811,66 @@ static int death(BHPlayerTick *c)
                 index = i;
             }
         }
-        if (!camera_reset(c, index) || !bh_player_reset(c->reset))
-            return fail(c, 3);
-        real(e, 0x240, 5);
-        real(e, 0x244, 1);
-        real(e, 0x248, 5);
-        sethalf(e, 0x2b0, 0);
-        sethalf(e, 0x2b2, 0);
-        if (!camera_mode(c, 0))
+        if (!camera_reset(ctx, index) || !bh_player_reset(ctx->reset))
+            return fail(ctx, 3);
+        real(entity, 0x240, 5);
+        real(entity, 0x244, 1);
+        real(entity, 0x248, 5);
+        sethalf(entity, 0x2b0, 0);
+        sethalf(entity, 0x2b2, 0);
+        if (!camera_mode(ctx, 0))
             return 0;
     }
     return 1;
 }
-static int camera_cheats(BHPlayerTick *c)
+static int camera_cheats(BHPlayerTick *ctx)
 {
-    BHEntity *e = c->player, *w;
+    BHEntity *entity = ctx->player, *w;
     BHWeaponObjectState *weapon;
     BHCameraInput in;
     static const long modes[6] = {0, 1, 7, 9, 8, 4};
     unsigned long i, bits;
     long ammo;
-    if (getbyte(e, 0x2bb))
+    if (getbyte(entity, 0x2bb))
     {
         for (i = 0; i < 6; ++i)
-            if (!key(c, 6 + i))
+            if (!key(ctx, 6 + i))
             {
                 long selected_mode = modes[i];
 #ifdef BH_SDL_BACKEND
-                if (i == 0 && c->snapshot && (c->snapshot->gamepad.buttons & (1UL << BH_PAD_BACK)))
+                if (i == 0 && ctx->snapshot && (ctx->snapshot->gamepad.buttons & (1UL << BH_PAD_BACK)))
                 {
                     unsigned long j;
                     for (j = 0; j < 6; ++j)
-                        if (modes[j] == half(e, 0x2b0))
+                        if (modes[j] == half(entity, 0x2b0))
                             break;
                     selected_mode = j < 6 ? modes[(j + 1) % 6] : modes[0];
                 }
 #endif
-                sethalf(e, 0x2b0, (unsigned short)selected_mode);
-                if (!camera_mode(c, selected_mode))
+                sethalf(entity, 0x2b0, (unsigned short)selected_mode);
+                if (!camera_mode(ctx, selected_mode))
                     return 0;
-                sound(c, c->resources.ui_cue, 1, 2, 0, 0);
+                sound(ctx, ctx->resources.ui_cue, 1, 2, 0, 0);
             }
-        if (!c->camera || !c->camera->camera)
-            return fail(c, 1);
-        in.target = e->position;
-        in.angles = vector(e, 0x3c);
-        in.basis_x = vector(e, 0x18);
-        in.basis_y = vector(e, 0x24);
-        in.basis_z = vector(e, 0x30);
-        in.actor_token = (unsigned long)e;
-        if (!bh_camera_state_update(c->camera->camera, bh_player_camera_state(e), &in, 1.0 / 30, number(e, 0x1f0),
-                                    number(e, 0x1f4)))
-            return fail(c, 3);
+        if (!ctx->camera || !ctx->camera->camera)
+            return fail(ctx, 1);
+        in.target = entity->position;
+        in.angles = vector(entity, 0x3c);
+        in.basis_x = vector(entity, 0x18);
+        in.basis_y = vector(entity, 0x24);
+        in.basis_z = vector(entity, 0x30);
+        in.actor_token = (unsigned long)entity;
+        if (!bh_camera_state_update(ctx->camera->camera, bh_player_camera_state(entity), &in, 1.0 / 30,
+                                    number(entity, 0x1f0), number(entity, 0x1f4)))
+            return fail(ctx, 3);
     }
-    if (!key(c, 31) && c->state->mode == 1)
-        setword(e, 0x21c, c->resources.cheat_model);
-    if (!key(c, 29) && c->state->mode == 1)
+    if (!key(ctx, 31) && ctx->state->mode == 1)
+        setword(entity, 0x21c, ctx->resources.cheat_model);
+    if (!key(ctx, 29) && ctx->state->mode == 1)
         for (i = 0; i < 10; ++i)
         {
-            if (!bh_weapon_registry_resolve(&c->weapons->factory->registry, i, &w, &weapon))
-                return fail(c, 1);
+            if (!bh_weapon_registry_resolve(&ctx->weapons->factory->registry, i, &w, &weapon))
+                return fail(ctx, 1);
             weapon->common.available_ec = 1;
             bits = (unsigned long)weapon->common.ammo + 999;
             memcpy(&ammo, &bits, 4);
@@ -877,179 +878,179 @@ static int camera_cheats(BHPlayerTick *c)
                 ammo = weapon->common.ammo_limit;
             weapon->common.ammo = ammo;
         }
-    if (!key(c, 30) && c->state->mode == 1)
-        c->state->god_mode = !c->state->god_mode;
-    if (c->state->god_mode)
+    if (!key(ctx, 30) && ctx->state->mode == 1)
+        ctx->state->god_mode = !ctx->state->god_mode;
+    if (ctx->state->god_mode)
     {
-        real(e, 0x23c, 0);
-        real(e, 0x24c, 0);
-        real(e, 0x240, 1);
+        real(entity, 0x23c, 0);
+        real(entity, 0x24c, 0);
+        real(entity, 0x240, 1);
     }
     return 1;
 }
-static int damage_timers(BHPlayerTick *c)
+static int damage_timers(BHPlayerTick *ctx)
 {
-    BHEntity *e = c->player, *w;
+    BHEntity *entity = ctx->player, *w;
     BHWeaponObjectState *weapon;
-    BHPlayerTickState *s = c->state;
-    BHVec3 velocity, acceleration = {0, -.002f, 0}, forward = vector(e, 0x30), motion = vector(e, 0x48);
+    BHPlayerTickState *state = ctx->state;
+    BHVec3 velocity, acceleration = {0, -.002f, 0}, forward = vector(entity, 0x30), motion = vector(entity, 0x48);
     float speed, spin, angle, pitch, timer;
     unsigned long i, image, handle;
     short countdown;
     speed = rf(((double)forward.x * motion.x + (double)forward.z * motion.z) + (double)forward.y * motion.y);
-    bh_sound_update(c->sound, word(e, 0x220), s->mode ? rf(.3 + (double)number(e, 0x2f8) * .05) : 0,
-                    rf(.5 + fabs(speed) * .01), &e->position, &motion);
+    bh_sound_update(ctx->sound, word(entity, 0x220), state->mode ? rf(.3 + (double)number(entity, 0x2f8) * .05) : 0,
+                    rf(.5 + fabs(speed) * .01), &entity->position, &motion);
     /* The player still ticks behind the flyby menu. It must not recreate
        damage/boost loops after return_menu has retired their handles. */
-    if (!s->mode)
+    if (!state->mode)
         return 1;
-    if (half(e, 0x2b4) && rand() < 16384 && s->death_frames < 95)
+    if (half(entity, 0x2b4) && rand() < 16384 && state->death_frames < 95)
     {
-        if (!c->particles)
-            return fail(c, 1);
+        if (!ctx->particles)
+            return fail(ctx, 1);
         for (i = 0; i < 3; ++i)
             ((float *)&velocity)[i] = rf((rand() - 16384) * (1.0 / 262144));
-        image = number(e, 0x24c) == 1 ? c->resources.second_smoke : c->resources.smoke_image;
+        image = number(entity, 0x24c) == 1 ? ctx->resources.second_smoke : ctx->resources.smoke_image;
         spin = rf((rand() - 16384) * (1.0 / 16384));
         angle = rf(rand() * (1.0 / 512));
-        bh_script_particle_create(c->particles, image, 3, &e->position, &velocity, &acceleration, .5f, angle, 12, spin,
-                                  .9f, .95f, 2, .3f);
+        bh_script_particle_create(ctx->particles, image, 3, &entity->position, &velocity, &acceleration, .5f, angle, 12,
+                                  spin, .9f, .95f, 2, .3f);
     }
-    if (!half(e, 0x2b4))
+    if (!half(entity, 0x2b4))
     {
-        if (word(e, 0x23c) == 0x3f800000UL)
+        if (word(entity, 0x23c) == 0x3f800000UL)
         {
-            if (s->mode > 1)
+            if (state->mode > 1)
             {
                 pitch = rf(.75 - (double)rand() * (-1.0 / 65536));
-                if (!sound_packet(c, c->resources.death_cue, 0, pitch, 0))
+                if (!sound_packet(ctx, ctx->resources.death_cue, 0, pitch, 0))
                     return 0;
             }
-            if (getbyte(e, 0x2bb))
-                setword(e, 0x224, sound(c, c->resources.death_loop, .8f, 1, 0, 0));
-            sethalf(e, 0x2b4, 1);
-            real(e, 0x24c, rf((double)number(e, 0x24c) + .2));
-            if (s->mode > 1)
+            if (getbyte(entity, 0x2bb))
+                setword(entity, 0x224, sound(ctx, ctx->resources.death_loop, .8f, 1, 0, 0));
+            sethalf(entity, 0x2b4, 1);
+            real(entity, 0x24c, rf((double)number(entity, 0x24c) + .2));
+            if (state->mode > 1)
             {
-                if (!c->scores || !c->damage_source || !c->network || !c->network->packets)
-                    return fail(c, 1);
-                c->scores->mode = s->mode;
-                c->scores->frame = (unsigned short)s->tick;
-                c->scores->local_player = e;
-                if (!bh_network_scores_death(c->scores, *c->network->packets->local_slot, *c->damage_source))
-                    return fail(c, 3);
+                if (!ctx->scores || !ctx->damage_source || !ctx->network || !ctx->network->packets)
+                    return fail(ctx, 1);
+                ctx->scores->mode = state->mode;
+                ctx->scores->frame = (unsigned short)state->tick;
+                ctx->scores->local_player = entity;
+                if (!bh_network_scores_death(ctx->scores, *ctx->network->packets->local_slot, *ctx->damage_source))
+                    return fail(ctx, 3);
             }
-            if (number(e, 0x24c) >= 1)
+            if (number(entity, 0x24c) >= 1)
             {
-                real(e, 0x24c, 1);
-                if (!s->death_frames)
-                    s->death_frames = 1;
-                s->confirmation = 0;
-                sound(c, c->resources.death_cue, 2, .8f, &e->position, &motion);
+                real(entity, 0x24c, 1);
+                if (!state->death_frames)
+                    state->death_frames = 1;
+                state->confirmation = 0;
+                sound(ctx, ctx->resources.death_cue, 2, .8f, &entity->position, &motion);
             }
-            sethalf(e, 0x2b2, (unsigned short)-3);
+            sethalf(entity, 0x2b2, (unsigned short)-3);
         }
     }
-    else if (number(e, 0x23c) < .5 && number(e, 0x24c) < 1)
+    else if (number(entity, 0x23c) < .5 && number(entity, 0x24c) < 1)
     {
-        if (getbyte(e, 0x2bb) && word(e, 0x224) != BH_SOUND_INVALID)
-            bh_sound_stop(c->sound, word(e, 0x224));
-        setword(e, 0x224, BH_SOUND_INVALID);
-        sethalf(e, 0x2b4, 0);
-        if (s->mode > 1)
+        if (getbyte(entity, 0x2bb) && word(entity, 0x224) != BH_SOUND_INVALID)
+            bh_sound_stop(ctx->sound, word(entity, 0x224));
+        setword(entity, 0x224, BH_SOUND_INVALID);
+        sethalf(entity, 0x2b4, 0);
+        if (state->mode > 1)
         {
-            timer = number(e, 0x240);
+            timer = number(entity, 0x240);
             if (timer == 0)
             {
-                real(e, 0x244, 1);
-                real(e, 0x240, 5);
-                real(e, 0x248, 5);
+                real(entity, 0x244, 1);
+                real(entity, 0x240, 5);
+                real(entity, 0x248, 5);
             }
             else if (timer < 5)
             {
-                real(e, 0x240, 5);
-                real(e, 0x248, 5);
+                real(entity, 0x240, 5);
+                real(entity, 0x248, 5);
             }
         }
-        sethalf(e, 0x2b2, 30);
-        if (number(e, 0x24c) >= .8 && !s->repair_warning)
+        sethalf(entity, 0x2b2, 30);
+        if (number(entity, 0x24c) >= .8 && !state->repair_warning)
         {
-            s->repair_warning = 1;
-            if (!c->panel || !c->panel->messages)
-                return fail(c, 1);
+            state->repair_warning = 1;
+            if (!ctx->panel || !ctx->panel->messages)
+                return fail(ctx, 1);
             if (!bh_message_enqueue(
-                    c->panel->messages,
+                    ctx->panel->messages,
                     "4Hey Buddy!\n\nYour car looks\npretty wrecked!\n\n\nDrop by one of our\nrepair shops and we'll\nmake you an offer.\n"))
-                return fail(c, 3);
+                return fail(ctx, 3);
         }
     }
-    real(e, 0x23c, rf((double)number(e, 0x23c) * .995));
-    countdown = half(e, 0x2b2);
+    real(entity, 0x23c, rf((double)number(entity, 0x23c) * .995));
+    countdown = half(entity, 0x2b2);
     if (countdown)
     {
         if (countdown < 0)
         {
             ++countdown;
-            sethalf(e, 0x2b2, (unsigned short)countdown);
-            if (!countdown && !camera_mode(c, s->death_frames ? 8 : 9))
+            sethalf(entity, 0x2b2, (unsigned short)countdown);
+            if (!countdown && !camera_mode(ctx, state->death_frames ? 8 : 9))
                 return 0;
         }
         else
         {
             --countdown;
-            sethalf(e, 0x2b2, (unsigned short)countdown);
-            if (!countdown && !camera_mode(c, half(e, 0x2b0)))
+            sethalf(entity, 0x2b2, (unsigned short)countdown);
+            if (!countdown && !camera_mode(ctx, half(entity, 0x2b0)))
                 return 0;
         }
     }
-    timer = number(e, 0x240);
+    timer = number(entity, 0x240);
     if (timer > 0)
     {
-        motion = vector(e, 0x48);
-        handle = word(e, 0x22c);
+        motion = vector(entity, 0x48);
+        handle = word(entity, 0x22c);
         if (handle == BH_SOUND_INVALID)
         {
-            sound(c, c->resources.boost_start, .6f, .6f, &e->position, &motion);
-            setword(e, 0x22c, sound(c, c->resources.boost_loop, .6f, .6f, &e->position, &motion));
+            sound(ctx, ctx->resources.boost_start, .6f, .6f, &entity->position, &motion);
+            setword(entity, 0x22c, sound(ctx, ctx->resources.boost_loop, .6f, .6f, &entity->position, &motion));
         }
         else
-            bh_sound_update(c->sound, handle, .6f, .6f, &e->position, &motion);
-        if (timer <= number(e, 0x248))
+            bh_sound_update(ctx->sound, handle, .6f, .6f, &entity->position, &motion);
+        if (timer <= number(entity, 0x248))
         {
-            real(e, 0x248, rf((double)timer * .9));
-            pitch = rf(1.2 - (double)number(e, 0x248) * (1.0 / 30));
-            sound(c, c->resources.menu_cue, .5f, pitch, 0, 0);
-            sound(c, c->resources.menu_cue, .5f, rf((double)pitch * .5), 0, 0);
-            sound(c, c->resources.ui_cue, .5f, pitch, 0, 0);
+            real(entity, 0x248, rf((double)timer * .9));
+            pitch = rf(1.2 - (double)number(entity, 0x248) * (1.0 / 30));
+            sound(ctx, ctx->resources.menu_cue, .5f, pitch, 0, 0);
+            sound(ctx, ctx->resources.menu_cue, .5f, rf((double)pitch * .5), 0, 0);
+            sound(ctx, ctx->resources.ui_cue, .5f, pitch, 0, 0);
         }
-        if (number(e, 0x244) > 0)
-            real(e, 0x244, rf((double)number(e, 0x244) - 1.0 / 30));
+        if (number(entity, 0x244) > 0)
+            real(entity, 0x244, rf((double)number(entity, 0x244) - 1.0 / 30));
         timer = rf((double)timer - 1.0 / 30);
-        real(e, 0x240, timer);
-        real(e, 0x23c, 0);
+        real(entity, 0x240, timer);
+        real(entity, 0x23c, 0);
         if (timer < 1 && timer >= .9666666666666667)
         {
-            bh_sound_stop(c->sound, word(e, 0x22c));
-            setword(e, 0x22c, BH_SOUND_INVALID);
-            sound(c, c->resources.boost_end, .6f, .6f, &e->position, &motion);
+            bh_sound_stop(ctx->sound, word(entity, 0x22c));
+            setword(entity, 0x22c, BH_SOUND_INVALID);
+            sound(ctx, ctx->resources.boost_end, .6f, .6f, &entity->position, &motion);
         }
         if (timer <= 0)
         {
             real(
-                e, 0x240,
+                entity, 0x240,
                 0); /* Source lifetime fix: the original threshold stop can be followed by a restart during the final second. Retire the owned voice at actual expiry. */
-            handle = word(e, 0x22c);
+            handle = word(entity, 0x22c);
             if (handle != BH_SOUND_INVALID)
             {
-                bh_sound_stop(c->sound, handle);
-                setword(e, 0x22c, BH_SOUND_INVALID);
+                bh_sound_stop(ctx->sound, handle);
+                setword(entity, 0x22c, BH_SOUND_INVALID);
             }
         }
     }
-    if (!(getbyte(e, 0x2b8) & 7))
+    if (!(getbyte(entity, 0x2b8) & 7))
     {
-        if (!bh_weapon_registry_resolve(&c->weapons->factory->registry, 0, &w, &weapon))
-            return fail(c, 1);
+        if (!bh_weapon_registry_resolve(&ctx->weapons->factory->registry, 0, &w, &weapon))
+            return fail(ctx, 1);
         if (weapon->common.ammo < 200)
         {
             ++weapon->common.ammo;
@@ -1057,92 +1058,94 @@ static int damage_timers(BHPlayerTick *c)
                 weapon->common.ammo = weapon->common.ammo_limit;
         }
     }
-    if (half(e, 0x2b4))
-        sethalf(e, 0x2b4, (unsigned short)(half(e, 0x2b4) + 1));
+    if (half(entity, 0x2b4))
+        sethalf(entity, 0x2b4, (unsigned short)(half(entity, 0x2b4) + 1));
     return 1;
 }
-int __cdecl bh_player_tick(BHPlayerTick *c)
+int __cdecl bh_player_tick(BHPlayerTick *ctx)
 {
-    BHEntity *e;
-    BHPlayerTickState *s;
+    BHEntity *entity;
+    BHPlayerTickState *state;
     BHMessageState *messages;
     int k, result;
     long last;
-    if (!c || !c->player || !c->state)
+    if (!ctx || !ctx->player || !ctx->state)
         return 0;
-    c->error = 0;
-    ++c->calls;
-    e = c->player;
-    s = c->state;
-    if (s->paused)
+    ctx->error = 0;
+    ++ctx->calls;
+    entity = ctx->player;
+    state = ctx->state;
+    if (state->paused)
     {
-        if (!input(c))
+        if (!input(ctx))
             return 0;
-        if (!key(c, 35) || !key(c, 33))
+        if (!key(ctx, 35) || !key(ctx, 33))
         {
-            if (!s->mode)
+            if (!state->mode)
                 return 1;
-            if (s->confirmation)
+            if (state->confirmation)
             {
-                restore_volume(c);
-                menu_cue(c, .7f, .5f);
-                s->confirmation = 0;
+                restore_volume(ctx);
+                menu_cue(ctx, .7f, .5f);
+                state->confirmation = 0;
             }
         }
-        if (!s->mode)
+        if (!state->mode)
             return 1;
-        k = key(c, 34);
-        if ((k != 0 || !s->confirmation) && s->ending != 2)
+        k = key(ctx, 34);
+        if ((k != 0 || !state->confirmation) && state->ending != 2)
             return 1;
-        restore_volume(c);
-        if (!s->ending)
-            menu_cue(c, .7f, .9f);
-        s->ending = s->confirmation = 0;
-        return return_menu(c);
+        restore_volume(ctx);
+        if (!state->ending)
+            menu_cue(ctx, .7f, .9f);
+        state->ending = state->confirmation = 0;
+        return return_menu(ctx);
     }
-    if (s->world_mode == 1)
+    if (state->world_mode == 1)
         return 1;
-    if (!c->pool || !c->body || !c->physics || !c->force || !c->decoded || !c->sound)
-        return fail(c, 1);
-    if (s->force != bh_player_force_control_a && s->force != bh_player_force_control_b &&
-        s->force != bh_player_force_control_c && s->force != bh_player_force_control_d)
-        return fail(c, 1);
-    setbyte(e, 0x2b8, (unsigned char)(getbyte(e, 0x2b8) + 1));
-    if (!network(c))
+    if (!ctx->pool || !ctx->body || !ctx->physics || !ctx->force || !ctx->decoded || !ctx->sound)
+        return fail(ctx, 1);
+    if (state->force != bh_player_force_control_a && state->force != bh_player_force_control_b &&
+        state->force != bh_player_force_control_c && state->force != bh_player_force_control_d)
+        return fail(ctx, 1);
+    setbyte(entity, 0x2b8, (unsigned char)(getbyte(entity, 0x2b8) + 1));
+    if (!network(ctx))
         return 0;
-    if (c->body->entity != e || c->force->body != c->body || !bh_physics_step_read_entity(c->body->physics, e))
-        return fail(c, 1);
-    c->body->world = (BHWorldGeometry *)word(e, 0xc4);
-    if (!bh_physics_step(c->physics, e, 1.0f / 30) || !s->force(c->force, 1.0f / 30, half(e, 0x2b4)) ||
-        !bh_physics_step_publish(c->body) || !recoil(c) || !send_pose(c))
-        return fail(c, c->error ? c->error : 3);
-    if (!s->damage_warning)
+    if (ctx->body->entity != entity || ctx->force->body != ctx->body ||
+        !bh_physics_step_read_entity(ctx->body->physics, entity))
+        return fail(ctx, 1);
+    ctx->body->world = (BHWorldGeometry *)word(entity, 0xc4);
+    if (!bh_physics_step(ctx->physics, entity, 1.0f / 30) ||
+        !state->force(ctx->force, 1.0f / 30, half(entity, 0x2b4)) || !bh_physics_step_publish(ctx->body) ||
+        !recoil(ctx) || !send_pose(ctx))
+        return fail(ctx, ctx->error ? ctx->error : 3);
+    if (!state->damage_warning)
     {
-        if (number(e, 0x23c) >= .6 && !half(e, 0x2b4))
+        if (number(entity, 0x23c) >= .6 && !half(entity, 0x2b4))
         {
-            s->damage_warning = 1;
-            cue(c, c->resources.damage_warning, .5f);
+            state->damage_warning = 1;
+            cue(ctx, ctx->resources.damage_warning, .5f);
         }
     }
-    else if (number(e, 0x23c) <= .05)
-        s->damage_warning = 0;
-    if (!s->hull_warning)
+    else if (number(entity, 0x23c) <= .05)
+        state->damage_warning = 0;
+    if (!state->hull_warning)
     {
-        if (number(e, 0x24c) >= .8)
+        if (number(entity, 0x24c) >= .8)
         {
-            s->hull_warning = 1;
-            cue(c, c->resources.hull_warning, 1);
+            state->hull_warning = 1;
+            cue(ctx, ctx->resources.hull_warning, 1);
         }
     }
-    else if (number(e, 0x24c) <= .2)
-        s->hull_warning = 0;
-    if (c->error || !bh_player_aim_update(c->body) || !near_contacts(c) || !ground(c))
-        return fail(c, c->error ? c->error : 3);
-    if (!key(c, 32))
+    else if (number(entity, 0x24c) <= .2)
+        state->hull_warning = 0;
+    if (ctx->error || !bh_player_aim_update(ctx->body) || !near_contacts(ctx) || !ground(ctx))
+        return fail(ctx, ctx->error ? ctx->error : 3);
+    if (!key(ctx, 32))
     {
-        if (!c->panel || !c->panel->messages)
-            return fail(c, 1);
-        messages = c->panel->messages;
+        if (!ctx->panel || !ctx->panel->messages)
+            return fail(ctx, 1);
+        messages = ctx->panel->messages;
         last = messages->last_index;
         if (last == -1)
             last = (messages->ring_count - 1 + messages->ring_start) % 8;
@@ -1157,90 +1160,90 @@ int __cdecl bh_player_tick(BHPlayerTick *c)
         messages->last_index = last;
         messages->display_phase = 1;
         messages->display_ticks = 40;
-        sound(c, c->resources.ui_cue, 1, 2, 0, 0);
+        sound(ctx, ctx->resources.ui_cue, 1, 2, 0, 0);
     }
-    if (!key(c, 33) && s->mode && number(e, 0x24c) < 1)
+    if (!key(ctx, 33) && state->mode && number(entity, 0x24c) < 1)
     {
-        menu_cue(c, .8f, .6f);
-        s->confirmation = 1;
-        if (s->mode == 1 && !s->paused)
+        menu_cue(ctx, .8f, .6f);
+        state->confirmation = 1;
+        if (state->mode == 1 && !state->paused)
         {
-            if (!c->media)
-                return fail(c, 1);
-            s->paused = 1;
-            s->saved_cd_volume = (float)bh_cd_audio_volume(c->media->audio);
-            bh_cd_set_volume(c->media, 0);
-            s->saved_wave_volume = (float)bh_wave_audio_volume(c->media->audio);
-            bh_wave_set_volume(c->media, 0);
+            if (!ctx->media)
+                return fail(ctx, 1);
+            state->paused = 1;
+            state->saved_cd_volume = (float)bh_cd_audio_volume(ctx->media->audio);
+            bh_cd_set_volume(ctx->media, 0);
+            state->saved_wave_volume = (float)bh_wave_audio_volume(ctx->media->audio);
+            bh_wave_set_volume(ctx->media, 0);
         }
     }
-    k = key(c, 35);
-    if (!k && s->mode && s->confirmation)
+    k = key(ctx, 35);
+    if (!k && state->mode && state->confirmation)
     {
-        restore_volume(c);
-        menu_cue(c, .7f, .5f);
-        s->confirmation = 0;
+        restore_volume(ctx);
+        menu_cue(ctx, .7f, .5f);
+        state->confirmation = 0;
     }
-    if ((k != 0 || s->mode) && s->mode)
+    if ((k != 0 || state->mode) && state->mode)
     {
-        k = key(c, 34);
-        if ((!k && s->confirmation) || s->ending == 2)
+        k = key(ctx, 34);
+        if ((!k && state->confirmation) || state->ending == 2)
         {
-            restore_volume(c);
-            if (!s->ending)
-                menu_cue(c, .7f, .9f);
-            s->ending = s->confirmation = 0;
-            return return_menu(c);
+            restore_volume(ctx);
+            if (!state->ending)
+                menu_cue(ctx, .7f, .9f);
+            state->ending = state->confirmation = 0;
+            return return_menu(ctx);
         }
     }
-    result = death(c);
+    result = death(ctx);
     if (!result)
         return 0;
     if (result == 2)
         return 1;
-    if (!weapons(c) || !camera_cheats(c) || !damage_timers(c))
+    if (!weapons(ctx) || !camera_cheats(ctx) || !damage_timers(ctx))
         return 0;
-    if (!bh_physics_step_read_entity(c->body->physics, e))
-        return fail(c, 3);
-    c->body->world = (BHWorldGeometry *)word(e, 0xc4);
-    return !c->error;
+    if (!bh_physics_step_read_entity(ctx->body->physics, entity))
+        return fail(ctx, 3);
+    ctx->body->world = (BHWorldGeometry *)word(entity, 0xc4);
+    return !ctx->error;
 }
-int __cdecl bh_player_tick_bind(BHPlayerTick *c, BHEntity *e)
+int __cdecl bh_player_tick_bind(BHPlayerTick *ctx, BHEntity *entity)
 {
     BHEntity *p;
     unsigned long n = 0;
-    if (!c || !e || !c->pool || bound_player)
+    if (!ctx || !entity || !ctx->pool || bound_player)
         return 0;
-    for (p = c->pool->active; p && n++ < c->pool->capacity; p = p->next)
-        if (p == e)
+    for (p = ctx->pool->active; p && n++ < ctx->pool->capacity; p = p->next)
+        if (p == entity)
             break;
-    if (p != e)
+    if (p != entity)
         return 0;
-    c->player = e;
-    c->generation = e->generation;
-    bound_player = c;
-    e->step = bh_player_step;
+    ctx->player = entity;
+    ctx->generation = entity->generation;
+    bound_player = ctx;
+    entity->step = bh_player_step;
     return 1;
 }
-BHPlayerTick *__cdecl bh_player_tick_context(BHEntity *e)
+BHPlayerTick *__cdecl bh_player_tick_context(BHEntity *entity)
 {
-    BHPlayerTick *c = bound_player;
-    if (!c || c->player != e || !c->pool)
+    BHPlayerTick *ctx = bound_player;
+    if (!ctx || ctx->player != entity || !ctx->pool)
         return 0;
-    return bh_entity_is_active(c->pool, e) && e->generation == c->generation ? c : 0;
+    return bh_entity_is_active(ctx->pool, entity) && entity->generation == ctx->generation ? ctx : 0;
 }
-int __cdecl bh_player_tick_unbind(BHPlayerTick *c)
+int __cdecl bh_player_tick_unbind(BHPlayerTick *ctx)
 {
-    if (!c || bound_player != c)
+    if (!ctx || bound_player != ctx)
         return 0;
-    if (bh_player_tick_context(c->player) && c->player->step == bh_player_step)
-        c->player->step = 0;
+    if (bh_player_tick_context(ctx->player) && ctx->player->step == bh_player_step)
+        ctx->player->step = 0;
     bound_player = 0;
     return 1;
 }
-void __cdecl bh_player_step(BHEntity *e)
+void __cdecl bh_player_step(BHEntity *entity)
 {
-    BHPlayerTick *c = bh_player_tick_context(e);
-    if (c)
-        bh_player_tick(c);
+    BHPlayerTick *ctx = bh_player_tick_context(entity);
+    if (ctx)
+        bh_player_tick(ctx);
 }

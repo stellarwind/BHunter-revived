@@ -219,8 +219,7 @@ int __cdecl bh_sound_tick(BHSoundQueue *q, float dt, float master, BHSoundTickSt
                     q->error = BH_SOUND_TOPOLOGY;
                     break;
                 }
-                q->last_hresult =
-                    bh_audio_duplicate(q->device, r->buffers[0], r->buffers + r->buffer_count);
+                q->last_hresult = bh_audio_duplicate(q->device, r->buffers[0], r->buffers + r->buffer_count);
                 if (q->last_hresult == 0)
                 {
                     ++r->buffer_count;

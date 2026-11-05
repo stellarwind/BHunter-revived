@@ -55,14 +55,16 @@ void __cdecl bh_cd_set_volume(BHMediaControl *c, float v)
     ++c->aux_writes;
     n->cd->local_volume = (float)((c->aux_packed & 65535UL) * (1.0 / 65535.0));
     /* The public volume slider is linear; translate to mixer hundredths dB. */
-    if (n->cd->device) {
+    if (n->cd->device)
+    {
         float gain = n->cd->local_volume;
         c->aux_result = bh_audio_volume(n->cd->device, gain > 0 ? (long)(2000.0 * log10(gain)) : -10000);
     }
 }
 void __cdecl bh_wave_set_volume(BHMediaControl *c, float v)
 {
-    if (!c || !c->audio) return;
+    if (!c || !c->audio)
+        return;
     c->wave_packed = packed(v);
     ++c->wave_writes;
     bh_audio_effects_gain((float)((c->wave_packed & 65535UL) * (1.0 / 65535.0)));

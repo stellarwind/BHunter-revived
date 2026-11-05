@@ -11,14 +11,15 @@ static __inline float rf(double v)
     read.bits = written.bits;
     return read.value;
 }
-static unsigned short current_tick(BHActorLaunchContext *c)
+static unsigned short current_tick(BHActorLaunchContext *ctx)
 {
-    BHActorRouteContext *route =
-        (c->actors && c->actors->response && c->actors->response->damage) ? c->actors->response->damage->route : NULL;
-    return route && route->live_tick ? bh_actor_route_now(route) : c->tick;
+    BHActorRouteContext *route = (ctx->actors && ctx->actors->response && ctx->actors->response->damage)
+                                     ? ctx->actors->response->damage->route
+                                     : NULL;
+    return route && route->live_tick ? bh_actor_route_now(route) : ctx->tick;
 }
 
-BHEntity *__cdecl bh_actor_launch(BHActorLaunchContext *c, BHWorldGeometry *w, unsigned long type, long token,
+BHEntity *__cdecl bh_actor_launch(BHActorLaunchContext *ctx, BHWorldGeometry *world, unsigned long type, long token,
                                   float speed, long tag)
 {
     unsigned long r, wire, i;
@@ -27,39 +28,39 @@ BHEntity *__cdecl bh_actor_launch(BHActorLaunchContext *c, BHWorldGeometry *w, u
     long quantized;
     int have_index = 0;
     unsigned short index = 0;
-    if (!c || !c->actors)
+    if (!ctx || !ctx->actors)
     {
-        if (c)
-            c->error = 1;
+        if (ctx)
+            ctx->error = 1;
         return 0;
     }
-    c->error = 0;
+    ctx->error = 0;
     r = (unsigned long)rand();
     r += (unsigned long)rand() * 65536UL;
     if (type == 0 || type == 3)
     {
-        if (c->mode == 3)
+        if (ctx->mode == 3)
             return 0;
-        if (c->mode == 2)
+        if (ctx->mode == 2)
         {
-            if (!w)
+            if (!world)
                 return 0;
-            if (!c->transport || !c->navigation)
+            if (!ctx->transport || !ctx->navigation)
             {
-                c->error = 1;
+                ctx->error = 1;
                 return 0;
             }
-            center.x = rf(((double)w->maximum.x + w->minimum.x) * .5);
-            center.y = rf(((double)w->maximum.y + w->minimum.y) * .5);
-            center.z = rf(((double)w->maximum.z + w->minimum.z) * .5);
+            center.x = rf(((double)world->maximum.x + world->minimum.x) * .5);
+            center.y = rf(((double)world->maximum.y + world->minimum.y) * .5);
+            center.z = rf(((double)world->maximum.z + world->minimum.z) * .5);
             token = (token / 5000) * 5000;
             /* 0043bd61..0043bd8a: original __ftol converts to 64 bits,
                then only EAX is stored and reloaded with FILD dword. Preserve
                that low-word conversion, including masked invalid inputs. */
             quantized = (long)(__int64)speed;
             speed = (float)quantized;
-            for (i = 0; i < c->navigation->node_count; ++i)
-                if (c->navigation->nodes[i].placement == w)
+            for (i = 0; i < ctx->navigation->node_count; ++i)
+                if (ctx->navigation->nodes[i].placement == world)
                 {
                     index = (unsigned short)i;
                     have_index = 1;
@@ -67,7 +68,7 @@ BHEntity *__cdecl bh_actor_launch(BHActorLaunchContext *c, BHWorldGeometry *w, u
                 }
             if (!have_index)
             {
-                c->error = 1;
+                ctx->error = 1;
                 return 0;
             }
             payload[0] = (unsigned char)r;
@@ -79,20 +80,20 @@ BHEntity *__cdecl bh_actor_launch(BHActorLaunchContext *c, BHWorldGeometry *w, u
             payload[6] = (unsigned char)type;
             payload[7] = (unsigned char)(token / 5000);
             payload[8] = (unsigned char)quantized;
-            if (!bh_packet_begin(&c->writer, c->packet, sizeof(c->packet), 10, current_tick(c)) ||
-                !bh_packet_write_position(&c->writer, w, index, &center) || !bh_packet_append(&c->writer, payload, 9) ||
-                !bh_packet_finish(&c->writer, &wire))
+            if (!bh_packet_begin(&ctx->writer, ctx->packet, sizeof(ctx->packet), 10, current_tick(ctx)) ||
+                !bh_packet_write_position(&ctx->writer, world, index, &center) ||
+                !bh_packet_append(&ctx->writer, payload, 9) || !bh_packet_finish(&ctx->writer, &wire))
             {
-                c->error = 2;
+                ctx->error = 2;
                 return 0;
             }
-            c->send_result = bh_network_send(c->transport, 0, c->packet, wire, 0);
-            ++c->sent;
+            ctx->send_result = bh_network_send(ctx->transport, 0, ctx->packet, wire, 0);
+            ++ctx->sent;
         }
     }
-    return bh_actor_construct_room(c->actors, w, type, token, speed, (unsigned long)tag, r);
+    return bh_actor_construct_room(ctx->actors, world, type, token, speed, (unsigned long)tag, r);
 }
-int __cdecl bh_actor_launch_receive(BHActorLaunchContext *c, void *bytes, unsigned long size, unsigned long capacity)
+int __cdecl bh_actor_launch_receive(BHActorLaunchContext *ctx, void *bytes, unsigned long size, unsigned long capacity)
 {
     BHWorldGeometry *world = 0;
     BHVec3 position;
@@ -100,47 +101,47 @@ int __cdecl bh_actor_launch_receive(BHActorLaunchContext *c, void *bytes, unsign
     unsigned long seed;
     short tag;
     unsigned short saved, tick;
-    BHEntity *e;
-    if (!c || !c->actors || !c->actors->response || !c->actors->response->damage ||
-        !c->actors->response->damage->route || !c->actors->response->damage->route->live_tick || !c->navigation ||
-        !c->stats || !c->good)
+    BHEntity *entity;
+    if (!ctx || !ctx->actors || !ctx->actors->response || !ctx->actors->response->damage ||
+        !ctx->actors->response->damage->route || !ctx->actors->response->damage->route->live_tick || !ctx->navigation ||
+        !ctx->stats || !ctx->good)
     {
-        if (c)
-            c->error = 1;
+        if (ctx)
+            ctx->error = 1;
         return 0;
     }
-    c->error = 0;
+    ctx->error = 0;
     /* These bounded source bridges return -1 for malformed input. Only 1
        represents the original owner's successful envelope/decode path. */
-    if (bh_packet_receive(&c->reader, bytes, size, capacity, c->stats) != 1 ||
-        bh_packet_read_position(&c->reader, c->navigation, &world, &position) != 1)
+    if (bh_packet_receive(&ctx->reader, bytes, size, capacity, ctx->stats) != 1 ||
+        bh_packet_read_position(&ctx->reader, ctx->navigation, &world, &position) != 1)
     {
-        c->error = 2;
+        ctx->error = 2;
         return 0;
     }
-    if (c->reader.cursor > c->reader.size || c->reader.size - c->reader.cursor < 9)
+    if (ctx->reader.cursor > ctx->reader.size || ctx->reader.size - ctx->reader.cursor < 9)
     {
-        c->reader.error = BH_PACKET_TRUNCATED;
-        c->error = 2;
+        ctx->reader.error = BH_PACKET_TRUNCATED;
+        ctx->error = 2;
         return 0;
     }
-    p = c->reader.data + c->reader.cursor;
-    c->reader.cursor += 9;
+    p = ctx->reader.data + ctx->reader.cursor;
+    ctx->reader.cursor += 9;
     seed = (unsigned long)p[0] | ((unsigned long)p[1] << 8) | ((unsigned long)p[2] << 16) | ((unsigned long)p[3] << 24);
     tag = (short)((unsigned short)p[4] | ((unsigned short)p[5] << 8));
-    --c->stats->accepted;
-    ++*c->good;
-    tick = (unsigned short)c->reader.data[2] | ((unsigned short)c->reader.data[3] << 8);
-    saved = bh_actor_route_now(c->actors->response->damage->route);
-    bh_actor_route_set_tick(c->actors->response->damage->route, tick);
-    e = bh_actor_construct_position(c->actors, &position, (unsigned long)(long)(signed char)p[6],
-                                    (long)(signed char)p[7] * 5000, (float)(signed char)p[8], (unsigned long)(long)tag,
-                                    seed);
-    bh_actor_route_set_tick(c->actors->response->damage->route, saved);
-    ++c->received;
-    if (!e)
+    --ctx->stats->accepted;
+    ++*ctx->good;
+    tick = (unsigned short)ctx->reader.data[2] | ((unsigned short)ctx->reader.data[3] << 8);
+    saved = bh_actor_route_now(ctx->actors->response->damage->route);
+    bh_actor_route_set_tick(ctx->actors->response->damage->route, tick);
+    entity = bh_actor_construct_position(ctx->actors, &position, (unsigned long)(long)(signed char)p[6],
+                                         (long)(signed char)p[7] * 5000, (float)(signed char)p[8],
+                                         (unsigned long)(long)tag, seed);
+    bh_actor_route_set_tick(ctx->actors->response->damage->route, saved);
+    ++ctx->received;
+    if (!entity)
     {
-        c->error = 3;
+        ctx->error = 3;
         return 0;
     }
     return 1;

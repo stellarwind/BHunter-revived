@@ -19,7 +19,7 @@ struct BHSoundVoice
 struct BHSoundResource
 {
     char name[64];
-    BHAudioBuffer * buffers[3];
+    BHAudioBuffer *buffers[3];
     unsigned short buffer_count, no_more, streaming, index, voice_limit, playing[3];
     unsigned long sample_bytes;
     long cached_volume[3], cached_frequency[3], cached_pan[3];
@@ -45,8 +45,8 @@ typedef struct BHSoundQueue
     BHSoundResource **resources, *free_resources;
     BHSoundVoice **voices, *free_voices;
     unsigned long resource_count, resource_capacity, voice_count, voice_capacity;
-    BHAudioDevice * device;
-    BHAudioBuffer * primary;
+    BHAudioDevice *device;
+    BHAudioBuffer *primary;
     BHSceneAllocator allocator;
     BHVec3 listener, listener_velocity, listener_right;
     long listener_active;
@@ -58,7 +58,7 @@ typedef struct BHSoundQueue
 /* Fresh explicit owner, retains supplied SDL mixer/buffer owners. NULL device permits
    pool-only operation but cannot create/duplicate buffers. Disposal implements
    0047b5f0 stop/release/free for all owned arrays/buffers/mixer references. No Play. */
-int __cdecl bh_sound_queue_init(BHSoundQueue *queue, BHAudioDevice * device, BHAudioBuffer * primary,
+int __cdecl bh_sound_queue_init(BHSoundQueue *queue, BHAudioDevice *device, BHAudioBuffer *primary,
                                 const BHSceneAllocator *allocator);
 int __cdecl bh_sound_queue_dispose(BHSoundQueue *queue);
 BHSoundResource *__cdecl bh_sound_resource_allocate(BHSoundQueue *queue); /* 0047b330 */

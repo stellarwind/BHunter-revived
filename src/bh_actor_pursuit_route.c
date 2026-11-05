@@ -16,30 +16,30 @@ static float stored(double d)
     bh_round_float(&f, d);
     return f;
 }
-static void read(BHEntity *e, unsigned long o, void *p, unsigned long n)
+static void read(BHEntity *entity, unsigned long o, void *p, unsigned long n)
 {
-    memcpy(p, (char *)e + o, n);
+    memcpy(p, (char *)entity + o, n);
 }
-static void write(BHEntity *e, unsigned long o, const void *p, unsigned long n)
+static void write(BHEntity *entity, unsigned long o, const void *p, unsigned long n)
 {
-    memcpy((char *)e + o, p, n);
+    memcpy((char *)entity + o, p, n);
 }
-static long value(BHEntity *e, unsigned long o)
+static long value(BHEntity *entity, unsigned long o)
 {
     long v;
-    read(e, o, &v, 4);
+    read(entity, o, &v, 4);
     return v;
 }
-static float number(BHEntity *e, unsigned long o)
+static float number(BHEntity *entity, unsigned long o)
 {
     float f;
-    read(e, o, &f, 4);
+    read(entity, o, &f, 4);
     return f;
 }
-static int fail(BHActorPursuitRouteContext *c, BHActorRouteError err)
+static int fail(BHActorPursuitRouteContext *ctx, BHActorRouteError err)
 {
-    if (c && c->route)
-        c->route->error = err;
+    if (ctx && ctx->route)
+        ctx->route->error = err;
     return 0;
 }
 static long elapsed32(long now, long before)
@@ -62,74 +62,74 @@ static int query(BHEntity *target, TargetMotion *p)
     target->query(target, p);
     return 1;
 }
-static int reset_duration(BHActorPursuitRouteContext *c, BHEntity *e, BHActorRouteState *s)
+static int reset_duration(BHActorPursuitRouteContext *ctx, BHEntity *entity, BHActorRouteState *state)
 {
     double ticks, duration;
-    float length = bh_route_curve_length(s->controls);
-    s->phase = 0;
-    duration = ((double)length + length) / ((double)s->speed * s->speed_scale);
-    s->duration = stored(duration);
+    float length = bh_route_curve_length(state->controls);
+    state->phase = 0;
+    duration = ((double)length + length) / ((double)state->speed * state->speed_scale);
+    state->duration = stored(duration);
     /* 0043914e/00439795 FST stores duration but retains it for tick conversion. */
     ticks = duration * 30;
     if (!_finite(ticks) || ticks < -9223372036854775808.0 || ticks >= 9223372036854775808.0)
-        return fail(c, BH_ACTOR_ROUTE_NUMERICAL);
-    s->duration_ticks = (unsigned short)(__int64)ticks;
-    s->tick = bh_actor_route_now(c->route);
-    return bh_actor_route_write(e, s);
+        return fail(ctx, BH_ACTOR_ROUTE_NUMERICAL);
+    state->duration_ticks = (unsigned short)(__int64)ticks;
+    state->tick = bh_actor_route_now(ctx->route);
+    return bh_actor_route_write(entity, state);
 }
 /* 0043950c..004397c3: target-control subpath, not an independent owner. */
-int __cdecl bh_actor_pursuit_target_controls(BHActorPursuitRouteContext *c, BHEntity *e)
+int __cdecl bh_actor_pursuit_target_controls(BHActorPursuitRouteContext *ctx, BHEntity *entity)
 {
-    BHActorRouteState s;
+    BHActorRouteState state;
     TargetMotion motion;
     BHVec3 saved_end, saved_tangent;
-    BHEntity *target = (BHEntity *)value(e, 0x1b8);
+    BHEntity *target = (BHEntity *)value(entity, 0x1b8);
     unsigned long i;
     long forced;
-    bh_actor_route_read(e, &s);
+    bh_actor_route_read(entity, &state);
     for (i = 0; i < 3; ++i)
-        ((float *)&s.controls[1])[i] =
-            stored((double)((float *)&s.controls[1])[i] * .4 - ((float *)&s.controls[0])[i] * (-.6));
+        ((float *)&state.controls[1])[i] =
+            stored((double)((float *)&state.controls[1])[i] * .4 - ((float *)&state.controls[0])[i] * (-.6));
     for (i = 0; i < 3; ++i)
-        ((float *)&s.controls[2])[i] =
-            stored((double)((float *)&s.controls[2])[i] * .4 - ((float *)&s.controls[3])[i] * (-.6));
+        ((float *)&state.controls[2])[i] =
+            stored((double)((float *)&state.controls[2])[i] * .4 - ((float *)&state.controls[3])[i] * (-.6));
     /* 00439564..00439618 commit all six tangent words before target query.
        Its synchronous callback must observe them in the real entity. */
-    write(e, 0x144, s.controls + 1, 12);
-    write(e, 0x150, s.controls + 2, 12);
+    write(entity, 0x144, state.controls + 1, 12);
+    write(entity, 0x150, state.controls + 2, 12);
     if (!query(target, &motion))
-        return fail(c, BH_ACTOR_ROUTE_ARGUMENT);
-    bh_actor_route_read(e, &s);
-    saved_end = s.controls[3];
-    saved_tangent = s.controls[2];
-    write(e, 0x1bc, &saved_end, 12);
-    write(e, 0x1c8, &saved_tangent, 12);
+        return fail(ctx, BH_ACTOR_ROUTE_ARGUMENT);
+    bh_actor_route_read(entity, &state);
+    saved_end = state.controls[3];
+    saved_tangent = state.controls[2];
+    write(entity, 0x1bc, &saved_end, 12);
+    write(entity, 0x1c8, &saved_tangent, 12);
     for (i = 0; i < 3; ++i)
     {
         double predicted =
             (double)((float *)&motion.position)[i] -
             (((double)((float *)&motion.velocity)[i] - ((float *)&motion.acceleration)[i] * (-1.5)) * (-1.5));
-        ((float *)&s.controls[3])[i] = stored(predicted);
+        ((float *)&state.controls[3])[i] = stored(predicted);
         /* X reloads the 00439662 FSTP spill; Y/Z retain their 004396be /
            004396e0 FST values until 00439748/0043974c. */
-        ((float *)&s.controls[2])[i] =
-            stored((i ? predicted : (double)s.controls[3].x) -
-                   (((double)((float *)&s.controls[0])[i] - ((float *)&saved_end)[i]) * (-.25)));
+        ((float *)&state.controls[2])[i] =
+            stored((i ? predicted : (double)state.controls[3].x) -
+                   (((double)((float *)&state.controls[0])[i] - ((float *)&saved_end)[i]) * (-.25)));
     }
-    write(e, 0x12c, s.controls + 3, 12);
-    write(e, 0x150, s.controls + 2, 12);
-    bh_world_clamp_point(s.current, (BHVec3 *)((char *)e + 0x12c));
-    bh_world_clamp_point(s.current, (BHVec3 *)((char *)e + 0x150));
-    bh_actor_route_read(e, &s);
-    if (!reset_duration(c, e, &s))
+    write(entity, 0x12c, state.controls + 3, 12);
+    write(entity, 0x150, state.controls + 2, 12);
+    bh_world_clamp_point(state.current, (BHVec3 *)((char *)entity + 0x12c));
+    bh_world_clamp_point(state.current, (BHVec3 *)((char *)entity + 0x150));
+    bh_actor_route_read(entity, &state);
+    if (!reset_duration(ctx, entity, &state))
         return 0;
     forced = 1;
-    write(e, 0x1d4, &forced, 4);
+    write(entity, 0x1d4, &forced, 4);
     return 1;
 }
-int __cdecl bh_actor_pursuit_route(BHActorPursuitRouteContext *c, BHEntity *e)
+int __cdecl bh_actor_pursuit_route(BHActorPursuitRouteContext *ctx, BHEntity *entity)
 {
-    BHActorRouteState s;
+    BHActorRouteState state;
     BHWorldGeometry *room, *target_world = 0, *preferred = 0;
     BHEntity *target;
     BHTargetSelection selected;
@@ -143,87 +143,89 @@ int __cdecl bh_actor_pursuit_route(BHActorPursuitRouteContext *c, BHEntity *e)
         "1Attention!\n\nWe have reports\non a fugitive car\nentering\n%s",
         "1Calling all\nHunters!\n\nA fugitive car\njust entered\n%s",
         "1Incoming\nSurveillance\nReport:\n\nA fugitive car\njust passed through\na gate at\n%s"};
-    if (!c || !c->route || !c->route->live_tick || !c->navigation || !e || !bh_math_environment_supported())
-        return fail(c, BH_ACTOR_ROUTE_ARGUMENT);
-    bh_actor_route_read(e, &s);
-    room = s.next;
-    target = (BHEntity *)value(e, 0x1b8);
-    if (s.sound_frames)
+    if (!ctx || !ctx->route || !ctx->route->live_tick || !ctx->navigation || !entity ||
+        !bh_math_environment_supported())
+        return fail(ctx, BH_ACTOR_ROUTE_ARGUMENT);
+    bh_actor_route_read(entity, &state);
+    room = state.next;
+    target = (BHEntity *)value(entity, 0x1b8);
+    if (state.sound_frames)
     {
-        --s.sound_frames;
-        write(e, 0x108, &s.sound_frames, 4);
-        if (!s.sound_frames && s.sound != BH_SOUND_INVALID)
+        --state.sound_frames;
+        write(entity, 0x108, &state.sound_frames, 4);
+        if (!state.sound_frames && state.sound != BH_SOUND_INVALID)
         {
-            if (!c->route->sound)
-                return fail(c, BH_ACTOR_ROUTE_ARGUMENT);
-            bh_sound_stop(c->route->sound, s.sound);
-            s.sound = BH_SOUND_INVALID;
-            write(e, 0x104, &s.sound, 4);
+            if (!ctx->route->sound)
+                return fail(ctx, BH_ACTOR_ROUTE_ARGUMENT);
+            bh_sound_stop(ctx->route->sound, state.sound);
+            state.sound = BH_SOUND_INVALID;
+            write(entity, 0x104, &state.sound, 4);
         }
     }
-    if (value(e, 0xfc) == 1 && (!target || rand() < 0x1000))
+    if (value(entity, 0xfc) == 1 && (!target || rand() < 0x1000))
     {
-        if (!bh_target_select(c->player, c->actor_head_owner ? *c->actor_head_owner : c->actor_head, e, s.controls + 3,
-                              c->actor_limit, &selected))
-            return fail(c, BH_ACTOR_ROUTE_ARGUMENT);
+        if (!bh_target_select(ctx->player, ctx->actor_head_owner ? *ctx->actor_head_owner : ctx->actor_head, entity,
+                              state.controls + 3, ctx->actor_limit, &selected))
+            return fail(ctx, BH_ACTOR_ROUTE_ARGUMENT);
         target = selected.target;
-        write(e, 0x1b8, &target, 4);
+        write(entity, 0x1b8, &target, 4);
     }
-    forced = value(e, 0x1d4);
+    forced = value(entity, 0x1d4);
     if (forced)
     {
-        s.controls[0] = s.controls[3];
+        state.controls[0] = state.controls[3];
         for (i = 0; i < 3; ++i)
-            ((float *)&s.controls[1])[i] = stored(
-                ((double)((float *)&s.controls[3])[i] - ((float *)&s.controls[2])[i]) + ((float *)&s.controls[0])[i]);
-        bh_world_clamp_point(s.current, s.controls);
-        bh_world_clamp_point(s.current, s.controls + 1);
-        read(e, 0x1bc, s.controls + 3, 12);
-        read(e, 0x1c8, s.controls + 2, 12);
-        if (!reset_duration(c, e, &s))
+            ((float *)&state.controls[1])[i] =
+                stored(((double)((float *)&state.controls[3])[i] - ((float *)&state.controls[2])[i]) +
+                       ((float *)&state.controls[0])[i]);
+        bh_world_clamp_point(state.current, state.controls);
+        bh_world_clamp_point(state.current, state.controls + 1);
+        read(entity, 0x1bc, state.controls + 3, 12);
+        read(entity, 0x1c8, state.controls + 2, 12);
+        if (!reset_duration(ctx, entity, &state))
             return 0;
         forced = 0;
-        write(e, 0x1d4, &forced, 4);
-        c->route->error = BH_ACTOR_ROUTE_OK;
+        write(entity, 0x1d4, &forced, 4);
+        ctx->route->error = BH_ACTOR_ROUTE_OK;
         return 1;
     }
     if (!room || !room->model || room->navigation.count != room->model->portal_count || room->navigation.count > 6)
-        return fail(c, BH_ACTOR_ROUTE_TOPOLOGY);
-    index = bh_navigation_find(c->navigation, room);
+        return fail(ctx, BH_ACTOR_ROUTE_TOPOLOGY);
+    index = bh_navigation_find(ctx->navigation, room);
     if (index < 0)
-        return fail(c, BH_ACTOR_ROUTE_TOPOLOGY);
-    if (value(e, 0xfc) == 6 && c->city_ids)
+        return fail(ctx, BH_ACTOR_ROUTE_TOPOLOGY);
+    if (value(entity, 0xfc) == 6 && ctx->city_ids)
     {
-        new_city = c->city_ids[index];
-        old_city = value(e, 0x110);
+        new_city = ctx->city_ids[index];
+        old_city = value(entity, 0x110);
         if (new_city != -1 && new_city != old_city)
         {
-            write(e, 0x110, &new_city, 4);
-            if (old_city != -1 && elapsed32(c->clock, c->last_report) > 1800)
+            write(entity, 0x110, &new_city, 4);
+            if (old_city != -1 && elapsed32(ctx->clock, ctx->last_report) > 1800)
             {
-                if (new_city < 0 || (unsigned long)new_city >= c->city_count || !c->city_names || !c->messages ||
-                    !c->city_names[new_city] || strlen(c->city_names[new_city]) > 160)
-                    return fail(c, BH_ACTOR_ROUTE_ARGUMENT);
+                if (new_city < 0 || (unsigned long)new_city >= ctx->city_count || !ctx->city_names || !ctx->messages ||
+                    !ctx->city_names[new_city] || strlen(ctx->city_names[new_city]) > 160)
+                    return fail(ctx, BH_ACTOR_ROUTE_ARGUMENT);
                 first = (unsigned long)rand() & 3;
-                c->last_report = c->clock;
-                sprintf(text, report[first], c->city_names[new_city]);
-                bh_message_enqueue(c->messages, text);
+                ctx->last_report = ctx->clock;
+                sprintf(text, report[first], ctx->city_names[new_city]);
+                bh_message_enqueue(ctx->messages, text);
             }
         }
     }
     for (i = 0; i < room->navigation.count; ++i)
-        if ((BHWorldGeometry *)room->navigation.portals[i].neighbor == s.current || incoming < 0)
+        if ((BHWorldGeometry *)room->navigation.portals[i].neighbor == state.current || incoming < 0)
             incoming = (long)i;
-    pursuit = number(e, 0x1b4);
+    pursuit = number(entity, 0x1b4);
     if (room->query_flags & 8)
     {
-        if (!bh_route_guided_exit(e, room, incoming, &outgoing))
-            return fail(c, BH_ACTOR_ROUTE_TOPOLOGY);
+        if (!bh_route_guided_exit(entity, room, incoming, &outgoing))
+            return fail(ctx, BH_ACTOR_ROUTE_TOPOLOGY);
     }
-    else if (!target || (unsigned long)index >= c->navigation->junction_count)
+    else if (!target || (unsigned long)index >= ctx->navigation->junction_count)
     {
-        if (!bh_route_choose_exit(e, room, 0, incoming, &outgoing))
-            return fail(c, BH_ACTOR_ROUTE_TOPOLOGY);
+        if (!bh_route_choose_exit(entity, room, 0, incoming, &outgoing))
+            return fail(ctx, BH_ACTOR_ROUTE_TOPOLOGY);
     }
     else
     {
@@ -237,12 +239,12 @@ int __cdecl bh_actor_pursuit_route(BHActorPursuitRouteContext *c, BHEntity *e)
                         preferred = target_world;
             if (!preferred)
             {
-                target_index = target_world ? bh_navigation_find(c->navigation, target_world) : index;
+                target_index = target_world ? bh_navigation_find(ctx->navigation, target_world) : index;
                 if (target_index < 0)
-                    return fail(c, BH_ACTOR_ROUTE_TOPOLOGY);
-                if ((unsigned long)target_index >= c->navigation->junction_count)
+                    return fail(ctx, BH_ACTOR_ROUTE_TOPOLOGY);
+                if ((unsigned long)target_index >= ctx->navigation->junction_count)
                 {
-                    const BHNavigationNode *node = c->navigation->nodes + target_index;
+                    const BHNavigationNode *node = ctx->navigation->nodes + target_index;
                     junction = node->junction_first_port;
                     if (junction == index)
                         junction = node->junction_second_port;
@@ -257,40 +259,42 @@ int __cdecl bh_actor_pursuit_route(BHActorPursuitRouteContext *c, BHEntity *e)
                         junction = index;
                     target_index = junction;
                 }
-                if ((unsigned long)target_index >= c->navigation->junction_count)
-                    return fail(c, BH_ACTOR_ROUTE_TOPOLOGY);
-                if (!c->navigation->routes.cells || c->navigation->routes.node_count != c->navigation->junction_count)
-                    return fail(c, BH_ACTOR_ROUTE_TOPOLOGY);
-                outgoing = c->navigation->routes.cells[target_index * c->navigation->junction_count + index].exit_slot;
+                if ((unsigned long)target_index >= ctx->navigation->junction_count)
+                    return fail(ctx, BH_ACTOR_ROUTE_TOPOLOGY);
+                if (!ctx->navigation->routes.cells ||
+                    ctx->navigation->routes.node_count != ctx->navigation->junction_count)
+                    return fail(ctx, BH_ACTOR_ROUTE_TOPOLOGY);
+                outgoing =
+                    ctx->navigation->routes.cells[target_index * ctx->navigation->junction_count + index].exit_slot;
                 if (outgoing >= 0 && (pursuit >= .5 || outgoing != incoming) &&
                     (unsigned long)outgoing < room->navigation.count)
                     preferred = (BHWorldGeometry *)room->navigation.portals[outgoing].neighbor;
             }
         }
-        if (!bh_route_choose_exit(e, room, preferred, incoming, &outgoing))
-            return fail(c, BH_ACTOR_ROUTE_TOPOLOGY);
+        if (!bh_route_choose_exit(entity, room, preferred, incoming, &outgoing))
+            return fail(ctx, BH_ACTOR_ROUTE_TOPOLOGY);
     }
     /* CRT random bias here is distinct from the actor-local generator used by route selection. */
-    factor = 1.0 - s.jitter;
-    s.u = stored(factor * s.u - ((double)s.jitter * rand()) * (-1.0 / 32768.0));
-    s.v = stored(factor * s.v - ((double)rand() * s.jitter) * (-1.0 / 32768.0));
-    write(e, 0x18c, &s.u, 4);
-    write(e, 0x190, &s.v, 4);
-    if (!bh_actor_route_promote(c->route, e, incoming, outgoing))
+    factor = 1.0 - state.jitter;
+    state.u = stored(factor * state.u - ((double)state.jitter * rand()) * (-1.0 / 32768.0));
+    state.v = stored(factor * state.v - ((double)rand() * state.jitter) * (-1.0 / 32768.0));
+    write(entity, 0x18c, &state.u, 4);
+    write(entity, 0x190, &state.v, 4);
+    if (!bh_actor_route_promote(ctx->route, entity, incoming, outgoing))
         return 0;
-    bh_actor_route_read(e, &s);
-    target = (BHEntity *)value(e, 0x1b8);
+    bh_actor_route_read(entity, &state);
+    target = (BHEntity *)value(entity, 0x1b8);
     if (target)
     {
         short protected_player = 0;
         read(target, 0xc4, &target_world, 4);
-        if (target == c->player)
+        if (target == ctx->player)
             read(target, 0x2b4, &protected_player, 2);
-        if (target_world == s.current && (!protected_player || target != c->player))
+        if (target_world == state.current && (!protected_player || target != ctx->player))
         {
-            return bh_actor_pursuit_target_controls(c, e);
+            return bh_actor_pursuit_target_controls(ctx, entity);
         }
     }
-    c->route->error = BH_ACTOR_ROUTE_OK;
+    ctx->route->error = BH_ACTOR_ROUTE_OK;
     return 1;
 }

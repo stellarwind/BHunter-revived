@@ -68,21 +68,21 @@ static int search(const BHActorBasisGroup *g, const BHActorBasisScale *s, unsign
         return 0;
     return 1;
 }
-int __cdecl bh_actor_basis_a_pair(const BHActorBasisContext *c, const BHVec3 *v, int *i, int *j, float *a, float *b)
+int __cdecl bh_actor_basis_a_pair(const BHActorBasisContext *ctx, const BHVec3 *v, int *i, int *j, float *a, float *b)
 {
-    if (!c || !vector_ok(v) || !i || !j || !a || !b || c->a_count > c->a_capacity ||
-        (c->a_count && (!c->groups_a || !c->scales_a)))
+    if (!ctx || !vector_ok(v) || !i || !j || !a || !b || ctx->a_count > ctx->a_capacity ||
+        (ctx->a_count && (!ctx->groups_a || !ctx->scales_a)))
         return 0;
-    return search(c->groups_a, c->scales_a, c->a_count, v, i, j, a, b, 1);
+    return search(ctx->groups_a, ctx->scales_a, ctx->a_count, v, i, j, a, b, 1);
 }
-int __cdecl bh_actor_basis_b_pair(const BHActorBasisContext *c, const BHVec3 *v, int *i, int *j, float *a, float *b)
+int __cdecl bh_actor_basis_b_pair(const BHActorBasisContext *ctx, const BHVec3 *v, int *i, int *j, float *a, float *b)
 {
-    if (!c || !vector_ok(v) || !i || !j || !a || !b || c->b_count > c->b_capacity ||
-        (c->b_count && (!c->groups_b || !c->scales_b)))
+    if (!ctx || !vector_ok(v) || !i || !j || !a || !b || ctx->b_count > ctx->b_capacity ||
+        (ctx->b_count && (!ctx->groups_b || !ctx->scales_b)))
         return 0;
-    return -search(c->groups_b, c->scales_b, c->b_count, v, i, j, a, b, 0);
+    return -search(ctx->groups_b, ctx->scales_b, ctx->b_count, v, i, j, a, b, 0);
 }
-int __cdecl bh_actor_basis_apply_group(const BHActorBasisContext *c, BHPhysicsState *state, float mass,
+int __cdecl bh_actor_basis_apply_group(const BHActorBasisContext *ctx, BHPhysicsState *state, float mass,
                                        const BHVec3 *inertia, float accumulated[15], const BHActorBasisIndices *group,
                                        float value)
 {
@@ -91,17 +91,17 @@ int __cdecl bh_actor_basis_apply_group(const BHActorBasisContext *c, BHPhysicsSt
     const BHActorBasisSample *sample;
     unsigned long row;
     double reciprocal;
-    if (!c || !state || !accumulated || !group || !c->samples || c->sample_count > c->sample_capacity ||
+    if (!ctx || !state || !accumulated || !group || !ctx->samples || ctx->sample_count > ctx->sample_capacity ||
         group->count < 1 || group->count > 16 || !vector_ok(inertia) || !mass || !_finite(mass) || !inertia->x ||
         !inertia->y || !inertia->z || !_finite(value))
         return 0;
     for (i = 0; i < group->count - 1; ++i)
-        if (group->sample[i] < 0 || group->sample[i] >= 15 || (unsigned long)group->sample[i] >= c->sample_count)
+        if (group->sample[i] < 0 || group->sample[i] >= 15 || (unsigned long)group->sample[i] >= ctx->sample_count)
             return 0;
     for (i = 0; i < group->count - 1; ++i)
     {
         index = group->sample[i];
-        sample = c->samples + index;
+        sample = ctx->samples + index;
         bh_round_float(accumulated + index, (double)value + accumulated[index]);
         reciprocal = 1.0 / mass;
         force.x = stored((double)sample->direction.x * value);

@@ -12,37 +12,37 @@ static float stored(double v)
     bh_round_float(&out, v);
     return out;
 }
-static float read_float(const BHEntity *e, unsigned long offset)
+static float read_float(const BHEntity *entity, unsigned long offset)
 {
     float v;
-    memcpy(&v, (const unsigned char *)e + offset, 4);
+    memcpy(&v, (const unsigned char *)entity + offset, 4);
     return v;
 }
-static void write_float(BHEntity *e, unsigned long offset, float value)
+static void write_float(BHEntity *entity, unsigned long offset, float value)
 {
-    memcpy((unsigned char *)e + offset, &value, 4);
+    memcpy((unsigned char *)entity + offset, &value, 4);
 }
-static void vector_store(BHEntity *e, unsigned long offset, const BHVec3 *v)
+static void vector_store(BHEntity *entity, unsigned long offset, const BHVec3 *v)
 {
-    memcpy((unsigned char *)e + offset, v, 12);
+    memcpy((unsigned char *)entity + offset, v, 12);
 }
-static void local_velocity(const BHPhysicsState *p, BHVec3 *out)
+static void local_velocity(const BHPhysicsState *physics, BHVec3 *out)
 {
     unsigned long k;
     for (k = 0; k < 3; ++k)
-        bh_round_float(((float *)out) + k,
-                       ((double)p->pose.m[0][k] * p->velocity.x + (double)p->pose.m[2][k] * p->velocity.z) +
-                           (double)p->pose.m[1][k] * p->velocity.y);
+        bh_round_float(((float *)out) + k, ((double)physics->pose.m[0][k] * physics->velocity.x +
+                                            (double)physics->pose.m[2][k] * physics->velocity.z) +
+                                               (double)physics->pose.m[1][k] * physics->velocity.y);
 }
-static void point(const BHPhysicsState *p, double x, double y, double z, int variant, BHVec3 *out)
+static void point(const BHPhysicsState *physics, double x, double y, double z, int variant, BHVec3 *out)
 {
     unsigned long k;
     double a, b, d, sum;
     for (k = 0; k < 3; ++k)
     {
-        a = (double)p->pose.m[k][0] * x;
-        b = (double)p->pose.m[k][1] * y;
-        d = (double)p->pose.m[k][2] * z;
+        a = (double)physics->pose.m[k][0] * x;
+        b = (double)physics->pose.m[k][1] * y;
+        d = (double)physics->pose.m[k][2] * z;
         if (variant == 0)
             sum = k == 2 ? (b + a) + d : (a + b) + d;
         else if (variant == 1)
@@ -51,49 +51,55 @@ static void point(const BHPhysicsState *p, double x, double y, double z, int var
             sum = k == 2 ? (b + d) + a : (a + d) + b;
         else
             sum = k == 1 ? (b + d) + a : (d + b) + a;
-        bh_round_float(((float *)out) + k, sum + p->pose.m[k][3]);
+        bh_round_float(((float *)out) + k, sum + physics->pose.m[k][3]);
     }
 }
-static void nozzle_base(const BHPhysicsState *p, float x, float z, int variant, BHVec3 *out)
+static void nozzle_base(const BHPhysicsState *physics, float x, float z, int variant, BHVec3 *out)
 {
     unsigned long k;
     double sum;
     for (k = 0; k < 3; ++k)
     {
         if (variant == 1)
-            sum = k == 2
-                      ? ((double)p->pose.m[k][1] * .3f - (double)p->pose.m[k][2] * -z) - (double)p->pose.m[k][0] * -x
-                      : ((double)p->pose.m[k][2] * z - (double)p->pose.m[k][0] * -x) - (double)p->pose.m[k][1] * -.3f;
+            sum = k == 2 ? ((double)physics->pose.m[k][1] * .3f - (double)physics->pose.m[k][2] * -z) -
+                               (double)physics->pose.m[k][0] * -x
+                         : ((double)physics->pose.m[k][2] * z - (double)physics->pose.m[k][0] * -x) -
+                               (double)physics->pose.m[k][1] * -.3f;
         else if (k == 1)
-            sum = ((double)p->pose.m[k][2] * z - (double)p->pose.m[k][1] * -.3f) - (double)p->pose.m[k][0] * -x;
+            sum = ((double)physics->pose.m[k][2] * z - (double)physics->pose.m[k][1] * -.3f) -
+                  (double)physics->pose.m[k][0] * -x;
         else if (variant == 3)
-            sum = ((double)p->pose.m[k][0] * x - (double)p->pose.m[k][2] * -z) - (double)p->pose.m[k][1] * -.3f;
+            sum = ((double)physics->pose.m[k][0] * x - (double)physics->pose.m[k][2] * -z) -
+                  (double)physics->pose.m[k][1] * -.3f;
         else if (k == 0)
-            sum = ((double)p->pose.m[k][1] * .3f - (double)p->pose.m[k][0] * -x) - (double)p->pose.m[k][2] * -z;
+            sum = ((double)physics->pose.m[k][1] * .3f - (double)physics->pose.m[k][0] * -x) -
+                  (double)physics->pose.m[k][2] * -z;
         else
-            sum = ((double)p->pose.m[k][0] * x - (double)p->pose.m[k][1] * -.3f) - (double)p->pose.m[k][2] * -z;
-        bh_round_float(((float *)out) + k, sum + p->pose.m[k][3]);
+            sum = ((double)physics->pose.m[k][0] * x - (double)physics->pose.m[k][1] * -.3f) -
+                  (double)physics->pose.m[k][2] * -z;
+        bh_round_float(((float *)out) + k, sum + physics->pose.m[k][3]);
     }
 }
-static int validate(BHPlayerForceControl *c)
+static int validate(BHPlayerForceControl *control)
 {
     BHVec3 inertia;
-    BHActorBasisContext *b;
+    BHActorBasisContext *ctx;
     unsigned long i;
-    if (!c || !c->body || !c->body->entity || !c->body->physics || !c->instability_counter || !(b = c->basis) ||
-        !b->samples || b->sample_count < 14 || b->sample_count > b->sample_capacity || b->a_count != 7 ||
-        b->b_count != 7 || b->a_capacity < 7 || b->b_capacity < 7 || !b->groups_a || !b->groups_b || !b->indices_a ||
-        !b->indices_b || !b->scales_a || !b->scales_b || !c->body->mass || !_finite(c->body->mass) ||
+    if (!control || !control->body || !control->body->entity || !control->body->physics ||
+        !control->instability_counter || !(ctx = control->basis) || !ctx->samples || ctx->sample_count < 14 ||
+        ctx->sample_count > ctx->sample_capacity || ctx->a_count != 7 || ctx->b_count != 7 || ctx->a_capacity < 7 ||
+        ctx->b_capacity < 7 || !ctx->groups_a || !ctx->groups_b || !ctx->indices_a || !ctx->indices_b ||
+        !ctx->scales_a || !ctx->scales_b || !control->body->mass || !_finite(control->body->mass) ||
         !bh_math_environment_supported())
     {
-        if (c)
-            c->error = 1;
+        if (control)
+            control->error = 1;
         return 0;
     }
-    memcpy(&inertia, (unsigned char *)c->body->entity + 0x78, 12);
+    memcpy(&inertia, (unsigned char *)control->body->entity + 0x78, 12);
     if (!inertia.x || !inertia.y || !inertia.z || !_finite(inertia.x) || !_finite(inertia.y) || !_finite(inertia.z))
     {
-        c->error = 1;
+        control->error = 1;
         return 0;
     }
     for (i = 0; i < 7; ++i)
@@ -101,71 +107,72 @@ static int validate(BHPlayerForceControl *c)
         long j;
         const BHActorBasisIndices *g[2];
         int kind;
-        g[0] = b->indices_a + i;
-        g[1] = b->indices_b + i;
+        g[0] = ctx->indices_a + i;
+        g[1] = ctx->indices_b + i;
         for (kind = 0; kind < 2; ++kind)
         {
             if (g[kind]->count < 1 || g[kind]->count > 16)
             {
-                c->error = 1;
+                control->error = 1;
                 return 0;
             }
             for (j = 0; j < g[kind]->count - 1; ++j)
                 if (g[kind]->sample[j] < 0 || g[kind]->sample[j] >= 15 ||
-                    (unsigned long)g[kind]->sample[j] >= b->sample_count)
+                    (unsigned long)g[kind]->sample[j] >= ctx->sample_count)
                 {
-                    c->error = 1;
+                    control->error = 1;
                     return 0;
                 }
         }
     }
-    c->error = 0;
+    control->error = 0;
     return 1;
 }
-static int apply(BHPlayerForceControl *c, float channels[15], const BHActorBasisIndices *g, float value)
+static int apply(BHPlayerForceControl *control, float channels[15], const BHActorBasisIndices *g, float value)
 {
     BHVec3 inertia;
-    memcpy(&inertia, (unsigned char *)c->body->entity + 0x78, 12);
-    return bh_actor_basis_apply_group(c->basis, c->body->physics, c->body->mass, &inertia, channels, g, value);
+    memcpy(&inertia, (unsigned char *)control->body->entity + 0x78, 12);
+    return bh_actor_basis_apply_group(control->basis, control->body->physics, control->body->mass, &inertia, channels,
+                                      g, value);
 }
-static int solve(BHPlayerForceControl *c, float channels[15], BHVec3 *torque, BHVec3 *force, int variant_b)
+static int solve(BHPlayerForceControl *control, float channels[15], BHVec3 *torque, BHVec3 *force, int variant_b)
 {
     int i, j;
     float a, b, delta;
     unsigned long k;
-    if (bh_actor_basis_a_pair(c->basis, torque, &i, &j, &a, &b))
+    if (bh_actor_basis_a_pair(control->basis, torque, &i, &j, &a, &b))
     {
-        if (fabs(a) > 0 && !apply(c, channels, c->basis->indices_a + i, a))
+        if (fabs(a) > 0 && !apply(control, channels, control->basis->indices_a + i, a))
             return 0;
-        if (fabs(b) > 0 && !apply(c, channels, c->basis->indices_a + j, b))
+        if (fabs(b) > 0 && !apply(control, channels, control->basis->indices_a + j, b))
             return 0;
         for (k = 0; k < 3; ++k)
         {
             if (k == 2 && variant_b)
             {
-                bh_round_float(&force->z, ((double)force->z + (double)c->basis->groups_a[j].direction.z * b) +
-                                              (double)c->basis->groups_a[i].direction.z * a);
+                bh_round_float(&force->z, ((double)force->z + (double)control->basis->groups_a[j].direction.z * b) +
+                                              (double)control->basis->groups_a[i].direction.z * a);
                 continue;
             }
-            delta = stored((double)((float *)&c->basis->groups_a[j].direction)[k] * b +
-                           (double)((float *)&c->basis->groups_a[i].direction)[k] * a);
+            delta = stored((double)((float *)&control->basis->groups_a[j].direction)[k] * b +
+                           (double)((float *)&control->basis->groups_a[i].direction)[k] * a);
             bh_round_float(((float *)force) + k, (double)((float *)force)[k] + delta);
         }
     }
-    if (bh_actor_basis_b_pair(c->basis, force, &i, &j, &a, &b))
+    if (bh_actor_basis_b_pair(control->basis, force, &i, &j, &a, &b))
     {
-        if (fabs(a) > 0 && !apply(c, channels, c->basis->indices_b + i, a))
+        if (fabs(a) > 0 && !apply(control, channels, control->basis->indices_b + i, a))
             return 0;
-        if (fabs(b) > 0 && !apply(c, channels, c->basis->indices_b + j, b))
+        if (fabs(b) > 0 && !apply(control, channels, control->basis->indices_b + j, b))
             return 0;
     }
     return 1;
 }
-static void visual(BHPlayerForceControl *c, float channels[15], const float previous[15], int variant)
+static void visual(BHPlayerForceControl *control, float channels[15], const float previous[15], int variant)
 {
     static const float nozzle[4][3] = {{.5f, .3f, 1.5f}, {-.5f, .3f, 1.5f}, {-.7f, .3f, -1.2f}, {.7f, .3f, -1.2f}};
-    BHEntity *e = c->body->entity;
-    BHPhysicsState *p = c->body->physics;
+    BHEntity *entity = control->body->entity;
+    BHPhysicsState *physics = control->body->physics;
     unsigned long i, j;
     float total = 0;
     double x, y, z, smoothed;
@@ -178,13 +185,13 @@ static void visual(BHPlayerForceControl *c, float channels[15], const float prev
         channels[i] = stored(smoothed);
         total = stored(smoothed + total);
     }
-    memcpy((unsigned char *)e + 0x2bc, channels, 60);
-    write_float(e, 0x2f8, total);
+    memcpy((unsigned char *)entity + 0x2bc, channels, 60);
+    write_float(entity, 0x2f8, total);
     for (i = 0; i < 4; ++i)
     {
         /* Each controller retains its own original projection sum order. */
-        nozzle_base(p, nozzle[i][0], nozzle[i][2], variant, &output);
-        vector_store(e, 0x2fc + i * 24, &output);
+        nozzle_base(physics, nozzle[i][0], nozzle[i][2], variant, &output);
+        vector_store(entity, 0x2fc + i * 24, &output);
         j = 1 + i * 3;
         x = i == 0   ? (double)channels[j] - (-.5)
             : i == 1 ? -.5 - (double)channels[j]
@@ -197,39 +204,39 @@ static void visual(BHPlayerForceControl *c, float channels[15], const float prev
             x = stored(x);
             y = stored(y);
         }
-        point(p, x, y, z, variant, &output);
-        vector_store(e, 0x308 + i * 24, &output);
+        point(physics, x, y, z, variant, &output);
+        vector_store(entity, 0x308 + i * 24, &output);
     }
 }
-int __cdecl bh_player_force_control_b(BHPlayerForceControl *c, float unused, int skip)
+int __cdecl bh_player_force_control_b(BHPlayerForceControl *control, float unused, int skip)
 {
-    BHEntity *e;
-    BHPhysicsState *p;
+    BHEntity *entity;
+    BHPhysicsState *physics;
     BHVec3 v, noise = {0, 0, 0}, torque, force;
     float old[15], channels[15];
     float pitch, yaw, thrust, instability, pitch_factor, speed_factor, signed_x, signed_y, pitch_target, roll_target;
     double noise_y;
     unsigned long k;
     (void)unused;
-    if (!validate(c))
+    if (!validate(control))
         return 0;
-    e = c->body->entity;
-    p = c->body->physics;
-    memcpy(old, (unsigned char *)e + 0x2bc, 60);
+    entity = control->body->entity;
+    physics = control->body->physics;
+    memcpy(old, (unsigned char *)entity + 0x2bc, 60);
     memset(channels, 0, sizeof(channels));
     if (!skip)
     {
-        local_velocity(p, &v);
-        torque.x = -p->angular_velocity.x;
-        torque.y = -p->angular_velocity.y;
-        torque.z = -p->angular_velocity.z;
-        instability = read_float(e, 0x250);
-        if (p->pose.m[1][1] >= .5)
-            write_float(e, 0x250, 1);
+        local_velocity(physics, &v);
+        torque.x = -physics->angular_velocity.x;
+        torque.y = -physics->angular_velocity.y;
+        torque.z = -physics->angular_velocity.z;
+        instability = read_float(entity, 0x250);
+        if (physics->pose.m[1][1] >= .5)
+            write_float(entity, 0x250, 1);
         else
         {
-            ++*c->instability_counter;
-            if ((*c->instability_counter & 3) == 0)
+            ++*control->instability_counter;
+            if ((*control->instability_counter & 3) == 0)
             {
                 noise.x = stored((double)(rand() - 16384) * instability * .0001220703125);
                 noise.z = stored((double)(rand() - 16384) * instability * .0001220703125);
@@ -239,14 +246,14 @@ int __cdecl bh_player_force_control_b(BHPlayerForceControl *c, float unused, int
                     noise_y = (double)(rand() - 16384) * instability * .0001220703125;
                 for (k = 0; k < 3; ++k)
                     bh_round_float(((float *)&torque) + k,
-                                   ((double)p->pose.m[0][k] * noise.x + (double)p->pose.m[2][k] * noise.z) +
-                                       (double)p->pose.m[1][k] * noise_y + ((float *)&torque)[k]);
+                                   ((double)physics->pose.m[0][k] * noise.x + (double)physics->pose.m[2][k] * noise.z) +
+                                       (double)physics->pose.m[1][k] * noise_y + ((float *)&torque)[k]);
             }
-            write_float(e, 0x250, stored((double)instability - (-.03333333333333333)));
+            write_float(entity, 0x250, stored((double)instability - (-.03333333333333333)));
         }
-        pitch = read_float(e, 0x18c);
-        yaw = read_float(e, 0x190);
-        thrust = read_float(e, 0x194);
+        pitch = read_float(entity, 0x18c);
+        yaw = read_float(entity, 0x190);
+        thrust = read_float(entity, 0x194);
         pitch_factor = stored((double)pitch * 2.75);
         speed_factor = stored((double)v.z * v.z * .00048828125);
         signed_x = v.x;
@@ -256,63 +263,64 @@ int __cdecl bh_player_force_control_b(BHPlayerForceControl *c, float unused, int
             signed_x = -signed_x;
             signed_y = -signed_y;
         }
-        force.x = stored((double)stored((double)v.x * -.85) * c->body->mass * 5.0f);
-        force.y = stored(((double)stored((double)v.y * -.85) - 1.9639999866485596f) * c->body->mass * 5.0f);
-        force.z = stored(((double)stored((double)v.z * -.4) - (double)thrust * -35.0f) * c->body->mass * 5.0f);
-        pitch_target = stored((((double)p->pose.m[1][0] * pitch_factor + torque.x) - ((double)yaw + yaw)) +
+        force.x = stored((double)stored((double)v.x * -.85) * control->body->mass * 5.0f);
+        force.y = stored(((double)stored((double)v.y * -.85) - 1.9639999866485596f) * control->body->mass * 5.0f);
+        force.z = stored(((double)stored((double)v.z * -.4) - (double)thrust * -35.0f) * control->body->mass * 5.0f);
+        pitch_target = stored((((double)physics->pose.m[1][0] * pitch_factor + torque.x) - ((double)yaw + yaw)) +
                               (double)pitch * pitch * sqrt((double)v.z * v.z) * .00625);
-        pitch_target = stored((double)speed_factor * p->pose.m[1][2] + pitch_target);
-        torque.x = stored(((double)pitch_target - (double)signed_y * -.03) * c->body->mass * 5.0f);
-        torque.y = stored((((double)p->pose.m[1][1] * pitch_factor + torque.y) - (double)signed_x * .02) *
-                          c->body->mass * 5.0f);
-        roll_target = stored((double)p->pose.m[1][2] * pitch_factor + torque.z);
-        roll_target = stored((double)roll_target - (double)p->pose.m[1][0] * 16.0f);
-        torque.z = stored((double)roll_target * c->body->mass * 5.0f);
-        if (!solve(c, channels, &torque, &force, 1))
+        pitch_target = stored((double)speed_factor * physics->pose.m[1][2] + pitch_target);
+        torque.x = stored(((double)pitch_target - (double)signed_y * -.03) * control->body->mass * 5.0f);
+        torque.y = stored((((double)physics->pose.m[1][1] * pitch_factor + torque.y) - (double)signed_x * .02) *
+                          control->body->mass * 5.0f);
+        roll_target = stored((double)physics->pose.m[1][2] * pitch_factor + torque.z);
+        roll_target = stored((double)roll_target - (double)physics->pose.m[1][0] * 16.0f);
+        torque.z = stored((double)roll_target * control->body->mass * 5.0f);
+        if (!solve(control, channels, &torque, &force, 1))
         {
-            c->error = 2;
+            control->error = 2;
             return 0;
         }
     }
-    visual(c, channels, old, 3);
+    visual(control, channels, old, 3);
     return 1;
 }
 /* Variants A/C/D share the up-vector stabilizer and drag construction. C/D
    additionally couple three player control scalars into the local targets.
    The original x87 CIpow calls are verified library reuse: exponent3 over
    local stabilizer.x and exponent2 over input0. No original code is called. */
-static int stabilized(BHPlayerForceControl *c, float dt, int skip, int variant)
+static int stabilized(BHPlayerForceControl *control, float dt, int skip, int variant)
 {
-    BHEntity *e;
-    BHPhysicsState *p;
+    BHEntity *entity;
+    BHPhysicsState *physics;
     BHVec3 up, cross, local, velocity, target, force, torque;
     float old[15], channels[15], ratio, blend, instability, input0, input1, input2;
     float saved_x, saved_y, saved_z, speed, scaled_x, scaled_y, selected_factor;
     double angle_x, controlled_x, retained_ratio;
     unsigned long k;
-    if (!validate(c) || (!skip && variant && (!(dt > 0) || !_finite(dt))))
+    if (!validate(control) || (!skip && variant && (!(dt > 0) || !_finite(dt))))
     {
-        if (c)
-            c->error = 1;
+        if (control)
+            control->error = 1;
         return 0;
     }
-    e = c->body->entity;
-    p = c->body->physics;
-    memcpy(old, (unsigned char *)e + 0x2bc, 60);
+    entity = control->body->entity;
+    physics = control->body->physics;
+    memcpy(old, (unsigned char *)entity + 0x2bc, 60);
     memset(channels, 0, sizeof(channels));
     if (!skip)
     {
-        input0 = read_float(e, 0x18c);
-        input1 = read_float(e, 0x190);
-        input2 = read_float(e, 0x194);
-        up.x = p->pose.m[0][1];
-        up.y = p->pose.m[1][1];
-        up.z = p->pose.m[2][1];
+        input0 = read_float(entity, 0x18c);
+        input1 = read_float(entity, 0x190);
+        input2 = read_float(entity, 0x194);
+        up.x = physics->pose.m[0][1];
+        up.y = physics->pose.m[1][1];
+        up.z = physics->pose.m[2][1];
         cross.x = -up.z;
         cross.y = 0;
         cross.z = up.x;
-        retained_ratio =
-            20.0 / (sqrt((double)p->velocity.z * p->velocity.z + (double)p->velocity.x * p->velocity.x) - (-20.0));
+        retained_ratio = 20.0 / (sqrt((double)physics->velocity.z * physics->velocity.z +
+                                      (double)physics->velocity.x * physics->velocity.x) -
+                                 (-20.0));
         ratio = stored(retained_ratio);
         if (variant)
             cross.y = stored((double)cross.y - ((double)input0 * (1.5 - retained_ratio * -2.0f) *
@@ -320,41 +328,41 @@ static int stabilized(BHPlayerForceControl *c, float dt, int skip, int variant)
                                                    ((double)dt * 250.0f));
         if (up.y >= .5)
         {
-            write_float(e, 0x250, 1);
+            write_float(entity, 0x250, 1);
             blend = stored(sqrt(ratio));
         }
         else
         {
-            instability = read_float(e, 0x250);
-            ++*c->instability_counter;
-            if ((*c->instability_counter & 3) == 0)
+            instability = read_float(entity, 0x250);
+            ++*control->instability_counter;
+            if ((*control->instability_counter & 3) == 0)
             {
                 cross.x = stored((double)cross.x - (double)(rand() - 16384) * instability * -.0001220703125);
                 cross.z = stored((double)cross.z - (double)(rand() - 16384) * instability * -.0001220703125);
                 if (instability > 6)
                     cross.y = stored((double)cross.y - (double)(rand() - 16384) * instability * -.0001220703125);
             }
-            write_float(e, 0x250, stored((double)instability - (-.03333333333333333)));
+            write_float(entity, 0x250, stored((double)instability - (-.03333333333333333)));
         }
         for (k = 0; k < 3; ++k)
             bh_round_float(((float *)&local) + k,
-                           ((double)p->pose.m[0][k] * cross.x + (double)p->pose.m[1][k] * cross.y) +
-                               (double)p->pose.m[2][k] * cross.z);
+                           ((double)physics->pose.m[0][k] * cross.x + (double)physics->pose.m[1][k] * cross.y) +
+                               (double)physics->pose.m[2][k] * cross.z);
         angle_x = local.x;
         if (up.y >= .5)
             angle_x = (1.0 - blend) * local.x + pow((double)local.x, 3.0) * .05 * blend;
         else
             /* The unstable X projection stays live through dt scaling;
                only Y/Z are spilled before constructing the torque. */
-            angle_x = ((double)p->pose.m[0][0] * cross.x + (double)p->pose.m[1][0] * cross.y) +
-                      (double)p->pose.m[2][0] * cross.z;
-        local_velocity(p, &velocity);
+            angle_x = ((double)physics->pose.m[0][0] * cross.x + (double)physics->pose.m[1][0] * cross.y) +
+                      (double)physics->pose.m[2][0] * cross.z;
+        local_velocity(physics, &velocity);
         saved_x = velocity.x;
         saved_y = velocity.y;
         saved_z = velocity.z;
-        torque.x = stored(angle_x * dt * 250.0f - p->angular_velocity.x);
-        torque.y = stored((double)local.y * dt * 250.0f - p->angular_velocity.y);
-        torque.z = stored((double)local.z * dt * 250.0f - p->angular_velocity.z);
+        torque.x = stored(angle_x * dt * 250.0f - physics->angular_velocity.x);
+        torque.y = stored((double)local.y * dt * 250.0f - physics->angular_velocity.y);
+        torque.z = stored((double)local.z * dt * 250.0f - physics->angular_velocity.z);
         target = velocity;
         if (variant)
         {
@@ -388,29 +396,29 @@ static int stabilized(BHPlayerForceControl *c, float dt, int skip, int variant)
         target.x = scaled_x;
         target.y = scaled_y;
         bh_vec3_normalize(&target);
-        force.x = stored(((double)speed * target.x - saved_x) * c->body->mass * 5.0f);
-        force.y = stored((((double)speed * target.y - saved_y) - 1.9639999866485596f) * c->body->mass * 5.0f);
-        force.z = stored(((double)speed * target.z - saved_z) * c->body->mass * 5.0f);
+        force.x = stored(((double)speed * target.x - saved_x) * control->body->mass * 5.0f);
+        force.y = stored((((double)speed * target.y - saved_y) - 1.9639999866485596f) * control->body->mass * 5.0f);
+        force.z = stored(((double)speed * target.z - saved_z) * control->body->mass * 5.0f);
         for (k = 0; k < 3; ++k)
-            bh_round_float(((float *)&torque) + k, (double)((float *)&torque)[k] * c->body->mass * 5.0f);
-        if (!solve(c, channels, &torque, &force, 0))
+            bh_round_float(((float *)&torque) + k, (double)((float *)&torque)[k] * control->body->mass * 5.0f);
+        if (!solve(control, channels, &torque, &force, 0))
         {
-            c->error = 2;
+            control->error = 2;
             return 0;
         }
     }
-    visual(c, channels, old, variant);
+    visual(control, channels, old, variant);
     return 1;
 }
-int __cdecl bh_player_force_control_a(BHPlayerForceControl *c, float dt, int skip)
+int __cdecl bh_player_force_control_a(BHPlayerForceControl *control, float dt, int skip)
 {
-    return stabilized(c, dt, skip, 0);
+    return stabilized(control, dt, skip, 0);
 }
-int __cdecl bh_player_force_control_c(BHPlayerForceControl *c, float dt, int skip)
+int __cdecl bh_player_force_control_c(BHPlayerForceControl *control, float dt, int skip)
 {
-    return stabilized(c, dt, skip, 1);
+    return stabilized(control, dt, skip, 1);
 }
-int __cdecl bh_player_force_control_d(BHPlayerForceControl *c, float dt, int skip)
+int __cdecl bh_player_force_control_d(BHPlayerForceControl *control, float dt, int skip)
 {
-    return stabilized(c, dt, skip, 2);
+    return stabilized(control, dt, skip, 2);
 }

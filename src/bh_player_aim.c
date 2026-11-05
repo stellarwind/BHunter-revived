@@ -20,22 +20,22 @@ static float soft_limit(float value)
 }
 int __cdecl bh_player_aim_update(BHPhysicsStepBody *body)
 {
-    BHEntity *e;
-    BHPhysicsState *p;
+    BHEntity *entity;
+    BHPhysicsState *physics;
     float raw_x, raw_y, x, y, rounded_x;
     double angle_x, angle_y, cx, cy, sx, sy, scale;
     BHVec3 direction, local = {0, 0, 1};
     unsigned long i;
-    if (!body || !(e = body->entity) || !(p = body->physics) || !bh_math_environment_supported())
+    if (!body || !(entity = body->entity) || !(physics = body->physics) || !bh_math_environment_supported())
         return 0;
-    memcpy(&raw_x, (unsigned char *)e + 0x1f0, 4);
-    memcpy(&raw_y, (unsigned char *)e + 0x1f4, 4);
+    memcpy(&raw_x, (unsigned char *)entity + 0x1f0, 4);
+    memcpy(&raw_y, (unsigned char *)entity + 0x1f4, 4);
     if (!_finite(raw_x) || !_finite(raw_y))
         return 0;
     if (raw_x == 0 && raw_y == 0)
     {
         for (i = 0; i < 3; ++i)
-            ((float *)&direction)[i] = p->pose.m[i][2];
+            ((float *)&direction)[i] = physics->pose.m[i][2];
     }
     else
     {
@@ -48,13 +48,13 @@ int __cdecl bh_player_aim_update(BHPhysicsStepBody *body)
         cy = cos(angle_y);
         scale = cy * cx;
         for (i = 0; i < 3; ++i)
-            bh_round_float(((float *)&direction) + i, (double)p->pose.m[i][2] * scale);
+            bh_round_float(((float *)&direction) + i, (double)physics->pose.m[i][2] * scale);
         if (rounded_x != 0)
         {
             sx = sin((double)rounded_x);
             for (i = 0; i < 3; ++i)
                 bh_round_float(((float *)&direction) + i,
-                               (double)((float *)&direction)[i] + (double)p->pose.m[i][0] * sx);
+                               (double)((float *)&direction)[i] + (double)physics->pose.m[i][0] * sx);
             local.x = stored(sx);
             local.z = stored((double)local.z * cx);
         }
@@ -63,12 +63,12 @@ int __cdecl bh_player_aim_update(BHPhysicsStepBody *body)
             sy = -(sin(angle_y) * cx);
             for (i = 0; i < 3; ++i)
                 bh_round_float(((float *)&direction) + i,
-                               (double)((float *)&direction)[i] + (double)p->pose.m[i][1] * sy);
+                               (double)((float *)&direction)[i] + (double)physics->pose.m[i][1] * sy);
             local.y = stored(sy);
             local.z = stored((double)local.z * cy);
         }
     }
-    memcpy((unsigned char *)e + 0x280, &direction, 12);
-    memcpy((unsigned char *)e + 0x28c, &local, 12);
+    memcpy((unsigned char *)entity + 0x280, &direction, 12);
+    memcpy((unsigned char *)entity + 0x28c, &local, 12);
     return 1;
 }

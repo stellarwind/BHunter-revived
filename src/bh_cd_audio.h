@@ -1,7 +1,8 @@
 #ifndef BH_CD_AUDIO_H
 #define BH_CD_AUDIO_H
 #include "bh_cd_notify.h"
-typedef struct BHCdAudio {
+typedef struct BHCdAudio
+{
     BHCdNotify *notify;
     int open_result, set_result;
     unsigned long opens;

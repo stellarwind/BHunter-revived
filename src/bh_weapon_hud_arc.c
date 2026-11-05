@@ -17,16 +17,16 @@ static int finite_vec(const BHVec3 *v)
 {
     return v && _finite(v->x) && _finite(v->y) && _finite(v->z);
 }
-static int fail(BHArcContext *c, BHArcError e)
+static int fail(BHArcContext *ctx, BHArcError e)
 {
-    if (c)
-        c->error = e;
+    if (ctx)
+        ctx->error = e;
     return 0;
 }
-static void begin(BHArcContext *c)
+static void begin(BHArcContext *ctx)
 {
-    c->attempted = c->queued = c->dropped = c->path_points = c->random_calls = 0;
-    c->error = BH_ARC_OK;
+    ctx->attempted = ctx->queued = ctx->dropped = ctx->path_points = ctx->random_calls = 0;
+    ctx->error = BH_ARC_OK;
 }
 static float stored(double n)
 {
@@ -34,41 +34,41 @@ static float stored(double n)
     bh_round_float(&f, n);
     return f;
 }
-static int random_value(BHArcContext *c)
+static int random_value(BHArcContext *ctx)
 {
-    ++c->random_calls;
+    ++ctx->random_calls;
     return rand();
 }
 static void put(unsigned long *out, float f)
 {
     memcpy(out, &f, 4);
 }
-static BHDrawCommand *reserve(BHArcContext *c)
+static BHDrawCommand *reserve(BHArcContext *ctx)
 {
-    BHDrawCommand *p = bh_queue_reserve(c->queue, 3);
-    ++c->attempted;
-    if (p)
-        ++c->queued;
-    else if (c->queue->error == BH_DRAW_FULL)
-        ++c->dropped;
+    BHDrawCommand *command = bh_queue_reserve(ctx->queue, 3);
+    ++ctx->attempted;
+    if (command)
+        ++ctx->queued;
+    else if (ctx->queue->error == BH_DRAW_FULL)
+        ++ctx->dropped;
     else
-        c->error = BH_ARC_QUEUE;
-    return p;
+        ctx->error = BH_ARC_QUEUE;
+    return command;
 }
-static void point(BHDrawCommand *p, const BHVec3 *position, float width, float start, float end, float modulation,
+static void point(BHDrawCommand *command, const BHVec3 *position, float width, float start, float end, float modulation,
                   unsigned long tile)
 {
-    put(&p->resource, position->x);
-    put(p->words, position->y);
-    put(p->words + 1, position->z);
-    put(p->words + 2, width);
-    put(p->words + 3, start);
-    put(p->words + 4, end);
-    put(p->words + 5, modulation);
-    p->words[6] = tile;
-    p->kind = BH_DRAW_PATH_POINT;
+    put(&command->resource, position->x);
+    put(command->words, position->y);
+    put(command->words + 1, position->z);
+    put(command->words + 2, width);
+    put(command->words + 3, start);
+    put(command->words + 4, end);
+    put(command->words + 5, modulation);
+    command->words[6] = tile;
+    command->kind = BH_DRAW_PATH_POINT;
 }
-static int curve(BHArcContext *c, const BHVec3 *start, const BHVec3 *control, const BHVec3 *target_control,
+static int curve(BHArcContext *ctx, const BHVec3 *start, const BHVec3 *control, const BHVec3 *target_control,
                  const BHVec3 *target, float strength)
 {
     BHDrawCommand *header, *p;
@@ -81,14 +81,14 @@ static int curve(BHArcContext *c, const BHVec3 *start, const BHVec3 *control, co
                 *e = (const float *)target;
     if (strength > 1)
         strength = 1;
-    header = reserve(c);
+    header = reserve(ctx);
     if (!header)
-        return c->error == BH_ARC_OK;
-    header->resource = c->image;
-    p = reserve(c);
+        return ctx->error == BH_ARC_OK;
+    header->resource = ctx->image;
+    p = reserve(ctx);
     if (p)
     {
-        tile = (unsigned long)random_value(c) & 3;
+        tile = (unsigned long)random_value(ctx) & 3;
         point(p, start, .5f, 0, 0, stored((double)strength * 100), tile);
         count = 1;
     }
@@ -97,7 +97,7 @@ static int curve(BHArcContext *c, const BHVec3 *start, const BHVec3 *control, co
     for (i = 7; i >= -8; --i)
     {
         progress = stored((double)progress - step);
-        p = reserve(c);
+        p = reserve(ctx);
         if (!p)
             continue;
         raw_complement = 1.0 - progress;
@@ -121,47 +121,47 @@ static int curve(BHArcContext *c, const BHVec3 *start, const BHVec3 *control, co
         if (i > -8)
         {
             envelope = stored(((double)(64 - i * i) * strength) * .000000476837158203125);
-            position.x = stored(((double)random_value(c) - 16384.0) * envelope + position.x);
-            position.y = stored(((double)random_value(c) - 16384.0) * envelope + position.y);
-            position.z = stored(((double)random_value(c) - 16384.0) * envelope + position.z);
+            position.x = stored(((double)random_value(ctx) - 16384.0) * envelope + position.x);
+            position.y = stored(((double)random_value(ctx) - 16384.0) * envelope + position.y);
+            position.z = stored(((double)random_value(ctx) - 16384.0) * envelope + position.z);
         }
-        tile = (unsigned long)random_value(c) & 3;
+        tile = (unsigned long)random_value(ctx) & 3;
         point(p, &position, 1.25f, root, (float)count, stored(((double)strength - progress) * 100), tile);
         ++count;
     }
     header->words[0] = count;
     header->kind = BH_DRAW_PATH_HEADER;
-    c->path_points = count;
-    return c->error == BH_ARC_OK;
+    ctx->path_points = count;
+    return ctx->error == BH_ARC_OK;
 }
-int __cdecl bh_arc_queue(BHArcContext *c, const BHVec3 *start, const BHVec3 *control, const BHVec3 *target_control,
+int __cdecl bh_arc_queue(BHArcContext *ctx, const BHVec3 *start, const BHVec3 *control, const BHVec3 *target_control,
                          const BHVec3 *target, float strength)
 {
-    if (!c || !c->queue || !finite_vec(start) || !finite_vec(control) || !finite_vec(target_control) ||
+    if (!ctx || !ctx->queue || !finite_vec(start) || !finite_vec(control) || !finite_vec(target_control) ||
         !finite_vec(target))
-        return fail(c, BH_ARC_ARGUMENT);
-    begin(c);
+        return fail(ctx, BH_ARC_ARGUMENT);
+    begin(ctx);
     if (!_finite(strength) || strength < 0)
-        return fail(c, BH_ARC_NUMERICAL);
-    return curve(c, start, control, target_control, target, strength);
+        return fail(ctx, BH_ARC_NUMERICAL);
+    return curve(ctx, start, control, target_control, target, strength);
 }
-int __cdecl bh_weapon_hud_arc(BHArcContext *c, BHWeaponHudState *state, const BHWeaponHudArcPlayer *player)
+int __cdecl bh_weapon_hud_arc(BHArcContext *ctx, BHWeaponHudState *state, const BHWeaponHudArcPlayer *player)
 {
     BHVec3 start, control, jitter;
     BHArcPacket packet;
     BHEntity *target;
     float strength;
     unsigned long i;
-    if (!c || !state || !c->queue)
-        return fail(c, BH_ARC_ARGUMENT);
-    begin(c);
+    if (!ctx || !state || !ctx->queue)
+        return fail(ctx, BH_ARC_ARGUMENT);
+    begin(ctx);
     target = state->target;
     if (!target)
         return 1;
     if (!player || !finite_vec(&player->position) || !finite_vec(&player->forward) || !finite_vec(&player->aim))
-        return fail(c, BH_ARC_ARGUMENT);
+        return fail(ctx, BH_ARC_ARGUMENT);
     if (!target->query)
-        return fail(c, BH_ARC_CALLBACK);
+        return fail(ctx, BH_ARC_CALLBACK);
     for (i = 0; i < 3; ++i)
     {
         ((float *)&start)[i] =
@@ -172,16 +172,16 @@ int __cdecl bh_weapon_hud_arc(BHArcContext *c, BHWeaponHudState *state, const BH
     packet.position.event = 3;
     target->query(target, &packet);
     if (!finite_vec(&packet.position.position))
-        return fail(c, BH_ARC_NUMERICAL);
+        return fail(ctx, BH_ARC_NUMERICAL);
     jitter = packet.position.position;
-    jitter.x = stored((double)jitter.x - ((double)random_value(c) - 16384.0) * -.00048828125);
-    jitter.y = stored((double)jitter.y - ((double)random_value(c) - 16384.0) * -.00048828125);
+    jitter.x = stored((double)jitter.x - ((double)random_value(ctx) - 16384.0) * -.00048828125);
+    jitter.y = stored((double)jitter.y - ((double)random_value(ctx) - 16384.0) * -.00048828125);
     {
-        int r = random_value(c);
+        int r = random_value(ctx);
         strength = stored((double)state->charge * .020833333333333332);
         jitter.z = stored((double)jitter.z - ((double)r - 16384.0) * -.00048828125);
     }
     if (!finite_vec(&start) || !finite_vec(&control) || !finite_vec(&jitter) || !_finite(strength) || strength < 0)
-        return fail(c, BH_ARC_NUMERICAL);
-    return curve(c, &start, &control, &jitter, &packet.position.position, strength);
+        return fail(ctx, BH_ARC_NUMERICAL);
+    return curve(ctx, &start, &control, &jitter, &packet.position.position, strength);
 }

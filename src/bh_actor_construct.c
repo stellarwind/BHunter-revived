@@ -10,266 +10,267 @@ static float rf(double v)
     bh_round_float(&f, v);
     return f;
 }
-static void word(BHEntity *e, unsigned long o, unsigned long v)
+static void word(BHEntity *entity, unsigned long o, unsigned long v)
 {
-    memcpy((char *)e + o, &v, 4);
+    memcpy((char *)entity + o, &v, 4);
 }
-static void real(BHEntity *e, unsigned long o, float f)
+static void real(BHEntity *entity, unsigned long o, float f)
 {
-    memcpy((char *)e + o, &f, 4);
+    memcpy((char *)entity + o, &f, 4);
 }
-static void short_word(BHEntity *e, unsigned long o, unsigned short v)
+static void short_word(BHEntity *entity, unsigned long o, unsigned short v)
 {
-    memcpy((char *)e + o, &v, 2);
+    memcpy((char *)entity + o, &v, 2);
 }
 static unsigned long next_random(unsigned long r)
 {
     return ((r * 0xe357UL >> 16) | (r * 0xe3570000UL)) ^ r;
 }
-static BHActorConstructContext *context(BHEntity *e)
+static BHActorConstructContext *context(BHEntity *entity)
 {
-    BHActorConstructContext *c;
-    memcpy(&c, e->payload + 584, 4);
-    return c;
+    BHActorConstructContext *ctx;
+    memcpy(&ctx, entity->payload + 584, 4);
+    return ctx;
 }
-static void route_tick(BHEntity *e)
+static void route_tick(BHEntity *entity)
 {
-    BHActorConstructContext *c = context(e);
-    if (!bh_actor_route_due(c->response->damage->route, e))
-        c->error = 2;
+    BHActorConstructContext *ctx = context(entity);
+    if (!bh_actor_route_due(ctx->response->damage->route, entity))
+        ctx->error = 2;
 }
-static void draw_actor(BHEntity *e)
+static void draw_actor(BHEntity *entity)
 {
-    BHActorConstructContext *c = context(e);
-    if (!bh_actor_vehicle_draw(c->draw, e))
-        c->error = 2;
+    BHActorConstructContext *ctx = context(entity);
+    if (!bh_actor_vehicle_draw(ctx->draw, entity))
+        ctx->error = 2;
 }
-static BHEntity *construct(BHActorConstructContext *c, BHWorldGeometry *world, unsigned long type, long token,
+static BHEntity *construct(BHActorConstructContext *ctx, BHWorldGeometry *world, unsigned long type, long token,
                            float speed, unsigned long death_tag, unsigned long seed)
 {
     BHActorResponseContext *response;
-    BHActorRouteState s;
+    BHActorRouteState state;
     BHVec3 center, zero = {0, 0, 0};
     const BHActorConstructRoom *binding = 0;
-    BHEntity *e, *head;
+    BHEntity *entity, *head;
     BHEntityStep draw = draw_actor;
     unsigned long i, index, r;
     float original_speed = speed;
     long bounty;
     unsigned short primary, secondary;
     double v;
-    if (!c || !world || !c->response || !c->response->damage || !c->response->damage->route ||
-        !c->response->damage->route->live_tick || !c->draw || !c->models || !c->sounds || c->resource_count < 25 ||
-        !c->rooms || !c->cycle_models || c->cycle_count < 4 || !bh_math_environment_supported())
+    if (!ctx || !world || !ctx->response || !ctx->response->damage || !ctx->response->damage->route ||
+        !ctx->response->damage->route->live_tick || !ctx->draw || !ctx->models || !ctx->sounds ||
+        ctx->resource_count < 25 || !ctx->rooms || !ctx->cycle_models || ctx->cycle_count < 4 ||
+        !bh_math_environment_supported())
     {
-        if (c)
-            c->error = 1;
+        if (ctx)
+            ctx->error = 1;
         return 0;
     }
-    c->error = 0;
-    response = c->response;
-    for (i = 0; i < c->room_count; ++i)
-        if (c->rooms[i].room && c->rooms[i].room->world == world)
+    ctx->error = 0;
+    response = ctx->response;
+    for (i = 0; i < ctx->room_count; ++i)
+        if (ctx->rooms[i].room && ctx->rooms[i].room->world == world)
         {
-            binding = c->rooms + i;
+            binding = ctx->rooms + i;
             break;
         }
     if (!binding || !_finite(speed))
     {
-        c->error = 1;
+        ctx->error = 1;
         return 0;
     }
     if (type == 4 || type == 5)
         type = 6;
-    e = bh_entity_acquire(response->damage->pool);
-    if (!e)
+    entity = bh_entity_acquire(response->damage->pool);
+    if (!entity)
     {
-        c->error = 2;
+        ctx->error = 2;
         return 0;
     }
-    memcpy(e->payload + 584, &c, 4);
-    e->position = zero;
-    memcpy((char *)e + 0x3c, &zero, 12);
-    e->flags |= 0x100;
-    memcpy(e->opaque2b, &world, 4);
-    memset(&s, 0, sizeof(s));
-    s.current = s.next = world;
+    memcpy(entity->payload + 584, &ctx, 4);
+    entity->position = zero;
+    memcpy((char *)entity + 0x3c, &zero, 12);
+    entity->flags |= 0x100;
+    memcpy(entity->opaque2b, &world, 4);
+    memset(&state, 0, sizeof(state));
+    state.current = state.next = world;
     center.x = rf(((double)world->minimum.x + world->maximum.x) * .5);
     center.y = rf(((double)world->minimum.y + world->maximum.y) * .5);
     center.z = rf(((double)world->minimum.z + world->maximum.z) * .5);
     for (i = 0; i < 4; ++i)
-        s.controls[i] = center;
-    s.portal_center = center;
+        state.controls[i] = center;
+    state.portal_center = center;
     head = binding->room->actors;
-    word(e, 0xf4, (unsigned long)head);
-    word(e, 0xf8, 0);
+    word(entity, 0xf4, (unsigned long)head);
+    word(entity, 0xf8, 0);
     if (head)
-        word(head, 0xf8, (unsigned long)e);
-    binding->room->actors = e;
-    memset((char *)e + 0x15c, 0, 24);
-    real(e, 0x194, 0);
-    s.duration = s.phase = 1;
+        word(head, 0xf8, (unsigned long)entity);
+    binding->room->actors = entity;
+    memset((char *)entity + 0x15c, 0, 24);
+    real(entity, 0x194, 0);
+    state.duration = state.phase = 1;
     r = next_random(seed);
-    s.u = rf(.25 - (r & 32767) * (-1.0 / 65536.0));
+    state.u = rf(.25 - (r & 32767) * (-1.0 / 65536.0));
     r = next_random(r);
-    s.v = rf(.25 - (r & 32767) * (-1.0 / 65536.0));
-    s.tick = (unsigned short)(bh_actor_route_now(response->damage->route) - 30);
-    s.duration_ticks = 30;
+    state.v = rf(.25 - (r & 32767) * (-1.0 / 65536.0));
+    state.tick = (unsigned short)(bh_actor_route_now(response->damage->route) - 30);
+    state.duration_ticks = 30;
     if (speed == 0)
     {
         r = next_random(r);
         speed = rf(15.0 - (r & 32767) * (-1.0 / 1024.0));
     }
-    s.speed = speed;
-    s.jitter = .2f;
-    s.speed_scale = 1;
-    s.sound = BH_SOUND_INVALID;
-    s.sound_frames = 0;
-    word(e, 0x100, token ? (unsigned long)token : (unsigned long)-5000);
-    word(e, 0x11c, death_tag);
-    real(e, 0x19c, 1);
-    word(e, 0x1ac, 0);
-    real(e, 0x1b4, 0);
-    word(e, 0x1b8, 0);
-    word(e, 0x110, binding->bound_resource);
-    word(e, 0xfc, type);
-    word(e, 0x118, 0);
-    memcpy(e->payload + 4, &draw, 4);
+    state.speed = speed;
+    state.jitter = .2f;
+    state.speed_scale = 1;
+    state.sound = BH_SOUND_INVALID;
+    state.sound_frames = 0;
+    word(entity, 0x100, token ? (unsigned long)token : (unsigned long)-5000);
+    word(entity, 0x11c, death_tag);
+    real(entity, 0x19c, 1);
+    word(entity, 0x1ac, 0);
+    real(entity, 0x1b4, 0);
+    word(entity, 0x1b8, 0);
+    word(entity, 0x110, binding->bound_resource);
+    word(entity, 0xfc, type);
+    word(entity, 0x118, 0);
+    memcpy(entity->payload + 4, &draw, 4);
     r = next_random(r);
     index = ((r & 32767) * 23) >> 15;
     if (index > 7)
         ++index;
     if (index > 14)
         ++index;
-    word(e, 0x114, c->models[index]);
-    word(e, 0x10c, c->sounds[index]);
+    word(entity, 0x114, ctx->models[index]);
+    word(entity, 0x10c, ctx->sounds[index]);
     if (type == 12)
     {
         type = 6;
-        word(e, 0xfc, 6);
-        word(e, 0x118, 1);
+        word(entity, 0xfc, 6);
+        word(entity, 0x118, 1);
     }
     if (type == 7)
     {
-        word(e, 0x114, c->models[8]);
-        word(e, 0x10c, c->sounds[8]);
+        word(entity, 0x114, ctx->models[8]);
+        word(entity, 0x10c, ctx->sounds[8]);
         type = 6;
-        word(e, 0xfc, 6);
+        word(entity, 0xfc, 6);
     }
     if (type == 10)
     {
         type = 2;
-        word(e, 0xfc, 2);
-        real(e, 0x1b4, .45f);
-        word(e, 0x1b8, (unsigned long)response->player);
+        word(entity, 0xfc, 2);
+        real(entity, 0x1b4, .45f);
+        word(entity, 0x1b8, (unsigned long)response->player);
     }
     if (type == 11)
     {
         type = 6;
-        word(e, 0xfc, 6);
-        word(e, 0x1b8, (unsigned long)response->player);
+        word(entity, 0xfc, 6);
+        word(entity, 0x1b8, (unsigned long)response->player);
     }
     if (type == 13)
     {
         type = 6;
-        word(e, 0xfc, 6);
-        word(e, 0x114, c->cycle_models[c->cycle & 3]);
-        ++c->cycle;
-        word(e, 0x10c, c->sounds[14]);
+        word(entity, 0xfc, 6);
+        word(entity, 0x114, ctx->cycle_models[ctx->cycle & 3]);
+        ++ctx->cycle;
+        word(entity, 0x10c, ctx->sounds[14]);
     }
     if (type == 14 || type == 15)
     {
-        word(e, 0x114, type == 15 ? c->special_model : c->models[8]);
-        word(e, 0x10c, c->sounds[8]);
+        word(entity, 0x114, type == 15 ? ctx->special_model : ctx->models[8]);
+        word(entity, 0x10c, ctx->sounds[8]);
         if (type == 15)
-            real(e, 0x194, -10);
+            real(entity, 0x194, -10);
         type = 6;
-        word(e, 0xfc, 6);
-        word(e, 0x1b8, (unsigned long)response->player);
+        word(entity, 0xfc, 6);
+        word(entity, 0x1b8, (unsigned long)response->player);
     }
     if (type == 3)
     {
-        word(e, 0x114, c->models[8]);
-        word(e, 0x10c, c->sounds[8]);
+        word(entity, 0x114, ctx->models[8]);
+        word(entity, 0x10c, ctx->sounds[8]);
         if (!token)
-            word(e, 0x100, (unsigned long)-30000);
+            word(entity, 0x100, (unsigned long)-30000);
     }
     if (type == 1 || type == 2 || type == 6)
     {
         head = response->vehicles->head;
-        word(e, 0xf0, (unsigned long)head);
-        word(e, 0xec, 0);
+        word(entity, 0xf0, (unsigned long)head);
+        word(entity, 0xec, 0);
         if (head)
-            word(head, 0xec, (unsigned long)e);
-        response->vehicles->head = e;
+            word(head, 0xec, (unsigned long)entity);
+        response->vehicles->head = entity;
         ++response->vehicles->count;
         if (type == 1)
         {
             if (original_speed == 0)
-                s.speed = rf((double)s.speed - (-10.0));
-            real(e, 0x1b4, 1);
+                state.speed = rf((double)state.speed - (-10.0));
+            real(entity, 0x1b4, 1);
             if (!token)
-                word(e, 0x100, (unsigned long)-15000);
+                word(entity, 0x100, (unsigned long)-15000);
         }
         else
         {
-            s.jitter = .3f;
+            state.jitter = .3f;
             if (!token)
             {
-                v = (double)s.speed - 20.0;
+                v = (double)state.speed - 20.0;
                 v = v * v * (type == 2 ? -.0078125 : -.015625);
                 bounty = (long)(__int64)v;
-                word(e, 0x100, (1UL - (unsigned long)bounty) * 5000UL);
+                word(entity, 0x100, (1UL - (unsigned long)bounty) * 5000UL);
             }
             if (type == 2 && original_speed == 0)
-                s.speed = rf((double)s.speed - (-5.0));
+                state.speed = rf((double)state.speed - (-5.0));
         }
         r = next_random(r);
         if (type == 2)
         {
-            real(e, 0x1b4, rf((r & 32767) * (1.0 / 131072.0)));
+            real(entity, 0x1b4, rf((r & 32767) * (1.0 / 131072.0)));
             r = next_random(r);
         }
         else
-            real(e, 0x1b4, 1);
+            real(entity, 0x1b4, 1);
         primary = (unsigned short)(__int64)((r & 32767) * (1.0 / 11000.0));
         r = next_random(r);
         secondary = (unsigned short)(__int64)((r & 32767) * (1.0 / 11000.0));
-        short_word(e, 0x1dc, primary);
-        short_word(e, 0x1de, secondary);
-        short_word(e, 0x1e0, 0);
-        short_word(e, 0x1e2, type == 6 ? 20 : 10);
-        word(e, 0x1d8, (type == 1 ? 30 : type == 2 ? 40 : 60) / (primary == 1 ? 2 : 1));
-        word(e, 0x1d4, 0);
+        short_word(entity, 0x1dc, primary);
+        short_word(entity, 0x1de, secondary);
+        short_word(entity, 0x1e0, 0);
+        short_word(entity, 0x1e2, type == 6 ? 20 : 10);
+        word(entity, 0x1d8, (type == 1 ? 30 : type == 2 ? 40 : 60) / (primary == 1 ? 2 : 1));
+        word(entity, 0x1d4, 0);
     }
-    s.random = r;
-    bh_actor_route_write(e, &s);
-    if (!bh_actor_damage_bind(response->damage, e))
+    state.random = r;
+    bh_actor_route_write(entity, &state);
+    if (!bh_actor_damage_bind(response->damage, entity))
     {
-        c->error = 2;
-        return e;
+        ctx->error = 2;
+        return entity;
     }
-    e->step = route_tick;
+    entity->step = route_tick;
     if (type == 1 || type == 2 || type == 6)
     {
-        if (!bh_actor_vehicle_tick_bind(response->attack, e) || !bh_actor_response_bind(response, e))
-            c->error = 2;
+        if (!bh_actor_vehicle_tick_bind(response->attack, entity) || !bh_actor_response_bind(response, entity))
+            ctx->error = 2;
     }
-    return e;
+    return entity;
 }
-BHEntity *__cdecl bh_actor_construct_room(BHActorConstructContext *c, BHWorldGeometry *w, unsigned long t, long token,
-                                          float speed, unsigned long tag, unsigned long seed)
+BHEntity *__cdecl bh_actor_construct_room(BHActorConstructContext *ctx, BHWorldGeometry *world, unsigned long t,
+                                          long token, float speed, unsigned long tag, unsigned long seed)
 {
-    return construct(c, w, t, token, speed, tag, seed);
+    return construct(ctx, world, t, token, speed, tag, seed);
 }
-BHEntity *__cdecl bh_actor_construct_position(BHActorConstructContext *c, const BHVec3 *p, unsigned long t, long token,
-                                              float speed, unsigned long tag, unsigned long seed)
+BHEntity *__cdecl bh_actor_construct_position(BHActorConstructContext *ctx, const BHVec3 *p, unsigned long t,
+                                              long token, float speed, unsigned long tag, unsigned long seed)
 {
-    BHWorldGeometry *w;
-    if (!c || !p)
+    BHWorldGeometry *world;
+    if (!ctx || !p)
         return 0;
-    w = bh_world_locate(c->first, c->world_count, 0, p, 0);
-    if (!w)
-        w = bh_world_locate(c->first, c->world_count, 0, p, 1);
-    return construct(c, w, t, token, speed, tag, seed);
+    world = bh_world_locate(ctx->first, ctx->world_count, 0, p, 0);
+    if (!world)
+        world = bh_world_locate(ctx->first, ctx->world_count, 0, p, 1);
+    return construct(ctx, world, t, token, speed, tag, seed);
 }
