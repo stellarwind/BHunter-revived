@@ -44,7 +44,7 @@ int __cdecl bh_menu_profile_commit(BHMenuProfileContext *c, BHMenuSettingsMenu *
         found = NULL;
         do
         {
-            if (!_strcmpi(name, (const char *)p->payload))
+            if (!_stricmp(name, (const char *)p->payload))
             {
                 found = p;
                 break;

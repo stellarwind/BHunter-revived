@@ -1,6 +1,5 @@
 #ifndef BH_CD_CLOSE_H
 #define BH_CD_CLOSE_H
-#include <windows.h>
 #include "bh_sdl_audio.h"
 typedef struct BHCdClose
 {
@@ -10,7 +9,7 @@ typedef struct BHCdClose
     int stop_result, close_result;
     unsigned long native_calls;
     int local_file;
-    DWORD local_length;
+    unsigned long local_length;
     float local_volume;
 } BHCdClose;
 int __cdecl bh_cd_stop_close(BHCdClose *);

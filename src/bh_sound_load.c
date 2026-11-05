@@ -47,7 +47,7 @@ unsigned long __cdecl bh_sound_load(BHSoundLoad *c, const char *name, float rang
     const unsigned char *format, *samples;
     unsigned long sample_bytes, format_bytes, i, frequency;
     BHAudioBuffer *buffer = NULL;
-    DWORD first_size;
+    unsigned long first_size;
     BHSoundResource *resource;
     double volume;
     int random;

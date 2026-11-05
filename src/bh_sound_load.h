@@ -17,7 +17,7 @@ typedef struct BHSoundLoad
     BHSceneAllocator file_allocator; /* optional pair; NULL pair uses real CRT */
     unsigned long files, allocations, native_calls, releases, loads, failures;
     unsigned long file_bytes, first_bytes, second_bytes;
-    HRESULT create_result, lock_result, unlock_result, frequency_result;
+    long create_result, lock_result, unlock_result, frequency_result;
     BHSoundLoadError error;
 } BHSoundLoad;
 /* Original five-argument resource loader and publication policy. Reads a

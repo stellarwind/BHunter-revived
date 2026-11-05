@@ -150,7 +150,7 @@ void __cdecl bh_menu_music_tick(BHEntity *e)
         return;
     if (!c->cd_ready)
     {
-        c->cd_ready = bh_cd_audio_startup(a, c->window);
+        c->cd_ready = bh_cd_audio_startup(a);
         if (!c->cd_ready)
         {
 #ifdef BH_SKIP_CD_AUDIO_CHECK

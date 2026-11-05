@@ -205,6 +205,27 @@ failed:
     return 0;
 }
 
+static FILE *open_loose(const char *name, const char *mode)
+{
+#ifndef _WIN32
+    if (strchr(name, '\\'))
+    {
+        size_t bytes = strlen(name) + 1;
+        char *path = (char *)malloc(bytes);
+        FILE *file;
+        size_t i;
+        if (!path)
+            return NULL;
+        for (i = 0; i < bytes; ++i)
+            path[i] = name[i] == '\\' ? '/' : name[i];
+        file = fopen(path, mode);
+        free(path);
+        return file;
+    }
+#endif
+    return fopen(name, mode);
+}
+
 /* 0047cbd0: cached -> loose -> embedded. The open-time fseek quirk is observed. */
 BHVFile *__cdecl bh_vfile_open(const char *name, const char *mode)
 {
@@ -227,7 +248,7 @@ BHVFile *__cdecl bh_vfile_open(const char *name, const char *mode)
             return cached->handle;
         }
     }
-    loose = fopen(name, mode);
+    loose = open_loose(name, mode);
     if (loose)
     {
         if (mode[0] == 'r')

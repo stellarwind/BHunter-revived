@@ -7,7 +7,6 @@
 #include "bh_model_images.h"
 #include "bh_model_scale.h"
 #include "bh_vfile.h"
-#include <windows.h>
 #include <stddef.h>
 #include <string.h>
 #include <stdlib.h>

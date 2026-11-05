@@ -1,4 +1,5 @@
 #include "bh_input_collection.h"
+#include "bh_platform.h"
 #include "bh_round.h"
 #include <string.h>
 #include <float.h>
@@ -10,106 +11,23 @@ static int fail(BHInputCollection *c, BHInputCollectionError error)
 }
 int __cdecl bh_input_collection_init(BHInputCollection *c, BHInputSnapshot *s, BHPlayerInputOwner *lists)
 {
-    unsigned long i;
     if (!c || !s || !lists)
         return 0;
     memset(c, 0, sizeof(*c));
     memset(s, 0, sizeof(*s));
     c->snapshot = s;
     c->lists = lists;
-    c->deadzone_mask = 0xffffffffUL;
-    for (i = 0; i < 8; ++i)
-    {
-        c->minimum[i] = 1;
-        c->maximum[i] = -1;
-    }
     s->pair3[0] = s->pair3[1] = 512;
-    c->api.joystick = joyGetPosEx;
-    c->api.cursor = GetCursorPos;
-    c->api.recenter = SetCursorPos;
     return 1;
-}
-static double axis(unsigned long raw, int deadzone)
-{
-    double value = (double)raw - 32768.0;
-    if (deadzone)
-    {
-        if (value > 0)
-        {
-            value -= 5000.0;
-            if (value < 0)
-                value = 0;
-        }
-        else
-        {
-            value -= -5000.0;
-            if (value > 0)
-                value = 0;
-        }
-        return value * 0.00004;
-    }
-    return value * 0.000033333333333333335;
-}
-static double calibrated_axis(unsigned long raw)
-{
-    double value = axis(raw, 1);
-    return value < -1 ? -1 : value > 1 ? 1 : value;
-}
-static void joystick(BHInputCollection *c, unsigned long device, const JOYINFOEX *sample)
-{
-    unsigned long i, base = device * 4, raw[4];
-    BHInputSnapshot *s = c->snapshot;
-    int was_calibrated = c->calibrated[device] != 0;
-    double value;
-    raw[0] = sample->dwXpos;
-    raw[1] = sample->dwYpos;
-    raw[2] = sample->dwZpos;
-    raw[3] = sample->dwRpos;
-    if (!was_calibrated)
-        for (i = 0; i < 4; ++i)
-            s->axes[base + i] = 0;
-    else
-    {
-        s->axes[base + 2] = 0;
-        s->axes[base + 3] = 0;
-    }
-    for (i = 0; i < 4; ++i)
-    {
-        if (i >= 2 && !(c->capabilities[device] & (1UL << (i - 2))))
-            continue;
-        if (!was_calibrated)
-        {
-            value = calibrated_axis(raw[i]);
-            if (value < c->minimum[base + i])
-                bh_round_float(c->minimum + base + i, value);
-            if (c->maximum[base + i] < value)
-                bh_round_float(c->maximum + base + i, value);
-            if ((double)c->maximum[base + i] - c->minimum[base + i] > .5)
-                c->calibrated[device] = 1;
-        }
-        else
-        {
-            value = axis(raw[i], (c->deadzone_mask & (1UL << (device * 8 + 1 + i * 2))) != 0);
-            bh_round_float(s->axes + base + i, value);
-            if (value < -1)
-                s->axes[base + i] = -1;
-            else if (s->axes[base + i] > 1)
-                s->axes[base + i] = 1;
-        }
-    }
-    for (i = 0; i < 4; ++i)
-        s->current[166 + device * 4 + i] = (unsigned char)((sample->dwButtons >> i) & 1);
 }
 int __cdecl bh_input_collect(BHInputCollection *c, unsigned long *changed)
 {
     BHInputSnapshot *s;
     BHPlayerInputList *list, *slow, *fast;
-    JOYINFOEX sample;
-    POINT cursor;
-    unsigned long i, device, count = 0, bits;
+    int x, y;
+    unsigned long i, count = 0, bits;
     double filtered;
-    if (!c || !changed || !c->snapshot || !c->lists || !c->api.joystick || !c->api.cursor || !c->api.recenter ||
-        c->snapshot->history_head > 31)
+    if (!c || !changed || !c->snapshot || !c->lists || c->snapshot->history_head > 31)
         return fail(c, BH_INPUT_COLLECTION_ARGUMENT);
     s = c->snapshot;
     slow = fast = c->lists->first;
@@ -121,19 +39,7 @@ int __cdecl bh_input_collect(BHInputCollection *c, unsigned long *changed)
             return fail(c, BH_INPUT_COLLECTION_TOPOLOGY);
     }
     c->error = BH_INPUT_COLLECTION_OK;
-    if (c->api.gamepad)
-        c->api.gamepad(&s->gamepad);
-    for (device = 0; device < 2; ++device)
-        if (c->enabled[device])
-        {
-            memset(&sample, 0, sizeof(sample));
-            sample.dwSize = 0x34;
-            sample.dwFlags = 0x4ff;
-            c->last_joystick[device] = c->api.joystick((UINT)device, &sample);
-            if (c->last_joystick[device] != JOYERR_NOERROR)
-                return fail(c, BH_INPUT_COLLECTION_DEVICE);
-            joystick(c, device, &sample);
-        }
+    bh_sdl_gamepad(&s->gamepad);
     if (c->disable_mouse_motion)
     {
         /* Clear retained filter state before binding evaluation. Polling or
@@ -148,13 +54,13 @@ int __cdecl bh_input_collect(BHInputCollection *c, unsigned long *changed)
     }
     else
     {
-        c->last_cursor = c->api.cursor(&cursor);
+        c->last_cursor = bh_sdl_mouse(&x, &y);
         if (!c->last_cursor)
             return fail(c, BH_INPUT_COLLECTION_DEVICE);
-        c->last_recenter = c->api.recenter(160, 100);
-        bits = (unsigned long)cursor.x - 160UL;
+        c->last_recenter = bh_sdl_warp(160, 100);
+        bits = (unsigned long)x - 160UL;
         memcpy(c->delta, &bits, 4);
-        bits = (unsigned long)cursor.y - 100UL;
+        bits = (unsigned long)y - 100UL;
         memcpy(c->delta + 1, &bits, 4);
         for (i = 0; i < 2; ++i)
         {

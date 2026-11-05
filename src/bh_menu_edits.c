@@ -1,4 +1,5 @@
 #include "bh_menu_edits.h"
+#include "bh_platform.h"
 #include "bh_menu_edit_names.h"
 #include <stdio.h>
 #include <string.h>

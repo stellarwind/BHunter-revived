@@ -7,7 +7,7 @@ typedef struct BHMediaControl
     unsigned long stops, aux_writes, wave_writes;
     int stop_result;
     int aux_result, wave_result;
-    DWORD aux_packed, wave_packed;
+    unsigned long aux_packed, wave_packed;
 } BHMediaControl;
 /* Game-local playback and gain controls. */
 int __cdecl bh_cd_play_range(BHMediaControl *, unsigned long from, unsigned long to, unsigned long minute_second,

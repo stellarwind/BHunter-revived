@@ -36,7 +36,7 @@ int __cdecl bh_input_text_begin(BHInputTextCapture *);
    paint its trailing17-character cursor, then enable cached input. Paint
    failure preserves the allocated active capture and reports0. */
 int __cdecl bh_input_text_begin_painted(BHInputTextCapture *);
-/* Whole0042bf80. MapVirtualKeyA mode2 translates source virtual-key values;
+/* Whole0042bf80. SDL translates the game's virtual-key values;
    its return deliberately replaces the scan index. Return/Escape set a phase
    but scanning/repainting continues; actual completion happens next step.
    Current length must match a terminated buffer, limit<capacity and fit the

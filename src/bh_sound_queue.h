@@ -1,6 +1,5 @@
 #ifndef BH_SOUND_QUEUE_H
 #define BH_SOUND_QUEUE_H
-#include <windows.h>
 #include "bh_sdl_audio.h"
 #include "bh_wave.h"
 #include "bh_math.h"
@@ -52,7 +51,7 @@ typedef struct BHSoundQueue
     long listener_active;
     unsigned short voice_limit_policy;
     BHSoundQueueError error;
-    HRESULT last_hresult;
+    long last_hresult;
 } BHSoundQueue;
 #define BH_SOUND_INVALID 0xffffffffUL
 /* Fresh explicit owner, retains supplied SDL mixer/buffer owners. NULL device permits
@@ -105,7 +104,7 @@ typedef struct BHSoundTickStats
 {
     unsigned long clock_calls, status_calls, stop_calls, play_calls, position_calls;
     unsigned long volume_calls, pan_calls, frequency_calls, duplicate_calls, recycled;
-    HRESULT last_error;
+    long last_error;
 } BHSoundTickStats;
 /* Complete 0047c200. Resource audible_range and time_scale are explicit loaded
    metadata; phase is decremented by dt, and processing occurs only below zero.

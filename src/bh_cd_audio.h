@@ -10,7 +10,7 @@ typedef struct BHCdAudio
 } BHCdAudio;
 /* Loads the extracted CD track through SDL; callback retained at call sites
    for the transition ABI, but no native window notification is installed. */
-int __cdecl bh_cd_audio_startup(BHCdAudio *, DWORD unused);
+int __cdecl bh_cd_audio_startup(BHCdAudio *);
 double __cdecl bh_cd_audio_volume(BHCdAudio *);
 double __cdecl bh_wave_audio_volume(BHCdAudio *);
 #endif

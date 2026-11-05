@@ -35,7 +35,7 @@ void __cdecl bh_cd_stop(BHMediaControl *c)
 }
 /* Original FNSTSW C0 first comparison sends unordered to zero. The product
    remains extended until truncating CRT __ftol; no intermediate float store. */
-static DWORD packed(float volume)
+static unsigned long packed(float volume)
 {
     unsigned long word;
     double v = volume;

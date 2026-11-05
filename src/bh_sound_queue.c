@@ -165,7 +165,7 @@ unsigned long __cdecl bh_sound_register_wave(BHSoundQueue *sound_queue, const BH
 {
     BHAudioBuffer *buffer = NULL;
     BHSoundResource *resource;
-    DWORD frequency;
+    unsigned long frequency;
     unsigned long i;
     if (sound_queue && !limit)
         limit = sound_queue->voice_limit_policy;
@@ -215,7 +215,7 @@ int __cdecl bh_sound_priority(BHSoundQueue *sound_queue, int positioned, const B
 {
     float distance = 9e37f;
     double x, y, z, total;
-    DWORD play, write;
+    unsigned long play, write;
     if (!sound_queue || !resource || !out || !vector_ok(position) || (positioned && !position) ||
         !bh_math_environment_supported())
         return fail(sound_queue, BH_SOUND_ARGUMENT);

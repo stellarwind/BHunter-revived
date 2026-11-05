@@ -1,6 +1,5 @@
 #ifndef BH_LOADING_IMAGE_H
 #define BH_LOADING_IMAGE_H
-#include <windows.h>
 #include "bh_pcx_reader.h"
 typedef enum BHLoadingImageError
 {

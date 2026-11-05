@@ -2,17 +2,6 @@
 #include <string.h>
 #include <stdio.h>
 
-HRESULT CALLBACK bh_render_device_policy(LPGUID id, LPSTR description, LPSTR name, LPD3DDEVICEDESC hardware,
-                                         LPD3DDEVICEDESC software, LPVOID user)
-{
-    (void)id;
-    (void)description;
-    (void)name;
-    (void)hardware;
-    (void)software;
-    (void)user;
-    return D3DENUMRET_OK;
-}
 static void extents(BHRenderStartup *s)
 {
     s->extent_x = (float)s->width;
@@ -148,7 +137,6 @@ int __cdecl bh_render_startup_hardware(BHRenderStartup *s, LPDIRECTDRAW draw, LP
         if (s->last_hresult != DD_OK)
             return failed(s);
     }
-    IDirect3D2_EnumDevices(s->d3d, bh_render_device_policy, NULL);
     s->last_hresult = IDirect3D2_CreateDevice(s->d3d, &IID_IDirect3DHALDevice, render, &s->device);
     if (s->last_hresult != DD_OK)
         return failed(s);

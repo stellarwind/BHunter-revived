@@ -20,7 +20,9 @@ extern "C"
         int down, repeat;
     } BHPlatformEvent;
     typedef void (*BHPlatformInput)(const BHPlatformEvent *, void *);
+#ifdef _WIN32
     void bh_sdl_use_dx12(int enabled);
+#endif
     int bh_sdl_open(int hidden, BHPlatformInput, void *);
     int bh_sdl_poll(void);
     int bh_sdl_active(void);
@@ -42,6 +44,9 @@ extern "C"
     int bh_sdl_paths(const char *assets, const char *settings);
     const char *bh_sdl_settings_file(const char *name);
     void bh_sdl_error_dialog(void);
+    void bh_sdl_video_cycle(int row);
+    const char *bh_sdl_video_label(int row);
+    void bh_sdl_canvas_margins(float *x, float *y);
 #ifdef __cplusplus
 }
 #endif

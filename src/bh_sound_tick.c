@@ -9,7 +9,7 @@
 typedef char distance_offset[offsetof(BHSoundVoice, distance_squared) == 0x2c ? 1 : -1];
 typedef char listener_offset[offsetof(BHSoundVoice, listener_index) == 0x40 ? 1 : -1];
 typedef char range_offset[offsetof(BHSoundResource, audible_range) == 0x94 ? 1 : -1];
-static int native_result(BHSoundQueue *sound_queue, BHSoundTickStats *s, HRESULT hr)
+static int native_result(BHSoundQueue *sound_queue, BHSoundTickStats *s, long hr)
 {
     sound_queue->last_hresult = hr;
     if (hr != 0)
@@ -104,7 +104,7 @@ static void parameters(BHSoundQueue *sound_queue, BHSoundResource *r, BHSoundVoi
     float attenuation, factor;
     double pan_value;
     long volume, pan, frequency;
-    HRESULT hr;
+    long hr;
     spatial(sound_queue, r, v, &attenuation, &pan_value, &factor);
     volume = clamp(truncate_low(((double)v->volume + attenuation) + master), -10000, 0);
     if (r->streaming && volume < -3500)
@@ -137,7 +137,7 @@ static void parameters(BHSoundQueue *sound_queue, BHSoundResource *r, BHSoundVoi
     if (r->cached_frequency[slot] != frequency)
     {
         ++s->frequency_calls;
-        hr = bh_audio_pitch(r->buffers[slot], (DWORD)frequency);
+        hr = bh_audio_pitch(r->buffers[slot], (unsigned long)frequency);
         native_result(sound_queue, s, hr);
         r->cached_frequency[slot] = frequency;
     }
@@ -159,7 +159,7 @@ int __cdecl bh_sound_tick(BHSoundQueue *sound_queue, float dt, float master, BHS
     BHSoundResource *r;
     BHSoundVoice *v, *best[4], *swap;
     unsigned long i, j, k, n, walk;
-    DWORD status;
+    unsigned long status;
     double phase;
     memset(&stats, 0, sizeof(stats));
     if (!sound_queue || !_finite(dt) || !_finite(master) || !bh_math_environment_supported())

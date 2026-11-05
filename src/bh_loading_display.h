@@ -1,6 +1,6 @@
 #ifndef BH_LOADING_DISPLAY_H
 #define BH_LOADING_DISPLAY_H
-#include <ddraw.h>
+#include "bh_render_types.h"
 #include "bh_loading_blit.h"
 typedef struct BHLoadingDisplay
 {

@@ -2,7 +2,6 @@
 #include "bh_input_evaluate.h"
 #include "bh_round.h"
 #include "bh_fp.h"
-#include <windows.h>
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>

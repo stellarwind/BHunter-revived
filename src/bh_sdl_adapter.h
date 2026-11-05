@@ -2,12 +2,7 @@
 #ifndef BH_SDL_ADAPTER_H
 #define BH_SDL_ADAPTER_H
 #include "bh_platform.h"
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#include <d3d.h>
-#include <ddraw.h>
-#include <windows.h>
+#include "bh_render_types.h"
 #ifdef __cplusplus
 extern "C"
 {
@@ -16,15 +11,12 @@ extern "C"
                                                struct IDirect3DDevice2 **device);
 #undef IDirect3D2_CreateDevice
 #define IDirect3D2_CreateDevice bh_IDirect3D2_CreateDevice
-    HRESULT __cdecl bh_IDirect3D2_CreateMaterial(void *self, struct IDirect3DMaterial2 **material, IUnknown *outer);
+    HRESULT __cdecl bh_IDirect3D2_CreateMaterial(void *self, struct IDirect3DMaterial2 **material, void *outer);
 #undef IDirect3D2_CreateMaterial
 #define IDirect3D2_CreateMaterial bh_IDirect3D2_CreateMaterial
-    HRESULT __cdecl bh_IDirect3D2_CreateViewport(void *self, struct IDirect3DViewport2 **viewport, IUnknown *outer);
+    HRESULT __cdecl bh_IDirect3D2_CreateViewport(void *self, struct IDirect3DViewport2 **viewport, void *outer);
 #undef IDirect3D2_CreateViewport
 #define IDirect3D2_CreateViewport bh_IDirect3D2_CreateViewport
-    HRESULT __cdecl bh_IDirect3D2_EnumDevices(void *self, LPD3DENUMDEVICESCALLBACK cb, void *ctx);
-#undef IDirect3D2_EnumDevices
-#define IDirect3D2_EnumDevices bh_IDirect3D2_EnumDevices
     ULONG __cdecl bh_IDirect3D2_Release(void *self);
 #undef IDirect3D2_Release
 #define IDirect3D2_Release bh_IDirect3D2_Release
@@ -100,19 +92,10 @@ extern "C"
     HRESULT __cdecl bh_IDirectDraw2_RestoreDisplayMode(void *self);
 #undef IDirectDraw2_RestoreDisplayMode
 #define IDirectDraw2_RestoreDisplayMode bh_IDirectDraw2_RestoreDisplayMode
-    HRESULT __cdecl bh_IDirectDraw2_SetCooperativeLevel(void *self, HWND hWnd, DWORD dwFlags);
-#undef IDirectDraw2_SetCooperativeLevel
-#define IDirectDraw2_SetCooperativeLevel bh_IDirectDraw2_SetCooperativeLevel
     HRESULT __cdecl bh_IDirectDraw2_SetDisplayMode(void *self, DWORD dwWidth, DWORD dwHeight, DWORD dwBPP,
                                                    DWORD dwRefreshRate, DWORD dwFlags);
 #undef IDirectDraw2_SetDisplayMode
 #define IDirectDraw2_SetDisplayMode bh_IDirectDraw2_SetDisplayMode
-    ULONG __cdecl bh_IDirectDrawClipper_Release(void *self);
-#undef IDirectDrawClipper_Release
-#define IDirectDrawClipper_Release bh_IDirectDrawClipper_Release
-    HRESULT __cdecl bh_IDirectDrawClipper_SetHWnd(void *self, DWORD dwFlags, HWND hWnd);
-#undef IDirectDrawClipper_SetHWnd
-#define IDirectDrawClipper_SetHWnd bh_IDirectDrawClipper_SetHWnd
     HRESULT __cdecl bh_IDirectDrawPalette_GetEntries(void *self, DWORD dwFlags, DWORD dwBase, DWORD dwNumEntries,
                                                      LPPALETTEENTRY lpEntries);
 #undef IDirectDrawPalette_GetEntries
@@ -157,7 +140,7 @@ extern "C"
 #undef IDirectDrawSurface_IsLost
 #define IDirectDrawSurface_IsLost bh_IDirectDrawSurface_IsLost
     HRESULT __cdecl bh_IDirectDrawSurface_Lock(void *self, LPRECT lpDestRect, LPDDSURFACEDESC lpDDSurfaceDesc,
-                                               DWORD dwFlags, HANDLE hEvent);
+                                               DWORD dwFlags, void *hEvent);
 #undef IDirectDrawSurface_Lock
 #define IDirectDrawSurface_Lock bh_IDirectDrawSurface_Lock
     HRESULT __cdecl bh_IDirectDrawSurface_QueryInterface(void *self, const IID *riid, void **ppvObject);
@@ -169,9 +152,6 @@ extern "C"
     HRESULT __cdecl bh_IDirectDrawSurface_Restore(void *self);
 #undef IDirectDrawSurface_Restore
 #define IDirectDrawSurface_Restore bh_IDirectDrawSurface_Restore
-    HRESULT __cdecl bh_IDirectDrawSurface_SetClipper(void *self, LPDIRECTDRAWCLIPPER lpDDClipper);
-#undef IDirectDrawSurface_SetClipper
-#define IDirectDrawSurface_SetClipper bh_IDirectDrawSurface_SetClipper
     HRESULT __cdecl bh_IDirectDrawSurface_SetPalette(void *self, LPDIRECTDRAWPALETTE lpDDPalette);
 #undef IDirectDrawSurface_SetPalette
 #define IDirectDrawSurface_SetPalette bh_IDirectDrawSurface_SetPalette
@@ -181,16 +161,12 @@ extern "C"
     ULONG __cdecl bh_IDirectDraw_AddRef(void *self);
 #undef IDirectDraw_AddRef
 #define IDirectDraw_AddRef bh_IDirectDraw_AddRef
-    HRESULT __cdecl bh_IDirectDraw_CreateClipper(void *self, DWORD dwFlags, LPDIRECTDRAWCLIPPER *lplpDDClipper,
-                                                 IUnknown *pUnkOuter);
-#undef IDirectDraw_CreateClipper
-#define IDirectDraw_CreateClipper bh_IDirectDraw_CreateClipper
     HRESULT __cdecl bh_IDirectDraw_CreatePalette(void *self, DWORD dwFlags, LPPALETTEENTRY lpColorTable,
-                                                 LPDIRECTDRAWPALETTE *lplpDDPalette, IUnknown *pUnkOuter);
+                                                 LPDIRECTDRAWPALETTE *lplpDDPalette, void *pUnkOuter);
 #undef IDirectDraw_CreatePalette
 #define IDirectDraw_CreatePalette bh_IDirectDraw_CreatePalette
     HRESULT __cdecl bh_IDirectDraw_CreateSurface(void *self, LPDDSURFACEDESC lpDDSurfaceDesc,
-                                                 LPDIRECTDRAWSURFACE *lplpDDSurface, IUnknown *pUnkOuter);
+                                                 LPDIRECTDRAWSURFACE *lplpDDSurface, void *pUnkOuter);
 #undef IDirectDraw_CreateSurface
 #define IDirectDraw_CreateSurface bh_IDirectDraw_CreateSurface
     HRESULT __cdecl bh_IDirectDraw_QueryInterface(void *self, const IID *riid, void **ppvObject);
@@ -199,22 +175,9 @@ extern "C"
     ULONG __cdecl bh_IDirectDraw_Release(void *self);
 #undef IDirectDraw_Release
 #define IDirectDraw_Release bh_IDirectDraw_Release
-    HRESULT __cdecl bh_IDirectDraw_RestoreDisplayMode(void *self);
-#undef IDirectDraw_RestoreDisplayMode
-#define IDirectDraw_RestoreDisplayMode bh_IDirectDraw_RestoreDisplayMode
-    HRESULT __cdecl bh_IDirectDraw_SetCooperativeLevel(void *self, HWND hWnd, DWORD dwFlags);
-#undef IDirectDraw_SetCooperativeLevel
-#define IDirectDraw_SetCooperativeLevel bh_IDirectDraw_SetCooperativeLevel
-    HRESULT __cdecl bh_gpu_create(GUID *, LPDIRECTDRAW *, IUnknown *);
-    HRESULT __cdecl bh_gpu_enumerate(LPDDENUMCALLBACKA, void *);
+    HRESULT __cdecl bh_gpu_create(GUID *, LPDIRECTDRAW *, void *);
 #define DirectDrawCreate bh_gpu_create
-#define DirectDrawEnumerateA bh_gpu_enumerate
     int bh_gpu_text(void *surface, int x, int y, const char *text, unsigned long rgb);
-    /* Native handles are borrowed only by deferred legacy backends. */
-    HWND __cdecl bh_sdl_legacy_window(void);
-    void __cdecl bh_sdl_video_cycle(int row);
-    const char *__cdecl bh_sdl_video_label(int row);
-    void __cdecl bh_sdl_canvas_margins(float *x, float *y);
 #ifdef __cplusplus
 }
 #endif

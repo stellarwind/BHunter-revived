@@ -1,9 +1,8 @@
 #include "bh_sound_startup.h"
 #include <string.h>
-int __cdecl bh_sound_startup(BHSoundQueue *sound_queue, HWND window, BHSoundStartupStats *stats)
+int __cdecl bh_sound_startup(BHSoundQueue *sound_queue, BHSoundStartupStats *stats)
 {
     BHSoundStartupStats actual;
-    (void)window;
     if (!sound_queue || !sound_queue->allocator.allocate || sound_queue->device || sound_queue->resources ||
         sound_queue->voices)
         return 0;

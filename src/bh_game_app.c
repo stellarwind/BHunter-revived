@@ -1,8 +1,16 @@
 #include "bh_game_app.h"
 #include "bh_platform.h"
+#include "bh_game_bootstrap.h"
+#include "bh_loading_progress.h"
+#include "bh_input_devices.h"
+#include "bh_input_messages.h"
+#include "bh_frame_service.h"
+#include "bh_frame_callback.h"
+#include "bh_render_startup.h"
+#include "bh_render_execute.h"
+#include "bh_present_begin.h"
 #include "bh_atlas_text.h"
 #include "bh_render_interpolation.h"
-#include "bh_application_bootstrap.h"
 #include "bh_primitive_dispatch.h"
 #include "bh_sprite_quad.h"
 #include "bh_horizon_color.h"
@@ -22,7 +30,6 @@
 #include "bh_actor_construct.h"
 #include "bh_actor_launch.h"
 #include "bh_script_actor_construct.h"
-#include "bh_display_shutdown.h"
 #include "bh_vfile.h"
 #include "bh_fp.h"
 #include "bh_rotation.h"
@@ -124,16 +131,11 @@ typedef struct BHGameApp
     BHTextQueue text;
     BHFrameService service;
     BHFrameCallback callback;
-    BHFrameWorker worker;
     LPDIRECTDRAW draw;
-    LPDIRECTDRAW2 draw2;
     LPDIRECTDRAWSURFACE primary, target;
-    LPDIRECTDRAWCLIPPER window_clipper;
-    BHDisplayCatalog display_catalog;
     BHDeviceName device_names[8];
     char text_buffer[160];
     BHRenderMode render_mode;
-    BHApplicationBootstrap application;
     BHRenderMaterial material;
     BHViewConfig view, scene_view;
     BHMainCamera main_camera;
@@ -180,7 +182,6 @@ typedef struct BHGameApp
     BHCdNotify cd_notify;
     BHCdAudio cd_audio;
     BHMediaControl media;
-    BHDisplayShutdown display_shutdown;
     BHGameBootstrap bootstrap;
     BHBootstrapBinding bindings[256];
     unsigned long binding_count;
@@ -549,19 +550,7 @@ static int restore_display(BHGameApp *app)
         }
     return 1;
 }
-static BOOL WINAPI game_cursor(LPPOINT point)
-{
-    int x, y;
-    if (!bh_sdl_mouse(&x, &y))
-        return FALSE;
-    point->x = x;
-    point->y = y;
-    return TRUE;
-}
-static BOOL WINAPI game_recenter(int x, int y)
-{
-    return bh_sdl_warp(x, y);
-}
+
 static HRESULT __cdecl loading_present(LPDIRECTDRAWSURFACE color, void *user)
 {
     BHGameApp *app = (BHGameApp *)user;
@@ -658,7 +647,6 @@ static int platform(BHGameApp *app)
     strcpy(app->device_names[0].name, "SDL3 GPU");
     if (!bh_config_init(&app->config, 0) || !bh_config_bootstrap(&app->config, app->config_path, app->device_names, 1))
         return failure(app, 6);
-    app->application.config = &app->config;
     app->hardware = 1;
     app->fullscreen = 1; /* Internal flip path; SDL independently owns window mode. */
     if (DirectDrawCreate(0, &app->draw, 0) != DD_OK)
@@ -996,10 +984,7 @@ static int source_owners(BHGameApp *app)
         return failure(app, 6);
     app->profile = app->config.profiles;
     app->collection.disable_mouse_motion = 1;
-    app->collection.api.gamepad = bh_sdl_gamepad;
-    app->collection.api.cursor = game_cursor;
-    app->collection.api.recenter = game_recenter;
-    if (!bh_input_devices_start(&app->devices, 0))
+    if (!bh_input_devices_start(&app->devices))
         return failure(app, 6);
     if (!bh_entities_init(&app->pool, 0x2580, 0) || !bh_sound_queue_init(&app->sound, 0, 0, 0) ||
         !bh_rail_paths_init(&app->rails, 0) || !bh_navigation_init(&app->navigation, 0))
@@ -1204,7 +1189,7 @@ static int source_owners(BHGameApp *app)
     app->menu.stay = &app->stay;
     app->menu_settings.input_profile = app->profile;
     app->menu_actions.devices = app->device_names;
-    app->menu_actions.device_count = (unsigned long)app->display_catalog.secondary_count + 1;
+    app->menu_actions.device_count = 1;
     app->menu_actions.config = &app->config;
     app->menu_actions.save_path = app->config_path;
     app->menu_actions.settings = &app->menu_settings;
@@ -1233,7 +1218,6 @@ static int source_owners(BHGameApp *app)
     app->transition.hardware_flags = 1;
     app->transition.camera_index = &app->selected_waypoint;
     app->transition.quit = &app->quit;
-    app->transition.window = (DWORD)bh_sdl_legacy_window();
     app->key_capture.pool = &app->pool;
     app->key_capture.snapshot = &app->snapshot;
     app->key_capture.state = &app->global_state;
@@ -1941,10 +1925,8 @@ static int manual_loop(BHGameApp *app)
     for (i = 0; i < 3; ++i)
         app->service.slot_draw[i] = app->slots + i;
     app->service.player_input = &app->global_state;
-    app->service.paused = (const volatile LONG *)&app->player_state.paused;
+    app->service.paused = &app->player_state.paused;
     app->service.frame_counter = &app->frame;
-    app->service.stop = &app->worker.stop;
-    app->service.worker_done = &app->worker.done;
     app->text_capture.input = app->bootstrap.all_keys;
     app->key_capture.input = app->bootstrap.all_keys;
 
@@ -1972,7 +1954,7 @@ static int manual_loop(BHGameApp *app)
 #ifdef DEBUGGING
             app->perf_previous = 0;
 #endif
-            if (!app->collection.disable_mouse_motion && !game_recenter(160, 100))
+            if (!app->collection.disable_mouse_motion && !bh_sdl_warp(160, 100))
                 return failure(app, 12);
             memset(app->snapshot.mouse_axes, 0, sizeof(app->snapshot.mouse_axes));
             memset(app->snapshot.pair4, 0, sizeof(app->snapshot.pair4));
@@ -2128,19 +2110,8 @@ static void cleanup(BHGameApp *app)
         IDirectDrawSurface_Release(app->target);
     if (app->primary)
         IDirectDrawSurface_Release(app->primary);
-    if (app->window_clipper)
-        IDirectDrawClipper_Release(app->window_clipper);
-    if (app->draw2)
-    {
-        IDirectDraw2_RestoreDisplayMode(app->draw2);
-        IDirectDraw2_SetCooperativeLevel(app->draw2, 0, DDSCL_NORMAL);
-        IDirectDraw2_Release(app->draw2);
-    }
     if (app->draw)
-    {
-        IDirectDraw_SetCooperativeLevel(app->draw, 0, DDSCL_NORMAL);
         IDirectDraw_Release(app->draw);
-    }
     bh_sdl_close();
     bh_vfile_shutdown();
     free(app->motion_bindings);
@@ -2175,7 +2146,7 @@ int bh_game_app_run(const char *directory, const char *settings_path, int profil
         free(app);
         return 2;
     }
-    sprintf(app->archive, "%s\\Bhunter.bin", directory);
+    sprintf(app->archive, "%s/Bhunter.bin", directory);
     strcpy(app->config_path, settings_path);
     if (!bh_math_environment_enter(&app->math))
     {
@@ -2192,7 +2163,7 @@ int bh_game_app_run(const char *directory, const char *settings_path, int profil
     }
     if (!loading_begin(app))
         goto done;
-    if (!bh_sound_startup(&app->sound, bh_sdl_legacy_window(), &app->sound_stats))
+    if (!bh_sound_startup(&app->sound, &app->sound_stats))
     {
         failure(app, 6);
         goto done;
@@ -2243,7 +2214,7 @@ int bh_game_app_run(const char *directory, const char *settings_path, int profil
     /* Original004798d5..004798f9: detach archive progress, initialize the
        producer buffers, then display twice. There is no logo wait/input loop. */
     bh_loading_progress_remove(&app->loading_progress);
-    if (!bh_frame_buffers_start(&app->frames, source_produce, app, 30, 3500 * sizeof(BHDrawCommand), 0, 0))
+    if (!bh_frame_buffers_start(&app->frames, source_produce, app, 30, 3500 * sizeof(BHDrawCommand)))
     {
         failure(app, 12);
         goto done;

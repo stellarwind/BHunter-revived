@@ -113,7 +113,7 @@ int main()
     BHCdClose cd={}; BHCdNotify retained={}; retained.cd=&cd;
     BHCdAudio audio={}; audio.notify=&retained; audio.music_path="audio-fixture.wav";
     BHMediaControl media={}; media.audio=&audio;
-    assert(bh_cd_audio_startup(&audio,0)); quiet_output();
+    assert(bh_cd_audio_startup(&audio)); quiet_output();
     assert(cd.local_length==2000 && cd.device->clip->pcm.empty());
     bh_wave_set_volume(&media,0); bh_cd_set_volume(&media,.5f);
     assert(bh_cd_play_range(&media,2,2,0,1,1)); // Original packed endpoint: one second.

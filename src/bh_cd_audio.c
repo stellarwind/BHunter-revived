@@ -1,8 +1,7 @@
 #include "bh_cd_audio.h"
-int __cdecl bh_cd_audio_startup(BHCdAudio *a, DWORD unused)
+int __cdecl bh_cd_audio_startup(BHCdAudio *a)
 {
     BHCdClose *cd;
-    (void)unused;
     if (!a || !a->notify || !(cd = a->notify->cd) || cd->device || !a->music_path)
         return 0;
     cd->output = bh_audio_open();

@@ -15,7 +15,6 @@ typedef struct BHMenuTransition
     unsigned short hardware_flags;
     BHEntity *music;
     long cd_ready, range_ready;
-    DWORD window;
     float saved_volume;
     long *camera_index, *quit;
     unsigned long warnings, fades, releases, saves;

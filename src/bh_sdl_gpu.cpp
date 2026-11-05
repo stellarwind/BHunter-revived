@@ -55,7 +55,9 @@ struct Batch
 SDL_Window *window;
 SDL_Gamepad *gamepad;
 SDL_GPUDevice *device;
+#ifdef _WIN32
 bool use_dx12;
+#endif
 SDL_GPUShader *vs, *fs;
 SDL_GPUSampler *sampler;
 SDL_GPUTexture *color_target, *depth_target;
@@ -90,7 +92,11 @@ struct Aspect
 const Aspect aspects[] = {{4, 3, "4:3"}, {16, 9, "16:9"}, {21, 9, "21:9"}};
 void output_size(int &w, int &h)
 {
-    SDL_GetWindowSizeInPixels(window, &w, &h);
+    if (!SDL_GetWindowSizeInPixels(window, &w, &h))
+    {
+        w = normal_w;
+        h = normal_h;
+    }
     if (mode && !modes.empty())
     {
         w = modes[selected_resolution].first;
@@ -426,15 +432,11 @@ bool ensure_commands()
 bool ensure_targets()
 {
     int w, h;
-    SDL_GetWindowSizeInPixels(window, &w, &h);
-    if (mode == 1 && !modes.empty())
-    {
-        w = modes[selected_resolution].first;
-        h = modes[selected_resolution].second;
-    }
-    float limit = std::min(1.f, std::min(3840.f / std::max(w, 1), 2160.f / std::max(h, 1)));
-    w = std::max(1, (int)std::lround(w * limit));
-    h = std::max(1, (int)std::lround(h * limit));
+    output_size(w, h);
+    float limit = std::min(1.f, std::min(3840.f / w, 2160.f / h));
+    /* The game uses x87 PC53. Some i386 libcs assume extended precision in lroundf. */
+    w = std::max(1, (int)(w * limit + .5f));
+    h = std::max(1, (int)(h * limit + .5f));
     if (color_target && target_w == (unsigned)w && target_h == (unsigned)h)
         return true;
     end_pass();
@@ -901,10 +903,12 @@ void apply_mode()
 } // namespace
 extern "C"
 {
+#ifdef _WIN32
     void bh_sdl_use_dx12(int enabled)
     {
         use_dx12 = enabled != 0;
     }
+#endif
 
     int bh_sdl_open(int hide, BHPlatformInput callback, void *user)
     {
@@ -977,16 +981,28 @@ extern "C"
         }
         SDL_free(available);
         finish_modes(settings_version, saved_width, saved_height);
-        const char *driver = use_dx12 ? "direct3d12" : "vulkan";
-        const auto format = use_dx12 ? SDL_GPU_SHADERFORMAT_DXIL : SDL_GPU_SHADERFORMAT_SPIRV;
+        const char *driver = "vulkan";
+        SDL_GPUShaderFormat format = SDL_GPU_SHADERFORMAT_SPIRV;
+#ifdef _WIN32
+        if (use_dx12)
+        {
+            driver = "direct3d12";
+            format = SDL_GPU_SHADERFORMAT_DXIL;
+        }
+#endif
         device = SDL_CreateGPUDevice(format, false, driver);
         if (!device || !SDL_ClaimWindowForGPUDevice(device, window))
         {
+#ifdef _WIN32
             set_error(use_dx12 ? "Create Direct3D 12 device" : "Create Vulkan device (use --dx12 to try Direct3D 12)");
+#else
+            set_error("Create Vulkan device");
+#endif
             return 0;
         }
         SDL_SetGPUSwapchainParameters(device, window, SDL_GPU_SWAPCHAINCOMPOSITION_SDR, SDL_GPU_PRESENTMODE_VSYNC);
         SDL_SetGPUAllowedFramesInFlight(device, 1);
+#ifdef _WIN32
         if (use_dx12)
         {
             vs = shader(dxil_vertex, sizeof(dxil_vertex), "VSMain", format, SDL_GPU_SHADERSTAGE_VERTEX);
@@ -994,6 +1010,7 @@ extern "C"
                 fs = shader(dxil_fragment, sizeof(dxil_fragment), "PSMain", format, SDL_GPU_SHADERSTAGE_FRAGMENT);
         }
         else
+#endif
         {
             vs = shader(spirv_vertex, sizeof(spirv_vertex), "VSMain", format, SDL_GPU_SHADERSTAGE_VERTEX);
             if (vs)
@@ -1096,12 +1113,6 @@ extern "C"
             return 0;
         ++output->version;
         return destination->target ? draw_surface(output, true) : 1;
-    }
-    HWND __cdecl bh_sdl_legacy_window()
-    {
-        return window ? (HWND)SDL_GetPointerProperty(SDL_GetWindowProperties(window),
-                                                     SDL_PROP_WINDOW_WIN32_HWND_POINTER, nullptr)
-                      : nullptr;
     }
     int bh_sdl_active()
     {
@@ -1402,15 +1413,9 @@ extern "C"
         if (window && x && y)
             canvas_margins(*x, *y);
     }
-    HRESULT __cdecl bh_gpu_create(GUID *, LPDIRECTDRAW *out, IUnknown *)
+    HRESULT __cdecl bh_gpu_create(GUID *, LPDIRECTDRAW *out, void *)
     {
         *out = (LPDIRECTDRAW) new Object;
-        return DD_OK;
-    }
-    HRESULT __cdecl bh_gpu_enumerate(LPDDENUMCALLBACKA callback, void *user)
-    {
-        char name[] = "SDL3 GPU";
-        callback(nullptr, name, name, user);
         return DD_OK;
     }
     HRESULT __cdecl bh_IDirect3D2_CreateDevice(void *self, const GUID *rclsid, IDirectDrawSurface *surface,
@@ -1420,25 +1425,14 @@ extern "C"
         *device = (IDirect3DDevice2 *)new Object;
         return DD_OK;
     }
-    HRESULT __cdecl bh_IDirect3D2_CreateMaterial(void *self, struct IDirect3DMaterial2 **material, IUnknown *outer)
+    HRESULT __cdecl bh_IDirect3D2_CreateMaterial(void *self, struct IDirect3DMaterial2 **material, void *outer)
     {
         *material = (IDirect3DMaterial2 *)new Object;
         return DD_OK;
     }
-    HRESULT __cdecl bh_IDirect3D2_CreateViewport(void *self, struct IDirect3DViewport2 **viewport, IUnknown *outer)
+    HRESULT __cdecl bh_IDirect3D2_CreateViewport(void *self, struct IDirect3DViewport2 **viewport, void *outer)
     {
         *viewport = (IDirect3DViewport2 *)new Object;
-        return DD_OK;
-    }
-    HRESULT __cdecl bh_IDirect3D2_EnumDevices(void *self, LPD3DENUMDEVICESCALLBACK cb, void *ctx)
-    {
-        D3DDEVICEDESC d{};
-        d.dwSize = sizeof(d);
-        d.dwFlags = D3DDD_COLORMODEL;
-        d.dcmColorModel = D3DCOLOR_RGB;
-        char name[] = "SDL3 GPU";
-        GUID id{};
-        cb(&id, name, name, &d, &d, ctx);
         return DD_OK;
     }
     ULONG __cdecl bh_IDirect3D2_Release(void *self)
@@ -1577,20 +1571,8 @@ extern "C"
     {
         return DD_OK;
     }
-    HRESULT __cdecl bh_IDirectDraw2_SetCooperativeLevel(void *self, HWND hWnd, DWORD dwFlags)
-    {
-        return DD_OK;
-    }
     HRESULT __cdecl bh_IDirectDraw2_SetDisplayMode(void *self, DWORD dwWidth, DWORD dwHeight, DWORD dwBPP,
                                                    DWORD dwRefreshRate, DWORD dwFlags)
-    {
-        return DD_OK;
-    }
-    ULONG __cdecl bh_IDirectDrawClipper_Release(void *self)
-    {
-        return release(self);
-    }
-    HRESULT __cdecl bh_IDirectDrawClipper_SetHWnd(void *self, DWORD dwFlags, HWND hWnd)
     {
         return DD_OK;
     }
@@ -1750,7 +1732,7 @@ extern "C"
         return DD_OK;
     }
     HRESULT __cdecl bh_IDirectDrawSurface_Lock(void *self, LPRECT lpDestRect, LPDDSURFACEDESC lpDDSurfaceDesc,
-                                               DWORD dwFlags, HANDLE hEvent)
+                                               DWORD dwFlags, void *hEvent)
     {
         auto *s = (Surface *)self;
         if (s->target)
@@ -1794,10 +1776,6 @@ extern "C"
     {
         return DD_OK;
     }
-    HRESULT __cdecl bh_IDirectDrawSurface_SetClipper(void *self, LPDIRECTDRAWCLIPPER lpDDClipper)
-    {
-        return DD_OK;
-    }
     HRESULT __cdecl bh_IDirectDrawSurface_SetPalette(void *self, LPDIRECTDRAWPALETTE lpDDPalette)
     {
         auto *s = (Surface *)self;
@@ -1823,14 +1801,8 @@ extern "C"
     {
         return addref(self);
     }
-    HRESULT __cdecl bh_IDirectDraw_CreateClipper(void *self, DWORD dwFlags, LPDIRECTDRAWCLIPPER *lplpDDClipper,
-                                                 IUnknown *pUnkOuter)
-    {
-        *lplpDDClipper = (LPDIRECTDRAWCLIPPER) new Object;
-        return DD_OK;
-    }
     HRESULT __cdecl bh_IDirectDraw_CreatePalette(void *self, DWORD dwFlags, LPPALETTEENTRY lpColorTable,
-                                                 LPDIRECTDRAWPALETTE *lplpDDPalette, IUnknown *pUnkOuter)
+                                                 LPDIRECTDRAWPALETTE *lplpDDPalette, void *pUnkOuter)
     {
         auto *p = new Palette;
         memcpy(p->entries, lpColorTable, sizeof(p->entries));
@@ -1838,7 +1810,7 @@ extern "C"
         return DD_OK;
     }
     HRESULT __cdecl bh_IDirectDraw_CreateSurface(void *self, LPDDSURFACEDESC lpDDSurfaceDesc,
-                                                 LPDIRECTDRAWSURFACE *lplpDDSurface, IUnknown *pUnkOuter)
+                                                 LPDIRECTDRAWSURFACE *lplpDDSurface, void *pUnkOuter)
     {
         auto *s = make_surface(*lpDDSurfaceDesc);
         if (s->primary && (lpDDSurfaceDesc->dwFlags & DDSD_BACKBUFFERCOUNT))
@@ -1859,13 +1831,5 @@ extern "C"
     ULONG __cdecl bh_IDirectDraw_Release(void *self)
     {
         return release(self);
-    }
-    HRESULT __cdecl bh_IDirectDraw_RestoreDisplayMode(void *self)
-    {
-        return DD_OK;
-    }
-    HRESULT __cdecl bh_IDirectDraw_SetCooperativeLevel(void *self, HWND hWnd, DWORD dwFlags)
-    {
-        return DD_OK;
     }
 }

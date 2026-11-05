@@ -5,8 +5,7 @@
    One scope per thread/boundary; pairs must be nested and restored in order.
    The supported current kernel profile is x87 PC53, nearest, all traps masked.
    Raw math functions require this profile; they do not silently change it.
-   CRT control APIs may clear sticky status on writes; this scope preserves
-   control settings, not a full x87 register/status environment. */
+   The scope saves and restores the x87 precision, rounding and exception masks. */
 typedef struct BHMathEnvironment
 {
     unsigned int control;

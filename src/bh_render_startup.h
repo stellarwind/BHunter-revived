@@ -23,8 +23,6 @@ typedef struct BHRenderStartup
     unsigned long depth_attachment_count, detach_failures;
     HRESULT last_detach_hresult;
 } BHRenderStartup;
-/* Complete0045bfe0: enumeration always continues, all six inputs ignored. */
-HRESULT CALLBACK bh_render_device_policy(LPGUID, LPSTR, LPSTR, LPD3DDEVICEDESC, LPD3DDEVICEDESC, LPVOID);
 /* Complete0045bff0/0045c540. draw/surfaces are actual native interfaces.
    Source owner retains them until dispose. software render may be NULL;
    fallback depth16 and offscreen surfaces preserve the original caps.

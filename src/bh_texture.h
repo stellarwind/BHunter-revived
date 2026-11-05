@@ -1,8 +1,6 @@
 #ifndef BH_TEXTURE_H
 #define BH_TEXTURE_H
-#include <windows.h>
-#include <ddraw.h>
-#include <d3d.h>
+#include "bh_render_types.h"
 #include "bh_pcx.h"
 
 typedef struct BHTextureImage BHTextureImage;

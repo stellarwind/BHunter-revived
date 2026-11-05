@@ -1,4 +1,5 @@
 #include "bh_menu_actions.h"
+#include "bh_platform.h"
 #include "bh_round.h"
 #include <string.h>
 #include <stdio.h>

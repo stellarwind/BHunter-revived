@@ -1,15 +1,18 @@
-"""Build the restored game with 32-bit MinGW-w64 and embedded GCC runtimes."""
+"""Build the restored game for 32-bit x86 Windows or Linux."""
 
 import argparse
 import hashlib
 import json
 import os
 import re
+import shlex
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 
-from prepare_sdl3 import prepare
+from bake_comic_font import prepare as prepare_comic_font
+from prepare_sdl3 import prepare, write_shader_header
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -47,9 +50,14 @@ def stage_runtime(out):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
+    linux = sys.platform.startswith("linux")
+    if not linux and os.name != "nt":
+        parser.error("The game build supports 32-bit x86 Windows and Linux")
     parser.add_argument("--cc", default=os.environ.get("BH_GCC", "gcc"))
     parser.add_argument("--cxx", default=os.environ.get("BH_GXX", "g++"))
-    parser.add_argument("--output-dir", type=Path, default=Path("build"))
+    parser.add_argument(
+        "--output-dir", type=Path, default=Path("build/linux-x86" if linux else "build")
+    )
     parser.add_argument("--incremental", action="store_true")
     parser.add_argument(
         "--symbols",
@@ -67,14 +75,17 @@ def main():
     cd.add_argument("--enable-cd-audio", dest="skip_cd_check", action="store_false")
     parser.set_defaults(skip_cd_check=True)
     args = parser.parse_args()
+    executable = "BHunter-source" if linux else "BHunter-source.exe"
+    architecture = ["-m32", "-march=i686", "-mfpmath=387"] if linux else []
+    compiler_target = r"(?:i[3-6]86|x86_64)-.*linux-.*" if linux else r"i[3-6]86-w64-mingw32"
     for name in ("cc", "cxx"):
         compiler = shutil.which(getattr(args, name))
         if not compiler:
-            parser.error(f"MinGW-w64 compiler not found: {getattr(args, name)}")
+            parser.error(f"Compiler not found: {getattr(args, name)}")
         setattr(args, name, str(Path(compiler).resolve()))
         target = subprocess.check_output([compiler, "-dumpmachine"], text=True).strip()
-        if not re.fullmatch(r"i[3-6]86-w64-mingw32", target):
-            parser.error(f"32-bit MinGW-w64 required; {compiler} targets {target}")
+        if not re.fullmatch(compiler_target, target):
+            parser.error(f"An x86 {'Linux' if linux else '32-bit MinGW-w64'} compiler is required; got {target}")
 
     out = (ROOT / args.output_dir).resolve()
     out.mkdir(parents=True, exist_ok=True)
@@ -86,7 +97,7 @@ def main():
     record = {
         "passed": False,
         "commands": [],
-        "target": str(out / "BHunter-source.exe"),
+        "target": str(out / executable),
         "toolchain": "gcc",
         "debugging": args.debugging,
         "symbols": args.symbols,
@@ -150,7 +161,9 @@ def main():
         if args.compile_one
         else [
             ROOT / "src" / name
-            for name in sorted(set(contexts) | {"bh_game_app.c", "bh_game_main.c"})
+            for name in sorted(
+                set(contexts) | {"bh_game_app.c", "bh_game_main.c"} | ({"bh_random.c"} if linux else set())
+            )
         ]
     )
     headers = hashlib.sha256(
@@ -166,13 +179,9 @@ def main():
         obj = objects_dir / (source.stem + ".o")
         objects.append(obj)
         flags = []
-        for flag in contexts.get(
-            source.name,
-            [
-                "/DDIRECT3D_VERSION=0x0500",
-                "/DDIRECTDRAW_VERSION=0x0500",
-            ],
-        ):
+        for flag in contexts.get(source.name, []):
+            if flag.startswith(("/DDIRECT3D_VERSION=", "/DDIRECTDRAW_VERSION=")):
+                continue
             if flag.startswith("/D"):
                 flags.append("-D" + flag[2:])
             elif flag.replace("\\", "/") != "/I{DXSDK}/include":
@@ -180,10 +189,8 @@ def main():
         if re.search(
             r"IDirect(?:Draw|3D)\w*_\w+\(|DirectDraw(?:Create|EnumerateA)\(",
             source.read_text(),
-        ) or source.name in {"bh_menu_actions.c", "bh_menu_edits.c"}:
+        ):
             flags += [
-                "-DDIRECT3D_VERSION=0x0500",
-                "-DDIRECTDRAW_VERSION=0x0500",
                 "-include",
                 str(ROOT / "src/bh_sdl_adapter.h"),
             ]
@@ -195,6 +202,8 @@ def main():
             args.cc,
             "-std=gnu99",
             "-O2",
+            *architecture,
+            *(["-include", ROOT / "src/bh_linux_compat.h"] if linux else []),
             *(["-g"] if args.symbols else []),
             "-fno-strict-aliasing",
             "-fwrapv",
@@ -226,35 +235,61 @@ def main():
             cache_path.write_text(json.dumps(cache, indent=2) + "\n")
     if args.compile_one:
         return
-    gpu_import = prepare(out, gnu=True, compiler=args.cxx, symbols=args.symbols)
     response = cache_dir / "objects.rsp"
     response.write_text(
         "\n".join('"' + str(obj).replace("\\", "/") + '"' for obj in objects) + "\n"
     )
-    run(
-        [
-            args.cc,
-            "-mwindows",
-            "-static",
-            "-static-libgcc",
-            "-Wl,--gc-sections",
-            "@" + str(response),
-            gpu_import,
-            "-lwinmm",
-            "-ladvapi32",
-            "-lcomctl32",
-            "-luser32",
-            "-o",
-            out / "BHunter-source.exe",
-        ]
-    )
+    runtime_files = ["fonts/comic-sans-ms-24.bhf"]
+    if linux:
+        dxc = shutil.which(os.environ.get("BH_DXC", "dxc"))
+        if not dxc:
+            parser.error("Install the host DirectX Shader Compiler (dxc) or set BH_DXC")
+        sdl_flags = shlex.split(
+            subprocess.check_output(["pkg-config", "--cflags", "--libs", "sdl3"], text=True)
+        )
+        prepare_comic_font(out)
+        write_shader_header(ROOT / "src/shaders/legacy.hlsl", cache_dir / "bh_gpu_shaders.h", dxc)
+        run(
+            [
+                args.cxx,
+                "-std=c++17",
+                "-O2",
+                *architecture,
+                *(["-g"] if args.symbols else []),
+                "-D__cdecl=",
+                "-I" + str(cache_dir),
+                ROOT / "src/bh_sdl_gpu.cpp",
+                ROOT / "src/bh_sdl_audio.cpp",
+                "@" + str(response),
+                "-Wl,--gc-sections",
+                *sdl_flags,
+                "-o",
+                out / executable,
+            ]
+        )
+    else:
+        gpu_import = prepare(out, gnu=True, compiler=args.cxx, symbols=args.symbols)
+        run(
+            [
+                args.cc,
+                "-mwindows",
+                "-static",
+                "-static-libgcc",
+                "-Wl,--gc-sections",
+                "@" + str(response),
+                gpu_import,
+                "-o",
+                out / executable,
+            ]
+        )
+        runtime_files += ["BHunterGPU.dll", "SDL3.dll", "SDL3-LICENSE.txt", "shaders/legacy.hlsl"]
     objdump = subprocess.check_output(
         [args.cc, "-print-prog-name=objdump"], text=True
     ).strip()
     record["imports"] = {}
-    for name in ("BHunter-source.exe", "BHunterGPU.dll", "SDL3.dll"):
+    for name in ([executable] if linux else [executable, "BHunterGPU.dll", "SDL3.dll"]):
         imports = subprocess.check_output([objdump, "-p", str(out / name)], text=True)
-        libraries = re.findall(r"DLL Name:\s*(\S+)", imports)
+        libraries = re.findall(r"NEEDED\s+(\S+)" if linux else r"DLL Name:\s*(\S+)", imports)
         record["imports"][name] = libraries
         if any(
             re.match(r"lib(?:gcc|stdc\+\+|winpthread).*\.dll$", library, re.IGNORECASE)
@@ -267,23 +302,17 @@ def main():
         if hashlib.sha256((ROOT / name).read_bytes()).hexdigest() != digest:
             raise RuntimeError(f"Source changed during build; rerun the build: {name}")
     record["executable_sha256"] = hashlib.sha256(
-        (out / "BHunter-source.exe").read_bytes()
+        (out / executable).read_bytes()
     ).hexdigest()
     record["runtime_sha256"] = {
         name: hashlib.sha256((out / name).read_bytes()).hexdigest()
-        for name in (
-            "BHunterGPU.dll",
-            "SDL3.dll",
-            "SDL3-LICENSE.txt",
-            "shaders/legacy.hlsl",
-            "fonts/comic-sans-ms-24.bhf",
-        )
+        for name in runtime_files
     }
     record["passed"] = True
-    record["translation_units"] = len(sources) + 1
+    record["translation_units"] = len(sources) + 2
     (cache_dir / "build.json").write_text(json.dumps(record, indent=2) + "\n")
     print(
-        f"Built {out / 'BHunter-source.exe'} from {len(sources)} production C translation units and the GPU adapter"
+        f"Built {out / executable} from {len(sources)} production C translation units and the SDL adapters"
     )
 
 

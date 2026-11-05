@@ -5,9 +5,6 @@
 #include "bh_input_collection.h"
 #include "bh_sound_queue.h"
 #include "bh_entities.h"
-struct BHInputDevices;
-struct BHCdClose;
-struct BHDisplayShutdown;
 typedef enum BHFrameServiceError
 {
     BH_FRAME_SERVICE_OK,
@@ -16,13 +13,12 @@ typedef enum BHFrameServiceError
     BH_FRAME_SERVICE_BUFFER,
     BH_FRAME_SERVICE_ENTITY,
     BH_FRAME_SERVICE_SOUND,
-    BH_FRAME_SERVICE_PACKET,
-    BH_FRAME_SERVICE_SHUTDOWN
+    BH_FRAME_SERVICE_PACKET
 } BHFrameServiceError;
 /* Borrowed live state for complete00479140. draw is the canonical BORROWING
    descriptor already bound to actual scene/entity producers. It must own no
    allocation; frame buffers own command storage. slot_draw descriptors are
-   separate borrowed metadata read by the worker only after publication. */
+   separate borrowed metadata read by the renderer after publication. */
 typedef struct BHFrameService
 {
     BHInputCollection *input;
@@ -33,27 +29,21 @@ typedef struct BHFrameService
     BHPlayerInputState *player_input; /* destination state at original004f5518 */
     const void *packet;
     unsigned long packet_bytes; /* current list004f5500 +2010 */
-    const volatile LONG *paused;
-    volatile unsigned long *frame_counter;
-    volatile LONG *stop, *worker_done;
+    const long *paused;
+    unsigned long *frame_counter;
     float master_db;
-    struct BHInputDevices *devices;
-    struct BHCdClose *cd;
-    struct BHDisplayShutdown *display;
     unsigned long calls, produced, input_calls, step_calls, refresh_calls, sound_calls;
-    unsigned long packet_calls, shutdown_calls, cleanup_order[5], cleanup_count, failures;
+    unsigned long packet_calls, failures;
     unsigned long changed;
     float last_dt;
     BHSoundTickStats sound_stats;
     BHFrameServiceError error;
     BHEntityError step_error, refresh_error;
 } BHFrameService;
-/* Whole original producer/acknowledged-shutdown callback. Normal: collect
+/* Produce one frame: collect
    input, increment wrapping frame counter only when pause==0, acquire actual
    frame buffer, initialize3500-command queue, step/refresh entities, deferred
    sound tick with original binary32 1/30, apply current input packet and publish.
-   Shutdown: nonzero signed stop requires worker_done!=0 and stop<=1; increment
-   stop then input/CD/sound/display cleanup in that order.
    Verified RET0047d680 needs no source stub. Returns status diagnostics while
    original subsequent effects continue after dependency-reported failures.
    Native sound API failures remain in sound_stats but do not fail the frame;
