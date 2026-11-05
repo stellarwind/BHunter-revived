@@ -1117,10 +1117,6 @@ extern "C"
                                                      SDL_PROP_WINDOW_WIN32_HWND_POINTER, nullptr)
                       : nullptr;
     }
-    HINSTANCE __cdecl bh_sdl_legacy_instance()
-    {
-        return GetModuleHandleA(nullptr);
-    }
     int bh_sdl_active()
     {
         return window && (SDL_GetWindowFlags(window) & SDL_WINDOW_INPUT_FOCUS) &&

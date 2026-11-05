@@ -5,7 +5,6 @@
 #include "bh_input_devices.h"
 #include "bh_input_messages.h"
 #include "bh_sound_startup.h"
-#include "bh_force_feedback_init.h"
 #include "bh_frame_service.h"
 #include "bh_frame_callback.h"
 typedef struct BHEngineBootstrap
@@ -15,7 +14,6 @@ typedef struct BHEngineBootstrap
     BHLoadingProgress *progress;
     BHInputDevices *devices;
     BHProviderStartup *providers;
-    BHForceFeedbackInit *force;
     BHSoundQueue *sound;
     BHSoundStartupStats sound_stats;
     BHPlayerInputOwner *inputs;
@@ -39,8 +37,8 @@ typedef struct BHEngineBootstrap
     unsigned long mounted, stages;
     int error;
 } BHEngineBootstrap;
-/* Whole00479200. Archive/loading progress, actual native input/sound/provider/
-   force construction, exact audio/image policy tables,9600entity pool, camera,
+/* Whole00479200. Archive/loading progress, native input, sound and provider
+   setup, exact audio/image policy tables,9600entity pool, camera,
    full game bootstrap/material and frame buffer callbacks. It starts no worker
    and invokes no frame producer. All original returns ignored by the binary
    remain diagnostics where safe; resource/binding failures become explicit
@@ -49,7 +47,7 @@ typedef struct BHEngineBootstrap
    Native positive paths include actual device operations: do not use as a
    diagnostic. Synthetic checks deliberately exercise pre-device failure.
    Progress callback is removed on every exit, preserving borrowed lifetime. */
-int __cdecl bh_engine_bootstrap(BHEngineBootstrap *, HINSTANCE, HWND);
+int __cdecl bh_engine_bootstrap(BHEngineBootstrap *, HWND);
 void __cdecl bh_engine_frame_produce(void *);
 LRESULT __cdecl bh_engine_input_message(void *, HWND, UINT, WPARAM, LPARAM);
 #endif

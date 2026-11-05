@@ -1,5 +1,4 @@
 #include "bh_window_dispatch.h"
-#include "bh_force_feedback_start.h"
 
 LRESULT __cdecl bh_window_default_message(void *user, HWND window, UINT message, WPARAM key, LPARAM bits)
 {
@@ -26,12 +25,6 @@ static void restore(BHWindowDispatch *c, LPDIRECTDRAWSURFACE *slot)
         result(c, IDirectDrawSurface_Restore(*slot));
     }
     else if (FAILED(hr))
-        ++c->failures;
-}
-static void focus(BHWindowDispatch *c)
-{
-    ++c->focus_starts;
-    if (!c->force || !bh_force_feedback_start(c->force))
         ++c->failures;
 }
 static void close_window(BHWindowDispatch *c)
@@ -85,14 +78,12 @@ LRESULT __cdecl bh_window_dispatch(BHWindowDispatch *c, HWND window, UINT messag
     {
     case WM_SETFOCUS:
         *c->display_state |= 1;
-        focus(c);
         break;
     case WM_KILLFOCUS:
         *c->display_state &= ~1L;
         break;
     case WM_ACTIVATEAPP:
         *c->display_state |= 2;
-        focus(c);
         break;
     case WM_PAINT:
         BeginPaint(window, &paint);
@@ -120,10 +111,7 @@ LRESULT __cdecl bh_window_dispatch(BHWindowDispatch *c, HWND window, UINT messag
         if (key == 0xf020)
             *c->display_state &= ~2L;
         else if (key == 0xf120)
-        {
             *c->display_state |= 2;
-            focus(c);
-        }
         break;
     }
     if (hide && *c->hide_cursor)

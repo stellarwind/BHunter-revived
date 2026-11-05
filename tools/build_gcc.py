@@ -171,7 +171,6 @@ def main():
             [
                 "/DDIRECT3D_VERSION=0x0500",
                 "/DDIRECTDRAW_VERSION=0x0500",
-                "/DDIRECTINPUT_VERSION=0x0500",
             ],
         ):
             if flag.startswith("/D"):
@@ -241,7 +240,6 @@ def main():
             "-Wl,--gc-sections",
             "@" + str(response),
             gpu_import,
-            "-ldinput",
             "-lwinmm",
             "-lole32",
             "-ladvapi32",

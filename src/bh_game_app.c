@@ -14,7 +14,6 @@
 #include "bh_attachment.h"
 #include "bh_input_text.h"
 #include "bh_menu_profile.h"
-#include "bh_force_feedback_update.h"
 #include "bh_target_construct.h"
 #include "bh_actor_response.h"
 #include "bh_effect_orbit_tick.h"
@@ -187,10 +186,6 @@ typedef struct BHGameApp
     BHNetworkTransport transport;
     BHNetworkGame network_game;
     BHNetworkShutdown network_shutdown;
-    BHForceFeedback force;
-    BHForceFeedbackStart force_start;
-    BHForceFeedbackInit force_init;
-    BHForceFeedbackUpdate force_update;
     BHCdClose cd;
     BHCdNotify cd_notify;
     BHCdAudio cd_audio;
@@ -1037,9 +1032,6 @@ static int source_owners(BHGameApp *app)
     app->sounds.queue = &app->sound;
     app->provider_startup.catalog = &app->providers;
     app->provider_startup.modems = &app->modems;
-    app->force_start.force = &app->force;
-    app->force_init.start = &app->force_start;
-    app->force_update.force = &app->force;
     app->cd.last_track = -1;
     app->cd_notify.cd = &app->cd;
     app->cd_audio.notify = &app->cd_notify;
@@ -1195,7 +1187,6 @@ static int source_owners(BHGameApp *app)
     app->player_tick.contacts = &app->contacts;
     app->player_tick.flash = &app->flash;
     app->player_tick.explosions = &app->explosions;
-    app->player_tick.feedback = &app->force_update;
     app->player_tick.game = &app->network_game;
     app->player_tick.navigation = &app->navigation;
     app->player_tick.latency = app->latency;
@@ -2337,7 +2328,6 @@ int bh_game_app_run(const char *directory, const char *settings_path, int profil
 
     app->initialized = 1;
 
-    bh_force_feedback_init(&app->force_init, bh_sdl_legacy_instance(), bh_sdl_legacy_window());
     manual_loop(app);
 
 done:

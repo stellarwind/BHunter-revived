@@ -8,7 +8,6 @@
 #include "bh_weapon_dispatch.h"
 #include "bh_remote_messages.h"
 #include "bh_network_debug.h"
-#include "bh_force_feedback_update.h"
 #include "bh_world_reset.h"
 #include "bh_menu_runtime.h"
 #include "bh_message_panel.h"
@@ -59,7 +58,6 @@ typedef struct BHPlayerTick
     BHContactEffects *contacts;
     BHFlashFlareContext *flash;
     BHScriptExplosionContext *explosions;
-    BHForceFeedbackUpdate *feedback;
     BHNetworkGame *game;
     BHRemoteMessages *network;
     BHNetworkDebug *network_debug;

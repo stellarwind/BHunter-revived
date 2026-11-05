@@ -351,12 +351,10 @@ static void cue(BHPlayerTick *ctx, unsigned long resource, float delay)
     }
     entity->step = bh_mission_sound_tick;
 }
-static int recoil(BHPlayerTick *ctx)
+static void recoil(BHEntity *entity)
 {
-    BHEntity *entity = ctx->player;
-    BHVec3 position = vector(entity, 0x298), speed = vector(entity, 0x2a4), difference, clamped,
-           right = vector(entity, 0x18), forward = vector(entity, 0x30);
-    float length, dx, dy;
+    BHVec3 position = vector(entity, 0x298), speed = vector(entity, 0x2a4), difference, clamped;
+    float length;
     unsigned long i;
     for (i = 0; i < 3; ++i)
         ((float *)&position)[i] = rf((double)((float *)&position)[i] + ((float *)&speed)[i]);
@@ -375,20 +373,6 @@ static int recoil(BHPlayerTick *ctx)
     }
     setvector(entity, 0x298, &position);
     setvector(entity, 0x2a4, &speed);
-    for (i = 0; i < 3; ++i)
-        ((float *)&difference)[i] = rf((double)((float *)&position)[i] - ((float *)&entity->position)[i]);
-    dx = rf(((double)right.y * difference.y + (double)right.z * difference.z) + (double)right.x * difference.x);
-    dy = rf(((double)forward.x * difference.x + (double)forward.y * difference.y) + (double)forward.z * difference.z);
-    if (!ctx->state->mode)
-        dx = dy = 0;
-    else
-    {
-        dx = rf((double)dx * (2.0 / 3));
-        dy = rf((double)-dy * .25);
-    }
-    if (!ctx->feedback || bh_force_feedback_update(ctx->feedback, bh_platform_ticks(), dx, dy) < 0)
-        return fail(ctx, 3);
-    return 1;
 }
 
 static int near_contacts(BHPlayerTick *ctx)
@@ -1108,8 +1092,10 @@ int __cdecl bh_player_tick(BHPlayerTick *ctx)
         return fail(ctx, 1);
     ctx->body->world = (BHWorldGeometry *)word(entity, 0xc4);
     if (!bh_physics_step(ctx->physics, entity, 1.0f / 30) ||
-        !state->force(ctx->force, 1.0f / 30, half(entity, 0x2b4)) || !bh_physics_step_publish(ctx->body) ||
-        !recoil(ctx) || !send_pose(ctx))
+        !state->force(ctx->force, 1.0f / 30, half(entity, 0x2b4)) || !bh_physics_step_publish(ctx->body))
+        return fail(ctx, ctx->error ? ctx->error : 3);
+    recoil(entity);
+    if (!send_pose(ctx))
         return fail(ctx, ctx->error ? ctx->error : 3);
     if (!state->damage_warning)
     {

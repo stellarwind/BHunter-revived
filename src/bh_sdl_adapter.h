@@ -212,7 +212,6 @@ extern "C"
     int bh_gpu_text(void *surface, int x, int y, const char *text, unsigned long rgb);
     /* Native handles are borrowed only by deferred legacy backends. */
     HWND __cdecl bh_sdl_legacy_window(void);
-    HINSTANCE __cdecl bh_sdl_legacy_instance(void);
     void __cdecl bh_sdl_video_cycle(int row);
     const char *__cdecl bh_sdl_video_label(int row);
     void __cdecl bh_sdl_canvas_margins(float *x, float *y);

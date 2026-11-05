@@ -6,7 +6,6 @@
 #include "bh_input_devices.h"
 #include "bh_cd_close.h"
 #include "bh_network_shutdown.h"
-#include "bh_force_feedback.h"
 #include "bh_display_shutdown.h"
 
 static void failure(BHFrameService *s, BHFrameServiceError error)
@@ -20,7 +19,7 @@ static int cleanup(BHFrameService *s, LONG stop)
     unsigned long bits;
     if (!*s->worker_done || stop > 1)
         return 1;
-    if (!s->devices || !s->cd || !s->sound || !s->network || !s->force_feedback || !s->display)
+    if (!s->devices || !s->cd || !s->sound || !s->network || !s->display)
     {
         failure(s, BH_FRAME_SERVICE_ARGUMENT);
         return 0;
@@ -40,8 +39,6 @@ static int cleanup(BHFrameService *s, LONG stop)
         failure(s, BH_FRAME_SERVICE_SHUTDOWN);
     s->cleanup_order[s->cleanup_count++] = 4;
     bh_network_shutdown(s->network);
-    s->cleanup_order[s->cleanup_count++] = 5;
-    bh_force_feedback_stop(s->force_feedback);
     s->cleanup_order[s->cleanup_count++] = 6;
     if (!bh_display_shutdown(s->display))
         failure(s, BH_FRAME_SERVICE_SHUTDOWN);

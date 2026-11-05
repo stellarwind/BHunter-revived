@@ -28,13 +28,13 @@ LRESULT __cdecl bh_engine_input_message(void *user, HWND w, UINT m, WPARAM a, LP
     BHEngineBootstrap *c = (BHEngineBootstrap *)user;
     return bh_input_message(c ? c->snapshot : 0, w, m, a, b);
 }
-int __cdecl bh_engine_bootstrap(BHEngineBootstrap *c, HINSTANCE instance, HWND window)
+int __cdecl bh_engine_bootstrap(BHEngineBootstrap *c, HWND window)
 {
     unsigned long i;
     BHPlayerTick *player;
-    if (!c || !c->archive || !c->images || !c->progress || !c->devices || !c->providers || !c->force || !c->sound ||
-        !c->inputs || !c->game || !c->game->pool || !c->game->textures || !c->game->resources ||
-        !c->game->resources->models || !c->view || !c->material || !c->frames || !c->service || !c->snapshot)
+    if (!c || !c->archive || !c->images || !c->progress || !c->devices || !c->providers || !c->sound || !c->inputs ||
+        !c->game || !c->game->pool || !c->game->textures || !c->game->resources || !c->game->resources->models ||
+        !c->view || !c->material || !c->frames || !c->service || !c->snapshot)
         return c ? fail(c, 1) : 0;
     c->error = 0;
     if (!bh_vfile_mount(c->archive))
@@ -60,7 +60,6 @@ int __cdecl bh_engine_bootstrap(BHEngineBootstrap *c, HINSTANCE instance, HWND w
     ++c->stages;
     bh_sound_startup(c->sound, window, &c->sound_stats);
     bh_provider_startup(c->providers);
-    bh_force_feedback_init(c->force, instance, window);
     if (!bh_bootstrap_resources(c->game, 5))
         return fail(c, 6);
     ++c->stages;

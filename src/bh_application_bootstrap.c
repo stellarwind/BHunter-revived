@@ -322,7 +322,7 @@ DWORD __cdecl bh_application_bootstrap(BHApplicationBootstrap *c, HINSTANCE inst
     c->engine->frames->mutex = mutex;
     c->engine->archive = c->paths->archive;
     c->engine->d3d = c->render.engine.d3d;
-    if (!bh_engine_bootstrap(c->engine, instance, c->window))
+    if (!bh_engine_bootstrap(c->engine, c->window))
         return fatal(c, 11, "Init of simulation failed");
     if (!bh_frame_callback_start(c->callback))
         return fatal(c, 12, "Init of renderer failed");
