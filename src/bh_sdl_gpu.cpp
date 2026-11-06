@@ -90,7 +90,8 @@ struct Aspect
     int numerator, denominator;
     const char *label;
 };
-const Aspect aspects[] = {{4, 3, "4:3"}, {16, 9, "16:9"}, {21, 9, "21:9"}};
+/* Saved settings store an index. Append new aspect ratios. */
+const Aspect aspects[] = {{4, 3, "4:3"}, {16, 9, "16:9"}, {16, 10, "16:10"}, {21, 9, "21:9"}};
 void output_size(int &w, int &h)
 {
     if (!SDL_GetWindowSizeInPixels(window, &w, &h))
@@ -161,8 +162,6 @@ void finish_modes(int settings_version, int saved_width, int saved_height)
 {
     if (settings_version == 1 && !modes.empty())
     {
-        /* Version 1 stored an index into the sorted native display list, before
-           canonical offscreen resolutions existed. Resolve that index first. */
         std::sort(modes.begin(), modes.end());
         auto saved = modes[std::clamp(selected_resolution, 0, (int)modes.size() - 1)];
         saved_width = saved.first;
@@ -174,12 +173,12 @@ void finish_modes(int settings_version, int saved_width, int saved_height)
                 break;
             }
     }
-    /* These are offscreen render sizes, not exclusive display modes.
-       Every supported aspect must remain usable on any desktop. */
+
     const std::pair<int, int> render_sizes[] = {
         {640, 480},   {800, 600},  {1024, 768}, {1280, 960},  {1600, 1200}, {1920, 1440}, {2560, 1920}, {2880, 2160},
         {854, 480},   {960, 540},  {1280, 720}, {1366, 768},  {1600, 900},  {1920, 1080}, {2560, 1440}, {3200, 1800},
-        {3840, 2160}, {1120, 480}, {1680, 720}, {2560, 1080}, {3440, 1440}, {3840, 1600}};
+        {3840, 2160}, {1120, 480}, {1680, 720}, {2560, 1080}, {3440, 1440}, {3840, 1600},
+        {768, 480},   {1280, 800}, {1440, 900}, {1680, 1050}, {1920, 1200}, {2560, 1600}, {3456, 2160}};
     if (saved_width >= 640 && saved_height >= 480 && saved_width <= 3840 && saved_height <= 2160 &&
         video_layout_aspect_matches(saved_width, saved_height, aspects[selected_aspect].numerator,
                                     aspects[selected_aspect].denominator) &&
