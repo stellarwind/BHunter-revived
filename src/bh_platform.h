@@ -40,6 +40,7 @@ extern "C"
     void bh_sdl_close(void);
     const char *bh_sdl_error(void);
     const char *bh_sdl_gpu_driver(void);
+    int bh_sdl_clear_frame(void);
     /* Resolve paths before changing cwd. Defaults preserve assets/settings beside
    the executable, independent of launch cwd. Explicit paths are cwd-relative. */
     int bh_sdl_paths(const char *assets, const char *settings);

@@ -1336,6 +1336,10 @@ extern "C"
         const char *driver = device ? SDL_GetGPUDeviceDriver(device) : nullptr;
         return driver ? driver : "unavailable";
     }
+    int bh_sdl_clear_frame()
+    {
+        return clear_target(true, true);
+    }
     void __cdecl bh_sdl_close()
     {
         if (gamepad)

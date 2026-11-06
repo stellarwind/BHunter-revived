@@ -2,6 +2,9 @@
 #include "bh_frame_render.h"
 #include <float.h>
 #include <string.h>
+#ifdef BH_SDL_BACKEND
+#include "bh_platform.h"
+#endif
 
 static int error(BHFrameDisplay *d, BHFrameRenderError value)
 {
@@ -57,7 +60,7 @@ static int flush_and_cycle(BHFrameDisplay *d)
         ok = 0;
     return ok;
 }
-int __cdecl bh_frame_clear_depth(BHFrameDisplay *d)
+static int clear_depth(BHFrameDisplay *d, int game_frame)
 {
     RECT r;
     DDBLTFX fx;
@@ -74,6 +77,14 @@ int __cdecl bh_frame_clear_depth(BHFrameDisplay *d)
         return 0;
     if (!d->textures->software && !flush_and_cycle(d))
         ok = 0;
+#ifdef BH_SDL_BACKEND
+    /* The horizon normally covers the color target, but rasterized edges
+       can leave pixels from the previous frame's damage fade. */
+    if (game_frame && !d->textures->software)
+        return native(d, bh_sdl_clear_frame() ? DD_OK : E_FAIL) && ok;
+#else
+    (void)game_frame;
+#endif
     if (d->textures->software && d->locked)
     {
         width = (unsigned long)(r.right - r.left);
@@ -97,6 +108,14 @@ int __cdecl bh_frame_clear_depth(BHFrameDisplay *d)
     if (!native(d, IDirectDrawSurface_Blt(d->auxiliary, &r, NULL, NULL, DDBLT_WAIT | DDBLT_DEPTHFILL, &fx)))
         ok = 0;
     return ok;
+}
+int __cdecl bh_frame_clear_depth(BHFrameDisplay *d)
+{
+    return clear_depth(d, 0);
+}
+int __cdecl bh_frame_clear_game(BHFrameDisplay *d)
+{
+    return clear_depth(d, 1);
 }
 static unsigned long color_value(BHFrameDisplay *d, long red, long green, long blue)
 {

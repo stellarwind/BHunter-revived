@@ -37,5 +37,7 @@ typedef struct BHFrameDisplay
    RGB values 0..255 are source adapter guards; this callback only supplies 255.
    No arbitrary invalid pointer or signed-overflow behavior is recovered. */
 int __cdecl bh_frame_clear_depth(BHFrameDisplay *);
+/* Game frame start. SDL hardware also clears the full color target to black. */
+int __cdecl bh_frame_clear_game(BHFrameDisplay *);
 int __cdecl bh_frame_clear_color(BHFrameDisplay *, long red, long green, long blue);
 #endif

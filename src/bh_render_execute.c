@@ -148,7 +148,7 @@ int __cdecl bh_render_execute(BHRenderExecute *e)
     }
     if (e->controls)
         bh_portal_clip_reset(e->controls->portal_cache);
-    status = e->display_mode == 1 ? bh_frame_clear_color(e->display, 255, 255, 255) : bh_frame_clear_depth(e->display);
+    status = e->display_mode == 1 ? bh_frame_clear_color(e->display, 255, 255, 255) : bh_frame_clear_game(e->display);
     if (!status)
     {
         failed(e, BH_RENDER_EXECUTE_CALLBACK);

@@ -34,9 +34,9 @@ Output VSMain(Input input)
 {
     Output o;
     float w = 1.0 / max(input.position.w, 1e-20);
-    // D3D TL vertices use integer pixel centers; SDL uses half-integer centers.
-    o.position = float4(((input.position.x + 0.5 - 320.0) / canvas.x) * w,
-                        ((240.0 - input.position.y - 0.5) / canvas.y) * w, input.position.z * w, w);
+    // Map the logical canvas bounds directly to the GPU viewport edges.
+    o.position = float4(((input.position.x - 320.0) / canvas.x) * w,
+                        ((240.0 - input.position.y) / canvas.y) * w, input.position.z * w, w);
     o.uv = input.uv;
     o.color = input.color.bgra;
     o.specular = input.specular.bgra;

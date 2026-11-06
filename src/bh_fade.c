@@ -97,10 +97,9 @@ int __cdecl bh_fade_apply(BHFadeContext *c)
         {
             float mx = 0, my = 0;
             bh_sdl_canvas_margins(&mx, &my);
-            /* Bleed past the pixel-center boundary at every output scale. */
-            v[0].sx = v[1].sx = -mx - 1;
+            v[0].sx = v[1].sx = -mx;
             v[2].sx = v[3].sx = c->width + mx;
-            v[0].sy = v[3].sy = -my - 1;
+            v[0].sy = v[3].sy = -my;
             v[1].sy = v[2].sy = c->height + my;
         }
 #endif
