@@ -78,6 +78,7 @@ BHOverlayFont overlay_font{};
 BHPlatformInput input_callback;
 void *message_user;
 char error_text[1024];
+char report_text[1024];
 bool quitting, hidden;
 int normal_x = SDL_WINDOWPOS_CENTERED, normal_y = SDL_WINDOWPOS_CENTERED, normal_w = 1280, normal_h = 960, mode = 0;
 bool maximized = false;
@@ -426,7 +427,11 @@ void end_pass()
 bool ensure_commands()
 {
     if (!commands)
+    {
         commands = SDL_AcquireGPUCommandBuffer(device);
+        if (!commands)
+            set_error("Acquire GPU commands");
+    }
     return commands != nullptr;
 }
 bool ensure_targets()
@@ -449,7 +454,11 @@ bool ensure_targets()
     targets_fresh = true;
     color_target = make_texture(w, h, SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
                                 SDL_GPU_TEXTUREUSAGE_COLOR_TARGET | SDL_GPU_TEXTUREUSAGE_SAMPLER);
+    if (!color_target)
+        set_error("Create GPU color target");
     depth_target = make_texture(w, h, SDL_GPU_TEXTUREFORMAT_D32_FLOAT, SDL_GPU_TEXTUREUSAGE_DEPTH_STENCIL_TARGET);
+    if (!depth_target)
+        set_error("Create GPU depth target");
     return color_target && depth_target;
 }
 bool begin_pass(SDL_GPULoadOp color_load = SDL_GPU_LOADOP_LOAD, SDL_GPULoadOp depth_load = SDL_GPU_LOADOP_LOAD,
@@ -484,7 +493,10 @@ bool begin_pass(SDL_GPULoadOp color_load = SDL_GPU_LOADOP_LOAD, SDL_GPULoadOp de
     d.stencil_store_op = SDL_GPU_STOREOP_DONT_CARE;
     pass = SDL_BeginGPURenderPass(commands, &c, 1, &d);
     if (!pass)
+    {
+        set_error("Begin GPU render pass");
         return false;
+    }
     targets_fresh = false;
     applied_margin_x = mx;
     applied_margin_y = my;
@@ -764,6 +776,8 @@ bool present()
         present_target(swap, w, h);
     bool ok = SDL_SubmitGPUCommandBuffer(commands);
     commands = nullptr;
+    if (!ok)
+        set_error("Submit GPU commands");
     return ok;
 }
 std::vector<unsigned> readback()
@@ -1199,7 +1213,13 @@ extern "C"
     }
     void bh_sdl_error_dialog()
     {
-        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "BHunter", "The game stopped at a dependency error.", nullptr);
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "BHunter",
+                                 report_text[0] ? report_text : "The game stopped before startup completed.", nullptr);
+    }
+    void bh_sdl_report_error(const char *details)
+    {
+        snprintf(report_text, sizeof(report_text), "%s", details);
+        fprintf(stderr, "%s\n", report_text);
     }
     double __cdecl bh_sdl_seconds()
     {
@@ -1310,6 +1330,11 @@ extern "C"
     const char *__cdecl bh_sdl_error()
     {
         return error_text;
+    }
+    const char *bh_sdl_gpu_driver()
+    {
+        const char *driver = device ? SDL_GetGPUDeviceDriver(device) : nullptr;
+        return driver ? driver : "unavailable";
     }
     void __cdecl bh_sdl_close()
     {

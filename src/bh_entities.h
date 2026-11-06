@@ -1,5 +1,6 @@
 #ifndef BH_ENTITIES_H
 #define BH_ENTITIES_H
+#include <stdint.h>
 #include "bh_math.h"
 #include "bh_scene.h"
 
@@ -39,6 +40,13 @@ typedef enum BHEntityError
     BH_ENTITY_MUTATION,
     BH_ENTITY_NUMERICAL
 } BHEntityError;
+typedef struct BHEntityMutation
+{
+    const char *dispatch;
+    const BHEntity *entity, *successor;
+    uintptr_t callback;
+    unsigned long generation, successor_generation;
+} BHEntityMutation;
 typedef struct BHEntityPool
 {
     BHEntity *active, *free_slots, *query_head, *focus;
@@ -50,6 +58,7 @@ typedef struct BHEntityPool
     unsigned long dispatch_depth;
     int focused;
     unsigned long retirements; /* adapter membership invalidation, increments on release */
+    BHEntityMutation step_mutation, query_mutation;
 } BHEntityPool;
 
 /* Complete original pool/dispatch behaviors with explicit context and NULL

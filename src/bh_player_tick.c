@@ -122,9 +122,14 @@ static int return_menu(BHPlayerTick *ctx)
 {
     BHMessagePanelFields *fields;
     unsigned long event = 20;
+    ctx->menu_return_stage = "validate bindings";
     if (!ctx->reset || !ctx->panel || !ctx->panel->entity || !ctx->snapshot || !ctx->world_reset || !ctx->menu)
         return fail(ctx, 1);
-    if (!camera_reset(ctx, 0) || !bh_player_reset(ctx->reset))
+    ctx->menu_return_stage = "reset player camera";
+    if (!camera_reset(ctx, 0))
+        return fail(ctx, 3);
+    ctx->menu_return_stage = "reset player";
+    if (!bh_player_reset(ctx->reset))
         return fail(ctx, 3);
     /* Keep the engine request for the next mission and mute it in the menu. */
     bh_sound_update(ctx->sound, word(ctx->player, 0x220), 0, 1, NULL, NULL);
@@ -137,13 +142,21 @@ static int return_menu(BHPlayerTick *ctx)
     fields->timer = fields->scale = 0;
     ctx->panel->mode_identity = 0x00442bf0UL;
     ctx->panel->entity->step = bh_message_panel_step;
+    ctx->menu_return_stage = "restore message panel and input";
     if (!bh_entity_set_query(ctx->pool, ctx->panel->entity, bh_message_panel_query) ||
         !bh_input_set_enabled(ctx->input, ctx->snapshot, 0))
         return fail(ctx, 3);
-    if (!bh_entities_query(ctx->pool, 0, 0, 0, 0, &event) || !bh_world_reset(ctx->world_reset) ||
-        !bh_menu_runtime_return(ctx->menu))
+    ctx->menu_return_stage = "broadcast entity reset (event 20)";
+    if (!bh_entities_query(ctx->pool, 0, 0, 0, 0, &event))
+        return fail(ctx, 3);
+    ctx->menu_return_stage = "reset world and scripts";
+    if (!bh_world_reset(ctx->world_reset))
+        return fail(ctx, 3);
+    ctx->menu_return_stage = "activate menu and settle flyby camera";
+    if (!bh_menu_runtime_return(ctx->menu))
         return fail(ctx, 3);
     ctx->state->mode = 0;
+    ctx->menu_return_stage = "complete";
     return 1;
 }
 static void cue(BHPlayerTick *ctx, unsigned long resource, float delay)
@@ -880,6 +893,10 @@ int __cdecl bh_player_tick(BHPlayerTick *ctx)
         !bh_physics_step_read_entity(ctx->body->physics, entity))
         return fail(ctx, 1);
     ctx->body->world = (BHWorldGeometry *)word(entity, 0xc4);
+    /* The original broad phase reads the live registry. Event 20 can retire
+       a wreck through the debris callback before our cached roster is rebuilt. */
+    if (ctx->targets && !bh_target_construct_prune_retired(ctx->targets))
+        return fail(ctx, 3);
     if (!bh_physics_step(ctx->physics, entity, 1.0f / 30) ||
         !state->force(ctx->force, 1.0f / 30, half(entity, 0x2b4)) || !bh_physics_step_publish(ctx->body))
         return fail(ctx, ctx->error ? ctx->error : 3);

@@ -27,6 +27,7 @@ typedef struct BHFlybyCameraContext
     BHAtlasPage *credit_font;
     BHTextQueue *text;
     BHFlybyCredits *credits;
+    const char *last_failure;
 } BHFlybyCameraContext;
 /* Complete00429fb0: fixed-step orbit/route transitions, filtered actor pose,
    motion-derived basis/velocity, real camera update and all credits branches.

@@ -58,6 +58,8 @@ struct BHTargetConstructContext
     int error;
 };
 int __cdecl bh_target_construct_sync(BHTargetConstructContext *);
+/* Bring the cached roster in line with the live registry before base-body physics. */
+int __cdecl bh_target_construct_prune_retired(BHTargetConstructContext *);
 int __cdecl bh_target_construct_dispose(BHTargetConstructContext *);
 /* Whole0043d2c0. Source returns acquired actor; original return was void. */
 BHEntity *__cdecl bh_target_construct_basic(BHTargetConstructContext *, const BHVec3 *, long resource_index, long mass);

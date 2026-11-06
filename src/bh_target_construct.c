@@ -177,6 +177,18 @@ int __cdecl bh_target_construct_sync(BHTargetConstructContext *ctx)
     ctx->synced_retirements = ctx->debris->pool->retirements;
     return 1;
 }
+int __cdecl bh_target_construct_prune_retired(BHTargetConstructContext *ctx)
+{
+    const BHPhysicsStepContext *physics = ctx->physics;
+    BHEntityPool *pool = ctx->debris->pool;
+    unsigned long i;
+    if (physics->validated_retirements == pool->retirements || ctx->synced_retirements == pool->retirements)
+        return 1;
+    for (i = 0; i < physics->body_count; ++i)
+        if (!live(pool, physics->bodies[i].entity, physics->bodies[i].generation))
+            return bh_target_construct_sync(ctx);
+    return 1;
+}
 int __cdecl bh_target_construct_dispose(BHTargetConstructContext *ctx)
 {
     unsigned long i;

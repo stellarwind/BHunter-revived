@@ -1,6 +1,7 @@
 #ifndef BH_PLAYER_TICK_H
 #define BH_PLAYER_TICK_H
 #include "bh_player_force_control.h"
+#include "bh_target_construct.h"
 #include "bh_player_aim.h"
 #include "bh_player_scene.h"
 #include "bh_player_reset.h"
@@ -34,6 +35,7 @@ typedef struct BHPlayerTick
     BHPlayerTickState *state;
     BHPhysicsStepContext *physics;
     BHPhysicsStepBody *body;
+    BHTargetConstructContext *targets; /* optional owner of dynamic bodies in physics */
     BHPlayerForceControl *force;
     BHPlayerInputList *input;
     BHPlayerInputState *decoded;
@@ -60,6 +62,7 @@ typedef struct BHPlayerTick
     BHPlayerTickResources resources;
     unsigned long generation, calls, near_contacts, ground_particles;
     int error;
+    const char *menu_return_stage;
 } BHPlayerTick;
 /* Whole0041e850. All original pause/physics/force/recoil/contact,
    surface particles, menu/death/respawn, weapon input and camera, cheats,

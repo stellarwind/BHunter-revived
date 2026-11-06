@@ -278,9 +278,13 @@ int __cdecl bh_entities_focus(BHEntityPool *pool, BHEntity *entity)
     pool->error = BH_ENTITY_OK;
     return 1;
 }
-static int successor(BHEntityPool *pool, BHEntity *entity, unsigned long generation)
+static int successor(BHEntityPool *pool, const BHEntityMutation *query)
 {
-    return !entity || (active(pool, entity) && entity->generation == generation) || fail(pool, BH_ENTITY_MUTATION);
+    const BHEntity *next = query->successor;
+    if (!next || (active(pool, next) && next->generation == query->successor_generation))
+        return 1;
+    pool->query_mutation = *query;
+    return fail(pool, BH_ENTITY_MUTATION);
 }
 static int enter(BHEntityPool *pool, int nested)
 {
@@ -317,6 +321,9 @@ static int dispatch(BHEntityPool *pool, int refresh)
     while (entity)
     {
         next = entity->next;
+        BHEntityMutation step = {refresh ? "refresh" : "step", entity, next,
+                                 refresh ? (uintptr_t)entity->refresh : (uintptr_t)entity->step,
+                                 entity->generation, 0};
 #ifdef BH_SDL_BACKEND
         render_mark = bh_interpolation_mark();
         render_identity = (unsigned long)entity;
@@ -338,6 +345,7 @@ static int dispatch(BHEntityPool *pool, int refresh)
            An unreallocated inactive successor remains a source boundary. */
         if (next && !active(pool, next))
         {
+            pool->step_mutation = step;
             fail(pool, BH_ENTITY_MUTATION);
             --pool->dispatch_depth;
             return 0;
@@ -360,7 +368,7 @@ int __cdecl bh_entities_query(BHEntityPool *pool, unsigned long mask, unsigned l
                               float radius, void *packet)
 {
     BHEntity *entity, *next;
-    unsigned long generation, current_generation;
+    unsigned long current_generation;
     int spatial = radius > 0;
     float low[3], high[3], rx, rz;
     double dx, dy, dz, distance;
@@ -384,8 +392,9 @@ int __cdecl bh_entities_query(BHEntityPool *pool, unsigned long mask, unsigned l
     while (entity)
     {
         next = entity->next;
-        generation = next ? next->generation : 0;
         current_generation = entity->generation;
+        BHEntityMutation query = {"query", entity, next, (uintptr_t)entity->query,
+                                  current_generation, next ? next->generation : 0};
         if ((entity->flags & mask) == value)
         {
             if (!spatial)
@@ -403,7 +412,7 @@ int __cdecl bh_entities_query(BHEntityPool *pool, unsigned long mask, unsigned l
                         entity->query(entity, &position);
                     if (!active(pool, entity) || entity->generation != current_generation)
                     {
-                        if (!successor(pool, next, generation))
+                        if (!successor(pool, &query))
                         {
                             --pool->dispatch_depth;
                             return 0;
@@ -427,7 +436,7 @@ int __cdecl bh_entities_query(BHEntityPool *pool, unsigned long mask, unsigned l
                 }
             }
         }
-        if (!successor(pool, next, generation))
+        if (!successor(pool, &query))
         {
             --pool->dispatch_depth;
             return 0;

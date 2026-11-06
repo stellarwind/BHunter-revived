@@ -38,9 +38,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <errno.h>
+#include <time.h>
 #define GAME_WORLD_CAPACITY 6000
 #define GAME_DYNAMIC_CAPACITY 256
 #define GAME_STARTS 32
+#define GAME_TRACE_TICKS 120
 #define N(a) (sizeof(a) / sizeof((a)[0]))
 #ifdef DEBUGGING
 typedef struct BHGamePerfSample
@@ -103,11 +106,24 @@ static void perf_dispose(BHGamePerfCapture *capture)
 }
 
 #endif
+typedef struct BHGameTraceTick
+{
+    unsigned long tick, frame, entities, retirements, commands, camera_waypoint;
+    long mode, paused, confirmation, waypoint;
+    float route_phase;
+    BHVec3 eye;
+    int frame_error, player_error, menu_error, flyby_error;
+    const char *menu_stage;
+} BHGameTraceTick;
 typedef struct BHGameApp
 {
     int hardware, fullscreen;
     long quit;
     int initialized, error, focus_sample;
+    const char *failure_function;
+    int failure_line;
+    BHGameTraceTick trace[GAME_TRACE_TICKS];
+    unsigned int trace_next, trace_count;
     char archive[512], config_path[512];
     long width, height, selected_waypoint, mission, ship, slot, input_changed, stay, fine_warning, pending_profile;
     unsigned long frame, actor_count, availability[4][32], event_value, mission_identity, instability;
@@ -368,10 +384,183 @@ static const char *const city_names[16] = {"Downtown",
                                            "Mining Tunnels\nat Industrial\nComplex",
                                            "City Ring",
                                            "Bronx/Downtown\nMetro Station"};
-static int failure(BHGameApp *app, int code)
+static int record_failure(BHGameApp *app, int code, const char *function, int line)
 {
     app->error = code;
+    if (!app->failure_function)
+    {
+        app->failure_function = function;
+        app->failure_line = line;
+    }
     return 0;
+}
+#define failure(app, code) record_failure((app), (code), __func__, __LINE__)
+static void trace_tick(BHGameApp *app)
+{
+    BHGameTraceTick *tick = app->trace + app->trace_next;
+    tick->tick = app->service.calls;
+    tick->frame = app->frame;
+    tick->entities = app->pool.used;
+    tick->retirements = app->pool.retirements;
+    tick->commands = app->queue.count;
+    tick->mode = app->player_state.mode;
+    tick->paused = app->player_state.paused;
+    tick->confirmation = app->player_state.confirmation;
+    tick->waypoint = app->selected_waypoint;
+    tick->camera_waypoint = app->flyby_state.route.waypoint_index;
+    tick->route_phase = app->flyby_state.route.phase;
+    tick->eye = app->flyby_state.camera.position;
+    tick->frame_error = app->service.error;
+    tick->player_error = app->player_tick.error;
+    tick->menu_error = app->menu.error;
+    tick->flyby_error = app->flyby.error;
+    tick->menu_stage = app->player_tick.menu_return_stage;
+    app->trace_next = (app->trace_next + 1) % N(app->trace);
+    if (app->trace_count < N(app->trace))
+        ++app->trace_count;
+}
+
+/* Offsets relative to this symbol are stable under address randomization. */
+static unsigned long callback_offset(uintptr_t callback)
+{
+    return callback ? (unsigned long)(callback - (uintptr_t)bh_game_app_run) : 0;
+}
+
+static void dump_entity(FILE *log, const BHEntityPool *pool, const char *label, const BHEntity *entity)
+{
+    if (!bh_entity_is_active(pool, entity))
+    {
+        fprintf(log, "%s %p inactive\n", label, (const void *)entity);
+        return;
+    }
+    fprintf(log, "%s %p gen=%lu kind=%lu flags=%08lx pos=(%.9g %.9g %.9g) "
+                 "step=%08lx refresh=%08lx query=%08lx next=%p\n",
+            label, (const void *)entity, entity->generation, entity->kind, entity->flags,
+            entity->position.x, entity->position.y, entity->position.z,
+            callback_offset((uintptr_t)entity->step), callback_offset((uintptr_t)entity->refresh),
+            callback_offset((uintptr_t)entity->query), (void *)entity->next);
+}
+
+static void dump_mutation(FILE *log, const BHEntityMutation *mutation, int checks_generation)
+{
+    if (mutation->dispatch)
+    {
+        fprintf(log, "%s mutation entity=%p gen=%lu callback=%08lx successor=%p",
+                mutation->dispatch, (const void *)mutation->entity, mutation->generation,
+                callback_offset(mutation->callback), (const void *)mutation->successor);
+        if (checks_generation)
+            fprintf(log, " expected_gen=%lu", mutation->successor_generation);
+        fputc('\n', log);
+    }
+}
+
+static void dump_game_state(FILE *log, const BHGameApp *app)
+{
+    const BHCameraRouteState *route = &app->flyby_state.route;
+    const BHCameraState *camera = &app->flyby_state.camera;
+    const BHEntity *entity;
+    unsigned int i;
+    fprintf(log, "Build %s %s, GPU %s, resolution %ldx%ld, initialized=%d\n",
+            __DATE__, __TIME__, bh_sdl_gpu_driver(), app->width, app->height, app->initialized);
+    fprintf(log, "State paused=%ld confirm=%ld ending=%ld death_frames=%ld ship=%ld player_tick=%lu focus=%d\n",
+            app->player_state.paused, app->player_state.confirmation, app->player_state.ending,
+            app->player_state.death_frames, app->ship, app->player_state.tick, app->focus_sample);
+    fprintf(log, "Last menu return stage=%s, settle steps=%lu, reset timers=%lu immediate=%lu, transition error=%d\n",
+            app->player_tick.menu_return_stage ? app->player_tick.menu_return_stage : "none",
+            app->menu.camera_steps, app->world_reset.timers, app->world_reset.immediate, app->transition.error);
+    fprintf(log, "Last flyby camera failure=%s\n", app->flyby_camera.last_failure ? app->flyby_camera.last_failure : "none");
+    fprintf(log, "Flyby camera mode=%ld eye=(%.9g %.9g %.9g) angles=(%.9g %.9g %.9g) orbit=%.9g "
+                 "route waypoint=%lu target=%lu phase=%.9g rate=%.9g room=%ld next=%ld\n",
+            camera->current.mode, camera->position.x, camera->position.y, camera->position.z,
+            camera->angles.x, camera->angles.y, camera->angles.z, app->flyby_state.orbit_time,
+            route->waypoint_index, app->camera_route.selected_waypoint, route->phase, route->parameter_rate,
+            bh_navigation_find(&app->navigation, route->current), bh_navigation_find(&app->navigation, route->next));
+    for (i = 0; i < N(route->curve); ++i)
+        fprintf(log, "  Route control %u (%.9g %.9g %.9g)\n",
+                i, route->curve[i].x, route->curve[i].y, route->curve[i].z);
+    for (i = 0; i < N(app->bootstrap.menus); ++i)
+    {
+        const BHBootstrapMenu *menu = app->bootstrap.menus + i;
+        if (bh_entity_is_active(&app->pool, menu->runtime.entity) && menu->runtime.entity->step)
+            fprintf(log, "Active menu %u id=%08lx selection=%ld distance=%.9g exiting=%ld\n",
+                    i, menu->identity, menu->settings.selection, menu->runtime.distance, menu->runtime.exiting);
+    }
+    fprintf(log, "Entities used=%lu capacity=%lu retirements=%lu vehicles=%lu physics_bodies=%lu pool_error=%d\n",
+            app->pool.used, app->pool.capacity, app->pool.retirements, app->vehicle_lifetime.count,
+            app->physics.body_count, app->pool.error);
+    fprintf(log, "Physics error=%d world_segment=%d, VM depth=%lu executed=%lu, player_reset=%d\n",
+            app->physics.error, app->segment.error, app->vm.depth, app->vm.executed, app->player_reset.error);
+    fprintf(log, "Frame service calls=%lu produced=%lu failures=%lu buffers active=%ld latest=%ld draw=%lu/%lu\n",
+            app->service.calls, app->service.produced, app->service.failures, app->frames.active, app->frames.latest,
+            app->queue.count, app->queue.capacity);
+    fprintf(log, "Backend results render=%08lx begin=%08lx end=%08lx audio=%08lx voices=%lu listener=%ld\n",
+            (unsigned long)app->render.last_hresult, (unsigned long)app->begin.last_hresult,
+            (unsigned long)app->present.last_hresult, (unsigned long)app->service.sound_stats.last_error,
+            app->sound.voice_count, app->sound.listener_active);
+    fprintf(log, "\nEntity callbacks are hex offsets from bh_game_app_run (32-bit wrap).\n");
+    dump_mutation(log, &app->pool.step_mutation, 0);
+    dump_mutation(log, &app->pool.query_mutation, 1);
+    dump_entity(log, &app->pool, "Player", app->player);
+    dump_entity(log, &app->pool, "Flyby", app->camera_entity);
+    for (i = 0, entity = app->pool.active; i < 64 && bh_entity_is_active(&app->pool, entity);
+         ++i, entity = entity->next)
+        dump_entity(log, &app->pool, "Active", entity);
+    fprintf(log, "\nRecent simulation ticks (oldest first, errors=frame/player/menu/flyby)\n");
+    for (i = 0; i < app->trace_count; ++i)
+    {
+        const BHGameTraceTick *tick =
+            app->trace + (app->trace_next + N(app->trace) - app->trace_count + i) % N(app->trace);
+        fprintf(log, "tick=%lu frame=%lu mode=%ld paused=%ld confirm=%ld wp=%lu->%ld phase=%.9g "
+                     "eye=(%.9g %.9g %.9g) entities=%lu retired=%lu commands=%lu errors=%d/%d/%d/%d menu=%s\n",
+                tick->tick, tick->frame, tick->mode, tick->paused, tick->confirmation, tick->camera_waypoint,
+                tick->waypoint, tick->route_phase, tick->eye.x, tick->eye.y, tick->eye.z,
+                tick->entities, tick->retirements, tick->commands, tick->frame_error, tick->player_error,
+                tick->menu_error, tick->flyby_error, tick->menu_stage ? tick->menu_stage : "none");
+    }
+}
+
+static void report_failure(const BHGameApp *app)
+{
+    char summary[256], details[1024], dialog[1024], timestamp[32] = "unknown";
+    const char *path = bh_sdl_settings_file("bhunter-crash.log");
+    time_t now = time(NULL);
+    struct tm *utc = gmtime(&now);
+    FILE *log;
+    int write_error;
+    snprintf(summary, sizeof(summary),
+             "Game stopped with error %d in %s (line %d).\n"
+             "Frame %lu, mode %ld, mission %ld, waypoint %ld.",
+             app->error, app->failure_function ? app->failure_function : "startup", app->failure_line,
+             app->frame, app->player_state.mode, app->mission, app->selected_waypoint);
+    snprintf(details, sizeof(details),
+             "Frame service %d (step %d, refresh %d), sound %d, render %d, draw queue %d.\n"
+             "Player %d, player query %d, script %d, timer %d, world reset %d.\n"
+             "Menu %d, flyby %d, camera route %d, scene %d, schedule %d.\n"
+             "Actor construction %d, actor response %d, attack %d.\n%.300s",
+             app->service.error, app->service.step_error, app->service.refresh_error,
+             app->sound.error, app->render.error, app->queue.error,
+             app->player_tick.error, app->player_query.error, app->vm.error, app->lifetime.timers.error,
+             app->world_reset.error, app->menu.error, app->flyby.error, app->camera_route.error,
+             app->scene.error, app->schedule.error, app->actor_construct.error, app->actor_response.error,
+             app->actor_attack.error, bh_sdl_error());
+    log = fopen(path, "a");
+    if (!log)
+    {
+        snprintf(dialog, sizeof(dialog), "Could not open crash report %.600s\n%.100s\n\n%s",
+                 path, strerror(errno), summary);
+        bh_sdl_report_error(dialog);
+        return;
+    }
+    if (utc)
+        strftime(timestamp, sizeof(timestamp), "%Y-%m-%dT%H:%M:%SZ", utc);
+    fprintf(log, "\n=== BHunter crash report %s ===\n%s\n%s\n", timestamp, summary, details);
+    dump_game_state(log, app);
+    write_error = ferror(log);
+    if (fclose(log))
+        write_error = 1;
+    snprintf(dialog, sizeof(dialog), "%s\n%.650s\n\n%s",
+             write_error ? "Could not finish writing crash report" : "Crash report saved to", path, summary);
+    bh_sdl_report_error(dialog);
 }
 #ifdef DEBUGGING
 static double perf_ms(BHGameApp *app, uint64_t end, uint64_t start)
@@ -1134,6 +1323,7 @@ static int source_owners(BHGameApp *app)
     app->player_tick.state = &app->player_state;
     app->player_tick.physics = &app->physics;
     app->player_tick.body = &app->physics_bodies[0];
+    app->player_tick.targets = &app->targets;
     app->player_tick.force = &app->player_force;
     app->player_tick.decoded = &app->decoded;
     app->player_tick.snapshot = &app->snapshot;
@@ -1978,6 +2168,7 @@ static int manual_loop(BHGameApp *app)
             app->contacts.has_camera = 1;
             app->contacts.camera_yaw = app->yaw = app->angles.x;
             app->frames.produce(app->frames.produce_user);
+            trace_tick(app);
             if (app->error)
                 break;
             bh_interpolation_capture(&app->interpolation, app->slots + app->frames.latest,
@@ -2231,6 +2422,8 @@ int bh_game_app_run(const char *directory, const char *settings_path, int profil
 
 done:
     result = app->error;
+    if (result)
+        report_failure(app);
 
     cleanup(app);
 

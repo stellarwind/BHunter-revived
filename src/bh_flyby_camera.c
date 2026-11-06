@@ -135,6 +135,12 @@ static int credits(BHFlybyCameraContext *c, const BHFlybyCameraState *s)
     }
     return 1;
 }
+static int failure(BHFlybyCameraContext *c, const char *stage)
+{
+    if (c)
+        c->last_failure = stage;
+    return -1;
+}
 int __cdecl bh_flyby_camera_step(BHFlybyCameraContext *c, BHFlybyCameraState *s)
 {
     BHVec3 desired, curve;
@@ -146,6 +152,7 @@ int __cdecl bh_flyby_camera_step(BHFlybyCameraContext *c, BHFlybyCameraState *s)
     long mode;
     unsigned long selected;
     float radius, height;
+    int result;
     if (!c || !s || !c->route || !c->camera || !c->starts || !c->text || !c->credit_font || !c->credit_font->atlas ||
         !c->credits || !c->start_count || c->credits->index >= 15 || s->route.waypoint_index >= c->start_count ||
         c->route->selected_waypoint >= c->start_count || c->route->selected_waypoint >= c->route->waypoint_count ||
@@ -153,15 +160,15 @@ int __cdecl bh_flyby_camera_step(BHFlybyCameraContext *c, BHFlybyCameraState *s)
         !finite_vector(&s->previous_position) || !finite_vector(&s->older_position) || !_finite(s->route.phase) ||
         s->route.phase < 0 || s->route.phase > 3 ||
         (s->route.phase > 0 && (!_finite(s->route.parameter_rate) || s->route.parameter_rate <= 0)))
-        return -1;
+        return failure(c, "validate camera and route state");
     selected = c->route->selected_waypoint;
     if (!finite_vector(&c->starts[s->route.waypoint_index].position) ||
         memcmp(&c->starts[selected].position, c->route->waypoints + selected, 12))
-        return -1;
+        return failure(c, "validate waypoint positions");
     memcpy(&radius, c->starts[s->route.waypoint_index].metadata, 4);
     memcpy(&height, c->starts[s->route.waypoint_index].metadata + 1, 4);
     if (!_finite(radius) || !_finite(height))
-        return -1;
+        return failure(c, "validate orbit metadata");
     s->orbit_time -= -0.03333333333333333;
     if (s->route.waypoint_index == 13)
         s->orbit_time -= -0.016666666666666666;
@@ -173,10 +180,10 @@ int __cdecl bh_flyby_camera_step(BHFlybyCameraContext *c, BHFlybyCameraState *s)
         if (s->route.waypoint_index != selected)
         {
             if (!plan(c, s))
-                return -1;
+                return failure(c, "plan route");
             s->route.phase = stored((double)s->route.phase + s->route.parameter_rate);
             if (!bh_camera_state_set_mode(&s->camera, 10))
-                return -1;
+                return failure(c, "enter travel camera mode");
         }
     }
     else if (phase > 2)
@@ -190,7 +197,7 @@ int __cdecl bh_flyby_camera_step(BHFlybyCameraContext *c, BHFlybyCameraState *s)
         {
             mode = (selected == 14 || selected == 15 || selected == 16) ? 8 : selected == 13 ? 11 : 10;
             if (!bh_camera_state_set_mode(&s->camera, mode))
-                return -1;
+                return failure(c, "enter destination camera mode");
             s->route.phase = 0;
         }
     }
@@ -201,7 +208,7 @@ int __cdecl bh_flyby_camera_step(BHFlybyCameraContext *c, BHFlybyCameraState *s)
         advanced = (double)phase + s->route.parameter_rate;
         s->route.phase = stored(advanced);
         if (advanced > 2 && !bh_camera_route_advance(c->route, &s->route))
-            return -1;
+            return failure(c, "advance portal route");
     }
     else
     {
@@ -211,7 +218,7 @@ int __cdecl bh_flyby_camera_step(BHFlybyCameraContext *c, BHFlybyCameraState *s)
         advanced = (double)phase + s->route.parameter_rate;
         s->route.phase = stored(advanced);
         if (advanced > 1 && !bh_camera_route_advance(c->route, &s->route))
-            return -1;
+            return failure(c, "enter first portal");
     }
     s->older_position = s->previous_position;
     s->previous_position = s->position;
@@ -259,6 +266,7 @@ int __cdecl bh_flyby_camera_step(BHFlybyCameraContext *c, BHFlybyCameraState *s)
     input.basis_z = s->basis_z;
     input.actor_token = c->actor_token;
     if (!bh_camera_state_update(c->camera, &s->camera, &input, 0.03333333333333333, 0, 0))
-        return -1;
-    return credits(c, s);
+        return failure(c, "update camera pose");
+    result = credits(c, s);
+    return result < 0 ? failure(c, "queue credits text") : result;
 }

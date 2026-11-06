@@ -39,10 +39,12 @@ extern "C"
     void bh_sdl_pace(void);
     void bh_sdl_close(void);
     const char *bh_sdl_error(void);
+    const char *bh_sdl_gpu_driver(void);
     /* Resolve paths before changing cwd. Defaults preserve assets/settings beside
    the executable, independent of launch cwd. Explicit paths are cwd-relative. */
     int bh_sdl_paths(const char *assets, const char *settings);
     const char *bh_sdl_settings_file(const char *name);
+    void bh_sdl_report_error(const char *details);
     void bh_sdl_error_dialog(void);
     void bh_sdl_video_cycle(int row);
     const char *bh_sdl_video_label(int row);
