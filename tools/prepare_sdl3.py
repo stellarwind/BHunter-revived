@@ -9,8 +9,6 @@ import urllib.request
 import zipfile
 from pathlib import Path
 
-from bake_comic_font import prepare as prepare_comic_font
-
 ROOT = Path(__file__).resolve().parents[1]
 VERSION = "3.4.18"
 # Official release archive; digest is verified before extracting downloaded code.
@@ -73,7 +71,6 @@ def write_shader_header(source, header, dxc, *, dxil=False):
 def prepare(out, *, gnu=True, compiler=None, symbols=False):
     out = Path(out).resolve()
     out.mkdir(parents=True, exist_ok=True)
-    prepare_comic_font(out)
     deps = ROOT / "toolchain/SDL3"
     deps.mkdir(parents=True, exist_ok=True)
     archive = deps / f"SDL3-devel-{VERSION}-VC.zip"
@@ -106,6 +103,7 @@ def prepare(out, *, gnu=True, compiler=None, symbols=False):
         ROOT / "src/bh_video_layout.h",
         ROOT / "src/bh_gamepad.h",
         ROOT / "src/bh_platform.h",
+        ROOT / "src/bh_overlay_atlas.inc",
         ROOT / "src/bh_overlay_font.h",
         ROOT / "src/bh_overlay_text.h",
     ]

@@ -20,6 +20,43 @@
 
 namespace
 {
+#include "bh_overlay_atlas.inc"
+
+constexpr unsigned base64_digit(char digit)
+{
+    if (digit >= 'A' && digit <= 'Z')
+        return digit - 'A';
+    if (digit >= 'a' && digit <= 'z')
+        return digit - 'a' + 26;
+    if (digit >= '0' && digit <= '9')
+        return digit - '0' + 52;
+    return digit == '+' ? 62 : 63;
+}
+
+constexpr auto decode_overlay_font()
+{
+    constexpr size_t length = sizeof(overlay_font_base64) - 1;
+    static_assert(length % 4 == 0);
+    constexpr size_t padding = (overlay_font_base64[length - 1] == '=') +
+                               (overlay_font_base64[length - 2] == '=');
+    std::array<unsigned char, length / 4 * 3 - padding> bytes{};
+    unsigned bits = 0, pending = 0;
+    size_t out = 0;
+    for (size_t i = 0; i < length - padding; ++i)
+    {
+        bits = (bits << 6) | base64_digit(overlay_font_base64[i]);
+        pending += 6;
+        if (pending >= 8)
+        {
+            pending -= 8;
+            bytes[out++] = (unsigned char)(bits >> pending);
+        }
+    }
+    return bytes;
+}
+
+constexpr auto overlay_font_bytes = decode_overlay_font();
+
 struct Object
 {
     unsigned refs = 1;
@@ -73,7 +110,6 @@ std::vector<Batch> batches;
 std::vector<Surface *> surfaces;
 std::array<unsigned, 256> states{};
 Surface *white;
-std::vector<unsigned char> overlay_font_bytes;
 BHOverlayFont overlay_font{};
 BHPlatformInput input_callback;
 void *message_user;
@@ -1091,33 +1127,11 @@ extern "C"
         auto *destination = (Surface *)surface;
         if (!destination || !text || !memchr(text, 0, 59))
             return 0;
-        if (!overlay_font.mask)
+        if (!overlay_font.mask &&
+            !bh_overlay_font_read(&overlay_font, overlay_font_bytes.data(), overlay_font_bytes.size()))
         {
-            FILE *file = fopen("fonts/comic-sans-ms-24.bhf", "rb");
-            if (!file)
-            {
-                snprintf(error_text, sizeof(error_text), "Missing Comic Sans 24 font atlas");
-                return 0;
-            }
-            if (fseek(file, 0, SEEK_END))
-            {
-                fclose(file);
-                return 0;
-            }
-            long size = ftell(file);
-            if (size < 0 || size > 17 * 1024 * 1024 || fseek(file, 0, SEEK_SET))
-            {
-                fclose(file);
-                return 0;
-            }
-            overlay_font_bytes.resize((size_t)size);
-            bool read = fread(overlay_font_bytes.data(), 1, (size_t)size, file) == (size_t)size;
-            fclose(file);
-            if (!read || !bh_overlay_font_read(&overlay_font, overlay_font_bytes.data(), overlay_font_bytes.size()))
-            {
-                snprintf(error_text, sizeof(error_text), "Invalid Comic Sans 24 font atlas");
-                return 0;
-            }
+            snprintf(error_text, sizeof(error_text), "Invalid embedded overlay font atlas");
+            return 0;
         }
         Surface *output = destination;
         if (destination->target)
@@ -1479,7 +1493,6 @@ extern "C"
         }
         window = nullptr;
         overlay_font = {};
-        overlay_font_bytes.clear();
         SDL_Quit();
     }
     void __cdecl bh_sdl_video_cycle(int row)

@@ -11,7 +11,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-from bake_comic_font import prepare as prepare_comic_font
 from prepare_sdl3 import prepare, write_shader_header
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -124,7 +123,6 @@ def main():
         ROOT / "tools/build_game.py",
         ROOT / "tools/build_gcc.py",
         ROOT / "tools/prepare_sdl3.py",
-        ROOT / "tools/bake_comic_font.py",
         ROOT / "tools/game_compile_context.json",
     ]
     record["sources"] = {
@@ -260,7 +258,7 @@ def main():
         "\n".join('"' + str(obj).replace("\\", "/") + '"' for obj in objects) + "\n"
     )
     shutil.copyfile(enet / "LICENSE", out / "ENet-LICENSE.txt")
-    runtime_files = ["fonts/comic-sans-ms-24.bhf", "ENet-LICENSE.txt"]
+    runtime_files = ["ENet-LICENSE.txt"]
     if linux:
         dxc = shutil.which(os.environ.get("BH_DXC", "dxc"))
         if not dxc:
@@ -268,7 +266,6 @@ def main():
         sdl_flags = shlex.split(
             subprocess.check_output(["pkg-config", "--cflags", "--libs", "sdl3"], text=True)
         )
-        prepare_comic_font(out)
         write_shader_header(ROOT / "src/shaders/legacy.hlsl", cache_dir / "bh_gpu_shaders.h", dxc)
         run(
             [

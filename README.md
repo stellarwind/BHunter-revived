@@ -77,7 +77,7 @@ Vulkan is the default renderer. Run `build\BHunter-source.exe --dx12` to select 
 
 The game builds for 32-bit x86. Install GCC and G++ with 32-bit C and C++ libraries, 32-bit SDL3 development files, Python 3.10+, and `pkg-config` configured to find the 32-bit SDL3 package. Install `dxc` for your build host or set `BH_DXC` to its path. Running the game requires a 32-bit Vulkan loader and driver.
 
-Place `Bhunter.bin` in `GAME_DATA` as above. Copy `fonts/comic-sans-ms-24.bhf` from the [BHunter 0.4 package](https://github.com/stellarwind/BHunter-revived/releases/tag/v0.4) to `assets/fonts/comic-sans-ms-24.bhf`, then run:
+Place `Bhunter.bin` in `GAME_DATA` as above, then run:
 
 ```sh
 python3 tools/build_gcc.py --incremental
@@ -101,3 +101,5 @@ This source restoration was decompiled, reconstructed and built with the assista
 ## License
 
 Restoration code: [MIT](LICENSE). Original game assets remain the property of their respective owners. Bundled [SDL3](https://github.com/libsdl-org/SDL/tree/release-3.4.18) uses the zlib license, included in the release.
+
+The overlay uses an embedded [Comic Neue Bold](https://github.com/crozynski/comicneue) bitmap atlas under the [SIL Open Font License 1.1](LICENSES/ComicNeue.txt).

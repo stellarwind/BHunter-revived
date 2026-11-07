@@ -4,8 +4,7 @@
 #include <stddef.h>
 #include <string.h>
 
-/* Original Comic Sans MS glyphs, baked at 24 pixels with quality 3.
-   Runtime composition uses portable buffers and preserves TextOutA metrics. */
+/* Overlay text uses a baked monochrome atlas with per-glyph bearings and advances. */
 typedef struct BHOverlayCanvas
 {
     unsigned char *pixels;
@@ -30,12 +29,13 @@ static inline unsigned long bh_overlay_u32(const unsigned char *p)
 static inline int bh_overlay_font_read(BHOverlayFont *font, const unsigned char *data, size_t bytes)
 {
     unsigned i, width, height;
-    if (!font || !data || bytes < 24 + 256 * 16 || memcmp(data, "BHCFONT1", 8) || bh_overlay_u32(data + 16) != 24 ||
+    if (!font || !data || bytes < 24 + 256 * 16 || memcmp(data, "BHCFONT2", 8) || bh_overlay_u32(data + 16) != 20 ||
         bh_overlay_u32(data + 20) != 256)
         return 0;
     width = bh_overlay_u32(data + 8);
     height = bh_overlay_u32(data + 12);
-    if (!width || !height || width > 4096 || height > 4096 || bytes != 24 + 256 * 16 + (size_t)width * height)
+    if (!width || !height || width > 4096 || height > 4096 || width % 8 ||
+        bytes != 24 + 256 * 16 + (size_t)(width / 8) * height)
         return 0;
     for (i = 0; i < 256; ++i)
     {
@@ -135,13 +135,16 @@ static inline int bh_overlay_text(BHOverlayCanvas *canvas, const BHOverlayFont *
             bottom = canvas->height;
         for (py = top; py < bottom; ++py)
             for (px = left; px < right; ++px)
-                if (font->mask[(glyph->y + py - gy) * font->width + glyph->x + px - gx])
+            {
+                unsigned bit = (glyph->y + py - gy) * font->width + glyph->x + px - gx;
+                if (font->mask[bit / 8] & (0x80u >> (bit % 8)))
                 {
                     unsigned byte;
                     unsigned char *out = canvas->pixels + (size_t)py * canvas->pitch + px * canvas->bytes;
                     for (byte = 0; byte < canvas->bytes; ++byte)
                         out[byte] = (unsigned char)(color >> (byte * 8));
                 }
+            }
         x += glyph->advance;
     }
     return 1;
