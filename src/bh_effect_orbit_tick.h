@@ -1,6 +1,7 @@
 #ifndef BH_EFFECT_ORBIT_TICK_H
 #define BH_EFFECT_ORBIT_TICK_H
 #include "bh_effect_projectile.h"
+#include "bh_effect_network.h"
 typedef struct BHEffectOrbitTickContext
 {
     BHEffectProjectileContext *core;

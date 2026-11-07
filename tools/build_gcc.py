@@ -115,6 +115,11 @@ def main():
         for path in (ROOT / "src").rglob("*")
         if path.is_file() and path.suffix in {".c", ".cpp", ".h", ".inc", ".hlsl"}
     ]
+    # ENet 1.3.18, upstream commit 2662c0de09e36f2a2030ccc2c528a3e4c9e8138a.
+    enet = ROOT / "third_party/enet"
+    dependencies += (
+        sorted(enet.rglob("*.h")) + sorted(enet.glob("*.c")) + [enet / "LICENSE"]
+    )
     dependencies += [
         ROOT / "tools/build_game.py",
         ROOT / "tools/build_gcc.py",
@@ -166,10 +171,24 @@ def main():
             )
         ]
     )
+    if not args.compile_one:
+        sources.extend(
+            enet / (name + ".c")
+            for name in (
+                "callbacks",
+                "compress",
+                "host",
+                "list",
+                "packet",
+                "peer",
+                "protocol",
+                "unix" if linux else "win32",
+            )
+        )
     headers = hashlib.sha256(
         b"".join(
             path.read_bytes()
-            for path in sorted((ROOT / "src").rglob("*"))
+            for path in sorted([*(ROOT / "src").rglob("*"), *enet.rglob("*.h")])
             if path.suffix in {".h", ".inc"}
         )
     ).hexdigest()
@@ -210,6 +229,7 @@ def main():
             "-ffunction-sections",
             "-fdata-sections",
             "-DBH_SDL_BACKEND",
+            "-I" + str(enet / "include"),
             *flags,
             "-c",
             source,
@@ -239,7 +259,8 @@ def main():
     response.write_text(
         "\n".join('"' + str(obj).replace("\\", "/") + '"' for obj in objects) + "\n"
     )
-    runtime_files = ["fonts/comic-sans-ms-24.bhf"]
+    shutil.copyfile(enet / "LICENSE", out / "ENet-LICENSE.txt")
+    runtime_files = ["fonts/comic-sans-ms-24.bhf", "ENet-LICENSE.txt"]
     if linux:
         dxc = shutil.which(os.environ.get("BH_DXC", "dxc"))
         if not dxc:
@@ -278,6 +299,8 @@ def main():
                 "-Wl,--gc-sections",
                 "@" + str(response),
                 gpu_import,
+                "-lwinmm",
+                "-lws2_32",
                 "-o",
                 out / executable,
             ]
@@ -312,7 +335,7 @@ def main():
     record["translation_units"] = len(sources) + 2
     (cache_dir / "build.json").write_text(json.dumps(record, indent=2) + "\n")
     print(
-        f"Built {out / executable} from {len(sources)} production C translation units and the SDL adapters"
+        f"Built {out / executable} from {len(sources)} C translation units and the SDL adapters"
     )
 
 

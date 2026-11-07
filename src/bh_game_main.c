@@ -1,10 +1,15 @@
 #include "bh_game_app.h"
 #include "bh_platform.h"
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include "bh_network_game.h"
 int main(int argc, char **argv)
 {
     const char *assets = 0, *settings = 0;
-    int i, result, profile = 0;
+    int i, result, profile = 0, network = 0;
+    unsigned long port = BH_NETWORK_PORT;
+    const char *address = NULL;
 #ifdef _WIN32
     int dx12 = 0;
 #endif
@@ -24,7 +29,22 @@ int main(int argc, char **argv)
             continue;
         }
 #endif
-        if (!strcmp(argv[i], "--asset-dir") && i + 1 < argc)
+        if (!strcmp(argv[i], "--host") && !network)
+            network = 1;
+        else if (!strcmp(argv[i], "--join") && !network && i + 1 < argc)
+        {
+            address = argv[++i];
+            network = 1;
+        }
+        else if (!strcmp(argv[i], "--port") && i + 1 < argc)
+        {
+            const char *number = argv[++i];
+            char *end;
+            port = strtoul(number, &end, 10);
+            if (*number < '0' || *number > '9' || *end || !port || port > 65535)
+                return 2;
+        }
+        else if (!strcmp(argv[i], "--asset-dir") && i + 1 < argc)
             assets = argv[++i];
         else if (!strcmp(argv[i], "--settings-dir") && i + 1 < argc)
             settings = argv[++i];
@@ -36,7 +56,8 @@ int main(int argc, char **argv)
 #ifdef _WIN32
     bh_sdl_use_dx12(dx12);
 #endif
-    result = bh_game_app_run("GAME_DATA", bh_sdl_settings_file("source-preview.cfg"), profile);
+    result = bh_game_app_run("GAME_DATA", bh_sdl_settings_file("source-preview.cfg"), profile,
+                             address, network ? (unsigned short)port : 0);
     if (result)
         bh_sdl_error_dialog();
     return result;

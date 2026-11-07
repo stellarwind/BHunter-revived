@@ -67,6 +67,15 @@ static BHEntity *receiver(BHEffectProjectileContext *ctx, const BHWorldSegmentHi
     }
     return NULL;
 }
+static int packet(BHEffectProjectileContext *ctx, BHEntity *entity, unsigned char kind, const BHVec3 *direction)
+{
+    if (ctx->network && !bh_effect_network_emit(ctx->network, entity, 0x138, 0x134, kind, direction))
+    {
+        ctx->error = 2;
+        return 0;
+    }
+    return 1;
+}
 static void flash(BHEffectProjectileContext *ctx, const BHVec3 *p)
 {
     BHEntity *entity = bh_entity_acquire(ctx->effects->pool);
@@ -167,7 +176,7 @@ void __cdecl bh_effect_split_tick(BHEntity *entity)
     BHEffectProjectileContext *ctx = context(entity);
     BHHomingProjectileContext *b;
     BHEffectSplitContext *s;
-    BHVec3 movement, end, random_velocity, normal, point, drift;
+    BHVec3 movement, end, random_velocity, normal, point, drift, normalized;
     BHWorldGeometry *cached;
     BHEntity *ignore, *response, *contact, *marker;
     BHImpactState *impact;
@@ -198,6 +207,8 @@ void __cdecl bh_effect_split_tick(BHEntity *entity)
     value(entity, 0xe8, stored(remaining));
     if (remaining <= 0)
     {
+        if (!packet(ctx, entity, 1, &zero))
+            return;
         if (word(entity, 0x130))
             integer(entity, 0x130, 1);
         bh_effect_split_cascade(entity, &zero);
@@ -284,6 +295,8 @@ void __cdecl bh_effect_split_tick(BHEntity *entity)
                                  .5f, NULL, NULL);
         }
         entity->position = hit.point;
+        if (!packet(ctx, entity, 1, &zero))
+            return;
         if (!identity)
         {
             if (!response)
@@ -332,6 +345,9 @@ void __cdecl bh_effect_split_tick(BHEntity *entity)
         bh_script_particle_create(b->particles, ctx->smoke_image, 3, &entity->position, &random_velocity, &acceleration,
                                   .1f, angle, 4, spin, .9f, .95f, .5f, 1);
         ++ctx->particles;
+        bh_vec3_normalize_to(&movement, &normalized);
+        if (!packet(ctx, entity, 4, &normalized))
+            return;
         ++s->jitters;
     }
 }

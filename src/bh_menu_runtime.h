@@ -12,7 +12,7 @@ typedef struct BHMenuRuntimeContext
     BHSoundQueue *sound;
     BHMenuTransition *transition;
     BHFlybyScene *flyby;
-    BHMenuRuntime *root, *ship_menu;
+    BHMenuRuntime *root, *ship_menu, *network_ship_menu, *network_menu;
     long *mode, *paused, *waypoint, *input_changed, *stay;
     unsigned long move_sound, open_sound, slide_sound, press_sound, release_sound;
     unsigned long sounds, refreshes, camera_steps;

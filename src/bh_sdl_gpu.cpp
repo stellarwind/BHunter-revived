@@ -77,6 +77,9 @@ std::vector<unsigned char> overlay_font_bytes;
 BHOverlayFont overlay_font{};
 BHPlatformInput input_callback;
 void *message_user;
+BHPlatformTextInput text_callback;
+void *text_user;
+unsigned long text_gamepad_buttons;
 char error_text[1024];
 char report_text[1024];
 bool quitting, hidden;
@@ -850,6 +853,7 @@ void find_gamepad()
     if (gamepad)
         SDL_CloseGamepad(gamepad);
     gamepad = nullptr;
+    text_gamepad_buttons = 0;
     int count = 0;
     auto *ids = SDL_GetGamepads(&count);
     for (int i = 0; i < count && !gamepad; ++i)
@@ -893,7 +897,33 @@ void read_gamepad(BHGamepadState *state, bool focused)
     for (unsigned i = 0; i < std::size(buttons); ++i)
         if (SDL_GetGamepadButton(gamepad, buttons[i]))
             state->buttons |= 1UL << i;
+    // Keep a text editor's confirm/cancel press out of the menu below it.
+    text_gamepad_buttons &= state->buttons;
+    state->buttons &= ~text_gamepad_buttons;
 }
+#ifdef __linux__
+void enable_deck_keyboard()
+{
+    // Direct launches on the Deck desktop may lack Steam's launch environment.
+    if (!SDL_GetHintBoolean("SteamDeck", false))
+    {
+        char product[32] = {};
+        FILE *file = fopen("/sys/devices/virtual/dmi/id/product_name", "r");
+        if (file)
+        {
+            if (fscanf(file, "%31s", product) != 1)
+                product[0] = '\0';
+            fclose(file);
+        }
+        if (strcmp(product, "Jupiter") && strcmp(product, "Galileo"))
+            return;
+        // Older SDL X11 backends use SteamDeck for this capability.
+        SDL_SetHintWithPriority("SteamDeck", "1", SDL_HINT_DEFAULT);
+    }
+    SDL_SetHintWithPriority("SDL_ENABLE_STEAM_SCREEN_KEYBOARD", "1", SDL_HINT_DEFAULT);
+    SDL_SetHintWithPriority(SDL_HINT_ENABLE_SCREEN_KEYBOARD, "1", SDL_HINT_DEFAULT);
+}
+#endif
 void apply_mode()
 {
     if (mode == 0)
@@ -931,6 +961,9 @@ extern "C"
         quitting = false;
         held_keys.fill(0);
         message_user = user;
+#ifdef __linux__
+        enable_deck_keyboard();
+#endif
         if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS))
         {
             set_error("SDL init");
@@ -1235,6 +1268,29 @@ extern "C"
         if (deadline > now)
             SDL_DelayPrecise(deadline - now);
     }
+    int bh_sdl_text_begin(BHPlatformTextInput callback, void *user)
+    {
+        if (!window || !callback || text_callback)
+            return 0;
+        const auto properties = SDL_CreateProperties();
+        const bool started = properties &&
+                             SDL_SetBooleanProperty(properties, SDL_PROP_TEXTINPUT_MULTILINE_BOOLEAN, false) &&
+                             SDL_StartTextInputWithProperties(window, properties);
+        SDL_DestroyProperties(properties);
+        if (!started)
+            return 0;
+        text_callback = callback;
+        text_user = user;
+        return 1;
+    }
+    void bh_sdl_text_end()
+    {
+        if (!text_callback)
+            return;
+        text_callback = nullptr;
+        text_user = nullptr;
+        SDL_StopTextInput(window);
+    }
     int __cdecl bh_sdl_poll()
     {
         bh_audio_poll();
@@ -1249,6 +1305,27 @@ extern "C"
             case SDL_EVENT_GAMEPAD_ADDED:
             case SDL_EVENT_GAMEPAD_REMOVED:
                 find_gamepad();
+                break;
+            case SDL_EVENT_GAMEPAD_BUTTON_DOWN:
+            case SDL_EVENT_GAMEPAD_BUTTON_UP:
+                if (gamepad && event.gbutton.which == SDL_GetGamepadID(gamepad) &&
+                    (event.gbutton.button == SDL_GAMEPAD_BUTTON_SOUTH ||
+                     event.gbutton.button == SDL_GAMEPAD_BUTTON_EAST))
+                {
+                    const bool submit = event.gbutton.button == SDL_GAMEPAD_BUTTON_SOUTH;
+                    const unsigned long button = 1UL << (submit ? BH_PAD_SOUTH : BH_PAD_EAST);
+                    if (event.type == SDL_EVENT_GAMEPAD_BUTTON_UP)
+                        text_gamepad_buttons &= ~button;
+                    else if (text_callback)
+                    {
+                        text_gamepad_buttons |= button;
+                        text_callback(submit ? BH_PLATFORM_TEXT_SUBMIT : BH_PLATFORM_TEXT_CANCEL, nullptr, text_user);
+                    }
+                }
+                break;
+            case SDL_EVENT_TEXT_INPUT:
+                if (text_callback && event.text.windowID == SDL_GetWindowID(window))
+                    text_callback(BH_PLATFORM_TEXT_INSERT, event.text.text, text_user);
                 break;
             case SDL_EVENT_QUIT:
             case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
@@ -1271,6 +1348,22 @@ extern "C"
                 }
                 if (event.key.down)
                 {
+                    if (text_callback)
+                    {
+                        const auto key = event.key.key;
+                        if (key == SDLK_BACKSPACE)
+                        {
+                            text_callback(BH_PLATFORM_TEXT_BACKSPACE, nullptr, text_user);
+                            break;
+                        }
+                        if (key == SDLK_RETURN || key == SDLK_KP_ENTER || key == SDLK_ESCAPE)
+                        {
+                            if (!event.key.repeat)
+                                text_callback(key == SDLK_ESCAPE ? BH_PLATFORM_TEXT_CANCEL : BH_PLATFORM_TEXT_SUBMIT,
+                                              nullptr, text_user);
+                            break;
+                        }
+                    }
                     if (!held_keys[scan])
                         held_keys[scan] = binding_key(scan, event.key.key);
                     if (held_keys[scan])
@@ -1341,6 +1434,7 @@ extern "C"
     }
     void __cdecl bh_sdl_close()
     {
+        bh_sdl_text_end();
         if (gamepad)
         {
             SDL_CloseGamepad(gamepad);

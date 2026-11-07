@@ -246,6 +246,7 @@ static int handoff(BHFlybyScene *s, BHEntity *camera)
         long value = rand();
         ++s->random_calls;
         index = (unsigned long)((value + ((value >> 31) & 0xfff)) >> 12);
+        index = (index + (unsigned long)*s->player_slot) & 7;
         if (!reset_player(s, index))
             return 0;
     }

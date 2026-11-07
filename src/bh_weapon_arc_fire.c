@@ -96,6 +96,8 @@ int __cdecl bh_weapon_arc_fire(BHWeaponArcFireContext *ctx, BHEntity *weapon_ent
     memcpy((unsigned char *)entity + 0x2a4, &recoil, 12);
     bh_sound_request(f->sound, ctx->sound, .4f, 3, &point, &zero);
     weapon_state->word_e8 = 4;
+    if (f->peers > 1)
+        bh_weapon_fire_packet(f, 1, 0, 5, weapon_state->hud.target);
     ++ctx->shots;
     return f->error == 0;
 }

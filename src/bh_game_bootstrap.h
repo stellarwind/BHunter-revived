@@ -10,7 +10,7 @@
 #include "bh_menu_object.h"
 #include "bh_sound_load.h"
 #include "bh_render_material.h"
-#define BH_BOOTSTRAP_MENUS 12
+#define BH_BOOTSTRAP_MENUS 14
 #define BH_BOOTSTRAP_ROWS 32
 typedef struct BHBootstrapBinding
 {

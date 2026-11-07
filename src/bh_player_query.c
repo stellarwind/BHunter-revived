@@ -396,6 +396,28 @@ int __cdecl bh_player_query_dispatch(BHPlayerQueryContext *ctx, BHPlayerQueryPac
             pitch = stored(.9 - (double)severity * (-.2));
             ++ctx->sound_requests;
             bh_sound_request(ctx->sound, resource, level, pitch, (BHVec3 *)&packet->floats[1], ctx->sound_velocity);
+            if (ctx->mode_count && *ctx->mode_count > 1 && ctx->simulation_tick && ctx->world &&
+                ctx->world_index && ctx->transport)
+            {
+                unsigned char bytes[32], tail[4];
+                BHPacketWriter writer;
+                int result;
+                bh_packet_begin(&writer, bytes, sizeof(bytes), 6, (unsigned short)*ctx->simulation_tick);
+                result =
+                    bh_packet_write_position(&writer, *ctx->world, *ctx->world_index, (BHVec3 *)&packet->floats[1]);
+                if (result > 0)
+                {
+                    tail[0] = (unsigned char)resource;
+                    tail[1] = (unsigned char)(__int64)((double)severity * 128.0f);
+                    tail[2] = (unsigned char)(__int64)((double)pitch * 64.0f);
+                    tail[3] = 0;
+                    bh_packet_append(&writer, tail, 4);
+                    ++ctx->packets;
+                    bh_network_packet_send(ctx->transport, &writer, 0, 0);
+                }
+                else if (result < 0)
+                    ctx->error = 5;
+            }
             if (!protected_player(entity) && scalar(entity, 0x240) == 0)
             {
                 if (scalar(entity, 0x250) < 1.5)

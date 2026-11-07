@@ -22,7 +22,7 @@ test "$(realpath -- "$workspace")" = "$workspace"
 # Lock this workspace through the build and local binary copy.
 exec 9<"$workspace"
 flock -x 9
-for directory in src tools; do
+for directory in src tools third_party; do
     mkdir -p -- "$workspace/$directory"
     test "$(realpath -- "$workspace/$directory")" = "$workspace/$directory"
     rsync -rt --delete --exclude=__pycache__/ -- "$2/$directory/" "$workspace/$directory/"

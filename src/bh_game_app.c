@@ -270,6 +270,29 @@ typedef struct BHGameApp
     BHAttachmentContext attachment;
     BHHudWorldContext world_hud;
     BHHudFlatContext flat_hud;
+    BHNetworkGame network_game;
+    BHNetworkTransport transport;
+    BHRemotePackets remote_packets;
+    BHRemoteMessages remote_messages;
+    BHRemoteTick remote_tick;
+    BHRemoteRender remote_render;
+    BHRemoteQuery remote_query;
+    BHRemoteFire remote_fire;
+    BHNetworkScores network_scores;
+    BHNetworkEffectReceive network_effects;
+    BHEffectNetworkContext effect_network;
+    BHEffectWorldIndex *effect_indices;
+    BHPulseWorldIndex *pulse_indices;
+    BHNavigation network_positions;
+    BHWorldGeometry *network_world, *remote_spawn_world;
+    unsigned short network_world_index;
+    float network_latency[8];
+    unsigned long sync_identity;
+    FILE *network_log;
+    BHMenuRuntime *network_entry;
+    char network_address[16];
+    long network_ship;
+    int network_playing, network_cancel_pressed;
     BHHudScores scores;
     BHHudScoreDraw score_draw;
     BHHudScoreText score_text;
@@ -1161,6 +1184,7 @@ static int __cdecl compose(BHGameBootstrap *bootstrap, unsigned long phase, void
         return failure(app, 1);
     }
 }
+static void network_menu_start(void *user, const char *address);
 static int source_owners(BHGameApp *app)
 {
     unsigned long i;
@@ -1343,6 +1367,13 @@ static int source_owners(BHGameApp *app)
     app->player_tick.flash = &app->flash;
     app->player_tick.explosions = &app->explosions;
     app->player_tick.camera_yaw = &app->yaw;
+    app->transport.game = &app->network_game;
+    app->player_tick.game = &app->network_game;
+    app->player_tick.network = &app->remote_messages;
+    app->player_tick.scores = &app->network_scores;
+    app->player_tick.navigation = &app->navigation;
+    app->player_tick.latency = app->network_latency;
+    app->player_tick.damage_source = &app->damage_source;
     app->player_create.tick = &app->player_tick;
     app->player_create.query = &app->player_query;
     app->player_create.current = &app->player;
@@ -1363,6 +1394,12 @@ static int source_owners(BHGameApp *app)
     app->player_query.fine_warning = &app->fine_warning;
     app->player_query.damage_source = &app->damage_source;
     app->player_query.sound_velocity = &app->zero;
+    app->player_query.transport = &app->transport;
+    app->player_query.mode_count = &app->player_state.mode;
+    app->player_query.simulation_tick = &app->player_state.tick;
+    app->player_query.world = &app->network_world;
+    app->player_query.world_index = &app->network_world_index;
+    app->physics_effects.transport = &app->transport;
     app->world_reset.vm = &app->vm;
     app->world_reset.loot_rows = app->availability;
     app->physics_effects.effects = &app->contacts;
@@ -1389,6 +1426,10 @@ static int source_owners(BHGameApp *app)
     app->menu_actions.messages = &app->messages;
     app->menu_actions.sound = &app->sound;
     app->menu_actions.player_name = app->bootstrap.player_name;
+    app->menu_actions.network_address = app->network_address;
+    app->menu_actions.network_ship = &app->network_ship;
+    app->menu_actions.network_start = network_menu_start;
+    app->menu_actions.network_user = app;
     app->menu_profiles.config = &app->config;
     app->menu_profiles.current = &app->profile;
     app->menu_profiles.pending_selection = &app->pending_profile;
@@ -1416,6 +1457,8 @@ static int source_owners(BHGameApp *app)
     app->key_capture.result = app->key_result;
     app->text_capture.buffer = app->text_buffer;
     app->text_capture.capacity = sizeof(app->text_buffer);
+    app->text_capture.address_commit = network_menu_start;
+    app->text_capture.address_user = app;
     app->text_capture.pool = &app->pool;
     app->text_capture.snapshot = &app->snapshot;
     app->text_capture.state = &app->global_state;
@@ -1787,6 +1830,18 @@ static int runtime_owners(BHGameApp *app)
     app->weapon_fire.projectiles = &app->projectiles;
     app->weapon_fire.area = &app->area;
     app->weapon_fire.sound = &app->sound;
+    app->weapon_fire.transport = &app->transport;
+    app->weapon_fire.local = app->player;
+    app->weapon_fire.local_id = -1;
+    app->weapon_pulse.transport = &app->transport;
+    app->weapon_pulse.local_id = -1;
+    app->pulse.transport = &app->transport;
+    app->pulse.sync_identity = &app->sync_identity;
+    app->effect.pending_identity = &app->sync_identity;
+    app->effect_network.transport = &app->transport;
+    app->effect.network = &app->effect_network;
+    app->actor_launch.transport = &app->transport;
+    app->actor_launch.navigation = &app->navigation;
     app->weapon_fire.messages = &app->messages;
     app->weapon_fire.empty_warning = &app->empty_warning;
     app->weapon_fire.ballistic_sound = V(0x4d0480);
@@ -2029,6 +2084,313 @@ static int runtime_owners(BHGameApp *app)
     return 1;
 }
 #undef V
+static int network_bind(BHGameApp *app)
+{
+    unsigned long i, count = app->editor_world.count;
+    if (!app->network_positions.nodes)
+    {
+        if (!count || count > 65535)
+            return 0;
+        app->network_positions.nodes = calloc(count, sizeof(*app->network_positions.nodes));
+        app->effect_indices = calloc(count, sizeof(*app->effect_indices));
+        app->pulse_indices = calloc(count, sizeof(*app->pulse_indices));
+        if (!app->network_positions.nodes || !app->effect_indices || !app->pulse_indices)
+        {
+            free(app->network_positions.nodes);
+            free(app->effect_indices);
+            free(app->pulse_indices);
+            app->network_positions.nodes = NULL;
+            app->effect_indices = NULL;
+            app->pulse_indices = NULL;
+            return 0;
+        }
+        /* The route graph excludes some rooms where a player can spawn or fly.
+           Wire position indices cover every room in level order. */
+        app->network_positions.node_count = count;
+        app->player_tick.navigation = &app->network_positions;
+        app->actor_launch.navigation = &app->network_positions;
+        for (i = 0; i < count; ++i)
+        {
+            app->network_positions.nodes[i].placement = app->rooms[i].world;
+            app->effect_indices[i].world = app->pulse_indices[i].world = app->rooms[i].world;
+            app->effect_indices[i].index = app->pulse_indices[i].index = (unsigned short)i;
+        }
+    }
+    app->effect_network.world_indices = app->effect_indices;
+    app->effect_network.world_count = count;
+    app->pulse.world_indices = app->pulse_indices;
+    app->pulse.world_count = count;
+    app->network_scores = (BHNetworkScores){
+        .scores = &app->scores, .text = &app->score_text, .transport = &app->transport, .local_player = app->player};
+    app->remote_messages = (BHRemoteMessages){.packets = &app->remote_packets,
+                                              .scores = &app->network_scores,
+                                              .messages = &app->messages,
+                                              .transport = &app->transport,
+                                              .sound = &app->sound,
+                                              .contacts = &app->contacts,
+                                              .effects = &app->network_effects,
+                                              .launch = &app->actor_launch,
+                                              .latency = app->network_latency,
+                                              .peers = &app->player_state.peers};
+    app->remote_packets = (BHRemotePackets){.pool = &app->pool,
+                                            .remote = app->remote,
+                                            .head = &app->vehicle_lifetime.head,
+                                            .count = &app->vehicle_lifetime.count,
+                                            .network = &app->network_game,
+                                            .query = &app->remote_query,
+                                            .render = &app->remote_render,
+                                            .car_models = app->flyby.scenario_resources,
+                                            .tick = &app->remote_tick,
+                                            .simulation_tick = &app->player_state.tick,
+                                            .local_slot = &app->slot,
+                                            .local = app->player,
+                                            .spawn_world = &app->remote_spawn_world,
+                                            .rooms = app->rooms,
+                                            .room_count = app->editor_world.count,
+                                            .navigation = &app->network_positions};
+    app->remote_query = (BHRemoteQuery){.pool = &app->pool,
+                                        .rooms = app->rooms,
+                                        .room_count = app->editor_world.count,
+                                        .head = &app->vehicle_lifetime.head,
+                                        .count = &app->vehicle_lifetime.count,
+                                        .remote = app->remote,
+                                        .local = app->player,
+                                        .worlds = app->effect_indices,
+                                        .world_count = count,
+                                        .transport = &app->transport,
+                                        .sound = &app->sound};
+    app->remote_render = (BHRemoteRender){
+        .queue = &app->queue, .sound = &app->sound, .spark_texture = bh_bootstrap_value(&app->bootstrap, 0x4f0094)};
+    app->remote_tick = (BHRemoteTick){.fire = &app->remote_fire,
+                                      .world = &app->segment,
+                                      .particles = &app->particles,
+                                      .sound = &app->sound,
+                                      .smoke_image = app->player_tick.resources.smoke_image};
+    app->remote_fire = (BHRemoteFire){.pulse = &app->weapon_pulse,
+                                      .projectiles = &app->projectiles,
+                                      .effects = &app->effect,
+                                      .area = &app->area,
+                                      .pulse_projectile = &app->pulse,
+                                      .arc = &app->arc_hud,
+                                      .local = app->player,
+                                      .tick = &app->player_state.tick,
+                                      .sync_identity = &app->debris.origin_tag,
+                                      .ballistic_sound = app->weapon_fire.ballistic_sound,
+                                      .homing_sound = app->weapon_fire.homing_sound,
+                                      .target_sound = app->weapon_launch.sound,
+                                      .area_sound = app->weapon_fire.area_sound,
+                                      .arc_sound = app->weapon_arc_fire.sound,
+                                      .special_sound = app->weapon_effect.shot_sound,
+                                      .arc_image = app->weapon_arc_fire.first_image,
+                                      .arc_flare = app->weapon_arc_fire.second_image,
+                                      .split_model = app->weapon_effect.split_model};
+    app->network_effects.navigation = &app->network_positions;
+    app->network_effects.pool = &app->pool;
+    app->effect.pending_identity = app->pulse.sync_identity = &app->debris.origin_tag;
+    for (i = 0; i < 8; ++i)
+        app->remote_packets.engine_sounds[i] = bh_bootstrap_value(&app->bootstrap, 0x4f5544);
+    return 1;
+}
+
+static void network_menu_status(BHGameApp *app, unsigned long row, const char *status)
+{
+    unsigned char body[40];
+    snprintf((char *)body, sizeof(body), "%s", status);
+    bh_menu_row_refresh(app->menu.network_menu->action_context->rows, row, NULL, body);
+    if (app->network_log)
+    {
+        fprintf(app->network_log, "menu_status row=%lu %s\n", row, status);
+        fflush(app->network_log);
+    }
+}
+
+static int network_start(BHGameApp *app, BHMenuRuntime *entry, const char *address, unsigned short port)
+{
+    if (app->network_game.host || app->player_state.mode)
+        return 0;
+    if (!bh_network_open(&app->network_game, address, port, app->bootstrap.player_name, app->network_ship))
+        return 0;
+    if (!network_bind(app))
+    {
+        bh_network_close(&app->network_game);
+        return 0;
+    }
+    app->network_entry = entry;
+    app->network_cancel_pressed = 0;
+    app->network_world = NULL;
+    app->scores.local_score = 0;
+    app->player_state.peers = 0;
+    app->player_state.send_delay = 0;
+    memset(app->network_latency, 0, sizeof(app->network_latency));
+    if (address)
+    {
+        entry->input_blocked = 1;
+        bh_input_set_enabled(entry->input, &app->snapshot, 0);
+    }
+    if (app->network_log)
+    {
+        fprintf(app->network_log, "session_start source=%s role=%s address=%s port=%u car=%u\n",
+                entry == app->menu.network_menu ? "menu" : "command-line", address ? "join" : "host",
+                address ? address : "*", port, (unsigned int)app->network_game.local_car);
+        fflush(app->network_log);
+    }
+    return 1;
+}
+
+static void network_menu_start(void *user, const char *address)
+{
+    BHGameApp *app = user;
+    if (app->network_log)
+    {
+        fprintf(app->network_log, "menu_request address=%s\n", address ? address : "*");
+        fflush(app->network_log);
+    }
+    if (!network_start(app, app->menu.network_menu, address, BH_NETWORK_PORT))
+    {
+        network_menu_status(app, address ? 1 : 0, address ? "Check host IPv4" : "Could not open UDP port");
+        return;
+    }
+    if (address)
+    {
+        snprintf(app->network_address, sizeof(app->network_address), "%s", address);
+        network_menu_status(app, 1, "Connecting...\nEsc to cancel");
+    }
+}
+
+static void network_roster(unsigned int slot, void *user)
+{
+    BHGameApp *app = user;
+    bh_remote_roster(&app->remote_messages, slot, app->network_game.hosting);
+    if (app->network_log)
+        fprintf(app->network_log, "roster slot=%u active=%d spawns=%lu error=%d\n", slot,
+                app->network_game.players[slot].active, app->remote_packets.spawns, app->remote_messages.error);
+}
+
+static void network_message(void *bytes, unsigned long size, void *user)
+{
+    BHGameApp *app = user;
+    if (app->network_game.hosting)
+        bh_remote_host_message(&app->remote_messages, bytes, size, BH_NETWORK_PACKET_CAPACITY);
+    else
+        bh_remote_client_message(&app->remote_messages, bytes, size, BH_NETWORK_PACKET_CAPACITY);
+}
+
+static void network_trace(BHGameApp *app)
+{
+    unsigned int i;
+    unsigned long model;
+    FILE *log = app->network_log;
+    if (!log)
+        return;
+    memcpy(&model, (char *)app->player + 0x21c, sizeof(model));
+    fprintf(log,
+            "frame=%lu mode=%ld slot=%ld pos=%.3f,%.3f,%.3f sent_pose=%lu pose=%lu sent_shot=%lu shot=%lu "
+            "fire=%lu scores=%lu rejected=%lu remote_draw=%lu car=%u model=%lu\n",
+            app->frame, app->player_state.mode, app->slot, (double)app->player->position.x,
+            (double)app->player->position.y, (double)app->player->position.z, app->network_game.sent[4],
+            app->network_game.received[4], app->network_game.sent[8], app->network_game.received[8],
+            app->remote_fire.shots, app->network_game.received[12], app->network_game.rejected,
+            app->remote_render.attempted, (unsigned int)app->network_game.local_car, model);
+    for (i = 0; i < 8; ++i)
+        if (app->remote[i])
+        {
+            BHVec3 position;
+            if (bh_remote_predict_position(app->remote[i], (unsigned short)app->player_state.tick, &position))
+                fprintf(log, "remote slot=%u pos=%.3f,%.3f,%.3f car=%u model=%lu\n", i, (double)position.x,
+                        (double)position.y, (double)position.z, (unsigned int)app->network_game.players[i].car,
+                        app->remote_render.models[i]);
+        }
+    fflush(log);
+}
+
+static int network_poll(BHGameApp *app)
+{
+    BHNetworkGame *game = &app->network_game;
+    int cancelled = 0;
+    if (!game->host)
+        return 1;
+    bh_network_receive(game, network_message, network_roster, app);
+    if (!app->network_playing && !game->local_player)
+    {
+        int escape_down = app->snapshot.current[27] != 0;
+        cancelled = app->network_cancel_pressed && !escape_down;
+        app->network_cancel_pressed = escape_down;
+        if (cancelled)
+            game->disconnected = 1;
+    }
+    if (game->disconnected || (!app->player_state.mode && app->network_playing))
+    {
+        int was_playing = app->player_state.mode > 1;
+        int join_failed = game->disconnected && !app->network_playing;
+        BHMenuRuntime *entry = app->network_entry;
+        network_trace(app);
+        if (!bh_remote_clear(&app->remote_messages))
+            return failure(app, 12);
+        bh_network_close(game);
+        app->slot = -1;
+        app->network_playing = 0;
+        app->network_entry = NULL;
+        entry->input_blocked = 0;
+        app->flyby.player_slot = &app->mission;
+        app->flyby.scenario = &app->ship;
+        if (was_playing && !bh_player_leave_network(&app->player_tick))
+            return failure(app, 12);
+        app->effect.pending_identity = app->pulse.sync_identity = &app->sync_identity;
+        if (was_playing)
+            bh_message_enqueue(&app->messages, "1Network session ended.");
+        else if (join_failed)
+        {
+            bh_input_set_enabled(entry->input, &app->snapshot, 1);
+            if (entry == app->menu.network_menu)
+                network_menu_status(app, 1, cancelled ? "Connection cancelled" : "Could not reach host");
+            else if (!cancelled)
+                bh_message_enqueue(&app->messages, "1Could not join network session.");
+        }
+        if (app->network_log)
+        {
+            fprintf(app->network_log, "session_end mode=%ld\n", app->player_state.mode);
+            fflush(app->network_log);
+        }
+        return 1;
+    }
+    if (game->local_player && app->player_state.mode == 0)
+    {
+        BHMenuRuntime *entry = app->network_entry;
+        app->slot = (long)game->local_player - 1;
+        app->flyby.player_slot = &app->slot;
+        app->flyby.scenario = &app->network_ship;
+        app->scores.local_index = app->slot;
+        app->player_state.mode = game->hosting ? 2 : 3;
+        app->network_scores.mode = app->player_state.mode;
+        app->network_playing = 1;
+        entry->input_blocked = 0;
+        bh_input_set_enabled(entry->input, &app->snapshot, 0);
+        entry->exiting = 1;
+    }
+    return 1;
+}
+
+static void network_tick(BHGameApp *app)
+{
+    int active = app->player_state.mode > 1 && app->slot >= 0;
+    unsigned short tick = (unsigned short)app->player_state.tick;
+    if (active)
+    {
+        memcpy(&app->network_world, (char *)app->player + 0xc4, 4);
+        if (app->network_world)
+            app->network_world_index = (unsigned short)bh_navigation_find(&app->network_positions, app->network_world);
+    }
+    app->actor_launch.mode = app->player_state.mode;
+    app->physics_effects.peer_count = app->effect_network.peers = app->pulse.peers = active ? 2 : 0;
+    app->weapon_fire.peers = app->weapon_pulse.peers = active ? 2 : 0;
+    app->weapon_fire.sender = app->weapon_pulse.sender = app->physics_effects.sender = tick;
+    app->weapon_fire.local_id = app->weapon_pulse.local_id = active ? app->slot : -1;
+    app->remote_query.local_id = (unsigned long)app->slot;
+    memcpy(app->weapon_fire.remote, app->remote, sizeof(app->remote));
+    if (active && app->frame % 30 == 0)
+        network_trace(app);
+}
+
 static void __cdecl source_produce(void *user)
 {
     BHGameApp *app = (BHGameApp *)user;
@@ -2093,7 +2455,7 @@ static int manual_loop(BHGameApp *app)
 {
     BHSimulationClock clock;
     unsigned long i, ticks, tick;
-    int produce;
+    int produce, focused;
 #ifdef DEBUGGING
     uint64_t simulation_start, render_start, present_start, frame_end;
 #endif
@@ -2126,9 +2488,13 @@ static int manual_loop(BHGameApp *app)
             app->quit = 1;
         if (app->quit)
             break;
-        if (!bh_sdl_active())
-        {
+        if (!network_poll(app))
+            break;
+        focused = bh_sdl_active();
+        if (!focused)
             app->focus_sample = 0;
+        if (!focused && !app->network_game.host)
+        {
             clock.ready = 0;
             app->interpolation.ready = 0;
 #ifdef DEBUGGING
@@ -2137,7 +2503,7 @@ static int manual_loop(BHGameApp *app)
             bh_sdl_delay(20);
             continue;
         }
-        if (!app->focus_sample)
+        if (focused && !app->focus_sample)
         {
             clock.ready = 0;
             app->interpolation.ready = 0;
@@ -2163,6 +2529,7 @@ static int manual_loop(BHGameApp *app)
             app->menu_settings.input_profile = app->profile;
             app->player_create.profile = app->profile;
             app->actor_damage.mode = app->player_state.mode;
+            network_tick(app);
             app->eye = app->flyby_state.camera.position;
             app->angles = app->flyby_state.camera.angles;
             app->contacts.has_camera = 1;
@@ -2318,7 +2685,8 @@ static void cleanup(BHGameApp *app)
     free(app->physics_worlds);
     free(app->reset_nodes);
 }
-int bh_game_app_run(const char *directory, const char *settings_path, int profile)
+int bh_game_app_run(const char *directory, const char *settings_path, int profile,
+                    const char *network_address, unsigned short network_port)
 {
     BHGameApp *app;
     int result;
@@ -2417,7 +2785,15 @@ int bh_game_app_run(const char *directory, const char *settings_path, int profil
     }
 
     app->initialized = 1;
-
+    app->slot = -1;
+    if (getenv("BH_NETWORK_TRACE"))
+        app->network_log = fopen(bh_sdl_settings_file("network.log"), "w");
+    if (network_port && !network_start(app, app->menu.root, network_address, network_port))
+    {
+        bh_sdl_report_error("Could not open the multiplayer session. Check the IPv4 address and UDP port.");
+        app->error = 2;
+        goto done;
+    }
     manual_loop(app);
 
 done:
@@ -2425,6 +2801,17 @@ done:
     if (result)
         report_failure(app);
 
+    if (app->network_game.host)
+    {
+        network_trace(app);
+        bh_remote_clear(&app->remote_messages);
+        bh_network_close(&app->network_game);
+    }
+    if (app->network_log)
+        fclose(app->network_log);
+    free(app->network_positions.nodes);
+    free(app->effect_indices);
+    free(app->pulse_indices);
     cleanup(app);
 
     bh_math_environment_leave(&app->math);

@@ -425,6 +425,7 @@ int __cdecl bh_physics_step(BHPhysicsStepContext *ctx, BHEntity *entity, float d
     BHVec3 movement, angles, slide;
     BHPhysicsResponse response;
     BHEntity *recipient = NULL;
+    const BHPhysicsStepWorld *current;
     unsigned long i, g, recipient_generation = 0;
     float margin, second_mass;
     int hit, result, saved_fallback, complete = 0;
@@ -572,7 +573,9 @@ int __cdecl bh_physics_step(BHPhysicsStepContext *ctx, BHEntity *entity, float d
         goto done;
     }
     bh_physics_step_publish(b);
-    if (!bh_physics_effects_run(ctx->effects, &ctx->first, response.audio_level))
+    current = world(ctx, b->world);
+    if (!bh_physics_effects_run(ctx->effects, &ctx->first, response.audio_level, b->world,
+                                (unsigned short)(current ? current->index : 0)))
         ctx->error = BH_PHYSICS_STEP_EFFECT;
     ++ctx->contacts;
     if (response.emit_first && entity->query)

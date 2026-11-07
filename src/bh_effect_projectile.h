@@ -8,6 +8,7 @@
 struct BHEffectOrbitTickContext;
 struct BHEffectAcceleratedContext;
 struct BHEffectSplitContext;
+struct BHEffectNetworkContext;
 typedef union BHEffectPacket {
     long words[10];
     float floats[10];
@@ -22,7 +23,9 @@ typedef struct BHEffectProjectileContext
     BHScriptExplosionContext *explosion;
     BHEffectDrawContext *draw;
     BHTrailContext *trails;
+    unsigned long *pending_identity;
     struct BHEffectSplitContext *split;
+    struct BHEffectNetworkContext *network;
     unsigned long blast_sound, impact_sound, ricochet_sound, loop_sound, second_loop_sound;
     unsigned long smoke_image, trail_image;
     unsigned long packets, flashes, particles, random_calls;

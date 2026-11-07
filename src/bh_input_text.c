@@ -29,7 +29,8 @@ static int valid(BHInputTextCapture *c)
     if (!c || !c->pool || !c->input || !c->snapshot || !c->state || !c->menu || !c->rows || !c->sound || !c->buffer ||
         !c->capacity || c->limit < 0 || (unsigned long)c->limit >= c->capacity)
         return 0;
-    if (c->commit != BH_TEXT_COMMIT_PROFILE || !c->profile || c->limit > 15)
+    if (c->limit > 15 || (c->commit == BH_TEXT_COMMIT_PROFILE ? !c->profile
+                           : c->commit != BH_TEXT_COMMIT_ADDRESS || !c->address_commit))
         return 0;
     end = (const char *)memchr(c->buffer, 0, c->capacity);
     return end && c->length >= 0 && c->length <= c->limit &&
@@ -48,7 +49,8 @@ static void paint(BHInputTextCapture *c)
     for (i = 0; i < n; ++i)
         if (c->buffer[i] >= 'a' && c->buffer[i] <= 'z')
             c->buffer[i] -= 32;
-    sprintf(c->display, "%s_", c->buffer + first);
+    sprintf(c->display, "%s_%s", c->buffer + first,
+            c->commit == BH_TEXT_COMMIT_ADDRESS ? "\nA Join  B Back" : "");
     ++c->repaints;
     if (!bh_menu_row_refresh(c->rows, (unsigned long)c->menu->selection, NULL, c->display))
         c->error = 1;
@@ -59,6 +61,40 @@ static void __cdecl text_tick(BHEntity *e)
     memcpy(&c, e->payload, 4);
     if (c && c->entity == e)
         bh_input_text_step(c);
+}
+static void address_input(BHPlatformTextEvent event, const char *text, void *user)
+{
+    BHInputTextCapture *c = user;
+    BHMenuSettingsRefresh refresh;
+    long length = c->length;
+    if (event == BH_PLATFORM_TEXT_CANCEL || event == BH_PLATFORM_TEXT_SUBMIT)
+    {
+        if (!bh_input_text_cancel(c))
+            return;
+        sound(c, 1);
+        if (event == BH_PLATFORM_TEXT_SUBMIT)
+            c->address_commit(c->address_user, c->buffer);
+        else if ((refresh = c->menu->rows[c->menu->selection]->refresh) != NULL)
+            refresh(c->menu, c->menu->selection);
+        return;
+    }
+    if (event == BH_PLATFORM_TEXT_BACKSPACE)
+    {
+        if (c->length > 0)
+            --c->length;
+    }
+    else if (event == BH_PLATFORM_TEXT_INSERT)
+    {
+        for (; *text && c->length < c->limit; ++text)
+            if ((*text >= '0' && *text <= '9') || *text == '.')
+                c->buffer[c->length++] = *text;
+    }
+    if (c->length != length)
+    {
+        c->buffer[c->length] = 0;
+        sound(c, 1);
+        paint(c);
+    }
 }
 static int begin(BHInputTextCapture *c, int initial_paint)
 {
@@ -73,6 +109,19 @@ static int begin(BHInputTextCapture *c, int initial_paint)
     e->step = text_tick;
     c->entity = e;
     c->error = 0;
+    if (c->commit == BH_TEXT_COMMIT_ADDRESS)
+    {
+        e->step = NULL;
+        if (!bh_sdl_text_begin(address_input, c))
+        {
+            bh_entity_release(c->pool, e);
+            c->entity = NULL;
+            return 0;
+        }
+        if (initial_paint)
+            paint(c);
+        return !c->error;
+    }
     if (initial_paint)
         paint(c);
     if (!bh_input_set_enabled(c->input, c->snapshot, 1))
@@ -97,7 +146,7 @@ int __cdecl bh_input_text_step(BHInputTextCapture *c)
     unsigned long p;
     long key;
     BHMenuSettingsRefresh refresh;
-    if (!c || !c->entity || !valid(c))
+    if (!c || !c->entity || c->commit != BH_TEXT_COMMIT_PROFILE || !valid(c))
         return 0;
     e = c->entity;
     c->error = 0;
@@ -190,10 +239,13 @@ int __cdecl bh_input_text_step(BHInputTextCapture *c)
 }
 int __cdecl bh_input_text_cancel(BHInputTextCapture *c)
 {
-    int okay;
+    int okay = 1;
     if (!c || !c->entity || c->pool->dispatch_depth)
         return 0;
-    okay = bh_input_set_enabled(c->input, c->snapshot, 0);
+    if (c->commit == BH_TEXT_COMMIT_ADDRESS)
+        bh_sdl_text_end();
+    else
+        okay = bh_input_set_enabled(c->input, c->snapshot, 0);
     if (!bh_entity_release(c->pool, c->entity))
         return 0;
     c->entity = NULL;

@@ -23,6 +23,40 @@ static int valid(BHWeaponFireContext *ctx, BHEntity *weapon_entity, BHEntity *en
 {
     return ctx && weapon_entity && entity && ctx->sound && bh_math_environment_supported();
 }
+static unsigned char target_id(BHWeaponFireContext *ctx, BHEntity *target)
+{
+    unsigned long i;
+    unsigned char id = 255;
+    if (!target)
+        return id;
+    if (target == ctx->local)
+        return (unsigned char)ctx->local_id;
+    for (i = 0; i < 8; i++)
+        if (ctx->remote[i] == target)
+            id = (unsigned char)i;
+    return id;
+}
+void __cdecl bh_weapon_fire_packet(BHWeaponFireContext *ctx, unsigned char a, unsigned char b, unsigned char d,
+                                   BHEntity *target)
+{
+    BHPacketWriter writer;
+    unsigned char payload[5];
+    if (!ctx->transport || ctx->local_id < 0)
+        return;
+    payload[0] = (unsigned char)ctx->local_id;
+    payload[1] = a;
+    payload[2] = b;
+    payload[3] = d;
+    payload[4] = target_id(ctx, target);
+    if (bh_packet_begin(&writer, ctx->packet, sizeof(ctx->packet), 8, ctx->sender) &&
+        bh_packet_append(&writer, payload, 5) && bh_packet_finish(&writer, &ctx->packet_bytes))
+    {
+        bh_network_send(ctx->transport, 0, ctx->packet, ctx->packet_bytes, 0);
+        ++ctx->packets;
+    }
+    else
+        ctx->error = 2;
+}
 int __cdecl bh_weapon_fire_empty(BHWeaponFireContext *ctx, const BHEntity *entity)
 {
     if (!ctx->messages || !ctx->empty_warning)
@@ -83,6 +117,11 @@ int __cdecl bh_weapon_fire_ballistic(BHWeaponFireContext *ctx, BHEntity *weapon_
         bh_sound_request(ctx->sound, ctx->ballistic_sound, .75f, 1.5f, &muzzle, &entity->origin);
         get(entity, 0xc4, &world, 4);
         bh_projectile_create_ballistic(ctx->projectiles, world, entity, &muzzle, &velocity, 2);
+        if (ctx->peers > 1 && !weapon_state->delay)
+        {
+            bh_weapon_fire_packet(ctx, 4, 2, 1, NULL);
+            weapon_state->delay = 8;
+        }
         get(entity, 0x2a4, &recoil, 12);
         for (i = 0; i < 3; i++)
             ((float *)&recoil)[i] = stored((double)((float *)&recoil)[i] - (double)((float *)&forward)[i] * (-3));
@@ -136,6 +175,11 @@ int __cdecl bh_weapon_fire_homing(BHWeaponFireContext *ctx, BHEntity *weapon_ent
         for (i = 0; i < 3; i++)
             ((float *)&recoil)[i] = stored((double)((float *)&recoil)[i] - (double)((float *)&forward)[i] * 4);
         put(entity, 0x2a4, &recoil, 12);
+        if (ctx->peers > 1 && !weapon_state->delay)
+        {
+            bh_weapon_fire_packet(ctx, 2, 4, 2, weapon_state->hud.target);
+            weapon_state->delay = 8;
+        }
         ++ctx->shots;
     }
     weapon_state->word_e8 = phase + 1;
@@ -154,6 +198,8 @@ int __cdecl bh_weapon_area_start(BHWeaponFireContext *ctx, BHEntity *weapon_enti
         return bh_weapon_fire_empty(ctx, entity);
     weapon_state->ammo = (long)((unsigned long)weapon_state->ammo - 1);
     weapon_state->word_e8 = 5;
+    if (ctx->peers > 1)
+        bh_weapon_fire_packet(ctx, 5, 1, 4, NULL);
     return ctx->error == 0;
 }
 int __cdecl bh_weapon_area_tick(BHWeaponFireContext *ctx, BHEntity *weapon_entity, BHEntity *entity)

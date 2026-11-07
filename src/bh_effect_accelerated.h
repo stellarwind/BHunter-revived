@@ -2,6 +2,7 @@
 #define BH_EFFECT_ACCELERATED_H
 #include "bh_effect_projectile.h"
 #include "bh_effect_puff.h"
+#include "bh_effect_network.h"
 typedef struct BHEffectAcceleratedContext
 {
     BHEffectPuffContext *puffs;

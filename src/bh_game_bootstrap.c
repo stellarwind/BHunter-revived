@@ -169,6 +169,21 @@ static void __cdecl submenu_first(BHMenuActions *a, long index)
     (void)index;
     bh_menu_submenu_first(a->settings);
 }
+static void __cdecl network_ship_picker(BHMenuActions *a, long index)
+{
+    BHMenuRuntime *picker = action_menu(a)->owner->runtime->network_ship_menu;
+    (void)index;
+    if (a->network_ship)
+    {
+        picker->actions->menu->selection = *a->network_ship;
+        picker->actions->menu->display_selection = (float)*a->network_ship;
+    }
+}
+static void __cdecl network_ship_select(BHMenuActions *a, long index)
+{
+    if (a->network_ship)
+        *a->network_ship = index;
+}
 static void __cdecl save(BHMenuActions *a, long index)
 {
     (void)index;
@@ -190,6 +205,10 @@ static BHMenuAction action(unsigned long id)
         return 0;
     case 0x42cae0:
         return submenu_first;
+    case 0x42cb10:
+        return network_ship_picker;
+    case 0x42caa0:
+        return network_ship_select;
     case 0x42f350:
         return save;
     case 0x42d070:
@@ -204,6 +223,10 @@ static BHMenuAction action(unsigned long id)
         return bh_menu_action_profile_promote;
     case 0x42f2b0:
         return bh_menu_action_graphics_notice;
+    case 0x42f360:
+        return bh_menu_action_network_host;
+    case 0x42f390:
+        return bh_menu_action_network_join;
     default:
         return 0;
     }
@@ -238,6 +261,9 @@ static void __cdecl row_refresh(BHMenuSettingsMenu *s, long row)
     m->edits.rows = &m->object.rows;
     switch (m->refresh[row])
     {
+    case 0x42d920:
+        bh_menu_network_address(&m->actions, row);
+        return;
     case 0x42d1b0:
         fn = bh_menu_edit_video;
         break;
@@ -366,6 +392,8 @@ int __cdecl bh_bootstrap_menus(BHGameBootstrap *c)
     if (c->actions->settings)
         c->actions->settings->ship_menu = &menu(c, 0x4cdc9c)->settings;
     c->runtime->root = &menu(c, 0x495e40)->runtime;
+    c->runtime->network_menu = &menu(c, 0x4d1488)->runtime;
+    c->runtime->network_ship_menu = &menu(c, 0x4cdca0)->runtime;
     c->runtime->ship_menu = &menu(c, 0x4cdc9c)->runtime;
     for (i = 0; i < BH_BOOTSTRAP_MENUS; ++i)
     {

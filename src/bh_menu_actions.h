@@ -29,6 +29,10 @@ struct BHMenuActions
     BHSoundQueue *sound;
     unsigned long denial_sound;
     const char *player_name;
+    const char *network_address;
+    long *network_ship;
+    void (*network_start)(void *user, const char *address);
+    void *network_user;
     unsigned long refreshes, paints, saves;
     int error;
 };
@@ -37,6 +41,9 @@ void __cdecl bh_menu_action_audio(BHMenuActions *, long);           /*42db60*/
 void __cdecl bh_menu_action_profile(BHMenuActions *, long);         /*42df90*/
 void __cdecl bh_menu_action_profile_promote(BHMenuActions *, long); /*42e150*/
 void __cdecl bh_menu_action_graphics_notice(BHMenuActions *, long); /*42f2b0*/
+void __cdecl bh_menu_action_network_host(BHMenuActions *, long);
+void __cdecl bh_menu_action_network_join(BHMenuActions *, long);
+void bh_menu_network_address(BHMenuActions *, long);
 /* Callers supply real initialized owners, current/root menus, safe terminated
    original profile text and writable private CFG path. Original rows
    may have absent refresh/action methods; non-NULL methods must be actual

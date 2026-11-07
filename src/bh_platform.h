@@ -20,6 +20,14 @@ extern "C"
         int down, repeat;
     } BHPlatformEvent;
     typedef void (*BHPlatformInput)(const BHPlatformEvent *, void *);
+    typedef enum BHPlatformTextEvent
+    {
+        BH_PLATFORM_TEXT_INSERT,
+        BH_PLATFORM_TEXT_BACKSPACE,
+        BH_PLATFORM_TEXT_SUBMIT,
+        BH_PLATFORM_TEXT_CANCEL
+    } BHPlatformTextEvent;
+    typedef void (*BHPlatformTextInput)(BHPlatformTextEvent, const char *, void *);
 #ifdef _WIN32
     void bh_sdl_use_dx12(int enabled);
 #endif
@@ -29,6 +37,8 @@ extern "C"
     int bh_sdl_mouse(int *x, int *y);
     int bh_sdl_warp(int x, int y);
     unsigned bh_sdl_key_character(unsigned key);
+    int bh_sdl_text_begin(BHPlatformTextInput, void *);
+    void bh_sdl_text_end(void);
     void bh_sdl_gamepad(BHGamepadState *);
     /* Milliseconds wrap at 2^32; subtract unsigned values for elapsed intervals.
    The profiler uses monotonic nanoseconds without 32-bit truncation. */

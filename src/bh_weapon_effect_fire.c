@@ -10,8 +10,13 @@ static float stored(double x)
 }
 static int valid(BHWeaponEffectFireContext *ctx, BHEntity *weapon_entity, BHEntity *entity)
 {
-    return ctx && ctx->fire && ctx->projectile && ctx->fire->sound && weapon_entity && entity &&
-           bh_math_environment_supported();
+    return ctx && ctx->fire && ctx->projectile && ctx->fire->sound && weapon_entity && entity && bh_math_environment_supported();
+}
+static void sync(BHWeaponEffectFireContext *ctx)
+{
+    BHWeaponFireContext *f = ctx->fire;
+    if (f->peers > 1 && ctx->projectile->pending_identity)
+        *ctx->projectile->pending_identity = ((unsigned long)f->local_id | 0x4000UL) << 16 | f->sender;
 }
 static int alternate(BHWeaponEffectFireContext *ctx, BHEntity *weapon_entity, BHEntity *entity, int split)
 {
@@ -55,6 +60,7 @@ static int alternate(BHWeaponEffectFireContext *ctx, BHEntity *weapon_entity, BH
         ((float *)&muzzle)[i] = stored(coordinate);
     }
     memcpy(&world, (unsigned char *)entity + 0xc4, 4);
+    sync(ctx);
     if (split)
     {
         for (i = 0; i < 3; i++)
@@ -68,11 +74,15 @@ static int alternate(BHWeaponEffectFireContext *ctx, BHEntity *weapon_entity, BH
                 ((float *)&velocity)[i] = stored((double)((float *)&side)[i] * dot + ((float *)&velocity)[i]);
         }
         bh_effect_split_create(ctx->projectile, world, entity, &muzzle, &velocity, 3, 10, ctx->split_model, 1);
+        if (f->peers > 1)
+            bh_weapon_fire_packet(f, 1, 0, 6, NULL);
     }
     else
     {
         bh_effect_orbit_create(ctx->projectile, world, entity, &muzzle, &entity->origin, &right, &up, &forward, 8,
                                target);
+        if (f->peers > 1)
+            bh_weapon_fire_packet(f, 1, 0, 3, target);
     }
     memcpy(&recoil, (unsigned char *)entity + 0x2a4, 12);
     for (i = 0; i < 3; i++)
@@ -126,8 +136,11 @@ int __cdecl bh_weapon_effect_accelerated_fire(BHWeaponEffectFireContext *ctx, BH
         ((float *)&acc)[i] = stored((double)((float *)&forward)[i] * 20);
     }
     acc.y = stored((double)forward.y * 20 - (-2));
+    sync(ctx);
     memcpy(&world, (unsigned char *)entity + 0xc4, 4);
     bh_effect_accelerated_create(ctx->projectile, world, entity, &muzzle, &entity->origin, &acc);
+    if (f->peers > 1)
+        bh_weapon_fire_packet(f, 1, 0, 7, NULL);
     memcpy(&recoil, (unsigned char *)entity + 0x2a4, 12);
     for (i = 0; i < 3; i++)
         ((float *)&recoil)[i] = stored((double)((float *)&recoil)[i] - (double)((float *)&forward)[i] * (-10));

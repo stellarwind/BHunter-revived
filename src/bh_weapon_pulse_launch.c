@@ -39,8 +39,12 @@ int __cdecl bh_weapon_pulse_launch(BHWeaponPulseLaunchContext *ctx, BHEntity *we
         ((float *)&muzzle)[i] = stored((double)((float *)&entity->position)[i] + ((float *)&up)[i]);
         ((float *)&velocity)[i] = stored((double)((float *)&forward)[i] * 15);
     }
+    if (f->peers > 1 && ctx->projectile->sync_identity)
+        *ctx->projectile->sync_identity = ((unsigned long)f->local_id | 0x4000UL) << 16 | f->sender;
     memcpy(&world, (unsigned char *)entity + 0xc4, 4);
     bh_pulse_projectile_create(ctx->projectile, world, entity, &muzzle, &entity->origin, &velocity);
+    if (f->peers > 1)
+        bh_weapon_fire_packet(f, 1, 0, 8, NULL);
     memcpy(&recoil, (unsigned char *)entity + 0x2a4, 12);
     for (i = 0; i < 3; i++)
         ((float *)&recoil)[i] = stored((double)((float *)&recoil)[i] - (double)((float *)&forward)[i] * (-6));

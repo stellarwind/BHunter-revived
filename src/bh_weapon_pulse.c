@@ -82,6 +82,8 @@ int __cdecl bh_weapon_pulse_fire(BHWeaponPulseContext *ctx, BHEntity *weapon, BH
     float *out, *h, *r, spin, angle, duration, distance = 125;
     double recoil, factor, dot;
     int random, world = 0, result;
+    unsigned char payload[5];
+    BHPacketWriter writer;
     if (!ctx || !weapon || !player || !player->query || !ctx->debris ||
         !bh_math_environment_supported())
         return 0;
@@ -286,6 +288,26 @@ int __cdecl bh_weapon_pulse_fire(BHWeaponPulseContext *ctx, BHEntity *weapon, BH
     bh_draw_segment(b->particles->queue, 3, ctx->trail_image, &trail, &trail_end, .3f, .01f, .5f, 0, 0);
     offset(&trail_end, &trail, &direction, 3);
     bh_draw_segment(b->particles->queue, 3, ctx->trail_image, &trail, &trail_end, .3f, .01f, .5f, 0, 0);
+    if (ctx->peers > 1 && !weapon_state->delay)
+    {
+        if (ctx->local_id >= 0)
+        {
+            payload[0] = (unsigned char)ctx->local_id;
+            payload[1] = 4;
+            payload[2] = 2;
+            payload[3] = 0;
+            payload[4] = 255;
+            if (bh_packet_begin(&writer, ctx->packet, sizeof(ctx->packet), 8, ctx->sender) &&
+                bh_packet_append(&writer, payload, 5) && bh_packet_finish(&writer, &ctx->packet_bytes))
+            {
+                ctx->last_send = bh_network_send(ctx->transport, 0, ctx->packet, ctx->packet_bytes, 0);
+                ++ctx->packets;
+            }
+            else
+                ctx->error = 2;
+        }
+        weapon_state->delay = 8;
+    }
     weapon_state->word_e8 = phase + 1;
     ++ctx->shots;
     return ctx->error == 0;

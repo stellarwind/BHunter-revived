@@ -7,6 +7,7 @@
 #include "bh_player_reset.h"
 #include "bh_player_query.h"
 #include "bh_weapon_dispatch.h"
+#include "bh_remote_messages.h"
 #include "bh_world_reset.h"
 #include "bh_menu_runtime.h"
 #include "bh_message_panel.h"
@@ -15,8 +16,8 @@ typedef int(__cdecl *BHPlayerForceMethod)(BHPlayerForceControl *, float, int);
 typedef struct BHPlayerTickState
 {
     long paused, mode, world_mode, confirmation, ending, death_frames, god_mode;
-    long damage_warning, hull_warning, repair_warning;
-    unsigned long tick, saved_model;
+    long damage_warning, hull_warning, repair_warning, send_delay;
+    unsigned long tick, peers, saved_model;
     float saved_cd_volume, saved_wave_volume;
     BHPlayerForceMethod force;
 } BHPlayerTickState;
@@ -58,13 +59,22 @@ typedef struct BHPlayerTick
     BHContactEffects *contacts;
     BHFlashFlareContext *flash;
     BHScriptExplosionContext *explosions;
+    BHNetworkGame *game;
+    BHRemoteMessages *network;
+    BHNetworkScores *scores;
+    const BHNavigation *navigation;
+    float *latency;
     const float *camera_yaw;
+    BHEntity **damage_source;
     BHPlayerTickResources resources;
-    unsigned long generation, calls, near_contacts, ground_particles;
+    unsigned char packet[64];
+    BHPacketWriter writer;
+    unsigned long packet_bytes;
+    unsigned long generation, calls, packets, near_contacts, ground_particles;
     int error;
     const char *menu_return_stage;
 } BHPlayerTick;
-/* Whole0041e850. All original pause/physics/force/recoil/contact,
+/* Whole0041e850. All original pause/network/physics/force/recoil/contact,
    surface particles, menu/death/respawn, weapon input and camera, cheats,
    damage/protection/audio/timer branches use the actual typed source owners.
    This is a single callback over supplied data; source fixtures never poll
@@ -77,6 +87,7 @@ typedef struct BHPlayerTick
    pointer is stored inside original live player physics/plume/input fields.
    Unbind before retiring the pool/context. Installed refresh invokes actual scene. */
 int __cdecl bh_player_tick(BHPlayerTick *);
+int bh_player_leave_network(BHPlayerTick *);
 int __cdecl bh_player_tick_bind(BHPlayerTick *, BHEntity *);
 int __cdecl bh_player_tick_unbind(BHPlayerTick *);
 BHPlayerTick *__cdecl bh_player_tick_context(BHEntity *);

@@ -239,6 +239,8 @@ void __cdecl bh_effect_accelerated_tick(BHEntity *entity)
             bh_sound_stop(b->sound, voice);
             voice = BH_SOUND_INVALID;
             put(entity, 0x128, &voice, 4);
+            if (ctx->network)
+                bh_effect_network_emit(ctx->network, entity, 0x138, 0x134, 2, &zero);
             bh_effect_detonate(ctx, entity);
             return;
         }

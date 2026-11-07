@@ -3,6 +3,12 @@
 #include "bh_pulse_visual.h"
 #include "bh_homing_projectile.h"
 #include "bh_script_explosion.h"
+#include "bh_network_transport.h"
+typedef struct BHPulseWorldIndex
+{
+    BHWorldGeometry *world;
+    unsigned short index;
+} BHPulseWorldIndex;
 typedef struct BHPulseProjectileContext
 {
     BHHomingProjectileContext *effects;
@@ -10,9 +16,14 @@ typedef struct BHPulseProjectileContext
     BHPulseVisualContext *draw;
     BHScriptDebrisContext *debris;
     BHScriptExplosionContext *explosion;
-    unsigned long *identity;
+    BHNetworkTransport *transport;
+    const BHPulseWorldIndex *world_indices;
+    unsigned long world_count;
+    unsigned long *identity, *sync_identity;
     unsigned long loop_sound, bounce_sound;
-    unsigned long explosions, bounces, liquid_hits;
+    unsigned long peers, explosions, bounces, liquid_hits, packets;
+    unsigned char packet[272];
+    unsigned long packet_bytes;
     int error;
 } BHPulseProjectileContext;
 BHEntity *__cdecl bh_pulse_projectile_create(BHPulseProjectileContext *, BHWorldGeometry *, BHEntity *, const BHVec3 *,

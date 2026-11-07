@@ -92,6 +92,22 @@ static void begin_text(BHMenuActions *c, const char *initial, long limit, BHInpu
         }
     }
 }
+void __cdecl bh_menu_action_network_host(BHMenuActions *c, long row)
+{
+    (void)row;
+    if (c->network_start)
+        c->network_start(c->network_user, NULL);
+}
+void __cdecl bh_menu_action_network_join(BHMenuActions *c, long row)
+{
+    (void)row;
+    if (c->network_address)
+        begin_text(c, c->network_address, 15, BH_TEXT_COMMIT_ADDRESS);
+}
+void bh_menu_network_address(BHMenuActions *c, long row)
+{
+    paint(c, row, c->network_address && *c->network_address ? c->network_address : "Enter host IPv4");
+}
 void __cdecl bh_menu_action_video(BHMenuActions *c, long row)
 {
 #ifdef BH_SDL_BACKEND

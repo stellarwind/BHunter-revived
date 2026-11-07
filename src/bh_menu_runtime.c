@@ -229,7 +229,7 @@ int __cdecl bh_menu_runtime_step(BHMenuRuntime *m)
         s->selection = m->pending_selection;
     }
     m->pending_selection = -1;
-    if (m == c->ship_menu && s->selection < 3)
+    if ((m == c->ship_menu || m == c->network_ship_menu) && s->selection < 3)
         *c->waypoint = s->selection + 14;
     if (!m->exiting && !blocked(m))
     {
