@@ -101,5 +101,3 @@ This source restoration was decompiled, reconstructed and built with the assista
 ## License
 
 Restoration code: [MIT](LICENSE). Original game assets remain the property of their respective owners. Bundled [SDL3](https://github.com/libsdl-org/SDL/tree/release-3.4.18) uses the zlib license, included in the release.
-
-The overlay uses an embedded [Comic Neue Bold](https://github.com/crozynski/comicneue) bitmap atlas under the [SIL Open Font License 1.1](LICENSES/ComicNeue.txt).
