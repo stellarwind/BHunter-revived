@@ -71,11 +71,9 @@ build\BHunter-source.exe
 
 The game and required DLLs are written directly to `build/`. Keep them together when moving the game.
 
-Vulkan is the default renderer. Run `build\BHunter-source.exe --dx12` to select Direct3D 12. On Windows the build downloads a pinned shader compiler on first use and embeds shaders for both backends in the GPU DLL.
-
 ### Native Linux build
 
-The game builds for 32-bit x86. Install GCC and G++ with 32-bit C and C++ libraries, 32-bit SDL3 development files, Python 3.10+, and `pkg-config` configured to find the 32-bit SDL3 package. Install `dxc` for your build host or set `BH_DXC` to its path. Running the game requires a 32-bit Vulkan loader and driver.
+The game builds for 32-bit x86. Install GCC and G++ with 32-bit C and C++ libraries, 32-bit SDL3 development files, Python 3.10+, and `pkg-config` configured to find the 32-bit SDL3 package. Running the game requires a 32-bit Vulkan loader and driver.
 
 Place `Bhunter.bin` in `GAME_DATA` as above, then run:
 
