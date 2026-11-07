@@ -13,6 +13,8 @@ import tarfile
 import tempfile
 import zipfile
 
+from prepare_sdl3_linux import prepare as prepare_linux_sdl, validate_runtime
+
 ROOT = Path(__file__).resolve().parents[1]
 DIST = ROOT / "dist"
 VERSION = r"[0-9]+(?:\.[0-9]+){1,2}"
@@ -47,11 +49,10 @@ done
 mkdir -p -- "$workspace/GAME_DATA"
 test "$(realpath -e -- "$workspace/GAME_DATA")" = "$workspace/GAME_DATA"
 cp -- "$3" "$workspace/GAME_DATA/Bhunter.bin"
-chroot "$root" /bin/sh -ec 'cd /workspace-release; exec python3 tools/build_gcc.py --incremental'
+chroot "$root" /bin/sh -ec 'cd /workspace-release; python3 tools/prepare_sdl3_linux.py; export PKG_CONFIG_PATH="$PWD/build-cache/sdl3/linux/install/lib/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"; exec python3 tools/build_gcc.py --incremental'
 runtime="$workspace/build/linux-x86"
 cp -- "$runtime/BHunter-source" "$runtime/ENet-LICENSE.txt" "$4/"
-libdir=$(chroot "$root" pkg-config --variable=libdir sdl3)
-chroot "$root" cat "$libdir/libSDL3.so.0" > "$4/libSDL3.so.0"
+cp -- "$workspace/build-cache/sdl3/linux/install/lib/libSDL3.so.0" "$4/libSDL3.so.0"
 """
 
 
@@ -96,6 +97,8 @@ def package_windows(version, stage):
 
 
 def package_linux(version, stage, runtime, sdl):
+    validate_runtime(runtime / "BHunter-source")
+    validate_runtime(sdl, sdl=True)
     name = f"BHunter-{version}-linux-x86"
     archive = stage / f"{name}.tar.gz"
     with tarfile.open(archive, "w:gz") as bundle:
@@ -177,6 +180,11 @@ def main():
     try:
         with tempfile.TemporaryDirectory(prefix=".release-", dir=DIST) as directory:
             stage = Path(directory)
+            if sys.platform.startswith("linux"):
+                sdl_prefix = prepare_linux_sdl()
+                os.environ["PKG_CONFIG_PATH"] = str(sdl_prefix / "lib/pkgconfig") + (
+                    os.pathsep + os.environ["PKG_CONFIG_PATH"] if os.environ.get("PKG_CONFIG_PATH") else ""
+                )
             build_native()
             if os.name == "nt":
                 packages = [package_windows(args.version, stage)]
@@ -185,11 +193,8 @@ def main():
                     build_linux_wsl(args.linux_chroot, args.wsl_distro, runtime)
                     packages.append(package_linux(args.version, stage, runtime, runtime / "libSDL3.so.0"))
             else:
-                libdir = Path(subprocess.check_output(
-                    ["pkg-config", "--variable=libdir", "sdl3"], text=True
-                ).strip())
                 packages = [package_linux(
-                    args.version, stage, ROOT / "build/linux-x86", libdir / "libSDL3.so.0",
+                    args.version, stage, ROOT / "build/linux-x86", sdl_prefix / "lib/libSDL3.so.0",
                 )]
             checksums = []
             for archive in packages:
