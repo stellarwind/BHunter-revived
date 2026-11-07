@@ -1,18 +1,14 @@
 // Original CPU lighting and reversed near/z depth; perspective-correct UVs.
-#ifdef __spirv__
-[[vk::combinedImageSampler]]
-#endif
-Texture2D image : register(t0, space2);
-#ifdef __spirv__
-[[vk::combinedImageSampler]]
-#endif
-SamplerState imageSampler : register(s0, space2);
-cbuffer Draw : register(b0, space3)
+[[vk::binding(0, 2)]]
+Sampler2D image;
+[[vk::binding(0, 3)]]
+cbuffer Draw
 {
     float4 controls;
     float4 fogColor;
 };
-cbuffer Canvas : register(b0, space1)
+[[vk::binding(0, 1)]]
+cbuffer Canvas
 {
     float4 canvas;
 };
@@ -44,7 +40,7 @@ Output VSMain(Input input)
 }
 float4 PSMain(Output input) : SV_Target0
 {
-    float4 texel = image.Sample(imageSampler, input.uv);
+    float4 texel = image.Sample(input.uv);
     if (controls.x > 0.5 && texel.a < 0.5)
         discard;
     float3 rgb = saturate(texel.rgb * input.color.rgb + input.specular.rgb);

@@ -28,9 +28,6 @@ extern "C"
         BH_PLATFORM_TEXT_CANCEL
     } BHPlatformTextEvent;
     typedef void (*BHPlatformTextInput)(BHPlatformTextEvent, const char *, void *);
-#ifdef _WIN32
-    void bh_sdl_use_dx12(int enabled);
-#endif
     int bh_sdl_open(int hidden, BHPlatformInput, void *);
     int bh_sdl_poll(void);
     int bh_sdl_active(void);

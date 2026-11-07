@@ -11,7 +11,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from prepare_sdl3 import prepare, write_shader_header
+from prepare_sdl3 import SHADER_PATH, prepare
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -112,7 +112,7 @@ def main():
     dependencies = [
         path
         for path in (ROOT / "src").rglob("*")
-        if path.is_file() and path.suffix in {".c", ".cpp", ".h", ".inc", ".hlsl"}
+        if path.is_file() and path.suffix in {".c", ".cpp", ".h", ".inc", ".slang"}
     ]
     # ENet 1.3.18, upstream commit 2662c0de09e36f2a2030ccc2c528a3e4c9e8138a.
     enet = ROOT / "third_party/enet"
@@ -260,13 +260,9 @@ def main():
     shutil.copyfile(enet / "LICENSE", out / "ENet-LICENSE.txt")
     runtime_files = ["ENet-LICENSE.txt"]
     if linux:
-        dxc = shutil.which(os.environ.get("BH_DXC", "dxc"))
-        if not dxc:
-            parser.error("Install the host DirectX Shader Compiler (dxc) or set BH_DXC")
         sdl_flags = shlex.split(
             subprocess.check_output(["pkg-config", "--cflags", "--libs", "sdl3"], text=True)
         )
-        write_shader_header(ROOT / "src/shaders/legacy.hlsl", cache_dir / "bh_gpu_shaders.h", dxc)
         run(
             [
                 args.cxx,
@@ -275,7 +271,6 @@ def main():
                 *architecture,
                 *(["-g"] if args.symbols else []),
                 "-D__cdecl=",
-                "-I" + str(cache_dir),
                 ROOT / "src/bh_sdl_gpu.cpp",
                 ROOT / "src/bh_sdl_audio.cpp",
                 "@" + str(response),
@@ -302,7 +297,7 @@ def main():
                 out / executable,
             ]
         )
-        runtime_files += ["BHunterGPU.dll", "SDL3.dll", "SDL3-LICENSE.txt", "shaders/legacy.hlsl"]
+        runtime_files += ["BHunterGPU.dll", "SDL3.dll", "SDL3-LICENSE.txt", SHADER_PATH.as_posix()]
     objdump = subprocess.check_output(
         [args.cc, "-print-prog-name=objdump"], text=True
     ).strip()

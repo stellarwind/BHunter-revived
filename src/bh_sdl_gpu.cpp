@@ -12,7 +12,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include "bh_gpu_shaders.h"
+#include "shaders/bh_gpu_shaders.h"
 #include <map>
 #include <filesystem>
 #include <string>
@@ -92,9 +92,6 @@ struct Batch
 SDL_Window *window;
 SDL_Gamepad *gamepad;
 SDL_GPUDevice *device;
-#ifdef _WIN32
-bool use_dx12;
-#endif
 SDL_GPUShader *vs, *fs;
 SDL_GPUSampler *sampler;
 SDL_GPUTexture *color_target, *depth_target;
@@ -851,14 +848,13 @@ std::vector<unsigned> readback()
     SDL_ReleaseGPUTransferBuffer(device, t);
     return result;
 }
-SDL_GPUShader *shader(const Uint8 *code, size_t size, const char *entry, SDL_GPUShaderFormat format,
-                      SDL_GPUShaderStage stage)
+SDL_GPUShader *shader(const Uint8 *code, size_t size, const char *entry, SDL_GPUShaderStage stage)
 {
     SDL_GPUShaderCreateInfo info{};
     info.code = code;
     info.code_size = size;
     info.entrypoint = entry;
-    info.format = format;
+    info.format = SDL_GPU_SHADERFORMAT_SPIRV;
     info.stage = stage;
     info.num_samplers = stage == SDL_GPU_SHADERSTAGE_FRAGMENT ? 1 : 0;
     info.num_uniform_buffers = 1;
@@ -982,13 +978,6 @@ void apply_mode()
 } // namespace
 extern "C"
 {
-#ifdef _WIN32
-    void bh_sdl_use_dx12(int enabled)
-    {
-        use_dx12 = enabled != 0;
-    }
-#endif
-
     int bh_sdl_open(int hide, BHPlatformInput callback, void *user)
     {
         int saved_width = 0, saved_height = 0, settings_version = 0;
@@ -1063,41 +1052,17 @@ extern "C"
         }
         SDL_free(available);
         finish_modes(settings_version, saved_width, saved_height);
-        const char *driver = "vulkan";
-        SDL_GPUShaderFormat format = SDL_GPU_SHADERFORMAT_SPIRV;
-#ifdef _WIN32
-        if (use_dx12)
-        {
-            driver = "direct3d12";
-            format = SDL_GPU_SHADERFORMAT_DXIL;
-        }
-#endif
-        device = SDL_CreateGPUDevice(format, false, driver);
+        device = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_SPIRV, false, "vulkan");
         if (!device || !SDL_ClaimWindowForGPUDevice(device, window))
         {
-#ifdef _WIN32
-            set_error(use_dx12 ? "Create Direct3D 12 device" : "Create Vulkan device (use --dx12 to try Direct3D 12)");
-#else
             set_error("Create Vulkan device");
-#endif
             return 0;
         }
         SDL_SetGPUSwapchainParameters(device, window, SDL_GPU_SWAPCHAINCOMPOSITION_SDR, SDL_GPU_PRESENTMODE_VSYNC);
         SDL_SetGPUAllowedFramesInFlight(device, 1);
-#ifdef _WIN32
-        if (use_dx12)
-        {
-            vs = shader(dxil_vertex, sizeof(dxil_vertex), "VSMain", format, SDL_GPU_SHADERSTAGE_VERTEX);
-            if (vs)
-                fs = shader(dxil_fragment, sizeof(dxil_fragment), "PSMain", format, SDL_GPU_SHADERSTAGE_FRAGMENT);
-        }
-        else
-#endif
-        {
-            vs = shader(spirv_vertex, sizeof(spirv_vertex), "VSMain", format, SDL_GPU_SHADERSTAGE_VERTEX);
-            if (vs)
-                fs = shader(spirv_fragment, sizeof(spirv_fragment), "PSMain", format, SDL_GPU_SHADERSTAGE_FRAGMENT);
-        }
+        vs = shader(spirv_vertex, sizeof(spirv_vertex), "VSMain", SDL_GPU_SHADERSTAGE_VERTEX);
+        if (vs)
+            fs = shader(spirv_fragment, sizeof(spirv_fragment), "PSMain", SDL_GPU_SHADERSTAGE_FRAGMENT);
         if (!vs || !fs)
         {
             set_error("Create shaders");

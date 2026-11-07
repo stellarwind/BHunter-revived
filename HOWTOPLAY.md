@@ -70,6 +70,37 @@ Use **Up/Down** to select, **Enter/Space/left mouse** to accept, and **Esc/right
 
 On a gamepad, use **D-pad Up/Down** or the **left stick** to select, the **bottom face button (A / Cross)** to accept, and the **right face button (B / Circle)** to go back.
 
+## Multiplayer
+
+The game uses UDP port **27890** by default. On the same local network, join using the host computer's local IPv4 address. The host's firewall must allow incoming UDP on the chosen port.
+
+### From the Network menu
+
+1. Both players select **Network** from the main menu and choose a vehicle.
+2. The host selects **Host** and shares their IPv4 address.
+3. The joining player selects **Join by IP**, enters the host's IPv4 address, then presses **Enter** or **A / Cross** to connect.
+
+### From the command line
+
+Run the host command on one computer and the join command on the other. Replace `192.168.1.50` with the host's IPv4 address.
+
+On Windows, run these from the game folder.
+
+```powershell
+.\BHunter-source.exe --host
+.\BHunter-source.exe --join 192.168.1.50
+```
+
+On Linux, run these from the game folder. The library path lets the packaged build find its bundled SDL.
+
+```sh
+export LD_LIBRARY_PATH="$PWD/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+./BHunter-source --host
+./BHunter-source --join 192.168.1.50
+```
+
+To use a different UDP port, add the same `--port` value to both commands, such as `--port 27900`. The in-game menu uses the default port.
+
 ## Original single-player cheats
 
 Type these during gameplay, without pressing Enter:

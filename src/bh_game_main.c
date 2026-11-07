@@ -10,22 +10,12 @@ int main(int argc, char **argv)
     int i, result, profile = 0, network = 0;
     unsigned long port = BH_NETWORK_PORT;
     const char *address = NULL;
-#ifdef _WIN32
-    int dx12 = 0;
-#endif
     for (i = 1; i < argc; ++i)
     {
 #ifdef DEBUGGING
         if (!strcmp(argv[i], "--profile"))
         {
             profile = 1;
-            continue;
-        }
-#endif
-#ifdef _WIN32
-        if (!strcmp(argv[i], "--dx12"))
-        {
-            dx12 = 1;
             continue;
         }
 #endif
@@ -53,9 +43,6 @@ int main(int argc, char **argv)
     }
     if (!bh_sdl_paths(assets, settings))
         return 2;
-#ifdef _WIN32
-    bh_sdl_use_dx12(dx12);
-#endif
     result = bh_game_app_run("GAME_DATA", bh_sdl_settings_file("source-preview.cfg"), profile,
                              address, network ? (unsigned short)port : 0);
     if (result)
