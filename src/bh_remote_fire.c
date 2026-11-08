@@ -344,7 +344,7 @@ static int shot(BHRemoteFire *fire, BHEntity *entity, short tick, short previous
         return !fire->projectiles->error;
     case 3:
     case 6:
-        if (!fire->effects || fire->effects->pending_identity != fire->sync_identity)
+        if (!fire->effects || !fire->effects->debris || &fire->effects->debris->origin_tag != fire->sync_identity)
             return 0;
         add(&muzzle, &position, &up, .5);
         sethalf(entity, 0x118, (unsigned short)(half(entity, 0x118) + 1));
@@ -483,12 +483,13 @@ static int shot(BHRemoteFire *fire, BHEntity *entity, short tick, short previous
             *fire->sync_identity = 1;
         if (type == 7)
         {
-            if (!fire->effects || !fire->effects->accelerated || fire->effects->pending_identity != fire->sync_identity)
+            if (!fire->effects || !fire->effects->accelerated || !fire->effects->debris ||
+                &fire->effects->debris->origin_tag != fire->sync_identity)
                 return 0;
             bh_effect_accelerated_create(fire->effects, world, entity, &muzzle, &velocity, &v);
             return !fire->effects->error;
         }
-        if (!fire->pulse_projectile || fire->pulse_projectile->sync_identity != fire->sync_identity)
+        if (!fire->pulse_projectile || fire->pulse_projectile->identity != fire->sync_identity)
             return 0;
         bh_pulse_projectile_create(fire->pulse_projectile, world, entity, &muzzle, &velocity, &v);
         return !fire->pulse_projectile->error;

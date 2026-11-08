@@ -1835,6 +1835,7 @@ static int runtime_owners(BHGameApp *app)
     app->weapon_pulse.transport = &app->transport;
     app->weapon_pulse.local_id = -1;
     app->pulse.transport = &app->transport;
+    /* The original keeps the local impact ID separate from replica attribution. */
     app->pulse.sync_identity = &app->sync_identity;
     app->effect.pending_identity = &app->sync_identity;
     app->effect_network.transport = &app->transport;
@@ -2186,7 +2187,6 @@ static int network_bind(BHGameApp *app)
                                       .split_model = app->weapon_effect.split_model};
     app->network_effects.navigation = &app->network_positions;
     app->network_effects.pool = &app->pool;
-    app->effect.pending_identity = app->pulse.sync_identity = &app->debris.origin_tag;
     for (i = 0; i < 8; ++i)
         app->remote_packets.engine_sounds[i] = bh_bootstrap_value(&app->bootstrap, 0x4f5544);
     return 1;
@@ -2335,7 +2335,6 @@ static int network_poll(BHGameApp *app)
         app->flyby.scenario = &app->ship;
         if (was_playing && !bh_player_leave_network(&app->player_tick))
             return failure(app, 12);
-        app->effect.pending_identity = app->pulse.sync_identity = &app->sync_identity;
         if (was_playing)
             bh_message_enqueue(&app->messages, "1Network session ended.");
         else if (join_failed)
