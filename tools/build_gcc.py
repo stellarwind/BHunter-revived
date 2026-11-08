@@ -275,6 +275,7 @@ def main():
                 "-D__cdecl=",
                 ROOT / "src/bh_sdl_gpu.cpp",
                 ROOT / "src/bh_sdl_audio.cpp",
+                ROOT / "src/bh_game_settings.cpp",
                 INI_SOURCE,
                 "@" + str(response),
                 "-Wl,--gc-sections",
@@ -327,7 +328,7 @@ def main():
         for name in runtime_files
     }
     record["passed"] = True
-    record["translation_units"] = len(sources) + 2
+    record["translation_units"] = len(sources) + 3
     (cache_dir / "build.json").write_text(json.dumps(record, indent=2) + "\n")
     print(
         f"Built {out / executable} from {len(sources)} C translation units and the SDL adapters"

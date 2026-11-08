@@ -1,4 +1,5 @@
 #include "bh_game_bootstrap.h"
+#include "bh_game_settings.h"
 #include "bh_atlas_text.h"
 #include "bh_atlas_glyph.h"
 #include "bh_texture_controls.h"
@@ -537,16 +538,21 @@ int bh_game_bootstrap(BHGameBootstrap *c)
         }
     bh_text_queue_clear(c->text, c->graffiti, 0);
     {
-        const char *name = getenv("COMPUTERNAME");
-        if (!name || !*name)
-            name = getenv("HOSTNAME");
-        if (!name || !*name)
-            name = "Anonymous";
-        strncpy(c->computer_name, name, sizeof(c->computer_name) - 1);
-        c->computer_name[sizeof(c->computer_name) - 1] = 0;
+        const char *name = bh_game_settings_player_name();
+        if (!*name)
+        {
+            name = getenv("COMPUTERNAME");
+            if (!name || !*name)
+                name = getenv("HOSTNAME");
+            if (!name || !*name)
+                name = "BHunter";
+            strncpy(c->computer_name, name, sizeof(c->computer_name) - 1);
+            c->computer_name[sizeof(c->computer_name) - 1] = 0;
+            name = c->computer_name;
+        }
+        strncpy(c->player_name, name, sizeof(c->player_name) - 1);
+        c->player_name[sizeof(c->player_name) - 1] = 0;
     }
-    strncpy(c->player_name, c->computer_name, 20);
-    c->player_name[20] = 0;
     c->all_keys = bh_player_input_create(c->inputs, 0);
     if (!c->all_keys)
         return fail(c, 10);

@@ -59,12 +59,17 @@ def prepare(out, *, gnu=True, compiler=None, symbols=False):
         cache = cache / "gcc"
     cache.mkdir(parents=True, exist_ok=True)
     import_lib = cache / ("libBHunterGPU.dll.a" if gnu else "BHunterGPU.lib")
-    inputs = [
+    sources = [
         ROOT / "src/bh_sdl_gpu.cpp",
+        ROOT / "src/bh_sdl_audio.cpp",
+        ROOT / "src/bh_game_settings.cpp",
+    ]
+    inputs = [
+        *sources,
         ROOT / "src/bh_sdl_adapter.h",
         ROOT / "src/bh_render_types.h",
-        ROOT / "src/bh_sdl_audio.cpp",
         ROOT / "src/bh_sdl_audio.h",
+        ROOT / "src/bh_game_settings.h",
         ROOT / "src/shaders/bh_gpu_shaders.h",
         Path(__file__),
         ROOT / "src/bh_video_layout.h",
@@ -101,7 +106,7 @@ def prepare(out, *, gnu=True, compiler=None, symbols=False):
             set(
                 re.findall(
                     r"^    (?:\w+[ \t*]+)+(bh_\w+)\([^;{}]*\)\s*\{",
-                    inputs[0].read_text() + "\n" + (ROOT / "src/bh_sdl_audio.cpp").read_text(),
+                    "\n".join(source.read_text() for source in sources),
                     re.MULTILINE,
                 )
             )
@@ -120,8 +125,7 @@ def prepare(out, *, gnu=True, compiler=None, symbols=False):
             "-static-libgcc",
             "-static-libstdc++",
             "-I" + str(sdk / "include"),
-            str(inputs[0]),
-            str(ROOT / "src/bh_sdl_audio.cpp"),
+            *map(str, sources),
             str(INI_SOURCE),
             str(sdk / "lib/x86/SDL3.lib"),
             "-o",

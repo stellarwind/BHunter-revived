@@ -1,6 +1,7 @@
 #include "bh_game_app.h"
 #include "bh_platform.h"
 #include "bh_game_bootstrap.h"
+#include "bh_game_settings.h"
 #include "bh_loading_progress.h"
 #include "bh_input_devices.h"
 #include "bh_input_messages.h"
@@ -853,6 +854,7 @@ static int platform(BHGameApp *app)
 {
     DDSURFACEDESC surface;
     BHSoftwareRaster raster;
+    bh_game_settings_load(bh_sdl_settings_file(BH_GAME_SETTINGS_FILENAME));
     if (!bh_sdl_open(0, sdl_input, app))
         return failure(app, 3);
     strcpy(app->device_names[0].name, "SDL3 GPU");

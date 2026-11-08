@@ -5,11 +5,10 @@
 #include "bh_sdl_adapter.h"
 #include "bh_video_layout.h"
 #include "bh_overlay_text.h"
-#include "../third_party/inih/ini.h"
+#include "bh_game_settings.h"
 #include <SDL3/SDL.h>
 #include <algorithm>
 #include <array>
-#include <charconv>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -118,25 +117,16 @@ unsigned long text_gamepad_buttons;
 char error_text[1024];
 char report_text[1024];
 bool quitting, hidden;
-int normal_x = SDL_WINDOWPOS_CENTERED, normal_y = SDL_WINDOWPOS_CENTERED, normal_w = 1280, normal_h = 960, mode = 0;
-bool maximized = false;
 std::vector<std::pair<int, int>> modes;
 int selected_resolution = 0;
-int selected_aspect = 0;
-struct Aspect
-{
-    int numerator, denominator;
-    const char *label;
-};
-const Aspect aspects[] = {{4, 3, "4:3"}, {16, 9, "16:9"}, {16, 10, "16:10"}, {21, 9, "21:9"}};
 void output_size(int &w, int &h)
 {
     if (!SDL_GetWindowSizeInPixels(window, &w, &h))
     {
-        w = normal_w;
-        h = normal_h;
+        w = bh_game_settings.window_width;
+        h = bh_game_settings.window_height;
     }
-    if (mode && !modes.empty())
+    if (bh_game_settings.borderless && !modes.empty())
     {
         w = modes[selected_resolution].first;
         h = modes[selected_resolution].second;
@@ -148,12 +138,13 @@ void canvas_margins(float &x, float &y)
 {
     int w, h;
     output_size(w, h);
-    const auto &selected = aspects[selected_aspect];
+    const auto &selected = bh_game_aspects[bh_game_settings.aspect];
     float aspect = (float)selected.numerator / selected.denominator;
     /* The selector groups common modes (e.g. 2560x1080 and 3440x1440 are
        both sold as 21:9). Use the chosen mode's exact shape in Borderless,
        never the desktop's shape, so its pixels and the UI stay square. */
-    if (mode && !modes.empty() && video_layout_aspect_matches(w, h, selected.numerator, selected.denominator))
+    if (bh_game_settings.borderless && !modes.empty() &&
+        video_layout_aspect_matches(w, h, selected.numerator, selected.denominator))
         aspect = (float)w / h;
     video_layout_canvas(aspect, &x, &y);
 }
@@ -171,8 +162,8 @@ void viewport_geometry(float &x, float &y, float &w, float &h, float &scale)
 }
 bool matching_mode(int index)
 {
-    return video_layout_aspect_matches(modes[index].first, modes[index].second, aspects[selected_aspect].numerator,
-                                       aspects[selected_aspect].denominator);
+    const auto &aspect = bh_game_aspects[bh_game_settings.aspect];
+    return video_layout_aspect_matches(modes[index].first, modes[index].second, aspect.numerator, aspect.denominator);
 }
 void select_matching_mode()
 {
@@ -202,16 +193,16 @@ void finish_modes(int saved_width, int saved_height)
         {854, 480},   {960, 540},  {1280, 720}, {1366, 768},  {1600, 900},  {1920, 1080}, {2560, 1440}, {3200, 1800},
         {3840, 2160}, {1120, 480}, {1680, 720}, {2560, 1080}, {3440, 1440}, {3840, 1600},
         {768, 480},   {1280, 800}, {1440, 900}, {1680, 1050}, {1920, 1200}, {2560, 1600}, {3456, 2160}};
+    const auto &aspect = bh_game_aspects[bh_game_settings.aspect];
     if (saved_width >= 640 && saved_height >= 480 && saved_width <= 3840 && saved_height <= 2160 &&
-        video_layout_aspect_matches(saved_width, saved_height, aspects[selected_aspect].numerator,
-                                    aspects[selected_aspect].denominator) &&
+        video_layout_aspect_matches(saved_width, saved_height, aspect.numerator, aspect.denominator) &&
         std::find(modes.begin(), modes.end(), std::make_pair(saved_width, saved_height)) == modes.end())
         modes.push_back({saved_width, saved_height});
     for (auto size : render_sizes)
         if (std::find(modes.begin(), modes.end(), size) == modes.end())
             modes.push_back(size);
     if (modes.empty())
-        modes.push_back({normal_w, normal_h});
+        modes.push_back({bh_game_settings.window_width, bh_game_settings.window_height});
     std::sort(modes.begin(), modes.end());
     selected_resolution = std::clamp(selected_resolution, 0, (int)modes.size() - 1);
     auto saved_mode = std::find(modes.begin(), modes.end(), std::make_pair(saved_width, saved_height));
@@ -219,10 +210,7 @@ void finish_modes(int saved_width, int saved_height)
         selected_resolution = (int)(saved_mode - modes.begin());
     select_matching_mode();
 }
-constexpr char settings_filename[] = "game-config.ini";
-constexpr int default_fov = 60, min_fov = 35, max_fov = 100;
-int field_of_view = default_fov;
-std::string settings_path = settings_filename, settings_directory;
+std::string settings_directory;
 void set_error(const char *context)
 {
     snprintf(error_text, sizeof(error_text), "%s: %s", context, SDL_GetError());
@@ -270,109 +258,26 @@ DDPIXELFORMAT pixel_format(unsigned bits = 16)
     }
     return p;
 }
-void read_setting_int(const char *value, int &setting)
-{
-    int number;
-    const char *end = value + strlen(value);
-    const auto parsed = std::from_chars(value, end, number);
-    if (parsed.ec == std::errc{} && parsed.ptr == end)
-        setting = number;
-}
-struct SavedRenderSize
-{
-    int width = 0, height = 0;
-};
-int read_video_setting(void *user, const char *section, const char *key, const char *value)
-{
-    auto &render_size = *static_cast<SavedRenderSize *>(user);
-    if (!SDL_strcasecmp(section, "Window"))
-    {
-        if (!SDL_strcasecmp(key, "X"))
-            read_setting_int(value, normal_x);
-        else if (!SDL_strcasecmp(key, "Y"))
-            read_setting_int(value, normal_y);
-        else if (!SDL_strcasecmp(key, "Width"))
-            read_setting_int(value, normal_w);
-        else if (!SDL_strcasecmp(key, "Height"))
-            read_setting_int(value, normal_h);
-        else if (!SDL_strcasecmp(key, "Maximized"))
-        {
-            if (!SDL_strcasecmp(value, "true"))
-                maximized = true;
-            else if (!SDL_strcasecmp(value, "false"))
-                maximized = false;
-        }
-    }
-    else if (!SDL_strcasecmp(section, "Display"))
-    {
-        if (!SDL_strcasecmp(key, "Mode"))
-        {
-            if (!SDL_strcasecmp(value, "Borderless"))
-                mode = 1;
-            else if (!SDL_strcasecmp(value, "Windowed"))
-                mode = 0;
-        }
-        else if (!SDL_strcasecmp(key, "AspectRatio"))
-        {
-            for (int i = 0; i < (int)std::size(aspects); ++i)
-                if (!strcmp(value, aspects[i].label))
-                    selected_aspect = i;
-        }
-        else if (!SDL_strcasecmp(key, "RenderWidth"))
-            read_setting_int(value, render_size.width);
-        else if (!SDL_strcasecmp(key, "RenderHeight"))
-            read_setting_int(value, render_size.height);
-        else if (!SDL_strcasecmp(key, "FOV"))
-            read_setting_int(value, field_of_view);
-    }
-    return 1;
-}
 void save_settings()
 {
     if (!window || hidden)
         return;
-    const auto temporary = settings_path + ".tmp";
-    FILE *f = fopen(temporary.c_str(), "w");
-    if (!f)
-        return;
-    auto resolution = modes.empty() ? std::make_pair(normal_w, normal_h) : modes[selected_resolution];
-    const int written = fprintf(f,
-                                "[Display]\n"
-                                "; Use Windowed or Borderless.\n"
-                                "Mode=%s\n"
-                                "; Choose 4:3, 16:9, 16:10, or 21:9.\n"
-                                "AspectRatio=%s\n"
-                                "; Render size in Borderless mode. Windowed mode follows the window size.\n"
-                                "RenderWidth=%d\n"
-                                "RenderHeight=%d\n"
-                                "; Base horizontal FOV in degrees (4:3). Min %d, max %d, default %d. Restart to apply.\n"
-                                "FOV=%d\n"
-                                "\n"
-                                "[Window]\n"
-                                "; Desktop position of the restored window.\n"
-                                "X=%d\n"
-                                "Y=%d\n"
-                                "; Width and height of the restored window.\n"
-                                "Width=%d\n"
-                                "Height=%d\n"
-                                "; Use true to maximize the window, or false to use the saved size.\n"
-                                "Maximized=%s\n",
-                                mode ? "Borderless" : "Windowed", aspects[selected_aspect].label, resolution.first,
-                                resolution.second, min_fov, max_fov, default_fov, field_of_view, normal_x, normal_y,
-                                normal_w, normal_h, maximized ? "true" : "false");
-    if (fclose(f) == 0 && written >= 0)
-        SDL_RenamePath(temporary.c_str(), settings_path.c_str());
+    const auto resolution = modes.empty() ? std::make_pair(bh_game_settings.window_width, bh_game_settings.window_height)
+                                          : modes[selected_resolution];
+    bh_game_settings.render_width = resolution.first;
+    bh_game_settings.render_height = resolution.second;
+    bh_game_settings_save();
 }
 void remember_window()
 {
     auto flags = SDL_GetWindowFlags(window);
     if (!(flags & (SDL_WINDOW_FULLSCREEN | SDL_WINDOW_MINIMIZED)))
     {
-        maximized = (flags & SDL_WINDOW_MAXIMIZED) != 0;
-        if (!maximized)
+        bh_game_settings.maximized = (flags & SDL_WINDOW_MAXIMIZED) != 0;
+        if (!bh_game_settings.maximized)
         {
-            SDL_GetWindowPosition(window, &normal_x, &normal_y);
-            SDL_GetWindowSize(window, &normal_w, &normal_h);
+            SDL_GetWindowPosition(window, &bh_game_settings.window_x, &bh_game_settings.window_y);
+            SDL_GetWindowSize(window, &bh_game_settings.window_width, &bh_game_settings.window_height);
         }
     }
     save_settings();
@@ -572,7 +477,8 @@ bool begin_pass(SDL_GPULoadOp color_load = SDL_GPU_LOADOP_LOAD, SDL_GPULoadOp de
         return false;
     float mx, my;
     canvas_margins(mx, my);
-    if (mx != applied_margin_x || my != applied_margin_y || selected_aspect != applied_aspect || mode != applied_mode)
+    if (mx != applied_margin_x || my != applied_margin_y || bh_game_settings.aspect != applied_aspect ||
+        bh_game_settings.borderless != applied_mode)
         targets_fresh = true;
     if (pass && !targets_fresh && color_load == SDL_GPU_LOADOP_LOAD && depth_load == SDL_GPU_LOADOP_LOAD)
         return true;
@@ -604,8 +510,8 @@ bool begin_pass(SDL_GPULoadOp color_load = SDL_GPU_LOADOP_LOAD, SDL_GPULoadOp de
     targets_fresh = false;
     applied_margin_x = mx;
     applied_margin_y = my;
-    applied_aspect = selected_aspect;
-    applied_mode = mode;
+    applied_aspect = bh_game_settings.aspect;
+    applied_mode = bh_game_settings.borderless;
     float x, y, w, h, scale;
     viewport_geometry(x, y, w, h, scale);
     SDL_GPUViewport viewport{x, y, w, h, 0, 1};
@@ -1027,13 +933,13 @@ void enable_deck_keyboard()
 #endif
 void apply_mode()
 {
-    if (mode == 0)
+    if (!bh_game_settings.borderless)
     {
         SDL_SetWindowFullscreen(window, false);
         SDL_SyncWindow(window);
-        SDL_SetWindowSize(window, normal_w, normal_h);
-        SDL_SetWindowPosition(window, normal_x, normal_y);
-        if (maximized)
+        SDL_SetWindowSize(window, bh_game_settings.window_width, bh_game_settings.window_height);
+        SDL_SetWindowPosition(window, bh_game_settings.window_x, bh_game_settings.window_y);
+        if (bh_game_settings.maximized)
             SDL_MaximizeWindow(window);
     }
     else
@@ -1049,7 +955,6 @@ extern "C"
 {
     int bh_sdl_open(int hide, BHPlatformInput callback, void *user)
     {
-        SavedRenderSize saved_render_size;
         hidden = hide != 0;
         input_callback = callback;
         quitting = false;
@@ -1066,22 +971,15 @@ extern "C"
         /* A missing controller subsystem must not prevent keyboard play. */
         if (SDL_InitSubSystem(SDL_INIT_GAMEPAD))
             find_gamepad();
-        field_of_view = default_fov;
-        ini_parse(settings_path.c_str(), read_video_setting, &saved_render_size);
-        field_of_view = std::clamp(field_of_view, min_fov, max_fov);
-        normal_w = std::clamp(normal_w, 640, 3840);
-        normal_h = std::clamp(normal_h, 480, 2160);
-        mode = std::clamp(mode, 0, 1);
-        selected_aspect = std::clamp(selected_aspect, 0, (int)std::size(aspects) - 1);
         if (hidden)
         {
-            normal_w = 640;
-            normal_h = 480;
-            mode = 0;
-            maximized = false;
-            selected_aspect = 0;
+            bh_game_settings.window_width = 640;
+            bh_game_settings.window_height = 480;
+            bh_game_settings.borderless = false;
+            bh_game_settings.maximized = false;
+            bh_game_settings.aspect = 0;
         }
-        window = SDL_CreateWindow("BHunter", normal_w, normal_h,
+        window = SDL_CreateWindow("BHunter", bh_game_settings.window_width, bh_game_settings.window_height,
                                   SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY | SDL_WINDOW_HIDDEN);
         if (!window)
         {
@@ -1089,7 +987,7 @@ extern "C"
             return 0;
         }
         SDL_SetWindowMinimumSize(window, 640, 480);
-        SDL_SetWindowPosition(window, normal_x, normal_y);
+        SDL_SetWindowPosition(window, bh_game_settings.window_x, bh_game_settings.window_y);
         int count = 0;
         auto **available = SDL_GetFullscreenDisplayModes(SDL_GetDisplayForWindow(window), &count);
         for (int i = 0; i < count; ++i)
@@ -1101,7 +999,7 @@ extern "C"
                 modes.push_back(size);
         }
         SDL_free(available);
-        finish_modes(saved_render_size.width, saved_render_size.height);
+        finish_modes(bh_game_settings.render_width, bh_game_settings.render_height);
         device = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_SPIRV, false, "vulkan");
         if (!device || !SDL_ClaimWindowForGPUDevice(device, window))
         {
@@ -1262,7 +1160,6 @@ extern "C"
         if (error || !fs::is_directory(output, error) || error)
             return 0;
         settings_directory = output.generic_string();
-        settings_path = (output / settings_filename).generic_string();
         fs::current_path(root, error);
         return !error;
     }
@@ -1371,7 +1268,7 @@ extern "C"
                     (event.key.mod & SDL_KMOD_ALT))
                 {
                     remember_window();
-                    mode = mode ? 0 : 1;
+                    bh_game_settings.borderless = !bh_game_settings.borderless;
                     apply_mode();
                     break;
                 }
@@ -1515,15 +1412,15 @@ extern "C"
         if (row == 0)
         {
             remember_window();
-            mode = mode ? 0 : 1;
+            bh_game_settings.borderless = !bh_game_settings.borderless;
             apply_mode();
         }
         if (row == 1)
         {
-            selected_aspect = (selected_aspect + 1) % std::size(aspects);
+            bh_game_settings.aspect = (bh_game_settings.aspect + 1) % std::size(bh_game_aspects);
             select_matching_mode();
         }
-        if (row == 2 && mode && !modes.empty())
+        if (row == 2 && bh_game_settings.borderless && !modes.empty())
         {
             for (int i = 1; i <= (int)modes.size(); ++i)
             {
@@ -1541,16 +1438,16 @@ extern "C"
     {
         static char text[64];
         if (row == 0)
-            return mode ? "Borderless" : "Windowed";
+            return bh_game_settings.borderless ? "Borderless" : "Windowed";
         if (row == 1)
-            return aspects[selected_aspect].label;
-        if (!mode)
+            return bh_game_aspects[bh_game_settings.aspect].label;
+        if (!bh_game_settings.borderless)
             return "Resize window";
         if (!modes.empty() && !matching_mode(selected_resolution))
             return "Unavailable";
         int w, h;
         SDL_GetWindowSizeInPixels(window, &w, &h);
-        if (mode && !modes.empty())
+        if (bh_game_settings.borderless && !modes.empty())
         {
             w = modes[selected_resolution].first;
             h = modes[selected_resolution].second;
@@ -1560,7 +1457,7 @@ extern "C"
     }
     int bh_sdl_fov_degrees()
     {
-        return field_of_view;
+        return bh_game_settings.field_of_view;
     }
     void __cdecl bh_sdl_canvas_margins(float *x, float *y)
     {
