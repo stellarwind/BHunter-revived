@@ -2127,6 +2127,7 @@ static int network_bind(BHGameApp *app)
                                               .transport = &app->transport,
                                               .sound = &app->sound,
                                               .contacts = &app->contacts,
+                                              .explosions = &app->explosions,
                                               .effects = &app->network_effects,
                                               .launch = &app->actor_launch,
                                               .latency = app->network_latency,

@@ -31,6 +31,7 @@ typedef struct BHScriptExplosionState
     float angle[8], spin[8];
     float radius, magnitude, probability;
     unsigned long sound_resource, origin_tag, target;
+    int visual_only;
 } BHScriptExplosionState;
 /* Whole constructors00402e50/004032f0. All contexts stay borrowed while their
    entities live; debris->origin_tag is the SAME attribution word004dfb34.
@@ -47,6 +48,8 @@ BHEntity *bh_script_explosion_create(BHScriptExplosionContext *, const BHVec3 *,
                                      float probability, unsigned long target);
 BHEntity *bh_script_explosion_secondary(BHScriptExplosionContext *, const BHVec3 *, float duration, float magnitude,
                                         float probability, unsigned long sound, unsigned long target);
+BHEntity *bh_script_explosion_visual(BHScriptExplosionContext *, const BHVec3 *, float duration, float magnitude,
+                                     float probability);
 void bh_script_explosion_tick(BHEntity *);            /*00402af0*/
 void bh_script_explosion_refresh(BHEntity *, void *); /*00402710*/
 int bh_script_explosion_read(const BHEntity *, BHScriptExplosionState *);

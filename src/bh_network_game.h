@@ -8,7 +8,10 @@ enum
     BH_NETWORK_CARS = 3,
     BH_NETWORK_ROSTER_BYTES = 26,
     BH_NETWORK_PACKET_CAPACITY = 264,
-    BH_NETWORK_PORT = 27890
+    BH_NETWORK_PORT = 27890,
+    BH_NETWORK_DEATH_EFFECT = 13,
+    BH_NETWORK_DEATH_FIRST = 0,
+    BH_NETWORK_DEATH_FINAL = 1
 };
 
 typedef struct BHNetworkPlayer
@@ -27,7 +30,7 @@ struct BHNetworkGame
     BHNetworkPlayer players[8];
     unsigned long local_player;
     unsigned char local_car;
-    unsigned long sent[13], received[13], rejected;
+    unsigned long sent[BH_NETWORK_DEATH_EFFECT + 1], received[BH_NETWORK_DEATH_EFFECT + 1], rejected;
     int initialized, hosting, disconnected;
 };
 

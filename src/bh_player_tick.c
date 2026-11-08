@@ -713,6 +713,24 @@ static int camera_mode(BHPlayerTick *ctx, long mode)
 {
     return bh_camera_state_set_mode(bh_player_camera_state(ctx->player), mode) ? 1 : fail(ctx, 3);
 }
+static void send_death_effect(BHPlayerTick *ctx, const BHVec3 *position, unsigned char stage)
+{
+    BHWorldGeometry *world;
+    long index;
+    if (ctx->state->mode < 2 || !ctx->network || !ctx->network->transport)
+        return;
+    world = (BHWorldGeometry *)word(ctx->player, 0xc4);
+    index = bh_navigation_find(ctx->navigation, world);
+    if (index < 0 ||
+        !bh_packet_begin(&ctx->writer, ctx->packet, sizeof(ctx->packet), BH_NETWORK_DEATH_EFFECT,
+                         (unsigned short)ctx->state->tick) ||
+        bh_packet_write_position(&ctx->writer, world, (unsigned short)index, position) != 1 ||
+        !bh_packet_append(&ctx->writer, &stage, 1))
+        return;
+    bh_network_packet_send(ctx->network->transport, &ctx->writer, 0, 1);
+    ctx->packet_bytes = ctx->writer.cursor;
+    ++ctx->packets;
+}
 static int death(BHPlayerTick *ctx)
 {
     BHPlayerTickState *state = ctx->state;
@@ -735,6 +753,7 @@ static int death(BHPlayerTick *ctx)
         {
             sound(ctx, ctx->resources.death_cue, 1, 1.5f, &entity->position, &entity->origin);
             bh_script_explosion_create(ctx->explosions, &position, 1, 10, .85f, 0);
+            send_death_effect(ctx, &position, BH_NETWORK_DEATH_FIRST);
             state->saved_model = word(entity, 0x21c);
             setword(entity, 0x21c, ctx->resources.death_model);
             bh_sound_stop(ctx->sound, word(entity, 0x224));
@@ -744,6 +763,7 @@ static int death(BHPlayerTick *ctx)
         {
             setword(entity, 0x21c, 0);
             bh_script_explosion_create(ctx->explosions, &entity->position, 1.2f, 14, .85f, 0);
+            send_death_effect(ctx, &entity->position, BH_NETWORK_DEATH_FINAL);
         }
         setvector(entity, 0x60, &acceleration);
         if (ctx->explosions->error)

@@ -13,6 +13,7 @@ typedef struct BHRemoteMessages
     BHNetworkTransport *transport;
     BHSoundQueue *sound;
     BHContactEffects *contacts;
+    BHScriptExplosionContext *explosions;
     BHNetworkEffectReceive *effects;
     BHActorLaunchContext *launch;
     float *latency;

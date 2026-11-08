@@ -59,6 +59,7 @@ int bh_script_explosion_read(const BHEntity *entity, BHScriptExplosionState *sta
     load(entity, 0x1ac, &state->sound_resource, 4);
     load(entity, 0x1b0, &state->origin_tag, 4);
     load(entity, 0x1b4, &state->target, 4);
+    load(entity, 0x1b8, &state->visual_only, 4);
     return 1;
 }
 int bh_script_explosion_write(BHEntity *entity, const BHScriptExplosionState *state)
@@ -76,6 +77,7 @@ int bh_script_explosion_write(BHEntity *entity, const BHScriptExplosionState *st
     store(entity, 0x1ac, &state->sound_resource, 4);
     store(entity, 0x1b0, &state->origin_tag, 4);
     store(entity, 0x1b4, &state->target, 4);
+    store(entity, 0x1b8, &state->visual_only, 4);
     return 1;
 }
 static int valid(BHScriptExplosionContext *ctx, const BHVec3 *p, float duration, float magnitude, float probability)
@@ -87,14 +89,14 @@ static int valid(BHScriptExplosionContext *ctx, const BHVec3 *p, float duration,
            bh_math_environment_supported();
 }
 static BHEntity *create(BHScriptExplosionContext *ctx, const BHVec3 *p, float duration, float magnitude,
-                        float probability, unsigned long sound, unsigned long target, int secondary)
+                        float probability, unsigned long sound, unsigned long target, int secondary, int visual_only)
 {
     BHScriptExplosionState state;
     BHEntity *flash, *e;
     BHVec3 zero = {0, 0, 0};
     BlastPacket blast;
     DamagePacket damage;
-    unsigned long i, generation;
+    unsigned long i, generation, origin_tag;
     float speed, size, radius, square;
     double factor, count;
     int r;
@@ -127,8 +129,10 @@ static BHEntity *create(BHScriptExplosionContext *ctx, const BHVec3 *p, float du
     state.probability = probability;
     state.sound_resource = sound;
     state.target = target;
-    state.origin_tag = ctx->debris->origin_tag;
+    origin_tag = ctx->debris->origin_tag;
+    state.origin_tag = visual_only ? 0 : origin_tag;
     ctx->debris->origin_tag = 0;
+    state.visual_only = visual_only;
     for (i = 0; i < 8; ++i)
     {
         state.direction[i].x = (float)(rand() - 16384);
@@ -155,7 +159,7 @@ static BHEntity *create(BHScriptExplosionContext *ctx, const BHVec3 *p, float du
     bh_round_float(&square, (double)magnitude * magnitude);
     bh_round_float(&blast.energy, ((double)magnitude * magnitude) * 125.0);
     bh_round_float(&blast.radius, (double)magnitude * 5.0);
-    if (!bh_entities_query(ctx->pool, 0, 0, NULL, 0, &blast))
+    if (!visual_only && !bh_entities_query(ctx->pool, 0, 0, NULL, 0, &blast))
         ctx->error = BH_EXPLOSION_QUERY;
     if (!live(ctx, e, generation))
         return NULL;
@@ -167,10 +171,12 @@ static BHEntity *create(BHScriptExplosionContext *ctx, const BHVec3 *p, float du
         ctx->error = BH_EXPLOSION_LIMIT;
     else
         bh_script_debris_create(ctx->debris, (long)count, p, 4, speed, size);
+    if (visual_only)
+        ctx->debris->origin_tag = origin_tag;
     if (!live(ctx, e, generation))
         return NULL;
     load(e, 0x1b0, &state.origin_tag, 4);
-    if (!state.origin_tag)
+    if (!visual_only && !state.origin_tag)
     {
         damage.event = 0;
         load(e, 0x1b4, &damage.target, 4);
@@ -198,12 +204,17 @@ static BHEntity *create(BHScriptExplosionContext *ctx, const BHVec3 *p, float du
 BHEntity *bh_script_explosion_create(BHScriptExplosionContext *ctx, const BHVec3 *p, float duration, float magnitude,
                                      float probability, unsigned long target)
 {
-    return create(ctx, p, duration, magnitude, probability, ctx ? ctx->sound_resource : 0, target, 0);
+    return create(ctx, p, duration, magnitude, probability, ctx ? ctx->sound_resource : 0, target, 0, 0);
 }
 BHEntity *bh_script_explosion_secondary(BHScriptExplosionContext *ctx, const BHVec3 *p, float duration, float magnitude,
                                         float probability, unsigned long sound, unsigned long target)
 {
-    return create(ctx, p, duration, magnitude, probability, sound, target, 1);
+    return create(ctx, p, duration, magnitude, probability, sound, target, 1, 0);
+}
+BHEntity *bh_script_explosion_visual(BHScriptExplosionContext *ctx, const BHVec3 *p, float duration, float magnitude,
+                                     float probability)
+{
+    return create(ctx, p, duration, magnitude, probability, ctx ? ctx->sound_resource : 0, 0, 0, 1);
 }
 void bh_script_explosion_tick(BHEntity *entity)
 {
@@ -238,7 +249,8 @@ void bh_script_explosion_tick(BHEntity *entity)
         v.y = (float)(rand() - 16384);
         v.z = (float)(rand() - 16384);
         bh_vec3_normalize(&v);
-        ctx->debris->origin_tag = state.origin_tag;
+        if (!state.visual_only)
+            ctx->debris->origin_tag = state.origin_tag;
         bh_round_float(&v.x, (double)distance * v.x);
         bh_round_float(&v.y, (double)distance * v.y);
         bh_round_float(&v.z, (double)distance * v.z);
@@ -248,7 +260,7 @@ void bh_script_explosion_tick(BHEntity *entity)
         bh_round_float(&duration, (double)state.duration - state.age);
         bh_round_float(&magnitude, (double)state.magnitude * 1.5);
         bh_round_float(&probability, (double)state.probability * .25);
-        bh_script_explosion_secondary(ctx, &p, duration, magnitude, probability, state.sound_resource, state.target);
+        create(ctx, &p, duration, magnitude, probability, state.sound_resource, state.target, 1, state.visual_only);
         if (!live(ctx, entity, generation))
             return;
         bh_script_explosion_read(entity, &state);

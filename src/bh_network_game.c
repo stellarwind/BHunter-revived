@@ -52,14 +52,16 @@ int bh_network_send(BHNetworkTransport *transport, unsigned long recipient, cons
     if (!bytes || size < 8 || size >= BH_NETWORK_PACKET_CAPACITY || recipient > BH_NETWORK_PLAYERS)
         return -1;
     type = *(const unsigned char *)bytes;
-    if (type < 3 || type > 12)
+    if (type < 3 || type > BH_NETWORK_DEATH_EFFECT)
         return -1;
     wire[0] = (unsigned char)game->local_player;
     wire[1] = (unsigned char)recipient;
     memcpy(wire + 2, bytes, size);
-    /* Damage and scoring are one-shot events. Keep them reliable. */
+    /* Damage, scoring and death effects are one-shot events. Keep them reliable. */
+    if (type == 7 || type == 11 || type == 12 || type == BH_NETWORK_DEATH_EFFECT)
+        reliable = 1;
     ++game->sent[type];
-    return send_to(game, wire, size + 2, reliable || type == 7 || type == 11 || type == 12 ? CONTROL : SNAPSHOTS);
+    return send_to(game, wire, size + 2, reliable ? CONTROL : SNAPSHOTS);
 }
 
 int bh_network_packet_send(BHNetworkTransport *transport, BHPacketWriter *writer, unsigned long recipient, int reliable)
@@ -190,7 +192,7 @@ static void gameplay(BHNetworkGame *game, const ENetEvent *event, BHNetworkMessa
     from = wire[0];
     to = wire[1];
     type = bytes[0];
-    if (type < 3 || type > 12 || !from || from > BH_NETWORK_PLAYERS)
+    if (type < 3 || type > BH_NETWORK_DEATH_EFFECT || !from || from > BH_NETWORK_PLAYERS)
         goto reject;
     if (game->hosting)
     {
@@ -209,6 +211,9 @@ static void gameplay(BHNetworkGame *game, const ENetEvent *event, BHNetworkMessa
     if (type == 12 && (size != 26 || from != 1))
         goto reject;
     if (type == 8 && (size != 15 || to || bytes[8] + 1 != from || bytes[11] > 8))
+        goto reject;
+    if (type == BH_NETWORK_DEATH_EFFECT &&
+        (size != 19 || to || event->channelID != CONTROL || bytes[16] > BH_NETWORK_DEATH_FINAL))
         goto reject;
     if (type == 3)
     {

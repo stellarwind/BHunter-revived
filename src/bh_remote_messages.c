@@ -477,6 +477,28 @@ static int damage(BHRemoteMessages *messages)
     packets->local->query(packets->local, &packet);
     return done(messages);
 }
+static int death_effect(BHRemoteMessages *messages)
+{
+    BHVec3 point;
+    unsigned char stage;
+    if (!position(messages, &point) || !take(messages, &stage, 1))
+        return 0;
+    if (stage > BH_NETWORK_DEATH_FINAL || messages->packets->reader.cursor != messages->packets->reader.size)
+    {
+        messages->error = 3;
+        return done(messages);
+    }
+    if (!messages->explosions)
+    {
+        messages->error = 1;
+        return done(messages);
+    }
+    if (stage == BH_NETWORK_DEATH_FIRST)
+        bh_script_explosion_visual(messages->explosions, &point, 1, 10, .85f);
+    else
+        bh_script_explosion_visual(messages->explosions, &point, 1.2f, 14, .85f);
+    return done(messages);
+}
 static int clock(BHRemoteMessages *messages, int host)
 {
     BHRemotePackets *packets = messages->packets;
@@ -603,6 +625,7 @@ static int message(BHRemoteMessages *messages, void *p, unsigned long n, unsigne
     case 5:
     case 6:
     case 7:
+    case BH_NETWORK_DEATH_EFFECT:
         break;
     case 11:
         if (!host)
@@ -631,6 +654,8 @@ static int message(BHRemoteMessages *messages, void *p, unsigned long n, unsigne
         if (age < 31)
             return damage(messages);
         return 1;
+    case BH_NETWORK_DEATH_EFFECT:
+        return death_effect(messages);
     case 11:
     case 12:
         return scores(messages, host);
