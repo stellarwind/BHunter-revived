@@ -882,7 +882,7 @@ static int platform(BHGameApp *app)
     if (app->hardware && !bh_texture_bind_display(&app->render_mode.engine.textures, &app->render_mode.engine.pixel))
         return failure(app, 4);
     if (!bh_view_config_init(&app->view, app->width, app->height) ||
-        !bh_main_camera_settings(&app->view, bh_sdl_fov_degrees(), .2, 25000) ||
+        !bh_main_camera_settings(&app->view, bh_sdl_fov_degrees(), .05, 25000) ||
         !bh_main_camera_pose(&app->view, &app->main_camera, 0, 0, 0, 0, 0, 0) ||
         !bh_clip_init(&app->clip, app->view.near_z, app->view.far_z, 0, (float)app->width, 0, (float)app->height) ||
         !bh_screen_clip_init(&app->screen_clip, app->view.near_z, app->view.far_z, 0, (float)app->width, 0,
