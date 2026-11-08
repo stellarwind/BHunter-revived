@@ -1,6 +1,7 @@
 #ifndef BH_NETWORK_GAME_H
 #define BH_NETWORK_GAME_H
 #include "bh_network_transport.h"
+#include <stdint.h>
 
 enum
 {
@@ -28,10 +29,11 @@ struct BHNetworkGame
     struct _ENetHost *host;
     struct _ENetPeer *server;
     BHNetworkPlayer players[8];
+    uint32_t handshake_deadline[BH_NETWORK_PLAYERS - 1]; /* Indexed by ENet peer, before roster assignment. */
     unsigned long local_player;
     unsigned char local_car;
     unsigned long sent[BH_NETWORK_DEATH_EFFECT + 1], received[BH_NETWORK_DEATH_EFFECT + 1], rejected;
-    int initialized, hosting, disconnected;
+    int initialized, hosting, disconnected, welcome_timed_out;
 };
 
 typedef void (*BHNetworkMessage)(void *, unsigned long, void *);

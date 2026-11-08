@@ -2328,6 +2328,7 @@ static int network_poll(BHGameApp *app)
     {
         int was_playing = app->player_state.mode > 1;
         int join_failed = game->disconnected && !app->network_playing;
+        const char *join_error = game->welcome_timed_out ? "Connection timed out" : "Could not reach host";
         BHMenuRuntime *entry = app->network_entry;
         network_trace(app);
         if (!bh_remote_clear(&app->remote_messages))
@@ -2347,7 +2348,7 @@ static int network_poll(BHGameApp *app)
         {
             bh_input_set_enabled(entry->input, &app->snapshot, 1);
             if (entry == app->menu.network_menu)
-                network_menu_status(app, 1, cancelled ? "Connection cancelled" : "Could not reach host");
+                network_menu_status(app, 1, cancelled ? "Connection cancelled" : join_error);
             else if (!cancelled)
                 bh_message_enqueue(&app->messages, "1Could not join network session.");
         }

@@ -1,5 +1,6 @@
 #include "bh_network_game.h"
 #include <enet/enet.h>
+#include <enet/time.h>
 #include <string.h>
 
 enum
@@ -10,7 +11,8 @@ enum
     HELLO = 1,
     WELCOME = 2,
     LEAVE = 3,
-    HELLO_SIZE = 35
+    HELLO_SIZE = 35,
+    HANDSHAKE_TIMEOUT_MS = 8000
 };
 
 static int enqueue(ENetPeer *peer, unsigned char channel, const void *data, size_t size)
@@ -245,6 +247,27 @@ reject:
     ++game->rejected;
 }
 
+static void expire_handshakes(BHNetworkGame *game)
+{
+    enet_uint32 now = enet_time_get();
+    for (size_t i = 0; i < game->host->peerCount; ++i)
+    {
+        ENetPeer *peer = game->host->peers + i;
+        if (peer->state != ENET_PEER_STATE_CONNECTED || ENET_TIME_LESS(now, game->handshake_deadline[i]))
+            continue;
+        if (game->hosting)
+        {
+            if (peer_slot(game, peer) == BH_NETWORK_PLAYERS)
+                enet_peer_disconnect_now(peer, 0);
+        }
+        else if (!game->local_player)
+        {
+            game->welcome_timed_out = 1;
+            game->disconnected = 1;
+        }
+    }
+}
+
 void bh_network_receive(BHNetworkGame *game, BHNetworkMessage receive, BHNetworkRoster roster, void *user)
 {
     ENetEvent event;
@@ -257,6 +280,7 @@ void bh_network_receive(BHNetworkGame *game, BHNetworkMessage receive, BHNetwork
         switch (event.type)
         {
         case ENET_EVENT_TYPE_CONNECT:
+            game->handshake_deadline[event.peer->incomingPeerID] = enet_time_get() + HANDSHAKE_TIMEOUT_MS;
             if (!game->hosting)
             {
                 unsigned char hello[HELLO_SIZE] = {0, HELLO, game->local_car};
@@ -303,4 +327,7 @@ void bh_network_receive(BHNetworkGame *game, BHNetworkMessage receive, BHNetwork
     }
     if (result < 0)
         game->disconnected = 1;
+    /* Process queued HELLO/WELCOME packets before checking their deadlines. */
+    if (!game->disconnected)
+        expire_handshakes(game);
 }
