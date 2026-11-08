@@ -59,8 +59,8 @@ static void queued(BHRemoteRender *render, int result)
 int bh_remote_render(BHRemoteRender *render, BHEntity *entity)
 {
     BHVec3 position, angles, velocity, normal, point, up = {0, -1, 0};
-    unsigned long handle, resource, i, j, frames = 60;
-    short model;
+    unsigned long handle, resource, model, i, j, frames = 60;
+    short slot;
     unsigned char flags;
     float angle;
     int value;
@@ -68,12 +68,26 @@ int bh_remote_render(BHRemoteRender *render, BHEntity *entity)
         return 0;
     render->attempted = render->dropped = 0;
     render->error = 0;
-    memcpy(&model, (char *)entity + 0x114, 2);
-    if (model < 0 || model >= 8)
+    memcpy(&slot, (char *)entity + 0x114, sizeof(slot));
+    if (slot < 0 || slot >= 8)
         return 0;
+    memcpy(&flags, (char *)entity + 0x11a, sizeof(flags));
+    memcpy(&handle, (char *)entity + 0x104, sizeof(handle));
+    if (flags & BH_REMOTE_POSE_HIDDEN)
+    {
+        if (handle != BH_SOUND_INVALID)
+        {
+            bh_sound_stop(render->sound, handle);
+            handle = BH_SOUND_INVALID;
+            memcpy((char *)entity + 0x104, &handle, sizeof(handle));
+        }
+        return 1;
+    }
     if (!bh_remote_predict_pose(entity, render->tick, &position, &angles))
         return 0;
-    queued(render, bh_draw_submit_resource(render->queue, 0, render->models[model], &position, &angles, 1));
+    model = flags & BH_REMOTE_POSE_WRECK ? render->wreck_model : render->models[slot];
+    if (model || !(flags & BH_REMOTE_POSE_WRECK))
+        queued(render, bh_draw_submit_resource(render->queue, 0, model, &position, &angles, 1));
     for (i = 0; i < 3; i++)
     {
         float component;
@@ -81,7 +95,6 @@ int bh_remote_render(BHRemoteRender *render, BHEntity *entity)
         (&velocity.x)[i] = stored((double)component * 30.0);
     }
     memcpy((char *)entity + 0x108, &frames, 4);
-    memcpy(&handle, (char *)entity + 0x104, 4);
     memcpy(&resource, (char *)entity + 0x10c, 4);
     if (handle == BH_SOUND_INVALID)
     {
@@ -90,8 +103,7 @@ int bh_remote_render(BHRemoteRender *render, BHEntity *entity)
     }
     else
         bh_sound_update(render->sound, handle, 1, 1, &position, &velocity);
-    memcpy(&flags, (char *)entity + 0x11a, 1);
-    if (flags & 1)
+    if (flags & BH_REMOTE_POSE_SHIELD)
         for (j = 0; j < 24; j++)
         {
             for (i = 0; i < 3; i++)

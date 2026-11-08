@@ -7,7 +7,7 @@ typedef struct BHRemoteRender
 {
     BHDrawQueue *queue;
     BHSoundQueue *sound;
-    unsigned long models[8], spark_texture;
+    unsigned long models[8], spark_texture, wreck_model;
     unsigned short tick;
     unsigned long attempted, dropped;
     int error;

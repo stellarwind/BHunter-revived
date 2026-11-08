@@ -2160,8 +2160,10 @@ static int network_bind(BHGameApp *app)
                                         .world_count = count,
                                         .transport = &app->transport,
                                         .sound = &app->sound};
-    app->remote_render = (BHRemoteRender){
-        .queue = &app->queue, .sound = &app->sound, .spark_texture = bh_bootstrap_value(&app->bootstrap, 0x4f0094)};
+    app->remote_render = (BHRemoteRender){.queue = &app->queue,
+                                          .sound = &app->sound,
+                                          .spark_texture = bh_bootstrap_value(&app->bootstrap, 0x4f0094),
+                                          .wreck_model = app->player_tick.resources.death_model};
     app->remote_tick = (BHRemoteTick){.fire = &app->remote_fire,
                                       .world = &app->segment,
                                       .particles = &app->particles,

@@ -1,6 +1,17 @@
 #ifndef BH_REMOTE_PREDICTION_H
 #define BH_REMOTE_PREDICTION_H
 #include "bh_entities.h"
+
+/* Flags in the last byte of a player pose packet. */
+enum
+{
+    BH_REMOTE_POSE_SHIELD = 1,
+    BH_REMOTE_POSE_GROUND_RING = 2,
+    BH_REMOTE_POSE_SMOKE = 4,
+    BH_REMOTE_POSE_WRECK = 8,
+    BH_REMOTE_POSE_HIDDEN = 16
+};
+
 /* Complete00423bb0: signed16 modular tick difference, negative ->0. Original
    anchor+180, anchor timestamp+17c, velocity+48 and acceleration+60 belong to
    the real entity payload. First binary32 stores v*t+anchor, then a*.5*t*t

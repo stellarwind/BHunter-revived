@@ -5,6 +5,14 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+
+enum
+{
+    DEATH_WRECK_FRAME = 75,
+    DEATH_HIDE_FRAME = 95,
+    DEATH_RESPAWN_FRAME = 200
+};
+
 static BHPlayerTick *bound_player;
 static const BHVec3 zero = {0, 0, 0};
 static float rf(double v)
@@ -255,7 +263,7 @@ static int network(BHPlayerTick *ctx)
     }
     return 1;
 }
-static int send_pose(BHPlayerTick *ctx)
+static int send_pose(BHPlayerTick *ctx, int reliable)
 {
     BHPlayerTickState *state = ctx->state;
     BHEntity *entity = ctx->player;
@@ -266,7 +274,7 @@ static int send_pose(BHPlayerTick *ctx)
     int result;
     if (state->mode < 2)
         return 1;
-    if (state->send_delay)
+    if (!reliable && state->send_delay)
     {
         --state->send_delay;
         return 1;
@@ -299,14 +307,21 @@ static int send_pose(BHPlayerTick *ctx)
         if (!bh_packet_append(&ctx->writer, &angle, 1))
             return fail(ctx, 2);
     }
-    flags = number(entity, 0x240) > 0 ? 1 : 0;
-    if (word(entity, 0x228) != BH_SOUND_INVALID)
-        flags |= 2;
-    if (half(entity, 0x2b4))
-        flags |= 4;
+    if (state->death_frames >= DEATH_HIDE_FRAME)
+        flags = BH_REMOTE_POSE_HIDDEN;
+    else
+    {
+        flags = number(entity, 0x240) > 0 ? BH_REMOTE_POSE_SHIELD : 0;
+        if (word(entity, 0x228) != BH_SOUND_INVALID)
+            flags |= BH_REMOTE_POSE_GROUND_RING;
+        if (half(entity, 0x2b4))
+            flags |= BH_REMOTE_POSE_SMOKE;
+        if (state->death_frames >= DEATH_WRECK_FRAME)
+            flags |= BH_REMOTE_POSE_WRECK;
+    }
     if (!bh_packet_append(&ctx->writer, &flags, 1))
         return fail(ctx, 2);
-    bh_network_packet_send(ctx->network->transport, &ctx->writer, 0, 0);
+    bh_network_packet_send(ctx->network->transport, &ctx->writer, 0, reliable);
     ++ctx->packets;
     ctx->packet_bytes = ctx->writer.cursor;
     return 1;
@@ -744,12 +759,12 @@ static int death(BHPlayerTick *ctx)
     for (i = 0; i < 3; ++i)
         ((float *)&position)[i] = rf((double)((float *)&position)[i] + (rand() - 16384) * (1.0 / 16384));
     ++state->death_frames;
-    if (state->death_frames == 75 || state->death_frames == 95)
+    if (state->death_frames == DEATH_WRECK_FRAME || state->death_frames == DEATH_HIDE_FRAME)
     {
         if (!ctx->explosions)
             return fail(ctx, 1);
         acceleration = vector(entity, 0x60);
-        if (state->death_frames == 75)
+        if (state->death_frames == DEATH_WRECK_FRAME)
         {
             sound(ctx, ctx->resources.death_cue, 1, 1.5f, &entity->position, &entity->origin);
             bh_script_explosion_create(ctx->explosions, &position, 1, 10, .85f, 0);
@@ -769,11 +784,11 @@ static int death(BHPlayerTick *ctx)
         if (ctx->explosions->error)
             return fail(ctx, 3);
     }
-    if (state->death_frames > 75)
+    if (state->death_frames > DEATH_WRECK_FRAME)
         for (j = 0; j < 2; ++j)
             for (i = 0; i < 3; ++i)
                 real(entity, 0x48 + j * 24 + i * 4, rf((double)number(entity, 0x48 + j * 24 + i * 4) * .9));
-    if (state->death_frames == 200)
+    if (state->death_frames == DEATH_RESPAWN_FRAME)
     {
         if (state->mode == 1 && !state->ending)
         {
@@ -889,7 +904,7 @@ static int damage_timers(BHPlayerTick *ctx)
        damage/boost loops after return_menu has retired their handles. */
     if (!state->mode)
         return 1;
-    if (half(entity, 0x2b4) && rand() < 16384 && state->death_frames < 95)
+    if (half(entity, 0x2b4) && rand() < 16384 && state->death_frames < DEATH_HIDE_FRAME)
     {
         if (!ctx->particles)
             return fail(ctx, 1);
@@ -1052,7 +1067,7 @@ int bh_player_tick(BHPlayerTick *ctx)
     BHEntity *entity;
     BHPlayerTickState *state;
     BHMessageState *messages;
-    int k, result;
+    int k, result, send_death_pose;
     long last;
     if (!ctx || !ctx->player || !ctx->state)
         return 0;
@@ -1108,7 +1123,11 @@ int bh_player_tick(BHPlayerTick *ctx)
         !state->force(ctx->force, 1.0f / 30, half(entity, 0x2b4)) || !bh_physics_step_publish(ctx->body))
         return fail(ctx, ctx->error ? ctx->error : 3);
     recoil(entity);
-    if (!send_pose(ctx))
+    /* Send a single pose for a transition tick, after the model or spawn changes. */
+    send_death_pose = state->mode > 1 && (state->death_frames == DEATH_WRECK_FRAME - 1 ||
+                                         state->death_frames == DEATH_HIDE_FRAME - 1 ||
+                                         state->death_frames == DEATH_RESPAWN_FRAME - 1);
+    if (!send_death_pose && !send_pose(ctx, 0))
         return fail(ctx, ctx->error ? ctx->error : 3);
     if (!state->damage_warning)
     {
@@ -1192,6 +1211,8 @@ int bh_player_tick(BHPlayerTick *ctx)
         return 0;
     if (result == 2)
         return 1;
+    if (send_death_pose && !send_pose(ctx, 1))
+        return 0;
     if (!weapons(ctx) || !camera_cheats(ctx) || !damage_timers(ctx))
         return 0;
     if (!bh_physics_step_read_entity(ctx->body->physics, entity))
