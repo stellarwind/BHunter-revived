@@ -241,7 +241,7 @@ void bh_menu_action_ship(BHMenuEdits *c, long row)
     *c->ship = row;
     memcpy(&unlocked, c->config->settings + 2, 2);
     for (i = 0; i < 9; ++i)
-        c->mission_rows[i]->action = (long)i <= unlocked ? bh_menu_action_mission : NULL;
+        c->mission_rows[i]->action = c->unlock_all_levels || (long)i <= unlocked ? bh_menu_action_mission : NULL;
     c->mission_menu->selection = unlocked;
     c->mission_menu->display_selection = (float)unlocked;
 }

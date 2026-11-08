@@ -12,6 +12,7 @@ struct BHGameSettings
     bool maximized, borderless;
     int aspect, render_width, render_height, field_of_view;
     std::string player_name;
+    bool unlock_all_levels;
 };
 
 struct BHGameAspect
@@ -29,6 +30,7 @@ extern "C"
 #endif
     void bh_game_settings_load(const char *path);
     const char *bh_game_settings_player_name(void);
+    int bh_game_settings_unlock_all_levels(void);
 #ifdef __cplusplus
 }
 #endif

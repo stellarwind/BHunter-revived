@@ -1441,6 +1441,7 @@ static int source_owners(BHGameApp *app)
     app->menu_edits.mode = &app->player_state.mode;
     app->menu_edits.mission = &app->mission;
     app->menu_edits.ship = &app->ship;
+    app->menu_edits.unlock_all_levels = bh_game_settings_unlock_all_levels();
     app->transition.pool = &app->pool;
     app->transition.draw = &app->queue;
     app->transition.media = &app->media;

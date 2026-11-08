@@ -43,7 +43,7 @@ A source restoration of **BHunter**, the 1999 hovercar combat game by **InterAct
 
 ## Install
 
-1. Download and extract [BHunter 0.5](https://github.com/stellarwind/BHunter-revived/releases/tag/v0.5) on Windows.
+1. Download and extract the [latest BHunter release](https://github.com/stellarwind/BHunter-revived/releases/latest) on Windows.
 2. Create a `GAME_DATA` folder beside the executable and copy `Bhunter.bin` from your own original game into it.
 3. Run `BHunter-source.exe`.
 
@@ -81,16 +81,6 @@ Place `Bhunter.bin` in `GAME_DATA` as above, then run:
 python3 tools/build_gcc.py --incremental
 ./build/linux-x86/BHunter-source
 ```
-
-## Unlock all levels
-
-Quit the game, then run with Python 3.10+:
-
-```bat
-python tools\unlock_levels.py
-```
-
-This unlocks all nine mission entries in `source-preview.cfg` beside the executable (`build/source-preview.cfg` for local builds), backing up the save before changing it.
 
 ## AI disclaimer
 

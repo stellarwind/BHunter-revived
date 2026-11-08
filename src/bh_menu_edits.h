@@ -24,7 +24,7 @@ struct BHMenuEdits
     BHMenuMissionRow *mission_rows[9];
     long *mode, *mission, *ship;
     unsigned long refreshes;
-    int error;
+    int error, unlock_all_levels;
 };
 void bh_menu_edit_video(BHMenuEdits *, long);       /*42d1b0*/
 void bh_menu_edit_audio(BHMenuEdits *, long);       /*42d290*/

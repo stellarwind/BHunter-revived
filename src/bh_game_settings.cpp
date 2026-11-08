@@ -11,7 +11,7 @@ namespace
 {
 constexpr int default_fov = 60, min_fov = 35, max_fov = 100;
 const BHGameSettings defaults = {
-    SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 960, false, false, 0, 0, 0, default_fov, {}};
+    SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 960, false, false, 0, 0, 0, default_fov, {}, false};
 std::string settings_path = BH_GAME_SETTINGS_FILENAME;
 
 void read_setting_int(const char *value, int &setting)
@@ -21,6 +21,14 @@ void read_setting_int(const char *value, int &setting)
     const auto parsed = std::from_chars(value, end, number);
     if (parsed.ec == std::errc{} && parsed.ptr == end)
         setting = number;
+}
+
+void read_setting_bool(const char *value, bool &setting)
+{
+    if (!SDL_strcasecmp(value, "true"))
+        setting = true;
+    else if (!SDL_strcasecmp(value, "false"))
+        setting = false;
 }
 
 int read_setting(void *user, const char *section, const char *key, const char *value)
@@ -37,12 +45,7 @@ int read_setting(void *user, const char *section, const char *key, const char *v
         else if (!SDL_strcasecmp(key, "Height"))
             read_setting_int(value, settings.window_height);
         else if (!SDL_strcasecmp(key, "Maximized"))
-        {
-            if (!SDL_strcasecmp(value, "true"))
-                settings.maximized = true;
-            else if (!SDL_strcasecmp(value, "false"))
-                settings.maximized = false;
-        }
+            read_setting_bool(value, settings.maximized);
     }
     else if (!SDL_strcasecmp(section, "Display"))
     {
@@ -68,6 +71,8 @@ int read_setting(void *user, const char *section, const char *key, const char *v
     }
     else if (!SDL_strcasecmp(section, "Multiplayer") && !SDL_strcasecmp(key, "PlayerName"))
         settings.player_name = value;
+    else if (!SDL_strcasecmp(section, "Gameplay") && !SDL_strcasecmp(key, "UnlockAllLevels"))
+        read_setting_bool(value, settings.unlock_all_levels);
     return 1;
 }
 } // namespace
@@ -90,6 +95,11 @@ extern "C"
     const char *bh_game_settings_player_name(void)
     {
         return bh_game_settings.player_name.c_str();
+    }
+
+    int bh_game_settings_unlock_all_levels(void)
+    {
+        return bh_game_settings.unlock_all_levels;
     }
 }
 
@@ -125,11 +135,15 @@ void bh_game_settings_save()
                 "\n"
                 "[Multiplayer]\n"
                 "; Leave blank to use the computer name. The game uses up to 20 bytes.\n"
-                "PlayerName=%s\n",
+                "PlayerName=%s\n"
+                "\n"
+                "[Gameplay]\n"
+                "UnlockAllLevels=%s\n",
                 settings.borderless ? "Borderless" : "Windowed", bh_game_aspects[settings.aspect].label,
                 settings.render_width, settings.render_height, min_fov, max_fov, default_fov, settings.field_of_view,
                 settings.window_x, settings.window_y, settings.window_width, settings.window_height,
-                settings.maximized ? "true" : "false", settings.player_name.c_str());
+                settings.maximized ? "true" : "false", settings.player_name.c_str(),
+                settings.unlock_all_levels ? "true" : "false");
     if (fclose(f) == 0 && written >= 0)
         SDL_RenamePath(temporary.c_str(), settings_path.c_str());
 }
