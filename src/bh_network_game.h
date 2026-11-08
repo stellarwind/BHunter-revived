@@ -9,11 +9,18 @@ enum
     BH_NETWORK_CARS = 3,
     BH_NETWORK_ROSTER_BYTES = 26,
     BH_NETWORK_PACKET_CAPACITY = 264,
+    BH_NETWORK_SCORE_HISTORY = 128,
     BH_NETWORK_PORT = 27890,
     BH_NETWORK_DEATH_EFFECT = 13,
     BH_NETWORK_DEATH_FIRST = 0,
     BH_NETWORK_DEATH_FINAL = 1
 };
+
+typedef struct BHNetworkScoreReport
+{
+    uint32_t received_at;
+    uint16_t frame;
+} BHNetworkScoreReport;
 
 typedef struct BHNetworkPlayer
 {
@@ -22,6 +29,8 @@ typedef struct BHNetworkPlayer
     unsigned char car;
     char name[32];
     struct _ENetPeer *peer;
+    BHNetworkScoreReport score_history[BH_NETWORK_SCORE_HISTORY];
+    unsigned int score_history_count, next_score_report;
 } BHNetworkPlayer;
 
 struct BHNetworkGame

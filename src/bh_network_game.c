@@ -12,7 +12,9 @@ enum
     WELCOME = 2,
     LEAVE = 3,
     HELLO_SIZE = 35,
-    HANDSHAKE_TIMEOUT_MS = 8000
+    HANDSHAKE_TIMEOUT_MS = 8000,
+    /* Keep recent reports for half the wrap period of the 16-bit, 30 Hz game clock. */
+    SCORE_REPLAY_WINDOW_MS = (1 << 15) * 1000 / 30
 };
 
 static int enqueue(ENetPeer *peer, unsigned char channel, const void *data, size_t size)
@@ -147,6 +149,7 @@ static void control(BHNetworkGame *game, ENetPeer *peer, const unsigned char *da
         welcome[2] = (unsigned char)(slot + 1);
         if (enqueue(peer, CONTROL, welcome, sizeof(welcome)) < 0)
             return;
+        memset(game->players + slot, 0, sizeof(game->players[slot]));
         memcpy(game->players[slot].name, data + 3, 31);
         game->players[slot].name[31] = 0;
         /* Control characters are interpreted by the in-game message renderer. */
@@ -182,6 +185,23 @@ static int packet_valid(const unsigned char *wire, size_t size, unsigned char *b
         return 0;
     memcpy(bytes, wire + 2, size - 2);
     return bh_packet_receive(&reader, bytes, (unsigned long)size - 2, BH_NETWORK_PACKET_CAPACITY, &stats) == 1;
+}
+
+static int new_score_report(BHNetworkPlayer *player, const unsigned char *bytes)
+{
+    enet_uint32 now = enet_time_get();
+    uint16_t frame = bytes[2] | ((uint16_t)bytes[3] << 8);
+    for (unsigned int i = 0; i < player->score_history_count; ++i)
+    {
+        const BHNetworkScoreReport *report = player->score_history + i;
+        if (report->frame == frame && ENET_TIME_DIFFERENCE(now, report->received_at) < SCORE_REPLAY_WINDOW_MS)
+            return 0;
+    }
+    player->score_history[player->next_score_report] = (BHNetworkScoreReport){now, frame};
+    player->next_score_report = (player->next_score_report + 1) % BH_NETWORK_SCORE_HISTORY;
+    if (player->score_history_count < BH_NETWORK_SCORE_HISTORY)
+        ++player->score_history_count;
+    return 1;
 }
 
 static void gameplay(BHNetworkGame *game, const ENetEvent *event, BHNetworkMessage receive, void *user)
@@ -234,6 +254,8 @@ static void gameplay(BHNetworkGame *game, const ENetEvent *event, BHNetworkMessa
         game->players[slot].name[19] = 0;
     }
     else if (!game->players[from - 1].active)
+        goto reject;
+    if (game->hosting && type == 11 && !new_score_report(game->players + from - 1, bytes))
         goto reject;
     if (game->hosting && to != 1)
         send_to(game, wire, size, event->channelID);
