@@ -145,21 +145,40 @@ static int due(BHEntity *entity, float old, double period)
     put(entity, 0x128, &next);
     return 1;
 }
-static int broadcast(BHScriptSensorContext *ctx, BHEntity *entity, BHEntity *actor, long radius, long expected,
-                     long event)
+static int dispatch(BHScriptSensorContext *ctx, BHEntity *actor, const BHVec3 *center, long radius, long expected,
+                    long event)
 {
-    SensorPacket packet;
+    SensorPacket packet = {0};
     float r;
-    unsigned long g = generation(entity);
-    int result;
-    BHEntity *after;
-    memset(&packet, 0, sizeof(packet));
     packet.event = event;
     packet.actor = actor;
     packet.expected = expected;
     bh_round_float(&r, (double)radius);
-    result = bh_entities_query(ctx->lifetime->timers.pool, 0, 0, event == 17 ? NULL : &actor->position,
-                               event == 17 ? 0 : r, &packet);
+    return bh_entities_query(ctx->lifetime->timers.pool, 0, 0, center, r, &packet);
+}
+
+int bh_script_damage_trigger(BHScriptSensorContext *ctx, const BHScriptTrigger *trigger)
+{
+    BHScriptTimerContext *timers;
+    BHEntity *actor;
+    if (!ctx || !ctx->lifetime || !trigger || trigger->final > 1)
+        return 0;
+    timers = &ctx->lifetime->timers;
+    if (!timers->actors || trigger->actor >= timers->actor_count)
+        return 0;
+    actor = timers->actors[trigger->actor].entity;
+    if (!present(timers->pool, actor) ||
+        !dispatch(ctx, actor, &trigger->center, trigger->radius, trigger->expected, 14))
+        return 0;
+    return !trigger->final || dispatch(ctx, actor, NULL, 0, 0, 17);
+}
+
+static int broadcast(BHScriptSensorContext *ctx, BHEntity *entity, BHEntity *actor, long radius, long expected,
+                     long event)
+{
+    unsigned long g = generation(entity);
+    BHEntity *after;
+    int result = dispatch(ctx, actor, event == 17 ? NULL : &actor->position, event == 17 ? 0 : radius, expected, event);
     if (!live(ctx->lifetime->timers.pool, entity, g))
     {
         ctx->error = BH_SENSOR_MUTATION;
@@ -284,6 +303,9 @@ void bh_script_damage_tick(BHEntity *entity)
     BHScriptSensorState state;
     double scaled;
     float damage, countdown, latch = 0;
+    const BHScriptTimerActor *actor;
+    if (ctx && ctx->prop_client)
+        return;
     bh_script_sensor_read(entity, &state);
     if (!valid(ctx, entity, &state, 1))
         return;
@@ -297,6 +319,12 @@ void bh_script_damage_tick(BHEntity *entity)
     bh_script_sensor_set_damage(state.actor, damage);
     if (!greater(scaled, (double)state.threshold))
         return;
+    if (ctx->prop_trigger && (actor = record(ctx, state.actor)))
+    {
+        BHScriptTrigger trigger = {state.actor->position, state.broadcast_radius, state.expected,
+                                   (uint32_t)(actor - ctx->lifetime->timers.actors), state.remaining == 1};
+        ctx->prop_trigger(ctx->prop_network, &trigger);
+    }
     if (!broadcast(ctx, entity, state.actor, state.broadcast_radius, state.expected, 14))
         return;
     get(entity, 0x128, &countdown);

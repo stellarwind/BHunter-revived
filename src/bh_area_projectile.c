@@ -86,7 +86,7 @@ static int packets(BHAreaProjectileContext *ctx, BHEntity *entity, BHEntity *tar
         return 0;
     }
     get(entity, 0xf4, &suppress, 4);
-    if (!suppress)
+    if (!suppress || bh_weapon_hits_host_prop(ctx->effects, target))
     {
         if (!live(ctx, target, target_generation) || !target->query)
         {

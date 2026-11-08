@@ -14,6 +14,12 @@ typedef enum BHScriptExplosionError
     BH_EXPLOSION_LIMIT,
     BH_EXPLOSION_QUEUE
 } BHScriptExplosionError;
+typedef struct BHScriptBlast
+{
+    BHVec3 point;
+    float duration, magnitude;
+    int secondary;
+} BHScriptBlast;
 typedef struct BHScriptExplosionContext
 {
     BHEntityPool *pool;
@@ -23,6 +29,9 @@ typedef struct BHScriptExplosionContext
     BHFlashFlareContext *flash;
     unsigned long sound_resource, image;
     BHScriptExplosionError error;
+    int prop_client;
+    void (*prop_blast)(void *, const BHScriptBlast *, BHEntity *source);
+    void *prop_network;
 } BHScriptExplosionContext;
 typedef struct BHScriptExplosionState
 {
@@ -31,7 +40,7 @@ typedef struct BHScriptExplosionState
     float angle[8], spin[8];
     float radius, magnitude, probability;
     unsigned long sound_resource, origin_tag, target;
-    int visual_only;
+    int visual_only, prop;
 } BHScriptExplosionState;
 /* Whole constructors00402e50/004032f0. All contexts stay borrowed while their
    entities live; debris->origin_tag is the SAME attribution word004dfb34.
@@ -50,6 +59,10 @@ BHEntity *bh_script_explosion_secondary(BHScriptExplosionContext *, const BHVec3
                                         float probability, unsigned long sound, unsigned long target);
 BHEntity *bh_script_explosion_visual(BHScriptExplosionContext *, const BHVec3 *, float duration, float magnitude,
                                      float probability);
+BHEntity *bh_script_explosion_prop(BHScriptExplosionContext *, const BHVec3 *, float duration, float magnitude,
+                                   float probability, unsigned long target);
+unsigned char bh_script_blast_hits(const BHScriptBlast *, const BHVec3 *);
+void bh_script_blast_player(const BHScriptBlast *, BHEntity *, unsigned char hits, BHEntity *source);
 void bh_script_explosion_tick(BHEntity *);            /*00402af0*/
 void bh_script_explosion_refresh(BHEntity *, void *); /*00402710*/
 int bh_script_explosion_read(const BHEntity *, BHScriptExplosionState *);

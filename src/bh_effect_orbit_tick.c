@@ -299,7 +299,8 @@ void bh_effect_orbit_tick(BHEntity *entity)
         ++ctx->liquid_hits;
         return;
     }
-    if (!result || identity)
+    response = result && (!identity || b->host_props) ? receiver(ctx, &hit) : NULL;
+    if (!result || (identity && !bh_weapon_hits_host_prop(b, response)))
     {
         entity->position = end;
         for (i = 0; i < 3; ++i)
@@ -307,7 +308,6 @@ void bh_effect_orbit_tick(BHEntity *entity)
         bh_sound_update(b->sound, word(entity, 0x128), 1, 1, &entity->position, &velocity);
         return;
     }
-    response = receiver(ctx, &hit);
     if (ctx->error)
         return;
     normal = hit.normal;
@@ -333,7 +333,7 @@ void bh_effect_orbit_tick(BHEntity *entity)
                              .5f, 0, 0);
     }
     entity->position = hit.point;
-    if (!announce(ctx, entity))
+    if (!identity && !announce(ctx, entity))
     {
         ctx->error = 2;
         return;

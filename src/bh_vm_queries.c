@@ -36,6 +36,7 @@ int bh_block_damage_bind(BHEntityPool *p, BHEntity *e, BHBlockDamageContext *c, 
     put(e, 0x148, &s->health, 4);
     put(e, 0x14c, &s->owner, 4);
     memcpy(e->payload + 600, &c, 4);
+    e->flags |= BH_ENTITY_SCRIPTED_PROP;
     return bh_entity_set_query(p, e, only ? bh_block_player_damage_query : bh_block_damage_query);
 }
 static void damage(BHEntity *e, float value)
@@ -55,7 +56,7 @@ void bh_block_player_damage_query(BHEntity *e, void *packet)
     if (event == 0)
     {
         memcpy(&owner, (char *)packet + 8, 4);
-        if (owner == c->player)
+        if (owner == c->player || (owner && (owner->flags & BH_ENTITY_NETWORK_PLAYER)))
         {
             memcpy(&amount, (char *)packet + 4, 4);
             damage(e, amount);

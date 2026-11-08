@@ -4,7 +4,7 @@
 
 enum
 {
-    PROTOCOL = 0x42480002,
+    PROTOCOL = 0x42480003,
     CONTROL = 0,
     SNAPSHOTS = 1,
     HELLO = 1,
@@ -52,13 +52,15 @@ int bh_network_send(BHNetworkTransport *transport, unsigned long recipient, cons
     if (!bytes || size < 8 || size >= BH_NETWORK_PACKET_CAPACITY || recipient > BH_NETWORK_PLAYERS)
         return -1;
     type = *(const unsigned char *)bytes;
-    if (type < 3 || type > BH_NETWORK_DEATH_EFFECT)
+    if (type < 3 || type > BH_NETWORK_LAST_MESSAGE)
+        return -1;
+    if (type >= BH_NETWORK_PROP_TRIGGER && !game->hosting)
         return -1;
     wire[0] = (unsigned char)game->local_player;
     wire[1] = (unsigned char)recipient;
     memcpy(wire + 2, bytes, size);
-    /* Damage, scoring and death effects are one-shot events. Keep them reliable. */
-    if (type == 7 || type == 11 || type == 12 || type == BH_NETWORK_DEATH_EFFECT)
+    /* Damage, scoring, death effects and prop events use reliable delivery. */
+    if (type == 7 || type == 11 || type == 12 || type >= BH_NETWORK_DEATH_EFFECT)
         reliable = 1;
     ++game->sent[type];
     return send_to(game, wire, size + 2, reliable ? CONTROL : SNAPSHOTS);
@@ -192,7 +194,7 @@ static void gameplay(BHNetworkGame *game, const ENetEvent *event, BHNetworkMessa
     from = wire[0];
     to = wire[1];
     type = bytes[0];
-    if (type < 3 || type > BH_NETWORK_DEATH_EFFECT || !from || from > BH_NETWORK_PLAYERS)
+    if (type < 3 || type > BH_NETWORK_LAST_MESSAGE || !from || from > BH_NETWORK_PLAYERS)
         goto reject;
     if (game->hosting)
     {
@@ -214,6 +216,13 @@ static void gameplay(BHNetworkGame *game, const ENetEvent *event, BHNetworkMessa
         goto reject;
     if (type == BH_NETWORK_DEATH_EFFECT &&
         (size != 19 || to || event->channelID != CONTROL || bytes[16] > BH_NETWORK_DEATH_FINAL))
+        goto reject;
+    if (type >= BH_NETWORK_PROP_TRIGGER &&
+        (game->hosting || from != 1 || event->channelID != CONTROL))
+        goto reject;
+    if (type == BH_NETWORK_PROP_TRIGGER && size != 10 + BH_NETWORK_PROP_TRIGGER_BYTES)
+        goto reject;
+    if (type == BH_NETWORK_PROP_BLAST && (size != 10 + BH_NETWORK_PROP_BLAST_BYTES || to))
         goto reject;
     if (type == 3)
     {

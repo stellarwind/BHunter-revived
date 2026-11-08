@@ -185,7 +185,7 @@ int bh_remote_spawn_packet(BHRemotePackets *packets, void *p, unsigned long n, u
     for (j = 0; j < 19 && name[j]; ++j)
         *((char *)entity + 0x11e + j) = (char)name[j];
     *((char *)entity + 0x11e + j) = 0;
-    entity->flags |= 0x100;
+    entity->flags |= 0x100 | BH_ENTITY_NETWORK_PLAYER;
     sethalf(entity, 0x11a, 0);
     sethalf(entity, 0x11c, 0);
     memset((char *)entity + 0x48, 0, 48);

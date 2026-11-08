@@ -412,6 +412,7 @@ static BHEntity *finish(BHTargetConstructContext *ctx, BHTargetConstructSlot *ta
     target_slot->step.pickups = ctx->pickups;
     target_slot->step.mode = ctx->mode;
     target_slot->step.smoke_image = ctx->smoke_image;
+    target_slot->step.scripted_prop = minimum != NULL;
     if (!bh_target_step_bind(&target_slot->step, &ts))
         goto rejected;
     entity->step = step;

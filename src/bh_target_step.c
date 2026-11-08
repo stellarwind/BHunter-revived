@@ -174,7 +174,10 @@ void bh_target_step(BHEntity *entity)
                 {
                     bh_target_step_read(entity, &state);
                     sample(&point, entity, &state);
-                    bh_script_explosion_create(ctx->explosions, &point, 1, 12, .95f, (unsigned long)body->owner);
+                    if (ctx->scripted_prop)
+                        bh_script_explosion_prop(ctx->explosions, &point, 1, 12, .95f, (unsigned long)body->owner);
+                    else
+                        bh_script_explosion_create(ctx->explosions, &point, 1, 12, .95f, (unsigned long)body->owner);
                     if (!live(pool, entity, generation))
                     {
                         ctx->error = 1;

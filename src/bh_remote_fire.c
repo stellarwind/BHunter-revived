@@ -1,4 +1,5 @@
 #include "bh_remote_fire.h"
+#include "bh_vm_queries.h"
 #include "bh_weapon_path.h"
 #include "bh_physics_response.h"
 #include "bh_rotation.h"
@@ -211,6 +212,11 @@ static int hitscan(BHWeaponPulseContext *ctx, BHEntity *player, const BHVec3 *po
                 packet.impulse = .1f;
                 packet.severity = 0;
                 target->query(target, &packet);
+                if (world && target->query && bh_weapon_hits_host_prop(b, target))
+                {
+                    BHBlockDirectDamagePacket damage = {0, .3f, player};
+                    target->query(target, &damage);
+                }
             }
         }
         else

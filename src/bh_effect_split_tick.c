@@ -265,10 +265,10 @@ void bh_effect_split_tick(BHEntity *entity)
         return;
     }
     identity = word(entity, 0x130);
-    if (result && identity != 1)
+    response = result && (identity != 1 || b->host_props) ? receiver(ctx, &hit) : NULL;
+    if (result && (identity != 1 || bh_weapon_hits_host_prop(b, response)))
     {
         normal = hit.normal;
-        response = receiver(ctx, &hit);
         if (hit.object.kind == BH_WORLD_HIT_GEOMETRY && !(hit.material_flags & 2))
         {
             dot = ((double)entity->origin.z * normal.z + (double)entity->origin.y * normal.y) +
@@ -295,9 +295,9 @@ void bh_effect_split_tick(BHEntity *entity)
                                  .5f, NULL, NULL);
         }
         entity->position = hit.point;
-        if (!packet(ctx, entity, 1, &zero))
+        if (identity != 1 && !packet(ctx, entity, 1, &zero))
             return;
-        if (!identity)
+        if (!identity || bh_weapon_hits_host_prop(b, response))
         {
             if (!response)
             {

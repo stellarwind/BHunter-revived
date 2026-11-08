@@ -20,7 +20,7 @@ typedef struct BHTargetStepContext
     BHPickupContext *pickups;
     long *mode; /* original004df250 editor mode, not gameplay mode or pause */
     unsigned long smoke_image;
-    int error;
+    int error, scripted_prop;
 } BHTargetStepContext;
 /* Count-zero binding. Same actual debris body/physics state/owner/sleep word;
    same outside registry as pickup owner. Borrow all owners until retirement.

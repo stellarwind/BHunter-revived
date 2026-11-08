@@ -206,12 +206,12 @@ void bh_effect_accelerated_tick(BHEntity *entity)
             return;
         }
         suppress = number(entity, 0x130);
-        if (result && !suppress)
+        receiver = result && (!suppress || b->host_props) ? response(b, &hit) : NULL;
+        if (result && (!suppress || bh_weapon_hits_host_prop(b, receiver)))
         {
             ++a->collisions;
             value(entity, 0xe8, 3);
             n = hit.normal;
-            receiver = response(b, &hit);
             if (world && !(hit.material_flags & 2))
             {
                 if (((double)entity->origin.x * n.x + (double)entity->origin.y * n.y) + (double)entity->origin.z * n.z >
@@ -239,7 +239,7 @@ void bh_effect_accelerated_tick(BHEntity *entity)
             bh_sound_stop(b->sound, voice);
             voice = BH_SOUND_INVALID;
             put(entity, 0x128, &voice, 4);
-            if (ctx->network)
+            if (ctx->network && !suppress)
                 bh_effect_network_emit(ctx->network, entity, 0x138, 0x134, 2, &zero);
             bh_effect_detonate(ctx, entity);
             return;

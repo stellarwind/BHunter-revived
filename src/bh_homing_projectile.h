@@ -26,7 +26,12 @@ typedef struct BHHomingProjectileContext
     unsigned long guidance, proximity, world_hits, damage_packets;
     int error;
     const BHBindingIndex *response_index; /* optional immutable scene identities */
+    int host_props;
 } BHHomingProjectileContext;
+static __inline int bh_weapon_hits_host_prop(const BHHomingProjectileContext *ctx, const BHEntity *target)
+{
+    return ctx->host_props && target && (target->flags & BH_ENTITY_SCRIPTED_PROP);
+}
 /* Typed live receiver lookup; the optional index stores only array positions. */
 static __inline const BHHomingWorldResponse *bh_homing_world_response(const BHHomingProjectileContext *c,
                                                                       const BHWorldGeometry *world)

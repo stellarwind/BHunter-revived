@@ -116,7 +116,7 @@ static void hit_packets(BHHomingProjectileContext *ctx, BHEntity *target, const 
     packet.impulse = impulse;
     packet.severity = 0;
     target->query(target, &packet);
-    if (!suppress)
+    if (!suppress || bh_weapon_hits_host_prop(ctx, target))
     {
         if (!live(ctx, target, generation))
         {

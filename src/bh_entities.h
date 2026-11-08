@@ -7,6 +7,11 @@
 typedef struct BHEntity BHEntity;
 typedef void (*BHEntityStep)(BHEntity *entity);
 typedef void (*BHEntityCallback)(BHEntity *entity, void *packet);
+enum
+{
+    BH_ENTITY_NETWORK_PLAYER = 0x200,
+    BH_ENTITY_SCRIPTED_PROP = 0x400
+};
 struct BHEntity
 {
     unsigned long flags, generation, kind;

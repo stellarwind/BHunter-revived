@@ -2,6 +2,7 @@
 #include "bh_callback_helpers.h"
 #include "bh_round.h"
 #include "bh_fp.h"
+#include <float.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -108,6 +109,77 @@ static int send_packet(BHRemoteMessages *messages, unsigned char type, unsigned 
     ++messages->sends;
     return 1;
 }
+typedef struct BHPropBlastMessage
+{
+    BHScriptBlast blast;
+    uint32_t source;
+    unsigned char hits[BH_NETWORK_PLAYERS];
+} BHPropBlastMessage;
+typedef char prop_message_layout[sizeof(BHScriptTrigger) == BH_NETWORK_PROP_TRIGGER_BYTES &&
+                                        sizeof(BHPropBlastMessage) == BH_NETWORK_PROP_BLAST_BYTES ? 1 : -1];
+
+static int send_prop(BHRemoteMessages *messages, unsigned char type, const void *payload, size_t size,
+                     unsigned long to)
+{
+    unsigned short tick = (unsigned short)*messages->packets->simulation_tick;
+    return send_packet(messages, type, tick, payload, size, to, 1) && messages->send_result >= 0;
+}
+
+void bh_remote_prop_trigger(void *user, const BHScriptTrigger *trigger)
+{
+    BHRemoteMessages *messages = user;
+    if (messages->prop_count == messages->prop_capacity)
+    {
+        size_t capacity = messages->prop_capacity ? messages->prop_capacity * 2 : 32;
+        BHScriptTrigger *history = NULL;
+        if (capacity > messages->prop_capacity && capacity <= SIZE_MAX / sizeof(*history))
+            history = realloc(messages->prop_history, capacity * sizeof(*history));
+        if (history)
+        {
+            messages->prop_history = history;
+            messages->prop_capacity = capacity;
+        }
+    }
+    if (messages->prop_count < messages->prop_capacity)
+        messages->prop_history[messages->prop_count++] = *trigger;
+    else
+        messages->error = 1;
+    if (!send_prop(messages, BH_NETWORK_PROP_TRIGGER, trigger, sizeof(*trigger), 0))
+        messages->error = 6;
+}
+
+void bh_remote_prop_blast(void *user, const BHScriptBlast *blast, BHEntity *source)
+{
+    BHRemoteMessages *messages = user;
+    BHRemotePackets *packets = messages->packets;
+    BHPropBlastMessage packet = {0};
+    BHVec3 position;
+    unsigned int i;
+    long slot = *packets->local_slot;
+    unsigned short tick = (unsigned short)*packets->simulation_tick;
+    packet.blast = *blast;
+    for (i = 0; i < BH_NETWORK_PLAYERS; ++i)
+    {
+        BHEntity *remote = packets->remote[i];
+        if (!remote || !packets->network->players[i].active)
+            continue;
+        if (remote == source)
+            packet.source = i + 1;
+        if (word(remote, 0x198) && !(half(remote, 0x11a) & BH_REMOTE_POSE_HIDDEN) &&
+            bh_remote_predict_position(remote, tick, &position))
+            packet.hits[i] = bh_script_blast_hits(blast, &position);
+    }
+    if (slot >= 0 && slot < BH_NETWORK_PLAYERS && packets->local)
+    {
+        if (packets->local == source)
+            packet.source = slot + 1;
+        bh_script_blast_player(blast, packets->local, bh_script_blast_hits(blast, &packets->local->position),
+                               packet.source ? source : NULL);
+    }
+    if (!send_prop(messages, BH_NETWORK_PROP_BLAST, &packet, sizeof(packet), 0))
+        messages->error = 6;
+}
+
 static int announce(BHRemoteMessages *messages, unsigned long slot, unsigned long to)
 {
     unsigned char payload[BH_NETWORK_ROSTER_BYTES];
@@ -173,7 +245,7 @@ static int birth(BHRemoteMessages *messages, unsigned long slot)
     for (i = 0; i < 3; ++i)
         memset((char *)entity + 0x140 + 32 * i, 0, 24);
     memset((char *)entity + 0x48, 0, 48);
-    entity->flags |= 0x100;
+    entity->flags |= 0x100 | BH_ENTITY_NETWORK_PLAYER;
     sethalf(entity, 0x11a, 0);
     sethalf(entity, 0x11c, 0);
     setword(entity, 0xfc, 8);
@@ -340,11 +412,19 @@ int bh_remote_roster(BHRemoteMessages *messages, unsigned int slot, int host)
         return 0;
     }
     score(messages);
+    /* Rebuild destroyed scenery for a new peer without replaying past blast hits. */
+    for (i = 0; i < messages->prop_count; ++i)
+        if (!send_prop(messages, BH_NETWORK_PROP_TRIGGER, messages->prop_history + i,
+                       sizeof(*messages->prop_history), player->id))
+            return 0;
     return !messages->error;
 }
 int bh_remote_clear(BHRemoteMessages *messages)
 {
     unsigned int slot;
+    free(messages->prop_history);
+    messages->prop_history = NULL;
+    messages->prop_count = messages->prop_capacity = 0;
     for (slot = 0; slot < 8; ++slot)
         if (messages->packets->remote[slot] && !retire(messages, slot))
             return 0;
@@ -499,6 +579,41 @@ static int death_effect(BHRemoteMessages *messages)
         bh_script_explosion_visual(messages->explosions, &point, 1.2f, 14, .85f);
     return done(messages);
 }
+static int prop_effect(BHRemoteMessages *messages, unsigned char type)
+{
+    if (type == BH_NETWORK_PROP_TRIGGER)
+    {
+        BHScriptTrigger trigger;
+        if (!messages->sensors || !take(messages, &trigger, sizeof(trigger)) ||
+            !_finite(trigger.center.x) || !_finite(trigger.center.y) || !_finite(trigger.center.z) ||
+            messages->packets->reader.cursor != messages->packets->reader.size ||
+            !bh_script_damage_trigger(messages->sensors, &trigger))
+            messages->error = 3;
+    }
+    else
+    {
+        BHPropBlastMessage packet;
+        unsigned long player = messages->packets->network->local_player;
+        if (!messages->explosions || !player || player > BH_NETWORK_PLAYERS ||
+            !take(messages, &packet, sizeof(packet)) ||
+            messages->packets->reader.cursor != messages->packets->reader.size ||
+            !_finite(packet.blast.point.x) || !_finite(packet.blast.point.y) || !_finite(packet.blast.point.z) ||
+            !_finite(packet.blast.duration) || !_finite(packet.blast.magnitude) || packet.blast.magnitude < 0 ||
+            (unsigned int)packet.blast.secondary > 1 || packet.source > BH_NETWORK_PLAYERS ||
+            packet.hits[player - 1] > 7)
+            messages->error = 3;
+        else
+        {
+            BHScriptBlast *blast = &packet.blast;
+            BHEntity *source = NULL;
+            if (packet.source)
+                source = packet.source == player ? messages->packets->local : messages->packets->remote[packet.source - 1];
+            bh_script_explosion_visual(messages->explosions, &blast->point, blast->duration, blast->magnitude, 0);
+            bh_script_blast_player(blast, messages->packets->local, packet.hits[player - 1], source);
+        }
+    }
+    return done(messages);
+}
 static int clock(BHRemoteMessages *messages, int host)
 {
     BHRemotePackets *packets = messages->packets;
@@ -632,6 +747,8 @@ static int message(BHRemoteMessages *messages, void *p, unsigned long n, unsigne
             return 1;
         break;
     case 12:
+    case BH_NETWORK_PROP_TRIGGER:
+    case BH_NETWORK_PROP_BLAST:
         if (host)
             return 1;
         break;
@@ -656,6 +773,9 @@ static int message(BHRemoteMessages *messages, void *p, unsigned long n, unsigne
         return 1;
     case BH_NETWORK_DEATH_EFFECT:
         return death_effect(messages);
+    case BH_NETWORK_PROP_TRIGGER:
+    case BH_NETWORK_PROP_BLAST:
+        return prop_effect(messages, type);
     case 11:
     case 12:
         return scores(messages, host);

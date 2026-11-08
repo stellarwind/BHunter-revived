@@ -2129,6 +2129,7 @@ static int network_bind(BHGameApp *app)
                                               .sound = &app->sound,
                                               .contacts = &app->contacts,
                                               .explosions = &app->explosions,
+                                              .sensors = &app->sensors,
                                               .effects = &app->network_effects,
                                               .launch = &app->actor_launch,
                                               .latency = app->network_latency,
@@ -2217,6 +2218,13 @@ static int network_start(BHGameApp *app, BHMenuRuntime *entry, const char *addre
         bh_network_close(&app->network_game);
         return 0;
     }
+    app->player->flags |= BH_ENTITY_NETWORK_PLAYER;
+    app->sensors.prop_client = app->explosions.prop_client = address != NULL;
+    app->sensors.prop_network = app->explosions.prop_network = &app->remote_messages;
+    app->sensors.prop_trigger = address ? NULL : bh_remote_prop_trigger;
+    app->explosions.prop_blast = address ? NULL : bh_remote_prop_blast;
+    app->projectile_effects.host_props = app->homing.host_props = app->ballistic.bindings.host_props = address == NULL;
+    app->weapon_pulse.effects.host_props = address == NULL;
     app->network_entry = entry;
     app->network_cancel_pressed = 0;
     app->network_world = NULL;
@@ -2329,6 +2337,11 @@ static int network_poll(BHGameApp *app)
         if (!bh_remote_clear(&app->remote_messages))
             return failure(app, 12);
         bh_network_close(game);
+        app->sensors.prop_client = app->explosions.prop_client = 0;
+        app->sensors.prop_trigger = NULL;
+        app->explosions.prop_blast = NULL;
+        app->projectile_effects.host_props = app->homing.host_props = app->ballistic.bindings.host_props = 0;
+        app->weapon_pulse.effects.host_props = 0;
         app->slot = -1;
         app->network_playing = 0;
         app->network_entry = NULL;

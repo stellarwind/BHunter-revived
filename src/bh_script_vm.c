@@ -451,7 +451,7 @@ static int execute(BHScriptVMContext *ctx, BHEntity *node, BHEntity *target, BHS
             return 0;
         }
         random_point(target, &p, 0);
-        bh_script_explosion_create(ctx->explosions, &p, 1, (float)args[0], .75f, 0);
+        bh_script_explosion_prop(ctx->explosions, &p, 1, (float)args[0], .75f, 0);
         break;
     case 8:
         if (!ctx->targets)
