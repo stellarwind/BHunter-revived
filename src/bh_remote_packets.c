@@ -252,7 +252,7 @@ int bh_remote_shot_packet(BHRemotePackets *packets, void *p, unsigned long n, un
     if (!take(packets, &count, 1) || !take(packets, &spacing, 1) || !take(packets, &type, 1) ||
         !take(packets, &target_slot, 1))
         return 0;
-    if (type > 8)
+    if (!bh_network_shot_pattern_valid(type, count, spacing))
     {
         packets->error = 4;
         --packets->pending;

@@ -35,7 +35,7 @@ typedef struct BHRemotePackets
    low16 and local slot. Stable caller-owned contexts/lists/pools/roster required.
    Shot receiver retains signed16 lag<61 (including future), type5 lifetime,
    immediate single-shot sync and bounded repeated shots/queued tail.
-   Source guards reject truncated fields, invalid slot/type and occupied spawn
+   Source guards reject truncated fields, invalid slots/shot patterns and occupied spawn
    slot rather than original overflow/leak. No original code or game playback. */
 int bh_remote_spawn_packet(BHRemotePackets *, void *, unsigned long size, unsigned long capacity);
 int bh_remote_shot_packet(BHRemotePackets *, void *, unsigned long size, unsigned long capacity);

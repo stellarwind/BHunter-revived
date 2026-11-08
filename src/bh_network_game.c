@@ -204,6 +204,26 @@ static int new_score_report(BHNetworkPlayer *player, const unsigned char *bytes)
     return 1;
 }
 
+int bh_network_shot_pattern_valid(unsigned int type, unsigned int count, unsigned int spacing)
+{
+    static const struct
+    {
+        unsigned char count, spacing;
+    } patterns[] = {
+        {4, 2}, /* Hitscan */
+        {4, 2}, /* Ballistic */
+        {2, 4}, /* Homing */
+        {1, 0}, /* Orbit */
+        {5, 1}, /* Area */
+        {1, 0}, /* Arc */
+        {1, 0}, /* Split */
+        {1, 0}, /* Accelerated */
+        {1, 0}  /* Pulse projectile */
+    };
+    return type < sizeof(patterns) / sizeof(patterns[0]) &&
+           count == patterns[type].count && spacing == patterns[type].spacing;
+}
+
 static void gameplay(BHNetworkGame *game, const ENetEvent *event, BHNetworkMessage receive, void *user)
 {
     const unsigned char *wire = event->packet->data;
@@ -232,7 +252,8 @@ static void gameplay(BHNetworkGame *game, const ENetEvent *event, BHNetworkMessa
         goto reject;
     if (type == 12 && (size != 26 || from != 1))
         goto reject;
-    if (type == 8 && (size != 15 || to || bytes[8] + 1 != from || bytes[11] > 8))
+    if (type == 8 &&
+        (size != 15 || to || bytes[8] + 1 != from || !bh_network_shot_pattern_valid(bytes[11], bytes[9], bytes[10])))
         goto reject;
     if (type == BH_NETWORK_DEATH_EFFECT &&
         (size != 19 || to || event->channelID != CONTROL || bytes[16] > BH_NETWORK_DEATH_FINAL))

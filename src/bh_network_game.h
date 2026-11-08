@@ -48,6 +48,7 @@ struct BHNetworkGame
 typedef void (*BHNetworkMessage)(void *, unsigned long, void *);
 typedef void (*BHNetworkRoster)(unsigned int slot, void *);
 
+int bh_network_shot_pattern_valid(unsigned int type, unsigned int count, unsigned int spacing);
 int bh_network_open(BHNetworkGame *, const char *address, unsigned short port, const char *name, unsigned int car);
 void bh_network_close(BHNetworkGame *);
 void bh_network_receive(BHNetworkGame *, BHNetworkMessage, BHNetworkRoster, void *);
