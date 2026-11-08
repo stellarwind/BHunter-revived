@@ -354,10 +354,12 @@ def build(out, source):
     # Own runtime and settings: the normal game directory is not altered.
     for filename in ("BHunter-source.exe", "BHunterGPU.dll", "SDL3.dll"):
         shutil.copy2(source / filename, out / filename)
+    if (source / "LICENCES").is_file():
+        shutil.copy2(source / "LICENCES", out / "LICENCES")
     for folder in ("GAME_DATA", "MUSIC_DATA", "shaders"):
         if (source / folder).exists():
             shutil.copytree(source / folder, out / folder, dirs_exist_ok=True)
-    for filename in ("source-preview.cfg", "video-sdl3.ini"):
+    for filename in ("source-preview.cfg", "game-config.ini"):
         if (source / filename).exists() and not (out / filename).exists():
             shutil.copy2(source / filename, out / filename)
     (out / "play.cmd").write_text(

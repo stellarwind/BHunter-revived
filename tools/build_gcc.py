@@ -11,7 +11,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from prepare_sdl3 import SHADER_PATH, prepare
+from prepare_sdl3 import INI_FLAGS, INI_SOURCE, LICENCE_SOURCES, SHADER_PATH, prepare, stage_licences
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -116,10 +116,11 @@ def main():
     ]
     # ENet 1.3.18, upstream commit 2662c0de09e36f2a2030ccc2c528a3e4c9e8138a.
     enet = ROOT / "third_party/enet"
-    dependencies += (
-        sorted(enet.rglob("*.h")) + sorted(enet.glob("*.c")) + [enet / "LICENSE"]
-    )
+    dependencies += sorted(enet.rglob("*.h")) + sorted(enet.glob("*.c"))
     dependencies += [
+        INI_SOURCE,
+        INI_SOURCE.with_suffix(".h"),
+        *(path for _, path in LICENCE_SOURCES),
         ROOT / "tools/build_game.py",
         ROOT / "tools/build_gcc.py",
         ROOT / "tools/prepare_sdl3.py",
@@ -257,9 +258,9 @@ def main():
     response.write_text(
         "\n".join('"' + str(obj).replace("\\", "/") + '"' for obj in objects) + "\n"
     )
-    shutil.copyfile(enet / "LICENSE", out / "ENet-LICENSE.txt")
-    runtime_files = ["ENet-LICENSE.txt"]
+    runtime_files = ["LICENCES"]
     if linux:
+        stage_licences(out)
         sdl_flags = shlex.split(
             subprocess.check_output(["pkg-config", "--cflags", "--libs", "sdl3"], text=True)
         )
@@ -268,11 +269,13 @@ def main():
                 args.cxx,
                 "-std=c++17",
                 "-O2",
+                *INI_FLAGS,
                 *architecture,
                 *(["-g"] if args.symbols else []),
                 "-D__cdecl=",
                 ROOT / "src/bh_sdl_gpu.cpp",
                 ROOT / "src/bh_sdl_audio.cpp",
+                INI_SOURCE,
                 "@" + str(response),
                 "-Wl,--gc-sections",
                 *sdl_flags,
@@ -297,7 +300,7 @@ def main():
                 out / executable,
             ]
         )
-        runtime_files += ["BHunterGPU.dll", "SDL3.dll", "SDL3-LICENSE.txt", SHADER_PATH.as_posix()]
+        runtime_files += ["BHunterGPU.dll", "SDL3.dll", SHADER_PATH.as_posix()]
     objdump = subprocess.check_output(
         [args.cc, "-print-prog-name=objdump"], text=True
     ).strip()

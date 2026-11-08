@@ -5,9 +5,11 @@
 #include "bh_sdl_adapter.h"
 #include "bh_video_layout.h"
 #include "bh_overlay_text.h"
+#include "../third_party/inih/ini.h"
 #include <SDL3/SDL.h>
 #include <algorithm>
 #include <array>
+#include <charconv>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -126,7 +128,6 @@ struct Aspect
     int numerator, denominator;
     const char *label;
 };
-/* Saved settings store an index. Append new aspect ratios. */
 const Aspect aspects[] = {{4, 3, "4:3"}, {16, 9, "16:9"}, {16, 10, "16:10"}, {21, 9, "21:9"}};
 void output_size(int &w, int &h)
 {
@@ -194,22 +195,8 @@ void select_matching_mode()
     if (best >= 0)
         selected_resolution = best;
 }
-void finish_modes(int settings_version, int saved_width, int saved_height)
+void finish_modes(int saved_width, int saved_height)
 {
-    if (settings_version == 1 && !modes.empty())
-    {
-        std::sort(modes.begin(), modes.end());
-        auto saved = modes[std::clamp(selected_resolution, 0, (int)modes.size() - 1)];
-        saved_width = saved.first;
-        saved_height = saved.second;
-        for (int i = 0; i < (int)std::size(aspects); ++i)
-            if (video_layout_aspect_matches(saved_width, saved_height, aspects[i].numerator, aspects[i].denominator))
-            {
-                selected_aspect = i;
-                break;
-            }
-    }
-
     const std::pair<int, int> render_sizes[] = {
         {640, 480},   {800, 600},  {1024, 768}, {1280, 960},  {1600, 1200}, {1920, 1440}, {2560, 1920}, {2880, 2160},
         {854, 480},   {960, 540},  {1280, 720}, {1366, 768},  {1600, 900},  {1920, 1080}, {2560, 1440}, {3200, 1800},
@@ -232,7 +219,8 @@ void finish_modes(int settings_version, int saved_width, int saved_height)
         selected_resolution = (int)(saved_mode - modes.begin());
     select_matching_mode();
 }
-std::string settings_path = "video-sdl3.ini", settings_directory;
+constexpr char settings_filename[] = "game-config.ini";
+std::string settings_path = settings_filename, settings_directory;
 void set_error(const char *context)
 {
     snprintf(error_text, sizeof(error_text), "%s: %s", context, SDL_GetError());
@@ -280,6 +268,61 @@ DDPIXELFORMAT pixel_format(unsigned bits = 16)
     }
     return p;
 }
+void read_setting_int(const char *value, int &setting)
+{
+    int number;
+    const char *end = value + strlen(value);
+    const auto parsed = std::from_chars(value, end, number);
+    if (parsed.ec == std::errc{} && parsed.ptr == end)
+        setting = number;
+}
+struct SavedRenderSize
+{
+    int width = 0, height = 0;
+};
+int read_video_setting(void *user, const char *section, const char *key, const char *value)
+{
+    auto &render_size = *static_cast<SavedRenderSize *>(user);
+    if (!SDL_strcasecmp(section, "Window"))
+    {
+        if (!SDL_strcasecmp(key, "X"))
+            read_setting_int(value, normal_x);
+        else if (!SDL_strcasecmp(key, "Y"))
+            read_setting_int(value, normal_y);
+        else if (!SDL_strcasecmp(key, "Width"))
+            read_setting_int(value, normal_w);
+        else if (!SDL_strcasecmp(key, "Height"))
+            read_setting_int(value, normal_h);
+        else if (!SDL_strcasecmp(key, "Maximized"))
+        {
+            if (!SDL_strcasecmp(value, "true"))
+                maximized = true;
+            else if (!SDL_strcasecmp(value, "false"))
+                maximized = false;
+        }
+    }
+    else if (!SDL_strcasecmp(section, "Display"))
+    {
+        if (!SDL_strcasecmp(key, "Mode"))
+        {
+            if (!SDL_strcasecmp(value, "Borderless"))
+                mode = 1;
+            else if (!SDL_strcasecmp(value, "Windowed"))
+                mode = 0;
+        }
+        else if (!SDL_strcasecmp(key, "AspectRatio"))
+        {
+            for (int i = 0; i < (int)std::size(aspects); ++i)
+                if (!strcmp(value, aspects[i].label))
+                    selected_aspect = i;
+        }
+        else if (!SDL_strcasecmp(key, "RenderWidth"))
+            read_setting_int(value, render_size.width);
+        else if (!SDL_strcasecmp(key, "RenderHeight"))
+            read_setting_int(value, render_size.height);
+    }
+    return 1;
+}
 void save_settings()
 {
     if (!window || hidden)
@@ -289,9 +332,28 @@ void save_settings()
     if (!f)
         return;
     auto resolution = modes.empty() ? std::make_pair(normal_w, normal_h) : modes[selected_resolution];
-    fprintf(f, "BHSDL3 3\n%d %d %d %d %d %d %d\n%d %d %d\n", normal_x, normal_y, normal_w, normal_h, mode, maximized,
-            selected_resolution, selected_aspect, resolution.first, resolution.second);
-    if (fclose(f) == 0)
+    const int written = fprintf(f,
+                                "[Display]\n"
+                                "; Use Windowed or Borderless.\n"
+                                "Mode=%s\n"
+                                "; Choose 4:3, 16:9, 16:10, or 21:9.\n"
+                                "AspectRatio=%s\n"
+                                "; Render size in Borderless mode. Windowed mode follows the window size.\n"
+                                "RenderWidth=%d\n"
+                                "RenderHeight=%d\n"
+                                "\n"
+                                "[Window]\n"
+                                "; Desktop position of the restored window.\n"
+                                "X=%d\n"
+                                "Y=%d\n"
+                                "; Width and height of the restored window.\n"
+                                "Width=%d\n"
+                                "Height=%d\n"
+                                "; Use true to maximize the window, or false to use the saved size.\n"
+                                "Maximized=%s\n",
+                                mode ? "Borderless" : "Windowed", aspects[selected_aspect].label, resolution.first,
+                                resolution.second, normal_x, normal_y, normal_w, normal_h, maximized ? "true" : "false");
+    if (fclose(f) == 0 && written >= 0)
         SDL_RenamePath(temporary.c_str(), settings_path.c_str());
 }
 void remember_window()
@@ -980,7 +1042,7 @@ extern "C"
 {
     int bh_sdl_open(int hide, BHPlatformInput callback, void *user)
     {
-        int saved_width = 0, saved_height = 0, settings_version = 0;
+        SavedRenderSize saved_render_size;
         hidden = hide != 0;
         input_callback = callback;
         quitting = false;
@@ -997,27 +1059,7 @@ extern "C"
         /* A missing controller subsystem must not prevent keyboard play. */
         if (SDL_InitSubSystem(SDL_INIT_GAMEPAD))
             find_gamepad();
-        FILE *f = fopen(settings_path.c_str(), "r");
-        if (f)
-        {
-            char tag[32] = {};
-            int version = 0, m = 0;
-            if (fscanf(f, "%31s %d", tag, &version) == 2 && !strcmp(tag, "BHSDL3") && version >= 1 && version <= 3)
-            {
-                settings_version = version;
-                fscanf(f, "%d %d %d %d %d %d %d", &normal_x, &normal_y, &normal_w, &normal_h, &mode, &m,
-                       &selected_resolution);
-                maximized = m != 0;
-                if (version >= 2)
-                    fscanf(f, "%d %d %d", &selected_aspect, &saved_width, &saved_height);
-                if (version == 2)
-                {
-                    const int old_aspect = selected_aspect;
-                    selected_aspect = old_aspect == 2 || old_aspect == 3 ? 1 : old_aspect >= 5 ? 2 : 0;
-                }
-            }
-            fclose(f);
-        }
+        ini_parse(settings_path.c_str(), read_video_setting, &saved_render_size);
         normal_w = std::clamp(normal_w, 640, 3840);
         normal_h = std::clamp(normal_h, 480, 2160);
         mode = std::clamp(mode, 0, 1);
@@ -1029,7 +1071,6 @@ extern "C"
             mode = 0;
             maximized = false;
             selected_aspect = 0;
-            settings_version = 0;
         }
         window = SDL_CreateWindow("BHunter", normal_w, normal_h,
                                   SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY | SDL_WINDOW_HIDDEN);
@@ -1051,7 +1092,7 @@ extern "C"
                 modes.push_back(size);
         }
         SDL_free(available);
-        finish_modes(settings_version, saved_width, saved_height);
+        finish_modes(saved_render_size.width, saved_render_size.height);
         device = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_SPIRV, false, "vulkan");
         if (!device || !SDL_ClaimWindowForGPUDevice(device, window))
         {
@@ -1212,7 +1253,7 @@ extern "C"
         if (error || !fs::is_directory(output, error) || error)
             return 0;
         settings_directory = output.generic_string();
-        settings_path = (output / "video-sdl3.ini").generic_string();
+        settings_path = (output / settings_filename).generic_string();
         fs::current_path(root, error);
         return !error;
     }

@@ -13,6 +13,7 @@ import tarfile
 import tempfile
 import zipfile
 
+from prepare_sdl3 import SHADER_PATH
 from prepare_sdl3_linux import prepare as prepare_linux_sdl, validate_runtime
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -46,12 +47,14 @@ for directory in src tools third_party; do
     test "$(realpath -e -- "$workspace/$directory")" = "$workspace/$directory"
     rsync -rt --delete --exclude=__pycache__/ -- "$2/$directory/" "$workspace/$directory/"
 done
+install -D -- "$2/LICENSE" "$workspace/LICENSE"
+install -D -- "$2/LICENSES/SDL3.txt" "$workspace/LICENSES/SDL3.txt"
 mkdir -p -- "$workspace/GAME_DATA"
 test "$(realpath -e -- "$workspace/GAME_DATA")" = "$workspace/GAME_DATA"
 cp -- "$3" "$workspace/GAME_DATA/Bhunter.bin"
 chroot "$root" /bin/sh -ec 'cd /workspace-release; python3 tools/prepare_sdl3_linux.py; export PKG_CONFIG_PATH="$PWD/build-cache/sdl3/linux/install/lib/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"; exec python3 tools/build_gcc.py --incremental'
 runtime="$workspace/build/linux-x86"
-cp -- "$runtime/BHunter-source" "$runtime/ENet-LICENSE.txt" "$4/"
+cp -- "$runtime/BHunter-source" "$runtime/LICENCES" "$4/"
 cp -- "$workspace/build-cache/sdl3/linux/install/lib/libSDL3.so.0" "$4/libSDL3.so.0"
 """
 
@@ -89,8 +92,8 @@ def package_windows(version, stage):
     archive = stage / f"{name}-windows-x86.zip"
     with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as bundle:
         for member in (
-            "BHunter-source.exe", "BHunterGPU.dll", "SDL3.dll", "SDL3-LICENSE.txt",
-            "ENet-LICENSE.txt", "shaders/legacy.slang",
+            "BHunter-source.exe", "BHunterGPU.dll", "SDL3.dll", "LICENCES",
+            SHADER_PATH.as_posix(),
         ):
             bundle.write(runtime / member, f"{name}/{member}")
     return archive
@@ -105,8 +108,7 @@ def package_linux(version, stage, runtime, sdl):
         for member, data, mode in (
             ("BHunter-source", (runtime / "BHunter-source").read_bytes(), 0o755),
             ("lib/libSDL3.so.0", sdl.read_bytes(), 0o755),
-            ("SDL3-LICENSE.txt", (ROOT / "LICENSES/SDL3.txt").read_bytes(), 0o644),
-            ("ENet-LICENSE.txt", (runtime / "ENet-LICENSE.txt").read_bytes(), 0o644),
+            ("LICENCES", (runtime / "LICENCES").read_bytes(), 0o644),
             ("run.sh", LINUX_LAUNCHER, 0o755),
         ):
             info = tarfile.TarInfo(f"{name}/{member}")

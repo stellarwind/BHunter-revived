@@ -13,6 +13,26 @@ VERSION = "3.4.18"
 # Official release archive; digest is verified before extracting downloaded code.
 SHA256 = "78d84602ae616cfe26b33a73b7d3b9b6b56e8a6650e53d92c9c6ca938f747acd"
 SHADER_PATH = Path("shaders/legacy.slang")
+# inih r62, upstream commit 26254ee9de7681f8825433415443e7116ff24b98.
+INI_SOURCE = ROOT / "third_party/inih/ini.c"
+# Indented keys are ordinary assignments in our settings files.
+INI_FLAGS = ["-DINI_ALLOW_MULTILINE=0"]
+LICENCE_SOURCES = (
+    ("BHunter Revived", ROOT / "LICENSE"),
+    ("SDL3", ROOT / "LICENSES/SDL3.txt"),
+    ("ENet", ROOT / "third_party/enet/LICENSE"),
+    ("inih", INI_SOURCE.with_name("LICENSE.txt")),
+)
+
+
+def stage_licences(out):
+    sections = [
+        f"{title}\n{'=' * len(title)}\n".encode("ascii") + path.read_bytes()
+        for title, path in LICENCE_SOURCES
+    ]
+    (out / "LICENCES").write_bytes(b"\n\n".join(sections))
+    for name in ("SDL3-LICENSE.txt", "ENet-LICENSE.txt", "inih-LICENSE.txt", "ComicNeue-LICENSE.txt"):
+        (out / name).unlink(missing_ok=True)
 
 
 def prepare(out, *, gnu=True, compiler=None, symbols=False):
@@ -53,6 +73,8 @@ def prepare(out, *, gnu=True, compiler=None, symbols=False):
         ROOT / "src/bh_overlay_atlas.inc",
         ROOT / "src/bh_overlay_font.h",
         ROOT / "src/bh_overlay_text.h",
+        INI_SOURCE,
+        INI_SOURCE.with_suffix(".h"),
     ]
     compiler_version = subprocess.check_output([compiler, "--version"])
     signature = hashlib.sha256(
@@ -91,6 +113,7 @@ def prepare(out, *, gnu=True, compiler=None, symbols=False):
             compiler,
             "-std=c++17",
             "-O2",
+            *INI_FLAGS,
             *(["-g"] if symbols else []),
             "-shared",
             "-static",
@@ -99,6 +122,7 @@ def prepare(out, *, gnu=True, compiler=None, symbols=False):
             "-I" + str(sdk / "include"),
             str(inputs[0]),
             str(ROOT / "src/bh_sdl_audio.cpp"),
+            str(INI_SOURCE),
             str(sdk / "lib/x86/SDL3.lib"),
             "-o",
             str(cached_dll),
@@ -112,7 +136,7 @@ def prepare(out, *, gnu=True, compiler=None, symbols=False):
         stamp.write_text(signature)
     shutil.copy2(cached_dll, out / "BHunterGPU.dll")
     shutil.copy2(sdk / "lib/x86/SDL3.dll", out / "SDL3.dll")
-    shutil.copy2(sdk / "LICENSE.txt", out / "SDL3-LICENSE.txt")
+    stage_licences(out)
     (out / "shaders").mkdir(exist_ok=True)
     shutil.copy2(ROOT / "src" / SHADER_PATH, out / SHADER_PATH)
     # Remove only the obsolete staged runtime files, never game assets or saves.
