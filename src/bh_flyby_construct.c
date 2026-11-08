@@ -23,7 +23,7 @@ static void publish(BHEntity *e, const BHFlybyCameraState *state)
     memcpy((unsigned char *)e + 0xe8, &state->camera, sizeof(state->camera));
     word(e, 0xc4, (unsigned long)state->route.current);
 }
-BHEntity *__cdecl bh_flyby_construct(BHFlybyConstruct *c)
+BHEntity *bh_flyby_construct(BHFlybyConstruct *c)
 {
     BHFlybyScene *s;
     BHFlybyCameraState *state;

@@ -38,7 +38,7 @@ static BHFlashFlareContext *context(BHEntity *e)
     memcpy(&c, e->payload + 464, 4);
     return c;
 }
-int __cdecl bh_flash_flare_bind(BHFlashFlareContext *c, BHEntity *e, float lifetime, float strength, float size)
+int bh_flash_flare_bind(BHFlashFlareContext *c, BHEntity *e, float lifetime, float strength, float size)
 {
     if (!c || !c->pool || !c->queue || !c->queue->commands || !bh_script_flash_bind(c->pool, e, lifetime))
         return 0;
@@ -48,7 +48,7 @@ int __cdecl bh_flash_flare_bind(BHFlashFlareContext *c, BHEntity *e, float lifet
     e->refresh = bh_flash_flare_refresh;
     return 1;
 }
-void __cdecl bh_flash_flare_refresh(BHEntity *e, void *packet)
+void bh_flash_flare_refresh(BHEntity *e, void *packet)
 {
     BHFlashFlareContext *c = context(e);
     float life, strength, size, value;
@@ -60,8 +60,8 @@ void __cdecl bh_flash_flare_refresh(BHEntity *e, void *packet)
     bh_flare_queue(c->queue, &e->position, size, value, c->textures[0], c->textures[1], c->textures[2], c->textures[3],
                    0);
 }
-int __cdecl bh_flare_queue(BHDrawQueue *q, const BHVec3 *p, float size, float strength, unsigned long first,
-                           unsigned long second, unsigned long third, unsigned long fourth, float angle)
+int bh_flare_queue(BHDrawQueue *q, const BHVec3 *p, float size, float strength, unsigned long first,
+                   unsigned long second, unsigned long third, unsigned long fourth, float angle)
 {
     BHDrawCommand *c;
     if (!p)
@@ -81,7 +81,7 @@ int __cdecl bh_flare_queue(BHDrawQueue *q, const BHVec3 *p, float size, float st
     c->words[9] = fourth ? fourth : third;
     return 1;
 }
-int __cdecl bh_flare_execute(BHFlareSubmit *c, BHDrawCommand *command, unsigned long *next)
+int bh_flare_execute(BHFlareSubmit *c, BHDrawCommand *command, unsigned long *next)
 {
     float x, y, scale, norm, dx, dy, gain, remaining, size, alpha, sx, sy, angle;
     double normalized, threshold, deltax, deltay, radius, weight, product, n;

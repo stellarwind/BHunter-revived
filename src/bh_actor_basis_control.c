@@ -68,23 +68,22 @@ static int search(const BHActorBasisGroup *g, const BHActorBasisScale *s, unsign
         return 0;
     return 1;
 }
-int __cdecl bh_actor_basis_a_pair(const BHActorBasisContext *ctx, const BHVec3 *v, int *i, int *j, float *a, float *b)
+int bh_actor_basis_a_pair(const BHActorBasisContext *ctx, const BHVec3 *v, int *i, int *j, float *a, float *b)
 {
     if (!ctx || !vector_ok(v) || !i || !j || !a || !b || ctx->a_count > ctx->a_capacity ||
         (ctx->a_count && (!ctx->groups_a || !ctx->scales_a)))
         return 0;
     return search(ctx->groups_a, ctx->scales_a, ctx->a_count, v, i, j, a, b, 1);
 }
-int __cdecl bh_actor_basis_b_pair(const BHActorBasisContext *ctx, const BHVec3 *v, int *i, int *j, float *a, float *b)
+int bh_actor_basis_b_pair(const BHActorBasisContext *ctx, const BHVec3 *v, int *i, int *j, float *a, float *b)
 {
     if (!ctx || !vector_ok(v) || !i || !j || !a || !b || ctx->b_count > ctx->b_capacity ||
         (ctx->b_count && (!ctx->groups_b || !ctx->scales_b)))
         return 0;
     return -search(ctx->groups_b, ctx->scales_b, ctx->b_count, v, i, j, a, b, 0);
 }
-int __cdecl bh_actor_basis_apply_group(const BHActorBasisContext *ctx, BHPhysicsState *state, float mass,
-                                       const BHVec3 *inertia, float accumulated[15], const BHActorBasisIndices *group,
-                                       float value)
+int bh_actor_basis_apply_group(const BHActorBasisContext *ctx, BHPhysicsState *state, float mass, const BHVec3 *inertia,
+                               float accumulated[15], const BHActorBasisIndices *group, float value)
 {
     long i, index;
     BHVec3 force, torque;

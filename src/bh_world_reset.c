@@ -23,7 +23,7 @@ static void identity(BHMat34 *m)
     memset(m, 0, sizeof(*m));
     m->m[0][0] = m->m[1][1] = m->m[2][2] = 1;
 }
-int __cdecl bh_world_reset(BHWorldReset *c)
+int bh_world_reset(BHWorldReset *c)
 {
     BHWorldResetNode *n;
     BHEntityPool *pool;

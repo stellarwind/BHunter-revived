@@ -29,7 +29,7 @@ static void include_point(BHVec3 *minimum, BHVec3 *maximum, const BHVec3 *p)
     if (maximum->z < p->z)
         maximum->z = p->z;
 }
-static void __cdecl model_bounds(BHFaceInfo *face, void *user)
+static void model_bounds(BHFaceInfo *face, void *user)
 {
     BHGeometryModel *m = (BHGeometryModel *)user;
     BHVec3 p;
@@ -56,7 +56,7 @@ static unsigned long material_flag(const char *name)
         return 8;
     return 0;
 }
-static void __cdecl classify(BHFaceInfo *face, void *user)
+static void classify(BHFaceInfo *face, void *user)
 {
     BHGeometryModel *m = (BHGeometryModel *)user;
     unsigned long flag = material_flag(face->texture), old;
@@ -71,7 +71,7 @@ static void __cdecl classify(BHFaceInfo *face, void *user)
             m->error = face->geometry->error;
     }
 }
-int __cdecl bh_geometry_model_init(BHGeometryModel *m, BHGeometry *g, long grid, unsigned long flags)
+int bh_geometry_model_init(BHGeometryModel *m, BHGeometry *g, long grid, unsigned long flags)
 {
     BHGeometryModel next;
     const BHBsp *b;
@@ -129,7 +129,7 @@ typedef struct WorldBoundsWork
     BHWorldGeometry *placement;
     int failed;
 } WorldBoundsWork;
-static void __cdecl world_bounds(BHFaceInfo *face, void *user)
+static void world_bounds(BHFaceInfo *face, void *user)
 {
     WorldBoundsWork *work = (WorldBoundsWork *)user;
     BHWorldGeometry *p = work->placement;
@@ -151,7 +151,7 @@ static void __cdecl world_bounds(BHFaceInfo *face, void *user)
         include_point(&p->minimum, &p->maximum, &out);
     }
 }
-int __cdecl bh_world_geometry_build(BHWorldGeometry *p, unsigned long ring_count)
+int bh_world_geometry_build(BHWorldGeometry *p, unsigned long ring_count)
 {
     BHWorldGeometry next, *previous;
     const BHGeometryModel *m;

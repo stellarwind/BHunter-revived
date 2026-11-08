@@ -11,5 +11,5 @@ typedef struct BHWeaponRemovedPacket
    cache and unrelated fields survive. Stop's return is ignored as original.
    Borrowed packet/weapon/sound survive the synchronous call; no query method
    or constructor is installed by this explicit source binding. */
-int __cdecl bh_weapon_target_removed(BHSoundQueue *, BHEntity *, const BHWeaponRemovedPacket *);
+int bh_weapon_target_removed(BHSoundQueue *, BHEntity *, const BHWeaponRemovedPacket *);
 #endif

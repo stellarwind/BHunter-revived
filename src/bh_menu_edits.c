@@ -54,7 +54,7 @@ static void key(BHMenuEdits *c, long row, unsigned long offset, int table)
     }
     paint(c, row, table == 0 ? key_names[value] : table == 1 ? joystick_names[value] : mouse_names[value]);
 }
-void __cdecl bh_menu_edit_video(BHMenuEdits *c, long row)
+void bh_menu_edit_video(BHMenuEdits *c, long row)
 {
 #ifdef BH_SDL_BACKEND
     if (c && c->config && row >= 0 && row <= 2)
@@ -88,7 +88,7 @@ void __cdecl bh_menu_edit_video(BHMenuEdits *c, long row)
 #endif
 }
 
-void __cdecl bh_menu_edit_audio(BHMenuEdits *c, long row)
+void bh_menu_edit_audio(BHMenuEdits *c, long row)
 {
     char text[128];
     double value;
@@ -103,7 +103,7 @@ void __cdecl bh_menu_edit_audio(BHMenuEdits *c, long row)
     paint(c, row == 1 ? 0 : 2, text);
     paint(c, row, text);
 }
-void __cdecl bh_menu_edit_profile(BHMenuEdits *c, long row)
+void bh_menu_edit_profile(BHMenuEdits *c, long row)
 {
     char text[21];
     BHInputProfile *p = profile(c);
@@ -115,7 +115,7 @@ void __cdecl bh_menu_edit_profile(BHMenuEdits *c, long row)
     else if (row == 1)
         paint(c, 1, NULL);
 }
-void __cdecl bh_menu_edit_motion(BHMenuEdits *c, long row)
+void bh_menu_edit_motion(BHMenuEdits *c, long row)
 {
     if (row >= 1 && row <= 6)
         key(c, row, 0x1b + row, 0);
@@ -124,17 +124,17 @@ void __cdecl bh_menu_edit_motion(BHMenuEdits *c, long row)
     else if (row >= 10 && row <= 12)
         key(c, row, 0x1b + row, 2);
 }
-void __cdecl bh_menu_edit_primary(BHMenuEdits *c, long row)
+void bh_menu_edit_primary(BHMenuEdits *c, long row)
 {
     if (row >= 1 && row <= 9)
         key(c, row, 0x27 + row, 0);
 }
-void __cdecl bh_menu_edit_secondary(BHMenuEdits *c, long row)
+void bh_menu_edit_secondary(BHMenuEdits *c, long row)
 {
     if (row >= 1 && row <= 9)
         key(c, row, 0x30 + row, 0);
 }
-void __cdecl bh_menu_edit_camera(BHMenuEdits *c, long row)
+void bh_menu_edit_camera(BHMenuEdits *c, long row)
 {
     if (row >= 1 && row <= 10)
         key(c, row, 0x39 + row, 0);
@@ -175,7 +175,7 @@ static void capture(BHMenuEdits *c, BHMenuKeyCommit commit)
         c->error = 1;
     }
 }
-void __cdecl bh_menu_action_motion(BHMenuEdits *c, long row)
+void bh_menu_action_motion(BHMenuEdits *c, long row)
 {
     BHInputProfile *p = profile(c);
     unsigned char *bytes;
@@ -192,17 +192,17 @@ void __cdecl bh_menu_action_motion(BHMenuEdits *c, long row)
     else
         capture(c, bh_menu_keys_motion);
 }
-void __cdecl bh_menu_action_primary(BHMenuEdits *c, long row)
+void bh_menu_action_primary(BHMenuEdits *c, long row)
 {
     (void)row;
     capture(c, bh_menu_keys_weapons);
 }
-void __cdecl bh_menu_action_secondary(BHMenuEdits *c, long row)
+void bh_menu_action_secondary(BHMenuEdits *c, long row)
 {
     (void)row;
     capture(c, bh_menu_keys_camera);
 }
-void __cdecl bh_menu_action_camera(BHMenuEdits *c, long row)
+void bh_menu_action_camera(BHMenuEdits *c, long row)
 {
     BHInputProfile *p = profile(c);
     unsigned char *bytes;
@@ -219,14 +219,14 @@ void __cdecl bh_menu_action_camera(BHMenuEdits *c, long row)
     else
         capture(c, bh_menu_keys_extra);
 }
-void __cdecl bh_menu_action_mission(BHMenuEdits *c, long row)
+void bh_menu_action_mission(BHMenuEdits *c, long row)
 {
     if (!c || !c->mode || !c->mission)
         return;
     *c->mode = 1;
     *c->mission = row;
 }
-void __cdecl bh_menu_action_ship(BHMenuEdits *c, long row)
+void bh_menu_action_ship(BHMenuEdits *c, long row)
 {
     short unlocked;
     unsigned long i;
@@ -245,10 +245,10 @@ void __cdecl bh_menu_action_ship(BHMenuEdits *c, long row)
     c->mission_menu->selection = unlocked;
     c->mission_menu->display_selection = (float)unlocked;
 }
-void __cdecl bh_menu_edit_row_callback(BHMenuSettingsMenu *m, long row)
+void bh_menu_edit_row_callback(BHMenuSettingsMenu *m, long row)
 {
     BHMenuEditBridge *b = (BHMenuEditBridge *)m->user;
-    static void(__cdecl *const edits[11])(BHMenuEdits *, long) = {
+    static void (*const edits[11])(BHMenuEdits *, long) = {
         bh_menu_edit_video,   bh_menu_edit_audio,     bh_menu_edit_profile, bh_menu_edit_motion,
         bh_menu_edit_primary, bh_menu_edit_secondary, bh_menu_edit_camera};
     if (b && b->kind >= 0 && b->kind <= BH_MENU_EDIT_CAMERA)

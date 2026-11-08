@@ -10,7 +10,7 @@ static int result(BHPresentContext *c, HRESULT hr)
     }
     return 1;
 }
-int __cdecl bh_present_end(BHPresentContext *c)
+int bh_present_end(BHPresentContext *c)
 {
     BHTextureContext *textures;
     HRESULT hr;

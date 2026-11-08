@@ -376,7 +376,7 @@ static int status_weapons(BHPlayerScene *scene, BHHudStatusState *status, const 
     return 1;
 }
 
-int __cdecl bh_player_scene_draw(BHPlayerScene *scene)
+int bh_player_scene_draw(BHPlayerScene *scene)
 {
     BHEntity *entity;
     BHCameraState *camera;

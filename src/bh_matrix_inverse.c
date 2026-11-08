@@ -4,7 +4,7 @@
 #include <math.h>
 #include <float.h>
 
-int __cdecl bh_mat4_lu(float matrix[4][4], long pivot[4], float *parity)
+int bh_mat4_lu(float matrix[4][4], long pivot[4], float *parity)
 {
     float scale[4], largest, best, reciprocal, temporary;
     double sum, score;
@@ -73,7 +73,7 @@ int __cdecl bh_mat4_lu(float matrix[4][4], long pivot[4], float *parity)
     }
     return 1;
 }
-void __cdecl bh_mat4_lu_solve(const float matrix[4][4], const long pivot[4], float vector[4])
+void bh_mat4_lu_solve(const float matrix[4][4], const long pivot[4], float vector[4])
 {
     double sum;
     int i, j, first = -1;
@@ -105,7 +105,7 @@ void __cdecl bh_mat4_lu_solve(const float matrix[4][4], const long pivot[4], flo
         bh_round_float(vector + i, sum / matrix[i][i]);
     }
 }
-int __cdecl bh_mat34_inverse_general(const BHMat34 *matrix, BHMat34 *inverse)
+int bh_mat34_inverse_general(const BHMat34 *matrix, BHMat34 *inverse)
 {
     float lu[4][4], column[4], parity;
     long pivot[4];

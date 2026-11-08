@@ -18,7 +18,7 @@ static float soft_limit(float value)
         return stored(((-((double)value) - 1) / (pow((double)value, -7.0) - (-1.0))) + value);
     return value;
 }
-int __cdecl bh_player_aim_update(BHPhysicsStepBody *body)
+int bh_player_aim_update(BHPhysicsStepBody *body)
 {
     BHEntity *entity;
     BHPhysicsState *physics;

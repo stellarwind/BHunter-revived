@@ -27,7 +27,7 @@ typedef char box_edges[offsetof(BHBoxPayload, edges) == 556 ? 1 : -1];
 typedef char box_faces[offsetof(BHBoxPayload, faces) == 944 ? 1 : -1];
 typedef char box_nodes[offsetof(BHBoxPayload, nodes) == 1020 ? 1 : -1];
 typedef char box_leaves[offsetof(BHBoxPayload, leaves) == 1360 ? 1 : -1];
-int __cdecl bh_collision_box_build(BHCollisionModel *model, const BHVec3 *extent, const BHVec3 *padding)
+int bh_collision_box_build(BHCollisionModel *model, const BHVec3 *extent, const BHVec3 *padding)
 {
     static const unsigned char face_vertices[6][4] = {{0, 4, 6, 2}, {3, 7, 5, 1}, {1, 5, 4, 0},
                                                       {2, 6, 7, 3}, {2, 3, 1, 0}, {4, 5, 7, 6}};

@@ -13,11 +13,11 @@ typedef char face_size[sizeof(BHBspFace) == 12 ? 1 : -1];
 typedef char node_size[sizeof(BHBspNode) == 56 ? 1 : -1];
 typedef char leaf_size[sizeof(BHBspLeaf) == 8 ? 1 : -1];
 static const unsigned long strides[] = {32, 60, 16, 12, 56, 8};
-static void *__cdecl allocate(unsigned long n, void *user)
+static void *allocate(unsigned long n, void *user)
 {
     return malloc(n);
 }
-static void __cdecl release(void *p, void *user)
+static void release(void *p, void *user)
 {
     free(p);
 }
@@ -53,7 +53,7 @@ static float midpoint(float minimum, float maximum)
     return value;
 }
 
-int __cdecl bh_bsp_init(BHBsp *bsp, const BHSceneAllocator *allocator)
+int bh_bsp_init(BHBsp *bsp, const BHSceneAllocator *allocator)
 {
     BHSceneAllocator memory;
     if (!bsp || (allocator && (!allocator->allocate || !allocator->release)))
@@ -70,7 +70,7 @@ int __cdecl bh_bsp_init(BHBsp *bsp, const BHSceneAllocator *allocator)
     bsp->allocator = memory;
     return 1;
 }
-void __cdecl bh_bsp_dispose(BHBsp *bsp)
+void bh_bsp_dispose(BHBsp *bsp)
 {
     BHSceneAllocator memory;
     if (!bsp)
@@ -144,7 +144,7 @@ static int tree(const unsigned char *data, unsigned long n, unsigned char *work)
     return 1;
 }
 
-int __cdecl bh_bsp_decode(BHBsp *bsp, const void *bytes, unsigned long size)
+int bh_bsp_decode(BHBsp *bsp, const void *bytes, unsigned long size)
 {
     const unsigned char *data = (const unsigned char *)bytes, *p;
     unsigned long n[6], offsets[6], at = 0, i, j, k, maximum = 0;
@@ -290,7 +290,7 @@ int __cdecl bh_bsp_decode(BHBsp *bsp, const void *bytes, unsigned long size)
     return 1;
 }
 
-int __cdecl bh_bsp_read(BHBsp *bsp, BHVFile *file)
+int bh_bsp_read(BHBsp *bsp, BHVFile *file)
 {
     long start, end;
     unsigned long size;
@@ -324,7 +324,7 @@ int __cdecl bh_bsp_read(BHBsp *bsp, BHVFile *file)
     return ok;
 }
 
-int __cdecl bh_bsp_load(BHBsp *bsp, const char *name, const char *prefix, BHBspSearch search)
+int bh_bsp_load(BHBsp *bsp, const char *name, const char *prefix, BHBspSearch search)
 {
     char path[256];
     unsigned long length = 0, prefix_length = 0;

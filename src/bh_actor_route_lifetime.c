@@ -14,7 +14,7 @@ static BHEntity *link_value(const BHEntity *entity, unsigned long offset)
 }
 #include "bh_actor_route_release_core.inc"
 #include "bh_actor_route_due_core.inc"
-int __cdecl bh_actor_route_due(BHActorRouteContext *ctx, BHEntity *entity)
+int bh_actor_route_due(BHActorRouteContext *ctx, BHEntity *entity)
 {
     const unsigned short *clock;
     if (!ctx || !entity || !ctx->live_tick)
@@ -25,7 +25,7 @@ int __cdecl bh_actor_route_due(BHActorRouteContext *ctx, BHEntity *entity)
     ctx->error = BH_ACTOR_ROUTE_OK;
     return 1;
 }
-int __cdecl bh_actor_route_release(BHActorRouteContext *ctx, BHEntityPool *pool, BHEntity *entity)
+int bh_actor_route_release(BHActorRouteContext *ctx, BHEntityPool *pool, BHEntity *entity)
 {
     BHActorRouteState state;
     BHPickupRoom *room = NULL;

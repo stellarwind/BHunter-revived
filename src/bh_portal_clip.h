@@ -12,7 +12,7 @@ typedef struct BHPortalClipCache
     unsigned char ready[BH_PORTAL_CLIP_CAPACITY];
     unsigned long projections;
 } BHPortalClipCache;
-void __cdecl bh_portal_clip_reset(BHPortalClipCache *);
-int __cdecl bh_portal_clip_project(const BHDrawQueue *, unsigned long command, const BHMainCamera *,
-                                   const BHViewConfig *, BHPortalClipCache *, float bounds[4]);
+void bh_portal_clip_reset(BHPortalClipCache *);
+int bh_portal_clip_project(const BHDrawQueue *, unsigned long command, const BHMainCamera *, const BHViewConfig *,
+                           BHPortalClipCache *, float bounds[4]);
 #endif

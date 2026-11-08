@@ -10,7 +10,7 @@ static float stored(double value)
     bh_round_float(&out, value);
     return out;
 }
-int __cdecl bh_remote_predict_pose(const BHEntity *entity, unsigned short tick, BHVec3 *position, BHVec3 *angles)
+int bh_remote_predict_pose(const BHEntity *entity, unsigned short tick, BHVec3 *position, BHVec3 *angles)
 {
     BHVec3 anchor[2], velocity[2], acceleration[2];
     unsigned short stamp, elapsed;
@@ -56,7 +56,7 @@ static void queued(BHRemoteRender *render, int result)
     else if (result < 0)
         render->error = 1;
 }
-int __cdecl bh_remote_render(BHRemoteRender *render, BHEntity *entity)
+int bh_remote_render(BHRemoteRender *render, BHEntity *entity)
 {
     BHVec3 position, angles, velocity, normal, point, up = {0, -1, 0};
     unsigned long handle, resource, i, j, frames = 60;

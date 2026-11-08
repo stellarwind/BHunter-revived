@@ -24,7 +24,7 @@ static char *next_token(char *cursor)
     return cursor;
 }
 
-char *__cdecl bh_script_arg_int(char *cursor, const BHScriptArgs *definitions, int *value, int *selector)
+char *bh_script_arg_int(char *cursor, const BHScriptArgs *definitions, int *value, int *selector)
 {
     int i;
     *selector = -1;
@@ -50,7 +50,7 @@ char *__cdecl bh_script_arg_int(char *cursor, const BHScriptArgs *definitions, i
     return next_token(cursor);
 }
 
-char *__cdecl bh_script_arg_float(char *cursor, const BHScriptArgs *definitions, float *value, int *selector)
+char *bh_script_arg_float(char *cursor, const BHScriptArgs *definitions, float *value, int *selector)
 {
     int i;
     *selector = -1;

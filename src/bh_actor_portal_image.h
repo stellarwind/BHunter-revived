@@ -9,6 +9,6 @@ typedef struct BHActorPortalImage
     unsigned char unused[0xe4];
     BHPortal portals[6];
 } BHActorPortalImage;
-void __cdecl bh_actor_portal_normal_core(void *geometry_image, int index, float *out);
-void __cdecl bh_actor_portal_center_core(void *geometry_image, int index, float *out);
+void bh_actor_portal_normal_core(void *geometry_image, int index, float *out);
+void bh_actor_portal_center_core(void *geometry_image, int index, float *out);
 #endif

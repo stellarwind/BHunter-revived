@@ -11,5 +11,5 @@ typedef struct BHPulseVisualContext
 } BHPulseVisualContext;
 /*Whole0043e840. Borrowed draw queue and registered resource/image handles.
   No object execution or backend calls. PC53 nearest, finite positive lifetime.*/
-int __cdecl bh_pulse_visual_draw(BHPulseVisualContext *, const BHEntity *);
+int bh_pulse_visual_draw(BHPulseVisualContext *, const BHEntity *);
 #endif

@@ -1,8 +1,8 @@
 #include "bh_horizon_queue.h"
 #include <string.h>
 
-int __cdecl bh_horizon_queue(BHDrawQueue *q, unsigned long texture, float texture_scale, float height,
-                             float outer_radius, float inner_radius, unsigned long color)
+int bh_horizon_queue(BHDrawQueue *q, unsigned long texture, float texture_scale, float height, float outer_radius,
+                     float inner_radius, unsigned long color)
 {
     unsigned long tail, index;
     BHDrawCommand *command;
@@ -38,8 +38,8 @@ int __cdecl bh_horizon_queue(BHDrawQueue *q, unsigned long texture, float textur
     q->error = BH_DRAW_OK;
     return 1;
 }
-int __cdecl bh_horizon_queue_execute(BHHorizonQueueContext *c, const BHDrawQueue *q, const BHDrawCommand *command,
-                                     unsigned long *next)
+int bh_horizon_queue_execute(BHHorizonQueueContext *c, const BHDrawQueue *q, const BHDrawCommand *command,
+                             unsigned long *next)
 {
     BHTextureImage *image;
     float texture_scale, height, outer_radius, inner_radius;

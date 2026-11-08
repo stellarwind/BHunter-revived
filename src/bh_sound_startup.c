@@ -1,6 +1,6 @@
 #include "bh_sound_startup.h"
 #include <string.h>
-int __cdecl bh_sound_startup(BHSoundQueue *sound_queue, BHSoundStartupStats *stats)
+int bh_sound_startup(BHSoundQueue *sound_queue, BHSoundStartupStats *stats)
 {
     BHSoundStartupStats actual;
     if (!sound_queue || !sound_queue->allocator.allocate || sound_queue->device || sound_queue->resources ||

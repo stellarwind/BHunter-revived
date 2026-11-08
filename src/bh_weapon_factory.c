@@ -25,7 +25,7 @@ static const unsigned long methods[10][6] = {
 static const long ammo_limits[10] = {750, 400, 150, 50, 300, 15, 10, 4, 1, 8};
 static BHWeaponFactory *active_factory;
 
-BHWeaponObjectState *__cdecl bh_weapon_object_state(BHEntity *entity)
+BHWeaponObjectState *bh_weapon_object_state(BHEntity *entity)
 {
     return entity ? (BHWeaponObjectState *)(entity->payload + 4) : NULL;
 }
@@ -34,7 +34,7 @@ static int live(const BHWeaponRegistry *registry, const BHWeaponRecord *record)
     return registry && bh_entity_is_active(registry->pool, record->entity) &&
            record->entity->generation == record->generation;
 }
-static void __cdecl weapon_query(BHEntity *entity, void *packet)
+static void weapon_query(BHEntity *entity, void *packet)
 {
     BHWeaponFactory *factory = active_factory;
     unsigned int i;
@@ -55,7 +55,7 @@ static void __cdecl weapon_query(BHEntity *entity, void *packet)
     if (!bh_weapon_target_removed(factory->sound, entity, (const BHWeaponRemovedPacket *)packet))
         factory->error = BH_WEAPON_FACTORY_BINDING;
 }
-int __cdecl bh_weapon_factory_open(BHWeaponFactory *factory, BHEntityPool *pool, BHSoundQueue *sound)
+int bh_weapon_factory_open(BHWeaponFactory *factory, BHEntityPool *pool, BHSoundQueue *sound)
 {
     if (!factory || !pool || !sound || active_factory)
         return 0;
@@ -65,7 +65,7 @@ int __cdecl bh_weapon_factory_open(BHWeaponFactory *factory, BHEntityPool *pool,
     active_factory = factory;
     return 1;
 }
-int __cdecl bh_weapon_factory_close(BHWeaponFactory *factory)
+int bh_weapon_factory_close(BHWeaponFactory *factory)
 {
     unsigned int i;
     if (!factory || active_factory != factory)
@@ -82,7 +82,7 @@ int __cdecl bh_weapon_factory_close(BHWeaponFactory *factory)
     factory->error = BH_WEAPON_FACTORY_OK;
     return 1;
 }
-BHEntity *__cdecl bh_weapon_factory_create(BHWeaponFactory *factory, unsigned int index)
+BHEntity *bh_weapon_factory_create(BHWeaponFactory *factory, unsigned int index)
 {
     BHEntity *entity;
     BHWeaponObjectState *state;
@@ -137,8 +137,8 @@ BHEntity *__cdecl bh_weapon_factory_create(BHWeaponFactory *factory, unsigned in
     factory->error = BH_WEAPON_FACTORY_OK;
     return entity;
 }
-int __cdecl bh_weapon_registry_resolve(BHWeaponRegistry *registry, unsigned int selection, BHEntity **entity,
-                                       BHWeaponObjectState **state)
+int bh_weapon_registry_resolve(BHWeaponRegistry *registry, unsigned int selection, BHEntity **entity,
+                               BHWeaponObjectState **state)
 {
     BHWeaponRecord *record;
     BHWeaponObjectState *current;
@@ -160,8 +160,8 @@ int __cdecl bh_weapon_registry_resolve(BHWeaponRegistry *registry, unsigned int 
     *state = current;
     return 1;
 }
-int __cdecl bh_weapon_registry_hud(BHWeaponRegistry *registry, unsigned int selection, BHEntity **entity,
-                                   BHWeaponObjectState **state, unsigned long *identity)
+int bh_weapon_registry_hud(BHWeaponRegistry *registry, unsigned int selection, BHEntity **entity,
+                           BHWeaponObjectState **state, unsigned long *identity)
 {
     if (identity)
         *identity = 0;
@@ -170,7 +170,7 @@ int __cdecl bh_weapon_registry_hud(BHWeaponRegistry *registry, unsigned int sele
     *identity = (*state)->method_130;
     return 1;
 }
-int __cdecl bh_weapon_method_available(unsigned long identity)
+int bh_weapon_method_available(unsigned long identity)
 {
     switch (identity)
     {
@@ -196,7 +196,7 @@ int __cdecl bh_weapon_method_available(unsigned long identity)
         return 0;
     }
 }
-int __cdecl bh_weapon_factory_tick(BHWeaponFactory *factory, unsigned int selection)
+int bh_weapon_factory_tick(BHWeaponFactory *factory, unsigned int selection)
 {
     BHEntity *entity;
     BHWeaponObjectState *state;

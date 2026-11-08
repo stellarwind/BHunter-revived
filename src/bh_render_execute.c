@@ -131,7 +131,7 @@ static int draw_anchored(BHRenderExecute *e, const BHDrawCommand *command, unsig
 #endif
     return draw_one(e, command, next);
 }
-int __cdecl bh_render_execute(BHRenderExecute *e)
+int bh_render_execute(BHRenderExecute *e)
 {
     unsigned long at, steps = 0, processed = 0, next;
     int ok = 1, status;

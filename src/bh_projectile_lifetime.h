@@ -24,8 +24,8 @@ typedef struct BHProjectileSyncPacket
    referenced entities remain borrowed. Installs actual whole query only;
    existing step/refresh remain caller-owned until original event20 cleanup.
    Original projectile construction, movement and rendering are not claimed. */
-int __cdecl bh_projectile_lifetime_bind(BHProjectileLifetime *, BHEntity *, const BHProjectileQueryState *);
-int __cdecl bh_projectile_query_state(const BHEntity *, BHProjectileQueryState *);
-void __cdecl bh_projectile_query(BHEntity *, void *); /*00440810*/
-void __cdecl bh_projectile_cleanup(BHEntity *);       /*00440030*/
+int bh_projectile_lifetime_bind(BHProjectileLifetime *, BHEntity *, const BHProjectileQueryState *);
+int bh_projectile_query_state(const BHEntity *, BHProjectileQueryState *);
+void bh_projectile_query(BHEntity *, void *); /*00440810*/
+void bh_projectile_cleanup(BHEntity *);       /*00440030*/
 #endif

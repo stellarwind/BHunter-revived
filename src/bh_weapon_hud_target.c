@@ -30,7 +30,7 @@ static void rectangle(BHWeaponHudTargetContext *ctx, double x, double y, float w
     else
         ctx->error = BH_WEAPON_HUD_TARGET_QUEUE;
 }
-int __cdecl bh_weapon_hud_target_draw(BHWeaponHudTargetContext *ctx, const BHWeaponHudState *state)
+int bh_weapon_hud_target_draw(BHWeaponHudTargetContext *ctx, const BHWeaponHudState *state)
 {
     BHEntity *target;
     TargetPacket packet;

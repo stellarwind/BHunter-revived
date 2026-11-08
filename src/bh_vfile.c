@@ -114,7 +114,7 @@ static void notify_access(unsigned long index)
 }
 
 /* 0047d270, with validation and transactional ownership on malformed input. */
-int __cdecl bh_vfile_mount(const char *path)
+int bh_vfile_mount(const char *path)
 {
     FILE *file;
     BHArchiveEntry *directory = NULL;
@@ -227,7 +227,7 @@ static FILE *open_loose(const char *name, const char *mode)
 }
 
 /* 0047cbd0: cached -> loose -> embedded. The open-time fseek quirk is observed. */
-BHVFile *__cdecl bh_vfile_open(const char *name, const char *mode)
+BHVFile *bh_vfile_open(const char *name, const char *mode)
 {
     BHPreloadedName *cached;
     BHVFile *handle;
@@ -291,7 +291,7 @@ BHVFile *__cdecl bh_vfile_open(const char *name, const char *mode)
     return NULL;
 }
 
-int __cdecl bh_vfile_close(BHVFile *file)
+int bh_vfile_close(BHVFile *file)
 {
     BHVFileOwner *owner;
     int result = 0;
@@ -312,7 +312,7 @@ int __cdecl bh_vfile_close(BHVFile *file)
 }
 
 /* 0047ca70: a cached name owns a persistent shared wrapper and byte payload. */
-int __cdecl bh_vfile_preload(const char *name, const char *mode)
+int bh_vfile_preload(const char *name, const char *mode)
 {
     BHVFile *file;
     BHPreloadedName *cached;
@@ -383,7 +383,7 @@ int __cdecl bh_vfile_preload(const char *name, const char *mode)
     return 1;
 }
 
-int __cdecl bh_vfile_eof(BHVFile *file)
+int bh_vfile_eof(BHVFile *file)
 {
     last_error = BH_VFILE_OK;
     if (!owner_of(file))
@@ -391,7 +391,7 @@ int __cdecl bh_vfile_eof(BHVFile *file)
     return file->memory || file->archive ? file->eof : (feof(file->file) ? 0x10 : 0);
 }
 
-int __cdecl bh_vfile_seek(BHVFile *file, long offset, int origin)
+int bh_vfile_seek(BHVFile *file, long offset, int origin)
 {
     __int64 target;
     last_error = BH_VFILE_OK;
@@ -427,7 +427,7 @@ int __cdecl bh_vfile_seek(BHVFile *file, long offset, int origin)
     return 0;
 }
 
-unsigned long __cdecl bh_vfile_read(void *buffer, unsigned long size, unsigned long count, BHVFile *file)
+unsigned long bh_vfile_read(void *buffer, unsigned long size, unsigned long count, BHVFile *file)
 {
     unsigned long requested, bytes, actual;
     last_error = BH_VFILE_OK;
@@ -491,7 +491,7 @@ unsigned long __cdecl bh_vfile_read(void *buffer, unsigned long size, unsigned l
 }
 
 /* 0047d050. Bound the observed read-ahead window to this entry's payload. */
-char *__cdecl bh_vfile_gets(char *buffer, unsigned long window, BHVFile *file)
+char *bh_vfile_gets(char *buffer, unsigned long window, BHVFile *file)
 {
     unsigned long wanted, actual, used, i;
     int newline = 0;
@@ -574,7 +574,7 @@ char *__cdecl bh_vfile_gets(char *buffer, unsigned long window, BHVFile *file)
     return buffer;
 }
 
-long __cdecl bh_vfile_tell(BHVFile *file)
+long bh_vfile_tell(BHVFile *file)
 {
     long position;
     last_error = BH_VFILE_OK;
@@ -596,7 +596,7 @@ long __cdecl bh_vfile_tell(BHVFile *file)
     return position;
 }
 
-int __cdecl bh_vfile_detach_archive(void)
+int bh_vfile_detach_archive(void)
 {
     int result = 0;
     last_error = BH_VFILE_OK;
@@ -616,7 +616,7 @@ int __cdecl bh_vfile_detach_archive(void)
     return 1;
 }
 
-void __cdecl bh_vfile_shutdown(void)
+void bh_vfile_shutdown(void)
 {
     BHVFileOwner *owner, *next;
     BHPreloadedName *cached, *next_cached;
@@ -647,16 +647,16 @@ void __cdecl bh_vfile_shutdown(void)
     last_error = BH_VFILE_OK;
 }
 
-void __cdecl bh_vfile_set_progress(BHVFileProgress callback)
+void bh_vfile_set_progress(BHVFileProgress callback)
 {
     state.progress = callback;
 }
 
-BHVFileError __cdecl bh_vfile_error(void)
+BHVFileError bh_vfile_error(void)
 {
     return last_error;
 }
-unsigned long __cdecl bh_vfile_entry_count(void)
+unsigned long bh_vfile_entry_count(void)
 {
     return state.count;
 }

@@ -25,5 +25,5 @@ typedef struct BHWeaponPulseContext
    No gameplay loop/input or provider/session creation occurs. PC53/masked.
    Returns1 for a whole valid call (also odd phase/empty ammo),0 source guard.
    Partial side effects persist on source dependency error. */
-int __cdecl bh_weapon_pulse_fire(BHWeaponPulseContext *, BHEntity *weapon, BHEntity *player);
+int bh_weapon_pulse_fire(BHWeaponPulseContext *, BHEntity *weapon, BHEntity *player);
 #endif

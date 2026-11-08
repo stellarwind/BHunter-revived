@@ -37,8 +37,8 @@ typedef struct BHRemotePackets
    immediate single-shot sync and bounded repeated shots/queued tail.
    Source guards reject truncated fields, invalid slot/type and occupied spawn
    slot rather than original overflow/leak. No original code or game playback. */
-int __cdecl bh_remote_spawn_packet(BHRemotePackets *, void *, unsigned long size, unsigned long capacity);
-int __cdecl bh_remote_shot_packet(BHRemotePackets *, void *, unsigned long size, unsigned long capacity);
+int bh_remote_spawn_packet(BHRemotePackets *, void *, unsigned long size, unsigned long capacity);
+int bh_remote_shot_packet(BHRemotePackets *, void *, unsigned long size, unsigned long capacity);
 void bh_remote_bind_draw(BHRemotePackets *, BHEntity *, unsigned int slot);
-int __cdecl bh_remote_entity_draw(BHRemotePackets *, BHEntity *);
+int bh_remote_entity_draw(BHRemotePackets *, BHEntity *);
 #endif

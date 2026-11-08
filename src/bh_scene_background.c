@@ -46,8 +46,8 @@ static void reset(BHSceneBackground *c, BHSceneBackgroundSlot *s, int fresh)
         s->duration = s->duration * .25f;
     }
 }
-int __cdecl bh_scene_background_init(BHSceneBackground *c, BHDrawQueue *queue, unsigned long first_model,
-                                     unsigned long second_model, unsigned long first_flare, unsigned long second_flare)
+int bh_scene_background_init(BHSceneBackground *c, BHDrawQueue *queue, unsigned long first_model,
+                             unsigned long second_model, unsigned long first_flare, unsigned long second_flare)
 {
     unsigned long i;
     if (!c || !queue)
@@ -82,7 +82,7 @@ static void flares(BHSceneBackground *c, BHVec3 *point, double base, float alpha
     opacity = (float)((.5 - (double)r * (-0.00000762939453125)) * alpha);
     result(out, bh_draw_billboard(c->queue, 3, c->second_flare, point, size, size, 0, 0, opacity));
 }
-int __cdecl bh_scene_background_step(BHSceneBackground *c, unsigned long index, const BHVec3 *eye)
+int bh_scene_background_step(BHSceneBackground *c, unsigned long index, const BHVec3 *eye)
 {
     BHSceneBackgroundSlot *s;
     BHVec3 position, angles;

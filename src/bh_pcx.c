@@ -8,12 +8,12 @@ static unsigned long u16(const unsigned char *p)
 {
     return (unsigned long)p[0] | ((unsigned long)p[1] << 8);
 }
-static void *__cdecl allocate(unsigned long bytes, void *user)
+static void *allocate(unsigned long bytes, void *user)
 {
     (void)user;
     return malloc(bytes);
 }
-static void __cdecl release(void *p, void *user)
+static void release(void *p, void *user)
 {
     (void)user;
     free(p);
@@ -24,7 +24,7 @@ static int fail(BHPcx *image, BHPcxError error)
         image->error = error;
     return 0;
 }
-int __cdecl bh_pcx_init(BHPcx *image, const BHSceneAllocator *allocator)
+int bh_pcx_init(BHPcx *image, const BHSceneAllocator *allocator)
 {
     if (!image)
         return 0;
@@ -42,7 +42,7 @@ int __cdecl bh_pcx_init(BHPcx *image, const BHSceneAllocator *allocator)
     }
     return 1;
 }
-void __cdecl bh_pcx_dispose(BHPcx *image)
+void bh_pcx_dispose(BHPcx *image)
 {
     BHSceneAllocator allocator;
     if (!image)
@@ -53,7 +53,7 @@ void __cdecl bh_pcx_dispose(BHPcx *image)
     memset(image, 0, sizeof(*image));
     image->allocator = allocator;
 }
-int __cdecl bh_pcx_decode(BHPcx *image, const void *bytes, unsigned long size)
+int bh_pcx_decode(BHPcx *image, const void *bytes, unsigned long size)
 {
     const unsigned char *p = (const unsigned char *)bytes;
     unsigned long width, height, pixels, end, at, out, count;
@@ -131,7 +131,7 @@ int __cdecl bh_pcx_decode(BHPcx *image, const void *bytes, unsigned long size)
     *image = next;
     return 1;
 }
-int __cdecl bh_pcx_read(BHPcx *image, BHVFile *file)
+int bh_pcx_read(BHPcx *image, BHVFile *file)
 {
     long start = -1, end;
     unsigned long size;
@@ -192,7 +192,7 @@ static unsigned char nearest(const unsigned char *rgb)
     }
     return index;
 }
-int __cdecl bh_pcx_palette(BHPcxPalette *output, const unsigned char *rgb, int mode, unsigned long color)
+int bh_pcx_palette(BHPcxPalette *output, const unsigned char *rgb, int mode, unsigned long color)
 {
     BHPcxPalette next;
     unsigned long i;

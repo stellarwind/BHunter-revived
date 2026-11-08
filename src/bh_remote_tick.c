@@ -40,7 +40,7 @@ static void real(BHEntity *entity, unsigned long o, float f)
 {
     memcpy((char *)entity + o, &f, 4);
 }
-int __cdecl bh_remote_tick(BHRemoteTick *tick, BHEntity *entity)
+int bh_remote_tick(BHRemoteTick *tick, BHEntity *entity)
 {
     unsigned long i, offset, flags, remaining;
     short countdown;
@@ -193,14 +193,14 @@ int __cdecl bh_remote_tick(BHRemoteTick *tick, BHEntity *entity)
         real(entity, 0x48 + 4 * i, rf((double)number(entity, 0x48 + 4 * i) * .965));
     return 1;
 }
-void __cdecl bh_remote_step(BHEntity *entity)
+void bh_remote_step(BHEntity *entity)
 {
     BHRemoteTick *tick;
     memcpy(&tick, entity->payload + 540, 4);
     if (tick)
         bh_remote_tick(tick, entity);
 }
-int __cdecl bh_remote_tick_bind(BHRemoteTick *tick, BHEntity *entity)
+int bh_remote_tick_bind(BHRemoteTick *tick, BHEntity *entity)
 {
     BHEntity *at;
     BHEntityPool *pool;

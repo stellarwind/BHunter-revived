@@ -25,6 +25,6 @@ typedef enum BHPositionResult
    Truncated data, invalid source metadata or unsupported FP state return ERROR
    without changing cursor/counters/outputs. Finite bounds may overflow a float
    result as in the original masked PC53 environment. No stream ownership. */
-BHPositionResult __cdecl bh_position_read(BHPackedPositions *stream, const BHNavigation *navigation,
-                                          BHWorldGeometry **world, BHVec3 *point);
+BHPositionResult bh_position_read(BHPackedPositions *stream, const BHNavigation *navigation, BHWorldGeometry **world,
+                                  BHVec3 *point);
 #endif

@@ -37,10 +37,10 @@ typedef struct BHScriptMotionActor
     BHMat34 local_to_world, world_to_local;
     BHEntity *attachments;
 } BHScriptMotionActor;
-int __cdecl bh_script_motion_actor_read(const BHEntity *, BHScriptMotionActor *);
-int __cdecl bh_script_motion_actor_write(BHEntity *, const BHScriptMotionActor *);
-BHEntity *__cdecl bh_script_motion_attachment_next(const BHEntity *);
-void __cdecl bh_script_motion_attachment_link(BHEntity *, BHEntity *);
+int bh_script_motion_actor_read(const BHEntity *, BHScriptMotionActor *);
+int bh_script_motion_actor_write(BHEntity *, const BHScriptMotionActor *);
+BHEntity *bh_script_motion_attachment_next(const BHEntity *);
+void bh_script_motion_attachment_link(BHEntity *, BHEntity *);
 /* Count-zero source binding, not a partial script VM/constructor admission.
    Caller supplies already constructed target matrices, bounds and attachments,
    and (for translation) origin already including this delta as the real parser
@@ -48,7 +48,7 @@ void __cdecl bh_script_motion_attachment_link(BHEntity *, BHEntity *);
    Installs the actual admitted motion/sensor query and complete new step owner.
    Source guards reject nonmembers, self-targets and cyclic/foreign attachments
    before mutation. The actual step does not acquire resources or poll input. */
-int __cdecl bh_script_motion_bind(BHScriptMotionContext *, BHEntity *, const BHScriptLifetimeState *, int rotate);
-void __cdecl bh_script_translate_tick(BHEntity *); /*00443800*/
-void __cdecl bh_script_rotate_tick(BHEntity *);    /*004439a0*/
+int bh_script_motion_bind(BHScriptMotionContext *, BHEntity *, const BHScriptLifetimeState *, int rotate);
+void bh_script_translate_tick(BHEntity *); /*00443800*/
+void bh_script_rotate_tick(BHEntity *);    /*004439a0*/
 #endif

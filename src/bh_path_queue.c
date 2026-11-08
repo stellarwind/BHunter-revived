@@ -26,8 +26,8 @@ static int binding(const BHPathQueueContext *c)
     return c && c->draw && c->draw->path && c->camera && c->view && c->draw->used <= c->draw->capacity &&
            c->draw->capacity && _finite(c->view->near_z) && c->view->near_z > 0;
 }
-int __cdecl bh_path_queue_append(BHPathQueueContext *c, const BHVec3 *p, float width, unsigned long flags,
-                                 float texture_start, float texture_end)
+int bh_path_queue_append(BHPathQueueContext *c, const BHVec3 *p, float width, unsigned long flags, float texture_start,
+                         float texture_end)
 {
     BHSpriteOrientedVertex *out;
     BHVec3 local;
@@ -117,8 +117,8 @@ static long select_path(BHPathQueueContext *c, const BHDrawCommand *points, unsi
         return -1;
     return first + second;
 }
-long __cdecl bh_path_queue_select(BHPathQueueContext *c, const BHDrawCommand *points, unsigned long spans,
-                                  unsigned long plane_mask)
+long bh_path_queue_select(BHPathQueueContext *c, const BHDrawCommand *points, unsigned long spans,
+                          unsigned long plane_mask)
 {
     if (!binding(c) || !points || spans > 65534)
     {
@@ -127,8 +127,7 @@ long __cdecl bh_path_queue_select(BHPathQueueContext *c, const BHDrawCommand *po
     }
     return select_path(c, points, spans, plane_mask, 0);
 }
-int __cdecl bh_path_queue_execute(BHPathQueueContext *c, const BHDrawQueue *q, const BHDrawCommand *header,
-                                  unsigned long *next)
+int bh_path_queue_execute(BHPathQueueContext *c, const BHDrawQueue *q, const BHDrawCommand *header, unsigned long *next)
 {
     unsigned long index, count, i, half;
     long first, second;

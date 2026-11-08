@@ -9,5 +9,5 @@ typedef struct BHSoundStartupStats
 /* Fresh initialized queue. Owns an SDL mixer reference; no window dependency.
    An unavailable output is retried by the platform poll without discarding
    resources or queued voices. Dispose through bh_sound_queue_dispose. */
-int __cdecl bh_sound_startup(BHSoundQueue *, BHSoundStartupStats *);
+int bh_sound_startup(BHSoundQueue *, BHSoundStartupStats *);
 #endif

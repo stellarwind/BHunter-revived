@@ -62,7 +62,7 @@ static void enable(BHMissionStory *c, unsigned long row, unsigned long index)
         ++c->availability[row][31];
     }
 }
-int __cdecl bh_mission_story_dispatch(BHMissionStory *c, const long packet[3])
+int bh_mission_story_dispatch(BHMissionStory *c, const long packet[3])
 {
     const StoryMessage *m = 0;
     unsigned long i;
@@ -238,14 +238,14 @@ int __cdecl bh_mission_story_dispatch(BHMissionStory *c, const long packet[3])
     }
     return !c->error;
 }
-void __cdecl bh_mission_story_query(BHEntity *e, void *packet)
+void bh_mission_story_query(BHEntity *e, void *packet)
 {
     BHMissionStory *c;
     memcpy(&c, e->payload + 548, 4);
     if (c)
         bh_mission_story_dispatch(c, (const long *)packet);
 }
-int __cdecl bh_mission_story_bind(BHMissionStory *c, BHEntity *e)
+int bh_mission_story_bind(BHMissionStory *c, BHEntity *e)
 {
     BHEntity *at;
     BHEntityPool *pool;

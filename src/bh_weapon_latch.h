@@ -9,5 +9,5 @@
    This is not integer decrement/wrap behavior. All other entity bytes survive.
    Caller borrows a live actual weapon allocation and masked PC53/nearest FP
    environment. No constructor, callback table or original code is supplied. */
-int __cdecl bh_weapon_latch_tick(BHEntity *weapon);
+int bh_weapon_latch_tick(BHEntity *weapon);
 #endif

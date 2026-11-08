@@ -6,11 +6,11 @@
 #include <math.h>
 #include <float.h>
 
-static void *__cdecl allocate(unsigned long n, void *user)
+static void *allocate(unsigned long n, void *user)
 {
     return malloc(n);
 }
-static void __cdecl release(void *p, void *user)
+static void release(void *p, void *user)
 {
     free(p);
 }
@@ -20,7 +20,7 @@ static int fail(BHNavigation *n, BHNavigationError error)
         n->error = error;
     return 0;
 }
-int __cdecl bh_navigation_init(BHNavigation *n, const BHSceneAllocator *allocator)
+int bh_navigation_init(BHNavigation *n, const BHSceneAllocator *allocator)
 {
     BHSceneAllocator memory;
     if (!n || (allocator && (!allocator->allocate || !allocator->release)))
@@ -38,7 +38,7 @@ int __cdecl bh_navigation_init(BHNavigation *n, const BHSceneAllocator *allocato
     bh_scene_routes_init(&n->routes, &memory);
     return 1;
 }
-void __cdecl bh_navigation_dispose(BHNavigation *n)
+void bh_navigation_dispose(BHNavigation *n)
 {
     BHSceneAllocator memory;
     if (!n)
@@ -49,7 +49,7 @@ void __cdecl bh_navigation_dispose(BHNavigation *n)
     bh_scene_routes_dispose(&n->routes);
     bh_navigation_init(n, &memory);
 }
-long __cdecl bh_navigation_find(const BHNavigation *n, const BHWorldGeometry *p)
+long bh_navigation_find(const BHNavigation *n, const BHWorldGeometry *p)
 {
     unsigned long i;
     if (!n || !p)
@@ -195,7 +195,7 @@ static void relax(BHNavigation *n)
                 }
             }
 }
-int __cdecl bh_navigation_build(BHNavigation *n, BHWorldGeometry *first, unsigned long scene_count, BHVFile *cache)
+int bh_navigation_build(BHNavigation *n, BHWorldGeometry *first, unsigned long scene_count, BHVFile *cache)
 {
     BHNavigation next;
     BHWorldGeometry *p;

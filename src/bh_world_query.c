@@ -12,11 +12,11 @@ typedef struct Frame
     BHWorldGeometry *world;
     unsigned long slot;
 } Frame;
-static void *__cdecl allocate(unsigned long n, void *user)
+static void *allocate(unsigned long n, void *user)
 {
     return malloc(n);
 }
-static void __cdecl release(void *p, void *user)
+static void release(void *p, void *user)
 {
     free(p);
 }
@@ -30,7 +30,7 @@ static long index_of(const BHWorldQuery *q, const BHWorldGeometry *p)
 {
     return bh_binding_find(&q->member_index, p, NULL);
 }
-int __cdecl bh_world_query_dispose(BHWorldQuery *q)
+int bh_world_query_dispose(BHWorldQuery *q)
 {
     BHSceneAllocator a;
     if (!q || q->busy)
@@ -51,8 +51,8 @@ int __cdecl bh_world_query_dispose(BHWorldQuery *q)
     q->allocator = a;
     return 1;
 }
-int __cdecl bh_world_query_init(BHWorldQuery *q, BHWorldGeometry *first, unsigned long count, BHEntity *const *actors,
-                                unsigned long actor_count, const BHSceneAllocator *allocator)
+int bh_world_query_init(BHWorldQuery *q, BHWorldGeometry *first, unsigned long count, BHEntity *const *actors,
+                        unsigned long actor_count, const BHSceneAllocator *allocator)
 {
     BHWorldQuery next;
     BHWorldGeometry *p;
@@ -222,8 +222,8 @@ static int actors(BHWorldQuery *q, BHEntity *self, const BHVec3 *p, float r, uns
     }
     return 1;
 }
-int __cdecl bh_world_query_run(BHWorldQuery *q, BHEntity *self, BHWorldGeometry *previous, const BHVec3 *point,
-                               float margin, BHWorldGeometry **owner)
+int bh_world_query_run(BHWorldQuery *q, BHEntity *self, BHWorldGeometry *previous, const BHVec3 *point, float margin,
+                       BHWorldGeometry **owner)
 {
     BHWorldGeometry *selected = previous;
     BHWorldHit *swap;

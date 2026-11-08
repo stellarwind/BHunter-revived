@@ -46,5 +46,5 @@ typedef struct BHHudContext
    On a source queue/render error, graph reset still executes after rendering.
    Caller provides moderate finite values, nonoverlapping inputs/state and the
    PC53/nearest/masked FP profile. No original code or callback substitute. */
-int __cdecl bh_hud_setup(BHHudContext *, const BHHudPlayer *);
+int bh_hud_setup(BHHudContext *, const BHHudPlayer *);
 #endif

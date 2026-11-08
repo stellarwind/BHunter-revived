@@ -53,7 +53,7 @@ static int append(BHScriptParse *c, long opcode, long args[5], long selectors[5]
     publish(c, entity);
     return 1;
 }
-int __cdecl bh_script_parse_command(BHScriptParse *c, char *line, long opcode)
+int bh_script_parse_command(BHScriptParse *c, char *line, long opcode)
 {
     long args[5] = {0, 0, 0, 0, 0}, selectors[5] = {-1, -1, -1, -1, -1};
     BHScriptArgs a;
@@ -67,7 +67,7 @@ int __cdecl bh_script_parse_command(BHScriptParse *c, char *line, long opcode)
         p = bh_script_arg_int(p, &a, (int *)(args + i), (int *)(selectors + i));
     return append(c, opcode, args, selectors);
 }
-int __cdecl bh_script_parse_flag(BHScriptParse *c, char *line, unsigned long flag)
+int bh_script_parse_flag(BHScriptParse *c, char *line, unsigned long flag)
 {
     char *p;
     long args[5] = {0, 0, 0, 0, 0}, selectors[5] = {-1, -1, -1, -1, -1};
@@ -89,7 +89,7 @@ int __cdecl bh_script_parse_flag(BHScriptParse *c, char *line, unsigned long fla
     args[1] = (long)flag;
     return append(c, 0, args, selectors);
 }
-int __cdecl bh_script_parse_sound(BHScriptParse *c, char *line)
+int bh_script_parse_sound(BHScriptParse *c, char *line)
 {
     char path[128], *p, *end;
     unsigned long resource, length, prefix;
@@ -217,7 +217,7 @@ static const Keyword commands[] = {
 static const Keyword flags[] = {{"alpha", 5, 1},       {"collision", 9, 2},      {"render", 6, 4},
                                 {"signtop", 7, 128},   {"signbottom", 10, 256},  {"radarblue", 9, 512},
                                 {"radarred", 8, 1024}, {"radaryellow", 11, 2048}};
-int __cdecl bh_script_parse_file(BHScriptParse *c, BHScriptDefinition *d)
+int bh_script_parse_file(BHScriptParse *c, BHScriptDefinition *d)
 {
     BHVFile *file;
     char path[256], line[513], *p, *arg;

@@ -3,7 +3,7 @@
 #include "bh_round.h"
 #include <float.h>
 #include <string.h>
-int __cdecl bh_project_point_scale(const BHMainCamera *camera, const BHViewConfig *view, float *x, float *y, float *z)
+int bh_project_point_scale(const BHMainCamera *camera, const BHViewConfig *view, float *x, float *y, float *z)
 {
     BHVec3 world, projected;
     if (!camera || !view || !x || !y || !z || !bh_math_environment_supported())

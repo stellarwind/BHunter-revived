@@ -1,7 +1,7 @@
 #include "bh_collision_model.h"
 #include <string.h>
 
-int __cdecl bh_collision_model_init(BHCollisionModel *model, const BHSceneAllocator *allocator)
+int bh_collision_model_init(BHCollisionModel *model, const BHSceneAllocator *allocator)
 {
     BHCollisionModel next;
     if (!model)
@@ -12,7 +12,7 @@ int __cdecl bh_collision_model_init(BHCollisionModel *model, const BHSceneAlloca
     *model = next;
     return 1;
 }
-int __cdecl bh_collision_model_dispose(BHCollisionModel *model)
+int bh_collision_model_dispose(BHCollisionModel *model)
 {
     if (!model || model->geometry.enumerating)
         return 0;
@@ -52,7 +52,7 @@ static int commit(BHCollisionModel *model, BHCollisionModel *next, int ok)
     model->geometry.bsp = &model->bsp;
     return 1;
 }
-int __cdecl bh_collision_model_decode(BHCollisionModel *model, const void *bytes, unsigned long size)
+int bh_collision_model_decode(BHCollisionModel *model, const void *bytes, unsigned long size)
 {
     BHCollisionModel next;
     int ok;
@@ -61,7 +61,7 @@ int __cdecl bh_collision_model_decode(BHCollisionModel *model, const void *bytes
     ok = bh_bsp_decode(&next.bsp, bytes, size);
     return commit(model, &next, ok);
 }
-int __cdecl bh_collision_model_load(BHCollisionModel *model, const char *name, const char *prefix, BHBspSearch search)
+int bh_collision_model_load(BHCollisionModel *model, const char *name, const char *prefix, BHBspSearch search)
 {
     BHCollisionModel next;
     int ok;
@@ -247,23 +247,21 @@ static int face_contact(const BHBsp *a, long a_face, const BHMat34 *a_to_b, cons
     return 1;
 }
 
-int __cdecl bh_collision_face_contact(const BHBsp *a, long a_face, const BHMat34 *a_to_b, const BHBsp *b, long b_face,
-                                      long b_node, const BHMat34 *b_to_world, const BHVec3 *world_normal,
-                                      BHFaceContact *out)
+int bh_collision_face_contact(const BHBsp *a, long a_face, const BHMat34 *a_to_b, const BHBsp *b, long b_face,
+                              long b_node, const BHMat34 *b_to_world, const BHVec3 *world_normal, BHFaceContact *out)
 {
     return face_contact(a, a_face, a_to_b, b, b_face, b_node, b_to_world, world_normal, out, 1);
 }
 
-int __cdecl bh_collision_node_contact(const BHBsp *a, long a_face, const BHMat34 *a_to_b, const BHBsp *b, long b_face,
-                                      long b_node, const BHMat34 *b_to_world, const BHVec3 *world_normal,
-                                      BHFaceContact *out)
+int bh_collision_node_contact(const BHBsp *a, long a_face, const BHMat34 *a_to_b, const BHBsp *b, long b_face,
+                              long b_node, const BHMat34 *b_to_world, const BHVec3 *world_normal, BHFaceContact *out)
 {
     return face_contact(a, a_face, a_to_b, b, b_face, b_node, b_to_world, world_normal, out, 0);
 }
 
-int __cdecl bh_collision_cached_contact(const BHBsp *a, long a_face, const BHMat34 *pose, const BHBsp *b, long b_face,
-                                        long b_node, const BHMat34 *to_world, const BHMat34 *to_local,
-                                        const BHVec3 *world_normal, BHFaceContact *out)
+int bh_collision_cached_contact(const BHBsp *a, long a_face, const BHMat34 *pose, const BHBsp *b, long b_face,
+                                long b_node, const BHMat34 *to_world, const BHMat34 *to_local,
+                                const BHVec3 *world_normal, BHFaceContact *out)
 {
     BHMat34 relative;
     if (!pose || !to_local)

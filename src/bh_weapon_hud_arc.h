@@ -37,8 +37,8 @@ typedef struct BHWeaponHudArcPlayer
    5=modulation,6=random tile. Unused payload remains unchanged, as original.
    Full queues drop individual attempted points; failure cannot undo a header.
    The separately recovered path queue consumer owns drawing these commands. */
-int __cdecl bh_arc_queue(BHArcContext *, const BHVec3 *start, const BHVec3 *control, const BHVec3 *target_control,
-                         const BHVec3 *target, float strength);
+int bh_arc_queue(BHArcContext *, const BHVec3 *start, const BHVec3 *control, const BHVec3 *target_control,
+                 const BHVec3 *target, float strength);
 /* Complete375B primary weapon-index4 HUD00432ff0. Capture player control points
    before target's installed event3 query; preserve query effects and read charge
    afterward. Three CRT random draws jitter the target control even if queuefull,
@@ -46,5 +46,5 @@ int __cdecl bh_arc_queue(BHArcContext *, const BHVec3 *start, const BHVec3 *cont
    No weapon constructor/target query callback is fabricated or counted. Target,
    state and player survive synchronous query; mutation is allowed but freeing
    them during the callback is outside the original lifetime contract. */
-int __cdecl bh_weapon_hud_arc(BHArcContext *, BHWeaponHudState *, const BHWeaponHudArcPlayer *);
+int bh_weapon_hud_arc(BHArcContext *, BHWeaponHudState *, const BHWeaponHudArcPlayer *);
 #endif

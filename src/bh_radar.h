@@ -30,8 +30,8 @@ typedef struct BHRadarContext
 } BHRadarContext;
 /* New source binding adapter, borrowed frame/queue outlive calls; borrowed
    image handles outlive queue consumption. No setup/startup implementation. */
-int __cdecl bh_radar_bind(BHRadarContext *, BHDrawQueue *, const BHRadarFrame *, unsigned long marker_image,
-                          unsigned long bar_image);
+int bh_radar_bind(BHRadarContext *, BHDrawQueue *, const BHRadarFrame *, unsigned long marker_image,
+                  unsigned long bar_image);
 /* Complete0041b650: fourth original argument is a raw integer Boolean, despite
    the float decompiler signature. Retains height/radius gates, bit8 visibility
    rule, exact-kind1/2 size rules, quadrant UVs and both flat/world branches.
@@ -39,6 +39,6 @@ int __cdecl bh_radar_bind(BHRadarContext *, BHDrawQueue *, const BHRadarFrame *,
    Return1 includes culling/full-queue drops; source invalid binding/queue or
    nonfinite numerical guard reports0. Does not consume/change target position.
    Caller owns PC53/nearest/masked profile; overlapping inputs/queue forbidden. */
-int __cdecl bh_radar_marker(BHRadarContext *, const BHVec3 *player_position, const BHVec3 *target_position,
-                            unsigned long kind, unsigned long extended, unsigned long skip_marker);
+int bh_radar_marker(BHRadarContext *, const BHVec3 *player_position, const BHVec3 *target_position, unsigned long kind,
+                    unsigned long extended, unsigned long skip_marker);
 #endif

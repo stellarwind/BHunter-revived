@@ -6,10 +6,10 @@
 /* 00478170: append a borrowed resource handle and binary32 pose to one
    bucket. The handle is resolved at execution time; it is never interpreted
    as an original x86 pointer. Returns 1 queued, 0 full, -1 invalid. */
-int __cdecl bh_draw_submit_resource(BHDrawQueue *queue, unsigned long bucket, unsigned long handle,
-                                    const BHVec3 *position, const BHVec3 *angles, float modulation);
+int bh_draw_submit_resource(BHDrawQueue *queue, unsigned long bucket, unsigned long handle, const BHVec3 *position,
+                            const BHVec3 *angles, float modulation);
 
-typedef const BHDrawResource *(__cdecl *BHDrawResourceLookup)(unsigned long handle, void *user);
+typedef const BHDrawResource *(*BHDrawResourceLookup)(unsigned long handle, void *user);
 typedef struct BHDrawSubmitContext
 {
     BHDrawResourceContext *draw;
@@ -23,9 +23,9 @@ typedef struct BHDrawSubmitContext
    original callback reads command+0x50 after invoking the resource owner.
    The next output must not alias command storage. Lookup must not mutate the
    command; descriptor and renderer bindings stay valid until draw returns. */
-int __cdecl bh_draw_submit_execute(BHDrawSubmitContext *context, const BHDrawCommand *command, unsigned long *next);
+int bh_draw_submit_execute(BHDrawSubmitContext *context, const BHDrawCommand *command, unsigned long *next);
 
-typedef BHTextureImage *(__cdecl *BHDrawImageLookup)(unsigned long handle, void *user);
+typedef BHTextureImage *(*BHDrawImageLookup)(unsigned long handle, void *user);
 typedef struct BHDrawBillboardSubmitContext
 {
     BHSpriteBillboardContext *draw;
@@ -38,6 +38,6 @@ typedef struct BHDrawBillboardSubmitContext
    Publish the command's current next link after drawing, even on a source
    draw failure. next must not alias command storage; lookup must not mutate
    the command. Missing image bindings publish the link and report failure. */
-int __cdecl bh_draw_submit_billboard_execute(BHDrawBillboardSubmitContext *context, const BHDrawCommand *command,
-                                             unsigned long *next);
+int bh_draw_submit_billboard_execute(BHDrawBillboardSubmitContext *context, const BHDrawCommand *command,
+                                     unsigned long *next);
 #endif

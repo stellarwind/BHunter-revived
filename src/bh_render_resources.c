@@ -10,12 +10,12 @@ struct BHRenderResourceEntry
     BHDrawResource descriptor;
 };
 
-static void *__cdecl allocate(unsigned long bytes, void *user)
+static void *allocate(unsigned long bytes, void *user)
 {
     (void)user;
     return malloc(bytes);
 }
-static void __cdecl release(void *pointer, void *user)
+static void release(void *pointer, void *user)
 {
     (void)user;
     free(pointer);
@@ -42,8 +42,8 @@ static int reserve(BHRenderResources *owner)
     owner->capacity = capacity;
     return 1;
 }
-int __cdecl bh_render_resources_init(BHRenderResources *owner, BHModelContext *models,
-                                     const BHModelInstanceContext *prototype, const BHSceneAllocator *allocator)
+int bh_render_resources_init(BHRenderResources *owner, BHModelContext *models, const BHModelInstanceContext *prototype,
+                             const BHSceneAllocator *allocator)
 {
     if (!owner || owner->entries || owner->count || owner->capacity || !models || !models->allocator.allocate ||
         !models->allocator.release || !prototype || !prototype->camera || !prototype->config || !prototype->clip ||
@@ -63,7 +63,7 @@ int __cdecl bh_render_resources_init(BHRenderResources *owner, BHModelContext *m
     }
     return 1;
 }
-unsigned long __cdecl bh_render_resources_load_model(BHRenderResources *owner, const char *name)
+unsigned long bh_render_resources_load_model(BHRenderResources *owner, const char *name)
 {
     BHRenderResourceEntry *entry;
     if (!owner || !owner->models || !owner->allocator.allocate || !name || !name[0])
@@ -121,14 +121,14 @@ failure:
     owner->allocator.release(entry, owner->allocator.user);
     return 0;
 }
-const BHDrawResource *__cdecl bh_render_resources_lookup(unsigned long handle, void *user)
+const BHDrawResource *bh_render_resources_lookup(unsigned long handle, void *user)
 {
     BHRenderResources *owner = (BHRenderResources *)user;
     if (!owner || !handle || handle > owner->count || !owner->entries)
         return NULL;
     return &owner->entries[handle - 1]->descriptor;
 }
-void __cdecl bh_render_resources_dispose(BHRenderResources *owner)
+void bh_render_resources_dispose(BHRenderResources *owner)
 {
     unsigned long i;
     if (!owner)

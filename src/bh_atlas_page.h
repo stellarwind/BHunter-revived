@@ -20,8 +20,8 @@ typedef struct BHAtlasPage
    Does not copy glyphs/create UVs or acquire a device texture handle; those are
    subsequent behavior. Source failure guards free partial page/image resources,
    while the real atlas cache and format-request side effects remain borrowed. */
-BHAtlasPage *__cdecl bh_atlas_page_create(BHAtlasContext *, const char *name, unsigned long size);
+BHAtlasPage *bh_atlas_page_create(BHAtlasContext *, const char *name, unsigned long size);
 /* Explicit source lifetime adapter; call before disposing borrowed atlas/q.
    Unlinks/releases the page image and detaches any real residency slot. */
-int __cdecl bh_atlas_page_dispose(BHAtlasContext *, BHAtlasPage *);
+int bh_atlas_page_dispose(BHAtlasContext *, BHAtlasPage *);
 #endif

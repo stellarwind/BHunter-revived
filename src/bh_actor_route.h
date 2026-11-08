@@ -35,11 +35,11 @@ typedef struct BHActorRouteContext
    these do not create actors or install callbacks. */
 /* Required live original-global clock binding. Packet consumers can temporarily
    set/restore its low word as the original does. */
-BHPickupRoom *__cdecl bh_actor_route_room(BHActorRouteContext *, const BHWorldGeometry *);
-unsigned short __cdecl bh_actor_route_now(const BHActorRouteContext *);
-void __cdecl bh_actor_route_set_tick(BHActorRouteContext *, unsigned short);
-int __cdecl bh_actor_route_read(const BHEntity *, BHActorRouteState *);
-int __cdecl bh_actor_route_write(BHEntity *, const BHActorRouteState *);
+BHPickupRoom *bh_actor_route_room(BHActorRouteContext *, const BHWorldGeometry *);
+unsigned short bh_actor_route_now(const BHActorRouteContext *);
+void bh_actor_route_set_tick(BHActorRouteContext *, unsigned short);
+int bh_actor_route_read(const BHEntity *, BHActorRouteState *);
+int bh_actor_route_write(BHEntity *, const BHActorRouteState *);
 /* Complete00434f40. Integer incoming/outgoing portal indices (the decompiler's
    provisional float outgoing type is contradicted by raw EAX/index arithmetic).
    Promote next world, preserve actual f4/f8 room-list links, build four route
@@ -47,10 +47,10 @@ int __cdecl bh_actor_route_write(BHEntity *, const BHActorRouteState *);
    room heads and all actor/world/model/neighbor lifetimes must remain stable.
    PC53 nearest/masked, finite moderate state and positive speed factors required.
    Source validation errors precede this owner's mutation. */
-int __cdecl bh_actor_route_promote(BHActorRouteContext *, BHEntity *, long incoming, long outgoing);
+int bh_actor_route_promote(BHActorRouteContext *, BHEntity *, long incoming, long outgoing);
 /* Complete004355c0. Original sound countdown/stop, last matching incoming
    neighbor (first slot fallback), actual random/guided selector, two exact RNG
    transitions for aperture bias, then real promotion owner. Earlier sound,
    RNG and bias effects remain observable if a later source guard fails. */
-int __cdecl bh_actor_route_advance(BHActorRouteContext *, BHEntity *);
+int bh_actor_route_advance(BHActorRouteContext *, BHEntity *);
 #endif

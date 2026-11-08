@@ -18,7 +18,7 @@ static int native(BHAtlasContext *c, HRESULT hr)
     c->last_hresult = hr;
     return hr == DD_OK ? 1 : fail(c, BH_TEXTURE_BACKEND);
 }
-int __cdecl bh_atlas_context_init(BHAtlasContext *c, BHTextureContext *q, unsigned long step)
+int bh_atlas_context_init(BHAtlasContext *c, BHTextureContext *q, unsigned long step)
 {
     if (!c || c->images || !q || !q->draw || !q->allocator.allocate || !q->allocator.release)
         return 0;
@@ -27,7 +27,7 @@ int __cdecl bh_atlas_context_init(BHAtlasContext *c, BHTextureContext *q, unsign
     c->scan_step = step;
     return 1;
 }
-void __cdecl bh_atlas_context_dispose(BHAtlasContext *c)
+void bh_atlas_context_dispose(BHAtlasContext *c)
 {
     BHAtlasImage *p, *next;
     if (!c)
@@ -150,7 +150,7 @@ static int rectangles(BHAtlasContext *c, BHAtlasImage *image, const unsigned cha
     }
     return 1;
 }
-BHAtlasImage *__cdecl bh_atlas_image_load(BHAtlasContext *c, const char *name, const DDPIXELFORMAT *pixel)
+BHAtlasImage *bh_atlas_image_load(BHAtlasContext *c, const char *name, const DDPIXELFORMAT *pixel)
 {
     BHTextureContext *q;
     BHAtlasImage *image, *slow, *fast;

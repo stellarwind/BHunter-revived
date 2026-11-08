@@ -48,11 +48,11 @@ typedef struct BHPickupContext
    table and room actor bindings are borrowed. Spawn consumes two CRT rand calls
    after a successful pool allocation. The selected draw method must be bound;
    missing draw bindings fail before allocation or random consumption. */
-BHEntity *__cdecl bh_pickup_spawn(BHPickupContext *context, const BHVec3 *position, long type, long variant,
-                                  long remaining, long offer, long token, float fade);
-BHPickupContext *__cdecl bh_pickup_context(BHEntity *entity);
-BHPickupState *__cdecl bh_pickup_state(BHEntity *entity);
-void __cdecl bh_pickup_tick(BHEntity *entity);                /* 004415a0 */
-void __cdecl bh_pickup_query(BHEntity *entity, void *packet); /* 00441570 */
-void __cdecl bh_pickup_cleanup(BHEntity *entity);             /* 004414d0 */
+BHEntity *bh_pickup_spawn(BHPickupContext *context, const BHVec3 *position, long type, long variant, long remaining,
+                          long offer, long token, float fade);
+BHPickupContext *bh_pickup_context(BHEntity *entity);
+BHPickupState *bh_pickup_state(BHEntity *entity);
+void bh_pickup_tick(BHEntity *entity);                /* 004415a0 */
+void bh_pickup_query(BHEntity *entity, void *packet); /* 00441570 */
+void bh_pickup_cleanup(BHEntity *entity);             /* 004414d0 */
 #endif

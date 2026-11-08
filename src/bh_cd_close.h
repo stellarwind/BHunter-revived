@@ -12,5 +12,5 @@ typedef struct BHCdClose
     unsigned long local_length;
     float local_volume;
 } BHCdClose;
-int __cdecl bh_cd_stop_close(BHCdClose *);
+int bh_cd_stop_close(BHCdClose *);
 #endif

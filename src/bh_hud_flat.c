@@ -117,7 +117,7 @@ static void counter(BHHudFlatContext *c, long amount, unsigned char countdown, i
         x = stored((double)x - step);
     }
 }
-int __cdecl bh_hud_flat_draw(BHHudFlatContext *c, BHHudStatusState *s)
+int bh_hud_flat_draw(BHHudFlatContext *c, BHHudStatusState *s)
 {
     const BHAttachmentContext *a;
     float scale, bar_width, bar_height, offset, digit_height, digit_width, bottom, x_offset, label_width, label_height,

@@ -19,15 +19,15 @@ static void write_field(BHEntity *entity, unsigned long offset, const void *in, 
 }
 #define READ(member, offset) read_field(entity, offset, &state->member, sizeof(state->member))
 #define WRITE(member, offset) write_field(entity, offset, &state->member, sizeof(state->member))
-unsigned short __cdecl bh_actor_route_now(const BHActorRouteContext *ctx)
+unsigned short bh_actor_route_now(const BHActorRouteContext *ctx)
 {
     return (unsigned short)*ctx->live_tick;
 }
-void __cdecl bh_actor_route_set_tick(BHActorRouteContext *ctx, unsigned short tick)
+void bh_actor_route_set_tick(BHActorRouteContext *ctx, unsigned short tick)
 {
     *ctx->live_tick = (*ctx->live_tick & 0xffff0000UL) | tick;
 }
-int __cdecl bh_actor_route_read(const BHEntity *entity, BHActorRouteState *state)
+int bh_actor_route_read(const BHEntity *entity, BHActorRouteState *state)
 {
     if (!entity || !state)
         return 0;
@@ -52,7 +52,7 @@ int __cdecl bh_actor_route_read(const BHEntity *entity, BHActorRouteState *state
     READ(duration_ticks, 0x1e6);
     return 1;
 }
-int __cdecl bh_actor_route_write(BHEntity *entity, const BHActorRouteState *state)
+int bh_actor_route_write(BHEntity *entity, const BHActorRouteState *state)
 {
     if (!entity || !state)
         return 0;
@@ -85,7 +85,7 @@ static int fail(BHActorRouteContext *ctx, BHActorRouteError e)
         ctx->error = e;
     return 0;
 }
-BHPickupRoom *__cdecl bh_actor_route_room(BHActorRouteContext *ctx, const BHWorldGeometry *world)
+BHPickupRoom *bh_actor_route_room(BHActorRouteContext *ctx, const BHWorldGeometry *world)
 {
     unsigned long i;
     long found = ctx->room_index ? bh_binding_find(ctx->room_index, world, NULL) : -1;
@@ -129,7 +129,7 @@ static int duration_ticks(double duration, unsigned short *out)
     return 1;
 }
 #include "bh_actor_route_promote_core.inc"
-int __cdecl bh_actor_route_promote(BHActorRouteContext *ctx, BHEntity *entity, long incoming, long outgoing)
+int bh_actor_route_promote(BHActorRouteContext *ctx, BHEntity *entity, long incoming, long outgoing)
 {
     BHActorRouteState state;
     BHPickupRoom *old, *current;
@@ -209,7 +209,7 @@ static __inline unsigned long random_next(unsigned long state)
 }
 #include "bh_actor_route_advance_core.inc"
 
-int __cdecl bh_actor_route_advance(BHActorRouteContext *ctx, BHEntity *entity)
+int bh_actor_route_advance(BHActorRouteContext *ctx, BHEntity *entity)
 {
     BHActorRouteState state;
     BHActorRouteAdvanceBinding binding;

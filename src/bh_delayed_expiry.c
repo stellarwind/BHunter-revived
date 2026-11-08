@@ -2,7 +2,7 @@
 #include "bh_round.h"
 #include <string.h>
 #include <float.h>
-int __cdecl bh_delayed_expiry_bind(BHEntityPool *p, BHEntity *e, float lifetime, float delay)
+int bh_delayed_expiry_bind(BHEntityPool *p, BHEntity *e, float lifetime, float delay)
 {
     if (!p || !e)
         return 0;
@@ -12,7 +12,7 @@ int __cdecl bh_delayed_expiry_bind(BHEntityPool *p, BHEntity *e, float lifetime,
     e->step = bh_delayed_expiry_tick;
     return 1;
 }
-void __cdecl bh_delayed_expiry_tick(BHEntity *e)
+void bh_delayed_expiry_tick(BHEntity *e)
 {
     BHEntityPool *p;
     float old, stored;

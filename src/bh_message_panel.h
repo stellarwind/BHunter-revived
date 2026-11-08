@@ -42,26 +42,26 @@ typedef struct BHMessagePanel
     BHMessagePanelError error;
 } BHMessagePanel;
 
-BHMessagePanelFields *__cdecl bh_message_panel_fields(BHEntity *);
+BHMessagePanelFields *bh_message_panel_fields(BHEntity *);
 /* Complete 00478b60 producer: plain queued text with selector 00477e80,
    leaving record coordinates and unused words intact. Return1 queued,0 full,
    -1 invalid source binding. Use bh_message_text_drain for these records. */
-int __cdecl bh_message_text_plain(BHTextQueue *, BHAtlasPage *, const char *);
+int bh_message_text_plain(BHTextQueue *, BHAtlasPage *, const char *);
 /* Complete original plain consumer 00477e80: text at the page's current
    cursor, then return record+50 next. The panel FIFO adapter handles this
    distinct selector alongside admitted positioned-text and clear consumers. */
-unsigned long __cdecl bh_message_text_execute_plain(const BHTextCommand *);
-int __cdecl bh_message_text_drain(BHTextQueue *, BHAtlasContext *, unsigned long *processed);
+unsigned long bh_message_text_execute_plain(const BHTextCommand *);
+int bh_message_text_drain(BHTextQueue *, BHAtlasContext *, unsigned long *processed);
 /* Source owner for the startup panel allocation subset and full four-phase
    step chain 00442bf0 -> 00442b60 -> 00442950 -> 004428b0, plus event4 query
    release 00442cd0 and refresh 00442440. Real draw, page, image and sound
    resources are borrowed from their recovered owner. Screen width is the
    original global 004e2998 binding; near_depth is original 0049175c. */
-BHEntity *__cdecl bh_message_panel_create(BHMessagePanel *);
-int __cdecl bh_message_panel_close(BHMessagePanel *);
-int __cdecl bh_message_panel_advance(BHMessagePanel *);
-void __cdecl bh_message_panel_step(BHEntity *);
-void __cdecl bh_message_panel_query(BHEntity *, void *packet);
-int __cdecl bh_message_panel_render(BHMessagePanel *);
-void __cdecl bh_message_panel_refresh(BHEntity *, void *packet);
+BHEntity *bh_message_panel_create(BHMessagePanel *);
+int bh_message_panel_close(BHMessagePanel *);
+int bh_message_panel_advance(BHMessagePanel *);
+void bh_message_panel_step(BHEntity *);
+void bh_message_panel_query(BHEntity *, void *packet);
+int bh_message_panel_render(BHMessagePanel *);
+void bh_message_panel_refresh(BHEntity *, void *packet);
 #endif

@@ -40,8 +40,8 @@ typedef struct BHScriptParse
    block flags are retained. Missing sidecar is a successful default.
    Malformed/unwritten locals become bounded errors; stack<32/name<32/line512.
    Context/definition/templates/resources remain borrowed until disposal. */
-int __cdecl bh_script_parse_sound(BHScriptParse *, char *);
-int __cdecl bh_script_parse_flag(BHScriptParse *, char *, unsigned long);
-int __cdecl bh_script_parse_command(BHScriptParse *, char *, long opcode);
-int __cdecl bh_script_parse_file(BHScriptParse *, BHScriptDefinition *);
+int bh_script_parse_sound(BHScriptParse *, char *);
+int bh_script_parse_flag(BHScriptParse *, char *, unsigned long);
+int bh_script_parse_command(BHScriptParse *, char *, long opcode);
+int bh_script_parse_file(BHScriptParse *, BHScriptDefinition *);
 #endif

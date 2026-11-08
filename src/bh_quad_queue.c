@@ -1,8 +1,8 @@
 #include "bh_quad_queue.h"
 #include <string.h>
-int __cdecl bh_quad_queue(BHDrawQueue *q, unsigned long bucket, unsigned long image, const BHVec3 *center,
-                          const BHVec3 *up, const BHVec3 *normal, float width, float height, float angle,
-                          unsigned long flags, float modulation, float u, float u_extent, float v, float v_extent)
+int bh_quad_queue(BHDrawQueue *q, unsigned long bucket, unsigned long image, const BHVec3 *center, const BHVec3 *up,
+                  const BHVec3 *normal, float width, float height, float angle, unsigned long flags, float modulation,
+                  float u, float u_extent, float v, float v_extent)
 {
     static const unsigned long headers[9] = {1, 2, 3, 4, 5, 0, 6, 7, 8};
     unsigned long header, tail, index;
@@ -47,7 +47,7 @@ int __cdecl bh_quad_queue(BHDrawQueue *q, unsigned long bucket, unsigned long im
     q->error = BH_DRAW_OK;
     return 1;
 }
-int __cdecl bh_quad_queue_execute(BHQuadQueueContext *c, const BHDrawCommand *command, unsigned long *next)
+int bh_quad_queue_execute(BHQuadQueueContext *c, const BHDrawCommand *command, unsigned long *next)
 {
     BHTextureImage *image;
     float values[18];

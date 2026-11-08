@@ -3,7 +3,7 @@
 #include <float.h>
 #include <math.h>
 
-double __cdecl bh_portal_camera_radius(const BHMat34 *projected, float near_z, const float bounds[4], float motion)
+double bh_portal_camera_radius(const BHMat34 *projected, float near_z, const float bounds[4], float motion)
 {
     BHMat34 inverse;
     BHVec3 point, direction;
@@ -32,7 +32,7 @@ double __cdecl bh_portal_camera_radius(const BHMat34 *projected, float near_z, c
     return radius * radius;
 }
 
-int __cdecl bh_portal_camera_touches(const BHVec3 corners[4], const BHVec3 *eye, double radius_squared)
+int bh_portal_camera_touches(const BHVec3 corners[4], const BHVec3 *eye, double radius_squared)
 {
     unsigned long axis, i;
     double distance = 0, delta;

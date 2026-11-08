@@ -9,11 +9,11 @@ typedef char model_transform[offsetof(BHModel, transform) == 8 ? 1 : -1];
 typedef char model_materials[offsetof(BHModel, materials) == 0x3c ? 1 : -1];
 typedef char model_images[offsetof(BHModel, images) == 0x68 ? 1 : -1];
 typedef char model_runtime[offsetof(BHModel, runtime) == 0x6c ? 1 : -1];
-static void *__cdecl allocate(unsigned long n, void *user)
+static void *allocate(unsigned long n, void *user)
 {
     return malloc(n);
 }
-static void __cdecl release(void *p, void *user)
+static void release(void *p, void *user)
 {
     free(p);
 }
@@ -23,7 +23,7 @@ static int fail(BHModelContext *c, BHBspError error)
         c->error = error;
     return 0;
 }
-int __cdecl bh_model_context_init(BHModelContext *c, BHTextureContext *textures, const BHSceneAllocator *a)
+int bh_model_context_init(BHModelContext *c, BHTextureContext *textures, const BHSceneAllocator *a)
 {
     if (!c || !textures || (a && (!a->allocate || !a->release)))
         return 0;
@@ -39,7 +39,7 @@ int __cdecl bh_model_context_init(BHModelContext *c, BHTextureContext *textures,
     }
     return 1;
 }
-int __cdecl bh_model_set_path(BHModelContext *c, const char *prefix, BHBspSearch search)
+int bh_model_set_path(BHModelContext *c, const char *prefix, BHBspSearch search)
 {
     unsigned long n = 0;
     if (!c || !prefix || search < BH_BSP_BARE_ONLY || search > BH_BSP_PREFIX_ONLY)
@@ -53,7 +53,7 @@ int __cdecl bh_model_set_path(BHModelContext *c, const char *prefix, BHBspSearch
     c->error = BH_BSP_OK;
     return 1;
 }
-void __cdecl bh_model_dispose(BHModelContext *c, BHModel *m)
+void bh_model_dispose(BHModelContext *c, BHModel *m)
 {
     if (!c || !m)
         return;
@@ -73,7 +73,7 @@ void __cdecl bh_model_dispose(BHModelContext *c, BHModel *m)
         c->allocator.release(m->images, c->allocator.user);
     memset(m, 0, sizeof(*m));
 }
-void __cdecl bh_model_delete(BHModelContext *c, BHModel *m)
+void bh_model_delete(BHModelContext *c, BHModel *m)
 {
     if (!c || !m)
         return;
@@ -87,7 +87,7 @@ static void *copy(BHModelContext *c, const void *p, unsigned long bytes)
         memcpy(out, p, bytes);
     return out;
 }
-int __cdecl bh_model_read(BHModelContext *c, BHVFile *file, BHModel *model)
+int bh_model_read(BHModelContext *c, BHVFile *file, BHModel *model)
 {
     BHModel next;
     BHBsp data;
@@ -141,7 +141,7 @@ int __cdecl bh_model_read(BHModelContext *c, BHVFile *file, BHModel *model)
     c->error = BH_BSP_OK;
     return 1;
 }
-BHModel *__cdecl bh_model_load(BHModelContext *c, const char *name)
+BHModel *bh_model_load(BHModelContext *c, const char *name)
 {
     char path[256];
     unsigned long n = 0, p;

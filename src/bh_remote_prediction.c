@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <float.h>
-int __cdecl bh_remote_predict_position(const BHEntity *entity, unsigned short tick, BHVec3 *out)
+int bh_remote_predict_position(const BHEntity *entity, unsigned short tick, BHVec3 *out)
 {
     BHVec3 anchor, velocity, acceleration, position;
     unsigned short stamp, elapsed;
@@ -37,8 +37,8 @@ int __cdecl bh_remote_predict_position(const BHEntity *entity, unsigned short ti
     *out = position;
     return 1;
 }
-int __cdecl bh_remote_choose_slot(const unsigned long (*rows)[32], unsigned long count, long row, long first,
-                                  long second, long *selected)
+int bh_remote_choose_slot(const unsigned long (*rows)[32], unsigned long count, long row, long first, long second,
+                          long *selected)
 {
     const unsigned long *slots;
     unsigned long product;

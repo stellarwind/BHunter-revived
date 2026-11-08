@@ -29,7 +29,7 @@ static int live(BHProjectileLifetime *c, const BHEntity *entity, int bound)
         memcpy(&g, entity->payload + 472, 4);
     return bh_entity_is_active(c->pool, entity) && (!bound || entity->generation == g);
 }
-int __cdecl bh_projectile_query_state(const BHEntity *entity, BHProjectileQueryState *state)
+int bh_projectile_query_state(const BHEntity *entity, BHProjectileQueryState *state)
 {
     if (!entity || !state)
         return 0;
@@ -40,7 +40,7 @@ int __cdecl bh_projectile_query_state(const BHEntity *entity, BHProjectileQueryS
     get(entity, 0x130, &state->secondary);
     return 1;
 }
-int __cdecl bh_projectile_lifetime_bind(BHProjectileLifetime *c, BHEntity *entity, const BHProjectileQueryState *state)
+int bh_projectile_lifetime_bind(BHProjectileLifetime *c, BHEntity *entity, const BHProjectileQueryState *state)
 {
     if (!state || !live(c, entity, 0))
         return 0;
@@ -54,7 +54,7 @@ int __cdecl bh_projectile_lifetime_bind(BHProjectileLifetime *c, BHEntity *entit
     c->error = 0;
     return bh_entity_set_query(c->pool, entity, bh_projectile_query);
 }
-void __cdecl bh_projectile_cleanup(BHEntity *entity)
+void bh_projectile_cleanup(BHEntity *entity)
 {
     BHProjectileLifetime *c = context(entity);
     unsigned long handle;
@@ -68,7 +68,7 @@ void __cdecl bh_projectile_cleanup(BHEntity *entity)
     bh_sound_stop(c->sound, handle);
     bh_entity_release(c->pool, entity);
 }
-void __cdecl bh_projectile_query(BHEntity *entity, void *packet)
+void bh_projectile_query(BHEntity *entity, void *packet)
 {
     BHProjectileLifetime *c = context(entity);
     BHProjectileQueryState state;

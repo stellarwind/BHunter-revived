@@ -63,7 +63,7 @@ static void detour(const BHWorldGeometry *room, BHVec3 *a, BHVec3 *b)
     b->x = stored((double)b->x - (-10));
     b->z = stored((double)b->z - (-10));
 }
-int __cdecl bh_camera_route_advance(BHCameraRouteContext *c, BHCameraRouteState *s)
+int bh_camera_route_advance(BHCameraRouteContext *c, BHCameraRouteState *s)
 {
     BHCameraRouteState next;
     BHWorldGeometry *room, *destination, *previous;

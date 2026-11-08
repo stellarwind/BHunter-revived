@@ -23,5 +23,5 @@ typedef struct BHPlayerReset
    The engine voice is retained for reuse after respawn. A failed sound
    stop never aborts later writes; return 0 reports it after full reset. Signed
    ammo ceilings retain negative limits rather than inventing a zero floor. */
-int __cdecl bh_player_reset(BHPlayerReset *);
+int bh_player_reset(BHPlayerReset *);
 #endif

@@ -20,10 +20,10 @@ typedef struct BHHitMarkerContext
     /* Optional application bridge for a semantic room's shared pickup/marker
        head. Returning NULL retains the original owner+12c storage. The
        callback and resolved head outlive all markers belonging to that owner. */
-    BHEntity **(__cdecl *owner_head)(BHEntity *owner, void *user);
+    BHEntity **(*owner_head)(BHEntity *owner, void *user);
     void *owner_head_user;
 } BHHitMarkerContext;
-typedef void(__cdecl *BHHitMarkerDraw)(BHEntity *);
+typedef void (*BHHitMarkerDraw)(BHEntity *);
 /* Whole 00407b40 / 00407a20. Context must start zeroed, bind the real pool,
    queue and original 004f0084 texture identity. All owner entities and this
    context outlive their markers; dispose before releasing owners or pool.
@@ -32,10 +32,10 @@ typedef void(__cdecl *BHHitMarkerDraw)(BHEntity *);
    Draw is installed at marker+e8; refresh/step are verified RET sentinels.
    The private borrowed source context occupies payload+624. PC53/masked FP.
    No original code, model stub or backend implementation is supplied here. */
-BHEntity *__cdecl bh_hit_marker_create(BHHitMarkerContext *, const BHVec3 *position, const BHVec3 *normal, float size,
-                                       unsigned long atlas_flags, BHEntity *owner);
-void __cdecl bh_hit_marker_draw(BHEntity *);
+BHEntity *bh_hit_marker_create(BHHitMarkerContext *, const BHVec3 *position, const BHVec3 *normal, float size,
+                               unsigned long atlas_flags, BHEntity *owner);
+void bh_hit_marker_draw(BHEntity *);
 /* Count-zero lifetime adapter. Unlinks the same two lists and releases real
    pooled slots; callers must not independently release active markers. */
-int __cdecl bh_hit_marker_dispose(BHHitMarkerContext *);
+int bh_hit_marker_dispose(BHHitMarkerContext *);
 #endif

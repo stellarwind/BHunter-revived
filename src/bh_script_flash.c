@@ -10,14 +10,14 @@ static BHEntityPool *pool(BHEntity *entity)
     memcpy(&pool, entity->payload + 456, 4);
     return pool;
 }
-float __cdecl bh_script_flash_countdown(const BHEntity *entity)
+float bh_script_flash_countdown(const BHEntity *entity)
 {
     float f = 0;
     if (entity)
         memcpy(&f, entity->payload + 4, 4);
     return f;
 }
-int __cdecl bh_script_flash_bind(BHEntityPool *pool, BHEntity *entity, float countdown)
+int bh_script_flash_bind(BHEntityPool *pool, BHEntity *entity, float countdown)
 {
     if (!bh_entity_is_active(pool, entity))
         return 0;
@@ -26,7 +26,7 @@ int __cdecl bh_script_flash_bind(BHEntityPool *pool, BHEntity *entity, float cou
     entity->step = bh_script_flash_tick;
     return 1;
 }
-void __cdecl bh_script_flash_tick(BHEntity *entity)
+void bh_script_flash_tick(BHEntity *entity)
 {
     float f;
     double value;

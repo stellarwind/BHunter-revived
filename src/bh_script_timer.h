@@ -48,7 +48,7 @@ typedef struct BHScriptTimerContext
 
 /* Identity lookup only; variable values, active and owner remain live. The
    optional index must be rebuilt if actor identities/order change. */
-const BHScriptTimerActor *__cdecl bh_script_timer_actor(const BHScriptTimerContext *, BHEntity *);
+const BHScriptTimerActor *bh_script_timer_actor(const BHScriptTimerContext *, BHEntity *);
 
 /* Context, pool and actor-state table must outlive all bound timers. The table
    supplies actual caller-owned actor variables and one-level owner/activity
@@ -56,8 +56,8 @@ const BHScriptTimerActor *__cdecl bh_script_timer_actor(const BHScriptTimerConte
    each activation/tick. One tick is the original fixed double 1/30 second.
    Uses the linked VC5 CRT rand() state, with the original signed 32-bit product
    wrapping and -1/32768 factor; no replacement random generator. */
-int __cdecl bh_script_timers_init(BHScriptTimerContext *context, BHEntityPool *pool, const BHScriptTimerActor *actors,
-                                  unsigned long count);
+int bh_script_timers_init(BHScriptTimerContext *context, BHEntityPool *pool, const BHScriptTimerActor *actors,
+                          unsigned long count);
 /* Bind a live real pool entity as timer (always_tick==0) or timer2 (!=0).
    Initial state is explicit; use -1 for each literal variable selector. Timer
    activation event 8 resolves signed actor variables, clones all 48 state bytes
@@ -67,16 +67,16 @@ int __cdecl bh_script_timers_init(BHScriptTimerContext *context, BHEntityPool *p
    Actor event 10 defers matching running-timer deletion until the next step.
    Template binding is a source constructor adapter, not the full script parser.
    Caller must retain fired/next entities and contexts until their timers end. */
-int __cdecl bh_script_timer_bind(BHScriptTimerContext *context, BHEntity *entity, const BHScriptTimerState *state,
-                                 int always_tick);
+int bh_script_timer_bind(BHScriptTimerContext *context, BHEntity *entity, const BHScriptTimerState *state,
+                         int always_tick);
 /* Borrowed mutable original timer state; expires on release/recycle. A callback
    may change it. If a fired callback releases/recycles the current timer, source
    stepping stops with MUTATION instead of writing through a recycled slot. */
-BHScriptTimerState *__cdecl bh_script_timer_state(BHScriptTimerContext *context, BHEntity *entity);
+BHScriptTimerState *bh_script_timer_state(BHScriptTimerContext *context, BHEntity *entity);
 /* Count-zero exposure of actual00442eb0. Caller must supply its existing
    persistent timer context binding at entity payload+52. */
-BHEntityStep __cdecl bh_script_timer_delete_step(void);
+BHEntityStep bh_script_timer_delete_step(void);
 /* Count-zero exposure of actual00442de0 for placed-world startup/reset.
    Bind the real timer/lifetime owner before installing this callback. */
-BHEntityStep __cdecl bh_script_timer_unconditional_step(void);
+BHEntityStep bh_script_timer_unconditional_step(void);
 #endif

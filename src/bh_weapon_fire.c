@@ -36,8 +36,8 @@ static unsigned char target_id(BHWeaponFireContext *ctx, BHEntity *target)
             id = (unsigned char)i;
     return id;
 }
-void __cdecl bh_weapon_fire_packet(BHWeaponFireContext *ctx, unsigned char a, unsigned char b, unsigned char d,
-                                   BHEntity *target)
+void bh_weapon_fire_packet(BHWeaponFireContext *ctx, unsigned char a, unsigned char b, unsigned char d,
+                           BHEntity *target)
 {
     BHPacketWriter writer;
     unsigned char payload[5];
@@ -57,7 +57,7 @@ void __cdecl bh_weapon_fire_packet(BHWeaponFireContext *ctx, unsigned char a, un
     else
         ctx->error = 2;
 }
-int __cdecl bh_weapon_fire_empty(BHWeaponFireContext *ctx, const BHEntity *entity)
+int bh_weapon_fire_empty(BHWeaponFireContext *ctx, const BHEntity *entity)
 {
     if (!ctx->messages || !ctx->empty_warning)
     {
@@ -73,7 +73,7 @@ int __cdecl bh_weapon_fire_empty(BHWeaponFireContext *ctx, const BHEntity *entit
     }
     return 1;
 }
-int __cdecl bh_weapon_fire_ballistic(BHWeaponFireContext *ctx, BHEntity *weapon_entity, BHEntity *entity)
+int bh_weapon_fire_ballistic(BHWeaponFireContext *ctx, BHEntity *weapon_entity, BHEntity *entity)
 {
     BHWeaponCommonState *weapon_state;
     BHVec3 up, side, forward, right, muzzle, velocity, recoil;
@@ -135,7 +135,7 @@ int __cdecl bh_weapon_fire_ballistic(BHWeaponFireContext *ctx, BHEntity *weapon_
     weapon_state->word_e8 = phase + 1;
     return ctx->error == 0;
 }
-int __cdecl bh_weapon_fire_homing(BHWeaponFireContext *ctx, BHEntity *weapon_entity, BHEntity *entity)
+int bh_weapon_fire_homing(BHWeaponFireContext *ctx, BHEntity *weapon_entity, BHEntity *entity)
 {
     BHWeaponCommonState *weapon_state;
     BHVec3 up, side, forward, muzzle, velocity, recoil;
@@ -185,7 +185,7 @@ int __cdecl bh_weapon_fire_homing(BHWeaponFireContext *ctx, BHEntity *weapon_ent
     weapon_state->word_e8 = phase + 1;
     return ctx->error == 0;
 }
-int __cdecl bh_weapon_area_start(BHWeaponFireContext *ctx, BHEntity *weapon_entity, BHEntity *entity)
+int bh_weapon_area_start(BHWeaponFireContext *ctx, BHEntity *weapon_entity, BHEntity *entity)
 {
     BHWeaponCommonState *weapon_state;
     if (!valid(ctx, weapon_entity, entity))
@@ -202,7 +202,7 @@ int __cdecl bh_weapon_area_start(BHWeaponFireContext *ctx, BHEntity *weapon_enti
         bh_weapon_fire_packet(ctx, 5, 1, 4, NULL);
     return ctx->error == 0;
 }
-int __cdecl bh_weapon_area_tick(BHWeaponFireContext *ctx, BHEntity *weapon_entity, BHEntity *entity)
+int bh_weapon_area_tick(BHWeaponFireContext *ctx, BHEntity *weapon_entity, BHEntity *entity)
 {
     BHWeaponCommonState *weapon_state;
     BHVec3 forward, recoil;

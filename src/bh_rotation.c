@@ -2,7 +2,7 @@
 #include "bh_round.h"
 #include <math.h>
 
-void __cdecl bh_mat34_rotate_y(float radians, BHMat34 *m)
+void bh_mat34_rotate_y(float radians, BHMat34 *m)
 {
     float cosine, sine;
     double x, z;
@@ -18,7 +18,7 @@ void __cdecl bh_mat34_rotate_y(float radians, BHMat34 *m)
     }
 }
 
-void __cdecl bh_mat34_rotate_x(float radians, BHMat34 *m)
+void bh_mat34_rotate_x(float radians, BHMat34 *m)
 {
     float cosine, sine;
     double y, z;
@@ -33,7 +33,7 @@ void __cdecl bh_mat34_rotate_x(float radians, BHMat34 *m)
         bh_round_float(&m->m[row][2], z * cosine - y * sine);
     }
 }
-void __cdecl bh_mat34_rotate_z(float radians, BHMat34 *m)
+void bh_mat34_rotate_z(float radians, BHMat34 *m)
 {
     float cosine, sine;
     double x, y;
@@ -49,7 +49,7 @@ void __cdecl bh_mat34_rotate_z(float radians, BHMat34 *m)
     }
 }
 
-void __cdecl bh_mat34_rotate_world_x(float radians, BHMat34 *m)
+void bh_mat34_rotate_world_x(float radians, BHMat34 *m)
 {
     float cosine, sine;
     double y, z;
@@ -64,7 +64,7 @@ void __cdecl bh_mat34_rotate_world_x(float radians, BHMat34 *m)
         bh_round_float(&m->m[2][column], y * sine + z * cosine);
     }
 }
-void __cdecl bh_mat34_rotate_world_y(float radians, BHMat34 *m)
+void bh_mat34_rotate_world_y(float radians, BHMat34 *m)
 {
     float cosine, sine;
     double x, z;

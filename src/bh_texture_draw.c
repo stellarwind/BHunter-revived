@@ -22,7 +22,7 @@ static int valid(const BHTextureImage *image)
            image->vertex_capacity <= 0x1000000UL && image->vertex_count <= image->vertex_capacity &&
            image->run_count <= image->vertex_count / 3 && image->run_serial <= image->vertex_count;
 }
-D3DTLVERTEX *__cdecl bh_texture_draw_vertex(BHTextureContext *q, BHTextureImage *image)
+D3DTLVERTEX *bh_texture_draw_vertex(BHTextureContext *q, BHTextureImage *image)
 {
     unsigned long size, capacity;
     unsigned long *runs;
@@ -65,7 +65,7 @@ D3DTLVERTEX *__cdecl bh_texture_draw_vertex(BHTextureContext *q, BHTextureImage 
     ++image->run_serial;
     return out;
 }
-int __cdecl bh_texture_draw_flush(BHTextureContext *q, BHTextureImage *image, unsigned long *runs_drawn)
+int bh_texture_draw_flush(BHTextureContext *q, BHTextureImage *image, unsigned long *runs_drawn)
 {
     D3DTEXTUREHANDLE handle;
     unsigned long i, at = 0;
@@ -101,8 +101,8 @@ int __cdecl bh_texture_draw_flush(BHTextureContext *q, BHTextureImage *image, un
     image->run_serial = image->vertex_count = image->run_count = 0;
     return ok;
 }
-int __cdecl bh_texture_draw_polygon(BHTextureContext *q, BHTextureImage *image, const D3DTLVERTEX *vertices,
-                                    unsigned long count)
+int bh_texture_draw_polygon(BHTextureContext *q, BHTextureImage *image, const D3DTLVERTEX *vertices,
+                            unsigned long count)
 {
     unsigned long i, old_count, old_serial;
     unsigned long *runs;

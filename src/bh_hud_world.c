@@ -103,7 +103,7 @@ static void counter(BHHudWorldContext *c, long amount, unsigned char countdown, 
         bh_round_float(&horizontal, (double)horizontal - (-.010666666666666666));
     }
 }
-int __cdecl bh_hud_world_draw(BHHudWorldContext *c, BHHudWorldState *state)
+int bh_hud_world_draw(BHHudWorldContext *c, BHHudWorldState *state)
 {
     const BHRadarFrame *f;
     if (!c || !state || !c->hud || !(f = c->hud->frame) || !c->hud->attachment || !c->hud->attachment->queue ||

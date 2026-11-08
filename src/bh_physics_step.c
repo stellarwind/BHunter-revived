@@ -11,12 +11,12 @@ typedef char physics_common_layout[sizeof(void *) == 4 && offsetof(BHEntity, pos
                                            offsetof(BHEntity, origin) == 0x48 && offsetof(BHEntity, lifetime) == 0xb4
                                        ? 1
                                        : -1];
-static void *__cdecl allocate(unsigned long n, void *u)
+static void *allocate(unsigned long n, void *u)
 {
     (void)u;
     return malloc(n);
 }
-static void __cdecl release(void *p, void *u)
+static void release(void *p, void *u)
 {
     (void)u;
     free(p);
@@ -46,7 +46,7 @@ static BHPhysicsStepPair *pair(BHPhysicsStepContext *ctx, BHGeometry *a, BHGeome
     long i = bh_binding_find(&ctx->pair_index, a, b);
     return i < 0 ? NULL : ctx->pairs + i;
 }
-int __cdecl bh_physics_step_read_entity(BHPhysicsState *physics, const BHEntity *entity)
+int bh_physics_step_read_entity(BHPhysicsState *physics, const BHEntity *entity)
 {
     unsigned long r, k;
     float basis[9];
@@ -67,7 +67,7 @@ int __cdecl bh_physics_step_read_entity(BHPhysicsState *physics, const BHEntity 
     memcpy(&physics->euler, (const unsigned char *)entity + 0x3c, 12);
     return 1;
 }
-int __cdecl bh_physics_step_publish(BHPhysicsStepBody *body)
+int bh_physics_step_publish(BHPhysicsStepBody *body)
 {
     unsigned long r, k;
     float basis[9];
@@ -93,7 +93,7 @@ int __cdecl bh_physics_step_publish(BHPhysicsStepBody *body)
     entity->scale = body->friction;
     return 1;
 }
-int __cdecl bh_physics_step_dispose(BHPhysicsStepContext *ctx)
+int bh_physics_step_dispose(BHPhysicsStepContext *ctx)
 {
     unsigned long i;
     BHSceneAllocator a;
@@ -130,10 +130,9 @@ static unsigned long unique(BHGeometry **list, unsigned long count, BHGeometry *
     list[count++] = g;
     return count;
 }
-int __cdecl bh_physics_step_init(BHPhysicsStepContext *ctx, BHEntityPool *pool, BHPhysicsStepBody *body,
-                                 unsigned long nb, const BHPhysicsStepWorld *w, unsigned long nw,
-                                 BHGeometry *const *models, unsigned long nm, BHPhysicsEffects *effects, int fallback,
-                                 const BHSceneAllocator *a)
+int bh_physics_step_init(BHPhysicsStepContext *ctx, BHEntityPool *pool, BHPhysicsStepBody *body, unsigned long nb,
+                         const BHPhysicsStepWorld *w, unsigned long nw, BHGeometry *const *models, unsigned long nm,
+                         BHPhysicsEffects *effects, int fallback, const BHSceneAllocator *a)
 {
     BHPhysicsStepContext next;
     BHGeometry **sources = NULL, **targets = NULL;
@@ -230,8 +229,8 @@ rejected:
     bh_physics_step_dispose(&next);
     return 0;
 }
-int __cdecl bh_physics_step_rebind(BHPhysicsStepContext *ctx, BHPhysicsStepBody *body, unsigned long nb,
-                                   BHGeometry *const *models, unsigned long nm)
+int bh_physics_step_rebind(BHPhysicsStepContext *ctx, BHPhysicsStepBody *body, unsigned long nb,
+                           BHGeometry *const *models, unsigned long nm)
 {
     BHPhysicsStepContext next;
     BHGeometry **sources = NULL, **targets = NULL;
@@ -417,7 +416,7 @@ static int selected(BHPhysicsStepContext *ctx, float *mass, BHEntity **recipient
     }
     return 1;
 }
-int __cdecl bh_physics_step(BHPhysicsStepContext *ctx, BHEntity *entity, float dt)
+int bh_physics_step(BHPhysicsStepContext *ctx, BHEntity *entity, float dt)
 {
     BHPhysicsStepBody *b;
     BHPhysicsState *physics;

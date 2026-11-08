@@ -5,7 +5,7 @@
 #include <float.h>
 #include <string.h>
 
-int __cdecl bh_sweep_init(BHSweepQuery *q, BHGeometry *a, BHGeometry *b)
+int bh_sweep_init(BHSweepQuery *q, BHGeometry *a, BHGeometry *b)
 {
     BHSweepQuery next;
     if (!q)
@@ -24,7 +24,7 @@ int __cdecl bh_sweep_init(BHSweepQuery *q, BHGeometry *a, BHGeometry *b)
     *q = next;
     return 1;
 }
-int __cdecl bh_sweep_dispose(BHSweepQuery *q)
+int bh_sweep_dispose(BHSweepQuery *q)
 {
     if (!q || q->busy || q->collision.busy || q->segment.busy)
         return 0;
@@ -165,8 +165,8 @@ static int sweep(BHSweepQuery *q, BHMat34 *pose, const BHVec3 *movement, const B
     apply(pose, &clear, &clear_angles);
     return 1;
 }
-int __cdecl bh_sweep_run(BHSweepQuery *q, BHMat34 *pose, const BHVec3 *movement, const BHVec3 *angles,
-                         const BHMat34 *world, const BHMat34 *local, int fallback, BHSweepHit *out)
+int bh_sweep_run(BHSweepQuery *q, BHMat34 *pose, const BHVec3 *movement, const BHVec3 *angles, const BHMat34 *world,
+                 const BHMat34 *local, int fallback, BHSweepHit *out)
 {
     BHMat34 next;
     BHSweepHit hit;

@@ -72,7 +72,7 @@ static BHFlybyScene *binding(const BHEntity *entity)
             return p;
     return 0;
 }
-int __cdecl bh_flyby_scene_bind(BHFlybyScene *s)
+int bh_flyby_scene_bind(BHFlybyScene *s)
 {
     BHFlybyScene *p;
     if (!s || !s->camera_entity || !s->entities || !s->flyby_camera || !s->flyby_camera->route || !s->flyby_state ||
@@ -92,7 +92,7 @@ int __cdecl bh_flyby_scene_bind(BHFlybyScene *s)
     s->error = BH_FLYBY_SCENE_OK;
     return 1;
 }
-void __cdecl bh_flyby_scene_unbind(BHFlybyScene *s)
+void bh_flyby_scene_unbind(BHFlybyScene *s)
 {
     BHFlybyScene **p;
     if (!s)
@@ -116,7 +116,7 @@ void __cdecl bh_flyby_scene_unbind(BHFlybyScene *s)
             return;
         }
 }
-void __cdecl bh_flyby_scene_refresh_entity(BHEntity *entity, void *packet)
+void bh_flyby_scene_refresh_entity(BHEntity *entity, void *packet)
 {
     BHFlybyScene *s = binding(entity);
     (void)packet;
@@ -128,7 +128,7 @@ void __cdecl bh_flyby_scene_refresh_entity(BHEntity *entity, void *packet)
             bh_flyby_scene_draw(s);
     }
 }
-void __cdecl bh_flyby_scene_camera_step_entity(BHEntity *entity)
+void bh_flyby_scene_camera_step_entity(BHEntity *entity)
 {
     BHFlybyScene *s = binding(entity);
     int result;
@@ -149,7 +149,7 @@ void __cdecl bh_flyby_scene_camera_step_entity(BHEntity *entity)
     write_vector(entity, 0x178, &s->flyby_state->camera.velocity);
     write_long(entity, 0x284, (long)s->flyby_state->route.waypoint_index);
 }
-void __cdecl bh_flyby_scene_rearm_entity(BHEntity *entity)
+void bh_flyby_scene_rearm_entity(BHEntity *entity)
 {
     BHFlybyScene *s = binding(entity);
     if (!s)
@@ -282,7 +282,7 @@ static int handoff(BHFlybyScene *s, BHEntity *camera)
     return 1;
 }
 
-int __cdecl bh_flyby_scene_draw(BHFlybyScene *s)
+int bh_flyby_scene_draw(BHFlybyScene *s)
 {
     BHEntity *camera;
     BHVec3 eye, angles, velocity;

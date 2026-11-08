@@ -14,7 +14,7 @@ static int native(BHTextureContext *q, HRESULT hr)
     q->last_hresult = hr;
     return hr == DD_OK ? 1 : fail(q, BH_TEXTURE_BACKEND);
 }
-int __cdecl bh_texture_set_path(BHTextureContext *q, const char *prefix, long policy)
+int bh_texture_set_path(BHTextureContext *q, const char *prefix, long policy)
 {
     unsigned long n;
     if (!q || !prefix || (n = strlen(prefix)) > 254)
@@ -109,7 +109,7 @@ static void discard(BHTextureContext *q, BHTextureImage *image)
         q->allocator.release(image->screen, q->allocator.user);
     q->allocator.release(image, q->allocator.user);
 }
-BHTextureImage *__cdecl bh_texture_load(BHTextureContext *q, const char *name)
+BHTextureImage *bh_texture_load(BHTextureContext *q, const char *name)
 {
     char key[28];
     BHTextureImage *image;

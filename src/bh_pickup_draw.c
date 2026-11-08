@@ -38,7 +38,7 @@ static float get_float(const unsigned long *in)
 }
 
 /* 004558d0. The input pointers model its in-place projected world point. */
-int __cdecl bh_pickup_project(const BHPickupDrawContext *ctx, float *x, float *y, float *z, float *scale)
+int bh_pickup_project(const BHPickupDrawContext *ctx, float *x, float *y, float *z, float *scale)
 {
     BHVec3 world, projected;
     if (!ctx || !ctx->camera || !ctx->view || !x || !y || !z || !scale)
@@ -58,9 +58,9 @@ int __cdecl bh_pickup_project(const BHPickupDrawContext *ctx, float *x, float *y
 
 /* 00478f60's inlined bucket append. Original command field offsets are
    +04 resource,+08 x..angle,+1c alpha,+20..+2c UV,+30 depth,+34 flags. */
-int __cdecl bh_pickup_rect_queue(BHDrawQueue *queue, unsigned long bucket, unsigned long image, float x, float y,
-                                 float width, float height, float angle, unsigned long flags, float alpha, float u,
-                                 float u_extent, float v, float v_extent, float depth)
+int bh_pickup_rect_queue(BHDrawQueue *queue, unsigned long bucket, unsigned long image, float x, float y, float width,
+                         float height, float angle, unsigned long flags, float alpha, float u, float u_extent, float v,
+                         float v_extent, float depth)
 {
     static const unsigned long mapping[9] = {1, 2, 3, 4, 5, 0, 6, 7, 8};
     unsigned long header, tail, index;
@@ -116,9 +116,9 @@ static void vertex(BHClipVertex *p, float x, float y, float u, float v)
     p->v = v;
 }
 
-int __cdecl bh_pickup_rect_draw(BHPickupDrawContext *ctx, BHTextureImage *image, float x, float y, float width,
-                                float height, float angle, unsigned long flags, float alpha, float u, float u_extent,
-                                float v, float v_extent, float depth)
+int bh_pickup_rect_draw(BHPickupDrawContext *ctx, BHTextureImage *image, float x, float y, float width, float height,
+                        float angle, unsigned long flags, float alpha, float u, float u_extent, float v, float v_extent,
+                        float depth)
 {
     BHClipVertex quad[4], *ring, *p;
     float half_width, half_height, radius;
@@ -216,8 +216,8 @@ int __cdecl bh_pickup_rect_draw(BHPickupDrawContext *ctx, BHTextureImage *image,
     return ctx->emit(ring, image, color, ctx->emit_user);
 }
 
-int __cdecl bh_pickup_rect_execute(BHPickupDrawContext *ctx, BHDrawImageLookup lookup, void *lookup_user,
-                                   const BHDrawCommand *command, unsigned long *next)
+int bh_pickup_rect_execute(BHPickupDrawContext *ctx, BHDrawImageLookup lookup, void *lookup_user,
+                           const BHDrawCommand *command, unsigned long *next)
 {
     BHTextureImage *image;
     float a[11];
@@ -278,7 +278,7 @@ static float digit_u(long digit)
     return (float)((.5 - (double)digit * (-8.0)) * .0078125);
 }
 
-int __cdecl bh_pickup_label(BHPickupDrawContext *ctx, const BHEntity *entity, long total, long count)
+int bh_pickup_label(BHPickupDrawContext *ctx, const BHEntity *entity, long total, long count)
 {
     float x, y, z, s, scale, alpha, step, w, u, v, du;
     long ds[8];
@@ -405,7 +405,7 @@ int __cdecl bh_pickup_label(BHPickupDrawContext *ctx, const BHEntity *entity, lo
     return result & r;
 }
 
-int __cdecl bh_pickup_draw(BHPickupDrawContext *ctx, BHEntity *entity)
+int bh_pickup_draw(BHPickupDrawContext *ctx, BHEntity *entity)
 {
     BHVec3 angles;
     float phase, size, alpha;
@@ -434,7 +434,7 @@ int __cdecl bh_pickup_draw(BHPickupDrawContext *ctx, BHEntity *entity)
     return r0 && r1 && r2;
 }
 
-int __cdecl bh_pickup_render_bind(BHPickupContext *context, BHPickupRenderBinding *binding)
+int bh_pickup_render_bind(BHPickupContext *context, BHPickupRenderBinding *binding)
 {
     if (!context || !binding || !binding->default_draw || !binding->special_draw)
         return 0;
@@ -443,14 +443,14 @@ int __cdecl bh_pickup_render_bind(BHPickupContext *context, BHPickupRenderBindin
     context->special_draw = bh_pickup_special_step;
     return 1;
 }
-void __cdecl bh_pickup_default_step(BHEntity *entity)
+void bh_pickup_default_step(BHEntity *entity)
 {
     BHPickupContext *owner = bh_pickup_context(entity);
     BHPickupRenderBinding *binding = owner ? (BHPickupRenderBinding *)owner->draw_user : NULL;
     if (binding && binding->default_draw)
         bh_pickup_draw(binding->default_draw, entity);
 }
-void __cdecl bh_pickup_special_step(BHEntity *entity)
+void bh_pickup_special_step(BHEntity *entity)
 {
     BHPickupContext *owner = bh_pickup_context(entity);
     BHPickupRenderBinding *binding = owner ? (BHPickupRenderBinding *)owner->draw_user : NULL;

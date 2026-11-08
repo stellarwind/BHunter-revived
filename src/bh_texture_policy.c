@@ -1,5 +1,5 @@
 #include "bh_texture_policy.h"
-int __cdecl bh_texture_policy_set(BHTextureContext *context, int mode, unsigned long color)
+int bh_texture_policy_set(BHTextureContext *context, int mode, unsigned long color)
 {
     if (!context)
         return 0;
@@ -7,9 +7,8 @@ int __cdecl bh_texture_policy_set(BHTextureContext *context, int mode, unsigned 
     context->palette_color = color;
     return 1;
 }
-int __cdecl bh_texture_image_set_words(BHTextureImage *image, unsigned long word0, unsigned long word1,
-                                       unsigned long word2, unsigned long word3, unsigned long word4,
-                                       unsigned long word5, unsigned long word6)
+int bh_texture_image_set_words(BHTextureImage *image, unsigned long word0, unsigned long word1, unsigned long word2,
+                               unsigned long word3, unsigned long word4, unsigned long word5, unsigned long word6)
 {
     if (!image)
         return 0;

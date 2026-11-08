@@ -35,7 +35,7 @@ static void result(BHProjectileDrawContext *ctx, int n)
     else if (!ctx->error)
         ctx->error = 1;
 }
-int __cdecl bh_projectile_ballistic_draw(BHProjectileDrawContext *ctx, const BHEntity *entity)
+int bh_projectile_ballistic_draw(BHProjectileDrawContext *ctx, const BHEntity *entity)
 {
     BHVec3 a, b;
     if (!ctx || !ctx->queue || !entity)
@@ -47,7 +47,7 @@ int __cdecl bh_projectile_ballistic_draw(BHProjectileDrawContext *ctx, const BHE
     result(ctx, bh_draw_segment(ctx->queue, 3, ctx->ballistic_trail, &a, &b, .3f, .3f, 1, 1, 0));
     return ctx->error < 0 ? -1 : !ctx->error;
 }
-int __cdecl bh_projectile_homing_draw(BHProjectileDrawContext *ctx, const BHEntity *entity)
+int bh_projectile_homing_draw(BHProjectileDrawContext *ctx, const BHEntity *entity)
 {
     BHVec3 a, b;
     float angle;
@@ -65,7 +65,7 @@ int __cdecl bh_projectile_homing_draw(BHProjectileDrawContext *ctx, const BHEnti
     result(ctx, bh_draw_billboard(ctx->queue, 3, ctx->homing_trail, &a, 1.5f, 1.5f, angle, 0, 1));
     return ctx->error < 0 ? -1 : !ctx->error;
 }
-int __cdecl bh_projectile_pulse_draw(BHProjectileDrawContext *ctx, const BHEntity *entity)
+int bh_projectile_pulse_draw(BHProjectileDrawContext *ctx, const BHEntity *entity)
 {
     BHVec3 up = {0, -1, 0};
     float alpha, size, angle;
@@ -88,12 +88,12 @@ static BHProjectileDrawContext *draw_context(BHEntity *entity)
     memcpy(&ctx, entity->payload + 616, 4);
     return ctx;
 }
-static void __cdecl ballistic_draw(BHEntity *entity, void *unused)
+static void ballistic_draw(BHEntity *entity, void *unused)
 {
     (void)unused;
     bh_projectile_ballistic_draw(draw_context(entity), entity);
 }
-static void __cdecl homing_draw(BHEntity *entity, void *unused)
+static void homing_draw(BHEntity *entity, void *unused)
 {
     (void)unused;
     bh_projectile_homing_draw(draw_context(entity), entity);
@@ -169,13 +169,13 @@ static BHEntity *create(BHProjectileCreateContext *ctx, BHWorldGeometry *world, 
     put(entity, 0x120, &zero, 4);
     return entity;
 }
-BHEntity *__cdecl bh_projectile_create_ballistic(BHProjectileCreateContext *ctx, BHWorldGeometry *world,
-                                                 BHEntity *entity, const BHVec3 *p, const BHVec3 *v, float t)
+BHEntity *bh_projectile_create_ballistic(BHProjectileCreateContext *ctx, BHWorldGeometry *world, BHEntity *entity,
+                                         const BHVec3 *p, const BHVec3 *v, float t)
 {
     return create(ctx, world, entity, p, v, t, NULL, 0);
 }
-BHEntity *__cdecl bh_projectile_create_homing(BHProjectileCreateContext *ctx, BHWorldGeometry *world, BHEntity *entity,
-                                              const BHVec3 *p, const BHVec3 *v, float t, BHEntity *target)
+BHEntity *bh_projectile_create_homing(BHProjectileCreateContext *ctx, BHWorldGeometry *world, BHEntity *entity,
+                                      const BHVec3 *p, const BHVec3 *v, float t, BHEntity *target)
 {
     return create(ctx, world, entity, p, v, t, target, 1);
 }

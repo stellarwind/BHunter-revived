@@ -10,6 +10,6 @@ typedef struct BHEffectOrbitTickContext
 } BHEffectOrbitTickContext;
 /* Count-zero complete source callback binding. core->orbit borrows this stable
    owner; core608/generation612/cleanup604 keep their established ABI. */
-int __cdecl bh_effect_orbit_tick_bind(BHEffectOrbitTickContext *, BHEntity *);
-void __cdecl bh_effect_orbit_tick(BHEntity *); /*whole00403870*/
+int bh_effect_orbit_tick_bind(BHEffectOrbitTickContext *, BHEntity *);
+void bh_effect_orbit_tick(BHEntity *); /*whole00403870*/
 #endif

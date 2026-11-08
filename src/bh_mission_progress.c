@@ -1,7 +1,7 @@
 #include "bh_mission_progress.h"
 #include <string.h>
 typedef char mission_abi[sizeof(short) == 2 && sizeof(long) == 4 && sizeof(void *) == 4 ? 1 : -1];
-BHEntity *__cdecl bh_mission_progress(BHMissionProgressContext *c, long progression)
+BHEntity *bh_mission_progress(BHMissionProgressContext *c, long progression)
 {
     short old;
     unsigned short low;

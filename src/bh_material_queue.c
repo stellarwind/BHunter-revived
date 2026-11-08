@@ -1,8 +1,8 @@
 #include "bh_material_queue.h"
 
-int __cdecl bh_material_queue_words(BHDrawQueue *q, unsigned long bucket, unsigned long image, unsigned long word0,
-                                    unsigned long word1, unsigned long word2, unsigned long word3, unsigned long word4,
-                                    unsigned long word5, unsigned long word6)
+int bh_material_queue_words(BHDrawQueue *q, unsigned long bucket, unsigned long image, unsigned long word0,
+                            unsigned long word1, unsigned long word2, unsigned long word3, unsigned long word4,
+                            unsigned long word5, unsigned long word6)
 {
     static const unsigned long mapping[9] = {1, 2, 3, 4, 5, 0, 6, 7, 8};
     unsigned long header, tail, index;
@@ -43,8 +43,7 @@ int __cdecl bh_material_queue_words(BHDrawQueue *q, unsigned long bucket, unsign
     return 1;
 }
 
-int __cdecl bh_material_queue_execute(BHDrawImageLookup lookup, void *user, const BHDrawCommand *command,
-                                      unsigned long *next)
+int bh_material_queue_execute(BHDrawImageLookup lookup, void *user, const BHDrawCommand *command, unsigned long *next)
 {
     BHTextureImage *image;
     int result;

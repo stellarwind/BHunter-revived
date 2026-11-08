@@ -31,7 +31,7 @@ static void offset(BHVec3 *out, const BHVec3 *p, const BHVec3 *n, double factor)
     bh_round_float(&out->y, (double)p->y - (double)n->y * factor);
     bh_round_float(&out->z, (double)p->z - (double)n->z * factor);
 }
-int __cdecl bh_homing_projectile_bind(BHHomingProjectileContext *ctx, BHEntity *entity)
+int bh_homing_projectile_bind(BHHomingProjectileContext *ctx, BHEntity *entity)
 {
     if (!ctx || !entity || !ctx->pool || !ctx->segment || !ctx->sound || !ctx->particles || !ctx->contacts ||
         !ctx->flash || !ctx->markers || !live(ctx, entity, entity->generation))
@@ -133,7 +133,7 @@ static void hit_packets(BHHomingProjectileContext *ctx, BHEntity *target, const 
         }
     }
 }
-void __cdecl bh_homing_projectile_tick(BHEntity *entity)
+void bh_homing_projectile_tick(BHEntity *entity)
 {
     BHHomingProjectileContext *ctx = context(entity);
     BHEntity *target, *ignore, *damage_source, *response, *actor;

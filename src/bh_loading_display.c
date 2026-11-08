@@ -28,7 +28,7 @@ static int wedge(BHLoadingDisplay *c, const BHLoadingBlitTarget *t, int n, float
         return bh_loading_blit_top_last(&c->blit, t, a, b);
     }
 }
-int __cdecl bh_loading_display(BHLoadingDisplay *c, float progress)
+int bh_loading_display(BHLoadingDisplay *c, float progress)
 {
     BHLoadingImages *im;
     DDSURFACEDESC desc;

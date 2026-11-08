@@ -3,9 +3,9 @@
 #include <math.h>
 #include <float.h>
 #include <string.h>
-int __cdecl bh_screen_region_draw(BHScreenQuadContext *c, BHTextureImage *image, float x, float y, float width,
-                                  float height, float angle, unsigned char flags, float modulation, float u,
-                                  float u_extent, float uv_v, float v_extent, float output_depth)
+int bh_screen_region_draw(BHScreenQuadContext *c, BHTextureImage *image, float x, float y, float width, float height,
+                          float angle, unsigned char flags, float modulation, float u, float u_extent, float uv_v,
+                          float v_extent, float output_depth)
 {
     BHClipVertex v[4], *ring, *p;
     double w, h, r, cs, sn, hs, hc, conversion;

@@ -78,7 +78,7 @@ static void refresh(BHEntity *e, void *packet)
     if (n)
         bh_editor_world_draw(n->context, n);
 }
-BHEditorNode *__cdecl bh_editor_world_node(BHEntity *e)
+BHEditorNode *bh_editor_world_node(BHEntity *e)
 {
     BHEditorNode *n;
     if (!e)
@@ -86,11 +86,11 @@ BHEditorNode *__cdecl bh_editor_world_node(BHEntity *e)
     memcpy(&n, e->payload + 560, 4);
     return n;
 }
-BHEntityCallback __cdecl bh_editor_world_draw_callback(void)
+BHEntityCallback bh_editor_world_draw_callback(void)
 {
     return refresh;
 }
-int __cdecl bh_editor_world_attach(BHEditorWorld *c, BHEditorNode *n)
+int bh_editor_world_attach(BHEditorWorld *c, BHEditorNode *n)
 {
     if (!c || !c->pool || !c->library || !c->nodes || c->count >= c->capacity || !n || !n->entity ||
         !live(c, n->entity) || n->model_index >= c->library->count || member(c, n))
@@ -170,7 +170,7 @@ static int portal_plane(BHEditorWorld *c, const BHPortal *p, const float *uv, un
     }
     return 1;
 }
-int __cdecl bh_editor_world_draw(BHEditorWorld *c, BHEditorNode *n)
+int bh_editor_world_draw(BHEditorWorld *c, BHEditorNode *n)
 {
     BHWorldGeometry *w;
     BHScriptBlock *b;
@@ -384,8 +384,8 @@ int __cdecl bh_editor_world_draw(BHEditorWorld *c, BHEditorNode *n)
     }
     return 1;
 }
-BHEditorNode *__cdecl bh_editor_world_clone(BHEditorWorld *c, long x, long y, long z, BHEditorNode *after,
-                                            const BHEditorNode *prototype)
+BHEditorNode *bh_editor_world_clone(BHEditorWorld *c, long x, long y, long z, BHEditorNode *after,
+                                    const BHEditorNode *prototype)
 {
     BHEditorNode *n, *next;
     BHEntity *e;
@@ -480,7 +480,7 @@ BHEditorNode *__cdecl bh_editor_world_clone(BHEditorWorld *c, long x, long y, lo
     c->error = 0;
     return n;
 }
-int __cdecl bh_editor_world_dispose(BHEditorWorld *c)
+int bh_editor_world_dispose(BHEditorWorld *c)
 {
     unsigned long i;
     BHEditorNode *n;

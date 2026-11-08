@@ -46,13 +46,13 @@ static int snapshot(BHNetworkScores *c)
     }
     return 1;
 }
-int __cdecl bh_network_scores_broadcast(BHNetworkScores *c)
+int bh_network_scores_broadcast(BHNetworkScores *c)
 {
     if (!valid(c))
         return 0;
     return snapshot(c);
 }
-int __cdecl bh_network_scores_death(BHNetworkScores *c, long attacker, BHEntity *victim)
+int bh_network_scores_death(BHNetworkScores *c, long attacker, BHEntity *victim)
 {
     long index = -1;
     unsigned long i, bits;

@@ -497,7 +497,7 @@ static int near_contacts(BHPlayerTick *ctx)
     }
     return 1;
 }
-static void __cdecl ring_refresh(BHEntity *entity, void *unused)
+static void ring_refresh(BHEntity *entity, void *unused)
 {
     BHPlayerTick *ctx;
     (void)unused;
@@ -1027,7 +1027,7 @@ static int damage_timers(BHPlayerTick *ctx)
         sethalf(entity, 0x2b4, (unsigned short)(half(entity, 0x2b4) + 1));
     return 1;
 }
-int __cdecl bh_player_tick(BHPlayerTick *ctx)
+int bh_player_tick(BHPlayerTick *ctx)
 {
     BHEntity *entity;
     BHPlayerTickState *state;
@@ -1179,7 +1179,7 @@ int __cdecl bh_player_tick(BHPlayerTick *ctx)
     ctx->body->world = (BHWorldGeometry *)word(entity, 0xc4);
     return !ctx->error;
 }
-int __cdecl bh_player_tick_bind(BHPlayerTick *ctx, BHEntity *entity)
+int bh_player_tick_bind(BHPlayerTick *ctx, BHEntity *entity)
 {
     BHEntity *p;
     unsigned long n = 0;
@@ -1196,14 +1196,14 @@ int __cdecl bh_player_tick_bind(BHPlayerTick *ctx, BHEntity *entity)
     entity->step = bh_player_step;
     return 1;
 }
-BHPlayerTick *__cdecl bh_player_tick_context(BHEntity *entity)
+BHPlayerTick *bh_player_tick_context(BHEntity *entity)
 {
     BHPlayerTick *ctx = bound_player;
     if (!ctx || ctx->player != entity || !ctx->pool)
         return 0;
     return bh_entity_is_active(ctx->pool, entity) && entity->generation == ctx->generation ? ctx : 0;
 }
-int __cdecl bh_player_tick_unbind(BHPlayerTick *ctx)
+int bh_player_tick_unbind(BHPlayerTick *ctx)
 {
     if (!ctx || bound_player != ctx)
         return 0;
@@ -1212,7 +1212,7 @@ int __cdecl bh_player_tick_unbind(BHPlayerTick *ctx)
     bound_player = 0;
     return 1;
 }
-void __cdecl bh_player_step(BHEntity *entity)
+void bh_player_step(BHEntity *entity)
 {
     BHPlayerTick *ctx = bh_player_tick_context(entity);
     if (ctx)

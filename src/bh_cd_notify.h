@@ -13,5 +13,5 @@ typedef struct BHCdNotify
     int last_result;
     unsigned long plays, failures;
 } BHCdNotify;
-int __cdecl bh_cd_play_retained(BHCdNotify *);
+int bh_cd_play_retained(BHCdNotify *);
 #endif

@@ -15,9 +15,9 @@ static long find_world(const BHSceneBindingInput *inputs, unsigned long count, c
             return (long)i;
     return -1;
 }
-int __cdecl bh_scene_bindings_init(BHSceneBindings *b, const BHSceneBindingInput *inputs, unsigned long count,
-                                   BHPickupRoom *rooms, BHEntityScheduleRoom *scheduled, BHRenderResources *resources,
-                                   BHEntityScheduleContext *context)
+int bh_scene_bindings_init(BHSceneBindings *b, const BHSceneBindingInput *inputs, unsigned long count,
+                           BHPickupRoom *rooms, BHEntityScheduleRoom *scheduled, BHRenderResources *resources,
+                           BHEntityScheduleContext *context)
 {
     BHWorldGeometry *cursor;
     unsigned long i, j, roots = 0;
@@ -91,7 +91,7 @@ int __cdecl bh_scene_bindings_init(BHSceneBindings *b, const BHSceneBindingInput
     b->error = BH_BINDINGS_OK;
     return 1;
 }
-BHEntityScheduleRoom *__cdecl bh_scene_bindings_schedule(const BHSceneBindings *b, const BHWorldGeometry *world)
+BHEntityScheduleRoom *bh_scene_bindings_schedule(const BHSceneBindings *b, const BHWorldGeometry *world)
 {
     unsigned long i;
     if (!b || !world || !b->rooms || !b->scheduled)
@@ -101,7 +101,7 @@ BHEntityScheduleRoom *__cdecl bh_scene_bindings_schedule(const BHSceneBindings *
             return b->scheduled + i;
     return NULL;
 }
-void __cdecl bh_scene_bindings_dispose(BHSceneBindings *b)
+void bh_scene_bindings_dispose(BHSceneBindings *b)
 {
     if (b)
         memset(b, 0, sizeof(*b));

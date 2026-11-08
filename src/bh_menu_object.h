@@ -17,14 +17,14 @@ typedef struct BHMenuObject
    Failure preserves owner. Pool/input owners must outlive the menu. The
    original output pointer is represented by entity, published last.
    No native input polling, menu update/query callback or global is invented. */
-int __cdecl bh_menu_object_create(BHMenuObject *, BHEntityPool *, BHPlayerInputOwner *, unsigned long tag,
-                                  const char *live_name);
+int bh_menu_object_create(BHMenuObject *, BHEntityPool *, BHPlayerInputOwner *, unsigned long tag,
+                          const char *live_name);
 /* Count-zero source bindings to actual restored row/page/FIFO ownership.
    Caller provides row capacity; original constructor does not establish it. */
-int __cdecl bh_menu_object_rows_init(BHMenuObject *, BHAtlasContext *, BHTextQueue *, BHMenuRow **, unsigned long);
-BHMenuRow *__cdecl bh_menu_object_add_row(BHMenuObject *, unsigned long, const unsigned char *, unsigned char *,
-                                          unsigned long, unsigned long, BHMenuRowRefresh);
+int bh_menu_object_rows_init(BHMenuObject *, BHAtlasContext *, BHTextQueue *, BHMenuRow **, unsigned long);
+BHMenuRow *bh_menu_object_add_row(BHMenuObject *, unsigned long, const unsigned char *, unsigned char *, unsigned long,
+                                  unsigned long, BHMenuRowRefresh);
 /* Reject pending page commands or active entity dispatch. Callers must not
    release menu entity/list independently. Removes just this actual list. */
-int __cdecl bh_menu_object_dispose(BHMenuObject *);
+int bh_menu_object_dispose(BHMenuObject *);
 #endif

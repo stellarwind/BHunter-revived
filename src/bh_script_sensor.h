@@ -29,10 +29,10 @@ typedef struct BHScriptSensorContext
    participates. Actor table supplies original one-level owner for box bounds.
    Context, radar, actual actor/owner records, pool and target entities must
    retain their lifetimes while bound. No VM/parser construction is admitted. */
-int __cdecl bh_script_sensor_bind(BHScriptSensorContext *, BHEntity *, const BHScriptSensorState *, int damage);
-int __cdecl bh_script_sensor_read(BHEntity *, BHScriptSensorState *);
-float __cdecl bh_script_sensor_damage(const BHEntity *);
-void __cdecl bh_script_sensor_set_damage(BHEntity *, float);
-void __cdecl bh_script_proximity_tick(BHEntity *); /*00443ac0*/
-void __cdecl bh_script_damage_tick(BHEntity *);    /*00443d40*/
+int bh_script_sensor_bind(BHScriptSensorContext *, BHEntity *, const BHScriptSensorState *, int damage);
+int bh_script_sensor_read(BHEntity *, BHScriptSensorState *);
+float bh_script_sensor_damage(const BHEntity *);
+void bh_script_sensor_set_damage(BHEntity *, float);
+void bh_script_proximity_tick(BHEntity *); /*00443ac0*/
+void bh_script_damage_tick(BHEntity *);    /*00443d40*/
 #endif

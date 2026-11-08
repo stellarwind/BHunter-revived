@@ -9,7 +9,7 @@ static void refresh(BHMenuSettingsMenu *menu, long index)
     if (callback)
         callback(menu, index);
 }
-int __cdecl bh_menu_profile_commit(BHMenuProfileContext *c, BHMenuSettingsMenu *menu, const char *name, long index)
+int bh_menu_profile_commit(BHMenuProfileContext *c, BHMenuSettingsMenu *menu, const char *name, long index)
 {
     BHInputProfile *current, *p, *found = NULL;
     unsigned long i, n;

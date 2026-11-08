@@ -25,5 +25,5 @@ typedef struct BHNetworkEffectReceive
    Original unused queryword3 is zeroed by this source boundary; no callback
    definition relies on it. Source truncation guards reject before an unsafe
    read. No transport receive, session, game loop or physical input occurs. */
-int __cdecl bh_network_effect_receive(BHNetworkEffectReceive *, void *, unsigned long size, unsigned long capacity);
+int bh_network_effect_receive(BHNetworkEffectReceive *, void *, unsigned long size, unsigned long capacity);
 #endif

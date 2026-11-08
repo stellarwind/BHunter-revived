@@ -61,7 +61,7 @@ static void flash(BHWeaponPulseContext *ctx, const BHVec3 *p)
         bh_flash_flare_bind(ctx->effects.flash, entity, .1f, 30, 1);
     }
 }
-int __cdecl bh_weapon_pulse_fire(BHWeaponPulseContext *ctx, BHEntity *weapon, BHEntity *player)
+int bh_weapon_pulse_fire(BHWeaponPulseContext *ctx, BHEntity *weapon, BHEntity *player)
 {
     BHHomingProjectileContext *b;
     BHWeaponCommonState *weapon_state;

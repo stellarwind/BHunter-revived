@@ -9,7 +9,7 @@ static int fail(BHTextureContext *q, BHTextureError error)
         q->error = error;
     return 0;
 }
-int __cdecl bh_native_primitive_emit(BHClipVertex *ring, BHTextureImage *image, unsigned long color, void *user)
+int bh_native_primitive_emit(BHClipVertex *ring, BHTextureImage *image, unsigned long color, void *user)
 {
     BHNativePrimitive *native = (BHNativePrimitive *)user;
     BHTextureContext *q;

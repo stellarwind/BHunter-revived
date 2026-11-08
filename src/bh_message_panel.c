@@ -10,7 +10,7 @@ typedef char message_panel_fields_size[sizeof(BHMessagePanelFields) == 20 ? 1 : 
 typedef char message_panel_cursor_offset[offsetof(BHMessagePanelFields, cursor) == 12 ? 1 : -1];
 static BHMessagePanel *active_panel;
 
-BHMessagePanelFields *__cdecl bh_message_panel_fields(BHEntity *entity)
+BHMessagePanelFields *bh_message_panel_fields(BHEntity *entity)
 {
     return entity ? (BHMessagePanelFields *)(entity->payload + 4) : NULL;
 }
@@ -18,7 +18,7 @@ static int live(BHMessagePanel *panel)
 {
     return panel && bh_entity_is_active(panel->pool, panel->entity) && panel->entity->generation == panel->generation;
 }
-int __cdecl bh_message_text_plain(BHTextQueue *queue, BHAtlasPage *page, const char *text)
+int bh_message_text_plain(BHTextQueue *queue, BHAtlasPage *page, const char *text)
 {
     BHTextCommand *command;
     unsigned long old, index;
@@ -41,12 +41,12 @@ int __cdecl bh_message_text_plain(BHTextQueue *queue, BHAtlasPage *page, const c
     queue->error = BH_TEXT_QUEUE_OK;
     return 1;
 }
-unsigned long __cdecl bh_message_text_execute_plain(const BHTextCommand *command)
+unsigned long bh_message_text_execute_plain(const BHTextCommand *command)
 {
     bh_atlas_page_text(command->page, command->text);
     return command->next;
 }
-int __cdecl bh_message_text_drain(BHTextQueue *queue, BHAtlasContext *atlas, unsigned long *processed)
+int bh_message_text_drain(BHTextQueue *queue, BHAtlasContext *atlas, unsigned long *processed)
 {
     BHTextCommand *command;
     unsigned long count = 0;
@@ -264,7 +264,7 @@ static int exit_message(BHMessagePanel *panel, BHMessagePanelFields *fields)
 }
 /* 00442440: draw the expanding television and ring, then age the notice.
    The source image handles and screen width replace original scattered globals. */
-int __cdecl bh_message_panel_render(BHMessagePanel *panel)
+int bh_message_panel_render(BHMessagePanel *panel)
 {
     BHMessagePanelFields *fields;
     BHMessageState *messages;
@@ -369,14 +369,14 @@ int __cdecl bh_message_panel_render(BHMessagePanel *panel)
     }
     return ok;
 }
-void __cdecl bh_message_panel_refresh(BHEntity *entity, void *packet)
+void bh_message_panel_refresh(BHEntity *entity, void *packet)
 {
     BHMessagePanel *panel = active_panel;
     (void)packet;
     if (panel && entity == panel->entity)
         bh_message_panel_render(panel);
 }
-int __cdecl bh_message_panel_advance(BHMessagePanel *panel)
+int bh_message_panel_advance(BHMessagePanel *panel)
 {
     BHMessagePanelFields *fields;
     int result;
@@ -409,13 +409,13 @@ int __cdecl bh_message_panel_advance(BHMessagePanel *panel)
     }
     return result;
 }
-void __cdecl bh_message_panel_step(BHEntity *entity)
+void bh_message_panel_step(BHEntity *entity)
 {
     BHMessagePanel *panel = active_panel;
     if (panel && entity == panel->entity)
         bh_message_panel_advance(panel);
 }
-void __cdecl bh_message_panel_query(BHEntity *entity, void *packet)
+void bh_message_panel_query(BHEntity *entity, void *packet)
 {
     BHMessagePanel *panel = active_panel;
     if (!panel || !entity || !packet || entity != panel->entity || !live(panel))
@@ -431,7 +431,7 @@ void __cdecl bh_message_panel_query(BHEntity *entity, void *packet)
         }
     }
 }
-BHEntity *__cdecl bh_message_panel_create(BHMessagePanel *panel)
+BHEntity *bh_message_panel_create(BHMessagePanel *panel)
 {
     BHEntity *entity;
     BHMessagePanelFields *fields;
@@ -475,7 +475,7 @@ BHEntity *__cdecl bh_message_panel_create(BHMessagePanel *panel)
     panel->error = BH_PANEL_OK;
     return entity;
 }
-int __cdecl bh_message_panel_close(BHMessagePanel *panel)
+int bh_message_panel_close(BHMessagePanel *panel)
 {
     if (!panel || active_panel != panel)
         return 0;

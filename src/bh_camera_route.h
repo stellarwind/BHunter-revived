@@ -36,5 +36,5 @@ typedef struct BHCameraRouteContext
    Invalid original uninitialized-slot/foreign-world cases reject transactionally.
    Zero control length retains original masked-x87 infinity/NaN output behavior.
    Requires PC53/nearest; storage/context must not overlap. */
-int __cdecl bh_camera_route_advance(BHCameraRouteContext *, BHCameraRouteState *);
+int bh_camera_route_advance(BHCameraRouteContext *, BHCameraRouteState *);
 #endif

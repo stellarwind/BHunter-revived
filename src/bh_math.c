@@ -8,7 +8,7 @@ typedef char check_vector_z[offsetof(BHVec3, z) == 8 ? 1 : -1];
 
 /* 00401000. Distinct output required. Preserve each output's original
    x87 sum grouping; a uniform dot-product loop changes cancellation. */
-void __cdecl bh_mat34_multiply(const BHMat34 *a, const BHMat34 *b, BHMat34 *out)
+void bh_mat34_multiply(const BHMat34 *a, const BHMat34 *b, BHMat34 *out)
 {
     out->m[0][0] = (a->m[0][2] * b->m[2][0] + a->m[0][1] * b->m[1][0]) + a->m[0][0] * b->m[0][0];
     out->m[0][1] = (a->m[0][0] * b->m[0][1] + a->m[0][2] * b->m[2][1]) + a->m[0][1] * b->m[1][1];
@@ -25,7 +25,7 @@ void __cdecl bh_mat34_multiply(const BHMat34 *a, const BHMat34 *b, BHMat34 *out)
 }
 
 /* 004011a0. Preserve sequential writes; this is not an alias-safe cross product. */
-void __cdecl bh_vec3_cross(const BHVec3 *a, const BHVec3 *b, BHVec3 *out)
+void bh_vec3_cross(const BHVec3 *a, const BHVec3 *b, BHVec3 *out)
 {
     out->x = a->y * b->z - b->y * a->z;
     out->y = a->z * b->x - b->z * a->x;
@@ -33,7 +33,7 @@ void __cdecl bh_vec3_cross(const BHVec3 *a, const BHVec3 *b, BHVec3 *out)
 }
 
 /* 004011f0. The assembly retains the length and reciprocal on the x87 stack. */
-int __cdecl bh_vec3_normalize(BHVec3 *v)
+int bh_vec3_normalize(BHVec3 *v)
 {
     double length = sqrt(v->x * v->x + v->y * v->y + v->z * v->z);
     if (length == 0.0)
@@ -46,7 +46,7 @@ int __cdecl bh_vec3_normalize(BHVec3 *v)
 }
 
 /* 00401270. Zero input leaves the output untouched. */
-int __cdecl bh_vec3_normalize_to(const BHVec3 *v, BHVec3 *out)
+int bh_vec3_normalize_to(const BHVec3 *v, BHVec3 *out)
 {
     double length = sqrt(v->x * v->x + v->y * v->y + v->z * v->z);
     if (length == 0.0)
@@ -59,7 +59,7 @@ int __cdecl bh_vec3_normalize_to(const BHVec3 *v, BHVec3 *out)
 }
 
 /* 004012e0. Sum y/z products before adding x, as in the x87 body. */
-void __cdecl bh_mat34_transform_point(const BHMat34 *m, const BHVec3 *v, BHVec3 *out)
+void bh_mat34_transform_point(const BHMat34 *m, const BHVec3 *v, BHVec3 *out)
 {
     out->x = (v->y * m->m[0][1] + v->z * m->m[0][2]) + v->x * m->m[0][0] + m->m[0][3];
     out->y = (v->y * m->m[1][1] + v->z * m->m[1][2]) + v->x * m->m[1][0] + m->m[1][3];
@@ -67,7 +67,7 @@ void __cdecl bh_mat34_transform_point(const BHMat34 *m, const BHVec3 *v, BHVec3 
 }
 
 /* 00401360. */
-void __cdecl bh_mat34_transform_direction(const BHMat34 *m, const BHVec3 *v, BHVec3 *out)
+void bh_mat34_transform_direction(const BHMat34 *m, const BHVec3 *v, BHVec3 *out)
 {
     out->x = (v->z * m->m[0][2] + v->y * m->m[0][1]) + v->x * m->m[0][0];
     out->y = (v->z * m->m[1][2] + v->y * m->m[1][1]) + v->x * m->m[1][0];
@@ -75,7 +75,7 @@ void __cdecl bh_mat34_transform_direction(const BHMat34 *m, const BHVec3 *v, BHV
 }
 
 /* 004013d0. R-transpose * (v-t); inverse only for an orthonormal basis. */
-void __cdecl bh_mat34_inverse_transform_point(const BHMat34 *m, const BHVec3 *v, BHVec3 *out)
+void bh_mat34_inverse_transform_point(const BHMat34 *m, const BHVec3 *v, BHVec3 *out)
 {
     float x = v->x - m->m[0][3], y = v->y - m->m[1][3], z = v->z - m->m[2][3];
     out->x = x * m->m[0][0] + m->m[2][0] * z + m->m[1][0] * y;
@@ -84,7 +84,7 @@ void __cdecl bh_mat34_inverse_transform_point(const BHMat34 *m, const BHVec3 *v,
 }
 
 /* 00401460. */
-void __cdecl bh_mat34_translate_world(float x, float y, float z, BHMat34 *m)
+void bh_mat34_translate_world(float x, float y, float z, BHMat34 *m)
 {
     m->m[0][3] = x + m->m[0][3];
     m->m[1][3] = y + m->m[1][3];
@@ -92,7 +92,7 @@ void __cdecl bh_mat34_translate_world(float x, float y, float z, BHMat34 *m)
 }
 
 /* 00401490. */
-void __cdecl bh_mat34_translate_local(float x, float y, float z, BHMat34 *m)
+void bh_mat34_translate_local(float x, float y, float z, BHMat34 *m)
 {
     m->m[0][3] = (m->m[0][2] * z + m->m[0][1] * y) + x * m->m[0][0] + m->m[0][3];
     m->m[1][3] = (m->m[1][0] * x + m->m[1][2] * z) + m->m[1][1] * y + m->m[1][3];
@@ -100,7 +100,7 @@ void __cdecl bh_mat34_translate_local(float x, float y, float z, BHMat34 *m)
 }
 
 /* 00401a70. Not a general matrix inverse; output must be distinct. */
-void __cdecl bh_mat34_inverse_rigid(const BHMat34 *m, BHMat34 *out)
+void bh_mat34_inverse_rigid(const BHMat34 *m, BHMat34 *out)
 {
     int r, c;
     for (r = 0; r < 3; r++)

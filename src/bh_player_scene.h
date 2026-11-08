@@ -64,5 +64,5 @@ typedef struct BHPlayerScene
    VC5 CRT random stream and PC53 nearest/masked floating-point profile.
    Nonfinite camera pose is outside the source renderer's supported domain and
    rejects before queue mutation; original behavior there remains unverified. */
-int __cdecl bh_player_scene_draw(BHPlayerScene *);
+int bh_player_scene_draw(BHPlayerScene *);
 #endif

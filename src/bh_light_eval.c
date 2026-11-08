@@ -148,13 +148,13 @@ static int evaluate(const BHLightContext *c, const BHVec3 *point, const BHVec3 *
     *result = packed;
     return 1;
 }
-int __cdecl bh_light_evaluate_prepared(const BHLightContext *c, const BHVec3 *point, const BHVec3 *normal, float scale,
-                                       unsigned long *result)
+int bh_light_evaluate_prepared(const BHLightContext *c, const BHVec3 *point, const BHVec3 *normal, float scale,
+                               unsigned long *result)
 {
     return evaluate(c, point, normal, scale, result, 1);
 }
-int __cdecl bh_light_evaluate_world(const BHLightContext *c, const BHVec3 *point, const BHVec3 *normal, float scale,
-                                    unsigned long *result)
+int bh_light_evaluate_world(const BHLightContext *c, const BHVec3 *point, const BHVec3 *normal, float scale,
+                            unsigned long *result)
 {
     return evaluate(c, point, normal, scale, result, 0);
 }

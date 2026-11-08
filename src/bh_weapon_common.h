@@ -17,10 +17,10 @@ typedef struct BHWeaponCommonState
 } BHWeaponCommonState;
 /* Source field adapter over the real BHEntity allocation. No allocation,
    ownership extension, callbacks, initialization or constructor recovery. */
-BHWeaponCommonState *__cdecl bh_weapon_common_state(BHEntity *);
+BHWeaponCommonState *bh_weapon_common_state(BHEntity *);
 /* Complete004309b0. Every nonzero signed delay decrements with x86 wrap,
    including negative values and LONG_MIN; zero retains every byte. */
-int __cdecl bh_weapon_delay_tick(BHEntity *);
+int bh_weapon_delay_tick(BHEntity *);
 typedef struct BHWeaponReadyContext
 {
     BHSoundQueue *sound;
@@ -34,5 +34,5 @@ typedef struct BHWeaponReadyContext
    this does not play sound. Original discarded sound request result: a binding/
    backend failure is reported after preserving reset and random side effects.
    Borrowed player/weapon/sound lifetime spans the call. PC53 nearest/masked. */
-int __cdecl bh_weapon_ready_reset(BHWeaponReadyContext *, BHEntity *weapon, const BHEntity *player);
+int bh_weapon_ready_reset(BHWeaponReadyContext *, BHEntity *weapon, const BHEntity *player);
 #endif

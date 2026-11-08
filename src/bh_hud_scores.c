@@ -40,7 +40,7 @@ static void row(BHHudScoreText *c, const char *name, long amount, long y)
     width = bh_atlas_page_text_width(c->page, (const unsigned char *)buffer);
     text_result(c, bh_text_queue_text(c->queue, c->page, buffer, 126 - width, y));
 }
-int __cdecl bh_hud_scores_text(BHHudScoreText *c, const BHHudScores *s)
+int bh_hud_scores_text(BHHudScoreText *c, const BHHudScores *s)
 {
     unsigned long i;
     int cleared = 0;
@@ -84,7 +84,7 @@ static void draw_row(BHHudScoreDraw *c, long index, long ordinal, int local, flo
     else
         c->error = BH_HUD_SCORES_QUEUE;
 }
-int __cdecl bh_hud_scores_draw(BHHudScoreDraw *c, const BHHudScores *s)
+int bh_hud_scores_draw(BHHudScoreDraw *c, const BHHudScores *s)
 {
     long upper = 100000, best, index, ordinal = 0;
     unsigned long i;

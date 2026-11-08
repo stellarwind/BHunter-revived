@@ -12,7 +12,7 @@ typedef char advance_context_sound[offsetof(BHActorRouteContext, sound) == 12 ? 
 typedef char advance_room_count[offsetof(BHActorExitRoomImage, count_record) == 0xf8 ? 1 : -1];
 typedef char advance_room_portals[offsetof(BHActorExitRoomImage, portals) == 0x1cc ? 1 : -1];
 
-int __cdecl bh_actor_guided_exit_core(const BHEntity *, void *, int);
+int bh_actor_guided_exit_core(const BHEntity *, void *, int);
 
 #define ADVANCE_UINT(a, o) (*(unsigned long *)((char *)(a) + (o)))
 #define ADVANCE_FLOAT(a, o) (*(float *)((char *)(a) + (o)))
@@ -35,7 +35,7 @@ static __inline void route_advance_expire_sound(BHActorRouteContext *context, BH
 /* Complete 004355c0 behavior. The explicit binding replaces only the original
    room/model/global-context representation; actor storage remains the real
    BHEntity. It supplies no replacement RNG or source-owned game subsystem. */
-int __cdecl bh_actor_route_advance_core(BHEntity *actor, const BHActorRouteAdvanceBinding *binding)
+int bh_actor_route_advance_core(BHEntity *actor, const BHActorRouteAdvanceBinding *binding)
 {
     BHActorExitRoomImage *room;
     const BHActorExitModelRecord *model;

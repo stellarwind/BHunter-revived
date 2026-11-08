@@ -18,13 +18,13 @@ static BHActorAttackContext *vehicle_tick_context(BHEntity *entity)
     memcpy(&ctx, entity->payload + 596, 4);
     return ctx;
 }
-void __cdecl bh_actor_attack_bound(BHEntity *entity)
+void bh_actor_attack_bound(BHEntity *entity)
 {
     BHActorAttackContext *ctx = vehicle_tick_context(entity);
     if (!bh_actor_attack(ctx, entity) && ctx && ctx->step_abort)
         longjmp(*(jmp_buf *)ctx->step_abort, 1);
 }
-void __cdecl bh_actor_pursuit_bound(BHEntity *entity)
+void bh_actor_pursuit_bound(BHEntity *entity)
 {
     BHActorAttackContext *ctx = vehicle_tick_context(entity);
     if (!bh_actor_pursuit_route(ctx->pursuit, entity) && ctx->step_abort)
@@ -116,7 +116,7 @@ static void release_tick(BHEntity *entity)
     if (!bh_actor_vehicle_release(ctx->vehicles, entity))
         ctx->error = 2;
 }
-int __cdecl bh_actor_response_bind(BHActorResponseContext *ctx, BHEntity *entity)
+int bh_actor_response_bind(BHActorResponseContext *ctx, BHEntity *entity)
 {
     if (!ctx || !ctx->damage || !ctx->damage->route || !ctx->attack || !ctx->vehicles || !ctx->vehicles->pool ||
         !entity || ctx->damage->pool != ctx->vehicles->pool || ctx->vehicles->route != ctx->damage->route ||
@@ -129,7 +129,7 @@ int __cdecl bh_actor_response_bind(BHActorResponseContext *ctx, BHEntity *entity
 #include "bh_actor_response_motion.inc"
 #include "bh_actor_response_smoke.inc"
 #include "bh_actor_response_finish.inc"
-void __cdecl bh_actor_response_query(BHEntity *entity, void *packet)
+void bh_actor_response_query(BHEntity *entity, void *packet)
 {
     BHActorResponseContext *ctx = context(entity);
     unsigned long event;
@@ -147,7 +147,7 @@ void __cdecl bh_actor_response_query(BHEntity *entity, void *packet)
     }
     bh_actor_response_query_core(entity, packet, ctx);
 }
-void __cdecl bh_actor_response_tick(BHEntity *entity)
+void bh_actor_response_tick(BHEntity *entity)
 {
     BHActorResponseContext *ctx = context(entity);
     BHActorDamageContext *d;

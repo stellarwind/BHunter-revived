@@ -46,14 +46,14 @@ static BHScriptTimerContext *owned(BHEntity *entity, BHEntityCallback query)
     ctx = owner(entity);
     return ctx && live(ctx, entity, bound_generation(entity)) ? ctx : NULL;
 }
-BHScriptWaitState *__cdecl bh_script_wait_state(BHScriptTimerContext *ctx, BHEntity *entity)
+BHScriptWaitState *bh_script_wait_state(BHScriptTimerContext *ctx, BHEntity *entity)
 {
     if (!ctx || !entity || (entity->query != bh_script_wait_template && entity->query != bh_script_wait_child) ||
         owner(entity) != ctx || !live(ctx, entity, bound_generation(entity)))
         return NULL;
     return state(entity);
 }
-int __cdecl bh_script_wait_bind(BHScriptTimerContext *ctx, BHEntity *entity, const BHScriptWaitState *initial)
+int bh_script_wait_bind(BHScriptTimerContext *ctx, BHEntity *entity, const BHScriptWaitState *initial)
 {
     BHScriptWaitState copy;
     if (!ctx || !entity || !initial || !live(ctx, entity, entity->generation) || initial->variable_remaining > 21 ||
@@ -71,7 +71,7 @@ int __cdecl bh_script_wait_bind(BHScriptTimerContext *ctx, BHEntity *entity, con
     ctx->error = BH_TIMER_OK;
     return 1;
 }
-void __cdecl bh_script_wait_template(BHEntity *entity, void *packet)
+void bh_script_wait_template(BHEntity *entity, void *packet)
 {
     BHScriptTimerContext *ctx = owned(entity, bh_script_wait_template);
     BHScriptWaitState *s, *created_state;
@@ -148,7 +148,7 @@ void __cdecl bh_script_wait_template(BHEntity *entity, void *packet)
         next->query(next, packet);
     }
 }
-void __cdecl bh_script_wait_child(BHEntity *entity, void *packet)
+void bh_script_wait_child(BHEntity *entity, void *packet)
 {
     BHScriptTimerContext *ctx = owned(entity, bh_script_wait_child);
     BHScriptWaitState *s;

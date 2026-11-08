@@ -18,7 +18,7 @@ static int scan_fail(BHWaveView *view, BHWaveError error)
     view->error = error;
     return 0;
 }
-int __cdecl bh_wave_scan(BHWaveView *view, const void *bytes, unsigned long size)
+int bh_wave_scan(BHWaveView *view, const void *bytes, unsigned long size)
 {
     const unsigned char *data = (const unsigned char *)bytes;
     unsigned long end, at, count, padded;
@@ -72,12 +72,12 @@ int __cdecl bh_wave_scan(BHWaveView *view, const void *bytes, unsigned long size
     *view = next;
     return 1;
 }
-static void *__cdecl allocate(unsigned long bytes, void *user)
+static void *allocate(unsigned long bytes, void *user)
 {
     (void)user;
     return malloc(bytes);
 }
-static void __cdecl release(void *p, void *user)
+static void release(void *p, void *user)
 {
     (void)user;
     free(p);
@@ -88,7 +88,7 @@ static int fail(BHWave *wave, BHWaveError error)
         wave->error = error;
     return 0;
 }
-int __cdecl bh_wave_init(BHWave *wave, const BHSceneAllocator *allocator)
+int bh_wave_init(BHWave *wave, const BHSceneAllocator *allocator)
 {
     if (!wave)
         return 0;
@@ -106,7 +106,7 @@ int __cdecl bh_wave_init(BHWave *wave, const BHSceneAllocator *allocator)
     }
     return 1;
 }
-void __cdecl bh_wave_dispose(BHWave *wave)
+void bh_wave_dispose(BHWave *wave)
 {
     BHSceneAllocator allocator;
     if (!wave)
@@ -117,7 +117,7 @@ void __cdecl bh_wave_dispose(BHWave *wave)
     memset(wave, 0, sizeof(*wave));
     wave->allocator = allocator;
 }
-int __cdecl bh_wave_decode(BHWave *wave, const void *bytes, unsigned long size)
+int bh_wave_decode(BHWave *wave, const void *bytes, unsigned long size)
 {
     BHWaveView view;
     BHWave next;
@@ -161,7 +161,7 @@ int __cdecl bh_wave_decode(BHWave *wave, const void *bytes, unsigned long size)
     *wave = next;
     return 1;
 }
-int __cdecl bh_wave_read(BHWave *wave, BHVFile *file)
+int bh_wave_read(BHWave *wave, BHVFile *file)
 {
     long start = -1, end;
     unsigned long size;

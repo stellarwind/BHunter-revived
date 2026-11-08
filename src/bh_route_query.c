@@ -14,8 +14,8 @@ static int contains(const BHWorldGeometry *p, const float *lower, const float *u
     return p->minimum.x <= upper[0] && lower[0] <= p->maximum.x && p->minimum.y <= upper[1] &&
            lower[1] <= p->maximum.y && p->minimum.z <= upper[2] && lower[2] <= p->maximum.z;
 }
-BHWorldGeometry *__cdecl bh_world_locate(BHWorldGeometry *first, unsigned long count, BHWorldGeometry *hint,
-                                         const BHVec3 *point, float margin)
+BHWorldGeometry *bh_world_locate(BHWorldGeometry *first, unsigned long count, BHWorldGeometry *hint,
+                                 const BHVec3 *point, float margin)
 {
     BHWorldGeometry *p, *start;
     unsigned long i;
@@ -58,7 +58,7 @@ BHWorldGeometry *__cdecl bh_world_locate(BHWorldGeometry *first, unsigned long c
     }
     return NULL;
 }
-int __cdecl bh_portal_center(const BHPortal *p, BHVec3 *out)
+int bh_portal_center(const BHPortal *p, BHVec3 *out)
 {
     BHActorPortalImage image;
     if (!p || !out || p->direction > 6 || p->direction == 3)
@@ -67,7 +67,7 @@ int __cdecl bh_portal_center(const BHPortal *p, BHVec3 *out)
     bh_actor_portal_center_core(&image, 0, (float *)out);
     return 1;
 }
-int __cdecl bh_portal_normal(const BHPortal *p, BHVec3 *out)
+int bh_portal_normal(const BHPortal *p, BHVec3 *out)
 {
     BHActorPortalImage image;
     if (!p || !out || p->direction > 6 || p->direction == 3)
@@ -84,8 +84,8 @@ static double squared(double x, double y, double z)
     bh_round_float(&rz, z);
     return (x * rx + y * ry) + z * rz;
 }
-int __cdecl bh_route_plan(const BHNavigation *n, BHWorldGeometry *first, unsigned long count, BHWorldGeometry *current,
-                          const BHVec3 *lookup_goal, const BHVec3 *projection_goal, BHRoutePlan *out)
+int bh_route_plan(const BHNavigation *n, BHWorldGeometry *first, unsigned long count, BHWorldGeometry *current,
+                  const BHVec3 *lookup_goal, const BHVec3 *projection_goal, BHRoutePlan *out)
 {
     BHWorldGeometry *destination;
     BHRoutePlan next;

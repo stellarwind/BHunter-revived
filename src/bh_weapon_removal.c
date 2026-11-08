@@ -2,7 +2,7 @@
 #include <stddef.h>
 typedef char removed_packet_size[sizeof(BHWeaponRemovedPacket) == 8 ? 1 : -1];
 typedef char removed_entity_offset[offsetof(BHWeaponRemovedPacket, entity) == 4 ? 1 : -1];
-int __cdecl bh_weapon_target_removed(BHSoundQueue *sound, BHEntity *weapon, const BHWeaponRemovedPacket *packet)
+int bh_weapon_target_removed(BHSoundQueue *sound, BHEntity *weapon, const BHWeaponRemovedPacket *packet)
 {
     BHWeaponCommonState *state;
     long handle;

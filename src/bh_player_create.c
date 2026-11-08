@@ -23,7 +23,7 @@ static BHEntity *failed(BHPlayerCreate *creation, int error)
     creation->error = error;
     return 0;
 }
-static void __cdecl refresh(BHEntity *entity, void *packet)
+static void refresh(BHEntity *entity, void *packet)
 {
     BHPlayerTick *ctx = bh_player_tick_context(entity);
     (void)packet;
@@ -33,8 +33,8 @@ static void __cdecl refresh(BHEntity *entity, void *packet)
         bh_player_scene_draw(ctx->scene);
     }
 }
-BHEntity *__cdecl bh_player_create(BHPlayerCreate *creation, float delay, const BHVec3 *position, unsigned long vehicle,
-                                   unsigned long model)
+BHEntity *bh_player_create(BHPlayerCreate *creation, float delay, const BHVec3 *position, unsigned long vehicle,
+                           unsigned long model)
 {
     BHEntity *entity, *w;
     BHPlayerTick *ctx;
@@ -185,7 +185,7 @@ BHEntity *__cdecl bh_player_create(BHPlayerCreate *creation, float delay, const 
     ++creation->created;
     return entity;
 }
-void __cdecl bh_player_create_delayed(BHEntity *entity)
+void bh_player_create_delayed(BHEntity *entity)
 {
     BHPlayerCreate *creation;
     float delay;

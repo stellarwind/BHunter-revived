@@ -3,8 +3,8 @@
 #include "bh_round.h"
 #include <math.h>
 #include <string.h>
-int __cdecl bh_menu_light_queue(BHDrawQueue *q, unsigned long bucket, long enabled, float x, float y, float z,
-                                float direct, float ambient, unsigned long dc, unsigned long ac)
+int bh_menu_light_queue(BHDrawQueue *q, unsigned long bucket, long enabled, float x, float y, float z, float direct,
+                        float ambient, unsigned long dc, unsigned long ac)
 {
     static const unsigned long map[9] = {1, 2, 3, 4, 5, 0, 6, 7, 8};
     unsigned long h, t, i;
@@ -46,7 +46,7 @@ int __cdecl bh_menu_light_queue(BHDrawQueue *q, unsigned long bucket, long enabl
     q->error = BH_DRAW_OK;
     return 1;
 }
-int __cdecl bh_menu_light_execute(BHLightConfig *light, const BHDrawCommand *c, unsigned long *next)
+int bh_menu_light_execute(BHLightConfig *light, const BHDrawCommand *c, unsigned long *next)
 {
     float f[5];
     int ok;
@@ -79,7 +79,7 @@ static void light(BHMenuPresent *p, const BHVec3 *v, int selected)
     record(p, bh_menu_light_queue(p->queue, 0, 1, v->x, v->y, v->z, 1, .4f, selected ? 0xff8080 : 0x80ffa0,
                                   selected ? 0xff8080 : 0xff80a0));
 }
-int __cdecl bh_menu_present(BHMenuPresent *p)
+int bh_menu_present(BHMenuPresent *p)
 {
     BHMat34 basis, m;
     BHVec3 x = {1, 0, 0}, y = {0, 1, 0}, z = {0, 0, 1}, right, up, forward, ld, base, axis, point, normal, cross, pose;

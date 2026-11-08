@@ -20,14 +20,14 @@ static int real_commit(BHMenuKeyCommit f)
 {
     return f == bh_menu_keys_motion || f == bh_menu_keys_weapons || f == bh_menu_keys_camera || f == bh_menu_keys_extra;
 }
-static void __cdecl capture_tick(BHEntity *e)
+static void capture_tick(BHEntity *e)
 {
     BHInputKeyCapture *c;
     memcpy(&c, e->payload, sizeof(c));
     if (c && c->entity == e)
         bh_input_key_capture_step(c);
 }
-int __cdecl bh_input_key_capture_begin(BHInputKeyCapture *c)
+int bh_input_key_capture_begin(BHInputKeyCapture *c)
 {
     BHEntity *e;
     if (!c || c->entity || !c->pool || !c->input || !c->snapshot || !c->state || !c->settings ||
@@ -49,7 +49,7 @@ int __cdecl bh_input_key_capture_begin(BHInputKeyCapture *c)
     }
     return 1;
 }
-int __cdecl bh_input_key_capture_step(BHInputKeyCapture *c)
+int bh_input_key_capture_step(BHInputKeyCapture *c)
 {
     unsigned long n, i;
     BHEntity *e;
@@ -101,7 +101,7 @@ int __cdecl bh_input_key_capture_step(BHInputKeyCapture *c)
         c->entity = NULL;
     return !c->error;
 }
-int __cdecl bh_input_key_capture_cancel(BHInputKeyCapture *c)
+int bh_input_key_capture_cancel(BHInputKeyCapture *c)
 {
     int okay;
     if (!c || !c->entity || c->pool->dispatch_depth)

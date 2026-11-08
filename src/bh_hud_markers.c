@@ -43,8 +43,7 @@ static int rectangle(BHHudMarkers *c, unsigned long image, double x, double y, f
         return fail(c, BH_HUD_MARKERS_QUEUE);
     return 1;
 }
-int __cdecl bh_hud_markers_draw(BHHudMarkers *c, BHEntity *head, const BHVec3 *player,
-                                const unsigned char *player_flags)
+int bh_hud_markers_draw(BHHudMarkers *c, BHEntity *head, const BHVec3 *player, const unsigned char *player_flags)
 {
     BHHudMarkerPacket packet;
     BHVec3 point;

@@ -15,7 +15,7 @@ typedef char camera_position_offset[offsetof(BHCameraState, position) == 0x78 ? 
 typedef char camera_angles_offset[offsetof(BHCameraState, angles) == 0x84 ? 1 : -1];
 typedef char camera_velocity_offset[offsetof(BHCameraState, velocity) == 0x90 ? 1 : -1];
 
-int __cdecl bh_camera_state_init(BHCameraState *state, long mode)
+int bh_camera_state_init(BHCameraState *state, long mode)
 {
     if (!state)
         return 0;
@@ -29,7 +29,7 @@ int __cdecl bh_camera_state_init(BHCameraState *state, long mode)
     return 1;
 }
 
-int __cdecl bh_camera_state_set_mode(BHCameraState *state, long mode)
+int bh_camera_state_set_mode(BHCameraState *state, long mode)
 {
     double yaw;
     const double pi = 3.14159265358979323846;
@@ -57,8 +57,8 @@ int __cdecl bh_camera_state_set_mode(BHCameraState *state, long mode)
     return 1;
 }
 
-int __cdecl bh_camera_state_set_correction(BHCameraStateContext *context, const BHCameraState *ignored_state,
-                                           BHCameraCorrection correction)
+int bh_camera_state_set_correction(BHCameraStateContext *context, const BHCameraState *ignored_state,
+                                   BHCameraCorrection correction)
 {
     (void)ignored_state;
     if (!context)
@@ -68,8 +68,7 @@ int __cdecl bh_camera_state_set_correction(BHCameraStateContext *context, const 
     context->correction_user = 0;
     return 1;
 }
-int __cdecl bh_camera_state_bind_correction(BHCameraStateContext *context, BHCameraCorrectionContextual correction,
-                                            void *user)
+int bh_camera_state_bind_correction(BHCameraStateContext *context, BHCameraCorrectionContextual correction, void *user)
 {
     if (!context)
         return 0;
@@ -98,8 +97,8 @@ static double wrap_stored(double value)
     return stored;
 }
 
-void __cdecl bh_camera_mode_smooth(BHCameraStateContext *context, BHCameraModeState *mode, BHVec3 *position,
-                                   const BHVec3 *angles, double position_retention, double angle_retention)
+void bh_camera_mode_smooth(BHCameraStateContext *context, BHCameraModeState *mode, BHVec3 *position,
+                           const BHVec3 *angles, double position_retention, double angle_retention)
 {
     float old_x, old_y, old_z, delta;
     double weight;
@@ -163,8 +162,8 @@ static void look_rotation(BHCameraState *state)
     bh_round_float(&state->angles.z, atan2(out.y, out.x));
 }
 
-int __cdecl bh_camera_state_update(BHCameraStateContext *context, BHCameraState *state, const BHCameraInput *input,
-                                   double dt, float look_yaw, float look_pitch)
+int bh_camera_state_update(BHCameraStateContext *context, BHCameraState *state, const BHCameraInput *input, double dt,
+                           float look_yaw, float look_pitch)
 {
     BHVec3 before;
     float old_weight, new_weight, delta;

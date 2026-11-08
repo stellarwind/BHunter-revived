@@ -8,8 +8,8 @@ static unsigned long word(const unsigned char *p)
     return (unsigned long)p[0] | ((unsigned long)p[1] << 8);
 }
 
-BHPositionResult __cdecl bh_position_read(BHPackedPositions *stream, const BHNavigation *navigation,
-                                          BHWorldGeometry **world, BHVec3 *point)
+BHPositionResult bh_position_read(BHPackedPositions *stream, const BHNavigation *navigation, BHWorldGeometry **world,
+                                  BHVec3 *point)
 {
     const unsigned char *record;
     BHWorldGeometry *selected;

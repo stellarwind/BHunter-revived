@@ -23,13 +23,13 @@ typedef struct BHWeaponFireContext
     int error;
 } BHWeaponFireContext;
 /* Count-zero shared original firing packet and empty-cue source helpers. */
-void __cdecl bh_weapon_fire_packet(BHWeaponFireContext *, unsigned char, unsigned char, unsigned char, BHEntity *);
-int __cdecl bh_weapon_fire_empty(BHWeaponFireContext *, const BHEntity *);
+void bh_weapon_fire_packet(BHWeaponFireContext *, unsigned char, unsigned char, unsigned char, BHEntity *);
+int bh_weapon_fire_empty(BHWeaponFireContext *, const BHEntity *);
 /* Whole actual original table methods. Initialized borrowed contexts retain
    shared identity, live projectile factories, source voice and packet owners.
    No playback, game loop or actual network session required by these owners. */
-int __cdecl bh_weapon_fire_ballistic(BHWeaponFireContext *, BHEntity *, BHEntity *); /*004305f0*/
-int __cdecl bh_weapon_fire_homing(BHWeaponFireContext *, BHEntity *, BHEntity *);    /*00430a30*/
-int __cdecl bh_weapon_area_start(BHWeaponFireContext *, BHEntity *, BHEntity *);     /*00431db0*/
-int __cdecl bh_weapon_area_tick(BHWeaponFireContext *, BHEntity *, BHEntity *);      /*00431f00*/
+int bh_weapon_fire_ballistic(BHWeaponFireContext *, BHEntity *, BHEntity *); /*004305f0*/
+int bh_weapon_fire_homing(BHWeaponFireContext *, BHEntity *, BHEntity *);    /*00430a30*/
+int bh_weapon_area_start(BHWeaponFireContext *, BHEntity *, BHEntity *);     /*00431db0*/
+int bh_weapon_area_tick(BHWeaponFireContext *, BHEntity *, BHEntity *);      /*00431f00*/
 #endif

@@ -57,49 +57,49 @@ typedef struct BHSoundQueue
 /* Fresh explicit owner, retains supplied SDL mixer/buffer owners. NULL device permits
    pool-only operation but cannot create/duplicate buffers. Disposal implements
    0047b5f0 stop/release/free for all owned arrays/buffers/mixer references. No Play. */
-int __cdecl bh_sound_queue_init(BHSoundQueue *queue, BHAudioDevice *device, BHAudioBuffer *primary,
-                                const BHSceneAllocator *allocator);
-int __cdecl bh_sound_queue_dispose(BHSoundQueue *queue);
-BHSoundResource *__cdecl bh_sound_resource_allocate(BHSoundQueue *queue); /* 0047b330 */
-BHSoundVoice *__cdecl bh_sound_voice_allocate(BHSoundQueue *queue);       /* 0047b410 */
+int bh_sound_queue_init(BHSoundQueue *queue, BHAudioDevice *device, BHAudioBuffer *primary,
+                        const BHSceneAllocator *allocator);
+int bh_sound_queue_dispose(BHSoundQueue *queue);
+BHSoundResource *bh_sound_resource_allocate(BHSoundQueue *queue); /* 0047b330 */
+BHSoundVoice *bh_sound_voice_allocate(BHSoundQueue *queue);       /* 0047b410 */
 /* Source adapter from decoded PCM to SDL playback buffer/registered resource.
    Does not recover full 0047b950's option/name parser. limit is 1..3, streaming
    is the original distinct list mode; volume is caller's stored base dB.
    A zero limit uses the configured voice-limit policy (default 2).
    Clip upload never plays. Caller retains BHWave ownership after return. */
-unsigned long __cdecl bh_sound_register_wave(BHSoundQueue *queue, const BHWave *wave, unsigned short streaming,
-                                             unsigned short limit, float base_volume);
+unsigned long bh_sound_register_wave(BHSoundQueue *queue, const BHWave *wave, unsigned short streaming,
+                                     unsigned short limit, float base_volume);
 /* 0047bc60: one explicit listener, original .01 or 9e37 baseline; optional
    native buffer progress weighting. Return 1 / 0 for success / invalid/backend. */
-int __cdecl bh_sound_priority(BHSoundQueue *queue, int positioned, const BHVec3 *position, BHSoundResource *resource,
-                              long slot, float *out);
+int bh_sound_priority(BHSoundQueue *queue, int positioned, const BHVec3 *position, BHSoundResource *resource, long slot,
+                      float *out);
 /* 0047bd40, integer resource ID. Queues source voice state, not playback.
    Generations wrap at 16 bits; original signed handle validation is retained,
    including rejection of negative packed generation handles. */
-unsigned long __cdecl bh_sound_request(BHSoundQueue *queue, unsigned long resource, float level, float pitch,
-                                       const BHVec3 *position, const BHVec3 *velocity);
-int __cdecl bh_sound_update(BHSoundQueue *queue, unsigned long handle, float level, float pitch, const BHVec3 *position,
-                            const BHVec3 *velocity); /* 0047c050: 1 updated, 0 stale, -1 invalid */
+unsigned long bh_sound_request(BHSoundQueue *queue, unsigned long resource, float level, float pitch,
+                               const BHVec3 *position, const BHVec3 *velocity);
+int bh_sound_update(BHSoundQueue *queue, unsigned long handle, float level, float pitch, const BHVec3 *position,
+                    const BHVec3 *velocity); /* 0047c050: 1 updated, 0 stale, -1 invalid */
 /* 0047c140 with synchronous native Stop when the last loop request retires,
    including without a listener/tick. Shared loops reselect next tick.
    Backend failure still retires the handle and is reported as 0. */
-int __cdecl bh_sound_stop(BHSoundQueue *queue, unsigned long handle);
+int bh_sound_stop(BHSoundQueue *queue, unsigned long handle);
 /* Stop every effect buffer and discard queued requests, invalidating their
    handles. Loaded samples and the separate music playback remain available. */
-int __cdecl bh_sound_stop_all(BHSoundQueue *queue);
+int bh_sound_stop_all(BHSoundQueue *queue);
 /* Checked source view uses the same signed-generation validation as originals. */
-BHSoundVoice *__cdecl bh_sound_voice(BHSoundQueue *queue, unsigned long handle);
+BHSoundVoice *bh_sound_voice(BHSoundQueue *queue, unsigned long handle);
 /* 0047b710: original single listener (index 0). Nonzero enabled stores the
    exact signed flag, Y(angles.x) -> X(angles.y) -> Z(angles.z) right vector,
    then position and velocity. Disabled retains all three vectors and accepts
    NULL unused inputs. Finite moderate enabled inputs require PC53; invalid
    bindings/index/numerics leave listener fields unchanged. No playback. */
-int __cdecl bh_sound_listener(BHSoundQueue *queue, unsigned long index, long enabled, const BHVec3 *position,
-                              const BHVec3 *angles, const BHVec3 *velocity);
+int bh_sound_listener(BHSoundQueue *queue, unsigned long index, long enabled, const BHVec3 *position,
+                      const BHVec3 *angles, const BHVec3 *velocity);
 /* 0047b920: request 0 -> 2, 1..3 unchanged, all other signed values -> 3.
    Explicit context replaces original global policy; existing resources retain
    their captured limits. New source PCM registrations can request limit 0. */
-int __cdecl bh_sound_set_voice_limit(BHSoundQueue *queue, long requested);
+int bh_sound_set_voice_limit(BHSoundQueue *queue, long requested);
 typedef struct BHSoundTickStats
 {
     unsigned long clock_calls, status_calls, stop_calls, play_calls, position_calls;
@@ -117,5 +117,5 @@ typedef struct BHSoundTickStats
    their lifetime until explicit stop; muted one-shots retain original behavior.
    Nonpositioned displacement scratch starts at zero (original unspecified),
    then retains the preceding positioned scratch within this call. */
-int __cdecl bh_sound_tick(BHSoundQueue *queue, float dt, float master_db, BHSoundTickStats *stats);
+int bh_sound_tick(BHSoundQueue *queue, float dt, float master_db, BHSoundTickStats *stats);
 #endif

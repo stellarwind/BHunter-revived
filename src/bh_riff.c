@@ -4,8 +4,8 @@ static unsigned long u32(const unsigned char *p)
 {
     return (unsigned long)p[0] | ((unsigned long)p[1] << 8) | ((unsigned long)p[2] << 16) | ((unsigned long)p[3] << 24);
 }
-int __cdecl bh_riff_scan(const void *bytes, unsigned long size, const unsigned char **format,
-                         const unsigned char **samples, unsigned long *sample_bytes)
+int bh_riff_scan(const void *bytes, unsigned long size, const unsigned char **format, const unsigned char **samples,
+                 unsigned long *sample_bytes)
 {
     const unsigned char *data = (const unsigned char *)bytes;
     unsigned long at = 12, end, length, tag, next;

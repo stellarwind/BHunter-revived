@@ -25,8 +25,8 @@ static void state(BHHorizonContext *c, D3DRENDERSTATETYPE type, unsigned long va
 {
     native(c, IDirect3DDevice2_SetRenderState(c->state->textures->device, type, value));
 }
-int __cdecl bh_horizon_init(BHHorizonContext *c, const BHMainCamera *camera, BHAttributeClipContext *clip,
-                            BHRenderState *render, BHHorizonColor *colors, BHHorizonEmit emit, void *user)
+int bh_horizon_init(BHHorizonContext *c, const BHMainCamera *camera, BHAttributeClipContext *clip,
+                    BHRenderState *render, BHHorizonColor *colors, BHHorizonEmit emit, void *user)
 {
     if (!c || !camera || !clip || !render || !render->textures || !emit ||
         (render->textures->software && (!colors || colors->textures != render->textures)))
@@ -80,8 +80,8 @@ static void polygon(BHHorizonContext *c, BHTextureImage *image, BHClipVertex **v
     else
         ++c->emitted;
 }
-int __cdecl bh_horizon_draw(BHHorizonContext *c, BHTextureImage *image, float texture_scale, float height,
-                            float outer_radius, float inner_radius, unsigned long color)
+int bh_horizon_draw(BHHorizonContext *c, BHTextureImage *image, float texture_scale, float height, float outer_radius,
+                    float inner_radius, unsigned long color)
 {
     BHTextureContext *q;
     BHTextureImage *im, *slow, *fast;
@@ -209,8 +209,7 @@ int __cdecl bh_horizon_draw(BHHorizonContext *c, BHTextureImage *image, float te
         state(c, D3DRENDERSTATE_FOGENABLE, 0);
     return c->error == BH_HORIZON_OK;
 }
-int __cdecl bh_horizon_native_emit(BHClipVertex *ring, BHTextureImage *image, int gradient, const float rgb[3],
-                                   void *user)
+int bh_horizon_native_emit(BHClipVertex *ring, BHTextureImage *image, int gradient, const float rgb[3], void *user)
 {
     BHHorizonNative *n = (BHHorizonNative *)user;
     BHTextureContext *q;

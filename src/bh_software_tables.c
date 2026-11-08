@@ -47,7 +47,7 @@ static int display(const BHTextureContext *q, const unsigned long masks[3], BHSo
     }
     return 1;
 }
-void __cdecl bh_software_tables_dispose(BHSoftwareTables *t)
+void bh_software_tables_dispose(BHSoftwareTables *t)
 {
     if (!t)
         return;
@@ -64,8 +64,8 @@ void __cdecl bh_software_tables_dispose(BHSoftwareTables *t)
     }
     memset(t, 0, sizeof(*t));
 }
-int __cdecl bh_software_tables_initialize(BHSoftwareTables *out, BHTextureContext *q, unsigned long mode,
-                                          const unsigned long masks[3])
+int bh_software_tables_initialize(BHSoftwareTables *out, BHTextureContext *q, unsigned long mode,
+                                  const unsigned long masks[3])
 {
     BHSoftwareTables t;
     unsigned char palette[256][3];

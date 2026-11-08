@@ -14,8 +14,7 @@
    recovered 00452140 owner performs the same six ordered half-space cuts and
    writes the same projected screen coordinates. Keep its scratch on the
    caller's stack because recursive portals need separate rings. */
-BHClipVertex *__cdecl bh_entity_schedule_clip_portal(BHClipContext *clip, BHClipVertex vertices[4],
-                                                     const BHVec3 projected[4])
+BHClipVertex *bh_entity_schedule_clip_portal(BHClipContext *clip, BHClipVertex vertices[4], const BHVec3 projected[4])
 {
     unsigned long i;
     if (!clip || !vertices || !projected)
@@ -29,7 +28,7 @@ BHClipVertex *__cdecl bh_entity_schedule_clip_portal(BHClipContext *clip, BHClip
     }
     return bh_clip_polygon(clip, vertices, NULL);
 }
-void __cdecl bh_entity_schedule_tick(BHEntityScheduleRoom *room)
+void bh_entity_schedule_tick(BHEntityScheduleRoom *room)
 {
     if (!room || !room->frame_active)
         return;
@@ -40,7 +39,7 @@ void __cdecl bh_entity_schedule_tick(BHEntityScheduleRoom *room)
     if (room->activity)
         *room->activity = (long)room->frame_remaining;
 }
-static void __cdecl activity_tick(BHEntity *entity)
+static void activity_tick(BHEntity *entity)
 {
     BHEntityScheduleRoom *room;
     memcpy(&room, entity->payload + 608, 4);
@@ -405,7 +404,7 @@ static int schedule(BHEntityScheduleContext *c, BHEntityScheduleRoom *r, unsigne
     }
     return 1;
 }
-int __cdecl bh_entity_schedule(BHEntityScheduleContext *c, BHEntityScheduleRoom *room)
+int bh_entity_schedule(BHEntityScheduleContext *c, BHEntityScheduleRoom *room)
 {
     double radius = 0;
     if (!c || !c->queue || !c->viewport || !c->camera || !room || !c->max_rooms || !c->max_entities || !c->max_depth)

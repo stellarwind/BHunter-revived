@@ -1,7 +1,7 @@
 #include "bh_effect_network.h"
 #include <string.h>
-int __cdecl bh_effect_network_emit(BHEffectNetworkContext *ctx, const BHEntity *entity, unsigned long world_offset,
-                                   unsigned long sync_offset, unsigned char kind, const BHVec3 *direction)
+int bh_effect_network_emit(BHEffectNetworkContext *ctx, const BHEntity *entity, unsigned long world_offset,
+                           unsigned long sync_offset, unsigned char kind, const BHVec3 *direction)
 {
     unsigned long sync, i;
     BHWorldGeometry *world;

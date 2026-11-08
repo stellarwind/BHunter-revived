@@ -24,7 +24,7 @@ typedef struct BHPlayerCameraContext
 } BHPlayerCameraContext;
 
 /* Source field binding adapter; no original-function recovery claim. */
-BHCameraState *__cdecl bh_player_camera_state(BHEntity *player);
+BHCameraState *bh_player_camera_state(BHEntity *player);
 /* Complete004221e0. Relocates actor and three camera eye histories, resets
    four motion vectors, restores start angles/basis/matrix, switches mode1,
    then performs50 synchronous source camera updates at1/30 second.
@@ -33,5 +33,5 @@ BHCameraState *__cdecl bh_player_camera_state(BHEntity *player);
    Caller supplies initialized camera/mode storage and finite start poses.
    Source bounds/nonfinite/binding guards reject before actor mutation;
    callback side effects retain their original synchronous semantics. */
-int __cdecl bh_player_camera_reset(BHPlayerCameraContext *, unsigned long index);
+int bh_player_camera_reset(BHPlayerCameraContext *, unsigned long index);
 #endif

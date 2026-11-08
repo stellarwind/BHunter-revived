@@ -12,5 +12,5 @@ typedef struct BHPresentBegin
     unsigned long restores, invalidations, native_calls, failures;
     HRESULT last_hresult;
 } BHPresentBegin;
-int __cdecl bh_present_begin(BHPresentBegin *);
+int bh_present_begin(BHPresentBegin *);
 #endif

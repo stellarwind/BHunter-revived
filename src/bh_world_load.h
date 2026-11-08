@@ -25,7 +25,7 @@ typedef struct BHWorldLoad
    Partial effects retained on resource failure; source closes VFILE on every
    exit, bounds malformed records and rejects original all-unknown NULL crash.
    No original code loading or gameplay execution. PC53 finite model state. */
-int __cdecl bh_world_load(BHWorldLoad *, const char *name);
+int bh_world_load(BHWorldLoad *, const char *name);
 /* Release the optional actor identity workspace before retiring its context. */
-void __cdecl bh_world_load_dispose_index(BHWorldLoad *);
+void bh_world_load_dispose_index(BHWorldLoad *);
 #endif

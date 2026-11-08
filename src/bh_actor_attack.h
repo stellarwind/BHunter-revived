@@ -23,10 +23,10 @@ typedef struct BHActorAttackContext
 } BHActorAttackContext;
 /* Whole00437ae0. Stable real owners and synchronous target query motion are
    borrowed. Source guards stop unsupported owner/lifetime mutation. */
-int __cdecl bh_actor_attack(BHActorAttackContext *, BHEntity *);
+int bh_actor_attack(BHActorAttackContext *, BHEntity *);
 /* Internal 00437f17 firing-vector subpath, part of the attack owner. */
-void __cdecl bh_actor_attack_fire_vectors(BHEntity *, float, BHVec3 *, BHVec3 *, BHVec3 *, BHVec3 *);
+void bh_actor_attack_fire_vectors(BHEntity *, float, BHVec3 *, BHVec3 *, BHVec3 *, BHVec3 *);
 /* Count-zero binding for complete004398c0 tick; payload+596 private context. */
-int __cdecl bh_actor_vehicle_tick_bind(BHActorAttackContext *, BHEntity *);
-void __cdecl bh_actor_vehicle_tick(BHEntity *);
+int bh_actor_vehicle_tick_bind(BHActorAttackContext *, BHEntity *);
+void bh_actor_vehicle_tick(BHEntity *);
 #endif

@@ -78,7 +78,7 @@ static int reset_duration(BHActorPursuitRouteContext *ctx, BHEntity *entity, BHA
     return bh_actor_route_write(entity, state);
 }
 /* 0043950c..004397c3: target-control subpath, not an independent owner. */
-int __cdecl bh_actor_pursuit_target_controls(BHActorPursuitRouteContext *ctx, BHEntity *entity)
+int bh_actor_pursuit_target_controls(BHActorPursuitRouteContext *ctx, BHEntity *entity)
 {
     BHActorRouteState state;
     TargetMotion motion;
@@ -127,7 +127,7 @@ int __cdecl bh_actor_pursuit_target_controls(BHActorPursuitRouteContext *ctx, BH
     write(entity, 0x1d4, &forced, 4);
     return 1;
 }
-int __cdecl bh_actor_pursuit_route(BHActorPursuitRouteContext *ctx, BHEntity *entity)
+int bh_actor_pursuit_route(BHActorPursuitRouteContext *ctx, BHEntity *entity)
 {
     BHActorRouteState state;
     BHWorldGeometry *room, *target_world = 0, *preferred = 0;

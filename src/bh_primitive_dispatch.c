@@ -17,8 +17,8 @@ static int leaf(BHClipVertex *ring, void *user)
     BHPrimitiveDispatch *c = (BHPrimitiveDispatch *)user;
     return c->selected(&c->raster, ring);
 }
-int __cdecl bh_primitive_dispatch_init(BHPrimitiveDispatch *c, BHRenderState *state, const BHSoftwareRaster *frame,
-                                       float left, float right, float top, float bottom)
+int bh_primitive_dispatch_init(BHPrimitiveDispatch *c, BHRenderState *state, const BHSoftwareRaster *frame, float left,
+                               float right, float top, float bottom)
 {
     if (!c || !state || !state->textures || !frame || !_finite(frame->near_z) || frame->near_z <= 0)
         return 0;
@@ -78,7 +78,7 @@ static int select_kernel(BHPrimitiveDispatch *c, BHTextureImage *image, unsigned
     }
     return c->selected ? 1 : -1;
 }
-int __cdecl bh_software_polygon(BHPrimitiveDispatch *c, BHTextureImage *image, BHClipVertex *ring, unsigned long color)
+int bh_software_polygon(BHPrimitiveDispatch *c, BHTextureImage *image, BHClipVertex *ring, unsigned long color)
 {
     DDSURFACEDESC locked;
     HRESULT hr;
@@ -199,7 +199,7 @@ static int native_emit(BHPrimitiveDispatch *c, BHTextureImage *image, BHClipVert
     ++c->polygons;
     return 1;
 }
-int __cdecl bh_primitive_emit(BHPrimitiveDispatch *c, BHTextureImage *image, BHClipVertex *ring, unsigned long color)
+int bh_primitive_emit(BHPrimitiveDispatch *c, BHTextureImage *image, BHClipVertex *ring, unsigned long color)
 {
     if (!c || !c->state || !c->state->textures)
         return fail(c, BH_PRIMITIVE_ARGUMENT);
@@ -208,7 +208,7 @@ int __cdecl bh_primitive_emit(BHPrimitiveDispatch *c, BHTextureImage *image, BHC
         return bh_software_polygon(c, image, ring, color);
     return native_emit(c, image, ring, color, 0);
 }
-int __cdecl bh_primitive_emit_scalar(BHPrimitiveDispatch *c, BHTextureImage *image, BHClipVertex *ring)
+int bh_primitive_emit_scalar(BHPrimitiveDispatch *c, BHTextureImage *image, BHClipVertex *ring)
 {
     unsigned long n;
     double sum, scaled;
@@ -226,8 +226,7 @@ int __cdecl bh_primitive_emit_scalar(BHPrimitiveDispatch *c, BHTextureImage *ima
     value = (long)scaled;
     return bh_software_polygon(c, image, ring, c->base_color + (unsigned long)value * 0x10101UL);
 }
-int __cdecl bh_primitive_emit_gradient(BHPrimitiveDispatch *c, BHTextureImage *image, BHClipVertex *ring,
-                                       unsigned long color)
+int bh_primitive_emit_gradient(BHPrimitiveDispatch *c, BHTextureImage *image, BHClipVertex *ring, unsigned long color)
 {
     int ok;
     if (!c || !c->state || !c->state->textures)

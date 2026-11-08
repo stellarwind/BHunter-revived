@@ -23,12 +23,12 @@ typedef struct BHMenuTransition
 /* Count-zero source binding, actual pool and all borrowed owners outlive entity.
    time is original+1f8 double, attempts+1c0. Known CRT empty-RET sentinel
    is represented by a disabled NULL callback, never counted as game code. */
-int __cdecl bh_menu_transition_bind(BHMenuTransition *, BHEntity *, double, long);
-double __cdecl bh_menu_transition_time(const BHEntity *);
-void __cdecl bh_menu_music_fade(BHEntity *);              /*42cb40*/
-void __cdecl bh_menu_music_tick(BHEntity *);              /*42cbb0*/
-void __cdecl bh_menu_fade_expiry(BHEntity *);             /*42cec0*/
-void __cdecl bh_menu_quit_fade(BHEntity *);               /*42cf00*/
-void __cdecl bh_menu_quit_tick(BHEntity *);               /*42cfb0*/
-BHEntity *__cdecl bh_menu_quit_begin(BHMenuTransition *); /*42d070*/
+int bh_menu_transition_bind(BHMenuTransition *, BHEntity *, double, long);
+double bh_menu_transition_time(const BHEntity *);
+void bh_menu_music_fade(BHEntity *);              /*42cb40*/
+void bh_menu_music_tick(BHEntity *);              /*42cbb0*/
+void bh_menu_fade_expiry(BHEntity *);             /*42cec0*/
+void bh_menu_quit_fade(BHEntity *);               /*42cf00*/
+void bh_menu_quit_tick(BHEntity *);               /*42cfb0*/
+BHEntity *bh_menu_quit_begin(BHMenuTransition *); /*42d070*/
 #endif

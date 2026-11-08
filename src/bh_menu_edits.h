@@ -4,7 +4,7 @@
 #include "bh_input_mode.h"
 #include "bh_menu_row.h"
 typedef struct BHMenuEdits BHMenuEdits;
-typedef void(__cdecl *BHMenuMissionAction)(BHMenuEdits *, long);
+typedef void (*BHMenuMissionAction)(BHMenuEdits *, long);
 typedef struct BHMenuMissionRow
 {
     BHMenuMissionAction action;
@@ -26,19 +26,19 @@ struct BHMenuEdits
     unsigned long refreshes;
     int error;
 };
-void __cdecl bh_menu_edit_video(BHMenuEdits *, long);       /*42d1b0*/
-void __cdecl bh_menu_edit_audio(BHMenuEdits *, long);       /*42d290*/
-void __cdecl bh_menu_edit_profile(BHMenuEdits *, long);     /*42e300*/
-void __cdecl bh_menu_edit_motion(BHMenuEdits *, long);      /*42d380*/
-void __cdecl bh_menu_edit_primary(BHMenuEdits *, long);     /*42d550*/
-void __cdecl bh_menu_edit_secondary(BHMenuEdits *, long);   /*42d620*/
-void __cdecl bh_menu_edit_camera(BHMenuEdits *, long);      /*42d6f0*/
-void __cdecl bh_menu_action_motion(BHMenuEdits *, long);    /*42e410*/
-void __cdecl bh_menu_action_primary(BHMenuEdits *, long);   /*42e640*/
-void __cdecl bh_menu_action_secondary(BHMenuEdits *, long); /*42e790*/
-void __cdecl bh_menu_action_camera(BHMenuEdits *, long);    /*42e8f0*/
-void __cdecl bh_menu_action_mission(BHMenuEdits *, long);   /*42ca10*/
-void __cdecl bh_menu_action_ship(BHMenuEdits *, long);      /*42ca30*/
+void bh_menu_edit_video(BHMenuEdits *, long);       /*42d1b0*/
+void bh_menu_edit_audio(BHMenuEdits *, long);       /*42d290*/
+void bh_menu_edit_profile(BHMenuEdits *, long);     /*42e300*/
+void bh_menu_edit_motion(BHMenuEdits *, long);      /*42d380*/
+void bh_menu_edit_primary(BHMenuEdits *, long);     /*42d550*/
+void bh_menu_edit_secondary(BHMenuEdits *, long);   /*42d620*/
+void bh_menu_edit_camera(BHMenuEdits *, long);      /*42d6f0*/
+void bh_menu_action_motion(BHMenuEdits *, long);    /*42e410*/
+void bh_menu_action_primary(BHMenuEdits *, long);   /*42e640*/
+void bh_menu_action_secondary(BHMenuEdits *, long); /*42e790*/
+void bh_menu_action_camera(BHMenuEdits *, long);    /*42e8f0*/
+void bh_menu_action_mission(BHMenuEdits *, long);   /*42ca10*/
+void bh_menu_action_ship(BHMenuEdits *, long);      /*42ca30*/
 /* Count-zero row callback bridge for the current actual menu. Install as
    BHMenuSettingsRow.refresh and set BHMenuSettingsMenu.user=context; dispatch
    mode identifies one of the seven refresh owners. */
@@ -57,5 +57,5 @@ typedef struct BHMenuEditBridge
     BHMenuEdits *context;
     BHMenuEditKind kind;
 } BHMenuEditBridge;
-void __cdecl bh_menu_edit_row_callback(BHMenuSettingsMenu *, long);
+void bh_menu_edit_row_callback(BHMenuSettingsMenu *, long);
 #endif

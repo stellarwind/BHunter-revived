@@ -12,7 +12,7 @@
 #include "bh_menu_runtime.h"
 #include "bh_message_panel.h"
 #include "bh_impact_ring.h"
-typedef int(__cdecl *BHPlayerForceMethod)(BHPlayerForceControl *, float, int);
+typedef int (*BHPlayerForceMethod)(BHPlayerForceControl *, float, int);
 typedef struct BHPlayerTickState
 {
     long paused, mode, world_mode, confirmation, ending, death_frames, god_mode;
@@ -86,10 +86,10 @@ typedef struct BHPlayerTick
    One explicit live-player callback registry holds the source context; no
    pointer is stored inside original live player physics/plume/input fields.
    Unbind before retiring the pool/context. Installed refresh invokes actual scene. */
-int __cdecl bh_player_tick(BHPlayerTick *);
+int bh_player_tick(BHPlayerTick *);
 int bh_player_leave_network(BHPlayerTick *);
-int __cdecl bh_player_tick_bind(BHPlayerTick *, BHEntity *);
-int __cdecl bh_player_tick_unbind(BHPlayerTick *);
-BHPlayerTick *__cdecl bh_player_tick_context(BHEntity *);
-void __cdecl bh_player_step(BHEntity *);
+int bh_player_tick_bind(BHPlayerTick *, BHEntity *);
+int bh_player_tick_unbind(BHPlayerTick *);
+BHPlayerTick *bh_player_tick_context(BHEntity *);
+void bh_player_step(BHEntity *);
 #endif

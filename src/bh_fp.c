@@ -17,12 +17,12 @@ static void write_control(unsigned short control)
     __asm__ volatile("fldcw %0" : : "m"(control));
 }
 
-int __cdecl bh_math_environment_supported(void)
+int bh_math_environment_supported(void)
 {
     return (read_control() & X87_CONTROL_MASK) == X87_PC53_NEAREST_MASKED;
 }
 
-int __cdecl bh_math_environment_enter(BHMathEnvironment *environment)
+int bh_math_environment_enter(BHMathEnvironment *environment)
 {
     if (!environment)
         return 0;
@@ -31,7 +31,7 @@ int __cdecl bh_math_environment_enter(BHMathEnvironment *environment)
     return bh_math_environment_supported();
 }
 
-void __cdecl bh_math_environment_leave(const BHMathEnvironment *environment)
+void bh_math_environment_leave(const BHMathEnvironment *environment)
 {
     if (environment)
         write_control((read_control() & ~X87_CONTROL_MASK) | (environment->control & X87_CONTROL_MASK));

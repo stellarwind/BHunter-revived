@@ -10,8 +10,8 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
-int __cdecl bh_script_blocks_init(BHScriptBlocks *c, BHScriptParse *parser, BHRenderResources *resources,
-                                  const char *prefix, BHBspSearch search)
+int bh_script_blocks_init(BHScriptBlocks *c, BHScriptParse *parser, BHRenderResources *resources, const char *prefix,
+                          BHBspSearch search)
 {
     if (!c || !parser || !resources || !prefix)
         return 0;
@@ -26,7 +26,7 @@ int __cdecl bh_script_blocks_init(BHScriptBlocks *c, BHScriptParse *parser, BHRe
     c->collision_search = search;
     return 1;
 }
-void __cdecl bh_script_blocks_dispose(BHScriptBlocks *c)
+void bh_script_blocks_dispose(BHScriptBlocks *c)
 {
     unsigned long i;
     if (!c)
@@ -37,7 +37,7 @@ void __cdecl bh_script_blocks_dispose(BHScriptBlocks *c)
     free(c->blocks);
     memset(c, 0, sizeof(*c));
 }
-int __cdecl bh_script_blocks_load(BHScriptBlocks *c, const char *path)
+int bh_script_blocks_load(BHScriptBlocks *c, const char *path)
 {
     BHVFile *file;
     char line[513], *newline;
@@ -124,7 +124,7 @@ static float stored(double v)
     bh_round_float(&f, v);
     return f;
 }
-int __cdecl bh_script_block_preview(BHScriptBrowser *c, long index, long x, long y)
+int bh_script_block_preview(BHScriptBrowser *c, long index, long x, long y)
 {
     BHScriptBlock *b;
     BHVec3 angles, center, transformed, position;
@@ -212,7 +212,7 @@ static int quad(BHScriptBrowser *c, unsigned long bucket, unsigned long image, f
     }
     return 1;
 }
-int __cdecl bh_script_block_browser(BHScriptBrowser *c)
+int bh_script_block_browser(BHScriptBrowser *c)
 {
     BHScriptBlocks *library;
     BHScriptBlock *b;

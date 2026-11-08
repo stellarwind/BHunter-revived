@@ -672,7 +672,7 @@ static void perf_save(BHGameApp *app)
     perf_dispose(&app->perf_capture);
 }
 #endif
-static BHEntity **__cdecl marker_room_head(BHEntity *owner, void *user)
+static BHEntity **marker_room_head(BHEntity *owner, void *user)
 {
     BHGameApp *app = (BHGameApp *)user;
     unsigned long i;
@@ -685,7 +685,7 @@ static BHEntity **__cdecl marker_room_head(BHEntity *owner, void *user)
             return &app->rooms[i].pickups;
     return 0;
 }
-static int __cdecl refresh_segment_actors(BHWorldSegmentContext *ctx, void *user)
+static int refresh_segment_actors(BHWorldSegmentContext *ctx, void *user)
 {
     BHGameApp *app = (BHGameApp *)user;
     BHEntity *entity;
@@ -763,7 +763,7 @@ static int restore_display(BHGameApp *app)
     return 1;
 }
 
-static HRESULT __cdecl loading_present(LPDIRECTDRAWSURFACE color, void *user)
+static HRESULT loading_present(LPDIRECTDRAWSURFACE color, void *user)
 {
     BHGameApp *app = (BHGameApp *)user;
     return IDirectDrawSurface_Blt(app->primary, 0, color, 0, DDBLT_WAIT, 0);
@@ -801,7 +801,7 @@ static void sdl_input(const BHPlatformEvent *event, void *user)
     bh_input_event(&app->snapshot, event);
 }
 
-static BHTextureImage *__cdecl image(unsigned long handle, void *user)
+static BHTextureImage *image(unsigned long handle, void *user)
 {
     BHGameApp *app = (BHGameApp *)user;
     BHTextureImage *p;
@@ -810,7 +810,7 @@ static BHTextureImage *__cdecl image(unsigned long handle, void *user)
             return p;
     return 0;
 }
-static int __cdecl polygon(BHClipVertex *ring, BHTextureImage *texture, unsigned long color, void *user)
+static int polygon(BHClipVertex *ring, BHTextureImage *texture, unsigned long color, void *user)
 {
     BHGameApp *app = (BHGameApp *)user;
     int result;
@@ -823,7 +823,7 @@ static int __cdecl polygon(BHClipVertex *ring, BHTextureImage *texture, unsigned
 }
 /* 00455f70 dispatches ribbon vertices to 0046e430, whose shade comes from
    each vertex's scalar. The plain polygon callback would discard it. */
-static int __cdecl scalar_polygon(BHClipVertex *ring, BHTextureImage *texture, unsigned long color, void *user)
+static int scalar_polygon(BHClipVertex *ring, BHTextureImage *texture, unsigned long color, void *user)
 {
     BHGameApp *app = (BHGameApp *)user;
     int result;
@@ -835,8 +835,7 @@ static int __cdecl scalar_polygon(BHClipVertex *ring, BHTextureImage *texture, u
     result = bh_primitive_emit_scalar(&app->primitive, texture, ring);
     return result;
 }
-static int __cdecl horizon_polygon(BHClipVertex *ring, BHTextureImage *texture, int gradient, const float rgb[3],
-                                   void *user)
+static int horizon_polygon(BHClipVertex *ring, BHTextureImage *texture, int gradient, const float rgb[3], void *user)
 {
     BHGameApp *app = (BHGameApp *)user;
     int result;
@@ -1162,7 +1161,7 @@ static int world_ready(BHGameApp *a);
 static int player_ready(BHGameApp *a);
 static int resources_ready(BHGameApp *a);
 static int runtime_owners(BHGameApp *a);
-static int __cdecl compose(BHGameBootstrap *bootstrap, unsigned long phase, void *user)
+static int compose(BHGameBootstrap *bootstrap, unsigned long phase, void *user)
 {
     BHGameApp *app = (BHGameApp *)user;
     (void)bootstrap;
@@ -2391,7 +2390,7 @@ static void network_tick(BHGameApp *app)
         network_trace(app);
 }
 
-static void __cdecl source_produce(void *user)
+static void source_produce(void *user)
 {
     BHGameApp *app = (BHGameApp *)user;
     unsigned long clock = app->frame + (app->player_state.paused == 0);

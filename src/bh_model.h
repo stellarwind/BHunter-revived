@@ -35,13 +35,13 @@ typedef struct BHModelContext
 /* Explicit context/lifetime adapters. Texture context outlives models; image
    cache entries are borrowed. Initialize model to zero before first read.
    Dispose every model with the same context/allocator that created it. */
-int __cdecl bh_model_context_init(BHModelContext *, BHTextureContext *, const BHSceneAllocator *);
-int __cdecl bh_model_set_path(BHModelContext *, const char *prefix, BHBspSearch);
-void __cdecl bh_model_dispose(BHModelContext *, BHModel *);
-void __cdecl bh_model_delete(BHModelContext *, BHModel *);
+int bh_model_context_init(BHModelContext *, BHTextureContext *, const BHSceneAllocator *);
+int bh_model_set_path(BHModelContext *, const char *prefix, BHBspSearch);
+void bh_model_dispose(BHModelContext *, BHModel *);
+void bh_model_delete(BHModelContext *, BHModel *);
 /* 00457e20; bounded validation before publication is a source guard. Failure
    retains previous model and reports context.error. File remains caller-owned. */
-int __cdecl bh_model_read(BHModelContext *, BHVFile *, BHModel *);
+int bh_model_read(BHModelContext *, BHVFile *, BHModel *);
 /* 00458140; original four search policies, fallback only on open failure. */
-BHModel *__cdecl bh_model_load(BHModelContext *, const char *name);
+BHModel *bh_model_load(BHModelContext *, const char *name);
 #endif

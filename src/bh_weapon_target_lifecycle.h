@@ -27,9 +27,9 @@ typedef struct BHWeaponTargetContext
     unsigned long queries, traces, sound_requests, stops, random_calls;
     BHWeaponTargetError error;
 } BHWeaponTargetContext;
-int __cdecl bh_weapon_target_ready(BHWeaponTargetContext *, BHEntity *weapon, const BHEntity *player);  /*004310c0*/
-int __cdecl bh_weapon_target_cancel(BHWeaponTargetContext *, BHEntity *weapon);                         /*00431130*/
-int __cdecl bh_weapon_target_update(BHWeaponTargetContext *, BHEntity *weapon, const BHEntity *player); /*00431180*/
+int bh_weapon_target_ready(BHWeaponTargetContext *, BHEntity *weapon, const BHEntity *player);  /*004310c0*/
+int bh_weapon_target_cancel(BHWeaponTargetContext *, BHEntity *weapon);                         /*00431130*/
+int bh_weapon_target_update(BHWeaponTargetContext *, BHEntity *weapon, const BHEntity *player); /*00431180*/
 /* Observed-field adapter only; not player or weapon constructor recovery. */
-BHVec3 *__cdecl bh_weapon_target_player_aim(BHEntity *player);
+BHVec3 *bh_weapon_target_player_aim(BHEntity *player);
 #endif

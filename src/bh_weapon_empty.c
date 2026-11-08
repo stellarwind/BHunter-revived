@@ -34,8 +34,8 @@ static int empty_notice(BHWeaponEmptyContext *context, const BHEntity *player)
     context->error = !sound_ok ? BH_WEAPON_EMPTY_SOUND : !message_ok ? BH_WEAPON_EMPTY_MESSAGE : BH_WEAPON_EMPTY_OK;
     return context->error == BH_WEAPON_EMPTY_OK;
 }
-int __cdecl bh_weapon_empty_trigger(BHWeaponEmptyContext *context, unsigned long identity, BHEntity *weapon,
-                                    const BHEntity *player)
+int bh_weapon_empty_trigger(BHWeaponEmptyContext *context, unsigned long identity, BHEntity *weapon,
+                            const BHEntity *player)
 {
     BHWeaponCommonState *state;
     if (!context || !weapon)
@@ -68,7 +68,7 @@ int __cdecl bh_weapon_empty_trigger(BHWeaponEmptyContext *context, unsigned long
     }
     return empty_notice(context, player);
 }
-int __cdecl bh_weapon_index9_trigger(BHWeaponEmptyContext *context, BHEntity *weapon, BHEntity *player)
+int bh_weapon_index9_trigger(BHWeaponEmptyContext *context, BHEntity *weapon, BHEntity *player)
 {
     BHWeaponCommonState *state;
     float timer;
@@ -96,8 +96,8 @@ int __cdecl bh_weapon_index9_trigger(BHWeaponEmptyContext *context, BHEntity *we
     context->error = BH_WEAPON_EMPTY_OK;
     return 1;
 }
-int __cdecl bh_weapon_empty_dispatch(BHWeaponEmptyContext *context, BHWeaponRegistry *registry, unsigned int selection,
-                                     BHEntity *player)
+int bh_weapon_empty_dispatch(BHWeaponEmptyContext *context, BHWeaponRegistry *registry, unsigned int selection,
+                             BHEntity *player)
 {
     BHEntity *entity;
     BHWeaponObjectState *state;

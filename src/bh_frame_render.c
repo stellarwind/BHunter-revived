@@ -109,11 +109,11 @@ static int clear_depth(BHFrameDisplay *d, int game_frame)
         ok = 0;
     return ok;
 }
-int __cdecl bh_frame_clear_depth(BHFrameDisplay *d)
+int bh_frame_clear_depth(BHFrameDisplay *d)
 {
     return clear_depth(d, 0);
 }
-int __cdecl bh_frame_clear_game(BHFrameDisplay *d)
+int bh_frame_clear_game(BHFrameDisplay *d)
 {
     return clear_depth(d, 1);
 }
@@ -126,7 +126,7 @@ static unsigned long color_value(BHFrameDisplay *d, long red, long green, long b
                            ((green >> (q->display_right[1] & 31)) << (q->display_left[1] & 31)) +
                            ((blue >> (q->display_right[2] & 31)) << (q->display_left[2] & 31)));
 }
-int __cdecl bh_frame_clear_color(BHFrameDisplay *d, long red, long green, long blue)
+int bh_frame_clear_color(BHFrameDisplay *d, long red, long green, long blue)
 {
     RECT r;
     DDBLTFX fx;

@@ -60,7 +60,7 @@ static int query(BHWeaponArcLifecycleContext *ctx, BHEntity *actor, ArcPacket *p
     actor->query(actor, packet);
     return finite_vector(&packet->position.position) ? 1 : error(ctx, BH_WEAPON_ARC_LIFECYCLE_NUMERICAL);
 }
-int __cdecl bh_weapon_arc_activate(BHWeaponArcLifecycleContext *ctx, BHEntity *weapon, const BHEntity *player)
+int bh_weapon_arc_activate(BHWeaponArcLifecycleContext *ctx, BHEntity *weapon, const BHEntity *player)
 {
     BHWeaponCommonState *weapon_state;
     float pitch;
@@ -81,7 +81,7 @@ int __cdecl bh_weapon_arc_activate(BHWeaponArcLifecycleContext *ctx, BHEntity *w
     weapon_state->word_108 = 0;
     return ctx->error == BH_WEAPON_ARC_LIFECYCLE_OK;
 }
-int __cdecl bh_weapon_arc_deactivate(BHWeaponArcLifecycleContext *ctx, BHEntity *weapon)
+int bh_weapon_arc_deactivate(BHWeaponArcLifecycleContext *ctx, BHEntity *weapon)
 {
     BHWeaponCommonState *weapon_state;
     unsigned long handle;
@@ -98,7 +98,7 @@ int __cdecl bh_weapon_arc_deactivate(BHWeaponArcLifecycleContext *ctx, BHEntity 
     weapon_state->word_100 = -1;
     return ctx->error == BH_WEAPON_ARC_LIFECYCLE_OK;
 }
-int __cdecl bh_weapon_arc_track(BHWeaponArcLifecycleContext *ctx, BHEntity *weapon, const BHEntity *player)
+int bh_weapon_arc_track(BHWeaponArcLifecycleContext *ctx, BHEntity *weapon, const BHEntity *player)
 {
     BHWeaponCommonState *weapon_state;
     ArcPacket packet;

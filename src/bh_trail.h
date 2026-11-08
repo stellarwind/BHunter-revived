@@ -21,24 +21,23 @@ typedef struct BHTrailParameters
    source-private context bridge at payload+600. A copied owner is invalid.
    Source callbacks use actual query event3, generation, pool/command owners.
    Parameters must be finite; node chains must remain live and acyclic. */
-int __cdecl bh_trail_bind(BHTrailContext *, BHEntity *, const BHTrailParameters *);
+int bh_trail_bind(BHTrailContext *, BHEntity *, const BHTrailParameters *);
 /* Complete004071b0/004072d0 constructors. node_value/fade_seconds derives
    the per-tick decrement; frequency derives interval1/frequency. Original
    width/drift rates scale by double1/30 before binary32 stores. These source
    guards require finite inputs and positive fade_seconds/frequency. Paired
    construction preserves both independent allocation attempts and returns
    number constructed (0..2); optional outputs borrow live pool entities. */
-BHEntity *__cdecl bh_trail_create(BHTrailContext *, unsigned long image, long bucket, unsigned long point_word,
-                                  const BHVec3 *position, BHEntity *attached, float lifetime, float fade_seconds,
-                                  float frequency, float node_value, float width, float width_rate,
-                                  const BHVec3 *velocity, float texture_scale);
-unsigned long __cdecl bh_trail_create_pair(BHTrailContext *, unsigned long image, long bucket, unsigned long point_word,
-                                           const BHVec3 *position, BHEntity *attached, float lifetime,
-                                           float fade_seconds, float frequency, float node_value, float width,
-                                           float width_rate, const BHVec3 *velocity, float texture_scale,
-                                           BHEntity **first, BHEntity **second);
+BHEntity *bh_trail_create(BHTrailContext *, unsigned long image, long bucket, unsigned long point_word,
+                          const BHVec3 *position, BHEntity *attached, float lifetime, float fade_seconds,
+                          float frequency, float node_value, float width, float width_rate, const BHVec3 *velocity,
+                          float texture_scale);
+unsigned long bh_trail_create_pair(BHTrailContext *, unsigned long image, long bucket, unsigned long point_word,
+                                   const BHVec3 *position, BHEntity *attached, float lifetime, float fade_seconds,
+                                   float frequency, float node_value, float width, float width_rate,
+                                   const BHVec3 *velocity, float texture_scale, BHEntity **first, BHEntity **second);
 /* Whole00406eb0 generator,00406e20 node tick,00406d50 path producer. */
-void __cdecl bh_trail_generate(BHEntity *);
-void __cdecl bh_trail_node_tick(BHEntity *);
-void __cdecl bh_trail_refresh(BHEntity *, void *);
+void bh_trail_generate(BHEntity *);
+void bh_trail_node_tick(BHEntity *);
+void bh_trail_refresh(BHEntity *, void *);
 #endif

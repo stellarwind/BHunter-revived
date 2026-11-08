@@ -9,12 +9,12 @@ typedef char state_size[sizeof(BHScriptTimerState) == 48 ? 1 : -1];
 typedef char state_offset[offsetof(BHEntity, payload) + 4 == 0xe8 ? 1 : -1];
 typedef char countdown_offset[offsetof(BHScriptTimerState, countdown) == 44 ? 1 : -1];
 
-static void __cdecl template_timer(BHEntity *entity, void *packet);
-static void __cdecl template_timer2(BHEntity *entity, void *packet);
-static void __cdecl running_query(BHEntity *entity, void *packet);
-static void __cdecl active_tick(BHEntity *entity);
-static void __cdecl always_tick(BHEntity *entity);
-static void __cdecl delete_tick(BHEntity *entity);
+static void template_timer(BHEntity *entity, void *packet);
+static void template_timer2(BHEntity *entity, void *packet);
+static void running_query(BHEntity *entity, void *packet);
+static void active_tick(BHEntity *entity);
+static void always_tick(BHEntity *entity);
+static void delete_tick(BHEntity *entity);
 
 static BHScriptTimerState *state(BHEntity *entity)
 {
@@ -34,7 +34,7 @@ static int live(const BHScriptTimerContext *ctx, const BHEntity *entity, unsigne
 {
     return ctx && bh_entity_is_active(ctx->pool, entity) && entity->generation == generation;
 }
-const BHScriptTimerActor *__cdecl bh_script_timer_actor(const BHScriptTimerContext *ctx, BHEntity *entity)
+const BHScriptTimerActor *bh_script_timer_actor(const BHScriptTimerContext *ctx, BHEntity *entity)
 {
     unsigned long i;
     long found;
@@ -60,8 +60,8 @@ static double random_part(long low, long high)
     unsigned long product = (unsigned long)rand() * ((unsigned long)high - (unsigned long)low);
     return (double)signed_word(product) * (-1.0 / 32768.0);
 }
-int __cdecl bh_script_timers_init(BHScriptTimerContext *ctx, BHEntityPool *pool, const BHScriptTimerActor *actors,
-                                  unsigned long count)
+int bh_script_timers_init(BHScriptTimerContext *ctx, BHEntityPool *pool, const BHScriptTimerActor *actors,
+                          unsigned long count)
 {
     BHScriptTimerContext next;
     unsigned long i, j;
@@ -82,7 +82,7 @@ int __cdecl bh_script_timers_init(BHScriptTimerContext *ctx, BHEntityPool *pool,
     *ctx = next;
     return 1;
 }
-BHScriptTimerState *__cdecl bh_script_timer_state(BHScriptTimerContext *ctx, BHEntity *entity)
+BHScriptTimerState *bh_script_timer_state(BHScriptTimerContext *ctx, BHEntity *entity)
 {
     if (!ctx || !entity || !live(ctx, entity, entity->generation) ||
         (entity->query != template_timer && entity->query != template_timer2 && entity->query != running_query) ||
@@ -90,8 +90,8 @@ BHScriptTimerState *__cdecl bh_script_timer_state(BHScriptTimerContext *ctx, BHE
         return NULL;
     return state(entity);
 }
-int __cdecl bh_script_timer_bind(BHScriptTimerContext *ctx, BHEntity *entity, const BHScriptTimerState *initial,
-                                 int unconditional)
+int bh_script_timer_bind(BHScriptTimerContext *ctx, BHEntity *entity, const BHScriptTimerState *initial,
+                         int unconditional)
 {
     if (!ctx || !entity || !initial || !live(ctx, entity, entity->generation) || !bh_math_environment_supported() ||
         initial->variable_remaining > 21 || initial->variable_low > 21 || initial->variable_high > 21)
@@ -107,13 +107,13 @@ int __cdecl bh_script_timer_bind(BHScriptTimerContext *ctx, BHEntity *entity, co
     ctx->error = BH_TIMER_OK;
     return 1;
 }
-static void __cdecl delete_tick(BHEntity *entity)
+static void delete_tick(BHEntity *entity)
 {
     BHScriptTimerContext *ctx = context(entity);
     if (!bh_entity_release(ctx->pool, entity))
         ctx->error = BH_TIMER_POOL;
 }
-static void __cdecl running_query(BHEntity *entity, void *packet)
+static void running_query(BHEntity *entity, void *packet)
 {
     BHScriptTimerPacket *event = (BHScriptTimerPacket *)packet;
     BHScriptTimerState *timer = state(entity);
@@ -172,11 +172,11 @@ static void tick(BHEntity *entity, int unconditional)
             delete_tick(entity);
     }
 }
-static void __cdecl active_tick(BHEntity *entity)
+static void active_tick(BHEntity *entity)
 {
     tick(entity, 0);
 }
-static void __cdecl always_tick(BHEntity *entity)
+static void always_tick(BHEntity *entity)
 {
     tick(entity, 1);
 }
@@ -250,20 +250,20 @@ static void activate(BHEntity *entity, void *packet, int unconditional)
         next->query(next, packet);
     }
 }
-static void __cdecl template_timer(BHEntity *entity, void *packet)
+static void template_timer(BHEntity *entity, void *packet)
 {
     activate(entity, packet, 0);
 }
-static void __cdecl template_timer2(BHEntity *entity, void *packet)
+static void template_timer2(BHEntity *entity, void *packet)
 {
     activate(entity, packet, 1);
 }
 
-BHEntityStep __cdecl bh_script_timer_delete_step(void)
+BHEntityStep bh_script_timer_delete_step(void)
 {
     return delete_tick;
 }
-BHEntityStep __cdecl bh_script_timer_unconditional_step(void)
+BHEntityStep bh_script_timer_unconditional_step(void)
 {
     return always_tick;
 }

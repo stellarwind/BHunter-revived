@@ -44,8 +44,7 @@ static int space(BHPacketWriter *w, unsigned long count)
     }
     return 1;
 }
-int __cdecl bh_packet_begin(BHPacketWriter *w, void *bytes, unsigned long capacity, unsigned char type,
-                            unsigned short sender)
+int bh_packet_begin(BHPacketWriter *w, void *bytes, unsigned long capacity, unsigned char type, unsigned short sender)
 {
     BHPacketWriter next;
     if (!w || !bytes || capacity < 8)
@@ -60,7 +59,7 @@ int __cdecl bh_packet_begin(BHPacketWriter *w, void *bytes, unsigned long capaci
     *w = next;
     return 1;
 }
-int __cdecl bh_packet_append(BHPacketWriter *w, const void *bytes, unsigned long count)
+int bh_packet_append(BHPacketWriter *w, const void *bytes, unsigned long count)
 {
     if (!bytes && count)
     {
@@ -76,7 +75,7 @@ int __cdecl bh_packet_append(BHPacketWriter *w, const void *bytes, unsigned long
     w->error = BH_PACKET_OK;
     return 1;
 }
-int __cdecl bh_packet_finish(BHPacketWriter *w, unsigned long *wire_size)
+int bh_packet_finish(BHPacketWriter *w, unsigned long *wire_size)
 {
     unsigned long end, aligned, checksum, i;
     if (!wire_size || !space(w, 0))
@@ -100,8 +99,7 @@ int __cdecl bh_packet_finish(BHPacketWriter *w, unsigned long *wire_size)
     w->error = BH_PACKET_OK;
     return 1;
 }
-int __cdecl bh_packet_write_position(BHPacketWriter *w, const BHWorldGeometry *world, unsigned short index,
-                                     const BHVec3 *point)
+int bh_packet_write_position(BHPacketWriter *w, const BHWorldGeometry *world, unsigned short index, const BHVec3 *point)
 {
     unsigned char data[8];
     unsigned long i;
@@ -135,7 +133,7 @@ int __cdecl bh_packet_write_position(BHPacketWriter *w, const BHWorldGeometry *w
     w->error = BH_PACKET_OK;
     return 1;
 }
-int __cdecl bh_packet_write_vector(BHPacketWriter *w, const BHVec3 *v, float scale)
+int bh_packet_write_vector(BHPacketWriter *w, const BHVec3 *v, float scale)
 {
     unsigned char data[3];
     unsigned long i, low;
@@ -167,8 +165,7 @@ int __cdecl bh_packet_write_vector(BHPacketWriter *w, const BHVec3 *v, float sca
     w->error = BH_PACKET_OK;
     return 1;
 }
-int __cdecl bh_packet_receive(BHPacketReader *r, void *bytes, unsigned long size, unsigned long capacity,
-                              BHPacketStats *stats)
+int bh_packet_receive(BHPacketReader *r, void *bytes, unsigned long size, unsigned long capacity, BHPacketStats *stats)
 {
     BHPacketReader next;
     unsigned long end, aligned, checksum, i;
@@ -214,8 +211,7 @@ static int reject_index(BHPacketReader *r)
     r->error = BH_PACKET_INDEX;
     return 0;
 }
-int __cdecl bh_packet_read_position(BHPacketReader *r, const BHNavigation *navigation, BHWorldGeometry **world,
-                                    BHVec3 *point)
+int bh_packet_read_position(BHPacketReader *r, const BHNavigation *navigation, BHWorldGeometry **world, BHVec3 *point)
 {
     BHPackedPositions stream;
     BHPositionResult result;
@@ -235,8 +231,8 @@ int __cdecl bh_packet_read_position(BHPacketReader *r, const BHNavigation *navig
                                                 : BH_PACKET_ARGUMENT;
     return result;
 }
-int __cdecl bh_packet_read_actor(BHPacketReader *r, unsigned long local_id, BHEntity *local, BHEntity *const remote[8],
-                                 BHEntity **actor)
+int bh_packet_read_actor(BHPacketReader *r, unsigned long local_id, BHEntity *local, BHEntity *const remote[8],
+                         BHEntity **actor)
 {
     unsigned short id;
     if (!remote || !actor)

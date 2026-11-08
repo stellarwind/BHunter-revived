@@ -1,7 +1,7 @@
 #include "bh_axis_snap.h"
 #include <math.h>
 #define SNAP_V(i) (*(float *)((unsigned char *)v + 4 * (i)))
-double __cdecl bh_vec3_snap_axis(BHVec3 *v)
+double bh_vec3_snap_axis(BHVec3 *v)
 {
     double length = sqrt((SNAP_V(1) * SNAP_V(1) + SNAP_V(2) * SNAP_V(2)) + SNAP_V(0) * SNAP_V(0));
     float x = SNAP_V(0), y, z;

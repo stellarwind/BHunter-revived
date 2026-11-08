@@ -17,8 +17,8 @@ static void point(BHClipVertex *p, float x, float y, float u, float v)
     p->u = u;
     p->v = v;
 }
-int __cdecl bh_sprite_billboard_draw(BHSpriteBillboardContext *c, BHTextureImage *image, float x, float y, float z,
-                                     float width, float height, float angle, unsigned long flags, float modulation)
+int bh_sprite_billboard_draw(BHSpriteBillboardContext *c, BHTextureImage *image, float x, float y, float z, float width,
+                             float height, float angle, unsigned long flags, float modulation)
 {
     BHVec3 world, projected;
     BHClipVertex quad[4], *ring, *p;

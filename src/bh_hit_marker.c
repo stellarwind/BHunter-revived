@@ -45,8 +45,8 @@ static int unlink_owner(BHHitMarkerContext *c, BHEntity *e)
         *owner_head(c, owner) = older;
     return 1;
 }
-BHEntity *__cdecl bh_hit_marker_create(BHHitMarkerContext *c, const BHVec3 *p, const BHVec3 *n, float size,
-                                       unsigned long flags, BHEntity *owner)
+BHEntity *bh_hit_marker_create(BHHitMarkerContext *c, const BHVec3 *p, const BHVec3 *n, float size, unsigned long flags,
+                               BHEntity *owner)
 {
     BHEntity *e, *prior, *old, **head;
     BHVec3 normal, position, up;
@@ -124,7 +124,7 @@ BHEntity *__cdecl bh_hit_marker_create(BHHitMarkerContext *c, const BHVec3 *p, c
     c->error = BH_HIT_MARKER_OK;
     return e;
 }
-void __cdecl bh_hit_marker_draw(BHEntity *e)
+void bh_hit_marker_draw(BHEntity *e)
 {
     BHHitMarkerContext *c;
     BHVec3 up, normal;
@@ -144,7 +144,7 @@ void __cdecl bh_hit_marker_draw(BHEntity *e)
                       number(e, 0x110), .5f);
     c->error = r == 1 ? BH_HIT_MARKER_OK : BH_HIT_MARKER_QUEUE;
 }
-int __cdecl bh_hit_marker_dispose(BHHitMarkerContext *c)
+int bh_hit_marker_dispose(BHHitMarkerContext *c)
 {
     BHEntity *e, *next;
     if (!c || !c->pool)

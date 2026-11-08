@@ -6,7 +6,7 @@
 #include <string.h>
 typedef char target_layout
     [sizeof(void *) == 4 && offsetof(BHEntity, payload) == 0xe4 && offsetof(BHEntity, opaque0) == 0x18 ? 1 : -1];
-int __cdecl bh_target_draw_state_read(const BHEntity *entity, BHTargetDrawState *state)
+int bh_target_draw_state_read(const BHEntity *entity, BHTargetDrawState *state)
 {
     if (!entity || !state)
         return 0;
@@ -17,7 +17,7 @@ int __cdecl bh_target_draw_state_read(const BHEntity *entity, BHTargetDrawState 
     memcpy(&state->owner, (const unsigned char *)entity + 0x128, 4);
     return 1;
 }
-int __cdecl bh_target_draw_state_write(BHEntity *entity, const BHTargetDrawState *state)
+int bh_target_draw_state_write(BHEntity *entity, const BHTargetDrawState *state)
 {
     if (!entity || !state)
         return 0;
@@ -64,7 +64,7 @@ static void marker(BHTargetDrawContext *ctx, float scale, float x, float y, floa
     result(status, rect(ctx, ctx->marker_image, x, y, rounded((double)scale * (fallback ? 100 : 80)),
                         rounded((double)scale * (fallback ? 50 : 40)), 0, .5f, .5f, .218f, depth));
 }
-int __cdecl bh_target_draw(BHTargetDrawContext *ctx, const BHEntity *entity)
+int bh_target_draw(BHTargetDrawContext *ctx, const BHEntity *entity)
 {
     BHTargetDrawState state;
     BHVec3 model, angles;

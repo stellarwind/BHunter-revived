@@ -25,7 +25,7 @@ static BHVec3 angles(const BHEntity *entity, float roll)
     result.z = roll;
     return result;
 }
-int __cdecl bh_effect_directional_draw(BHEffectDrawContext *ctx, const BHEntity *entity)
+int bh_effect_directional_draw(BHEffectDrawContext *ctx, const BHEntity *entity)
 {
     BHVec3 rotation;
     float phase, angle;
@@ -39,7 +39,7 @@ int __cdecl bh_effect_directional_draw(BHEffectDrawContext *ctx, const BHEntity 
     combine(&status, bh_flare_queue(ctx->queue, &entity->position, 4, 50, ctx->timed_texture, 0, 0, 0, angle));
     return status;
 }
-int __cdecl bh_effect_variable_draw(BHEffectDrawContext *ctx, const BHEntity *entity)
+int bh_effect_variable_draw(BHEffectDrawContext *ctx, const BHEntity *entity)
 {
     unsigned long model;
     float roll, strength, size;
@@ -59,7 +59,7 @@ int __cdecl bh_effect_variable_draw(BHEffectDrawContext *ctx, const BHEntity *en
     combine(&status, bh_flare_queue(ctx->queue, &entity->position, size, strength, ctx->random_texture, 0, 0, 0, 0));
     return status;
 }
-int __cdecl bh_effect_fixed_draw(BHEffectDrawContext *ctx, const BHEntity *entity)
+int bh_effect_fixed_draw(BHEffectDrawContext *ctx, const BHEntity *entity)
 {
     BHVec3 rotation;
     int status = 1;

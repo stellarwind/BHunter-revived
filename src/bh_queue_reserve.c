@@ -2,7 +2,7 @@
 #include <stddef.h>
 typedef char reserve_stride[sizeof(BHDrawCommand) == 84 ? 1 : -1];
 typedef char reserve_link[offsetof(BHDrawCommand, next) == 0x50 ? 1 : -1];
-BHDrawCommand *__cdecl bh_queue_reserve(BHDrawQueue *q, long bucket)
+BHDrawCommand *bh_queue_reserve(BHDrawQueue *q, long bucket)
 {
     static const unsigned long headers[9] = {1, 2, 3, 4, 5, 0, 6, 7, 8};
     unsigned long header, tail, index;
@@ -33,7 +33,7 @@ BHDrawCommand *__cdecl bh_queue_reserve(BHDrawQueue *q, long bucket)
     q->error = BH_DRAW_OK;
     return command;
 }
-int __cdecl bh_queue_mode(BHDrawQueue *q, long bucket, unsigned long mode)
+int bh_queue_mode(BHDrawQueue *q, long bucket, unsigned long mode)
 {
     BHDrawCommand *command = bh_queue_reserve(q, bucket);
     if (!command)
@@ -42,7 +42,7 @@ int __cdecl bh_queue_mode(BHDrawQueue *q, long bucket, unsigned long mode)
     command->words[0] = mode;
     return 1;
 }
-int __cdecl bh_queue_mode_execute(BHRenderState *state, const BHDrawCommand *command, unsigned long *next)
+int bh_queue_mode_execute(BHRenderState *state, const BHDrawCommand *command, unsigned long *next)
 {
     int ok;
     if (!state || !command || !next)

@@ -43,13 +43,12 @@ typedef struct BHScriptExplosionState
    they do not suppress a finite secondary explosion or its damage broadcasts.
    Query callbacks may remove entities: released/recycled current slots stop
    the remaining source accesses with MUTATION instead of original stale use. */
-BHEntity *__cdecl bh_script_explosion_create(BHScriptExplosionContext *, const BHVec3 *, float duration,
-                                             float magnitude, float probability, unsigned long target);
-BHEntity *__cdecl bh_script_explosion_secondary(BHScriptExplosionContext *, const BHVec3 *, float duration,
-                                                float magnitude, float probability, unsigned long sound,
-                                                unsigned long target);
-void __cdecl bh_script_explosion_tick(BHEntity *);            /*00402af0*/
-void __cdecl bh_script_explosion_refresh(BHEntity *, void *); /*00402710*/
-int __cdecl bh_script_explosion_read(const BHEntity *, BHScriptExplosionState *);
-int __cdecl bh_script_explosion_write(BHEntity *, const BHScriptExplosionState *);
+BHEntity *bh_script_explosion_create(BHScriptExplosionContext *, const BHVec3 *, float duration, float magnitude,
+                                     float probability, unsigned long target);
+BHEntity *bh_script_explosion_secondary(BHScriptExplosionContext *, const BHVec3 *, float duration, float magnitude,
+                                        float probability, unsigned long sound, unsigned long target);
+void bh_script_explosion_tick(BHEntity *);            /*00402af0*/
+void bh_script_explosion_refresh(BHEntity *, void *); /*00402710*/
+int bh_script_explosion_read(const BHEntity *, BHScriptExplosionState *);
+int bh_script_explosion_write(BHEntity *, const BHScriptExplosionState *);
 #endif

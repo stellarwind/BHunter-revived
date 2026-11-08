@@ -10,7 +10,7 @@ static long sub(long a, long b)
 {
     return (long)((unsigned long)a - (unsigned long)b);
 }
-int __cdecl bh_world_edit_rebuild(BHWorldGeometry *p, unsigned long count)
+int bh_world_edit_rebuild(BHWorldGeometry *p, unsigned long count)
 {
     if (!bh_world_geometry_build(p, count))
         return 0;
@@ -28,7 +28,7 @@ static int snap(BHWorldEditPlacement *p, unsigned long count)
         bh_round_float((&p->geometry.position.x) + i, (double)((p->coordinates[i] / grid) * grid));
     return bh_world_edit_rebuild(&p->geometry, count);
 }
-int __cdecl bh_world_edit_move(BHWorldEditPlacement *p, unsigned long count, long x, long y, long z, int single)
+int bh_world_edit_move(BHWorldEditPlacement *p, unsigned long count, long x, long y, long z, int single)
 {
     unsigned long steps = 0;
     if (!p || !count || count > 65535)
@@ -50,7 +50,7 @@ int __cdecl bh_world_edit_move(BHWorldEditPlacement *p, unsigned long count, lon
     } while (p->geometry.owner);
     return 1;
 }
-int __cdecl bh_world_edit_rotate(BHWorldEditPlacement *p, unsigned long count, long turn, long pivot_x, long pivot_z)
+int bh_world_edit_rotate(BHWorldEditPlacement *p, unsigned long count, long turn, long pivot_x, long pivot_z)
 {
     long x, z;
     unsigned long steps = 0;

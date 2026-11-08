@@ -27,9 +27,9 @@ typedef struct BHModelDrawLitContext
    only when directional.enabled!=0; no normalization is added. Contexts and
    borrowed lists/config outlive traversal; no caller-owned data is copied
    except local_direction/scalars. Existing draw cache/model must be valid. */
-int __cdecl bh_model_draw_lit_context_init(BHModelDrawLitContext *, BHModelDrawContext *, const BHLightContext *,
-                                           const BHLightConfig *, const BHMat34 *world_to_model, long point_enabled,
-                                           float scale, unsigned long base_color);
+int bh_model_draw_lit_context_init(BHModelDrawLitContext *, BHModelDrawContext *, const BHLightContext *,
+                                   const BHLightConfig *, const BHMat34 *world_to_model, long point_enabled,
+                                   float scale, unsigned long base_color);
 /* Complete00459510. Original visibility/BSP painter order and side-specific
    lighting are preserved; emits through actual frozen00458310/00458430 owners.
    Dynamic point uses binary32 AABB midpoint and raw node normal on both sides;
@@ -40,5 +40,5 @@ int __cdecl bh_model_draw_lit_context_init(BHModelDrawLitContext *, BHModelDrawC
    leaf, and earlier emission is not rolled back on a later error. Shares draw
    task storage; callback/lifetime/nonreentrancy and PC53 contracts apply. Whole
    software dispatcher remains unfinished; native emission is explicit adapter. */
-int __cdecl bh_model_draw_lit(BHModelDrawLitContext *, long node, unsigned long mask);
+int bh_model_draw_lit(BHModelDrawLitContext *, long node, unsigned long mask);
 #endif

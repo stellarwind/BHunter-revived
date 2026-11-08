@@ -16,7 +16,7 @@
 static const double degrees_to_radians = 0.017453292519943295;
 static const float one_half = 0.5f;
 
-int __cdecl bh_scene_owner_init(BHSceneOwner *owner, BHSceneBindings *bindings, long target_width, long target_height)
+int bh_scene_owner_init(BHSceneOwner *owner, BHSceneBindings *bindings, long target_width, long target_height)
 {
     if (!owner || !bindings || target_width <= 0 || target_height <= 0)
         return 0;
@@ -33,8 +33,8 @@ static int inside(const BHWorldGeometry *world, const BHVec3 *point)
            point->y <= world->maximum.y && point->z >= world->minimum.z && point->z <= world->maximum.z;
 }
 
-int __cdecl bh_scene_owner_step(BHSceneOwner *owner, const BHVec3 *eye, const BHVec3 *angles, float fov_degrees,
-                                float near_z, float far_z, long camera_width, long camera_height)
+int bh_scene_owner_step(BHSceneOwner *owner, const BHVec3 *eye, const BHVec3 *angles, float fov_degrees, float near_z,
+                        float far_z, long camera_width, long camera_height)
 {
     BHSceneBindings *bindings;
     BHEntityScheduleContext *schedule;

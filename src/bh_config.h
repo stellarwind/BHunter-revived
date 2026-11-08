@@ -10,8 +10,8 @@ typedef struct BHInputProfile
     unsigned char payload[60];
     const struct BHInputProfile *baseline;
 } BHInputProfile;
-typedef void *(__cdecl *BHConfigAllocate)(unsigned long bytes, void *user);
-typedef void(__cdecl *BHConfigRelease)(void *pointer, void *user);
+typedef void *(*BHConfigAllocate)(unsigned long bytes, void *user);
+typedef void (*BHConfigRelease)(void *pointer, void *user);
 typedef struct BHConfigAllocator
 {
     BHConfigAllocate allocate;
@@ -49,25 +49,25 @@ typedef struct BHDeviceName
    On load failure retain the previous valid state; loaded pointer words are
    never followed. Disk payload remains 416 + N*76 bytes, no invented version.
    Current bound is 4096 profiles. Caller owns the allocator's lifetime. */
-int __cdecl bh_config_load(BHConfig *config, const char *path);
-int __cdecl bh_config_save(BHConfig *config, const char *path);
-int __cdecl bh_config_bootstrap(BHConfig *config, const char *path, const BHDeviceName *devices, unsigned long count);
+int bh_config_load(BHConfig *config, const char *path);
+int bh_config_save(BHConfig *config, const char *path);
+int bh_config_bootstrap(BHConfig *config, const char *path, const BHDeviceName *devices, unsigned long count);
 
 /* Source lifecycle/validation adapters, not original-function claims. */
-int __cdecl bh_config_init(BHConfig *config, const BHConfigAllocator *allocator);
-void __cdecl bh_config_dispose(BHConfig *config);
-int __cdecl bh_config_valid(const BHConfig *config);
+int bh_config_init(BHConfig *config, const BHConfigAllocator *allocator);
+void bh_config_dispose(BHConfig *config);
+int bh_config_valid(const BHConfig *config);
 /* Count-zero owning adapter for original menu profile cloning. Copy a current
    owned profile's complete76-byte record, borrowing its existing baseline,
    then insert immediately after it in the circular list. The context owns
    and frees the new allocation. Failure preserves ring and profile count;
    caller supplies name/flags and current selection. Profiles and baselines
    remain borrowed until config disposal or replacement by a successful load. */
-BHInputProfile *__cdecl bh_config_profile_clone_after(BHConfig *, BHInputProfile *current);
+BHInputProfile *bh_config_profile_clone_after(BHConfig *, BHInputProfile *current);
 /* Count-zero owning menu adapter. Removes a nondefault member only when more
    than one remains, returns its live previous selection, updates allocation
    tracking/ring/head and frees through the actual allocator. Failure leaves
    ring intact. No borrowed baseline may be freed while referenced. */
-BHInputProfile *__cdecl bh_config_profile_remove(BHConfig *, BHInputProfile *);
+BHInputProfile *bh_config_profile_remove(BHConfig *, BHInputProfile *);
 
 #endif

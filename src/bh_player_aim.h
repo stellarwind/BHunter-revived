@@ -8,5 +8,5 @@
    masked NaN at scaled +/-1; no repaired clamp is substituted. PC53 finite
    moderate controls/basis; CRTpow/sin/cos reuse, no original code execution.
    Body/entity/physics must be live, disjoint and remain owned by caller. */
-int __cdecl bh_player_aim_update(BHPhysicsStepBody *);
+int bh_player_aim_update(BHPhysicsStepBody *);
 #endif

@@ -2,11 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-static void *__cdecl allocate(unsigned long n, void *user)
+static void *allocate(unsigned long n, void *user)
 {
     return malloc(n);
 }
-static void __cdecl release(void *p, void *user)
+static void release(void *p, void *user)
 {
     free(p);
 }
@@ -17,7 +17,7 @@ static int fail(BHBlockLibrary *library, BHBspError error)
     return 0;
 }
 
-int __cdecl bh_blocks_init(BHBlockLibrary *library, const BHSceneAllocator *allocator)
+int bh_blocks_init(BHBlockLibrary *library, const BHSceneAllocator *allocator)
 {
     BHSceneAllocator memory;
     if (!library || (allocator && (!allocator->allocate || !allocator->release)))
@@ -34,7 +34,7 @@ int __cdecl bh_blocks_init(BHBlockLibrary *library, const BHSceneAllocator *allo
     library->allocator = memory;
     return 1;
 }
-void __cdecl bh_blocks_dispose(BHBlockLibrary *library)
+void bh_blocks_dispose(BHBlockLibrary *library)
 {
     unsigned long i;
     BHSceneAllocator memory;
@@ -101,7 +101,7 @@ static int names(const unsigned char *bytes, unsigned long size, BHBlockData *ou
     return BH_BSP_OK;
 }
 
-int __cdecl bh_blocks_decode_names(BHBlockLibrary *library, const void *bytes, unsigned long size)
+int bh_blocks_decode_names(BHBlockLibrary *library, const void *bytes, unsigned long size)
 {
     BHBlockLibrary next;
     unsigned long count, i;
@@ -129,7 +129,7 @@ int __cdecl bh_blocks_decode_names(BHBlockLibrary *library, const void *bytes, u
     *library = next;
     return 1;
 }
-long __cdecl bh_blocks_find(const BHBlockLibrary *library, const char *name)
+long bh_blocks_find(const BHBlockLibrary *library, const char *name)
 {
     unsigned long i;
     if (!library || !name)
@@ -162,7 +162,7 @@ static int text(BHBlockLibrary *library, BHVFile *file, unsigned char **bytes, u
     return 1;
 }
 
-int __cdecl bh_blocks_load(BHBlockLibrary *library, const char *list_path, const char *prefix, BHBspSearch search)
+int bh_blocks_load(BHBlockLibrary *library, const char *list_path, const char *prefix, BHBspSearch search)
 {
     BHBlockLibrary next;
     BHVFile *file;

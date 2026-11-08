@@ -65,7 +65,7 @@ static void groups(BHActorBasisContext *ctx, const long *definition, BHActorBasi
         ++*count;
     }
 }
-int __cdecl bh_actor_basis_build_groups(BHActorBasisContext *context)
+int bh_actor_basis_build_groups(BHActorBasisContext *context)
 {
     if (!context || !group_capacity(context))
         return 0;
@@ -83,7 +83,7 @@ static void sample(BHActorBasisContext *context, const BHVec3 *point, const BHVe
     out->point = *point;
     ++context->sample_count;
 }
-int __cdecl bh_actor_basis_acquire(BHActorBasisContext *context)
+int bh_actor_basis_acquire(BHActorBasisContext *context)
 {
     BHVec3 point = {0, 0, 0}, direction = {0, 0, 0};
     unsigned long i;

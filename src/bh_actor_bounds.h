@@ -14,7 +14,7 @@ typedef struct BHActorBoundsImage
 extern "C"
 {
 #endif
-    void __cdecl bh_actor_bounds_clamp(const void *bounds_image, void *point);
+    void bh_actor_bounds_clamp(const void *bounds_image, void *point);
 #ifdef __cplusplus
 }
 #endif

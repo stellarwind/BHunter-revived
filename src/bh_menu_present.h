@@ -23,11 +23,11 @@ typedef struct BHMenuPresent
     unsigned long capture, queued, dropped;
     int error;
 } BHMenuPresent;
-int __cdecl bh_menu_light_queue(BHDrawQueue *, unsigned long, long, float, float, float, float, float, unsigned long,
-                                unsigned long);
-int __cdecl bh_menu_light_execute(BHLightConfig *, const BHDrawCommand *, unsigned long *);
+int bh_menu_light_queue(BHDrawQueue *, unsigned long, long, float, float, float, float, float, unsigned long,
+                        unsigned long);
+int bh_menu_light_execute(BHLightConfig *, const BHDrawCommand *, unsigned long *);
 /* Whole0042abd0. Missing eye or application_mode>=1 suppresses everything.
    Capacity exhaustion drops individual commands while preserving call order.
    Finite moderate PC53 inputs; original PC24 remains unvalidated. */
-int __cdecl bh_menu_present(BHMenuPresent *);
+int bh_menu_present(BHMenuPresent *);
 #endif

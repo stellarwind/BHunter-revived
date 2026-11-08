@@ -339,7 +339,7 @@ static int run(BHSoftwareRaster *c, BHClipVertex *ring, int packed, int masked, 
     return 1;
 }
 #define KERNEL(P, N, B, M, S, L, Z)                                                                                    \
-    int __cdecl bh_raster_##P##_##N(BHSoftwareRaster *c, BHClipVertex *v)                                              \
+    int bh_raster_##P##_##N(BHSoftwareRaster *c, BHClipVertex *v)                                                      \
     {                                                                                                                  \
         return run(c, v, B, M, S, L, Z);                                                                               \
     }

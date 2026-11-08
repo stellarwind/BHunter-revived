@@ -25,10 +25,10 @@ typedef struct BHWeaponArcLifecycleContext
 } BHWeaponArcLifecycleContext;
 /* Complete004324a0. Exact weapon subset reset, one CRT rand/.8 level cue,
    then clear+108 AFTER synchronous real sound allocation. */
-int __cdecl bh_weapon_arc_activate(BHWeaponArcLifecycleContext *, BHEntity *weapon, const BHEntity *player);
+int bh_weapon_arc_activate(BHWeaponArcLifecycleContext *, BHEntity *weapon, const BHEntity *player);
 /* Complete00432510. Capture handle+100 before clearing target/charge, stop
    actual queued voice if nonsentinel, then clear+108 and set+100=-1. */
-int __cdecl bh_weapon_arc_deactivate(BHWeaponArcLifecycleContext *, BHEntity *weapon);
+int bh_weapon_arc_deactivate(BHWeaponArcLifecycleContext *, BHEntity *weapon);
 /* Complete00432c60. Consume latch+108, acquire/retain actual queried target,
    update signed charge with32bit wrap and real sound thresholds/lifetimes.
    Player position+0c/velocity+48/aim+280 and shared weapon fields remain LIVE
@@ -43,5 +43,5 @@ int __cdecl bh_weapon_arc_deactivate(BHWeaponArcLifecycleContext *, BHEntity *we
    Source guards diagnose absent methods, cycles, nonfinite fields and binding
    errors. Successful prior state/sound/query effects remain on later failure.
    PC53 nearest/masked moderate finite inputs; no Play or original execution. */
-int __cdecl bh_weapon_arc_track(BHWeaponArcLifecycleContext *, BHEntity *weapon, const BHEntity *player);
+int bh_weapon_arc_track(BHWeaponArcLifecycleContext *, BHEntity *weapon, const BHEntity *player);
 #endif

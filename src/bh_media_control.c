@@ -6,8 +6,8 @@ static BHCdNotify *notify(BHMediaControl *c)
 {
     return c && c->audio ? c->audio->notify : 0;
 }
-int __cdecl bh_cd_play_range(BHMediaControl *c, unsigned long from, unsigned long to, unsigned long ms,
-                             unsigned long frame, long repeat)
+int bh_cd_play_range(BHMediaControl *c, unsigned long from, unsigned long to, unsigned long ms, unsigned long frame,
+                     long repeat)
 {
     BHCdNotify *n = notify(c);
     if (!n || !n->cd)
@@ -21,7 +21,7 @@ int __cdecl bh_cd_play_range(BHMediaControl *c, unsigned long from, unsigned lon
     n->end_track = to;
     return bh_cd_play_retained(n);
 }
-void __cdecl bh_cd_stop(BHMediaControl *c)
+void bh_cd_stop(BHMediaControl *c)
 {
     BHCdNotify *n = notify(c);
     if (!n || !n->cd)
@@ -46,7 +46,7 @@ static unsigned long packed(float volume)
     word = (unsigned long)(v * 65535.0);
     return (word << 16) + word;
 }
-void __cdecl bh_cd_set_volume(BHMediaControl *c, float v)
+void bh_cd_set_volume(BHMediaControl *c, float v)
 {
     BHCdNotify *n = notify(c);
     if (!n || !n->cd)
@@ -61,7 +61,7 @@ void __cdecl bh_cd_set_volume(BHMediaControl *c, float v)
         c->aux_result = bh_audio_volume(n->cd->device, gain > 0 ? (long)(2000.0 * log10(gain)) : -10000);
     }
 }
-void __cdecl bh_wave_set_volume(BHMediaControl *c, float v)
+void bh_wave_set_volume(BHMediaControl *c, float v)
 {
     if (!c || !c->audio)
         return;

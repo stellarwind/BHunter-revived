@@ -28,5 +28,5 @@ typedef struct BHRemoteFire
    source contexts and actor/world lifetimes. No OS input or network gameplay.
    Finite moderate PC53. Missing owners/methods and malformed states reject
    after earlier effects; no guessed globals/vtables or original execution. */
-int __cdecl bh_remote_fire(BHRemoteFire *, BHEntity *, short shot_tick, unsigned long type, BHEntity *target);
+int bh_remote_fire(BHRemoteFire *, BHEntity *, short shot_tick, unsigned long type, BHEntity *target);
 #endif

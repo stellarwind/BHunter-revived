@@ -35,15 +35,14 @@ static void real_vehicle_draw(BHEntity *entity)
     BHScriptActorContext *ctx = bh_script_actor_context(entity);
     bh_script_actor_vehicle_draw(ctx->draw, entity);
 }
-void __cdecl bh_script_actor_present(BHEntity *entity)
+void bh_script_actor_present(BHEntity *entity)
 {
     BHEntityStep draw;
     memcpy(&draw, (char *)entity + 0xe8, 4);
     if (draw)
         draw(entity);
 }
-BHEntity *__cdecl bh_script_actor_construct(BHScriptActorConstructorContext *ctx, const BHVec3 *position,
-                                            unsigned long type)
+BHEntity *bh_script_actor_construct(BHScriptActorConstructorContext *ctx, const BHVec3 *position, unsigned long type)
 {
     BHScriptActorContext *callbacks;
     BHActorRouteContext *route;

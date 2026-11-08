@@ -1,6 +1,6 @@
 #include "bh_horizon_color.h"
 #include <string.h>
-int __cdecl bh_horizon_color_init(BHHorizonColor *c, BHTextureContext *textures)
+int bh_horizon_color_init(BHHorizonColor *c, BHTextureContext *textures)
 {
     if (!c || !textures || !textures->allocator.allocate || !textures->allocator.release)
         return 0;
@@ -9,7 +9,7 @@ int __cdecl bh_horizon_color_init(BHHorizonColor *c, BHTextureContext *textures)
     c->allocator = textures->allocator;
     return 1;
 }
-void __cdecl bh_horizon_color_dispose(BHHorizonColor *c)
+void bh_horizon_color_dispose(BHHorizonColor *c)
 {
     if (!c)
         return;
@@ -19,7 +19,7 @@ void __cdecl bh_horizon_color_dispose(BHHorizonColor *c)
         c->allocator.release(c->packed, c->allocator.user);
     memset(c, 0, sizeof(*c));
 }
-int __cdecl bh_horizon_color_prepare(BHHorizonColor *c, unsigned long mode, unsigned long color)
+int bh_horizon_color_prepare(BHHorizonColor *c, unsigned long mode, unsigned long color)
 {
     unsigned long row, i, base[3], constant[3], value[3], packed, j;
     BHTextureContext *q;

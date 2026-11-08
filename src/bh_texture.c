@@ -10,11 +10,11 @@ typedef char image_size[sizeof(BHTextureImage) == 0x70 ? 1 : -1];
 typedef char image_name[offsetof(BHTextureImage, name) == 0x1c ? 1 : -1];
 typedef char image_runs[offsetof(BHTextureImage, runs) == 0x48 ? 1 : -1];
 typedef char image_flags[offsetof(BHTextureImage, flags) == 0x50 ? 1 : -1];
-static void *__cdecl allocate(unsigned long bytes, void *user)
+static void *allocate(unsigned long bytes, void *user)
 {
     return malloc(bytes);
 }
-static void __cdecl release(void *p, void *user)
+static void release(void *p, void *user)
 {
     free(p);
 }
@@ -74,16 +74,16 @@ static int context_init(BHTextureContext *q, LPDIRECTDRAW draw, LPDIRECT3DDEVICE
     }
     return 1;
 }
-int __cdecl bh_texture_context_init(BHTextureContext *q, LPDIRECTDRAW draw, LPDIRECT3DDEVICE2 device,
-                                    const BHSceneAllocator *allocator)
+int bh_texture_context_init(BHTextureContext *q, LPDIRECTDRAW draw, LPDIRECT3DDEVICE2 device,
+                            const BHSceneAllocator *allocator)
 {
     return context_init(q, draw, device, allocator, 0);
 }
-int __cdecl bh_texture_context_init_software(BHTextureContext *q, LPDIRECTDRAW draw, const BHSceneAllocator *allocator)
+int bh_texture_context_init_software(BHTextureContext *q, LPDIRECTDRAW draw, const BHSceneAllocator *allocator)
 {
     return context_init(q, draw, NULL, allocator, 1);
 }
-void __cdecl bh_texture_context_dispose(BHTextureContext *q)
+void bh_texture_context_dispose(BHTextureContext *q)
 {
     unsigned long i;
     BHTextureSlot *s, *next;
@@ -147,7 +147,7 @@ HRESULT CALLBACK bh_texture_format_callback(LPDDSURFACEDESC desc, LPVOID context
         f->pixel = *p;
     return D3DENUMRET_OK;
 }
-int __cdecl bh_texture_formats(BHTextureContext *q)
+int bh_texture_formats(BHTextureContext *q)
 {
     unsigned long i;
     int ok = 1;
@@ -167,8 +167,8 @@ int __cdecl bh_texture_formats(BHTextureContext *q)
     }
     return ok;
 }
-BHTextureFormat *__cdecl bh_texture_request_format(BHTextureContext *q, unsigned long width, unsigned long height,
-                                                   unsigned long depth, unsigned long kind)
+BHTextureFormat *bh_texture_request_format(BHTextureContext *q, unsigned long width, unsigned long height,
+                                           unsigned long depth, unsigned long kind)
 {
     unsigned long i;
     if (!q)
@@ -190,7 +190,7 @@ BHTextureFormat *__cdecl bh_texture_request_format(BHTextureContext *q, unsigned
     error(q, BH_TEXTURE_FORMAT);
     return NULL;
 }
-int __cdecl bh_texture_slot_create(BHTextureContext *q, BHTextureFormat *f)
+int bh_texture_slot_create(BHTextureContext *q, BHTextureFormat *f)
 {
     BHTextureSlot *s;
     DDSURFACEDESC desc;
@@ -245,7 +245,7 @@ failed:
     q->allocator.release(s, q->allocator.user);
     return 0;
 }
-int __cdecl bh_texture_preallocate(BHTextureContext *q)
+int bh_texture_preallocate(BHTextureContext *q)
 {
     unsigned long i, remaining;
     if (!q || !q->device || !q->draw)
@@ -314,7 +314,7 @@ static void pixels_copy(BHTextureContext *q, BHTextureImage *image, BHTextureSlo
 
     ++q->pixel_uploads;
 }
-D3DTEXTUREHANDLE __cdecl bh_texture_resident(BHTextureContext *q, BHTextureImage *image)
+D3DTEXTUREHANDLE bh_texture_resident(BHTextureContext *q, BHTextureImage *image)
 {
     BHTextureSlot *s, *next;
     if (!q || !image || !image->source || !owned_format(q, image->format))

@@ -58,15 +58,15 @@ typedef struct BHRailWagonContext
    PC53/nearest/masked finite moderate geometry is required. Source guards
    reject foreign/dead pointers, open rail walks and invalid divisors; no
    original game/global ABI, physical playback or game startup is supplied. */
-BHEntity *__cdecl bh_rail_wagon_spawn(BHRailWagonContext *, const BHVec3 *, const BHVec3 *); /*004470c0*/
-void __cdecl bh_rail_wagon_draw(BHEntity *);                                                 /*00446160*/
-void __cdecl bh_rail_wagon_tick(BHEntity *);                                                 /*004462f0*/
-void __cdecl bh_rail_wagon_follow(BHEntity *);                                               /*00446b10*/
-void __cdecl bh_rail_wagon_query(BHEntity *, void *);                                        /*00446e00*/
+BHEntity *bh_rail_wagon_spawn(BHRailWagonContext *, const BHVec3 *, const BHVec3 *); /*004470c0*/
+void bh_rail_wagon_draw(BHEntity *);                                                 /*00446160*/
+void bh_rail_wagon_tick(BHEntity *);                                                 /*004462f0*/
+void bh_rail_wagon_follow(BHEntity *);                                               /*00446b10*/
+void bh_rail_wagon_query(BHEntity *, void *);                                        /*00446e00*/
 /* Source component access/binding adapters. Pose maps actual opaque0(+18..47),
    state maps payload+4; shared actor next/previous/class offsets are retained.
    Private persistent owner metadata is outside original wagon/rider fields. */
-BHRailWagonState *__cdecl bh_rail_wagon_state(BHEntity *);
-BHRailWagonPose *__cdecl bh_rail_wagon_pose(BHEntity *);
-int __cdecl bh_rail_wagon_set_rider(BHEntity *, BHEntity *, BHRailSegment *);
+BHRailWagonState *bh_rail_wagon_state(BHEntity *);
+BHRailWagonPose *bh_rail_wagon_pose(BHEntity *);
+int bh_rail_wagon_set_rider(BHEntity *, BHEntity *, BHRailSegment *);
 #endif

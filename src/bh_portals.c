@@ -39,7 +39,7 @@ static int valid_ring(BHPortalNode *node, unsigned long count)
     return current == node;
 }
 
-int __cdecl bh_portals_match(BHPortalNode *node, unsigned long ring_count)
+int bh_portals_match(BHPortalNode *node, unsigned long ring_count)
 {
     unsigned long slot, other_slot, k;
     BHPortalNode *other;

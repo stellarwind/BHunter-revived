@@ -20,6 +20,6 @@ typedef struct BHScriptArgs
    Names use original case-insensitive prefix matching, first active slot wins.
    Values/selector must be valid; definitions must be valid on variable paths.
    Token/name bytes follow the original ASCII/CRT classification contract. */
-char *__cdecl bh_script_arg_int(char *cursor, const BHScriptArgs *definitions, int *value, int *selector);
-char *__cdecl bh_script_arg_float(char *cursor, const BHScriptArgs *definitions, float *value, int *selector);
+char *bh_script_arg_int(char *cursor, const BHScriptArgs *definitions, int *value, int *selector);
+char *bh_script_arg_float(char *cursor, const BHScriptArgs *definitions, float *value, int *selector);
 #endif

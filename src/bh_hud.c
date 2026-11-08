@@ -14,7 +14,7 @@ static int fail(BHHudContext *c, BHHudError e)
         c->error = e;
     return 0;
 }
-int __cdecl bh_hud_setup(BHHudContext *c, const BHHudPlayer *p)
+int bh_hud_setup(BHHudContext *c, const BHHudPlayer *p)
 {
     BHAttachmentContext *a;
     BHRadarFrame *f;

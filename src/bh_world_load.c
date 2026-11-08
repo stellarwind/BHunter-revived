@@ -41,7 +41,7 @@ static void sync(BHEditorWorld *w)
         setword(n->entity, 0x1c8, (unsigned long)(o ? o->entity : 0));
     }
 }
-int __cdecl bh_world_load(BHWorldLoad *c, const char *name)
+int bh_world_load(BHWorldLoad *c, const char *name)
 {
     BHEditorWorld *w;
     BHScriptVMContext *vm;
@@ -285,7 +285,7 @@ int __cdecl bh_world_load(BHWorldLoad *c, const char *name)
     return 1;
 }
 
-void __cdecl bh_world_load_dispose_index(BHWorldLoad *c)
+void bh_world_load_dispose_index(BHWorldLoad *c)
 {
     if (!c)
         return;

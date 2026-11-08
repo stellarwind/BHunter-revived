@@ -39,19 +39,19 @@ typedef struct BHContactEffects
    Texture identifiers and optional camera yaw are explicit caller bindings.
    Generated commands preserve original selectors/data; no renderer callback
    pointers, texture objects or Direct3D backend implementations are fabricated. */
-int __cdecl bh_contact_effects_init(BHContactEffects *context, BHEntityPool *pool, BHDrawQueue *queue,
-                                    unsigned long spark, unsigned long quad, unsigned long rays, unsigned long line);
-int __cdecl bh_contact_effects_dispose(BHContactEffects *context);
-BHSparkState *__cdecl bh_contact_spark_state(BHContactEffects *context, BHEntity *entity);
-BHImpactState *__cdecl bh_contact_impact_state(BHContactEffects *context, BHEntity *entity);
+int bh_contact_effects_init(BHContactEffects *context, BHEntityPool *pool, BHDrawQueue *queue, unsigned long spark,
+                            unsigned long quad, unsigned long rays, unsigned long line);
+int bh_contact_effects_dispose(BHContactEffects *context);
+BHSparkState *bh_contact_spark_state(BHContactEffects *context, BHEntity *entity);
+BHImpactState *bh_contact_impact_state(BHContactEffects *context, BHEntity *entity);
 /* 00407510 installs actual 004073f0 tick / 004073b0 refresh callbacks.
    Successful allocation consumes exactly eight shared CRT random draws.
    Return source handle added for ownership, not an original EAX claim. */
-BHEntity *__cdecl bh_contact_spark_create(BHContactEffects *context, const BHVec3 *point, float lifetime, float speed);
+BHEntity *bh_contact_spark_create(BHContactEffects *context, const BHVec3 *point, float lifetime, float speed);
 /* Source adapter for the verified physics special-surface allocation fields.
    flags bit 2 takes priority over 4, selects 16-unit quad vs 12-unit rays.
    Real callbacks: age 00407ad0 and refresh 00407670 / 00407720. No audio is queued
    here; the full physics effects/audio/network orchestration remains WIP. */
-BHEntity *__cdecl bh_contact_impact_create(BHContactEffects *context, const BHVec3 *point, const BHVec3 *normal,
-                                           unsigned long flags);
+BHEntity *bh_contact_impact_create(BHContactEffects *context, const BHVec3 *point, const BHVec3 *normal,
+                                   unsigned long flags);
 #endif

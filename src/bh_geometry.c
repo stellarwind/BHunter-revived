@@ -8,11 +8,11 @@ typedef char face_info_layout[sizeof(BHFaceInfo) == 44 && offsetof(BHFaceInfo, n
    without a node normal retain its previous normal, even across owners. */
 static BHFaceInfo enumeration_descriptor;
 #include "bh_geometry_core.inc"
-static void *__cdecl allocate(unsigned long n, void *user)
+static void *allocate(unsigned long n, void *user)
 {
     return malloc(n);
 }
-static void __cdecl release(void *p, void *user)
+static void release(void *p, void *user)
 {
     free(p);
 }
@@ -27,7 +27,7 @@ static int face_index(BHGeometry *g, long face)
     return g && g->bsp && g->face_flags && face >= 0 && (unsigned long)face < g->bsp->counts[3];
 }
 
-int __cdecl bh_geometry_init(BHGeometry *g, const BHBsp *bsp, const BHSceneAllocator *allocator)
+int bh_geometry_init(BHGeometry *g, const BHBsp *bsp, const BHSceneAllocator *allocator)
 {
     BHGeometry next;
     if (!g || !bsp || !bsp->storage || !bsp->faces || !bsp->edges || !bsp->vertices || !bsp->nodes || !bsp->leaves ||
@@ -52,7 +52,7 @@ int __cdecl bh_geometry_init(BHGeometry *g, const BHBsp *bsp, const BHSceneAlloc
     *g = next;
     return 1;
 }
-int __cdecl bh_geometry_dispose(BHGeometry *g)
+int bh_geometry_dispose(BHGeometry *g)
 {
     if (!g || g->enumerating)
         return fail(g, BH_BSP_ARGUMENT);
@@ -61,7 +61,7 @@ int __cdecl bh_geometry_dispose(BHGeometry *g)
     memset(g, 0, sizeof(*g));
     return 1;
 }
-int __cdecl bh_geometry_set_flags(BHGeometry *g, long face, unsigned long flags)
+int bh_geometry_set_flags(BHGeometry *g, long face, unsigned long flags)
 {
     BHGeometryCoreView view;
     if (!face_index(g, face))
@@ -71,7 +71,7 @@ int __cdecl bh_geometry_set_flags(BHGeometry *g, long face, unsigned long flags)
     g->error = BH_BSP_OK;
     return 1;
 }
-int __cdecl bh_geometry_get_flags(BHGeometry *g, long face, unsigned long *flags)
+int bh_geometry_get_flags(BHGeometry *g, long face, unsigned long *flags)
 {
     BHGeometryCoreView view;
     if (!face_index(g, face) || !flags)
@@ -81,7 +81,7 @@ int __cdecl bh_geometry_get_flags(BHGeometry *g, long face, unsigned long *flags
     g->error = BH_BSP_OK;
     return 1;
 }
-int __cdecl bh_geometry_vertex(BHGeometry *g, long face, long ordinal, BHVec3 *out)
+int bh_geometry_vertex(BHGeometry *g, long face, long ordinal, BHVec3 *out)
 {
     const BHBsp *b;
     BHGeometryCoreView view;
@@ -107,7 +107,7 @@ int __cdecl bh_geometry_vertex(BHGeometry *g, long face, long ordinal, BHVec3 *o
     g->error = BH_BSP_OK;
     return 1;
 }
-int __cdecl bh_geometry_face(BHGeometry *g, long face, BHFaceInfo *out)
+int bh_geometry_face(BHGeometry *g, long face, BHFaceInfo *out)
 {
     const BHBsp *b;
     BHFaceInfo next;
@@ -171,7 +171,7 @@ int __cdecl bh_geometry_face(BHGeometry *g, long face, BHFaceInfo *out)
     g->error = BH_BSP_OK;
     return 1;
 }
-int __cdecl bh_geometry_each_face(BHGeometry *g, BHFaceCallback callback, void *user)
+int bh_geometry_each_face(BHGeometry *g, BHFaceCallback callback, void *user)
 {
     unsigned long i;
     int active;

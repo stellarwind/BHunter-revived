@@ -33,6 +33,6 @@ typedef struct BHRemoteMessages
    The portable clock packet includes all eight slots. PC53 finite moderate state. */
 int bh_remote_roster(BHRemoteMessages *, unsigned int slot, int host);
 int bh_remote_clear(BHRemoteMessages *);
-int __cdecl bh_remote_host_message(BHRemoteMessages *, void *, unsigned long size, unsigned long capacity);
-int __cdecl bh_remote_client_message(BHRemoteMessages *, void *, unsigned long size, unsigned long capacity);
+int bh_remote_host_message(BHRemoteMessages *, void *, unsigned long size, unsigned long capacity);
+int bh_remote_client_message(BHRemoteMessages *, void *, unsigned long size, unsigned long capacity);
 #endif

@@ -38,7 +38,7 @@ static int live(BHEffectOrbitTickContext *ctx, BHEntity *entity, unsigned long g
 {
     return bh_entity_is_active(ctx->core->effects->pool, entity) && entity->generation == generation;
 }
-int __cdecl bh_effect_orbit_tick_bind(BHEffectOrbitTickContext *ctx, BHEntity *entity)
+int bh_effect_orbit_tick_bind(BHEffectOrbitTickContext *ctx, BHEntity *entity)
 {
     if (!ctx || !ctx->core || !entity || !ctx->core->effects || !ctx->core->effects->segment ||
         !ctx->core->effects->contacts || !ctx->core->effects->markers || !ctx->core->trails || !ctx->core->explosion ||
@@ -110,7 +110,7 @@ static BHEntity *receiver(BHEffectOrbitTickContext *ctx, BHWorldSegmentHit *hit)
     ctx->error = 2;
     return 0;
 }
-void __cdecl bh_effect_orbit_tick(BHEntity *entity)
+void bh_effect_orbit_tick(BHEntity *entity)
 {
     BHEffectProjectileContext *core;
     BHEffectOrbitTickContext *ctx;

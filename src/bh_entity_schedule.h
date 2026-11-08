@@ -46,12 +46,11 @@ typedef struct BHEntityScheduleContext
    recovered six-plane convex clip owner. Input is four camera-projected points
    in cyclic order. The result ring borrows vertices and scratch from caller;
    next invocation invalidates it. A NULL result with BH_CLIP_OK is culled. */
-BHClipVertex *__cdecl bh_entity_schedule_clip_portal(BHClipContext *clip, BHClipVertex vertices[4],
-                                                     const BHVec3 projected[4]);
+BHClipVertex *bh_entity_schedule_clip_portal(BHClipContext *clip, BHClipVertex vertices[4], const BHVec3 projected[4]);
 /* 00409f20: each tick decrements the 30-frame refresh callback installed by
    the schedule pass, then removes it at zero. */
-void __cdecl bh_entity_schedule_tick(BHEntityScheduleRoom *room);
+void bh_entity_schedule_tick(BHEntityScheduleRoom *room);
 /* 00409f40: resource/child/linked-room/overlay/portal order. All room and
    entity bindings are borrowed; the caller owns their stable lifetime. */
-int __cdecl bh_entity_schedule(BHEntityScheduleContext *context, BHEntityScheduleRoom *room);
+int bh_entity_schedule(BHEntityScheduleContext *context, BHEntityScheduleRoom *room);
 #endif

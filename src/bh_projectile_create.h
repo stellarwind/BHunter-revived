@@ -24,14 +24,14 @@ typedef struct BHProjectileCreateContext
    borrowed. Homing target must have a real synchronous event3 query.
    Original unused/recycled words remain unchanged, including ballistic12c
    and homing100..108 when no target is supplied. No original code executed. */
-BHEntity *__cdecl bh_projectile_create_ballistic(BHProjectileCreateContext *, BHWorldGeometry *, BHEntity *source,
-                                                 const BHVec3 *, const BHVec3 *, float lifetime);
-BHEntity *__cdecl bh_projectile_create_homing(BHProjectileCreateContext *, BHWorldGeometry *, BHEntity *source,
-                                              const BHVec3 *, const BHVec3 *, float lifetime, BHEntity *target);
+BHEntity *bh_projectile_create_ballistic(BHProjectileCreateContext *, BHWorldGeometry *, BHEntity *source,
+                                         const BHVec3 *, const BHVec3 *, float lifetime);
+BHEntity *bh_projectile_create_homing(BHProjectileCreateContext *, BHWorldGeometry *, BHEntity *source, const BHVec3 *,
+                                      const BHVec3 *, float lifetime, BHEntity *target);
 /* Whole visual producers0043e620/0043e710/00441ce0. Actual queue owners,
    image identities and PC53 profile; no original backend invocation.
    Return0 queue-full (other producers still attempted),-1 binding error. */
-int __cdecl bh_projectile_ballistic_draw(BHProjectileDrawContext *, const BHEntity *);
-int __cdecl bh_projectile_homing_draw(BHProjectileDrawContext *, const BHEntity *);
-int __cdecl bh_projectile_pulse_draw(BHProjectileDrawContext *, const BHEntity *);
+int bh_projectile_ballistic_draw(BHProjectileDrawContext *, const BHEntity *);
+int bh_projectile_homing_draw(BHProjectileDrawContext *, const BHEntity *);
+int bh_projectile_pulse_draw(BHProjectileDrawContext *, const BHEntity *);
 #endif

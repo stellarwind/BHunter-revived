@@ -27,11 +27,11 @@ typedef struct Chunk
     BHEntity *slots;
     unsigned char *live;
 } Chunk;
-static void *__cdecl allocate(unsigned long size, void *user)
+static void *allocate(unsigned long size, void *user)
 {
     return malloc(size);
 }
-static void __cdecl release(void *pointer, void *user)
+static void release(void *pointer, void *user)
 {
     free(pointer);
 }
@@ -66,7 +66,7 @@ static int active(const BHEntityPool *pool, const BHEntity *entity)
     state = membership(pool, entity);
     return state && *state;
 }
-int __cdecl bh_entity_is_active(const BHEntityPool *pool, const BHEntity *entity)
+int bh_entity_is_active(const BHEntityPool *pool, const BHEntity *entity)
 {
     return active(pool, entity);
 }
@@ -84,7 +84,7 @@ static Chunk *new_chunk(BHEntityPool *pool, unsigned long count, int zero)
         memset(chunk->slots, 0, count * 864);
     return chunk;
 }
-int __cdecl bh_entities_init(BHEntityPool *pool, unsigned long count, const BHSceneAllocator *allocator)
+int bh_entities_init(BHEntityPool *pool, unsigned long count, const BHSceneAllocator *allocator)
 {
     BHEntityPool next;
     Chunk *chunk;
@@ -123,7 +123,7 @@ int __cdecl bh_entities_init(BHEntityPool *pool, unsigned long count, const BHSc
     *pool = next;
     return 1;
 }
-int __cdecl bh_entities_dispose(BHEntityPool *pool)
+int bh_entities_dispose(BHEntityPool *pool)
 {
     Chunk *chunk, *next;
     BHSceneAllocator memory;
@@ -143,7 +143,7 @@ int __cdecl bh_entities_dispose(BHEntityPool *pool)
     pool->allocator = memory;
     return 1;
 }
-BHEntity *__cdecl bh_entity_acquire(BHEntityPool *pool)
+BHEntity *bh_entity_acquire(BHEntityPool *pool)
 {
     BHEntity *entity;
     Chunk *chunk;
@@ -215,7 +215,7 @@ BHEntity *__cdecl bh_entity_acquire(BHEntityPool *pool)
     pool->error = BH_ENTITY_OK;
     return entity;
 }
-int __cdecl bh_entity_set_query(BHEntityPool *pool, BHEntity *entity, BHEntityCallback callback)
+int bh_entity_set_query(BHEntityPool *pool, BHEntity *entity, BHEntityCallback callback)
 {
     if (!active(pool, entity))
         return fail(pool, BH_ENTITY_ARGUMENT);
@@ -241,7 +241,7 @@ int __cdecl bh_entity_set_query(BHEntityPool *pool, BHEntity *entity, BHEntityCa
     pool->error = BH_ENTITY_OK;
     return 1;
 }
-int __cdecl bh_entity_release(BHEntityPool *pool, BHEntity *entity)
+int bh_entity_release(BHEntityPool *pool, BHEntity *entity)
 {
     if (!active(pool, entity))
         return fail(pool, BH_ENTITY_ARGUMENT);
@@ -269,7 +269,7 @@ int __cdecl bh_entity_release(BHEntityPool *pool, BHEntity *entity)
     pool->error = BH_ENTITY_OK;
     return 1;
 }
-int __cdecl bh_entities_focus(BHEntityPool *pool, BHEntity *entity)
+int bh_entities_focus(BHEntityPool *pool, BHEntity *entity)
 {
     if (!pool || (entity && !active(pool, entity)))
         return fail(pool, BH_ENTITY_ARGUMENT);
@@ -355,17 +355,17 @@ static int dispatch(BHEntityPool *pool, int refresh)
     --pool->dispatch_depth;
     return 1;
 }
-int __cdecl bh_entities_step(BHEntityPool *pool)
+int bh_entities_step(BHEntityPool *pool)
 {
     return dispatch(pool, 0);
 }
-int __cdecl bh_entities_refresh(BHEntityPool *pool)
+int bh_entities_refresh(BHEntityPool *pool)
 {
     return dispatch(pool, 1);
 }
 
-int __cdecl bh_entities_query(BHEntityPool *pool, unsigned long mask, unsigned long value, const BHVec3 *center,
-                              float radius, void *packet)
+int bh_entities_query(BHEntityPool *pool, unsigned long mask, unsigned long value, const BHVec3 *center, float radius,
+                      void *packet)
 {
     BHEntity *entity, *next;
     unsigned long current_generation;
@@ -446,7 +446,7 @@ int __cdecl bh_entities_query(BHEntityPool *pool, unsigned long mask, unsigned l
     --pool->dispatch_depth;
     return 1;
 }
-int __cdecl bh_entities_valid(const BHEntityPool *pool)
+int bh_entities_valid(const BHEntityPool *pool)
 {
     const BHEntity *entity, *previous = NULL;
     Chunk *chunk;

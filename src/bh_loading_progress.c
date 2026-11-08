@@ -3,7 +3,7 @@
 
 static BHLoadingProgress *binding;
 
-void __cdecl bh_loading_progress(float fraction)
+void bh_loading_progress(float fraction)
 {
     BHLoadingProgress *owner = binding;
     if (!owner)
@@ -13,7 +13,7 @@ void __cdecl bh_loading_progress(float fraction)
     owner->display_result = bh_loading_display(owner->display, fraction);
 }
 
-int __cdecl bh_loading_progress_install(BHLoadingProgress *owner)
+int bh_loading_progress_install(BHLoadingProgress *owner)
 {
     if (!owner || !owner->display || (binding && binding != owner))
         return 0;
@@ -22,7 +22,7 @@ int __cdecl bh_loading_progress_install(BHLoadingProgress *owner)
     return 1;
 }
 
-void __cdecl bh_loading_progress_remove(BHLoadingProgress *owner)
+void bh_loading_progress_remove(BHLoadingProgress *owner)
 {
     if (owner && binding == owner)
     {

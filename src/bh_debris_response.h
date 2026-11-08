@@ -43,19 +43,19 @@ typedef struct BHDebrisOwnerPacket
    Caller keeps entity position and physics pose translation synchronized.
    Bind installs the real response query; it supplies no unrecovered tick or
    renderer. Existing real step/refresh callbacks remain caller-owned. */
-int __cdecl bh_debris_context_init(BHDebrisContext *context, BHEntityPool *pool, BHSoundQueue *sound,
-                                   unsigned long contact_sound, BHEntity **registry, unsigned long capacity);
-int __cdecl bh_debris_context_dispose(BHDebrisContext *context);
-int __cdecl bh_debris_bind(BHDebrisContext *context, BHDebrisBody *body, BHEntity *entity, BHPhysicsState *physics,
-                           float mass, float friction, const BHVec3 *inertia);
-int __cdecl bh_debris_unbind(BHDebrisBody *body);
+int bh_debris_context_init(BHDebrisContext *context, BHEntityPool *pool, BHSoundQueue *sound,
+                           unsigned long contact_sound, BHEntity **registry, unsigned long capacity);
+int bh_debris_context_dispose(BHDebrisContext *context);
+int bh_debris_bind(BHDebrisContext *context, BHDebrisBody *body, BHEntity *entity, BHPhysicsState *physics, float mass,
+                   float friction, const BHVec3 *inertia);
+int bh_debris_unbind(BHDebrisBody *body);
 /* Complete 0043c8f0: event 1 blast, 2 contact, 6 stop, 17 detach, 20 retire;
    other events leave state alone. Packets must have the corresponding layout.
    PC53 finite input contract. Original masked zero-distance/mass/inertia
    divisions are retained (may produce nonfinite results); not sanitized.
    Sound is queued after response/damping, before sleep reset; never played. */
-void __cdecl bh_debris_receive(BHEntity *entity, void *packet);
+void bh_debris_receive(BHEntity *entity, void *packet);
 /* Complete 0043c8b0: remove first registry occurrence, shift through sentinel,
    then release the entity even when absent from the registry. */
-void __cdecl bh_debris_remove(BHEntity *entity);
+void bh_debris_remove(BHEntity *entity);
 #endif

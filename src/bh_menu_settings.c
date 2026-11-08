@@ -16,7 +16,7 @@ static void refresh(BHMenuSettingsMenu *menu, long index)
     if (method)
         method(menu, index);
 }
-void __cdecl bh_menu_submenu_first(BHMenuSettings *s)
+void bh_menu_submenu_first(BHMenuSettings *s)
 {
     if (!s || !s->ship_menu)
         return;
@@ -36,19 +36,19 @@ static void assign(BHMenuSettings *s, BHMenuSettingsMenu *menu, const unsigned c
     }
     refresh(menu, index);
 }
-void __cdecl bh_menu_keys_motion(BHMenuSettings *s, BHMenuSettingsMenu *m, const unsigned char *p, long i)
+void bh_menu_keys_motion(BHMenuSettings *s, BHMenuSettingsMenu *m, const unsigned char *p, long i)
 {
     assign(s, m, p, i, 0x1c, 6);
 }
-void __cdecl bh_menu_keys_weapons(BHMenuSettings *s, BHMenuSettingsMenu *m, const unsigned char *p, long i)
+void bh_menu_keys_weapons(BHMenuSettings *s, BHMenuSettingsMenu *m, const unsigned char *p, long i)
 {
     assign(s, m, p, i, 0x28, 9);
 }
-void __cdecl bh_menu_keys_camera(BHMenuSettings *s, BHMenuSettingsMenu *m, const unsigned char *p, long i)
+void bh_menu_keys_camera(BHMenuSettings *s, BHMenuSettingsMenu *m, const unsigned char *p, long i)
 {
     assign(s, m, p, i, 0x31, 9);
 }
-void __cdecl bh_menu_keys_extra(BHMenuSettings *s, BHMenuSettingsMenu *m, const unsigned char *p, long i)
+void bh_menu_keys_extra(BHMenuSettings *s, BHMenuSettingsMenu *m, const unsigned char *p, long i)
 {
     assign(s, m, p, i, 0x3a, 10);
 }

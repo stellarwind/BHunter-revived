@@ -19,8 +19,8 @@ static unsigned short current_tick(BHActorLaunchContext *ctx)
     return route && route->live_tick ? bh_actor_route_now(route) : ctx->tick;
 }
 
-BHEntity *__cdecl bh_actor_launch(BHActorLaunchContext *ctx, BHWorldGeometry *world, unsigned long type, long token,
-                                  float speed, long tag)
+BHEntity *bh_actor_launch(BHActorLaunchContext *ctx, BHWorldGeometry *world, unsigned long type, long token,
+                          float speed, long tag)
 {
     unsigned long r, wire, i;
     unsigned char payload[9];
@@ -93,7 +93,7 @@ BHEntity *__cdecl bh_actor_launch(BHActorLaunchContext *ctx, BHWorldGeometry *wo
     }
     return bh_actor_construct_room(ctx->actors, world, type, token, speed, (unsigned long)tag, r);
 }
-int __cdecl bh_actor_launch_receive(BHActorLaunchContext *ctx, void *bytes, unsigned long size, unsigned long capacity)
+int bh_actor_launch_receive(BHActorLaunchContext *ctx, void *bytes, unsigned long size, unsigned long capacity)
 {
     BHWorldGeometry *world = 0;
     BHVec3 position;

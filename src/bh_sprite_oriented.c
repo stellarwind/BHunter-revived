@@ -131,7 +131,7 @@ static int emit_segment(BHSpriteOrientedContext *c, BHSpriteOrientedVertex *a, B
                (v[0].u + v[1].u) * middle, (v[0].v + v[1].v) * middle, a->texture_start);
     return polygon(c, v, narrow_near_0, 3) && polygon(c, v, narrow_near_1, 3) && polygon(c, v, narrow_near_2, 3);
 }
-int __cdecl bh_sprite_oriented_ribbon(BHSpriteOrientedContext *c, BHSpriteOrientedVertex *head)
+int bh_sprite_oriented_ribbon(BHSpriteOrientedContext *c, BHSpriteOrientedVertex *head)
 {
     BHSpriteOrientedVertex *p, *q;
     unsigned long n = 0;
@@ -218,7 +218,7 @@ int __cdecl bh_sprite_oriented_ribbon(BHSpriteOrientedContext *c, BHSpriteOrient
     ++c->paths_emitted;
     return 1;
 }
-int __cdecl bh_sprite_oriented_draw(BHSpriteOrientedContext *c)
+int bh_sprite_oriented_draw(BHSpriteOrientedContext *c)
 {
     BHSpriteOrientedVertex *p, *next, *first, *v;
     unsigned long original, steps = 0, back_steps;

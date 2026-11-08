@@ -50,8 +50,8 @@ typedef struct BHSpriteOrientedContext
    performs the masked division, then unordered comparison selects original
    float -0.8 clamp, keeping finite corners and original invalid sticky flag.
    The caller's required FP profile masks traps; sticky status is not cleared. */
-int __cdecl bh_sprite_oriented_ribbon(BHSpriteOrientedContext *, BHSpriteOrientedVertex *head);
+int bh_sprite_oriented_ribbon(BHSpriteOrientedContext *, BHSpriteOrientedVertex *head);
 /* Complete original 004569b0 near-plane clipping and chain dispatch. */
-int __cdecl bh_sprite_oriented_draw(BHSpriteOrientedContext *);
+int bh_sprite_oriented_draw(BHSpriteOrientedContext *);
 
 #endif

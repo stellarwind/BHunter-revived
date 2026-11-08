@@ -31,6 +31,6 @@ typedef struct BHSpriteBillboardContext
    modulation is a distinct float ninth argument (omitted by old decompiler
    signature). Returns 1 on success including depth/screen cull (emitted=0).
    Emitter consumes the clipped ring synchronously and must not retain it. */
-int __cdecl bh_sprite_billboard_draw(BHSpriteBillboardContext *, BHTextureImage *, float x, float y, float z,
-                                     float width, float height, float angle, unsigned long flags, float modulation);
+int bh_sprite_billboard_draw(BHSpriteBillboardContext *, BHTextureImage *, float x, float y, float z, float width,
+                             float height, float angle, unsigned long flags, float modulation);
 #endif

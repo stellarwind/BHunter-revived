@@ -18,7 +18,7 @@ typedef struct BHRemoteTick
    Private source context at payload+540 installs the real step callback.
    PC53 finite moderate fields, coherent borrowed world and actor lifetimes;
    source guards preserve previous channel/effect changes on later failure. */
-int __cdecl bh_remote_tick(BHRemoteTick *, BHEntity *);
-int __cdecl bh_remote_tick_bind(BHRemoteTick *, BHEntity *);
-void __cdecl bh_remote_step(BHEntity *);
+int bh_remote_tick(BHRemoteTick *, BHEntity *);
+int bh_remote_tick_bind(BHRemoteTick *, BHEntity *);
+void bh_remote_step(BHEntity *);
 #endif

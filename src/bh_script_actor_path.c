@@ -9,15 +9,14 @@ static float store(double v)
     bh_round_float(&r, v);
     return r;
 }
-void __cdecl bh_script_actor_linear(float t, BHVec3 *o, const BHVec3 *a, const BHVec3 *b, const BHVec3 *unused1,
-                                    const BHVec3 *unused2)
+void bh_script_actor_linear(float t, BHVec3 *o, const BHVec3 *a, const BHVec3 *b, const BHVec3 *unused1,
+                            const BHVec3 *unused2)
 {
     (void)unused1;
     (void)unused2;
     bh_vec3_interpolate(t, o, a, b);
 }
-void __cdecl bh_script_actor_curve(float t, BHVec3 *o, const BHVec3 *a, const BHVec3 *b, const BHVec3 *c,
-                                   const BHVec3 *d)
+void bh_script_actor_curve(float t, BHVec3 *o, const BHVec3 *a, const BHVec3 *b, const BHVec3 *c, const BHVec3 *d)
 {
     float angle = store((double)t * 1.5707963267948966), u, v, ly, lz, one;
     double cs, sn, mu, mv, lx, rx, ry, rz;

@@ -3,7 +3,7 @@
 #include "bh_round.h"
 #include <math.h>
 #include <float.h>
-double __cdecl bh_geometry_radius(const BHBsp *bsp)
+double bh_geometry_radius(const BHBsp *bsp)
 {
     const BHBspNode *node;
     double x, y, z, minimum, maximum;

@@ -1,6 +1,6 @@
 /* Route/smoke subpath439bfe..439dcd of00439910. Not another original owner.
    Returns -1 for a checked source pursuit failure,0 without smoke,1 with smoke. */
-int __cdecl bh_actor_response_route_smoke(BHEntity *e, BHActorResponseContext *c, BHVec3 *death_position)
+int bh_actor_response_route_smoke(BHEntity *e, BHActorResponseContext *c, BHVec3 *death_position)
 {
     BHVec3 position, velocity, acceleration;
     float left, t, angular, angle;

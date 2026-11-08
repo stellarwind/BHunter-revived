@@ -65,7 +65,7 @@ static int done(BHRemotePackets *packets)
     ++packets->processed;
     return !packets->error;
 }
-static void __cdecl query(BHEntity *entity, void *p)
+static void query(BHEntity *entity, void *p)
 {
     BHRemotePackets *packets;
     memcpy(&packets, entity->payload + 536, 4);
@@ -76,7 +76,7 @@ static void __cdecl query(BHEntity *entity, void *p)
         bh_remote_query(packets->query, entity, (BHRemoteQueryPacket *)p);
     }
 }
-int __cdecl bh_remote_entity_draw(BHRemotePackets *packets, BHEntity *entity)
+int bh_remote_entity_draw(BHRemotePackets *packets, BHEntity *entity)
 {
     BHRemotePackets *bound;
     if (!packets || !entity || !packets->render || !packets->simulation_tick)
@@ -88,7 +88,7 @@ int __cdecl bh_remote_entity_draw(BHRemotePackets *packets, BHEntity *entity)
     packets->render->tick = (unsigned short)*packets->simulation_tick;
     return bh_remote_render(packets->render, entity);
 }
-static void __cdecl draw_remote(BHEntity *entity)
+static void draw_remote(BHEntity *entity)
 {
     BHRemotePackets *packets;
     memcpy(&packets, entity->payload + 536, 4);
@@ -102,7 +102,7 @@ void bh_remote_bind_draw(BHRemotePackets *packets, BHEntity *entity, unsigned in
         packets->render->models[slot] = packets->car_models[car];
     memcpy((char *)entity + 0xe8, &draw, sizeof(draw));
 }
-int __cdecl bh_remote_spawn_packet(BHRemotePackets *packets, void *p, unsigned long n, unsigned long capacity)
+int bh_remote_spawn_packet(BHRemotePackets *packets, void *p, unsigned long n, unsigned long capacity)
 {
     unsigned long id, i, j;
     unsigned char slot, name[20];
@@ -225,7 +225,7 @@ int __cdecl bh_remote_spawn_packet(BHRemotePackets *packets, void *p, unsigned l
     ++packets->spawns;
     return done(packets);
 }
-int __cdecl bh_remote_shot_packet(BHRemotePackets *packets, void *p, unsigned long n, unsigned long capacity)
+int bh_remote_shot_packet(BHRemotePackets *packets, void *p, unsigned long n, unsigned long capacity)
 {
     unsigned short sender;
     unsigned char slot, count, spacing, type, target_slot;

@@ -8,5 +8,5 @@
    dz*dz, and rounds the accumulating sum to float after each chord. Existing
    camera_curve owns evaluation; caller supplies PC53/nearest/masked exceptions
    and live moderate finite controls. Inputs are borrowed and never changed. */
-float __cdecl bh_route_curve_length(const BHVec3 controls[4]);
+float bh_route_curve_length(const BHVec3 controls[4]);
 #endif

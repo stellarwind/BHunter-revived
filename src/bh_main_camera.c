@@ -5,7 +5,7 @@
 #include <float.h>
 #include <string.h>
 
-int __cdecl bh_main_camera_settings(BHViewConfig *c, double degrees, double near_z, double far_z)
+int bh_main_camera_settings(BHViewConfig *c, double degrees, double near_z, double far_z)
 {
     float fov, n, f;
     if (!c || !_finite(degrees) || !_finite(near_z) || !_finite(far_z))
@@ -20,7 +20,7 @@ int __cdecl bh_main_camera_settings(BHViewConfig *c, double degrees, double near
     c->fov = fov;
     return 1;
 }
-void __cdecl bh_mat34_rotate_world_z(float radians, BHMat34 *m)
+void bh_mat34_rotate_world_z(float radians, BHMat34 *m)
 {
     float cosine, sine;
     double x, y;
@@ -48,7 +48,7 @@ static void main_plane(BHViewPlane *out, const BHMainCamera *camera, float x, fl
                    ((double)out->normal.x * camera->position.x + (double)out->normal.y * camera->position.y) +
                        (double)out->normal.z * camera->position.z);
 }
-int __cdecl bh_main_camera_build(const BHViewConfig *c, const BHMat34 *camera, BHMainCamera *out)
+int bh_main_camera_build(const BHViewConfig *c, const BHMat34 *camera, BHMainCamera *out)
 {
     BHMainCamera next;
     BHVec3 zero;
@@ -102,8 +102,8 @@ int __cdecl bh_main_camera_build(const BHViewConfig *c, const BHMat34 *camera, B
     *out = next;
     return 1;
 }
-int __cdecl bh_main_camera_pose(const BHViewConfig *c, BHMainCamera *out, double x, double y, double z, double yaw,
-                                double pitch, double roll)
+int bh_main_camera_pose(const BHViewConfig *c, BHMainCamera *out, double x, double y, double z, double yaw,
+                        double pitch, double roll)
 {
     BHMainCamera next;
     float tx, ty, tz, ry, rx, rz;

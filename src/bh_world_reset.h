@@ -28,5 +28,5 @@ typedef struct BHWorldReset
    Bounds X/Y displacement stores binary32; Z retains its PC53 difference.
    Source failure preserves preceding changes, just as the original sequence.
    No editor callback, world loader or game loop is installed here. */
-int __cdecl bh_world_reset(BHWorldReset *);
+int bh_world_reset(BHWorldReset *);
 #endif

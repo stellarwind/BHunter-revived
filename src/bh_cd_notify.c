@@ -1,5 +1,5 @@
 #include "bh_cd_notify.h"
-int __cdecl bh_cd_play_retained(BHCdNotify *c)
+int bh_cd_play_retained(BHCdNotify *c)
 {
     unsigned long packed, end;
     BHCdClose *cd;

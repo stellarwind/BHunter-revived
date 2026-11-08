@@ -1,7 +1,6 @@
 #include "bh_light_config.h"
-int __cdecl bh_light_configure(BHLightConfig *config, long enabled, float x, float y, float z,
-                               float directional_strength, float ambient_strength, unsigned long directional_color,
-                               unsigned long ambient_color)
+int bh_light_configure(BHLightConfig *config, long enabled, float x, float y, float z, float directional_strength,
+                       float ambient_strength, unsigned long directional_color, unsigned long ambient_color)
 {
     if (!config)
         return 0;

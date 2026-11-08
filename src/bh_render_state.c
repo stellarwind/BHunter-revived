@@ -16,7 +16,7 @@ static int native(BHRenderState *s, HRESULT h)
     }
     return 1;
 }
-int __cdecl bh_render_depth(BHRenderState *s, unsigned long mode)
+int bh_render_depth(BHRenderState *s, unsigned long mode)
 {
     int ok = 1;
     if (!valid(s))
@@ -33,7 +33,7 @@ int __cdecl bh_render_depth(BHRenderState *s, unsigned long mode)
         ok = 0;
     return ok;
 }
-int __cdecl bh_render_blend(BHRenderState *s, unsigned long enable, unsigned long source, unsigned long destination)
+int bh_render_blend(BHRenderState *s, unsigned long enable, unsigned long source, unsigned long destination)
 {
     int ok = 1;
     if (!valid(s))
@@ -53,7 +53,7 @@ int __cdecl bh_render_blend(BHRenderState *s, unsigned long enable, unsigned lon
         ok = 0;
     return ok;
 }
-int __cdecl bh_render_state_init(BHRenderState *s, BHTextureContext *textures)
+int bh_render_state_init(BHRenderState *s, BHTextureContext *textures)
 {
     int ok = 1;
     if (!s || !textures || (!textures->software && !textures->device))
@@ -67,7 +67,7 @@ int __cdecl bh_render_state_init(BHRenderState *s, BHTextureContext *textures)
         ok = 0;
     return ok;
 }
-int __cdecl bh_render_mode(BHRenderState *s, unsigned long mode)
+int bh_render_mode(BHRenderState *s, unsigned long mode)
 {
     BHTextureImage *image, *slow, *fast;
     int ok = 1;

@@ -30,9 +30,8 @@ static int channel(double n, float modulation, unsigned long *out)
     *out = result < 0 ? 0 : result > 255 ? 255 : (unsigned long)result;
     return 1;
 }
-int __cdecl bh_plane_quad_draw(BHSpriteQuadContext *c, BHTextureImage *image, const BHVec3 *center,
-                               const BHVec3 *normal, const BHVec3 *up, float width, float height, float angle,
-                               unsigned char flags, float modulation)
+int bh_plane_quad_draw(BHSpriteQuadContext *c, BHTextureImage *image, const BHVec3 *center, const BHVec3 *normal,
+                       const BHVec3 *up, float width, float height, float angle, unsigned char flags, float modulation)
 {
     BHVec3 origin, n, t, r, old_t, old_r, light_normal;
     BHClipVertex quad[4], *ring;
@@ -196,7 +195,7 @@ int __cdecl bh_plane_quad_draw(BHSpriteQuadContext *c, BHTextureImage *image, co
     c->emitted = 1;
     return 1;
 }
-int __cdecl bh_plane_quad_execute(BHQuadQueueContext *c, const BHDrawCommand *command, unsigned long *next)
+int bh_plane_quad_execute(BHQuadQueueContext *c, const BHDrawCommand *command, unsigned long *next)
 {
     BHTextureImage *image;
     BHVec3 center, normal, up;

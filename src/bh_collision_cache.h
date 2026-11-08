@@ -18,6 +18,6 @@ typedef struct BHCollisionCache
    retained. Finite decoded BSP, nonempty sections, PC53/nearest contract.
    Bounded argument and transactional allocation-failure handling are adapters.
    This owner does not replace existing geometry/query metadata implicitly. */
-int __cdecl bh_collision_cache_prepare(BHCollisionCache *cache, const BHBsp *bsp, const BHSceneAllocator *allocator);
-void __cdecl bh_collision_cache_dispose(BHCollisionCache *cache);
+int bh_collision_cache_prepare(BHCollisionCache *cache, const BHBsp *bsp, const BHSceneAllocator *allocator);
+void bh_collision_cache_dispose(BHCollisionCache *cache);
 #endif

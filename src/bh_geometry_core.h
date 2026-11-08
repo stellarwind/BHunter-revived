@@ -24,7 +24,7 @@ typedef char geometry_core_vertex_stride[sizeof(BHBspVertex) == 60 ? 1 : -1];
 typedef char geometry_core_edge_stride[sizeof(BHBspEdge) == 16 ? 1 : -1];
 typedef char geometry_core_face_stride[sizeof(BHBspFace) == 12 ? 1 : -1];
 
-void __cdecl bh_geometry_set_flags_core(BHGeometryCoreView *, long face, unsigned long flags);
-unsigned long __cdecl bh_geometry_get_flags_core(const BHGeometryCoreView *, long face);
-void __cdecl bh_geometry_vertex_core(const BHGeometryCoreView *, long face, long ordinal, BHVec3 *out);
+void bh_geometry_set_flags_core(BHGeometryCoreView *, long face, unsigned long flags);
+unsigned long bh_geometry_get_flags_core(const BHGeometryCoreView *, long face);
+void bh_geometry_vertex_core(const BHGeometryCoreView *, long face, long ordinal, BHVec3 *out);
 #endif

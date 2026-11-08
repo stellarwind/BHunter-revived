@@ -40,12 +40,12 @@ extern const long bh_actor_basis_definition_b[22];
    Zero sums intentionally produceInf reciprocal andNaN normalized components
    under the masked-exception profile; no zero-vector fallback is invented.
    Source capacity/binding guards reject before mutation. */
-int __cdecl bh_actor_basis_build_groups(BHActorBasisContext *);
+int bh_actor_basis_build_groups(BHActorBasisContext *);
 /* Complete00413f80: increment reference count on every call, initialize only
    when old count was0. Appends14 samples then invokes actual group builder.
    Original normalize_to leaves sample0.direction untouched for zero input;
    owners initialize array storage before first use if they want BSS semantics.
    Source first-call capacity/binding guards reject before increment/mutation.
    Caller PC53/nearest/all-exceptions-masked profile required. */
-int __cdecl bh_actor_basis_acquire(BHActorBasisContext *);
+int bh_actor_basis_acquire(BHActorBasisContext *);
 #endif

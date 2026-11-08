@@ -9,7 +9,7 @@ static int fail(BHInputCollection *c, BHInputCollectionError error)
         c->error = error;
     return 0;
 }
-int __cdecl bh_input_collection_init(BHInputCollection *c, BHInputSnapshot *s, BHPlayerInputOwner *lists)
+int bh_input_collection_init(BHInputCollection *c, BHInputSnapshot *s, BHPlayerInputOwner *lists)
 {
     if (!c || !s || !lists)
         return 0;
@@ -20,7 +20,7 @@ int __cdecl bh_input_collection_init(BHInputCollection *c, BHInputSnapshot *s, B
     s->pair3[0] = s->pair3[1] = 512;
     return 1;
 }
-int __cdecl bh_input_collect(BHInputCollection *c, unsigned long *changed)
+int bh_input_collect(BHInputCollection *c, unsigned long *changed)
 {
     BHInputSnapshot *s;
     BHPlayerInputList *list, *slow, *fast;

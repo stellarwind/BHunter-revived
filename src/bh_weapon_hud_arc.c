@@ -134,8 +134,8 @@ static int curve(BHArcContext *ctx, const BHVec3 *start, const BHVec3 *control, 
     ctx->path_points = count;
     return ctx->error == BH_ARC_OK;
 }
-int __cdecl bh_arc_queue(BHArcContext *ctx, const BHVec3 *start, const BHVec3 *control, const BHVec3 *target_control,
-                         const BHVec3 *target, float strength)
+int bh_arc_queue(BHArcContext *ctx, const BHVec3 *start, const BHVec3 *control, const BHVec3 *target_control,
+                 const BHVec3 *target, float strength)
 {
     if (!ctx || !ctx->queue || !finite_vec(start) || !finite_vec(control) || !finite_vec(target_control) ||
         !finite_vec(target))
@@ -145,7 +145,7 @@ int __cdecl bh_arc_queue(BHArcContext *ctx, const BHVec3 *start, const BHVec3 *c
         return fail(ctx, BH_ARC_NUMERICAL);
     return curve(ctx, start, control, target_control, target, strength);
 }
-int __cdecl bh_weapon_hud_arc(BHArcContext *ctx, BHWeaponHudState *state, const BHWeaponHudArcPlayer *player)
+int bh_weapon_hud_arc(BHArcContext *ctx, BHWeaponHudState *state, const BHWeaponHudArcPlayer *player)
 {
     BHVec3 start, control, jitter;
     BHArcPacket packet;

@@ -9,6 +9,6 @@
    for; no PCM codec validation or complete-tail validation is added here.
    Bounded container/chunk spans reject unsafe original out-of-bounds accesses.
    No allocation and no original-code execution. */
-int __cdecl bh_riff_scan(const void *bytes, unsigned long size, const unsigned char **format,
-                         const unsigned char **samples, unsigned long *sample_bytes);
+int bh_riff_scan(const void *bytes, unsigned long size, const unsigned char **format, const unsigned char **samples,
+                 unsigned long *sample_bytes);
 #endif

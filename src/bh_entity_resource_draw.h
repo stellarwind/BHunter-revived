@@ -17,6 +17,6 @@ typedef struct BHEntityResourceDrawContext
    Returns 1 when all three append, 0 on partial/full queue, -1 for an invalid
    source binding. The queue retains successful appends after saturation.
    Original floating-point inputs and resource handles are passed through. */
-int __cdecl bh_entity_resource_draw_special(BHEntityResourceDrawContext *context, BHEntity *entity);
+int bh_entity_resource_draw_special(BHEntityResourceDrawContext *context, BHEntity *entity);
 
 #endif

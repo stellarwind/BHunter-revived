@@ -7,7 +7,7 @@ static short wrap(long value)
     memcpy(&result, &bits, 2);
     return result;
 }
-int __cdecl bh_editor_numeric_key(BHEditorNumericContext *c, BHEntity *e, long key)
+int bh_editor_numeric_key(BHEditorNumericContext *c, BHEntity *e, long key)
 {
     short value, digit;
     unsigned char *field;

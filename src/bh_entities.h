@@ -5,8 +5,8 @@
 #include "bh_scene.h"
 
 typedef struct BHEntity BHEntity;
-typedef void(__cdecl *BHEntityStep)(BHEntity *entity);
-typedef void(__cdecl *BHEntityCallback)(BHEntity *entity, void *packet);
+typedef void (*BHEntityStep)(BHEntity *entity);
+typedef void (*BHEntityCallback)(BHEntity *entity, void *packet);
 struct BHEntity
 {
     unsigned long flags, generation, kind;
@@ -67,22 +67,22 @@ typedef struct BHEntityPool
    Initialize a fresh context; dispose before reinitialization. Max 65535 slots.
    Origin is an explicit caller-supplied equivalent of the shared origin vector.
    Generation, links, callbacks and private ownership fields are engine-owned. */
-int __cdecl bh_entities_init(BHEntityPool *pool, unsigned long count, const BHSceneAllocator *allocator); /* 00476da0 */
-BHEntity *__cdecl bh_entity_acquire(BHEntityPool *pool);                                                  /* 00476f20 */
-int __cdecl bh_entity_release(BHEntityPool *pool, BHEntity *entity);                                      /* 00477070 */
-int __cdecl bh_entity_set_query(BHEntityPool *pool, BHEntity *entity, BHEntityCallback callback);         /* 00476e90 */
-int __cdecl bh_entities_query(BHEntityPool *pool, unsigned long mask, unsigned long value, const BHVec3 *center,
-                              float radius, void *packet); /* 004770f0 */
-int __cdecl bh_entities_step(BHEntityPool *pool);          /* 004772f0 */
-int __cdecl bh_entities_refresh(BHEntityPool *pool);       /* 00477330 */
+int bh_entities_init(BHEntityPool *pool, unsigned long count, const BHSceneAllocator *allocator); /* 00476da0 */
+BHEntity *bh_entity_acquire(BHEntityPool *pool);                                                  /* 00476f20 */
+int bh_entity_release(BHEntityPool *pool, BHEntity *entity);                                      /* 00477070 */
+int bh_entity_set_query(BHEntityPool *pool, BHEntity *entity, BHEntityCallback callback);         /* 00476e90 */
+int bh_entities_query(BHEntityPool *pool, unsigned long mask, unsigned long value, const BHVec3 *center, float radius,
+                      void *packet);         /* 004770f0 */
+int bh_entities_step(BHEntityPool *pool);    /* 004772f0 */
+int bh_entities_refresh(BHEntityPool *pool); /* 00477330 */
 /* Source ownership/focus/validation adapters. Dispose rejects active dispatch.
    Callbacks may release the current slot or add new head slots. Changing a
    cached successor to an inactive slot stops dispatch with MUTATION; active
    recycled slots retain the original saved-pointer step/refresh order. Nested
    queries are allowed to depth 16; nested step/refresh are rejected. */
-int __cdecl bh_entities_dispose(BHEntityPool *pool);
-int __cdecl bh_entities_focus(BHEntityPool *pool, BHEntity *entity);
-int __cdecl bh_entities_valid(const BHEntityPool *pool);
+int bh_entities_dispose(BHEntityPool *pool);
+int bh_entities_focus(BHEntityPool *pool, BHEntity *entity);
+int bh_entities_valid(const BHEntityPool *pool);
 /* Source ownership check using existing chunk live bits; no list traversal. */
-int __cdecl bh_entity_is_active(const BHEntityPool *pool, const BHEntity *entity);
+int bh_entity_is_active(const BHEntityPool *pool, const BHEntity *entity);
 #endif

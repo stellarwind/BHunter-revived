@@ -36,18 +36,17 @@ typedef struct BHEffectProjectileContext
    real cleanup and query definitions are installed, never original addresses.
    All referenced entities/owners remain stable during synchronous emissions.
    Finite moderate PC53/nearest; original PC24 and extreme trig unvalidated. */
-int __cdecl bh_effect_projectile_bind(BHEffectProjectileContext *, BHEntity *, int orbit);
-void __cdecl bh_effect_orbit_query(BHEntity *, void *);  /*405ef0*/
-void __cdecl bh_effect_linear_query(BHEntity *, void *); /*406300*/
+int bh_effect_projectile_bind(BHEffectProjectileContext *, BHEntity *, int orbit);
+void bh_effect_orbit_query(BHEntity *, void *);  /*405ef0*/
+void bh_effect_linear_query(BHEntity *, void *); /*406300*/
 /* Complete source constructor APIs: ordinary borrowed world/entity bindings.
    All installed tick/draw/query callbacks have actual source definitions. */
-BHEntity *__cdecl bh_effect_orbit_create(BHEffectProjectileContext *, BHWorldGeometry *, BHEntity *, const BHVec3 *,
-                                         const BHVec3 *, const BHVec3 *, const BHVec3 *, const BHVec3 *, float,
-                                         BHEntity *);
-BHEntity *__cdecl bh_effect_split_create(BHEffectProjectileContext *, BHWorldGeometry *, BHEntity *, const BHVec3 *,
-                                         const BHVec3 *, float, int, unsigned long, float);
-BHEntity *__cdecl bh_effect_shard_create(BHEffectProjectileContext *, BHWorldGeometry *, BHEntity *, const BHVec3 *,
-                                         const BHVec3 *, float, int, unsigned long, float);
-BHEntity *__cdecl bh_effect_accelerated_create(BHEffectProjectileContext *, BHWorldGeometry *, BHEntity *,
-                                               const BHVec3 *, const BHVec3 *, const BHVec3 *);
+BHEntity *bh_effect_orbit_create(BHEffectProjectileContext *, BHWorldGeometry *, BHEntity *, const BHVec3 *,
+                                 const BHVec3 *, const BHVec3 *, const BHVec3 *, const BHVec3 *, float, BHEntity *);
+BHEntity *bh_effect_split_create(BHEffectProjectileContext *, BHWorldGeometry *, BHEntity *, const BHVec3 *,
+                                 const BHVec3 *, float, int, unsigned long, float);
+BHEntity *bh_effect_shard_create(BHEffectProjectileContext *, BHWorldGeometry *, BHEntity *, const BHVec3 *,
+                                 const BHVec3 *, float, int, unsigned long, float);
+BHEntity *bh_effect_accelerated_create(BHEffectProjectileContext *, BHWorldGeometry *, BHEntity *, const BHVec3 *,
+                                       const BHVec3 *, const BHVec3 *);
 #endif

@@ -44,8 +44,8 @@ static BHDebrisBody *checked(BHEntity *entity)
         return NULL;
     return b;
 }
-int __cdecl bh_debris_context_init(BHDebrisContext *ctx, BHEntityPool *pool, BHSoundQueue *sound, unsigned long id,
-                                   BHEntity **registry, unsigned long capacity)
+int bh_debris_context_init(BHDebrisContext *ctx, BHEntityPool *pool, BHSoundQueue *sound, unsigned long id,
+                           BHEntity **registry, unsigned long capacity)
 {
     BHDebrisContext next;
     unsigned long end;
@@ -62,7 +62,7 @@ int __cdecl bh_debris_context_init(BHDebrisContext *ctx, BHEntityPool *pool, BHS
     *ctx = next;
     return 1;
 }
-int __cdecl bh_debris_context_dispose(BHDebrisContext *ctx)
+int bh_debris_context_dispose(BHDebrisContext *ctx)
 {
     BHEntity *p;
     BHDebrisBody *b;
@@ -81,8 +81,8 @@ int __cdecl bh_debris_context_dispose(BHDebrisContext *ctx)
     memset(ctx, 0, sizeof(*ctx));
     return 1;
 }
-int __cdecl bh_debris_bind(BHDebrisContext *ctx, BHDebrisBody *body, BHEntity *entity, BHPhysicsState *physics,
-                           float mass, float friction, const BHVec3 *inertia)
+int bh_debris_bind(BHDebrisContext *ctx, BHDebrisBody *body, BHEntity *entity, BHPhysicsState *physics, float mass,
+                   float friction, const BHVec3 *inertia)
 {
     BHDebrisBody next;
     if (!body || body->entity || !physics || !inertia || !live(ctx, entity) || entity->query ||
@@ -103,7 +103,7 @@ int __cdecl bh_debris_bind(BHDebrisContext *ctx, BHDebrisBody *body, BHEntity *e
     memcpy(entity->payload + 632, &body, sizeof(body));
     return 1;
 }
-int __cdecl bh_debris_unbind(BHDebrisBody *body)
+int bh_debris_unbind(BHDebrisBody *body)
 {
     BHEntity *entity;
     if (!body || !(entity = body->entity) || checked(entity) != body)
@@ -115,7 +115,7 @@ int __cdecl bh_debris_unbind(BHDebrisBody *body)
     body->entity = NULL;
     return 1;
 }
-void __cdecl bh_debris_remove(BHEntity *entity)
+void bh_debris_remove(BHEntity *entity)
 {
     BHDebrisBody *b = checked(entity);
     unsigned long end, i, j;
@@ -135,7 +135,7 @@ void __cdecl bh_debris_remove(BHEntity *entity)
     }
     b->entity = NULL;
 }
-void __cdecl bh_debris_receive(BHEntity *entity, void *packet)
+void bh_debris_receive(BHEntity *entity, void *packet)
 {
     BHDebrisBody *b = checked(entity);
     BHPhysicsState *s;

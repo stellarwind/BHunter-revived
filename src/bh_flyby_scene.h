@@ -7,7 +7,7 @@
 #include "bh_input_evaluate.h"
 #include "bh_player_force_control.h"
 
-typedef int(__cdecl *BHFlybyForceControl)(BHPlayerForceControl *, float, int);
+typedef int (*BHFlybyForceControl)(BHPlayerForceControl *, float, int);
 
 typedef enum BHFlybySceneError
 {
@@ -55,14 +55,14 @@ typedef struct BHFlybyScene
 /* Bind/unbind the exact live entity and generation to source callbacks. Bind
    installs the restored scene-refresh and camera-update callbacks. Unbind
    removes source callbacks only while the entity generation still matches. */
-int __cdecl bh_flyby_scene_bind(BHFlybyScene *);
-void __cdecl bh_flyby_scene_unbind(BHFlybyScene *);
+int bh_flyby_scene_bind(BHFlybyScene *);
+void bh_flyby_scene_unbind(BHFlybyScene *);
 /* Complete 00428f50, including render, input/player relocation, two live
    entity queries, and callback handoff. Queue-full drops are successful
    original mutations; missing live dependencies return 0 with error set. */
-int __cdecl bh_flyby_scene_draw(BHFlybyScene *);
+int bh_flyby_scene_draw(BHFlybyScene *);
 /* Source adapters for original 0042a9b0 and installed 00429fb0. */
-void __cdecl bh_flyby_scene_rearm_entity(BHEntity *);
-void __cdecl bh_flyby_scene_camera_step_entity(BHEntity *);
-void __cdecl bh_flyby_scene_refresh_entity(BHEntity *, void *packet);
+void bh_flyby_scene_rearm_entity(BHEntity *);
+void bh_flyby_scene_camera_step_entity(BHEntity *);
+void bh_flyby_scene_refresh_entity(BHEntity *, void *packet);
 #endif

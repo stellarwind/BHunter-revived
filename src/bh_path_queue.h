@@ -27,8 +27,8 @@ typedef struct BHPathQueueContext
    the real camera, preserve corner scratch and link previous slot. Increments
    used without resetting it. Source capacity/finite guards expose failure;
    callers retain all previously appended source vertices on failure. */
-int __cdecl bh_path_queue_append(BHPathQueueContext *, const BHVec3 *point, float width, unsigned long flags,
-                                 float texture_start, float texture_end);
+int bh_path_queue_append(BHPathQueueContext *, const BHVec3 *point, float width, unsigned long flags,
+                         float texture_start, float texture_end);
 /* Complete00477880 adaptive path selection. points supplies spans+1 contiguous
    BH_DRAW_PATH_POINT records. One span bypasses culling; zero span uses the
    original visible zero-radius acceptance under a positive near plane. The
@@ -37,8 +37,8 @@ int __cdecl bh_path_queue_append(BHPathQueueContext *, const BHVec3 *point, floa
    returned cull masks reject. Both recursive children inherit the returned
    mask. Returns number appended, -1 for an explicit source binding error.
    Finite points, nonincreasing words5 and positive view near_z are required. */
-long __cdecl bh_path_queue_select(BHPathQueueContext *, const BHDrawCommand *points, unsigned long spans,
-                                  unsigned long plane_mask);
+long bh_path_queue_select(BHPathQueueContext *, const BHDrawCommand *points, unsigned long spans,
+                          unsigned long plane_mask);
 /* Complete004779e0 owner. Header and its declared contiguous points belong to
    queue; linked first point equals the next physical record. Draws with the
    real recovered ribbon owner after selecting two independently masked halves
@@ -48,6 +48,5 @@ long __cdecl bh_path_queue_select(BHPathQueueContext *, const BHDrawCommand *poi
    image, camera and pool lifetimes are borrowed; next must not alias them.
    The real ribbon draw owns its successful used-count reset. No original code,
    fake callback or software rasterizer is supplied. PC53 finite profile. */
-int __cdecl bh_path_queue_execute(BHPathQueueContext *, const BHDrawQueue *, const BHDrawCommand *header,
-                                  unsigned long *next);
+int bh_path_queue_execute(BHPathQueueContext *, const BHDrawQueue *, const BHDrawCommand *header, unsigned long *next);
 #endif

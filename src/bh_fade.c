@@ -18,7 +18,7 @@ static int native_call(BHFadeContext *c, HRESULT h)
     }
     return 1;
 }
-void __cdecl bh_fade_set(BHFadeContext *c, float amount, unsigned long color)
+void bh_fade_set(BHFadeContext *c, float amount, unsigned long color)
 {
     if (c)
     {
@@ -26,7 +26,7 @@ void __cdecl bh_fade_set(BHFadeContext *c, float amount, unsigned long color)
         c->color = color;
     }
 }
-int __cdecl bh_fade_queue(BHDrawQueue *q, float amount, unsigned long color)
+int bh_fade_queue(BHDrawQueue *q, float amount, unsigned long color)
 {
     BHDrawCommand *p;
     if (!q)
@@ -39,7 +39,7 @@ int __cdecl bh_fade_queue(BHDrawQueue *q, float amount, unsigned long color)
     p->words[0] = color;
     return 1;
 }
-int __cdecl bh_fade_execute(BHFadeContext *c, const BHDrawCommand *p, unsigned long *next)
+int bh_fade_execute(BHFadeContext *c, const BHDrawCommand *p, unsigned long *next)
 {
     float f;
     if (!c || !p || !next || p->kind != BH_DRAW_FADE)
@@ -49,7 +49,7 @@ int __cdecl bh_fade_execute(BHFadeContext *c, const BHDrawCommand *p, unsigned l
     *next = p->next;
     return 1;
 }
-void __cdecl bh_fade_dispose(BHFadeContext *c)
+void bh_fade_dispose(BHFadeContext *c)
 {
     if (c)
     {
@@ -64,7 +64,7 @@ static long tint(unsigned long color, unsigned shift, float amount)
     unsigned long bias = v < 0 ? ((1UL << shift) - 1) : 0;
     return (long)((double)(((long)(color + bias) >> shift) & 255) * amount);
 }
-int __cdecl bh_fade_apply(BHFadeContext *c)
+int bh_fade_apply(BHFadeContext *c)
 {
     BHTextureContext *t;
     D3DTLVERTEX v[4];

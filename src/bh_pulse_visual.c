@@ -25,7 +25,7 @@ static void result(BHPulseVisualContext *c, int n)
     else if (!c->error)
         c->error = 1;
 }
-int __cdecl bh_pulse_visual_draw(BHPulseVisualContext *c, const BHEntity *e)
+int bh_pulse_visual_draw(BHPulseVisualContext *c, const BHEntity *e)
 {
     BHVec3 angles, direction, position;
     float lifetime, phase, envelope, offset, size;

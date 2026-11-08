@@ -26,16 +26,15 @@ typedef struct BHWeaponEmptyContext
    live player pose/velocity; one shared warning is appended, then flag set1.
    Original ignores sound/message returns; source reports failures after the
    same prior side effects. No firing behavior is claimed. */
-int __cdecl bh_weapon_empty_trigger(BHWeaponEmptyContext *, unsigned long method_identity, BHEntity *weapon,
-                                    const BHEntity *player);
+int bh_weapon_empty_trigger(BHWeaponEmptyContext *, unsigned long method_identity, BHEntity *weapon,
+                            const BHEntity *player);
 /* Complete index9 +124 00433dc0. Positive player+240 timer suppresses action.
    Otherwise empty ammo uses the same sound/warning path; nonzero signed ammo
    decrements once and sets player+240/+248=15, +244=1. The player is mutable
    authoritative entity storage. */
-int __cdecl bh_weapon_index9_trigger(BHWeaponEmptyContext *, BHEntity *weapon, BHEntity *player);
+int bh_weapon_index9_trigger(BHWeaponEmptyContext *, BHEntity *weapon, BHEntity *player);
 /* Resolve one live registry allocation and dispatch its verified +124 method.
    All other identities return METHOD, with no silent no-op. */
-int __cdecl bh_weapon_empty_dispatch(BHWeaponEmptyContext *, BHWeaponRegistry *, unsigned int selection,
-                                     BHEntity *player);
+int bh_weapon_empty_dispatch(BHWeaponEmptyContext *, BHWeaponRegistry *, unsigned int selection, BHEntity *player);
 extern const char bh_weapon_empty_warning[];
 #endif

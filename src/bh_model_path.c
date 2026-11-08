@@ -1,6 +1,6 @@
 #include "bh_model_path.h"
 #include <string.h>
-int __cdecl bh_model_path_set(BHModelContext *context, const char *prefix, long policy)
+int bh_model_path_set(BHModelContext *context, const char *prefix, long policy)
 {
     unsigned long length = 0;
     if (!context)

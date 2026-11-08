@@ -13,8 +13,7 @@ static int fail(BHRadarContext *c, BHRadarError e)
         c->error = e;
     return 0;
 }
-int __cdecl bh_radar_bind(BHRadarContext *c, BHDrawQueue *q, const BHRadarFrame *frame, unsigned long marker,
-                          unsigned long bar)
+int bh_radar_bind(BHRadarContext *c, BHDrawQueue *q, const BHRadarFrame *frame, unsigned long marker, unsigned long bar)
 {
     if (!c || !q || !frame)
         return 0;
@@ -41,8 +40,8 @@ static void point(BHVec3 *out, const BHRadarFrame *f, double x, double y)
     bh_round_float(&out->y, ((double)f->axis_x.y * x + f->origin.y) + (double)f->axis_y.y * y);
     bh_round_float(&out->z, ((double)f->axis_x.z * x + f->origin.z) + (double)f->axis_y.z * y);
 }
-int __cdecl bh_radar_marker(BHRadarContext *c, const BHVec3 *player, const BHVec3 *target, unsigned long kind,
-                            unsigned long extended, unsigned long skip_marker)
+int bh_radar_marker(BHRadarContext *c, const BHVec3 *player, const BHVec3 *target, unsigned long kind,
+                    unsigned long extended, unsigned long skip_marker)
 {
     const BHRadarFrame *f;
     BHVec3 delta, center;

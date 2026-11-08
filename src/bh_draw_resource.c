@@ -130,8 +130,8 @@ static int draw(BHDrawResourceContext *c, const BHDrawResource *resource, double
     }
 }
 
-int __cdecl bh_draw_resource(BHDrawResourceContext *c, const BHDrawResource *resource, double x, double y, double z,
-                             double rotate_y, double rotate_x, double rotate_z, float modulation)
+int bh_draw_resource(BHDrawResourceContext *c, const BHDrawResource *resource, double x, double y, double z,
+                     double rotate_y, double rotate_x, double rotate_z, float modulation)
 {
     if (!c || !resource || !c->camera || !c->config || !_finite(x) || !_finite(y) || !_finite(z) ||
         !_finite(rotate_y) || !_finite(rotate_x) || !_finite(rotate_z) || !_finite(modulation))

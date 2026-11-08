@@ -1,12 +1,12 @@
 #include "bh_pcx_reader.h"
 #include <string.h>
 
-void __cdecl bh_pcx_reader_init(BHPcxReader *reader)
+void bh_pcx_reader_init(BHPcxReader *reader)
 {
     if (reader)
         memset(reader, 0, sizeof(*reader));
 }
-int __cdecl bh_pcx_reader_close(BHPcxReader *reader)
+int bh_pcx_reader_close(BHPcxReader *reader)
 {
     int result;
     if (!reader)
@@ -17,7 +17,7 @@ int __cdecl bh_pcx_reader_close(BHPcxReader *reader)
         reader->error = BH_PCX_IO;
     return result;
 }
-int __cdecl bh_pcx_reader_open(BHPcxReader *reader, const char *name)
+int bh_pcx_reader_open(BHPcxReader *reader, const char *name)
 {
     BHPcxReader next;
     unsigned char header[12];
@@ -96,7 +96,7 @@ static int byte(BHPcxReader *reader, unsigned char *value)
     *value = reader->buffer[reader->cursor++];
     return 1;
 }
-int __cdecl bh_pcx_reader_next(BHPcxReader *reader, unsigned char *pixel)
+int bh_pcx_reader_next(BHPcxReader *reader, unsigned char *pixel)
 {
     unsigned char prefix, value;
     if (!reader || !pixel || !reader->file || reader->error != BH_PCX_OK)

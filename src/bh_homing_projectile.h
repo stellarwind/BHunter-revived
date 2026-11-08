@@ -48,8 +48,8 @@ static __inline const BHHomingWorldResponse *bh_homing_world_response(const BHHo
    from callbacks. World-response mappings bind actual query entities; NULL is
    an explicitly absent RET receiver. All hit worlds require one mapping.
    No constructor, gameplay loop, invented vtable or original code is supplied. */
-int __cdecl bh_homing_projectile_bind(BHHomingProjectileContext *, BHEntity *);
+int bh_homing_projectile_bind(BHHomingProjectileContext *, BHEntity *);
 /* Whole0043f630: predictive steering, source segment/proximity checks,
    liquid/solid contact effects, marker, damage and pooled retirement. */
-void __cdecl bh_homing_projectile_tick(BHEntity *);
+void bh_homing_projectile_tick(BHEntity *);
 #endif

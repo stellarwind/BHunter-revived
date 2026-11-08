@@ -23,8 +23,8 @@ typedef struct BHSegmentQuery
 /* Fresh owner; borrows immutable decoded geometry and its live face flags.
    This supplies the collision metadata already owned by bh_geometry_init and
    bh_bsp_decode, rather than the original lazy allocation in 0044b130. */
-int __cdecl bh_segment_query_init(BHSegmentQuery *query, BHGeometry *geometry);
-int __cdecl bh_segment_query_dispose(BHSegmentQuery *query);
+int bh_segment_query_init(BHSegmentQuery *query, BHGeometry *geometry);
+int bh_segment_query_dispose(BHSegmentQuery *query);
 /* 0044d530 over source BSP data, with the transform setup of 0044d9b0.
    Return 1 for first traversal-order contact, 0 for miss, -1 for invalid input
    or traversal limits. Out is replaced only on contact. This is not a closest-
@@ -36,6 +36,6 @@ int __cdecl bh_segment_query_dispose(BHSegmentQuery *query);
    or excessive repeated DAG traversal. Coplanar original arithmetic is retained
    under masked PC53, including nonfinite intermediate results and endpoints
    carried from an earlier model query. */
-int __cdecl bh_segment_query_run(BHSegmentQuery *query, const BHVec3 *start, const BHVec3 *end, const BHMat34 *to_world,
-                                 const BHMat34 *to_local, BHSegmentHit *out);
+int bh_segment_query_run(BHSegmentQuery *query, const BHVec3 *start, const BHVec3 *end, const BHMat34 *to_world,
+                         const BHMat34 *to_local, BHSegmentHit *out);
 #endif

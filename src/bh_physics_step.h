@@ -72,22 +72,22 @@ typedef struct BHPhysicsStepContext
    to actual response-query owners such as bh_debris_bind. Caller synchronizes
    external teleports into that component and publishes them before querying
    another body. Each step publishes itself; it does not overwrite other actors. No callbacks are fabricated here. */
-int __cdecl bh_physics_step_init(BHPhysicsStepContext *, BHEntityPool *, BHPhysicsStepBody *, unsigned long,
-                                 const BHPhysicsStepWorld *, unsigned long, BHGeometry *const *, unsigned long,
-                                 BHPhysicsEffects *, int fallback, const BHSceneAllocator *);
+int bh_physics_step_init(BHPhysicsStepContext *, BHEntityPool *, BHPhysicsStepBody *, unsigned long,
+                         const BHPhysicsStepWorld *, unsigned long, BHGeometry *const *, unsigned long,
+                         BHPhysicsEffects *, int fallback, const BHSceneAllocator *);
 /* Count-zero roster adapter. Scene ring/world bindings and geometry topology of
    surviving identities must be unchanged. Transfers unchanged sweep workspaces
    and scene validation storage; replaces actor/candidate arrays transactionally.
    Drops removed geometry borrows before callers recycle collision slots. Caller
    must not step after a rejected in-place roster edit until sync succeeds. */
-int __cdecl bh_physics_step_rebind(BHPhysicsStepContext *, BHPhysicsStepBody *, unsigned long, BHGeometry *const *,
-                                   unsigned long);
-int __cdecl bh_physics_step_dispose(BHPhysicsStepContext *);
+int bh_physics_step_rebind(BHPhysicsStepContext *, BHPhysicsStepBody *, unsigned long, BHGeometry *const *,
+                           unsigned long);
+int bh_physics_step_dispose(BHPhysicsStepContext *);
 /* Count-zero boundary views, for actual original common physics fields only. */
-int __cdecl bh_physics_step_read_entity(BHPhysicsState *, const BHEntity *);
-int __cdecl bh_physics_step_publish(BHPhysicsStepBody *);
+int bh_physics_step_read_entity(BHPhysicsState *, const BHEntity *);
+int bh_physics_step_publish(BHPhysicsStepBody *);
 /* Whole004124d0. Return1 complete (including original ignored effect failures),
    0 source binding/numerical/lifetime/dependency failure with error. Side effects
    already performed remain visible. No playback, provider setup or game loop. */
-int __cdecl bh_physics_step(BHPhysicsStepContext *, BHEntity *, float dt);
+int bh_physics_step(BHPhysicsStepContext *, BHEntity *, float dt);
 #endif

@@ -11,7 +11,7 @@ static void read_payload(const BHEntity *entity, unsigned long offset, void *out
 {
     memcpy(out, entity->payload + offset, length);
 }
-int __cdecl bh_entity_resource_draw_special(BHEntityResourceDrawContext *context, BHEntity *entity)
+int bh_entity_resource_draw_special(BHEntityResourceDrawContext *context, BHEntity *entity)
 {
     BHVec3 angles, first, second;
     unsigned long handle;

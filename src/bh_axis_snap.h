@@ -6,5 +6,5 @@
    priority over y over x on magnitude ties. Nonpositive selected component
    uses negative length, including selected zero -> negative zero. Other
    coordinates become positive zero. PC53 nearest/masked profile required. */
-double __cdecl bh_vec3_snap_axis(BHVec3 *v);
+double bh_vec3_snap_axis(BHVec3 *v);
 #endif

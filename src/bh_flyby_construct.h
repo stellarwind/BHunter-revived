@@ -17,5 +17,5 @@ typedef struct BHFlybyConstruct
    No other scene may bind this context; dispose/unbind previous owner first.
    Allocation failure preserves caller camera. Source dependency failure retires
    newly acquired entity and registry binding; earlier side effects may remain. */
-BHEntity *__cdecl bh_flyby_construct(BHFlybyConstruct *);
+BHEntity *bh_flyby_construct(BHFlybyConstruct *);
 #endif

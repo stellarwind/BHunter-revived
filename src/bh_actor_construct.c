@@ -258,13 +258,13 @@ static BHEntity *construct(BHActorConstructContext *ctx, BHWorldGeometry *world,
     }
     return entity;
 }
-BHEntity *__cdecl bh_actor_construct_room(BHActorConstructContext *ctx, BHWorldGeometry *world, unsigned long t,
-                                          long token, float speed, unsigned long tag, unsigned long seed)
+BHEntity *bh_actor_construct_room(BHActorConstructContext *ctx, BHWorldGeometry *world, unsigned long t, long token,
+                                  float speed, unsigned long tag, unsigned long seed)
 {
     return construct(ctx, world, t, token, speed, tag, seed);
 }
-BHEntity *__cdecl bh_actor_construct_position(BHActorConstructContext *ctx, const BHVec3 *p, unsigned long t,
-                                              long token, float speed, unsigned long tag, unsigned long seed)
+BHEntity *bh_actor_construct_position(BHActorConstructContext *ctx, const BHVec3 *p, unsigned long t, long token,
+                                      float speed, unsigned long tag, unsigned long seed)
 {
     BHWorldGeometry *world;
     if (!ctx || !p)

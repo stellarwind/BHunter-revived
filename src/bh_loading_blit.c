@@ -74,7 +74,7 @@ static int vertical(BHLoadingBlit *c, const BHLoadingBlitTarget *t, long x, long
             return 0;
     return 1;
 }
-int __cdecl bh_loading_blit_top(BHLoadingBlit *c, const BHLoadingBlitTarget *t, float from, float to)
+int bh_loading_blit_top(BHLoadingBlit *c, const BHLoadingBlitTarget *t, float from, float to)
 {
     long w, h, y, p, lo, hi;
     double ray;
@@ -96,7 +96,7 @@ int __cdecl bh_loading_blit_top(BHLoadingBlit *c, const BHLoadingBlitTarget *t, 
     }
     return 1;
 }
-int __cdecl bh_loading_blit_right(BHLoadingBlit *c, const BHLoadingBlitTarget *t, float from, float to)
+int bh_loading_blit_right(BHLoadingBlit *c, const BHLoadingBlitTarget *t, float from, float to)
 {
     long w, h, x, p, q, lo, hi;
     double pa, qb;
@@ -120,7 +120,7 @@ int __cdecl bh_loading_blit_right(BHLoadingBlit *c, const BHLoadingBlitTarget *t
     }
     return 1;
 }
-int __cdecl bh_loading_blit_bottom(BHLoadingBlit *c, const BHLoadingBlitTarget *t, float from, float to)
+int bh_loading_blit_bottom(BHLoadingBlit *c, const BHLoadingBlitTarget *t, float from, float to)
 {
     long w, h, y, p, q, lo, hi;
     double pa, qb, ra, rb;
@@ -146,7 +146,7 @@ int __cdecl bh_loading_blit_bottom(BHLoadingBlit *c, const BHLoadingBlitTarget *
     }
     return 1;
 }
-int __cdecl bh_loading_blit_left(BHLoadingBlit *c, const BHLoadingBlitTarget *t, float from, float to)
+int bh_loading_blit_left(BHLoadingBlit *c, const BHLoadingBlitTarget *t, float from, float to)
 {
     long w, h, x, p, q, lo, hi;
     double pa, qb, ra, rb;
@@ -172,7 +172,7 @@ int __cdecl bh_loading_blit_left(BHLoadingBlit *c, const BHLoadingBlitTarget *t,
     }
     return 1;
 }
-int __cdecl bh_loading_blit_top_last(BHLoadingBlit *c, const BHLoadingBlitTarget *t, float from, float to)
+int bh_loading_blit_top_last(BHLoadingBlit *c, const BHLoadingBlitTarget *t, float from, float to)
 {
     long w, h, y, p, q, lo, hi;
     double pa, qb;

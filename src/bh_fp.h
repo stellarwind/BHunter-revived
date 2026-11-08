@@ -10,8 +10,8 @@ typedef struct BHMathEnvironment
 {
     unsigned int control;
 } BHMathEnvironment;
-int __cdecl bh_math_environment_supported(void);
-int __cdecl bh_math_environment_enter(BHMathEnvironment *environment);
-void __cdecl bh_math_environment_leave(const BHMathEnvironment *environment);
+int bh_math_environment_supported(void);
+int bh_math_environment_enter(BHMathEnvironment *environment);
+void bh_math_environment_leave(const BHMathEnvironment *environment);
 
 #endif

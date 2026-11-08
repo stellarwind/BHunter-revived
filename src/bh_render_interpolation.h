@@ -31,21 +31,19 @@ typedef struct BHSimulationClock
     double last, remainder;
     int ready, sampled;
 } BHSimulationClock;
-unsigned long __cdecl bh_simulation_advance(BHSimulationClock *, double seconds);
-void __cdecl bh_interpolation_bind(BHDrawQueue *);
-void __cdecl bh_interpolation_reset(void);
-unsigned long __cdecl bh_interpolation_mark(void);
+unsigned long bh_simulation_advance(BHSimulationClock *, double seconds);
+void bh_interpolation_bind(BHDrawQueue *);
+void bh_interpolation_reset(void);
+unsigned long bh_interpolation_mark(void);
 /* Nested draw owners stamp first. Enclosing callbacks preserve those identities. */
-void __cdecl bh_interpolation_stamp(unsigned long start, unsigned long identity, unsigned long generation);
+void bh_interpolation_stamp(unsigned long start, unsigned long identity, unsigned long generation);
 /* Stable producer-defined parts use a separate namespace from automatic ordinals. */
-void __cdecl bh_interpolation_part(unsigned long index, unsigned long owner, unsigned long generation,
-                                   unsigned long part);
-void __cdecl bh_interpolation_trail_point(unsigned long index, unsigned long owner, unsigned long generation,
-                                          unsigned long older_owner, unsigned long older_generation,
-                                          unsigned long image);
-void __cdecl bh_interpolation_attach(unsigned long start, unsigned long end, unsigned long model);
-void __cdecl bh_interpolation_capture(BHRenderInterpolation *, const BHDrawQueue *, long scene);
-BHDrawQueue *__cdecl bh_interpolation_sample(BHRenderInterpolation *, float alpha);
+void bh_interpolation_part(unsigned long index, unsigned long owner, unsigned long generation, unsigned long part);
+void bh_interpolation_trail_point(unsigned long index, unsigned long owner, unsigned long generation,
+                                  unsigned long older_owner, unsigned long older_generation, unsigned long image);
+void bh_interpolation_attach(unsigned long start, unsigned long end, unsigned long model);
+void bh_interpolation_capture(BHRenderInterpolation *, const BHDrawQueue *, long scene);
+BHDrawQueue *bh_interpolation_sample(BHRenderInterpolation *, float alpha);
 /* Retain only mutable consumer fields after the sampled queue is executed. */
-void __cdecl bh_interpolation_rendered(BHRenderInterpolation *);
+void bh_interpolation_rendered(BHRenderInterpolation *);
 #endif

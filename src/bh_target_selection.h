@@ -25,6 +25,6 @@ typedef struct BHTargetSelection
    actor without a query; partial result/callback effects remain observable.
    These guards are source failure behavior outside the original valid domain.
    result must not alias origin or any actor/list storage. */
-int __cdecl bh_target_select(BHEntity *player, BHEntity *head, const BHEntity *excluded, const BHVec3 *origin,
-                             unsigned long limit, BHTargetSelection *result);
+int bh_target_select(BHEntity *player, BHEntity *head, const BHEntity *excluded, const BHVec3 *origin,
+                     unsigned long limit, BHTargetSelection *result);
 #endif

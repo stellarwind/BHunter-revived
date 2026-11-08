@@ -8,5 +8,5 @@ typedef struct BHEditorNumericContext
 /* Whole0040d000. Eight signed16 model parameters occupy original+334. Mode0
    starts a signed entry,1 appends positive digits,2 appends negative digits.
    Negative key toggles sign. Context is explicit original48f88c/4df258. */
-int __cdecl bh_editor_numeric_key(BHEditorNumericContext *, BHEntity *, long key);
+int bh_editor_numeric_key(BHEditorNumericContext *, BHEntity *, long key);
 #endif

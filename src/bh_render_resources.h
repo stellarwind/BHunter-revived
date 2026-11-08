@@ -30,9 +30,9 @@ typedef struct BHRenderResources
     BHRenderResourcesError error;
 } BHRenderResources;
 
-int __cdecl bh_render_resources_init(BHRenderResources *owner, BHModelContext *models,
-                                     const BHModelInstanceContext *prototype, const BHSceneAllocator *allocator);
-unsigned long __cdecl bh_render_resources_load_model(BHRenderResources *owner, const char *name);
-const BHDrawResource *__cdecl bh_render_resources_lookup(unsigned long handle, void *owner);
-void __cdecl bh_render_resources_dispose(BHRenderResources *owner);
+int bh_render_resources_init(BHRenderResources *owner, BHModelContext *models, const BHModelInstanceContext *prototype,
+                             const BHSceneAllocator *allocator);
+unsigned long bh_render_resources_load_model(BHRenderResources *owner, const char *name);
+const BHDrawResource *bh_render_resources_lookup(unsigned long handle, void *owner);
+void bh_render_resources_dispose(BHRenderResources *owner);
 #endif

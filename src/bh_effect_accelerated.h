@@ -13,7 +13,7 @@ typedef struct BHEffectAcceleratedContext
 } BHEffectAcceleratedContext;
 /* Whole00405270. Borrowed source pool/world/response/particle/sound bindings.
    Original fields and actual source callback owners are authoritative. */
-void __cdecl bh_effect_accelerated_tick(BHEntity *);
+void bh_effect_accelerated_tick(BHEntity *);
 /* Shared zero-count source call-site helper, exact query/tick detonation tail. */
-void __cdecl bh_effect_detonate(BHEffectProjectileContext *, BHEntity *);
+void bh_effect_detonate(BHEffectProjectileContext *, BHEntity *);
 #endif

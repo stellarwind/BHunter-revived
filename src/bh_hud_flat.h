@@ -30,5 +30,5 @@ typedef struct BHHudFlatContext
    callback reentrancy. PC53 nearest/masked moderate finite contract. Compact
    BHHudStatusState is an explicit binding, not a restored full player layout.
    No weapon/player constructors, software dispatcher or original execution. */
-int __cdecl bh_hud_flat_draw(BHHudFlatContext *, BHHudStatusState *);
+int bh_hud_flat_draw(BHHudFlatContext *, BHHudStatusState *);
 #endif

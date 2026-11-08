@@ -11,16 +11,16 @@ typedef char list_bindings[offsetof(BHPlayerInputList, bindings) == 0x10 ? 1 : -
 typedef char list_state[offsetof(BHPlayerInputList, state) == 0x2010 ? 1 : -1];
 typedef char profile_size[sizeof(BHInputProfile) == 0x4c ? 1 : -1];
 
-static void *__cdecl allocate(unsigned long bytes, void *user)
+static void *allocate(unsigned long bytes, void *user)
 {
     return malloc(bytes);
 }
-static void __cdecl release(void *memory, void *user)
+static void release(void *memory, void *user)
 {
     free(memory);
 }
 
-int __cdecl bh_player_input_owner_init(BHPlayerInputOwner *owner, const BHSceneAllocator *allocator)
+int bh_player_input_owner_init(BHPlayerInputOwner *owner, const BHSceneAllocator *allocator)
 {
     if (!owner || (allocator && (!allocator->allocate || !allocator->release)))
         return 0;
@@ -36,7 +36,7 @@ int __cdecl bh_player_input_owner_init(BHPlayerInputOwner *owner, const BHSceneA
     return 1;
 }
 
-void __cdecl bh_player_input_owner_dispose(BHPlayerInputOwner *owner)
+void bh_player_input_owner_dispose(BHPlayerInputOwner *owner)
 {
     BHPlayerInputList *list, *next;
     if (!owner)
@@ -51,7 +51,7 @@ void __cdecl bh_player_input_owner_dispose(BHPlayerInputOwner *owner)
     owner->first = NULL;
 }
 
-BHPlayerInputList *__cdecl bh_player_input_create(BHPlayerInputOwner *owner, int mode)
+BHPlayerInputList *bh_player_input_create(BHPlayerInputOwner *owner, int mode)
 {
     BHPlayerInputList *list;
     unsigned long i;
@@ -87,9 +87,9 @@ static BHInputBinding *binding(BHPlayerInputList *list, long index, const char *
     return entry;
 }
 
-void __cdecl bh_player_input_bind_axis(BHPlayerInputList *list, long index, const char *name, unsigned char flags,
-                                       unsigned short modifiers, unsigned short first, unsigned short second,
-                                       unsigned short third, unsigned short fourth)
+void bh_player_input_bind_axis(BHPlayerInputList *list, long index, const char *name, unsigned char flags,
+                               unsigned short modifiers, unsigned short first, unsigned short second,
+                               unsigned short third, unsigned short fourth)
 {
     BHInputBinding *entry = binding(list, index, name);
     entry->flags = flags;
@@ -101,8 +101,8 @@ void __cdecl bh_player_input_bind_axis(BHPlayerInputList *list, long index, cons
     entry->key[3] = fourth;
 }
 
-void __cdecl bh_player_input_bind_key(BHPlayerInputList *list, long index, const char *name, unsigned char flags,
-                                      unsigned short modifiers, unsigned short key)
+void bh_player_input_bind_key(BHPlayerInputList *list, long index, const char *name, unsigned char flags,
+                              unsigned short modifiers, unsigned short key)
 {
     BHInputBinding *entry = binding(list, index, name);
     entry->kind = 1;
@@ -111,12 +111,12 @@ void __cdecl bh_player_input_bind_key(BHPlayerInputList *list, long index, const
     entry->key[0] = key;
 }
 
-void __cdecl bh_player_input_bind_string(BHPlayerInputList *list, long index, const char *name)
+void bh_player_input_bind_string(BHPlayerInputList *list, long index, const char *name)
 {
     binding(list, index, name)->kind = 5;
 }
 
-void __cdecl bh_player_input_setup(BHPlayerInputList *list, const BHInputProfile *profile)
+void bh_player_input_setup(BHPlayerInputList *list, const BHInputProfile *profile)
 {
     static const unsigned char axes[5][5] = {{1, 0x1c, 0x1d, 0x22, 0x25},
                                              {0, 0x1e, 0x1f, 0x23, 0x26},
@@ -156,7 +156,7 @@ void __cdecl bh_player_input_setup(BHPlayerInputList *list, const BHInputProfile
 #endif
 }
 
-void __cdecl bh_player_input_apply_packet(BHPlayerInputState *state, const void *packet)
+void bh_player_input_apply_packet(BHPlayerInputState *state, const void *packet)
 {
     const unsigned char *p = (const unsigned char *)packet + 2;
     unsigned long records = ((const unsigned char *)packet)[1], n, i;
@@ -184,7 +184,7 @@ void __cdecl bh_player_input_apply_packet(BHPlayerInputState *state, const void 
     }
 }
 
-int __cdecl bh_player_input_apply_packet_checked(BHPlayerInputState *state, const void *packet, unsigned long bytes)
+int bh_player_input_apply_packet_checked(BHPlayerInputState *state, const void *packet, unsigned long bytes)
 {
     const unsigned char *p = (const unsigned char *)packet;
     unsigned long records, offset = 2, record_bytes;
@@ -220,7 +220,7 @@ int __cdecl bh_player_input_apply_packet_checked(BHPlayerInputState *state, cons
     return 1;
 }
 
-unsigned char __cdecl bh_player_input_transition(BHPlayerInputState *state, unsigned long index)
+unsigned char bh_player_input_transition(BHPlayerInputState *state, unsigned long index)
 {
     unsigned long value = state->values[index];
     if (value && !(value & 0x80000000u))

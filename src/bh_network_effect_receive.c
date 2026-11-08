@@ -1,8 +1,7 @@
 #include "bh_network_effect_receive.h"
 #include "bh_round.h"
 #include <string.h>
-int __cdecl bh_network_effect_receive(BHNetworkEffectReceive *c, void *bytes, unsigned long size,
-                                      unsigned long capacity)
+int bh_network_effect_receive(BHNetworkEffectReceive *c, void *bytes, unsigned long size, unsigned long capacity)
 {
     BHVec3 position;
     unsigned char *payload;

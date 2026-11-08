@@ -8,10 +8,9 @@ static int fail(BHModelDrawLitContext *c, BHModelDrawLitError error)
         c->error = error;
     return 0;
 }
-int __cdecl bh_model_draw_lit_context_init(BHModelDrawLitContext *c, BHModelDrawContext *draw,
-                                           const BHLightContext *prepared, const BHLightConfig *directional,
-                                           const BHMat34 *world_to_model, long point_enabled, float scale,
-                                           unsigned long base_color)
+int bh_model_draw_lit_context_init(BHModelDrawLitContext *c, BHModelDrawContext *draw, const BHLightContext *prepared,
+                                   const BHLightConfig *directional, const BHMat34 *world_to_model, long point_enabled,
+                                   float scale, unsigned long base_color)
 {
     BHModelDrawLitContext next;
     unsigned long i;
@@ -109,7 +108,7 @@ static int shade(BHModelDrawLitContext *c, const BHBspNode *node)
     ++c->nodes_shaded;
     return 1;
 }
-int __cdecl bh_model_draw_lit(BHModelDrawLitContext *c, long node, unsigned long mask)
+int bh_model_draw_lit(BHModelDrawLitContext *c, long node, unsigned long mask)
 {
     BHModelDrawContext *draw;
     unsigned long count = 1, slot, bit;

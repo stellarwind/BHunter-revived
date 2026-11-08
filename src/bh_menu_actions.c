@@ -92,13 +92,13 @@ static void begin_text(BHMenuActions *c, const char *initial, long limit, BHInpu
         }
     }
 }
-void __cdecl bh_menu_action_network_host(BHMenuActions *c, long row)
+void bh_menu_action_network_host(BHMenuActions *c, long row)
 {
     (void)row;
     if (c->network_start)
         c->network_start(c->network_user, NULL);
 }
-void __cdecl bh_menu_action_network_join(BHMenuActions *c, long row)
+void bh_menu_action_network_join(BHMenuActions *c, long row)
 {
     (void)row;
     if (c->network_address)
@@ -108,7 +108,7 @@ void bh_menu_network_address(BHMenuActions *c, long row)
 {
     paint(c, row, c->network_address && *c->network_address ? c->network_address : "Enter host IPv4");
 }
-void __cdecl bh_menu_action_video(BHMenuActions *c, long row)
+void bh_menu_action_video(BHMenuActions *c, long row)
 {
 #ifdef BH_SDL_BACKEND
     if (!c || !c->config)
@@ -154,7 +154,7 @@ void __cdecl bh_menu_action_video(BHMenuActions *c, long row)
 #endif
 }
 
-void __cdecl bh_menu_action_audio(BHMenuActions *c, long row)
+void bh_menu_action_audio(BHMenuActions *c, long row)
 {
     double v;
     long n, percent;
@@ -189,7 +189,7 @@ void __cdecl bh_menu_action_audio(BHMenuActions *c, long row)
     paint(c, cd ? 2 : 0, body);
     paint(c, cd ? 3 : 1, body);
 }
-void __cdecl bh_menu_action_profile(BHMenuActions *c, long row)
+void bh_menu_action_profile(BHMenuActions *c, long row)
 {
     BHInputProfile *p, *previous;
     if (!c || !c->profiles || !c->profiles->current || !(p = *c->profiles->current))
@@ -239,7 +239,7 @@ static int named(BHInputProfile *start, BHInputProfile *exclude, const char *nam
     } while (p != start);
     return 0;
 }
-void __cdecl bh_menu_action_profile_promote(BHMenuActions *c, long unused)
+void bh_menu_action_profile_promote(BHMenuActions *c, long unused)
 {
     BHInputProfile *p, *clone, *next, *previous;
     const BHInputProfile *base;
@@ -288,7 +288,7 @@ void __cdecl bh_menu_action_profile_promote(BHMenuActions *c, long unused)
     if (c->settings)
         c->settings->input_profile = clone;
 }
-void __cdecl bh_menu_action_graphics_notice(BHMenuActions *c, long unused)
+void bh_menu_action_graphics_notice(BHMenuActions *c, long unused)
 {
 #ifdef BH_SDL_BACKEND
     (void)unused;

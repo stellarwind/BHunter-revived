@@ -3,13 +3,13 @@
 #include <string.h>
 typedef char event_payload_offset[offsetof(BHEntity, payload) == 0xe4 ? 1 : -1];
 typedef char event_query_offset[offsetof(BHEntity, query) == 0xd0 ? 1 : -1];
-void __cdecl bh_player_input_bind_kind4(BHPlayerInputList *list, long index)
+void bh_player_input_bind_kind4(BHPlayerInputList *list, long index)
 {
     if (list->count < index + 1)
         list->count = index + 1;
     list->bindings[index].kind = 4;
 }
-int __cdecl bh_player_input_broadcast(BHEntity *head, unsigned long limit, unsigned long *visited)
+int bh_player_input_broadcast(BHEntity *head, unsigned long limit, unsigned long *visited)
 {
     unsigned long count = 0;
     long selected;

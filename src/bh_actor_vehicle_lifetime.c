@@ -23,7 +23,7 @@ static BHPickupRoom *vehicle_release_notice_room(BHActorVehicleLifetimeContext *
     return vehicle_release_room(ctx, actor);
 }
 #include "bh_actor_vehicle_release_core.inc"
-int __cdecl bh_actor_vehicle_release(BHActorVehicleLifetimeContext *ctx, BHEntity *entity)
+int bh_actor_vehicle_release(BHActorVehicleLifetimeContext *ctx, BHEntity *entity)
 {
     BHPickupRoom *room = 0;
     BHEntity *previous, *next;

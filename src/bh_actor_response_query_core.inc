@@ -40,7 +40,7 @@ static BHEntity *response_query_select(BHActorResponseContext *c, BHEntity *e, c
     bh_camera_curve((phase), (destination), RESPONSE_QUERY_VEC(0x120), RESPONSE_QUERY_VEC(0x144),                      \
                     RESPONSE_QUERY_VEC(0x150), RESPONSE_QUERY_VEC(0x12c))
 
-void __cdecl bh_actor_response_query_core(BHEntity *e, void *packet, BHActorResponseContext *c)
+void bh_actor_response_query_core(BHEntity *e, void *packet, BHActorResponseContext *c)
 {
     unsigned long *p = (unsigned long *)packet;
     float *f = (float *)packet;

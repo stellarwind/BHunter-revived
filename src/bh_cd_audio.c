@@ -1,5 +1,5 @@
 #include "bh_cd_audio.h"
-int __cdecl bh_cd_audio_startup(BHCdAudio *a)
+int bh_cd_audio_startup(BHCdAudio *a)
 {
     BHCdClose *cd;
     if (!a || !a->notify || !(cd = a->notify->cd) || cd->device || !a->music_path)
@@ -21,11 +21,11 @@ int __cdecl bh_cd_audio_startup(BHCdAudio *a)
     cd->last_track = -1;
     return 1;
 }
-double __cdecl bh_cd_audio_volume(BHCdAudio *a)
+double bh_cd_audio_volume(BHCdAudio *a)
 {
     return a && a->notify && a->notify->cd && a->notify->cd->device ? a->notify->cd->local_volume : 1;
 }
-double __cdecl bh_wave_audio_volume(BHCdAudio *a)
+double bh_wave_audio_volume(BHCdAudio *a)
 {
     (void)a;
     return bh_audio_get_effects_gain();

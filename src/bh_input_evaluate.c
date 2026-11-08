@@ -16,7 +16,7 @@ static int binding_key(const BHInputSnapshot *s, const unsigned char *history, c
     return key(s, history, b->key[0], previous) ||
            ((b->flags & BH_INPUT_GAMEPAD) && index <= BH_PAD_RIGHT && (buttons & (1UL << index)));
 }
-int __cdecl bh_input_evaluate(BHPlayerInputList *list, BHInputSnapshot *snapshot, int full)
+int bh_input_evaluate(BHPlayerInputList *list, BHInputSnapshot *snapshot, int full)
 {
     unsigned char output[0x120], down[256], up[256], history[32], head;
     unsigned long n_down = 0, n_up = 0, at = 2, records = 0, i, j, n, pad;
@@ -140,7 +140,7 @@ int __cdecl bh_input_evaluate(BHPlayerInputList *list, BHInputSnapshot *snapshot
     snapshot->history_head = head;
     return 1;
 }
-int __cdecl bh_input_set_enabled(BHPlayerInputList *list, BHInputSnapshot *snapshot, int mode)
+int bh_input_set_enabled(BHPlayerInputList *list, BHInputSnapshot *snapshot, int mode)
 {
     if (!list)
         return 0;

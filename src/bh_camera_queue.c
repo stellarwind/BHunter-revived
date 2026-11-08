@@ -1,7 +1,7 @@
 #include "bh_camera_queue.h"
 #include <string.h>
 
-int __cdecl bh_camera_queue_pose(BHDrawQueue *q, const BHVec3 *position, const BHVec3 *angles)
+int bh_camera_queue_pose(BHDrawQueue *q, const BHVec3 *position, const BHVec3 *angles)
 {
     unsigned long tail, index;
     BHDrawCommand *command;
@@ -35,8 +35,8 @@ int __cdecl bh_camera_queue_pose(BHDrawQueue *q, const BHVec3 *position, const B
     return 1;
 }
 
-int __cdecl bh_camera_queue_execute(const BHViewConfig *view, BHMainCamera *camera, const BHDrawQueue *q,
-                                    const BHDrawCommand *command, unsigned long *next)
+int bh_camera_queue_execute(const BHViewConfig *view, BHMainCamera *camera, const BHDrawQueue *q,
+                            const BHDrawCommand *command, unsigned long *next)
 {
     float pose[6];
     unsigned long following;

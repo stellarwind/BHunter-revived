@@ -32,7 +32,7 @@ typedef struct BHAttachmentContext
    Clear before following all six links in order: shared nodes and cycles are
    valid. No allocation, resource release or link mutation. NULL is permitted
    only as a source convenience at the public boundary. */
-void __cdecl bh_attachment_reset(BHAttachmentNode *);
+void bh_attachment_reset(BHAttachmentNode *);
 /* Complete00417f70 recursive room/portal radar connectors. Exactly two live
    neighbors produce one portal-to-portal segment; other degrees produce six
    slot-order center-to-portal segments. Radial400 clipping mutates the center
@@ -47,5 +47,5 @@ void __cdecl bh_attachment_reset(BHAttachmentNode *);
    queue storage must not overlap them. PC53 nearest/masked finite profile;
    PC24/exceptional original behavior and original software rasterizer remain
    unvalidated. No original full-entity layout or model lifetime is invented. */
-int __cdecl bh_attachment_render(BHAttachmentContext *, BHAttachmentNode *);
+int bh_attachment_render(BHAttachmentContext *, BHAttachmentNode *);
 #endif

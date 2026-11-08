@@ -12,7 +12,7 @@ static __inline float curve_float_spill(double value)
     reloaded.bits = stored.bits;
     return reloaded.value;
 }
-void __cdecl bh_camera_curve(float t, BHVec3 *out, const BHVec3 *a, const BHVec3 *b, const BHVec3 *c, const BHVec3 *d)
+void bh_camera_curve(float t, BHVec3 *out, const BHVec3 *a, const BHVec3 *b, const BHVec3 *c, const BHVec3 *d)
 {
     float square, u, blend, inverse, last_z;
     double cube, blend_inverse, last_x, last_y;

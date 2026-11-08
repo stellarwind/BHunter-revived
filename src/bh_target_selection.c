@@ -25,8 +25,8 @@ static __inline float selection_stored(double value)
     return read.value;
 }
 
-int __cdecl bh_target_select(BHEntity *player, BHEntity *head, const BHEntity *excluded, const BHVec3 *origin,
-                             unsigned long limit, BHTargetSelection *result)
+int bh_target_select(BHEntity *player, BHEntity *head, const BHEntity *excluded, const BHVec3 *origin,
+                     unsigned long limit, BHTargetSelection *result)
 {
     BHTargetQueryPacket packet;
     long eligible, kind, weight;

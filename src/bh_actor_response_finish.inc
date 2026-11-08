@@ -4,7 +4,7 @@
 #define RESPONSE_FINISH_CURVE(t, p)                                                                                    \
     bh_camera_curve((t), (p), RESPONSE_FINISH_VEC(0x120), RESPONSE_FINISH_VEC(0x144), RESPONSE_FINISH_VEC(0x150),      \
                     RESPONSE_FINISH_VEC(0x12c))
-void __cdecl bh_actor_response_finish(BHEntity *e, BHActorResponseContext *c, const BHVec3 *death_position, int smoked)
+void bh_actor_response_finish(BHEntity *e, BHActorResponseContext *c, const BHVec3 *death_position, int smoked)
 {
     BHActorDamageContext *d = c->damage;
     BHVec3 before, at, after, velocity, spin;

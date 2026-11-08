@@ -10,11 +10,11 @@ typedef char weapon_common_size[sizeof(BHWeaponCommonState) == 0x30 ? 1 : -1];
 typedef char weapon_hud_offset[offsetof(BHWeaponCommonState, hud) == 0x10 ? 1 : -1];
 typedef char weapon_ammo_offset[offsetof(BHWeaponCommonState, ammo) == 0x24 ? 1 : -1];
 typedef char weapon_delay_offset[offsetof(BHWeaponCommonState, delay) == 0x2c ? 1 : -1];
-BHWeaponCommonState *__cdecl bh_weapon_common_state(BHEntity *weapon)
+BHWeaponCommonState *bh_weapon_common_state(BHEntity *weapon)
 {
     return weapon ? (BHWeaponCommonState *)(weapon->payload + 4) : NULL;
 }
-int __cdecl bh_weapon_delay_tick(BHEntity *weapon)
+int bh_weapon_delay_tick(BHEntity *weapon)
 {
     BHWeaponCommonState *state = bh_weapon_common_state(weapon);
     if (!state)
@@ -23,7 +23,7 @@ int __cdecl bh_weapon_delay_tick(BHEntity *weapon)
         state->delay = (long)((unsigned long)state->delay - 1UL);
     return 1;
 }
-int __cdecl bh_weapon_ready_reset(BHWeaponReadyContext *ctx, BHEntity *weapon, const BHEntity *player)
+int bh_weapon_ready_reset(BHWeaponReadyContext *ctx, BHEntity *weapon, const BHEntity *player)
 {
     BHWeaponCommonState *state = bh_weapon_common_state(weapon);
     unsigned long handle;

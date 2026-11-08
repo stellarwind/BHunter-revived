@@ -16,19 +16,19 @@ static void removed(BHEntity *entity, void *packet, unsigned long offset, int ex
     if (extra)
         memcpy((unsigned char *)entity + 0xfc, &zero, 4);
 }
-void __cdecl bh_actor_target_removed(BHEntity *entity, void *packet)
+void bh_actor_target_removed(BHEntity *entity, void *packet)
 {
     removed(entity, packet, 0x1b4, 0);
 }
-void __cdecl bh_effect_target_removed(BHEntity *entity, void *packet)
+void bh_effect_target_removed(BHEntity *entity, void *packet)
 {
     removed(entity, packet, 0xf4, 1);
 }
-void __cdecl bh_pickup_target_removed(BHEntity *entity, void *packet)
+void bh_pickup_target_removed(BHEntity *entity, void *packet)
 {
     removed(entity, packet, 0x104, 0);
 }
-void __cdecl bh_marker_query(BHEntity *entity, void *packet)
+void bh_marker_query(BHEntity *entity, void *packet)
 {
     unsigned long event, zero = 0;
     if (!entity || !packet)
@@ -39,7 +39,7 @@ void __cdecl bh_marker_query(BHEntity *entity, void *packet)
     else if (event == 3)
         memcpy((unsigned char *)packet + 4, &entity->position, 12);
 }
-void __cdecl bh_vec3_interpolate(float factor, BHVec3 *out, const BHVec3 *a, const BHVec3 *b)
+void bh_vec3_interpolate(float factor, BHVec3 *out, const BHVec3 *a, const BHVec3 *b)
 {
     double x, y, z;
     if (!out || !a || !b)

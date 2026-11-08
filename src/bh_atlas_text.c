@@ -14,7 +14,7 @@ static long signed_metric(unsigned short bits)
     memcpy(&value, &bits, 2);
     return value;
 }
-long __cdecl bh_atlas_page_text(BHAtlasPage *page, const unsigned char *text)
+long bh_atlas_page_text(BHAtlasPage *page, const unsigned char *text)
 {
     const BHAtlasRectangle *glyph;
     RECT source, destination;
@@ -73,7 +73,7 @@ long __cdecl bh_atlas_page_text(BHAtlasPage *page, const unsigned char *text)
         page->image->resident->pixels_dirty = 1;
     return total;
 }
-long __cdecl bh_atlas_page_text_width(const BHAtlasPage *page, const unsigned char *text)
+long bh_atlas_page_text_width(const BHAtlasPage *page, const unsigned char *text)
 {
     unsigned long code, index;
     long total = 0;
@@ -86,7 +86,7 @@ long __cdecl bh_atlas_page_text_width(const BHAtlasPage *page, const unsigned ch
     }
     return total;
 }
-BHTextureImage *__cdecl bh_atlas_page_image(const BHAtlasPage *page)
+BHTextureImage *bh_atlas_page_image(const BHAtlasPage *page)
 {
     return page ? page->image : NULL;
 }

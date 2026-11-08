@@ -16,8 +16,8 @@ static int vector_ok(const BHVec3 *v)
 {
     return v && _finite(v->x) && _finite(v->y) && _finite(v->z);
 }
-int __cdecl bh_sound_listener(BHSoundQueue *sound_queue, unsigned long index, long enabled, const BHVec3 *position,
-                              const BHVec3 *angles, const BHVec3 *velocity)
+int bh_sound_listener(BHSoundQueue *sound_queue, unsigned long index, long enabled, const BHVec3 *position,
+                      const BHVec3 *angles, const BHVec3 *velocity)
 {
     BHMat34 rotation;
     const BHVec3 right = {1, 0, 0};
@@ -48,7 +48,7 @@ int __cdecl bh_sound_listener(BHSoundQueue *sound_queue, unsigned long index, lo
     sound_queue->error = BH_SOUND_OK;
     return 1;
 }
-int __cdecl bh_sound_set_voice_limit(BHSoundQueue *sound_queue, long requested)
+int bh_sound_set_voice_limit(BHSoundQueue *sound_queue, long requested)
 {
     if (!sound_queue)
         return 0;

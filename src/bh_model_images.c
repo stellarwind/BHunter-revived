@@ -1,6 +1,6 @@
 #include "bh_model_images.h"
 #include <string.h>
-long __cdecl bh_model_image_find(const BHModel *model, const char *name)
+long bh_model_image_find(const BHModel *model, const char *name)
 {
     long i, count;
     if (!model || !name || model->frame || !model->images)
@@ -11,7 +11,7 @@ long __cdecl bh_model_image_find(const BHModel *model, const char *name)
             return i;
     return -1;
 }
-int __cdecl bh_model_image_replace(BHModel *model, long index, BHTextureImage *image)
+int bh_model_image_replace(BHModel *model, long index, BHTextureImage *image)
 {
     if (index < 0 || !model || model->frame || index >= (long)model->material_count || !model->images)
         return 0;

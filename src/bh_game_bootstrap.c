@@ -36,7 +36,7 @@ static int fail(BHGameBootstrap *c, int error)
     c->error = error;
     return 0;
 }
-unsigned long __cdecl bh_bootstrap_value(const BHGameBootstrap *c, unsigned long identity)
+unsigned long bh_bootstrap_value(const BHGameBootstrap *c, unsigned long identity)
 {
     unsigned long i;
     if (c)
@@ -128,7 +128,7 @@ static int resources(BHGameBootstrap *c, const BHBootstrapResource *ops, unsigne
     }
     return 1;
 }
-int __cdecl bh_bootstrap_resources(BHGameBootstrap *c, unsigned long stage)
+int bh_bootstrap_resources(BHGameBootstrap *c, unsigned long stage)
 {
     if (!c)
         return 0;
@@ -164,12 +164,12 @@ static BHBootstrapMenu *action_menu(BHMenuActions *a)
 {
     return (BHBootstrapMenu *)((char *)a - offsetof(BHBootstrapMenu, actions));
 }
-static void __cdecl submenu_first(BHMenuActions *a, long index)
+static void submenu_first(BHMenuActions *a, long index)
 {
     (void)index;
     bh_menu_submenu_first(a->settings);
 }
-static void __cdecl network_ship_picker(BHMenuActions *a, long index)
+static void network_ship_picker(BHMenuActions *a, long index)
 {
     BHMenuRuntime *picker = action_menu(a)->owner->runtime->network_ship_menu;
     (void)index;
@@ -179,18 +179,18 @@ static void __cdecl network_ship_picker(BHMenuActions *a, long index)
         picker->actions->menu->display_selection = (float)*a->network_ship;
     }
 }
-static void __cdecl network_ship_select(BHMenuActions *a, long index)
+static void network_ship_select(BHMenuActions *a, long index)
 {
     if (a->network_ship)
         *a->network_ship = index;
 }
-static void __cdecl save(BHMenuActions *a, long index)
+static void save(BHMenuActions *a, long index)
 {
     (void)index;
     if (!bh_config_save(a->config, a->save_path))
         a->error = 1;
 }
-static void __cdecl quit(BHMenuActions *a, long index)
+static void quit(BHMenuActions *a, long index)
 {
     BHBootstrapMenu *m = action_menu(a);
     (void)index;
@@ -251,7 +251,7 @@ static BHMenuMissionAction edit_action(unsigned long id)
         return 0;
     }
 }
-static void __cdecl row_refresh(BHMenuSettingsMenu *s, long row)
+static void row_refresh(BHMenuSettingsMenu *s, long row)
 {
     BHBootstrapMenu *m = (BHBootstrapMenu *)s->user;
     BHMenuMissionAction fn = 0;
@@ -289,7 +289,7 @@ static void __cdecl row_refresh(BHMenuSettingsMenu *s, long row)
     if (fn)
         fn(&m->edits, row);
 }
-static void __cdecl initial_refresh(void *s, long index)
+static void initial_refresh(void *s, long index)
 {
     row_refresh((BHMenuSettingsMenu *)s, index);
 }
@@ -334,7 +334,7 @@ static int add_row(BHGameBootstrap *c, const BHBootstrapRowSpec *r)
     ++c->rows_created;
     return 1;
 }
-int __cdecl bh_bootstrap_menus(BHGameBootstrap *c)
+int bh_bootstrap_menus(BHGameBootstrap *c)
 {
     unsigned long i, j;
     BHBootstrapMenu *m;
@@ -439,12 +439,12 @@ static int scale_captain(BHGameBootstrap *c)
     cache = r->data.model.instance->cache;
     return bh_model_scale(r->data.model.instance->model, 3, 3, 3, &cache, 1) ? 1 : fail(c, 5);
 }
-static void __cdecl fade_refresh(BHEntity *e, void *packet)
+static void fade_refresh(BHEntity *e, void *packet)
 {
     (void)packet;
     bh_menu_music_fade(e);
 }
-int __cdecl bh_game_bootstrap(BHGameBootstrap *c)
+int bh_game_bootstrap(BHGameBootstrap *c)
 {
     BHVFile *file;
     BHBootstrapResource r;

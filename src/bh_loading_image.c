@@ -3,11 +3,11 @@
 #include <stdlib.h>
 #include <string.h>
 #define ARENA_BYTES 0x12c000UL
-static void *__cdecl allocate(unsigned long bytes, void *user)
+static void *allocate(unsigned long bytes, void *user)
 {
     return malloc(bytes);
 }
-static void __cdecl release(void *memory, void *user)
+static void release(void *memory, void *user)
 {
     free(memory);
 }
@@ -20,9 +20,8 @@ static int fail(BHLoadingImages *c, BHLoadingImageError error)
     }
     return 0;
 }
-int __cdecl bh_loading_images_bind(BHLoadingImages *c, unsigned long width, unsigned long bytes,
-                                   const unsigned long *right, const unsigned long *left,
-                                   const BHSceneAllocator *allocator)
+int bh_loading_images_bind(BHLoadingImages *c, unsigned long width, unsigned long bytes, const unsigned long *right,
+                           const unsigned long *left, const BHSceneAllocator *allocator)
 {
     if (!c || (bytes != 1 && (!right || !left)) || (allocator && (!allocator->allocate || !allocator->release)))
         return 0;
@@ -43,7 +42,7 @@ int __cdecl bh_loading_images_bind(BHLoadingImages *c, unsigned long width, unsi
     }
     return 1;
 }
-void __cdecl bh_loading_images_dispose(BHLoadingImages *c)
+void bh_loading_images_dispose(BHLoadingImages *c)
 {
     if (!c)
         return;
@@ -82,7 +81,7 @@ static unsigned char indexed(const unsigned char *rgb, int quarter)
     }
     return (unsigned char)(((r * 5) / 255) * 42 + ((g * 6) / 255) * 6 + (b * 5) / 255);
 }
-int __cdecl bh_loading_image_load(BHLoadingImages *c, const char *name, unsigned long offset)
+int bh_loading_image_load(BHLoadingImages *c, const char *name, unsigned long offset)
 {
     BHPcxReader reader;
     BHPcxPalette palette;
@@ -180,7 +179,7 @@ int __cdecl bh_loading_image_load(BHLoadingImages *c, const char *name, unsigned
     ++c->loads;
     return 1;
 }
-int __cdecl bh_loading_images_init(BHLoadingImages *c)
+int bh_loading_images_init(BHLoadingImages *c)
 {
     BHLoadingImages next;
     BHLoadingImageError error;

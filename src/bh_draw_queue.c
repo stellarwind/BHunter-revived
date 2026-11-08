@@ -5,15 +5,15 @@
 
 typedef char command_size[sizeof(BHDrawCommand) == 0x54 ? 1 : -1];
 typedef char command_link[offsetof(BHDrawCommand, next) == 0x50 ? 1 : -1];
-static void *__cdecl allocate(unsigned long size, void *user)
+static void *allocate(unsigned long size, void *user)
 {
     return malloc(size);
 }
-static void __cdecl release(void *pointer, void *user)
+static void release(void *pointer, void *user)
 {
     free(pointer);
 }
-int __cdecl bh_draw_queue_init(BHDrawQueue *q, unsigned long capacity, const BHSceneAllocator *allocator)
+int bh_draw_queue_init(BHDrawQueue *q, unsigned long capacity, const BHSceneAllocator *allocator)
 {
     BHDrawQueue next;
     if (!q || capacity < 9 || capacity > 65535 || (allocator && (!allocator->allocate || !allocator->release)))
@@ -34,7 +34,7 @@ int __cdecl bh_draw_queue_init(BHDrawQueue *q, unsigned long capacity, const BHS
     *q = next;
     return bh_draw_queue_begin(q);
 }
-int __cdecl bh_draw_queue_dispose(BHDrawQueue *q)
+int bh_draw_queue_dispose(BHDrawQueue *q)
 {
     if (!q)
         return 0;
@@ -43,7 +43,7 @@ int __cdecl bh_draw_queue_dispose(BHDrawQueue *q)
     memset(q, 0, sizeof(*q));
     return 1;
 }
-int __cdecl bh_draw_queue_begin(BHDrawQueue *q)
+int bh_draw_queue_begin(BHDrawQueue *q)
 {
     unsigned long i;
     if (!q || !q->commands || q->capacity < 9)
@@ -105,8 +105,8 @@ static int unavailable(const BHDrawQueue *q)
 {
     return q && q->error == BH_DRAW_FULL ? 0 : -1;
 }
-int __cdecl bh_draw_billboard(BHDrawQueue *q, unsigned long bucket, unsigned long resource, const BHVec3 *position,
-                              float width, float height, float angle, unsigned long frame, float alpha)
+int bh_draw_billboard(BHDrawQueue *q, unsigned long bucket, unsigned long resource, const BHVec3 *position, float width,
+                      float height, float angle, unsigned long frame, float alpha)
 {
     BHDrawCommand *command;
     if (!position)
@@ -124,9 +124,8 @@ int __cdecl bh_draw_billboard(BHDrawQueue *q, unsigned long bucket, unsigned lon
     put(command->words + 6, alpha);
     return 1;
 }
-int __cdecl bh_draw_segment(BHDrawQueue *q, unsigned long bucket, unsigned long resource, const BHVec3 *from,
-                            const BHVec3 *to, float first_width, float second_width, float first_alpha,
-                            float second_alpha, unsigned long control)
+int bh_draw_segment(BHDrawQueue *q, unsigned long bucket, unsigned long resource, const BHVec3 *from, const BHVec3 *to,
+                    float first_width, float second_width, float first_alpha, float second_alpha, unsigned long control)
 {
     BHDrawCommand *command;
     if (!from || !to)
@@ -145,9 +144,9 @@ int __cdecl bh_draw_segment(BHDrawQueue *q, unsigned long bucket, unsigned long 
     command->words[10] = control;
     return 1;
 }
-int __cdecl bh_draw_oriented(BHDrawQueue *q, unsigned long bucket, unsigned long resource, const BHVec3 *position,
-                             const BHVec3 *up, const BHVec3 *normal, float width, float height, float angle,
-                             unsigned long control, float alpha)
+int bh_draw_oriented(BHDrawQueue *q, unsigned long bucket, unsigned long resource, const BHVec3 *position,
+                     const BHVec3 *up, const BHVec3 *normal, float width, float height, float angle,
+                     unsigned long control, float alpha)
 {
     BHDrawCommand *command;
     if (!position || !up || !normal)

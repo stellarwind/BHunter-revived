@@ -20,8 +20,8 @@ static int binding(const BHSegmentQueueContext *c)
     return c && c->camera && c->draw && c->draw->path && c->draw->capacity && c->draw->capacity <= 0x7fffffffUL &&
            c->draw->used <= c->draw->capacity;
 }
-int __cdecl bh_segment_queue_append(BHSegmentQueueContext *c, const BHVec3 *p, float width, unsigned long flags,
-                                    float modulation)
+int bh_segment_queue_append(BHSegmentQueueContext *c, const BHVec3 *p, float width, unsigned long flags,
+                            float modulation)
 {
     unsigned long index;
     BHSpriteOrientedVertex *out;
@@ -52,7 +52,7 @@ int __cdecl bh_segment_queue_append(BHSegmentQueueContext *c, const BHVec3 *p, f
     c->error = BH_SEGMENT_QUEUE_OK;
     return 1;
 }
-int __cdecl bh_segment_queue_execute(BHSegmentQueueContext *c, const BHDrawCommand *command, unsigned long *next)
+int bh_segment_queue_execute(BHSegmentQueueContext *c, const BHDrawCommand *command, unsigned long *next)
 {
     BHVec3 point;
     BHTextureImage *image;

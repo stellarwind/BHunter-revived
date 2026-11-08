@@ -27,8 +27,8 @@ static double distance_to(const BHViewPlane *p, double x, double y, double z)
     return (((double)p->normal.x * x + (double)p->normal.y * y) + (double)p->normal.z * z) - p->offset;
 }
 
-int __cdecl bh_model_instance_draw(BHModelInstanceContext *c, double x, double y, double z, double rotate_y,
-                                   double rotate_x, double rotate_z, float opacity)
+int bh_model_instance_draw(BHModelInstanceContext *c, double x, double y, double z, double rotate_y, double rotate_x,
+                           double rotate_z, float opacity)
 {
     unsigned long mask = 63, bit, slot, next_frame;
     double depth, d;

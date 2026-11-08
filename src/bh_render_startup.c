@@ -29,7 +29,7 @@ static int format(BHRenderStartup *s, LPDIRECTDRAWSURFACE surface, unsigned long
     s->last_hresult = IDirectDrawSurface_GetPixelFormat(surface, &s->pixel);
     return s->last_hresult == DD_OK;
 }
-void __cdecl bh_render_startup_dispose(BHRenderStartup *s)
+void bh_render_startup_dispose(BHRenderStartup *s)
 {
     unsigned long i;
     HRESULT hr;
@@ -80,7 +80,7 @@ void __cdecl bh_render_startup_dispose(BHRenderStartup *s)
         IDirectDrawSurface_Release(s->screen);
     memset(s, 0, sizeof(*s));
 }
-HRESULT __cdecl bh_render_startup_attach_depth(BHRenderStartup *s, LPDIRECTDRAWSURFACE target)
+HRESULT bh_render_startup_attach_depth(BHRenderStartup *s, LPDIRECTDRAWSURFACE target)
 {
     unsigned long i;
     HRESULT hr;
@@ -107,9 +107,9 @@ static int failed(BHRenderStartup *s)
     s->last_hresult = hr;
     return 0;
 }
-int __cdecl bh_render_startup_hardware(BHRenderStartup *s, LPDIRECTDRAW draw, LPDIRECTDRAWSURFACE render,
-                                       LPDIRECTDRAWSURFACE screen, unsigned long width, unsigned long height,
-                                       unsigned long bits)
+int bh_render_startup_hardware(BHRenderStartup *s, LPDIRECTDRAW draw, LPDIRECTDRAWSURFACE render,
+                               LPDIRECTDRAWSURFACE screen, unsigned long width, unsigned long height,
+                               unsigned long bits)
 {
     DDSURFACEDESC depth;
     D3DVIEWPORT2 viewport;
@@ -172,9 +172,9 @@ int __cdecl bh_render_startup_hardware(BHRenderStartup *s, LPDIRECTDRAW draw, LP
         return failed(s);
     return 1;
 }
-int __cdecl bh_render_startup_software(BHRenderStartup *s, LPDIRECTDRAW draw, LPDIRECTDRAWSURFACE format_surface,
-                                       LPDIRECTDRAWSURFACE render, LPDIRECTDRAWSURFACE screen, unsigned long width,
-                                       unsigned long height, unsigned long bits)
+int bh_render_startup_software(BHRenderStartup *s, LPDIRECTDRAW draw, LPDIRECTDRAWSURFACE format_surface,
+                               LPDIRECTDRAWSURFACE render, LPDIRECTDRAWSURFACE screen, unsigned long width,
+                               unsigned long height, unsigned long bits)
 {
     DDSURFACEDESC desc;
     PALETTEENTRY palette[256];
@@ -256,7 +256,7 @@ static void mode_error(BHRenderMode *m, const char *reason, unsigned long w, uns
     if (used + need < sizeof(m->errors))
         memcpy(m->errors + used, text, need + 1);
 }
-void __cdecl bh_render_mode_dispose(BHRenderMode *m)
+void bh_render_mode_dispose(BHRenderMode *m)
 {
     if (!m)
         return;
@@ -267,8 +267,8 @@ void __cdecl bh_render_mode_dispose(BHRenderMode *m)
         IDirectDrawSurface_Release(m->screen);
     m->render = m->screen = NULL;
 }
-int __cdecl bh_render_mode_startup(BHRenderMode *m, LPDIRECTDRAW2 draw2, LPDIRECTDRAW draw, unsigned long width,
-                                   unsigned long height, unsigned long bits, int software)
+int bh_render_mode_startup(BHRenderMode *m, LPDIRECTDRAW2 draw2, LPDIRECTDRAW draw, unsigned long width,
+                           unsigned long height, unsigned long bits, int software)
 {
     DDSURFACEDESC desc;
     DDSCAPS caps;

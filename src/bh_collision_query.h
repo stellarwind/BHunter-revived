@@ -28,12 +28,12 @@ typedef struct BHCollisionQuery
    Return 1 contact, 0 miss, -1 invalid/limit; output changes only on contact.
    Front lists precede back lists; first contact is traversal order, not closest.
    Malformed/cyclic references reject with bounded work and counters restored. */
-int __cdecl bh_collision_query_init(BHCollisionQuery *query, BHGeometry *a, BHGeometry *b);
-int __cdecl bh_collision_query_dispose(BHCollisionQuery *query);
+int bh_collision_query_init(BHCollisionQuery *query, BHGeometry *a, BHGeometry *b);
+int bh_collision_query_dispose(BHCollisionQuery *query);
 /* 0044c200: fixed source node against destination node/subtree. */
-int __cdecl bh_collision_query_node(BHCollisionQuery *query, long a_node, long b_node, const BHMat34 *a_to_b,
-                                    const BHMat34 *b_to_world, BHCollisionHit *out);
+int bh_collision_query_node(BHCollisionQuery *query, long a_node, long b_node, const BHMat34 *a_to_b,
+                            const BHMat34 *b_to_world, BHCollisionHit *out);
 /* 0044d2f0: source subtree against destination subtree, ancestor face suppression. */
-int __cdecl bh_collision_query_run(BHCollisionQuery *query, long a_node, long b_node, const BHMat34 *a_to_b,
-                                   const BHMat34 *b_to_world, BHCollisionHit *out);
+int bh_collision_query_run(BHCollisionQuery *query, long a_node, long b_node, const BHMat34 *a_to_b,
+                           const BHMat34 *b_to_world, BHCollisionHit *out);
 #endif

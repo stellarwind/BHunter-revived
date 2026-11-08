@@ -495,7 +495,7 @@ static int shot(BHRemoteFire *fire, BHEntity *entity, short tick, short previous
     }
     return 1;
 }
-int __cdecl bh_remote_fire(BHRemoteFire *fire, BHEntity *entity, short tick, unsigned long type, BHEntity *target)
+int bh_remote_fire(BHRemoteFire *fire, BHEntity *entity, short tick, unsigned long type, BHEntity *target)
 {
     unsigned short old;
     int result;

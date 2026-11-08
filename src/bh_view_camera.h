@@ -30,15 +30,15 @@ typedef struct BHViewCamera
     float focal;
 } BHViewCamera;
 /* Explicit source config/default binding; no original constructor claim. */
-int __cdecl bh_view_config_init(BHViewConfig *, long width, long height);
+int bh_view_config_init(BHViewConfig *, long width, long height);
 /* Complete00451660 over explicit target dimensions/context. Resets origins to
    zero and clip bounds to full target; preserves FOV and depth settings. */
-int __cdecl bh_view_reset_viewport(BHViewConfig *, long width, long height);
+int bh_view_reset_viewport(BHViewConfig *, long width, long height);
 /* Complete004515b0. Preserves asymmetric clamps and inverted bounds. */
-int __cdecl bh_view_clip_rect(BHViewConfig *, float x, float y, float width, float height);
+int bh_view_clip_rect(BHViewConfig *, float x, float y, float width, float height);
 /* Complete00451b80. Outward plane inequality: dot(normal,point)<=offset.
    Caller PC53/nearest/masked profile. Uses original rigid-inverse semantics;
    does not substitute a general inverse for nonrigid inputs. Input/output may
    not overlap. Source validation failure retains output. */
-int __cdecl bh_view_camera_build(const BHViewConfig *, const BHMat34 *, BHViewCamera *);
+int bh_view_camera_build(const BHViewConfig *, const BHMat34 *, BHViewCamera *);
 #endif

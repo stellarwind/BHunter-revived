@@ -7,5 +7,5 @@
    the rounded maximum norm. This differs from BSP root_radius maxabs.
    Source guards return0 for NULL/empty/nonfinite input or unsupported FP.
    Only first node is consumed; decoded BSP owns all storage. */
-double __cdecl bh_geometry_radius(const BHBsp *bsp);
+double bh_geometry_radius(const BHBsp *bsp);
 #endif

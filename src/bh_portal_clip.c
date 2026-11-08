@@ -87,7 +87,7 @@ static int project(const BHDrawQueue *q, unsigned long at, const BHMainCamera *c
     }
     return 1;
 }
-void __cdecl bh_portal_clip_reset(BHPortalClipCache *cache)
+void bh_portal_clip_reset(BHPortalClipCache *cache)
 {
     if (cache)
     {
@@ -95,8 +95,8 @@ void __cdecl bh_portal_clip_reset(BHPortalClipCache *cache)
         cache->projections = 0;
     }
 }
-int __cdecl bh_portal_clip_project(const BHDrawQueue *q, unsigned long at, const BHMainCamera *camera,
-                                   const BHViewConfig *view, BHPortalClipCache *cache, float bounds[4])
+int bh_portal_clip_project(const BHDrawQueue *q, unsigned long at, const BHMainCamera *camera, const BHViewConfig *view,
+                           BHPortalClipCache *cache, float bounds[4])
 {
     return bounds && project(q, at, camera, view, cache, bounds, 0);
 }

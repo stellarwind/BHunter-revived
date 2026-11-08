@@ -16,7 +16,7 @@ static int fail(BHSegmentQuery *q, BHBspError error)
         q->error = error;
     return -1;
 }
-int __cdecl bh_segment_query_init(BHSegmentQuery *q, BHGeometry *geometry)
+int bh_segment_query_init(BHSegmentQuery *q, BHGeometry *geometry)
 {
     BHSegmentQuery next;
     if (!q || !geometry || !geometry->bsp || !geometry->face_flags || geometry->bsp->counts[4] > 65535 ||
@@ -32,7 +32,7 @@ int __cdecl bh_segment_query_init(BHSegmentQuery *q, BHGeometry *geometry)
     *q = next;
     return 1;
 }
-int __cdecl bh_segment_query_dispose(BHSegmentQuery *q)
+int bh_segment_query_dispose(BHSegmentQuery *q)
 {
     if (!q || q->busy)
         return 0;
@@ -148,8 +148,8 @@ static int faces(BHSegmentQuery *q, const BHBspNode *node, const BHVec3 *a, cons
     }
     return 0;
 }
-int __cdecl bh_segment_query_run(BHSegmentQuery *q, const BHVec3 *start, const BHVec3 *end, const BHMat34 *to_world,
-                                 const BHMat34 *to_local, BHSegmentHit *out)
+int bh_segment_query_run(BHSegmentQuery *q, const BHVec3 *start, const BHVec3 *end, const BHMat34 *to_world,
+                         const BHMat34 *to_local, BHSegmentHit *out)
 {
     const BHBsp *bsp;
     const BHBspNode *node;

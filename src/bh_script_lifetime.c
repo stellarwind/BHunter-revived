@@ -50,8 +50,8 @@ static void defer(BHEntity *entity)
 {
     entity->step = bh_script_timer_delete_step();
 }
-int __cdecl bh_script_lifetime_bind(BHScriptLifetimeContext *ctx, BHEntity *entity, const BHScriptLifetimeState *state,
-                                    BHEntityCallback query)
+int bh_script_lifetime_bind(BHScriptLifetimeContext *ctx, BHEntity *entity, const BHScriptLifetimeState *state,
+                            BHEntityCallback query)
 {
     BHScriptTimerContext *timer;
     if (!ctx || !ctx->timers.pool || !ctx->sounds || !entity || !state)
@@ -70,7 +70,7 @@ int __cdecl bh_script_lifetime_bind(BHScriptLifetimeContext *ctx, BHEntity *enti
     put(entity, 0x180, &state->mission_countdown, 4);
     return bh_entity_set_query(ctx->timers.pool, entity, query);
 }
-int __cdecl bh_script_lifetime_bind_context(BHScriptLifetimeContext *ctx, BHEntity *entity)
+int bh_script_lifetime_bind_context(BHScriptLifetimeContext *ctx, BHEntity *entity)
 {
     BHScriptTimerContext *timer;
     if (!ctx || !ctx->timers.pool || !ctx->sounds || !entity || !bh_entity_is_active(ctx->timers.pool, entity))
@@ -80,7 +80,7 @@ int __cdecl bh_script_lifetime_bind_context(BHScriptLifetimeContext *ctx, BHEnti
     memcpy(entity->payload + 400, &ctx, 4);
     return 1;
 }
-int __cdecl bh_script_lifetime_read(BHEntity *entity, BHScriptLifetimeState *state)
+int bh_script_lifetime_read(BHEntity *entity, BHScriptLifetimeState *state)
 {
     if (!entity || !state)
         return 0;
@@ -93,7 +93,7 @@ int __cdecl bh_script_lifetime_read(BHEntity *entity, BHScriptLifetimeState *sta
     get(entity, 0x180, &state->mission_countdown, 4);
     return 1;
 }
-void __cdecl bh_script_unloaded_query(BHEntity *entity, void *packet)
+void bh_script_unloaded_query(BHEntity *entity, void *packet)
 {
     BHScriptTimerPacket *p = (BHScriptTimerPacket *)packet;
     if (p->event == 20 && !loaded(entity))
@@ -111,7 +111,7 @@ static int elapsed(BHEntity *entity, unsigned long offset)
     put(entity, offset, &old, 4);
     return !(value > 0.0);
 }
-void __cdecl bh_script_sound_expiry(BHEntity *entity)
+void bh_script_sound_expiry(BHEntity *entity)
 {
     if (elapsed(entity, 0x128))
     {
@@ -119,7 +119,7 @@ void __cdecl bh_script_sound_expiry(BHEntity *entity)
         release_entity(entity);
     }
 }
-void __cdecl bh_script_motion_query(BHEntity *entity, void *packet)
+void bh_script_motion_query(BHEntity *entity, void *packet)
 {
     BHScriptTimerPacket *p = (BHScriptTimerPacket *)packet;
     BHEntity *a;
@@ -139,7 +139,7 @@ void __cdecl bh_script_motion_query(BHEntity *entity, void *packet)
         defer(entity);
     }
 }
-void __cdecl bh_script_sensor_query(BHEntity *entity, void *packet)
+void bh_script_sensor_query(BHEntity *entity, void *packet)
 {
     BHScriptTimerPacket *p = (BHScriptTimerPacket *)packet;
     if (p->event == 4 || (!loaded(entity) && p->event == 20))
@@ -150,7 +150,7 @@ void __cdecl bh_script_sensor_query(BHEntity *entity, void *packet)
     if (p->event == 10 && p->actor == actor(entity))
         defer(entity);
 }
-void __cdecl bh_script_sound_query(BHEntity *entity, void *packet)
+void bh_script_sound_query(BHEntity *entity, void *packet)
 {
     BHScriptTimerPacket *p = (BHScriptTimerPacket *)packet;
     if (p->event == 4 || (!loaded(entity) && p->event == 20))
@@ -159,7 +159,7 @@ void __cdecl bh_script_sound_query(BHEntity *entity, void *packet)
         release_entity(entity);
     }
 }
-void __cdecl bh_script_sound_actor_query(BHEntity *entity, void *packet)
+void bh_script_sound_actor_query(BHEntity *entity, void *packet)
 {
     BHScriptTimerPacket *p = (BHScriptTimerPacket *)packet;
     if (p->event == 4 || p->event == 20)
@@ -174,7 +174,7 @@ void __cdecl bh_script_sound_actor_query(BHEntity *entity, void *packet)
         defer(entity);
     }
 }
-void __cdecl bh_mission_sound_tick(BHEntity *entity)
+void bh_mission_sound_tick(BHEntity *entity)
 {
     unsigned long resource;
     if (elapsed(entity, 0x180))
@@ -202,11 +202,11 @@ static BHEntity *spawn(BHScriptLifetimeContext *ctx, unsigned long resource)
     entity->step = bh_mission_sound_tick;
     return entity;
 }
-BHEntity *__cdecl bh_mission_sound_first(BHScriptLifetimeContext *ctx)
+BHEntity *bh_mission_sound_first(BHScriptLifetimeContext *ctx)
 {
     return ctx ? spawn(ctx, ctx->mission_sound[0]) : NULL;
 }
-BHEntity *__cdecl bh_mission_sound_second(BHScriptLifetimeContext *ctx)
+BHEntity *bh_mission_sound_second(BHScriptLifetimeContext *ctx)
 {
     return ctx ? spawn(ctx, ctx->mission_sound[1]) : NULL;
 }

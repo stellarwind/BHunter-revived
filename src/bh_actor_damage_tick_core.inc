@@ -11,7 +11,7 @@ static float damage_tick_phase(BHActorDamageContext *c, BHEntity *e)
     unsigned short elapsed = (unsigned short)(bh_actor_route_now(c->route) - *(unsigned short *)((char *)e + 0x1e4));
     return damage_query_stored((double)(short)elapsed / *(short *)((char *)e + 0x1e6));
 }
-void __cdecl bh_actor_damage_tick_core(BHEntity *e, BHActorDamageContext *c)
+void bh_actor_damage_tick_core(BHEntity *e, BHActorDamageContext *c)
 {
     BHVec3 position, death_position, velocity, acceleration, before, at, after, spin;
     BHPickupRoom *room;

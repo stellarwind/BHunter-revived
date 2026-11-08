@@ -33,7 +33,7 @@ static int restore(BHPresentBegin *c, LPDIRECTDRAWSURFACE s, int *lost)
     }
     return 1;
 }
-int __cdecl bh_present_begin(BHPresentBegin *c)
+int bh_present_begin(BHPresentBegin *c)
 {
     BHPresentContext *p;
     BHFadeContext *fade;

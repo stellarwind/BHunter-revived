@@ -74,39 +74,38 @@ typedef struct BHTextureContext
 } BHTextureContext;
 /* New explicit lifetime binding, AddRefs real native interfaces. Original nine
    class dimensions/minima are pinned data; format enumeration is explicit. */
-int __cdecl bh_texture_context_init(BHTextureContext *context, LPDIRECTDRAW draw, LPDIRECT3DDEVICE2 device,
-                                    const BHSceneAllocator *allocator);
+int bh_texture_context_init(BHTextureContext *context, LPDIRECTDRAW draw, LPDIRECT3DDEVICE2 device,
+                            const BHSceneAllocator *allocator);
 /* Explicit original software branch: owns a draw reference and format/arena
    state without a fabricated native device. */
-int __cdecl bh_texture_context_init_software(BHTextureContext *context, LPDIRECTDRAW draw,
-                                             const BHSceneAllocator *allocator);
-void __cdecl bh_texture_context_dispose(BHTextureContext *context);
+int bh_texture_context_init_software(BHTextureContext *context, LPDIRECTDRAW draw, const BHSceneAllocator *allocator);
+void bh_texture_context_dispose(BHTextureContext *context);
 HRESULT CALLBACK bh_texture_format_callback(LPDDSURFACEDESC desc, LPVOID format); /* 0044e490 */
-int __cdecl bh_texture_formats(BHTextureContext *context);                        /* 0044e510 */
-BHTextureFormat *__cdecl bh_texture_request_format(BHTextureContext *context, unsigned long width, unsigned long height,
-                                                   unsigned long depth, unsigned long kind); /* 0044e580 */
-int __cdecl bh_texture_slot_create(BHTextureContext *context, BHTextureFormat *format);      /* 0044e5f0 */
+int bh_texture_formats(BHTextureContext *context);                                /* 0044e510 */
+BHTextureFormat *bh_texture_request_format(BHTextureContext *context, unsigned long width, unsigned long height,
+                                           unsigned long depth, unsigned long kind); /* 0044e580 */
+int bh_texture_slot_create(BHTextureContext *context, BHTextureFormat *format);      /* 0044e5f0 */
 /* Original mandatory/best-effort two passes; inspect context.error separately
    for retained allocation/native failures on its best-effort pass. */
-int __cdecl bh_texture_preallocate(BHTextureContext *context);                                  /* 0044e780 */
-D3DTEXTUREHANDLE __cdecl bh_texture_resident(BHTextureContext *context, BHTextureImage *image); /* 004505f0 */
+int bh_texture_preallocate(BHTextureContext *context);                                  /* 0044e780 */
+D3DTEXTUREHANDLE bh_texture_resident(BHTextureContext *context, BHTextureImage *image); /* 004505f0 */
 /* Complete 0044e880 over explicit context. A nonempty path gains trailing '\\'.
    Empty prefix or out-of-range policy chooses bare-only (-1). */
-int __cdecl bh_texture_set_path(BHTextureContext *context, const char *prefix, long policy);
+int bh_texture_set_path(BHTextureContext *context, const char *prefix, long policy);
 /* Complete 0044e9b0; explicit display shifts replace configured globals. Like
    the original, initialization latches once and does not follow later changes. */
-int __cdecl bh_texture_tables_init(BHTextureContext *context);
+int bh_texture_tables_init(BHTextureContext *context);
 /* Complete 0044eb60. palette_bytes <=768 selects RGB triples, >768 RGBA; input
    must contain 256 entries at that stride. Native mode/nonindexed images do
    nothing, as original. Software outputs are owned by the image. */
-int __cdecl bh_texture_palette_tables(BHTextureContext *context, BHTextureImage *image, const unsigned char *palette,
-                                      unsigned long palette_bytes);
+int bh_texture_palette_tables(BHTextureContext *context, BHTextureImage *image, const unsigned char *palette,
+                              unsigned long palette_bytes);
 /* Complete 0044f550. Cache aliases are independent of current palette/path.
    Real PCX streaming reader dialect, native surfaces and source draw arenas.
    Source guards reject malformed/overlong input and clean failed allocations.
    Returned cache identity remains borrowed until context disposal. */
-BHTextureImage *__cdecl bh_texture_load(BHTextureContext *context, const char *name);
+BHTextureImage *bh_texture_load(BHTextureContext *context, const char *name);
 /* Platform binding from an actual display format to original bit shifts.
    Must be set before initializing software tables. */
-int __cdecl bh_texture_bind_display(BHTextureContext *context, const DDPIXELFORMAT *pixel);
+int bh_texture_bind_display(BHTextureContext *context, const DDPIXELFORMAT *pixel);
 #endif

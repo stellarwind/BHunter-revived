@@ -21,9 +21,9 @@ typedef struct BHActorDamageContext
     BHActorRouteError error;
 } BHActorDamageContext;
 /* Count-zero source callback/context binding; borrowed until entity release. */
-int __cdecl bh_actor_damage_bind(BHActorDamageContext *, BHEntity *);
-void __cdecl bh_actor_damage_tick(BHEntity *);          /*004357d0*/
-void __cdecl bh_actor_damage_query(BHEntity *, void *); /*00435e80*/
+int bh_actor_damage_bind(BHActorDamageContext *, BHEntity *);
+void bh_actor_damage_tick(BHEntity *);          /*004357d0*/
+void bh_actor_damage_query(BHEntity *, void *); /*00435e80*/
 /* Numerical subpath00435bf9..00435c55, not a distinct original owner. */
-void __cdecl bh_actor_damage_death_velocity(const BHVec3 *after, const BHVec3 *at, BHVec3 *velocity);
+void bh_actor_damage_death_velocity(const BHVec3 *after, const BHVec3 *at, BHVec3 *velocity);
 #endif

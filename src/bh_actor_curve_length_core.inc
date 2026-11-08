@@ -12,7 +12,7 @@ typedef char curve_length_last[offsetof(BHActorCurveLengthImage, last) == 0x12c 
 typedef char curve_length_tangent[offsetof(BHActorCurveLengthImage, first_tangent) == 0x144 ? 1 : -1];
 typedef char curve_length_last_tangent[offsetof(BHActorCurveLengthImage, last_tangent) == 0x150 ? 1 : -1];
 
-float __cdecl bh_actor_curve_length_core(const BHActorCurveLengthImage *actor)
+float bh_actor_curve_length_core(const BHActorCurveLengthImage *actor)
 {
     BHVec3 previous, current;
     float sum = 0, t;

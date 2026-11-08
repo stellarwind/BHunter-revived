@@ -21,7 +21,7 @@ static BHBlockDamageContext *damage_context(BHEntity *e)
     memcpy(&c, e->payload + 600, 4);
     return c;
 }
-int __cdecl bh_block_damage_read(const BHEntity *e, BHBlockDamageState *s)
+int bh_block_damage_read(const BHEntity *e, BHBlockDamageState *s)
 {
     if (!e || !s)
         return 0;
@@ -29,8 +29,7 @@ int __cdecl bh_block_damage_read(const BHEntity *e, BHBlockDamageState *s)
     get(e, 0x14c, &s->owner, 4);
     return 1;
 }
-int __cdecl bh_block_damage_bind(BHEntityPool *p, BHEntity *e, BHBlockDamageContext *c, const BHBlockDamageState *s,
-                                 int only)
+int bh_block_damage_bind(BHEntityPool *p, BHEntity *e, BHBlockDamageContext *c, const BHBlockDamageState *s, int only)
 {
     if (!live(p, e) || !c || !c->world || !s)
         return 0;
@@ -46,7 +45,7 @@ static void damage(BHEntity *e, float value)
     bh_round_float(&health, (double)health - (double)value * (-10.0f));
     put(e, 0x148, &health, 4);
 }
-void __cdecl bh_block_player_damage_query(BHEntity *e, void *packet)
+void bh_block_player_damage_query(BHEntity *e, void *packet)
 {
     long event;
     BHEntity *owner, *watched;
@@ -74,7 +73,7 @@ void __cdecl bh_block_player_damage_query(BHEntity *e, void *packet)
         }
     }
 }
-void __cdecl bh_block_damage_query(BHEntity *e, void *packet)
+void bh_block_damage_query(BHEntity *e, void *packet)
 {
     long event;
     BHEntity *owner, *watched;
@@ -143,7 +142,7 @@ static BHEntity *link(const BHEntity *e, unsigned long offset)
     get(e, offset, &p, 4);
     return p;
 }
-int __cdecl bh_radar_query_bind(BHRadarQueryContext *c, BHEntity *e, BHEntity *owner, long id)
+int bh_radar_query_bind(BHRadarQueryContext *c, BHEntity *e, BHEntity *owner, long id)
 {
     BHEntity *zero = NULL;
     if (!c || !c->lifetime || c->lifetime->timers.pool != c->pool || !c->lifetime->sounds || !live(c->pool, e) ||
@@ -185,7 +184,7 @@ static int retire(BHRadarQueryContext *c, BHEntity *e)
     }
     return 1;
 }
-void __cdecl bh_radar_entity_query(BHEntity *e, void *packet)
+void bh_radar_entity_query(BHEntity *e, void *packet)
 {
     BHRadarQueryContext *c = radar_context(e);
     long event, id, matched;

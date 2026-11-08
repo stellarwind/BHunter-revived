@@ -15,7 +15,7 @@ typedef struct BHLoadingDisplay
     float normalized;
     HRESULT lock_result, unlock_result, copy_result, flip_result;
     /* Optional windowed presentation adapter. NULL retains original Flip. */
-    HRESULT(__cdecl *present)(LPDIRECTDRAWSURFACE, void *);
+    HRESULT (*present)(LPDIRECTDRAWSURFACE, void *);
     void *present_user;
     unsigned long presentations;
 } BHLoadingDisplay;
@@ -29,5 +29,5 @@ typedef struct BHLoadingDisplay
    span for checked wedges, while full copies advance by the actual signed pitch.
    Source guards reject stage outside0..2, invalid dimensions/overflowing spans,
    a missing primary before native rendering. No original bootstrap is claimed. */
-int __cdecl bh_loading_display(BHLoadingDisplay *, float progress);
+int bh_loading_display(BHLoadingDisplay *, float progress);
 #endif

@@ -31,7 +31,7 @@ typedef struct BHSoftwareRaster
     double rejected_value; /* last masked-invalid signed64 conversion */
     unsigned long masked_conversions;
 } BHSoftwareRaster;
-typedef int(__cdecl *BHRasterKernel)(BHSoftwareRaster *, BHClipVertex *);
+typedef int (*BHRasterKernel)(BHSoftwareRaster *, BHClipVertex *);
 /* Whole0045e790..0046cd20:28 original software polygon callback owners.
    Borrow an already locked tightly packed square power-of-two indexed texture,
    actual image palette maps, actual software/gradient table owners and frame
@@ -59,7 +59,7 @@ typedef int(__cdecl *BHRasterKernel)(BHSoftwareRaster *, BHClipVertex *);
     X(P, masked_shade_write)                                                                                           \
     X(P, blend)                                                                                                        \
     X(P, shade_blend)
-#define BH_RASTER_DECLARE(P, N) int __cdecl bh_raster_##P##_##N(BHSoftwareRaster *, BHClipVertex *);
+#define BH_RASTER_DECLARE(P, N) int bh_raster_##P##_##N(BHSoftwareRaster *, BHClipVertex *);
 BH_RASTER_KERNELS(BH_RASTER_DECLARE, indexed)
 BH_RASTER_KERNELS(BH_RASTER_DECLARE, packed)
 #undef BH_RASTER_DECLARE

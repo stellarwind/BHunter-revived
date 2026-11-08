@@ -26,11 +26,11 @@ typedef struct BHMessageState
 } BHMessageState;
 /* Source initialization of original static ring/arena state: empty counters,
    arena start and original last index -1 at 0048fb9c. */
-void __cdecl bh_message_state_init(BHMessageState *);
+void bh_message_state_init(BHMessageState *);
 /* Complete valid-string 00442a30 ring/arena effects. A string longer than one
    ring slot is rejected rather than reproducing the original adjacent-memory
    overflow. On arena exhaustion, ring/display mutations remain and result 0.
    Panel +e8 is clamped to3 only for verified identity 00442950 and value>3.
    Missing panel binding is explicitly reported after queue mutations. */
-int __cdecl bh_message_enqueue(BHMessageState *, const char *text);
+int bh_message_enqueue(BHMessageState *, const char *text);
 #endif

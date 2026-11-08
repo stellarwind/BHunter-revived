@@ -66,7 +66,7 @@ static void glow_sprite(BHActorVehicleDrawContext *ctx, BHEntity *entity, unsign
     bh_draw_billboard(ctx->queue, 3, resource, point, 2, 2, 0, 0, alpha);
 #endif
 }
-void __cdecl bh_actor_vehicle_pose_core(BHActorVehicleDrawContext *ctx, BHEntity *entity, unsigned short tick)
+void bh_actor_vehicle_pose_core(BHActorVehicleDrawContext *ctx, BHEntity *entity, unsigned short tick)
 {
     BHActorVehiclePoseImage *a = (BHActorVehiclePoseImage *)entity;
     BHVec3 before, p, after, angles, velocity, local, glow;
@@ -160,7 +160,7 @@ void __cdecl bh_actor_vehicle_pose_core(BHActorVehicleDrawContext *ctx, BHEntity
         bh_sound_update(ctx->sound, a->sound, 1, 1, &p, &velocity);
 }
 
-int __cdecl bh_actor_vehicle_draw(BHActorVehicleDrawContext *ctx, BHEntity *entity)
+int bh_actor_vehicle_draw(BHActorVehicleDrawContext *ctx, BHEntity *entity)
 {
     if (!ctx || !ctx->queue || !ctx->sound || !entity)
     {

@@ -35,7 +35,7 @@ static int live(BHAreaProjectileContext *ctx, BHEntity *entity, unsigned long ge
 {
     return bh_entity_is_active(ctx->effects->pool, entity) && entity->generation == gen;
 }
-static void __cdecl draw(BHEntity *entity, void *packet)
+static void draw(BHEntity *entity, void *packet)
 {
     BHAreaProjectileContext *ctx = context(entity);
     (void)packet;
@@ -105,7 +105,7 @@ static int packets(BHAreaProjectileContext *ctx, BHEntity *entity, BHEntity *tar
     }
     return 1;
 }
-void __cdecl bh_area_projectile_tick(BHEntity *entity)
+void bh_area_projectile_tick(BHEntity *entity)
 {
     BHAreaProjectileContext *ctx = context(entity);
     BHHomingProjectileContext *b;
@@ -244,9 +244,8 @@ void __cdecl bh_area_projectile_tick(BHEntity *entity)
     }
     bh_sound_update(b->sound, sound, number(entity, 0xe8), 1, &entity->position, &entity->origin);
 }
-BHEntity *__cdecl bh_area_projectile_create(BHAreaProjectileContext *ctx, BHWorldGeometry *world,
-                                            const BHVec3 *position, const BHVec3 *velocity, BHEntity *source,
-                                            float strength)
+BHEntity *bh_area_projectile_create(BHAreaProjectileContext *ctx, BHWorldGeometry *world, const BHVec3 *position,
+                                    const BHVec3 *velocity, BHEntity *source, float strength)
 {
     BHEntity *entity;
     float radius = 20;

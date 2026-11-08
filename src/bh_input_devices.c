@@ -5,15 +5,15 @@
 #include <stdio.h>
 #include <string.h>
 #include <stddef.h>
-static void *__cdecl allocate(unsigned long bytes, void *user)
+static void *allocate(unsigned long bytes, void *user)
 {
     return malloc(bytes);
 }
-static void __cdecl release(void *memory, void *user)
+static void release(void *memory, void *user)
 {
     free(memory);
 }
-int __cdecl bh_input_devices_bind(BHInputDevices *d, BHInputCollection *c, const BHSceneAllocator *a)
+int bh_input_devices_bind(BHInputDevices *d, BHInputCollection *c, const BHSceneAllocator *a)
 {
     unsigned long i;
     if (!d || !c || !c->snapshot || !c->lists || (a && (!a->allocate || !a->release)))
@@ -31,7 +31,7 @@ int __cdecl bh_input_devices_bind(BHInputDevices *d, BHInputCollection *c, const
     }
     return 1;
 }
-int __cdecl bh_input_devices_start(BHInputDevices *d)
+int bh_input_devices_start(BHInputDevices *d)
 {
     BHInputCollection *c;
     BHInputSnapshot *s;
@@ -80,7 +80,7 @@ int __cdecl bh_input_devices_start(BHInputDevices *d)
     s->mouse_axes[0] = s->mouse_axes[1] = 0;
     return !d->allocation_failures;
 }
-void __cdecl bh_input_devices_dispose(BHInputDevices *d)
+void bh_input_devices_dispose(BHInputDevices *d)
 {
     unsigned long i;
     if (!d)

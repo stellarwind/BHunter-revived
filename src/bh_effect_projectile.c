@@ -48,7 +48,7 @@ static int live(BHEffectProjectileContext *ctx, BHEntity *entity)
     memcpy(&g, entity->payload + 612, 4);
     return bh_entity_is_active(ctx->effects->pool, entity) && entity->generation == g;
 }
-int __cdecl bh_effect_projectile_bind(BHEffectProjectileContext *ctx, BHEntity *entity, int orbit)
+int bh_effect_projectile_bind(BHEffectProjectileContext *ctx, BHEntity *entity, int orbit)
 {
     BHEntityStep step;
     unsigned long handle;
@@ -182,7 +182,7 @@ static void synchronize(BHEffectProjectileContext *ctx, BHEntity *entity, BHEffe
     bh_sound_request(ctx->effects->sound, ctx->ricochet_sound, 1, 2, &entity->position, &zero);
     particle(ctx, entity, &v, .1f, 4, .5f, 1);
 }
-void __cdecl bh_effect_orbit_query(BHEntity *entity, void *packet)
+void bh_effect_orbit_query(BHEntity *entity, void *packet)
 {
     BHEffectProjectileContext *ctx = context(entity);
     BHEffectPacket *p = (BHEffectPacket *)packet;
@@ -216,7 +216,7 @@ void __cdecl bh_effect_orbit_query(BHEntity *entity, void *packet)
         break;
     }
 }
-void __cdecl bh_effect_linear_query(BHEntity *entity, void *packet)
+void bh_effect_linear_query(BHEntity *entity, void *packet)
 {
     BHEffectProjectileContext *ctx = context(entity);
     BHEffectPacket *p = (BHEffectPacket *)packet;
@@ -285,9 +285,9 @@ static void identity(BHEffectProjectileContext *ctx, BHEntity *entity)
         *ctx->pending_identity = 0;
     }
 }
-BHEntity *__cdecl bh_effect_orbit_create(BHEffectProjectileContext *ctx, BHWorldGeometry *world, BHEntity *source,
-                                         const BHVec3 *p, const BHVec3 *v, const BHVec3 *a, const BHVec3 *b,
-                                         const BHVec3 *acc, float life, BHEntity *target)
+BHEntity *bh_effect_orbit_create(BHEffectProjectileContext *ctx, BHWorldGeometry *world, BHEntity *source,
+                                 const BHVec3 *p, const BHVec3 *v, const BHVec3 *a, const BHVec3 *b, const BHVec3 *acc,
+                                 float life, BHEntity *target)
 {
     BHEntity *entity;
     unsigned long voice;
@@ -350,20 +350,20 @@ static BHEntity *split_create(BHEffectProjectileContext *ctx, BHWorldGeometry *w
     identity(ctx, entity);
     return entity;
 }
-BHEntity *__cdecl bh_effect_split_create(BHEffectProjectileContext *ctx, BHWorldGeometry *world, BHEntity *entity,
-                                         const BHVec3 *p, const BHVec3 *v, float life, int count, unsigned long model,
-                                         float multiplier)
+BHEntity *bh_effect_split_create(BHEffectProjectileContext *ctx, BHWorldGeometry *world, BHEntity *entity,
+                                 const BHVec3 *p, const BHVec3 *v, float life, int count, unsigned long model,
+                                 float multiplier)
 {
     return split_create(ctx, world, entity, p, v, life, count, model, multiplier, 0);
 }
-BHEntity *__cdecl bh_effect_shard_create(BHEffectProjectileContext *ctx, BHWorldGeometry *world, BHEntity *entity,
-                                         const BHVec3 *p, const BHVec3 *v, float life, int count, unsigned long model,
-                                         float multiplier)
+BHEntity *bh_effect_shard_create(BHEffectProjectileContext *ctx, BHWorldGeometry *world, BHEntity *entity,
+                                 const BHVec3 *p, const BHVec3 *v, float life, int count, unsigned long model,
+                                 float multiplier)
 {
     return split_create(ctx, world, entity, p, v, life, count, model, multiplier, 1);
 }
-BHEntity *__cdecl bh_effect_accelerated_create(BHEffectProjectileContext *ctx, BHWorldGeometry *world, BHEntity *source,
-                                               const BHVec3 *p, const BHVec3 *v, const BHVec3 *acc)
+BHEntity *bh_effect_accelerated_create(BHEffectProjectileContext *ctx, BHWorldGeometry *world, BHEntity *source,
+                                       const BHVec3 *p, const BHVec3 *v, const BHVec3 *acc)
 {
     BHEntity *entity;
     unsigned long voice;
@@ -395,7 +395,7 @@ BHEntity *__cdecl bh_effect_accelerated_create(BHEffectProjectileContext *ctx, B
     return entity;
 }
 
-void __cdecl bh_effect_detonate(BHEffectProjectileContext *ctx, BHEntity *entity)
+void bh_effect_detonate(BHEffectProjectileContext *ctx, BHEntity *entity)
 {
     terminate_effects(ctx, entity);
 }

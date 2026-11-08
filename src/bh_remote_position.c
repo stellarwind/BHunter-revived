@@ -107,7 +107,7 @@ static void clamp(BHEntity *entity, unsigned long offset, double squared, double
         real(entity, offset + 8, rf((double)number(entity, offset + 8) * factor));
     }
 }
-int __cdecl bh_remote_position_packet(BHRemotePackets *packets, void *p, unsigned long size, unsigned long capacity)
+int bh_remote_position_packet(BHRemotePackets *packets, void *p, unsigned long size, unsigned long capacity)
 {
     BHEntity *entity;
     unsigned short slot, sender, newest, middle, oldest;

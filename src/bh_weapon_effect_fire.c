@@ -93,19 +93,19 @@ static int alternate(BHWeaponEffectFireContext *ctx, BHEntity *weapon_entity, BH
     ++f->shots;
     return f->error == 0;
 }
-int __cdecl bh_weapon_effect_orbit_fire(BHWeaponEffectFireContext *ctx, BHEntity *weapon_entity, BHEntity *entity)
+int bh_weapon_effect_orbit_fire(BHWeaponEffectFireContext *ctx, BHEntity *weapon_entity, BHEntity *entity)
 {
     if (!valid(ctx, weapon_entity, entity) || !ctx->projectile->orbit)
         return 0;
     return alternate(ctx, weapon_entity, entity, 0);
 }
-int __cdecl bh_weapon_effect_split_fire(BHWeaponEffectFireContext *ctx, BHEntity *weapon_entity, BHEntity *entity)
+int bh_weapon_effect_split_fire(BHWeaponEffectFireContext *ctx, BHEntity *weapon_entity, BHEntity *entity)
 {
     if (!valid(ctx, weapon_entity, entity) || !ctx->projectile->split)
         return 0;
     return alternate(ctx, weapon_entity, entity, 1);
 }
-int __cdecl bh_weapon_effect_accelerated_fire(BHWeaponEffectFireContext *ctx, BHEntity *weapon_entity, BHEntity *entity)
+int bh_weapon_effect_accelerated_fire(BHWeaponEffectFireContext *ctx, BHEntity *weapon_entity, BHEntity *entity)
 {
     BHWeaponCommonState *weapon_state;
     BHWeaponFireContext *f;

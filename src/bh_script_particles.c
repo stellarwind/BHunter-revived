@@ -22,7 +22,7 @@ static int live(BHEntityPool *pool, BHEntity *entity)
 {
     return bh_entity_is_active(pool, entity);
 }
-int __cdecl bh_script_particles_init(BHScriptParticleContext *ctx, BHEntityPool *pool, BHDrawQueue *queue)
+int bh_script_particles_init(BHScriptParticleContext *ctx, BHEntityPool *pool, BHDrawQueue *queue)
 {
     if (!ctx || !pool || !queue || !queue->commands || !bh_entities_valid(pool))
         return 0;
@@ -31,17 +31,17 @@ int __cdecl bh_script_particles_init(BHScriptParticleContext *ctx, BHEntityPool 
     ctx->error = BH_PARTICLE_OK;
     return 1;
 }
-BHScriptParticleState *__cdecl bh_script_particle_state(BHScriptParticleContext *ctx, BHEntity *entity)
+BHScriptParticleState *bh_script_particle_state(BHScriptParticleContext *ctx, BHEntity *entity)
 {
     if (!ctx || !entity || !live(ctx->pool, entity) || entity->step != bh_script_particle_tick ||
         entity->refresh != bh_script_particle_refresh || context(entity) != ctx)
         return NULL;
     return state(entity);
 }
-BHEntity *__cdecl bh_script_particle_create(BHScriptParticleContext *ctx, unsigned long resource, unsigned long bucket,
-                                            const BHVec3 *p, const BHVec3 *v, const BHVec3 *a, float size, float angle,
-                                            float size_rate, float angular_rate, float size_decay, float angular_decay,
-                                            float lifetime, float alpha)
+BHEntity *bh_script_particle_create(BHScriptParticleContext *ctx, unsigned long resource, unsigned long bucket,
+                                    const BHVec3 *p, const BHVec3 *v, const BHVec3 *a, float size, float angle,
+                                    float size_rate, float angular_rate, float size_decay, float angular_decay,
+                                    float lifetime, float alpha)
 {
     BHEntity *entity;
     BHScriptParticleState *s;
@@ -80,7 +80,7 @@ BHEntity *__cdecl bh_script_particle_create(BHScriptParticleContext *ctx, unsign
     ctx->error = BH_PARTICLE_OK;
     return entity;
 }
-void __cdecl bh_script_particle_tick(BHEntity *entity)
+void bh_script_particle_tick(BHEntity *entity)
 {
     BHScriptParticleContext *ctx = context(entity);
     BHScriptParticleState *s = state(entity);
@@ -112,7 +112,7 @@ void __cdecl bh_script_particle_tick(BHEntity *entity)
     bh_round_float(&s->size_step, (double)s->size_decay * s->size_step);
     bh_round_float(&s->alpha, (double)s->alpha_step + s->alpha);
 }
-void __cdecl bh_script_particle_refresh(BHEntity *entity, void *packet)
+void bh_script_particle_refresh(BHEntity *entity, void *packet)
 {
     BHScriptParticleContext *ctx = context(entity);
     BHScriptParticleState *s = state(entity);
@@ -145,7 +145,7 @@ static const BHScriptTimerActor *actor_record(BHScriptEmitterContext *ctx, BHEnt
             return ctx->lifetime->timers.actors + i;
     return NULL;
 }
-int __cdecl bh_script_emitter_read(BHEntity *entity, BHScriptEmitterState *state)
+int bh_script_emitter_read(BHEntity *entity, BHScriptEmitterState *state)
 {
     if (!entity || !state)
         return 0;
@@ -158,8 +158,7 @@ int __cdecl bh_script_emitter_read(BHEntity *entity, BHScriptEmitterState *state
     get(entity, 0x10c, &state->size, 4);
     return 1;
 }
-int __cdecl bh_script_emitter_bind(BHScriptEmitterContext *ctx, BHEntity *entity, const BHScriptEmitterState *state,
-                                   int steam)
+int bh_script_emitter_bind(BHScriptEmitterContext *ctx, BHEntity *entity, const BHScriptEmitterState *state, int steam)
 {
     BHScriptLifetimeState base;
     unsigned char retained[12];
@@ -210,7 +209,7 @@ static int countdown(BHEntity *entity, float value)
     put(entity, 0x128, &value, 4);
     return !(n > 0);
 }
-void __cdecl bh_script_fountain_tick(BHEntity *entity)
+void bh_script_fountain_tick(BHEntity *entity)
 {
     BHScriptEmitterContext *ctx = emitter_context(entity);
     BHScriptEmitterState state;
@@ -239,7 +238,7 @@ void __cdecl bh_script_fountain_tick(BHEntity *entity)
     if (expires)
         bh_entity_release(ctx->lifetime->timers.pool, entity);
 }
-void __cdecl bh_script_steam_tick(BHEntity *entity)
+void bh_script_steam_tick(BHEntity *entity)
 {
     BHScriptEmitterContext *ctx = emitter_context(entity);
     BHScriptEmitterState state;
@@ -274,7 +273,7 @@ void __cdecl bh_script_steam_tick(BHEntity *entity)
     if (expires)
         bh_entity_release(ctx->lifetime->timers.pool, entity);
 }
-void __cdecl bh_script_steam_refresh(BHEntity *entity, void *packet)
+void bh_script_steam_refresh(BHEntity *entity, void *packet)
 {
     BHScriptEmitterContext *ctx = emitter_context(entity);
     BHScriptEmitterState state;

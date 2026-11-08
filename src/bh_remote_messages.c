@@ -121,7 +121,7 @@ static int announce(BHRemoteMessages *messages, unsigned long slot, unsigned lon
     payload[BH_NETWORK_ROSTER_BYTES - 1] = player->car;
     return send_packet(messages, 3, (unsigned short)*messages->packets->simulation_tick, payload, sizeof(payload), to, 1);
 }
-static void __cdecl query(BHEntity *entity, void *packet)
+static void query(BHEntity *entity, void *packet)
 {
     BHRemotePackets *packets;
     memcpy(&packets, entity->payload + 536, 4);
@@ -637,11 +637,11 @@ static int message(BHRemoteMessages *messages, void *p, unsigned long n, unsigne
     }
     return 1;
 }
-int __cdecl bh_remote_host_message(BHRemoteMessages *messages, void *p, unsigned long n, unsigned long capacity)
+int bh_remote_host_message(BHRemoteMessages *messages, void *p, unsigned long n, unsigned long capacity)
 {
     return message(messages, p, n, capacity, 1);
 }
-int __cdecl bh_remote_client_message(BHRemoteMessages *messages, void *p, unsigned long n, unsigned long capacity)
+int bh_remote_client_message(BHRemoteMessages *messages, void *p, unsigned long n, unsigned long capacity)
 {
     return message(messages, p, n, capacity, 0);
 }

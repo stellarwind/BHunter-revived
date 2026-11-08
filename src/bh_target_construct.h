@@ -57,22 +57,20 @@ struct BHTargetConstructContext
     unsigned long synced_retirements;
     int error;
 };
-int __cdecl bh_target_construct_sync(BHTargetConstructContext *);
+int bh_target_construct_sync(BHTargetConstructContext *);
 /* Bring the cached roster in line with the live registry before base-body physics. */
-int __cdecl bh_target_construct_prune_retired(BHTargetConstructContext *);
-int __cdecl bh_target_construct_dispose(BHTargetConstructContext *);
+int bh_target_construct_prune_retired(BHTargetConstructContext *);
+int bh_target_construct_dispose(BHTargetConstructContext *);
 /* Whole0043d2c0. Source returns acquired actor; original return was void. */
-BHEntity *__cdecl bh_target_construct_basic(BHTargetConstructContext *, const BHVec3 *, long resource_index, long mass);
+BHEntity *bh_target_construct_basic(BHTargetConstructContext *, const BHVec3 *, long resource_index, long mass);
 /* Whole0043d7c0. Rotation is original local Y/X/Z order. */
-BHEntity *__cdecl bh_target_construct_moving(BHTargetConstructContext *, const BHVec3 *, const BHVec3 *angles,
-                                             const BHVec3 *velocity, const BHVec3 *spin, unsigned long resource,
-                                             float mass, float countdown, BHEntity *owner, long token, long loot,
-                                             long counter);
+BHEntity *bh_target_construct_moving(BHTargetConstructContext *, const BHVec3 *, const BHVec3 *angles,
+                                     const BHVec3 *velocity, const BHVec3 *spin, unsigned long resource, float mass,
+                                     float countdown, BHEntity *owner, long token, long loot, long counter);
 /* Whole0043ddc0. Endpoints become inverse-basis local bounds, not a sorted
  * AABB. */
-BHEntity *__cdecl bh_target_construct_box(BHTargetConstructContext *, const BHVec3 *, const BHVec3 *angles,
-                                          const BHVec3 *velocity, const BHVec3 *spin, unsigned long resource,
-                                          float mass, float countdown, BHEntity *owner, long token,
-                                          const BHVec3 *anchor, const BHVec3 *first, const BHVec3 *second,
-                                          long counter);
+BHEntity *bh_target_construct_box(BHTargetConstructContext *, const BHVec3 *, const BHVec3 *angles,
+                                  const BHVec3 *velocity, const BHVec3 *spin, unsigned long resource, float mass,
+                                  float countdown, BHEntity *owner, long token, const BHVec3 *anchor,
+                                  const BHVec3 *first, const BHVec3 *second, long counter);
 #endif

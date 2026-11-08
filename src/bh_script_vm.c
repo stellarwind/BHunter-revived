@@ -59,7 +59,7 @@ static int live(BHEntityPool *pool, BHEntity *entity)
 {
     return bh_entity_is_active(pool, entity);
 }
-int __cdecl bh_script_vm_read(BHEntity *entity, BHScriptVMState *state)
+int bh_script_vm_read(BHEntity *entity, BHScriptVMState *state)
 {
     if (!entity || !state)
         return 0;
@@ -71,7 +71,7 @@ int __cdecl bh_script_vm_read(BHEntity *entity, BHScriptVMState *state)
     state->variable_sum = (long)word(entity, 0x124);
     return 1;
 }
-int __cdecl bh_script_vm_bind(BHScriptVMContext *ctx, BHEntity *entity, const BHScriptVMState *state)
+int bh_script_vm_bind(BHScriptVMContext *ctx, BHEntity *entity, const BHScriptVMState *state)
 {
     if (!ctx || !ctx->lifetime || !ctx->lifetime->timers.pool || !state || !entity || !live(pool(ctx), entity))
         return 0;
@@ -84,8 +84,8 @@ int __cdecl bh_script_vm_bind(BHScriptVMContext *ctx, BHEntity *entity, const BH
     setword(entity, 0x124, (unsigned long)state->variable_sum);
     return bh_entity_set_query(pool(ctx), entity, bh_script_vm_query);
 }
-BHEntity *__cdecl bh_script_vm_create(BHScriptVMContext *ctx, BHEntity **out, long opcode, const long args[5],
-                                      const long selectors[5])
+BHEntity *bh_script_vm_create(BHScriptVMContext *ctx, BHEntity **out, long opcode, const long args[5],
+                              const long selectors[5])
 {
     BHScriptVMState state;
     BHEntity *entity;
@@ -664,7 +664,7 @@ static int execute(BHScriptVMContext *ctx, BHEntity *node, BHEntity *target, BHS
     }
     return 1;
 }
-void __cdecl bh_script_vm_query(BHEntity *entity, void *packet)
+void bh_script_vm_query(BHEntity *entity, void *packet)
 {
     BHScriptVMContext *ctx = context(entity);
     BHScriptTimerPacket *p = (BHScriptTimerPacket *)packet;

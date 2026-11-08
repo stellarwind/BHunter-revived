@@ -43,5 +43,5 @@ typedef struct BHWeaponDispatch
    Only verified0047d680 RET is a successful no-op. Every other route calls its
    complete real source owner with typed borrowed contexts. Missing contexts or
    stale/edited registry fail; previous owner effects remain. */
-int __cdecl bh_weapon_dispatch(BHWeaponDispatch *, unsigned int, BHWeaponSlot);
+int bh_weapon_dispatch(BHWeaponDispatch *, unsigned int, BHWeaponSlot);
 #endif

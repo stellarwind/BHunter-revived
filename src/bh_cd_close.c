@@ -1,5 +1,5 @@
 #include "bh_cd_close.h"
-int __cdecl bh_cd_stop_close(BHCdClose *c)
+int bh_cd_stop_close(BHCdClose *c)
 {
     if (!c)
         return 0;

@@ -9,11 +9,11 @@
 #include <ctype.h>
 #undef isdigit
 typedef char rail_segment_size[sizeof(BHRailSegment) == 44 && offsetof(BHRailSegment, visited) == 40 ? 1 : -1];
-static void *__cdecl allocate(unsigned long n, void *u)
+static void *allocate(unsigned long n, void *u)
 {
     return malloc(n);
 }
-static void __cdecl release(void *p, void *u)
+static void release(void *p, void *u)
 {
     free(p);
 }
@@ -23,7 +23,7 @@ static int fail(BHRailPaths *p)
         ++p->failures;
     return 0;
 }
-int __cdecl bh_rail_paths_init(BHRailPaths *p, const BHSceneAllocator *a)
+int bh_rail_paths_init(BHRailPaths *p, const BHSceneAllocator *a)
 {
     if (!p || (a && (!a->allocate || !a->release)))
         return 0;
@@ -41,7 +41,7 @@ int __cdecl bh_rail_paths_init(BHRailPaths *p, const BHSceneAllocator *a)
     memset(p->segments, 0, 200UL * sizeof(BHRailSegment));
     return 1;
 }
-void __cdecl bh_rail_paths_dispose(BHRailPaths *p)
+void bh_rail_paths_dispose(BHRailPaths *p)
 {
     if (!p)
         return;
@@ -62,7 +62,7 @@ static double metric(const BHVec3 *a, const BHVec3 *b)
     bh_round_float(&rz, z);
     return (x * rx + y * y) + z * rz;
 }
-int __cdecl bh_rail_near(const BHVec3 *a, const BHVec3 *b)
+int bh_rail_near(const BHVec3 *a, const BHVec3 *b)
 {
     double d;
     if (!a || !b)
@@ -84,8 +84,7 @@ static void transform(BHVec3 *out, const BHVec3 *v, const BHVec3 *position, doub
     bh_round_float(&out->y, (double)out->y + position->y);
     bh_round_float(&out->z, (double)out->z + position->z);
 }
-int __cdecl bh_rail_add(BHRailPaths *p, const BHVec3 *start, const BHVec3 *end, const BHVec3 *position,
-                        const BHVec3 *rotation)
+int bh_rail_add(BHRailPaths *p, const BHVec3 *start, const BHVec3 *end, const BHVec3 *position, const BHVec3 *rotation)
 {
     BHRailSegment *s;
     double sine, cosine;
@@ -121,7 +120,7 @@ static int part(BHRailPaths *p, const BHVec3 *position, const BHVec3 *rotation, 
     b.z = z2;
     return bh_rail_add(p, &a, &b, position, rotation);
 }
-int __cdecl bh_rail_placement(BHRailPaths *p, const char *name, const BHVec3 *position, const BHVec3 *rotation)
+int bh_rail_placement(BHRailPaths *p, const char *name, const BHVec3 *position, const BHVec3 *rotation)
 {
     if (!p || !name || !position || !rotation)
         return fail(p);
@@ -170,7 +169,7 @@ static int pointer(const BHRailPaths *p, const BHRailSegment *v)
     unsigned long at = (unsigned long)v, base = (unsigned long)p->segments;
     return !v || (at >= base && at - base < (unsigned long)p->count * sizeof(*v) && (at - base) % sizeof(*v) == 0);
 }
-int __cdecl bh_rail_link(BHRailPaths *p)
+int bh_rail_link(BHRailPaths *p)
 {
     long i;
     BHRailSegment temporary, *head, *current, *candidate;

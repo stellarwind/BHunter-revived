@@ -12,7 +12,7 @@ static void put_time(BHEntity *e, double t)
 {
     memcpy((char *)e + 0x1f8, &t, 8);
 }
-double __cdecl bh_menu_transition_time(const BHEntity *e)
+double bh_menu_transition_time(const BHEntity *e)
 {
     double t;
     memcpy(&t, (const char *)e + 0x1f8, 8);
@@ -24,7 +24,7 @@ static int live(BHMenuTransition *c, BHEntity *e)
     memcpy(&g, e->payload + 604, 4);
     return bh_entity_is_active(c->pool, e) && e->generation == g;
 }
-int __cdecl bh_menu_transition_bind(BHMenuTransition *c, BHEntity *e, double t, long attempts)
+int bh_menu_transition_bind(BHMenuTransition *c, BHEntity *e, double t, long attempts)
 {
     BHEntity *p;
     unsigned long i = 0;
@@ -57,13 +57,13 @@ static void fade(BHMenuTransition *c, float alpha, unsigned long color)
     if (bh_fade_queue(c->draw, alpha, color) < 0)
         c->error = 1;
 }
-void __cdecl bh_menu_music_fade(BHEntity *e)
+void bh_menu_music_fade(BHEntity *e)
 {
     BHMenuTransition *c = context(e);
     if (c && live(c, e))
         fade(c, clamp(bh_menu_transition_time(e) * .5), 0);
 }
-void __cdecl bh_menu_fade_expiry(BHEntity *e)
+void bh_menu_fade_expiry(BHEntity *e)
 {
     BHMenuTransition *c = context(e);
     double t;
@@ -78,7 +78,7 @@ void __cdecl bh_menu_fade_expiry(BHEntity *e)
     }
     put_time(e, t - 1.0 / 30.0);
 }
-void __cdecl bh_menu_quit_fade(BHEntity *e)
+void bh_menu_quit_fade(BHEntity *e)
 {
     BHMenuTransition *c = context(e);
     double t, v;
@@ -137,7 +137,7 @@ static void retry(BHMenuTransition *c, BHEntity *e)
     ++n;
     memcpy((char *)e + 0x1c0, &n, 4);
 }
-void __cdecl bh_menu_music_tick(BHEntity *e)
+void bh_menu_music_tick(BHEntity *e)
 {
     BHMenuTransition *c = context(e);
     BHCdAudio *a;
@@ -204,7 +204,7 @@ exhausted:
         bh_entity_release(c->pool, e);
     }
 }
-void __cdecl bh_menu_quit_tick(BHEntity *e)
+void bh_menu_quit_tick(BHEntity *e)
 {
     BHMenuTransition *c = context(e);
     double old, t, volume;
@@ -240,12 +240,12 @@ void __cdecl bh_menu_quit_tick(BHEntity *e)
         bh_cd_set_volume(c->media, c->saved_volume);
     }
 }
-static void __cdecl quit_refresh(BHEntity *e, void *unused)
+static void quit_refresh(BHEntity *e, void *unused)
 {
     (void)unused;
     bh_menu_quit_fade(e);
 }
-BHEntity *__cdecl bh_menu_quit_begin(BHMenuTransition *c)
+BHEntity *bh_menu_quit_begin(BHMenuTransition *c)
 {
     BHEntity *e;
     if (!c || !c->pool || !c->media || !c->media->audio || !c->config || !c->config_path)

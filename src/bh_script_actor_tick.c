@@ -88,11 +88,11 @@ static int tick(BHActorRouteContext *ctx, BHEntity *entity, int phase, unsigned 
     ctx->error = BH_ACTOR_ROUTE_OK;
     return 1;
 }
-int __cdecl bh_script_actor_clock_tick(BHActorRouteContext *ctx, BHEntity *entity)
+int bh_script_actor_clock_tick(BHActorRouteContext *ctx, BHEntity *entity)
 {
     return tick(ctx, entity, 0, 0);
 }
-int __cdecl bh_script_actor_phase_tick(BHActorRouteContext *ctx, BHEntity *entity, unsigned long pulse)
+int bh_script_actor_phase_tick(BHActorRouteContext *ctx, BHEntity *entity, unsigned long pulse)
 {
     return tick(ctx, entity, 1, pulse);
 }

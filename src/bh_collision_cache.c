@@ -2,7 +2,7 @@
 #include "bh_round.h"
 #include <string.h>
 #include <math.h>
-void __cdecl bh_collision_cache_dispose(BHCollisionCache *c)
+void bh_collision_cache_dispose(BHCollisionCache *c)
 {
     if (!c)
         return;
@@ -21,7 +21,7 @@ void __cdecl bh_collision_cache_dispose(BHCollisionCache *c)
     }
     memset(c, 0, sizeof(*c));
 }
-int __cdecl bh_collision_cache_prepare(BHCollisionCache *c, const BHBsp *b, const BHSceneAllocator *a)
+int bh_collision_cache_prepare(BHCollisionCache *c, const BHBsp *b, const BHSceneAllocator *a)
 {
     BHCollisionCache n;
     unsigned long i, j;

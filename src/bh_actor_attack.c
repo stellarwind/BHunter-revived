@@ -279,8 +279,7 @@ static void beam(BHActorAttackContext *ctx, BHEntity *entity, BHWorldGeometry *w
     bh_draw_segment(b->particles->queue, 3, ctx->beam_image, &point, &end, .3f, .01f, .5f, 0, 0);
     ++ctx->beams;
 }
-void __cdecl bh_actor_attack_fire_vectors(BHEntity *entity, float t, BHVec3 *p, BHVec3 *direction, BHVec3 *side,
-                                          BHVec3 *travel)
+void bh_actor_attack_fire_vectors(BHEntity *entity, float t, BHVec3 *p, BHVec3 *direction, BHVec3 *side, BHVec3 *travel)
 {
     BHActorRouteState state;
     BHVec3 q;
@@ -301,7 +300,7 @@ void __cdecl bh_actor_attack_fire_vectors(BHEntity *entity, float t, BHVec3 *p, 
     bh_vec3_normalize(direction);
     bh_vec3_cross(direction, &up, side);
 }
-int __cdecl bh_actor_attack(BHActorAttackContext *ctx, BHEntity *entity)
+int bh_actor_attack(BHActorAttackContext *ctx, BHEntity *entity)
 {
     BHEntity *target;
     BHActorRouteState state;
@@ -476,7 +475,7 @@ int __cdecl bh_actor_attack(BHActorAttackContext *ctx, BHEntity *entity)
     }
     return !ctx->error;
 }
-int __cdecl bh_actor_vehicle_tick_bind(BHActorAttackContext *ctx, BHEntity *entity)
+int bh_actor_vehicle_tick_bind(BHActorAttackContext *ctx, BHEntity *entity)
 {
     if (!ctx || !ctx->effects || !ctx->effects->effects || !entity || !live(ctx, entity, entity->generation))
         return 0;
@@ -484,7 +483,7 @@ int __cdecl bh_actor_vehicle_tick_bind(BHActorAttackContext *ctx, BHEntity *enti
     entity->step = bh_actor_vehicle_tick;
     return 1;
 }
-void __cdecl bh_actor_vehicle_tick(BHEntity *entity)
+void bh_actor_vehicle_tick(BHEntity *entity)
 {
     BHActorAttackContext *ctx;
     jmp_buf frame;

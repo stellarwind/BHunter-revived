@@ -9,7 +9,7 @@
    RGB contains original signed-truncation extraction, in0..255 floats.
    Callback consumes synchronously without retaining/mutating context or ring.
    Selecting a callback does not implement either software raster dispatcher. */
-typedef int(__cdecl *BHHorizonEmit)(BHClipVertex *, BHTextureImage *, int gradient, const float rgb[3], void *);
+typedef int (*BHHorizonEmit)(BHClipVertex *, BHTextureImage *, int gradient, const float rgb[3], void *);
 typedef enum BHHorizonError
 {
     BH_HORIZON_OK,
@@ -37,15 +37,15 @@ typedef struct BHHorizonContext
 /* Explicit borrowed owning bindings. Camera's projected matrix, position.x/z
    and angles.x are the original global projection/eye/yaw values. Context,
    dependencies and emitter user must not overlap or recursively enter. */
-int __cdecl bh_horizon_init(BHHorizonContext *, const BHMainCamera *, BHAttributeClipContext *, BHRenderState *,
-                            BHHorizonColor *, BHHorizonEmit, void *);
+int bh_horizon_init(BHHorizonContext *, const BHMainCamera *, BHAttributeClipContext *, BHRenderState *,
+                    BHHorizonColor *, BHHorizonEmit, void *);
 /* Complete0045db80 with explicit selected primitive binding. All nine source
    vertices/eight polygons, native/software branch choices, software color
    preparation, native fog/depth and flush lifetime are retained. Software
    callback must own the still-unrecovered software dispatch/raster contracts;
    no software backend is supplied here. Caller owns PC53 profile. */
-int __cdecl bh_horizon_draw(BHHorizonContext *, BHTextureImage *, float texture_scale, float height, float outer_radius,
-                            float inner_radius, unsigned long color);
+int bh_horizon_draw(BHHorizonContext *, BHTextureImage *, float texture_scale, float height, float outer_radius,
+                    float inner_radius, unsigned long color);
 /* Explicit native-only adapter for0046e530's native branch. Whole0046e530
    remains unrecovered because its software branch calls0046dda0. Uses live
    original near-z numerator and specular alpha trunc(-255*scalar)+255. */
@@ -55,5 +55,5 @@ typedef struct BHHorizonNative
     float near_z;
     unsigned long polygons, vertices;
 } BHHorizonNative;
-int __cdecl bh_horizon_native_emit(BHClipVertex *, BHTextureImage *, int, const float[3], void *);
+int bh_horizon_native_emit(BHClipVertex *, BHTextureImage *, int, const float[3], void *);
 #endif

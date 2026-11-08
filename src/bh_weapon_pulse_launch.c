@@ -8,7 +8,7 @@ static float stored(double x)
     bh_round_float(&f, x);
     return f;
 }
-int __cdecl bh_weapon_pulse_launch(BHWeaponPulseLaunchContext *ctx, BHEntity *weapon_entity, BHEntity *entity)
+int bh_weapon_pulse_launch(BHWeaponPulseLaunchContext *ctx, BHEntity *weapon_entity, BHEntity *entity)
 {
     BHWeaponCommonState *weapon_state;
     BHWeaponFireContext *f;

@@ -81,7 +81,7 @@ static int retire(BHRemoteQuery *query, BHEntity *entity)
     query->remote[slot] = NULL;
     return bh_entity_release(query->pool, entity);
 }
-int __cdecl bh_remote_query(BHRemoteQuery *query, BHEntity *entity, BHRemoteQueryPacket *p)
+int bh_remote_query(BHRemoteQuery *query, BHEntity *entity, BHRemoteQueryPacket *p)
 {
     BHVec3 position;
     BHWorldGeometry *world;

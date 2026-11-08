@@ -675,7 +675,7 @@ static int step(BHEditorControl *c, BHEditorNode *n)
         return paste(c, n);
     return 1;
 }
-int __cdecl bh_editor_control_bind(BHEditorControl *c, BHEditorNode *n)
+int bh_editor_control_bind(BHEditorControl *c, BHEditorNode *n)
 {
     if (!c || !c->world || !n || !member(c->world, n) || !n->entity)
         return 0;
@@ -685,14 +685,14 @@ int __cdecl bh_editor_control_bind(BHEditorControl *c, BHEditorNode *n)
     install(c, n);
     return 1;
 }
-void __cdecl bh_editor_tick(BHEntity *e)
+void bh_editor_tick(BHEntity *e)
 {
     BHEditorControl *c = control(e);
     BHEditorNode *n = bh_editor_world_node(e);
     if (c && n)
         step(c, n);
 }
-void __cdecl bh_editor_enter(BHEntity *e)
+void bh_editor_enter(BHEntity *e)
 {
     BHEditorControl *c = control(e);
     if (c && c->world && c->world->input && key(c, 0) == 0)

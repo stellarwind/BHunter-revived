@@ -6,7 +6,7 @@
 typedef char frame_slot_size[sizeof(BHFrameSlot) == 12 ? 1 : -1];
 typedef char frame_slot_busy[offsetof(BHFrameSlot, busy) == 4 ? 1 : -1];
 typedef char frame_slot_age[offsetof(BHFrameSlot, age) == 8 ? 1 : -1];
-static void *__cdecl allocate(unsigned long bytes, void *user)
+static void *allocate(unsigned long bytes, void *user)
 {
     return malloc(bytes);
 }
@@ -20,7 +20,7 @@ static int fail(BHFrameBuffers *c, BHFrameBufferError error)
         c->error = error;
     return 0;
 }
-int __cdecl bh_frame_buffers_bind(BHFrameBuffers *c, const BHSceneAllocator *a)
+int bh_frame_buffers_bind(BHFrameBuffers *c, const BHSceneAllocator *a)
 {
     if (!c || (a && (!a->allocate || !a->release)))
         return 0;
@@ -35,8 +35,8 @@ int __cdecl bh_frame_buffers_bind(BHFrameBuffers *c, const BHSceneAllocator *a)
     }
     return 1;
 }
-int __cdecl bh_frame_buffers_start(BHFrameBuffers *c, BHFrameProduce produce, void *produce_user, double fps,
-                                   unsigned long bytes)
+int bh_frame_buffers_start(BHFrameBuffers *c, BHFrameProduce produce, void *produce_user, double fps,
+                           unsigned long bytes)
 {
     void *data[3];
     unsigned long i, j;
@@ -76,7 +76,7 @@ int __cdecl bh_frame_buffers_start(BHFrameBuffers *c, BHFrameProduce produce, vo
     c->error = BH_FRAME_BUFFER_OK;
     return 1;
 }
-void *__cdecl bh_frame_buffers_acquire(BHFrameBuffers *c)
+void *bh_frame_buffers_acquire(BHFrameBuffers *c)
 {
     unsigned long i;
     long best = -1, age = -1;
@@ -108,7 +108,7 @@ void *__cdecl bh_frame_buffers_acquire(BHFrameBuffers *c)
     c->error = BH_FRAME_BUFFER_OK;
     return c->slots[best].data;
 }
-int __cdecl bh_frame_buffers_publish(BHFrameBuffers *c)
+int bh_frame_buffers_publish(BHFrameBuffers *c)
 {
     unsigned long i, bits;
     if (!c || !c->writing || c->active < 0 || c->active > 2)
@@ -124,7 +124,7 @@ int __cdecl bh_frame_buffers_publish(BHFrameBuffers *c)
     c->error = BH_FRAME_BUFFER_OK;
     return 1;
 }
-int __cdecl bh_frame_buffers_dispose(BHFrameBuffers *c)
+int bh_frame_buffers_dispose(BHFrameBuffers *c)
 {
     unsigned long i;
     if (!c || c->writing)

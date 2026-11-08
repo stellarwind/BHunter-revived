@@ -30,15 +30,15 @@ typedef struct BHWave
     BHWaveError error;
     BHSceneAllocator allocator;
 } BHWave;
-int __cdecl bh_wave_scan(BHWaveView *view, const void *bytes, unsigned long size);
+int bh_wave_scan(BHWaveView *view, const void *bytes, unsigned long size);
 /* Initialize fresh owner; successful PCM decode replaces old data. Failure
    retains old samples/metadata. Input must not overlap owned samples.
    Supported PCM: 1/2 channels, 8/16 bits; no resampling or amplitude changes.
    Max input 64 MiB, max sample rate 192000. Empty PCM data is supported. */
-int __cdecl bh_wave_init(BHWave *wave, const BHSceneAllocator *allocator);
-void __cdecl bh_wave_dispose(BHWave *wave);
-int __cdecl bh_wave_decode(BHWave *wave, const void *bytes, unsigned long size);
+int bh_wave_init(BHWave *wave, const BHSceneAllocator *allocator);
+void bh_wave_dispose(BHWave *wave);
+int bh_wave_decode(BHWave *wave, const void *bytes, unsigned long size);
 /* Borrowed VFILE: read remaining payload; success at end, failure attempts
    cursor rollback. Caller owns handle/cache lifetime and serialized access. */
-int __cdecl bh_wave_read(BHWave *wave, BHVFile *file);
+int bh_wave_read(BHWave *wave, BHVFile *file);
 #endif

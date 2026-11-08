@@ -15,7 +15,7 @@ typedef struct BHLoadingProgress
    Install/remove are lifecycle adapters, not additional original owners.
    One installation owns the existing process-wide VFILE callback slot;
    remove it before disposing the borrowed display/images/native surfaces. */
-void __cdecl bh_loading_progress(float fraction);
-int __cdecl bh_loading_progress_install(BHLoadingProgress *);
-void __cdecl bh_loading_progress_remove(BHLoadingProgress *);
+void bh_loading_progress(float fraction);
+int bh_loading_progress_install(BHLoadingProgress *);
+void bh_loading_progress_remove(BHLoadingProgress *);
 #endif

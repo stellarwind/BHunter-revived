@@ -1,6 +1,6 @@
 #include "bh_texture.h"
 
-int __cdecl bh_texture_bind_display(BHTextureContext *q, const DDPIXELFORMAT *pixel)
+int bh_texture_bind_display(BHTextureContext *q, const DDPIXELFORMAT *pixel)
 {
     unsigned long masks[3], i, mask, low, bits;
     if (!q || !pixel || !(pixel->dwFlags & DDPF_RGB) || pixel->dwRGBBitCount > 16 || q->tables.initialized)
@@ -31,7 +31,7 @@ int __cdecl bh_texture_bind_display(BHTextureContext *q, const DDPIXELFORMAT *pi
     }
     return 1;
 }
-int __cdecl bh_texture_tables_init(BHTextureContext *q)
+int bh_texture_tables_init(BHTextureContext *q)
 {
     static const unsigned long steps[4] = {4, 6, 7, 8};
     unsigned long i, j;
@@ -61,8 +61,8 @@ static unsigned long clipped(long value)
 {
     return value < 0 ? 0 : value > 255 ? 255 : (unsigned long)value;
 }
-int __cdecl bh_texture_palette_tables(BHTextureContext *q, BHTextureImage *image, const unsigned char *palette,
-                                      unsigned long bytes)
+int bh_texture_palette_tables(BHTextureContext *q, BHTextureImage *image, const unsigned char *palette,
+                              unsigned long bytes)
 {
     static const unsigned long phase[4] = {0, 1, 3, 2};
     unsigned long i, j, k, stride, original[3], value[3], quant[3], packed;

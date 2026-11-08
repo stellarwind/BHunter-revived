@@ -28,8 +28,8 @@ typedef struct BHActorConstructContext
    Draw/route/query callbacks call actual source owners. All bindings borrowed.
    NULL/missing room is a bounded error instead of original fatal exit.
    Recycled fields not initialized by the originals remain retained. */
-BHEntity *__cdecl bh_actor_construct_room(BHActorConstructContext *, BHWorldGeometry *, unsigned long type, long token,
-                                          float speed, unsigned long death_tag, unsigned long seed);
-BHEntity *__cdecl bh_actor_construct_position(BHActorConstructContext *, const BHVec3 *, unsigned long type, long token,
-                                              float speed, unsigned long death_tag, unsigned long seed);
+BHEntity *bh_actor_construct_room(BHActorConstructContext *, BHWorldGeometry *, unsigned long type, long token,
+                                  float speed, unsigned long death_tag, unsigned long seed);
+BHEntity *bh_actor_construct_position(BHActorConstructContext *, const BHVec3 *, unsigned long type, long token,
+                                      float speed, unsigned long death_tag, unsigned long seed);
 #endif

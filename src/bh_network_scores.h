@@ -25,6 +25,6 @@ typedef struct BHNetworkScores
    The send result is diagnostic. No session,
    provider or peer initialization is performed here. All bindings outlive call.
    Packet storage retains final unpadded wire bytes for evidence/readback. */
-int __cdecl bh_network_scores_broadcast(BHNetworkScores *);
-int __cdecl bh_network_scores_death(BHNetworkScores *, long attacker, BHEntity *victim);
+int bh_network_scores_broadcast(BHNetworkScores *);
+int bh_network_scores_death(BHNetworkScores *, long attacker, BHEntity *victim);
 #endif

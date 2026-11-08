@@ -10,13 +10,13 @@
    must remain accessible/live members until the owner releases the scene.
    Queries do not revalidate topology; fallback traversal is bounded by count.
    Nonfinite point/margin returns NULL. No nearest-room fallback is invented. */
-BHWorldGeometry *__cdecl bh_world_locate(BHWorldGeometry *first, unsigned long scene_count, BHWorldGeometry *hint,
-                                         const BHVec3 *point, float margin);
+BHWorldGeometry *bh_world_locate(BHWorldGeometry *first, unsigned long scene_count, BHWorldGeometry *hint,
+                                 const BHVec3 *point, float margin);
 /* 00433f70/00434040: scratch aperture center and signed axis normal. Valid
    direction codes are 0/1/2/4/5/6. Invalid direction leaves output unchanged.
    Center uses scratch, which may differ from overlap after runtime clipping. */
-int __cdecl bh_portal_center(const BHPortal *portal, BHVec3 *out);
-int __cdecl bh_portal_normal(const BHPortal *portal, BHVec3 *out);
+int bh_portal_center(const BHPortal *portal, BHVec3 *out);
+int bh_portal_normal(const BHPortal *portal, BHVec3 *out);
 
 typedef struct BHRoutePlan
 {
@@ -33,7 +33,6 @@ typedef struct BHRoutePlan
    No synthetic AI/entity callbacks or guessed waypoint globals are required.
    Invalid/unreachable route rejects with output unchanged; topology and routing
    metadata must remain live and immutable during the query. */
-int __cdecl bh_route_plan(const BHNavigation *navigation, BHWorldGeometry *first, unsigned long scene_count,
-                          BHWorldGeometry *current, const BHVec3 *lookup_goal, const BHVec3 *projection_goal,
-                          BHRoutePlan *out);
+int bh_route_plan(const BHNavigation *navigation, BHWorldGeometry *first, unsigned long scene_count,
+                  BHWorldGeometry *current, const BHVec3 *lookup_goal, const BHVec3 *projection_goal, BHRoutePlan *out);
 #endif

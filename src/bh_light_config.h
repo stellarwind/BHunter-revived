@@ -16,6 +16,6 @@ typedef struct BHLightConfig
    Scalar arguments preserve original value semantics and permit callers to
    pass fields from config itself. Caller supplies admitted PC53 environment.
    Source NULL guard/success return extend the original valid-pointer API. */
-int __cdecl bh_light_configure(BHLightConfig *, long enabled, float x, float y, float z, float directional_strength,
-                               float ambient_strength, unsigned long directional_color, unsigned long ambient_color);
+int bh_light_configure(BHLightConfig *, long enabled, float x, float y, float z, float directional_strength,
+                       float ambient_strength, unsigned long directional_color, unsigned long ambient_color);
 #endif

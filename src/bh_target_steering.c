@@ -3,7 +3,7 @@
 #include "bh_actor_bounds.inc"
 #include <string.h>
 
-void __cdecl bh_world_clamp_point(const BHWorldGeometry *world, BHVec3 *point)
+void bh_world_clamp_point(const BHWorldGeometry *world, BHVec3 *point)
 {
     struct
     {

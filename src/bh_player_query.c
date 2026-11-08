@@ -285,7 +285,7 @@ static void transform(BHEntity *entity, double x, double y, double z, BHVec3 *ou
             stored(((double)scalar(entity, 0x20 + row * 12) * z + (double)scalar(entity, 0x18 + row * 12) * x) +
                    (double)scalar(entity, 0x1c + row * 12) * y);
 }
-int __cdecl bh_player_query_dispatch(BHPlayerQueryContext *ctx, BHPlayerQueryPacket *packet)
+int bh_player_query_dispatch(BHPlayerQueryContext *ctx, BHPlayerQueryPacket *packet)
 {
     BHEntity *entity;
     BHVec3 d, a, b, r, normal;
@@ -504,12 +504,12 @@ int __cdecl bh_player_query_dispatch(BHPlayerQueryContext *ctx, BHPlayerQueryPac
         ctx->error = 6;
     return !ctx->error;
 }
-void __cdecl bh_player_query(BHEntity *entity, void *p)
+void bh_player_query(BHEntity *entity, void *p)
 {
     if (active && active->player == entity)
         bh_player_query_dispatch(active, (BHPlayerQueryPacket *)p);
 }
-int __cdecl bh_player_query_bind(BHPlayerQueryContext *ctx)
+int bh_player_query_bind(BHPlayerQueryContext *ctx)
 {
     if (!ctx || active || !ctx->weapons || !ctx->weapons->pool || !ctx->player)
         return 0;
@@ -518,7 +518,7 @@ int __cdecl bh_player_query_bind(BHPlayerQueryContext *ctx)
     active = ctx;
     return 1;
 }
-int __cdecl bh_player_query_unbind(BHPlayerQueryContext *ctx)
+int bh_player_query_unbind(BHPlayerQueryContext *ctx)
 {
     if (!ctx || active != ctx)
         return 0;

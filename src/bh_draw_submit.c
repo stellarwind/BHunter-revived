@@ -37,8 +37,8 @@ static BHDrawCommand *append(BHDrawQueue *queue, unsigned long bucket)
     return command;
 }
 
-int __cdecl bh_draw_submit_resource(BHDrawQueue *queue, unsigned long bucket, unsigned long handle,
-                                    const BHVec3 *position, const BHVec3 *angles, float modulation)
+int bh_draw_submit_resource(BHDrawQueue *queue, unsigned long bucket, unsigned long handle, const BHVec3 *position,
+                            const BHVec3 *angles, float modulation)
 {
     BHDrawCommand *command;
     if (!position || !angles)
@@ -58,7 +58,7 @@ int __cdecl bh_draw_submit_resource(BHDrawQueue *queue, unsigned long bucket, un
     return 1;
 }
 
-int __cdecl bh_draw_submit_execute(BHDrawSubmitContext *context, const BHDrawCommand *command, unsigned long *next)
+int bh_draw_submit_execute(BHDrawSubmitContext *context, const BHDrawCommand *command, unsigned long *next)
 {
     const BHDrawResource *resource;
     unsigned long handle;
@@ -81,8 +81,8 @@ int __cdecl bh_draw_submit_execute(BHDrawSubmitContext *context, const BHDrawCom
     return status;
 }
 
-int __cdecl bh_draw_submit_billboard_execute(BHDrawBillboardSubmitContext *context, const BHDrawCommand *command,
-                                             unsigned long *next)
+int bh_draw_submit_billboard_execute(BHDrawBillboardSubmitContext *context, const BHDrawCommand *command,
+                                     unsigned long *next)
 {
     BHTextureImage *image;
     unsigned long handle, flags;

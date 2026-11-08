@@ -69,5 +69,5 @@ typedef struct BHRenderExecute
    error/failures remain diagnostic when the return value is1. Invalid selectors,
    cycles and missing bindings stop at an explicit source adapter boundary.
    Native execution requires an already begun real Direct3D2 scene. */
-int __cdecl bh_render_execute(BHRenderExecute *);
+int bh_render_execute(BHRenderExecute *);
 #endif

@@ -208,7 +208,7 @@ static void visual(BHPlayerForceControl *control, float channels[15], const floa
         vector_store(entity, 0x308 + i * 24, &output);
     }
 }
-int __cdecl bh_player_force_control_b(BHPlayerForceControl *control, float unused, int skip)
+int bh_player_force_control_b(BHPlayerForceControl *control, float unused, int skip)
 {
     BHEntity *entity;
     BHPhysicsState *physics;
@@ -410,15 +410,15 @@ static int stabilized(BHPlayerForceControl *control, float dt, int skip, int var
     visual(control, channels, old, variant);
     return 1;
 }
-int __cdecl bh_player_force_control_a(BHPlayerForceControl *control, float dt, int skip)
+int bh_player_force_control_a(BHPlayerForceControl *control, float dt, int skip)
 {
     return stabilized(control, dt, skip, 0);
 }
-int __cdecl bh_player_force_control_c(BHPlayerForceControl *control, float dt, int skip)
+int bh_player_force_control_c(BHPlayerForceControl *control, float dt, int skip)
 {
     return stabilized(control, dt, skip, 1);
 }
-int __cdecl bh_player_force_control_d(BHPlayerForceControl *control, float dt, int skip)
+int bh_player_force_control_d(BHPlayerForceControl *control, float dt, int skip)
 {
     return stabilized(control, dt, skip, 2);
 }

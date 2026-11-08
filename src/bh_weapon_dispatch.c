@@ -2,7 +2,7 @@
 #include "bh_weapon_latch.h"
 #include "bh_weapon_timer.h"
 #include <string.h>
-int __cdecl bh_weapon_dispatch(BHWeaponDispatch *c, unsigned int selection, BHWeaponSlot slot)
+int bh_weapon_dispatch(BHWeaponDispatch *c, unsigned int selection, BHWeaponSlot slot)
 {
     BHEntity *weapon_entity;
     BHWeaponObjectState *weapon;

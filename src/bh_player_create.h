@@ -29,7 +29,6 @@ typedef struct BHPlayerCreate
    player tick and scene use the explicit checked player callback registry,
    preserving all original force-control/plume words through+35c.
    Replacing an existing player's global query binding requires explicit close. */
-BHEntity *__cdecl bh_player_create(BHPlayerCreate *, float delay, const BHVec3 *, unsigned long vehicle,
-                                   unsigned long model);
-void __cdecl bh_player_create_delayed(BHEntity *);
+BHEntity *bh_player_create(BHPlayerCreate *, float delay, const BHVec3 *, unsigned long vehicle, unsigned long model);
+void bh_player_create_delayed(BHEntity *);
 #endif

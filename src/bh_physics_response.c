@@ -29,8 +29,8 @@ static double reverse_dot(const BHVec3 *a, const BHVec3 *b)
 {
     return ((double)a->z * b->z + (double)a->y * b->y) + (double)a->x * b->x;
 }
-int __cdecl bh_physics_overlap(BHSweepQuery *q, const BHMat34 *pose, const BHMat34 *world, const BHMat34 *local,
-                               BHCollisionHit *out)
+int bh_physics_overlap(BHSweepQuery *q, const BHMat34 *pose, const BHMat34 *world, const BHMat34 *local,
+                       BHCollisionHit *out)
 {
     BHMat34 relative;
     if (!q || !q->initialized || q->busy || !pose || !world || !local || !out)
@@ -40,8 +40,8 @@ int __cdecl bh_physics_overlap(BHSweepQuery *q, const BHMat34 *pose, const BHMat
     bh_mat34_multiply(local, pose, &relative);
     return bh_collision_query_run(&q->collision, 0, 0, &relative, world, out);
 }
-int __cdecl bh_physics_prepare(BHPhysicsState *physics, float dt, float radius, BHVec3 *movement, BHVec3 *angles,
-                               float *broad_margin)
+int bh_physics_prepare(BHPhysicsState *physics, float dt, float radius, BHVec3 *movement, BHVec3 *angles,
+                       float *broad_margin)
 {
     BHPhysicsState next;
     BHVec3 delta, rotation;
@@ -74,7 +74,7 @@ int __cdecl bh_physics_prepare(BHPhysicsState *physics, float dt, float radius, 
     *broad_margin = margin;
     return 1;
 }
-int __cdecl bh_physics_slide(const BHVec3 *movement, const BHSweepHit *contact, float coefficient, BHVec3 *out)
+int bh_physics_slide(const BHVec3 *movement, const BHSweepHit *contact, float coefficient, BHVec3 *out)
 {
     BHVec3 slide;
     float factor;
@@ -94,8 +94,8 @@ int __cdecl bh_physics_slide(const BHVec3 *movement, const BHSweepHit *contact, 
     *out = slide;
     return 1;
 }
-int __cdecl bh_physics_contact_response(const BHSweepHit *hit, float slide_fraction, float dt, float a_mass,
-                                        float b_mass, BHVec3 *acceleration, BHPhysicsResponse *out)
+int bh_physics_contact_response(const BHSweepHit *hit, float slide_fraction, float dt, float a_mass, float b_mass,
+                                BHVec3 *acceleration, BHPhysicsResponse *out)
 {
     BHPhysicsResponse next;
     BHVec3 force;
@@ -206,7 +206,7 @@ int __cdecl bh_physics_contact_response(const BHSweepHit *hit, float slide_fract
     *out = next;
     return 1;
 }
-int __cdecl bh_physics_finish(BHPhysicsState *physics, const BHMat34 *previous, float dt, int no_collision)
+int bh_physics_finish(BHPhysicsState *physics, const BHMat34 *previous, float dt, int no_collision)
 {
     BHPhysicsState next;
     BHMat34 rotation;

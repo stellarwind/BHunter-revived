@@ -35,7 +35,7 @@ static int live(BHPulseProjectileContext *ctx, BHEntity *entity, unsigned long g
 {
     return bh_entity_is_active(ctx->effects->pool, entity) && entity->generation == gen;
 }
-static void __cdecl draw(BHEntity *entity, void *unused)
+static void draw(BHEntity *entity, void *unused)
 {
     (void)unused;
     bh_pulse_visual_draw(context(entity)->draw, entity);
@@ -82,7 +82,7 @@ static void announce(BHPulseProjectileContext *ctx, BHEntity *entity)
     bh_network_send(ctx->transport, 0, ctx->packet, ctx->packet_bytes, 0);
     ++ctx->packets;
 }
-void __cdecl bh_pulse_projectile_tick(BHEntity *entity)
+void bh_pulse_projectile_tick(BHEntity *entity)
 {
     BHPulseProjectileContext *ctx = context(entity);
     BHHomingProjectileContext *b;
@@ -241,8 +241,8 @@ void __cdecl bh_pulse_projectile_tick(BHEntity *entity)
     }
     bh_sound_update(b->sound, sound, 1, 1, &entity->position, &entity->origin);
 }
-BHEntity *__cdecl bh_pulse_projectile_create(BHPulseProjectileContext *ctx, BHWorldGeometry *world, BHEntity *source,
-                                             const BHVec3 *position, const BHVec3 *base, const BHVec3 *velocity)
+BHEntity *bh_pulse_projectile_create(BHPulseProjectileContext *ctx, BHWorldGeometry *world, BHEntity *source,
+                                     const BHVec3 *position, const BHVec3 *base, const BHVec3 *velocity)
 {
     BHEntity *entity;
     BHProjectileQueryState state;

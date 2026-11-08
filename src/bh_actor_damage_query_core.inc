@@ -26,7 +26,7 @@ static BHPickupRoom *damage_query_room(BHActorDamageContext *c, BHEntity *e)
     return bh_actor_route_room(c->route, current);
 }
 
-void __cdecl bh_actor_damage_query_core(BHEntity *e, void *packet, BHActorDamageContext *c, unsigned short tick)
+void bh_actor_damage_query_core(BHEntity *e, void *packet, BHActorDamageContext *c, unsigned short tick)
 {
     unsigned long *p = (unsigned long *)packet;
     float *f = (float *)packet;

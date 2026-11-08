@@ -29,5 +29,5 @@ typedef struct BHWeaponHudTargetContext
    Queue exhaustion drops individual draws; source queue errors preserve later
    attempts. Context/queue/input must not overlap. PC53 nearest/masked moderate
    finite contract; no target query implementation is supplied by this owner. */
-int __cdecl bh_weapon_hud_target_draw(BHWeaponHudTargetContext *, const BHWeaponHudState *);
+int bh_weapon_hud_target_draw(BHWeaponHudTargetContext *, const BHWeaponHudState *);
 #endif

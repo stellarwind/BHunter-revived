@@ -43,5 +43,5 @@ typedef struct BHRemoteQuery
    All bindings remain borrowed. Retirement stops the owned engine voice
    before releasing its entity. Output packet >=40bytes.
    Source guards reject bad bindings/list reciprocity before list mutation. */
-int __cdecl bh_remote_query(BHRemoteQuery *, BHEntity *, BHRemoteQueryPacket *);
+int bh_remote_query(BHRemoteQuery *, BHEntity *, BHRemoteQueryPacket *);
 #endif

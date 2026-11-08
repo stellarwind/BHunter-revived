@@ -6,5 +6,5 @@
    positive binary32 timer +f0 subtracts the original double 1/30 and stores
    binary32. Other state and nonpositive/unordered raw bits are retained.
    Caller borrows a live weapon and masked PC53/nearest FP environment. */
-int __cdecl bh_weapon_single_timer_tick(BHEntity *weapon);
+int bh_weapon_single_timer_tick(BHEntity *weapon);
 #endif

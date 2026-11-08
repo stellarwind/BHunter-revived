@@ -49,7 +49,7 @@ static void release_tick(BHEntity *entity)
     BHActorDamageContext *ctx = context(entity);
     bh_actor_route_release(ctx->route, ctx->pool, entity);
 }
-int __cdecl bh_actor_damage_bind(BHActorDamageContext *ctx, BHEntity *entity)
+int bh_actor_damage_bind(BHActorDamageContext *ctx, BHEntity *entity)
 {
     if (!ctx || !ctx->pool || !ctx->route || !ctx->route->live_tick || !ctx->route->sound || !entity ||
         !live(ctx, entity))
@@ -61,7 +61,7 @@ static unsigned long random_step(unsigned long r)
 {
     return ((r * 0xe357UL >> 16) | (r * 0xe3570000UL)) ^ r;
 }
-void __cdecl bh_actor_damage_death_velocity(const BHVec3 *after, const BHVec3 *at, BHVec3 *velocity)
+void bh_actor_damage_death_velocity(const BHVec3 *after, const BHVec3 *at, BHVec3 *velocity)
 {
     /* 00435bf9..00435c52 retains X, but spills Y/Z differences before
        reloading them for the common scale. Do not symmetrize these stores. */
@@ -74,7 +74,7 @@ void __cdecl bh_actor_damage_death_velocity(const BHVec3 *after, const BHVec3 *a
 }
 #include "bh_actor_damage_query_core.inc"
 #include "bh_actor_damage_tick_core.inc"
-void __cdecl bh_actor_damage_tick(BHEntity *entity)
+void bh_actor_damage_tick(BHEntity *entity)
 {
     BHActorDamageContext *ctx = context(entity);
     if (!ctx || !live(ctx, entity) || !ctx->particles || !ctx->fragments || !ctx->targets || !ctx->loot_rows ||
@@ -91,7 +91,7 @@ void __cdecl bh_actor_damage_tick(BHEntity *entity)
     }
     bh_actor_damage_tick_core(entity, ctx);
 }
-void __cdecl bh_actor_damage_query(BHEntity *entity, void *packet)
+void bh_actor_damage_query(BHEntity *entity, void *packet)
 {
     BHActorDamageContext *ctx = context(entity);
     unsigned long event;

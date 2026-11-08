@@ -12,7 +12,7 @@ typedef char actor_radius_offset[offsetof(BHEntity, collision_radius) == 0xc0 ? 
 typedef char actor_query_offset[offsetof(BHEntity, query) == 0xd0 ? 1 : -1];
 typedef char actor_payload_offset[offsetof(BHEntity, payload) == 0xe4 ? 1 : -1];
 
-BHWorldSegmentRoom *__cdecl bh_world_segment_room(BHWorldSegmentContext *q, const BHWorldGeometry *w)
+BHWorldSegmentRoom *bh_world_segment_room(BHWorldSegmentContext *q, const BHWorldGeometry *w)
 {
     unsigned long i;
     if (q->room_index)
@@ -31,8 +31,7 @@ BHWorldSegmentRoom *__cdecl bh_world_segment_room(BHWorldSegmentContext *q, cons
             return q->rooms + i;
     return NULL;
 }
-int __cdecl bh_world_segment_index_rooms(BHWorldSegmentContext *q, BHWorldSegmentRoom **workspace,
-                                         unsigned long capacity)
+int bh_world_segment_index_rooms(BHWorldSegmentContext *q, BHWorldSegmentRoom **workspace, unsigned long capacity)
 {
     unsigned long i, slot;
     if (!q || q->busy)
@@ -79,10 +78,9 @@ static int excluded(const BHWorldHit *self, BHWorldGeometry *w, BHEntity *e)
     return self && ((w && self->kind == BH_WORLD_HIT_GEOMETRY && self->object.geometry == w) ||
                     (e && self->kind == BH_WORLD_HIT_ACTOR && self->object.actor == e));
 }
-int __cdecl bh_world_segment_init(BHWorldSegmentContext *q, BHWorldGeometry *first, unsigned long count,
-                                  BHWorldSegmentRoom *rooms, unsigned long room_count,
-                                  const BHWorldSegmentActor *actors, unsigned long actor_count,
-                                  unsigned long max_room_actors)
+int bh_world_segment_init(BHWorldSegmentContext *q, BHWorldGeometry *first, unsigned long count,
+                          BHWorldSegmentRoom *rooms, unsigned long room_count, const BHWorldSegmentActor *actors,
+                          unsigned long actor_count, unsigned long max_room_actors)
 {
     BHWorldSegmentContext next;
     BHWorldGeometry *p;
@@ -423,8 +421,8 @@ static int bh_world_segment_actor_trace(BHWorldSegmentContext *q, const BHWorldH
     }
     return found;
 }
-int __cdecl bh_world_segment_run(BHWorldSegmentContext *q, const BHWorldHit *self, BHWorldGeometry **cached,
-                                 const BHVec3 *start, const BHVec3 *end, float radius, BHWorldSegmentHit *out)
+int bh_world_segment_run(BHWorldSegmentContext *q, const BHWorldHit *self, BHWorldGeometry **cached,
+                         const BHVec3 *start, const BHVec3 *end, float radius, BHWorldSegmentHit *out)
 {
     BHWorldGeometry *owner, *old;
     BHWorldSegmentHit hit, original;

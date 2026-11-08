@@ -26,14 +26,14 @@ typedef struct BHScriptBlocks
 } BHScriptBlocks;
 /* Count-zero owner adapters. Release scripts through their real pool owners
    separately; render descriptors/textures belong to the supplied registry. */
-int __cdecl bh_script_blocks_init(BHScriptBlocks *, BHScriptParse *, BHRenderResources *, const char *, BHBspSearch);
-void __cdecl bh_script_blocks_dispose(BHScriptBlocks *);
+int bh_script_blocks_init(BHScriptBlocks *, BHScriptParse *, BHRenderResources *, const char *, BHBspSearch);
+void bh_script_blocks_dispose(BHScriptBlocks *);
 /* Whole00411f00: original empty-registry gate, real VFILE line list, sidecar
    templates, loaded rendering model + independent collision model/material
    bounds/portal flags, count-on-render-success, square-root page dimensions,
    water image flags. Resources and partial scripts retain earlier effects if
    a later model fails. No scenes, gameplay or original code are loaded. */
-int __cdecl bh_script_blocks_load(BHScriptBlocks *, const char *list);
+int bh_script_blocks_load(BHScriptBlocks *, const char *list);
 typedef struct BHScriptBrowser
 {
     BHScriptBlocks *library;
@@ -51,6 +51,6 @@ typedef struct BHScriptBrowser
    Library count<=600, columns>=5, rows>=0, finite cursor/angles/bounds and
    height1..16384; original small-row scroll behavior and signed truncation
    retained. Caller drains real queue before changing/discarding resources. */
-int __cdecl bh_script_block_preview(BHScriptBrowser *, long index, long x, long y);
-int __cdecl bh_script_block_browser(BHScriptBrowser *);
+int bh_script_block_preview(BHScriptBrowser *, long index, long x, long y);
+int bh_script_block_browser(BHScriptBrowser *);
 #endif

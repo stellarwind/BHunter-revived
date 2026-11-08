@@ -5,8 +5,8 @@ static double plane_distance(const BHViewPlane *p, float x, float y, float z)
 {
     return (((double)x * p->normal.x + (double)y * p->normal.y) + (double)z * p->normal.z) - p->offset;
 }
-unsigned long __cdecl bh_view_cull_sphere(const BHViewConfig *c, const BHMainCamera *camera, float x, float y, float z,
-                                          float radius, unsigned long mask, float *depth)
+unsigned long bh_view_cull_sphere(const BHViewConfig *c, const BHMainCamera *camera, float x, float y, float z,
+                                  float radius, unsigned long mask, float *depth)
 {
     double distance;
     unsigned long bit, slot;

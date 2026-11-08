@@ -34,8 +34,7 @@ typedef struct BHWorldGeometry
    any applied script settings. This does not claim full block-script recovery.
    Portal list is in original face order. >6 portals or nonpositive grid rejects
    before touching geometry flags. Own/dispose the geometry separately. */
-int __cdecl bh_geometry_model_init(BHGeometryModel *model, BHGeometry *geometry, long grid,
-                                   unsigned long initial_flags);
+int bh_geometry_model_init(BHGeometryModel *model, BHGeometry *geometry, long grid, unsigned long initial_flags);
 /* 004084a0 and its 004082d0 bound callback. Inputs are a zero-initialized or
    previously built component with a live model, position/flags, next and previous
    scene links. Construction preserves those inputs and replaces output only on
@@ -44,5 +43,5 @@ int __cdecl bh_geometry_model_init(BHGeometryModel *model, BHGeometry *geometry,
    borrowed and immutable except their real owned face flags. No simulation or
    script/entity callbacks are installed. After constructing every member, run
    bh_portals_match on each navigation component to connect the scene. */
-int __cdecl bh_world_geometry_build(BHWorldGeometry *placement, unsigned long ring_count);
+int bh_world_geometry_build(BHWorldGeometry *placement, unsigned long ring_count);
 #endif

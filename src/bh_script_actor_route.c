@@ -24,7 +24,7 @@ static BHPickupRoom *binding(BHActorRouteContext *ctx, BHWorldGeometry *world)
 {
     return bh_actor_route_room(ctx, world);
 }
-BHScriptActorPath __cdecl bh_script_actor_route_path(const BHEntity *entity)
+BHScriptActorPath bh_script_actor_route_path(const BHEntity *entity)
 {
     BHScriptActorPath p;
     memcpy(&p, (const char *)entity + 0x1a0, 4);
@@ -36,7 +36,7 @@ static int error(BHActorRouteContext *ctx, BHActorRouteError e)
         ctx->error = e;
     return 0;
 }
-int __cdecl bh_script_actor_route_advance(BHActorRouteContext *ctx, BHEntity *entity)
+int bh_script_actor_route_advance(BHActorRouteContext *ctx, BHEntity *entity)
 {
     BHActorRouteState state;
     BHPickupRoom *old, *room;

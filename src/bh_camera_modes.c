@@ -37,7 +37,7 @@ static void remember(BHCameraModeState *s, const BHVec3 *p)
     memcpy(s->mode_data, p, 12);
 }
 
-void __cdecl bh_camera_look_at(BHVec3 *angles, const BHVec3 *target, const BHVec3 *eye, const BHVec3 *up)
+void bh_camera_look_at(BHVec3 *angles, const BHVec3 *target, const BHVec3 *eye, const BHVec3 *up)
 {
     BHVec3 forward, right, local_up, result;
     double yaw, pitch, c, s, cp, sp;
@@ -63,7 +63,7 @@ void __cdecl bh_camera_look_at(BHVec3 *angles, const BHVec3 *target, const BHVec
     *angles = result;
 }
 
-void __cdecl bh_camera_mode_0(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
+void bh_camera_mode_0(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
 {
     BHVec3 p;
     int i;
@@ -81,15 +81,15 @@ static void chase(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraI
                 stored((double)component(&in->basis_z, i) * -7.5 + component(&in->target, i)));
     bh_camera_mode_smooth(c, s, &p, &in->angles, pr, ar);
 }
-void __cdecl bh_camera_mode_1(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
+void bh_camera_mode_1(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
 {
     chase(c, s, in, .8, .9);
 }
-void __cdecl bh_camera_mode_10(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
+void bh_camera_mode_10(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
 {
     chase(c, s, in, .85, .98);
 }
-void __cdecl bh_camera_mode_2(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
+void bh_camera_mode_2(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
 {
     BHVec3 p, a;
     double z;
@@ -106,7 +106,7 @@ void __cdecl bh_camera_mode_2(BHCameraStateContext *c, BHCameraModeState *s, con
     a.z = -in->angles.z;
     bh_camera_mode_smooth(c, s, &p, &a, .5, .5);
 }
-void __cdecl bh_camera_mode_3(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
+void bh_camera_mode_3(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
 {
     BHVec3 p = in->target, a;
     p.y = stored((double)p.y - 15);
@@ -115,7 +115,7 @@ void __cdecl bh_camera_mode_3(BHCameraStateContext *c, BHCameraModeState *s, con
     a.z = 0;
     bh_camera_mode_smooth(c, s, &p, &a, .5, .5);
 }
-void __cdecl bh_camera_mode_4(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
+void bh_camera_mode_4(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
 {
     BHVec3 p, a;
     double co = cos((double)in->angles.x), si = sin((double)in->angles.x);
@@ -126,7 +126,7 @@ void __cdecl bh_camera_mode_4(BHCameraStateContext *c, BHCameraModeState *s, con
     a.y = a.z = 0;
     bh_camera_mode_smooth(c, s, &p, &a, .5, .5);
 }
-void __cdecl bh_camera_mode_5(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
+void bh_camera_mode_5(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
 {
     BHVec3 p, a;
     double co = cos((double)in->angles.x), si = sin((double)in->angles.x);
@@ -137,7 +137,7 @@ void __cdecl bh_camera_mode_5(BHCameraStateContext *c, BHCameraModeState *s, con
     a.y = a.z = 0;
     bh_camera_mode_smooth(c, s, &p, &a, .5, .5);
 }
-void __cdecl bh_camera_mode_6(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
+void bh_camera_mode_6(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
 {
     BHVec3 p = in->target, a;
     p.y = stored((double)p.y - (-15));
@@ -146,7 +146,7 @@ void __cdecl bh_camera_mode_6(BHCameraStateContext *c, BHCameraModeState *s, con
     a.z = 0;
     bh_camera_mode_smooth(c, s, &p, &a, .5, .5);
 }
-void __cdecl bh_camera_mode_7(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
+void bh_camera_mode_7(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
 {
     BHVec3 previous, d, p, a;
     double scale, raw[3], motion;
@@ -179,7 +179,7 @@ static double movement_radius(const BHVec3 *p, const BHVec3 *previous)
     double x = (double)p->x - previous->x, y = (double)p->y - previous->y, z = (double)p->z - previous->z;
     return 10 - sqrt((x * stored(x) + y * y) + z * stored(z)) * -30;
 }
-void __cdecl bh_camera_mode_8(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
+void bh_camera_mode_8(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
 {
     BHVec3 old, p, a, up = {0, 1, 0};
     double phase, range, si, co;
@@ -199,7 +199,7 @@ void __cdecl bh_camera_mode_8(BHCameraStateContext *c, BHCameraModeState *s, con
     bh_camera_mode_smooth(c, s, &p, &a, .5, .5);
     remember(s, &in->target);
 }
-void __cdecl bh_camera_mode_11(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
+void bh_camera_mode_11(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
 {
     BHVec3 old, p, a, up = {0, 1, 0};
     double phase, warped, range;
@@ -219,7 +219,7 @@ void __cdecl bh_camera_mode_11(BHCameraStateContext *c, BHCameraModeState *s, co
     bh_camera_mode_smooth(c, s, &p, &a, .5, .95);
     remember(s, &in->target);
 }
-void __cdecl bh_camera_mode_9(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
+void bh_camera_mode_9(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
 {
     BHVec3 old, d, p, a, up = {0, 1, 0};
     double scale, distance, raw[3], v, base_x;
@@ -269,9 +269,9 @@ void __cdecl bh_camera_mode_9(BHCameraStateContext *c, BHCameraModeState *s, con
     bh_camera_mode_smooth(c, s, &p, &a, 0, 0);
     remember(s, &in->target);
 }
-int __cdecl bh_camera_mode_update(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
+int bh_camera_mode_update(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
 {
-    static void(__cdecl *const modes[12])(BHCameraStateContext *, BHCameraModeState *, const BHCameraInput *) = {
+    static void (*const modes[12])(BHCameraStateContext *, BHCameraModeState *, const BHCameraInput *) = {
         bh_camera_mode_0, bh_camera_mode_1, bh_camera_mode_2, bh_camera_mode_3, bh_camera_mode_4,  bh_camera_mode_5,
         bh_camera_mode_6, bh_camera_mode_7, bh_camera_mode_8, bh_camera_mode_9, bh_camera_mode_10, bh_camera_mode_11};
     if (!c || !s || !in || s->mode < 0 || s->mode >= 12)

@@ -19,7 +19,7 @@ typedef struct BHEditorControl
    Deleting the last editable node retains its actual entity as the original
    empty-editor sentinel. Enter installs real callbacks without inventing a
    selection; drawing with no selection reports a bounded source error. */
-int __cdecl bh_editor_control_bind(BHEditorControl *, BHEditorNode *);
-void __cdecl bh_editor_tick(BHEntity *);  /*0040e420*/
-void __cdecl bh_editor_enter(BHEntity *); /*00410080*/
+int bh_editor_control_bind(BHEditorControl *, BHEditorNode *);
+void bh_editor_tick(BHEntity *);  /*0040e420*/
+void bh_editor_enter(BHEntity *); /*00410080*/
 #endif

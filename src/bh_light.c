@@ -37,7 +37,7 @@ static int valid(const BHLightContext *c, const BHVec3 *reference, float radius)
     }
     return 1;
 }
-int __cdecl bh_light_prepare(BHLightContext *c, const BHVec3 *reference, float radius)
+int bh_light_prepare(BHLightContext *c, const BHVec3 *reference, float radius)
 {
     BHLight *p;
     BHVec3 delta;

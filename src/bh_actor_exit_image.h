@@ -26,5 +26,5 @@ typedef struct BHActorExitNeighborImage
     unsigned long flags;
 } BHActorExitNeighborImage;
 
-int __cdecl bh_actor_choose_exit_core(void *actor, void *room_image, void *preferred_image, int excluded);
+int bh_actor_choose_exit_core(void *actor, void *room_image, void *preferred_image, int excluded);
 #endif

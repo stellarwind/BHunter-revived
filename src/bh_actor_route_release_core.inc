@@ -15,7 +15,7 @@ typedef char release_binding_head[offsetof(BHActorRouteReleaseBinding, room_head
 /* Complete 00435720. Source bindings name the real queue, pool and room head;
    the original payload/list stores remain on the real entity. No retained
    payload, sound handle or actor route field is cleared during retirement. */
-int __cdecl bh_actor_route_release_core(BHEntity *actor, const BHActorRouteReleaseBinding *binding)
+int bh_actor_route_release_core(BHEntity *actor, const BHActorRouteReleaseBinding *binding)
 {
     BHEntity *previous, *next;
     if (RELEASE_UINT(actor, 0x104) != BH_SOUND_INVALID)

@@ -21,8 +21,8 @@ typedef struct BHTargetDrawContext
 /* Count-zero field views of this target class only. The actual local basis
    occupies entity+18..38, its model angles+3c..44. Other entity classes can
    assign unrelated payload meanings; these are not generic entity fields. */
-int __cdecl bh_target_draw_state_read(const BHEntity *, BHTargetDrawState *);
-int __cdecl bh_target_draw_state_write(BHEntity *, const BHTargetDrawState *);
+int bh_target_draw_state_read(const BHEntity *, BHTargetDrawState *);
+int bh_target_draw_state_write(BHEntity *, const BHTargetDrawState *);
 /* Whole0043c3f0. Always queue model at world+basis*anchor. Owner==player and
    nonzero signed number gate full atlas background/digits and optional marker.
    All handles resolve through actual existing resource/image consumers.
@@ -30,5 +30,5 @@ int __cdecl bh_target_draw_state_write(BHEntity *, const BHTargetDrawState *);
    Preserve successful appends and continue the whole owner after exhaustion.
    Camera/view/queue/player/images/target lifetimes are borrowed; PC53 required.
    Entity remains unchanged. No constructor, callback stub or visual substitute. */
-int __cdecl bh_target_draw(BHTargetDrawContext *, const BHEntity *);
+int bh_target_draw(BHTargetDrawContext *, const BHEntity *);
 #endif

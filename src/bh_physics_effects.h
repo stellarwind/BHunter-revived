@@ -25,6 +25,6 @@ typedef struct BHPhysicsEffects
    contact position using the current world's verified index, then send type6
    before spark allocation. current_world=NULL suppresses only the packet.
    Source diagnostics do not suppress subsequent original side effects. */
-int __cdecl bh_physics_effects_run(BHPhysicsEffects *, const BHSweepHit *, float level,
-                                   const BHWorldGeometry *current_world, unsigned short world_index);
+int bh_physics_effects_run(BHPhysicsEffects *, const BHSweepHit *, float level, const BHWorldGeometry *current_world,
+                           unsigned short world_index);
 #endif

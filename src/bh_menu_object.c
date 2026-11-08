@@ -5,8 +5,8 @@ static void word(BHEntity *e, unsigned long offset, unsigned long value)
 {
     memcpy((unsigned char *)e + offset, &value, 4);
 }
-int __cdecl bh_menu_object_create(BHMenuObject *menu, BHEntityPool *pool, BHPlayerInputOwner *owner, unsigned long tag,
-                                  const char *name)
+int bh_menu_object_create(BHMenuObject *menu, BHEntityPool *pool, BHPlayerInputOwner *owner, unsigned long tag,
+                          const char *name)
 {
     BHEntity *e;
     BHPlayerInputList *list;
@@ -69,8 +69,8 @@ int __cdecl bh_menu_object_create(BHMenuObject *menu, BHEntityPool *pool, BHPlay
     *menu = fresh;
     return 1;
 }
-int __cdecl bh_menu_object_rows_init(BHMenuObject *m, BHAtlasContext *a, BHTextQueue *q, BHMenuRow **slots,
-                                     unsigned long capacity)
+int bh_menu_object_rows_init(BHMenuObject *m, BHAtlasContext *a, BHTextQueue *q, BHMenuRow **slots,
+                             unsigned long capacity)
 {
     if (!m || !m->entity || m->rows_bound)
         return 0;
@@ -79,9 +79,8 @@ int __cdecl bh_menu_object_rows_init(BHMenuObject *m, BHAtlasContext *a, BHTextQ
     m->rows_bound = 1;
     return 1;
 }
-BHMenuRow *__cdecl bh_menu_object_add_row(BHMenuObject *m, unsigned long id, const unsigned char *title,
-                                          unsigned char *body, unsigned long first, unsigned long second,
-                                          BHMenuRowRefresh refresh)
+BHMenuRow *bh_menu_object_add_row(BHMenuObject *m, unsigned long id, const unsigned char *title, unsigned char *body,
+                                  unsigned long first, unsigned long second, BHMenuRowRefresh refresh)
 {
     BHMenuRow *r;
     if (!m || !m->entity || !m->rows_bound)
@@ -91,7 +90,7 @@ BHMenuRow *__cdecl bh_menu_object_add_row(BHMenuObject *m, unsigned long id, con
         word(m->entity, 0x1cc, m->rows.count);
     return r;
 }
-int __cdecl bh_menu_object_dispose(BHMenuObject *m)
+int bh_menu_object_dispose(BHMenuObject *m)
 {
     BHPlayerInputList *p, *list;
     BHPlayerInputOwner *o;

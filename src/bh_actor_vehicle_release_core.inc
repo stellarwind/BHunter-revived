@@ -5,7 +5,7 @@ typedef char vehicle_release_count[offsetof(BHActorVehicleLifetimeContext, count
 /* Whole 004397e0 through real source queue/query/pool owners. Notification
    binding resolves the publisher's room AFTER callbacks, as the original
    +1a4 read does; all room/global links and the count are then reloaded. */
-int __cdecl bh_actor_vehicle_release_core(BHEntity *actor, BHActorVehicleLifetimeContext *context)
+int bh_actor_vehicle_release_core(BHEntity *actor, BHActorVehicleLifetimeContext *context)
 {
     BHPickupRoom *room;
     BHEntity *previous, *next;

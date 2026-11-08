@@ -14,7 +14,7 @@ typedef struct BHEffectDrawContext
    return1 queued,0 partial/full,-1 invalid; later producers still run after
    exhaustion as original. Variable draw always consumes exactly two CRT rand
    values, including absent model/full queue. No constructor/tick admission. */
-int __cdecl bh_effect_directional_draw(BHEffectDrawContext *, const BHEntity *);
-int __cdecl bh_effect_variable_draw(BHEffectDrawContext *, const BHEntity *);
-int __cdecl bh_effect_fixed_draw(BHEffectDrawContext *, const BHEntity *);
+int bh_effect_directional_draw(BHEffectDrawContext *, const BHEntity *);
+int bh_effect_variable_draw(BHEffectDrawContext *, const BHEntity *);
+int bh_effect_fixed_draw(BHEffectDrawContext *, const BHEntity *);
 #endif

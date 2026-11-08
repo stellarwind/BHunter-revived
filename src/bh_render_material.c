@@ -19,7 +19,7 @@ static void native(BHRenderMaterial *owner, HRESULT hr)
         ++owner->failures;
     }
 }
-const char *__cdecl bh_render_material_initialize(BHRenderMaterial *owner, BHTextureContext *q, LPDIRECT3D2 d3d)
+const char *bh_render_material_initialize(BHRenderMaterial *owner, BHTextureContext *q, LPDIRECT3D2 d3d)
 {
     D3DMATERIAL material;
     HRESULT hr;
@@ -79,7 +79,7 @@ const char *__cdecl bh_render_material_initialize(BHRenderMaterial *owner, BHTex
     }
     return q->errors[0] ? q->errors : NULL;
 }
-void __cdecl bh_render_material_dispose(BHRenderMaterial *owner)
+void bh_render_material_dispose(BHRenderMaterial *owner)
 {
     if (!owner)
         return;

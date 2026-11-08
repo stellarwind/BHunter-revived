@@ -12,7 +12,7 @@ typedef struct BHAreaProjectileContext
     unsigned long collisions, room_hits, global_hits;
     int error;
 } BHAreaProjectileContext;
-BHEntity *__cdecl bh_area_projectile_create(BHAreaProjectileContext *, BHWorldGeometry *, const BHVec3 *,
-                                            const BHVec3 *, BHEntity *source, float strength); /*00442360*/
-void __cdecl bh_area_projectile_tick(BHEntity *);                                              /*00441d80*/
+BHEntity *bh_area_projectile_create(BHAreaProjectileContext *, BHWorldGeometry *, const BHVec3 *, const BHVec3 *,
+                                    BHEntity *source, float strength); /*00442360*/
+void bh_area_projectile_tick(BHEntity *);                              /*00441d80*/
 #endif

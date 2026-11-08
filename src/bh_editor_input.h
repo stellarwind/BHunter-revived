@@ -19,8 +19,8 @@ typedef struct BHEditorInput
 /* Whole00412190. Source returns1 once the list exists, even if entity allocation
    fails: original already-installed bindings remain. Invalid/repeated setup or
    list-allocation failure returns0. Original mode1,29 slots, kind4 at8 retained. */
-int __cdecl bh_editor_input_setup(BHEditorInput *context);
+int bh_editor_input_setup(BHEditorInput *context);
 /* Whole004100b0 with source-private context binding in the actual pooled entity.
    A valid encoded list->state packet and disjoint destination are required. */
-void __cdecl bh_editor_input_tick(BHEntity *entity);
+void bh_editor_input_tick(BHEntity *entity);
 #endif

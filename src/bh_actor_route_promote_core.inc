@@ -37,8 +37,7 @@ static __inline void promote_tangent(BHVec3 *out, const BHVec3 *point, const BHV
 #define PROMOTE_WORLD(offset) (*(BHWorldGeometry **)((char *)a + (offset)))
 #define PROMOTE_LINK(actor, offset) (*(BHEntity **)((char *)(actor) + (offset)))
 
-int __cdecl bh_actor_route_promote_core(BHEntity *a, const BHActorRoutePromotionBinding *binding, long incoming,
-                                        long outgoing)
+int bh_actor_route_promote_core(BHEntity *a, const BHActorRoutePromotionBinding *binding, long incoming, long outgoing)
 {
     const BHPortal *in = binding->incoming, *out = binding->outgoing;
     BHWorldGeometry *world = binding->world;

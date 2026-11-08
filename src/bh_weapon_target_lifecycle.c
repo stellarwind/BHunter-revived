@@ -21,7 +21,7 @@ static int finite_vector(const BHVec3 *v)
 {
     return _finite(v->x) && _finite(v->y) && _finite(v->z);
 }
-BHVec3 *__cdecl bh_weapon_target_player_aim(BHEntity *entity)
+BHVec3 *bh_weapon_target_player_aim(BHEntity *entity)
 {
     return entity ? (BHVec3 *)((unsigned char *)entity + 0x280) : NULL;
 }
@@ -40,7 +40,7 @@ static void stop(BHWeaponTargetContext *ctx, unsigned long h)
             ctx->error = BH_WEAPON_TARGET_SOUND;
     }
 }
-int __cdecl bh_weapon_target_ready(BHWeaponTargetContext *ctx, BHEntity *weapon_entity, const BHEntity *entity)
+int bh_weapon_target_ready(BHWeaponTargetContext *ctx, BHEntity *weapon_entity, const BHEntity *entity)
 {
     BHWeaponCommonState *weapon_state = bh_weapon_common_state(weapon_entity);
     int value;
@@ -60,7 +60,7 @@ int __cdecl bh_weapon_target_ready(BHWeaponTargetContext *ctx, BHEntity *weapon_
         ctx->error = BH_WEAPON_TARGET_SOUND;
     return ctx->error == BH_WEAPON_TARGET_OK;
 }
-int __cdecl bh_weapon_target_cancel(BHWeaponTargetContext *ctx, BHEntity *weapon_entity)
+int bh_weapon_target_cancel(BHWeaponTargetContext *ctx, BHEntity *weapon_entity)
 {
     BHWeaponCommonState *weapon_state = bh_weapon_common_state(weapon_entity);
     if (!ctx || !ctx->sound || !weapon_state)
@@ -79,7 +79,7 @@ static int query(BHWeaponTargetContext *ctx, BHEntity *entity, BHEntityPositionP
     entity->query(entity, p);
     return finite_vector(&p->position) ? 1 : fail(ctx, BH_WEAPON_TARGET_NUMERICAL);
 }
-int __cdecl bh_weapon_target_update(BHWeaponTargetContext *ctx, BHEntity *weapon_entity, const BHEntity *entity)
+int bh_weapon_target_update(BHWeaponTargetContext *ctx, BHEntity *weapon_entity, const BHEntity *entity)
 {
     BHWeaponCommonState *weapon_state = bh_weapon_common_state(weapon_entity);
     const BHVec3 *aim;

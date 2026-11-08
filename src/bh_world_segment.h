@@ -42,7 +42,7 @@ typedef struct BHWorldSegmentContext
     /* Optional source registry adapter, called before a query borrows actors.
        It may rebuild the descriptors after spawn/retirement. No callbacks may
        mutate the registry during traversal; NULL uses the caller-bound registry. */
-    int(__cdecl *refresh_actors)(struct BHWorldSegmentContext *, void *);
+    int (*refresh_actors)(struct BHWorldSegmentContext *, void *);
     void *refresh_user;
     /* Optional borrowed index of the immutable room bindings. Rebuilt by the
        scene owner after replacing bindings; fresh init clears it. */
@@ -59,17 +59,15 @@ typedef struct BHWorldSegmentHit
 
 /* Source binding adapter; all worlds must occur exactly once in rooms and the
    source scene ring. Does not create callbacks/models/entities. */
-int __cdecl bh_world_segment_init(BHWorldSegmentContext *, BHWorldGeometry *first, unsigned long world_count,
-                                  BHWorldSegmentRoom *rooms, unsigned long room_count,
-                                  const BHWorldSegmentActor *actors, unsigned long actor_count,
-                                  unsigned long max_room_actors);
+int bh_world_segment_init(BHWorldSegmentContext *, BHWorldGeometry *first, unsigned long world_count,
+                          BHWorldSegmentRoom *rooms, unsigned long room_count, const BHWorldSegmentActor *actors,
+                          unsigned long actor_count, unsigned long max_room_actors);
 /* Bind caller-owned zeroable workspace: power-of-two capacity >= 2*room_count.
    Indexing changes no traversal order. Keep workspace and room/world bindings
    alive and unchanged until reinitialization or scene disposal. Failure drops
    the index and retains the linear lookup. No allocations occur in queries. */
-BHWorldSegmentRoom *__cdecl bh_world_segment_room(BHWorldSegmentContext *, const BHWorldGeometry *);
-int __cdecl bh_world_segment_index_rooms(BHWorldSegmentContext *, BHWorldSegmentRoom **workspace,
-                                         unsigned long capacity);
+BHWorldSegmentRoom *bh_world_segment_room(BHWorldSegmentContext *, const BHWorldGeometry *);
+int bh_world_segment_index_rooms(BHWorldSegmentContext *, BHWorldSegmentRoom **workspace, unsigned long capacity);
 /* Complete0040c4a0, owning0040ba40 and0040b020. Returns1 hit,0 miss,-1 invalid.
    Prior room cache is retained when lookup fails, as in original. A NULL cache
    with no containing room returns before global actors. Cache is updated once
@@ -81,8 +79,8 @@ int __cdecl bh_world_segment_index_rooms(BHWorldSegmentContext *, BHWorldSegment
    All inputs finite; actor bases satisfy bh_mat34_inverse_rigid's orthonormal
    contract. Caller uses masked PC53/nearest. Traversal allocates nothing;
    the optional source registry refresh may prepare new actor workspaces. */
-int __cdecl bh_world_segment_run(BHWorldSegmentContext *, const BHWorldHit *self, BHWorldGeometry **cached,
-                                 const BHVec3 *start, const BHVec3 *end, float radius, BHWorldSegmentHit *out);
+int bh_world_segment_run(BHWorldSegmentContext *, const BHWorldHit *self, BHWorldGeometry **cached, const BHVec3 *start,
+                         const BHVec3 *end, float radius, BHWorldSegmentHit *out);
 
 typedef struct BHCameraCorrectionOwner
 {
@@ -94,8 +92,8 @@ typedef struct BHCameraCorrectionOwner
    for a valid correction/miss,0 for dependency failure. Eye and target do not
    overlap. A source dependency error restores eye/cache/selected; successful
    writes retain original first-hit publication order. No global state used. */
-int __cdecl bh_camera_correct(BHCameraCorrectionOwner *, BHVec3 *eye, const BHVec3 *target, BHEntity *self);
+int bh_camera_correct(BHCameraCorrectionOwner *, BHVec3 *eye, const BHVec3 *target, BHEntity *self);
 /* Real contextual camera callback bridge. actor_token is actual x86 actor
    pointer supplied by camera update; user is BHCameraCorrectionOwner*. */
-void __cdecl bh_camera_correct_callback(BHVec3 *, const BHVec3 *, unsigned long actor_token, void *user);
+void bh_camera_correct_callback(BHVec3 *, const BHVec3 *, unsigned long actor_token, void *user);
 #endif

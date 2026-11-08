@@ -15,7 +15,7 @@ static int query_fail(BHCollisionQuery *q, BHBspError error)
     q->error = error;
     return -1;
 }
-int __cdecl bh_collision_query_init(BHCollisionQuery *q, BHGeometry *a, BHGeometry *b)
+int bh_collision_query_init(BHCollisionQuery *q, BHGeometry *a, BHGeometry *b)
 {
     BHCollisionQuery next;
     unsigned long size;
@@ -40,7 +40,7 @@ int __cdecl bh_collision_query_init(BHCollisionQuery *q, BHGeometry *a, BHGeomet
     *q = next;
     return 1;
 }
-int __cdecl bh_collision_query_dispose(BHCollisionQuery *q)
+int bh_collision_query_dispose(BHCollisionQuery *q)
 {
     if (!q || q->busy)
         return 0;
@@ -327,13 +327,13 @@ done:
         *out = hit;
     return result;
 }
-int __cdecl bh_collision_query_node(BHCollisionQuery *q, long an, long bn, const BHMat34 *a_to_b,
-                                    const BHMat34 *b_to_world, BHCollisionHit *out)
+int bh_collision_query_node(BHCollisionQuery *q, long an, long bn, const BHMat34 *a_to_b, const BHMat34 *b_to_world,
+                            BHCollisionHit *out)
 {
     return execute(q, an, bn, a_to_b, b_to_world, out, 0);
 }
-int __cdecl bh_collision_query_run(BHCollisionQuery *q, long an, long bn, const BHMat34 *a_to_b,
-                                   const BHMat34 *b_to_world, BHCollisionHit *out)
+int bh_collision_query_run(BHCollisionQuery *q, long an, long bn, const BHMat34 *a_to_b, const BHMat34 *b_to_world,
+                           BHCollisionHit *out)
 {
     return execute(q, an, bn, a_to_b, b_to_world, out, 1);
 }

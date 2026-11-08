@@ -44,17 +44,17 @@ struct BHMenuRuntime
     float push, distance, scroll;
 };
 /* Count-zero binding of real source callbacks to an existing pool entity. */
-int __cdecl bh_menu_runtime_bind(BHMenuRuntime *);
-void __cdecl bh_menu_runtime_step_entity(BHEntity *);
-void __cdecl bh_menu_runtime_refresh_entity(BHEntity *, void *);
+int bh_menu_runtime_bind(BHMenuRuntime *);
+void bh_menu_runtime_step_entity(BHEntity *);
+void bh_menu_runtime_refresh_entity(BHEntity *, void *);
 /* Whole0042b2e0. Consumes already cached input only: no device polling,
    messages, keyboard/mouse automation or game process. Requires at least one
    actionable row; source guards bound formerly unbounded selection loops.
    PC53 finite input/animation profile; PC24 unresolved. */
-int __cdecl bh_menu_runtime_step(BHMenuRuntime *);
+int bh_menu_runtime_step(BHMenuRuntime *);
 /* Whole0042f400. Return-to-menu resources, actual flyby state reset and fifty
    synchronous source camera-settling calls; no render/game loop execution.
    flyby must already be a real bound source scene with live table/ring/font.
    Requires at least eleven actual camera start records. */
-int __cdecl bh_menu_runtime_return(BHMenuRuntimeContext *);
+int bh_menu_runtime_return(BHMenuRuntimeContext *);
 #endif

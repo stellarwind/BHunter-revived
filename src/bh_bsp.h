@@ -76,9 +76,9 @@ typedef struct BHBsp
    storage. Decode/read/load failure retains previous output. Numeric profile
    is the checked PC53 math contract. No texture object is fabricated.
    Limits: 65535 records per nonempty section, 16 MiB input, 256-byte paths. */
-int __cdecl bh_bsp_init(BHBsp *bsp, const BHSceneAllocator *allocator);
-void __cdecl bh_bsp_dispose(BHBsp *bsp);
-int __cdecl bh_bsp_decode(BHBsp *bsp, const void *bytes, unsigned long size);
-int __cdecl bh_bsp_read(BHBsp *bsp, BHVFile *file);
-int __cdecl bh_bsp_load(BHBsp *bsp, const char *name, const char *prefix, BHBspSearch search);
+int bh_bsp_init(BHBsp *bsp, const BHSceneAllocator *allocator);
+void bh_bsp_dispose(BHBsp *bsp);
+int bh_bsp_decode(BHBsp *bsp, const void *bytes, unsigned long size);
+int bh_bsp_read(BHBsp *bsp, BHVFile *file);
+int bh_bsp_load(BHBsp *bsp, const char *name, const char *prefix, BHBspSearch search);
 #endif

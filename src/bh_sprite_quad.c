@@ -30,9 +30,9 @@ static int channel(double n, float modulation, unsigned long *out)
     *out = result < 0 ? 0 : result > 255 ? 255 : (unsigned long)result;
     return 1;
 }
-int __cdecl bh_sprite_quad_draw(BHSpriteQuadContext *c, BHTextureImage *image, const BHVec3 *center,
-                                const BHVec3 *normal, const BHVec3 *up, float width, float height, float angle,
-                                unsigned char flags, float modulation, float u, float u_extent, float v, float v_extent)
+int bh_sprite_quad_draw(BHSpriteQuadContext *c, BHTextureImage *image, const BHVec3 *center, const BHVec3 *normal,
+                        const BHVec3 *up, float width, float height, float angle, unsigned char flags, float modulation,
+                        float u, float u_extent, float v, float v_extent)
 {
     BHVec3 origin, n, t, r, old_t, old_r, light_normal;
     BHClipVertex quad[4], *ring;

@@ -55,7 +55,7 @@ static void paint(BHInputTextCapture *c)
     if (!bh_menu_row_refresh(c->rows, (unsigned long)c->menu->selection, NULL, c->display))
         c->error = 1;
 }
-static void __cdecl text_tick(BHEntity *e)
+static void text_tick(BHEntity *e)
 {
     BHInputTextCapture *c;
     memcpy(&c, e->payload, 4);
@@ -132,15 +132,15 @@ static int begin(BHInputTextCapture *c, int initial_paint)
     }
     return !c->error;
 }
-int __cdecl bh_input_text_begin(BHInputTextCapture *c)
+int bh_input_text_begin(BHInputTextCapture *c)
 {
     return begin(c, 0);
 }
-int __cdecl bh_input_text_begin_painted(BHInputTextCapture *c)
+int bh_input_text_begin_painted(BHInputTextCapture *c)
 {
     return begin(c, 1);
 }
-int __cdecl bh_input_text_step(BHInputTextCapture *c)
+int bh_input_text_step(BHInputTextCapture *c)
 {
     BHEntity *e;
     unsigned long p;
@@ -237,7 +237,7 @@ int __cdecl bh_input_text_step(BHInputTextCapture *c)
         c->entity = NULL;
     return !c->error;
 }
-int __cdecl bh_input_text_cancel(BHInputTextCapture *c)
+int bh_input_text_cancel(BHInputTextCapture *c)
 {
     int okay = 1;
     if (!c || !c->entity || c->pool->dispatch_depth)

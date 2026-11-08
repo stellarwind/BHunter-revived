@@ -37,8 +37,8 @@ static void release(BHSoundLoad *c, void *p)
     else
         free(p);
 }
-unsigned long __cdecl bh_sound_load(BHSoundLoad *c, const char *name, float range, float level,
-                                    unsigned short streaming, float denominator)
+unsigned long bh_sound_load(BHSoundLoad *c, const char *name, float range, float level, unsigned short streaming,
+                            float denominator)
 {
     BHSoundQueue *sound_queue;
     BHVFile *file;

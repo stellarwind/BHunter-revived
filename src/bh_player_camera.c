@@ -30,11 +30,11 @@ static void translate(BHVec3 *v, const BHVec3 *delta, double delta_x)
     bh_round_float(&v->y, (double)v->y + delta->y);
     bh_round_float(&v->z, (double)v->z + delta->z);
 }
-BHCameraState *__cdecl bh_player_camera_state(BHEntity *player)
+BHCameraState *bh_player_camera_state(BHEntity *player)
 {
     return player ? (BHCameraState *)((unsigned char *)player + 0xe8) : 0;
 }
-int __cdecl bh_player_camera_reset(BHPlayerCameraContext *context, unsigned long index)
+int bh_player_camera_reset(BHPlayerCameraContext *context, unsigned long index)
 {
     BHEntity *player;
     BHCameraState *camera;

@@ -56,8 +56,8 @@ static void packet(BHPhysicsEffects *c, const BHWorldGeometry *world, unsigned s
     if (c->last_send < 0)
         c->error = 1;
 }
-int __cdecl bh_physics_effects_run(BHPhysicsEffects *c, const BHSweepHit *hit, float level,
-                                   const BHWorldGeometry *world, unsigned short index)
+int bh_physics_effects_run(BHPhysicsEffects *c, const BHSweepHit *hit, float level, const BHWorldGeometry *world,
+                           unsigned short index)
 {
     BHEntity *effect;
     const BHVec3 *point;

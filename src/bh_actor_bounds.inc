@@ -9,7 +9,7 @@ typedef char bounds_maximum_offset[offsetof(BHActorBoundsImage, maximum) == 0x1b
 #define HIGH(i) (*(const float *)((const char *)bounds_image + 0x1bc + 4 * (i)))
 #define POINT(i) (*(float *)((char *)point + 4 * (i)))
 
-void __cdecl bh_actor_bounds_clamp(const void *bounds_image, void *point)
+void bh_actor_bounds_clamp(const void *bounds_image, void *point)
 {
     if (POINT(0) < LOW(0))
         POINT(0) = LOW(0);

@@ -27,5 +27,5 @@ typedef struct BHLightContext
    list and PC53/nearest/masked FP environment. Source preflight rejects null
    required pointers, cycles and nonfinite consumed input without mutation.
    No light allocation, shading evaluator or renderer dispatch is claimed. */
-int __cdecl bh_light_prepare(BHLightContext *, const BHVec3 *reference, float radius);
+int bh_light_prepare(BHLightContext *, const BHVec3 *reference, float radius);
 #endif

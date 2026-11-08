@@ -38,10 +38,10 @@ typedef struct BHSceneBindings
    lifetime. Initializes neither model
    resources nor gameplay entities. The world ring must already have been
    built and matched. Failure does not publish partially bound output. */
-int __cdecl bh_scene_bindings_init(BHSceneBindings *bindings, const BHSceneBindingInput *inputs, unsigned long count,
-                                   BHPickupRoom *rooms, BHEntityScheduleRoom *scheduled, BHRenderResources *resources,
-                                   BHEntityScheduleContext *schedule_context);
+int bh_scene_bindings_init(BHSceneBindings *bindings, const BHSceneBindingInput *inputs, unsigned long count,
+                           BHPickupRoom *rooms, BHEntityScheduleRoom *scheduled, BHRenderResources *resources,
+                           BHEntityScheduleContext *schedule_context);
 
-BHEntityScheduleRoom *__cdecl bh_scene_bindings_schedule(const BHSceneBindings *bindings, const BHWorldGeometry *world);
-void __cdecl bh_scene_bindings_dispose(BHSceneBindings *bindings);
+BHEntityScheduleRoom *bh_scene_bindings_schedule(const BHSceneBindings *bindings, const BHWorldGeometry *world);
+void bh_scene_bindings_dispose(BHSceneBindings *bindings);
 #endif

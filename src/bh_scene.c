@@ -10,11 +10,11 @@ typedef char route_size[sizeof(BHSceneRoute) == 8 && offsetof(BHSceneRoute, dist
 #define MAX_RECORDS 65535UL
 #define MAX_NODES 2048UL
 
-static void *__cdecl allocate(unsigned long bytes, void *user)
+static void *allocate(unsigned long bytes, void *user)
 {
     return malloc(bytes);
 }
-static void __cdecl release(void *pointer, void *user)
+static void release(void *pointer, void *user)
 {
     free(pointer);
 }
@@ -38,7 +38,7 @@ static int setup(BHSceneAllocator *output, const BHSceneAllocator *input)
     }
     return 1;
 }
-int __cdecl bh_scene_level_init(BHSceneLevel *level, const BHSceneAllocator *allocator)
+int bh_scene_level_init(BHSceneLevel *level, const BHSceneAllocator *allocator)
 {
     BHSceneAllocator memory;
     if (!level || !setup(&memory, allocator))
@@ -47,7 +47,7 @@ int __cdecl bh_scene_level_init(BHSceneLevel *level, const BHSceneAllocator *all
     level->allocator = memory;
     return 1;
 }
-int __cdecl bh_scene_routes_init(BHSceneRoutes *routes, const BHSceneAllocator *allocator)
+int bh_scene_routes_init(BHSceneRoutes *routes, const BHSceneAllocator *allocator)
 {
     BHSceneAllocator memory;
     if (!routes || !setup(&memory, allocator))
@@ -56,7 +56,7 @@ int __cdecl bh_scene_routes_init(BHSceneRoutes *routes, const BHSceneAllocator *
     routes->allocator = memory;
     return 1;
 }
-void __cdecl bh_scene_level_dispose(BHSceneLevel *level)
+void bh_scene_level_dispose(BHSceneLevel *level)
 {
     if (!level)
         return;
@@ -68,7 +68,7 @@ void __cdecl bh_scene_level_dispose(BHSceneLevel *level)
     level->links = NULL;
     level->placement_count = level->link_count = 0;
 }
-void __cdecl bh_scene_routes_dispose(BHSceneRoutes *routes)
+void bh_scene_routes_dispose(BHSceneRoutes *routes)
 {
     if (!routes)
         return;
@@ -90,7 +90,7 @@ static int routes_fail(BHSceneRoutes *routes, BHSceneError error)
     return 0;
 }
 
-int __cdecl bh_scene_level_decode(BHSceneLevel *level, const void *bytes, unsigned long size)
+int bh_scene_level_decode(BHSceneLevel *level, const void *bytes, unsigned long size)
 {
     const unsigned char *data = (const unsigned char *)bytes;
     unsigned long count, offset, links, i;
@@ -145,8 +145,7 @@ int __cdecl bh_scene_level_decode(BHSceneLevel *level, const void *bytes, unsign
     return 1;
 }
 
-int __cdecl bh_scene_routes_decode(BHSceneRoutes *routes, const void *bytes, unsigned long size,
-                                   unsigned long expected_nodes)
+int bh_scene_routes_decode(BHSceneRoutes *routes, const void *bytes, unsigned long size, unsigned long expected_nodes)
 {
     const unsigned char *data = (const unsigned char *)bytes;
     unsigned long count, cells, required, i, slot, distance, magnitude;
@@ -250,7 +249,7 @@ static int blob(BHVFile *file, const BHSceneAllocator *memory, unsigned char **d
     return 1;
 }
 
-int __cdecl bh_scene_level_read(BHSceneLevel *level, BHVFile *file)
+int bh_scene_level_read(BHSceneLevel *level, BHVFile *file)
 {
     unsigned char *data;
     unsigned long size;
@@ -268,7 +267,7 @@ int __cdecl bh_scene_level_read(BHSceneLevel *level, BHVFile *file)
         level->error = BH_SCENE_IO;
     return ok;
 }
-int __cdecl bh_scene_routes_read(BHSceneRoutes *routes, BHVFile *file, unsigned long expected_nodes)
+int bh_scene_routes_read(BHSceneRoutes *routes, BHVFile *file, unsigned long expected_nodes)
 {
     unsigned char *data;
     unsigned long size;

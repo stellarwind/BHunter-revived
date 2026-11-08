@@ -48,7 +48,7 @@ static int live(BHEntityPool *p, BHEntity *e)
 {
     return bh_entity_is_active(p, e);
 }
-int __cdecl bh_trail_bind(BHTrailContext *c, BHEntity *e, const BHTrailParameters *p)
+int bh_trail_bind(BHTrailContext *c, BHEntity *e, const BHTrailParameters *p)
 {
     BHEntity *zero = NULL;
     unsigned long i, generation = 0;
@@ -86,10 +86,10 @@ int __cdecl bh_trail_bind(BHTrailContext *c, BHEntity *e, const BHTrailParameter
     e->refresh = NULL;
     return 1;
 }
-BHEntity *__cdecl bh_trail_create(BHTrailContext *c, unsigned long image, long bucket, unsigned long point_word,
-                                  const BHVec3 *position, BHEntity *attached, float lifetime, float fade_seconds,
-                                  float frequency, float node_value, float width, float width_rate,
-                                  const BHVec3 *velocity, float texture_scale)
+BHEntity *bh_trail_create(BHTrailContext *c, unsigned long image, long bucket, unsigned long point_word,
+                          const BHVec3 *position, BHEntity *attached, float lifetime, float fade_seconds,
+                          float frequency, float node_value, float width, float width_rate, const BHVec3 *velocity,
+                          float texture_scale)
 {
     BHEntity *e;
     BHTrailParameters p;
@@ -128,11 +128,10 @@ BHEntity *__cdecl bh_trail_create(BHTrailContext *c, unsigned long image, long b
     }
     return e;
 }
-unsigned long __cdecl bh_trail_create_pair(BHTrailContext *c, unsigned long image, long bucket,
-                                           unsigned long point_word, const BHVec3 *position, BHEntity *attached,
-                                           float lifetime, float fade_seconds, float frequency, float node_value,
-                                           float width, float width_rate, const BHVec3 *velocity, float texture_scale,
-                                           BHEntity **first, BHEntity **second)
+unsigned long bh_trail_create_pair(BHTrailContext *c, unsigned long image, long bucket, unsigned long point_word,
+                                   const BHVec3 *position, BHEntity *attached, float lifetime, float fade_seconds,
+                                   float frequency, float node_value, float width, float width_rate,
+                                   const BHVec3 *velocity, float texture_scale, BHEntity **first, BHEntity **second)
 {
     BHEntity *a, *b;
     BHVec3 scaled;
@@ -155,7 +154,7 @@ unsigned long __cdecl bh_trail_create_pair(BHTrailContext *c, unsigned long imag
         *second = b;
     return (a ? 1 : 0) + (b ? 1 : 0);
 }
-void __cdecl bh_trail_node_tick(BHEntity *e)
+void bh_trail_node_tick(BHEntity *e)
 {
     BHTrailContext *c = context(e);
     BHEntity *older, *newer;
@@ -182,7 +181,7 @@ void __cdecl bh_trail_node_tick(BHEntity *e)
     number(e, 0x14, (double)drift.z + e->position.z);
     number(e, 0xf4, (double)scalar(e, 0x104) + scalar(e, 0xf4));
 }
-void __cdecl bh_trail_refresh(BHEntity *e, void *unused)
+void bh_trail_refresh(BHEntity *e, void *unused)
 {
     BHTrailContext *c = context(e);
     BHEntity *node;
@@ -225,7 +224,7 @@ void __cdecl bh_trail_refresh(BHEntity *e, void *unused)
     header->words[0] = count;
     header->kind = BH_DRAW_PATH_HEADER;
 }
-void __cdecl bh_trail_generate(BHEntity *e)
+void bh_trail_generate(BHEntity *e)
 {
     BHTrailContext *c = context(e);
     BHEntity *attached, *older, *node;

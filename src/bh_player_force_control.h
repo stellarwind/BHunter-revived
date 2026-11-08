@@ -17,11 +17,11 @@ typedef struct BHPlayerForceControl
    skip_forces retains smoothing and all eight visual endpoint writes. PC53,
    finite moderate inputs, initialized actual basis and nonzero mass/inertia.
    Uses shared real CRT rand exactly on original instability cadence. */
-int __cdecl bh_player_force_control_b(BHPlayerForceControl *, float unused, int skip_forces);
+int bh_player_force_control_b(BHPlayerForceControl *, float unused, int skip_forces);
 /* Other whole force-control variants00414880,00416120,00416eb0. Positive dt
    is required for the input-coupled variants C/D; each owns its complete
    stabilizer, force selection, smoothing and visual endpoint behavior. */
-int __cdecl bh_player_force_control_a(BHPlayerForceControl *, float dt, int skip_forces);
-int __cdecl bh_player_force_control_c(BHPlayerForceControl *, float dt, int skip_forces);
-int __cdecl bh_player_force_control_d(BHPlayerForceControl *, float dt, int skip_forces);
+int bh_player_force_control_a(BHPlayerForceControl *, float dt, int skip_forces);
+int bh_player_force_control_c(BHPlayerForceControl *, float dt, int skip_forces);
+int bh_player_force_control_d(BHPlayerForceControl *, float dt, int skip_forces);
 #endif

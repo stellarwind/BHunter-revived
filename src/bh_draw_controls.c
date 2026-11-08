@@ -31,7 +31,7 @@ static BHDrawCommand *append(BHDrawQueue *q, unsigned long bucket)
     q->error = BH_DRAW_OK;
     return command;
 }
-int __cdecl bh_draw_controls_state(BHDrawQueue *q, unsigned long bucket, long value)
+int bh_draw_controls_state(BHDrawQueue *q, unsigned long bucket, long value)
 {
     BHDrawCommand *c = append(q, bucket);
     if (!c)
@@ -40,8 +40,7 @@ int __cdecl bh_draw_controls_state(BHDrawQueue *q, unsigned long bucket, long va
     c->resource = (unsigned long)value;
     return 1;
 }
-int __cdecl bh_draw_controls_clip_rect(BHDrawQueue *q, unsigned long bucket, float x, float y, float width,
-                                       float height)
+int bh_draw_controls_clip_rect(BHDrawQueue *q, unsigned long bucket, float x, float y, float width, float height)
 {
     BHDrawCommand *c = append(q, bucket);
     float values[4];
@@ -56,8 +55,8 @@ int __cdecl bh_draw_controls_clip_rect(BHDrawQueue *q, unsigned long bucket, flo
     memcpy(c->words, values, sizeof(values));
     return 1;
 }
-int __cdecl bh_draw_controls_portal_clip(BHDrawQueue *q, unsigned long bucket, const BHVec3 corners[4],
-                                         unsigned long parent, float near_z, float far_z)
+int bh_draw_controls_portal_clip(BHDrawQueue *q, unsigned long bucket, const BHVec3 corners[4], unsigned long parent,
+                                 float near_z, float far_z)
 {
     BHDrawCommand *c;
     if (!corners || (parent != BH_DRAW_END && (!q || parent >= q->count)))
@@ -74,7 +73,7 @@ int __cdecl bh_draw_controls_portal_clip(BHDrawQueue *q, unsigned long bucket, c
     c->words[15] = 0;
     return 1;
 }
-int __cdecl bh_draw_controls_texture_mask(BHDrawControlContext *c, unsigned long mask)
+int bh_draw_controls_texture_mask(BHDrawControlContext *c, unsigned long mask)
 {
     unsigned long i;
     if (!c)
@@ -94,8 +93,8 @@ int __cdecl bh_draw_controls_texture_mask(BHDrawControlContext *c, unsigned long
     }
     return 1;
 }
-int __cdecl bh_draw_controls_execute(BHDrawControlContext *c, const BHDrawQueue *q, const BHDrawCommand *command,
-                                     unsigned long *next)
+int bh_draw_controls_execute(BHDrawControlContext *c, const BHDrawQueue *q, const BHDrawCommand *command,
+                             unsigned long *next)
 {
     float v[4];
     int ok;

@@ -21,8 +21,8 @@ static BHPickupRoom *find_room(BHPickupContext *context, BHWorldGeometry *world)
     return NULL;
 }
 
-BHEntity *__cdecl bh_pickup_basic_spawn(BHPickupContext *context, const BHVec3 *position, long type, long remaining,
-                                        long offer, long token, float fade)
+BHEntity *bh_pickup_basic_spawn(BHPickupContext *context, const BHVec3 *position, long type, long remaining, long offer,
+                                long token, float fade)
 {
     BHEntity *entity;
     BHPickupState *state;

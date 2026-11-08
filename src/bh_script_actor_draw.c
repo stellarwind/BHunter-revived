@@ -30,7 +30,7 @@ static void smoke(BHScriptActorDrawContext *ctx, const BHVec3 *p)
     bh_script_particle_create(ctx->particles, ctx->smoke_resource, 3, &point, &velocity, &acceleration, 1, angle, 15,
                               angular, .9f, .95f, 2.5f, .25f);
 }
-int __cdecl bh_script_actor_draw(BHScriptActorDrawContext *ctx, BHEntity *entity)
+int bh_script_actor_draw(BHScriptActorDrawContext *ctx, BHEntity *entity)
 {
     BHActorRouteState state;
     BHScriptActorPath path;
@@ -83,7 +83,7 @@ int __cdecl bh_script_actor_draw(BHScriptActorDrawContext *ctx, BHEntity *entity
     ctx->error = BH_ACTOR_ROUTE_OK;
     return 1;
 }
-int __cdecl bh_script_actor_vehicle_draw(BHScriptActorDrawContext *ctx, BHEntity *entity)
+int bh_script_actor_vehicle_draw(BHScriptActorDrawContext *ctx, BHEntity *entity)
 {
     BHActorRouteState state;
     BHVec3 p, q, previous, angles, offset, velocity, glow, local = {1.5f, -5, 13.75f};

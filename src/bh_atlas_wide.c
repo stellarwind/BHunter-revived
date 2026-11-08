@@ -19,7 +19,7 @@ static long metric(unsigned short bits)
     memcpy(&value, &bits, 2);
     return value;
 }
-long __cdecl bh_atlas_page_wide_text(BHAtlasPage *page, const unsigned short *text)
+long bh_atlas_page_wide_text(BHAtlasPage *page, const unsigned short *text)
 {
     const BHAtlasRectangle *glyph;
     RECT source, destination;
@@ -78,7 +78,7 @@ long __cdecl bh_atlas_page_wide_text(BHAtlasPage *page, const unsigned short *te
         page->image->resident->pixels_dirty = 1;
     return total;
 }
-long __cdecl bh_atlas_page_wide_width(const BHAtlasPage *page, const unsigned short *text)
+long bh_atlas_page_wide_width(const BHAtlasPage *page, const unsigned short *text)
 {
     unsigned long code, index;
     long total = 0;
@@ -89,7 +89,7 @@ long __cdecl bh_atlas_page_wide_width(const BHAtlasPage *page, const unsigned sh
             total = wrapped_add(total, metric(page->atlas->rectangles[index].width));
     return total;
 }
-int __cdecl bh_text_queue_wide(BHTextQueue *queue, BHAtlasPage *page, const unsigned short *text, long x, long y)
+int bh_text_queue_wide(BHTextQueue *queue, BHAtlasPage *page, const unsigned short *text, long x, long y)
 {
     unsigned long previous, index, i;
     unsigned short word;
@@ -124,7 +124,7 @@ int __cdecl bh_text_queue_wide(BHTextQueue *queue, BHAtlasPage *page, const unsi
     queue->error = BH_TEXT_QUEUE_OK;
     return 1;
 }
-unsigned long __cdecl bh_text_queue_execute_wide(const BHTextCommand *command)
+unsigned long bh_text_queue_execute_wide(const BHTextCommand *command)
 {
     bh_atlas_page_cursor(command->page, command->position.xy[0], command->position.xy[1]);
     bh_atlas_page_wide_text(command->page, (const unsigned short *)command->text);

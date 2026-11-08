@@ -23,7 +23,7 @@ static int live(BHEntityPool *pool, const BHEntity *entity)
 {
     return bh_entity_is_active(pool, entity);
 }
-int __cdecl bh_script_motion_actor_read(const BHEntity *entity, BHScriptMotionActor *s)
+int bh_script_motion_actor_read(const BHEntity *entity, BHScriptMotionActor *s)
 {
     if (!entity || !s)
         return 0;
@@ -35,7 +35,7 @@ int __cdecl bh_script_motion_actor_read(const BHEntity *entity, BHScriptMotionAc
     get(entity, 0x12c, &s->attachments, 4);
     return 1;
 }
-int __cdecl bh_script_motion_actor_write(BHEntity *entity, const BHScriptMotionActor *s)
+int bh_script_motion_actor_write(BHEntity *entity, const BHScriptMotionActor *s)
 {
     if (!entity || !s)
         return 0;
@@ -47,14 +47,14 @@ int __cdecl bh_script_motion_actor_write(BHEntity *entity, const BHScriptMotionA
     put(entity, 0x12c, &s->attachments, 4);
     return 1;
 }
-BHEntity *__cdecl bh_script_motion_attachment_next(const BHEntity *entity)
+BHEntity *bh_script_motion_attachment_next(const BHEntity *entity)
 {
     BHEntity *next = NULL;
     if (entity)
         get(entity, 0xec, &next, 4);
     return next;
 }
-void __cdecl bh_script_motion_attachment_link(BHEntity *entity, BHEntity *next)
+void bh_script_motion_attachment_link(BHEntity *entity, BHEntity *next)
 {
     if (entity)
         put(entity, 0xec, &next, 4);
@@ -105,8 +105,7 @@ static int valid(BHScriptMotionContext *ctx, BHEntity *entity, const BHScriptLif
     ctx->error = BH_MOTION_OK;
     return 1;
 }
-int __cdecl bh_script_motion_bind(BHScriptMotionContext *ctx, BHEntity *entity, const BHScriptLifetimeState *state,
-                                  int rotate)
+int bh_script_motion_bind(BHScriptMotionContext *ctx, BHEntity *entity, const BHScriptLifetimeState *state, int rotate)
 {
     if (!valid(ctx, entity, state, rotate))
         return 0;
@@ -162,7 +161,7 @@ static int expire(BHEntity *entity, float countdown)
     put(entity, 0x128, &countdown, 4);
     return !(next > 0);
 }
-void __cdecl bh_script_translate_tick(BHEntity *entity)
+void bh_script_translate_tick(BHEntity *entity)
 {
     BHScriptMotionContext *ctx = context(entity);
     BHScriptLifetimeState state;
@@ -203,7 +202,7 @@ static void wrap(float *v)
     else if (!((double)*v >= -3.141592653589793))
         bh_round_float(v, (double)*v - (-6.283185307179586));
 }
-void __cdecl bh_script_rotate_tick(BHEntity *entity)
+void bh_script_rotate_tick(BHEntity *entity)
 {
     BHScriptMotionContext *ctx = context(entity);
     BHScriptLifetimeState state;

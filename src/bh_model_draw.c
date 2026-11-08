@@ -11,11 +11,11 @@ typedef char draw_vertex_size[sizeof(BHBspVertex) == sizeof(BHClipVertex) && siz
 typedef char
     draw_vertex_frame[offsetof(BHClipVertex, frame) == 0x34 && offsetof(BHClipVertex, projected) == 0x38 ? 1 : -1];
 typedef char draw_image_flags[offsetof(BHTextureImage, flags) == 0x50 ? 1 : -1];
-static void *__cdecl allocate(unsigned long bytes, void *user)
+static void *allocate(unsigned long bytes, void *user)
 {
     return malloc(bytes);
 }
-static void __cdecl release(void *p, void *user)
+static void release(void *p, void *user)
 {
     free(p);
 }
@@ -35,7 +35,7 @@ static void set_frame(BHClipVertex *v, unsigned long frame)
 {
     memcpy(&v->frame, &frame, 4);
 }
-void __cdecl bh_model_draw_cache_dispose(BHModelDrawCache *cache)
+void bh_model_draw_cache_dispose(BHModelDrawCache *cache)
 {
     if (!cache)
         return;
@@ -50,7 +50,7 @@ void __cdecl bh_model_draw_cache_dispose(BHModelDrawCache *cache)
     }
     memset(cache, 0, sizeof(*cache));
 }
-void __cdecl bh_model_draw_cache_reset(BHModelDrawCache *cache)
+void bh_model_draw_cache_reset(BHModelDrawCache *cache)
 {
     unsigned long i;
     if (!cache)
@@ -60,7 +60,7 @@ void __cdecl bh_model_draw_cache_reset(BHModelDrawCache *cache)
     if (cache->face_frames)
         memset(cache->face_frames, 0, cache->face_count * 4);
 }
-int __cdecl bh_model_draw_cache_init(BHModelDrawCache *cache, const BHModel *model, const BHSceneAllocator *a)
+int bh_model_draw_cache_init(BHModelDrawCache *cache, const BHModel *model, const BHSceneAllocator *a)
 {
     BHModelDrawCache next;
     unsigned long i;
@@ -104,10 +104,9 @@ int __cdecl bh_model_draw_cache_init(BHModelDrawCache *cache, const BHModel *mod
     *cache = next;
     return 1;
 }
-int __cdecl bh_model_draw_context_init(BHModelDrawContext *c, const BHModel *model, BHModelDrawCache *cache,
-                                       const BHViewCamera *view, BHClipContext *clip, unsigned long frame,
-                                       unsigned long texture_mask, unsigned long color, BHModelPolygonEmit emit,
-                                       void *user)
+int bh_model_draw_context_init(BHModelDrawContext *c, const BHModel *model, BHModelDrawCache *cache,
+                               const BHViewCamera *view, BHClipContext *clip, unsigned long frame,
+                               unsigned long texture_mask, unsigned long color, BHModelPolygonEmit emit, void *user)
 {
     if (!c || !model || !cache || cache->model != model || !view || !clip || !frame || !emit ||
         !bh_clip_set_camera(clip, &view->projected))
@@ -124,7 +123,7 @@ int __cdecl bh_model_draw_context_init(BHModelDrawContext *c, const BHModel *mod
     c->user = user;
     return 1;
 }
-int __cdecl bh_model_draw_face(BHModelDrawContext *c, long face)
+int bh_model_draw_face(BHModelDrawContext *c, long face)
 {
     const BHModel *m;
     const BHBspFace *f;
@@ -188,7 +187,7 @@ int __cdecl bh_model_draw_face(BHModelDrawContext *c, long face)
     ++c->polygons_emitted;
     return 1;
 }
-int __cdecl bh_model_draw_leaf_chain(BHModelDrawContext *c, long leaf)
+int bh_model_draw_leaf_chain(BHModelDrawContext *c, long leaf)
 {
     unsigned long steps = 0;
     const BHBspLeaf *p;
@@ -218,7 +217,7 @@ static double support(const BHBspNode *node, const BHViewPlane *p, int maximum)
         return (z + (x + y)) - p->offset;
     return (x + (y + z)) - p->offset;
 }
-int __cdecl bh_model_draw_unlit(BHModelDrawContext *c, long node, unsigned long mask)
+int bh_model_draw_unlit(BHModelDrawContext *c, long node, unsigned long mask)
 {
     unsigned long count = 1, slot, bit;
     BHModelDrawTask *task;

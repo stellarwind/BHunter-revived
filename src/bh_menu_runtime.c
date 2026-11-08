@@ -109,7 +109,7 @@ static int activate(BHMenuRuntime *m)
         return fail(m->context);
     return choose(m, 1, 0);
 }
-int __cdecl bh_menu_runtime_bind(BHMenuRuntime *m)
+int bh_menu_runtime_bind(BHMenuRuntime *m)
 {
     BHEntity *p;
     unsigned long n = 0;
@@ -132,13 +132,13 @@ static BHMenuRuntime *binding(BHEntity *e)
     memcpy(&m, e->payload + 608, 4);
     return m;
 }
-void __cdecl bh_menu_runtime_step_entity(BHEntity *e)
+void bh_menu_runtime_step_entity(BHEntity *e)
 {
     BHMenuRuntime *m = binding(e);
     if (m && m->entity == e)
         bh_menu_runtime_step(m);
 }
-void __cdecl bh_menu_runtime_refresh_entity(BHEntity *e, void *unused)
+void bh_menu_runtime_refresh_entity(BHEntity *e, void *unused)
 {
     BHMenuRuntime *m = binding(e);
     BHMenuPresent *p;
@@ -202,7 +202,7 @@ static int press(BHMenuRuntime *m, int back)
         return 0;
     return 1;
 }
-int __cdecl bh_menu_runtime_step(BHMenuRuntime *m)
+int bh_menu_runtime_step(BHMenuRuntime *m)
 {
     BHMenuRuntimeContext *c;
     BHMenuSettingsMenu *s;
@@ -361,7 +361,7 @@ int __cdecl bh_menu_runtime_step(BHMenuRuntime *m)
     }
     return !c->error;
 }
-static void __cdecl fade_refresh(BHEntity *e, void *unused)
+static void fade_refresh(BHEntity *e, void *unused)
 {
     (void)unused;
     bh_menu_music_fade(e);
@@ -370,7 +370,7 @@ static void put(BHEntity *e, unsigned long o, const void *v, unsigned long n)
 {
     memcpy((char *)e + o, v, n);
 }
-int __cdecl bh_menu_runtime_return(BHMenuRuntimeContext *c)
+int bh_menu_runtime_return(BHMenuRuntimeContext *c)
 {
     BHMenuRuntime *root;
     BHFlybyScene *f;

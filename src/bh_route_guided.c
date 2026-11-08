@@ -1,7 +1,7 @@
 #include "bh_route_guided.h"
 #include "bh_actor_guided_exit_core.inc"
 
-int __cdecl bh_route_guided_exit(const BHEntity *actor, const BHWorldGeometry *room, long incoming, long *selected)
+int bh_route_guided_exit(const BHEntity *actor, const BHWorldGeometry *room, long incoming, long *selected)
 {
     BHActorExitRoomImage image;
     BHActorExitNeighborImage neighbors[6];

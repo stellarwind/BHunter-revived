@@ -117,8 +117,8 @@ static int paint(BHMenuRows *owner, BHMenuRow *row, unsigned char *body)
     }
     return 1;
 }
-int __cdecl bh_menu_rows_init(BHMenuRows *owner, BHAtlasContext *atlas, BHTextQueue *text, BHMenuRow **rows,
-                              unsigned long capacity)
+int bh_menu_rows_init(BHMenuRows *owner, BHAtlasContext *atlas, BHTextQueue *text, BHMenuRow **rows,
+                      unsigned long capacity)
 {
     if (!owner || !atlas || !atlas->textures || !atlas->textures->allocator.allocate ||
         !atlas->textures->allocator.release || !text || !rows || !capacity)
@@ -131,9 +131,8 @@ int __cdecl bh_menu_rows_init(BHMenuRows *owner, BHAtlasContext *atlas, BHTextQu
     owner->capacity = capacity;
     return 1;
 }
-BHMenuRow *__cdecl bh_menu_row_create(BHMenuRows *owner, unsigned long identity, const unsigned char *title,
-                                      unsigned char *body, unsigned long first, unsigned long second,
-                                      BHMenuRowRefresh refresh)
+BHMenuRow *bh_menu_row_create(BHMenuRows *owner, unsigned long identity, const unsigned char *title,
+                              unsigned char *body, unsigned long first, unsigned long second, BHMenuRowRefresh refresh)
 {
     BHMenuRow *row;
     BHTextureContext *textures;
@@ -172,7 +171,7 @@ BHMenuRow *__cdecl bh_menu_row_create(BHMenuRows *owner, unsigned long identity,
     ++owner->count;
     return row;
 }
-int __cdecl bh_menu_row_refresh(BHMenuRows *owner, unsigned long index, const unsigned char *title, unsigned char *body)
+int bh_menu_row_refresh(BHMenuRows *owner, unsigned long index, const unsigned char *title, unsigned char *body)
 {
     BHMenuRow *row;
     if (!owner || !owner->rows || index >= owner->count || !(row = owner->rows[index]) ||
@@ -187,7 +186,7 @@ int __cdecl bh_menu_row_refresh(BHMenuRows *owner, unsigned long index, const un
     owner->error = 0;
     return paint(owner, row, body);
 }
-int __cdecl bh_menu_rows_dispose(BHMenuRows *owner)
+int bh_menu_rows_dispose(BHMenuRows *owner)
 {
     unsigned long i;
     BHTextureContext *textures;

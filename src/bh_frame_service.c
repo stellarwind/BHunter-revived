@@ -10,7 +10,7 @@ static void failure(BHFrameService *s, BHFrameServiceError error)
     if (s->error == BH_FRAME_SERVICE_OK)
         s->error = error;
 }
-int __cdecl bh_frame_service_tick(BHFrameService *s)
+int bh_frame_service_tick(BHFrameService *s)
 {
     void *buffer;
     long active;

@@ -18,7 +18,7 @@ typedef struct BHRenderMaterial
    later native HRESULTs are recorded separately without changing its return.
    Source guards return a literal diagnostic for invalid/previously live owner;
    bounded error append replaces original unbounded strcat. */
-const char *__cdecl bh_render_material_initialize(BHRenderMaterial *, BHTextureContext *, LPDIRECT3D2);
+const char *bh_render_material_initialize(BHRenderMaterial *, BHTextureContext *, LPDIRECT3D2);
 /* Source lifetime adapter, not a recovered original destructor. */
-void __cdecl bh_render_material_dispose(BHRenderMaterial *);
+void bh_render_material_dispose(BHRenderMaterial *);
 #endif

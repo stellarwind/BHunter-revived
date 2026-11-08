@@ -37,8 +37,8 @@ static int valid_ring(BHDepthSplitContext *c, BHClipVertex *ring, int attribute)
     } while (p != ring);
     return n >= 3 ? 1 : fail(c, BH_DEPTH_SPLIT_TOPOLOGY);
 }
-int __cdecl bh_depth_split_init(BHDepthSplitContext *c, float left, float right, float top, float bottom,
-                                BHDepthLeaf leaf, void *user)
+int bh_depth_split_init(BHDepthSplitContext *c, float left, float right, float top, float bottom, BHDepthLeaf leaf,
+                        void *user)
 {
     if (!c || !leaf || !_finite(left) || !_finite(right) || !_finite(top) || !_finite(bottom) || left > right ||
         top > bottom)
@@ -180,11 +180,11 @@ static int run(BHDepthSplitContext *c, BHClipVertex *ring, int attribute)
         return 0;
     return split(c, ring, attribute, 0);
 }
-int __cdecl bh_depth_subdivide(BHDepthSplitContext *c, BHClipVertex *ring)
+int bh_depth_subdivide(BHDepthSplitContext *c, BHClipVertex *ring)
 {
     return run(c, ring, 0);
 }
-int __cdecl bh_depth_subdivide_scalar(BHDepthSplitContext *c, BHClipVertex *ring)
+int bh_depth_subdivide_scalar(BHDepthSplitContext *c, BHClipVertex *ring)
 {
     return run(c, ring, 1);
 }

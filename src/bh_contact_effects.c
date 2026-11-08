@@ -12,11 +12,11 @@ typedef char spark_velocity_offset[offsetof(BHSparkState, velocity) == 0x24 ? 1 
 typedef char impact_age_offset[offsetof(BHImpactState, age) == 0x18 ? 1 : -1];
 typedef char impact_normal_offset[offsetof(BHImpactState, normal) == 0x2c ? 1 : -1];
 typedef char state_payload_offset[offsetof(BHEntity, payload) + 4 == 0xe8 ? 1 : -1];
-static void __cdecl spark_tick(BHEntity *entity);
-static void __cdecl spark_refresh(BHEntity *entity, void *packet);
-static void __cdecl impact_tick(BHEntity *entity);
-static void __cdecl quad_refresh(BHEntity *entity, void *packet);
-static void __cdecl rays_refresh(BHEntity *entity, void *packet);
+static void spark_tick(BHEntity *entity);
+static void spark_refresh(BHEntity *entity, void *packet);
+static void impact_tick(BHEntity *entity);
+static void quad_refresh(BHEntity *entity, void *packet);
+static void rays_refresh(BHEntity *entity, void *packet);
 static BHContactEffects *context(BHEntity *entity)
 {
     BHContactEffects *ctx;
@@ -43,9 +43,8 @@ static int live(BHContactEffects *ctx, BHEntity *entity)
 {
     return ctx && bh_entity_is_active(ctx->pool, entity);
 }
-int __cdecl bh_contact_effects_init(BHContactEffects *ctx, BHEntityPool *pool, BHDrawQueue *queue,
-                                    unsigned long spark_id, unsigned long quad_id, unsigned long rays_id,
-                                    unsigned long line_id)
+int bh_contact_effects_init(BHContactEffects *ctx, BHEntityPool *pool, BHDrawQueue *queue, unsigned long spark_id,
+                            unsigned long quad_id, unsigned long rays_id, unsigned long line_id)
 {
     BHContactEffects next;
     if (!ctx || !pool || !queue || !queue->commands || !bh_entities_valid(pool))
@@ -60,7 +59,7 @@ int __cdecl bh_contact_effects_init(BHContactEffects *ctx, BHEntityPool *pool, B
     *ctx = next;
     return 1;
 }
-int __cdecl bh_contact_effects_dispose(BHContactEffects *ctx)
+int bh_contact_effects_dispose(BHContactEffects *ctx)
 {
     BHEntity *p;
     unsigned long count = 0;
@@ -75,21 +74,21 @@ int __cdecl bh_contact_effects_dispose(BHContactEffects *ctx)
     memset(ctx, 0, sizeof(*ctx));
     return 1;
 }
-BHSparkState *__cdecl bh_contact_spark_state(BHContactEffects *ctx, BHEntity *entity)
+BHSparkState *bh_contact_spark_state(BHContactEffects *ctx, BHEntity *entity)
 {
     if (!entity || !live(ctx, entity) || entity->step != spark_tick || entity->refresh != spark_refresh ||
         context(entity) != ctx)
         return NULL;
     return spark(entity);
 }
-BHImpactState *__cdecl bh_contact_impact_state(BHContactEffects *ctx, BHEntity *entity)
+BHImpactState *bh_contact_impact_state(BHContactEffects *ctx, BHEntity *entity)
 {
     if (!entity || !live(ctx, entity) || entity->step != impact_tick ||
         (entity->refresh != quad_refresh && entity->refresh != rays_refresh) || context(entity) != ctx)
         return NULL;
     return impact(entity);
 }
-BHEntity *__cdecl bh_contact_spark_create(BHContactEffects *ctx, const BHVec3 *point, float lifetime, float speed)
+BHEntity *bh_contact_spark_create(BHContactEffects *ctx, const BHVec3 *point, float lifetime, float speed)
 {
     BHEntity *entity;
     BHSparkState *state;
@@ -134,8 +133,8 @@ BHEntity *__cdecl bh_contact_spark_create(BHContactEffects *ctx, const BHVec3 *p
     ctx->error = BH_EFFECT_OK;
     return entity;
 }
-BHEntity *__cdecl bh_contact_impact_create(BHContactEffects *ctx, const BHVec3 *point, const BHVec3 *normal,
-                                           unsigned long flags)
+BHEntity *bh_contact_impact_create(BHContactEffects *ctx, const BHVec3 *point, const BHVec3 *normal,
+                                   unsigned long flags)
 {
     BHEntity *entity;
     BHImpactState *state;
@@ -163,7 +162,7 @@ BHEntity *__cdecl bh_contact_impact_create(BHContactEffects *ctx, const BHVec3 *
     ctx->error = BH_EFFECT_OK;
     return entity;
 }
-static void __cdecl spark_tick(BHEntity *entity)
+static void spark_tick(BHEntity *entity)
 {
     BHContactEffects *ctx = context(entity);
     BHSparkState *state = spark(entity);
@@ -186,7 +185,7 @@ static void __cdecl spark_tick(BHEntity *entity)
     bh_round_float(&state->angle, (double)state->angle - (double)state->spin * (-1.0 / 30.0));
     bh_round_float(&state->height, (double)state->height - (-1.0 / 30.0));
 }
-static void __cdecl spark_refresh(BHEntity *entity, void *packet)
+static void spark_refresh(BHEntity *entity, void *packet)
 {
     BHContactEffects *ctx = context(entity);
     BHSparkState *state = spark(entity);
@@ -196,7 +195,7 @@ static void __cdecl spark_refresh(BHEntity *entity, void *packet)
                           state->angle, state->frame, state->lifetime) < 0)
         ctx->error = BH_EFFECT_QUEUE;
 }
-static void __cdecl impact_tick(BHEntity *entity)
+static void impact_tick(BHEntity *entity)
 {
     BHContactEffects *ctx = context(entity);
     BHImpactState *state = impact(entity);
@@ -219,7 +218,7 @@ static int impact_valid(BHContactEffects *ctx, BHEntity *entity)
     }
     return 1;
 }
-static void __cdecl quad_refresh(BHEntity *entity, void *packet)
+static void quad_refresh(BHEntity *entity, void *packet)
 {
     BHContactEffects *ctx = context(entity);
     BHImpactState *state = impact(entity);
@@ -236,7 +235,7 @@ static void __cdecl quad_refresh(BHEntity *entity, void *packet)
                          alpha) < 0)
         ctx->error = BH_EFFECT_QUEUE;
 }
-static void __cdecl rays_refresh(BHEntity *entity, void *packet)
+static void rays_refresh(BHEntity *entity, void *packet)
 {
     BHContactEffects *ctx = context(entity);
     BHImpactState *state = impact(entity);

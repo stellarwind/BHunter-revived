@@ -17,7 +17,7 @@ static BHAttachmentNode *neighbor(const BHPortal *p)
     /* navigation is the first member, including in every borrowed neighbor. */
     return (BHAttachmentNode *)p->neighbor;
 }
-void __cdecl bh_attachment_reset(BHAttachmentNode *node)
+void bh_attachment_reset(BHAttachmentNode *node)
 {
     unsigned long i;
     if (!node || !node->radar_visited)
@@ -240,7 +240,7 @@ static int render_node(BHAttachmentContext *c, BHAttachmentNode *node)
     }
     return 1;
 }
-int __cdecl bh_attachment_render(BHAttachmentContext *c, BHAttachmentNode *root)
+int bh_attachment_render(BHAttachmentContext *c, BHAttachmentNode *root)
 {
     if (!c || !root || !c->queue || !c->frame)
         return fail(c, BH_ATTACHMENT_ARGUMENT);

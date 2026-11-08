@@ -46,10 +46,10 @@ typedef struct BHPlayerQueryContext
    branch divides by zero). Source rejects invalid packets before mutation.
    No player construction/tick claim. Binding/side-effect errors preserve prior
    effects, and verified RET methods are represented by no operation. */
-int __cdecl bh_player_query_dispatch(BHPlayerQueryContext *, BHPlayerQueryPacket *);
+int bh_player_query_dispatch(BHPlayerQueryContext *, BHPlayerQueryPacket *);
 /* Count-zero install/uninstall. One live player context per process; its real
    entity, pool and context must outlive installed callback. */
-int __cdecl bh_player_query_bind(BHPlayerQueryContext *);
-int __cdecl bh_player_query_unbind(BHPlayerQueryContext *);
-void __cdecl bh_player_query(BHEntity *, void *);
+int bh_player_query_bind(BHPlayerQueryContext *);
+int bh_player_query_unbind(BHPlayerQueryContext *);
+void bh_player_query(BHEntity *, void *);
 #endif

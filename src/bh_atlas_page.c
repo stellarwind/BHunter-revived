@@ -32,7 +32,7 @@ static int native(BHTextureContext *q, HRESULT hr)
     }
     return 1;
 }
-BHAtlasPage *__cdecl bh_atlas_page_create(BHAtlasContext *context, const char *name, unsigned long size)
+BHAtlasPage *bh_atlas_page_create(BHAtlasContext *context, const char *name, unsigned long size)
 {
     BHTextureContext *q;
     BHTextureImage *image;
@@ -116,7 +116,7 @@ failed:
     discard(q, image);
     return NULL;
 }
-int __cdecl bh_atlas_page_dispose(BHAtlasContext *context, BHAtlasPage *page)
+int bh_atlas_page_dispose(BHAtlasContext *context, BHAtlasPage *page)
 {
     BHTextureContext *q;
     BHTextureImage **at, *image;

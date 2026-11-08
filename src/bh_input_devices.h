@@ -12,7 +12,7 @@ typedef struct BHInputDevices
 /* Source ownership adapter. Fresh owner; collector/snapshot/list storage are
    borrowed. Seeds exactly255 static original key-name entries; key255 has no
    initialized table slot. NULL allocator selects actual CRT malloc/free. */
-int __cdecl bh_input_devices_bind(BHInputDevices *, BHInputCollection *, const BHSceneAllocator *);
-int __cdecl bh_input_devices_start(BHInputDevices *);
-void __cdecl bh_input_devices_dispose(BHInputDevices *);
+int bh_input_devices_bind(BHInputDevices *, BHInputCollection *, const BHSceneAllocator *);
+int bh_input_devices_start(BHInputDevices *);
+void bh_input_devices_dispose(BHInputDevices *);
 #endif

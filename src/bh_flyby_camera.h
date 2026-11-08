@@ -41,5 +41,5 @@ typedef struct BHFlybyCameraContext
    command dropped on full ring,-1 invalid/dependency failure. Native glyph
    execution occurs later through the real text ring consumers. No game loop
    or original callback is loaded/executed by this owner. */
-int __cdecl bh_flyby_camera_step(BHFlybyCameraContext *, BHFlybyCameraState *);
+int bh_flyby_camera_step(BHFlybyCameraContext *, BHFlybyCameraState *);
 #endif

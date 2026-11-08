@@ -6,7 +6,7 @@
 #include "bh_player_force_control.h"
 #include "bh_camera_state.h"
 #include "bh_weapon_factory.h"
-typedef int(__cdecl *BHStoryForceControl)(BHPlayerForceControl *, float, int);
+typedef int (*BHStoryForceControl)(BHPlayerForceControl *, float, int);
 typedef struct BHMissionStory
 {
     BHMissionProgressContext *progress;
@@ -33,7 +33,7 @@ typedef struct BHMissionStory
    Source rejects absent bindings at their branch of use. Camera is the actual
    player+e8 subobject; weapons5..9 must equal actual player table entries.
    No gameplay/input execution or original-backed callbacks. */
-int __cdecl bh_mission_story_dispatch(BHMissionStory *, const long packet[3]);
-int __cdecl bh_mission_story_bind(BHMissionStory *, BHEntity *);
-void __cdecl bh_mission_story_query(BHEntity *, void *);
+int bh_mission_story_dispatch(BHMissionStory *, const long packet[3]);
+int bh_mission_story_bind(BHMissionStory *, BHEntity *);
+void bh_mission_story_query(BHEntity *, void *);
 #endif

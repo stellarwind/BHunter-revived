@@ -41,21 +41,21 @@ typedef struct BHWeaponFactory
 /* One live factory is bound to the pool callback ABI, whose original query
    signature contains no user pointer. Close only after released query owners.
    This explicit source binding is not a recovered global or player constructor. */
-int __cdecl bh_weapon_factory_open(BHWeaponFactory *, BHEntityPool *, BHSoundQueue *);
-int __cdecl bh_weapon_factory_close(BHWeaponFactory *);
+int bh_weapon_factory_open(BHWeaponFactory *, BHEntityPool *, BHSoundQueue *);
+int bh_weapon_factory_close(BHWeaponFactory *);
 /* Complete initialization effects of 00433ea0, plus a source registry entry.
    The caller owns the returned pool allocation. Index must be 0..9. */
-BHEntity *__cdecl bh_weapon_factory_create(BHWeaponFactory *, unsigned int index);
+BHEntity *bh_weapon_factory_create(BHWeaponFactory *, unsigned int index);
 /* Borrowed result valid while pool allocation/generation remains live. */
-int __cdecl bh_weapon_registry_resolve(BHWeaponRegistry *, unsigned int selection, BHEntity **entity,
-                                       BHWeaponObjectState **state);
-int __cdecl bh_weapon_registry_hud(BHWeaponRegistry *, unsigned int selection, BHEntity **entity,
-                                   BHWeaponObjectState **state, unsigned long *identity);
+int bh_weapon_registry_resolve(BHWeaponRegistry *, unsigned int selection, BHEntity **entity,
+                               BHWeaponObjectState **state);
+int bh_weapon_registry_hud(BHWeaponRegistry *, unsigned int selection, BHEntity **entity, BHWeaponObjectState **state,
+                           unsigned long *identity);
 /* Explicit result for an unresolved gameplay method. No RET or missing method
    is represented by a successful callable no-op. */
-int __cdecl bh_weapon_method_available(unsigned long identity);
+int bh_weapon_method_available(unsigned long identity);
 /* Dispatch only complete source-owned context-free +12c methods. Other
    identities report METHOD; live storage and generation are checked first. */
-int __cdecl bh_weapon_factory_tick(BHWeaponFactory *, unsigned int selection);
-BHWeaponObjectState *__cdecl bh_weapon_object_state(BHEntity *);
+int bh_weapon_factory_tick(BHWeaponFactory *, unsigned int selection);
+BHWeaponObjectState *bh_weapon_object_state(BHEntity *);
 #endif

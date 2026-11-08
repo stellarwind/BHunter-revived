@@ -38,6 +38,6 @@ typedef struct BHHudMarkers
    player_flags borrows the original player byte+2b8, not the radar visibility
    word. It is read after each query so callback mutations remain observable.
    PC53/nearest/masked finite input profile; PC24 remains unvalidated. */
-int __cdecl bh_hud_markers_draw(BHHudMarkers *, BHEntity *head, const BHVec3 *player_position,
-                                const unsigned char *player_flags);
+int bh_hud_markers_draw(BHHudMarkers *, BHEntity *head, const BHVec3 *player_position,
+                        const unsigned char *player_flags);
 #endif

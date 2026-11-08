@@ -20,7 +20,7 @@ static int query(BHWeaponTargetContext *ctx, BHEntity *entity, BHEntityPositionP
     entity->query(entity, p);
     return 1;
 }
-int __cdecl bh_weapon_homing_track(BHWeaponTargetContext *ctx, BHEntity *weapon_entity, const BHEntity *entity)
+int bh_weapon_homing_track(BHWeaponTargetContext *ctx, BHEntity *weapon_entity, const BHEntity *entity)
 {
     BHWeaponCommonState *weapon_state;
     BHVec3 aim, d;

@@ -27,7 +27,7 @@ static BHTargetConstructSlot *slot(BHEntity *entity)
     memcpy(&target_slot, entity->payload + 608, 4);
     return target_slot;
 }
-static void __cdecl refresh(BHEntity *entity, void *p)
+static void refresh(BHEntity *entity, void *p)
 {
     BHTargetConstructSlot *target_slot = slot(entity);
     (void)p;
@@ -35,7 +35,7 @@ static void __cdecl refresh(BHEntity *entity, void *p)
     if (bh_target_draw(target_slot->context->draw, entity) < 1)
         target_slot->context->error = 1;
 }
-static void __cdecl step(BHEntity *entity)
+static void step(BHEntity *entity)
 {
     BHTargetConstructSlot *target_slot = slot(entity);
     BHTargetConstructContext *ctx = target_slot->context;
@@ -53,7 +53,7 @@ static int same_body(const BHPhysicsStepBody *body, const BHPhysicsStepBody *b)
            body->geometry == b->geometry && body->target_world == b->target_world &&
            body->target_local == b->target_local && body->model_index == b->model_index;
 }
-int __cdecl bh_target_construct_sync(BHTargetConstructContext *ctx)
+int bh_target_construct_sync(BHTargetConstructContext *ctx)
 {
     unsigned long i, n, m;
     BHPhysicsStepBody *body, next;
@@ -177,7 +177,7 @@ int __cdecl bh_target_construct_sync(BHTargetConstructContext *ctx)
     ctx->synced_retirements = ctx->debris->pool->retirements;
     return 1;
 }
-int __cdecl bh_target_construct_prune_retired(BHTargetConstructContext *ctx)
+int bh_target_construct_prune_retired(BHTargetConstructContext *ctx)
 {
     const BHPhysicsStepContext *physics = ctx->physics;
     BHEntityPool *pool = ctx->debris->pool;
@@ -189,7 +189,7 @@ int __cdecl bh_target_construct_prune_retired(BHTargetConstructContext *ctx)
             return bh_target_construct_sync(ctx);
     return 1;
 }
-int __cdecl bh_target_construct_dispose(BHTargetConstructContext *ctx)
+int bh_target_construct_dispose(BHTargetConstructContext *ctx)
 {
     unsigned long i;
     BHTargetConstructSlot *target_slot;
@@ -423,7 +423,7 @@ rejected:
     ctx->error = 1;
     return NULL;
 }
-BHEntity *__cdecl bh_target_construct_basic(BHTargetConstructContext *ctx, const BHVec3 *p, long index, long mass)
+BHEntity *bh_target_construct_basic(BHTargetConstructContext *ctx, const BHVec3 *p, long index, long mass)
 {
     BHVec3 zero = {0, 0, 0};
     BHTargetConstructSlot *target_slot;
@@ -438,9 +438,9 @@ BHEntity *__cdecl bh_target_construct_basic(BHTargetConstructContext *ctx, const
     memcpy((char *)target_slot->body.entity + 0x78, &target_slot->body.inertia.x, 4);
     return finish(ctx, target_slot, ctx->resources[index], &zero, &zero, 0, NULL, 0, -1, 0, 0, &zero, NULL, NULL);
 }
-BHEntity *__cdecl bh_target_construct_moving(BHTargetConstructContext *ctx, const BHVec3 *p, const BHVec3 *a,
-                                             const BHVec3 *v, const BHVec3 *w, unsigned long resource, float mass,
-                                             float countdown, BHEntity *owner, long token, long loot, long counter)
+BHEntity *bh_target_construct_moving(BHTargetConstructContext *ctx, const BHVec3 *p, const BHVec3 *a, const BHVec3 *v,
+                                     const BHVec3 *w, unsigned long resource, float mass, float countdown,
+                                     BHEntity *owner, long token, long loot, long counter)
 {
     BHVec3 zero = {0, 0, 0};
     BHTargetConstructSlot *target_slot;
@@ -465,10 +465,10 @@ static void local_point(const BHMat34 *m, const BHVec3 *v, BHVec3 *out)
     out->y = rounded(((double)m->m[2][1] * z + (double)m->m[1][1] * y) + (double)m->m[0][1] * x);
     out->z = rounded(((double)m->m[2][2] * z + (double)m->m[1][2] * y) + (double)m->m[0][2] * x);
 }
-BHEntity *__cdecl bh_target_construct_box(BHTargetConstructContext *ctx, const BHVec3 *p, const BHVec3 *a,
-                                          const BHVec3 *v, const BHVec3 *w, unsigned long resource, float mass,
-                                          float countdown, BHEntity *owner, long token, const BHVec3 *anchor,
-                                          const BHVec3 *first, const BHVec3 *second, long counter)
+BHEntity *bh_target_construct_box(BHTargetConstructContext *ctx, const BHVec3 *p, const BHVec3 *a, const BHVec3 *v,
+                                  const BHVec3 *w, unsigned long resource, float mass, float countdown, BHEntity *owner,
+                                  long token, const BHVec3 *anchor, const BHVec3 *first, const BHVec3 *second,
+                                  long counter)
 {
     BHTargetConstructSlot *target_slot;
     BHVec3 an, lo, hi, extent, padding;

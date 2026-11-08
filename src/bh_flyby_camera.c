@@ -141,7 +141,7 @@ static int failure(BHFlybyCameraContext *c, const char *stage)
         c->last_failure = stage;
     return -1;
 }
-int __cdecl bh_flyby_camera_step(BHFlybyCameraContext *c, BHFlybyCameraState *s)
+int bh_flyby_camera_step(BHFlybyCameraContext *c, BHFlybyCameraState *s)
 {
     BHVec3 desired, curve;
     BHCameraInput input;

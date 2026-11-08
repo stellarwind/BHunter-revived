@@ -51,6 +51,6 @@ typedef struct BHModelInstanceContext
    color and counters retain that partial traversal, while drawn stays zero.
    Frame wrap is rejected by the source guard because the draw cache reserves
    zero as its initial invalid token. */
-int __cdecl bh_model_instance_draw(BHModelInstanceContext *, double x, double y, double z, double rotate_y,
-                                   double rotate_x, double rotate_z, float opacity);
+int bh_model_instance_draw(BHModelInstanceContext *, double x, double y, double z, double rotate_y, double rotate_x,
+                           double rotate_z, float opacity);
 #endif

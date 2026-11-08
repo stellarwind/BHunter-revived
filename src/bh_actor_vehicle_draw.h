@@ -14,5 +14,5 @@ typedef struct BHActorVehicleDrawContext
 } BHActorVehicleDrawContext;
 /* Whole00434920; borrowed queue/sound/resource bindings. Does not draw natively
    or play audio: actual restored queue owners retain those operations. */
-int __cdecl bh_actor_vehicle_draw(BHActorVehicleDrawContext *, BHEntity *);
+int bh_actor_vehicle_draw(BHActorVehicleDrawContext *, BHEntity *);
 #endif

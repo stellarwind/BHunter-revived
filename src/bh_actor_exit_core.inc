@@ -12,7 +12,7 @@ typedef char exit_neighbor_flags[offsetof(BHActorExitNeighborImage, flags) == 0x
 #define EXIT_UINT(p, o) (*(unsigned int *)((unsigned char *)(p) + (o)))
 #define EXIT_POINTER(p, o) (*(void **)((unsigned char *)(p) + (o)))
 
-int __cdecl bh_actor_choose_exit_core(void *actor, void *room_image, void *preferred_image, int excluded)
+int bh_actor_choose_exit_core(void *actor, void *room_image, void *preferred_image, int excluded)
 {
     int eligible = 0, allowed[10], i, count;
     const BHActorExitModelRecord *model = bh_actor_exit_counts + EXIT_INT(room_image, 0xf8);

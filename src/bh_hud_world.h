@@ -27,5 +27,5 @@ typedef struct BHHudWorldContext
    and countdown updates. Source binding/numerical guards reject before any
    publication or mutation. PC53 nearest/masked moderate finite contract;
    source bindings do not implement player/weapon constructors or callbacks. */
-int __cdecl bh_hud_world_draw(BHHudWorldContext *, BHHudWorldState *);
+int bh_hud_world_draw(BHHudWorldContext *, BHHudWorldState *);
 #endif

@@ -22,7 +22,7 @@ static const BHScriptTimerActor *actor_record(BHScriptLifetimeContext *ctx, BHEn
 {
     return bh_script_timer_actor(&ctx->timers, actor);
 }
-int __cdecl bh_script_attached_sound_read(BHEntity *entity, BHScriptAttachedSoundState *state)
+int bh_script_attached_sound_read(BHEntity *entity, BHScriptAttachedSoundState *state)
 {
     if (!entity || !state)
         return 0;
@@ -34,8 +34,8 @@ int __cdecl bh_script_attached_sound_read(BHEntity *entity, BHScriptAttachedSoun
     get(entity, 0x108, &state->target);
     return 1;
 }
-int __cdecl bh_script_attached_sound_bind(BHScriptLifetimeContext *ctx, BHEntity *entity,
-                                          const BHScriptAttachedSoundState *state)
+int bh_script_attached_sound_bind(BHScriptLifetimeContext *ctx, BHEntity *entity,
+                                  const BHScriptAttachedSoundState *state)
 {
     BHScriptLifetimeState base;
     if (!ctx || !entity || !state || !ctx->sounds || !actor_record(ctx, state->actor))
@@ -63,7 +63,7 @@ int __cdecl bh_script_attached_sound_bind(BHScriptLifetimeContext *ctx, BHEntity
     entity->step = bh_script_attached_sound_tick;
     return 1;
 }
-void __cdecl bh_script_attached_sound_tick(BHEntity *entity)
+void bh_script_attached_sound_tick(BHEntity *entity)
 {
     BHScriptAttachedSoundState state;
     BHScriptLifetimeContext *ctx = context(entity);

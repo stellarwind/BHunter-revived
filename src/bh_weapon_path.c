@@ -8,8 +8,7 @@ static float stored(double x)
     bh_round_float(&f, x);
     return f;
 }
-void __cdecl bh_weapon_path_blend(BHVec3 *out, const BHVec3 *a, const BHVec3 *b, const BHVec3 *c, const BHVec3 *d,
-                                  float t)
+void bh_weapon_path_blend(BHVec3 *out, const BHVec3 *a, const BHVec3 *b, const BHVec3 *c, const BHVec3 *d, float t)
 {
     BHVec3 start = *a, control = *b, near_target = *c, target = *d, result;
     float complement, blend, other;
@@ -34,7 +33,7 @@ void __cdecl bh_weapon_path_blend(BHVec3 *out, const BHVec3 *a, const BHVec3 *b,
     }
     *out = result;
 }
-int __cdecl bh_weapon_path_point(BHEntity *weapon, BHEntity *player, BHVec3 *out, float t)
+int bh_weapon_path_point(BHEntity *weapon, BHEntity *player, BHVec3 *out, float t)
 {
     BHWeaponCommonState *weapon_state;
     BHVec3 up, side, heading, start, control, target_control, difference;

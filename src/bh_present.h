@@ -17,5 +17,5 @@ typedef struct BHPresentContext
    Software unlocks both surfaces, restores only DDERR_SURFACELOST, and copies
    color to optional target via BltFast(0,0,NULL,DDBLTFAST_WAIT). Native HRESULT
    failures are reported while later original operations still execute. */
-int __cdecl bh_present_end(BHPresentContext *);
+int bh_present_end(BHPresentContext *);
 #endif

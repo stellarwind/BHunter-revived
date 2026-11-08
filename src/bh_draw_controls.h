@@ -19,19 +19,17 @@ typedef struct BHDrawControlContext
 } BHDrawControlContext;
 /* Complete 00478990/00478a70. Source return extends original void API:
    1 queued, 0 full, -1 invalid. Float payloads are copied without sanitizing. */
-int __cdecl bh_draw_controls_state(BHDrawQueue *, unsigned long bucket, long value);
-int __cdecl bh_draw_controls_clip_rect(BHDrawQueue *, unsigned long bucket, float x, float y, float width,
-                                       float height);
+int bh_draw_controls_state(BHDrawQueue *, unsigned long bucket, long value);
+int bh_draw_controls_clip_rect(BHDrawQueue *, unsigned long bucket, float x, float y, float width, float height);
 /* SDL portal windows retain their world polygon and ancestor, so projection
    uses the same render camera as the room geometry. */
-int __cdecl bh_draw_controls_portal_clip(BHDrawQueue *, unsigned long bucket, const BHVec3 corners[4],
-                                         unsigned long parent, float near_z, float far_z);
+int bh_draw_controls_portal_clip(BHDrawQueue *, unsigned long bucket, const BHVec3 corners[4], unsigned long parent,
+                                 float near_z, float far_z);
 /* 00458300 over explicit global bindings. Registered model resources and
    future resource prototypes receive the same mask as the shared state. */
-int __cdecl bh_draw_controls_texture_mask(BHDrawControlContext *, unsigned long mask);
+int bh_draw_controls_texture_mask(BHDrawControlContext *, unsigned long mask);
 /* Complete 00477f40/00477e40. The latter skips applying its rectangle if the
    next command is another rectangle. Queue storage must be live and stable;
    next output must not alias queue/context memory. Returns source success. */
-int __cdecl bh_draw_controls_execute(BHDrawControlContext *, const BHDrawQueue *, const BHDrawCommand *,
-                                     unsigned long *next);
+int bh_draw_controls_execute(BHDrawControlContext *, const BHDrawQueue *, const BHDrawCommand *, unsigned long *next);
 #endif

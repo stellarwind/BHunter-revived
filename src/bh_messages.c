@@ -4,7 +4,7 @@
 
 typedef char message_ring_slot_size[sizeof(((BHMessageState *)0)->ring[0]) == 512 ? 1 : -1];
 typedef char message_arena_size[sizeof(((BHMessageState *)0)->arena) == 8192 ? 1 : -1];
-void __cdecl bh_message_state_init(BHMessageState *messages)
+void bh_message_state_init(BHMessageState *messages)
 {
     if (messages)
     {
@@ -19,7 +19,7 @@ static unsigned long folded_eight(long value)
     unsigned long folded = magnitude & 7UL;
     return sign ? 0UL - folded : folded;
 }
-int __cdecl bh_message_enqueue(BHMessageState *messages, const char *text)
+int bh_message_enqueue(BHMessageState *messages, const char *text)
 {
     size_t length;
     unsigned long slot;

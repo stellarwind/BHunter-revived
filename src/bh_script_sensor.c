@@ -55,7 +55,7 @@ static int greater_equal(double a, double b)
 {
     return !_isnan(a) && !_isnan(b) && a >= b;
 }
-int __cdecl bh_script_sensor_read(BHEntity *entity, BHScriptSensorState *state)
+int bh_script_sensor_read(BHEntity *entity, BHScriptSensorState *state)
 {
     if (!entity || !state)
         return 0;
@@ -69,14 +69,14 @@ int __cdecl bh_script_sensor_read(BHEntity *entity, BHScriptSensorState *state)
     get(entity, 0x12c, &state->latch);
     return 1;
 }
-float __cdecl bh_script_sensor_damage(const BHEntity *entity)
+float bh_script_sensor_damage(const BHEntity *entity)
 {
     float value = 0;
     if (entity)
         get(entity, 0x148, &value);
     return value;
 }
-void __cdecl bh_script_sensor_set_damage(BHEntity *entity, float value)
+void bh_script_sensor_set_damage(BHEntity *entity, float value)
 {
     if (entity)
         put(entity, 0x148, &value);
@@ -107,8 +107,7 @@ static int valid(BHScriptSensorContext *ctx, BHEntity *entity, const BHScriptSen
     ctx->error = BH_SENSOR_OK;
     return 1;
 }
-int __cdecl bh_script_sensor_bind(BHScriptSensorContext *ctx, BHEntity *entity, const BHScriptSensorState *state,
-                                  int damage)
+int bh_script_sensor_bind(BHScriptSensorContext *ctx, BHEntity *entity, const BHScriptSensorState *state, int damage)
 {
     BHScriptLifetimeState base;
     if (!valid(ctx, entity, state, 0))
@@ -221,7 +220,7 @@ static int nearby(BHEntity *entity, BHEntity *b, long threshold)
     bh_round_float(&rz, z);
     return greater((double)threshold, (x * rx + y * y) + z * rz);
 }
-void __cdecl bh_script_proximity_tick(BHEntity *entity)
+void bh_script_proximity_tick(BHEntity *entity)
 {
     BHScriptSensorContext *ctx = context(entity);
     BHScriptSensorState state;
@@ -279,7 +278,7 @@ void __cdecl bh_script_proximity_tick(BHEntity *entity)
     latch = 0;
     put(entity, 0x12c, &latch);
 }
-void __cdecl bh_script_damage_tick(BHEntity *entity)
+void bh_script_damage_tick(BHEntity *entity)
 {
     BHScriptSensorContext *ctx = context(entity);
     BHScriptSensorState state;

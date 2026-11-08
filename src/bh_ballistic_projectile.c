@@ -35,7 +35,7 @@ static double length2(const BHVec3 *v)
 {
     return ((double)v->x * v->x + (double)v->y * v->y) + (double)v->z * v->z;
 }
-int __cdecl bh_ballistic_projectile_bind(BHBallisticProjectileContext *owner, BHEntity *entity)
+int bh_ballistic_projectile_bind(BHBallisticProjectileContext *owner, BHEntity *entity)
 {
     BHHomingProjectileContext *ctx = owner ? &owner->bindings : NULL;
     if (!ctx || !entity || !ctx->pool || !ctx->segment || !ctx->sound || !ctx->particles || !ctx->contacts ||
@@ -141,7 +141,7 @@ static void retire(BHHomingProjectileContext *ctx, BHEntity *entity, unsigned lo
     bh_sound_stop(ctx->sound, voice);
     bh_entity_release(ctx->pool, entity);
 }
-void __cdecl bh_ballistic_projectile_tick(BHEntity *entity)
+void bh_ballistic_projectile_tick(BHEntity *entity)
 {
     BHHomingProjectileContext *ctx = context(entity);
     BHBallisticProjectileContext *owner = (BHBallisticProjectileContext *)ctx;

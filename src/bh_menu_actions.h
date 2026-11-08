@@ -5,7 +5,7 @@
 #include "bh_media_control.h"
 #include "bh_messages.h"
 typedef struct BHMenuActions BHMenuActions;
-typedef void(__cdecl *BHMenuAction)(BHMenuActions *, long);
+typedef void (*BHMenuAction)(BHMenuActions *, long);
 /* Borrowed selection and row actions for the active menu. */
 typedef struct BHMenuActionsRoot
 {
@@ -36,13 +36,13 @@ struct BHMenuActions
     unsigned long refreshes, paints, saves;
     int error;
 };
-void __cdecl bh_menu_action_video(BHMenuActions *, long);           /*42d0d0*/
-void __cdecl bh_menu_action_audio(BHMenuActions *, long);           /*42db60*/
-void __cdecl bh_menu_action_profile(BHMenuActions *, long);         /*42df90*/
-void __cdecl bh_menu_action_profile_promote(BHMenuActions *, long); /*42e150*/
-void __cdecl bh_menu_action_graphics_notice(BHMenuActions *, long); /*42f2b0*/
-void __cdecl bh_menu_action_network_host(BHMenuActions *, long);
-void __cdecl bh_menu_action_network_join(BHMenuActions *, long);
+void bh_menu_action_video(BHMenuActions *, long);           /*42d0d0*/
+void bh_menu_action_audio(BHMenuActions *, long);           /*42db60*/
+void bh_menu_action_profile(BHMenuActions *, long);         /*42df90*/
+void bh_menu_action_profile_promote(BHMenuActions *, long); /*42e150*/
+void bh_menu_action_graphics_notice(BHMenuActions *, long); /*42f2b0*/
+void bh_menu_action_network_host(BHMenuActions *, long);
+void bh_menu_action_network_join(BHMenuActions *, long);
 void bh_menu_network_address(BHMenuActions *, long);
 /* Callers supply real initialized owners, current/root menus, safe terminated
    original profile text and writable private CFG path. Original rows

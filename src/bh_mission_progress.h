@@ -15,5 +15,5 @@ typedef struct BHMissionProgressContext
    Save failure preserves the progression write and does not suppress cue.
    Borrowed config/path/lifetime/pool/sound owners survive until cue expires.
    Returns the acquired cue as source convenience; original return is void. */
-BHEntity *__cdecl bh_mission_progress(BHMissionProgressContext *, long progression);
+BHEntity *bh_mission_progress(BHMissionProgressContext *, long progression);
 #endif

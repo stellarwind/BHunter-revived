@@ -17,11 +17,11 @@ typedef struct ProfileNode
     struct ProfileNode *allocation_next;
 } ProfileNode;
 
-static void *__cdecl allocate(unsigned long bytes, void *user)
+static void *allocate(unsigned long bytes, void *user)
 {
     return malloc(bytes);
 }
-static void __cdecl release(void *pointer, void *user)
+static void release(void *pointer, void *user)
 {
     free(pointer);
 }
@@ -36,7 +36,7 @@ static int terminated(const unsigned char *bytes, unsigned long count)
     return memchr(bytes, 0, count) != NULL;
 }
 
-int __cdecl bh_config_init(BHConfig *config, const BHConfigAllocator *allocator)
+int bh_config_init(BHConfig *config, const BHConfigAllocator *allocator)
 {
     if (!config)
         return 0;
@@ -53,7 +53,7 @@ int __cdecl bh_config_init(BHConfig *config, const BHConfigAllocator *allocator)
     return 1;
 }
 
-void __cdecl bh_config_dispose(BHConfig *config)
+void bh_config_dispose(BHConfig *config)
 {
     ProfileNode *node, *next;
     if (!config)
@@ -135,7 +135,7 @@ static int member(const BHConfig *config, const BHInputProfile *profile)
     return 0;
 }
 
-int __cdecl bh_config_valid(const BHConfig *config)
+int bh_config_valid(const BHConfig *config)
 {
     const BHInputProfile *profile;
     const ProfileNode *node;
@@ -166,7 +166,7 @@ int __cdecl bh_config_valid(const BHConfig *config)
     return profile == config->profiles;
 }
 
-BHInputProfile *__cdecl bh_config_profile_clone_after(BHConfig *config, BHInputProfile *current)
+BHInputProfile *bh_config_profile_clone_after(BHConfig *config, BHInputProfile *current)
 {
     ProfileNode *node;
     BHInputProfile *profile, *following;
@@ -201,7 +201,7 @@ BHInputProfile *__cdecl bh_config_profile_clone_after(BHConfig *config, BHInputP
     return profile;
 }
 
-BHInputProfile *__cdecl bh_config_profile_remove(BHConfig *config, BHInputProfile *current)
+BHInputProfile *bh_config_profile_remove(BHConfig *config, BHInputProfile *current)
 {
     ProfileNode *node, *previous = NULL, *scan;
     BHInputProfile *selected;
@@ -246,7 +246,7 @@ BHInputProfile *__cdecl bh_config_profile_remove(BHConfig *config, BHInputProfil
     return selected;
 }
 
-int __cdecl bh_config_load(BHConfig *config, const char *path)
+int bh_config_load(BHConfig *config, const char *path)
 {
     BHConfig next;
     FILE *file;
@@ -330,7 +330,7 @@ rejected:
     return fail(config, error);
 }
 
-int __cdecl bh_config_save(BHConfig *config, const char *path)
+int bh_config_save(BHConfig *config, const char *path)
 {
     FILE *file;
     BHInputProfile *profile;
@@ -358,7 +358,7 @@ int __cdecl bh_config_save(BHConfig *config, const char *path)
     return 1;
 }
 
-int __cdecl bh_config_bootstrap(BHConfig *config, const char *path, const BHDeviceName *devices, unsigned long count)
+int bh_config_bootstrap(BHConfig *config, const char *path, const BHDeviceName *devices, unsigned long count)
 {
     unsigned long i, selected = 0;
     unsigned short hardware;

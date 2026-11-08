@@ -18,6 +18,6 @@ typedef struct BHInputCollection
     BHInputCollectionError error;
     int disable_mouse_motion; /* explicit source preference; buttons remain live */
 } BHInputCollection;
-int __cdecl bh_input_collection_init(BHInputCollection *, BHInputSnapshot *, BHPlayerInputOwner *);
-int __cdecl bh_input_collect(BHInputCollection *, unsigned long *changed);
+int bh_input_collection_init(BHInputCollection *, BHInputSnapshot *, BHPlayerInputOwner *);
+int bh_input_collect(BHInputCollection *, unsigned long *changed);
 #endif

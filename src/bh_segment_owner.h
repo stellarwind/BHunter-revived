@@ -16,7 +16,7 @@ typedef struct BHSegmentOwner
     BHGeometry geometry;
     BHSegmentQuery query;
 } BHSegmentOwner;
-int __cdecl bh_segment_owner_query(BHSegmentOwner *, const BHBsp *, const BHVec3 *start, const BHVec3 *end,
-                                   const BHMat34 *to_world, const BHMat34 *to_local, BHSegmentHit *result);
-int __cdecl bh_segment_owner_dispose(BHSegmentOwner *);
+int bh_segment_owner_query(BHSegmentOwner *, const BHBsp *, const BHVec3 *start, const BHVec3 *end,
+                           const BHMat34 *to_world, const BHMat34 *to_local, BHSegmentHit *result);
+int bh_segment_owner_dispose(BHSegmentOwner *);
 #endif

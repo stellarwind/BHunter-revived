@@ -7,15 +7,15 @@
 #include <string.h>
 static BHDrawQueue *tracked;
 static BHDrawIdentity identities[BH_INTERPOLATION_CAPACITY];
-void __cdecl bh_interpolation_reset(void)
+void bh_interpolation_reset(void)
 {
     memset(identities, 0, sizeof(identities));
 }
-void __cdecl bh_interpolation_bind(BHDrawQueue *q)
+void bh_interpolation_bind(BHDrawQueue *q)
 {
     tracked = q;
 }
-unsigned long __cdecl bh_interpolation_mark(void)
+unsigned long bh_interpolation_mark(void)
 {
     return tracked ? tracked->count : 0;
 }
@@ -25,7 +25,7 @@ static int spatial(unsigned long kind)
            kind == BH_DRAW_SEGMENT || kind == BH_DRAW_ORIENTED || kind == BH_DRAW_QUAD || kind == BH_DRAW_RECT ||
            kind == BH_DRAW_FLARE || kind == BH_DRAW_PATH_POINT;
 }
-void __cdecl bh_interpolation_stamp(unsigned long start, unsigned long identity, unsigned long generation)
+void bh_interpolation_stamp(unsigned long start, unsigned long identity, unsigned long generation)
 {
     unsigned long i, ordinal = 0, flare_ordinal = 0;
     if (!tracked || !tracked->commands || start > tracked->count)
@@ -40,8 +40,7 @@ void __cdecl bh_interpolation_stamp(unsigned long start, unsigned long identity,
             identities[i].ordinal = tracked->commands[i].kind == BH_DRAW_FLARE ? flare_ordinal++ : ordinal++;
         }
 }
-void __cdecl bh_interpolation_part(unsigned long index, unsigned long owner, unsigned long generation,
-                                   unsigned long part)
+void bh_interpolation_part(unsigned long index, unsigned long owner, unsigned long generation, unsigned long part)
 {
     if (!tracked || !tracked->commands || index >= tracked->count || index >= BH_INTERPOLATION_CAPACITY || !owner ||
         part >= 0x80000000UL || !spatial(tracked->commands[index].kind) || identities[index].owner)
@@ -52,9 +51,8 @@ void __cdecl bh_interpolation_part(unsigned long index, unsigned long owner, uns
 }
 /* Path payload starts in resource (xyz), so its image belongs in identity,
    not the ordinary resource comparison. Nodes retain identity as heads change. */
-void __cdecl bh_interpolation_trail_point(unsigned long index, unsigned long owner, unsigned long generation,
-                                          unsigned long older_owner, unsigned long older_generation,
-                                          unsigned long image)
+void bh_interpolation_trail_point(unsigned long index, unsigned long owner, unsigned long generation,
+                                  unsigned long older_owner, unsigned long older_generation, unsigned long image)
 {
     BHDrawIdentity *id;
     if (!tracked || index >= tracked->count || tracked->commands[index].kind != BH_DRAW_PATH_POINT)
@@ -69,7 +67,7 @@ void __cdecl bh_interpolation_trail_point(unsigned long index, unsigned long own
 /* Attach a producer range after its vehicle model has been queued. The HUD's
    current contents may change (ammo digits, radar rooms, gauges), so command
    ordinal matching cannot describe its motion. Rebase it as one rigid object. */
-void __cdecl bh_interpolation_attach(unsigned long start, unsigned long end, unsigned long model)
+void bh_interpolation_attach(unsigned long start, unsigned long end, unsigned long model)
 {
     unsigned long i;
     if (!tracked || model >= tracked->count || tracked->commands[model].kind != BH_DRAW_MODEL_RESOURCE || start > end ||
@@ -101,7 +99,7 @@ static int same(const BHDrawCommand *a, const BHDrawCommand *b, const BHDrawIden
            (a->kind != BH_DRAW_FLARE || !memcmp(a->words + 6, b->words + 6, 16)) && ai->owner == bi->owner &&
            ai->generation == bi->generation && ai->ordinal == bi->ordinal;
 }
-void __cdecl bh_interpolation_capture(BHRenderInterpolation *s, const BHDrawQueue *q, long scene)
+void bh_interpolation_capture(BHRenderInterpolation *s, const BHDrawQueue *q, long scene)
 {
     unsigned long i, slot;
     if (!s || !q || !q->commands || q->count > BH_INTERPOLATION_CAPACITY)
@@ -170,7 +168,7 @@ static void blend(unsigned long *out, const unsigned long *old, float alpha, int
     value = a + alpha * delta;
     memcpy(out, &value, 4);
 }
-BHDrawQueue *__cdecl bh_interpolation_sample(BHRenderInterpolation *s, float alpha)
+BHDrawQueue *bh_interpolation_sample(BHRenderInterpolation *s, float alpha)
 {
     unsigned long i, j, count, angle_start, last_anchor = BH_DRAW_END;
     BHMat34 delta;
@@ -281,7 +279,7 @@ BHDrawQueue *__cdecl bh_interpolation_sample(BHRenderInterpolation *s, float alp
     return &s->queue;
 }
 
-void __cdecl bh_interpolation_rendered(BHRenderInterpolation *s)
+void bh_interpolation_rendered(BHRenderInterpolation *s)
 {
     unsigned long i;
     if (!s || !s->sampled)
@@ -292,7 +290,7 @@ void __cdecl bh_interpolation_rendered(BHRenderInterpolation *s)
     s->sampled = 0;
 }
 
-unsigned long __cdecl bh_simulation_advance(BHSimulationClock *c, double now)
+unsigned long bh_simulation_advance(BHSimulationClock *c, double now)
 {
     unsigned long ticks;
     double elapsed;

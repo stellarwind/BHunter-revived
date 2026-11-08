@@ -5,7 +5,7 @@
 #include <float.h>
 #include <string.h>
 
-int __cdecl bh_collision_candidate_world(BHCollisionCandidate *out, BHWorldGeometry *world, BHSweepQuery *sweep)
+int bh_collision_candidate_world(BHCollisionCandidate *out, BHWorldGeometry *world, BHSweepQuery *sweep)
 {
     BHCollisionCandidate next;
     BHGeometry *geometry;
@@ -24,9 +24,8 @@ int __cdecl bh_collision_candidate_world(BHCollisionCandidate *out, BHWorldGeome
     *out = next;
     return 1;
 }
-int __cdecl bh_collision_candidate_actor(BHCollisionCandidate *out, BHEntity *actor, BHSweepQuery *sweep,
-                                         const BHMat34 *world, const BHMat34 *local, const BHVec3 *movement,
-                                         unsigned long flags)
+int bh_collision_candidate_actor(BHCollisionCandidate *out, BHEntity *actor, BHSweepQuery *sweep, const BHMat34 *world,
+                                 const BHMat34 *local, const BHVec3 *movement, unsigned long flags)
 {
     BHCollisionCandidate next;
     if (!out || !actor || !sweep || !sweep->initialized || !world || !local || !movement)
@@ -89,8 +88,8 @@ static int finite_matrix(const BHMat34 *m)
             return 0;
     return 1;
 }
-int __cdecl bh_entity_collision_dispatch(BHCollisionCandidate *c, unsigned long count, BHMat34 *pose, BHVec3 *movement,
-                                         BHVec3 *angles, int fallback, BHSweepHit *out)
+int bh_entity_collision_dispatch(BHCollisionCandidate *c, unsigned long count, BHMat34 *pose, BHVec3 *movement,
+                                 BHVec3 *angles, int fallback, BHSweepHit *out)
 {
     BHMat34 next, best_pose;
     BHVec3 delta, rotation;

@@ -24,6 +24,6 @@ typedef struct BHSoundLoad
    bounded VFILE RIFF and uploads mono/stereo PCM8/PCM16 into the SDL backend.
    Keeps scheduling metadata, random phase, cache reset and voice-limit policy.
    Unsupported codecs fail without publishing a resource. No playback. */
-unsigned long __cdecl bh_sound_load(BHSoundLoad *, const char *name, float audible_range, float level,
-                                    unsigned short streaming, float interval_denominator);
+unsigned long bh_sound_load(BHSoundLoad *, const char *name, float audible_range, float level, unsigned short streaming,
+                            float interval_denominator);
 #endif

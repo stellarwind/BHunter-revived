@@ -10,6 +10,6 @@ typedef struct BHEffectCleanupContext
 /* Count-zero lifetime binding for actual original sound word+128. The source
    context at private payload+604 must outlive the entity. Installs the complete
    cleanup owner; it does not claim restoration of constructor00403870. */
-int __cdecl bh_effect_cleanup_bind(BHEffectCleanupContext *, BHEntity *, unsigned long handle);
-void __cdecl bh_effect_sound_cleanup(BHEntity *); /*whole00403850*/
+int bh_effect_cleanup_bind(BHEffectCleanupContext *, BHEntity *, unsigned long handle);
+void bh_effect_sound_cleanup(BHEntity *); /*whole00403850*/
 #endif

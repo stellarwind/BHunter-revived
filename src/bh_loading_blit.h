@@ -22,9 +22,9 @@ typedef struct BHLoadingBlitTarget
    depths retain original no-store behavior. Signed column pitch truncates to
    a multiple of pixel size, exactly as the original typed pointer increments.
    Caller must provide distinct accessible source and destination spans. */
-int __cdecl bh_loading_blit_top(BHLoadingBlit *, const BHLoadingBlitTarget *, float from, float to);      /*0044a220*/
-int __cdecl bh_loading_blit_right(BHLoadingBlit *, const BHLoadingBlitTarget *, float from, float to);    /*0044a520*/
-int __cdecl bh_loading_blit_bottom(BHLoadingBlit *, const BHLoadingBlitTarget *, float from, float to);   /*0044a380*/
-int __cdecl bh_loading_blit_left(BHLoadingBlit *, const BHLoadingBlitTarget *, float from, float to);     /*0044a8a0*/
-int __cdecl bh_loading_blit_top_last(BHLoadingBlit *, const BHLoadingBlitTarget *, float from, float to); /*0044a720*/
+int bh_loading_blit_top(BHLoadingBlit *, const BHLoadingBlitTarget *, float from, float to);      /*0044a220*/
+int bh_loading_blit_right(BHLoadingBlit *, const BHLoadingBlitTarget *, float from, float to);    /*0044a520*/
+int bh_loading_blit_bottom(BHLoadingBlit *, const BHLoadingBlitTarget *, float from, float to);   /*0044a380*/
+int bh_loading_blit_left(BHLoadingBlit *, const BHLoadingBlitTarget *, float from, float to);     /*0044a8a0*/
+int bh_loading_blit_top_last(BHLoadingBlit *, const BHLoadingBlitTarget *, float from, float to); /*0044a720*/
 #endif

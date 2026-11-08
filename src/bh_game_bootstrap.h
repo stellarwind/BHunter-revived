@@ -69,7 +69,7 @@ struct BHGameBootstrap
     /* Count-zero composition phases:1world,2player,3menus,4all resources,
     5font pages ready before flyby construction.
     Callback must initialize actual source registries, never supply substitutes. */
-    int(__cdecl *compose)(BHGameBootstrap *, unsigned long, void *);
+    int (*compose)(BHGameBootstrap *, unsigned long, void *);
     void *compose_user;
     const BHBootstrapBinding *bindings;
     unsigned long binding_count;
@@ -90,8 +90,8 @@ struct BHGameBootstrap
    Sources bound before call may still invoke platform/resource constructors;
    synthetic checks use controlled source resource failures. A successful full
    asset/native bootstrap is an explicit outstanding integration question. */
-int __cdecl bh_game_bootstrap(BHGameBootstrap *);
-unsigned long __cdecl bh_bootstrap_value(const BHGameBootstrap *, unsigned long identity);
-int __cdecl bh_bootstrap_menus(BHGameBootstrap *); /* count-zero family composition */
-int __cdecl bh_bootstrap_resources(BHGameBootstrap *, unsigned long stage);
+int bh_game_bootstrap(BHGameBootstrap *);
+unsigned long bh_bootstrap_value(const BHGameBootstrap *, unsigned long identity);
+int bh_bootstrap_menus(BHGameBootstrap *); /* count-zero family composition */
+int bh_bootstrap_resources(BHGameBootstrap *, unsigned long stage);
 #endif

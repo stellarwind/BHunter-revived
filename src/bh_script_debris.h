@@ -27,10 +27,10 @@ typedef struct BHScriptDebrisState
    created entities. Each success consumes exactly9 shared CRT random draws.
    Return created count is source ownership observability, not original EAX.
    Source rejects negative/count>65535; PC53/masked arithmetic retained. */
-unsigned long __cdecl bh_script_debris_create(BHScriptDebrisContext *, long count, const BHVec3 *, float lifetime,
-                                              float speed, float size);
-int __cdecl bh_script_debris_read(const BHEntity *, BHScriptDebrisState *);
-int __cdecl bh_script_debris_write(BHEntity *, const BHScriptDebrisState *);
-void __cdecl bh_script_debris_tick(BHEntity *);            /*00402d20*/
-void __cdecl bh_script_debris_refresh(BHEntity *, void *); /*004027f0*/
+unsigned long bh_script_debris_create(BHScriptDebrisContext *, long count, const BHVec3 *, float lifetime, float speed,
+                                      float size);
+int bh_script_debris_read(const BHEntity *, BHScriptDebrisState *);
+int bh_script_debris_write(BHEntity *, const BHScriptDebrisState *);
+void bh_script_debris_tick(BHEntity *);            /*00402d20*/
+void bh_script_debris_refresh(BHEntity *, void *); /*004027f0*/
 #endif

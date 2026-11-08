@@ -32,5 +32,5 @@ struct BHPortalNode
    The bounded source interface validates exactly ring_count members and all
    finite ordered extents before writing. Rejection leaves the ring unchanged.
    Limits: 65535 nodes, six portals each. Requires the project's PC53 profile. */
-int __cdecl bh_portals_match(BHPortalNode *node, unsigned long ring_count);
+int bh_portals_match(BHPortalNode *node, unsigned long ring_count);
 #endif

@@ -1,11 +1,11 @@
 #include "bh_gdi_text.h"
 #include "bh_sdl_adapter.h"
 #include <string.h>
-unsigned long __cdecl bh_draw_command_next(const BHDrawCommand *c)
+unsigned long bh_draw_command_next(const BHDrawCommand *c)
 {
     return c->next;
 }
-int __cdecl bh_gdi_text_queue(BHDrawQueue *q, short x, short y, const char *text, unsigned long rgb)
+int bh_gdi_text_queue(BHDrawQueue *q, short x, short y, const char *text, unsigned long rgb)
 {
     BHDrawCommand *c;
     unsigned long at, tail;
@@ -34,7 +34,7 @@ int __cdecl bh_gdi_text_queue(BHDrawQueue *q, short x, short y, const char *text
     strncpy((char *)(c->words + 1), text, 59);
     return 1;
 }
-int __cdecl bh_editor_message_queue(BHDrawQueue *q)
+int bh_editor_message_queue(BHDrawQueue *q)
 {
     return bh_gdi_text_queue(q, 0, 0, "No objects, press 'N' to create new", 0xff0000UL);
 }
@@ -45,7 +45,7 @@ static void native(BHGdiText *c, HRESULT hr)
     if (FAILED(hr))
         ++c->failures;
 }
-int __cdecl bh_gdi_text_execute(BHGdiText *c, const BHDrawCommand *command, unsigned long *next)
+int bh_gdi_text_execute(BHGdiText *c, const BHDrawCommand *command, unsigned long *next)
 {
     BHFrameDisplay *d;
     DDSURFACEDESC desc;
@@ -90,7 +90,7 @@ int __cdecl bh_gdi_text_execute(BHGdiText *c, const BHDrawCommand *command, unsi
     }
     return ok;
 }
-void __cdecl bh_gdi_text_dispose(BHGdiText *c)
+void bh_gdi_text_dispose(BHGdiText *c)
 {
     if (c)
         c->display = NULL;

@@ -30,8 +30,8 @@ static void store_scalar(BHClipVertex *p, double value)
     bh_round_float(&stored, value);
     memcpy(&p->unknown28, &stored, 4);
 }
-int __cdecl bh_attribute_clip_init(BHAttributeClipContext *c, float near_z, float far_z, float left, float right,
-                                   float top, float bottom)
+int bh_attribute_clip_init(BHAttributeClipContext *c, float near_z, float far_z, float left, float right, float top,
+                           float bottom)
 {
     if (!c || !_finite(near_z) || !_finite(far_z) || !_finite(left) || !_finite(right) || !_finite(top) ||
         !_finite(bottom) || near_z <= 0 || far_z < near_z || right < left || bottom < top)
@@ -151,7 +151,7 @@ static BHClipVertex *cut(BHAttributeClipContext *c, BHClipVertex *extreme, unsig
     after->previous = second;
     return first;
 }
-BHClipVertex *__cdecl bh_attribute_clip_polygon(BHAttributeClipContext *c, BHClipVertex *head, int project_depth)
+BHClipVertex *bh_attribute_clip_polygon(BHAttributeClipContext *c, BHClipVertex *head, int project_depth)
 {
     BHClipVertex *p, *minimum, *maximum;
     unsigned long n = 0, i, axis;

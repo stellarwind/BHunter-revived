@@ -11,5 +11,5 @@ typedef struct BHActorVehicleLifetimeContext
 /* Whole004397e0; source-owned global ec/f0 list plus existing real room f4/f8
    list. Broadcast17 follows sound stop and precedes both list unlink operations.
    Bindings/lists remain borrowed during synchronous callbacks. */
-int __cdecl bh_actor_vehicle_release(BHActorVehicleLifetimeContext *, BHEntity *);
+int bh_actor_vehicle_release(BHActorVehicleLifetimeContext *, BHEntity *);
 #endif

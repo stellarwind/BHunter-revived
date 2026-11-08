@@ -44,7 +44,7 @@ static int live(BHScriptExplosionContext *ctx, BHEntity *entity, unsigned long g
     ctx->error = BH_EXPLOSION_MUTATION;
     return 0;
 }
-int __cdecl bh_script_explosion_read(const BHEntity *entity, BHScriptExplosionState *state)
+int bh_script_explosion_read(const BHEntity *entity, BHScriptExplosionState *state)
 {
     if (!entity || !state)
         return 0;
@@ -61,7 +61,7 @@ int __cdecl bh_script_explosion_read(const BHEntity *entity, BHScriptExplosionSt
     load(entity, 0x1b4, &state->target, 4);
     return 1;
 }
-int __cdecl bh_script_explosion_write(BHEntity *entity, const BHScriptExplosionState *state)
+int bh_script_explosion_write(BHEntity *entity, const BHScriptExplosionState *state)
 {
     if (!entity || !state)
         return 0;
@@ -195,18 +195,17 @@ static BHEntity *create(BHScriptExplosionContext *ctx, const BHVec3 *p, float du
     }
     return e;
 }
-BHEntity *__cdecl bh_script_explosion_create(BHScriptExplosionContext *ctx, const BHVec3 *p, float duration,
-                                             float magnitude, float probability, unsigned long target)
+BHEntity *bh_script_explosion_create(BHScriptExplosionContext *ctx, const BHVec3 *p, float duration, float magnitude,
+                                     float probability, unsigned long target)
 {
     return create(ctx, p, duration, magnitude, probability, ctx ? ctx->sound_resource : 0, target, 0);
 }
-BHEntity *__cdecl bh_script_explosion_secondary(BHScriptExplosionContext *ctx, const BHVec3 *p, float duration,
-                                                float magnitude, float probability, unsigned long sound,
-                                                unsigned long target)
+BHEntity *bh_script_explosion_secondary(BHScriptExplosionContext *ctx, const BHVec3 *p, float duration, float magnitude,
+                                        float probability, unsigned long sound, unsigned long target)
 {
     return create(ctx, p, duration, magnitude, probability, sound, target, 1);
 }
-void __cdecl bh_script_explosion_tick(BHEntity *entity)
+void bh_script_explosion_tick(BHEntity *entity)
 {
     BHScriptExplosionContext *ctx = context(entity);
     BHScriptExplosionState state;
@@ -265,7 +264,7 @@ void __cdecl bh_script_explosion_tick(BHEntity *entity)
         store(entity, 0x154 + i * 4, state.angle + i, 4);
     }
 }
-void __cdecl bh_script_explosion_refresh(BHEntity *entity, void *packet)
+void bh_script_explosion_refresh(BHEntity *entity, void *packet)
 {
     BHScriptExplosionContext *ctx = context(entity);
     BHScriptExplosionState state;

@@ -20,7 +20,7 @@ static __inline float guided_float_spill(double value)
 /* Complete 00434650. The caller supplies the same borrowed portal/count/flag
    image used by the exit selector. Floating locals preserve the owner's
    retained x87 intermediates, including the vertical value times its spill. */
-int __cdecl bh_actor_guided_exit_core(const BHEntity *actor, void *room_image, int incoming)
+int bh_actor_guided_exit_core(const BHEntity *actor, void *room_image, int incoming)
 {
     const BHActorExitModelRecord *model = bh_actor_exit_counts + *(int *)((char *)room_image + 0xf8);
     char *geometry = (char *)room_image + 0xe8;

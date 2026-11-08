@@ -12,7 +12,7 @@ typedef char center_portal_stride[sizeof(BHPortal) == 60 ? 1 : -1];
 /* Complete 00433f70 source variant. The two aperture sums use the original
    single-precision stores; the integer plane remains on the x87 stack until
    the selected output store. Instruction scheduling still differs. */
-void __cdecl bh_actor_portal_center_core(void *geometry_image, int index, float *out)
+void bh_actor_portal_center_core(void *geometry_image, int index, float *out)
 {
     char *at = (char *)geometry_image + index * 60;
     float u = (CENTER_F(geometry_image, index * 60 + 0x110) + CENTER_F(geometry_image, index * 60 + 0x10c)) * .5f;

@@ -6,8 +6,7 @@
 
 typedef char ring_age_layout[offsetof(BHEntity, payload) + 4 + offsetof(BHImpactState, age) == 0x100 ? 1 : -1];
 typedef char ring_normal_layout[offsetof(BHEntity, payload) + 4 + offsetof(BHImpactState, normal) == 0x114 ? 1 : -1];
-int __cdecl bh_impact_ring_draw(BHDrawQueue *queue, unsigned long texture, const BHEntity *entity,
-                                const float *camera_yaw)
+int bh_impact_ring_draw(BHDrawQueue *queue, unsigned long texture, const BHEntity *entity, const float *camera_yaw)
 {
     const BHImpactState *state;
     BHVec3 up = {0, 0, 1};

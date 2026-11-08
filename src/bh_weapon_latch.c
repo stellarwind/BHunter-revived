@@ -2,7 +2,7 @@
 #include "bh_round.h"
 #include <string.h>
 
-int __cdecl bh_weapon_latch_tick(BHEntity *weapon)
+int bh_weapon_latch_tick(BHEntity *weapon)
 {
     BHWeaponCommonState *state = bh_weapon_common_state(weapon);
     float value;

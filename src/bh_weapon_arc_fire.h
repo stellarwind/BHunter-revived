@@ -9,5 +9,5 @@ typedef struct BHWeaponArcFireContext
     BHFlashFlareContext *flash;
     unsigned long first_image, second_image, sound, shots, queries;
 } BHWeaponArcFireContext;
-int __cdecl bh_weapon_arc_fire(BHWeaponArcFireContext *, BHEntity *, BHEntity *); /*004327a0*/
+int bh_weapon_arc_fire(BHWeaponArcFireContext *, BHEntity *, BHEntity *); /*004327a0*/
 #endif

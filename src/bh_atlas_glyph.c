@@ -44,7 +44,7 @@ static unsigned long nearest(unsigned long color, const unsigned char *palette)
     }
     return result;
 }
-int __cdecl bh_atlas_page_clear(BHAtlasContext *context, BHAtlasPage *page, unsigned long color)
+int bh_atlas_page_clear(BHAtlasContext *context, BHAtlasPage *page, unsigned long color)
 {
     BHTextureContext *q;
     DDSURFACEDESC lock;
@@ -107,7 +107,7 @@ int __cdecl bh_atlas_page_clear(BHAtlasContext *context, BHAtlasPage *page, unsi
 
     return ok;
 }
-void __cdecl bh_atlas_page_cursor(BHAtlasPage *page, long x, long y)
+void bh_atlas_page_cursor(BHAtlasPage *page, long x, long y)
 {
     if (page)
     {

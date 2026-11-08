@@ -26,7 +26,7 @@ typedef struct BHAtlasContext
     HRESULT last_hresult;
 } BHAtlasContext;
 /* New binding adapter. Zero initialize context before first use. */
-int __cdecl bh_atlas_context_init(BHAtlasContext *, BHTextureContext *, unsigned long scan_step);
+int bh_atlas_context_init(BHAtlasContext *, BHTextureContext *, unsigned long scan_step);
 /* Complete0046f490. Literal case-insensitive full-name cache: no extension
    rewrite, prefix or texture search policy. Original first-pixel index is
    transparent for rectangle extraction after current palette transformation.
@@ -36,8 +36,8 @@ int __cdecl bh_atlas_context_init(BHAtlasContext *, BHTextureContext *, unsigned
    scan reads, >512rectangles, failed allocations/native calls transactionally.
    RGB masks containing bit31 explicitly reject: the original signed mask loop
    differs there and this real native backend rejects that surface profile. */
-BHAtlasImage *__cdecl bh_atlas_image_load(BHAtlasContext *, const char *, const DDPIXELFORMAT *);
+BHAtlasImage *bh_atlas_image_load(BHAtlasContext *, const char *, const DDPIXELFORMAT *);
 /* Source owner release adapter, no original destructor claim. Dispose before
    releasing the borrowed texture context and its real native draw. */
-void __cdecl bh_atlas_context_dispose(BHAtlasContext *);
+void bh_atlas_context_dispose(BHAtlasContext *);
 #endif

@@ -42,7 +42,7 @@ static void grant(BHWeaponObjectState *state, long count)
     if (ceiling < count)
         state->common.ammo = ceiling;
 }
-int __cdecl bh_player_reset(BHPlayerReset *reset)
+int bh_player_reset(BHPlayerReset *reset)
 {
     BHEntity *player, *entity, *weapons[10];
     BHWeaponObjectState *states[10];

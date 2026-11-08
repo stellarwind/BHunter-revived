@@ -24,7 +24,7 @@ typedef struct BHActorLaunchContext
    using actual position/checksum/transport owners, then constructs locally.
    Receive restores the borrowed route tick after constructor failure as well.
    Transport can be a real NULL-peer context; no sessions are created here. */
-BHEntity *__cdecl bh_actor_launch(BHActorLaunchContext *, BHWorldGeometry *, unsigned long type, long token,
-                                  float speed, long death_tag);
-int __cdecl bh_actor_launch_receive(BHActorLaunchContext *, void *, unsigned long size, unsigned long capacity);
+BHEntity *bh_actor_launch(BHActorLaunchContext *, BHWorldGeometry *, unsigned long type, long token, float speed,
+                          long death_tag);
+int bh_actor_launch_receive(BHActorLaunchContext *, void *, unsigned long size, unsigned long capacity);
 #endif

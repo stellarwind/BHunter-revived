@@ -28,8 +28,8 @@ typedef struct BHTargetStepContext
    receives borrowed event12 through its actual live query; its receiver's
    event12 meaning is NOT restored here. Existing fixed physics roster must be
    disposed/rebound after target retirement before another physics step. */
-int __cdecl bh_target_step_bind(BHTargetStepContext *, const BHTargetStepState *);
-int __cdecl bh_target_step_read(const BHEntity *, BHTargetStepState *);
-int __cdecl bh_target_step_write(BHEntity *, const BHTargetStepState *);
-void __cdecl bh_target_step(BHEntity *); /*whole0043cd00*/
+int bh_target_step_bind(BHTargetStepContext *, const BHTargetStepState *);
+int bh_target_step_read(const BHEntity *, BHTargetStepState *);
+int bh_target_step_write(BHEntity *, const BHTargetStepState *);
+void bh_target_step(BHEntity *); /*whole0043cd00*/
 #endif

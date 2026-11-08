@@ -6,7 +6,7 @@ static BHWorldSegmentRoom *binding(BHWorldSegmentContext *q, BHWorldGeometry *w)
 {
     return bh_world_segment_room(q, w);
 }
-int __cdecl bh_camera_correct(BHCameraCorrectionOwner *owner, BHVec3 *eye, const BHVec3 *target, BHEntity *self)
+int bh_camera_correct(BHCameraCorrectionOwner *owner, BHVec3 *eye, const BHVec3 *target, BHEntity *self)
 {
     BHWorldSegmentHit hit;
     BHWorldHit excluded;
@@ -79,7 +79,7 @@ int __cdecl bh_camera_correct(BHCameraCorrectionOwner *owner, BHVec3 *eye, const
     owner->error = BH_WORLD_SEGMENT_OK;
     return 1;
 }
-void __cdecl bh_camera_correct_callback(BHVec3 *eye, const BHVec3 *target, unsigned long actor_token, void *user)
+void bh_camera_correct_callback(BHVec3 *eye, const BHVec3 *target, unsigned long actor_token, void *user)
 {
     bh_camera_correct((BHCameraCorrectionOwner *)user, eye, target, (BHEntity *)actor_token);
 }

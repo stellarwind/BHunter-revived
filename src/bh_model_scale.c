@@ -12,7 +12,7 @@ static int edge_index(const BHModel *m, long e)
 {
     return e >= 0 && (unsigned long)e < m->edge_count;
 }
-long __cdecl bh_model_reverse_edges(BHModel *m, long first, long count)
+long bh_model_reverse_edges(BHModel *m, long first, long count)
 {
     long left, right, after, remaining, i;
     BHBspEdge saved;
@@ -91,8 +91,7 @@ static double extent(float lo, float hi)
     double a = magnitude(lo), b = magnitude(hi);
     return a < b ? b : a;
 }
-int __cdecl bh_model_scale(BHModel *m, float sx, float sy, float sz, BHModelDrawCache *const *caches,
-                           unsigned long count)
+int bh_model_scale(BHModel *m, float sx, float sy, float sz, BHModelDrawCache *const *caches, unsigned long count)
 {
     unsigned long i, j;
     int reflect;

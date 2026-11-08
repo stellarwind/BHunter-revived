@@ -152,7 +152,7 @@ static void parameters(BHSoundQueue *sound_queue, BHSoundResource *r, BHSoundVoi
         r->playing[slot] = 1;
     }
 }
-int __cdecl bh_sound_tick(BHSoundQueue *sound_queue, float dt, float master, BHSoundTickStats *out)
+int bh_sound_tick(BHSoundQueue *sound_queue, float dt, float master, BHSoundTickStats *out)
 {
     BHSoundTickStats stats;
     BHVec3 scratch = {0, 0, 0};

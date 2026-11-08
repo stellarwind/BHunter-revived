@@ -26,7 +26,7 @@ typedef struct BHPulseProjectileContext
     unsigned long packet_bytes;
     int error;
 } BHPulseProjectileContext;
-BHEntity *__cdecl bh_pulse_projectile_create(BHPulseProjectileContext *, BHWorldGeometry *, BHEntity *, const BHVec3 *,
-                                             const BHVec3 *, const BHVec3 *); /*00440ad0*/
-void __cdecl bh_pulse_projectile_tick(BHEntity *);                            /*00440050*/
+BHEntity *bh_pulse_projectile_create(BHPulseProjectileContext *, BHWorldGeometry *, BHEntity *, const BHVec3 *,
+                                     const BHVec3 *, const BHVec3 *); /*00440ad0*/
+void bh_pulse_projectile_tick(BHEntity *);                            /*00440050*/
 #endif

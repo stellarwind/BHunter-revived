@@ -25,13 +25,13 @@ typedef struct BHSegmentQueueContext
    to the signed stored used-count minus one. Existing corner scratch survives.
    Capacity and finite guards expose original out-of-domain inputs. Borrowed
    point/camera/pool must not overlap. PC53 nearest/masked finite profile. */
-int __cdecl bh_segment_queue_append(BHSegmentQueueContext *, const BHVec3 *, float width, unsigned long flags,
-                                    float modulation);
+int bh_segment_queue_append(BHSegmentQueueContext *, const BHVec3 *, float width, unsigned long flags,
+                            float modulation);
 /* Complete004777c0, the actual consumer installed by00478390 bh_draw_segment.
    Both endpoint appends precede image lookup/draw. Real004569b0 owns near-plane
    clipping and successful pool reset. Earlier appends remain on source failure.
    Reads the command's current next link AFTER synchronous draw/lookup, also on
    failure. Queue/image/camera/pool survive consumption; next cannot alias them.
    No original executable callback is used or installed. */
-int __cdecl bh_segment_queue_execute(BHSegmentQueueContext *, const BHDrawCommand *, unsigned long *next);
+int bh_segment_queue_execute(BHSegmentQueueContext *, const BHDrawCommand *, unsigned long *next);
 #endif

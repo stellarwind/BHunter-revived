@@ -6,7 +6,7 @@ typedef char list_packet_offset[offsetof(BHPlayerInputList, state) == 0x2010 ? 1
 typedef char entity_step_offset[offsetof(BHEntity, step) == 0xcc ? 1 : -1];
 /* Count-zero source context storage, outside every original field accessed by
    this pair. Original004100b0 ignores its entity argument and reads globals. */
-void __cdecl bh_editor_input_tick(BHEntity *entity)
+void bh_editor_input_tick(BHEntity *entity)
 {
     BHEditorInput *context;
     if (!entity)
@@ -15,7 +15,7 @@ void __cdecl bh_editor_input_tick(BHEntity *entity)
     if (context && context->list && context->state)
         bh_player_input_apply_packet(context->state, context->list->state);
 }
-int __cdecl bh_editor_input_setup(BHEditorInput *context)
+int bh_editor_input_setup(BHEditorInput *context)
 {
     static const unsigned short keys[29] = {0x4e, 0x2e, 0x21, 0x22, 0x25, 0x27, 0x26, 0x28, 0,    2,
                                             1,    0x5a, 0x58, 0x43, 0x56, 0x53, 0x4d, 0x71, 0x6d, 0x30,

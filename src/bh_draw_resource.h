@@ -68,6 +68,6 @@ typedef struct BHDrawResourceContext
     BHDrawResourceError error;
 } BHDrawResourceContext;
 
-int __cdecl bh_draw_resource(BHDrawResourceContext *, const BHDrawResource *, double x, double y, double z,
-                             double rotate_y, double rotate_x, double rotate_z, float modulation);
+int bh_draw_resource(BHDrawResourceContext *, const BHDrawResource *, double x, double y, double z, double rotate_y,
+                     double rotate_x, double rotate_z, float modulation);
 #endif

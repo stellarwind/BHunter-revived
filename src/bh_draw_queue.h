@@ -57,18 +57,18 @@ typedef struct BHDrawQueue
 /* capacity includes nine original bucket headers. Fresh owner; dispose before
    reinitializing. begin resets headers/count, preserving unused payload words.
    Header next links form one global chain in render order, not nine rings. */
-int __cdecl bh_draw_queue_init(BHDrawQueue *queue, unsigned long capacity, const BHSceneAllocator *allocator);
-int __cdecl bh_draw_queue_dispose(BHDrawQueue *queue);
-int __cdecl bh_draw_queue_begin(BHDrawQueue *queue); /* 00477390 */
+int bh_draw_queue_init(BHDrawQueue *queue, unsigned long capacity, const BHSceneAllocator *allocator);
+int bh_draw_queue_dispose(BHDrawQueue *queue);
+int bh_draw_queue_begin(BHDrawQueue *queue); /* 00477390 */
 /* Return 1 queued, 0 full, -1 invalid. Resource is a borrowed opaque source
    texture identifier; no original texture object or vtable is fabricated.
    Payload floats are copied verbatim, including nonfinite bit patterns. */
-int __cdecl bh_draw_billboard(BHDrawQueue *queue, unsigned long bucket, unsigned long resource, const BHVec3 *point,
-                              float width, float height, float angle, unsigned long frame, float alpha); /* 00478280 */
-int __cdecl bh_draw_segment(BHDrawQueue *queue, unsigned long bucket, unsigned long resource, const BHVec3 *from,
-                            const BHVec3 *to, float first_width, float second_width, float first_alpha,
-                            float second_alpha, unsigned long control); /* 00478390 */
-int __cdecl bh_draw_oriented(BHDrawQueue *queue, unsigned long bucket, unsigned long resource, const BHVec3 *point,
-                             const BHVec3 *up, const BHVec3 *normal, float width, float height, float angle,
-                             unsigned long control, float alpha); /* 004785f0 */
+int bh_draw_billboard(BHDrawQueue *queue, unsigned long bucket, unsigned long resource, const BHVec3 *point,
+                      float width, float height, float angle, unsigned long frame, float alpha); /* 00478280 */
+int bh_draw_segment(BHDrawQueue *queue, unsigned long bucket, unsigned long resource, const BHVec3 *from,
+                    const BHVec3 *to, float first_width, float second_width, float first_alpha, float second_alpha,
+                    unsigned long control); /* 00478390 */
+int bh_draw_oriented(BHDrawQueue *queue, unsigned long bucket, unsigned long resource, const BHVec3 *point,
+                     const BHVec3 *up, const BHVec3 *normal, float width, float height, float angle,
+                     unsigned long control, float alpha); /* 004785f0 */
 #endif

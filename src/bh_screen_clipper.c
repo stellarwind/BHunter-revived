@@ -18,8 +18,8 @@ static BHClipVertex *fail(BHScreenClipContext *c, BHClipError error)
         c->error = error;
     return NULL;
 }
-int __cdecl bh_screen_clip_init(BHScreenClipContext *c, float near_z, float far_z, float left, float right, float top,
-                                float bottom)
+int bh_screen_clip_init(BHScreenClipContext *c, float near_z, float far_z, float left, float right, float top,
+                        float bottom)
 {
     if (!c || !_finite(near_z) || !_finite(far_z) || !_finite(left) || !_finite(right) || !_finite(top) ||
         !_finite(bottom) || near_z <= 0 || far_z < near_z || right < left || bottom < top)
@@ -110,7 +110,7 @@ static BHClipVertex *cut(BHScreenClipContext *c, BHClipVertex *extreme, unsigned
     after->previous = second;
     return first;
 }
-BHClipVertex *__cdecl bh_screen_clip_polygon(BHScreenClipContext *c, BHClipVertex *head, float depth)
+BHClipVertex *bh_screen_clip_polygon(BHScreenClipContext *c, BHClipVertex *head, float depth)
 {
     BHClipVertex *p, *minimum, *maximum;
     unsigned long n = 0, i, axis;

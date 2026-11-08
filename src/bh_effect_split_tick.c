@@ -86,7 +86,7 @@ static void flash(BHEffectProjectileContext *ctx, const BHVec3 *p)
         ++ctx->flashes;
     }
 }
-int __cdecl bh_effect_split_cascade(BHEntity *entity, const BHVec3 *normal)
+int bh_effect_split_cascade(BHEntity *entity, const BHVec3 *normal)
 {
     BHEffectProjectileContext *ctx = context(entity);
     BHEffectSplitContext *s;
@@ -171,7 +171,7 @@ int __cdecl bh_effect_split_cascade(BHEntity *entity, const BHVec3 *normal)
     ++s->cascades;
     return 1;
 }
-void __cdecl bh_effect_split_tick(BHEntity *entity)
+void bh_effect_split_tick(BHEntity *entity)
 {
     BHEffectProjectileContext *ctx = context(entity);
     BHHomingProjectileContext *b;

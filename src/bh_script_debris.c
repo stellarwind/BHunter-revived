@@ -22,7 +22,7 @@ static void put(BHEntity *entity, unsigned long a, const void *p)
 {
     memcpy((unsigned char *)entity + a, p, 4);
 }
-int __cdecl bh_script_debris_read(const BHEntity *entity, BHScriptDebrisState *state)
+int bh_script_debris_read(const BHEntity *entity, BHScriptDebrisState *state)
 {
     if (!entity || !state)
         return 0;
@@ -35,7 +35,7 @@ int __cdecl bh_script_debris_read(const BHEntity *entity, BHScriptDebrisState *s
     get(entity, 0x1b0, &state->origin_tag);
     return 1;
 }
-int __cdecl bh_script_debris_write(BHEntity *entity, const BHScriptDebrisState *state)
+int bh_script_debris_write(BHEntity *entity, const BHScriptDebrisState *state)
 {
     if (!entity || !state)
         return 0;
@@ -48,8 +48,8 @@ int __cdecl bh_script_debris_write(BHEntity *entity, const BHScriptDebrisState *
     put(entity, 0x1b0, &state->origin_tag);
     return 1;
 }
-unsigned long __cdecl bh_script_debris_create(BHScriptDebrisContext *ctx, long count, const BHVec3 *p, float lifetime,
-                                              float speed, float size)
+unsigned long bh_script_debris_create(BHScriptDebrisContext *ctx, long count, const BHVec3 *p, float lifetime,
+                                      float speed, float size)
 {
     BHEntity *entity;
     BHScriptDebrisState state;
@@ -119,7 +119,7 @@ unsigned long __cdecl bh_script_debris_create(BHScriptDebrisContext *ctx, long c
     ctx->error = BH_DEBRIS_OK;
     return created;
 }
-void __cdecl bh_script_debris_tick(BHEntity *entity)
+void bh_script_debris_tick(BHEntity *entity)
 {
     BHScriptDebrisContext *ctx = context(entity);
     BHScriptDebrisState state;
@@ -155,7 +155,7 @@ void __cdecl bh_script_debris_tick(BHEntity *entity)
     bh_round_float(&state.angle, (double)state.spin + state.angle);
     put(entity, 0x194, &state.angle);
 }
-void __cdecl bh_script_debris_refresh(BHEntity *entity, void *packet)
+void bh_script_debris_refresh(BHEntity *entity, void *packet)
 {
     BHScriptDebrisContext *ctx = context(entity);
     BHScriptDebrisState state;

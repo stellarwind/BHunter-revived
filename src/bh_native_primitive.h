@@ -14,5 +14,5 @@ typedef struct BHNativePrimitive
    Callback signature is shared with source model traversal. Rings/images are
    borrowed; no queue publication on source guard/temporary allocation failure.
    Native depth is near_z/z (GREATEREQUAL); rhw is1/z, raw color is preserved. */
-int __cdecl bh_native_primitive_emit(BHClipVertex *, BHTextureImage *, unsigned long color, void *user);
+int bh_native_primitive_emit(BHClipVertex *, BHTextureImage *, unsigned long color, void *user);
 #endif

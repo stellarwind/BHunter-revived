@@ -13,7 +13,7 @@ static int response_tick_phase_valid(BHActorResponseContext *c, double phase)
 #define RESPONSE_MOTION_FLOAT(o) (*(float *)((char *)e + (o)))
 #define RESPONSE_MOTION_STORE(o, v) (*(volatile float *)((char *)e + (o)) = response_query_stored(v))
 #define RESPONSE_MOTION_SHORT(o) (*(unsigned short *)((char *)e + (o)))
-int __cdecl bh_actor_response_motion(BHEntity *e, BHActorResponseContext *c)
+int bh_actor_response_motion(BHEntity *e, BHActorResponseContext *c)
 {
     double ratio, scale, numerator, duration, phase, fade, damage;
     double dx, dy, dz, distance, damping;

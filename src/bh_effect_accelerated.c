@@ -95,7 +95,7 @@ static void puff(BHEffectProjectileContext *ctx, BHEntity *entity, unsigned long
     bh_effect_puff_bind(a->puffs, p, ring);
     ++a->puff_entities;
 }
-void __cdecl bh_effect_accelerated_tick(BHEntity *entity)
+void bh_effect_accelerated_tick(BHEntity *entity)
 {
     BHEffectProjectileContext *ctx = context(entity);
     BHEffectAcceleratedContext *a;

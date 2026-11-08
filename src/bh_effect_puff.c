@@ -28,7 +28,7 @@ static BHEffectPuffContext *context(BHEntity *entity)
     memcpy(&ctx, entity->payload + 624, 4);
     return ctx;
 }
-int __cdecl bh_effect_puff_bind(BHEffectPuffContext *ctx, BHEntity *entity, int ring)
+int bh_effect_puff_bind(BHEffectPuffContext *ctx, BHEntity *entity, int ring)
 {
     if (!ctx || !ctx->queue || !entity)
         return 0;
@@ -47,7 +47,7 @@ static void draw(BHEffectPuffContext *ctx, unsigned long image, const BHVec3 *p,
     else if (r < 0)
         ctx->error = 1;
 }
-void __cdecl bh_effect_puff_random_draw(BHEntity *entity, void *ignored)
+void bh_effect_puff_random_draw(BHEntity *entity, void *ignored)
 {
     BHEffectPuffContext *ctx = context(entity);
     float alpha, size, angle;
@@ -78,7 +78,7 @@ void __cdecl bh_effect_puff_random_draw(BHEntity *entity, void *ignored)
         draw(ctx, image, &p, &up, &v, size, size, angle, 8, alpha);
     }
 }
-void __cdecl bh_effect_puff_ring_draw(BHEntity *entity, void *ignored)
+void bh_effect_puff_ring_draw(BHEntity *entity, void *ignored)
 {
     BHEffectPuffContext *ctx = context(entity);
     float alpha, size, angle = 0, sn, cs, w, h;

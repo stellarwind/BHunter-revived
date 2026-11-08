@@ -12,6 +12,6 @@ typedef struct BHBallisticProjectileContext
 /* Count-zero binding into actual acquired entity. Same lifetime contracts as
    homing bridge, original fields retained, no projectile constructor claim.
    Optional actual projectile query/lifetime context remains unchanged. */
-int __cdecl bh_ballistic_projectile_bind(BHBallisticProjectileContext *, BHEntity *);
-void __cdecl bh_ballistic_projectile_tick(BHEntity *); /*whole0043ea90*/
+int bh_ballistic_projectile_bind(BHBallisticProjectileContext *, BHEntity *);
+void bh_ballistic_projectile_tick(BHEntity *); /*whole0043ea90*/
 #endif

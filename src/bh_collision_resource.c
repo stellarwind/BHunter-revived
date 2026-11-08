@@ -1,6 +1,6 @@
 #include "bh_collision_resource.h"
 #include <string.h>
-int __cdecl bh_collision_resource_path(BHCollisionResourcePath *context, const char *prefix, long policy)
+int bh_collision_resource_path(BHCollisionResourcePath *context, const char *prefix, long policy)
 {
     unsigned long length = 0;
     if (!context || !prefix)
@@ -24,8 +24,7 @@ int __cdecl bh_collision_resource_path(BHCollisionResourcePath *context, const c
     }
     return 1;
 }
-int __cdecl bh_collision_resource_load(const BHCollisionResourcePath *context, BHCollisionModel *model,
-                                       const char *name)
+int bh_collision_resource_load(const BHCollisionResourcePath *context, BHCollisionModel *model, const char *name)
 {
     if (!context || !model || !name)
         return 0;

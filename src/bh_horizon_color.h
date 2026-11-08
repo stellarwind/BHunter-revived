@@ -18,8 +18,8 @@ typedef struct BHHorizonColor
 } BHHorizonColor;
 /* Fresh source owning adapters; borrowed texture context/allocator user outlive
    this owner. Dispose before reinitializing. No original startup claim. */
-int __cdecl bh_horizon_color_init(BHHorizonColor *, BHTextureContext *);
-void __cdecl bh_horizon_color_dispose(BHHorizonColor *);
+int bh_horizon_color_init(BHHorizonColor *, BHTextureContext *);
+void bh_horizon_color_dispose(BHHorizonColor *);
 /* Complete0045d7a0. Exactly mode1 produces indexed256x256 bytes; every other
    mode produces packed256x256 unsigned16 values. Both buffers share the same
    full32bit key; cross-mode stale cache behavior is intentionally preserved.
@@ -27,5 +27,5 @@ void __cdecl bh_horizon_color_dispose(BHHorizonColor *);
    read live only on packed misses and retain x86 low5bit count masking.
    Actual texture table initializer runs before even a cache hit. Source null
    allocation/binding guards report0; original allocation failure was unchecked. */
-int __cdecl bh_horizon_color_prepare(BHHorizonColor *, unsigned long mode, unsigned long color);
+int bh_horizon_color_prepare(BHHorizonColor *, unsigned long mode, unsigned long color);
 #endif

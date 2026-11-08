@@ -23,8 +23,8 @@ typedef struct BHSoftwareTables
    have3..8 R/G bits and2..8 B bits, matching q display shifts. Source guards
    reject malformed masks (original division loops could hang), invalid/live
    owners and allocation failure. q's table initialization still latches. */
-int __cdecl bh_software_tables_initialize(BHSoftwareTables *, BHTextureContext *, unsigned long bytes_per_pixel,
-                                          const unsigned long masks[3]);
+int bh_software_tables_initialize(BHSoftwareTables *, BHTextureContext *, unsigned long bytes_per_pixel,
+                                  const unsigned long masks[3]);
 /* Explicit source lifetime adapter, not an original destructor claim. */
-void __cdecl bh_software_tables_dispose(BHSoftwareTables *);
+void bh_software_tables_dispose(BHSoftwareTables *);
 #endif

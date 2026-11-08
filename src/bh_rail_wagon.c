@@ -29,7 +29,7 @@ static Private *private_data(BHEntity *e)
 {
     return (Private *)(e->payload + 580);
 }
-BHRailWagonPose *__cdecl bh_rail_wagon_pose(BHEntity *e)
+BHRailWagonPose *bh_rail_wagon_pose(BHEntity *e)
 {
     return e ? (BHRailWagonPose *)e->opaque0 : NULL;
 }
@@ -54,7 +54,7 @@ static int wagon(BHRailWagonContext *c, BHEntity *e)
     return e && member(c, e) && (e->step == bh_rail_wagon_tick || e->step == bh_rail_wagon_follow) &&
            state(e)->kind == 9 && private_data(e)->context == c;
 }
-BHRailWagonState *__cdecl bh_rail_wagon_state(BHEntity *e)
+BHRailWagonState *bh_rail_wagon_state(BHEntity *e)
 {
     return e && (e->step == bh_rail_wagon_tick || e->step == bh_rail_wagon_follow) ? state(e) : NULL;
 }
@@ -355,7 +355,7 @@ static int rider_update(BHRailWagonContext *c, BHEntity *e)
     memcpy(rider->opaque1 + 24, &c->pool->origin, 12);
     return 1;
 }
-int __cdecl bh_rail_wagon_set_rider(BHEntity *e, BHEntity *rider, BHRailSegment *checkpoint)
+int bh_rail_wagon_set_rider(BHEntity *e, BHEntity *rider, BHRailSegment *checkpoint)
 {
     BHRailWagonContext *c = owner(e);
     if (!c || (rider && !member(c, rider)) || (checkpoint && !segment(c, checkpoint)))
@@ -365,7 +365,7 @@ int __cdecl bh_rail_wagon_set_rider(BHEntity *e, BHEntity *rider, BHRailSegment 
     private_data(e)->rider_generation = rider ? rider->generation : 0;
     return 1;
 }
-void __cdecl bh_rail_wagon_draw(BHEntity *e)
+void bh_rail_wagon_draw(BHEntity *e)
 {
     BHRailWagonContext *c = owner(e);
     BHRailWagonState *s;
@@ -394,7 +394,7 @@ void __cdecl bh_rail_wagon_draw(BHEntity *e)
     else if (bh_sound_update(c->sound, s->sound_instance, 1, pitch, &point, &velocity) < 0)
         failure(c, BH_WAGON_SOUND);
 }
-void __cdecl bh_rail_wagon_tick(BHEntity *e)
+void bh_rail_wagon_tick(BHEntity *e)
 {
     BHRailWagonContext *c = owner(e);
     BHRailWagonState *s;
@@ -443,7 +443,7 @@ void __cdecl bh_rail_wagon_tick(BHEntity *e)
         } while (s->elapsed >= s->duration);
     rider_update(c, e);
 }
-void __cdecl bh_rail_wagon_follow(BHEntity *e)
+void bh_rail_wagon_follow(BHEntity *e)
 {
     BHRailWagonContext *c = owner(e);
     BHRailWagonState *s, *leader;
@@ -498,7 +498,7 @@ void __cdecl bh_rail_wagon_follow(BHEntity *e)
         align(e, &delta);
     }
 }
-void __cdecl bh_rail_wagon_query(BHEntity *e, void *packet)
+void bh_rail_wagon_query(BHEntity *e, void *packet)
 {
     BHRailWagonContext *c = owner(e);
     BHRailWagonState *s, *other;
@@ -586,7 +586,7 @@ void __cdecl bh_rail_wagon_query(BHEntity *e, void *packet)
     }
     ++c->couples;
 }
-BHEntity *__cdecl bh_rail_wagon_spawn(BHRailWagonContext *c, const BHVec3 *position, const BHVec3 *angles)
+BHEntity *bh_rail_wagon_spawn(BHRailWagonContext *c, const BHVec3 *position, const BHVec3 *angles)
 {
     BHWorldGeometry *w;
     BHEntity *e;

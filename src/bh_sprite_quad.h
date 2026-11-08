@@ -38,7 +38,7 @@ typedef struct BHSpriteQuadContext
    guards reject nonfinite/conversion overflow. Returns1 also for a cull.
    UV arguments are start/extent pairs. Inputs are copied before output writes.
    No original code or fake backend callback is supplied by this module. */
-int __cdecl bh_sprite_quad_draw(BHSpriteQuadContext *, BHTextureImage *, const BHVec3 *center, const BHVec3 *normal,
-                                const BHVec3 *up, float width, float height, float angle, unsigned char flags,
-                                float modulation, float u, float u_extent, float v, float v_extent);
+int bh_sprite_quad_draw(BHSpriteQuadContext *, BHTextureImage *, const BHVec3 *center, const BHVec3 *normal,
+                        const BHVec3 *up, float width, float height, float angle, unsigned char flags, float modulation,
+                        float u, float u_extent, float v, float v_extent);
 #endif

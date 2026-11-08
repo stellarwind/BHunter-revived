@@ -15,8 +15,8 @@ typedef struct BHScriptActorQueryPacket
 } BHScriptActorQueryPacket;
 /* Count-zero persistent binding for actual callback ABI. Context and all real
    owners remain borrowed until cleanup. Does not construct an actor. */
-int __cdecl bh_script_actor_bind(BHScriptActorContext *, BHEntity *);
-BHScriptActorContext *__cdecl bh_script_actor_context(BHEntity *);
-void __cdecl bh_script_actor_query(BHEntity *, void *); /* whole004376e0 */
-void __cdecl bh_script_actor_cleanup(BHEntity *);       /* adapter to actual435720 */
+int bh_script_actor_bind(BHScriptActorContext *, BHEntity *);
+BHScriptActorContext *bh_script_actor_context(BHEntity *);
+void bh_script_actor_query(BHEntity *, void *); /* whole004376e0 */
+void bh_script_actor_cleanup(BHEntity *);       /* adapter to actual435720 */
 #endif

@@ -17,5 +17,5 @@ typedef struct BHMenuProfileContext
    refreshes selected row. Rows/callbacks are read live for each call.
    All owners must outlive callbacks; callback may modify menu row bindings,
    but may not dispose config/current storage or invalidate the new profile. */
-int __cdecl bh_menu_profile_commit(BHMenuProfileContext *, BHMenuSettingsMenu *, const char *, long);
+int bh_menu_profile_commit(BHMenuProfileContext *, BHMenuSettingsMenu *, const char *, long);
 #endif

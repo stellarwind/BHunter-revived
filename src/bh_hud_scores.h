@@ -41,7 +41,7 @@ typedef struct BHHudScoreDraw
    sprintf("%d"), signed16-bit remote versus signed32-bit local. Right align at
    x=126-width; existing queue truncates xy to signed16 bits and text to59bytes.
    Full ring drops remain success; no queued command executes synchronously. */
-int __cdecl bh_hud_scores_text(BHHudScoreText *, const BHHudScores *);
+int bh_hud_scores_text(BHHudScoreText *, const BHHudScores *);
 /* Complete00427710: descending distinct scores strictly between the initial
    -100000/100000 bounds; all remote ties emit in slot order, then local tie.
    Local remote slot is excluded here; local row modulation1, others.5. Width
@@ -49,5 +49,5 @@ int __cdecl bh_hud_scores_text(BHHudScoreText *, const BHHudScores *);
    All producers are real bucket3 UV rectangles; full queue drops continue.
    Inputs/page/actors survive queue consumption; serialize mutations externally.
    PC53 nearest/masked finite near-plane profile, no gameplay execution. */
-int __cdecl bh_hud_scores_draw(BHHudScoreDraw *, const BHHudScores *);
+int bh_hud_scores_draw(BHHudScoreDraw *, const BHHudScores *);
 #endif

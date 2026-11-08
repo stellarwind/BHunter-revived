@@ -1,6 +1,6 @@
 #include "bh_effect_cleanup.h"
 #include <string.h>
-int __cdecl bh_effect_cleanup_bind(BHEffectCleanupContext *ctx, BHEntity *entity, unsigned long handle)
+int bh_effect_cleanup_bind(BHEffectCleanupContext *ctx, BHEntity *entity, unsigned long handle)
 {
     if (!ctx || !ctx->pool || !ctx->sound || !entity)
         return 0;
@@ -11,7 +11,7 @@ int __cdecl bh_effect_cleanup_bind(BHEffectCleanupContext *ctx, BHEntity *entity
     entity->step = bh_effect_sound_cleanup;
     return 1;
 }
-void __cdecl bh_effect_sound_cleanup(BHEntity *entity)
+void bh_effect_sound_cleanup(BHEntity *entity)
 {
     BHEffectCleanupContext *ctx;
     unsigned long sound;

@@ -15,25 +15,25 @@ static int live(BHEntityPool *pool, BHEntity *entity)
 {
     return bh_entity_is_active(pool, entity);
 }
-BHScriptActorContext *__cdecl bh_script_actor_context(BHEntity *entity)
+BHScriptActorContext *bh_script_actor_context(BHEntity *entity)
 {
     BHScriptActorContext *ctx;
     memcpy(&ctx, entity->payload + 560, 4);
     return ctx;
 }
-int __cdecl bh_script_actor_bind(BHScriptActorContext *ctx, BHEntity *entity)
+int bh_script_actor_bind(BHScriptActorContext *ctx, BHEntity *entity)
 {
     if (!ctx || !ctx->pool || !ctx->route || !ctx->route->live_tick || !entity || !live(ctx->pool, entity))
         return 0;
     memcpy(entity->payload + 560, &ctx, 4);
     return bh_entity_set_query(ctx->pool, entity, bh_script_actor_query);
 }
-void __cdecl bh_script_actor_cleanup(BHEntity *entity)
+void bh_script_actor_cleanup(BHEntity *entity)
 {
     BHScriptActorContext *ctx = bh_script_actor_context(entity);
     bh_actor_route_release(ctx->route, ctx->pool, entity);
 }
-void __cdecl bh_script_actor_query(BHEntity *entity, void *packet)
+void bh_script_actor_query(BHEntity *entity, void *packet)
 {
     BHScriptActorContext *ctx = bh_script_actor_context(entity);
     BHScriptActorQueryPacket *p = (BHScriptActorQueryPacket *)packet;

@@ -4,7 +4,7 @@
 typedef char actor_portal_offset[offsetof(BHActorPortalImage, portals) == 0xe4 ? 1 : -1];
 typedef char actor_portal_stride[sizeof(BHPortal) == 60 ? 1 : -1];
 
-void __cdecl bh_actor_portal_normal_core(void *geometry_image, int index, float *out)
+void bh_actor_portal_normal_core(void *geometry_image, int index, float *out)
 {
     switch (*(int *)((unsigned char *)geometry_image + 0xe4 + index * 60))
     {

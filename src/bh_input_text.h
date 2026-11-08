@@ -34,11 +34,11 @@ typedef struct BHInputTextCapture
 /* Count-zero setup adapter. All owners/buffer remain borrowed through release.
    Commits update the input profile name or submit an IPv4 address.
    Real cached packet/snapshot state only: no physical input collection. */
-int __cdecl bh_input_text_begin(BHInputTextCapture *);
+int bh_input_text_begin(BHInputTextCapture *);
 /* Count-zero menu-action setup: allocate first, then paint the cursor and
    enable cached profile input or native address input. Paint failure
    preserves the allocated active capture and reports0. */
-int __cdecl bh_input_text_begin_painted(BHInputTextCapture *);
+int bh_input_text_begin_painted(BHInputTextCapture *);
 /* Whole0042bf80. SDL translates the game's virtual-key values;
    its return deliberately replaces the scan index. Return/Escape set a phase
    but scanning/repainting continues; actual completion happens next step.
@@ -47,6 +47,6 @@ int __cdecl bh_input_text_begin_painted(BHInputTextCapture *);
    retain the capture entity/context until step returns. Native translation
    follows the original ANSI low-byte append; tested host ASCII mapping only.
    Negative/dead-key indices are rejected before the original unsafe lookup. */
-int __cdecl bh_input_text_step(BHInputTextCapture *);
-int __cdecl bh_input_text_cancel(BHInputTextCapture *);
+int bh_input_text_step(BHInputTextCapture *);
+int bh_input_text_cancel(BHInputTextCapture *);
 #endif

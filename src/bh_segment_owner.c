@@ -1,6 +1,6 @@
 #include "bh_segment_owner.h"
 #include <string.h>
-int __cdecl bh_segment_owner_dispose(BHSegmentOwner *owner)
+int bh_segment_owner_dispose(BHSegmentOwner *owner)
 {
     if (!owner || owner->query.busy)
         return 0;
@@ -10,8 +10,8 @@ int __cdecl bh_segment_owner_dispose(BHSegmentOwner *owner)
     memset(&owner->geometry, 0, sizeof(owner->geometry));
     return 1;
 }
-int __cdecl bh_segment_owner_query(BHSegmentOwner *owner, const BHBsp *bsp, const BHVec3 *start, const BHVec3 *end,
-                                   const BHMat34 *world, const BHMat34 *local, BHSegmentHit *result)
+int bh_segment_owner_query(BHSegmentOwner *owner, const BHBsp *bsp, const BHVec3 *start, const BHVec3 *end,
+                           const BHMat34 *world, const BHMat34 *local, BHSegmentHit *result)
 {
     if (!bsp)
         return 0;

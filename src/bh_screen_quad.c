@@ -3,8 +3,8 @@
 #include <math.h>
 #include <float.h>
 #include <string.h>
-int __cdecl bh_screen_quad_draw(BHScreenQuadContext *c, BHTextureImage *image, float x, float y, float width,
-                                float height, float angle, unsigned char flags, float modulation)
+int bh_screen_quad_draw(BHScreenQuadContext *c, BHTextureImage *image, float x, float y, float width, float height,
+                        float angle, unsigned char flags, float modulation)
 {
     BHClipVertex v[4], *ring, *p;
     double w, h, r, cs, sn, hs, hc, conversion;
@@ -106,8 +106,8 @@ int __cdecl bh_screen_quad_draw(BHScreenQuadContext *c, BHTextureImage *image, f
     c->emitted = 1;
     return 1;
 }
-int __cdecl bh_screen_quad_queue(BHDrawQueue *q, unsigned long bucket, unsigned long image, float x, float y,
-                                 float width, float height, float angle, unsigned long flags, float modulation)
+int bh_screen_quad_queue(BHDrawQueue *q, unsigned long bucket, unsigned long image, float x, float y, float width,
+                         float height, float angle, unsigned long flags, float modulation)
 {
     static const unsigned long headers[9] = {1, 2, 3, 4, 5, 0, 6, 7, 8};
     unsigned long header, tail, index;
@@ -147,7 +147,7 @@ int __cdecl bh_screen_quad_queue(BHDrawQueue *q, unsigned long bucket, unsigned 
     q->error = BH_DRAW_OK;
     return 1;
 }
-int __cdecl bh_screen_quad_execute(BHScreenQuadSubmit *c, const BHDrawCommand *command, unsigned long *next)
+int bh_screen_quad_execute(BHScreenQuadSubmit *c, const BHDrawCommand *command, unsigned long *next)
 {
     float f[6];
     BHTextureImage *image;

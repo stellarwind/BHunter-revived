@@ -8,5 +8,5 @@ typedef struct BHWeaponPulseLaunchContext
     BHPulseProjectileContext *projectile;
     unsigned long sound;
 } BHWeaponPulseLaunchContext;
-int __cdecl bh_weapon_pulse_launch(BHWeaponPulseLaunchContext *, BHEntity *, BHEntity *); /*00433b30*/
+int bh_weapon_pulse_launch(BHWeaponPulseLaunchContext *, BHEntity *, BHEntity *); /*00433b30*/
 #endif

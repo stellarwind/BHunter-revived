@@ -57,9 +57,9 @@ typedef struct BHScriptVMContext
    explicitly after any earlier effects. Children retain original loaded flag.
    Unknown opcode still forwards the chain; allocation failure returns early.
    PC53 profile, moderate finite numeric state and stable callbacks required. */
-int __cdecl bh_script_vm_bind(BHScriptVMContext *, BHEntity *, const BHScriptVMState *);
-int __cdecl bh_script_vm_read(BHEntity *, BHScriptVMState *);
-BHEntity *__cdecl bh_script_vm_create(BHScriptVMContext *, BHEntity **out, long opcode, const long args[5],
-                                      const long selectors[5]);
-void __cdecl bh_script_vm_query(BHEntity *, void *);
+int bh_script_vm_bind(BHScriptVMContext *, BHEntity *, const BHScriptVMState *);
+int bh_script_vm_read(BHEntity *, BHScriptVMState *);
+BHEntity *bh_script_vm_create(BHScriptVMContext *, BHEntity **out, long opcode, const long args[5],
+                              const long selectors[5]);
+void bh_script_vm_query(BHEntity *, void *);
 #endif

@@ -12,7 +12,7 @@ typedef struct BHScriptActorConstructorContext
    all fields and actual query/draw/tick callbacks, then real route promotion.
    Loaded resource handles and contexts remain borrowed until cleanup. The
    defined type domain is0..3; other values reject before allocation/RNG. */
-BHEntity *__cdecl bh_script_actor_construct(BHScriptActorConstructorContext *, const BHVec3 *, unsigned long type);
+BHEntity *bh_script_actor_construct(BHScriptActorConstructorContext *, const BHVec3 *, unsigned long type);
 /* Count-zero callback bridge/read API for actual original+e8 render slot. */
-void __cdecl bh_script_actor_present(BHEntity *);
+void bh_script_actor_present(BHEntity *);
 #endif

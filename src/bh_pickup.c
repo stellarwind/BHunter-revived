@@ -16,7 +16,7 @@ typedef char pickup_reply_layout[sizeof(BHPickupTakePacket) == 28 && offsetof(BH
                                      ? 1
                                      : -1];
 
-BHPickupContext *__cdecl bh_pickup_context(BHEntity *entity)
+BHPickupContext *bh_pickup_context(BHEntity *entity)
 {
     BHPickupContext *context;
     if (!entity)
@@ -28,7 +28,7 @@ static void bind_owner(BHEntity *entity, BHPickupContext *context)
 {
     memcpy(entity->payload + 64, &context, sizeof(context));
 }
-BHPickupState *__cdecl bh_pickup_state(BHEntity *entity)
+BHPickupState *bh_pickup_state(BHEntity *entity)
 {
     return entity ? (BHPickupState *)(entity->payload + 8) : NULL;
 }
@@ -66,7 +66,7 @@ static void unlink_pickup(BHPickupContext *context, BHEntity *entity)
     state->room_next = state->room_previous = state->global_next = state->global_previous = NULL;
     state->room = NULL;
 }
-void __cdecl bh_pickup_cleanup(BHEntity *entity)
+void bh_pickup_cleanup(BHEntity *entity)
 {
     BHPickupContext *context = bh_pickup_context(entity);
     if (!context || !context->pool)
@@ -74,7 +74,7 @@ void __cdecl bh_pickup_cleanup(BHEntity *entity)
     unlink_pickup(context, entity);
     bh_entity_release(context->pool, entity);
 }
-void __cdecl bh_pickup_query(BHEntity *entity, void *packet)
+void bh_pickup_query(BHEntity *entity, void *packet)
 {
     long event;
     BHPickupContext *context;
@@ -158,7 +158,7 @@ static int offer_to(BHPickupContext *context, BHEntity *pickup, BHEntity *actor,
     }
     return 0;
 }
-void __cdecl bh_pickup_tick(BHEntity *entity)
+void bh_pickup_tick(BHEntity *entity)
 {
     BHPickupContext *context = bh_pickup_context(entity);
     BHPickupState *state = bh_pickup_state(entity);
@@ -206,8 +206,8 @@ void __cdecl bh_pickup_tick(BHEntity *entity)
         play_take(context, entity);
     }
 }
-BHEntity *__cdecl bh_pickup_spawn(BHPickupContext *context, const BHVec3 *position, long type, long variant,
-                                  long remaining, long offer, long token, float fade)
+BHEntity *bh_pickup_spawn(BHPickupContext *context, const BHVec3 *position, long type, long variant, long remaining,
+                          long offer, long token, float fade)
 {
     BHEntity *entity;
     BHPickupState *state;

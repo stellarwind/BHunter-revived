@@ -18,7 +18,7 @@ static void identity(BHMat34 *m)
     memset(m, 0, sizeof(*m));
     m->m[0][0] = m->m[1][1] = m->m[2][2] = 1;
 }
-int __cdecl bh_clip_init(BHClipContext *c, float near_z, float far_z, float left, float right, float top, float bottom)
+int bh_clip_init(BHClipContext *c, float near_z, float far_z, float left, float right, float top, float bottom)
 {
     if (!c || !_finite(near_z) || !_finite(far_z) || !_finite(left) || !_finite(right) || !_finite(top) ||
         !_finite(bottom) || near_z <= 0 || far_z < near_z || right < left || bottom < top)
@@ -34,7 +34,7 @@ int __cdecl bh_clip_init(BHClipContext *c, float near_z, float far_z, float left
     identity(&c->inverse);
     return 1;
 }
-int __cdecl bh_clip_set_camera(BHClipContext *c, const BHMat34 *camera)
+int bh_clip_set_camera(BHClipContext *c, const BHMat34 *camera)
 {
     unsigned long i;
     if (!c || !camera)
@@ -145,7 +145,7 @@ static BHClipVertex *cut(BHClipContext *c, BHClipVertex *extreme, unsigned long 
     after->previous = second;
     return first;
 }
-BHClipVertex *__cdecl bh_clip_polygon(BHClipContext *c, BHClipVertex *head, const BHTextureImage *image)
+BHClipVertex *bh_clip_polygon(BHClipContext *c, BHClipVertex *head, const BHTextureImage *image)
 {
     BHClipVertex *p, *minimum, *maximum;
     unsigned long n = 0, axis, i;

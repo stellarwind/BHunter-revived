@@ -3,7 +3,7 @@
 #include <string.h>
 #include <math.h>
 #include <float.h>
-int __cdecl bh_view_reset_viewport(BHViewConfig *c, long width, long height)
+int bh_view_reset_viewport(BHViewConfig *c, long width, long height)
 {
     if (!c || width <= 0 || height <= 0)
         return 0;
@@ -13,7 +13,7 @@ int __cdecl bh_view_reset_viewport(BHViewConfig *c, long width, long height)
     c->margin_x = c->margin_y = 0;
     return 1;
 }
-int __cdecl bh_view_config_init(BHViewConfig *c, long width, long height)
+int bh_view_config_init(BHViewConfig *c, long width, long height)
 {
     BHViewConfig next;
     memset(&next, 0, sizeof(next));
@@ -25,7 +25,7 @@ int __cdecl bh_view_config_init(BHViewConfig *c, long width, long height)
     *c = next;
     return 1;
 }
-int __cdecl bh_view_clip_rect(BHViewConfig *c, float x, float y, float width, float height)
+int bh_view_clip_rect(BHViewConfig *c, float x, float y, float width, float height)
 {
     float right, bottom;
     if (!c || !_finite(x) || !_finite(y) || !_finite(width) || !_finite(height))
@@ -59,7 +59,7 @@ static void plane(BHViewPlane *out, const BHMat34 *inverse, const BHVec3 *positi
     bh_round_float(&out->offset, ((double)out->normal.z * position->z + (double)out->normal.y * position->y) +
                                      (double)out->normal.x * position->x);
 }
-int __cdecl bh_view_camera_build(const BHViewConfig *c, const BHMat34 *camera, BHViewCamera *out)
+int bh_view_camera_build(const BHViewConfig *c, const BHMat34 *camera, BHViewCamera *out)
 {
     BHViewCamera next;
     BHVec3 local, point;

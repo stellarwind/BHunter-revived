@@ -48,9 +48,9 @@ typedef struct BHWorldQuery
    flags; collision_radius is the verified common entity +c0 field, initialized
    by each real actor constructor (pool recycling does not supply that default).
    Up to 65535 members of each kind. Init failure leaves caller output unchanged. */
-int __cdecl bh_world_query_init(BHWorldQuery *query, BHWorldGeometry *first, unsigned long scene_count,
-                                BHEntity *const *actors, unsigned long actor_count, const BHSceneAllocator *allocator);
-int __cdecl bh_world_query_dispose(BHWorldQuery *query);
+int bh_world_query_init(BHWorldQuery *query, BHWorldGeometry *first, unsigned long scene_count, BHEntity *const *actors,
+                        unsigned long actor_count, const BHSceneAllocator *allocator);
+int bh_world_query_dispose(BHWorldQuery *query);
 /* 0040b300 with owned 0040abe0 DFS and 0040af20 actor broad phase.
    Select previous if it contains the point; otherwise try exact then expanded
    owner lookup, finally retaining previous even outside bounds. If no owner,
@@ -64,6 +64,6 @@ int __cdecl bh_world_query_dispose(BHWorldQuery *query);
    nothing, replace prior results/owner only on success, and reject foreign visited links, nonfinite inputs or overflow of owned
    capacity. The scene topology is validated at init and must remain stable
    until dispose; query_flags, actor positions and radii remain live. */
-int __cdecl bh_world_query_run(BHWorldQuery *query, BHEntity *self, BHWorldGeometry *previous, const BHVec3 *point,
-                               float margin, BHWorldGeometry **owner);
+int bh_world_query_run(BHWorldQuery *query, BHEntity *self, BHWorldGeometry *previous, const BHVec3 *point,
+                       float margin, BHWorldGeometry **owner);
 #endif

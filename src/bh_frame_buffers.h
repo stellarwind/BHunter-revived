@@ -1,7 +1,7 @@
 #ifndef BH_FRAME_BUFFERS_H
 #define BH_FRAME_BUFFERS_H
 #include "bh_scene.h"
-typedef void(__cdecl *BHFrameProduce)(void *);
+typedef void (*BHFrameProduce)(void *);
 typedef struct BHFrameSlot
 {
     void *data;
@@ -28,13 +28,13 @@ typedef struct BHFrameBuffers
     BHFrameBufferError error;
 } BHFrameBuffers;
 /* The SDL main loop owns production, publication, and consumption. */
-int __cdecl bh_frame_buffers_bind(BHFrameBuffers *, const BHSceneAllocator *);
+int bh_frame_buffers_bind(BHFrameBuffers *, const BHSceneAllocator *);
 /* Set the frame interval and allocate all three buffers. */
-int __cdecl bh_frame_buffers_start(BHFrameBuffers *, BHFrameProduce, void *, double fps, unsigned long bytes);
+int bh_frame_buffers_start(BHFrameBuffers *, BHFrameProduce, void *, double fps, unsigned long bytes);
 /* Select the oldest available slot. Its buffer is borrowed until publication. */
-void *__cdecl bh_frame_buffers_acquire(BHFrameBuffers *);
+void *bh_frame_buffers_acquire(BHFrameBuffers *);
 /* Age the slots and publish the active writer as the latest frame. */
-int __cdecl bh_frame_buffers_publish(BHFrameBuffers *);
+int bh_frame_buffers_publish(BHFrameBuffers *);
 /* Release owned buffers when there is no outstanding writer. */
-int __cdecl bh_frame_buffers_dispose(BHFrameBuffers *);
+int bh_frame_buffers_dispose(BHFrameBuffers *);
 #endif

@@ -14,7 +14,7 @@ static int live(BHEntityPool *pool, BHEntity *entity, unsigned long generation)
 {
     return bh_entity_is_active(pool, entity) && entity->generation == generation;
 }
-int __cdecl bh_target_step_read(const BHEntity *entity, BHTargetStepState *state)
+int bh_target_step_read(const BHEntity *entity, BHTargetStepState *state)
 {
     if (!entity || !state)
         return 0;
@@ -24,7 +24,7 @@ int __cdecl bh_target_step_read(const BHEntity *entity, BHTargetStepState *state
     memcpy(&state->emission, (const char *)entity + 0x114, 16);
     return 1;
 }
-int __cdecl bh_target_step_write(BHEntity *entity, const BHTargetStepState *state)
+int bh_target_step_write(BHEntity *entity, const BHTargetStepState *state)
 {
     if (!entity || !state)
         return 0;
@@ -42,7 +42,7 @@ int __cdecl bh_target_step_write(BHEntity *entity, const BHTargetStepState *stat
     }
     return 1;
 }
-int __cdecl bh_target_step_bind(BHTargetStepContext *ctx, const BHTargetStepState *state)
+int bh_target_step_bind(BHTargetStepContext *ctx, const BHTargetStepState *state)
 {
     unsigned long i;
     BHDebrisBody *body;
@@ -94,7 +94,7 @@ static void sample(BHVec3 *out, BHEntity *entity, const BHTargetStepState *state
                              (double)physics.pose.m[2][0] * x) +
                                 entity->position.z);
 }
-void __cdecl bh_target_step(BHEntity *entity)
+void bh_target_step(BHEntity *entity)
 {
     BHTargetStepContext *ctx = context(entity);
     BHDebrisBody *body = ctx->body;

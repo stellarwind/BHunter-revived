@@ -55,5 +55,5 @@ typedef struct BHFrameService
    destination; current list004f5500 +2010 supplies the packet. Explicit source
    storage does not recover original global allocation or startup construction.
    No callback body, device, entity or gameplay state is fabricated here. */
-int __cdecl bh_frame_service_tick(BHFrameService *);
+int bh_frame_service_tick(BHFrameService *);
 #endif

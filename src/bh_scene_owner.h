@@ -28,12 +28,12 @@ typedef struct BHSceneOwner
     BHSceneOwnerError error;
 } BHSceneOwner;
 
-int __cdecl bh_scene_owner_init(BHSceneOwner *owner, BHSceneBindings *bindings, long target_width, long target_height);
+int bh_scene_owner_init(BHSceneOwner *owner, BHSceneBindings *bindings, long target_width, long target_height);
 /* Returns one after scheduling and both full-target clip commands. A gated or
    failed call returns zero; a gate clears cached room without advancing frame.
    The scheduler's clip rectangle is set to camera dimensions before traversal;
    viewport width/height retain the caller's target extent for queued resets.
    Its near/far and camera are synchronized to this pass. */
-int __cdecl bh_scene_owner_step(BHSceneOwner *owner, const BHVec3 *eye, const BHVec3 *angles, float fov_degrees,
-                                float near_z, float far_z, long camera_width, long camera_height);
+int bh_scene_owner_step(BHSceneOwner *owner, const BHVec3 *eye, const BHVec3 *angles, float fov_degrees, float near_z,
+                        float far_z, long camera_width, long camera_height);
 #endif
