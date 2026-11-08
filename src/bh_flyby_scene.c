@@ -339,7 +339,8 @@ int bh_flyby_scene_draw(BHFlybyScene *s)
         }
     eye = read_vector(camera, 0x160);
     angles = read_vector(camera, 0x16c);
-    if (!bh_scene_owner_step(s->scene, &eye, &angles, 60, .01f, 25000, *s->display_width, *s->display_height) &&
+    if (!bh_scene_owner_step(s->scene, &eye, &angles, s->scene->view_fov_degrees, .01f, 25000, *s->display_width,
+                             *s->display_height) &&
         s->scene->error != BH_SCENE_OWNER_INACTIVE &&
         !(s->scene->error == BH_SCENE_OWNER_QUEUE && s->queue->error == BH_DRAW_FULL) && s->error == BH_FLYBY_SCENE_OK)
         s->error = BH_FLYBY_SCENE_OWNER;

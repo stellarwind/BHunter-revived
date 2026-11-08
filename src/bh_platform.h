@@ -56,6 +56,7 @@ extern "C"
     void bh_sdl_error_dialog(void);
     void bh_sdl_video_cycle(int row);
     const char *bh_sdl_video_label(int row);
+    int bh_sdl_fov_degrees(void);
     void bh_sdl_canvas_margins(float *x, float *y);
 #ifdef __cplusplus
 }

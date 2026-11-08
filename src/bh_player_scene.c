@@ -536,8 +536,8 @@ int bh_player_scene_draw(BHPlayerScene *scene)
             if (!bh_hud_scores_draw(scene->score_draw, scene->scores))
                 fail(scene, BH_PLAYER_SCENE_OWNER);
         }
-        if (!bh_scene_owner_step(scene->scene, eye, angles, 60, .01f, 25000, *scene->display_width,
-                                 *scene->display_height) &&
+        if (!bh_scene_owner_step(scene->scene, eye, angles, scene->scene->view_fov_degrees, .01f, 25000,
+                                 *scene->display_width, *scene->display_height) &&
             scene->scene->error != BH_SCENE_OWNER_INACTIVE &&
             !(scene->scene->error == BH_SCENE_OWNER_QUEUE && scene->queue->error == BH_DRAW_FULL))
             fail(scene, BH_PLAYER_SCENE_OWNER);

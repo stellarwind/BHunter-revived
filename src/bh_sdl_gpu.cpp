@@ -220,6 +220,8 @@ void finish_modes(int saved_width, int saved_height)
     select_matching_mode();
 }
 constexpr char settings_filename[] = "game-config.ini";
+constexpr int default_fov = 60, min_fov = 35, max_fov = 100;
+int field_of_view = default_fov;
 std::string settings_path = settings_filename, settings_directory;
 void set_error(const char *context)
 {
@@ -320,6 +322,8 @@ int read_video_setting(void *user, const char *section, const char *key, const c
             read_setting_int(value, render_size.width);
         else if (!SDL_strcasecmp(key, "RenderHeight"))
             read_setting_int(value, render_size.height);
+        else if (!SDL_strcasecmp(key, "FOV"))
+            read_setting_int(value, field_of_view);
     }
     return 1;
 }
@@ -341,6 +345,8 @@ void save_settings()
                                 "; Render size in Borderless mode. Windowed mode follows the window size.\n"
                                 "RenderWidth=%d\n"
                                 "RenderHeight=%d\n"
+                                "; Base horizontal FOV in degrees (4:3). Min %d, max %d, default %d. Restart to apply.\n"
+                                "FOV=%d\n"
                                 "\n"
                                 "[Window]\n"
                                 "; Desktop position of the restored window.\n"
@@ -352,7 +358,8 @@ void save_settings()
                                 "; Use true to maximize the window, or false to use the saved size.\n"
                                 "Maximized=%s\n",
                                 mode ? "Borderless" : "Windowed", aspects[selected_aspect].label, resolution.first,
-                                resolution.second, normal_x, normal_y, normal_w, normal_h, maximized ? "true" : "false");
+                                resolution.second, min_fov, max_fov, default_fov, field_of_view, normal_x, normal_y,
+                                normal_w, normal_h, maximized ? "true" : "false");
     if (fclose(f) == 0 && written >= 0)
         SDL_RenamePath(temporary.c_str(), settings_path.c_str());
 }
@@ -1059,7 +1066,9 @@ extern "C"
         /* A missing controller subsystem must not prevent keyboard play. */
         if (SDL_InitSubSystem(SDL_INIT_GAMEPAD))
             find_gamepad();
+        field_of_view = default_fov;
         ini_parse(settings_path.c_str(), read_video_setting, &saved_render_size);
+        field_of_view = std::clamp(field_of_view, min_fov, max_fov);
         normal_w = std::clamp(normal_w, 640, 3840);
         normal_h = std::clamp(normal_h, 480, 2160);
         mode = std::clamp(mode, 0, 1);
@@ -1548,6 +1557,10 @@ extern "C"
         }
         snprintf(text, sizeof(text), "%d x %d", w, h);
         return text;
+    }
+    int bh_sdl_fov_degrees()
+    {
+        return field_of_view;
     }
     void __cdecl bh_sdl_canvas_margins(float *x, float *y)
     {

@@ -20,6 +20,7 @@ typedef struct BHSceneOwner
     BHSceneBindings *bindings;
     long target_width, target_height;
     long camera_width, camera_height;
+    float view_fov_degrees;
     unsigned long mode, frame;
     BHMat34 view;
     BHViewCamera camera; /* projected matrix and eye used by portal facing */

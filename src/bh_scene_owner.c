@@ -24,6 +24,7 @@ int bh_scene_owner_init(BHSceneOwner *owner, BHSceneBindings *bindings, long tar
     owner->bindings = bindings;
     owner->target_width = target_width;
     owner->target_height = target_height;
+    owner->view_fov_degrees = 60;
     return 1;
 }
 
