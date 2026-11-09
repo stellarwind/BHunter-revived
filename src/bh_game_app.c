@@ -1682,6 +1682,7 @@ static int player_ready(BHGameApp *app)
     app->player_scene.world_status = &app->world_hud;
     app->player_scene.flat_status = &app->flat_hud;
     app->player_scene.score_draw = &app->score_draw;
+    app->player_scene.remote_packets = &app->remote_packets;
     app->player_scene.scores = &app->scores;
     app->player_scene.background = &app->background;
     app->player_scene.scene = &app->scene;

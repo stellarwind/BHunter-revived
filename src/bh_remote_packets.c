@@ -1,4 +1,7 @@
 #include "bh_remote_packets.h"
+#ifdef BH_SDL_BACKEND
+#include "bh_render_interpolation.h"
+#endif
 #include <string.h>
 static unsigned long word(BHEntity *entity, unsigned long o)
 {
@@ -79,6 +82,10 @@ static void query(BHEntity *entity, void *p)
 int bh_remote_entity_draw(BHRemotePackets *packets, BHEntity *entity)
 {
     BHRemotePackets *bound;
+    int result;
+#ifdef BH_SDL_BACKEND
+    unsigned long mark;
+#endif
     if (!packets || !entity || !packets->render || !packets->simulation_tick)
         return 0;
     memcpy(&bound, entity->payload + 536, 4);
@@ -86,17 +93,32 @@ int bh_remote_entity_draw(BHRemotePackets *packets, BHEntity *entity)
         half(entity, 0x114) > 7 || packets->remote[half(entity, 0x114)] != entity)
         return 0;
     packets->render->tick = (unsigned short)*packets->simulation_tick;
-    return bh_remote_render(packets->render, entity);
+#ifdef BH_SDL_BACKEND
+    mark = bh_interpolation_mark();
+#endif
+    result = bh_remote_render(packets->render, entity);
+#ifdef BH_SDL_BACKEND
+    bh_interpolation_stamp(mark, (unsigned long)entity, entity->generation);
+#endif
+    return result;
 }
-static void draw_remote(BHEntity *entity)
+
+void bh_remote_draw_scene(BHRemotePackets *packets)
 {
-    BHRemotePackets *packets;
-    memcpy(&packets, entity->payload + 536, 4);
-    bh_remote_entity_draw(packets, entity);
+    for (unsigned int slot = 0; slot < BH_NETWORK_PLAYERS; ++slot)
+        if (packets->remote[slot])
+            bh_remote_entity_draw(packets, packets->remote[slot]);
 }
+
+/* Room membership still drives queries. Drawing waits for the viewport reset. */
+static void skip_room_draw(BHEntity *entity)
+{
+    (void)entity;
+}
+
 void bh_remote_bind_draw(BHRemotePackets *packets, BHEntity *entity, unsigned int slot)
 {
-    BHEntityStep draw = draw_remote;
+    BHEntityStep draw = skip_room_draw;
     unsigned int car = packets->network->players[slot].car;
     if (packets->car_models && car < BH_NETWORK_CARS)
         packets->render->models[slot] = packets->car_models[car];

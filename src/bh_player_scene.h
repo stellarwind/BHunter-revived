@@ -40,6 +40,7 @@ typedef struct BHPlayerScene
     BHHudScores *scores;
     BHSceneBackground *background;
     BHSceneOwner *scene;
+    struct BHRemotePackets *remote_packets;
     BHWeaponRegistry *weapons;
     BHArcContext *arc;
     BHWeaponHudTargetContext *target;

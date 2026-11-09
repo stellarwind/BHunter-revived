@@ -11,6 +11,7 @@
 #include "bh_queue_reserve.h"
 #include "bh_round.h"
 #include "bh_pickup.h"
+#include "bh_remote_packets.h"
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
@@ -536,10 +537,14 @@ int bh_player_scene_draw(BHPlayerScene *scene)
             if (!bh_hud_scores_draw(scene->score_draw, scene->scores))
                 fail(scene, BH_PLAYER_SCENE_OWNER);
         }
-        if (!bh_scene_owner_step(scene->scene, eye, angles, scene->scene->view_fov_degrees, .01f, 25000,
-                                 *scene->display_width, *scene->display_height) &&
-            scene->scene->error != BH_SCENE_OWNER_INACTIVE &&
-            !(scene->scene->error == BH_SCENE_OWNER_QUEUE && scene->queue->error == BH_DRAW_FULL))
+        if (bh_scene_owner_step(scene->scene, eye, angles, scene->scene->view_fov_degrees, .01f, 25000,
+                                *scene->display_width, *scene->display_height))
+        {
+            if (*scene->mode_count > 1 && scene->remote_packets)
+                bh_remote_draw_scene(scene->remote_packets);
+        }
+        else if (scene->scene->error != BH_SCENE_OWNER_INACTIVE &&
+                 !(scene->scene->error == BH_SCENE_OWNER_QUEUE && scene->queue->error == BH_DRAW_FULL))
             fail(scene, BH_PLAYER_SCENE_OWNER);
         if (*scene->confirmation_gate)
         {
