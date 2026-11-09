@@ -1,9 +1,14 @@
 #include "bh_remote_render.h"
 #include "bh_round.h"
 #include "bh_fp.h"
+#include "bh_rotation.h"
+#ifdef BH_SDL_BACKEND
+#include "bh_render_interpolation.h"
+#endif
 #include <stdlib.h>
 #include <string.h>
 #include <float.h>
+#include <math.h>
 static float stored(double value)
 {
     float out;
@@ -56,6 +61,40 @@ static void queued(BHRemoteRender *render, int result)
     else if (result < 0)
         render->error = 1;
 }
+
+static void draw_propulsion(BHRemoteRender *render, const BHEntity *entity, const BHVec3 *position, const BHVec3 *angles)
+{
+    const unsigned char *channels = (const unsigned char *)entity + BH_REMOTE_PROPULSION_OFFSET;
+    BHMat34 pose = {{{1, 0, 0, position->x}, {0, 1, 0, position->y}, {0, 0, 1, position->z}}};
+    bh_mat34_rotate_y(angles->x, &pose);
+    bh_mat34_rotate_x(angles->y, &pose);
+    bh_mat34_rotate_z(angles->z, &pose);
+    for (unsigned long i = 0; i < BH_PLAYER_NOZZLE_COUNT; ++i, channels += 3)
+    {
+        const BHVec3 *base = bh_player_nozzles + i;
+        float x = (float)channels[0] / BH_PROPULSION_WIRE_SCALE;
+        float y = 2.0f * channels[1] / BH_PROPULSION_WIRE_SCALE;
+        float z = (float)channels[2] / BH_PROPULSION_WIRE_SCALE;
+        BHVec3 from, to, tip;
+        float width;
+        int result;
+        if (!(channels[0] || channels[1] || channels[2]))
+            continue;
+        tip.x = base->x + (base->x < 0 ? -x : x);
+        tip.y = base->y + y;
+        tip.z = base->z + (base->z < 0 ? -z : z);
+        bh_mat34_transform_point(&pose, base, &from);
+        bh_mat34_transform_point(&pose, &tip, &to);
+        width = .5f + sqrtf(x * x + y * y + z * z);
+        result = bh_draw_segment(render->queue, 3, render->thrust_texture, &from, &to, .5f, width, 1, .75f, 0);
+#ifdef BH_SDL_BACKEND
+        if (result > 0)
+            bh_interpolation_part(render->queue->count - 1, (unsigned long)entity, entity->generation, i);
+#endif
+        queued(render, result);
+    }
+}
+
 int bh_remote_render(BHRemoteRender *render, BHEntity *entity)
 {
     BHVec3 position, angles, velocity, normal, point, up = {0, -1, 0};
@@ -88,6 +127,8 @@ int bh_remote_render(BHRemoteRender *render, BHEntity *entity)
     model = flags & BH_REMOTE_POSE_WRECK ? render->wreck_model : render->models[slot];
     if (model || !(flags & BH_REMOTE_POSE_WRECK))
         queued(render, bh_draw_submit_resource(render->queue, 0, model, &position, &angles, 1));
+    if (render->thrust_texture && !(flags & BH_REMOTE_POSE_WRECK))
+        draw_propulsion(render, entity, &position, &angles);
     for (i = 0; i < 3; i++)
     {
         float component;

@@ -8,6 +8,7 @@ enum
     BH_NETWORK_PLAYERS = 8,
     BH_NETWORK_CARS = 3,
     BH_NETWORK_ROSTER_BYTES = 26,
+    BH_NETWORK_POSE_BYTES = 22,
     BH_NETWORK_PACKET_CAPACITY = 264,
     BH_NETWORK_SCORE_HISTORY = 128,
     BH_NETWORK_PORT = 27890,
@@ -26,7 +27,7 @@ typedef struct BHNetworkPlayer
 {
     int active;
     unsigned long id;
-    unsigned char car;
+    unsigned char car, pose_propulsion;
     char name[32];
     struct _ENetPeer *peer;
     BHNetworkScoreReport score_history[BH_NETWORK_SCORE_HISTORY];
@@ -40,7 +41,7 @@ struct BHNetworkGame
     BHNetworkPlayer players[8];
     uint32_t handshake_deadline[BH_NETWORK_PLAYERS - 1]; /* Indexed by ENet peer, before roster assignment. */
     unsigned long local_player;
-    unsigned char local_car;
+    unsigned char local_car, server_pose_propulsion;
     unsigned long sent[BH_NETWORK_DEATH_EFFECT + 1], received[BH_NETWORK_DEATH_EFFECT + 1], rejected;
     int initialized, hosting, disconnected, welcome_timed_out;
 };

@@ -2,7 +2,7 @@
 #define BH_REMOTE_PREDICTION_H
 #include "bh_entities.h"
 
-/* Flags in the last byte of a player pose packet. */
+/* Flags immediately after the angles in a player pose packet. */
 enum
 {
     BH_REMOTE_POSE_SHIELD = 1,

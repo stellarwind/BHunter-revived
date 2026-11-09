@@ -1,4 +1,5 @@
 #include "bh_player_tick.h"
+#include "bh_player_propulsion.h"
 #include "bh_input_evaluate.h"
 #include "bh_round.h"
 #include "bh_fp.h"
@@ -270,7 +271,7 @@ static int send_pose(BHPlayerTick *ctx, int reliable)
     BHWorldGeometry *world;
     unsigned long i;
     unsigned short slot;
-    unsigned char flags, angle;
+    unsigned char flags, angle, propulsion[BH_PROPULSION_CHANNELS] = {0};
     int result;
     if (state->mode < 2)
         return 1;
@@ -320,6 +321,15 @@ static int send_pose(BHPlayerTick *ctx, int reliable)
             flags |= BH_REMOTE_POSE_WRECK;
     }
     if (!bh_packet_append(&ctx->writer, &flags, 1))
+        return fail(ctx, 2);
+    if (!(flags & (BH_REMOTE_POSE_WRECK | BH_REMOTE_POSE_HIDDEN)))
+        for (i = 0; i < sizeof(propulsion); ++i)
+        {
+            float channel = number(entity, BH_PLAYER_NOZZLE_CHANNEL_OFFSET + i * 4) * BH_PROPULSION_WIRE_SCALE;
+            if (channel > 0)
+                propulsion[i] = channel >= 255 ? 255 : (unsigned char)(channel + .5f);
+        }
+    if (!bh_packet_append(&ctx->writer, propulsion, sizeof(propulsion)))
         return fail(ctx, 2);
     bh_network_packet_send(ctx->network->transport, &ctx->writer, 0, reliable);
     ++ctx->packets;

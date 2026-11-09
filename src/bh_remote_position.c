@@ -127,7 +127,7 @@ int bh_remote_position_packet(BHRemotePackets *packets, void *p, unsigned long s
     }
     packets->error = 0;
     ++packets->pending;
-    if (!bh_packet_receive(&packets->reader, p, size, capacity, &packets->framing))
+    if (bh_packet_receive(&packets->reader, p, size, capacity, &packets->framing) != 1)
     {
         --packets->pending;
         ++packets->bad;
@@ -140,8 +140,11 @@ int bh_remote_position_packet(BHRemotePackets *packets, void *p, unsigned long s
         packets->error = 1;
         return 0;
     }
-    if (packets->reader.size - packets->reader.cursor < 2)
+    if (packets->reader.size != BH_NETWORK_POSE_BYTES &&
+        packets->reader.size != BH_NETWORK_POSE_BYTES + BH_PROPULSION_CHANNELS)
     {
+        --packets->pending;
+        ++packets->bad;
         packets->error = 3;
         return 0;
     }
@@ -216,11 +219,6 @@ int bh_remote_position_packet(BHRemotePackets *packets, void *p, unsigned long s
         packets->error = 5;
         return 0;
     }
-    if (packets->reader.cursor > packets->reader.size || packets->reader.size - packets->reader.cursor < 4)
-    {
-        packets->error = 3;
-        return 0;
-    }
     bytes = packets->reader.data + packets->reader.cursor;
     for (i = 0; i < 3; ++i)
     {
@@ -229,9 +227,19 @@ int bh_remote_position_packet(BHRemotePackets *packets, void *p, unsigned long s
         real(entity, bank + 16 + 4 * i, rf((double)v * .02454369328916073));
     }
     flags = bytes[3];
-    packets->reader.cursor += 4;
     if (bank == 0x17c)
+    {
         sethalf(entity, 0x11a, flags);
+        if (entity != packets->local)
+        {
+            unsigned char *propulsion = (unsigned char *)entity + BH_REMOTE_PROPULSION_OFFSET;
+            if (packets->reader.size > BH_NETWORK_POSE_BYTES)
+                memcpy(propulsion, bytes + 4, BH_PROPULSION_CHANNELS);
+            else
+                memset(propulsion, 0, BH_PROPULSION_CHANNELS);
+        }
+    }
+    packets->reader.cursor = packets->reader.size;
     if (first_pose)
     {
         memcpy((char *)entity + 0x13c, (char *)entity + 0x17c, 32);

@@ -1,4 +1,5 @@
 #include "bh_player_force_control.h"
+#include "bh_player_propulsion.h"
 #include "bh_round.h"
 #include "bh_fp.h"
 #include <math.h>
@@ -168,9 +169,11 @@ static int solve(BHPlayerForceControl *control, float channels[15], BHVec3 *torq
     }
     return 1;
 }
+const BHVec3 bh_player_nozzles[BH_PLAYER_NOZZLE_COUNT] = {
+    {.5f, .3f, 1.5f}, {-.5f, .3f, 1.5f}, {-.7f, .3f, -1.2f}, {.7f, .3f, -1.2f}};
+
 static void visual(BHPlayerForceControl *control, float channels[15], const float previous[15], int variant)
 {
-    static const float nozzle[4][3] = {{.5f, .3f, 1.5f}, {-.5f, .3f, 1.5f}, {-.7f, .3f, -1.2f}, {.7f, .3f, -1.2f}};
     BHEntity *entity = control->body->entity;
     BHPhysicsState *physics = control->body->physics;
     unsigned long i, j;
@@ -187,10 +190,10 @@ static void visual(BHPlayerForceControl *control, float channels[15], const floa
     }
     memcpy((unsigned char *)entity + 0x2bc, channels, 60);
     write_float(entity, 0x2f8, total);
-    for (i = 0; i < 4; ++i)
+    for (i = 0; i < BH_PLAYER_NOZZLE_COUNT; ++i)
     {
         /* Each controller retains its own original projection sum order. */
-        nozzle_base(physics, nozzle[i][0], nozzle[i][2], variant, &output);
+        nozzle_base(physics, bh_player_nozzles[i].x, bh_player_nozzles[i].z, variant, &output);
         vector_store(entity, 0x2fc + i * 24, &output);
         j = 1 + i * 3;
         x = i == 0   ? (double)channels[j] - (-.5)

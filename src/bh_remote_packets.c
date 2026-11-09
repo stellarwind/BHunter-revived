@@ -122,6 +122,7 @@ void bh_remote_bind_draw(BHRemotePackets *packets, BHEntity *entity, unsigned in
     unsigned int car = packets->network->players[slot].car;
     if (packets->car_models && car < BH_NETWORK_CARS)
         packets->render->models[slot] = packets->car_models[car];
+    memset((char *)entity + BH_REMOTE_PROPULSION_OFFSET, 0, BH_PROPULSION_CHANNELS);
     memcpy((char *)entity + 0xe8, &draw, sizeof(draw));
 }
 int bh_remote_spawn_packet(BHRemotePackets *packets, void *p, unsigned long n, unsigned long capacity)

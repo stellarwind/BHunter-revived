@@ -1,13 +1,16 @@
 #ifndef BH_REMOTE_RENDER_H
 #define BH_REMOTE_RENDER_H
 #include "bh_remote_prediction.h"
+#include "bh_player_propulsion.h"
 #include "bh_draw_submit.h"
 #include "bh_sound_queue.h"
+/* Remote entities store the quantized nozzle channels in their own payload. */
+enum { BH_REMOTE_PROPULSION_OFFSET = 0x2c0 };
 typedef struct BHRemoteRender
 {
     BHDrawQueue *queue;
     BHSoundQueue *sound;
-    unsigned long models[8], spark_texture, wreck_model;
+    unsigned long models[8], spark_texture, wreck_model, thrust_texture;
     unsigned short tick;
     unsigned long attempted, dropped;
     int error;
@@ -16,7 +19,7 @@ typedef struct BHRemoteRender
    anchors at+180/+18c; velocity pairs+48/+54, acceleration pairs+60/+6c.
    Outputs must not overlap entity or each other. PC53 finite contract. */
 int bh_remote_predict_pose(const BHEntity *, unsigned short tick, BHVec3 *, BHVec3 *);
-/* Whole00423c80. Actual model/24 random oriented spark queue producers and
+/* Model, propulsion and shield spark queue producers and
    actual deferred sound request/update. No sound Play occurs in this owner.
    Resource slots, tick, queue and sound are caller-owned live bindings. */
 int bh_remote_render(BHRemoteRender *, BHEntity *);
