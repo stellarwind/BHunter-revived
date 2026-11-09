@@ -1214,7 +1214,8 @@ static int source_owners(BHGameApp *app)
     app->cd.last_track = -1;
     app->cd_notify.cd = &app->cd;
     app->cd_audio.notify = &app->cd_notify;
-    app->cd_audio.music_path = "MUSIC_DATA/track02.wav";
+    app->cd_audio.music_path = "MUSIC_DATA/track02.ogg";
+    app->cd_audio.music_fallback_path = "MUSIC_DATA/track02.wav";
     app->media.audio = &app->cd_audio;
     bh_message_state_init(&app->messages);
     app->messages.panel_entity = 0;

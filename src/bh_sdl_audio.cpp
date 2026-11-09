@@ -3,10 +3,15 @@
 #include <algorithm>
 #include <cmath>
 #include <cstring>
+#include <limits>
 #include <memory>
 #include <mutex>
 #include <vector>
 #include <new>
+
+#define STB_VORBIS_NO_PUSHDATA_API
+#include "../third_party/stb/stb_vorbis.c"
+#undef STB_VORBIS_NO_PUSHDATA_API
 
 /* All clip/voice state is protected by mixer_mutex. Never destroy or lock an
    SDL stream while holding it: SDL invokes the mixer under the stream lock. */
@@ -16,15 +21,45 @@ struct BHAudioDevice
 };
 struct MusicFile
 {
+    static constexpr size_t block_frames = 4096;
     SDL_IOStream *io = nullptr;
+    stb_vorbis *vorbis = nullptr;
     Uint64 offset = 0, cached = ~Uint64(0);
     unsigned bits = 0, count = 0;
-    unsigned char raw[4096 * 4];
-    float decoded[4096 * 2];
+    size_t next_frame = 0, previous_frame = SIZE_MAX;
+    unsigned char raw[block_frames * 4];
+    float decoded[block_frames * 2], first[2], previous[2];
     ~MusicFile()
     {
+        if (vorbis)
+            stb_vorbis_close(vorbis);
         if (io)
             SDL_CloseIO(io);
+    }
+
+    bool refill_vorbis(size_t frame, size_t frames, unsigned channels)
+    {
+        // Interpolation can revisit the last sample of the old block after a refill.
+        previous_frame = SIZE_MAX;
+        if (count && frame == cached + count)
+        {
+            previous_frame = frame - 1;
+            std::copy_n(decoded + (count - 1) * channels, channels, previous);
+        }
+        cached = frame;
+        count = unsigned(std::min(block_frames, frames - frame));
+        int got = 0;
+        if (frame == next_frame || stb_vorbis_seek64(vorbis, frame))
+            got = stb_vorbis_get_samples_float_interleaved(vorbis, int(channels), decoded, int(count * channels));
+        // Keep failed or short reads bounded to one attempt per block.
+        if (got != int(count))
+        {
+            std::fill(decoded + std::max(got, 0) * channels, decoded + count * channels, 0.0f);
+            next_frame = SIZE_MAX;
+            return false;
+        }
+        next_frame = frame + count;
+        return true;
     }
 };
 struct AudioClip
@@ -40,8 +75,18 @@ struct AudioClip
         auto &f = *file;
         if (frame < f.cached || frame >= f.cached + f.count)
         {
+            if (f.vorbis)
+            {
+                // The loop endpoint can interpolate against the first frame of the track.
+                if (!frame)
+                    return f.first[channel];
+                if (frame == f.previous_frame)
+                    return f.previous[channel];
+                f.refill_vorbis(frame, frames, channels);
+                return f.decoded[channel];
+            }
             f.cached = frame;
-            f.count = unsigned(std::min(size_t(4096), frames - frame));
+            f.count = unsigned(std::min(MusicFile::block_frames, frames - frame));
             size_t bytes = f.count * stride;
             if (SDL_SeekIO(f.io, Sint64(f.offset + frame * stride), SDL_IO_SEEK_SET) < 0 ||
                 SDL_ReadIO(f.io, f.raw, bytes) != bytes)
@@ -133,15 +178,22 @@ void SDLCALL mix(void *, SDL_AudioStream *stream, int additional, int)
         additional -= frames * 8;
     }
 }
-BHAudioBuffer *publish(std::shared_ptr<AudioClip> clip)
+BHAudioBuffer *publish(std::shared_ptr<AudioClip> clip, bool music = false)
 {
     auto v = std::make_unique<BHAudioBuffer>();
     v->clip = std::move(clip);
     v->frequency = v->clip->rate;
     v->end = double(v->clip->frames);
+    v->music = music;
     std::lock_guard<std::mutex> guard(mixer_mutex);
     voices.push_back(v.get());
     return v.release();
+}
+BHAudioBuffer *publish_music(const std::shared_ptr<AudioClip> &clip, unsigned long *ms)
+{
+    auto v = publish(clip, true);
+    *ms = static_cast<unsigned long>(Uint64(clip->frames) * 1000 / clip->rate);
+    return v;
 }
 } // namespace
 extern "C"
@@ -358,8 +410,32 @@ extern "C"
             if (!f.io)
                 return nullptr;
             unsigned char header[12], fmt[16];
-            if (SDL_ReadIO(f.io, header, 12) != 12 || std::memcmp(header, "RIFF", 4) ||
-                std::memcmp(header + 8, "WAVE", 4))
+            if (SDL_ReadIO(f.io, header, 12) != 12)
+                return nullptr;
+            if (!std::memcmp(header, "OggS", 4))
+            {
+                SDL_CloseIO(f.io);
+                f.io = nullptr;
+                f.vorbis = stb_vorbis_open_filename(path, nullptr, nullptr);
+                if (!f.vorbis)
+                    return nullptr;
+                auto info = stb_vorbis_get_info(f.vorbis);
+                auto frames = stb_vorbis_stream_length_in_samples64(f.vorbis);
+                if ((info.channels != 1 && info.channels != 2) || info.sample_rate < 100 ||
+                    info.sample_rate > 192000 || frames <= 0 || Uint64(frames) > SIZE_MAX ||
+                    Uint64(frames) > std::numeric_limits<Uint64>::max() / 1000 ||
+                    Uint64(frames) * 1000 / info.sample_rate > std::numeric_limits<unsigned long>::max())
+                    return nullptr;
+                c->channels = unsigned(info.channels);
+                c->rate = info.sample_rate;
+                c->stride = c->channels * sizeof(float);
+                c->frames = size_t(frames);
+                if (!f.refill_vorbis(0, c->frames, c->channels))
+                    return nullptr;
+                std::copy_n(f.decoded, c->channels, f.first);
+                return publish_music(c, ms);
+            }
+            if (std::memcmp(header, "RIFF", 4) || std::memcmp(header + 8, "WAVE", 4))
                 return nullptr;
             auto u32 = [](const unsigned char *p) {
                 return Uint32(p[0]) | (Uint32(p[1]) << 8) | (Uint32(p[2]) << 16) | (Uint32(p[3]) << 24);
@@ -402,13 +478,7 @@ extern "C"
             if (!format || !data || !sample_bytes || sample_bytes % c->stride)
                 return nullptr;
             c->frames = sample_bytes / c->stride;
-            *ms = static_cast<unsigned long>(Uint64(c->frames) * 1000 / c->rate);
-            auto v = publish(c);
-            {
-                std::lock_guard<std::mutex> guard(mixer_mutex);
-                v->music = true;
-            }
-            return v;
+            return publish_music(c, ms);
         }
         catch (...)
         {

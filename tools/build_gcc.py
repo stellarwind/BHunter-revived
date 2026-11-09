@@ -11,7 +11,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from prepare_sdl3 import INI_FLAGS, INI_SOURCE, LICENCE_SOURCES, SHADER_PATH, prepare, stage_licences
+from prepare_sdl3 import INI_FLAGS, INI_SOURCE, LICENCE_SOURCES, SHADER_PATH, STB_VORBIS_SOURCE, prepare, stage_licences
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def stage_runtime(out):
     """Stage only game assets, leaving saves and player settings untouched."""
     staged = {}
-    for folder, name in (("GAME_DATA", "Bhunter.bin"), ("MUSIC_DATA", "track02.wav")):
+    for folder, name in (("GAME_DATA", "Bhunter.bin"), ("MUSIC_DATA", "track02.ogg"), ("MUSIC_DATA", "track02.wav")):
         target = out / folder / name
         candidates = [ROOT / folder / name, ROOT / "build" / folder / name]
         source = next(
@@ -120,6 +120,7 @@ def main():
     dependencies += [
         INI_SOURCE,
         INI_SOURCE.with_suffix(".h"),
+        STB_VORBIS_SOURCE,
         *(path for _, path in LICENCE_SOURCES),
         ROOT / "tools/build_game.py",
         ROOT / "tools/build_gcc.py",

@@ -9,6 +9,8 @@ int bh_cd_audio_startup(BHCdAudio *a)
         return 0;
     ++a->opens;
     cd->device = bh_audio_load_music(a->music_path, &cd->local_length);
+    if (!cd->device && a->music_fallback_path)
+        cd->device = bh_audio_load_music(a->music_fallback_path, &cd->local_length);
     a->open_result = cd->device ? 0 : -1;
     if (!cd->device)
     {

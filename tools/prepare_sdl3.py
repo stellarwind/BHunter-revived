@@ -15,6 +15,8 @@ SHA256 = "78d84602ae616cfe26b33a73b7d3b9b6b56e8a6650e53d92c9c6ca938f747acd"
 SHADER_PATH = Path("shaders/legacy.slang")
 # inih r62, upstream commit 26254ee9de7681f8825433415443e7116ff24b98.
 INI_SOURCE = ROOT / "third_party/inih/ini.c"
+# stb_vorbis 1.23, upstream commit d85119c15235cb3caa65fb357e694cbc17238952.
+STB_VORBIS_SOURCE = ROOT / "third_party/stb/stb_vorbis.c"
 # Indented keys are ordinary assignments in our settings files.
 INI_FLAGS = ["-DINI_ALLOW_MULTILINE=0"]
 LICENCE_SOURCES = (
@@ -22,6 +24,7 @@ LICENCE_SOURCES = (
     ("SDL3", ROOT / "LICENSES/SDL3.txt"),
     ("ENet", ROOT / "third_party/enet/LICENSE"),
     ("inih", INI_SOURCE.with_name("LICENSE.txt")),
+    ("stb_vorbis (MIT)", STB_VORBIS_SOURCE.with_name("LICENSE")),
 )
 
 
@@ -80,6 +83,7 @@ def prepare(out, *, gnu=True, compiler=None, symbols=False):
         ROOT / "src/bh_overlay_text.h",
         INI_SOURCE,
         INI_SOURCE.with_suffix(".h"),
+        STB_VORBIS_SOURCE,
     ]
     compiler_version = subprocess.check_output([compiler, "--version"])
     signature = hashlib.sha256(
