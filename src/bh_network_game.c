@@ -12,14 +12,58 @@ enum
     HELLO = 1,
     WELCOME = 2,
     LEAVE = 3,
+    LEVEL_OFFER = 4,
+    LEVEL_READY = 5,
+    LEVEL_SUPPORTED = 6,
     HELLO_SIZE = 35,
     POSE_PROPULSION = 1,
+    LEVEL_CAN_LOAD = 1,
+    LEVEL_WAS_OFFERED = 2,
+    LEVEL_HASH_SIZE = 8,
+    LEVEL_READY_SIZE = HELLO_SIZE + LEVEL_HASH_SIZE,
     POSE_WIRE_SIZE = 2 + BH_NETWORK_POSE_BYTES,
     PROPULSION_POSE_WIRE_SIZE = POSE_WIRE_SIZE + BH_PROPULSION_CHANNELS,
     HANDSHAKE_TIMEOUT_MS = 8000,
+    LEVEL_TIMEOUT_MS = 60000,
     /* Keep recent reports for half the wrap period of the 16-bit, 30 Hz game clock. */
     SCORE_REPLAY_WINDOW_MS = (1 << 15) * 1000 / 30
 };
+
+int bh_level_name_valid(const char *name)
+{
+    size_t i;
+    if (!name)
+        return 0;
+    for (i = 0; i < BH_LEVEL_NAME_CAPACITY && name[i]; ++i)
+    {
+        unsigned char c = name[i];
+        if (!(c >= 'a' && c <= 'z') && !(c >= 'A' && c <= 'Z') &&
+            !(c >= '0' && c <= '9') && c != '_' && c != '-')
+            return 0;
+    }
+    if (!i || i == BH_LEVEL_NAME_CAPACITY)
+        return 0;
+    /* These basenames are device names on Windows even with an extension. */
+    if (i == 3 && (!_stricmp(name, "CON") || !_stricmp(name, "PRN") ||
+                   !_stricmp(name, "AUX") || !_stricmp(name, "NUL")))
+        return 0;
+    return i != 4 || name[3] < '0' || name[3] > '9' ||
+           (_strnicmp(name, "COM", 3) && _strnicmp(name, "LPT", 3));
+}
+
+static void write_hash(unsigned char *bytes, uint64_t fingerprint)
+{
+    for (unsigned int i = 0; i < LEVEL_HASH_SIZE; ++i)
+        bytes[i] = (unsigned char)(fingerprint >> (8 * i));
+}
+
+static uint64_t read_hash(const unsigned char *bytes)
+{
+    uint64_t fingerprint = 0;
+    for (unsigned int i = 0; i < LEVEL_HASH_SIZE; ++i)
+        fingerprint |= (uint64_t)bytes[i] << (8 * i);
+    return fingerprint;
+}
 
 static int enqueue(ENetPeer *peer, unsigned char channel, const void *data, size_t size)
 {
@@ -154,16 +198,74 @@ static unsigned int peer_slot(const BHNetworkGame *game, const ENetPeer *peer)
     return BH_NETWORK_PLAYERS;
 }
 
+static void hello_data(const BHNetworkGame *game, unsigned char *data, unsigned char type)
+{
+    data[0] = 0;
+    data[1] = type;
+    data[2] = game->local_car;
+    memcpy(data + 3, game->players[0].name, 31);
+    data[HELLO_SIZE - 1] = POSE_PROPULSION;
+}
+
+int bh_network_level_ready(BHNetworkGame *game, uint64_t fingerprint)
+{
+    unsigned char ready[LEVEL_READY_SIZE];
+    if (!game->server || !game->level.name[0] || game->level_ready || game->disconnected ||
+        fingerprint != game->level.fingerprint)
+        return 0;
+    hello_data(game, ready, LEVEL_READY);
+    write_hash(ready + HELLO_SIZE, fingerprint);
+    if (enqueue(game->server, CONTROL, ready, sizeof(ready)) < 0)
+        return 0;
+    game->level_ready = 1;
+    return 1;
+}
+
+static void offer_level(BHNetworkGame *game, ENetPeer *peer)
+{
+    unsigned char offer[2 + LEVEL_HASH_SIZE + BH_LEVEL_NAME_CAPACITY] = {0, LEVEL_OFFER};
+    size_t size = strlen(game->level.name) + 1;
+    unsigned int index = peer->incomingPeerID;
+    if (game->level_handshake[index] == LEVEL_WAS_OFFERED)
+        return;
+    write_hash(offer + 2, game->level.fingerprint);
+    memcpy(offer + 2 + LEVEL_HASH_SIZE, game->level.name, size);
+    if (enqueue(peer, CONTROL, offer, 2 + LEVEL_HASH_SIZE + size) < 0)
+        return;
+    game->level_handshake[index] = LEVEL_WAS_OFFERED;
+    game->handshake_deadline[index] = enet_time_get() + LEVEL_TIMEOUT_MS;
+    enet_peer_timeout(peer, 8, 15000, LEVEL_TIMEOUT_MS);
+}
+
 static void control(BHNetworkGame *game, ENetPeer *peer, const unsigned char *data, size_t size, BHNetworkRoster roster,
                     void *user)
 {
     unsigned int slot;
-    if (game->hosting && size == HELLO_SIZE && data[1] == HELLO && data[2] < BH_NETWORK_CARS &&
-        peer_slot(game, peer) == BH_NETWORK_PLAYERS)
+    if (game->hosting && size == 2 && data[1] == LEVEL_SUPPORTED &&
+        game->level_handshake[peer->incomingPeerID] == 0)
+        game->level_handshake[peer->incomingPeerID] = LEVEL_CAN_LOAD;
+    else if (game->hosting && peer_slot(game, peer) == BH_NETWORK_PLAYERS &&
+        ((size == HELLO_SIZE && data[1] == HELLO) || (size == LEVEL_READY_SIZE && data[1] == LEVEL_READY)) &&
+        data[2] < BH_NETWORK_CARS)
     {
         unsigned char welcome[] = {0, WELCOME, 0, POSE_PROPULSION};
-        /* The last byte of the HELLO name field was reserved for a NUL. */
         int pose_propulsion = data[HELLO_SIZE - 1] == POSE_PROPULSION;
+        if (game->level.name[0])
+        {
+            if (data[1] == HELLO)
+            {
+                if (game->level_handshake[peer->incomingPeerID])
+                    offer_level(game, peer);
+                else
+                    enet_peer_disconnect(peer, 0);
+                return;
+            }
+            if (game->level_handshake[peer->incomingPeerID] != LEVEL_WAS_OFFERED ||
+                read_hash(data + HELLO_SIZE) != game->level.fingerprint)
+                return;
+        }
+        else if (data[1] != HELLO)
+            return;
         for (slot = 1; slot < BH_NETWORK_PLAYERS && game->players[slot].active; ++slot)
             ;
         if (slot == BH_NETWORK_PLAYERS)
@@ -171,6 +273,7 @@ static void control(BHNetworkGame *game, ENetPeer *peer, const unsigned char *da
         welcome[2] = (unsigned char)(slot + 1);
         if (enqueue(peer, CONTROL, welcome, pose_propulsion ? sizeof(welcome) : 3) < 0)
             return;
+        enet_peer_timeout(peer, 8, 2500, HANDSHAKE_TIMEOUT_MS);
         memset(game->players + slot, 0, sizeof(game->players[slot]));
         memcpy(game->players[slot].name, data + 3, 31);
         game->players[slot].name[31] = 0;
@@ -188,12 +291,29 @@ static void control(BHNetworkGame *game, ENetPeer *peer, const unsigned char *da
         game->players[slot].active = 1;
         roster(slot, user);
     }
+    else if (!game->hosting && size > 2 + LEVEL_HASH_SIZE && size <= 2 + LEVEL_HASH_SIZE + BH_LEVEL_NAME_CAPACITY &&
+             data[1] == LEVEL_OFFER && !game->local_player && !game->level.name[0])
+    {
+        const char *name = (const char *)data + 2 + LEVEL_HASH_SIZE;
+        if (!name[0] || memchr(name, 0, size - 2 - LEVEL_HASH_SIZE) != data + size - 1 ||
+            !bh_level_name_valid(name))
+        {
+            game->disconnected = 1;
+            return;
+        }
+        strcpy(game->level.name, name);
+        game->level.fingerprint = read_hash(data + 2);
+        game->handshake_deadline[0] = enet_time_get() + LEVEL_TIMEOUT_MS;
+        enet_peer_timeout(peer, 8, 15000, LEVEL_TIMEOUT_MS);
+    }
     else if (!game->hosting && (size == 3 || size == 4) && data[2] > 1 && data[2] <= BH_NETWORK_PLAYERS)
     {
-        if (data[1] == WELCOME && !game->local_player && (size == 3 || data[3] == POSE_PROPULSION))
+        if (data[1] == WELCOME && !game->local_player && (size == 3 || data[3] == POSE_PROPULSION) &&
+            (!game->level.name[0] || game->level_ready))
         {
             game->local_player = data[2];
             game->server_pose_propulsion = size == 4;
+            enet_peer_timeout(peer, 8, 2500, HANDSHAKE_TIMEOUT_MS);
         }
         else if (data[1] == LEAVE && size == 3 && game->players[data[2] - 1].active && data[2] != game->local_player)
         {
@@ -351,12 +471,14 @@ void bh_network_receive(BHNetworkGame *game, BHNetworkMessage receive, BHNetwork
         {
         case ENET_EVENT_TYPE_CONNECT:
             game->handshake_deadline[event.peer->incomingPeerID] = enet_time_get() + HANDSHAKE_TIMEOUT_MS;
+            game->level_handshake[event.peer->incomingPeerID] = 0;
             if (!game->hosting)
             {
-                unsigned char hello[HELLO_SIZE] = {0, HELLO, game->local_car};
-                memcpy(hello + 3, game->players[0].name, 32);
-                hello[HELLO_SIZE - 1] = POSE_PROPULSION;
-                if (enqueue(event.peer, CONTROL, hello, sizeof(hello)) < 0)
+                static const unsigned char capability[] = {0, LEVEL_SUPPORTED};
+                unsigned char hello[HELLO_SIZE];
+                hello_data(game, hello, HELLO);
+                if (enqueue(event.peer, CONTROL, capability, sizeof(capability)) < 0 ||
+                    enqueue(event.peer, CONTROL, hello, sizeof(hello)) < 0)
                     game->disconnected = 1;
             }
             else if (event.data != PROTOCOL)
@@ -365,7 +487,9 @@ void bh_network_receive(BHNetworkGame *game, BHNetworkMessage receive, BHNetwork
                 enet_peer_timeout(event.peer, 8, 2500, 8000);
             break;
         case ENET_EVENT_TYPE_RECEIVE:
-            if (event.packet->dataLength && !event.packet->data[0])
+        {
+            int welcomed = game->local_player != 0;
+            if (event.packet->dataLength >= 2 && !event.packet->data[0])
             {
                 if (event.channelID == CONTROL)
                     control(game, event.peer, event.packet->data, event.packet->dataLength, roster, user);
@@ -373,7 +497,15 @@ void bh_network_receive(BHNetworkGame *game, BHNetworkMessage receive, BHNetwork
             else
                 gameplay(game, &event, receive, user);
             enet_packet_destroy(event.packet);
+            /* Let the app select and bind the world before receiving the roster. */
+            if (game->disconnected || (!game->hosting && !welcomed &&
+                (game->local_player || (game->level.name[0] && !game->level_ready))))
+            {
+                enet_host_flush(game->host);
+                return;
+            }
             break;
+        }
         case ENET_EVENT_TYPE_DISCONNECT:
             if (!game->hosting)
                 game->disconnected = 1;

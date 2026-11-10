@@ -960,6 +960,13 @@ extern "C"
         quitting = false;
         held_keys.fill(0);
         message_user = user;
+        if (window && device)
+        {
+            // A new world owns new draw state, but can use the existing swapchain.
+            states.fill(0);
+            targets_fresh = true;
+            return 1;
+        }
 #ifdef __linux__
         enable_deck_keyboard();
 #endif
@@ -1172,7 +1179,7 @@ extern "C"
     void bh_sdl_error_dialog()
     {
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "BHunter",
-                                 report_text[0] ? report_text : "The game stopped before startup completed.", nullptr);
+                                 report_text[0] ? report_text : "The game stopped before startup completed.", window);
     }
     void bh_sdl_report_error(const char *details)
     {
@@ -1398,6 +1405,12 @@ extern "C"
             SDL_DestroyGPUDevice(device);
             device = nullptr;
         }
+        color_target = depth_target = nullptr;
+        vs = fs = nullptr;
+        sampler = nullptr;
+        applied_margin_x = applied_margin_y = -1;
+        applied_aspect = applied_mode = -1;
+        modes.clear();
         if (window)
         {
             SDL_ShowCursor();

@@ -271,7 +271,10 @@ typedef struct BHGameApp
     BHAttachmentContext attachment;
     BHHudWorldContext world_hud;
     BHHudFlatContext flat_hud;
-    BHNetworkGame network_game;
+    BHNetworkGame *network_game;
+    BHLevelIdentity level;
+    const char *local_level;
+    int reload;
     BHNetworkTransport transport;
     BHRemotePackets remote_packets;
     BHRemoteMessages remote_messages;
@@ -854,7 +857,6 @@ static int platform(BHGameApp *app)
 {
     DDSURFACEDESC surface;
     BHSoftwareRaster raster;
-    bh_game_settings_load(bh_sdl_settings_file(BH_GAME_SETTINGS_FILENAME));
     if (!bh_sdl_open(0, sdl_input, app))
         return failure(app, 3);
     strcpy(app->device_names[0].name, "SDL3 GPU");
@@ -1369,8 +1371,8 @@ static int source_owners(BHGameApp *app)
     app->player_tick.flash = &app->flash;
     app->player_tick.explosions = &app->explosions;
     app->player_tick.camera_yaw = &app->yaw;
-    app->transport.game = &app->network_game;
-    app->player_tick.game = &app->network_game;
+    app->transport.game = app->network_game;
+    app->player_tick.game = app->network_game;
     app->player_tick.network = &app->remote_messages;
     app->player_tick.scores = &app->network_scores;
     app->player_tick.navigation = &app->navigation;
@@ -2143,7 +2145,7 @@ static int network_bind(BHGameApp *app)
                                             .remote = app->remote,
                                             .head = &app->vehicle_lifetime.head,
                                             .count = &app->vehicle_lifetime.count,
-                                            .network = &app->network_game,
+                                            .network = app->network_game,
                                             .query = &app->remote_query,
                                             .render = &app->remote_render,
                                             .car_models = app->flyby.scenario_resources,
@@ -2213,17 +2215,10 @@ static void network_menu_status(BHGameApp *app, unsigned long row, const char *s
     }
 }
 
-static int network_start(BHGameApp *app, BHMenuRuntime *entry, const char *address, unsigned short port)
+static int network_attach(BHGameApp *app, BHMenuRuntime *entry)
 {
-    if (app->network_game.host || app->player_state.mode)
-        return 0;
-    if (!bh_network_open(&app->network_game, address, port, app->bootstrap.player_name, app->network_ship))
-        return 0;
     if (!network_bind(app))
-    {
-        bh_network_close(&app->network_game);
         return 0;
-    }
     app->network_entry = entry;
     app->network_cancel_pressed = 0;
     app->network_world = NULL;
@@ -2231,16 +2226,33 @@ static int network_start(BHGameApp *app, BHMenuRuntime *entry, const char *addre
     app->player_state.peers = 0;
     app->player_state.send_delay = 0;
     memset(app->network_latency, 0, sizeof(app->network_latency));
-    if (address)
+    if (!app->network_game->hosting)
     {
         entry->input_blocked = 1;
         bh_input_set_enabled(entry->input, &app->snapshot, 0);
+    }
+    return 1;
+}
+
+static int network_start(BHGameApp *app, BHMenuRuntime *entry, const char *address, unsigned short port)
+{
+    BHNetworkGame *game = app->network_game;
+    if (game->host || app->player_state.mode)
+        return 0;
+    if (!bh_network_open(game, address, port, app->bootstrap.player_name, app->network_ship))
+        return 0;
+    if (game->hosting)
+        game->level = app->level;
+    if (!network_attach(app, entry))
+    {
+        bh_network_close(game);
+        return 0;
     }
     if (app->network_log)
     {
         fprintf(app->network_log, "session_start source=%s role=%s address=%s port=%u car=%u\n",
                 entry == app->menu.network_menu ? "menu" : "command-line", address ? "join" : "host",
-                address ? address : "*", port, (unsigned int)app->network_game.local_car);
+                address ? address : "*", port, (unsigned int)app->network_game->local_car);
         fflush(app->network_log);
     }
     return 1;
@@ -2269,16 +2281,16 @@ static void network_menu_start(void *user, const char *address)
 static void network_roster(unsigned int slot, void *user)
 {
     BHGameApp *app = user;
-    bh_remote_roster(&app->remote_messages, slot, app->network_game.hosting);
+    bh_remote_roster(&app->remote_messages, slot, app->network_game->hosting);
     if (app->network_log)
         fprintf(app->network_log, "roster slot=%u active=%d spawns=%lu error=%d\n", slot,
-                app->network_game.players[slot].active, app->remote_packets.spawns, app->remote_messages.error);
+                app->network_game->players[slot].active, app->remote_packets.spawns, app->remote_messages.error);
 }
 
 static void network_message(void *bytes, unsigned long size, void *user)
 {
     BHGameApp *app = user;
-    if (app->network_game.hosting)
+    if (app->network_game->hosting)
         bh_remote_host_message(&app->remote_messages, bytes, size, BH_NETWORK_PACKET_CAPACITY);
     else
         bh_remote_client_message(&app->remote_messages, bytes, size, BH_NETWORK_PACKET_CAPACITY);
@@ -2296,17 +2308,17 @@ static void network_trace(BHGameApp *app)
             "frame=%lu mode=%ld slot=%ld pos=%.3f,%.3f,%.3f sent_pose=%lu pose=%lu sent_shot=%lu shot=%lu "
             "fire=%lu scores=%lu rejected=%lu remote_draw=%lu car=%u model=%lu\n",
             app->frame, app->player_state.mode, app->slot, (double)app->player->position.x,
-            (double)app->player->position.y, (double)app->player->position.z, app->network_game.sent[4],
-            app->network_game.received[4], app->network_game.sent[8], app->network_game.received[8],
-            app->remote_fire.shots, app->network_game.received[12], app->network_game.rejected,
-            app->remote_render.attempted, (unsigned int)app->network_game.local_car, model);
+            (double)app->player->position.y, (double)app->player->position.z, app->network_game->sent[4],
+            app->network_game->received[4], app->network_game->sent[8], app->network_game->received[8],
+            app->remote_fire.shots, app->network_game->received[12], app->network_game->rejected,
+            app->remote_render.attempted, (unsigned int)app->network_game->local_car, model);
     for (i = 0; i < 8; ++i)
         if (app->remote[i])
         {
             BHVec3 position;
             if (bh_remote_predict_position(app->remote[i], (unsigned short)app->player_state.tick, &position))
                 fprintf(log, "remote slot=%u pos=%.3f,%.3f,%.3f car=%u model=%lu\n", i, (double)position.x,
-                        (double)position.y, (double)position.z, (unsigned int)app->network_game.players[i].car,
+                        (double)position.y, (double)position.z, (unsigned int)app->network_game->players[i].car,
                         app->remote_render.models[i]);
         }
     fflush(log);
@@ -2314,17 +2326,29 @@ static void network_trace(BHGameApp *app)
 
 static int network_poll(BHGameApp *app)
 {
-    BHNetworkGame *game = &app->network_game;
+    BHNetworkGame *game = app->network_game;
     int cancelled = 0;
-    if (!game->host)
+    if (!game->host && !game->local_player)
         return 1;
-    bh_network_receive(game, network_message, network_roster, app);
+    if (app->network_playing || !game->local_player)
+        bh_network_receive(game, network_message, network_roster, app);
     if (!app->network_playing && !game->local_player)
     {
         int escape_down = app->snapshot.current[27] != 0;
         cancelled = app->network_cancel_pressed && !escape_down;
         app->network_cancel_pressed = escape_down;
         if (cancelled)
+            game->disconnected = 1;
+    }
+    if (!game->hosting && !game->disconnected && (game->level.name[0] || game->local_player))
+    {
+        if (strcmp(game->level.name, app->level.name) || game->level.fingerprint != app->level.fingerprint)
+        {
+            /* The ENet session survives while the world and its callbacks are rebuilt. */
+            app->reload = 1;
+            return 1;
+        }
+        if (game->level.name[0] && !game->level_ready && !bh_network_level_ready(game, app->level.fingerprint))
             game->disconnected = 1;
     }
     if (game->disconnected || (!app->player_state.mode && app->network_playing))
@@ -2337,6 +2361,11 @@ static int network_poll(BHGameApp *app)
         if (!bh_remote_clear(&app->remote_messages))
             return failure(app, 12);
         bh_network_close(game);
+        if (strcmp(app->level.name, app->local_level))
+        {
+            app->reload = 1;
+            return 1;
+        }
         app->slot = -1;
         app->network_playing = 0;
         app->network_entry = NULL;
@@ -2367,7 +2396,8 @@ static int network_poll(BHGameApp *app)
         BHMenuRuntime *entry = app->network_entry;
         app->slot = (long)game->local_player - 1;
         app->flyby.player_slot = &app->slot;
-        app->flyby.scenario = &app->network_ship;
+        if (game->host)
+            app->flyby.scenario = &app->network_ship;
         app->scores.local_index = app->slot;
         app->player_state.mode = game->hosting ? 2 : 3;
         app->network_scores.mode = app->player_state.mode;
@@ -2497,12 +2527,12 @@ static int manual_loop(BHGameApp *app)
             app->quit = 1;
         if (app->quit)
             break;
-        if (!network_poll(app))
+        if (!network_poll(app) || app->reload)
             break;
         focused = bh_sdl_active();
         if (!focused)
             app->focus_sample = 0;
-        if (!focused && !app->network_game.host)
+        if (!focused && !app->network_game->host)
         {
             clock.ready = 0;
             app->interpolation.ready = 0;
@@ -2679,7 +2709,6 @@ static void cleanup(BHGameApp *app)
         IDirectDrawSurface_Release(app->primary);
     if (app->draw)
         IDirectDraw_Release(app->draw);
-    bh_sdl_close();
     bh_vfile_shutdown();
     free(app->motion_bindings);
     free(app->world_responses);
@@ -2694,26 +2723,30 @@ static void cleanup(BHGameApp *app)
     free(app->physics_worlds);
     free(app->reset_nodes);
 }
-int bh_game_app_run(const char *directory, const char *settings_path, int profile,
-                    const char *network_address, unsigned short network_port)
+static int run_world(const char *directory, const char *settings_path, int profile, const char *network_address,
+                     unsigned short network_port, const char *local_level, int vehicle,
+                     BHNetworkGame *game, int first, int *reload)
 {
     BHGameApp *app;
     int result;
+    int joining = game->host && !game->hosting;
+    const char *level = joining ? game->level.name : local_level;
+    const char *level_error = NULL;
     BHTextureImage *loaded;
     app = (BHGameApp *)calloc(1, sizeof(*app));
     if (!app)
         return 2;
+    app->network_game = game;
+    app->network_ship = joining ? game->local_car : vehicle;
+    app->local_level = local_level;
+    strcpy(app->level.name, level);
+    app->bootstrap.custom_level = *level != 0;
     app->fullscreen = 1;
 #ifdef DEBUGGING
     app->perf_enabled = profile;
 #endif
     app->width = 640;
     app->height = 480;
-    if (!directory || strlen(directory) > 450 || !settings_path || strlen(settings_path) >= sizeof(app->config_path))
-    {
-        free(app);
-        return 2;
-    }
     sprintf(app->archive, "%s/Bhunter.bin", directory);
     strcpy(app->config_path, settings_path);
     if (!bh_math_environment_enter(&app->math))
@@ -2722,12 +2755,30 @@ int bh_game_app_run(const char *directory, const char *settings_path, int profil
         return 2;
     }
 
-    if (!platform(app) || !source_owners(app))
+    if (!platform(app))
+        goto done;
+    if (app->network_ship < 0)
+        app->network_ship = bh_game_settings_default_vehicle();
+    if (!source_owners(app))
         goto done;
     if (!bh_vfile_mount(app->archive))
     {
         failure(app, 2);
         goto done;
+    }
+    if (*level)
+    {
+        char path[512];
+        snprintf(path, sizeof(path), "%s/%s.bhlevel", directory, level);
+        if (!bh_vfile_mount_level(path, &app->level.fingerprint))
+            level_error = "Missing or invalid level package";
+        else if (joining && app->level.fingerprint != game->level.fingerprint)
+            level_error = "Level package differs from the host's copy";
+        if (level_error)
+        {
+            app->error = 9;
+            goto done;
+        }
     }
     if (!loading_begin(app))
         goto done;
@@ -2745,6 +2796,8 @@ int bh_game_app_run(const char *directory, const char *settings_path, int profil
     }
     if (!bh_game_bootstrap(&app->bootstrap))
     {
+        if (*level)
+            level_error = "Could not load level package";
         failure(app, app->error ? app->error : 10);
         goto done;
     }
@@ -2796,25 +2849,61 @@ int bh_game_app_run(const char *directory, const char *settings_path, int profil
     app->initialized = 1;
     app->slot = -1;
     if (getenv("BH_NETWORK_TRACE"))
-        app->network_log = fopen(bh_sdl_settings_file("network.log"), "w");
-    if (network_port && !network_start(app, app->menu.root, network_address, network_port))
+    {
+        app->network_log = fopen(bh_sdl_settings_file("network.log"), first ? "w" : "a");
+        if (app->network_log)
+        {
+            fprintf(app->network_log, "level=%s\n", *level ? level : "(stock)");
+            fflush(app->network_log);
+        }
+    }
+    if (joining)
+    {
+        if (!network_attach(app, app->menu.root))
+        {
+            failure(app, 12);
+            goto done;
+        }
+    }
+    else if (first && network_port && !network_start(app, app->menu.root, network_address, network_port))
     {
         bh_sdl_report_error("Could not open the multiplayer session. Check the IPv4 address and UDP port.");
         app->error = 2;
         goto done;
     }
+    else if (first && !network_port && *level)
+    {
+        /* Use the arena start and respawn rules for solo flight. */
+        game->hosting = 1;
+        game->local_player = game->players[0].id = 1;
+        game->players[0].active = 1;
+        if (!network_attach(app, app->menu.root))
+        {
+            failure(app, 12);
+            goto done;
+        }
+    }
     manual_loop(app);
 
 done:
     result = app->error;
-    if (result)
+    if (result && (!level_error || app->failure_function))
         report_failure(app);
-
-    if (app->network_game.host)
+    if (level_error)
     {
-        network_trace(app);
-        bh_remote_clear(&app->remote_messages);
-        bh_network_close(&app->network_game);
+        char message[256];
+        snprintf(message, sizeof(message), "%s: %s/%s.bhlevel", level_error, directory, level);
+        bh_sdl_report_error(message);
+    }
+
+    if (!app->reload && (game->host || game->local_player))
+    {
+        if (app->network_entry)
+        {
+            network_trace(app);
+            bh_remote_clear(&app->remote_messages);
+        }
+        bh_network_close(game);
     }
     if (app->network_log)
         fclose(app->network_log);
@@ -2824,6 +2913,36 @@ done:
     cleanup(app);
 
     bh_math_environment_leave(&app->math);
+    *reload = app->reload;
+    if (joining && level_error)
+    {
+        bh_sdl_error_dialog();
+        *reload = 1;
+        result = 0;
+    }
     free(app);
+    return result;
+}
+
+int bh_game_app_run(const char *directory, const char *settings_path, int profile,
+                    const char *network_address, unsigned short network_port, const char *level, int vehicle)
+{
+    BHNetworkGame game = {0};
+    char settings[512];
+    int first = 1, reload, result;
+    if (!directory || strlen(directory) > 450 || !settings_path || strlen(settings_path) >= sizeof(settings) ||
+        (level && (!bh_level_name_valid(level) || network_address)))
+        return 2;
+    strcpy(settings, settings_path);
+    bh_game_settings_load(bh_sdl_settings_file(BH_GAME_SETTINGS_FILENAME));
+    do
+    {
+        reload = 0;
+        result = run_world(directory, settings, profile, network_address, network_port, level ? level : "",
+                           vehicle, &game, first, &reload);
+        first = 0;
+    } while (!result && reload);
+    bh_sdl_close();
+    bh_network_close(&game);
     return result;
 }

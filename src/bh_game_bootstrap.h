@@ -51,6 +51,7 @@ struct BHGameBootstrap
     BHTextQueue *text;
     BHScriptBlocks *blocks;
     BHWorldLoad *world;
+    int custom_level;
     BHEditorInput *editor;
     BHNavigation *navigation;
     BHPlayerCreate *player;

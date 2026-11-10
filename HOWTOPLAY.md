@@ -101,6 +101,24 @@ export LD_LIBRARY_PATH="$PWD/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 
 To use a different UDP port, add the same `--port` value to both commands, such as `--port 27900`. The in-game menu uses the default port.
 
+Set `DefaultVehicle` under `[Multiplayer]` in `game-config.ini`. Use `0` for Barletta (the default), `1` for Stinger, or `2` for Viper. Add `--vehicle` with a value to either command to override the INI for that launch.
+
+### Custom levels
+
+Put the `.bhlevel` package in `GAME_DATA` beside `Bhunter.bin`. Pass the package name without its extension. Names can contain up to 48 ASCII letters, digits, hyphens, and underscores.
+
+```powershell
+.\BHunter-source.exe --level crossroads
+.\BHunter-source.exe --host --level crossroads
+.\BHunter-source.exe --join 192.168.1.50
+```
+
+The first command starts solo flight. The second hosts the arena. Every player needs the same package file in their own `GAME_DATA` folder. The host selects the level for everyone, including players who join through the Network menu. On Linux, use the same arguments with `./BHunter-source`.
+
+From a source checkout, run `python tools/build_test_arena.py` to generate `build/GAME_DATA/crossroads.bhlevel`. It includes the arena geometry, scripts, and five custom road textures. The remaining materials come from your installed `Bhunter.bin`.
+
+To package another level, put its placement file at `level.lev` and add its custom assets under `bsp/`, `textures/`, and `sound/` as needed. Include a `bsp/blocks.txt` for a custom block library and define starts with the block scripts. You can include a `level.pth` navigation cache. Run `python tools/pack_level.py path/to/level build/GAME_DATA/my-level.bhlevel` and share the resulting file.
+
 ## Original single-player cheats
 
 Type these during gameplay, without pressing Enter:

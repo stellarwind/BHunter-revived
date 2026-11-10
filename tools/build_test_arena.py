@@ -1,16 +1,12 @@
-"""Build Crossroads, an isolated BHunter deathmatch test arena.
-
-Run after building the game: python tools/build_test_arena.py
-The generated runtime is build/test-arena; play.cmd starts a local host.
-Only loose assets in that directory override the original game archive.
-"""
+"""Build the Crossroads deathmatch package for BHunter's GAME_DATA folder."""
 
 import argparse
-import json
-import shutil
 import struct
 from itertools import pairwise
 from pathlib import Path
+from tempfile import TemporaryDirectory
+
+from pack_level import pack_level
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -117,12 +113,6 @@ class Model:
                 for rows in (materials, vertices, edges, faces, nodes, leaves)
             )
         )
-        return {
-            "model": path.name,
-            "minimum": low,
-            "maximum": high,
-            "faces": len(faces),
-        }
 
 
 def solid(path, width, depth, height, wall):
@@ -142,7 +132,7 @@ def solid(path, width, depth, height, wall):
                 "P_ROOF2.PCX" if axis == 1 else wall,
                 16,
             )
-    return m.write(path, inward=False)
+    m.write(path, inward=False)
 
 
 def street(x, z):
@@ -197,32 +187,19 @@ def road_texture(folder, x, z, cache):
     return name
 
 
-def build(out, source):
-    if out == source or out in source.parents:
-        raise ValueError("The arena output must be separate from the game directory")
-    for required in (
-        "BHunter-source.exe",
-        "BHunterGPU.dll",
-        "SDL3.dll",
-        "GAME_DATA/Bhunter.bin",
-    ):
-        if not (source / required).is_file():
-            raise FileNotFoundError(
-                f"Build the game first: missing {source / required}"
-            )
-    out.mkdir(parents=True, exist_ok=True)
+def build_assets(out):
     bsp = out / "bsp"
     bsp.mkdir(exist_ok=True)
     textures = out / "textures"
     textures.mkdir(exist_ok=True)
     road_tiles = {}
-    placements, models, portals = [], [], []
+    placements = []
     names = []
 
     def register(name, position, flags=0, script="grid 1\ncollision on\nrender on\n"):
         if name not in names:
             names.append(name)
-            (bsp / name).with_suffix(".txt").write_text(script, encoding="ascii")
+            (bsp / name).with_suffix(".txt").write_text(script, encoding="ascii", newline="\n")
         placements.append((name, *position, flags))
 
     # Nine rooms share full-height portals. Buildings stay inside their owning room.
@@ -258,20 +235,9 @@ def build(out, source):
                     "PORTAL.GIF" if neighbor else "DT_OLD01.PCX",
                     1000 if neighbor else 20,
                 )
-                if neighbor:
-                    portals.append(
-                        {
-                            "cell": iz * 3 + ix,
-                            "axis": axis,
-                            "plane": plane,
-                            "range": [a, b, c, d],
-                            "normal": sign,
-                        }
-                    )
-            models.append(m.write(bsp / name, inward=True))
+            m.write(bsp / name, inward=True)
             register(name, (0, 0, 0))
 
-    buildings = []
     styles = ["DT_BIG01.PCX", "DT_OLD01.PCX", "F_GLAS01.PCX", "I_BWIN.PCX"]
     for i, (x, z, height) in enumerate(
         [
@@ -286,15 +252,12 @@ def build(out, source):
         ]
     ):
         name = f"dm_house{i}.bsp"
-        models.append(solid(bsp / name, 40, 40, height, styles[i % 4]))
+        solid(bsp / name, 40, 40, height, styles[i % 4])
         register(name, (x, 0, z))
-        buildings.append(
-            {"model": name, "center": [x, z], "size": [40, 40], "height": height}
-        )
     for i, (x, z) in enumerate([(-20, -20), (20, -20), (-20, 20), (20, 20)]):
         name = "dm_cover.bsp"
         if i == 0:
-            models.append(solid(bsp / name, 12, 12, 7, "I_BWALL1.PCX"))
+            solid(bsp / name, 12, 12, 7, "I_BWALL1.PCX")
         register(name, (x, 0, z))
 
     # Location scripts are executed by the stock loader, including the 8 multiplayer starts.
@@ -310,7 +273,7 @@ def build(out, source):
     ]
     for i, (x, y, z, yaw) in enumerate(spawns):
         name = f"dm_start{i}.bsp"
-        models.append(solid(bsp / name, 1, 1, 1, "I_BWALL2.PCX"))
+        solid(bsp / name, 1, 1, 1, "I_BWALL2.PCX")
         script = "grid 1\ncollision off\nrender off\n" + "".join(
             f"location {j} 20 0\n" for j in range(i, 32, 8)
         )
@@ -326,58 +289,20 @@ def build(out, source):
             iz = min(2, max(0, int((prop[3] + 120) // 80)))
             if iz * 3 + ix == cell:
                 placements.append(prop)
-    (bsp / "blocks.txt").write_text("\n".join(names + ["end"]) + "\n", encoding="ascii")
+    (bsp / "blocks.txt").write_text("\n".join(names + ["end"]) + "\n", encoding="ascii", newline="\n")
     lev = pack("I", len(placements)) + b"".join(
         name.encode().ljust(16, b"\0") + pack("4i", *pose) for name, *pose in placements
     )
-    (out / "test.lev").write_bytes(lev)
-    (out / "crossroads.lev").write_bytes(lev)
-    (out / "test.pth").write_bytes(pack("I", 0xFFFFFFFF))
-    manifest = {
-        "name": "Crossroads",
-        "size": [240, 240],
-        "flight_ceiling": 100,
-        "buildings": buildings,
-        "spawns": spawns,
-        "models": models,
-        "placements": placements,
-        "portals": portals,
-        "features": [
-            "central court with four low cover blocks",
-            "inner road loop and outer service road",
-            "eight buildings with varied rooftop heights",
-            "eight multiplayer spawn positions",
-        ],
-        "mode": "Deathmatch geometry and stock multiplayer spawns; no single-player mission or bots.",
-    }
-    (out / "arena.json").write_text(json.dumps(manifest, indent=2) + "\n")
-    # Own runtime and settings: the normal game directory is not altered.
-    for filename in ("BHunter-source.exe", "BHunterGPU.dll", "SDL3.dll"):
-        shutil.copy2(source / filename, out / filename)
-    if (source / "LICENCES").is_file():
-        shutil.copy2(source / "LICENCES", out / "LICENCES")
-    for folder in ("GAME_DATA", "MUSIC_DATA", "shaders"):
-        if (source / folder).exists():
-            shutil.copytree(source / folder, out / folder, dirs_exist_ok=True)
-    for filename in ("source-preview.cfg", "game-config.ini"):
-        if (source / filename).exists() and not (out / filename).exists():
-            shutil.copy2(source / filename, out / filename)
-    (out / "play.cmd").write_text(
-        '@echo off\ncd /d "%~dp0"\n"BHunter-source.exe" --asset-dir "%~dp0." --settings-dir "%~dp0." --host\n',
-        encoding="ascii",
-    )
-    (out / "join.cmd").write_text(
-        '@echo off\ncd /d "%~dp0"\nset "arena_host=%~1"\nif not defined arena_host set /p "arena_host=Host IP: "\n"BHunter-source.exe" --asset-dir "%~dp0." --settings-dir "%~dp0." --join "%arena_host%"\n',
-        encoding="ascii",
-    )
-    print(
-        f"Built {out}: {len(placements)} placements, {len(portals) // 2} portal links, 8 starts"
-    )
+    (out / "level.lev").write_bytes(lev)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output-dir", type=Path, default=ROOT / "build/test-arena")
-    parser.add_argument("--game-dir", type=Path, default=ROOT / "build")
+    parser.add_argument("--output-dir", type=Path, default=ROOT / "build/GAME_DATA")
     args = parser.parse_args()
-    build(args.output_dir.resolve(), args.game_dir.resolve())
+    output = args.output_dir / "crossroads.bhlevel"
+    with TemporaryDirectory() as workspace:
+        source = Path(workspace)
+        build_assets(source)
+        pack_level(source, output)
+    print(f"Built {output}")

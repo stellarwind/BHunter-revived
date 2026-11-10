@@ -2,6 +2,7 @@
 #define BH_VFILE_H
 
 #include <stdio.h>
+#include <stdint.h>
 
 /* Observed x86 layouts; analytical names, historical provenance unresolved. */
 typedef struct BHArchiveEntry
@@ -34,6 +35,9 @@ typedef enum BHVFileError
 } BHVFileError;
 
 int bh_vfile_mount(const char *path);                                                              /* 0047d270 */
+/* Mount a level package before loading assets. The fingerprint covers the whole package. */
+int bh_vfile_mount_level(const char *path, uint64_t *fingerprint);
+BHVFile *bh_vfile_open_level(const char *name);
 BHVFile *bh_vfile_open(const char *name, const char *mode);                                        /* 0047cbd0 */
 int bh_vfile_close(BHVFile *file);                                                                 /* 0047ce50 */
 int bh_vfile_eof(BHVFile *file);                                                                   /* 0047cea0 */

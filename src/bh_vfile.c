@@ -36,6 +36,9 @@ static struct
     BHPreloadedName *preloaded;
     FILE *archive;
     unsigned long count;
+    FILE *level;
+    BHArchiveEntry *level_directory;
+    unsigned long level_count;
     BHVFileProgress progress;
     BHVFileOwner *allocated;
     int callback_depth;
@@ -113,32 +116,12 @@ static void notify_access(unsigned long index)
     }
 }
 
-/* 0047d270, with validation and transactional ownership on malformed input. */
-int bh_vfile_mount(const char *path)
+static int read_directory(FILE *file, BHArchiveEntry **entries, unsigned long *entry_count)
 {
-    FILE *file;
     BHArchiveEntry *directory = NULL;
-    long *order = NULL;
     long length;
     unsigned long count, i, header_end;
     unsigned char bytes[256];
-    last_error = BH_VFILE_OK;
-    if (!path || !*path)
-    {
-        last_error = BH_VFILE_ARGUMENT;
-        return 0;
-    }
-    if (state.callback_depth || archive_busy())
-    {
-        last_error = BH_VFILE_BUSY;
-        return 0;
-    }
-    file = fopen(path, "rb");
-    if (!file)
-    {
-        last_error = BH_VFILE_IO;
-        return 0;
-    }
     if (fseek(file, 0, SEEK_END) || (length = ftell(file)) < 4 || fseek(file, 0, SEEK_SET))
     {
         last_error = BH_VFILE_FORMAT;
@@ -159,8 +142,7 @@ int bh_vfile_mount(const char *path)
     if (count)
     {
         directory = (BHArchiveEntry *)malloc(count * sizeof(*directory));
-        order = (long *)malloc(count * sizeof(*order));
-        if (!directory || !order)
+        if (!directory)
         {
             last_error = BH_VFILE_MEMORY;
             goto failed;
@@ -187,7 +169,51 @@ int bh_vfile_mount(const char *path)
             last_error = BH_VFILE_FORMAT;
             goto failed;
         }
-        order[i] = -1;
+    }
+    *entries = directory;
+    *entry_count = count;
+    return 1;
+failed:
+    free(directory);
+    return 0;
+}
+
+/* 0047d270, with validation and transactional ownership on malformed input. */
+int bh_vfile_mount(const char *path)
+{
+    FILE *file;
+    BHArchiveEntry *directory = NULL;
+    long *order = NULL;
+    unsigned long count, i;
+    last_error = BH_VFILE_OK;
+    if (!path || !*path)
+    {
+        last_error = BH_VFILE_ARGUMENT;
+        return 0;
+    }
+    if (state.callback_depth || archive_busy())
+    {
+        last_error = BH_VFILE_BUSY;
+        return 0;
+    }
+    file = fopen(path, "rb");
+    if (!file)
+    {
+        last_error = BH_VFILE_IO;
+        return 0;
+    }
+    if (!read_directory(file, &directory, &count))
+        goto failed;
+    if (count)
+    {
+        order = (long *)malloc(count * sizeof(*order));
+        if (!order)
+        {
+            last_error = BH_VFILE_MEMORY;
+            goto failed;
+        }
+        for (i = 0; i < count; ++i)
+            order[i] = -1;
     }
     if (state.archive)
         fclose(state.archive);
@@ -203,6 +229,94 @@ failed:
     free(order);
     fclose(file);
     return 0;
+}
+
+static const BHArchiveEntry *level_entry(const BHArchiveEntry *entries, unsigned long count, const char *name)
+{
+    unsigned long i;
+    for (i = 0; i < count; ++i)
+        if (!_stricmp(name, entries[i].name))
+            return entries + i;
+    return NULL;
+}
+
+int bh_vfile_mount_level(const char *path, uint64_t *fingerprint)
+{
+    FILE *file;
+    BHArchiveEntry *entries = NULL;
+    unsigned long count;
+    unsigned char bytes[8192];
+    uint64_t hash = UINT64_C(14695981039346656037);
+    size_t length, i;
+    last_error = BH_VFILE_OK;
+    if (!path || !fingerprint || state.level || state.allocated || state.callback_depth)
+    {
+        last_error = BH_VFILE_ARGUMENT;
+        return 0;
+    }
+    file = fopen(path, "rb");
+    if (!file)
+    {
+        last_error = BH_VFILE_IO;
+        return 0;
+    }
+    if (!read_directory(file, &entries, &count))
+        goto failed;
+    if (!level_entry(entries, count, "level.lev"))
+    {
+        last_error = BH_VFILE_FORMAT;
+        goto failed;
+    }
+    if (fseek(file, 0, SEEK_SET))
+    {
+        last_error = BH_VFILE_IO;
+        goto failed;
+    }
+    while ((length = fread(bytes, 1, sizeof(bytes), file)) != 0)
+        for (i = 0; i < length; ++i)
+            hash = (hash ^ bytes[i]) * UINT64_C(1099511628211);
+    if (ferror(file))
+    {
+        last_error = BH_VFILE_IO;
+        goto failed;
+    }
+    state.level = file;
+    state.level_directory = entries;
+    state.level_count = count;
+    *fingerprint = hash;
+    return 1;
+failed:
+    free(entries);
+    fclose(file);
+    return 0;
+}
+
+static BHVFile *open_entry(FILE *file, const BHArchiveEntry *entry)
+{
+    BHVFile *handle = new_handle();
+    if (!handle)
+        return NULL;
+    handle->file = file;
+    handle->archive = 1;
+    handle->begin = (long)entry->begin;
+    handle->end = (long)entry->end;
+    handle->position = handle->begin;
+    /* Original pushes (start,0,FILE): an ignored invalid-origin seek. */
+    fseek(file, 0, (int)handle->begin);
+    return handle;
+}
+
+BHVFile *bh_vfile_open_level(const char *name)
+{
+    const BHArchiveEntry *entry;
+    if (!name || !*name)
+    {
+        last_error = BH_VFILE_ARGUMENT;
+        return NULL;
+    }
+    entry = level_entry(state.level_directory, state.level_count, name);
+    last_error = entry ? BH_VFILE_OK : BH_VFILE_NOT_FOUND;
+    return entry ? open_entry(state.level, entry) : NULL;
 }
 
 static FILE *open_loose(const char *name, const char *mode)
@@ -232,6 +346,7 @@ BHVFile *bh_vfile_open(const char *name, const char *mode)
     BHPreloadedName *cached;
     BHVFile *handle;
     FILE *loose;
+    const BHArchiveEntry *entry;
     unsigned long i;
     last_error = BH_VFILE_OK;
     if (!name || !*name || !mode || !*mode)
@@ -248,7 +363,10 @@ BHVFile *bh_vfile_open(const char *name, const char *mode)
             return cached->handle;
         }
     }
-    loose = open_loose(name, mode);
+    if (mode[0] == 'r' && (entry = level_entry(state.level_directory, state.level_count, name)))
+        return open_entry(state.level, entry);
+    /* A custom world gets its assets from the fingerprinted package or the base game. */
+    loose = mode[0] == 'r' && state.level ? NULL : open_loose(name, mode);
     if (loose)
     {
         if (mode[0] == 'r')
@@ -274,17 +392,7 @@ BHVFile *bh_vfile_open(const char *name, const char *mode)
             if (!_stricmp(name, state.directory[i].name))
             {
                 notify_access(i);
-                handle = new_handle();
-                if (!handle)
-                    return NULL;
-                handle->file = state.archive;
-                handle->archive = 1;
-                handle->begin = (long)state.directory[i].begin;
-                handle->end = (long)state.directory[i].end;
-                handle->position = handle->begin;
-                /* Original pushes (start,0,FILE): an ignored invalid-origin seek. */
-                fseek(state.archive, 0, (int)handle->begin);
-                return handle;
+                return open_entry(state.archive, state.directory + i);
             }
     }
     last_error = BH_VFILE_NOT_FOUND;
@@ -641,6 +749,9 @@ void bh_vfile_shutdown(void)
     }
     if (state.archive)
         fclose(state.archive);
+    if (state.level)
+        fclose(state.level);
+    free(state.level_directory);
     free(state.directory);
     free(state.access_order);
     memset(&state, 0, sizeof(state));

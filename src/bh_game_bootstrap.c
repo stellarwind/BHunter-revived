@@ -472,14 +472,15 @@ int bh_game_bootstrap(BHGameBootstrap *c)
     c->player->search = c->collision_path.search;
     if (bh_script_blocks_load(c->blocks, "bsp\\blocks.txt"))
     {
-        if (!bh_world_load(c->world, "test.lev"))
+        if (!bh_world_load(c->world, c->custom_level ? "level.lev" : "test.lev") ||
+            (c->custom_level && (!c->world->editor->world->count || c->world->skipped)))
             return fail(c, 9);
         first = (c->world->editor->world->count ? &c->world->editor->world->nodes[0]->placement.geometry : 0);
         if (first)
         {
             if (!c->editor || !c->navigation || !bh_editor_input_setup(c->editor))
                 return fail(c, 1);
-            file = bh_vfile_open("test.pth", "rb");
+            file = c->custom_level ? bh_vfile_open_level("level.pth") : bh_vfile_open("test.pth", "rb");
             index = bh_navigation_build(c->navigation, first, c->world->editor->world->count, file);
             if (file)
                 bh_vfile_close(file);
@@ -487,6 +488,8 @@ int bh_game_bootstrap(BHGameBootstrap *c)
                 return fail(c, 9);
         }
     }
+    else if (c->custom_level)
+        return fail(c, 9);
     if (c->compose && !c->compose(c, 1, c->compose_user))
         return fail(c, 11);
     bh_vfile_preload("bsp\\hun_lod1.BSP", "rb");

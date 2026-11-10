@@ -11,7 +11,7 @@ namespace
 {
 constexpr int default_fov = 60, min_fov = 35, max_fov = 100;
 const BHGameSettings defaults = {
-    SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 960, false, false, 0, 0, 0, default_fov, {}, false};
+    SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 960, false, false, 0, 0, 0, default_fov, {}, 0, false};
 std::string settings_path = BH_GAME_SETTINGS_FILENAME;
 
 void read_setting_int(const char *value, int &setting)
@@ -69,8 +69,13 @@ int read_setting(void *user, const char *section, const char *key, const char *v
         else if (!SDL_strcasecmp(key, "FOV"))
             read_setting_int(value, settings.field_of_view);
     }
-    else if (!SDL_strcasecmp(section, "Multiplayer") && !SDL_strcasecmp(key, "PlayerName"))
-        settings.player_name = value;
+    else if (!SDL_strcasecmp(section, "Multiplayer"))
+    {
+        if (!SDL_strcasecmp(key, "PlayerName"))
+            settings.player_name = value;
+        else if (!SDL_strcasecmp(key, "DefaultVehicle"))
+            read_setting_int(value, settings.default_vehicle);
+    }
     else if (!SDL_strcasecmp(section, "Gameplay") && !SDL_strcasecmp(key, "UnlockAllLevels"))
         read_setting_bool(value, settings.unlock_all_levels);
     return 1;
@@ -90,11 +95,18 @@ extern "C"
         settings.field_of_view = std::clamp(settings.field_of_view, min_fov, max_fov);
         settings.window_width = std::clamp(settings.window_width, 640, 3840);
         settings.window_height = std::clamp(settings.window_height, 480, 2160);
+        if (settings.default_vehicle < 0 || settings.default_vehicle > 2)
+            settings.default_vehicle = defaults.default_vehicle;
     }
 
     const char *bh_game_settings_player_name(void)
     {
         return bh_game_settings.player_name.c_str();
+    }
+
+    int bh_game_settings_default_vehicle(void)
+    {
+        return bh_game_settings.default_vehicle;
     }
 
     int bh_game_settings_unlock_all_levels(void)
@@ -136,13 +148,15 @@ void bh_game_settings_save()
                 "[Multiplayer]\n"
                 "; Leave blank to use the computer name. The game uses up to 20 bytes.\n"
                 "PlayerName=%s\n"
+                "; Use 0 for Barletta, 1 for Stinger, or 2 for Viper.\n"
+                "DefaultVehicle=%d\n"
                 "\n"
                 "[Gameplay]\n"
                 "UnlockAllLevels=%s\n",
                 settings.borderless ? "Borderless" : "Windowed", bh_game_aspects[settings.aspect].label,
                 settings.render_width, settings.render_height, min_fov, max_fov, default_fov, settings.field_of_view,
                 settings.window_x, settings.window_y, settings.window_width, settings.window_height,
-                settings.maximized ? "true" : "false", settings.player_name.c_str(),
+                settings.maximized ? "true" : "false", settings.player_name.c_str(), settings.default_vehicle,
                 settings.unlock_all_levels ? "true" : "false");
     if (fclose(f) == 0 && written >= 0)
         SDL_RenamePath(temporary.c_str(), settings_path.c_str());
