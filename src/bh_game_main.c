@@ -39,7 +39,7 @@ int main(int argc, char **argv)
             const char *number = argv[++i];
             if (number[0] < '0' || number[0] >= '0' + BH_NETWORK_CARS || number[1])
             {
-                fprintf(stderr, "--vehicle must be 0, 1, or 2.\n");
+                fprintf(stderr, "Invalid --vehicle value.\n");
                 return 2;
             }
             vehicle = number[0] - '0';

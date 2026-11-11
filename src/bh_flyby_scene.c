@@ -189,7 +189,7 @@ static int handoff(BHFlybyScene *s, BHEntity *camera)
     BHPlayerInputList *list;
     BHPlayerInputState decoded;
     long scenario, count, slot;
-    unsigned long index;
+    unsigned long index, model;
     struct
     {
         long event, value, message;
@@ -229,12 +229,13 @@ static int handoff(BHFlybyScene *s, BHEntity *camera)
     scenario = *s->scenario;
     if (scenario >= 0 && scenario < 3)
     {
+        model = s->scenario_model_override ? s->scenario_model_override : s->scenario_resources[scenario];
         if (!reset_player(s, (unsigned long)(0x14 + scenario)))
             return 0;
         player = *s->current_player;
         if (!player)
             return fail(s, BH_FLYBY_SCENE_BINDING);
-        write_long(player, 0x21c, (long)s->scenario_resources[scenario]);
+        write_long(player, 0x21c, (long)model);
         *s->mission_identity = scenario == 0 ? 0x00415530UL : scenario == 1 ? 0x00416120UL : 0x00416eb0UL;
         *s->force_control = scenario == 0   ? bh_player_force_control_b
                             : scenario == 1 ? bh_player_force_control_c
