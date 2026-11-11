@@ -73,8 +73,6 @@ int bh_input_devices_start(BHInputDevices *d)
     memset(s->axes, 0, sizeof(s->axes));
     memset(&s->gamepad, 0, sizeof(s->gamepad));
     s->previous_gamepad_buttons = 0;
-    c->last_recenter = bh_sdl_warp(160, 100);
-    c->delta[0] = c->delta[1] = 0;
     s->pair4[0] = s->pair4[1] = 0;
     s->pair3[0] = s->pair3[1] = 512;
     s->mouse_axes[0] = s->mouse_axes[1] = 0;

@@ -1204,7 +1204,8 @@ static int source_owners(BHGameApp *app)
         !bh_input_devices_bind(&app->devices, &app->collection, 0))
         return failure(app, 6);
     app->profile = app->config.profiles;
-    app->collection.disable_mouse_motion = 1;
+    app->collection.mouse_sensitivity = bh_game_settings_mouse_sensitivity();
+    app->collection.mouse_invert_y = bh_game_settings_mouse_invert_y();
     if (!bh_input_devices_start(&app->devices))
         return failure(app, 6);
     if (!bh_entities_init(&app->pool, 0x2580, 0) || !bh_sound_queue_init(&app->sound, 0, 0, 0) ||
@@ -2542,6 +2543,8 @@ static int manual_loop(BHGameApp *app)
         if (!network_poll(app) || app->reload)
             break;
         focused = bh_sdl_active();
+        bh_sdl_set_relative_mouse(focused && app->player_state.mode && !app->player_state.paused &&
+                                  !app->player_state.confirmation && !app->player_state.ending);
         if (!focused)
             app->focus_sample = 0;
         if (!focused && !app->network_game->host)
@@ -2561,11 +2564,6 @@ static int manual_loop(BHGameApp *app)
 #ifdef DEBUGGING
             app->perf_previous = 0;
 #endif
-            if (!app->collection.disable_mouse_motion && !bh_sdl_warp(160, 100))
-                return failure(app, 12);
-            memset(app->snapshot.mouse_axes, 0, sizeof(app->snapshot.mouse_axes));
-            memset(app->snapshot.pair4, 0, sizeof(app->snapshot.pair4));
-            app->collection.delta[0] = app->collection.delta[1] = 0;
             app->focus_sample = 1;
         }
         ticks = bh_simulation_advance(&clock, bh_sdl_seconds());

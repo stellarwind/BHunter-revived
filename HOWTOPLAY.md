@@ -2,7 +2,7 @@
 
 Choose **Game**, a vehicle, then training or an unlocked episode. Follow the incoming messages and radar to find your objectives.
 
-The keyboard and mouse controls below are the default **Standard** profile bindings. Change them under **Setup → Input configuration → Edit**; a custom save may use different keys. Mouse steering is disabled in this restoration, but mouse buttons work. Gamepad controls work alongside the selected keyboard profile.
+The keyboard and mouse controls below are the default **Standard** profile bindings. Change them under **Setup → Input configuration → Edit**. A custom save may use different bindings. Gamepad controls work alongside the selected profile.
 
 ## Flying and fighting
 
@@ -11,11 +11,15 @@ The keyboard and mouse controls below are the default **Standard** profile bindi
 | A / Z | Accelerate / brake |
 | Left / Right arrows | Turn left / right |
 | Down / Up arrows | Pitch up / down (inverted flight controls) |
+| Move mouse left / right | Turn left / right |
+| Move mouse up / down | Pitch up / down |
 | Ctrl or left mouse button | Fire primary weapon |
 | Space or right mouse button | Fire secondary weapon |
 | Tab | Review previous incoming messages |
 | Esc | Ask to abandon the mission; pauses single-player |
 | Y / N | Confirm abandonment / resume; Esc also cancels the prompt |
+
+Set `Sensitivity` and `InvertY` under `[Mouse]` in `game-config.ini` next to the executable, then restart the game.
 
 ## Weapon selection
 

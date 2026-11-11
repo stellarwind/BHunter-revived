@@ -410,6 +410,7 @@ void input_event(BHPlatformEventType type, unsigned key, bool down, bool repeat 
 }
 void lose_focus()
 {
+    bh_sdl_set_relative_mouse(0);
     held_keys.fill(0);
     input_event(BH_PLATFORM_FOCUS, 0, false);
 }
@@ -1099,28 +1100,18 @@ extern "C"
         return window && (SDL_GetWindowFlags(window) & SDL_WINDOW_INPUT_FOCUS) &&
                !(SDL_GetWindowFlags(window) & SDL_WINDOW_MINIMIZED);
     }
-    int bh_sdl_mouse(int *x, int *y)
+    void bh_sdl_set_relative_mouse(int enabled)
     {
-        int w, h;
-        float mx, my;
-        if (!window || !x || !y || !SDL_GetWindowSize(window, &w, &h))
-            return 0;
-        SDL_GetMouseState(&mx, &my);
-        const float density = SDL_GetWindowPixelDensity(window);
-        *x = (int)((mx - w / 2) * density) + 160;
-        *y = (int)((my - h / 2) * density) + 100;
-        return 1;
+        const bool relative = enabled && bh_sdl_active();
+        if (window && SDL_GetWindowRelativeMouseMode(window) != relative &&
+            SDL_SetWindowRelativeMouseMode(window, relative))
+            SDL_GetRelativeMouseState(nullptr, nullptr);
     }
-    int bh_sdl_warp(int x, int y)
+    void bh_sdl_relative_mouse(float *x, float *y)
     {
-        int w, h;
-        if (!window || !SDL_GetWindowSize(window, &w, &h))
-            return 0;
-        const float density = SDL_GetWindowPixelDensity(window);
-        if (density <= 0)
-            return 0;
-        SDL_WarpMouseInWindow(window, (x - 160) / density + w / 2, (y - 100) / density + h / 2);
-        return 1;
+        *x = *y = 0;
+        if (bh_sdl_active() && SDL_GetWindowRelativeMouseMode(window))
+            SDL_GetRelativeMouseState(x, y);
     }
     unsigned bh_sdl_key_character(unsigned key)
     {

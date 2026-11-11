@@ -6,16 +6,15 @@ typedef enum BHInputCollectionError
     BH_INPUT_COLLECTION_OK,
     BH_INPUT_COLLECTION_ARGUMENT,
     BH_INPUT_COLLECTION_TOPOLOGY,
-    BH_INPUT_COLLECTION_DEVICE,
     BH_INPUT_COLLECTION_EVALUATE
 } BHInputCollectionError;
 typedef struct BHInputCollection
 {
     BHInputSnapshot *snapshot;
     BHPlayerInputOwner *lists;
-    long delta[2];
-    int last_cursor, last_recenter;
     BHInputCollectionError error;
+    float mouse_sensitivity;
+    int mouse_invert_y;
     int disable_mouse_motion; /* explicit source preference; buttons remain live */
 } BHInputCollection;
 int bh_input_collection_init(BHInputCollection *, BHInputSnapshot *, BHPlayerInputOwner *);

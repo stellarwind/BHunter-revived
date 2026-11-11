@@ -14,6 +14,8 @@ struct BHGameSettings
     std::string player_name;
     int default_vehicle;
     bool unlock_all_levels;
+    float mouse_sensitivity;
+    bool mouse_invert_y;
 };
 
 struct BHGameAspect
@@ -33,6 +35,8 @@ extern "C"
     const char *bh_game_settings_player_name(void);
     int bh_game_settings_default_vehicle(void);
     int bh_game_settings_unlock_all_levels(void);
+    float bh_game_settings_mouse_sensitivity(void);
+    int bh_game_settings_mouse_invert_y(void);
 #ifdef __cplusplus
 }
 #endif

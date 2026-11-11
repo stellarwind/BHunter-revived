@@ -1,8 +1,10 @@
 #include "bh_game_settings.h"
+#include "bh_network_game.h"
 #include "../third_party/inih/ini.h"
 #include <SDL3/SDL.h>
 #include <algorithm>
 #include <charconv>
+#include <cmath>
 #include <cstdio>
 #include <cstring>
 #include <iterator>
@@ -11,7 +13,8 @@ namespace
 {
 constexpr int default_fov = 60, min_fov = 35, max_fov = 100;
 const BHGameSettings defaults = {
-    SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 960, false, false, 0, 0, 0, default_fov, {}, 0, false};
+    SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 960, false, false, 0, 0, 0, default_fov, {}, 0, false,
+    1.0f, false};
 std::string settings_path = BH_GAME_SETTINGS_FILENAME;
 
 void read_setting_int(const char *value, int &setting)
@@ -78,6 +81,19 @@ int read_setting(void *user, const char *section, const char *key, const char *v
     }
     else if (!SDL_strcasecmp(section, "Gameplay") && !SDL_strcasecmp(key, "UnlockAllLevels"))
         read_setting_bool(value, settings.unlock_all_levels);
+    else if (!SDL_strcasecmp(section, "Mouse"))
+    {
+        if (!SDL_strcasecmp(key, "Sensitivity"))
+        {
+            float sensitivity;
+            const char *end = value + strlen(value);
+            const auto parsed = std::from_chars(value, end, sensitivity);
+            if (parsed.ec == std::errc{} && parsed.ptr == end && std::isfinite(sensitivity))
+                settings.mouse_sensitivity = std::clamp(sensitivity, 0.1f, 3.0f);
+        }
+        else if (!SDL_strcasecmp(key, "InvertY"))
+            read_setting_bool(value, settings.mouse_invert_y);
+    }
     return 1;
 }
 } // namespace
@@ -95,7 +111,7 @@ extern "C"
         settings.field_of_view = std::clamp(settings.field_of_view, min_fov, max_fov);
         settings.window_width = std::clamp(settings.window_width, 640, 3840);
         settings.window_height = std::clamp(settings.window_height, 480, 2160);
-        if (settings.default_vehicle < 0 || settings.default_vehicle > 2)
+        if (settings.default_vehicle < 0 || settings.default_vehicle >= BH_NETWORK_CARS)
             settings.default_vehicle = defaults.default_vehicle;
     }
 
@@ -113,12 +129,24 @@ extern "C"
     {
         return bh_game_settings.unlock_all_levels;
     }
+
+    float bh_game_settings_mouse_sensitivity(void)
+    {
+        return bh_game_settings.mouse_sensitivity;
+    }
+
+    int bh_game_settings_mouse_invert_y(void)
+    {
+        return bh_game_settings.mouse_invert_y;
+    }
 }
 
 void bh_game_settings_save()
 {
     const auto &settings = bh_game_settings;
     const auto temporary = settings_path + ".tmp";
+    char sensitivity[32]{};
+    std::to_chars(sensitivity, sensitivity + sizeof(sensitivity) - 1, settings.mouse_sensitivity);
     FILE *f = fopen(temporary.c_str(), "w");
     if (!f)
         return;
@@ -129,35 +157,37 @@ void bh_game_settings_save()
                 "Mode=%s\n"
                 "; Choose 4:3, 16:9, 16:10, or 21:9.\n"
                 "AspectRatio=%s\n"
-                "; Render size in Borderless mode. Windowed mode follows the window size.\n"
                 "RenderWidth=%d\n"
                 "RenderHeight=%d\n"
                 "; Base horizontal FOV in degrees (4:3). Min %d, max %d, default %d. Restart to apply.\n"
                 "FOV=%d\n"
                 "\n"
                 "[Window]\n"
-                "; Desktop position of the restored window.\n"
                 "X=%d\n"
                 "Y=%d\n"
-                "; Width and height of the restored window.\n"
                 "Width=%d\n"
                 "Height=%d\n"
-                "; Use true to maximize the window, or false to use the saved size.\n"
                 "Maximized=%s\n"
                 "\n"
                 "[Multiplayer]\n"
-                "; Leave blank to use the computer name. The game uses up to 20 bytes.\n"
+                "; Leave blank to use the computer name.\n"
                 "PlayerName=%s\n"
-                "; Use 0 for Barletta, 1 for Stinger, or 2 for Viper.\n"
+                "; Use 0 for Barletta, 1 for Stinger, 2 for Viper, or 3 for B-mobile.\n"
                 "DefaultVehicle=%d\n"
                 "\n"
                 "[Gameplay]\n"
-                "UnlockAllLevels=%s\n",
+                "UnlockAllLevels=%s\n"
+                "\n"
+                "[Mouse]\n"
+                "; Mouse sensitivity multiplier, Min .1, default is 1.0, Max 3.0\n"
+                "Sensitivity=%s\n"
+                "InvertY=%s\n",
                 settings.borderless ? "Borderless" : "Windowed", bh_game_aspects[settings.aspect].label,
                 settings.render_width, settings.render_height, min_fov, max_fov, default_fov, settings.field_of_view,
                 settings.window_x, settings.window_y, settings.window_width, settings.window_height,
                 settings.maximized ? "true" : "false", settings.player_name.c_str(), settings.default_vehicle,
-                settings.unlock_all_levels ? "true" : "false");
+                settings.unlock_all_levels ? "true" : "false", sensitivity,
+                settings.mouse_invert_y ? "true" : "false");
     if (fclose(f) == 0 && written >= 0)
         SDL_RenamePath(temporary.c_str(), settings_path.c_str());
 }

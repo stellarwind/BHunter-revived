@@ -1,8 +1,6 @@
 #include "bh_input_collection.h"
 #include "bh_platform.h"
-#include "bh_round.h"
 #include <string.h>
-#include <float.h>
 static int fail(BHInputCollection *c, BHInputCollectionError error)
 {
     if (c)
@@ -17,6 +15,7 @@ int bh_input_collection_init(BHInputCollection *c, BHInputSnapshot *s, BHPlayerI
     memset(s, 0, sizeof(*s));
     c->snapshot = s;
     c->lists = lists;
+    c->mouse_sensitivity = 1.0f;
     s->pair3[0] = s->pair3[1] = 512;
     return 1;
 }
@@ -24,9 +23,8 @@ int bh_input_collect(BHInputCollection *c, unsigned long *changed)
 {
     BHInputSnapshot *s;
     BHPlayerInputList *list, *slow, *fast;
-    int x, y;
-    unsigned long i, count = 0, bits;
-    double filtered;
+    float motion[2] = {0, 0};
+    unsigned long i, count = 0;
     if (!c || !changed || !c->snapshot || !c->lists || c->snapshot->history_head > 31)
         return fail(c, BH_INPUT_COLLECTION_ARGUMENT);
     s = c->snapshot;
@@ -40,40 +38,18 @@ int bh_input_collect(BHInputCollection *c, unsigned long *changed)
     }
     c->error = BH_INPUT_COLLECTION_OK;
     bh_sdl_gamepad(&s->gamepad);
-    if (c->disable_mouse_motion)
+    if (!c->disable_mouse_motion)
+        bh_sdl_relative_mouse(motion, motion + 1);
+    for (i = 0; i < 2; ++i)
     {
-        /* Clear retained filter state before binding evaluation. Polling or
-           recentering is unnecessary when every mouse motion channel is off. */
-        for (i = 0; i < 2; ++i)
-        {
-            c->delta[i] = 0;
-            s->mouse_axes[i] = 0;
-            s->pair3[i] = 512;
-            s->pair4[i] = 0;
-        }
-    }
-    else
-    {
-        c->last_cursor = bh_sdl_mouse(&x, &y);
-        if (!c->last_cursor)
-            return fail(c, BH_INPUT_COLLECTION_DEVICE);
-        c->last_recenter = bh_sdl_warp(160, 100);
-        bits = (unsigned long)x - 160UL;
-        memcpy(c->delta, &bits, 4);
-        bits = (unsigned long)y - 100UL;
-        memcpy(c->delta + 1, &bits, 4);
-        for (i = 0; i < 2; ++i)
-        {
-            unsigned short accumulated = (unsigned short)(s->pair3[i] + (unsigned long)c->delta[i]);
-            s->pair3[i] = accumulated > 1023 ? 1023 : accumulated;
-            s->pair4[i] = (unsigned short)c->delta[i];
-            filtered = ((double)s->mouse_axes[i] - (double)c->delta[i] * -0.002) * .99;
-            bh_round_float(s->mouse_axes + i, filtered);
-            if (!(filtered >= -1))
-                s->mouse_axes[i] = -1;
-            else if (s->mouse_axes[i] > 1)
-                s->mouse_axes[i] = 1;
-        }
+        /* Consume only this tick's movement. The evaluator clamps the combined
+           mouse and gamepad axis and applies any keyboard override. */
+        float axis = motion[i] * .01f * c->mouse_sensitivity;
+        /* SDL Y grows downward. Bindings receive up-positive mouse motion by default. */
+        if (i == 1 && !c->mouse_invert_y)
+            axis = -axis;
+        s->mouse_axes[i] = axis < -1 ? -1 : axis > 1 ? 1 : axis;
+        s->pair4[i] = (unsigned short)(long)(motion[i] < -32768 ? -32768 : motion[i] > 32767 ? 32767 : motion[i]);
     }
     for (list = c->lists->first; list; list = list->next)
     {

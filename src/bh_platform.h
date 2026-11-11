@@ -31,8 +31,8 @@ extern "C"
     int bh_sdl_open(int hidden, BHPlatformInput, void *);
     int bh_sdl_poll(void);
     int bh_sdl_active(void);
-    int bh_sdl_mouse(int *x, int *y);
-    int bh_sdl_warp(int x, int y);
+    void bh_sdl_set_relative_mouse(int enabled);
+    void bh_sdl_relative_mouse(float *x, float *y);
     unsigned bh_sdl_key_character(unsigned key);
     int bh_sdl_text_begin(BHPlatformTextInput, void *);
     void bh_sdl_text_end(void);
