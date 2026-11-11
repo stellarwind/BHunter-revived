@@ -96,7 +96,7 @@ int bh_network_scores_death(BHNetworkScores *c, long attacker, BHEntity *victim)
         c->error = 2;
         return 0;
     }
-    c->send_result = bh_network_packet_send(c->transport, &c->writer, 1, 0);
+    c->send_result = bh_network_packet_send(c->transport, &c->writer, BH_NETWORK_SERVER, 0);
     ++c->reports;
     return 1;
 }

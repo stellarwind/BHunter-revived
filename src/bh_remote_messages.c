@@ -112,13 +112,7 @@ static int announce(BHRemoteMessages *messages, unsigned long slot, unsigned lon
 {
     unsigned char payload[BH_NETWORK_ROSTER_BYTES];
     BHNetworkPlayer *player = messages->packets->network->players + slot;
-    unsigned long j;
-    memcpy(payload, &player->id, 4);
-    payload[4] = (unsigned char)slot;
-    for (j = 0; j < 19 && player->name[j]; ++j)
-        payload[5 + j] = (unsigned char)player->name[j];
-    memset(payload + 5 + j, 0, 20 - j);
-    payload[BH_NETWORK_ROSTER_BYTES - 1] = player->car;
+    bh_network_roster_payload(player, payload);
     return send_packet(messages, 3, (unsigned short)*messages->packets->simulation_tick, payload, sizeof(payload), to, 1);
 }
 static void query(BHEntity *entity, void *packet)
@@ -538,7 +532,7 @@ static int clock(BHRemoteMessages *messages, int host)
     *messages->peers = peers > 3 ? 3 : peers;
     *packets->simulation_tick = (*packets->simulation_tick & 0xffff0000UL) | value;
     slot = (unsigned char)*packets->local_slot;
-    if (!send_packet(messages, 5, value, &slot, 1, 1, 0))
+    if (!send_packet(messages, 5, value, &slot, 1, BH_NETWORK_SERVER, 0))
         return 0;
     return done(messages);
 }

@@ -15,8 +15,10 @@ enum
     LEVEL_OFFER = 4,
     LEVEL_READY = 5,
     LEVEL_SUPPORTED = 6,
+    DEDICATED_SUPPORTED = 7,
     HELLO_SIZE = 35,
     POSE_PROPULSION = 1,
+    DEDICATED_SERVER = 2,
     LEVEL_CAN_LOAD = 1,
     LEVEL_WAS_OFFERED = 2,
     LEVEL_HASH_SIZE = 8,
@@ -100,14 +102,20 @@ static int send_to(BHNetworkGame *game, const unsigned char *wire, size_t size, 
     int result = 0;
     if (!game->hosting)
         return game->server ? enqueue_gameplay(game->server, channel, wire, size, game->server_pose_propulsion) : -1;
-    for (i = 1; i < BH_NETWORK_PLAYERS; ++i)
+    for (i = game->dedicated ? 0 : 1; i < BH_NETWORK_PLAYERS; ++i)
     {
         BHNetworkPlayer *player = game->players + i;
-        if (player->active && player->id != wire[0] && (!wire[1] || player->id == wire[1]))
+        if (player->active && player->peer && player->peer->state == ENET_PEER_STATE_CONNECTED &&
+            player->id != wire[0] && (!wire[1] || player->id == wire[1]))
             if (enqueue_gameplay(player->peer, channel, wire, size, player->pose_propulsion) < 0)
                 result = -1;
     }
     return result;
+}
+
+static unsigned char server_id(const BHNetworkGame *game)
+{
+    return game->dedicated ? BH_NETWORK_SERVER : 1;
 }
 
 int bh_network_send(BHNetworkTransport *transport, unsigned long recipient, const void *bytes, unsigned long size,
@@ -115,15 +123,16 @@ int bh_network_send(BHNetworkTransport *transport, unsigned long recipient, cons
 {
     BHNetworkGame *game = transport ? transport->game : NULL;
     unsigned char wire[2 + BH_NETWORK_PACKET_CAPACITY], type;
-    if (!game || !game->host || !game->local_player)
+    if (!game || !game->host || (!game->hosting && !game->local_player))
         return 0;
-    if (!bytes || size < 8 || size >= BH_NETWORK_PACKET_CAPACITY || recipient > BH_NETWORK_PLAYERS)
+    if (!bytes || size < 8 || size >= BH_NETWORK_PACKET_CAPACITY ||
+        (recipient > BH_NETWORK_PLAYERS && (recipient != BH_NETWORK_SERVER || game->hosting)))
         return -1;
     type = *(const unsigned char *)bytes;
     if (type < 3 || type > BH_NETWORK_DEATH_EFFECT)
         return -1;
-    wire[0] = (unsigned char)game->local_player;
-    wire[1] = (unsigned char)recipient;
+    wire[0] = game->hosting ? server_id(game) : (unsigned char)game->local_player;
+    wire[1] = recipient == BH_NETWORK_SERVER ? server_id(game) : (unsigned char)recipient;
     memcpy(wire + 2, bytes, size);
     /* Damage, scoring and death effects are one-shot events. Keep them reliable. */
     if (type == 7 || type == 11 || type == 12 || type == BH_NETWORK_DEATH_EFFECT)
@@ -138,21 +147,25 @@ int bh_network_packet_send(BHNetworkTransport *transport, BHPacketWriter *writer
     return bh_packet_finish(writer, &size) ? bh_network_send(transport, recipient, writer->data, size, reliable) : -1;
 }
 
-int bh_network_open(BHNetworkGame *game, const char *address, unsigned short port, const char *name, unsigned int car)
+static int open_game(BHNetworkGame *game, const char *address, unsigned short port, const char *name,
+                     unsigned int car, int dedicated)
 {
     ENetAddress endpoint = {ENET_HOST_ANY, port};
-    if (!port || !name || car >= BH_NETWORK_CARS || enet_initialize() != 0)
+    if (!port || (!dedicated && (!name || car >= BH_NETWORK_CARS)) || enet_initialize() != 0)
         return 0;
     memset(game, 0, sizeof(*game));
     game->initialized = 1;
     game->local_car = (unsigned char)car;
     game->hosting = address == NULL;
-    game->host = enet_host_create(address ? NULL : &endpoint, address ? 1 : BH_NETWORK_PLAYERS - 1, 2, 0, 0);
+    game->dedicated = dedicated;
+    game->host = enet_host_create(address ? NULL : &endpoint,
+                                  address ? 1 : BH_NETWORK_PLAYERS - !dedicated, 2, 0, 0);
     if (!game->host)
         goto failed;
     game->host->maximumPacketSize = BH_NETWORK_PACKET_CAPACITY + 2;
     game->host->maximumWaitingData = 64 * 1024;
-    strncpy(game->players[0].name, name, sizeof(game->players[0].name) - 1);
+    if (!dedicated)
+        strncpy(game->players[0].name, name, sizeof(game->players[0].name) - 1);
     if (address)
     {
         if (enet_address_set_host_ip(&endpoint, address) < 0)
@@ -162,7 +175,7 @@ int bh_network_open(BHNetworkGame *game, const char *address, unsigned short por
             goto failed;
         enet_peer_timeout(game->server, 8, 2500, 8000);
     }
-    else
+    else if (!dedicated)
     {
         game->local_player = game->players[0].id = 1;
         game->players[0].car = game->local_car;
@@ -172,6 +185,22 @@ int bh_network_open(BHNetworkGame *game, const char *address, unsigned short por
 failed:
     bh_network_close(game);
     return 0;
+}
+
+int bh_network_open(BHNetworkGame *game, const char *address, unsigned short port, const char *name, unsigned int car)
+{
+    return open_game(game, address, port, name, car, 0);
+}
+
+int bh_network_open_dedicated(BHNetworkGame *game, unsigned short port, const BHLevelIdentity *level)
+{
+    if (level && level->name[0] && !bh_level_name_valid(level->name))
+        return 0;
+    if (!open_game(game, NULL, port, NULL, 0, 1))
+        return 0;
+    if (level)
+        game->level = *level;
+    return 1;
 }
 
 void bh_network_close(BHNetworkGame *game)
@@ -192,7 +221,7 @@ void bh_network_close(BHNetworkGame *game)
 static unsigned int peer_slot(const BHNetworkGame *game, const ENetPeer *peer)
 {
     unsigned int slot;
-    for (slot = 1; slot < BH_NETWORK_PLAYERS; ++slot)
+    for (slot = game->dedicated ? 0 : 1; slot < BH_NETWORK_PLAYERS; ++slot)
         if (game->players[slot].peer == peer)
             return slot;
     return BH_NETWORK_PLAYERS;
@@ -241,15 +270,22 @@ static void control(BHNetworkGame *game, ENetPeer *peer, const unsigned char *da
                     void *user)
 {
     unsigned int slot;
-    if (game->hosting && size == 2 && data[1] == LEVEL_SUPPORTED &&
+    if (game->hosting && size == 2 && data[1] == DEDICATED_SUPPORTED)
+        game->dedicated_supported[peer->incomingPeerID] = 1;
+    else if (game->hosting && size == 2 && data[1] == LEVEL_SUPPORTED &&
         game->level_handshake[peer->incomingPeerID] == 0)
         game->level_handshake[peer->incomingPeerID] = LEVEL_CAN_LOAD;
     else if (game->hosting && peer_slot(game, peer) == BH_NETWORK_PLAYERS &&
         ((size == HELLO_SIZE && data[1] == HELLO) || (size == LEVEL_READY_SIZE && data[1] == LEVEL_READY)) &&
         data[2] < BH_NETWORK_CARS)
     {
-        unsigned char welcome[] = {0, WELCOME, 0, POSE_PROPULSION};
+        unsigned char welcome[] = {0, WELCOME, 0, 0};
         int pose_propulsion = data[HELLO_SIZE - 1] == POSE_PROPULSION;
+        if (game->dedicated && !game->dedicated_supported[peer->incomingPeerID])
+        {
+            enet_peer_disconnect(peer, 0);
+            return;
+        }
         if (game->level.name[0])
         {
             if (data[1] == HELLO)
@@ -266,12 +302,13 @@ static void control(BHNetworkGame *game, ENetPeer *peer, const unsigned char *da
         }
         else if (data[1] != HELLO)
             return;
-        for (slot = 1; slot < BH_NETWORK_PLAYERS && game->players[slot].active; ++slot)
+        for (slot = game->dedicated ? 0 : 1; slot < BH_NETWORK_PLAYERS && game->players[slot].active; ++slot)
             ;
         if (slot == BH_NETWORK_PLAYERS)
             return;
         welcome[2] = (unsigned char)(slot + 1);
-        if (enqueue(peer, CONTROL, welcome, pose_propulsion ? sizeof(welcome) : 3) < 0)
+        welcome[3] = (pose_propulsion ? POSE_PROPULSION : 0) | (game->dedicated ? DEDICATED_SERVER : 0);
+        if (enqueue(peer, CONTROL, welcome, welcome[3] ? sizeof(welcome) : 3) < 0)
             return;
         enet_peer_timeout(peer, 8, 2500, HANDSHAKE_TIMEOUT_MS);
         memset(game->players + slot, 0, sizeof(game->players[slot]));
@@ -306,16 +343,20 @@ static void control(BHNetworkGame *game, ENetPeer *peer, const unsigned char *da
         game->handshake_deadline[0] = enet_time_get() + LEVEL_TIMEOUT_MS;
         enet_peer_timeout(peer, 8, 15000, LEVEL_TIMEOUT_MS);
     }
-    else if (!game->hosting && (size == 3 || size == 4) && data[2] > 1 && data[2] <= BH_NETWORK_PLAYERS)
+    else if (!game->hosting && (size == 3 || size == 4) && data[2] && data[2] <= BH_NETWORK_PLAYERS)
     {
-        if (data[1] == WELCOME && !game->local_player && (size == 3 || data[3] == POSE_PROPULSION) &&
+        unsigned char features = size == 4 ? data[3] : 0;
+        if (data[1] == WELCOME && !game->local_player && !(features & ~(POSE_PROPULSION | DEDICATED_SERVER)) &&
+            (data[2] > 1 || (features & DEDICATED_SERVER)) &&
             (!game->level.name[0] || game->level_ready))
         {
             game->local_player = data[2];
-            game->server_pose_propulsion = size == 4;
+            game->server_pose_propulsion = (features & POSE_PROPULSION) != 0;
+            game->dedicated = (features & DEDICATED_SERVER) != 0;
             enet_peer_timeout(peer, 8, 2500, HANDSHAKE_TIMEOUT_MS);
         }
-        else if (data[1] == LEAVE && size == 3 && game->players[data[2] - 1].active && data[2] != game->local_player)
+        else if (data[1] == LEAVE && size == 3 && (data[2] > 1 || game->dedicated) &&
+                 game->players[data[2] - 1].active && data[2] != game->local_player)
         {
             game->players[data[2] - 1].active = 0;
             roster(data[2] - 1, user);
@@ -327,10 +368,24 @@ static int packet_valid(const unsigned char *wire, size_t size, unsigned char *b
 {
     BHPacketReader reader;
     BHPacketStats stats = {0, 0};
-    if (size < 10 || size > 265 || wire[3] != size - 10 || wire[1] > BH_NETWORK_PLAYERS)
+    if (size < 10 || size > 265 || wire[3] != size - 10 || wire[1] > BH_NETWORK_SERVER)
         return 0;
     memcpy(bytes, wire + 2, size - 2);
     return bh_packet_receive(&reader, bytes, (unsigned long)size - 2, BH_NETWORK_PACKET_CAPACITY, &stats) == 1;
+}
+
+void bh_network_roster_payload(const BHNetworkPlayer *player, unsigned char payload[BH_NETWORK_ROSTER_BYTES])
+{
+    unsigned int length = 0;
+    memset(payload, 0, BH_NETWORK_ROSTER_BYTES);
+    payload[0] = (unsigned char)player->id;
+    payload[4] = (unsigned char)(player->id - 1);
+    while (length < 19 && player->name[length])
+    {
+        payload[5 + length] = (unsigned char)player->name[length];
+        ++length;
+    }
+    payload[BH_NETWORK_ROSTER_BYTES - 1] = player->car;
 }
 
 static int new_score_report(BHNetworkPlayer *player, const unsigned char *bytes)
@@ -375,29 +430,34 @@ static void gameplay(BHNetworkGame *game, const ENetEvent *event, BHNetworkMessa
     const unsigned char *wire = event->packet->data;
     size_t size = event->packet->dataLength;
     unsigned char bytes[BH_NETWORK_PACKET_CAPACITY], type, from, to;
-    if (!game->local_player || !packet_valid(wire, size, bytes))
+    unsigned char server = server_id(game);
+    if ((!game->hosting && !game->local_player) || !packet_valid(wire, size, bytes))
         goto reject;
     from = wire[0];
     to = wire[1];
     type = bytes[0];
-    if (type < 3 || type > BH_NETWORK_DEATH_EFFECT || !from || from > BH_NETWORK_PLAYERS)
+    if (type < 3 || type > BH_NETWORK_DEATH_EFFECT || !from || from > BH_NETWORK_SERVER ||
+        (to > BH_NETWORK_PLAYERS && to != server))
         goto reject;
     if (game->hosting)
     {
-        if (peer_slot(game, event->peer) + 1 != from || type == 3 || type == 10 || type == 12 ||
-            ((type == 5 || type == 11) && to != 1))
+        if (from > BH_NETWORK_PLAYERS || peer_slot(game, event->peer) + 1 != from ||
+            type == 3 || type == 10 || type == 12 || ((type == 5 || type == 11) && to != server) ||
+            (to == BH_NETWORK_SERVER && type != 5 && type != 11))
             goto reject;
     }
     else if (to && to != game->local_player)
         goto reject;
+    if (from > BH_NETWORK_PLAYERS && (from != server || type == 4 || type == 8 || type == 11))
+        goto reject;
     if (type == 4 &&
         ((size != POSE_WIRE_SIZE && size != PROPULSION_POSE_WIRE_SIZE) || to || bytes[8] + 1 != from || bytes[9]))
         goto reject;
-    if (type == 5 && (game->hosting ? size != 11 || bytes[8] + 1 != from : size != 27 || from != 1))
+    if (type == 5 && (game->hosting ? size != 11 || bytes[8] + 1 != from : size != 27 || from != server))
         goto reject;
     if (type == 11 && (size != 12 || bytes[8] + 1 != from || (bytes[9] > 7 && bytes[9] != 255)))
         goto reject;
-    if (type == 12 && (size != 26 || from != 1))
+    if ((type == 10 && from != server) || (type == 12 && (size != 26 || from != server)))
         goto reject;
     if (type == 8 &&
         (size != 15 || to || bytes[8] + 1 != from || !bh_network_shot_pattern_valid(bytes[11], bytes[9], bytes[10])))
@@ -408,7 +468,7 @@ static void gameplay(BHNetworkGame *game, const ENetEvent *event, BHNetworkMessa
     if (type == 3)
     {
         unsigned int slot, car;
-        if (from != 1 || event->channelID != CONTROL || size != 10 + BH_NETWORK_ROSTER_BYTES)
+        if (from != server || event->channelID != CONTROL || size != 10 + BH_NETWORK_ROSTER_BYTES)
             goto reject;
         slot = bytes[12];
         car = bytes[8 + BH_NETWORK_ROSTER_BYTES - 1];
@@ -421,13 +481,13 @@ static void gameplay(BHNetworkGame *game, const ENetEvent *event, BHNetworkMessa
         memcpy(game->players[slot].name, bytes + 13, 19);
         game->players[slot].name[19] = 0;
     }
-    else if (!game->players[from - 1].active)
+    else if (from <= BH_NETWORK_PLAYERS && !game->players[from - 1].active)
         goto reject;
     if (game->hosting && type == 11 && !new_score_report(game->players + from - 1, bytes))
         goto reject;
-    if (game->hosting && to != 1)
+    if (game->hosting && to != server)
         send_to(game, wire, size, event->channelID);
-    if (!to || to == game->local_player)
+    if (!to || to == (game->hosting ? server : game->local_player))
     {
         ++game->received[type];
         receive(bytes, (unsigned long)size - 2, user);
@@ -472,12 +532,15 @@ void bh_network_receive(BHNetworkGame *game, BHNetworkMessage receive, BHNetwork
         case ENET_EVENT_TYPE_CONNECT:
             game->handshake_deadline[event.peer->incomingPeerID] = enet_time_get() + HANDSHAKE_TIMEOUT_MS;
             game->level_handshake[event.peer->incomingPeerID] = 0;
+            game->dedicated_supported[event.peer->incomingPeerID] = 0;
             if (!game->hosting)
             {
                 static const unsigned char capability[] = {0, LEVEL_SUPPORTED};
+                static const unsigned char dedicated[] = {0, DEDICATED_SUPPORTED};
                 unsigned char hello[HELLO_SIZE];
                 hello_data(game, hello, HELLO);
                 if (enqueue(event.peer, CONTROL, capability, sizeof(capability)) < 0 ||
+                    enqueue(event.peer, CONTROL, dedicated, sizeof(dedicated)) < 0 ||
                     enqueue(event.peer, CONTROL, hello, sizeof(hello)) < 0)
                     game->disconnected = 1;
             }

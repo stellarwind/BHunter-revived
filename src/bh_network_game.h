@@ -46,22 +46,25 @@ struct BHNetworkGame
 {
     struct _ENetHost *host;
     struct _ENetPeer *server;
-    BHNetworkPlayer players[8];
-    uint32_t handshake_deadline[BH_NETWORK_PLAYERS - 1]; /* Indexed by ENet peer, before roster assignment. */
-    unsigned char level_handshake[BH_NETWORK_PLAYERS - 1];
+    BHNetworkPlayer players[BH_NETWORK_PLAYERS];
+    uint32_t handshake_deadline[BH_NETWORK_PLAYERS]; /* Indexed by ENet peer, before roster assignment. */
+    unsigned char level_handshake[BH_NETWORK_PLAYERS];
+    unsigned char dedicated_supported[BH_NETWORK_PLAYERS]; /* Indexed by ENet peer. */
     BHLevelIdentity level;
     unsigned long local_player;
     unsigned char local_car, server_pose_propulsion;
     unsigned long sent[BH_NETWORK_DEATH_EFFECT + 1], received[BH_NETWORK_DEATH_EFFECT + 1], rejected;
-    int initialized, hosting, disconnected, welcome_timed_out, level_ready;
+    int initialized, hosting, dedicated, disconnected, welcome_timed_out, level_ready;
 };
 
 typedef void (*BHNetworkMessage)(void *, unsigned long, void *);
 typedef void (*BHNetworkRoster)(unsigned int slot, void *);
 
 int bh_network_shot_pattern_valid(unsigned int type, unsigned int count, unsigned int spacing);
+void bh_network_roster_payload(const BHNetworkPlayer *, unsigned char payload[BH_NETWORK_ROSTER_BYTES]);
 int bh_level_name_valid(const char *name);
 int bh_network_open(BHNetworkGame *, const char *address, unsigned short port, const char *name, unsigned int car);
+int bh_network_open_dedicated(BHNetworkGame *, unsigned short port, const BHLevelIdentity *level);
 int bh_network_level_ready(BHNetworkGame *, uint64_t fingerprint);
 void bh_network_close(BHNetworkGame *);
 void bh_network_receive(BHNetworkGame *, BHNetworkMessage, BHNetworkRoster, void *);
