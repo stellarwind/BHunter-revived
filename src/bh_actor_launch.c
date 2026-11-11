@@ -134,9 +134,14 @@ int bh_actor_launch_receive(BHActorLaunchContext *ctx, void *bytes, unsigned lon
     tick = (unsigned short)ctx->reader.data[2] | ((unsigned short)ctx->reader.data[3] << 8);
     saved = bh_actor_route_now(ctx->actors->response->damage->route);
     bh_actor_route_set_tick(ctx->actors->response->damage->route, tick);
-    entity = bh_actor_construct_position(ctx->actors, &position, (unsigned long)(long)(signed char)p[6],
+    if (world->owner)
+        entity = bh_actor_construct_room(ctx->actors, world->owner, (unsigned long)(long)(signed char)p[6],
                                          (long)(signed char)p[7] * 5000, (float)(signed char)p[8],
                                          (unsigned long)(long)tag, seed);
+    else
+        entity = bh_actor_construct_position(ctx->actors, &position, (unsigned long)(long)(signed char)p[6],
+                                             (long)(signed char)p[7] * 5000, (float)(signed char)p[8],
+                                             (unsigned long)(long)tag, seed);
     bh_actor_route_set_tick(ctx->actors->response->damage->route, saved);
     ++ctx->received;
     if (!entity)

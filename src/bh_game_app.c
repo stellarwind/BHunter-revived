@@ -2313,12 +2313,13 @@ static void network_trace(BHGameApp *app)
     memcpy(&model, (char *)app->player + 0x21c, sizeof(model));
     fprintf(log,
             "frame=%lu mode=%ld slot=%ld pos=%.3f,%.3f,%.3f sent_pose=%lu pose=%lu sent_shot=%lu shot=%lu "
-            "fire=%lu scores=%lu rejected=%lu remote_draw=%lu car=%u model=%lu\n",
+            "fire=%lu scores=%lu rejected=%lu remote_draw=%lu car=%u model=%lu traffic=%lu/%d\n",
             app->frame, app->player_state.mode, app->slot, (double)app->player->position.x,
             (double)app->player->position.y, (double)app->player->position.z, app->network_game->sent[4],
             app->network_game->received[4], app->network_game->sent[8], app->network_game->received[8],
             app->remote_fire.shots, app->network_game->received[12], app->network_game->rejected,
-            app->remote_render.attempted, (unsigned int)app->network_game->local_car, model);
+            app->remote_render.attempted, (unsigned int)app->network_game->local_car, model,
+            app->actor_launch.received, app->actor_launch.error);
     for (i = 0; i < 8; ++i)
         if (app->remote[i])
         {

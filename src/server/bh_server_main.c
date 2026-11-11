@@ -1,4 +1,5 @@
 #include "bh_server_session.h"
+#include "bh_server_traffic.h"
 #include "../bh_vfile.h"
 #include <enet/enet.h>
 #include <signal.h>
@@ -75,6 +76,7 @@ static void usage(FILE *stream)
 int main(int argc, char **argv)
 {
     BHServerSession session;
+    BHServerTraffic traffic;
     BHLevelIdentity level = {0};
     const char *level_name = NULL, *asset_dir = "GAME_DATA";
     unsigned long port = BH_NETWORK_PORT;
@@ -130,9 +132,16 @@ int main(int argc, char **argv)
         }
         strcpy(level.name, level_name);
     }
-    if (!bh_server_session_open(&session, (unsigned short)port, &level, NULL, NULL, NULL))
+    if (!bh_server_traffic_load(&traffic, &session, &level))
+    {
+        fputs("Could not read traffic launchers from the level package.\n", stderr);
+        bh_vfile_shutdown();
+        return 2;
+    }
+    if (!bh_server_session_open(&session, (unsigned short)port, &level, NULL, bh_server_traffic_roster, &traffic))
     {
         fprintf(stderr, "Could not open dedicated session on UDP port %lu.\n", port);
+        bh_server_traffic_close(&traffic);
         bh_vfile_shutdown();
         return 2;
     }
@@ -143,6 +152,7 @@ int main(int argc, char **argv)
     fflush(stdout);
     result = run(&session);
     bh_server_session_close(&session);
+    bh_server_traffic_close(&traffic);
     bh_vfile_shutdown();
     if (!result)
         fputs("The dedicated session stopped after a network or clock error.\n", stderr);

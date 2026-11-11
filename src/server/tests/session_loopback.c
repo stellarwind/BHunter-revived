@@ -1,13 +1,16 @@
 #include "../bh_server_session.h"
+#include "../bh_server_traffic.h"
+#include "../../bh_vfile.h"
 #include <enet/enet.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 static BHServerSession server;
+static BHServerTraffic traffic;
 static BHNetworkGame clients[BH_NETWORK_PLAYERS + 1];
 static unsigned long departures, world_packets;
-static const BHLevelIdentity level = {"crossroads", UINT64_C(0x123456789abcdef0)};
+static BHLevelIdentity level = {"stadium", 0};
 
 static void check(int condition, const char *description)
 {
@@ -28,9 +31,11 @@ static void world_message(void *bytes, unsigned long size, void *user)
 
 static void client_message(void *bytes, unsigned long size, void *user)
 {
-    (void)bytes;
-    (void)size;
-    (void)user;
+    if (*(unsigned char *)bytes == 10)
+    {
+        const BHNetworkGame *client = user;
+        check(client && client->received[5] && size == 25, "traffic follows the initial clock");
+    }
 }
 
 static void client_roster(unsigned int slot, void *user)
@@ -45,7 +50,7 @@ static void pump_clients(void)
     for (unsigned int i = 0; i <= BH_NETWORK_PLAYERS; ++i)
     {
         BHNetworkGame *client = clients + i;
-        bh_network_receive(client, client_message, client_roster, NULL);
+        bh_network_receive(client, client_message, client_roster, client);
         if (client->level.name[0] && !client->level_ready)
         {
             check(!strcmp(client->level.name, level.name), "host-selected level name");
@@ -97,7 +102,7 @@ static unsigned short test_dedicated(void)
     unsigned long score_packets, damage_packets;
 
     for (port = 27960; port < 27976; ++port)
-        if (bh_server_session_open(&server, port, &level, world_message, NULL, NULL))
+        if (bh_server_session_open(&server, port, &level, world_message, bh_server_traffic_roster, &traffic))
             break;
     check(port < 27976, "open dedicated session");
     check(!server.game.local_player && !server.game.players[0].active, "dedicated host owns no player");
@@ -111,6 +116,8 @@ static unsigned short test_dedicated(void)
     {
         wait_for(&clients[i].received[3], BH_NETWORK_PLAYERS, "complete eight-player roster");
         wait_for(&clients[i].received[12], BH_NETWORK_PLAYERS - i, "score snapshots follow the roster");
+        wait_for(&clients[i].received[5], 1, "initial server clock reaches each client");
+        wait_for(&clients[i].received[10], 10, "Stadium launches ten traffic actors for each client");
     }
 
     check(bh_network_open(clients + BH_NETWORK_PLAYERS, "127.0.0.1", port, "overflow", 0), "open ninth client");
@@ -136,7 +143,7 @@ static unsigned short test_dedicated(void)
     check(!clients[7].received[11], "score report stays with the server");
     for (unsigned int i = 0; i < 64; ++i)
         check(bh_server_session_tick(&server), "advance session clock");
-    wait_for(&clients[0].received[5], 1, "dedicated clock reaches player one");
+    wait_for(&clients[0].received[5], 2, "periodic dedicated clock reaches player one");
     send_packet(&clients[0], 5, BH_NETWORK_SERVER, clock_reply, sizeof(clock_reply));
     wait_for(&server.game.received[5], 1, "player one's clock reply reaches server");
 
@@ -145,6 +152,7 @@ static unsigned short test_dedicated(void)
     check(bh_network_open(&clients[0], "127.0.0.1", port, "replacement", 0), "open replacement client");
     wait_for(&clients[0].local_player, 1, "vacated first slot can be reused");
     wait_for(&clients[0].received[3], BH_NETWORK_PLAYERS, "replacement gets complete roster");
+    wait_for(&clients[0].received[10], 10, "replacement gets Stadium traffic");
     check(!server.scores[0], "slot reuse resets the score");
 
     for (unsigned int i = 0; i < BH_NETWORK_PLAYERS; ++i)
@@ -196,10 +204,14 @@ static void test_listen(unsigned short port)
     bh_network_close(&host);
 }
 
-int main(void)
+int main(int argc, char **argv)
 {
+    check(argc == 2 && bh_vfile_mount_level(argv[1], &level.fingerprint), "mount the Stadium package");
+    check(bh_server_traffic_load(&traffic, &server, &level), "load Stadium traffic");
     test_listen(test_dedicated());
-    puts("Dedicated networking passed: eight players, level handshake, routing, scoring, clock, and slot reuse.");
+    bh_server_traffic_close(&traffic);
+    bh_vfile_shutdown();
+    puts("Dedicated networking passed: eight players, level handshake, Stadium traffic, routing, scoring, clock, and slot reuse.");
     puts("Listen host regression passed.");
     return 0;
 }

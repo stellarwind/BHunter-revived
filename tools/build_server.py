@@ -44,7 +44,7 @@ def main():
             [
                 cc, "-std=gnu99", "-O2", "-flto", "-fno-strict-aliasing", *architecture,
                 "-I", str(enet / "include"),
-                "src/server/bh_server_main.c", "src/server/bh_server_session.c",
+                "src/server/bh_server_main.c", "src/server/bh_server_session.c", "src/server/bh_server_traffic.c",
                 "src/bh_network_game.c", "src/bh_network_codec.c", "src/bh_vfile.c",
                 *(str(enet / f"{name}.c") for name in (
                     "callbacks", "compress", "host", "list", "packet", "peer", "protocol", platform,

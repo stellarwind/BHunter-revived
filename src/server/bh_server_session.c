@@ -27,6 +27,29 @@ static void send_scores(BHServerSession *session)
     send_packet(session, 12, payload, sizeof(payload), 0, 1);
 }
 
+static void send_clock(BHServerSession *session, unsigned long recipient, int reliable)
+{
+    unsigned char payload[BH_NETWORK_PLAYERS * 2 + 1];
+    double sum = 0;
+    unsigned int players = 0;
+    for (unsigned int i = 0; i < BH_NETWORK_PLAYERS; ++i)
+    {
+        int tick = (int)((int16_t)session->tick + (double)session->latency[i]);
+        put_word(payload + 2 * i, (uint16_t)tick);
+        if (session->game.players[i].active)
+        {
+            sum += session->latency[i];
+            ++players;
+        }
+    }
+    if (players)
+    {
+        double delay = sum * 1.4 / players;
+        payload[BH_NETWORK_PLAYERS * 2] = delay < 0 ? 0 : delay > 3 ? 3 : (unsigned char)delay;
+        send_packet(session, 5, payload, sizeof(payload), recipient, reliable);
+    }
+}
+
 static void roster(unsigned int slot, void *user)
 {
     BHServerSession *session = user;
@@ -45,6 +68,8 @@ static void roster(unsigned int slot, void *user)
                 send_packet(session, 3, payload, sizeof(payload), player->id, 1);
             }
         send_scores(session);
+        if (session->world_roster)
+            send_clock(session, player->id, 1);
     }
     if (session->world_roster)
         session->world_roster(slot, session->world);
@@ -94,27 +119,8 @@ int bh_server_session_poll(BHServerSession *session)
 
 int bh_server_session_tick(BHServerSession *session)
 {
-    unsigned char payload[BH_NETWORK_PLAYERS * 2 + 1];
-    double sum = 0;
-    unsigned int players = 0;
-    if (++session->tick & 63)
-        return !session->failed;
-    for (unsigned int i = 0; i < BH_NETWORK_PLAYERS; ++i)
-    {
-        int tick = (int)((int16_t)session->tick + (double)session->latency[i]);
-        put_word(payload + 2 * i, (uint16_t)tick);
-        if (session->game.players[i].active)
-        {
-            sum += session->latency[i];
-            ++players;
-        }
-    }
-    if (players)
-    {
-        double delay = sum * 1.4 / players;
-        payload[BH_NETWORK_PLAYERS * 2] = delay < 0 ? 0 : delay > 3 ? 3 : (unsigned char)delay;
-        send_packet(session, 5, payload, sizeof(payload), 0, 0);
-    }
+    if (!(++session->tick & 63))
+        send_clock(session, 0, 0);
     return !session->failed;
 }
 

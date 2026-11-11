@@ -26,14 +26,14 @@ def main():
                 os.environ.get("BH_GCC", "gcc"), "-std=gnu99", "-O2", "-flto",
                 "-fno-strict-aliasing", *flags, "-I", str(enet / "include"),
                 "src/server/tests/session_loopback.c", "src/server/bh_server_session.c",
-                "src/bh_network_game.c", "src/bh_network_codec.c",
+                "src/server/bh_server_traffic.c", "src/bh_network_game.c", "src/bh_network_codec.c", "src/bh_vfile.c",
                 *(str(source) for source in sorted(enet.glob("*.c"))
                   if source.stem not in {"win32", "unix"} or source.stem == platform),
                 *libraries, "-o", str(executable),
             ],
             cwd=root, check=True,
         )
-        subprocess.run([str(executable)], check=True, timeout=30)
+        subprocess.run([str(executable), str(root / "levels/stadium.bhlevel")], check=True, timeout=30)
 
 
 if __name__ == "__main__":
