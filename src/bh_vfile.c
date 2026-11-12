@@ -1,14 +1,15 @@
 #include "bh_vfile.h"
 #include <limits.h>
+#include <stdckdint.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 
-typedef char check_vfile_long[sizeof(long) == 4 ? 1 : -1];
-typedef char check_vfile_size[sizeof(BHVFile) == 32 ? 1 : -1];
-typedef char check_vfile_memory[offsetof(BHVFile, memory) == 24 ? 1 : -1];
-typedef char check_archive_size[sizeof(BHArchiveEntry) == 256 ? 1 : -1];
-typedef char check_archive_begin[offsetof(BHArchiveEntry, begin) == 248 ? 1 : -1];
+static_assert(sizeof(long) == 4, "virtual file layout requires 32-bit long");
+static_assert(sizeof(BHVFile) == 32, "virtual file size");
+static_assert(offsetof(BHVFile, memory) == 24, "virtual file memory offset");
+static_assert(sizeof(BHArchiveEntry) == 256, "archive entry size");
+static_assert(offsetof(BHArchiveEntry, begin) == 248, "archive entry begin offset");
 
 /* The wrapper remains 32 bytes. Private tracking makes teardown explicit. */
 typedef struct BHVFileOwner
@@ -24,7 +25,7 @@ typedef struct BHPreloadedName
     BHVFile *handle;
     struct BHPreloadedName *next;
 } BHPreloadedName;
-typedef char check_preload_size[sizeof(BHPreloadedName) == 256 ? 1 : -1];
+static_assert(sizeof(BHPreloadedName) == 256, "preloaded file name size");
 
 /* Owning definitions for the state observed at 004f95f8..004f9618. */
 static struct
@@ -537,7 +538,8 @@ int bh_vfile_seek(BHVFile *file, long offset, int origin)
 
 unsigned long bh_vfile_read(void *buffer, unsigned long size, unsigned long count, BHVFile *file)
 {
-    unsigned long requested, bytes, actual;
+    long requested;
+    unsigned long bytes, actual;
     last_error = BH_VFILE_OK;
     if (!owner_of(file))
         return 0;
@@ -548,7 +550,7 @@ unsigned long bh_vfile_read(void *buffer, unsigned long size, unsigned long coun
         last_error = BH_VFILE_ARGUMENT;
         return 0;
     }
-    if (count > LONG_MAX / size)
+    if (ckd_mul(&requested, size, count))
     {
         last_error = BH_VFILE_OVERFLOW;
         return 0;
@@ -567,8 +569,7 @@ unsigned long bh_vfile_read(void *buffer, unsigned long size, unsigned long coun
         last_error = BH_VFILE_ARGUMENT;
         return 0;
     }
-    requested = size * count;
-    bytes = requested;
+    bytes = (unsigned long)requested;
     if (bytes > (unsigned long)(file->end - file->position))
     {
         bytes = (unsigned long)(file->end - file->position);

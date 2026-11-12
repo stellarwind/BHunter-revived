@@ -42,7 +42,7 @@ def main():
         candidate = Path(scratch) / executable.name
         subprocess.run(
             [
-                cc, "-std=gnu99", "-O2", "-flto", "-fno-strict-aliasing", *architecture,
+                cc, "-std=gnu23", "-O2", "-flto", "-fno-strict-aliasing", *architecture,
                 "-I", str(enet / "include"),
                 "src/server/bh_server_main.c", "src/server/bh_server_session.c", "src/server/bh_server_traffic.c",
                 "src/bh_network_game.c", "src/bh_network_codec.c", "src/bh_vfile.c",

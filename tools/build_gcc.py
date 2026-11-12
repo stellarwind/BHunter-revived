@@ -109,6 +109,7 @@ def main():
             "cxx_version": subprocess.check_output([args.cxx, "--version"], text=True),
         },
     }
+    embedded_config = ROOT / "src/bh_config_defaults.bin"
     dependencies = [
         path
         for path in (ROOT / "src").rglob("*")
@@ -122,6 +123,7 @@ def main():
         INI_SOURCE.with_suffix(".h"),
         STB_VORBIS_SOURCE,
         *(path for _, path in LICENCE_SOURCES),
+        embedded_config,
         ROOT / "tools/build_game.py",
         ROOT / "tools/build_gcc.py",
         ROOT / "tools/prepare_sdl3.py",
@@ -190,7 +192,7 @@ def main():
             path.read_bytes()
             for path in sorted([*(ROOT / "src").rglob("*"), *enet.rglob("*.h")])
             if path.suffix in {".h", ".inc"}
-        )
+        ) + embedded_config.read_bytes()
     ).hexdigest()
     compiler_version = subprocess.check_output([args.cc, "--version"], text=True)
     objects = []
@@ -219,7 +221,7 @@ def main():
             flags.append("-DBH_SKIP_CD_AUDIO_CHECK")
         argv = [
             args.cc,
-            "-std=gnu99",
+            "-std=gnu23",
             "-O2",
             *architecture,
             *(["-include", ROOT / "src/bh_linux_compat.h"] if linux else []),

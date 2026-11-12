@@ -5,10 +5,13 @@
 #include <stddef.h>
 #include <errno.h>
 
-typedef char profile_size[sizeof(BHInputProfile) == 76 ? 1 : -1];
-typedef char profile_links[offsetof(BHInputProfile, next) == 4 && offsetof(BHInputProfile, previous) == 8 ? 1 : -1];
-typedef char profile_baseline[offsetof(BHInputProfile, baseline) == 72 ? 1 : -1];
+static_assert(sizeof(BHInputProfile) == 76, "input profile size");
+static_assert(offsetof(BHInputProfile, next) == 4 && offsetof(BHInputProfile, previous) == 8,
+              "input profile link offsets");
+static_assert(offsetof(BHInputProfile, baseline) == 72, "input profile baseline offset");
+
 #include "bh_config_defaults.h"
+static_assert(sizeof(default_settings) == sizeof(((BHConfig *)0)->settings), "default settings size");
 
 typedef struct ProfileNode
 {
@@ -263,7 +266,7 @@ int bh_config_load(BHConfig *config, const char *path)
     {
         if (errno != ENOENT)
             return fail(config, BH_CONFIG_IO);
-        memcpy(next.settings, default_settings, 416);
+        memcpy(next.settings, default_settings, sizeof(default_settings));
         next.loaded_defaults = 1;
         if (!defaults(&next))
             goto rejected;

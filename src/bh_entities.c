@@ -9,21 +9,19 @@
 #include <stddef.h>
 #include <math.h>
 
-typedef char slot_size[sizeof(BHEntity) == 864 ? 1 : -1];
-typedef char callback_offsets[offsetof(BHEntity, refresh) == 200 && offsetof(BHEntity, step) == 204 &&
-                                      offsetof(BHEntity, query) == 208
-                                  ? 1
-                                  : -1];
-typedef char link_offsets[offsetof(BHEntity, query_next) == 212 && offsetof(BHEntity, next) == 224 ? 1 : -1];
-typedef char field_offsets[offsetof(BHEntity, position) == 12 && offsetof(BHEntity, origin) == 72 &&
-                                   offsetof(BHEntity, lifetime) == 180
-                               ? 1
-                               : -1];
-typedef char pointer_size[sizeof(void *) == 4 ? 1 : -1];
+static_assert(sizeof(void *) == 4, "entity layout requires 32-bit pointers");
+static_assert(sizeof(BHEntity) == 864, "entity slot size");
+static_assert(sizeof(BHRemotePose) == 32, "remote pose size");
 
-#define ENTITY_OFFSET(member, offset) typedef char member##_offset[offsetof(BHEntity, member) == (offset) ? 1 : -1]
-#define PLAYER_OFFSET(name, member, offset)                                                                           \
-    typedef char player_##name##_offset[offsetof(BHEntity, player.member) == (offset) ? 1 : -1]
+#define ENTITY_OFFSET(member, offset) static_assert(offsetof(BHEntity, member) == (offset), #member " offset")
+ENTITY_OFFSET(refresh, 200);
+ENTITY_OFFSET(step, 204);
+ENTITY_OFFSET(query, 208);
+ENTITY_OFFSET(query_next, 212);
+ENTITY_OFFSET(next, 224);
+ENTITY_OFFSET(position, 12);
+ENTITY_OFFSET(origin, 72);
+ENTITY_OFFSET(lifetime, 180);
 ENTITY_OFFSET(basis, 0x18);
 ENTITY_OFFSET(euler, 0x3c);
 ENTITY_OFFSET(velocity, 0x48);
@@ -35,40 +33,38 @@ ENTITY_OFFSET(last_clear, 0x84);
 ENTITY_OFFSET(collision_geometry, 0xbc);
 ENTITY_OFFSET(world, 0xc4);
 ENTITY_OFFSET(payload, 0xe4);
-typedef char actor_draw_offset[offsetof(BHEntity, actor.draw) == 0xe8 ? 1 : -1];
-typedef char actor_global_next_offset[offsetof(BHEntity, actor.global_next) == 0xf0 ? 1 : -1];
-typedef char actor_room_next_offset[offsetof(BHEntity, actor.room_next) == 0xf4 ? 1 : -1];
-typedef char actor_kind_offset[offsetof(BHEntity, actor.kind) == 0xfc ? 1 : -1];
-typedef char flyby_camera_offset[offsetof(BHEntity, flyby.camera) == 0xe8 ? 1 : -1];
-typedef char flyby_history_offset[offsetof(BHEntity, flyby.previous_position) == 0x23c ? 1 : -1];
-typedef char flyby_waypoint_offset[offsetof(BHEntity, flyby.waypoint_index) == 0x284 ? 1 : -1];
-typedef char remote_pose_size[sizeof(BHRemotePose) == 32 ? 1 : -1];
-typedef char remote_pose_flags_offset[offsetof(BHEntity, remote.pose_flags) == 0x11a ? 1 : -1];
-typedef char remote_history_offset[offsetof(BHEntity, remote.oldest) == 0x13c &&
-                                   offsetof(BHEntity, remote.middle) == 0x15c &&
-                                   offsetof(BHEntity, remote.newest) == 0x17c &&
-                                   offsetof(BHEntity, remote.newest.world) == 0x198 ? 1 : -1];
-typedef char remote_propulsion_offset[offsetof(BHEntity, remote.propulsion) == 0x2c0 ? 1 : -1];
-PLAYER_OFFSET(camera, camera, 0xe8);
-PLAYER_OFFSET(input_list, input_list, 0x188);
-PLAYER_OFFSET(input, input, 0x18c);
-PLAYER_OFFSET(model_resource, model_resource, 0x21c);
-PLAYER_OFFSET(engine_sound, engine_sound, 0x220);
-PLAYER_OFFSET(cash, cash, 0x230);
-PLAYER_OFFSET(damage, damage, 0x23c);
-PLAYER_OFFSET(weapons, weapons, 0x258);
-PLAYER_OFFSET(aim_direction, aim_direction, 0x280);
-PLAYER_OFFSET(recoil_position, recoil_position, 0x298);
-PLAYER_OFFSET(camera_mode, camera_mode, 0x2b0);
-PLAYER_OFFSET(disabled_frames, disabled_frames, 0x2b4);
-PLAYER_OFFSET(selected_weapon, selected_weapon, 0x2b6);
-PLAYER_OFFSET(vehicle, vehicle, 0x2bb);
-PLAYER_OFFSET(channels, propulsion.channels, 0x2bc);
-PLAYER_OFFSET(nozzle_channels, propulsion.thrust.nozzles, 0x2c0);
-PLAYER_OFFSET(delayed_creation, propulsion.delayed.creation, 0x2e8);
-PLAYER_OFFSET(engine_output, engine_output, 0x2f8);
-PLAYER_OFFSET(nozzle_trail, nozzle_trail, 0x2fc);
-#undef PLAYER_OFFSET
+ENTITY_OFFSET(actor.draw, 0xe8);
+ENTITY_OFFSET(actor.global_next, 0xf0);
+ENTITY_OFFSET(actor.room_next, 0xf4);
+ENTITY_OFFSET(actor.kind, 0xfc);
+ENTITY_OFFSET(flyby.camera, 0xe8);
+ENTITY_OFFSET(flyby.previous_position, 0x23c);
+ENTITY_OFFSET(flyby.waypoint_index, 0x284);
+ENTITY_OFFSET(remote.pose_flags, 0x11a);
+ENTITY_OFFSET(remote.oldest, 0x13c);
+ENTITY_OFFSET(remote.middle, 0x15c);
+ENTITY_OFFSET(remote.newest, 0x17c);
+ENTITY_OFFSET(remote.newest.world, 0x198);
+ENTITY_OFFSET(remote.propulsion, 0x2c0);
+ENTITY_OFFSET(player.camera, 0xe8);
+ENTITY_OFFSET(player.input_list, 0x188);
+ENTITY_OFFSET(player.input, 0x18c);
+ENTITY_OFFSET(player.model_resource, 0x21c);
+ENTITY_OFFSET(player.engine_sound, 0x220);
+ENTITY_OFFSET(player.cash, 0x230);
+ENTITY_OFFSET(player.damage, 0x23c);
+ENTITY_OFFSET(player.weapons, 0x258);
+ENTITY_OFFSET(player.aim_direction, 0x280);
+ENTITY_OFFSET(player.recoil_position, 0x298);
+ENTITY_OFFSET(player.camera_mode, 0x2b0);
+ENTITY_OFFSET(player.disabled_frames, 0x2b4);
+ENTITY_OFFSET(player.selected_weapon, 0x2b6);
+ENTITY_OFFSET(player.vehicle, 0x2bb);
+ENTITY_OFFSET(player.propulsion.channels, 0x2bc);
+ENTITY_OFFSET(player.propulsion.thrust.nozzles, 0x2c0);
+ENTITY_OFFSET(player.propulsion.delayed.creation, 0x2e8);
+ENTITY_OFFSET(player.engine_output, 0x2f8);
+ENTITY_OFFSET(player.nozzle_trail, 0x2fc);
 #undef ENTITY_OFFSET
 
 typedef struct Chunk

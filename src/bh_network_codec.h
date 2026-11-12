@@ -36,10 +36,10 @@ typedef struct BHPacketReader
    finish returns unpadded wire length; cursor includes zero padding to 4 bytes.
    These adapters do not implement sender 00423710 or DirectPlay transport.
    Append failures leave bytes/cursor unchanged. No appending after finish. */
-int bh_packet_begin(BHPacketWriter *writer, void *bytes, unsigned long capacity, unsigned char type,
-                    unsigned short sender);
-int bh_packet_append(BHPacketWriter *writer, const void *bytes, unsigned long count);
-int bh_packet_finish(BHPacketWriter *writer, unsigned long *wire_size);
+[[nodiscard]] int bh_packet_begin(BHPacketWriter *writer, void *bytes, unsigned long capacity, unsigned char type,
+                                  unsigned short sender);
+[[nodiscard]] int bh_packet_append(BHPacketWriter *writer, const void *bytes, unsigned long count);
+[[nodiscard]] int bh_packet_finish(BHPacketWriter *writer, unsigned long *wire_size);
 /* 004234d0: eight bytes (world index, three quantized coordinates). NULL world
    returns 0 without appending. Index is explicit original world +108 binding.
    Position normalization retains PC53, clamps below -.5 to -.5, but >=1.5 to

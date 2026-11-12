@@ -388,19 +388,23 @@ int bh_player_query_dispatch(BHPlayerQueryContext *ctx, BHPlayerQueryPacket *pac
             {
                 unsigned char bytes[32], tail[4];
                 BHPacketWriter writer;
-                int result;
-                bh_packet_begin(&writer, bytes, sizeof(bytes), 6, (unsigned short)*ctx->simulation_tick);
-                result =
-                    bh_packet_write_position(&writer, *ctx->world, *ctx->world_index, (BHVec3 *)&packet->floats[1]);
+                int result = bh_packet_begin(&writer, bytes, sizeof(bytes), 6, (unsigned short)*ctx->simulation_tick)
+                                 ? bh_packet_write_position(&writer, *ctx->world, *ctx->world_index,
+                                                            (BHVec3 *)&packet->floats[1])
+                                 : -1;
                 if (result > 0)
                 {
                     tail[0] = (unsigned char)resource;
                     tail[1] = (unsigned char)(__int64)((double)severity * 128.0f);
                     tail[2] = (unsigned char)(__int64)((double)pitch * 64.0f);
                     tail[3] = 0;
-                    bh_packet_append(&writer, tail, 4);
-                    ++ctx->packets;
-                    bh_network_packet_send(ctx->transport, &writer, 0, 0);
+                    if (bh_packet_append(&writer, tail, sizeof(tail)))
+                    {
+                        ++ctx->packets;
+                        bh_network_packet_send(ctx->transport, &writer, 0, 0);
+                    }
+                    else
+                        ctx->error = 5;
                 }
                 else if (result < 0)
                     ctx->error = 5;

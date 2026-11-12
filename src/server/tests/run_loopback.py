@@ -23,7 +23,7 @@ def main():
         executable = Path(output) / ("session-loopback.exe" if windows else "session-loopback")
         subprocess.run(
             [
-                os.environ.get("BH_GCC", "gcc"), "-std=gnu99", "-O2", "-flto",
+                os.environ.get("BH_GCC", "gcc"), "-std=gnu23", "-O2", "-flto",
                 "-fno-strict-aliasing", *flags, "-I", str(enet / "include"),
                 "src/server/tests/session_loopback.c", "src/server/bh_server_session.c",
                 "src/server/bh_server_traffic.c", "src/bh_network_game.c", "src/bh_network_codec.c", "src/bh_vfile.c",
