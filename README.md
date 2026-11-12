@@ -6,29 +6,29 @@
 
 <table>
   <tr>
-    <td align="center"><a href="screenshots/1.png"><img src="screenshots/1.png" alt="BHunter screenshot 1" width="280"></a></td>
-    <td align="center"><a href="screenshots/2.png"><img src="screenshots/2.png" alt="BHunter screenshot 2" width="280"></a></td>
-    <td align="center"><a href="screenshots/3.png"><img src="screenshots/3.png" alt="BHunter screenshot 3" width="280"></a></td>
+    <td align="center"><a href="screenshots/1.webp"><img src="screenshots/1.webp" alt="BHunter screenshot 1" width="280"></a></td>
+    <td align="center"><a href="screenshots/2.webp"><img src="screenshots/2.webp" alt="BHunter screenshot 2" width="280"></a></td>
+    <td align="center"><a href="screenshots/3.webp"><img src="screenshots/3.webp" alt="BHunter screenshot 3" width="280"></a></td>
   </tr>
   <tr>
-    <td align="center"><a href="screenshots/4.png"><img src="screenshots/4.png" alt="BHunter screenshot 4" width="280"></a></td>
-    <td align="center"><a href="screenshots/5.png"><img src="screenshots/5.png" alt="BHunter screenshot 5" width="280"></a></td>
-    <td align="center"><a href="screenshots/6.png"><img src="screenshots/6.png" alt="BHunter screenshot 6" width="280"></a></td>
+    <td align="center"><a href="screenshots/4.webp"><img src="screenshots/4.webp" alt="BHunter screenshot 4" width="280"></a></td>
+    <td align="center"><a href="screenshots/5.webp"><img src="screenshots/5.webp" alt="BHunter screenshot 5" width="280"></a></td>
+    <td align="center"><a href="screenshots/6.webp"><img src="screenshots/6.webp" alt="BHunter screenshot 6" width="280"></a></td>
   </tr>
   <tr>
-    <td align="center"><a href="screenshots/7.png"><img src="screenshots/7.png" alt="BHunter screenshot 7" width="280"></a></td>
-    <td align="center"><a href="screenshots/8.png"><img src="screenshots/8.png" alt="BHunter screenshot 8" width="280"></a></td>
-    <td align="center"><a href="screenshots/9.png"><img src="screenshots/9.png" alt="BHunter screenshot 9" width="280"></a></td>
+    <td align="center"><a href="screenshots/7.webp"><img src="screenshots/7.webp" alt="BHunter screenshot 7" width="280"></a></td>
+    <td align="center"><a href="screenshots/8.webp"><img src="screenshots/8.webp" alt="BHunter screenshot 8" width="280"></a></td>
+    <td align="center"><a href="screenshots/9.webp"><img src="screenshots/9.webp" alt="BHunter screenshot 9" width="280"></a></td>
   </tr>
   <tr>
-    <td align="center"><a href="screenshots/10.png"><img src="screenshots/10.png" alt="BHunter screenshot 10" width="280"></a></td>
-    <td align="center"><a href="screenshots/11.png"><img src="screenshots/11.png" alt="BHunter screenshot 11" width="280"></a></td>
-    <td align="center"><a href="screenshots/12.png"><img src="screenshots/12.png" alt="BHunter screenshot 12" width="280"></a></td>
+    <td align="center"><a href="screenshots/10.webp"><img src="screenshots/10.webp" alt="BHunter screenshot 10" width="280"></a></td>
+    <td align="center"><a href="screenshots/11.webp"><img src="screenshots/11.webp" alt="BHunter screenshot 11" width="280"></a></td>
+    <td align="center"><a href="screenshots/12.webp"><img src="screenshots/12.webp" alt="BHunter screenshot 12" width="280"></a></td>
   </tr>
   <tr>
-    <td align="center"><a href="screenshots/13.png"><img src="screenshots/13.png" alt="BHunter screenshot 13" width="280"></a></td>
-    <td align="center"><a href="screenshots/14.png"><img src="screenshots/14.png" alt="BHunter screenshot 14" width="280"></a></td>
-    <td align="center"><a href="screenshots/15.png"><img src="screenshots/15.png" alt="BHunter screenshot 15" width="280"></a></td>
+    <td align="center"><a href="screenshots/13.webp"><img src="screenshots/13.webp" alt="BHunter screenshot 13" width="280"></a></td>
+    <td align="center"><a href="screenshots/14.webp"><img src="screenshots/14.webp" alt="BHunter screenshot 14" width="280"></a></td>
+    <td align="center"><a href="screenshots/15.webp"><img src="screenshots/15.webp" alt="BHunter screenshot 15" width="280"></a></td>
   </tr>
 </table>
 
