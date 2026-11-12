@@ -94,18 +94,6 @@ static void play_take(BHPickupContext *context, BHEntity *entity)
     if (context->sound)
         bh_sound_request(context->sound, context->take_sound, 1.0f, 1.0f, &entity->position, &context->sound_velocity);
 }
-static BHEntity *actor_next(BHEntity *entity)
-{
-    BHEntity *next;
-    memcpy(&next, entity->payload + 16, sizeof(next)); /* actor +f4 */
-    return next;
-}
-static long actor_kind(BHEntity *entity)
-{
-    long kind;
-    memcpy(&kind, entity->payload + 24, sizeof(kind)); /* actor +fc */
-    return kind;
-}
 /* A successful event 0xd may mutate the current pickup through actor callbacks;
    the pool generation check prevents writing through a recycled slot. */
 static int offer_to(BHPickupContext *context, BHEntity *pickup, BHEntity *actor, int locate_actor, int *accepted_sound)
@@ -183,9 +171,9 @@ void bh_pickup_tick(BHEntity *entity)
     }
     bh_round_float(&state->phase, (double)state->phase + 0.25);
     room = state->room ? room_binding(context, state->room) : NULL;
-    for (actor = room ? room->actors : NULL; actor; actor = actor_next(actor))
+    for (actor = room ? room->actors : NULL; actor; actor = actor->actor.room_next)
     {
-        long kind = actor_kind(actor);
+        long kind = actor->actor.kind;
         if (kind != 1 && kind != 2 && kind != 8)
             continue;
         result = offer_to(context, entity, actor, 1, &audible);

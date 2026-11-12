@@ -35,7 +35,7 @@ static int retire(BHRemoteQuery *query, BHEntity *entity)
     memcpy(&slot, (char *)entity + 0x114, 2);
     if (slot < 0 || slot >= 8)
         return fail(query);
-    memcpy(&world, (char *)entity + 0x198, 4);
+    world = entity->remote.newest.world;
     rp = link(entity, 0xf8);
     rn = link(entity, 0xf4);
     gp = link(entity, 0xec);
@@ -101,7 +101,7 @@ int bh_remote_query(BHRemoteQuery *query, BHEntity *entity, BHRemoteQueryPacket 
             return fail(query);
         if (!bh_remote_predict_position(entity, query->tick, &position))
             return fail(query);
-        memcpy(&world, (char *)entity + 0x198, 4);
+        world = entity->remote.newest.world;
         if (!world)
             return 1;
         for (i = 0; i < query->world_count; i++)

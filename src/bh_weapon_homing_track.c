@@ -60,7 +60,7 @@ int bh_weapon_homing_track(BHWeaponTargetContext *ctx, BHEntity *weapon_entity, 
         d.x = stored((double)packet.position.x - entity->position.x);
         d.y = stored((double)packet.position.y - entity->position.y);
         d.z = stored((double)packet.position.z - entity->position.z);
-        memcpy(&aim, (const unsigned char *)entity + 0x280, 12);
+        aim = entity->player.aim_direction;
         projection = ((double)aim.x * d.x + (double)aim.y * d.y) + (double)aim.z * d.z;
         dot = stored(projection);
         length = sqrt(((double)d.z * d.z + (double)d.y * d.y) + (double)d.x * d.x);
@@ -85,7 +85,7 @@ int bh_weapon_homing_track(BHWeaponTargetContext *ctx, BHEntity *weapon_entity, 
         d.y = stored(y);
         d.z = stored(z);
         d.x = stored(x);
-        memcpy(&aim, (const unsigned char *)entity + 0x280, 12);
+        aim = entity->player.aim_direction;
         projection = ((double)aim.x * d.x + (double)aim.y * d.y) + (double)aim.z * d.z;
         dot = stored(projection);
         if (projection >= 0 && dot < best)

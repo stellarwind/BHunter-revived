@@ -22,42 +22,6 @@ typedef char scene_player_pointer_size[sizeof(void *) == 4 ? 1 : -1];
 typedef char scene_player_payload_offset[offsetof(BHEntity, payload) == 0xe4 ? 1 : -1];
 typedef char scene_random_range[RAND_MAX == 32767 ? 1 : -1];
 
-static BHVec3 vector_at(const BHEntity *entity, unsigned long offset)
-{
-    BHVec3 v;
-    memcpy(&v, (const unsigned char *)entity + offset, 12);
-    return v;
-}
-static float float_at(const BHEntity *entity, unsigned long offset)
-{
-    float v;
-    memcpy(&v, (const unsigned char *)entity + offset, 4);
-    return v;
-}
-static long long_at(const BHEntity *entity, unsigned long offset)
-{
-    long v;
-    memcpy(&v, (const unsigned char *)entity + offset, 4);
-    return v;
-}
-static unsigned long word_at(const BHEntity *entity, unsigned long offset)
-{
-    unsigned long v;
-    memcpy(&v, (const unsigned char *)entity + offset, 4);
-    return v;
-}
-static unsigned char byte_at(const BHEntity *entity, unsigned long offset)
-{
-    return *((const unsigned char *)entity + offset);
-}
-static void put_float(BHEntity *entity, unsigned long offset, float value)
-{
-    memcpy((unsigned char *)entity + offset, &value, 4);
-}
-static void put_byte(BHEntity *entity, unsigned long offset, unsigned char value)
-{
-    *((unsigned char *)entity + offset) = value;
-}
 static float stored(double n)
 {
     float f;
@@ -115,9 +79,9 @@ static BHVec3 direction(const BHVec3 *right, const BHVec3 *up, const BHVec3 *for
 static void aim(BHPlayerScene *scene)
 {
     BHEntity *entity = scene->player;
-    BHVec3 pos = vector_at(entity, 0xc), right = vector_at(entity, 0x18);
-    BHVec3 up = vector_at(entity, 0x24), forward = vector_at(entity, 0x30);
-    BHVec3 aim_offset = vector_at(entity, 0x28c), aim_vector = vector_at(entity, 0x280);
+    BHVec3 pos = entity->position, right = entity->basis[0];
+    BHVec3 up = entity->basis[1], forward = entity->basis[2];
+    BHVec3 aim_offset = entity->player.aim_offset, aim_vector = entity->player.aim_direction;
     BHVec3 center, axis, normal;
     float gauge, velocity, alpha, span, shift;
     unsigned long i;
@@ -125,7 +89,7 @@ static void aim(BHPlayerScene *scene)
     normal.x = -normal.x;
     normal.y = -normal.y;
     normal.z = -normal.z;
-    if (long_at(entity, 0xe8) == 0)
+    if (entity->player.camera.current.mode == 0)
     {
         axis.x = -up.x;
         axis.y = -up.y;
@@ -135,14 +99,14 @@ static void aim(BHPlayerScene *scene)
                      stored(-.30000001192092896 - (double)aim_offset.y * -1.1), stored((double)aim_offset.z * 1.1));
         queued(scene, bh_quad_queue(scene->queue, 3, scene->aim_image, &center, &axis, &normal, .25f, .25f, 0, 0, .5f,
                                     .00390625f, .9921875f, .00390625f, .9921875f));
-        gauge = float_at(entity, 0x23c);
+        gauge = entity->player.damage;
         if (!(gauge >= 0))
             gauge = 0;
         else if (gauge > 1)
             gauge = 1;
         velocity =
-            stored(((double)vector_at(entity, 0x48).x * forward.x + (double)vector_at(entity, 0x48).y * forward.y +
-                    (double)vector_at(entity, 0x48).z * forward.z) *
+            stored(((double)entity->velocity.x * forward.x + (double)entity->velocity.y * forward.y +
+                    (double)entity->velocity.z * forward.z) *
                    .006666666666666667);
         if (!(velocity >= 0))
             velocity = 0;
@@ -186,29 +150,29 @@ static void aim(BHPlayerScene *scene)
 static void status_state(BHPlayerScene *scene, BHHudStatusState *state, const BHHudWeaponAmmo *const *ammunition)
 {
     BHEntity *entity = scene->player;
-    state->gauge_a = float_at(entity, 0x24c);
-    state->gauge_b = float_at(entity, 0x23c);
+    state->gauge_a = entity->player.wear;
+    state->gauge_b = entity->player.damage;
     state->weapons = ammunition;
     state->weapon_count = 10;
-    state->primary = byte_at(entity, 0x2b6);
-    state->secondary = byte_at(entity, 0x2b7);
-    state->flags = byte_at(entity, 0x2b8);
-    state->countdown_a = byte_at(entity, 0x2b9);
-    state->countdown_b = byte_at(entity, 0x2ba);
-    state->counter_a = long_at(entity, 0x230);
-    state->counter_b = long_at(entity, 0x234);
-    state->pending = long_at(entity, 0x238);
+    state->primary = entity->player.selected_weapon[0];
+    state->secondary = entity->player.selected_weapon[1];
+    state->flags = entity->player.frame_phase;
+    state->countdown_a = entity->player.cash_flash;
+    state->countdown_b = entity->player.fine_flash;
+    state->counter_a = entity->player.cash;
+    state->counter_b = entity->player.fine;
+    state->pending = entity->player.bounty_pending;
 }
 static void status_publish(BHPlayerScene *scene, const BHHudStatusState *state)
 {
-    put_byte(scene->player, 0x2b9, state->countdown_a);
-    put_byte(scene->player, 0x2ba, state->countdown_b);
+    scene->player->player.cash_flash = state->countdown_a;
+    scene->player->player.fine_flash = state->countdown_b;
 }
 
 static void particles(BHPlayerScene *scene)
 {
     BHEntity *entity = scene->player;
-    float effect = float_at(entity, 0x240), remaining = float_at(entity, 0x244);
+    float effect = entity->player.shield_time, remaining = entity->player.shield_fade;
     float size, alpha, fade;
     BHVec3 pos, offset, up = {0, -1, 0}, normal;
     unsigned long i;
@@ -220,7 +184,7 @@ static void particles(BHPlayerScene *scene)
     else
         fade = stored(1.0 - (double)remaining);
     alpha = stored((double)fade * .3);
-    pos = vector_at(entity, 0xc);
+    pos = entity->position;
     for (i = 0; i < 32; ++i)
     {
         offset.x = (float)(random_value(scene) - 0x4000);
@@ -245,9 +209,9 @@ static void trail(BHPlayerScene *scene)
     BHEntity *entity = scene->player;
     for (i = 0; i < 4; ++i)
     {
-        BHVec3 motion = vector_at(entity, 0x2c0 + i * 12);
-        BHVec3 from = vector_at(entity, 0x2fc + i * 24);
-        BHVec3 to = vector_at(entity, 0x308 + i * 24);
+        BHVec3 motion = entity->player.propulsion.thrust.nozzles[i];
+        BHVec3 from = entity->player.nozzle_trail[i].from;
+        BHVec3 to = entity->player.nozzle_trail[i].to;
         int random = random_value(scene);
         float width, alpha;
         width = stored(
@@ -262,8 +226,8 @@ static unsigned long tail(BHPlayerScene *scene)
 {
     BHEntity *entity = scene->player;
     unsigned long anchor = BH_DRAW_END;
-    unsigned long resource = word_at(entity, 0x21c);
-    BHVec3 position = vector_at(entity, 0xc), angles = vector_at(entity, 0x3c);
+    unsigned long resource = entity->player.model_resource;
+    BHVec3 position = entity->position, angles = entity->euler;
 #ifdef BH_SDL_BACKEND
     unsigned long render_mark = bh_interpolation_mark();
 #endif
@@ -281,7 +245,7 @@ static unsigned long tail(BHPlayerScene *scene)
 #endif
     if (*scene->frame_count < 75)
     {
-        if (byte_at(entity, 0x2b4) & 0x10)
+        if ((unsigned char)entity->player.disabled_frames & 0x10)
         {
             BHDrawCommand *command = bh_queue_reserve(scene->queue, 8);
             ++scene->attempted;
@@ -335,16 +299,16 @@ static int selected(BHPlayerScene *scene, unsigned char index)
     unsigned long method;
     BHWeaponHudArcPlayer arc_player;
     if (!bh_weapon_registry_hud(scene->weapons, index, &weapon, &state, &method) ||
-        word_at(scene->player, 0x258 + index * 4) != (unsigned long)weapon)
+        scene->player->player.weapons[index] != weapon)
         return fail(scene, BH_PLAYER_SCENE_WEAPON);
     switch (method)
     {
     case 0x0047d680UL: /* verified shared RET method */
         return 1;
     case 0x00432ff0UL:
-        arc_player.position = vector_at(scene->player, 0xc);
-        arc_player.forward = vector_at(scene->player, 0x30);
-        arc_player.aim = vector_at(scene->player, 0x280);
+        arc_player.position = scene->player->position;
+        arc_player.forward = scene->player->basis[2];
+        arc_player.aim = scene->player->player.aim_direction;
         if (!bh_weapon_hud_arc(scene->arc, &state->common.hud, &arc_player))
             return fail(scene, BH_PLAYER_SCENE_OWNER);
         scene->random_calls += scene->arc->random_calls;
@@ -370,7 +334,7 @@ static int status_weapons(BHPlayerScene *scene, BHHudStatusState *status, const 
         BHWeaponObjectState *state;
         unsigned long identity, index = chosen[i];
         if (!bh_weapon_registry_hud(scene->weapons, index, &weapon, &state, &identity) ||
-            word_at(scene->player, 0x258 + index * 4) != (unsigned long)weapon)
+            scene->player->player.weapons[index] != weapon)
             return fail(scene, BH_PLAYER_SCENE_WEAPON);
         ammunition[index] = (const BHHudWeaponAmmo *)weapon;
     }
@@ -393,7 +357,7 @@ int bh_player_scene_draw(BHPlayerScene *scene)
         return fail(scene, BH_PLAYER_SCENE_ARGUMENT);
     scene->error = BH_PLAYER_SCENE_OK;
     scene->attempted = scene->queued = scene->dropped = scene->random_calls = 0;
-    active = byte_at(entity, 0x2bb) == 1 && *scene->mode_count != 0;
+    active = entity->player.vehicle == 1 && *scene->mode_count != 0;
     if (active)
     {
         float flag, flash, amount, gauge, oscillation;
@@ -427,7 +391,7 @@ int bh_player_scene_draw(BHPlayerScene *scene)
         bh_interpolation_stamp(render_mark, (unsigned long)camera, entity->generation);
 #endif
         queued(scene, bh_horizon_queue(scene->queue, scene->horizon_image, 5000, 5000, 25000, 12500, 0x804000));
-        flag = (float)byte_at(entity, 0x2b8);
+        flag = (float)entity->player.frame_phase;
         oscillation = stored(sin((double)flag * .02454369260617026) * .1);
         queued(scene, bh_material_queue_words(scene->queue, 5, scene->material_image, 1, bits(.05f), 0,
                                               bits(stored((double)flag * .00390625)), 0, bits(.05f),
@@ -437,7 +401,7 @@ int bh_player_scene_draw(BHPlayerScene *scene)
                 fail(scene, BH_PLAYER_SCENE_OWNER);
         if (*scene->frame_count < 150 || *scene->mode_count > 1)
         {
-            flash = float_at(entity, 0x254);
+            flash = entity->player.damage_flash;
             if (!((double)flash > .1))
             {
                 queued(scene, bh_fade_queue(scene->queue, 0, 0));
@@ -449,12 +413,12 @@ int bh_player_scene_draw(BHPlayerScene *scene)
                 amount = stored((double)flash * flash);
                 if ((double)amount > .9)
                     amount = .9f;
-                gauge = float_at(entity, 0x24c);
+                gauge = entity->player.wear;
                 component = (long)((1.0 - (double)gauge) * -127.0);
                 color = (0xff00UL - (unsigned long)component) << 8;
                 if ((double)amount > .05)
                     queued(scene, bh_fade_queue(scene->queue, amount, color));
-                put_float(entity, 0x254, stored((.65 - (double)float_at(entity, 0x23c) * -.35) * flash));
+                entity->player.damage_flash = stored((.65 - (double)entity->player.damage * -.35) * flash);
             }
         }
         else
@@ -480,7 +444,7 @@ int bh_player_scene_draw(BHPlayerScene *scene)
 #endif
         scene->markers->display_width = *scene->display_width;
         if (!bh_hud_markers_draw(scene->markers, *scene->actor_head, &entity->position,
-                                 (const unsigned char *)entity + 0x2b8))
+                                 &entity->player.frame_phase))
             fail(scene, BH_PLAYER_SCENE_OWNER);
         {
             BHEntity *pickup = *scene->pickup_head;
@@ -503,9 +467,9 @@ int bh_player_scene_draw(BHPlayerScene *scene)
         attached[3] = bh_interpolation_mark();
 #endif
         /* Resolve each selector only when its synchronous callback is due. */
-        if (!selected(scene, byte_at(entity, 0x2b6)))
+        if (!selected(scene, entity->player.selected_weapon[0]))
             return 0;
-        if (!selected(scene, byte_at(entity, 0x2b7)))
+        if (!selected(scene, entity->player.selected_weapon[1]))
             return 0;
         for (i = 0; i < 10; ++i)
             ammunition[i] = 0;
@@ -515,7 +479,7 @@ int bh_player_scene_draw(BHPlayerScene *scene)
 #ifdef BH_SDL_BACKEND
         attached[4] = bh_interpolation_mark();
 #endif
-        if (long_at(entity, 0xe8) == 0)
+        if (entity->player.camera.current.mode == 0)
         {
             if (!bh_hud_world_draw(scene->world_status, &status))
                 fail(scene, BH_PLAYER_SCENE_OWNER);

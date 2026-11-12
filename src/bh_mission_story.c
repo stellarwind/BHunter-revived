@@ -24,10 +24,6 @@ typedef struct StoryMessage
     const char *text;
 } StoryMessage;
 #include "bh_mission_story_data.h"
-static void setword(BHEntity *e, unsigned long offset, unsigned long v)
-{
-    memcpy((char *)e + offset, &v, 4);
-}
 static void cue(BHMissionStory *c, long progression)
 {
     if (!c->progress)
@@ -48,8 +44,8 @@ static void clear(BHMissionStory *c)
         c->error = 1;
         return;
     }
-    setword(c->player, 0x238, 0);
-    setword(c->player, 0x234, 0);
+    c->player->player.bounty_pending = 0;
+    c->player->player.fine = 0;
     ++c->broadcasts;
     if (!bh_player_input_broadcast(*c->actors, c->actor_limit, &visited))
         c->error = 4;
@@ -130,7 +126,7 @@ int bh_mission_story_dispatch(BHMissionStory *c, const long packet[3])
             break;
         case STORY_FINALE:
             clear(c);
-            if (!c->player || !c->camera || c->camera != (BHCameraState *)((char *)c->player + 0xe8) ||
+            if (!c->player || !c->camera || c->camera != &c->player->player.camera ||
                 !c->force_control || !c->force_gate)
             {
                 c->error = 1;
@@ -224,7 +220,7 @@ int bh_mission_story_dispatch(BHMissionStory *c, const long packet[3])
                 c->error = 1;
                 break;
             }
-            memcpy(&actual, (char *)c->player + 0x258 + i * 4, 4);
+            actual = c->player->player.weapons[i];
             if (actual != weapon)
             {
                 c->error = 1;

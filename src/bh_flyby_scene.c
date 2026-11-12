@@ -17,26 +17,6 @@ typedef char flyby_scene_crt_random[RAND_MAX == 32767 ? 1 : -1];
 
 static BHFlybyScene *flyby_bindings;
 
-static BHVec3 read_vector(const BHEntity *e, unsigned long offset)
-{
-    BHVec3 v;
-    memcpy(&v, (const unsigned char *)e + offset, sizeof(v));
-    return v;
-}
-static long read_long(const BHEntity *e, unsigned long offset)
-{
-    long v;
-    memcpy(&v, (const unsigned char *)e + offset, sizeof(v));
-    return v;
-}
-static void write_vector(BHEntity *e, unsigned long offset, const BHVec3 *v)
-{
-    memcpy((unsigned char *)e + offset, v, sizeof(*v));
-}
-static void write_long(BHEntity *e, unsigned long offset, long v)
-{
-    memcpy((unsigned char *)e + offset, &v, sizeof(v));
-}
 static float stored(double x)
 {
     float v;
@@ -144,10 +124,10 @@ void bh_flyby_scene_camera_step_entity(BHEntity *entity)
     /* +160/+16c/+178 are outputs of the camera at +e8, not the actor's
        orbit position/angles/velocity at +0c/+3c/+48. Original 00429fb0
        calls 0047aac0 on that camera; drawing and menu placement share it. */
-    write_vector(entity, 0x160, &s->flyby_state->camera.position);
-    write_vector(entity, 0x16c, &s->flyby_state->camera.angles);
-    write_vector(entity, 0x178, &s->flyby_state->camera.velocity);
-    write_long(entity, 0x284, (long)s->flyby_state->route.waypoint_index);
+    entity->flyby.camera.position = s->flyby_state->camera.position;
+    entity->flyby.camera.angles = s->flyby_state->camera.angles;
+    entity->flyby.camera.velocity = s->flyby_state->camera.velocity;
+    entity->flyby.waypoint_index = (long)s->flyby_state->route.waypoint_index;
 }
 void bh_flyby_scene_rearm_entity(BHEntity *entity)
 {
@@ -166,7 +146,7 @@ static BHPlayerInputList *player_input(BHFlybyScene *s, BHEntity *player)
     unsigned long n = 0;
     if (!s->input_owner || !player)
         return 0;
-    target = (BHPlayerInputList *)(unsigned long)read_long(player, 0x188);
+    target = player->player.input_list;
     for (p = s->input_owner->first; p && n < 65536; p = p->next, ++n)
         if (p == target)
             return p;
@@ -215,17 +195,17 @@ static int handoff(BHFlybyScene *s, BHEntity *camera)
        (destination, packet). +2010 is serialized input; +18c is the player's
        decoded 36-word window, never a packet or a full 1024-byte state. */
     memset(&decoded, 0, sizeof(decoded));
-    memcpy(decoded.values, (const unsigned char *)player + 0x18c, 36 * 4);
+    memcpy(decoded.values, player->player.input.words, sizeof(player->player.input.words));
     if (!bh_player_input_apply_packet_checked(&decoded, list->state, sizeof(list->state)))
         return fail(s, BH_FLYBY_SCENE_PACKET);
-    for (index = 36; index < 256; ++index)
+    for (index = BH_PLAYER_INPUT_WORDS; index < 256; ++index)
         if (decoded.values[index])
             return fail(s, BH_FLYBY_SCENE_PACKET);
-    memcpy((unsigned char *)player + 0x18c, decoded.values, 36 * 4);
+    memcpy(player->player.input.words, decoded.values, sizeof(player->player.input.words));
     player = *s->current_player;
     if (!player)
         return fail(s, BH_FLYBY_SCENE_BINDING);
-    write_long(player, 0x210, 2);
+    player->player.input.words[BH_PLAYER_INPUT_ESCAPE] = 2;
     scenario = *s->scenario;
     if (scenario >= 0 && scenario < 3)
     {
@@ -235,7 +215,7 @@ static int handoff(BHFlybyScene *s, BHEntity *camera)
         player = *s->current_player;
         if (!player)
             return fail(s, BH_FLYBY_SCENE_BINDING);
-        write_long(player, 0x21c, (long)model);
+        player->player.model_resource = model;
         *s->mission_identity = scenario == 0 ? 0x00415530UL : scenario == 1 ? 0x00416120UL : 0x00416eb0UL;
         *s->force_control = scenario == 0   ? bh_player_force_control_b
                             : scenario == 1 ? bh_player_force_control_c
@@ -300,16 +280,16 @@ int bh_flyby_scene_draw(BHFlybyScene *s)
         return fail(s, BH_FLYBY_SCENE_BINDING);
     s->error = BH_FLYBY_SCENE_OK;
     s->attempted = s->queued = s->dropped = s->random_calls = 0;
-    eye = read_vector(camera, 0x160);
-    angles = read_vector(camera, 0x16c);
-    velocity = read_vector(camera, 0x178);
+    eye = camera->flyby.camera.position;
+    angles = camera->flyby.camera.angles;
+    velocity = camera->flyby.camera.velocity;
     if (!bh_sound_listener(s->sound, 0, 1, &eye, &angles, &velocity))
         s->error = BH_FLYBY_SCENE_OWNER;
-    eye = read_vector(camera, 0x160);
-    angles = read_vector(camera, 0x16c);
+    eye = camera->flyby.camera.position;
+    angles = camera->flyby.camera.angles;
     queue_result(s, bh_camera_queue_pose(s->queue, &eye, &angles));
     queue_result(s, bh_horizon_queue(s->queue, s->horizon_image, 5000, 5000, 25000, 12500, 0x804000));
-    waypoint = read_long(camera, 0x284);
+    waypoint = camera->flyby.waypoint_index;
     if (waypoint == 13 || *s->selected_waypoint == 17)
     {
         BHVec3 target;
@@ -318,7 +298,7 @@ int bh_flyby_scene_draw(BHFlybyScene *s)
         if (waypoint < 0 || (unsigned long)waypoint >= s->start_count)
             return fail(s, BH_FLYBY_SCENE_BINDING);
         target = s->starts[waypoint].position;
-        eye = read_vector(camera, 0x160);
+        eye = camera->flyby.camera.position;
         dx = (double)target.x - eye.x;
         dy = stored((double)target.y - eye.y);
         dz = stored((double)target.z - eye.z);
@@ -334,12 +314,12 @@ int bh_flyby_scene_draw(BHFlybyScene *s)
     if (!full)
         for (i = 0; i < 8; ++i)
         {
-            eye = read_vector(camera, 0x160);
+            eye = camera->flyby.camera.position;
             if (bh_scene_background_step(s->background, i, &eye) < 0 && s->error == BH_FLYBY_SCENE_OK)
                 s->error = BH_FLYBY_SCENE_OWNER;
         }
-    eye = read_vector(camera, 0x160);
-    angles = read_vector(camera, 0x16c);
+    eye = camera->flyby.camera.position;
+    angles = camera->flyby.camera.angles;
     if (!bh_scene_owner_step(s->scene, &eye, &angles, s->scene->view_fov_degrees, .01f, 25000, *s->display_width,
                              *s->display_height) &&
         s->scene->error != BH_SCENE_OWNER_INACTIVE &&

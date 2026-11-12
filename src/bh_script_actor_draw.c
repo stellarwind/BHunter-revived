@@ -78,7 +78,7 @@ int bh_script_actor_draw(BHScriptActorDrawContext *ctx, BHEntity *entity)
     velocity.x = stored(((double)q.x - p.x) * 30);
     velocity.y = stored(((double)q.y - p.y) * 30);
     velocity.z = stored(((double)q.z - p.z) * 30);
-    memcpy((char *)entity + 0x48, &velocity, 12);
+    entity->velocity = velocity;
     memcpy((char *)entity + 0x108, &frames, 4);
     ctx->error = BH_ACTOR_ROUTE_OK;
     return 1;
@@ -163,7 +163,7 @@ int bh_script_actor_vehicle_draw(BHScriptActorDrawContext *ctx, BHEntity *entity
     velocity.x = stored(((double)q.x - p.x) * 30);
     velocity.y = stored(((double)q.y - p.y) * 30);
     velocity.z = stored(((double)q.z - p.z) * 30);
-    memcpy((char *)entity + 0x48, &velocity, 12);
+    entity->velocity = velocity;
     memcpy((char *)entity + 0x108, &frames, 4);
     ctx->error = BH_ACTOR_ROUTE_OK;
     return 1;

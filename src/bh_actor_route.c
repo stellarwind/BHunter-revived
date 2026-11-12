@@ -96,16 +96,6 @@ BHPickupRoom *bh_actor_route_room(BHActorRouteContext *ctx, const BHWorldGeometr
             return ctx->rooms + i;
     return NULL;
 }
-static BHEntity *actor_link(const BHEntity *entity, unsigned long offset)
-{
-    BHEntity *out;
-    read_field(entity, offset, &out, 4);
-    return out;
-}
-static void set_link(BHEntity *entity, unsigned long offset, BHEntity *value)
-{
-    write_field(entity, offset, &value, 4);
-}
 static int vector_finite(const BHVec3 *v)
 {
     return _finite(v->x) && _finite(v->y) && _finite(v->z);
@@ -157,16 +147,16 @@ int bh_actor_route_promote(BHActorRouteContext *ctx, BHEntity *entity, long inco
     if (!out->neighbor || !bh_actor_route_room(ctx, (BHWorldGeometry *)out->neighbor) || !portal_valid(in) ||
         !portal_valid(out))
         return fail(ctx, BH_ACTOR_ROUTE_TOPOLOGY);
-    next = actor_link(entity, 0xf4);
-    previous = actor_link(entity, 0xf8);
-    if ((previous ? actor_link(previous, 0xf4) != entity : old->actors != entity) ||
-        (next && actor_link(next, 0xf8) != entity))
+    next = entity->actor.room_next;
+    previous = entity->actor.room_previous;
+    if ((previous ? previous->actor.room_next != entity : old->actors != entity) ||
+        (next && next->actor.room_previous != entity))
         return fail(ctx, BH_ACTOR_ROUTE_TOPOLOGY);
     at = old->actors;
     n = 0;
     while (at && at != entity && n < ctx->actor_limit)
     {
-        at = actor_link(at, 0xf4);
+        at = at->actor.room_next;
         ++n;
     }
     if (at != entity || n >= ctx->actor_limit)
@@ -180,7 +170,7 @@ int bh_actor_route_promote(BHActorRouteContext *ctx, BHEntity *entity, long inco
     saved = *entity;
     old_head = old->actors;
     new_head = current->actors;
-    new_head_previous = new_head ? actor_link(new_head, 0xf8) : NULL;
+    new_head_previous = new_head ? new_head->actor.room_previous : NULL;
     binding.context = ctx;
     binding.old_room = old;
     binding.room = current;
@@ -193,11 +183,11 @@ int bh_actor_route_promote(BHActorRouteContext *ctx, BHEntity *entity, long inco
         old->actors = old_head;
         current->actors = new_head;
         if (previous)
-            set_link(previous, 0xf4, entity);
+            previous->actor.room_next = entity;
         if (next)
-            set_link(next, 0xf8, entity);
+            next->actor.room_previous = entity;
         if (new_head)
-            set_link(new_head, 0xf8, new_head_previous);
+            new_head->actor.room_previous = new_head_previous;
         return fail(ctx, BH_ACTOR_ROUTE_NUMERICAL);
     }
     ctx->error = BH_ACTOR_ROUTE_OK;

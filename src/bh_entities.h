@@ -1,28 +1,78 @@
 #ifndef BH_ENTITIES_H
 #define BH_ENTITIES_H
 #include <stdint.h>
+#include "bh_flyby_fields.h"
 #include "bh_math.h"
+#include "bh_player_fields.h"
+#include "bh_remote_fields.h"
 #include "bh_scene.h"
 
 typedef struct BHEntity BHEntity;
+struct BHGeometry;
+struct BHBsp;
+struct BHWorldGeometry;
 typedef void (*BHEntityStep)(BHEntity *entity);
 typedef void (*BHEntityCallback)(BHEntity *entity, void *packet);
+typedef struct BHActorFields
+{
+    unsigned char reserved[4];
+    BHEntityStep draw;
+    BHEntity *global_previous, *global_next, *room_next, *room_previous;
+    unsigned long kind;
+} BHActorFields;
+
 struct BHEntity
 {
     unsigned long flags, generation, kind;
     BHVec3 position;
-    unsigned char opaque0[48];
-    BHVec3 origin;
-    unsigned char opaque1[96];
+    union
+    {
+        unsigned char opaque0[48];
+        struct
+        {
+            BHVec3 basis[3], euler;
+        };
+    };
+    union
+    {
+        BHVec3 origin;
+        BHVec3 velocity;
+    };
+    union
+    {
+        unsigned char opaque1[96];
+        struct
+        {
+            BHVec3 angular_velocity, acceleration, angular_acceleration, inertia;
+            BHMat34 last_clear;
+        };
+    };
     float lifetime, scale;
-    unsigned char opaque2a[4];
+    union
+    {
+        unsigned char opaque2a[4];
+        struct BHGeometry *collision_geometry;
+        const struct BHBsp *collision_bsp;
+    };
     float collision_radius; /* verified +c0 broad-phase extent, 0040af20 */
-    unsigned char opaque2b[4];
+    union
+    {
+        unsigned char opaque2b[4];
+        struct BHWorldGeometry *world;
+    };
     BHEntityCallback refresh;
     BHEntityStep step;
     BHEntityCallback query;
     BHEntity *query_next, *query_previous, *previous, *next;
-    unsigned char payload[636];
+    /* Recycled slots share the same storage across entity types. */
+    union
+    {
+        unsigned char payload[636];
+        BHActorFields actor;
+        BHFlybyFields flyby;
+        BHPlayerFields player;
+        BHRemoteFields remote;
+    };
 };
 typedef struct BHEntityPositionPacket
 {

@@ -91,7 +91,7 @@ int bh_target_construct_sync(BHTargetConstructContext *ctx)
             if (retain && (n >= ctx->roster_count || !same_body(ctx->roster + n, &next)))
                 retain = 0;
             ctx->roster[n] = next;
-            memcpy(&ctx->roster[n].world, (const char *)ctx->base_bodies[i].entity + 0xc4, 4);
+            ctx->roster[n].world = ctx->base_bodies[i].entity->world;
             ++n;
         }
     for (i = 0; i < ctx->capacity; ++i)
@@ -117,7 +117,7 @@ int bh_target_construct_sync(BHTargetConstructContext *ctx)
         body->friction = target_slot->body.friction;
         /* Physics publishes its selected room into the shared actual entity.
        Membership rebuild must retain that hint, including sleeping actors. */
-        memcpy(&body->world, (const char *)entity + 0xc4, 4);
+        body->world = entity->world;
         body->model_index = m;
         memcpy(&body->flags, (char *)entity + 0x114, 4);
         if (retain && (n >= ctx->roster_count || !same_body(ctx->roster + n, body) || m >= ctx->model_count ||
@@ -325,8 +325,7 @@ static BHTargetConstructSlot *begin(BHTargetConstructContext *ctx, const BHVec3 
         return NULL;
     target_slot->body.entity = entity;
     target_slot->body.generation = entity->generation;
-    /* Every original constructor clears +c4, including recycled entity slots. */
-    memset((char *)entity + 0xc4, 0, 4);
+    entity->world = NULL;
     memset(&target_slot->state, 0, sizeof(target_slot->state));
     identity(&rotation);
     bh_mat34_rotate_y(a->x, &rotation);
@@ -355,7 +354,7 @@ static BHTargetConstructSlot *begin(BHTargetConstructContext *ctx, const BHVec3 
     memset(&target_slot->body, 0, sizeof(target_slot->body));
     if (!bh_debris_bind(ctx->debris, &target_slot->body, entity, &target_slot->state, mass, .9f, &inertia))
         goto rejected;
-    memcpy((char *)entity + 0x78, &inertia, 12);
+    entity->inertia = inertia;
     memcpy(entity->payload + 608, &target_slot, 4);
     return target_slot;
 rejected:
@@ -397,7 +396,7 @@ static BHEntity *finish(BHTargetConstructContext *ctx, BHTargetConstructSlot *ta
     bh_target_draw_state_write(entity, &ds);
     bh_target_step_write(entity, &ts);
     memset((char *)entity + 0xe8, 0, 4);
-    memcpy((char *)entity + 0xbc, &target_slot->collision.geometry.bsp, 4);
+    entity->collision_bsp = target_slot->collision.geometry.bsp;
     for (n = 0; n < ctx->debris->registry_capacity && ctx->debris->registry[n]; ++n)
         ;
     ctx->debris->registry[n] = entity;
@@ -435,7 +434,7 @@ BHEntity *bh_target_construct_basic(BHTargetConstructContext *ctx, const BHVec3 
     /* Original FILD -> FST mass (without popping) -> FMUL keeps the integer
      for X inertia. Y/Z reload the already stored binary32 mass. */
     target_slot->body.inertia.x = rounded((double)mass * 1.73);
-    memcpy((char *)target_slot->body.entity + 0x78, &target_slot->body.inertia.x, 4);
+    target_slot->body.entity->inertia.x = target_slot->body.inertia.x;
     return finish(ctx, target_slot, ctx->resources[index], &zero, &zero, 0, NULL, 0, -1, 0, 0, &zero, NULL, NULL);
 }
 BHEntity *bh_target_construct_moving(BHTargetConstructContext *ctx, const BHVec3 *p, const BHVec3 *a, const BHVec3 *v,

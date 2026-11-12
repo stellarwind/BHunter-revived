@@ -128,7 +128,7 @@ int bh_world_load(BHWorldLoad *c, const char *name)
         n->placement.geometry.position = e->position;
         setword(e, 0xf4, n->placement.geometry.flags);
         n->placement.angles.x = rf((n->placement.geometry.flags & 3) * 1.5707963267948966);
-        memcpy((char *)e + 0x3c, &n->placement.angles, 12);
+        e->euler = n->placement.angles;
         setword(e, 0x134, 0);
         setword(e, 0x138, 0);
         setword(e, 0x13c, 0x437a0000);

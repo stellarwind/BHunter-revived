@@ -49,7 +49,7 @@ static int tick(BHActorRouteContext *ctx, BHEntity *entity, int phase, unsigned 
             bh_round_float(&t, (double)signed_elapsed / signed_duration);
         }
         path(t, &point, state.controls, state.controls + 1, state.controls + 2, state.controls + 3);
-        memcpy(&velocity, (char *)entity + 0x48, 12);
+        velocity = entity->velocity;
         if (state.sound == BH_SOUND_INVALID)
         {
             get(entity, 0x10c, &resource);

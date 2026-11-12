@@ -116,7 +116,7 @@ static void sync(BHEditorWorld *c)
             setword(n->entity, 0xe8 + j * 4, (unsigned long)n->placement.coordinates[j]);
         setword(n->entity, 0xf4, w->flags);
         setword(n->entity, 0xf8, n->model_index);
-        memcpy((char *)n->entity + 0x3c, &n->placement.angles, 12);
+        n->entity->euler = n->placement.angles;
         memcpy((char *)n->entity + 0x150, &w->transform, 48);
         memcpy((char *)n->entity + 0x180, &w->inverse, 48);
         memcpy((char *)n->entity + 0x1b0, &w->minimum, 12);

@@ -52,19 +52,19 @@ int bh_physics_step_read_entity(BHPhysicsState *physics, const BHEntity *entity)
     float basis[9];
     if (!physics || !entity)
         return 0;
-    memcpy(basis, entity->opaque0, 36);
+    memcpy(basis, entity->basis, sizeof(basis));
     for (r = 0; r < 3; ++r)
     {
         for (k = 0; k < 3; ++k)
             physics->pose.m[r][k] = basis[k * 3 + r];
         physics->pose.m[r][3] = ((const float *)&entity->position)[r];
     }
-    memcpy(&physics->last_clear, (const unsigned char *)entity + 0x84, 48);
-    memcpy(&physics->velocity, (const unsigned char *)entity + 0x48, 12);
-    memcpy(&physics->angular_velocity, (const unsigned char *)entity + 0x54, 12);
-    memcpy(&physics->acceleration, (const unsigned char *)entity + 0x60, 12);
-    memcpy(&physics->angular_acceleration, (const unsigned char *)entity + 0x6c, 12);
-    memcpy(&physics->euler, (const unsigned char *)entity + 0x3c, 12);
+    physics->last_clear = entity->last_clear;
+    physics->velocity = entity->velocity;
+    physics->angular_velocity = entity->angular_velocity;
+    physics->acceleration = entity->acceleration;
+    physics->angular_acceleration = entity->angular_acceleration;
+    physics->euler = entity->euler;
     return 1;
 }
 int bh_physics_step_publish(BHPhysicsStepBody *body)
@@ -81,14 +81,14 @@ int bh_physics_step_publish(BHPhysicsStepBody *body)
             basis[k * 3 + r] = physics->pose.m[r][k];
         ((float *)&entity->position)[r] = physics->pose.m[r][3];
     }
-    memcpy(entity->opaque0, basis, 36);
-    memcpy((unsigned char *)entity + 0x84, &physics->last_clear, 48);
-    memcpy((unsigned char *)entity + 0x48, &physics->velocity, 12);
-    memcpy((unsigned char *)entity + 0x54, &physics->angular_velocity, 12);
-    memcpy((unsigned char *)entity + 0x60, &physics->acceleration, 12);
-    memcpy((unsigned char *)entity + 0x6c, &physics->angular_acceleration, 12);
-    memcpy((unsigned char *)entity + 0x3c, &physics->euler, 12);
-    memcpy((unsigned char *)entity + 0xc4, &body->world, 4);
+    memcpy(entity->basis, basis, sizeof(basis));
+    entity->last_clear = physics->last_clear;
+    entity->velocity = physics->velocity;
+    entity->angular_velocity = physics->angular_velocity;
+    entity->acceleration = physics->acceleration;
+    entity->angular_acceleration = physics->angular_acceleration;
+    entity->euler = physics->euler;
+    entity->world = body->world;
     entity->lifetime = body->mass;
     entity->scale = body->friction;
     return 1;
@@ -467,7 +467,7 @@ int bh_physics_step(BHPhysicsStepContext *ctx, BHEntity *entity, float dt)
             fail(ctx, BH_PHYSICS_STEP_COLLISION);
         goto done;
     }
-    memcpy((unsigned char *)entity + 0xc4, &b->world, 4);
+    entity->world = b->world;
     memset(&ctx->first, 0, sizeof(ctx->first));
     hit = bh_entity_collision_dispatch(ctx->candidates, ctx->candidate_count, &pose, &movement, &angles, ctx->fallback,
                                        &ctx->first);

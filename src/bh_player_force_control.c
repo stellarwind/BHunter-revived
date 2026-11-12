@@ -13,20 +13,6 @@ static float stored(double v)
     bh_round_float(&out, v);
     return out;
 }
-static float read_float(const BHEntity *entity, unsigned long offset)
-{
-    float v;
-    memcpy(&v, (const unsigned char *)entity + offset, 4);
-    return v;
-}
-static void write_float(BHEntity *entity, unsigned long offset, float value)
-{
-    memcpy((unsigned char *)entity + offset, &value, 4);
-}
-static void vector_store(BHEntity *entity, unsigned long offset, const BHVec3 *v)
-{
-    memcpy((unsigned char *)entity + offset, v, 12);
-}
 static void local_velocity(const BHPhysicsState *physics, BHVec3 *out)
 {
     unsigned long k;
@@ -97,7 +83,7 @@ static int validate(BHPlayerForceControl *control)
             control->error = 1;
         return 0;
     }
-    memcpy(&inertia, (unsigned char *)control->body->entity + 0x78, 12);
+    inertia = control->body->entity->inertia;
     if (!inertia.x || !inertia.y || !inertia.z || !_finite(inertia.x) || !_finite(inertia.y) || !_finite(inertia.z))
     {
         control->error = 1;
@@ -132,7 +118,7 @@ static int validate(BHPlayerForceControl *control)
 static int apply(BHPlayerForceControl *control, float channels[15], const BHActorBasisIndices *g, float value)
 {
     BHVec3 inertia;
-    memcpy(&inertia, (unsigned char *)control->body->entity + 0x78, 12);
+    inertia = control->body->entity->inertia;
     return bh_actor_basis_apply_group(control->basis, control->body->physics, control->body->mass, &inertia, channels,
                                       g, value);
 }
@@ -188,13 +174,13 @@ static void visual(BHPlayerForceControl *control, float channels[15], const floa
         channels[i] = stored(smoothed);
         total = stored(smoothed + total);
     }
-    memcpy((unsigned char *)entity + 0x2bc, channels, 60);
-    write_float(entity, 0x2f8, total);
+    memcpy(entity->player.propulsion.channels, channels, sizeof(entity->player.propulsion.channels));
+    entity->player.engine_output = total;
     for (i = 0; i < BH_PLAYER_NOZZLE_COUNT; ++i)
     {
         /* Each controller retains its own original projection sum order. */
         nozzle_base(physics, bh_player_nozzles[i].x, bh_player_nozzles[i].z, variant, &output);
-        vector_store(entity, 0x2fc + i * 24, &output);
+        entity->player.nozzle_trail[i].from = output;
         j = 1 + i * 3;
         x = i == 0   ? (double)channels[j] - (-.5)
             : i == 1 ? -.5 - (double)channels[j]
@@ -208,7 +194,7 @@ static void visual(BHPlayerForceControl *control, float channels[15], const floa
             y = stored(y);
         }
         point(physics, x, y, z, variant, &output);
-        vector_store(entity, 0x308 + i * 24, &output);
+        entity->player.nozzle_trail[i].to = output;
     }
 }
 int bh_player_force_control_b(BHPlayerForceControl *control, float unused, int skip)
@@ -225,7 +211,7 @@ int bh_player_force_control_b(BHPlayerForceControl *control, float unused, int s
         return 0;
     entity = control->body->entity;
     physics = control->body->physics;
-    memcpy(old, (unsigned char *)entity + 0x2bc, 60);
+    memcpy(old, entity->player.propulsion.channels, sizeof(old));
     memset(channels, 0, sizeof(channels));
     if (!skip)
     {
@@ -233,9 +219,9 @@ int bh_player_force_control_b(BHPlayerForceControl *control, float unused, int s
         torque.x = -physics->angular_velocity.x;
         torque.y = -physics->angular_velocity.y;
         torque.z = -physics->angular_velocity.z;
-        instability = read_float(entity, 0x250);
+        instability = entity->player.instability;
         if (physics->pose.m[1][1] >= .5)
-            write_float(entity, 0x250, 1);
+            entity->player.instability = 1;
         else
         {
             ++*control->instability_counter;
@@ -252,11 +238,11 @@ int bh_player_force_control_b(BHPlayerForceControl *control, float unused, int s
                                    ((double)physics->pose.m[0][k] * noise.x + (double)physics->pose.m[2][k] * noise.z) +
                                        (double)physics->pose.m[1][k] * noise_y + ((float *)&torque)[k]);
             }
-            write_float(entity, 0x250, stored((double)instability - (-.03333333333333333)));
+            entity->player.instability = stored((double)instability - (-.03333333333333333));
         }
-        pitch = read_float(entity, 0x18c);
-        yaw = read_float(entity, 0x190);
-        thrust = read_float(entity, 0x194);
+        pitch = entity->player.input.axes[0];
+        yaw = entity->player.input.axes[1];
+        thrust = entity->player.input.axes[2];
         pitch_factor = stored((double)pitch * 2.75);
         speed_factor = stored((double)v.z * v.z * .00048828125);
         signed_x = v.x;
@@ -308,13 +294,13 @@ static int stabilized(BHPlayerForceControl *control, float dt, int skip, int var
     }
     entity = control->body->entity;
     physics = control->body->physics;
-    memcpy(old, (unsigned char *)entity + 0x2bc, 60);
+    memcpy(old, entity->player.propulsion.channels, sizeof(old));
     memset(channels, 0, sizeof(channels));
     if (!skip)
     {
-        input0 = read_float(entity, 0x18c);
-        input1 = read_float(entity, 0x190);
-        input2 = read_float(entity, 0x194);
+        input0 = entity->player.input.axes[0];
+        input1 = entity->player.input.axes[1];
+        input2 = entity->player.input.axes[2];
         up.x = physics->pose.m[0][1];
         up.y = physics->pose.m[1][1];
         up.z = physics->pose.m[2][1];
@@ -331,12 +317,12 @@ static int stabilized(BHPlayerForceControl *control, float dt, int skip, int var
                                                    ((double)dt * 250.0f));
         if (up.y >= .5)
         {
-            write_float(entity, 0x250, 1);
+            entity->player.instability = 1;
             blend = stored(sqrt(ratio));
         }
         else
         {
-            instability = read_float(entity, 0x250);
+            instability = entity->player.instability;
             ++*control->instability_counter;
             if ((*control->instability_counter & 3) == 0)
             {
@@ -345,7 +331,7 @@ static int stabilized(BHPlayerForceControl *control, float dt, int skip, int var
                 if (instability > 6)
                     cross.y = stored((double)cross.y - (double)(rand() - 16384) * instability * -.0001220703125);
             }
-            write_float(entity, 0x250, stored((double)instability - (-.03333333333333333)));
+            entity->player.instability = stored((double)instability - (-.03333333333333333));
         }
         for (k = 0; k < 3; ++k)
             bh_round_float(((float *)&local) + k,

@@ -14,8 +14,8 @@ int bh_remote_predict_position(const BHEntity *entity, unsigned short tick, BHVe
     float *p = &position.x;
     if (!entity || !out || !bh_math_environment_supported())
         return 0;
-    memcpy(&stamp, (const unsigned char *)entity + 0x17c, 2);
-    memcpy(&anchor, (const unsigned char *)entity + 0x180, 12);
+    stamp = entity->remote.newest.tick;
+    anchor = entity->remote.newest.position;
     elapsed = (unsigned short)(tick - stamp);
     delta = elapsed & 0x8000 ? (long)elapsed - 65536 : (long)elapsed;
     if (delta <= 0)
@@ -23,8 +23,8 @@ int bh_remote_predict_position(const BHEntity *entity, unsigned short tick, BHVe
         *out = anchor;
         return 1;
     }
-    memcpy(&velocity, (const unsigned char *)entity + 0x48, 12);
-    memcpy(&acceleration, (const unsigned char *)entity + 0x60, 12);
+    velocity = entity->velocity;
+    acceleration = entity->acceleration;
     for (i = 0; i < 3; ++i)
         if (!_finite((&anchor.x)[i]) || !_finite((&velocity.x)[i]) || !_finite((&acceleration.x)[i]))
             return 0;

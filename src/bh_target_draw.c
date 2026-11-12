@@ -77,8 +77,8 @@ int bh_target_draw(BHTargetDrawContext *ctx, const BHEntity *entity)
         !bh_math_environment_supported())
         return -1;
     bh_target_draw_state_read(entity, &state);
-    memcpy(basis, entity->opaque0, 36);
-    memcpy(&angles, (const unsigned char *)entity + 0x3c, 12);
+    memcpy(basis, entity->basis, sizeof(basis));
+    angles = entity->euler;
     /* Original X/Y offsets spill before position addition; Z does not. */
     partial_x = rounded(((double)basis[0] * state.local_anchor.x + (double)basis[3] * state.local_anchor.y) +
                         (double)basis[6] * state.local_anchor.z);

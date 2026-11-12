@@ -70,7 +70,7 @@ int bh_hud_markers_draw(BHHudMarkers *c, BHEntity *head, const BHVec3 *player, c
         if (!head->query)
             return fail(c, BH_HUD_MARKERS_CALLBACK);
         head->query(head, &packet);
-        memcpy(&kind, head->payload + 24, 4);
+        kind = head->actor.kind;
         extended = skip = 0;
         switch (kind)
         {
@@ -141,7 +141,7 @@ int bh_hud_markers_draw(BHHudMarkers *c, BHEntity *head, const BHVec3 *player, c
                                .25f, 0, .25f, z))
                     return 0;
                 /* Original reloads kind after four synchronous producers. */
-                memcpy(&kind, head->payload + 24, 4);
+                kind = head->actor.kind;
                 if (kind == 8)
                 {
                     memcpy(&status, head->payload + 48, 2);
@@ -184,7 +184,7 @@ int bh_hud_markers_draw(BHHudMarkers *c, BHEntity *head, const BHVec3 *player, c
 #endif
             }
         }
-        memcpy(&head, head->payload + 12, 4);
+        head = head->actor.global_next;
     }
     return 1;
 }

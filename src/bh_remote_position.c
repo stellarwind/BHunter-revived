@@ -9,42 +9,12 @@ static float rf(double v)
     bh_round_float(&f, v);
     return f;
 }
-static unsigned long word(BHEntity *entity, unsigned long o)
-{
-    unsigned long n;
-    memcpy(&n, (char *)entity + o, 4);
-    return n;
-}
-static void setword(BHEntity *entity, unsigned long o, unsigned long n)
-{
-    memcpy((char *)entity + o, &n, 4);
-}
-static unsigned short half(BHEntity *entity, unsigned long o)
-{
-    unsigned short n;
-    memcpy(&n, (char *)entity + o, 2);
-    return n;
-}
-static void sethalf(BHEntity *entity, unsigned long o, unsigned short n)
-{
-    memcpy((char *)entity + o, &n, 2);
-}
 static short delta(unsigned short a, unsigned short b)
 {
     unsigned short u = (unsigned short)(a - b);
     short s;
     memcpy(&s, &u, 2);
     return s;
-}
-static float number(BHEntity *entity, unsigned long o)
-{
-    float f;
-    memcpy(&f, (char *)entity + o, 4);
-    return f;
-}
-static void real(BHEntity *entity, unsigned long o, float f)
-{
-    memcpy((char *)entity + o, &f, 4);
 }
 static double wrap(float n)
 {
@@ -66,52 +36,53 @@ static BHPickupRoom *room(BHRemotePackets *packets, BHWorldGeometry *world)
 static int move(BHRemotePackets *packets, BHEntity *entity, BHWorldGeometry *old, BHWorldGeometry *next)
 {
     BHPickupRoom *a = old ? room(packets, old) : 0, *b = next ? room(packets, next) : 0;
-    BHEntity *previous = (BHEntity *)word(entity, 0xf8), *following = (BHEntity *)word(entity, 0xf4), *head;
+    BHEntity *previous = entity->actor.room_previous, *following = entity->actor.room_next, *head;
     if (old == next)
         return 1;
     if ((old && !a) || (next && !b))
         return 0;
-    if (a && ((previous ? (BHEntity *)word(previous, 0xf4) : a->actors) != entity ||
-              (following && (BHEntity *)word(following, 0xf8) != entity)))
+    if (a && ((previous ? previous->actor.room_next : a->actors) != entity ||
+              (following && following->actor.room_previous != entity)))
         return 0;
     if (a)
     {
         if (previous)
-            setword(previous, 0xf4, (unsigned long)following);
+            previous->actor.room_next = following;
         else
             a->actors = following;
         if (following)
-            setword(following, 0xf8, (unsigned long)previous);
+            following->actor.room_previous = previous;
     }
     if (b)
     {
         head = b->actors;
-        setword(entity, 0xf4, (unsigned long)head);
+        entity->actor.room_next = head;
         b->actors = entity;
-        setword(entity, 0xf8, 0);
+        entity->actor.room_previous = 0;
         if (head)
-            setword(head, 0xf8, (unsigned long)entity);
+            head->actor.room_previous = entity;
     }
     return 1;
 }
-static void clamp(BHEntity *entity, unsigned long offset, double squared, double limit)
+static void clamp(BHVec3 *vector, double squared, double limit)
 {
-    float x = number(entity, offset), y = number(entity, offset + 4), z = number(entity, offset + 8);
+    float x = vector->x, y = vector->y, z = vector->z;
     double length = ((double)z * z + (double)y * y) + (double)x * x;
     float factor;
     if (length > squared)
     {
         factor = rf(limit / sqrt(length));
-        real(entity, offset, rf((double)number(entity, offset) * factor));
-        real(entity, offset + 4, rf((double)number(entity, offset + 4) * factor));
-        real(entity, offset + 8, rf((double)number(entity, offset + 8) * factor));
+        vector->x = rf((double)vector->x * factor);
+        vector->y = rf((double)vector->y * factor);
+        vector->z = rf((double)vector->z * factor);
     }
 }
 int bh_remote_position_packet(BHRemotePackets *packets, void *p, unsigned long size, unsigned long capacity)
 {
     BHEntity *entity;
     unsigned short slot, sender, newest, middle, oldest;
-    unsigned long bank, i, o;
+    BHRemotePose *pose;
+    unsigned long i;
     BHWorldGeometry *before, *world;
     BHVec3 position;
     unsigned char *bytes, flags;
@@ -170,36 +141,36 @@ int bh_remote_position_packet(BHRemotePackets *packets, void *p, unsigned long s
         return 0;
     }
     memcpy(&sender, packets->reader.data + 2, 2);
-    before = (BHWorldGeometry *)word(entity, 0x198);
+    before = entity->remote.newest.world;
     first_pose = before == NULL;
-    oldest = half(entity, 0x13c);
-    middle = half(entity, 0x15c);
-    newest = half(entity, 0x17c);
+    oldest = entity->remote.oldest.tick;
+    middle = entity->remote.middle.tick;
+    newest = entity->remote.newest.tick;
     if (!first_pose && delta(sender, oldest) < 0)
     {
         --packets->pending;
         return 1;
     }
     if (first_pose)
-        bank = 0x17c;
+        pose = &entity->remote.newest;
     else if (delta(sender, middle) < 0)
-        bank = 0x13c;
+        pose = &entity->remote.oldest;
     else if (sender != middle && delta(sender, newest) >= 0)
     {
         if (sender != newest)
         {
-            memcpy((char *)entity + 0x13c, (char *)entity + 0x15c, 32);
-            memcpy((char *)entity + 0x15c, (char *)entity + 0x17c, 32);
+            entity->remote.oldest = entity->remote.middle;
+            entity->remote.middle = entity->remote.newest;
         }
-        bank = 0x17c;
+        pose = &entity->remote.newest;
     }
     else
     {
         if (sender != middle)
-            memcpy((char *)entity + 0x13c, (char *)entity + 0x15c, 32);
-        bank = 0x15c;
+            entity->remote.oldest = entity->remote.middle;
+        pose = &entity->remote.middle;
     }
-    sethalf(entity, bank, sender);
+    pose->tick = sender;
     world = before;
     decoded = bh_packet_read_position(&packets->reader, packets->navigation, &world, &position);
     if (decoded != 1)
@@ -212,9 +183,9 @@ int bh_remote_position_packet(BHRemotePackets *packets, void *p, unsigned long s
         packets->error = decoded < 0 ? 3 : 4;
         return 0;
     }
-    setword(entity, bank + 28, (unsigned long)world);
-    memcpy((char *)entity + bank + 4, &position, 12);
-    if (bank == 0x17c && !move(packets, entity, before, world))
+    pose->world = world;
+    pose->position = position;
+    if (pose == &entity->remote.newest && !move(packets, entity, before, world))
     {
         packets->error = 5;
         return 0;
@@ -224,15 +195,15 @@ int bh_remote_position_packet(BHRemotePackets *packets, void *p, unsigned long s
     {
         signed char v;
         memcpy(&v, bytes + i, 1);
-        real(entity, bank + 16 + 4 * i, rf((double)v * .02454369328916073));
+        bh_vec3_set_component(&pose->angles, i, rf((double)v * .02454369328916073));
     }
     flags = bytes[3];
-    if (bank == 0x17c)
+    if (pose == &entity->remote.newest)
     {
-        sethalf(entity, 0x11a, flags);
+        entity->remote.pose_flags = flags;
         if (entity != packets->local)
         {
-            unsigned char *propulsion = (unsigned char *)entity + BH_REMOTE_PROPULSION_OFFSET;
+            unsigned char *propulsion = entity->remote.propulsion;
             if (packets->reader.size > BH_NETWORK_POSE_BYTES)
                 memcpy(propulsion, bytes + 4, BH_PROPULSION_CHANNELS);
             else
@@ -242,39 +213,46 @@ int bh_remote_position_packet(BHRemotePackets *packets, void *p, unsigned long s
     packets->reader.cursor = packets->reader.size;
     if (first_pose)
     {
-        memcpy((char *)entity + 0x13c, (char *)entity + 0x17c, 32);
-        memcpy((char *)entity + 0x15c, (char *)entity + 0x17c, 32);
-        sethalf(entity, 0x13c, (unsigned short)(sender - 2));
-        sethalf(entity, 0x15c, (unsigned short)(sender - 1));
+        entity->remote.oldest = entity->remote.newest;
+        entity->remote.middle = entity->remote.newest;
+        entity->remote.oldest.tick = (unsigned short)(sender - 2);
+        entity->remote.middle.tick = (unsigned short)(sender - 1);
     }
-    dt = delta(half(entity, 0x17c), half(entity, 0x15c));
-    previous_dt = delta(half(entity, 0x15c), half(entity, 0x13c));
+    dt = delta(entity->remote.newest.tick, entity->remote.middle.tick);
+    previous_dt = delta(entity->remote.middle.tick, entity->remote.oldest.tick);
     if (!dt)
         dt = 1;
     if (!previous_dt)
         previous_dt = 1;
     for (i = 0; i < 3; ++i)
     {
-        oldp = number(entity, 0x140 + 4 * i);
-        midp = number(entity, 0x160 + 4 * i);
-        latestp = number(entity, 0x180 + 4 * i);
+        oldp = bh_vec3_component(&entity->remote.oldest.position, i);
+        midp = bh_vec3_component(&entity->remote.middle.position, i);
+        latestp = bh_vec3_component(&entity->remote.newest.position, i);
         velocity[i] = rf(((double)latestp - midp) / dt);
         accel = ((double)velocity[i] - ((double)midp - oldp) / previous_dt) / dt;
-        real(entity, 0x48 + 4 * i, rf(((double)velocity[i] + number(entity, 0x48 + 4 * i)) * .5));
-        real(entity, 0x60 + 4 * i, rf((accel + number(entity, 0x60 + 4 * i)) * .5));
-        angle = rf((double)number(entity, 0x18c + 4 * i) - number(entity, 0x16c + 4 * i));
+        bh_vec3_set_component(&entity->velocity, i,
+                              rf(((double)velocity[i] + bh_vec3_component(&entity->velocity, i)) * .5));
+        bh_vec3_set_component(&entity->acceleration, i,
+                              rf((accel + bh_vec3_component(&entity->acceleration, i)) * .5));
+        angle = rf((double)bh_vec3_component(&entity->remote.newest.angles, i) -
+                   bh_vec3_component(&entity->remote.middle.angles, i));
         new_ang[i] = rf(wrap(angle) / dt);
-        angle = rf((double)number(entity, 0x16c + 4 * i) - number(entity, 0x14c + 4 * i));
+        angle = rf((double)bh_vec3_component(&entity->remote.middle.angles, i) -
+                   bh_vec3_component(&entity->remote.oldest.angles, i));
         old_ang[i] = rf(wrap(angle) / previous_dt);
     }
     for (i = 0; i < 3; ++i)
     {
-        real(entity, 0x54 + 4 * i, rf(((double)new_ang[i] + number(entity, 0x54 + 4 * i)) * .5));
-        real(entity, 0x6c + 4 * i, rf((((double)new_ang[i] - old_ang[i]) / dt + number(entity, 0x6c + 4 * i)) * .5));
+        bh_vec3_set_component(&entity->angular_velocity, i,
+                              rf(((double)new_ang[i] + bh_vec3_component(&entity->angular_velocity, i)) * .5));
+        bh_vec3_set_component(&entity->angular_acceleration, i,
+                              rf((((double)new_ang[i] - old_ang[i]) / dt +
+                                  bh_vec3_component(&entity->angular_acceleration, i)) * .5));
     }
-    clamp(entity, 0x48, 100, 10);
-    clamp(entity, 0x60, 4, 2);
-    age = delta((unsigned short)*packets->simulation_tick, half(entity, 0x17c));
+    clamp(&entity->velocity, 100, 10);
+    clamp(&entity->acceleration, 4, 2);
+    age = delta((unsigned short)*packets->simulation_tick, entity->remote.newest.tick);
     if (age < 0)
         age = delta(0, (unsigned short)age);
     if (age)
@@ -287,12 +265,19 @@ int bh_remote_position_packet(BHRemotePackets *packets, void *p, unsigned long s
             packets->error = 6;
             return 0;
         }
-        for (i = 0; i < 6; ++i)
-            real(entity, 0x60 + 4 * i, rf((double)decay_a * number(entity, 0x60 + 4 * i)));
-        for (i = 0; i < 6; ++i)
+        for (i = 0; i < 3; ++i)
         {
-            o = 0x48 + 4 * i;
-            real(entity, o, rf((i ? decay_v : decay) * number(entity, o)));
+            bh_vec3_set_component(&entity->acceleration, i,
+                                  rf((double)decay_a * bh_vec3_component(&entity->acceleration, i)));
+            bh_vec3_set_component(&entity->angular_acceleration, i,
+                                  rf((double)decay_a * bh_vec3_component(&entity->angular_acceleration, i)));
+        }
+        for (i = 0; i < 3; ++i)
+        {
+            bh_vec3_set_component(&entity->velocity, i,
+                                  rf((i ? decay_v : decay) * bh_vec3_component(&entity->velocity, i)));
+            bh_vec3_set_component(&entity->angular_velocity, i,
+                                  rf((double)decay_v * bh_vec3_component(&entity->angular_velocity, i)));
         }
     }
     --packets->pending;

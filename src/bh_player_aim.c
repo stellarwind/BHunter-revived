@@ -1,7 +1,6 @@
 #include "bh_player_aim.h"
 #include "bh_round.h"
 #include "bh_fp.h"
-#include <string.h>
 #include <math.h>
 #include <float.h>
 static float stored(double value)
@@ -28,8 +27,8 @@ int bh_player_aim_update(BHPhysicsStepBody *body)
     unsigned long i;
     if (!body || !(entity = body->entity) || !(physics = body->physics) || !bh_math_environment_supported())
         return 0;
-    memcpy(&raw_x, (unsigned char *)entity + 0x1f0, 4);
-    memcpy(&raw_y, (unsigned char *)entity + 0x1f4, 4);
+    raw_x = entity->player.input.axes[BH_PLAYER_INPUT_AIM_X];
+    raw_y = entity->player.input.axes[BH_PLAYER_INPUT_AIM_Y];
     if (!_finite(raw_x) || !_finite(raw_y))
         return 0;
     if (raw_x == 0 && raw_y == 0)
@@ -68,7 +67,7 @@ int bh_player_aim_update(BHPhysicsStepBody *body)
             local.z = stored((double)local.z * cy);
         }
     }
-    memcpy((unsigned char *)entity + 0x280, &direction, 12);
-    memcpy((unsigned char *)entity + 0x28c, &local, 12);
+    entity->player.aim_direction = direction;
+    entity->player.aim_offset = local;
     return 1;
 }

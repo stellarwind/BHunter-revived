@@ -20,6 +20,57 @@ typedef char field_offsets[offsetof(BHEntity, position) == 12 && offsetof(BHEnti
                                ? 1
                                : -1];
 typedef char pointer_size[sizeof(void *) == 4 ? 1 : -1];
+
+#define ENTITY_OFFSET(member, offset) typedef char member##_offset[offsetof(BHEntity, member) == (offset) ? 1 : -1]
+#define PLAYER_OFFSET(name, member, offset)                                                                           \
+    typedef char player_##name##_offset[offsetof(BHEntity, player.member) == (offset) ? 1 : -1]
+ENTITY_OFFSET(basis, 0x18);
+ENTITY_OFFSET(euler, 0x3c);
+ENTITY_OFFSET(velocity, 0x48);
+ENTITY_OFFSET(angular_velocity, 0x54);
+ENTITY_OFFSET(acceleration, 0x60);
+ENTITY_OFFSET(angular_acceleration, 0x6c);
+ENTITY_OFFSET(inertia, 0x78);
+ENTITY_OFFSET(last_clear, 0x84);
+ENTITY_OFFSET(collision_geometry, 0xbc);
+ENTITY_OFFSET(world, 0xc4);
+ENTITY_OFFSET(payload, 0xe4);
+typedef char actor_draw_offset[offsetof(BHEntity, actor.draw) == 0xe8 ? 1 : -1];
+typedef char actor_global_next_offset[offsetof(BHEntity, actor.global_next) == 0xf0 ? 1 : -1];
+typedef char actor_room_next_offset[offsetof(BHEntity, actor.room_next) == 0xf4 ? 1 : -1];
+typedef char actor_kind_offset[offsetof(BHEntity, actor.kind) == 0xfc ? 1 : -1];
+typedef char flyby_camera_offset[offsetof(BHEntity, flyby.camera) == 0xe8 ? 1 : -1];
+typedef char flyby_history_offset[offsetof(BHEntity, flyby.previous_position) == 0x23c ? 1 : -1];
+typedef char flyby_waypoint_offset[offsetof(BHEntity, flyby.waypoint_index) == 0x284 ? 1 : -1];
+typedef char remote_pose_size[sizeof(BHRemotePose) == 32 ? 1 : -1];
+typedef char remote_pose_flags_offset[offsetof(BHEntity, remote.pose_flags) == 0x11a ? 1 : -1];
+typedef char remote_history_offset[offsetof(BHEntity, remote.oldest) == 0x13c &&
+                                   offsetof(BHEntity, remote.middle) == 0x15c &&
+                                   offsetof(BHEntity, remote.newest) == 0x17c &&
+                                   offsetof(BHEntity, remote.newest.world) == 0x198 ? 1 : -1];
+typedef char remote_propulsion_offset[offsetof(BHEntity, remote.propulsion) == 0x2c0 ? 1 : -1];
+PLAYER_OFFSET(camera, camera, 0xe8);
+PLAYER_OFFSET(input_list, input_list, 0x188);
+PLAYER_OFFSET(input, input, 0x18c);
+PLAYER_OFFSET(model_resource, model_resource, 0x21c);
+PLAYER_OFFSET(engine_sound, engine_sound, 0x220);
+PLAYER_OFFSET(cash, cash, 0x230);
+PLAYER_OFFSET(damage, damage, 0x23c);
+PLAYER_OFFSET(weapons, weapons, 0x258);
+PLAYER_OFFSET(aim_direction, aim_direction, 0x280);
+PLAYER_OFFSET(recoil_position, recoil_position, 0x298);
+PLAYER_OFFSET(camera_mode, camera_mode, 0x2b0);
+PLAYER_OFFSET(disabled_frames, disabled_frames, 0x2b4);
+PLAYER_OFFSET(selected_weapon, selected_weapon, 0x2b6);
+PLAYER_OFFSET(vehicle, vehicle, 0x2bb);
+PLAYER_OFFSET(channels, propulsion.channels, 0x2bc);
+PLAYER_OFFSET(nozzle_channels, propulsion.thrust.nozzles, 0x2c0);
+PLAYER_OFFSET(delayed_creation, propulsion.delayed.creation, 0x2e8);
+PLAYER_OFFSET(engine_output, engine_output, 0x2f8);
+PLAYER_OFFSET(nozzle_trail, nozzle_trail, 0x2fc);
+#undef PLAYER_OFFSET
+#undef ENTITY_OFFSET
+
 typedef struct Chunk
 {
     struct Chunk *next;

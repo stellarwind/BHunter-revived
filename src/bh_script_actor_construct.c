@@ -76,11 +76,11 @@ BHEntity *bh_script_actor_construct(BHScriptActorConstructorContext *ctx, const 
     state.current = state.next = world;
     put(entity, 0xc4, &world, 4);
     head = room->actors;
-    put(entity, 0xf4, &head, 4);
+    entity->actor.room_next = head;
     room->actors = entity;
-    word(entity, 0xf8, 0);
+    entity->actor.room_previous = 0;
     if (head)
-        put(head, 0xf8, &entity, 4);
+        head->actor.room_previous = entity;
     first = (unsigned long)rand();
     second = (unsigned long)rand();
     state.random = first + second * 65536UL;
@@ -109,7 +109,7 @@ BHEntity *bh_script_actor_construct(BHScriptActorConstructorContext *ctx, const 
     word(entity, 0x1ac, 0);
     word(entity, 0x114, ctx->model_resources[type]);
     word(entity, 0x10c, ctx->sound_resource);
-    word(entity, 0xfc, type < 2 ? 4 : 5);
+    entity->actor.kind = type < 2 ? 4 : 5;
     if (type < 2)
     {
         offset.x = 5;

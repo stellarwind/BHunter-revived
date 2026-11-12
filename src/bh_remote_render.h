@@ -5,7 +5,6 @@
 #include "bh_draw_submit.h"
 #include "bh_sound_queue.h"
 /* Remote entities store the quantized nozzle channels in their own payload. */
-enum { BH_REMOTE_PROPULSION_OFFSET = 0x2c0 };
 typedef struct BHRemoteRender
 {
     BHDrawQueue *queue;

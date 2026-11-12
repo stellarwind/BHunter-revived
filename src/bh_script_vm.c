@@ -554,7 +554,7 @@ static int execute(BHScriptVMContext *ctx, BHEntity *node, BHEntity *target, BHS
         t = rf(100000.0 / args[3]);
         for (i = 0; i < 3; ++i)
             ((float *)&velocity)[i] = rf((double)((float *)&velocity)[i] * t);
-        memcpy(&angles, (char *)target + 0x3c, 12);
+        angles = target->euler;
         bh_target_construct_box(ctx->targets, &p, &angles, &velocity, &spin, a->resource, (float)args[3],
                                 (float)args[0], args[1] ? (BHEntity *)word(target, 0x14c) : 0, args[2], &anchor,
                                 &minimum, &maximum, 0);
@@ -596,7 +596,7 @@ static int execute(BHScriptVMContext *ctx, BHEntity *node, BHEntity *target, BHS
         }
         waypoint = ctx->waypoints + args[0];
         waypoint->position = target->position;
-        memcpy(&waypoint->angles, (char *)target + 0x3c, 12);
+        waypoint->angles = target->euler;
         waypoint->speed = (float)args[1];
         waypoint->delay = (float)args[2];
         break;

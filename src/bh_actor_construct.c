@@ -90,7 +90,7 @@ static BHEntity *construct(BHActorConstructContext *ctx, BHWorldGeometry *world,
     }
     memcpy(entity->payload + 584, &ctx, 4);
     entity->position = zero;
-    memcpy((char *)entity + 0x3c, &zero, 12);
+    entity->euler = zero;
     entity->flags |= 0x100;
     memcpy(entity->opaque2b, &world, 4);
     memset(&state, 0, sizeof(state));
@@ -102,10 +102,10 @@ static BHEntity *construct(BHActorConstructContext *ctx, BHWorldGeometry *world,
         state.controls[i] = center;
     state.portal_center = center;
     head = binding->room->actors;
-    word(entity, 0xf4, (unsigned long)head);
-    word(entity, 0xf8, 0);
+    entity->actor.room_next = head;
+    entity->actor.room_previous = 0;
     if (head)
-        word(head, 0xf8, (unsigned long)entity);
+        head->actor.room_previous = entity;
     binding->room->actors = entity;
     memset((char *)entity + 0x15c, 0, 24);
     real(entity, 0x194, 0);
@@ -133,7 +133,7 @@ static BHEntity *construct(BHActorConstructContext *ctx, BHWorldGeometry *world,
     real(entity, 0x1b4, 0);
     word(entity, 0x1b8, 0);
     word(entity, 0x110, binding->bound_resource);
-    word(entity, 0xfc, type);
+    entity->actor.kind = type;
     word(entity, 0x118, 0);
     memcpy(entity->payload + 4, &draw, 4);
     r = next_random(r);
@@ -147,7 +147,7 @@ static BHEntity *construct(BHActorConstructContext *ctx, BHWorldGeometry *world,
     if (type == 12)
     {
         type = 6;
-        word(entity, 0xfc, 6);
+        entity->actor.kind = 6;
         word(entity, 0x118, 1);
     }
     if (type == 7)
@@ -155,25 +155,25 @@ static BHEntity *construct(BHActorConstructContext *ctx, BHWorldGeometry *world,
         word(entity, 0x114, ctx->models[8]);
         word(entity, 0x10c, ctx->sounds[8]);
         type = 6;
-        word(entity, 0xfc, 6);
+        entity->actor.kind = 6;
     }
     if (type == 10)
     {
         type = 2;
-        word(entity, 0xfc, 2);
+        entity->actor.kind = 2;
         real(entity, 0x1b4, .45f);
         word(entity, 0x1b8, (unsigned long)response->player);
     }
     if (type == 11)
     {
         type = 6;
-        word(entity, 0xfc, 6);
+        entity->actor.kind = 6;
         word(entity, 0x1b8, (unsigned long)response->player);
     }
     if (type == 13)
     {
         type = 6;
-        word(entity, 0xfc, 6);
+        entity->actor.kind = 6;
         word(entity, 0x114, ctx->cycle_models[ctx->cycle & 3]);
         ++ctx->cycle;
         word(entity, 0x10c, ctx->sounds[14]);
@@ -185,7 +185,7 @@ static BHEntity *construct(BHActorConstructContext *ctx, BHWorldGeometry *world,
         if (type == 15)
             real(entity, 0x194, -10);
         type = 6;
-        word(entity, 0xfc, 6);
+        entity->actor.kind = 6;
         word(entity, 0x1b8, (unsigned long)response->player);
     }
     if (type == 3)
@@ -198,10 +198,10 @@ static BHEntity *construct(BHActorConstructContext *ctx, BHWorldGeometry *world,
     if (type == 1 || type == 2 || type == 6)
     {
         head = response->vehicles->head;
-        word(entity, 0xf0, (unsigned long)head);
-        word(entity, 0xec, 0);
+        entity->actor.global_next = head;
+        entity->actor.global_previous = 0;
         if (head)
-            word(head, 0xec, (unsigned long)entity);
+            head->actor.global_previous = entity;
         response->vehicles->head = entity;
         ++response->vehicles->count;
         if (type == 1)

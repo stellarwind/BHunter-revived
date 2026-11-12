@@ -289,7 +289,7 @@ int bh_actor_pursuit_route(BHActorPursuitRouteContext *ctx, BHEntity *entity)
         short protected_player = 0;
         read(target, 0xc4, &target_world, 4);
         if (target == ctx->player)
-            read(target, 0x2b4, &protected_player, 2);
+            protected_player = target->player.disabled_frames;
         if (target_world == state.current && (!protected_player || target != ctx->player))
         {
             return bh_actor_pursuit_target_controls(ctx, entity);

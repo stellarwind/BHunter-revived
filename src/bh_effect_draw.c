@@ -65,7 +65,7 @@ int bh_effect_fixed_draw(BHEffectDrawContext *ctx, const BHEntity *entity)
     int status = 1;
     if (!valid(ctx, entity))
         return -1;
-    memcpy(&rotation, (const unsigned char *)entity + 0x3c, 12);
+    rotation = entity->euler;
     combine(&status, bh_draw_submit_resource(ctx->queue, 0, ctx->fixed_model, &entity->position, &rotation, 1));
     combine(&status, bh_flare_queue(ctx->queue, &entity->position, 4, 250, ctx->fixed_texture, 0, 0, 0, 0));
     return status;

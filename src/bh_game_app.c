@@ -2310,7 +2310,7 @@ static void network_trace(BHGameApp *app)
     FILE *log = app->network_log;
     if (!log)
         return;
-    memcpy(&model, (char *)app->player + 0x21c, sizeof(model));
+    model = app->player->player.model_resource;
     fprintf(log,
             "frame=%lu mode=%ld slot=%ld pos=%.3f,%.3f,%.3f sent_pose=%lu pose=%lu sent_shot=%lu shot=%lu "
             "fire=%lu scores=%lu rejected=%lu remote_draw=%lu car=%u model=%lu traffic=%lu/%d\n",
@@ -2429,7 +2429,7 @@ static void network_tick(BHGameApp *app)
     unsigned short tick = (unsigned short)app->player_state.tick;
     if (active)
     {
-        memcpy(&app->network_world, (char *)app->player + 0xc4, 4);
+        app->network_world = app->player->world;
         if (app->network_world)
             app->network_world_index = (unsigned short)bh_navigation_find(&app->network_positions, app->network_world);
     }

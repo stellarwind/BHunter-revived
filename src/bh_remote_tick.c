@@ -85,7 +85,7 @@ int bh_remote_tick(BHRemoteTick *tick, BHEntity *entity)
     remaining = word(entity, 0x108);
     if (remaining)
     {
-        flags = *((unsigned char *)entity + 0x11a);
+        flags = (unsigned char)entity->remote.pose_flags;
         if (flags & 6)
         {
             if (!tick->particles || !tick->particles->pool || !tick->particles->queue ||
@@ -152,7 +152,7 @@ int bh_remote_tick(BHRemoteTick *tick, BHEntity *entity)
                 }
             }
         }
-        flags = *((unsigned char *)entity + 0x11a);
+        flags = (unsigned char)entity->remote.pose_flags;
         if (flags & 4)
         {
             r = rand();

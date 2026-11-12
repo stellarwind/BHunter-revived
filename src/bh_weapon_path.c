@@ -48,9 +48,9 @@ int bh_weapon_path_point(BHEntity *weapon, BHEntity *player, BHVec3 *out, float 
     if (!enabled || !target || !(t >= 0) || !(t <= 1) ||
         !((double)t <= (double)weapon_state->hud.charge * (1.0 / 48)) || !target->query)
         return 0;
-    memcpy(&up, (unsigned char *)player + 0x24, 12);
-    memcpy(&side, (unsigned char *)player + 0x30, 12);
-    memcpy(&heading, (unsigned char *)player + 0x280, 12);
+    up = player->basis[1];
+    side = player->basis[2];
+    heading = player->player.aim_direction;
     for (i = 0; i < 3; i++)
     {
         ((float *)&start)[i] =

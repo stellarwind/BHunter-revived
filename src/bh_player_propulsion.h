@@ -6,7 +6,6 @@
 enum
 {
     BH_PLAYER_NOZZLE_COUNT = 4,
-    BH_PLAYER_NOZZLE_CHANNEL_OFFSET = 0x2c0,
     BH_PROPULSION_CHANNELS = BH_PLAYER_NOZZLE_COUNT * 3,
     BH_PROPULSION_WIRE_SCALE = 32 /* Five fractional bits per unsigned channel. */
 };

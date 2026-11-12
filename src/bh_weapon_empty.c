@@ -78,7 +78,7 @@ int bh_weapon_index9_trigger(BHWeaponEmptyContext *context, BHEntity *weapon, BH
             context->error = BH_WEAPON_EMPTY_ARGUMENT;
         return 0;
     }
-    memcpy(&timer, (unsigned char *)player + 0x240, 4);
+    timer = player->player.shield_time;
     if (timer > 0)
     {
         context->error = BH_WEAPON_EMPTY_OK;
@@ -89,10 +89,10 @@ int bh_weapon_index9_trigger(BHWeaponEmptyContext *context, BHEntity *weapon, BH
         return empty_notice(context, player);
     state->ammo = (long)((unsigned long)state->ammo - 1UL);
     timer = 15.0f;
-    memcpy((unsigned char *)player + 0x240, &timer, 4);
-    memcpy((unsigned char *)player + 0x248, &timer, 4);
+    player->player.shield_time = timer;
+    player->player.shield_pitch_time = timer;
     timer = 1.0f;
-    memcpy((unsigned char *)player + 0x244, &timer, 4);
+    player->player.shield_fade = timer;
     context->error = BH_WEAPON_EMPTY_OK;
     return 1;
 }

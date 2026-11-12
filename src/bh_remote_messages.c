@@ -161,38 +161,42 @@ static int birth(BHRemoteMessages *messages, unsigned long slot)
     strncpy((char *)entity + 0x11e, player->name, 19);
     *((char *)entity + 0x131) = 0;
     stamp = (unsigned short)*packets->simulation_tick;
-    sethalf(entity, 0x17c, stamp);
-    sethalf(entity, 0x15c, (unsigned short)(stamp - 1));
-    sethalf(entity, 0x13c, (unsigned short)(stamp - 2));
-    for (i = 0; i < 3; ++i)
-        memset((char *)entity + 0x140 + 32 * i, 0, 24);
-    memset((char *)entity + 0x48, 0, 48);
+    entity->remote.newest.tick = stamp;
+    entity->remote.middle.tick = (unsigned short)(stamp - 1);
+    entity->remote.oldest.tick = (unsigned short)(stamp - 2);
+    entity->remote.oldest.position = entity->remote.oldest.angles = (BHVec3){0};
+    entity->remote.middle.position = entity->remote.middle.angles = (BHVec3){0};
+    entity->remote.newest.position = entity->remote.newest.angles = (BHVec3){0};
+    entity->velocity = (BHVec3){0};
+    entity->angular_velocity = (BHVec3){0};
+    entity->acceleration = (BHVec3){0};
+    entity->angular_acceleration = (BHVec3){0};
     entity->flags |= 0x100;
-    sethalf(entity, 0x11a, 0);
+    entity->remote.pose_flags = 0;
     sethalf(entity, 0x11c, 0);
-    setword(entity, 0xfc, 8);
+    entity->actor.kind = 8;
     setword(entity, 0x100, 0);
     setword(entity, 0x108, 0);
     setword(entity, 0x110, BH_SOUND_INVALID);
     setword(entity, 0x104, BH_SOUND_INVALID);
     setword(entity, 0x10c, packets->engine_sounds[slot]);
     next = *packets->head;
-    setword(entity, 0xf0, (unsigned long)next);
+    entity->actor.global_next = next;
     *packets->head = entity;
-    setword(entity, 0xec, 0);
+    entity->actor.global_previous = 0;
     if (next)
-        setword(next, 0xec, (unsigned long)entity);
+        next->actor.global_previous = entity;
     ++*packets->count;
     if (room)
     {
         next = room->actors;
-        setword(entity, 0xf4, (unsigned long)next);
+        entity->actor.room_next = next;
         room->actors = entity;
-        setword(entity, 0xf8, 0);
+        entity->actor.room_previous = 0;
         if (next)
-            setword(next, 0xf8, (unsigned long)entity);
+            next->actor.room_previous = entity;
     }
-    setword(entity, 0x198, (unsigned long)world);
+    entity->remote.newest.world = world;
     setword(entity, 0x134, 0);
     sethalf(entity, 0x118, 0);
     for (i = 0; i < 9; ++i)
@@ -213,7 +217,7 @@ static int retire(BHRemoteMessages *messages, unsigned long slot)
     BHRemoteQueryPacket packet;
     if (!entity || !packets->head || !packets->count || !*packets->count)
         return 0;
-    world = (BHWorldGeometry *)word(entity, 0x198);
+    world = entity->remote.newest.world;
     if (world)
     {
         for (i = 0; i < packets->room_count; ++i)
@@ -224,16 +228,16 @@ static int retire(BHRemoteMessages *messages, unsigned long slot)
             }
         if (!room)
             return 0;
-        previous = (BHEntity *)word(entity, 0xf8);
-        next = (BHEntity *)word(entity, 0xf4);
-        if ((previous ? (BHEntity *)word(previous, 0xf4) : room->actors) != entity ||
-            (next && (BHEntity *)word(next, 0xf8) != entity))
+        previous = entity->actor.room_previous;
+        next = entity->actor.room_next;
+        if ((previous ? previous->actor.room_next : room->actors) != entity ||
+            (next && next->actor.room_previous != entity))
             return 0;
     }
-    previous = (BHEntity *)word(entity, 0xec);
-    next = (BHEntity *)word(entity, 0xf0);
-    if ((previous ? (BHEntity *)word(previous, 0xf0) : *packets->head) != entity ||
-        (next && (BHEntity *)word(next, 0xec) != entity))
+    previous = entity->actor.global_previous;
+    next = entity->actor.global_next;
+    if ((previous ? previous->actor.global_next : *packets->head) != entity ||
+        (next && next->actor.global_previous != entity))
         return 0;
     /* Departure bypasses the event-20 retirement path. Stop before the
        entity (and its only copy of the engine handle) is released. */
@@ -248,23 +252,23 @@ static int retire(BHRemoteMessages *messages, unsigned long slot)
     packets->remote[slot] = 0;
     if (room)
     {
-        previous = (BHEntity *)word(entity, 0xf8);
-        next = (BHEntity *)word(entity, 0xf4);
+        previous = entity->actor.room_previous;
+        next = entity->actor.room_next;
         if (previous)
-            setword(previous, 0xf4, (unsigned long)next);
+            previous->actor.room_next = next;
         else
             room->actors = next;
         if (next)
-            setword(next, 0xf8, (unsigned long)previous);
+            next->actor.room_previous = previous;
     }
-    previous = (BHEntity *)word(entity, 0xec);
-    next = (BHEntity *)word(entity, 0xf0);
+    previous = entity->actor.global_previous;
+    next = entity->actor.global_next;
     if (previous)
-        setword(previous, 0xf0, (unsigned long)next);
+        previous->actor.global_next = next;
     else
         *packets->head = next;
     if (next)
-        setword(next, 0xec, (unsigned long)previous);
+        next->actor.global_previous = previous;
     --*packets->count;
     packet.words[0] = 17;
     packet.words[1] = (long)entity;

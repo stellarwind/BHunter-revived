@@ -23,7 +23,7 @@ static int finite_vector(const BHVec3 *v)
 }
 BHVec3 *bh_weapon_target_player_aim(BHEntity *entity)
 {
-    return entity ? (BHVec3 *)((unsigned char *)entity + 0x280) : NULL;
+    return entity ? &entity->player.aim_direction : NULL;
 }
 static void clear(BHWeaponCommonState *weapon_state)
 {

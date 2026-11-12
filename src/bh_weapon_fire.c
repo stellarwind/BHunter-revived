@@ -5,14 +5,6 @@
 #include <stdlib.h>
 static const char empty_text[] =
     "5Hello Mister,\r\n\r\nseems like you're\r\nfresh out of ammo\r\non that one!\r\n\r\nCome visit one of my\r\nshops for a refill.\r\n\r\n";
-static void get(const BHEntity *entity, unsigned long a, void *p, unsigned long n)
-{
-    memcpy(p, (const unsigned char *)entity + a, n);
-}
-static void put(BHEntity *entity, unsigned long a, const void *p, unsigned long n)
-{
-    memcpy((unsigned char *)entity + a, p, n);
-}
 static float stored(double x)
 {
     float f;
@@ -91,10 +83,10 @@ int bh_weapon_fire_ballistic(BHWeaponFireContext *ctx, BHEntity *weapon_entity, 
         if (!weapon_state->ammo)
             return 1;
         weapon_state->ammo = (long)((unsigned long)weapon_state->ammo - 1);
-        get(entity, 0x24, &up, 12);
-        get(entity, 0x30, &side, 12);
-        get(entity, 0x18, &right, 12);
-        get(entity, 0x280, &forward, 12);
+        up = entity->basis[1];
+        side = entity->basis[2];
+        right = entity->basis[0];
+        forward = entity->player.aim_direction;
         /* 0043066c/8b spill without popping: the side offset uses retained centers.
     0043071b/25 retain X as double across rand; Y/Z reload their float spills. */
         for (i = 0; i < 3; i++)
@@ -115,21 +107,21 @@ int bh_weapon_fire_ballistic(BHWeaponFireContext *ctx, BHEntity *weapon_entity, 
             ((float *)&velocity)[i] = stored((double)((float *)&velocity)[i] - ((double)r - 16384) * (-1.0 / 8192));
         }
         bh_sound_request(ctx->sound, ctx->ballistic_sound, .75f, 1.5f, &muzzle, &entity->origin);
-        get(entity, 0xc4, &world, 4);
+        world = entity->world;
         bh_projectile_create_ballistic(ctx->projectiles, world, entity, &muzzle, &velocity, 2);
         if (ctx->peers > 1 && !weapon_state->delay)
         {
             bh_weapon_fire_packet(ctx, 4, 2, 1, NULL);
             weapon_state->delay = 8;
         }
-        get(entity, 0x2a4, &recoil, 12);
+        recoil = entity->player.recoil_velocity;
         for (i = 0; i < 3; i++)
             ((float *)&recoil)[i] = stored((double)((float *)&recoil)[i] - (double)((float *)&forward)[i] * (-3));
-        put(entity, 0x2a4, &recoil, 12);
+        entity->player.recoil_velocity = recoil;
         sign = (phase & 2) ? -.5 : .5;
         for (i = 0; i < 3; i++)
             ((float *)&recoil)[i] = stored((double)((float *)&recoil)[i] - (double)((float *)&right)[i] * sign);
-        put(entity, 0x2a4, &recoil, 12);
+        entity->player.recoil_velocity = recoil;
         ++ctx->shots;
     }
     weapon_state->word_e8 = phase + 1;
@@ -153,9 +145,9 @@ int bh_weapon_fire_homing(BHWeaponFireContext *ctx, BHEntity *weapon_entity, BHE
             return 1;
         weapon_state->ammo = (long)((unsigned long)weapon_state->ammo - 1);
         bh_sound_request(ctx->sound, ctx->homing_sound, .75f, 2, &entity->position, &entity->origin);
-        get(entity, 0x24, &up, 12);
-        get(entity, 0x30, &side, 12);
-        get(entity, 0x280, &forward, 12);
+        up = entity->basis[1];
+        side = entity->basis[2];
+        forward = entity->player.aim_direction;
         for (i = 0; i < 3; i++)
         {
             ((float *)&muzzle)[i] =
@@ -169,12 +161,12 @@ int bh_weapon_fire_homing(BHWeaponFireContext *ctx, BHEntity *weapon_entity, BHE
             r = rand();
             ((float *)&velocity)[i] = stored((double)((float *)&velocity)[i] - ((double)r - 16384) * (-1.0 / 8192));
         }
-        get(entity, 0xc4, &world, 4);
+        world = entity->world;
         bh_projectile_create_homing(ctx->projectiles, world, entity, &muzzle, &velocity, 2, weapon_state->hud.target);
-        get(entity, 0x2a4, &recoil, 12);
+        recoil = entity->player.recoil_velocity;
         for (i = 0; i < 3; i++)
             ((float *)&recoil)[i] = stored((double)((float *)&recoil)[i] - (double)((float *)&forward)[i] * 4);
-        put(entity, 0x2a4, &recoil, 12);
+        entity->player.recoil_velocity = recoil;
         if (ctx->peers > 1 && !weapon_state->delay)
         {
             bh_weapon_fire_packet(ctx, 2, 4, 2, weapon_state->hud.target);
@@ -223,16 +215,16 @@ int bh_weapon_area_tick(BHWeaponFireContext *ctx, BHEntity *weapon_entity, BHEnt
         bh_sound_request(ctx->sound, ctx->area_sound, 1, 1, &entity->position, &entity->origin);
         bh_sound_request(ctx->sound, ctx->area_sound, 1, .5f, &entity->position, &entity->origin);
     }
-    get(entity, 0x280, &forward, 12);
+    forward = entity->player.aim_direction;
     distance = (long)(3UL - phase);
     strength = stored(1 - (double)(distance < 0 ? -(double)distance : distance) * .25);
-    get(entity, 0xc4, &world, 4);
+    world = entity->world;
     bh_area_projectile_create(ctx->area, world, &entity->position, &forward, entity, strength);
     gain = ((phase & 1) - .5) * 6;
-    get(entity, 0x2a4, &recoil, 12);
+    recoil = entity->player.recoil_velocity;
     for (i = 0; i < 3; i++)
         ((float *)&recoil)[i] = stored((double)((float *)&forward)[i] * gain + ((float *)&recoil)[i]);
-    put(entity, 0x2a4, &recoil, 12);
+    entity->player.recoil_velocity = recoil;
     weapon_state->word_e8 = phase - 1;
     ++ctx->bursts;
     return 1;

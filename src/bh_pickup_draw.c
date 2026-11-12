@@ -420,7 +420,7 @@ int bh_pickup_draw(BHPickupDrawContext *ctx, BHEntity *entity)
     angles.x = phase + phase;
     angles.y = (float)(sin((double)phase * .87) * .3);
     angles.z = 0;
-    memcpy(entity->opaque0 + 0x24, &angles, sizeof(angles));
+    entity->euler = angles;
     r0 = bh_draw_submit_resource(ctx->queue, 0, resource, &entity->position, &angles, 1.0f);
     oscillation = sin((double)phase * 5.17);
     size = (float)(oscillation - (-6.0));

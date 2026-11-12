@@ -27,7 +27,7 @@ int bh_entity_resource_draw_special(BHEntityResourceDrawContext *context, BHEnti
     angles.x = phase + phase;
     angles.z = 0.0f;
     angles.y = (float)(sin((double)phase * 0.87) * 0.3);
-    memcpy(entity->opaque0 + 0x24, &angles, sizeof(angles));
+    entity->euler = angles;
     first = entity->position;
     first.x = (float)((double)entity->position.x - 0.05);
     first_result = bh_draw_submit_resource(context->queue, 3, handle, &first, &angles, 0.35f);
@@ -36,7 +36,7 @@ int bh_entity_resource_draw_special(BHEntityResourceDrawContext *context, BHEnti
     second.x = (float)((double)first.x - (-0.1));
     angles.x = (float)((double)phase * 2.74);
     angles.y = (float)(sin((double)phase * 1.1919000000000002) * 0.3);
-    memcpy(entity->opaque0 + 0x24, &angles, sizeof(angles));
+    entity->euler = angles;
     second_result = bh_draw_submit_resource(context->queue, 3, handle, &second, &angles, 0.35f);
 
     oscillation = sin((double)phase * 5.17);

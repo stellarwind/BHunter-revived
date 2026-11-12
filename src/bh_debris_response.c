@@ -244,9 +244,9 @@ void bh_debris_receive(BHEntity *entity, void *packet)
     /* Original response writes these common fields immediately. Keep the
        typed component and callback-visible entity coherent without republishing
        every body before every physics step. */
-    memcpy((char *)entity + 0x54, &s->angular_velocity, 12);
-    memcpy((char *)entity + 0x60, &s->acceleration, 12);
-    memcpy((char *)entity + 0x6c, &s->angular_acceleration, 12);
+    entity->angular_velocity = s->angular_velocity;
+    entity->acceleration = s->acceleration;
+    entity->angular_acceleration = s->angular_acceleration;
     if (b->sleep_time > 2)
         b->sleep_time = 0;
 }

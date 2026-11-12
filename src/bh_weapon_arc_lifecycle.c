@@ -34,7 +34,7 @@ static int finite_vector(const BHVec3 *p)
 }
 static const BHVec3 *aim(const BHEntity *entity)
 {
-    return (const BHVec3 *)((const unsigned char *)entity + 0x280);
+    return &entity->player.aim_direction;
 }
 static unsigned long request(BHWeaponArcLifecycleContext *ctx, unsigned long id, const BHEntity *entity, float level,
                              float pitch)

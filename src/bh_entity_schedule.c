@@ -92,12 +92,6 @@ static int resource(BHEntityScheduleContext *c, BHEntityScheduleRoom *room, int 
 #endif
     return result;
 }
-static BHEntity *actor_next(BHEntity *e)
-{
-    BHEntity *next;
-    memcpy(&next, e->payload + 16, sizeof(next));
-    return next;
-}
 static BHEntityStep draw_method(BHEntity *e)
 {
     BHEntityStep method;
@@ -128,7 +122,7 @@ static int draw_children(BHEntityScheduleContext *c, BHEntity *head, int pickups
 #ifdef BH_SDL_BACKEND
         bh_interpolation_stamp(mark, identity, generation);
 #endif
-        next = pickups ? bh_pickup_state(e)->room_next : actor_next(e);
+        next = pickups ? bh_pickup_state(e)->room_next : e->actor.room_next;
         e = next; /* deliberately read after callback: mutation is observable */
     }
     return 1;

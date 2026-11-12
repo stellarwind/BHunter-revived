@@ -25,21 +25,24 @@ int bh_remote_predict_pose(const BHEntity *entity, unsigned short tick, BHVec3 *
     double t, half_squared;
     if (!entity || !position || !angles || !bh_math_environment_supported())
         return 0;
-    memcpy(&stamp, (const char *)entity + 0x17c, 2);
+    stamp = entity->remote.newest.tick;
     elapsed = (unsigned short)(tick - stamp);
     dt = elapsed & 0x8000 ? (long)elapsed - 65536 : (long)elapsed;
-    memcpy(anchor, (const char *)entity + 0x180, sizeof(anchor));
+    anchor[0] = entity->remote.newest.position;
+    anchor[1] = entity->remote.newest.angles;
     if (dt <= 0)
     {
         *position = anchor[0];
         *angles = anchor[1];
         return 1;
     }
-    memcpy(velocity, (const char *)entity + 0x48, sizeof(velocity));
-    memcpy(acceleration, (const char *)entity + 0x60, sizeof(acceleration));
+    velocity[0] = entity->velocity;
+    velocity[1] = entity->angular_velocity;
+    acceleration[0] = entity->acceleration;
+    acceleration[1] = entity->angular_acceleration;
     for (j = 0; j < 2; j++)
         for (i = 0; i < 3; i++)
-            if (!_finite((&anchor[j].x)[i]) || !_finite((&velocity[j].x)[i]) || !_finite((&acceleration[j].x)[i]))
+            if (!_finite(bh_vec3_component(&anchor[j], i)) || !_finite(bh_vec3_component(&velocity[j], i)) || !_finite(bh_vec3_component(&acceleration[j], i)))
                 return 0;
     t = (double)dt;
     half_squared = (t * t) * .5;
@@ -47,10 +50,10 @@ int bh_remote_predict_pose(const BHEntity *entity, unsigned short tick, BHVec3 *
     out[1] = angles;
     for (j = 0; j < 2; j++)
         for (i = 0; i < 3; i++)
-            bh_round_float((&out[j]->x) + i, (double)(&velocity[j].x)[i] * t + (&anchor[j].x)[i]);
+            bh_round_float((&out[j]->x) + i, (double)bh_vec3_component(&velocity[j], i) * t + bh_vec3_component(&anchor[j], i));
     for (j = 0; j < 2; j++)
         for (i = 0; i < 3; i++)
-            bh_round_float((&out[j]->x) + i, (double)(&acceleration[j].x)[i] * half_squared + (&out[j]->x)[i]);
+            bh_round_float((&out[j]->x) + i, (double)bh_vec3_component(&acceleration[j], i) * half_squared + (&out[j]->x)[i]);
     return 1;
 }
 static void queued(BHRemoteRender *render, int result)
@@ -64,7 +67,7 @@ static void queued(BHRemoteRender *render, int result)
 
 static void draw_propulsion(BHRemoteRender *render, const BHEntity *entity, const BHVec3 *position, const BHVec3 *angles)
 {
-    const unsigned char *channels = (const unsigned char *)entity + BH_REMOTE_PROPULSION_OFFSET;
+    const unsigned char *channels = entity->remote.propulsion;
     BHMat34 pose = {{{1, 0, 0, position->x}, {0, 1, 0, position->y}, {0, 0, 1, position->z}}};
     bh_mat34_rotate_y(angles->x, &pose);
     bh_mat34_rotate_x(angles->y, &pose);
@@ -110,7 +113,7 @@ int bh_remote_render(BHRemoteRender *render, BHEntity *entity)
     memcpy(&slot, (char *)entity + 0x114, sizeof(slot));
     if (slot < 0 || slot >= 8)
         return 0;
-    memcpy(&flags, (char *)entity + 0x11a, sizeof(flags));
+    flags = entity->remote.pose_flags;
     memcpy(&handle, (char *)entity + 0x104, sizeof(handle));
     if (flags & BH_REMOTE_POSE_HIDDEN)
     {
@@ -132,8 +135,8 @@ int bh_remote_render(BHRemoteRender *render, BHEntity *entity)
     for (i = 0; i < 3; i++)
     {
         float component;
-        memcpy(&component, (char *)entity + 0x48 + i * 4, 4);
-        (&velocity.x)[i] = stored((double)component * 30.0);
+        component = bh_vec3_component(&entity->velocity, i);
+        bh_vec3_set_component(&velocity, i, stored((double)component * 30.0));
     }
     memcpy((char *)entity + 0x108, &frames, 4);
     memcpy(&resource, (char *)entity + 0x10c, 4);
@@ -150,13 +153,13 @@ int bh_remote_render(BHRemoteRender *render, BHEntity *entity)
             for (i = 0; i < 3; i++)
             {
                 value = rand();
-                (&normal.x)[i] = (float)(value - 16384);
+                bh_vec3_set_component(&normal, i, (float)(value - 16384));
             }
             bh_vec3_normalize(&normal);
             for (i = 0; i < 3; i++)
             {
-                (&normal.x)[i] = stored((double)(&normal.x)[i] * 3.0);
-                (&point.x)[i] = stored((double)(&normal.x)[i] + (&position.x)[i]);
+                bh_vec3_set_component(&normal, i, stored((double)bh_vec3_component(&normal, i) * 3.0));
+                bh_vec3_set_component(&point, i, stored((double)bh_vec3_component(&normal, i) + bh_vec3_component(&position, i)));
             }
             value = rand();
             angle = stored((double)value * .0001953125);

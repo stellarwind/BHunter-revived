@@ -10,16 +10,6 @@ static float rounded(double v)
     bh_round_float(&f, v);
     return f;
 }
-static BHEntity *link(const BHEntity *entity, unsigned long off)
-{
-    BHEntity *p;
-    memcpy(&p, (const char *)entity + off, 4);
-    return p;
-}
-static void setlink(BHEntity *entity, unsigned long off, BHEntity *p)
-{
-    memcpy((char *)entity + off, &p, 4);
-}
 static BHPickupRoom *binding(BHActorRouteContext *ctx, BHWorldGeometry *world)
 {
     return bh_actor_route_room(ctx, world);
@@ -58,13 +48,13 @@ int bh_script_actor_route_advance(BHActorRouteContext *ctx, BHEntity *entity)
     if (!old || !room || !world->model || world->navigation.count != world->model->portal_count ||
         world->navigation.count > 6)
         return error(ctx, BH_ACTOR_ROUTE_TOPOLOGY);
-    next = link(entity, 0xf4);
-    prev = link(entity, 0xf8);
-    if ((prev ? link(prev, 0xf4) != entity : old->actors != entity) || (next && link(next, 0xf8) != entity))
+    next = entity->actor.room_next;
+    prev = entity->actor.room_previous;
+    if ((prev ? prev->actor.room_next != entity : old->actors != entity) || (next && next->actor.room_previous != entity))
         return error(ctx, BH_ACTOR_ROUTE_TOPOLOGY);
     at = old->actors;
     for (n = 0; at && at != entity && n < ctx->actor_limit; ++n)
-        at = link(at, 0xf4);
+        at = at->actor.room_next;
     if (at != entity || n >= ctx->actor_limit)
         return error(ctx, BH_ACTOR_ROUTE_TOPOLOGY);
     for (i = 0; i < world->navigation.count; ++i)
@@ -162,21 +152,21 @@ int bh_script_actor_route_advance(BHActorRouteContext *ctx, BHEntity *entity)
         }
     }
     if (prev)
-        setlink(prev, 0xf4, next);
+        prev->actor.room_next = next;
     else
         old->actors = next;
     if (next)
-        setlink(next, 0xf8, prev);
+        next->actor.room_previous = prev;
     next = room->actors;
-    setlink(entity, 0xf4, next);
-    setlink(entity, 0xf8, 0);
+    entity->actor.room_next = next;
+    entity->actor.room_previous = 0;
     if (next)
-        setlink(next, 0xf8, entity);
+        next->actor.room_previous = entity;
     room->actors = entity;
     state.current = world;
     state.next = (BHWorldGeometry *)world->navigation.portals[outgoing].neighbor;
     bh_actor_route_write(entity, &state);
-    memcpy((char *)entity + 0xc4, &world, 4);
+    entity->world = world;
     memcpy((char *)entity + 0x1a0, &path, 4);
     ctx->error = BH_ACTOR_ROUTE_OK;
     return 1;

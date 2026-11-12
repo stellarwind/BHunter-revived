@@ -40,10 +40,10 @@ static int alternate(BHWeaponEffectFireContext *ctx, BHEntity *weapon_entity, BH
     weapon_state->word_e8 = phase ? 0 : 1;
     timer = split ? .3f : 1;
     memcpy(phase ? &weapon_state->word_f0 : &weapon_state->word_f4, &timer, 4);
-    memcpy(&right, (unsigned char *)entity + 0x18, 12);
-    memcpy(&up, (unsigned char *)entity + 0x24, 12);
-    memcpy(&side, (unsigned char *)entity + 0x30, 12);
-    memcpy(&forward, (unsigned char *)entity + 0x280, 12);
+    right = entity->basis[0];
+    up = entity->basis[1];
+    side = entity->basis[2];
+    forward = entity->player.aim_direction;
     gain = phase ? 1 : -1;
     for (i = 0; i < 3; i++)
     {
@@ -59,7 +59,7 @@ static int alternate(BHWeaponEffectFireContext *ctx, BHEntity *weapon_entity, BH
                 ((double)((float *)&entity->position)[i] + ((float *)&right)[i]) + (double)((float *)&up)[i] * .5;
         ((float *)&muzzle)[i] = stored(coordinate);
     }
-    memcpy(&world, (unsigned char *)entity + 0xc4, 4);
+    world = entity->world;
     sync(ctx);
     if (split)
     {
@@ -84,12 +84,12 @@ static int alternate(BHWeaponEffectFireContext *ctx, BHEntity *weapon_entity, BH
         if (f->peers > 1)
             bh_weapon_fire_packet(f, 1, 0, 3, target);
     }
-    memcpy(&recoil, (unsigned char *)entity + 0x2a4, 12);
+    recoil = entity->player.recoil_velocity;
     for (i = 0; i < 3; i++)
         ((float *)&recoil)[i] =
             stored(((double)((float *)&recoil)[i] - (double)((float *)&forward)[i] * (split ? -3 : -4)) -
                    (double)((float *)&right)[i] * (phase ? -.5 : .5));
-    memcpy((unsigned char *)entity + 0x2a4, &recoil, 12);
+    entity->player.recoil_velocity = recoil;
     ++f->shots;
     return f->error == 0;
 }
@@ -128,8 +128,8 @@ int bh_weapon_effect_accelerated_fire(BHWeaponEffectFireContext *ctx, BHEntity *
     memcpy(&weapon_state->word_f0, &timer, 4);
     bh_sound_request(f->sound, ctx->shot_sound, 1, .6f, &entity->position, &entity->origin);
     bh_sound_request(f->sound, ctx->shot_sound, 1, 1.3f, &entity->position, &entity->origin);
-    memcpy(&up, (unsigned char *)entity + 0x24, 12);
-    memcpy(&forward, (unsigned char *)entity + 0x280, 12);
+    up = entity->basis[1];
+    forward = entity->player.aim_direction;
     for (i = 0; i < 3; i++)
     {
         ((float *)&muzzle)[i] = stored((double)((float *)&entity->position)[i] + ((float *)&up)[i]);
@@ -137,14 +137,14 @@ int bh_weapon_effect_accelerated_fire(BHWeaponEffectFireContext *ctx, BHEntity *
     }
     acc.y = stored((double)forward.y * 20 - (-2));
     sync(ctx);
-    memcpy(&world, (unsigned char *)entity + 0xc4, 4);
+    world = entity->world;
     bh_effect_accelerated_create(ctx->projectile, world, entity, &muzzle, &entity->origin, &acc);
     if (f->peers > 1)
         bh_weapon_fire_packet(f, 1, 0, 7, NULL);
-    memcpy(&recoil, (unsigned char *)entity + 0x2a4, 12);
+    recoil = entity->player.recoil_velocity;
     for (i = 0; i < 3; i++)
         ((float *)&recoil)[i] = stored((double)((float *)&recoil)[i] - (double)((float *)&forward)[i] * (-10));
-    memcpy((unsigned char *)entity + 0x2a4, &recoil, 12);
+    entity->player.recoil_velocity = recoil;
     ++f->shots;
     return f->error == 0;
 }

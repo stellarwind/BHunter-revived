@@ -3,12 +3,6 @@
 #include "bh_render_interpolation.h"
 #endif
 #include <string.h>
-static unsigned long word(BHEntity *entity, unsigned long o)
-{
-    unsigned long n;
-    memcpy(&n, (char *)entity + o, 4);
-    return n;
-}
 static void setword(BHEntity *entity, unsigned long o, unsigned long n)
 {
     memcpy((char *)entity + o, &n, 4);
@@ -118,12 +112,11 @@ static void skip_room_draw(BHEntity *entity)
 
 void bh_remote_bind_draw(BHRemotePackets *packets, BHEntity *entity, unsigned int slot)
 {
-    BHEntityStep draw = skip_room_draw;
     unsigned int car = packets->network->players[slot].car;
     if (packets->car_models && car < BH_NETWORK_CARS)
         packets->render->models[slot] = packets->car_models[car];
-    memset((char *)entity + BH_REMOTE_PROPULSION_OFFSET, 0, BH_PROPULSION_CHANNELS);
-    memcpy((char *)entity + 0xe8, &draw, sizeof(draw));
+    memset(entity->remote.propulsion, 0, sizeof(entity->remote.propulsion));
+    entity->actor.draw = skip_room_draw;
 }
 int bh_remote_spawn_packet(BHRemotePackets *packets, void *p, unsigned long n, unsigned long capacity)
 {
@@ -200,41 +193,45 @@ int bh_remote_spawn_packet(BHRemotePackets *packets, void *p, unsigned long n, u
             sethalf(entity, 0x116, (unsigned short)i);
     bh_remote_bind_draw(packets, entity, slot);
     stamp = (unsigned short)*packets->simulation_tick;
-    sethalf(entity, 0x17c, stamp);
-    sethalf(entity, 0x15c, (unsigned short)(stamp - 1));
-    sethalf(entity, 0x13c, (unsigned short)(stamp - 2));
-    for (i = 0; i < 3; ++i)
-        memset((char *)entity + 0x140 + 32 * i, 0, 24);
+    entity->remote.newest.tick = stamp;
+    entity->remote.middle.tick = (unsigned short)(stamp - 1);
+    entity->remote.oldest.tick = (unsigned short)(stamp - 2);
+    entity->remote.oldest.position = entity->remote.oldest.angles = (BHVec3){0};
+    entity->remote.middle.position = entity->remote.middle.angles = (BHVec3){0};
+    entity->remote.newest.position = entity->remote.newest.angles = (BHVec3){0};
     for (j = 0; j < 19 && name[j]; ++j)
         *((char *)entity + 0x11e + j) = (char)name[j];
     *((char *)entity + 0x11e + j) = 0;
     entity->flags |= 0x100;
-    sethalf(entity, 0x11a, 0);
+    entity->remote.pose_flags = 0;
     sethalf(entity, 0x11c, 0);
-    memset((char *)entity + 0x48, 0, 48);
-    setword(entity, 0xfc, 8);
+    entity->velocity = (BHVec3){0};
+    entity->angular_velocity = (BHVec3){0};
+    entity->acceleration = (BHVec3){0};
+    entity->angular_acceleration = (BHVec3){0};
+    entity->actor.kind = 8;
     setword(entity, 0x100, 0);
     setword(entity, 0x108, 0);
     setword(entity, 0x110, BH_SOUND_INVALID);
     setword(entity, 0x104, BH_SOUND_INVALID);
     setword(entity, 0x10c, packets->engine_sounds[slot]);
     next = *packets->head;
-    setword(entity, 0xf0, (unsigned long)next);
+    entity->actor.global_next = next;
     *packets->head = entity;
-    setword(entity, 0xec, 0);
+    entity->actor.global_previous = 0;
     if (next)
-        setword(next, 0xec, (unsigned long)entity);
+        next->actor.global_previous = entity;
     ++*packets->count;
     if (room)
     {
         next = room->actors;
-        setword(entity, 0xf4, (unsigned long)next);
+        entity->actor.room_next = next;
         room->actors = entity;
-        setword(entity, 0xf8, 0);
+        entity->actor.room_previous = 0;
         if (next)
-            setword(next, 0xf8, (unsigned long)entity);
+            next->actor.room_previous = entity;
     }
-    setword(entity, 0x198, (unsigned long)world);
+    entity->remote.newest.world = world;
     memcpy(entity->payload + 536, &packets, 4);
     if (!bh_remote_tick_bind(packets->tick, entity) || !bh_entity_set_query(packets->pool, entity, query))
     {

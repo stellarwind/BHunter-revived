@@ -1,5 +1,6 @@
 #ifndef BH_MATH_H
 #define BH_MATH_H
+#include <string.h>
 
 /* Recovered binary layouts. Names are ours; original source names are unknown. */
 /* Current admitted source profile: x87 PC53/nearest, all exceptions masked;
@@ -12,6 +13,20 @@ typedef struct BHVec3
 {
     float x, y, z;
 } BHVec3;
+
+/* Index a component through the vector's contiguous binary representation. */
+static __inline float bh_vec3_component(const BHVec3 *vector, unsigned int index)
+{
+    float value;
+    memcpy(&value, (const unsigned char *)vector + index * sizeof(value), sizeof(value));
+    return value;
+}
+
+static __inline void bh_vec3_set_component(BHVec3 *vector, unsigned int index, float value)
+{
+    memcpy((unsigned char *)vector + index * sizeof(value), &value, sizeof(value));
+}
+
 typedef struct BHMat34
 {
     float m[3][4];

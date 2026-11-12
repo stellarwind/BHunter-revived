@@ -121,8 +121,8 @@ int bh_weapon_dispatch(BHWeaponDispatch *c, unsigned int selection, BHWeaponSlot
         if (!c->arc_hud)
             break;
         p.position = c->player->position;
-        memcpy(&p.forward, (char *)c->player + 0x30, 12);
-        memcpy(&p.aim, (char *)c->player + 0x280, 12);
+        p.forward = c->player->basis[2];
+        p.aim = c->player->player.aim_direction;
         if (c->arc_hud)
             result = bh_weapon_hud_arc(c->arc_hud, &weapon->common.hud, &p);
         break;

@@ -244,7 +244,7 @@ int bh_editor_world_draw(BHEditorWorld *c, BHEditorNode *n)
     }
     bucket = (word(n->entity, 0x114) & 1) ? 3 : 0;
     modulation = n == c->selection ? stored(.75 - sin((double)number(n->entity, 0x130)) * (-.25)) : 1;
-    memcpy(&angles, (char *)n->entity + 0x3c, 12);
+    angles = n->entity->euler;
     if (bh_draw_submit_resource(c->queue, bucket, b->resource, &n->entity->position, &angles, modulation) != 1)
     {
         c->error = 2;

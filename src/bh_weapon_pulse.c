@@ -104,9 +104,9 @@ int bh_weapon_pulse_fire(BHWeaponPulseContext *ctx, BHEntity *weapon, BHEntity *
         return 1;
     weapon_state->ammo = (long)((unsigned long)weapon_state->ammo - 1);
     generation = player->generation;
-    get(player, 0x30, &axis, 12);
-    get(player, 0x24, &up, 12);
-    get(player, 0x280, &heading, 12);
+    axis = player->basis[2];
+    up = player->basis[1];
+    heading = player->player.aim_direction;
     out = &muzzle.x;
     r = &player->position.x;
     for (i = 0; i < 3; ++i)
@@ -140,11 +140,11 @@ int bh_weapon_pulse_fire(BHWeaponPulseContext *ctx, BHEntity *weapon, BHEntity *
     recoil = 3 - (double)random * (-.0002);
     if (phase & 2)
         recoil *= .125;
-    get(player, 0x2a4, &a, 12);
+    a = player->player.recoil_velocity;
     out = &a.x;
     for (i = 0; i < 3; ++i)
         bh_round_float(out + i, (double)h[i] * recoil + out[i]);
-    put(player, 0x2a4, &a, 12);
+    player->player.recoil_velocity = a;
     packet.event = 2;
     packet.point = muzzle;
     out = &packet.normal.x;

@@ -368,7 +368,7 @@ int bh_actor_attack(BHActorAttackContext *ctx, BHEntity *entity)
     }
     if (!frame)
     {
-        short protected_player = target == ctx->pursuit->player ? short_value(target, 0x2b4) : 0;
+        short protected_player = target == ctx->pursuit->player ? target->player.disabled_frames : 0;
         if (protected_player)
             return 1;
         if (!have_motion && !motion(ctx, entity, target, &m))

@@ -2,10 +2,6 @@
 #include "bh_fp.h"
 #include <string.h>
 #include <float.h>
-static void vector(BHEntity *e, unsigned long at, const BHVec3 *v)
-{
-    memcpy((unsigned char *)e + at, v, 12);
-}
 static void word(BHEntity *e, unsigned long at, unsigned long value)
 {
     memcpy((unsigned char *)e + at, &value, 4);
@@ -13,15 +9,15 @@ static void word(BHEntity *e, unsigned long at, unsigned long value)
 static void publish(BHEntity *e, const BHFlybyCameraState *state)
 {
     e->position = state->position;
-    vector(e, 0x23c, &state->previous_position);
-    vector(e, 0x248, &state->older_position);
-    vector(e, 0x18, &state->basis_x);
-    vector(e, 0x24, &state->basis_y);
-    vector(e, 0x30, &state->basis_z);
-    vector(e, 0x3c, &state->angles);
-    vector(e, 0x48, &state->velocity);
-    memcpy((unsigned char *)e + 0xe8, &state->camera, sizeof(state->camera));
-    word(e, 0xc4, (unsigned long)state->route.current);
+    e->flyby.previous_position = state->previous_position;
+    e->flyby.older_position = state->older_position;
+    e->basis[0] = state->basis_x;
+    e->basis[1] = state->basis_y;
+    e->basis[2] = state->basis_z;
+    e->euler = state->angles;
+    e->velocity = state->velocity;
+    e->flyby.camera = state->camera;
+    e->world = state->route.current;
 }
 BHEntity *bh_flyby_construct(BHFlybyConstruct *c)
 {
@@ -68,24 +64,18 @@ BHEntity *bh_flyby_construct(BHFlybyConstruct *c)
     c->settled = 0;
     c->error = 0;
     e->position = position;
-    word(e, 0xc4, 0);
-    vector(e, 0x23c, &position);
-    vector(e, 0x248, &position);
-    word(e, 0x284, (unsigned long)selected);
-    word(e, 0x18, 0x3f800000);
-    word(e, 0x1c, 0);
-    word(e, 0x20, 0);
-    word(e, 0x24, 0);
-    word(e, 0x28, 0x3f800000);
-    word(e, 0x2c, 0);
-    word(e, 0x30, 0);
-    word(e, 0x34, 0);
-    word(e, 0x38, 0x3f800000);
-    for (i = 0; i < 4; ++i)
-        vector(e, 0x48 + i * 12, &zero);
-    memcpy((unsigned char *)e + 0x3c, &pi, 4);
-    word(e, 0x40, 0);
-    word(e, 0x44, 0);
+    e->world = NULL;
+    e->flyby.previous_position = position;
+    e->flyby.older_position = position;
+    e->flyby.waypoint_index = selected;
+    e->basis[0] = (BHVec3){1, 0, 0};
+    e->basis[1] = (BHVec3){0, 1, 0};
+    e->basis[2] = (BHVec3){0, 0, 1};
+    e->velocity = zero;
+    e->angular_velocity = zero;
+    e->acceleration = zero;
+    e->angular_acceleration = zero;
+    e->euler = (BHVec3){pi, 0, 0};
     state = s->flyby_state;
     state->position = state->previous_position = state->older_position = position;
     state->angles.x = pi;
@@ -99,14 +89,14 @@ BHEntity *bh_flyby_construct(BHFlybyConstruct *c)
     state->orbit_time = 0;
     if (!bh_camera_state_init(&state->camera, 10))
         goto failed;
-    memcpy((unsigned char *)e + 0xe8, &state->camera, sizeof(state->camera));
-    vector(e, 0x160, &position);
-    vector(e, 0x16c, &state->angles);
+    e->flyby.camera = state->camera;
+    e->flyby.camera.position = position;
+    e->flyby.camera.angles = state->angles;
     word(e, 0x1f8, 0);
     word(e, 0x1fc, 0);
     word(e, 0x1dc, 0);
     state->route.current = bh_world_locate(camera->route->first, camera->route->scene_count, NULL, &position, 0);
-    word(e, 0xc4, (unsigned long)state->route.current);
+    e->world = state->route.current;
     if (!bh_flyby_scene_bind(s))
         goto failed;
     for (i = 0; i < 50; ++i)

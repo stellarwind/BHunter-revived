@@ -45,8 +45,8 @@ int bh_weapon_arc_fire(BHWeaponArcFireContext *ctx, BHEntity *weapon_entity, BHE
         progress = 1;
     if (!bh_weapon_path_point(weapon_entity, entity, &point, progress))
     {
-        memcpy(&side, (unsigned char *)entity + 0x30, 12);
-        memcpy(&up, (unsigned char *)entity + 0x24, 12);
+        side = entity->basis[2];
+        up = entity->basis[1];
         for (i = 0; i < 3; i++)
             ((float *)&point)[i] =
                 stored((((double)((float *)&entity->position)[i] - (double)((float *)&side)[i] * (-3)) -
@@ -87,13 +87,13 @@ int bh_weapon_arc_fire(BHWeaponArcFireContext *ctx, BHEntity *weapon_entity, BHE
         target->query(target, packet);
         ++ctx->queries;
     }
-    memcpy(&recoil, (unsigned char *)entity + 0x2a4, 12);
+    recoil = entity->player.recoil_velocity;
     for (i = 0; i < 3; i++)
     {
         r = rand();
         ((float *)&recoil)[i] = stored((double)((float *)&recoil)[i] - ((double)r - 16384) * (-1.0 / 16384));
     }
-    memcpy((unsigned char *)entity + 0x2a4, &recoil, 12);
+    entity->player.recoil_velocity = recoil;
     bh_sound_request(f->sound, ctx->sound, .4f, 3, &point, &zero);
     weapon_state->word_e8 = 4;
     if (f->peers > 1)

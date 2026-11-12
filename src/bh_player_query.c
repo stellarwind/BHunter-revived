@@ -6,18 +6,6 @@
 #include <math.h>
 static BHPlayerQueryContext *active;
 typedef char query_abi[sizeof(void *) == 4 && sizeof(BHPlayerQueryPacket) == 40 ? 1 : -1];
-static long word(BHEntity *entity, unsigned int o)
-{
-    long v;
-    memcpy(&v, (unsigned char *)entity + o, 4);
-    return v;
-}
-static float scalar(BHEntity *entity, unsigned int o)
-{
-    float v;
-    memcpy(&v, (unsigned char *)entity + o, 4);
-    return v;
-}
 static void put(BHEntity *entity, unsigned int o, long v)
 {
     memcpy((unsigned char *)entity + o, &v, 4);
@@ -34,19 +22,15 @@ static float stored(double d)
     bh_round_float(&v, d);
     return v;
 }
-static void put_byte(BHEntity *entity, unsigned int o, unsigned char v)
+static void damp(BHVec3 *vector, double factor)
 {
-    ((unsigned char *)entity)[o] = v;
-}
-static unsigned char octet(BHEntity *entity, unsigned int o)
-{
-    return ((unsigned char *)entity)[o];
+    vector->x = stored((double)vector->x * factor);
+    vector->y = stored((double)vector->y * factor);
+    vector->z = stored((double)vector->z * factor);
 }
 static int protected_player(BHEntity *entity)
 {
-    unsigned short v;
-    memcpy(&v, (unsigned char *)entity + 0x2b4, 2);
-    return v != 0;
+    return entity->player.disabled_frames != 0;
 }
 static long add(long a, long b)
 {
@@ -77,7 +61,7 @@ static void broadcast(BHPlayerQueryContext *ctx)
             ctx->error = 3;
             return;
         }
-        if (word(entity, 0xfc) == 1)
+        if (entity->actor.kind == 1)
         {
             packet.words[0] = 15;
             if (!entity->query)
@@ -88,7 +72,7 @@ static void broadcast(BHPlayerQueryContext *ctx)
             ++ctx->broadcasts;
             entity->query(entity, &packet);
         }
-        memcpy(&entity, (unsigned char *)entity + 0xf0, 4);
+        entity = entity->actor.global_next;
     }
 }
 static const char warning30[] =
@@ -105,7 +89,7 @@ static int registry(BHPlayerQueryContext *ctx, unsigned int i, BHEntity **entity
         ctx->error = 1;
         return 0;
     }
-    memcpy(&p, (unsigned char *)ctx->player + 0x258 + i * 4, 4);
+    p = ctx->player->player.weapons[i];
     if (p != *entity)
     {
         ctx->error = 1;
@@ -130,7 +114,7 @@ static void select_weapon(BHPlayerQueryContext *ctx, unsigned int i)
 {
     BHEntity *old, *now;
     BHWeaponObjectState *os, *ns;
-    unsigned int slot = i < 5 ? 0x2b6 : 0x2b7, previous = octet(ctx->player, slot);
+    unsigned int slot = i >= 5, previous = ctx->player->player.selected_weapon[slot];
     if (previous == i)
         return;
     if (!registry(ctx, previous, &old, &os) || !registry(ctx, i, &now, &ns))
@@ -151,7 +135,7 @@ static void select_weapon(BHPlayerQueryContext *ctx, unsigned int i)
         ctx->error = 4;
         return;
     }
-    put_byte(ctx->player, slot, (unsigned char)i);
+    ctx->player->player.selected_weapon[slot] = (unsigned char)i;
     switch (ns->method_11c)
     {
     case 0x431050UL:
@@ -182,7 +166,7 @@ static void purchase(BHPlayerQueryContext *ctx, BHPlayerQueryPacket *packet)
     packet->words[6] = 0;
     if (price)
     {
-        long affordable = word(entity, 0x230) / price;
+        long affordable = entity->player.cash / price;
         if (affordable < quantity)
             quantity = affordable;
         if (!quantity)
@@ -190,42 +174,42 @@ static void purchase(BHPlayerQueryContext *ctx, BHPlayerQueryPacket *packet)
     }
     if (type == 20)
     {
-        if (scalar(entity, 0x24c) <= quantity * .01)
+        if (entity->player.wear <= quantity * .01)
         {
-            accepted = (long)(__int64)((double)scalar(entity, 0x24c) * 100.0f);
-            set(entity, 0x24c, 0);
+            accepted = (long)(__int64)((double)entity->player.wear * 100.0f);
+            entity->player.wear = stored(0);
         }
         else
         {
             accepted = quantity;
-            set(entity, 0x24c, (double)scalar(entity, 0x24c) - quantity * .01);
+            entity->player.wear = stored((double)entity->player.wear - quantity * .01);
         }
         packet->words[6] = accepted;
     }
     else if (type == 21)
     {
-        oldfine = word(entity, 0x234);
-        put_byte(entity, 0x2ba, 60);
+        oldfine = entity->player.fine;
+        entity->player.fine_flash = 60;
         total = mul(quantity, price);
         if (total < oldfine)
         {
             accepted = quantity;
-            put(entity, 0x234, sub(oldfine, total));
+            entity->player.fine = sub(oldfine, total);
         }
         else
         {
             accepted = oldfine / price;
-            put(entity, 0x234, 0);
+            entity->player.fine = 0;
         }
         packet->words[6] = accepted;
         if (price && accepted)
         {
-            put_byte(entity, 0x2b9, 60);
-            put(entity, 0x230, sub(word(entity, 0x230), mul(accepted, price)));
+            entity->player.cash_flash = 60;
+            entity->player.cash = sub(entity->player.cash, mul(accepted, price));
         }
-        if (word(entity, 0x238) && !word(entity, 0x234) && oldfine > 0)
+        if (entity->player.bounty_pending && !entity->player.fine && oldfine > 0)
         {
-            put(entity, 0x238, 0);
+            entity->player.bounty_pending = 0;
             message(ctx, restored);
         }
         broadcast(ctx);
@@ -273,8 +257,8 @@ static void purchase(BHPlayerQueryContext *ctx, BHPlayerQueryPacket *packet)
     }
     if (price && accepted)
     {
-        put_byte(entity, 0x2b9, 60);
-        put(entity, 0x230, sub(word(entity, 0x230), mul(accepted, price)));
+        entity->player.cash_flash = 60;
+        entity->player.cash = sub(entity->player.cash, mul(accepted, price));
     }
 }
 static void transform(BHEntity *entity, double x, double y, double z, BHVec3 *out)
@@ -282,8 +266,8 @@ static void transform(BHEntity *entity, double x, double y, double z, BHVec3 *ou
     unsigned int row;
     for (row = 0; row < 3; row++)
         ((float *)out)[row] =
-            stored(((double)scalar(entity, 0x20 + row * 12) * z + (double)scalar(entity, 0x18 + row * 12) * x) +
-                   (double)scalar(entity, 0x1c + row * 12) * y);
+            stored(((double)entity->basis[row].z * z + (double)entity->basis[row].x * x) +
+                   (double)entity->basis[row].y * y);
 }
 int bh_player_query_dispatch(BHPlayerQueryContext *ctx, BHPlayerQueryPacket *packet)
 {
@@ -308,7 +292,7 @@ int bh_player_query_dispatch(BHPlayerQueryContext *ctx, BHPlayerQueryPacket *pac
     }
     if (packet->words[0] == 13 &&
         (packet->words[1] < 0 || (packet->words[1] > 9 && packet->words[1] != 20 && packet->words[1] != 21) ||
-         packet->words[4] < 0 || packet->words[3] < 0 || word(entity, 0x230) < 0 ||
+         packet->words[4] < 0 || packet->words[3] < 0 || entity->player.cash < 0 ||
          (packet->words[1] == 21 && !packet->words[4])))
     {
         ctx->error = 1;
@@ -321,22 +305,24 @@ int bh_player_query_dispatch(BHPlayerQueryContext *ctx, BHPlayerQueryPacket *pac
         random_scale = stored((double)packet->floats[1] * .001);
         for (i = 0; i < 3; i++)
         {
+            double recoil;
+            float speed;
             value = rand() - 0x4000;
             ++ctx->random_calls;
-            set(entity, 0x2a4 + i * 4,
-                (double)scalar(entity, 0x2a4 + i * 4) +
-                    (i == 2 ? (double)value * random_scale : stored((double)value * random_scale)));
+            recoil = i == 2 ? (double)value * random_scale : stored((double)value * random_scale);
+            speed = bh_vec3_component(&entity->player.recoil_velocity, i);
+            bh_vec3_set_component(&entity->player.recoil_velocity, i, stored((double)speed + recoil));
         }
-        if (scalar(entity, 0x240) <= 0 && !protected_player(entity))
+        if (entity->player.shield_time <= 0 && !protected_player(entity))
         {
-            t = (double)packet->floats[1] + scalar(entity, 0x23c);
-            set(entity, 0x23c, t);
+            t = (double)packet->floats[1] + entity->player.damage;
+            entity->player.damage = stored(t);
             *ctx->damage_source = t < 1 ? NULL : (BHEntity *)packet->words[2];
-            t = (double)scalar(entity, 0x23c) - (double)packet->floats[1] * (-4.0f);
-            if (scalar(entity, 0x254) < t)
-                set(entity, 0x254, t);
-            if (scalar(entity, 0x23c) > 1)
-                set(entity, 0x23c, 1);
+            t = (double)entity->player.damage - (double)packet->floats[1] * (-4.0f);
+            if (entity->player.damage_flash < t)
+                entity->player.damage_flash = stored(t);
+            if (entity->player.damage > 1)
+                entity->player.damage = stored(1);
         }
         break;
     case 1:
@@ -352,14 +338,14 @@ int bh_player_query_dispatch(BHPlayerQueryContext *ctx, BHPlayerQueryPacket *pac
         {
             length = stored(length);
             factor =
-                (((double)packet->floats[4] / scalar(entity, 0xb4)) * (1 - length / packet->floats[5]) * 30) / length;
+                (((double)packet->floats[4] / entity->lifetime) * (1 - length / packet->floats[5]) * 30) / length;
             f = stored(factor);
-            set(entity, 0x60, (double)scalar(entity, 0x60) + factor * d.x);
-            set(entity, 0x64, (double)scalar(entity, 0x64) + (double)f * d.y);
-            set(entity, 0x68, (double)scalar(entity, 0x68) + (double)f * d.z);
-            set(entity, 0x2a4, (double)scalar(entity, 0x2a4) + (double)d.x * f * .01);
-            set(entity, 0x2a8, (double)scalar(entity, 0x2a8) + (double)d.y * f * .01);
-            set(entity, 0x2ac, (double)scalar(entity, 0x2ac) + (double)d.z * f * .01);
+            entity->acceleration.x = stored((double)entity->acceleration.x + factor * d.x);
+            entity->acceleration.y = stored((double)entity->acceleration.y + (double)f * d.y);
+            entity->acceleration.z = stored((double)entity->acceleration.z + (double)f * d.z);
+            entity->player.recoil_velocity.x = stored((double)entity->player.recoil_velocity.x + (double)d.x * f * .01);
+            entity->player.recoil_velocity.y = stored((double)entity->player.recoil_velocity.y + (double)d.y * f * .01);
+            entity->player.recoil_velocity.z = stored((double)entity->player.recoil_velocity.z + (double)d.z * f * .01);
         }
         break;
     case 2:
@@ -372,21 +358,22 @@ int bh_player_query_dispatch(BHPlayerQueryContext *ctx, BHPlayerQueryPacket *pac
         z = stored((double)packet->floats[3] - entity->position.z);
         transform(entity, x, y, z, &b);
         bh_vec3_normalize(&b);
-        impulse = (double)scalar(entity, 0xb8) * packet->floats[7] * 900;
-        factor = (double)packet->floats[7] * scalar(entity, 0xb4);
+        impulse = (double)entity->scale * packet->floats[7] * 900;
+        factor = (double)packet->floats[7] * entity->lifetime;
         for (i = 0; i < 3; i++)
         {
             ((float *)&a)[i] = stored((double)((float *)&a)[i] * factor * 270);
-            set(entity, 0x60 + i * 4,
-                (double)scalar(entity, 0x60 + i * 4) -
-                    (i == 1 ? stored((double)normal.y * impulse) : (double)((float *)&normal)[i] * impulse));
+            bh_vec3_set_component(
+                &entity->acceleration, i,
+                stored((double)bh_vec3_component(&entity->acceleration, i) -
+                       (i == 1 ? stored((double)normal.y * impulse) : (double)bh_vec3_component(&normal, i) * impulse)));
         }
         bh_vec3_cross(&b, &a, &r);
         for (i = 0; i < 3; i++)
         {
-            t = (double)((float *)&r)[i] / scalar(entity, 0x78 + i * 4);
-            set(entity, 0x6c + i * 4, (double)scalar(entity, 0x6c + i * 4) - t * .5);
-            set(entity, 0x54 + i * 4, (double)scalar(entity, 0x54 + i * 4) * .85);
+            t = (double)((float *)&r)[i] / bh_vec3_component(&entity->inertia, i);
+            bh_vec3_set_component(&entity->angular_acceleration, i, stored((double)bh_vec3_component(&entity->angular_acceleration, i) - t * .5));
+            bh_vec3_set_component(&entity->angular_velocity, i, stored((double)bh_vec3_component(&entity->angular_velocity, i) * .85));
         }
         severity = packet->floats[8];
         if ((double)severity * .5 > .05)
@@ -418,73 +405,73 @@ int bh_player_query_dispatch(BHPlayerQueryContext *ctx, BHPlayerQueryPacket *pac
                 else if (result < 0)
                     ctx->error = 5;
             }
-            if (!protected_player(entity) && scalar(entity, 0x240) == 0)
+            if (!protected_player(entity) && entity->player.shield_time == 0)
             {
-                if (scalar(entity, 0x250) < 1.5)
-                    set(entity, 0x23c, (double)scalar(entity, 0x23c) - (double)severity * (-.2));
-                t = (double)scalar(entity, 0x23c) - (double)severity * (-.2);
-                if (scalar(entity, 0x254) < t)
-                    set(entity, 0x254, t);
+                if (entity->player.instability < 1.5)
+                    entity->player.damage = stored((double)entity->player.damage - (double)severity * (-.2));
+                t = (double)entity->player.damage - (double)severity * (-.2);
+                if (entity->player.damage_flash < t)
+                    entity->player.damage_flash = stored(t);
             }
-            if (scalar(entity, 0x23c) > 1)
-                set(entity, 0x23c, 1);
-            if (scalar(entity, 0x240) > 0)
-                set(entity, 0x23c, 0);
+            if (entity->player.damage > 1)
+                entity->player.damage = stored(1);
+            if (entity->player.shield_time > 0)
+                entity->player.damage = stored(0);
         }
         break;
     case 3:
     case 16:
         for (i = 0; i < 3; i++)
             packet->floats[1 + i] =
-                stored((double)((float *)&entity->position)[i] - (double)scalar(entity, 0x30 + i * 4) * 1.5);
+                stored((double)((float *)&entity->position)[i] - (double)bh_vec3_component(&entity->basis[2], i) * 1.5);
         if (packet->words[0] == 16)
         {
             for (i = 0; i < 3; i++)
             {
-                packet->floats[4 + i] = scalar(entity, 0x48 + i * 4);
-                packet->floats[7 + i] = scalar(entity, 0x60 + i * 4);
+                packet->floats[4 + i] = bh_vec3_component(&entity->velocity, i);
+                packet->floats[7 + i] = bh_vec3_component(&entity->acceleration, i);
             }
         }
         break;
     case 4:
-        if (octet(entity, 0x2bb))
-            put_byte(entity, 0x2bb, (unsigned char)(octet(entity, 0x2bb) + 1));
+        if (entity->player.vehicle)
+            entity->player.vehicle = (unsigned char)(entity->player.vehicle + 1);
         break;
     case 5:
-        if (octet(entity, 0x2bb) > 1)
-            put_byte(entity, 0x2bb, (unsigned char)(octet(entity, 0x2bb) - 1));
+        if (entity->player.vehicle > 1)
+            entity->player.vehicle = (unsigned char)(entity->player.vehicle - 1);
         break;
     case 6:
-        if (!octet(entity, 0x2bb))
+        if (!entity->player.vehicle)
             entity->step = NULL;
         break;
     case 11:
-        for (i = 0; i < 6; i++)
-            set(entity, 0x48 + i * 4, (double)scalar(entity, 0x48 + i * 4) * .75);
-        for (i = 0; i < 6; i++)
-            set(entity, 0x60 + i * 4, (double)scalar(entity, 0x60 + i * 4) * .5);
+        damp(&entity->velocity, .75);
+        damp(&entity->angular_velocity, .75);
+        damp(&entity->acceleration, .5);
+        damp(&entity->angular_acceleration, .5);
         break;
     case 12:
         value = packet->words[1];
         if (value > 0)
         {
-            put_byte(entity, 0x2b9, 60);
-            put(entity, 0x230, add(word(entity, 0x230), value));
+            entity->player.cash_flash = 60;
+            entity->player.cash = add(entity->player.cash, value);
         }
         else if (value < 0)
         {
-            old = word(entity, 0x234);
-            put(entity, 0x234, sub(old, value));
-            put_byte(entity, 0x2ba, 60);
-            if (!word(entity, 0x238))
+            old = entity->player.fine;
+            entity->player.fine = sub(old, value);
+            entity->player.fine_flash = 60;
+            if (!entity->player.bounty_pending)
             {
-                if (word(entity, 0x234) >= 50000 && old < 50000)
+                if (entity->player.fine >= 50000 && old < 50000)
                 {
-                    put_byte(entity, 0x2ba, 60);
-                    put(entity, 0x238, 1);
+                    entity->player.fine_flash = 60;
+                    entity->player.bounty_pending = 1;
                     message(ctx, warning50);
                 }
-                else if (word(entity, 0x234) > 29999 && old < 30000)
+                else if (entity->player.fine > 29999 && old < 30000)
                 {
                     if (!*ctx->fine_warning)
                         message(ctx, warning30);

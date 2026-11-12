@@ -26,7 +26,7 @@ int bh_player_input_broadcast(BHEntity *head, unsigned long limit, unsigned long
             return 0;
         }
         ++count;
-        memcpy(&selected, head->payload + 24, 4);
+        selected = head->actor.kind;
         if (selected == 1)
         {
             if (!head->query)
@@ -38,7 +38,7 @@ int bh_player_input_broadcast(BHEntity *head, unsigned long limit, unsigned long
             packet[0] = 15;
             head->query(head, packet);
         }
-        memcpy(&next, head->payload + 12, 4);
+        next = head->actor.global_next;
         head = next;
     }
     if (visited)
