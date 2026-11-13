@@ -1,4 +1,4 @@
-"""Fetch pinned official SDL3 and build the x86 SDL GPU adapter with MinGW-w64."""
+"""Fetch and stage pinned official SDL3 for 32-bit Windows builds."""
 
 import hashlib
 import os
@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 VERSION = "3.4.18"
 # Official release archive; digest is verified before extracting downloaded code.
 SHA256 = "78d84602ae616cfe26b33a73b7d3b9b6b56e8a6650e53d92c9c6ca938f747acd"
-SHADER_PATH = Path("shaders/legacy.slang")
+WINDOWS_RUNTIME_FILES = ("SDL3.dll", "LICENCES")
 # inih r62, upstream commit 26254ee9de7681f8825433415443e7116ff24b98.
 INI_SOURCE = ROOT / "third_party/inih/ini.c"
 # stb_vorbis 1.23, upstream commit d85119c15235cb3caa65fb357e694cbc17238952.
@@ -38,9 +38,7 @@ def stage_licences(out):
         (out / name).unlink(missing_ok=True)
 
 
-def prepare(out, *, gnu=True, compiler=None, symbols=False):
-    out = Path(out).resolve()
-    out.mkdir(parents=True, exist_ok=True)
+def windows_sdk():
     deps = ROOT / "toolchain/SDL3"
     deps.mkdir(parents=True, exist_ok=True)
     archive = deps / f"SDL3-devel-{VERSION}-VC.zip"
@@ -56,6 +54,24 @@ def prepare(out, *, gnu=True, compiler=None, symbols=False):
     if not (sdk / "include/SDL3/SDL.h").exists():
         with zipfile.ZipFile(archive) as z:
             z.extractall(deps)
+    return sdk
+
+
+def stage_windows_runtime(out, sdk):
+    shutil.copy2(sdk / "lib/x86/SDL3.dll", out / "SDL3.dll")
+    stage_licences(out)
+    for name in ("ddraw.dll", "DDrawCompat-LICENSE.txt", "shaders/legacy.hlsl"):
+        (out / name).unlink(missing_ok=True)
+    staged_shader = out / "shaders/legacy.slang"
+    if staged_shader.parent.resolve() != (ROOT / "src/shaders").resolve():
+        staged_shader.unlink(missing_ok=True)
+
+
+def prepare(out, *, gnu=True, compiler=None, symbols=False):
+    """Build and stage the separate adapter for legacy investigation tools."""
+    out = Path(out).resolve()
+    out.mkdir(parents=True, exist_ok=True)
+    sdk = windows_sdk()
     compiler = compiler or os.environ.get("BH_GPU_CXX", shutil.which("g++") or "g++")
     cache = ROOT / "build-cache/sdl3"
     if gnu:
@@ -143,13 +159,7 @@ def prepare(out, *, gnu=True, compiler=None, symbols=False):
             create_vc_import_library(cache, definition, import_lib)
         stamp.write_text(signature)
     shutil.copy2(cached_dll, out / "BHunterGPU.dll")
-    shutil.copy2(sdk / "lib/x86/SDL3.dll", out / "SDL3.dll")
-    stage_licences(out)
-    (out / "shaders").mkdir(exist_ok=True)
-    shutil.copy2(ROOT / "src" / SHADER_PATH, out / SHADER_PATH)
-    # Remove only the obsolete staged runtime files, never game assets or saves.
-    for name in ("ddraw.dll", "DDrawCompat-LICENSE.txt", "shaders/legacy.hlsl"):
-        (out / name).unlink(missing_ok=True)
+    stage_windows_runtime(out, sdk)
     return import_lib
 
 
@@ -183,4 +193,8 @@ def create_vc_import_library(cache, definition, import_lib):
 if __name__ == "__main__":
     import sys
 
-    print(prepare(Path(sys.argv[1] if len(sys.argv) > 1 else ROOT / "build")))
+    out = Path(sys.argv[1] if len(sys.argv) > 1 else ROOT / "build").resolve()
+    out.mkdir(parents=True, exist_ok=True)
+    sdk = windows_sdk()
+    stage_windows_runtime(out, sdk)
+    print(sdk)

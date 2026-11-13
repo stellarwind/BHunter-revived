@@ -11,7 +11,16 @@ import subprocess
 import sys
 from pathlib import Path
 
-from prepare_sdl3 import INI_FLAGS, INI_SOURCE, LICENCE_SOURCES, SHADER_PATH, STB_VORBIS_SOURCE, prepare, stage_licences
+from prepare_sdl3 import (
+    INI_FLAGS,
+    INI_SOURCE,
+    LICENCE_SOURCES,
+    STB_VORBIS_SOURCE,
+    WINDOWS_RUNTIME_FILES,
+    stage_licences,
+    stage_windows_runtime,
+    windows_sdk,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -261,58 +270,53 @@ def main():
     response.write_text(
         "\n".join('"' + str(obj).replace("\\", "/") + '"' for obj in objects) + "\n"
     )
-    runtime_files = ["LICENCES"]
     if linux:
         stage_licences(out)
+        runtime_files = ("LICENCES",)
+        platform_flags = ["-D__cdecl="]
         sdl_flags = shlex.split(
             subprocess.check_output(["pkg-config", "--cflags", "--libs", "sdl3"], text=True)
         )
-        run(
-            [
-                args.cxx,
-                "-std=c++17",
-                "-O2",
-                *INI_FLAGS,
-                *architecture,
-                *(["-g"] if args.symbols else []),
-                "-D__cdecl=",
-                ROOT / "src/bh_sdl_gpu.cpp",
-                ROOT / "src/bh_sdl_audio.cpp",
-                ROOT / "src/bh_game_settings.cpp",
-                INI_SOURCE,
-                "@" + str(response),
-                "-Wl,--gc-sections",
-                *sdl_flags,
-                "-o",
-                out / executable,
-            ]
-        )
     else:
-        gpu_import = prepare(out, gnu=True, compiler=args.cxx, symbols=args.symbols)
-        run(
-            [
-                args.cc,
-                "-mwindows",
-                "-static",
-                "-static-libgcc",
-                "-Wl,--gc-sections",
-                "@" + str(response),
-                gpu_import,
-                "-lwinmm",
-                "-lws2_32",
-                "-o",
-                out / executable,
-            ]
-        )
-        runtime_files += ["BHunterGPU.dll", "SDL3.dll", SHADER_PATH.as_posix()]
+        sdk = windows_sdk()
+        runtime_files = WINDOWS_RUNTIME_FILES
+        platform_flags = [
+            "-mwindows", "-static", "-static-libgcc", "-static-libstdc++",
+            "-I" + str(sdk / "include"),
+        ]
+        sdl_flags = [sdk / "lib/x86/SDL3.lib", "-lwinmm", "-lws2_32"]
+    run(
+        [
+            args.cxx,
+            "-std=c++17",
+            "-O2",
+            *INI_FLAGS,
+            *architecture,
+            *(["-g"] if args.symbols else []),
+            *platform_flags,
+            ROOT / "src/bh_sdl_gpu.cpp",
+            ROOT / "src/bh_sdl_audio.cpp",
+            ROOT / "src/bh_game_settings.cpp",
+            INI_SOURCE,
+            "@" + str(response),
+            "-Wl,--gc-sections",
+            *sdl_flags,
+            "-o",
+            out / executable,
+        ]
+    )
+    if not linux:
+        stage_windows_runtime(out, sdk)
     objdump = subprocess.check_output(
         [args.cc, "-print-prog-name=objdump"], text=True
     ).strip()
     record["imports"] = {}
-    for name in ([executable] if linux else [executable, "BHunterGPU.dll", "SDL3.dll"]):
+    for name in ([executable] if linux else [executable, "SDL3.dll"]):
         imports = subprocess.check_output([objdump, "-p", str(out / name)], text=True)
         libraries = re.findall(r"NEEDED\s+(\S+)" if linux else r"DLL Name:\s*(\S+)", imports)
         record["imports"][name] = libraries
+        if any(library.lower() == "bhuntergpu.dll" for library in libraries):
+            raise RuntimeError(f"Unexpected GPU adapter DLL dependency in {name}")
         if any(
             re.match(r"lib(?:gcc|stdc\+\+|winpthread).*\.dll$", library, re.IGNORECASE)
             for library in libraries
@@ -330,6 +334,8 @@ def main():
         name: hashlib.sha256((out / name).read_bytes()).hexdigest()
         for name in runtime_files
     }
+    if not linux:
+        (out / "BHunterGPU.dll").unlink(missing_ok=True)
     record["passed"] = True
     record["translation_units"] = len(sources) + 3
     (cache_dir / "build.json").write_text(json.dumps(record, indent=2) + "\n")
