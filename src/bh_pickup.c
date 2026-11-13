@@ -5,32 +5,35 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef char pickup_state_size[sizeof(BHPickupState) == 56 ? 1 : -1];
-typedef char pickup_state_offset[offsetof(BHEntity, payload) + 8 == 0xec ? 1 : -1];
-typedef char pickup_context_offset[offsetof(BHEntity, payload) + 64 == 0x124 ? 1 : -1];
-typedef char pickup_pointer_size[sizeof(void *) == 4 ? 1 : -1];
+static_assert(sizeof(BHPickupState) == 56, "BHPickupState size");
+static_assert(offsetof(BHEntity, payload) + 8 == 0xec, "pickup state offset");
+static_assert(offsetof(BHEntity, payload) + 64 == 0x124, "pickup context offset");
+static_assert(sizeof(void *) == 4, "pickup pointer size");
 /* Event13 is seven words: original004415a0 consumes the reply written by
    original0041d7c0/0043a1d0 at +14/+18. There is no reserved sixth word. */
-typedef char pickup_reply_layout[sizeof(BHPickupTakePacket) == 28 && offsetof(BHPickupTakePacket, accepted) == 0x14 &&
-                                         offsetof(BHPickupTakePacket, consumed) == 0x18
-                                     ? 1
-                                     : -1];
+static_assert(sizeof(BHPickupTakePacket) == 28 && offsetof(BHPickupTakePacket, accepted) == 0x14 &&
+                  offsetof(BHPickupTakePacket, consumed) == 0x18,
+              "pickup reply layout");
 
 BHPickupContext *bh_pickup_context(BHEntity *entity)
 {
     BHPickupContext *context;
     if (!entity)
         return NULL;
-    memcpy(&context, entity->payload + 64, sizeof(context));
+    memcpy(&context, &entity->bindings.pickup, sizeof(context));
     return context;
 }
 static void bind_owner(BHEntity *entity, BHPickupContext *context)
 {
-    memcpy(entity->payload + 64, &context, sizeof(context));
+    memcpy(&entity->bindings.pickup, &context, sizeof(context));
 }
 BHPickupState *bh_pickup_state(BHEntity *entity)
 {
     return entity ? (BHPickupState *)(entity->payload + 8) : NULL;
+}
+const BHPickupState *bh_pickup_state_const(const BHEntity *entity)
+{
+    return entity ? (const BHPickupState *)(entity->payload + 8) : NULL;
 }
 static BHPickupRoom *room_binding(BHPickupContext *context, BHWorldGeometry *world)
 {
@@ -253,7 +256,7 @@ BHEntity *bh_pickup_spawn(BHPickupContext *context, const BHVec3 *position, long
     }
     {
         BHEntityStep draw = (variant == 0 && type == 9) ? context->special_draw : context->default_draw;
-        memcpy(entity->payload + 4, &draw, sizeof(draw));
+        memcpy(&entity->actor.draw, &draw, sizeof(draw));
     } /* entity +e8 */
     if (room)
     {

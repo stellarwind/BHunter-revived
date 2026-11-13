@@ -1,3 +1,4 @@
+#include "bh_field_access.h"
 #include "bh_script_vm.h"
 #include "bh_round.h"
 #include "bh_fp.h"
@@ -10,24 +11,14 @@ static float rf(double v)
     bh_round_float(&f, v);
     return f;
 }
-static unsigned long word(BHEntity *entity, unsigned long o)
-{
-    unsigned long v;
-    memcpy(&v, (char *)entity + o, 4);
-    return v;
-}
 static void setword(BHEntity *entity, unsigned long o, unsigned long v)
 {
     memcpy((char *)entity + o, &v, 4);
 }
-static void real(BHEntity *entity, unsigned long o, float f)
-{
-    memcpy((char *)entity + o, &f, 4);
-}
 static BHScriptVMContext *context(BHEntity *entity)
 {
     BHScriptVMContext *ctx;
-    memcpy(&ctx, entity->payload + 576, 4);
+    memcpy(&ctx, &entity->bindings.script_vm, 4);
     return ctx;
 }
 static BHEntityPool *pool(BHScriptVMContext *ctx)
@@ -63,25 +54,25 @@ int bh_script_vm_read(BHEntity *entity, BHScriptVMState *state)
 {
     if (!entity || !state)
         return 0;
-    state->next = (BHEntity *)word(entity, 0xec);
-    state->loaded = (long)word(entity, 0xf4);
-    state->opcode = (long)word(entity, 0xf8);
-    memcpy(state->args, (char *)entity + 0xfc, 20);
-    memcpy(state->selectors, (char *)entity + 0x110, 20);
-    state->variable_sum = (long)word(entity, 0x124);
+    state->next = (BHEntity *)bh_field_u32(&entity->script_vm.next);
+    state->loaded = (long)bh_field_u32(&entity->script_vm.loaded);
+    state->opcode = (long)bh_field_u32(&entity->script_vm.opcode);
+    memcpy(state->args, (char *)&entity->script_vm.args, 20);
+    memcpy(state->selectors, (char *)&entity->script_vm.selectors, 20);
+    state->variable_sum = (long)bh_field_u32(&entity->script_vm.variable_sum);
     return 1;
 }
 int bh_script_vm_bind(BHScriptVMContext *ctx, BHEntity *entity, const BHScriptVMState *state)
 {
     if (!ctx || !ctx->lifetime || !ctx->lifetime->timers.pool || !state || !entity || !live(pool(ctx), entity))
         return 0;
-    memcpy(entity->payload + 576, &ctx, 4);
-    setword(entity, 0xec, (unsigned long)state->next);
-    setword(entity, 0xf4, (unsigned long)state->loaded);
-    setword(entity, 0xf8, (unsigned long)state->opcode);
-    memcpy((char *)entity + 0xfc, state->args, 20);
-    memcpy((char *)entity + 0x110, state->selectors, 20);
-    setword(entity, 0x124, (unsigned long)state->variable_sum);
+    memcpy(&entity->bindings.script_vm, &ctx, 4);
+    bh_field_store_u32(&entity->script_vm.next, (unsigned long)state->next);
+    bh_field_store_u32(&entity->script_vm.loaded, (unsigned long)state->loaded);
+    bh_field_store_u32(&entity->script_vm.opcode, (unsigned long)state->opcode);
+    memcpy((char *)&entity->script_vm.args, state->args, 20);
+    memcpy((char *)&entity->script_vm.selectors, state->selectors, 20);
+    bh_field_store_u32(&entity->script_vm.variable_sum, (unsigned long)state->variable_sum);
     return bh_entity_set_query(pool(ctx), entity, bh_script_vm_query);
 }
 BHEntity *bh_script_vm_create(BHScriptVMContext *ctx, BHEntity **out, long opcode, const long args[5],
@@ -117,8 +108,8 @@ BHEntity *bh_script_vm_create(BHScriptVMContext *ctx, BHEntity **out, long opcod
 }
 static void point(BHEntity *entity, BHVec3 *minimum, BHVec3 *maximum)
 {
-    memcpy(minimum, (char *)entity + 0x1b0, 12);
-    memcpy(maximum, (char *)entity + 0x1bc, 12);
+    memcpy(minimum, (char *)&entity->placement.minimum, 12);
+    memcpy(maximum, (char *)&entity->placement.maximum, 12);
 }
 static void random_point(BHEntity *entity, BHVec3 *p, int inner)
 {
@@ -203,7 +194,7 @@ static void portal_extent(BHPortal *p, const BHVec3 *point, float first, float s
 static void radar_query(BHEntity *entity, void *packet)
 {
     BHScriptVMContext *ctx;
-    memcpy(&ctx, entity->payload + 580, 4);
+    memcpy(&ctx, &entity->bindings.radar_vm, 4);
     ctx->radar->head = ctx->launch->actors->response->vehicles->head;
     ctx->radar->count = ctx->launch->actors->response->vehicles->count;
     bh_radar_entity_query(entity, packet);
@@ -224,9 +215,9 @@ static int radar(BHScriptVMContext *ctx, BHEntity *entity, BHEntity *watched, co
         return 0;
     e->position = *p;
     e->flags |= 0x100;
-    setword(e, 0x108, 0);
-    setword(e, 0xfc, 6);
-    setword(e, 0x11c, 0);
+    e->actor.sound_frames = 0;
+    e->actor.kind = 6;
+    e->actor.radar_id = 0;
     v = ctx->launch->actors->response->vehicles;
     ctx->radar->head = v->head;
     ctx->radar->count = v->count;
@@ -238,7 +229,7 @@ static int radar(BHScriptVMContext *ctx, BHEntity *entity, BHEntity *watched, co
     }
     v->head = ctx->radar->head;
     v->count = ctx->radar->count;
-    memcpy(e->payload + 580, &ctx, 4);
+    memcpy(&e->bindings.radar_vm, &ctx, 4);
     bh_entity_set_query(pool(ctx), e, radar_query);
     return 1;
 }
@@ -280,9 +271,9 @@ static int execute(BHScriptVMContext *ctx, BHEntity *node, BHEntity *target, BHS
             ctx->error = 1;
             return 0;
         }
-        flags = word(effective, 0x114);
+        flags = bh_field_u32(&effective->placement.query_flags);
         flags = args[0] ? flags | (unsigned long)args[1] : flags & ~(unsigned long)args[1];
-        setword(effective, 0x114, flags);
+        bh_field_store_u32(&effective->placement.query_flags, flags);
         if (binding->world)
             binding->world->query_flags = flags;
         break;
@@ -490,7 +481,7 @@ static int execute(BHScriptVMContext *ctx, BHEntity *node, BHEntity *target, BHS
             a->damage.world = a->world;
             a->damage.player = ctx->sensors->player;
             damage.health = bh_script_sensor_damage(target);
-            memcpy(&damage.owner, (char *)target + 0x14c, 4);
+            memcpy(&damage.owner, (char *)&target->placement.damage_source, 4);
             if (!bh_block_damage_bind(pool(ctx), target, &a->damage, &damage, state->opcode == 22))
             {
                 ctx->error = 2;
@@ -502,6 +493,7 @@ static int execute(BHScriptVMContext *ctx, BHEntity *node, BHEntity *target, BHS
             ctx->error = 2;
             return 0;
         }
+        /* The fifth sensor argument is retained at +10c; no consumer is recovered. */
         if (state->opcode != 10)
             setword(entity, 0x10c, (unsigned long)args[4]);
         if (state->opcode == 22)
@@ -556,8 +548,9 @@ static int execute(BHScriptVMContext *ctx, BHEntity *node, BHEntity *target, BHS
             ((float *)&velocity)[i] = rf((double)((float *)&velocity)[i] * t);
         angles = target->euler;
         bh_target_construct_box(ctx->targets, &p, &angles, &velocity, &spin, a->resource, (float)args[3],
-                                (float)args[0], args[1] ? (BHEntity *)word(target, 0x14c) : 0, args[2], &anchor,
-                                &minimum, &maximum, 0);
+                                (float)args[0],
+                                args[1] ? (BHEntity *)bh_field_u32(&target->placement.damage_source) : 0, args[2],
+                                &anchor, &minimum, &maximum, 0);
         break;
     case 17:
         if (!ctx->launch)
@@ -586,7 +579,7 @@ static int execute(BHScriptVMContext *ctx, BHEntity *node, BHEntity *target, BHS
         break;
     case 19:
         effective = owner(a);
-        setword(effective, 0x11c, (unsigned long)args[0]);
+        bh_field_store_u32(&effective->placement.city_id, (unsigned long)args[0]);
         break;
     case 20:
         if (args[0] < 0 || (unsigned long)args[0] >= ctx->waypoint_count || !ctx->waypoints)
@@ -702,13 +695,13 @@ void bh_script_vm_query(BHEntity *entity, void *packet)
                     return;
                 }
                 state.args[i] = a->state->variables[state.selectors[i]];
-                setword(entity, 0xfc + i * 4, (unsigned long)state.args[i]);
+                entity->script_vm.args[i] = state.args[i];
             }
     }
     ++ctx->executed;
     if (execute(ctx, entity, p->actor, a, &state) && live(pool(ctx), entity) && entity->generation == generation)
     {
-        next = (BHEntity *)word(entity, 0xec);
+        next = (BHEntity *)bh_field_u32(&entity->script_vm.next);
         if (next)
         {
             if (!live(pool(ctx), next) || !next->query)

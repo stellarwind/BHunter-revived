@@ -4,7 +4,7 @@
 #include <float.h>
 #include <stddef.h>
 #include <string.h>
-typedef char sensor_layout[sizeof(void *) == 4 && offsetof(BHEntity, payload) == 0xe4 ? 1 : -1];
+static_assert(sizeof(void *) == 4 && offsetof(BHEntity, payload) == 0xe4, "sensor layout");
 typedef struct SensorPacket
 {
     long event;
@@ -12,25 +12,17 @@ typedef struct SensorPacket
     long expected;
     unsigned char unused[28];
 } SensorPacket;
-typedef char packet_layout[sizeof(SensorPacket) == 40 && offsetof(SensorPacket, expected) == 8 ? 1 : -1];
-static void get(const BHEntity *entity, unsigned long at, void *out)
-{
-    memcpy(out, (const unsigned char *)entity + at, 4);
-}
-static void put(BHEntity *entity, unsigned long at, const void *value)
-{
-    memcpy((unsigned char *)entity + at, value, 4);
-}
+static_assert(sizeof(SensorPacket) == 40 && offsetof(SensorPacket, expected) == 8, "packet layout");
 static BHScriptSensorContext *context(BHEntity *entity)
 {
     BHScriptSensorContext *ctx;
-    memcpy(&ctx, entity->payload + 416, 4);
+    memcpy(&ctx, &entity->bindings.script_sensor, 4);
     return ctx;
 }
 static unsigned long generation(BHEntity *entity)
 {
     unsigned long n;
-    memcpy(&n, entity->payload + 420, 4);
+    memcpy(&n, &entity->bindings.sensor_generation, 4);
     return n;
 }
 static int live(BHEntityPool *pool, const BHEntity *entity, unsigned long generation)
@@ -59,27 +51,27 @@ int bh_script_sensor_read(BHEntity *entity, BHScriptSensorState *state)
 {
     if (!entity || !state)
         return 0;
-    get(entity, 0xf0, &state->actor);
-    get(entity, 0xf4, &state->script_loaded);
-    get(entity, 0xfc, &state->remaining);
-    get(entity, 0x100, &state->threshold);
-    get(entity, 0x104, &state->broadcast_radius);
-    get(entity, 0x108, &state->expected);
-    get(entity, 0x128, &state->countdown);
-    get(entity, 0x12c, &state->latch);
+    memcpy(&state->actor, &entity->sensor.actor, 4);
+    memcpy(&state->script_loaded, &entity->sensor.script_loaded, 4);
+    memcpy(&state->remaining, &entity->sensor.remaining, 4);
+    memcpy(&state->threshold, &entity->sensor.threshold, 4);
+    memcpy(&state->broadcast_radius, &entity->sensor.broadcast_radius, 4);
+    memcpy(&state->expected, &entity->sensor.expected, 4);
+    memcpy(&state->countdown, &entity->sensor.countdown, 4);
+    memcpy(&state->latch, &entity->sensor.latch, 4);
     return 1;
 }
 float bh_script_sensor_damage(const BHEntity *entity)
 {
     float value = 0;
     if (entity)
-        get(entity, 0x148, &value);
+        memcpy(&value, &entity->placement.damage, 4);
     return value;
 }
 void bh_script_sensor_set_damage(BHEntity *entity, float value)
 {
     if (entity)
-        put(entity, 0x148, &value);
+        memcpy(&entity->placement.damage, &value, 4);
 }
 static int valid(BHScriptSensorContext *ctx, BHEntity *entity, const BHScriptSensorState *state, int bound)
 {
@@ -122,12 +114,12 @@ int bh_script_sensor_bind(BHScriptSensorContext *ctx, BHEntity *entity, const BH
         ctx->error = BH_SENSOR_ARGUMENT;
         return 0;
     }
-    put(entity, 0x100, &state->threshold);
-    put(entity, 0x104, &state->broadcast_radius);
-    put(entity, 0x108, &state->expected);
-    put(entity, 0x12c, &state->latch);
-    memcpy(entity->payload + 416, &ctx, 4);
-    memcpy(entity->payload + 420, &entity->generation, 4);
+    memcpy(&entity->sensor.threshold, &state->threshold, 4);
+    memcpy(&entity->sensor.broadcast_radius, &state->broadcast_radius, 4);
+    memcpy(&entity->sensor.expected, &state->expected, 4);
+    memcpy(&entity->sensor.latch, &state->latch, 4);
+    memcpy(&entity->bindings.script_sensor, &ctx, 4);
+    memcpy(&entity->bindings.sensor_generation, &entity->generation, 4);
     entity->step = damage ? bh_script_damage_tick : bh_script_proximity_tick;
     return 1;
 }
@@ -138,11 +130,11 @@ static int due(BHEntity *entity, float old, double period)
     double value = (double)old - (1.0 / 30.0);
     float next;
     bh_round_float(&next, value);
-    put(entity, 0x128, &next);
+    memcpy(&entity->sensor.countdown, &next, 4);
     if (greater(value, 0))
         return 0;
     bh_round_float(&next, value + period);
-    put(entity, 0x128, &next);
+    memcpy(&entity->sensor.countdown, &next, 4);
     return 1;
 }
 static int broadcast(BHScriptSensorContext *ctx, BHEntity *entity, BHEntity *actor, long radius, long expected,
@@ -165,7 +157,7 @@ static int broadcast(BHScriptSensorContext *ctx, BHEntity *entity, BHEntity *act
         ctx->error = BH_SENSOR_MUTATION;
         return 0;
     }
-    get(entity, 0xf0, &after);
+    memcpy(&after, &entity->sensor.actor, 4);
     if (after != actor)
     {
         ctx->error = BH_SENSOR_MUTATION;
@@ -182,18 +174,18 @@ static int decrease(BHScriptSensorContext *ctx, BHEntity *entity, int final_even
 {
     long remaining;
     unsigned long bits;
-    get(entity, 0xfc, &remaining);
+    memcpy(&remaining, &entity->sensor.remaining, 4);
     if (!remaining)
         return 0;
     bits = (unsigned long)remaining - 1UL;
     memcpy(&remaining, &bits, 4);
-    put(entity, 0xfc, &remaining);
+    memcpy(&entity->sensor.remaining, &remaining, 4);
     if (remaining)
         return 0;
     if (final_event)
     {
         BHEntity *actor;
-        get(entity, 0xf0, &actor);
+        memcpy(&actor, &entity->sensor.actor, 4);
         if (!broadcast(ctx, entity, actor, 0, 0, 17))
             return 1;
     }
@@ -203,8 +195,8 @@ static int decrease(BHScriptSensorContext *ctx, BHEntity *entity, int final_even
 static int in_box(const BHEntity *entity, const BHEntity *p)
 {
     BHVec3 low, high;
-    memcpy(&low, (const unsigned char *)entity + 0x1b0, 12);
-    memcpy(&high, (const unsigned char *)entity + 0x1bc, 12);
+    memcpy(&low, (char *)&entity->placement.minimum, 12);
+    memcpy(&high, (char *)&entity->placement.maximum, 12);
     /* Retain the original unequal C0 versus C0|C3 tests, including asymmetric
     unordered bound behavior. Ordinary six ordered <= comparisons differ. */
     return greater_equal(p->position.x, low.x) && !greater(p->position.x, high.x) && !greater(low.y, p->position.y) &&
@@ -244,9 +236,9 @@ void bh_script_proximity_tick(BHEntity *entity)
             ctx->error = BH_SENSOR_ACTOR;
             return;
         }
-        get(entity, 0x100, &state.threshold);
-        get(entity, 0x104, &state.broadcast_radius);
-        get(entity, 0x108, &state.expected);
+        memcpy(&state.threshold, &entity->sensor.threshold, 4);
+        memcpy(&state.broadcast_radius, &entity->sensor.broadcast_radius, 4);
+        memcpy(&state.expected, &entity->sensor.expected, 4);
         if (state.threshold > 0)
             inside = nearby(p, state.actor, state.threshold);
         else
@@ -264,11 +256,11 @@ void bh_script_proximity_tick(BHEntity *entity)
         }
         if (inside)
         {
-            get(entity, 0x12c, &latch);
+            memcpy(&latch, &entity->sensor.latch, 4);
             if (greater(latch, 0))
                 return;
             latch = 1;
-            put(entity, 0x12c, &latch);
+            memcpy(&entity->sensor.latch, &latch, 4);
             if (!broadcast(ctx, entity, state.actor, state.broadcast_radius, state.expected, 14))
                 return;
             if (decrease(ctx, entity, 0))
@@ -276,7 +268,7 @@ void bh_script_proximity_tick(BHEntity *entity)
         }
     }
     latch = 0;
-    put(entity, 0x12c, &latch);
+    memcpy(&entity->sensor.latch, &latch, 4);
 }
 void bh_script_damage_tick(BHEntity *entity)
 {
@@ -291,7 +283,7 @@ void bh_script_damage_tick(BHEntity *entity)
         bh_script_sensor_set_damage(state.actor, 0);
     if (!due(entity, state.countdown, 1))
         return;
-    put(entity, 0x12c, &latch);
+    memcpy(&entity->sensor.latch, &latch, 4);
     scaled = (double)bh_script_sensor_damage(state.actor) * .98;
     bh_round_float(&damage, scaled);
     bh_script_sensor_set_damage(state.actor, damage);
@@ -299,11 +291,11 @@ void bh_script_damage_tick(BHEntity *entity)
         return;
     if (!broadcast(ctx, entity, state.actor, state.broadcast_radius, state.expected, 14))
         return;
-    get(entity, 0x128, &countdown);
+    memcpy(&countdown, &entity->sensor.countdown, 4);
     bh_round_float(&countdown, (double)countdown + 4);
-    put(entity, 0x128, &countdown);
+    memcpy(&entity->sensor.countdown, &countdown, 4);
     latch = 1;
-    put(entity, 0x12c, &latch);
+    memcpy(&entity->sensor.latch, &latch, 4);
     bh_script_sensor_set_damage(state.actor, 0);
     decrease(ctx, entity, 1);
 }

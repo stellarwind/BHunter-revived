@@ -42,11 +42,11 @@ void bh_entity_schedule_tick(BHEntityScheduleRoom *room)
 static void activity_tick(BHEntity *entity)
 {
     BHEntityScheduleRoom *room;
-    memcpy(&room, entity->payload + 608, 4);
+    memcpy(&room, &entity->bindings.room_activity, 4);
     if (!room || room->activity_entity != entity)
         return;
     bh_entity_schedule_tick(room);
-    memcpy((char *)entity + 0x104, &room->frame_remaining, 4);
+    memcpy(&entity->placement.activity_frames, &room->frame_remaining, 4);
     if (!room->frame_active)
         entity->step = NULL;
 }
@@ -95,7 +95,7 @@ static int resource(BHEntityScheduleContext *c, BHEntityScheduleRoom *room, int 
 static BHEntityStep draw_method(BHEntity *e)
 {
     BHEntityStep method;
-    memcpy(&method, e->payload + 4, sizeof(method));
+    memcpy(&method, &e->actor.draw, sizeof(method));
     return method;
 }
 static int draw_children(BHEntityScheduleContext *c, BHEntity *head, int pickups)
@@ -274,8 +274,8 @@ static int schedule(BHEntityScheduleContext *c, BHEntityScheduleRoom *r, unsigne
         *r->activity = 30;
     if (r->activity_entity)
     {
-        memcpy(r->activity_entity->payload + 608, &r, 4);
-        memcpy((char *)r->activity_entity + 0x104, &r->frame_remaining, 4);
+        memcpy(&r->activity_entity->bindings.room_activity, &r, 4);
+        memcpy(&r->activity_entity->placement.activity_frames, &r->frame_remaining, 4);
         r->activity_entity->step = activity_tick;
     }
     if (!r->frame_seen || r->last_frame != c->frame)

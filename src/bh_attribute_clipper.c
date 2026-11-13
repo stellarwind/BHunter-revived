@@ -3,15 +3,15 @@
 #include <stddef.h>
 #include <string.h>
 #include <float.h>
-typedef char attribute_vertex_size[sizeof(BHClipVertex) == 0x3c ? 1 : -1];
-typedef char attribute_vertex_point[offsetof(BHClipVertex, point) == 0xc ? 1 : -1];
-typedef char attribute_vertex_z[offsetof(BHClipVertex, point) + offsetof(BHVec3, z) == 0x14 ? 1 : -1];
-typedef char attribute_vertex_uv[offsetof(BHClipVertex, u) == 0x18 && offsetof(BHClipVertex, v) == 0x1c ? 1 : -1];
-typedef char attribute_vertex_screen[offsetof(BHClipVertex, sx) == 0x20 && offsetof(BHClipVertex, sy) == 0x24 ? 1 : -1];
-typedef char attribute_vertex_scalar[offsetof(BHClipVertex, unknown28) == 0x28 ? 1 : -1];
-typedef char
-    attribute_vertex_links[offsetof(BHClipVertex, next) == 0x2c && offsetof(BHClipVertex, previous) == 0x30 ? 1 : -1];
-typedef char attribute_vertex_projected[offsetof(BHClipVertex, projected) == 0x38 ? 1 : -1];
+static_assert(sizeof(BHClipVertex) == 0x3c, "BHClipVertex size");
+static_assert(offsetof(BHClipVertex, point) == 0xc, "BHClipVertex.point offset");
+static_assert(offsetof(BHClipVertex, point) + offsetof(BHVec3, z) == 0x14, "attribute vertex z");
+static_assert(offsetof(BHClipVertex, u) == 0x18 && offsetof(BHClipVertex, v) == 0x1c, "attribute vertex uv");
+static_assert(offsetof(BHClipVertex, sx) == 0x20 && offsetof(BHClipVertex, sy) == 0x24, "attribute vertex screen");
+static_assert(offsetof(BHClipVertex, unknown28) == 0x28, "BHClipVertex.unknown28 offset");
+static_assert(offsetof(BHClipVertex, next) == 0x2c && offsetof(BHClipVertex, previous) == 0x30,
+              "attribute vertex links");
+static_assert(offsetof(BHClipVertex, projected) == 0x38, "BHClipVertex.projected offset");
 static BHClipVertex *fail(BHAttributeClipContext *c, BHClipError error)
 {
     if (c)

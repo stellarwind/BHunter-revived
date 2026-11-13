@@ -4,13 +4,13 @@
 int bh_actor_route_due_core(BHEntity *actor, BHActorRouteContext *context, const unsigned short *clock)
 {
     short delta = (short)*clock;
-    delta -= *(unsigned short *)((char *)actor + 0x1e6);
-    delta -= *(unsigned short *)((char *)actor + 0x1e4);
+    delta -= *(unsigned short *)&actor->actor.duration_ticks;
+    delta -= *(unsigned short *)&actor->actor.tick;
     if (delta >= 0)
     {
         if (!bh_actor_route_advance(context, actor))
             return 0;
-        *(unsigned short *)((char *)actor + 0x1e4) = (unsigned short)(*clock + delta);
+        *(unsigned short *)&actor->actor.tick = (unsigned short)(*clock + delta);
     }
     return 1;
 }

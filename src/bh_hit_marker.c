@@ -1,46 +1,27 @@
+#include "bh_field_access.h"
 #include "bh_hit_marker.h"
 #include "bh_callback_helpers.h"
 #include "bh_fp.h"
 #include "bh_round.h"
 #include <stddef.h>
 #include <string.h>
-typedef char marker_layout[sizeof(void *) == 4 && offsetof(BHEntity, payload) == 0xe4 ? 1 : -1];
-static BHEntity *link(const BHEntity *e, unsigned long offset)
-{
-    BHEntity *p;
-    memcpy(&p, (const unsigned char *)e + offset, 4);
-    return p;
-}
-static void set_link(BHEntity *e, unsigned long offset, BHEntity *p)
-{
-    memcpy((unsigned char *)e + offset, &p, 4);
-}
-static void scalar(BHEntity *e, unsigned long offset, float f)
-{
-    memcpy((unsigned char *)e + offset, &f, 4);
-}
-static float number(const BHEntity *e, unsigned long offset)
-{
-    float f;
-    memcpy(&f, (const unsigned char *)e + offset, 4);
-    return f;
-}
+static_assert(sizeof(void *) == 4 && offsetof(BHEntity, payload) == 0xe4, "marker layout");
 static BHEntity **owner_head(BHHitMarkerContext *c, BHEntity *owner)
 {
     BHEntity **head = NULL;
     if (c->owner_head)
         head = c->owner_head(owner, c->owner_head_user);
-    return head ? head : (BHEntity **)((unsigned char *)owner + 0x12c);
+    return head ? head : &owner->placement.attachments;
 }
 static int unlink_owner(BHHitMarkerContext *c, BHEntity *e)
 {
-    BHEntity *owner = link(e, 0xf4), *older = link(e, 0xec), *newer = link(e, 0xf0);
+    BHEntity *owner = e->marker.owner, *older = e->marker.owner_older, *newer = e->marker.owner_newer;
     if (!owner)
         return 0;
     if (older)
-        set_link(older, 0xf0, newer);
+        (older->marker.owner_newer = newer);
     if (newer)
-        set_link(newer, 0xec, older);
+        (newer->marker.owner_older = older);
     else
         *owner_head(c, owner) = older;
     return 1;
@@ -71,12 +52,12 @@ BHEntity *bh_hit_marker_create(BHHitMarkerContext *c, const BHVec3 *p, const BHV
         c->error = BH_HIT_MARKER_POOL;
         return NULL;
     }
-    scalar(e, 0x100, 0);
-    scalar(e, 0x104, 30);
-    scalar(e, 0x108, size);
-    scalar(e, 0x10c, (float)(flags & 1) * .5f);
-    scalar(e, 0x110, (float)(flags & 2) * .25f);
-    memcpy((unsigned char *)e + 0x114, &normal, 12);
+    bh_field_store_f32(&e->marker.age, 0);
+    bh_field_store_f32(&e->marker.lifetime, 30);
+    bh_field_store_f32(&e->marker.size, size);
+    bh_field_store_f32(&e->marker.u, (float)(flags & 1) * .5f);
+    bh_field_store_f32(&e->marker.v, (float)(flags & 2) * .25f);
+    memcpy((char *)&e->marker.normal, &normal, 12);
     dot = ((double)normal.x * 0.0 + (double)normal.z * 0.0) + (double)normal.y;
     if (dot < .5 && dot > -.5)
     {
@@ -90,26 +71,26 @@ BHEntity *bh_hit_marker_create(BHHitMarkerContext *c, const BHVec3 *p, const BHV
         up.y = 0;
         up.z = 1;
     }
-    memcpy((unsigned char *)e + 0x120, &up, 12);
+    memcpy((char *)&e->marker.up, &up, 12);
     e->position = position;
-    memcpy((unsigned char *)e + 0xe8, &draw, 4);
-    memcpy(e->payload + 624, &c, 4);
+    memcpy((char *)&e->marker.draw, &draw, 4);
+    memcpy(&e->bindings.hit_marker, &c, 4);
     head = owner_head(c, owner);
-    set_link(e, 0xf4, owner);
+    (e->marker.owner = owner);
     prior = *head;
-    set_link(e, 0xf0, NULL);
-    set_link(e, 0xec, prior);
+    (e->marker.owner_newer = NULL);
+    (e->marker.owner_older = prior);
     *head = e;
     if (prior)
-        set_link(prior, 0xf0, e);
+        (prior->marker.owner_newer = e);
     e->step = NULL;
     e->refresh = NULL;
     bh_entity_set_query(c->pool, e, bh_marker_query);
     if (c->count == 200)
     {
         old = c->oldest;
-        c->oldest = link(old, 0xfc);
-        set_link(c->oldest, 0xf8, NULL);
+        c->oldest = old->marker.newer;
+        (c->oldest->marker.older = NULL);
         unlink_owner(c, old);
         bh_entity_release(c->pool, old);
     }
@@ -117,9 +98,9 @@ BHEntity *bh_hit_marker_create(BHHitMarkerContext *c, const BHVec3 *p, const BHV
         ++c->count;
     if (c->count == 1)
         c->oldest = e;
-    set_link(e, 0xf8, c->newest);
+    (e->marker.older = c->newest);
     if (c->newest)
-        set_link(c->newest, 0xfc, e);
+        (c->newest->marker.newer = e);
     c->newest = e;
     c->error = BH_HIT_MARKER_OK;
     return e;
@@ -132,16 +113,16 @@ void bh_hit_marker_draw(BHEntity *e)
     int r;
     if (!e)
         return;
-    memcpy(&c, e->payload + 624, 4);
+    memcpy(&c, &e->bindings.hit_marker, 4);
     if (!c)
         return;
-    size = number(e, 0x108);
+    size = bh_field_f32(&e->marker.size);
     if (!(size > 0))
         return;
-    memcpy(&up, (unsigned char *)e + 0x120, 12);
-    memcpy(&normal, (unsigned char *)e + 0x114, 12);
-    r = bh_quad_queue(c->queue, 0, c->image, &e->position, &up, &normal, size, size, 0, 0, 1, number(e, 0x10c), .5f,
-                      number(e, 0x110), .5f);
+    memcpy(&up, (char *)&e->marker.up, 12);
+    memcpy(&normal, (char *)&e->marker.normal, 12);
+    r = bh_quad_queue(c->queue, 0, c->image, &e->position, &up, &normal, size, size, 0, 0, 1,
+                      bh_field_f32(&e->marker.u), .5f, bh_field_f32(&e->marker.v), .5f);
     c->error = r == 1 ? BH_HIT_MARKER_OK : BH_HIT_MARKER_QUEUE;
 }
 int bh_hit_marker_dispose(BHHitMarkerContext *c)
@@ -157,7 +138,7 @@ int bh_hit_marker_dispose(BHHitMarkerContext *c)
             c->error = BH_HIT_MARKER_TOPOLOGY;
             return 0;
         }
-        next = c->count > 1 ? link(e, 0xfc) : NULL;
+        next = c->count > 1 ? e->marker.newer : NULL;
         if (!bh_entity_release(c->pool, e))
         {
             c->error = BH_HIT_MARKER_POOL;

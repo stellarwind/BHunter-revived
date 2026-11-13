@@ -17,7 +17,9 @@ typedef struct BHActorExitRoomImage
 {
     unsigned char unused_before[0xf8];
     int count_record;
-    unsigned char unused_middle[0x1cc - 0xfc];
+    unsigned char unused_before_flags[0x114 - 0xfc];
+    unsigned long flags;
+    unsigned char unused_middle[0x1cc - 0x118];
     BHPortal portals[6];
 } BHActorExitRoomImage;
 typedef struct BHActorExitNeighborImage

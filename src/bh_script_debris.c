@@ -6,46 +6,38 @@
 #include <math.h>
 #include <float.h>
 #include <string.h>
-typedef char debris_layout
-    [sizeof(void *) == 4 && offsetof(BHEntity, payload) == 0xe4 && offsetof(BHEntity, origin) == 0x48 ? 1 : -1];
+static_assert(sizeof(void *) == 4 && offsetof(BHEntity, payload) == 0xe4 && offsetof(BHEntity, origin) == 0x48,
+              "debris layout");
 static BHScriptDebrisContext *context(BHEntity *entity)
 {
     BHScriptDebrisContext *ctx;
-    memcpy(&ctx, entity->payload + 472, 4);
+    memcpy(&ctx, &entity->bindings.script_debris, 4);
     return ctx;
-}
-static void get(const BHEntity *entity, unsigned long a, void *p)
-{
-    memcpy(p, (const unsigned char *)entity + a, 4);
-}
-static void put(BHEntity *entity, unsigned long a, const void *p)
-{
-    memcpy((unsigned char *)entity + a, p, 4);
 }
 int bh_script_debris_read(const BHEntity *entity, BHScriptDebrisState *state)
 {
     if (!entity || !state)
         return 0;
-    get(entity, 0xe8, &state->lifetime);
-    get(entity, 0x194, &state->angle);
-    get(entity, 0x198, &state->spin);
-    get(entity, 0x1a0, &state->width);
-    get(entity, 0x1a4, &state->height);
-    get(entity, 0x1a8, &state->frame);
-    get(entity, 0x1b0, &state->origin_tag);
+    memcpy(&state->lifetime, &entity->fragment.lifetime, 4);
+    memcpy(&state->angle, &entity->fragment.angle, 4);
+    memcpy(&state->spin, &entity->fragment.spin, 4);
+    memcpy(&state->width, &entity->fragment.width, 4);
+    memcpy(&state->height, &entity->fragment.height, 4);
+    memcpy(&state->frame, &entity->fragment.frame, 4);
+    memcpy(&state->origin_tag, &entity->fragment.origin_tag, 4);
     return 1;
 }
 int bh_script_debris_write(BHEntity *entity, const BHScriptDebrisState *state)
 {
     if (!entity || !state)
         return 0;
-    put(entity, 0xe8, &state->lifetime);
-    put(entity, 0x194, &state->angle);
-    put(entity, 0x198, &state->spin);
-    put(entity, 0x1a0, &state->width);
-    put(entity, 0x1a4, &state->height);
-    put(entity, 0x1a8, &state->frame);
-    put(entity, 0x1b0, &state->origin_tag);
+    memcpy(&entity->fragment.lifetime, &state->lifetime, 4);
+    memcpy(&entity->fragment.angle, &state->angle, 4);
+    memcpy(&entity->fragment.spin, &state->spin, 4);
+    memcpy(&entity->fragment.width, &state->width, 4);
+    memcpy(&entity->fragment.height, &state->height, 4);
+    memcpy(&entity->fragment.frame, &state->frame, 4);
+    memcpy(&entity->fragment.origin_tag, &state->origin_tag, 4);
     return 1;
 }
 unsigned long bh_script_debris_create(BHScriptDebrisContext *ctx, long count, const BHVec3 *p, float lifetime,
@@ -110,7 +102,7 @@ unsigned long bh_script_debris_create(BHScriptDebrisContext *ctx, long count, co
         r = rand();
         bh_round_float(&state.spin, ((double)r - 16384.0) * (1.0 / 32768.0));
         bh_script_debris_write(entity, &state);
-        memcpy(entity->payload + 472, &ctx, 4);
+        memcpy(&entity->bindings.script_debris, &ctx, 4);
         entity->step = bh_script_debris_tick;
         entity->refresh = bh_script_debris_refresh;
         ++created;
@@ -134,7 +126,7 @@ void bh_script_debris_tick(BHEntity *entity)
     bh_script_debris_read(entity, &state);
     life = (double)state.lifetime - (1.0 / 30.0);
     bh_round_float(&state.lifetime, life);
-    put(entity, 0xe8, &state.lifetime);
+    memcpy(&entity->fragment.lifetime, &state.lifetime, 4);
     if (_isnan(life) || life < 0)
     {
         bh_entity_release(ctx->pool, entity);
@@ -153,7 +145,7 @@ void bh_script_debris_tick(BHEntity *entity)
     bh_round_float(&entity->origin.y, factor * y);
     bh_round_float(&entity->origin.z, factor * old.z);
     bh_round_float(&state.angle, (double)state.spin + state.angle);
-    put(entity, 0x194, &state.angle);
+    memcpy(&entity->fragment.angle, &state.angle, 4);
 }
 void bh_script_debris_refresh(BHEntity *entity, void *packet)
 {

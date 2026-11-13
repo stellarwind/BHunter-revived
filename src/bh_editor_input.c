@@ -2,8 +2,8 @@
 #include "bh_player_input_events.h"
 #include <stddef.h>
 #include <string.h>
-typedef char list_packet_offset[offsetof(BHPlayerInputList, state) == 0x2010 ? 1 : -1];
-typedef char entity_step_offset[offsetof(BHEntity, step) == 0xcc ? 1 : -1];
+static_assert(offsetof(BHPlayerInputList, state) == 0x2010, "BHPlayerInputList.state offset");
+static_assert(offsetof(BHEntity, step) == 0xcc, "BHEntity.step offset");
 /* Count-zero source context storage, outside every original field accessed by
    this pair. Original004100b0 ignores its entity argument and reads globals. */
 void bh_editor_input_tick(BHEntity *entity)
@@ -11,7 +11,7 @@ void bh_editor_input_tick(BHEntity *entity)
     BHEditorInput *context;
     if (!entity)
         return;
-    memcpy(&context, entity->payload + 420, sizeof(context));
+    memcpy(&context, &entity->bindings.editor_input, sizeof(context));
     if (context && context->list && context->state)
         bh_player_input_apply_packet(context->state, context->list->state);
 }
@@ -39,7 +39,7 @@ int bh_editor_input_setup(BHEditorInput *context)
     context->dispatcher = bh_entity_acquire(context->pool);
     if (context->dispatcher)
     {
-        memcpy(context->dispatcher->payload + 420, &context, sizeof(context));
+        memcpy(&context->dispatcher->bindings.editor_input, &context, sizeof(context));
         context->dispatcher->step = bh_editor_input_tick;
     }
     return 1;

@@ -2,22 +2,13 @@
 #include <float.h>
 #include <stddef.h>
 #include <string.h>
-typedef char projectile_layout[sizeof(void *) == 4 && offsetof(BHEntity, payload) == 0xe4 &&
-                                       offsetof(BHProjectileSyncPacket, position) == 16
-                                   ? 1
-                                   : -1];
-static void get(const BHEntity *entity, unsigned long offset, void *out)
-{
-    memcpy(out, (const unsigned char *)entity + offset, 4);
-}
-static void put(BHEntity *entity, unsigned long offset, const void *value)
-{
-    memcpy((unsigned char *)entity + offset, value, 4);
-}
+static_assert(sizeof(void *) == 4 && offsetof(BHEntity, payload) == 0xe4 &&
+                  offsetof(BHProjectileSyncPacket, position) == 16,
+              "projectile layout");
 static BHProjectileLifetime *context(BHEntity *entity)
 {
     BHProjectileLifetime *c;
-    memcpy(&c, entity->payload + 468, 4);
+    memcpy(&c, &entity->bindings.projectile_lifetime, 4);
     return c;
 }
 static int live(BHProjectileLifetime *c, const BHEntity *entity, int bound)
@@ -26,31 +17,31 @@ static int live(BHProjectileLifetime *c, const BHEntity *entity, int bound)
     if (!c || !c->pool || !c->sound || !entity)
         return 0;
     if (bound)
-        memcpy(&g, entity->payload + 472, 4);
+        memcpy(&g, &entity->bindings.lifetime_generation, 4);
     return bh_entity_is_active(c->pool, entity) && (!bound || entity->generation == g);
 }
 int bh_projectile_query_state(const BHEntity *entity, BHProjectileQueryState *state)
 {
     if (!entity || !state)
         return 0;
-    get(entity, 0xe8, &state->countdown);
-    get(entity, 0x118, &state->sound);
-    get(entity, 0x11c, &state->identity);
-    get(entity, 0x12c, &state->target);
-    get(entity, 0x130, &state->secondary);
+    memcpy(&state->countdown, &entity->projectile.countdown, 4);
+    memcpy(&state->sound, &entity->projectile.sound, 4);
+    memcpy(&state->identity, &entity->projectile.identity, 4);
+    memcpy(&state->target, &entity->projectile.target, 4);
+    memcpy(&state->secondary, &entity->projectile.secondary, 4);
     return 1;
 }
 int bh_projectile_lifetime_bind(BHProjectileLifetime *c, BHEntity *entity, const BHProjectileQueryState *state)
 {
     if (!state || !live(c, entity, 0))
         return 0;
-    put(entity, 0xe8, &state->countdown);
-    put(entity, 0x118, &state->sound);
-    put(entity, 0x11c, &state->identity);
-    put(entity, 0x12c, &state->target);
-    put(entity, 0x130, &state->secondary);
-    memcpy(entity->payload + 468, &c, 4);
-    memcpy(entity->payload + 472, &entity->generation, 4);
+    memcpy(&entity->projectile.countdown, &state->countdown, 4);
+    memcpy(&entity->projectile.sound, &state->sound, 4);
+    memcpy(&entity->projectile.identity, &state->identity, 4);
+    memcpy(&entity->projectile.target, &state->target, 4);
+    memcpy(&entity->projectile.secondary, &state->secondary, 4);
+    memcpy(&entity->bindings.projectile_lifetime, &c, 4);
+    memcpy(&entity->bindings.lifetime_generation, &entity->generation, 4);
     c->error = 0;
     return bh_entity_set_query(c->pool, entity, bh_projectile_query);
 }
@@ -64,7 +55,7 @@ void bh_projectile_cleanup(BHEntity *entity)
             c->error = 1;
         return;
     }
-    get(entity, 0x118, &handle);
+    memcpy(&handle, &entity->projectile.sound, 4);
     bh_sound_stop(c->sound, handle);
     bh_entity_release(c->pool, entity);
 }
@@ -96,12 +87,12 @@ void bh_projectile_query(BHEntity *entity, void *packet)
         if (removed == state.target)
         {
             state.target = NULL;
-            put(entity, 0x12c, &state.target);
+            memcpy(&entity->projectile.target, &state.target, 4);
         }
         if (removed == state.secondary)
         {
             state.secondary = NULL;
-            put(entity, 0x130, &state.secondary);
+            memcpy(&entity->projectile.secondary, &state.secondary, 4);
         }
         return;
     }
@@ -118,9 +109,9 @@ void bh_projectile_query(BHEntity *entity, void *packet)
     if (!_isnan(state.countdown) && (double)state.countdown > .2)
     {
         state.countdown = .2f;
-        put(entity, 0xe8, &state.countdown);
+        memcpy(&entity->projectile.countdown, &state.countdown, 4);
     }
     memcpy(&entity->position, (unsigned char *)packet + 16, 12);
     identity = 1;
-    put(entity, 0x11c, &identity);
+    memcpy(&entity->projectile.identity, &identity, 4);
 }

@@ -1,9 +1,9 @@
 #include "bh_atlas_page.h"
 #include <stddef.h>
 #include <string.h>
-typedef char page_size[sizeof(BHAtlasPage) == 0x28 ? 1 : -1];
-typedef char page_color[offsetof(BHAtlasPage, last_color) == 0xc ? 1 : -1];
-typedef char page_extent[offsetof(BHAtlasPage, size) == 0x20 ? 1 : -1];
+static_assert(sizeof(BHAtlasPage) == 0x28, "BHAtlasPage size");
+static_assert(offsetof(BHAtlasPage, last_color) == 0xc, "BHAtlasPage.last_color offset");
+static_assert(offsetof(BHAtlasPage, size) == 0x20, "BHAtlasPage.size offset");
 static void discard(BHTextureContext *q, BHTextureImage *image)
 {
     if (!image)

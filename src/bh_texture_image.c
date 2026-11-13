@@ -44,7 +44,7 @@ static void message(BHTextureContext *q, const char *tag, const char *name, int 
         memcpy(q->errors + used + a, name, b + 1);
     }
 }
-static int canonicalize(const char *name, char *out)
+static int canonicalize_texture_name(const char *name, char *out)
 {
     unsigned long i, n;
     if (!name || !(n = strlen(name)) || n >= 28)
@@ -120,7 +120,7 @@ BHTextureImage *bh_texture_load(BHTextureContext *q, const char *name)
     unsigned long colors[256], i, j, x, y, bytes;
     unsigned char index;
     int ok = 1;
-    if (!q || !q->allocator.allocate || !q->draw || !canonicalize(name, key))
+    if (!q || !q->allocator.allocate || !q->draw || !canonicalize_texture_name(name, key))
     {
         fail(q, BH_TEXTURE_ARGUMENT);
         return NULL;

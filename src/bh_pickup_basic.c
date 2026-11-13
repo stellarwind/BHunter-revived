@@ -6,11 +6,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef char basic_pickup_layout[sizeof(void *) == 4 && sizeof(BHPickupState) == 56 &&
-                                         offsetof(BHEntity, payload) + 8 == 0xec &&
-                                         offsetof(BHEntity, payload) + 64 == 0x124
-                                     ? 1
-                                     : -1];
+static_assert(sizeof(void *) == 4 && sizeof(BHPickupState) == 56 && offsetof(BHEntity, payload) + 8 == 0xec &&
+                  offsetof(BHEntity, payload) + 64 == 0x124,
+              "basic pickup layout");
 
 static BHPickupRoom *find_room(BHPickupContext *context, BHWorldGeometry *world)
 {
@@ -42,7 +40,7 @@ BHEntity *bh_pickup_basic_spawn(BHPickupContext *context, const BHVec3 *position
         return NULL;
     state = bh_pickup_state(entity);
     memset(state, 0, sizeof(*state)); /* Clears otherwise unwritten no-room links. */
-    memcpy(entity->payload + 64, &context, sizeof(context));
+    memcpy(&entity->bindings.pickup, &context, sizeof(context));
     state->resource = context->resources[type];
     random_value = rand();
     memcpy(&state->fade, &fade, sizeof(fade)); /* Original integer MOV, not FP load. */
@@ -73,7 +71,7 @@ BHEntity *bh_pickup_basic_spawn(BHPickupContext *context, const BHVec3 *position
         bh_entity_release(context->pool, entity);
         return NULL;
     }
-    memcpy(entity->payload + 4, &draw, sizeof(draw));
+    memcpy(&entity->actor.draw, &draw, sizeof(draw));
     if (room)
     {
         state->room_next = room->pickups;

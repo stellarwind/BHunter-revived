@@ -6,11 +6,11 @@
 #include <string.h>
 #include <stddef.h>
 
-typedef char actor_kind_offset[offsetof(BHEntity, kind) == 8 ? 1 : -1];
-typedef char actor_basis_offset[offsetof(BHEntity, opaque0) == 0x18 ? 1 : -1];
-typedef char actor_radius_offset[offsetof(BHEntity, collision_radius) == 0xc0 ? 1 : -1];
-typedef char actor_query_offset[offsetof(BHEntity, query) == 0xd0 ? 1 : -1];
-typedef char actor_payload_offset[offsetof(BHEntity, payload) == 0xe4 ? 1 : -1];
+static_assert(offsetof(BHEntity, kind) == 8, "BHEntity.kind offset");
+static_assert(offsetof(BHEntity, opaque0) == 0x18, "BHEntity.opaque0 offset");
+static_assert(offsetof(BHEntity, collision_radius) == 0xc0, "BHEntity.collision_radius offset");
+static_assert(offsetof(BHEntity, query) == 0xd0, "BHEntity.query offset");
+static_assert(offsetof(BHEntity, payload) == 0xe4, "BHEntity.payload offset");
 
 BHWorldSegmentRoom *bh_world_segment_room(BHWorldSegmentContext *q, const BHWorldGeometry *w)
 {
@@ -225,7 +225,7 @@ static int geometry(BHWorldSegmentContext *q, BHWorldGeometry *w, const BHVec3 *
 static BHEntity *actor_next(BHEntity *e)
 {
     BHEntity *next;
-    memcpy(&next, e->payload + 16, sizeof(next));
+    memcpy(&next, &e->actor.room_next, sizeof(next));
     return next;
 }
 static int bh_world_segment_room_trace(BHWorldSegmentContext *q, const BHWorldHit *self, BHWorldGeometry *w,

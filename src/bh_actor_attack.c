@@ -1,3 +1,4 @@
+#include "bh_field_access.h"
 #include "bh_actor_attack.h"
 #include "bh_actor_vehicle_step.inc"
 #include "bh_camera_curve.h"
@@ -24,45 +25,6 @@ static double attack_product(double a, double b)
 {
     return a * b;
 }
-static void get(BHEntity *entity, unsigned long o, void *p, unsigned long n)
-{
-    memcpy(p, (char *)entity + o, n);
-}
-static void put(BHEntity *entity, unsigned long o, const void *p, unsigned long n)
-{
-    memcpy((char *)entity + o, p, n);
-}
-static long word(BHEntity *entity, unsigned long o)
-{
-    long v;
-    get(entity, o, &v, 4);
-    return v;
-}
-static void setword(BHEntity *entity, unsigned long o, long v)
-{
-    put(entity, o, &v, 4);
-}
-static float number(BHEntity *entity, unsigned long o)
-{
-    float v;
-    get(entity, o, &v, 4);
-    return v;
-}
-static void real(BHEntity *entity, unsigned long o, float v)
-{
-    put(entity, o, &v, 4);
-}
-static short short_value(BHEntity *entity, unsigned long o)
-{
-    short v;
-    get(entity, o, &v, 2);
-    return v;
-}
-static void setshort_value(BHEntity *entity, unsigned long o, long v)
-{
-    unsigned short u = (unsigned short)v;
-    put(entity, o, &u, 2);
-}
 static void scale(BHVec3 *v, double s)
 {
     v->x = rf(v->x * s);
@@ -77,7 +39,7 @@ static void offset(BHEntity *entity, BHVec3 *p)
 {
     unsigned long i;
     for (i = 0; i < 3; ++i)
-        ((float *)p)[i] = rf((double)number(entity, 0x15c + i * 4) + ((float *)p)[i]);
+        ((float *)p)[i] = rf((double)bh_field_f32(&((float *)&entity->actor.offset)[i]) + ((float *)p)[i]);
 }
 static int live(BHActorAttackContext *ctx, BHEntity *entity, unsigned long gen)
 {
@@ -293,7 +255,8 @@ void bh_actor_attack_fire_vectors(BHEntity *entity, float t, BHVec3 *p, BHVec3 *
         /* 00437fc6..0043802d retain each following position through its
            FST, subtract the rounded fire point, then retain the difference
            through the direction FST for the travel-velocity product. */
-        double delta = ((double)number(entity, 0x15c + 4 * i) + ((float *)&q)[i]) - ((float *)p)[i];
+        double delta =
+            ((double)bh_field_f32(&((float *)&entity->actor.offset)[i]) + ((float *)&q)[i]) - ((float *)p)[i];
         ((float *)direction)[i] = rf(delta);
         ((float *)travel)[i] = rf(delta * 30);
     }
@@ -319,7 +282,7 @@ int bh_actor_attack(BHActorAttackContext *ctx, BHEntity *entity)
         return 0;
     b = ctx->effects->effects;
     ctx->error = 0;
-    target = (BHEntity *)word(entity, 0x1b8);
+    target = (BHEntity *)bh_field_i32(&entity->actor.target);
     bh_actor_route_read(entity, &state);
     if (!target)
         return 1;
@@ -329,8 +292,8 @@ int bh_actor_attack(BHActorAttackContext *ctx, BHEntity *entity)
         return 0;
     }
     t = rf((double)state.phase / state.duration);
-    pursuit = number(entity, 0x1b4);
-    forced = word(entity, 0x1d4) != 0;
+    pursuit = bh_field_f32(&entity->actor.pursuit);
+    forced = bh_field_i32(&entity->actor.forced_pursuit) != 0;
     if (forced)
     {
         if (!motion(ctx, entity, target, &m))
@@ -360,10 +323,10 @@ int bh_actor_attack(BHActorAttackContext *ctx, BHEntity *entity)
         bh_world_clamp_point(state.current, state.controls + 2);
         bh_actor_route_write(entity, &state);
     }
-    frame = short_value(entity, 0x1e0);
+    frame = bh_field_i16(&entity->actor.attack_frame);
     if (frame < 0)
     {
-        setshort_value(entity, 0x1e0, frame + 1);
+        bh_field_store_u16(&entity->actor.attack_frame, frame + 1);
         return 1;
     }
     if (!frame)
@@ -396,17 +359,17 @@ int bh_actor_attack(BHActorAttackContext *ctx, BHEntity *entity)
             /* Original TEST AH,41 accepts unordered too: coincident
                target/actor positions must retain that firing decision. */
             if (_isnan(dot) || .98 - (double)pursuit * .03 <= dot)
-                setshort_value(entity, 0x1e0, 1);
+                bh_field_store_u16(&entity->actor.attack_frame, 1);
         }
         return 1;
     }
     next = (unsigned short)(frame + 1);
-    setshort_value(entity, 0x1e0, next);
-    total = word(entity, 0x1d8);
+    bh_field_store_u16(&entity->actor.attack_frame, next);
+    total = bh_field_i32(&entity->actor.burst_frames);
     if ((short)next == total)
     {
-        cooldown = short_value(entity, 0x1e2);
-        setshort_value(entity, 0x1e0, -(long)cooldown);
+        cooldown = bh_field_i16(&entity->actor.attack_cooldown);
+        bh_field_store_u16(&entity->actor.attack_frame, -(long)cooldown);
         return 1;
     }
     if (next & 1)
@@ -414,13 +377,13 @@ int bh_actor_attack(BHActorAttackContext *ctx, BHEntity *entity)
     bh_actor_attack_fire_vectors(entity, t, &p, &direction, &side, &travel);
     /* Original emitters reload these live fields after the synchronous motion
        query (004380e8/00438176 and corresponding primary-weapon branches). */
-    get(entity, 0x1a4, &state.current, 4);
-    target = (BHEntity *)word(entity, 0x1b8);
+    memcpy(&state.current, &entity->actor.current, 4);
+    target = (BHEntity *)bh_field_i32(&entity->actor.target);
     ++ctx->attacks;
     if (next == 2 && rand() < 0x1000)
     {
-        secondary = short_value(entity, 0x1de);
-        setshort_value(entity, 0x1e0, total - 1);
+        secondary = bh_field_i16(&entity->actor.secondary_weapon);
+        bh_field_store_u16(&entity->actor.attack_frame, total - 1);
         ++ctx->specials;
         if (secondary == 0)
         {
@@ -441,7 +404,7 @@ int bh_actor_attack(BHActorAttackContext *ctx, BHEntity *entity)
         }
         return 1;
     }
-    primary = short_value(entity, 0x1dc);
+    primary = bh_field_i16(&entity->actor.primary_weapon);
     if (primary == 0)
     {
         for (i = 0; i < 3; ++i)
@@ -479,7 +442,7 @@ int bh_actor_vehicle_tick_bind(BHActorAttackContext *ctx, BHEntity *entity)
 {
     if (!ctx || !ctx->effects || !ctx->effects->effects || !entity || !live(ctx, entity, entity->generation))
         return 0;
-    memcpy(entity->payload + 596, &ctx, 4);
+    memcpy(&entity->bindings.actor_attack, &ctx, 4);
     entity->step = bh_actor_vehicle_tick;
     return 1;
 }
@@ -488,7 +451,7 @@ void bh_actor_vehicle_tick(BHEntity *entity)
     BHActorAttackContext *ctx;
     jmp_buf frame;
     void *previous_abort;
-    memcpy(&ctx, entity->payload + 596, 4);
+    memcpy(&ctx, &entity->bindings.actor_attack, 4);
     if (!ctx)
         return;
     previous_abort = ctx->step_abort;

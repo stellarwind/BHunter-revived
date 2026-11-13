@@ -5,17 +5,7 @@
 #include <stdlib.h>
 #include <math.h>
 static BHPlayerQueryContext *active;
-typedef char query_abi[sizeof(void *) == 4 && sizeof(BHPlayerQueryPacket) == 40 ? 1 : -1];
-static void put(BHEntity *entity, unsigned int o, long v)
-{
-    memcpy((unsigned char *)entity + o, &v, 4);
-}
-static void set(BHEntity *entity, unsigned int o, double d)
-{
-    float v;
-    bh_round_float(&v, d);
-    memcpy((unsigned char *)entity + o, &v, 4);
-}
+static_assert(sizeof(void *) == 4 && sizeof(BHPlayerQueryPacket) == 40, "query abi");
 static float stored(double d)
 {
     float v;
@@ -105,9 +95,9 @@ static void cue(BHPlayerQueryContext *ctx, int secondary)
         return;
     /* Same private binding consumed by the real bh_mission_sound_tick owner.
     No original field besides104/180 is initialized by this allocation. */
-    memcpy(entity->payload + 400, &life, 4);
-    put(entity, 0x104, (long)(secondary ? ctx->secondary_cue : ctx->primary_cue));
-    set(entity, 0x180, 2);
+    memcpy(&entity->bindings.script_lifetime, &life, 4);
+    entity->script_lifetime.mission_resource = secondary ? ctx->secondary_cue : ctx->primary_cue;
+    entity->script_lifetime.mission_countdown = 2;
     entity->step = bh_mission_sound_tick;
 }
 static void select_weapon(BHPlayerQueryContext *ctx, unsigned int i)
@@ -119,7 +109,7 @@ static void select_weapon(BHPlayerQueryContext *ctx, unsigned int i)
         return;
     if (!registry(ctx, previous, &old, &os) || !registry(ctx, i, &now, &ns))
         return;
-    switch (os->method_120)
+    switch (os->cancel_identity)
     {
     case 0x47d680UL:
         break;
@@ -136,7 +126,7 @@ static void select_weapon(BHPlayerQueryContext *ctx, unsigned int i)
         return;
     }
     ctx->player->player.selected_weapon[slot] = (unsigned char)i;
-    switch (ns->method_11c)
+    switch (ns->ready_identity)
     {
     case 0x431050UL:
         if (!bh_weapon_ready_reset(ctx->ready, now, ctx->player))
@@ -265,9 +255,8 @@ static void transform(BHEntity *entity, double x, double y, double z, BHVec3 *ou
 {
     unsigned int row;
     for (row = 0; row < 3; row++)
-        ((float *)out)[row] =
-            stored(((double)entity->basis[row].z * z + (double)entity->basis[row].x * x) +
-                   (double)entity->basis[row].y * y);
+        ((float *)out)[row] = stored(((double)entity->basis[row].z * z + (double)entity->basis[row].x * x) +
+                                     (double)entity->basis[row].y * y);
 }
 int bh_player_query_dispatch(BHPlayerQueryContext *ctx, BHPlayerQueryPacket *packet)
 {
@@ -337,8 +326,7 @@ int bh_player_query_dispatch(BHPlayerQueryContext *ctx, BHPlayerQueryPacket *pac
         if (length > 0 && length < packet->floats[5])
         {
             length = stored(length);
-            factor =
-                (((double)packet->floats[4] / entity->lifetime) * (1 - length / packet->floats[5]) * 30) / length;
+            factor = (((double)packet->floats[4] / entity->lifetime) * (1 - length / packet->floats[5]) * 30) / length;
             f = stored(factor);
             entity->acceleration.x = stored((double)entity->acceleration.x + factor * d.x);
             entity->acceleration.y = stored((double)entity->acceleration.y + (double)f * d.y);
@@ -363,17 +351,19 @@ int bh_player_query_dispatch(BHPlayerQueryContext *ctx, BHPlayerQueryPacket *pac
         for (i = 0; i < 3; i++)
         {
             ((float *)&a)[i] = stored((double)((float *)&a)[i] * factor * 270);
-            bh_vec3_set_component(
-                &entity->acceleration, i,
-                stored((double)bh_vec3_component(&entity->acceleration, i) -
-                       (i == 1 ? stored((double)normal.y * impulse) : (double)bh_vec3_component(&normal, i) * impulse)));
+            bh_vec3_set_component(&entity->acceleration, i,
+                                  stored((double)bh_vec3_component(&entity->acceleration, i) -
+                                         (i == 1 ? stored((double)normal.y * impulse)
+                                                 : (double)bh_vec3_component(&normal, i) * impulse)));
         }
         bh_vec3_cross(&b, &a, &r);
         for (i = 0; i < 3; i++)
         {
             t = (double)((float *)&r)[i] / bh_vec3_component(&entity->inertia, i);
-            bh_vec3_set_component(&entity->angular_acceleration, i, stored((double)bh_vec3_component(&entity->angular_acceleration, i) - t * .5));
-            bh_vec3_set_component(&entity->angular_velocity, i, stored((double)bh_vec3_component(&entity->angular_velocity, i) * .85));
+            bh_vec3_set_component(&entity->angular_acceleration, i,
+                                  stored((double)bh_vec3_component(&entity->angular_acceleration, i) - t * .5));
+            bh_vec3_set_component(&entity->angular_velocity, i,
+                                  stored((double)bh_vec3_component(&entity->angular_velocity, i) * .85));
         }
         severity = packet->floats[8];
         if ((double)severity * .5 > .05)
@@ -383,8 +373,8 @@ int bh_player_query_dispatch(BHPlayerQueryContext *ctx, BHPlayerQueryPacket *pac
             pitch = stored(.9 - (double)severity * (-.2));
             ++ctx->sound_requests;
             bh_sound_request(ctx->sound, resource, level, pitch, (BHVec3 *)&packet->floats[1], ctx->sound_velocity);
-            if (ctx->mode_count && *ctx->mode_count > 1 && ctx->simulation_tick && ctx->world &&
-                ctx->world_index && ctx->transport)
+            if (ctx->mode_count && *ctx->mode_count > 1 && ctx->simulation_tick && ctx->world && ctx->world_index &&
+                ctx->transport)
             {
                 unsigned char bytes[32], tail[4];
                 BHPacketWriter writer;

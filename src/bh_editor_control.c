@@ -1,3 +1,4 @@
+#include "bh_field_access.h"
 #include "bh_editor_control.h"
 #include "bh_gdi_text.h"
 #include "bh_round.h"
@@ -17,16 +18,6 @@ static long bits(unsigned long x)
     memcpy(&v, &x, 4);
     return v;
 }
-static unsigned long word(BHEntity *e, unsigned long o)
-{
-    unsigned long v;
-    memcpy(&v, (char *)e + o, 4);
-    return v;
-}
-static void setword(BHEntity *e, unsigned long o, unsigned long v)
-{
-    memcpy((char *)e + o, &v, 4);
-}
 static float number(BHEntity *e, unsigned long o)
 {
     float f;
@@ -40,7 +31,7 @@ static void real(BHEntity *e, unsigned long o, float f)
 static BHEditorControl *control(BHEntity *e)
 {
     BHEditorControl *c;
-    memcpy(&c, e->payload + 556, 4);
+    memcpy(&c, &e->bindings.editor_control, 4);
     return c;
 }
 static int fail(BHEditorControl *c, int error)
@@ -95,11 +86,11 @@ static BHEditorNode *anchor(BHEditorControl *c, BHEditorNode *n, int backwards)
 }
 static void orbit(BHEditorNode *to, const BHEditorNode *from)
 {
-    memcpy((char *)to->entity + 0x134, (char *)from->entity + 0x134, 12);
+    memcpy(&to->entity->placement.editor_yaw, &from->entity->placement.editor_yaw, 12);
 }
 static void install(BHEditorControl *c, BHEditorNode *n)
 {
-    memcpy(n->entity->payload + 556, &c, 4);
+    memcpy(&n->entity->bindings.editor_control, &c, 4);
     n->entity->step = bh_editor_tick;
 }
 static void sync(BHEditorWorld *c)
@@ -113,18 +104,18 @@ static void sync(BHEditorWorld *c)
         w = &n->placement.geometry;
         n->entity->position = w->position;
         for (j = 0; j < 3; ++j)
-            setword(n->entity, 0xe8 + j * 4, (unsigned long)n->placement.coordinates[j]);
-        setword(n->entity, 0xf4, w->flags);
-        setword(n->entity, 0xf8, n->model_index);
+            bh_field_store_u32(&n->entity->placement.coordinates[j], (unsigned long)n->placement.coordinates[j]);
+        bh_field_store_u32(&n->entity->placement.orientation_flags, w->flags);
+        bh_field_store_u32(&n->entity->placement.model_index, n->model_index);
         n->entity->euler = n->placement.angles;
-        memcpy((char *)n->entity + 0x150, &w->transform, 48);
-        memcpy((char *)n->entity + 0x180, &w->inverse, 48);
-        memcpy((char *)n->entity + 0x1b0, &w->minimum, 12);
-        memcpy((char *)n->entity + 0x1bc, &w->maximum, 12);
+        memcpy(&n->entity->placement.transform, &w->transform, 48);
+        memcpy(&n->entity->placement.inverse, &w->inverse, 48);
+        memcpy(&n->entity->placement.minimum, &w->minimum, 12);
+        memcpy(&n->entity->placement.maximum, &w->maximum, 12);
         o = owner(n);
-        setword(n->entity, 0x1c8, (unsigned long)(o ? o->entity : 0));
-        setword(n->entity, 0x120, (unsigned long)previous(n)->entity);
-        setword(n->entity, 0x124, (unsigned long)next(n)->entity);
+        bh_field_store_u32(&n->entity->placement.owner, (unsigned long)(o ? o->entity : 0));
+        bh_field_store_u32(&n->entity->placement.previous, (unsigned long)previous(n)->entity);
+        bh_field_store_u32(&n->entity->placement.next, (unsigned long)next(n)->entity);
     }
 }
 static int rebuild(BHEditorControl *c, BHEditorNode *n)
@@ -175,21 +166,23 @@ static int move(BHEditorControl *c, BHEditorNode *n, unsigned long axis, long de
 }
 static void zoom(BHEditorNode *n, short y)
 {
-    double value = (double)number(n->entity, 0x13c) - (double)y * number(n->entity, 0x13c) * (-.001);
-    real(n->entity, 0x13c, value < 1 ? 1 : value > 10000 ? 10000 : rf(value));
+    double value = (double)bh_field_f32(&n->entity->placement.editor_radius) -
+                   (double)y * bh_field_f32(&n->entity->placement.editor_radius) * (-.001);
+    bh_field_store_f32(&n->entity->placement.editor_radius, value < 1 ? 1 : value > 10000 ? 10000 : rf(value));
 }
 static int translate(BHEditorControl *c, BHEditorNode *n, short x, short y)
 {
     long grid = c->world->library->blocks[n->model_index].definition.grid;
     float threshold, value;
-    double yaw = number(n->entity, 0x134), radius = number(n->entity, 0x13c);
+    double yaw = bh_field_f32(&n->entity->placement.editor_yaw),
+           radius = bh_field_f32(&n->entity->placement.editor_radius);
     unsigned long axis, offset;
     if (grid <= 0 || grid > 2147483)
         return fail(c, 1);
-    real(n->entity, 0x140,
-         rf((double)number(n->entity, 0x140) - ((double)y * sin(yaw) - (double)x * cos(yaw)) * radius));
-    real(n->entity, 0x144,
-         rf((double)number(n->entity, 0x144) - ((double)y * cos(yaw) + (double)x * sin(yaw)) * radius));
+    bh_field_store_f32(&n->entity->placement.editor_pan_x, rf((double)bh_field_f32(&n->entity->placement.editor_pan_x) -
+                                                              ((double)y * sin(yaw) - (double)x * cos(yaw)) * radius));
+    bh_field_store_f32(&n->entity->placement.editor_pan_z, rf((double)bh_field_f32(&n->entity->placement.editor_pan_z) -
+                                                              ((double)y * cos(yaw) + (double)x * sin(yaw)) * radius));
     threshold = (float)(grid * 1000);
     for (axis = 0; axis < 2; ++axis)
     {
@@ -426,7 +419,8 @@ static int pan(BHEditorControl *c, BHEditorNode *n, short x, short y)
     BHEditorWorld *w = c->world;
     BHVec3 at, p, target;
     BHEditorNode *to;
-    double yaw = number(n->entity, 0x134), radius = number(n->entity, 0x13c);
+    double yaw = bh_field_f32(&n->entity->placement.editor_yaw),
+           radius = bh_field_f32(&n->entity->placement.editor_radius);
     int first = key(c, 9), second = key(c, 10);
     unsigned long i;
     if (second == 2)
@@ -489,7 +483,8 @@ static int step(BHEditorControl *c, BHEditorNode *n)
         return fail(c, 1);
     if (w->mode != 1)
         return 1;
-    real(n->entity, 0x130, rf((double)number(n->entity, 0x130) - (-1.0)));
+    bh_field_store_f32(&n->entity->placement.selection_phase,
+                       rf((double)bh_field_f32(&n->entity->placement.selection_phase) - (-1.0)));
     raw = w->input->values[8];
     mouse_x = (short)(unsigned short)raw;
     mouse_y = (short)(unsigned short)(raw >> 16);
@@ -514,7 +509,7 @@ static int step(BHEditorControl *c, BHEditorNode *n)
                 return fail(c, 1);
             n->model_index = (unsigned long)w->browser->selected;
             w->numeric->selected = -1;
-            memcpy((char *)n->entity + 0x334, w->library->blocks[n->model_index].definition.values, 16);
+            memcpy(&n->entity->placement.script_values, w->library->blocks[n->model_index].definition.values, 16);
             if (!rebuild(c, n))
                 return 0;
         }
@@ -556,8 +551,8 @@ static int step(BHEditorControl *c, BHEditorNode *n)
     b = key(c, 10);
     if (b == 0)
     {
-        real(n->entity, 0x140, 0);
-        real(n->entity, 0x144, 0);
+        bh_field_store_f32(&n->entity->placement.editor_pan_x, 0);
+        bh_field_store_f32(&n->entity->placement.editor_pan_z, 0);
     }
     if (b == 2)
     {
@@ -568,12 +563,12 @@ static int step(BHEditorControl *c, BHEditorNode *n)
         zoom(n, mouse_y);
     else
     {
-        real(n->entity, 0x134, rf((double)number(n->entity, 0x134) - (double)mouse_x * (-1.0 / 512.0)));
-        value = (double)number(n->entity, 0x138) - (double)mouse_y * (1.0 / 512.0);
-        real(n->entity, 0x138,
-             value > 1.5707963267948966    ? 1.5707963705062866f
-             : value < -1.5707963267948966 ? -1.5707963705062866f
-                                           : rf(value));
+        bh_field_store_f32(&n->entity->placement.editor_yaw, rf((double)bh_field_f32(&n->entity->placement.editor_yaw) -
+                                                                (double)mouse_x * (-1.0 / 512.0)));
+        value = (double)bh_field_f32(&n->entity->placement.editor_pitch) - (double)mouse_y * (1.0 / 512.0);
+        bh_field_store_f32(&n->entity->placement.editor_pitch, value > 1.5707963267948966    ? 1.5707963705062866f
+                                                               : value < -1.5707963267948966 ? -1.5707963705062866f
+                                                                                             : rf(value));
     }
     if (key(c, 0) == 0)
     {

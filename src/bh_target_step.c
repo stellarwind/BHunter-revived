@@ -7,7 +7,7 @@
 static BHTargetStepContext *context(BHEntity *entity)
 {
     BHTargetStepContext *ctx;
-    memcpy(&ctx, entity->payload + 616, 4);
+    memcpy(&ctx, &entity->bindings.target_step, 4);
     return ctx;
 }
 static int live(BHEntityPool *pool, BHEntity *entity, unsigned long generation)
@@ -18,20 +18,20 @@ int bh_target_step_read(const BHEntity *entity, BHTargetStepState *state)
 {
     if (!entity || !state)
         return 0;
-    memcpy(&state->countdown, (const char *)entity + 0xec, 4);
-    memcpy(&state->minimum, (const char *)entity + 0xfc, 12);
-    memcpy(&state->maximum, (const char *)entity + 0x108, 12);
-    memcpy(&state->emission, (const char *)entity + 0x114, 16);
+    memcpy(&state->countdown, (char *)&entity->target.countdown, 4);
+    memcpy(&state->minimum, (char *)&entity->target.minimum, 12);
+    memcpy(&state->maximum, (char *)&entity->target.maximum, 12);
+    memcpy(&state->emission, (char *)&entity->target.emission, 16);
     return 1;
 }
 int bh_target_step_write(BHEntity *entity, const BHTargetStepState *state)
 {
     if (!entity || !state)
         return 0;
-    memcpy((char *)entity + 0xec, &state->countdown, 4);
-    memcpy((char *)entity + 0xfc, &state->minimum, 12);
-    memcpy((char *)entity + 0x108, &state->maximum, 12);
-    memcpy((char *)entity + 0x114, &state->emission, 16);
+    memcpy((char *)&entity->target.countdown, &state->countdown, 4);
+    memcpy((char *)&entity->target.minimum, &state->minimum, 12);
+    memcpy((char *)&entity->target.maximum, &state->maximum, 12);
+    memcpy((char *)&entity->target.emission, &state->emission, 16);
     if (entity->step == bh_target_step)
     {
         BHTargetStepContext *ctx = context(entity);
@@ -63,7 +63,7 @@ int bh_target_step_bind(BHTargetStepContext *ctx, const BHTargetStepState *state
         return 0;
     ctx->physics->bodies[i].flags = (unsigned long)state->emission;
     bh_target_step_write(body->entity, state);
-    memcpy(body->entity->payload + 616, &ctx, 4);
+    memcpy(&body->entity->bindings.target_step, &ctx, 4);
     body->entity->step = bh_target_step;
     ctx->error = 0;
     return 1;
@@ -121,7 +121,7 @@ void bh_target_step(BHEntity *entity)
     {
         u = (unsigned long)state.counter + 1;
         memcpy(&state.counter, &u, 4);
-        memcpy((char *)entity + 0x120, &state.counter, 4);
+        memcpy((char *)&entity->target.counter, &state.counter, 4);
     }
     if (state.emission)
     {
@@ -146,7 +146,7 @@ void bh_target_step(BHEntity *entity)
     {
         value = (double)state.countdown - 1.0 / 30.0;
         bh_round_float(&state.countdown, value);
-        memcpy((char *)entity + 0xec, &state.countdown, 4);
+        memcpy((char *)&entity->target.countdown, &state.countdown, 4);
         if (_isnan(value) || value <= 0)
         {
             owner = body->owner;

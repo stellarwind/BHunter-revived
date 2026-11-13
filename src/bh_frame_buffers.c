@@ -3,9 +3,9 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
-typedef char frame_slot_size[sizeof(BHFrameSlot) == 12 ? 1 : -1];
-typedef char frame_slot_busy[offsetof(BHFrameSlot, busy) == 4 ? 1 : -1];
-typedef char frame_slot_age[offsetof(BHFrameSlot, age) == 8 ? 1 : -1];
+static_assert(sizeof(BHFrameSlot) == 12, "BHFrameSlot size");
+static_assert(offsetof(BHFrameSlot, busy) == 4, "BHFrameSlot.busy offset");
+static_assert(offsetof(BHFrameSlot, age) == 8, "BHFrameSlot.age offset");
 static void *allocate(unsigned long bytes, void *user)
 {
     return malloc(bytes);
@@ -41,8 +41,8 @@ int bh_frame_buffers_start(BHFrameBuffers *c, BHFrameProduce produce, void *prod
     void *data[3];
     unsigned long i, j;
     double delay;
-    if (!c || !c->allocator.allocate || !c->allocator.release || !produce || !_finite(fps) || fps <= 0 ||
-        !bytes || c->writing)
+    if (!c || !c->allocator.allocate || !c->allocator.release || !produce || !_finite(fps) || fps <= 0 || !bytes ||
+        c->writing)
         return fail(c, BH_FRAME_BUFFER_ARGUMENT);
     for (i = 0; i < 3; ++i)
         if (c->slots[i].data)

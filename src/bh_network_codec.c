@@ -4,8 +4,8 @@
 #include <float.h>
 #include <string.h>
 
-typedef char
-    packet_integer_widths[sizeof(unsigned long) == 4 && sizeof(unsigned short) == 2 && sizeof(__int64) == 8 ? 1 : -1];
+static_assert(sizeof(unsigned long) == 4 && sizeof(unsigned short) == 2 && sizeof(__int64) == 8,
+              "packet integer widths");
 static unsigned short read16(const unsigned char *p)
 {
     return (unsigned short)(p[0] | ((unsigned short)p[1] << 8));

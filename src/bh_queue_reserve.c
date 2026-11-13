@@ -1,7 +1,7 @@
 #include "bh_queue_reserve.h"
 #include <stddef.h>
-typedef char reserve_stride[sizeof(BHDrawCommand) == 84 ? 1 : -1];
-typedef char reserve_link[offsetof(BHDrawCommand, next) == 0x50 ? 1 : -1];
+static_assert(sizeof(BHDrawCommand) == 84, "BHDrawCommand size");
+static_assert(offsetof(BHDrawCommand, next) == 0x50, "BHDrawCommand.next offset");
 BHDrawCommand *bh_queue_reserve(BHDrawQueue *q, long bucket)
 {
     static const unsigned long headers[9] = {1, 2, 3, 4, 5, 0, 6, 7, 8};

@@ -38,6 +38,11 @@ ENTITY_OFFSET(actor.global_next, 0xf0);
 ENTITY_OFFSET(actor.room_next, 0xf4);
 ENTITY_OFFSET(actor.kind, 0xfc);
 ENTITY_OFFSET(flyby.camera, 0xe8);
+ENTITY_OFFSET(flyby.route_phase, 0x1dc);
+ENTITY_OFFSET(flyby.orbit_time, 0x1f8);
+static_assert(sizeof(BHFlybyFields) == 0x1a4, "flyby payload size");
+ENTITY_OFFSET(actor.radar_id, 0x11c);
+ENTITY_OFFSET(actor.radar_owner, 0x1b8);
 ENTITY_OFFSET(flyby.previous_position, 0x23c);
 ENTITY_OFFSET(flyby.waypoint_index, 0x284);
 ENTITY_OFFSET(remote.pose_flags, 0x11a);
@@ -65,6 +70,120 @@ ENTITY_OFFSET(player.propulsion.thrust.nozzles, 0x2c0);
 ENTITY_OFFSET(player.propulsion.delayed.creation, 0x2e8);
 ENTITY_OFFSET(player.engine_output, 0x2f8);
 ENTITY_OFFSET(player.nozzle_trail, 0x2fc);
+
+/* All recovered actor fields share the original payload layout. */
+ENTITY_OFFSET(actor.draw, 0xe8);
+ENTITY_OFFSET(actor.global_previous, 0xec);
+ENTITY_OFFSET(actor.global_next, 0xf0);
+ENTITY_OFFSET(actor.room_next, 0xf4);
+ENTITY_OFFSET(actor.room_previous, 0xf8);
+ENTITY_OFFSET(actor.kind, 0xfc);
+ENTITY_OFFSET(actor.bounty_token, 0x100);
+ENTITY_OFFSET(actor.sound, 0x104);
+ENTITY_OFFSET(actor.sound_frames, 0x108);
+ENTITY_OFFSET(actor.sound_resource, 0x10c);
+ENTITY_OFFSET(actor.bound_resource, 0x110);
+ENTITY_OFFSET(actor.model_resource, 0x114);
+ENTITY_OFFSET(actor.destroy_when_faded, 0x118);
+ENTITY_OFFSET(actor.death_tag, 0x11c);
+ENTITY_OFFSET(actor.route_start, 0x120);
+ENTITY_OFFSET(actor.route_end, 0x12c);
+ENTITY_OFFSET(actor.portal_center, 0x138);
+ENTITY_OFFSET(actor.route_first, 0x144);
+ENTITY_OFFSET(actor.route_second, 0x150);
+ENTITY_OFFSET(actor.offset, 0x15c);
+ENTITY_OFFSET(actor.offset_velocity, 0x168);
+ENTITY_OFFSET(actor.draw_offset, 0x174);
+ENTITY_OFFSET(actor.phase, 0x180);
+ENTITY_OFFSET(actor.duration, 0x184);
+ENTITY_OFFSET(actor.speed, 0x188);
+ENTITY_OFFSET(actor.u, 0x18c);
+ENTITY_OFFSET(actor.v, 0x190);
+ENTITY_OFFSET(actor.damage, 0x194);
+ENTITY_OFFSET(actor.speed_scale, 0x198);
+ENTITY_OFFSET(actor.fade, 0x19c);
+ENTITY_OFFSET(actor.script_path, 0x1a0);
+ENTITY_OFFSET(actor.current, 0x1a4);
+ENTITY_OFFSET(actor.next, 0x1a8);
+ENTITY_OFFSET(actor.damage_source, 0x1ac);
+ENTITY_OFFSET(actor.jitter, 0x1b0);
+ENTITY_OFFSET(actor.pursuit, 0x1b4);
+ENTITY_OFFSET(actor.target, 0x1b8);
+ENTITY_OFFSET(actor.saved_end, 0x1bc);
+ENTITY_OFFSET(actor.saved_tangent, 0x1c8);
+ENTITY_OFFSET(actor.forced_pursuit, 0x1d4);
+ENTITY_OFFSET(actor.burst_frames, 0x1d8);
+ENTITY_OFFSET(actor.primary_weapon, 0x1dc);
+ENTITY_OFFSET(actor.secondary_weapon, 0x1de);
+ENTITY_OFFSET(actor.attack_frame, 0x1e0);
+ENTITY_OFFSET(actor.attack_cooldown, 0x1e2);
+ENTITY_OFFSET(actor.tick, 0x1e4);
+ENTITY_OFFSET(actor.duration_ticks, 0x1e6);
+ENTITY_OFFSET(actor.random, 0x1e8);
+static_assert(sizeof(BHActorFields) == 0x108, "actor field view size");
+ENTITY_OFFSET(mass, 0xb4);
+ENTITY_OFFSET(friction, 0xb8);
+
+static_assert(sizeof(BHRemoteFireSchedule) == 12, "remote firing schedule size");
+static_assert(offsetof(BHRemoteFireSchedule, target) == 8, "remote firing target offset");
+static_assert(sizeof(BHRemoteFields) == 0x1e8, "remote payload view size");
+ENTITY_OFFSET(remote.engine_sound, 0x104);
+ENTITY_OFFSET(remote.sound_frames, 0x108);
+ENTITY_OFFSET(remote.engine_resource, 0x10c);
+ENTITY_OFFSET(remote.reserved_sound, 0x110);
+ENTITY_OFFSET(remote.slot, 0x114);
+ENTITY_OFFSET(remote.roster_slot, 0x116);
+ENTITY_OFFSET(remote.muzzle_phase, 0x118);
+ENTITY_OFFSET(remote.pose_flags, 0x11a);
+ENTITY_OFFSET(remote.score, 0x11c);
+ENTITY_OFFSET(remote.name, 0x11e);
+ENTITY_OFFSET(remote.cached_world, 0x134);
+ENTITY_OFFSET(remote.player_id, 0x138);
+ENTITY_OFFSET(remote.firing[0].remaining, 0x19c);
+ENTITY_OFFSET(remote.firing[0].spacing, 0x19e);
+ENTITY_OFFSET(remote.firing[0].countdown, 0x1a0);
+ENTITY_OFFSET(remote.firing[0].packet_count, 0x1a2);
+ENTITY_OFFSET(remote.firing[0].target, 0x1a4);
+ENTITY_OFFSET(remote.firing[1].remaining, 0x1a8);
+ENTITY_OFFSET(remote.firing[1].spacing, 0x1aa);
+ENTITY_OFFSET(remote.firing[1].countdown, 0x1ac);
+ENTITY_OFFSET(remote.firing[1].packet_count, 0x1ae);
+ENTITY_OFFSET(remote.firing[1].target, 0x1b0);
+ENTITY_OFFSET(remote.firing[2].remaining, 0x1b4);
+ENTITY_OFFSET(remote.firing[2].spacing, 0x1b6);
+ENTITY_OFFSET(remote.firing[2].countdown, 0x1b8);
+ENTITY_OFFSET(remote.firing[2].packet_count, 0x1ba);
+ENTITY_OFFSET(remote.firing[2].target, 0x1bc);
+ENTITY_OFFSET(remote.firing[3].remaining, 0x1c0);
+ENTITY_OFFSET(remote.firing[3].spacing, 0x1c2);
+ENTITY_OFFSET(remote.firing[3].countdown, 0x1c4);
+ENTITY_OFFSET(remote.firing[3].packet_count, 0x1c6);
+ENTITY_OFFSET(remote.firing[3].target, 0x1c8);
+ENTITY_OFFSET(remote.firing[4].remaining, 0x1cc);
+ENTITY_OFFSET(remote.firing[4].spacing, 0x1ce);
+ENTITY_OFFSET(remote.firing[4].countdown, 0x1d0);
+ENTITY_OFFSET(remote.firing[4].packet_count, 0x1d2);
+ENTITY_OFFSET(remote.firing[4].target, 0x1d4);
+ENTITY_OFFSET(remote.firing[5].remaining, 0x1d8);
+ENTITY_OFFSET(remote.firing[5].spacing, 0x1da);
+ENTITY_OFFSET(remote.firing[5].countdown, 0x1dc);
+ENTITY_OFFSET(remote.firing[5].packet_count, 0x1de);
+ENTITY_OFFSET(remote.firing[5].target, 0x1e0);
+ENTITY_OFFSET(remote.firing[6].remaining, 0x1e4);
+ENTITY_OFFSET(remote.firing[6].spacing, 0x1e6);
+ENTITY_OFFSET(remote.firing[6].countdown, 0x1e8);
+ENTITY_OFFSET(remote.firing[6].packet_count, 0x1ea);
+ENTITY_OFFSET(remote.firing[6].target, 0x1ec);
+ENTITY_OFFSET(remote.firing[7].remaining, 0x1f0);
+ENTITY_OFFSET(remote.firing[7].spacing, 0x1f2);
+ENTITY_OFFSET(remote.firing[7].countdown, 0x1f4);
+ENTITY_OFFSET(remote.firing[7].packet_count, 0x1f6);
+ENTITY_OFFSET(remote.firing[7].target, 0x1f8);
+ENTITY_OFFSET(remote.firing[8].remaining, 0x1fc);
+ENTITY_OFFSET(remote.firing[8].spacing, 0x1fe);
+ENTITY_OFFSET(remote.firing[8].countdown, 0x200);
+ENTITY_OFFSET(remote.firing[8].packet_count, 0x202);
+ENTITY_OFFSET(remote.firing[8].target, 0x204);
 #undef ENTITY_OFFSET
 
 typedef struct Chunk
@@ -368,9 +487,9 @@ static int dispatch(BHEntityPool *pool, int refresh)
     while (entity)
     {
         next = entity->next;
-        BHEntityMutation step = {refresh ? "refresh" : "step", entity, next,
-                                 refresh ? (uintptr_t)entity->refresh : (uintptr_t)entity->step,
-                                 entity->generation, 0};
+        BHEntityMutation step = {
+            refresh ? "refresh" : "step", entity, next, refresh ? (uintptr_t)entity->refresh : (uintptr_t)entity->step,
+            entity->generation,           0};
 #ifdef BH_SDL_BACKEND
         render_mark = bh_interpolation_mark();
         render_identity = (unsigned long)entity;
@@ -440,8 +559,8 @@ int bh_entities_query(BHEntityPool *pool, unsigned long mask, unsigned long valu
     {
         next = entity->next;
         current_generation = entity->generation;
-        BHEntityMutation query = {"query", entity, next, (uintptr_t)entity->query,
-                                  current_generation, next ? next->generation : 0};
+        BHEntityMutation query = {
+            "query", entity, next, (uintptr_t)entity->query, current_generation, next ? next->generation : 0};
         if ((entity->flags & mask) == value)
         {
             if (!spatial)

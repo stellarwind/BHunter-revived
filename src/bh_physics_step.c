@@ -7,10 +7,9 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
-typedef char physics_common_layout[sizeof(void *) == 4 && offsetof(BHEntity, position) == 12 &&
-                                           offsetof(BHEntity, origin) == 0x48 && offsetof(BHEntity, lifetime) == 0xb4
-                                       ? 1
-                                       : -1];
+static_assert(sizeof(void *) == 4 && offsetof(BHEntity, position) == 12 && offsetof(BHEntity, origin) == 0x48 &&
+                  offsetof(BHEntity, lifetime) == 0xb4,
+              "physics common layout");
 static void *allocate(unsigned long n, void *u)
 {
     (void)u;
@@ -89,8 +88,8 @@ int bh_physics_step_publish(BHPhysicsStepBody *body)
     entity->angular_acceleration = physics->angular_acceleration;
     entity->euler = physics->euler;
     entity->world = body->world;
-    entity->lifetime = body->mass;
-    entity->scale = body->friction;
+    entity->mass = body->mass;
+    entity->friction = body->friction;
     return 1;
 }
 int bh_physics_step_dispose(BHPhysicsStepContext *ctx)
@@ -382,7 +381,7 @@ static int candidates(BHPhysicsStepContext *ctx, BHPhysicsStepBody *self)
             if (!b || !live(ctx->pool, b->entity, b->generation) || b->model_index >= ctx->model_count)
                 return fail(ctx, BH_PHYSICS_STEP_BINDING);
             p = pair(ctx, self->geometry, b->geometry);
-            memcpy(&b->flags, (const char *)b->entity + 0x114, 4);
+            memcpy(&b->flags, &b->entity->placement.query_flags, 4);
             bh_mat34_inverse_rigid(&b->physics->pose, &inverse);
             if (!p || !bh_collision_candidate_actor(ctx->candidates + i, b->entity, &p->sweep, &b->physics->pose,
                                                     &inverse, &b->physics->velocity, b->flags))

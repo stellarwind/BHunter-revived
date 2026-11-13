@@ -3,20 +3,12 @@
 #include "bh_round.h"
 #include <stddef.h>
 #include <string.h>
-typedef char motion_layout
-    [sizeof(void *) == 4 && offsetof(BHEntity, payload) == 0xe4 && offsetof(BHEntity, origin) == 0x48 ? 1 : -1];
-static void get(const BHEntity *entity, unsigned long o, void *v, unsigned long n)
-{
-    memcpy(v, (const unsigned char *)entity + o, n);
-}
-static void put(BHEntity *entity, unsigned long o, const void *v, unsigned long n)
-{
-    memcpy((unsigned char *)entity + o, v, n);
-}
+static_assert(sizeof(void *) == 4 && offsetof(BHEntity, payload) == 0xe4 && offsetof(BHEntity, origin) == 0x48,
+              "motion layout");
 static BHScriptMotionContext *context(BHEntity *entity)
 {
     BHScriptMotionContext *ctx;
-    memcpy(&ctx, entity->payload + 408, 4);
+    memcpy(&ctx, &entity->bindings.script_motion, 4);
     return ctx;
 }
 static int live(BHEntityPool *pool, const BHEntity *entity)
@@ -27,37 +19,37 @@ int bh_script_motion_actor_read(const BHEntity *entity, BHScriptMotionActor *s)
 {
     if (!entity || !s)
         return 0;
-    get(entity, 0x3c, &s->angles, 12);
-    get(entity, 0x1b0, &s->minimum, 12);
-    get(entity, 0x1bc, &s->maximum, 12);
-    get(entity, 0x150, &s->local_to_world, 48);
-    get(entity, 0x180, &s->world_to_local, 48);
-    get(entity, 0x12c, &s->attachments, 4);
+    memcpy(&s->angles, &entity->euler, 12);
+    memcpy(&s->minimum, &entity->placement.minimum, 12);
+    memcpy(&s->maximum, &entity->placement.maximum, 12);
+    memcpy(&s->local_to_world, &entity->placement.transform, 48);
+    memcpy(&s->world_to_local, &entity->placement.inverse, 48);
+    memcpy(&s->attachments, &entity->placement.attachments, 4);
     return 1;
 }
 int bh_script_motion_actor_write(BHEntity *entity, const BHScriptMotionActor *s)
 {
     if (!entity || !s)
         return 0;
-    put(entity, 0x3c, &s->angles, 12);
-    put(entity, 0x1b0, &s->minimum, 12);
-    put(entity, 0x1bc, &s->maximum, 12);
-    put(entity, 0x150, &s->local_to_world, 48);
-    put(entity, 0x180, &s->world_to_local, 48);
-    put(entity, 0x12c, &s->attachments, 4);
+    memcpy(&entity->euler, &s->angles, 12);
+    memcpy(&entity->placement.minimum, &s->minimum, 12);
+    memcpy(&entity->placement.maximum, &s->maximum, 12);
+    memcpy(&entity->placement.transform, &s->local_to_world, 48);
+    memcpy(&entity->placement.inverse, &s->world_to_local, 48);
+    memcpy(&entity->placement.attachments, &s->attachments, 4);
     return 1;
 }
 BHEntity *bh_script_motion_attachment_next(const BHEntity *entity)
 {
     BHEntity *next = NULL;
     if (entity)
-        get(entity, 0xec, &next, 4);
+        memcpy(&next, &entity->script_lifetime.attachment_next, 4);
     return next;
 }
 void bh_script_motion_attachment_link(BHEntity *entity, BHEntity *next)
 {
     if (entity)
-        put(entity, 0xec, &next, 4);
+        memcpy(&entity->script_lifetime.attachment_next, &next, 4);
 }
 static BHEntity *attachments(BHScriptMotionContext *ctx, BHEntity *entity, BHEntity *raw)
 {
@@ -115,7 +107,7 @@ int bh_script_motion_bind(BHScriptMotionContext *ctx, BHEntity *entity, const BH
         ctx->error = BH_MOTION_ARGUMENT;
         return 0;
     }
-    memcpy(entity->payload + 408, &ctx, 4);
+    memcpy(&entity->bindings.script_motion, &ctx, 4);
     entity->step = rotate ? bh_script_rotate_tick : bh_script_translate_tick;
     return 1;
 }
@@ -158,7 +150,7 @@ static int expire(BHEntity *entity, float countdown)
         return 0;
     next = (double)countdown - (1.0 / 30.0);
     bh_round_float(&countdown, next);
-    put(entity, 0x128, &countdown, 4);
+    memcpy(&entity->script_lifetime.countdown, &countdown, 4);
     return !(next > 0);
 }
 void bh_script_translate_tick(BHEntity *entity)
@@ -210,12 +202,12 @@ void bh_script_rotate_tick(BHEntity *entity)
     bh_script_lifetime_read(entity, &state);
     if (!valid(ctx, entity, &state, 1))
         return;
-    get(state.actor, 0x3c, &angles, 12);
+    memcpy(&angles, &state.actor->euler, 12);
     add(&angles, &state.delta);
     wrap(&angles.x);
     wrap(&angles.y);
     wrap(&angles.z);
-    put(state.actor, 0x3c, &angles, 12);
+    memcpy(&state.actor->euler, &angles, 12);
     publish(ctx, state.actor);
     if (expire(entity, state.countdown))
         bh_entity_release(ctx->lifetime->timers.pool, entity);

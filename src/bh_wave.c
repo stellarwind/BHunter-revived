@@ -3,7 +3,7 @@
 #include <string.h>
 
 #define MAX_INPUT (64UL * 1024UL * 1024UL)
-typedef char wave_word_size[(sizeof(unsigned short) == 2 && sizeof(unsigned long) == 4) ? 1 : -1];
+static_assert((sizeof(unsigned short) == 2 && sizeof(unsigned long) == 4), "wave word size");
 static unsigned short u16(const unsigned char *p)
 {
     return (unsigned short)((unsigned short)p[0] | ((unsigned short)p[1] << 8));

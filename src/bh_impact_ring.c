@@ -4,8 +4,8 @@
 #include <math.h>
 #include <float.h>
 
-typedef char ring_age_layout[offsetof(BHEntity, payload) + 4 + offsetof(BHImpactState, age) == 0x100 ? 1 : -1];
-typedef char ring_normal_layout[offsetof(BHEntity, payload) + 4 + offsetof(BHImpactState, normal) == 0x114 ? 1 : -1];
+static_assert(offsetof(BHEntity, payload) + 4 + offsetof(BHImpactState, age) == 0x100, "ring age layout");
+static_assert(offsetof(BHEntity, payload) + 4 + offsetof(BHImpactState, normal) == 0x114, "ring normal layout");
 int bh_impact_ring_draw(BHDrawQueue *queue, unsigned long texture, const BHEntity *entity, const float *camera_yaw)
 {
     const BHImpactState *state;

@@ -6,12 +6,12 @@
 #include <stddef.h>
 #include <float.h>
 
-typedef char scores_payload_offset[offsetof(BHEntity, payload) == 0xe4 ? 1 : -1];
-typedef char scores_word_size[sizeof(long) == 4 && sizeof(int) == 4 && sizeof(short) == 2 ? 1 : -1];
+static_assert(offsetof(BHEntity, payload) == 0xe4, "BHEntity.payload offset");
+static_assert(sizeof(long) == 4 && sizeof(int) == 4 && sizeof(short) == 2, "scores word size");
 static long score(const BHEntity *entity)
 {
     short value;
-    memcpy(&value, entity->payload + 56, 2);
+    memcpy(&value, &entity->remote.score, 2);
     return value;
 }
 static long row_y(long index)
@@ -58,7 +58,7 @@ int bh_hud_scores_text(BHHudScoreText *c, const BHHudScores *s)
             if (!cleared)
                 text_result(c, bh_text_queue_clear(c->queue, c->page, 0));
             cleared = 1;
-            row(c, (const char *)s->remote[i]->payload + 58, score(s->remote[i]), row_y((long)i));
+            row(c, s->remote[i]->remote.name, score(s->remote[i]), row_y((long)i));
         }
     if (!cleared)
         text_result(c, bh_text_queue_clear(c->queue, c->page, 0));

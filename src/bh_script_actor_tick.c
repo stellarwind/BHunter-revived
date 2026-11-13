@@ -2,14 +2,6 @@
 #include "bh_round.h"
 #include "bh_fp.h"
 #include <string.h>
-static void get(const BHEntity *entity, unsigned long at, void *p)
-{
-    memcpy(p, (const char *)entity + at, 4);
-}
-static void put(BHEntity *entity, unsigned long at, const void *p)
-{
-    memcpy((char *)entity + at, p, 4);
-}
 static int fail(BHActorRouteContext *ctx, BHActorRouteError e)
 {
     if (ctx)
@@ -52,18 +44,18 @@ static int tick(BHActorRouteContext *ctx, BHEntity *entity, int phase, unsigned 
         velocity = entity->velocity;
         if (state.sound == BH_SOUND_INVALID)
         {
-            get(entity, 0x10c, &resource);
+            memcpy(&resource, &entity->actor.sound_resource, 4);
             state.sound = bh_sound_request(ctx->sound, resource, 1, phase ? .7f : 1, &point, &velocity);
-            put(entity, 0x104, &state.sound);
+            memcpy(&entity->actor.sound, &state.sound, 4);
         }
         else
             bh_sound_update(ctx->sound, state.sound, 1, phase ? .7f : 1, &point, &velocity);
         if (phase)
         {
-            get(entity, 0x118, &counter);
+            memcpy(&counter, &entity->actor.destroy_when_faded, 4);
             bits = (unsigned long)counter - 1UL;
             memcpy(&counter, &bits, 4);
-            put(entity, 0x118, &counter);
+            memcpy(&entity->actor.destroy_when_faded, &counter, 4);
             if (counter < 45)
             {
                 if (!(bits & 3))
@@ -72,7 +64,7 @@ static int tick(BHActorRouteContext *ctx, BHEntity *entity, int phase, unsigned 
                 {
                     bits = (unsigned long)counter + 120UL;
                     memcpy(&counter, &bits, 4);
-                    put(entity, 0x118, &counter);
+                    memcpy(&entity->actor.destroy_when_faded, &counter, 4);
                 }
             }
         }
@@ -83,7 +75,7 @@ static int tick(BHActorRouteContext *ctx, BHEntity *entity, int phase, unsigned 
         if (!bh_script_actor_route_advance(ctx, entity))
             return 0;
         stamp = (unsigned short)(bh_actor_route_now(ctx) + delta);
-        memcpy((char *)entity + 0x1e4, &stamp, 2);
+        memcpy((char *)&entity->actor.tick, &stamp, 2);
     }
     ctx->error = BH_ACTOR_ROUTE_OK;
     return 1;

@@ -3,8 +3,8 @@
 #include "bh_actor_exit_core.inc"
 #include <stddef.h>
 #include <string.h>
-typedef char route_actor_payload[offsetof(BHEntity, payload) == 0xe4 ? 1 : -1];
-typedef char route_word_size[sizeof(unsigned long) == 4 && sizeof(long) == 4 ? 1 : -1];
+static_assert(offsetof(BHEntity, payload) == 0xe4, "BHEntity.payload offset");
+static_assert(sizeof(unsigned long) == 4 && sizeof(long) == 4, "route word size");
 
 int bh_route_choose_exit(BHEntity *actor, const BHWorldGeometry *room, const BHWorldGeometry *preferred, long excluded,
                          long *selected)

@@ -3,13 +3,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef char format_size[sizeof(BHTextureFormat) == 64 ? 1 : -1];
-typedef char slot_size[sizeof(BHTextureSlot) == 28 ? 1 : -1];
-typedef char slot_flags[offsetof(BHTextureSlot, palette_dirty) == 0x16 ? 1 : -1];
-typedef char image_size[sizeof(BHTextureImage) == 0x70 ? 1 : -1];
-typedef char image_name[offsetof(BHTextureImage, name) == 0x1c ? 1 : -1];
-typedef char image_runs[offsetof(BHTextureImage, runs) == 0x48 ? 1 : -1];
-typedef char image_flags[offsetof(BHTextureImage, flags) == 0x50 ? 1 : -1];
+static_assert(sizeof(BHTextureFormat) == 64, "BHTextureFormat size");
+static_assert(sizeof(BHTextureSlot) == 28, "BHTextureSlot size");
+static_assert(offsetof(BHTextureSlot, palette_dirty) == 0x16, "BHTextureSlot.palette_dirty offset");
+static_assert(sizeof(BHTextureImage) == 0x70, "BHTextureImage size");
+static_assert(offsetof(BHTextureImage, name) == 0x1c, "BHTextureImage.name offset");
+static_assert(offsetof(BHTextureImage, runs) == 0x48, "BHTextureImage.runs offset");
+static_assert(offsetof(BHTextureImage, flags) == 0x50, "BHTextureImage.flags offset");
 static void *allocate(unsigned long bytes, void *user)
 {
     return malloc(bytes);

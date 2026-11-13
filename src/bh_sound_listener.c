@@ -5,13 +5,10 @@
 #include <float.h>
 #include <string.h>
 
-typedef char
-    listener_position_velocity[offsetof(BHSoundQueue, listener_velocity) - offsetof(BHSoundQueue, listener) == 12 ? 1
-                                                                                                                  : -1];
-typedef char
-    listener_right_offset[offsetof(BHSoundQueue, listener_right) - offsetof(BHSoundQueue, listener) == 24 ? 1 : -1];
-typedef char
-    listener_flag_offset[offsetof(BHSoundQueue, listener_active) - offsetof(BHSoundQueue, listener) == 36 ? 1 : -1];
+static_assert(offsetof(BHSoundQueue, listener_velocity) - offsetof(BHSoundQueue, listener) == 12,
+              "listener position velocity");
+static_assert(offsetof(BHSoundQueue, listener_right) - offsetof(BHSoundQueue, listener) == 24, "listener right offset");
+static_assert(offsetof(BHSoundQueue, listener_active) - offsetof(BHSoundQueue, listener) == 36, "listener flag offset");
 static int vector_ok(const BHVec3 *v)
 {
     return v && _finite(v->x) && _finite(v->y) && _finite(v->z);

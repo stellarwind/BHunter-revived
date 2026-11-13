@@ -101,8 +101,8 @@ int bh_weapon_homing_track(BHWeaponTargetContext *ctx, BHEntity *weapon_entity, 
                 self.kind = BH_WORLD_HIT_ACTOR;
                 self.object.actor = (BHEntity *)entity;
                 ++ctx->traces;
-                result = bh_world_segment_run(ctx->world, &self, (BHWorldGeometry **)&weapon_state->word_104,
-                                              &entity->position, &packet.position, -1, &hit);
+                result = bh_world_segment_run(ctx->world, &self, &weapon_state->cached_world, &entity->position,
+                                              &packet.position, -1, &hit);
                 if (result < 0)
                 {
                     ctx->error = BH_WEAPON_TARGET_WORLD;
@@ -115,7 +115,7 @@ int bh_weapon_homing_track(BHWeaponTargetContext *ctx, BHEntity *weapon_entity, 
                 }
             }
         }
-        memcpy(&target, (unsigned char *)target + 0xf0, 4);
+        memcpy(&target, &target->actor.global_next, 4);
     }
     weapon_state->hud.charge = 0;
     return 1;

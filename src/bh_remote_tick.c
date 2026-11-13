@@ -1,3 +1,4 @@
+#include "bh_field_access.h"
 #include "bh_remote_tick.h"
 #include "bh_round.h"
 #include "bh_fp.h"
@@ -10,39 +11,9 @@ static float rf(double v)
     bh_round_float(&f, v);
     return f;
 }
-static unsigned long word(BHEntity *entity, unsigned long o)
-{
-    unsigned long n;
-    memcpy(&n, (char *)entity + o, 4);
-    return n;
-}
-static void setword(BHEntity *entity, unsigned long o, unsigned long n)
-{
-    memcpy((char *)entity + o, &n, 4);
-}
-static short half(BHEntity *entity, unsigned long o)
-{
-    short n;
-    memcpy(&n, (char *)entity + o, 2);
-    return n;
-}
-static void sethalf(BHEntity *entity, unsigned long o, unsigned short n)
-{
-    memcpy((char *)entity + o, &n, 2);
-}
-static float number(BHEntity *entity, unsigned long o)
-{
-    float f;
-    memcpy(&f, (char *)entity + o, 4);
-    return f;
-}
-static void real(BHEntity *entity, unsigned long o, float f)
-{
-    memcpy((char *)entity + o, &f, 4);
-}
 int bh_remote_tick(BHRemoteTick *tick, BHEntity *entity)
 {
-    unsigned long i, offset, flags, remaining;
+    unsigned long i, flags, remaining;
     short countdown;
     BHEntity *target;
     BHVec3 position, start, end, p, velocity, acceleration = {0, -.002f, 0};
@@ -62,17 +33,20 @@ int bh_remote_tick(BHRemoteTick *tick, BHEntity *entity)
     ++tick->calls;
     for (i = 0; i < 9; ++i)
     {
-        offset = 0x19c + 12 * i;
-        if (half(entity, offset))
+
+        if (bh_field_i16(&entity->remote.firing[i].remaining))
         {
-            countdown = (short)(unsigned short)((unsigned short)half(entity, offset + 4) - 1);
-            sethalf(entity, offset + 4, (unsigned short)countdown);
+            countdown = (short)(unsigned short)((unsigned short)bh_field_i16(&entity->remote.firing[i].countdown) - 1);
+            bh_field_store_u16(&entity->remote.firing[i].countdown, (unsigned short)countdown);
             if (countdown < 1)
             {
-                sethalf(entity, offset + 4,
-                        (unsigned short)((unsigned short)half(entity, offset + 2) + (unsigned short)countdown));
-                sethalf(entity, offset, (unsigned short)((unsigned short)half(entity, offset) - 1));
-                memcpy(&target, (char *)entity + offset + 8, 4);
+                bh_field_store_u16(&entity->remote.firing[i].countdown,
+                                   (unsigned short)((unsigned short)bh_field_i16(&entity->remote.firing[i].spacing) +
+                                                    (unsigned short)countdown));
+                bh_field_store_u16(
+                    &entity->remote.firing[i].remaining,
+                    (unsigned short)((unsigned short)bh_field_i16(&entity->remote.firing[i].remaining) - 1));
+                target = entity->remote.firing[i].target;
                 ++tick->scheduled;
                 if (!bh_remote_fire(tick->fire, entity, (short)(unsigned short)*tick->fire->tick, i, target))
                 {
@@ -82,7 +56,7 @@ int bh_remote_tick(BHRemoteTick *tick, BHEntity *entity)
             }
         }
     }
-    remaining = word(entity, 0x108);
+    remaining = bh_field_u32(&entity->remote.sound_frames);
     if (remaining)
     {
         flags = (unsigned char)entity->remote.pose_flags;
@@ -102,7 +76,7 @@ int bh_remote_tick(BHRemoteTick *tick, BHEntity *entity)
                 tick->error = 1;
                 return 0;
             }
-            cached = (BHWorldGeometry *)word(entity, 0xc4);
+            cached = (BHWorldGeometry *)bh_field_u32(&entity->world);
             start = end = position;
             start.y = rf((double)position.y - (-.3));
             end.y = rf((double)position.y - (-8.3));
@@ -174,29 +148,35 @@ int bh_remote_tick(BHRemoteTick *tick, BHEntity *entity)
                 ++tick->smoke_particles;
             }
         }
-        remaining = word(entity, 0x108) - 1;
-        setword(entity, 0x108, remaining);
-        if (!remaining && word(entity, 0x104) != BH_SOUND_INVALID)
+        remaining = bh_field_u32(&entity->remote.sound_frames) - 1;
+        bh_field_store_u32(&entity->remote.sound_frames, remaining);
+        if (!remaining && bh_field_u32(&entity->remote.engine_sound) != BH_SOUND_INVALID)
         {
             if (!tick->sound)
             {
                 tick->error = 1;
                 return 0;
             }
-            bh_sound_stop(tick->sound, word(entity, 0x104));
-            setword(entity, 0x104, BH_SOUND_INVALID);
+            bh_sound_stop(tick->sound, bh_field_u32(&entity->remote.engine_sound));
+            bh_field_store_u32(&entity->remote.engine_sound, BH_SOUND_INVALID);
         }
     }
     for (i = 0; i < 6; ++i)
-        real(entity, 0x60 + 4 * i, rf((double)number(entity, 0x60 + 4 * i) * .8));
+    {
+        BHVec3 *value = i < 3 ? &entity->acceleration : &entity->angular_acceleration;
+        bh_vec3_set_component(value, i % 3, rf((double)bh_vec3_component(value, i % 3) * .8));
+    }
     for (i = 0; i < 6; ++i)
-        real(entity, 0x48 + 4 * i, rf((double)number(entity, 0x48 + 4 * i) * .965));
+    {
+        BHVec3 *value = i < 3 ? &entity->velocity : &entity->angular_velocity;
+        bh_vec3_set_component(value, i % 3, rf((double)bh_vec3_component(value, i % 3) * .965));
+    }
     return 1;
 }
 void bh_remote_step(BHEntity *entity)
 {
     BHRemoteTick *tick;
-    memcpy(&tick, entity->payload + 540, 4);
+    memcpy(&tick, &entity->bindings.remote_tick, 4);
     if (tick)
         bh_remote_tick(tick, entity);
 }
@@ -210,7 +190,7 @@ int bh_remote_tick_bind(BHRemoteTick *tick, BHEntity *entity)
     for (at = pool->active; at && n++ < pool->capacity; at = at->next)
         if (at == entity)
         {
-            memcpy(entity->payload + 540, &tick, 4);
+            memcpy(&entity->bindings.remote_tick, &tick, 4);
             entity->step = bh_remote_step;
             return 1;
         }

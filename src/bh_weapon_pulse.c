@@ -5,14 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 static const BHVec3 zero = {0, 0, 0}, acceleration = {0, -.002f, 0};
-static void get(const BHEntity *entity, unsigned long a, void *p, unsigned long n)
-{
-    memcpy(p, (const unsigned char *)entity + a, n);
-}
-static void put(BHEntity *entity, unsigned long a, const void *p, unsigned long n)
-{
-    memcpy((unsigned char *)entity + a, p, n);
-}
 static void offset(BHVec3 *out, const BHVec3 *p, const BHVec3 *n, double factor)
 {
     bh_round_float(&out->x, (double)p->x - (double)n->x * factor);
@@ -84,8 +76,7 @@ int bh_weapon_pulse_fire(BHWeaponPulseContext *ctx, BHEntity *weapon, BHEntity *
     int random, world = 0, result;
     unsigned char payload[5];
     BHPacketWriter writer;
-    if (!ctx || !weapon || !player || !player->query || !ctx->debris ||
-        !bh_math_environment_supported())
+    if (!ctx || !weapon || !player || !player->query || !ctx->debris || !bh_math_environment_supported())
         return 0;
     b = &ctx->effects;
     if (!b->pool || !b->segment || !b->sound || !b->particles || !b->contacts || !b->flash || !b->markers)
@@ -114,7 +105,7 @@ int bh_weapon_pulse_fire(BHWeaponPulseContext *ctx, BHEntity *weapon, BHEntity *
     random = rand();
     bh_sound_request(b->sound, ctx->shot_sound, 1, (float)(.9 - (double)random * (-.000006103515625)), &muzzle,
                      &player->origin);
-    get(player, 0xe8, &kind, 4);
+    memcpy(&kind, &player->player.camera.current.mode, 4);
     if (kind != 0 && kind != 1)
     {
         random = rand();
@@ -181,7 +172,7 @@ int bh_weapon_pulse_fire(BHWeaponPulseContext *ctx, BHEntity *weapon, BHEntity *
     }
     bh_draw_segment(b->particles->queue, 3, ctx->trail_image, &muzzle, &trail, .3f, .01f, 1, 0, 0);
     offset(&end, &muzzle, &direction, -125);
-    get(weapon, 0x104, &cached, 4);
+    cached = weapon_state->cached_world;
     self.kind = BH_WORLD_HIT_ACTOR;
     self.object.actor = player;
     memset(&hit, 0, sizeof(hit));
@@ -191,7 +182,7 @@ int bh_weapon_pulse_fire(BHWeaponPulseContext *ctx, BHEntity *weapon, BHEntity *
         ctx->error = 2;
         return 0;
     }
-    put(weapon, 0x104, &cached, 4);
+    weapon_state->cached_world = cached;
     if (result)
     {
         point = hit.point;

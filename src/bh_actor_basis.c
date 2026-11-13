@@ -2,10 +2,10 @@
 #include "bh_round.h"
 #include <math.h>
 
-typedef char actor_basis_sample_size[sizeof(BHActorBasisSample) == 36 ? 1 : -1];
-typedef char actor_basis_group_size[sizeof(BHActorBasisGroup) == 48 ? 1 : -1];
-typedef char actor_basis_indices_size[sizeof(BHActorBasisIndices) == 64 ? 1 : -1];
-typedef char actor_basis_scale_size[sizeof(BHActorBasisScale) == 8 ? 1 : -1];
+static_assert(sizeof(BHActorBasisSample) == 36, "BHActorBasisSample size");
+static_assert(sizeof(BHActorBasisGroup) == 48, "BHActorBasisGroup size");
+static_assert(sizeof(BHActorBasisIndices) == 64, "BHActorBasisIndices size");
+static_assert(sizeof(BHActorBasisScale) == 8, "BHActorBasisScale size");
 
 const long bh_actor_basis_definition_a[25] = {1, 0, 4, 1, 6,  7, 12, 4,  3, 4, 9, 10, 2,
                                               2, 5, 2, 8, 11, 2, 2,  11, 2, 5, 8, -1};

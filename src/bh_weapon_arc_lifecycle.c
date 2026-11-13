@@ -203,8 +203,8 @@ int bh_weapon_arc_track(BHWeaponArcLifecycleContext *ctx, BHEntity *weapon, cons
                 self.kind = BH_WORLD_HIT_ACTOR;
                 self.object.actor = (BHEntity *)player;
                 ++ctx->world_queries;
-                result = bh_world_segment_run(ctx->world, &self, (BHWorldGeometry **)&weapon_state->word_104,
-                                              &player->position, &packet.position.position, -1, &hit);
+                result = bh_world_segment_run(ctx->world, &self, &weapon_state->cached_world, &player->position,
+                                              &packet.position.position, -1, &hit);
                 if (result < 0)
                     error(ctx, BH_WEAPON_ARC_LIFECYCLE_WORLD);
                 if (!result)
@@ -214,7 +214,7 @@ int bh_weapon_arc_track(BHWeaponArcLifecycleContext *ctx, BHEntity *weapon, cons
                 }
             }
         }
-        memcpy(&successor, actor->payload + 12, 4);
+        memcpy(&successor, &actor->actor.global_next, 4);
         actor = successor;
     }
     weapon_state->hud.charge = 0;

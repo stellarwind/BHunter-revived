@@ -3,15 +3,15 @@
 #include <stddef.h>
 #include <float.h>
 #include <string.h>
-typedef char screen_vertex_size[sizeof(BHClipVertex) == 0x3c ? 1 : -1];
-typedef char screen_vertex_depth[offsetof(BHClipVertex, point) + offsetof(BHVec3, z) == 0x14 ? 1 : -1];
-typedef char screen_vertex_u[offsetof(BHClipVertex, u) == 0x18 ? 1 : -1];
-typedef char screen_vertex_v[offsetof(BHClipVertex, v) == 0x1c ? 1 : -1];
-typedef char screen_vertex_x[offsetof(BHClipVertex, sx) == 0x20 ? 1 : -1];
-typedef char screen_vertex_y[offsetof(BHClipVertex, sy) == 0x24 ? 1 : -1];
-typedef char screen_vertex_next[offsetof(BHClipVertex, next) == 0x2c ? 1 : -1];
-typedef char screen_vertex_previous[offsetof(BHClipVertex, previous) == 0x30 ? 1 : -1];
-typedef char screen_vertex_projected[offsetof(BHClipVertex, projected) == 0x38 ? 1 : -1];
+static_assert(sizeof(BHClipVertex) == 0x3c, "BHClipVertex size");
+static_assert(offsetof(BHClipVertex, point) + offsetof(BHVec3, z) == 0x14, "screen vertex depth");
+static_assert(offsetof(BHClipVertex, u) == 0x18, "BHClipVertex.u offset");
+static_assert(offsetof(BHClipVertex, v) == 0x1c, "BHClipVertex.v offset");
+static_assert(offsetof(BHClipVertex, sx) == 0x20, "BHClipVertex.sx offset");
+static_assert(offsetof(BHClipVertex, sy) == 0x24, "BHClipVertex.sy offset");
+static_assert(offsetof(BHClipVertex, next) == 0x2c, "BHClipVertex.next offset");
+static_assert(offsetof(BHClipVertex, previous) == 0x30, "BHClipVertex.previous offset");
+static_assert(offsetof(BHClipVertex, projected) == 0x38, "BHClipVertex.projected offset");
 static BHClipVertex *fail(BHScreenClipContext *c, BHClipError error)
 {
     if (c)

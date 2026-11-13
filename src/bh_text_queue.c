@@ -3,10 +3,10 @@
 #include <string.h>
 #include <stddef.h>
 
-typedef char text_command_size[sizeof(BHTextCommand) == 84 ? 1 : -1];
-typedef char text_command_page[offsetof(BHTextCommand, page) == 4 ? 1 : -1];
-typedef char text_command_string[offsetof(BHTextCommand, text) == 12 ? 1 : -1];
-typedef char text_command_next[offsetof(BHTextCommand, next) == 80 ? 1 : -1];
+static_assert(sizeof(BHTextCommand) == 84, "BHTextCommand size");
+static_assert(offsetof(BHTextCommand, page) == 4, "BHTextCommand.page offset");
+static_assert(offsetof(BHTextCommand, text) == 12, "BHTextCommand.text offset");
+static_assert(offsetof(BHTextCommand, next) == 80, "BHTextCommand.next offset");
 static unsigned long advance(unsigned long word)
 {
     return (word & 0xffffff00u) | ((word + 1) & 255);

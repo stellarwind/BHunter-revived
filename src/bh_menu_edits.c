@@ -36,17 +36,17 @@ static BHInputProfile *profile(BHMenuEdits *c)
 {
     return c && c->settings ? c->settings->input_profile : NULL;
 }
-static void key(BHMenuEdits *c, long row, unsigned long offset, int table)
+static void key(BHMenuEdits *c, long row, const unsigned char *binding, int table)
 {
     BHInputProfile *p = profile(c);
     unsigned long value;
-    if (!p)
+    if (!p || !binding)
     {
         if (c)
             c->error = 1;
         return;
     }
-    value = ((unsigned char *)p)[offset];
+    value = *binding;
     if ((table == 1 && value >= 17) || (table == 2 && value >= 5))
     {
         c->error = 1;
@@ -66,7 +66,7 @@ void bh_menu_edit_video(BHMenuEdits *c, long row)
         return;
     if (row == 0)
     {
-        memcpy(&value, c->config->settings + 4, 4);
+        memcpy(&value, &c->config->values.hardware_acceleration, 4);
         if (value == 0)
             paint(c, 0, "Disable");
         else if (value == 1)
@@ -74,12 +74,12 @@ void bh_menu_edit_video(BHMenuEdits *c, long row)
     }
     else if (row == 1)
     {
-        short_text(text, (const char *)c->config->settings + 12);
+        short_text(text, c->config->values.device_name);
         paint(c, 1, text);
     }
     else if (row == 2)
     {
-        memcpy(&value, c->config->settings + 8, 4);
+        memcpy(&value, &c->config->values.resolution, 4);
         if (value == 0)
             paint(c, 2, "320 x 240");
         else if (value == 1)
@@ -109,7 +109,7 @@ void bh_menu_edit_profile(BHMenuEdits *c, long row)
     BHInputProfile *p = profile(c);
     if (row == 0 && p)
     {
-        short_text(text, (const char *)p + 12);
+        short_text(text, p->name);
         paint(c, 0, text);
     }
     else if (row == 1)
@@ -117,35 +117,39 @@ void bh_menu_edit_profile(BHMenuEdits *c, long row)
 }
 void bh_menu_edit_motion(BHMenuEdits *c, long row)
 {
+    BHInputProfile *p = profile(c);
     if (row >= 1 && row <= 6)
-        key(c, row, 0x1b + row, 0);
+        key(c, row, p ? &p->motion_keys[row - 1] : NULL, 0);
     else if (row >= 7 && row <= 9)
-        key(c, row, 0x1b + row, 1);
+        key(c, row, p ? &p->motion_joystick[row - 7] : NULL, 1);
     else if (row >= 10 && row <= 12)
-        key(c, row, 0x1b + row, 2);
+        key(c, row, p ? &p->motion_mouse[row - 10] : NULL, 2);
 }
 void bh_menu_edit_primary(BHMenuEdits *c, long row)
 {
+    BHInputProfile *p = profile(c);
     if (row >= 1 && row <= 9)
-        key(c, row, 0x27 + row, 0);
+        key(c, row, p ? &p->primary_keys[row - 1] : NULL, 0);
 }
 void bh_menu_edit_secondary(BHMenuEdits *c, long row)
 {
+    BHInputProfile *p = profile(c);
     if (row >= 1 && row <= 9)
-        key(c, row, 0x30 + row, 0);
+        key(c, row, p ? &p->secondary_keys[row - 1] : NULL, 0);
 }
 void bh_menu_edit_camera(BHMenuEdits *c, long row)
 {
+    BHInputProfile *p = profile(c);
     if (row >= 1 && row <= 10)
-        key(c, row, 0x39 + row, 0);
+        key(c, row, p ? &p->camera_keys[row - 1] : NULL, 0);
     else if (row == 11)
-        key(c, row, 0x45, 1);
+        key(c, row, p ? &p->camera_joystick[1] : NULL, 1);
     else if (row == 12)
-        key(c, row, 0x44, 1);
+        key(c, row, p ? &p->camera_joystick[0] : NULL, 1);
     else if (row == 13)
-        key(c, row, 0x47, 2);
+        key(c, row, p ? &p->camera_mouse[1] : NULL, 2);
     else if (row == 14)
-        key(c, row, 0x46, 2);
+        key(c, row, p ? &p->camera_mouse[0] : NULL, 2);
 }
 static void refresh(BHMenuEdits *c, long row)
 {
@@ -184,8 +188,8 @@ void bh_menu_action_motion(BHMenuEdits *c, long row)
         return;
     if (row >= 7 && row <= 12)
     {
-        bytes = (unsigned char *)p;
-        offset = (unsigned long)(0x1b + row);
+        bytes = row <= 9 ? p->motion_joystick : p->motion_mouse;
+        offset = (unsigned long)(row <= 9 ? row - 7 : row - 10);
         bytes[offset] = (unsigned char)((bytes[offset] + 1) % (row <= 9 ? 17 : 5));
         refresh(c, row);
     }
@@ -211,8 +215,8 @@ void bh_menu_action_camera(BHMenuEdits *c, long row)
         return;
     if (row >= 11 && row <= 14)
     {
-        bytes = (unsigned char *)p;
-        offset = row == 11 ? 0x45 : row == 12 ? 0x44 : row == 13 ? 0x47 : 0x46;
+        bytes = row <= 12 ? p->camera_joystick : p->camera_mouse;
+        offset = (row == 11 || row == 13) ? 1 : 0;
         bytes[offset] = (unsigned char)((bytes[offset] + 1) % (row <= 12 ? 17 : 5));
         refresh(c, row);
     }
@@ -239,7 +243,7 @@ void bh_menu_action_ship(BHMenuEdits *c, long row)
             return;
         }
     *c->ship = row;
-    memcpy(&unlocked, c->config->settings + 2, 2);
+    memcpy(&unlocked, &c->config->values.unlocked_mission, 2);
     for (i = 0; i < 9; ++i)
         c->mission_rows[i]->action = c->unlock_all_levels || (long)i <= unlocked ? bh_menu_action_mission : NULL;
     c->mission_menu->selection = unlocked;

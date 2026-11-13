@@ -6,8 +6,8 @@ int bh_effect_cleanup_bind(BHEffectCleanupContext *ctx, BHEntity *entity, unsign
         return 0;
     if (!bh_entity_is_active(ctx->pool, entity))
         return 0;
-    memcpy(entity->payload + 604, &ctx, 4);
-    memcpy((char *)entity + 0x128, &handle, 4);
+    memcpy(&entity->bindings.effect_cleanup, &ctx, 4);
+    memcpy((char *)&entity->effect.sound, &handle, 4);
     entity->step = bh_effect_sound_cleanup;
     return 1;
 }
@@ -15,8 +15,8 @@ void bh_effect_sound_cleanup(BHEntity *entity)
 {
     BHEffectCleanupContext *ctx;
     unsigned long sound;
-    memcpy(&ctx, entity->payload + 604, 4);
-    memcpy(&sound, (char *)entity + 0x128, 4);
+    memcpy(&ctx, &entity->bindings.effect_cleanup, 4);
+    memcpy(&sound, (char *)&entity->effect.sound, 4);
     bh_sound_stop(ctx->sound, sound);
     bh_entity_release(ctx->pool, entity);
 }

@@ -17,7 +17,7 @@ int bh_editor_numeric_key(BHEditorNumericContext *c, BHEntity *e, long key)
         return 1;
     if (!e || c->selected >= 8)
         return 0;
-    field = (unsigned char *)e + 0x334 + c->selected * 2;
+    field = (unsigned char *)&e->placement.script_values[c->selected];
     digit = wrap(key);
     memcpy(&value, field, 2);
     switch (c->entry_state)

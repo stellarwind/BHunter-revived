@@ -32,14 +32,14 @@ static int retire(BHRemoteQuery *query, BHEntity *entity)
     }
     if (at != entity)
         return fail(query);
-    memcpy(&slot, (char *)entity + 0x114, 2);
+    memcpy(&slot, (char *)&entity->remote.slot, 2);
     if (slot < 0 || slot >= 8)
         return fail(query);
     world = entity->remote.newest.world;
-    rp = link(entity, 0xf8);
-    rn = link(entity, 0xf4);
-    gp = link(entity, 0xec);
-    gn = link(entity, 0xf0);
+    rp = entity->actor.room_previous;
+    rn = entity->actor.room_next;
+    gp = entity->actor.global_previous;
+    gn = entity->actor.global_next;
     if (world)
     {
         for (i = 0; i < query->room_count; i++)
@@ -48,35 +48,35 @@ static int retire(BHRemoteQuery *query, BHEntity *entity)
                 room = query->rooms + i;
                 break;
             }
-        if (!room || (rp ? link(rp, 0xf4) : room->actors) != entity || (rn && link(rn, 0xf8) != entity))
+        if (!room || (rp ? rp->actor.room_next : room->actors) != entity || (rn && rn->actor.room_previous != entity))
             return fail(query);
     }
-    if ((gp ? link(gp, 0xf0) : *query->head) != entity || (gn && link(gn, 0xec) != entity))
+    if ((gp ? gp->actor.global_next : *query->head) != entity || (gn && gn->actor.global_previous != entity))
         return fail(query);
-    memcpy(&voice, (char *)entity + 0x104, 4);
+    memcpy(&voice, (char *)&entity->remote.engine_sound, 4);
     if (voice != BH_SOUND_INVALID && !query->sound)
         return fail(query);
     if (voice != BH_SOUND_INVALID)
     {
         bh_sound_stop(query->sound, voice);
         voice = BH_SOUND_INVALID;
-        memcpy((char *)entity + 0x104, &voice, 4);
+        memcpy((char *)&entity->remote.engine_sound, &voice, 4);
     }
     if (world)
     {
         if (rp)
-            set_link(rp, 0xf4, rn);
+            (rp->actor.room_next = rn);
         else
             room->actors = rn;
         if (rn)
-            set_link(rn, 0xf8, rp);
+            (rn->actor.room_previous = rp);
     }
     if (gp)
-        set_link(gp, 0xf0, gn);
+        (gp->actor.global_next = gn);
     else
         *query->head = gn;
     if (gn)
-        set_link(gn, 0xec, gp);
+        (gn->actor.global_previous = gp);
     --*query->count;
     query->remote[slot] = NULL;
     return bh_entity_release(query->pool, entity);
@@ -109,7 +109,7 @@ int bh_remote_query(BHRemoteQuery *query, BHEntity *entity, BHRemoteQueryPacket 
                 break;
         if (i == query->world_count)
             return fail(query);
-        memcpy(&recipient, (char *)entity + 0x138, 4);
+        memcpy(&recipient, (char *)&entity->remote.player_id, 4);
         target = p->damage.attacker;
         value = p->damage.severity;
         if (!_finite(value) || value < -1000000)
@@ -133,7 +133,7 @@ int bh_remote_query(BHRemoteQuery *query, BHEntity *entity, BHRemoteQueryPacket 
                supply live local/remote actors; NULL is an unknown identity. */
                     if (target)
                     {
-                        memcpy(&id, (char *)target + 0x114, 2);
+                        memcpy(&id, (char *)&target->remote.slot, 2);
                         if (!bh_packet_append(&writer, &id, 2))
                             return fail(query);
                     }
@@ -154,7 +154,7 @@ int bh_remote_query(BHRemoteQuery *query, BHEntity *entity, BHRemoteQueryPacket 
             for (j = 0; j < 2; j++)
                 for (i = 0; i < 3; i++)
                 {
-                    memcpy(&value, (char *)entity + 0x48 + j * 0x18 + i * 4, 4);
+                    memcpy(&value, (char *)&entity->velocity + j * 0x18 + i * 4, 4);
                     bh_round_float(p->floats + 4 + j * 3 + i, (double)value * (j ? 900.0 : 30.0));
                 }
         return 1;

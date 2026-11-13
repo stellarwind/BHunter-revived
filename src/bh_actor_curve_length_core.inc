@@ -8,9 +8,10 @@ typedef struct BHActorCurveLengthImage
     unsigned char unused[0x120];
     BHVec3 first, last, center, first_tangent, last_tangent;
 } BHActorCurveLengthImage;
-typedef char curve_length_last[offsetof(BHActorCurveLengthImage, last) == 0x12c ? 1 : -1];
-typedef char curve_length_tangent[offsetof(BHActorCurveLengthImage, first_tangent) == 0x144 ? 1 : -1];
-typedef char curve_length_last_tangent[offsetof(BHActorCurveLengthImage, last_tangent) == 0x150 ? 1 : -1];
+static_assert(offsetof(BHActorCurveLengthImage, last) == 0x12c, "BHActorCurveLengthImage.last offset");
+static_assert(offsetof(BHActorCurveLengthImage, first_tangent) == 0x144,
+              "BHActorCurveLengthImage.first_tangent offset");
+static_assert(offsetof(BHActorCurveLengthImage, last_tangent) == 0x150, "BHActorCurveLengthImage.last_tangent offset");
 
 float bh_actor_curve_length_core(const BHActorCurveLengthImage *actor)
 {

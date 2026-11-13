@@ -28,7 +28,7 @@ static int snapshot(BHNetworkScores *c)
         if ((long)i == c->scores->local_index)
             value = (unsigned short)c->scores->local_score;
         else if (c->scores->remote[i])
-            memcpy(&value, (const unsigned char *)c->scores->remote[i] + 0x11c, 2);
+            memcpy(&value, &c->scores->remote[i]->remote.score, 2);
         word(payload + i * 2, value);
     }
     if (!bh_packet_begin(&c->writer, c->packet, sizeof(c->packet), 12, c->frame) ||
@@ -81,9 +81,9 @@ int bh_network_scores_death(BHNetworkScores *c, long attacker, BHEntity *victim)
             }
             else if (c->scores->remote[index])
             {
-                memcpy(&score, (unsigned char *)c->scores->remote[index] + 0x11c, 2);
+                memcpy(&score, &c->scores->remote[index]->remote.score, 2);
                 ++score;
-                memcpy((unsigned char *)c->scores->remote[index] + 0x11c, &score, 2);
+                memcpy(&c->scores->remote[index]->remote.score, &score, 2);
             }
         }
         return snapshot(c);

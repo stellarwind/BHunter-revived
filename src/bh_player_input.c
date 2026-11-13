@@ -4,12 +4,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef char binding_size[sizeof(BHInputBinding) == 0x20 ? 1 : -1];
-typedef char binding_name[offsetof(BHInputBinding, name) == 0xc ? 1 : -1];
-typedef char list_size[sizeof(BHPlayerInputList) == 0x2130 ? 1 : -1];
-typedef char list_bindings[offsetof(BHPlayerInputList, bindings) == 0x10 ? 1 : -1];
-typedef char list_state[offsetof(BHPlayerInputList, state) == 0x2010 ? 1 : -1];
-typedef char profile_size[sizeof(BHInputProfile) == 0x4c ? 1 : -1];
+static_assert(sizeof(BHInputBinding) == 0x20, "BHInputBinding size");
+static_assert(offsetof(BHInputBinding, name) == 0xc, "BHInputBinding.name offset");
+static_assert(sizeof(BHPlayerInputList) == 0x2130, "BHPlayerInputList size");
+static_assert(offsetof(BHPlayerInputList, bindings) == 0x10, "BHPlayerInputList.bindings offset");
+static_assert(offsetof(BHPlayerInputList, state) == 0x2010, "BHPlayerInputList.state offset");
+static_assert(sizeof(BHInputProfile) == 0x4c, "BHInputProfile size");
 
 static void *allocate(unsigned long bytes, void *user)
 {

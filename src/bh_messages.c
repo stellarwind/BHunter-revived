@@ -1,9 +1,10 @@
+#include "bh_message_panel.h"
 #include "bh_messages.h"
 #include <string.h>
 #include <stddef.h>
 
-typedef char message_ring_slot_size[sizeof(((BHMessageState *)0)->ring[0]) == 512 ? 1 : -1];
-typedef char message_arena_size[sizeof(((BHMessageState *)0)->arena) == 8192 ? 1 : -1];
+static_assert(sizeof(((BHMessageState *)0)->ring[0]) == 512, "message ring slot size");
+static_assert(sizeof(((BHMessageState *)0)->arena) == 8192, "message arena size");
 void bh_message_state_init(BHMessageState *messages)
 {
     if (messages)
@@ -69,11 +70,11 @@ int bh_message_enqueue(BHMessageState *messages, const char *text)
     }
     if (*messages->panel_step_identity == 0x00442950UL)
     {
-        memcpy(&panel_time, messages->panel_entity->payload + 4, 4); /* +e8 */
+        memcpy(&panel_time, &bh_message_panel_fields(messages->panel_entity)->timer, 4); /* +e8 */
         if (panel_time > 3.0f)
         {
             panel_time = 3.0f;
-            memcpy(messages->panel_entity->payload + 4, &panel_time, 4);
+            memcpy(&bh_message_panel_fields(messages->panel_entity)->timer, &panel_time, 4);
         }
     }
     messages->error = BH_MESSAGE_OK;

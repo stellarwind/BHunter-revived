@@ -3,9 +3,9 @@
 #include <string.h>
 #include <stddef.h>
 
-typedef char placement_size[sizeof(BHScenePlacement) == 32 && offsetof(BHScenePlacement, x) == 16 ? 1 : -1];
-typedef char link_size[sizeof(BHSceneLink) == 20 && sizeof(short) == 2 ? 1 : -1];
-typedef char route_size[sizeof(BHSceneRoute) == 8 && offsetof(BHSceneRoute, distance) == 4 ? 1 : -1];
+static_assert(sizeof(BHScenePlacement) == 32 && offsetof(BHScenePlacement, x) == 16, "placement size");
+static_assert(sizeof(BHSceneLink) == 20 && sizeof(short) == 2, "link size");
+static_assert(sizeof(BHSceneRoute) == 8 && offsetof(BHSceneRoute, distance) == 4, "route size");
 #define MAX_INPUT (64UL * 1024 * 1024)
 #define MAX_RECORDS 65535UL
 #define MAX_NODES 2048UL

@@ -5,27 +5,9 @@
 #include <stddef.h>
 #include <string.h>
 
-typedef char pickup_position_offset[offsetof(BHEntity, position) == 0x0c ? 1 : -1];
-typedef char pickup_phase_offset[offsetof(BHEntity, payload) + 0x18 == 0xfc ? 1 : -1];
+static_assert(offsetof(BHEntity, position) == 0x0c, "BHEntity.position offset");
+static_assert(offsetof(BHEntity, payload) + 8 + offsetof(BHPickupState, rotation) == 0xfc, "pickup phase offset");
 
-static float payload_float(const BHEntity *entity, unsigned long offset)
-{
-    float out;
-    memcpy(&out, entity->payload + offset, 4);
-    return out;
-}
-static long payload_long(const BHEntity *entity, unsigned long offset)
-{
-    long out;
-    memcpy(&out, entity->payload + offset, 4);
-    return out;
-}
-static unsigned long payload_word(const BHEntity *entity, unsigned long offset)
-{
-    unsigned long out;
-    memcpy(&out, entity->payload + offset, 4);
-    return out;
-}
 static void put_float(unsigned long *out, float value)
 {
     memcpy(out, &value, 4);
@@ -286,7 +268,7 @@ int bh_pickup_label(BHPickupDrawContext *ctx, const BHEntity *entity, long total
     long kind;
     if (!ctx || !ctx->queue || !ctx->camera || !ctx->view || !entity || !ctx->display_depth)
         return -1;
-    kind = payload_long(entity, 0x1c);
+    kind = bh_pickup_state_const(entity)->type;
     x = entity->position.x;
     y = entity->position.y - 2.5f;
     z = entity->position.z;
@@ -415,8 +397,8 @@ int bh_pickup_draw(BHPickupDrawContext *ctx, BHEntity *entity)
     int r0, r1, r2;
     if (!ctx || !ctx->queue || !entity)
         return -1;
-    phase = payload_float(entity, 0x18);
-    resource = payload_word(entity, 0x30);
+    phase = bh_pickup_state_const(entity)->rotation;
+    resource = bh_pickup_state_const(entity)->resource;
     angles.x = phase + phase;
     angles.y = (float)(sin((double)phase * .87) * .3);
     angles.z = 0;
@@ -426,8 +408,8 @@ int bh_pickup_draw(BHPickupDrawContext *ctx, BHEntity *entity)
     size = (float)(oscillation - (-6.0));
     alpha = (float)(.5 - oscillation * (-.25));
     r1 = bh_draw_billboard(ctx->queue, 3, ctx->glow_image, &entity->position, size, size, 0, 0, alpha);
-    count = payload_long(entity, 0x28);
-    total = payload_long(entity, 0x2c);
+    count = bh_pickup_state_const(entity)->offer;
+    total = bh_pickup_state_const(entity)->token;
     r2 = total ? bh_pickup_label(ctx, entity, (long)((unsigned long)total * (unsigned long)count), count) : 1;
     if (r0 < 0 || r1 < 0 || r2 < 0)
         return -1;

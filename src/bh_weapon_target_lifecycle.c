@@ -147,8 +147,8 @@ int bh_weapon_target_update(BHWeaponTargetContext *ctx, BHEntity *weapon_entity,
                     self.object.actor = (BHEntity *)entity;
                     memset(&hit, 0, sizeof(hit));
                     ++ctx->traces;
-                    result = bh_world_segment_run(ctx->world, &self, (BHWorldGeometry **)&weapon_state->word_104,
-                                                  &entity->position, &packet.packet.position, -1, &hit);
+                    result = bh_world_segment_run(ctx->world, &self, &weapon_state->cached_world, &entity->position,
+                                                  &packet.packet.position, -1, &hit);
                     if (result < 0)
                         ctx->error = BH_WEAPON_TARGET_WORLD;
                     if (!result)
@@ -158,7 +158,7 @@ int bh_weapon_target_update(BHWeaponTargetContext *ctx, BHEntity *weapon_entity,
                     }
                 }
             }
-            memcpy(&next, e->payload + 12, 4);
+            memcpy(&next, &e->actor.global_next, 4);
             e = next;
         }
         weapon_state->hud.charge = 0;

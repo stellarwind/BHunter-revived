@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <math.h>
 
-typedef char hud_weapon_ammo_offset[offsetof(BHHudWeaponAmmo, amount) == 0x10c ? 1 : -1];
+static_assert(offsetof(BHHudWeaponAmmo, amount) == 0x10c, "BHHudWeaponAmmo.amount offset");
 
 static int vector(const BHVec3 *v)
 {

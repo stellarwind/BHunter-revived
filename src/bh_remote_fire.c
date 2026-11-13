@@ -1,3 +1,4 @@
+#include "bh_field_access.h"
 #include "bh_remote_fire.h"
 #include "bh_weapon_path.h"
 #include "bh_physics_response.h"
@@ -13,14 +14,6 @@ static float rf(double v)
     float f;
     bh_round_float(&f, v);
     return f;
-}
-static void get(const BHEntity *entity, unsigned long a, void *p, unsigned long n)
-{
-    memcpy(p, (const unsigned char *)entity + a, n);
-}
-static void put(BHEntity *entity, unsigned long a, const void *p, unsigned long n)
-{
-    memcpy((unsigned char *)entity + a, p, n);
 }
 static void offset(BHVec3 *out, const BHVec3 *p, const BHVec3 *n, double factor)
 {
@@ -133,7 +126,7 @@ static int hitscan(BHWeaponPulseContext *ctx, BHEntity *player, const BHVec3 *po
     }
     bh_draw_segment(b->particles->queue, 3, ctx->trail_image, &muzzle, &trail, .3f, .01f, 1, 0, 0);
     offset(&end, &muzzle, &direction, -125);
-    get(player, 0x134, &cached, 4);
+    memcpy(&cached, &player->remote.cached_world, 4);
     self.kind = BH_WORLD_HIT_ACTOR;
     self.object.actor = player;
     memset(&hit, 0, sizeof(hit));
@@ -143,7 +136,7 @@ static int hitscan(BHWeaponPulseContext *ctx, BHEntity *player, const BHVec3 *po
         ctx->error = 2;
         return 0;
     }
-    put(player, 0x134, &cached, 4);
+    memcpy(&player->remote.cached_world, &cached, 4);
     if (result)
     {
         point = hit.point;
@@ -242,23 +235,6 @@ static int hitscan(BHWeaponPulseContext *ctx, BHEntity *player, const BHVec3 *po
     return ctx->error == 0;
 }
 
-static unsigned short half(BHEntity *entity, unsigned long o)
-{
-    unsigned short n;
-    get(entity, o, &n, 2);
-    return n;
-}
-static short shalf(BHEntity *entity, unsigned long o)
-{
-    unsigned short n = half(entity, o);
-    short v;
-    memcpy(&v, &n, 2);
-    return v;
-}
-static void sethalf(BHEntity *entity, unsigned long o, unsigned short v)
-{
-    put(entity, o, &v, 2);
-}
 static void add(BHVec3 *out, const BHVec3 *a, const BHVec3 *b, double factor)
 {
     unsigned long i;
@@ -298,10 +274,10 @@ static int shot(BHRemoteFire *fire, BHEntity *entity, short tick, short previous
     forward.x = matrix.m[0][2];
     forward.y = matrix.m[1][2];
     forward.z = matrix.m[2][2];
-    get(entity, 0x48, &velocity, 12);
+    memcpy(&velocity, &entity->velocity, 12);
     for (i = 0; i < 3; ++i)
         ((float *)&velocity)[i] = rf((double)((float *)&velocity)[i] * 30);
-    get(entity, 0xc4, &world, 4);
+    memcpy(&world, &entity->world, 4);
     if (type > 8)
         return 1;
     if (!fire->pulse || !fire->pulse->effects.sound)
@@ -321,8 +297,9 @@ static int shot(BHRemoteFire *fire, BHEntity *entity, short tick, short previous
         add(&muzzle, &position, &up, .5);
         if (type == 1)
         {
-            add(&muzzle, &muzzle, &right, (half(entity, 0x118) & 1) ? 1 : -1);
-            sethalf(entity, 0x118, (unsigned short)(half(entity, 0x118) + 1));
+            add(&muzzle, &muzzle, &right, (bh_field_u16(&entity->remote.muzzle_phase) & 1) ? 1 : -1);
+            bh_field_store_u16(&entity->remote.muzzle_phase,
+                               (unsigned short)(bh_field_u16(&entity->remote.muzzle_phase) + 1));
         }
         add(&v, &velocity, &forward, type == 1 ? 150 : 120);
         for (i = 0; i < 3; ++i)
@@ -347,8 +324,9 @@ static int shot(BHRemoteFire *fire, BHEntity *entity, short tick, short previous
         if (!fire->effects || !fire->effects->debris || &fire->effects->debris->origin_tag != fire->sync_identity)
             return 0;
         add(&muzzle, &position, &up, .5);
-        sethalf(entity, 0x118, (unsigned short)(half(entity, 0x118) + 1));
-        add(&muzzle, &muzzle, &right, (half(entity, 0x118) & 1) ? 1 : -1);
+        bh_field_store_u16(&entity->remote.muzzle_phase,
+                           (unsigned short)(bh_field_u16(&entity->remote.muzzle_phase) + 1));
+        add(&muzzle, &muzzle, &right, (bh_field_u16(&entity->remote.muzzle_phase) & 1) ? 1 : -1);
         if (!*fire->sync_identity)
             *fire->sync_identity = 1;
         if (type == 3)
@@ -370,7 +348,7 @@ static int shot(BHRemoteFire *fire, BHEntity *entity, short tick, short previous
     case 4:
         if (!fire->area || fire->area->identity != fire->sync_identity)
             return 0;
-        phase = shalf(entity, 0x1d2);
+        phase = bh_field_i16(&entity->remote.firing[4].packet_count);
         if (phase == 5)
         {
             bh_sound_request(effects->sound, fire->area_sound, 1, 1, &position, &velocity);
@@ -383,19 +361,21 @@ static int shot(BHRemoteFire *fire, BHEntity *entity, short tick, short previous
         *fire->sync_identity = 1;
         bh_area_projectile_create(fire->area, world, &position, &forward, entity, strength);
         if (phase)
-            sethalf(entity, 0x1d2, (unsigned short)(half(entity, 0x1d2) - 1));
+            bh_field_store_u16(&entity->remote.firing[4].packet_count,
+                               (unsigned short)(bh_field_u16(&entity->remote.firing[4].packet_count) - 1));
         return !fire->area->error;
     case 5:
         if (!particles || !effects->flash || !effects->pool || !fire->arc)
             return 0;
-        sethalf(entity, 0x1dc, 0);
-        sethalf(entity, 0x1da, (unsigned short)(half(entity, 0x1da) + 1));
-        strength = rf((60 - (long)shalf(entity, 0x1d8)) * (1.0 / 30));
+        bh_field_store_u16(&entity->remote.firing[5].countdown, 0);
+        bh_field_store_u16(&entity->remote.firing[5].spacing,
+                           (unsigned short)(bh_field_u16(&entity->remote.firing[5].spacing) + 1));
+        strength = rf((60 - (long)bh_field_i16(&entity->remote.firing[5].remaining)) * (1.0 / 30));
         if (strength > 1.75)
             strength = rf((2.0 - strength) * 4);
         else if (strength > 1)
             strength = 1;
-        if (!(half(entity, 0x1da) & 3) || strength <= .5)
+        if (!(bh_field_u16(&entity->remote.firing[5].spacing) & 3) || strength <= .5)
         {
             if (!target)
             {

@@ -7,18 +7,10 @@
 #include <stdlib.h>
 #include <string.h>
 static const BHVec3 zero = {0, 0, 0};
-static void get(const BHEntity *entity, unsigned long a, void *p, unsigned long n)
-{
-    memcpy(p, (const unsigned char *)entity + a, n);
-}
-static void put(BHEntity *entity, unsigned long a, const void *p, unsigned long n)
-{
-    memcpy((unsigned char *)entity + a, p, n);
-}
 static BHHomingProjectileContext *context(BHEntity *entity)
 {
     BHHomingProjectileContext *ctx;
-    memcpy(&ctx, entity->payload + 608, 4);
+    memcpy(&ctx, &entity->bindings.homing_projectile, 4);
     return ctx;
 }
 static int live(BHHomingProjectileContext *ctx, BHEntity *entity, unsigned long generation)
@@ -41,8 +33,8 @@ int bh_homing_projectile_bind(BHHomingProjectileContext *ctx, BHEntity *entity)
     if (ctx->particles->pool != ctx->pool || ctx->contacts->pool != ctx->pool || ctx->flash->pool != ctx->pool ||
         ctx->markers->pool != ctx->pool)
         return 0;
-    memcpy(entity->payload + 608, &ctx, 4);
-    memcpy(entity->payload + 612, &entity->generation, 4);
+    memcpy(&entity->bindings.homing_projectile, &ctx, 4);
+    memcpy(&entity->bindings.projectile_generation, &entity->generation, 4);
     entity->step = bh_homing_projectile_tick;
     ctx->error = 0;
     return 1;
@@ -151,23 +143,23 @@ void bh_homing_projectile_tick(BHEntity *entity)
     int result, is_world = 0;
     if (!ctx || !bh_math_environment_supported())
         return;
-    memcpy(&generation, entity->payload + 612, 4);
+    memcpy(&generation, &entity->bindings.projectile_generation, 4);
     if (!live(ctx, entity, generation))
     {
         ctx->error = 3;
         return;
     }
     ctx->error = 0;
-    get(entity, 0xe8, &life, 4);
+    memcpy(&life, &entity->projectile.countdown, 4);
     remaining = (double)life - (1.0 / 30.0);
     bh_round_float(&life, remaining);
-    put(entity, 0xe8, &life, 4);
+    memcpy(&entity->projectile.countdown, &life, 4);
     if (!(remaining > 0))
     {
         bh_entity_release(ctx->pool, entity);
         return;
     }
-    get(entity, 0x12c, &target, 4);
+    memcpy(&target, &entity->projectile.target, 4);
     if (target)
     {
         if (!target->query)
@@ -183,8 +175,8 @@ void bh_homing_projectile_tick(BHEntity *entity)
             ctx->error = 3;
             return;
         }
-        get(entity, 0x100, previous, 12);
-        put(entity, 0x100, &position.position, 12);
+        memcpy(previous, &entity->projectile.target_position, 12);
+        memcpy(&entity->projectile.target_position, &position.position, 12);
         old = entity->position;
         velocity = entity->origin;
         dx = (double)position.position.x - old.x;
@@ -220,10 +212,10 @@ void bh_homing_projectile_tick(BHEntity *entity)
     velocity = entity->origin;
     old = entity->position;
     offset(&end, &old, &velocity, -1.0 / 30.0);
-    get(entity, 0x124, &cached, 4);
-    get(entity, 0x128, &ignore, 4);
-    get(entity, 0x11c, &suppress, 4);
-    get(entity, 0x130, &damage_source, 4);
+    memcpy(&cached, &entity->projectile.world, 4);
+    memcpy(&ignore, &entity->projectile.ignore, 4);
+    memcpy(&suppress, &entity->projectile.identity, 4);
+    memcpy(&damage_source, &entity->projectile.secondary, 4);
     self.kind = ignore ? BH_WORLD_HIT_ACTOR : BH_WORLD_HIT_END;
     self.object.actor = ignore;
     memset(&hit, 0, sizeof(hit));
@@ -233,7 +225,7 @@ void bh_homing_projectile_tick(BHEntity *entity)
         ctx->error = 2;
         return;
     }
-    put(entity, 0x124, &cached, 4);
+    memcpy(&entity->projectile.world, &cached, 4);
     if (!result)
     {
         if (cached)
@@ -290,7 +282,7 @@ void bh_homing_projectile_tick(BHEntity *entity)
                         return;
                     }
                 }
-                get(actor, 0xf4, &actor, 4);
+                actor = actor->actor.room_next;
             }
         }
         entity->position = end;

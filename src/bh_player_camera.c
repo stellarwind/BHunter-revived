@@ -5,10 +5,10 @@
 #include <string.h>
 #include <float.h>
 
-typedef char player_camera_start_size[sizeof(BHPlayerCameraStart) == 32 ? 1 : -1];
-typedef char player_camera_pointer_size[sizeof(void *) == 4 ? 1 : -1];
-typedef char player_camera_position_offset[offsetof(BHEntity, position) == 0xc ? 1 : -1];
-typedef char player_camera_payload_offset[offsetof(BHEntity, payload) == 0xe4 ? 1 : -1];
+static_assert(sizeof(BHPlayerCameraStart) == 32, "BHPlayerCameraStart size");
+static_assert(sizeof(void *) == 4, "player camera pointer size");
+static_assert(offsetof(BHEntity, position) == 0xc, "BHEntity.position offset");
+static_assert(offsetof(BHEntity, payload) == 0xe4, "BHEntity.payload offset");
 
 static int finite_vector(const BHVec3 *v)
 {

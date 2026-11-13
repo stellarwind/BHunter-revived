@@ -6,8 +6,8 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
-typedef char slot_size[sizeof(BHSceneBackgroundSlot) == 48 ? 1 : -1];
-typedef char slot_model_offset[offsetof(BHSceneBackgroundSlot, model) == 0x14 ? 1 : -1];
+static_assert(sizeof(BHSceneBackgroundSlot) == 48, "BHSceneBackgroundSlot size");
+static_assert(offsetof(BHSceneBackgroundSlot, model) == 0x14, "BHSceneBackgroundSlot.model offset");
 static const double tick = 0.03333333333333333;
 static const double random_angle = 0.0001953125;
 static void reset(BHSceneBackground *c, BHSceneBackgroundSlot *s, int fresh)

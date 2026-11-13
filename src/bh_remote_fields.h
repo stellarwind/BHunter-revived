@@ -4,6 +4,15 @@
 #include "bh_player_propulsion.h"
 
 struct BHWorldGeometry;
+struct BHEntity;
+
+/* Nine original 12-byte firing schedules. Weapon-specific counters reuse
+   these same words; the packet count is retained independently of remaining. */
+typedef struct BHRemoteFireSchedule
+{
+    unsigned short remaining, spacing, countdown, packet_count;
+    struct BHEntity *target;
+} BHRemoteFireSchedule;
 
 typedef struct BHRemotePose
 {
@@ -15,11 +24,21 @@ typedef struct BHRemotePose
 
 typedef struct BHRemoteFields
 {
-    unsigned char reserved_before_flags[0x11a - 0xe4];
+    unsigned char reserved_before_sound[0x104 - 0xe4];
+    unsigned long engine_sound, sound_frames, engine_resource;
+    /* Initialized to the invalid sound handle; no further consumer recovered. */
+    unsigned long reserved_sound;
+    short slot, roster_slot;
+    unsigned short muzzle_phase;
     unsigned short pose_flags;
-    unsigned char reserved_before_history[0x13c - 0x11c];
+    short score;
+    char name[20];
+    unsigned char reserved_before_cached_world[2];
+    struct BHWorldGeometry *cached_world;
+    unsigned long player_id;
     BHRemotePose oldest, middle, newest;
-    unsigned char reserved_before_propulsion[0x2c0 - 0x19c];
+    BHRemoteFireSchedule firing[9];
+    unsigned char reserved_before_propulsion[0x2c0 - 0x208];
     unsigned char propulsion[BH_PROPULSION_CHANNELS];
 } BHRemoteFields;
 #endif

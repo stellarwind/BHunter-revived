@@ -14,13 +14,11 @@ typedef struct Private
     BHWorldGeometry *world;
     unsigned long leader_generation, rider_generation;
 } Private;
-typedef char wagon_layout[sizeof(BHRailWagonPose) == 48 && offsetof(BHEntity, opaque0) == 0x18 &&
-                                  offsetof(BHEntity, payload) + 4 == 0xe8 &&
-                                  offsetof(BHRailWagonState, actor_next) == 12 &&
-                                  offsetof(BHRailWagonState, kind) == 20 && offsetof(BHRailWagonState, segment) == 64 &&
-                                  offsetof(BHRailWagonState, checkpoint) == 80 && sizeof(Private) + 580 <= 636
-                              ? 1
-                              : -1];
+static_assert(sizeof(BHRailWagonPose) == 48 && offsetof(BHEntity, opaque0) == 0x18 &&
+                  offsetof(BHEntity, payload) + 4 == 0xe8 && offsetof(BHRailWagonState, actor_next) == 12 &&
+                  offsetof(BHRailWagonState, kind) == 20 && offsetof(BHRailWagonState, segment) == 64 &&
+                  offsetof(BHRailWagonState, checkpoint) == 80 && sizeof(Private) + 580 <= 636,
+              "wagon layout");
 static BHRailWagonState *state(BHEntity *e)
 {
     return (BHRailWagonState *)(e->payload + 4);
@@ -110,22 +108,22 @@ static BHPickupRoom *room(BHRailWagonContext *c, BHWorldGeometry *w)
 static BHEntity *actor_next(BHEntity *e)
 {
     BHEntity *p;
-    memcpy(&p, e->payload + 16, 4);
+    memcpy(&p, &e->actor.room_next, 4);
     return p;
 }
 static BHEntity *actor_previous(BHEntity *e)
 {
     BHEntity *p;
-    memcpy(&p, e->payload + 20, 4);
+    memcpy(&p, &e->actor.room_previous, 4);
     return p;
 }
 static void actor_next_set(BHEntity *e, BHEntity *v)
 {
-    memcpy(e->payload + 16, &v, 4);
+    memcpy(&e->actor.room_next, &v, 4);
 }
 static void actor_previous_set(BHEntity *e, BHEntity *v)
 {
-    memcpy(e->payload + 20, &v, 4);
+    memcpy(&e->actor.room_previous, &v, 4);
 }
 static int unlink_room(BHRailWagonContext *c, BHEntity *e)
 {

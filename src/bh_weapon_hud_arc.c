@@ -7,8 +7,8 @@
 #include <stddef.h>
 #include <limits.h>
 
-typedef char arc_target_query_offset[offsetof(BHEntity, query) == 0xd0 ? 1 : -1];
-typedef char arc_random_range[RAND_MAX == 32767 ? 1 : -1];
+static_assert(offsetof(BHEntity, query) == 0xd0, "BHEntity.query offset");
+static_assert(RAND_MAX == 32767, "arc random range");
 typedef union BHArcPacket {
     BHEntityPositionPacket position;
     unsigned long words[10];

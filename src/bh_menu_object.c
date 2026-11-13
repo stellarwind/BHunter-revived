@@ -1,3 +1,4 @@
+#include "bh_field_access.h"
 #include "bh_menu_object.h"
 #include "bh_gamepad.h"
 #include <string.h>
@@ -23,8 +24,8 @@ int bh_menu_object_create(BHMenuObject *menu, BHEntityPool *pool, BHPlayerInputO
         bh_entity_release(pool, e);
         return 0;
     }
-    memcpy((unsigned char *)e + 0x188, &list, 4);
-    word(e, 0x284, tag);
+    memcpy((char *)&e->menu.input_list, &list, 4);
+    bh_field_store_u32(&e->menu.tag, tag);
     if (!name)
         name = "";
     bh_player_input_bind_key(list, 0, name, 0, 0, 0x26);
@@ -45,16 +46,17 @@ int bh_menu_object_create(BHMenuObject *menu, BHEntityPool *pool, BHPlayerInputO
     list->bindings[8].flags = BH_INPUT_GAMEPAD | BH_PAD_EAST;
     list->bindings[3].flags = BH_INPUT_GAMEPAD | BH_PAD_MENU_Y;
 #endif
+    /* Unrecovered menu animation/control slots retain their original defaults. */
     word(e, 0x1d8, 0xffffffffUL);
     word(e, 0x1d4, 0xffffffffUL);
     word(e, 0x1c4, 0xffffffffUL);
-    word(e, 0x1bc, 0);
-    word(e, 0x1cc, 0);
+    bh_field_store_u32(&e->menu.input_phase, 0);
+    bh_field_store_u32(&e->menu.row_count, 0);
     word(e, 0x1d0, 0);
     word(e, 0x1dc, 0x3f800000UL);
     word(e, 0x1e0, 0);
     word(e, 0x1e4, 0x40900000UL);
-    word(e, 0x1c0, 0);
+    bh_field_store_u32(&e->menu.attempts, 0);
     word(e, 0x1c8, 0);
     word(e, 0x1e8, 0);
     word(e, 0x1ec, 0);
@@ -87,7 +89,7 @@ BHMenuRow *bh_menu_object_add_row(BHMenuObject *m, unsigned long id, const unsig
         return NULL;
     r = bh_menu_row_create(&m->rows, id, title, body, first, second, refresh);
     if (r)
-        word(m->entity, 0x1cc, m->rows.count);
+        bh_field_store_u32(&m->entity->menu.row_count, m->rows.count);
     return r;
 }
 int bh_menu_object_dispose(BHMenuObject *m)

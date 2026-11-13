@@ -163,7 +163,7 @@ static int nested(BHScriptParse *c, char *line, int kind)
     entity->position = c->vm->lifetime->timers.pool->origin;
     if (kind == 2)
     {
-        memcpy(&wait, entity->payload + 4, 48);
+        memcpy(&wait, bh_script_wait_fields(entity), sizeof(wait));
         wait.fired = wait.next = 0;
         wait.script_loaded = c->vm->script_loading;
         wait.remaining = count;
@@ -178,7 +178,7 @@ static int nested(BHScriptParse *c, char *line, int kind)
     }
     else
     {
-        memcpy(&timer, entity->payload + 4, 48);
+        memcpy(&timer, bh_script_timer_fields(entity), sizeof(timer));
         timer.fired = timer.next = 0;
         timer.script_loaded = c->vm->script_loading;
         timer.remaining = count;

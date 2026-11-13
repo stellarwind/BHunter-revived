@@ -1,12 +1,12 @@
 #include "bh_actor_bounds.h"
 #include <stddef.h>
 
-typedef char bounds_minimum_offset[offsetof(BHActorBoundsImage, minimum) == 0x1b0 ? 1 : -1];
-typedef char bounds_maximum_offset[offsetof(BHActorBoundsImage, maximum) == 0x1bc ? 1 : -1];
+static_assert(offsetof(BHActorBoundsImage, minimum) == 0x1b0, "BHActorBoundsImage.minimum offset");
+static_assert(offsetof(BHActorBoundsImage, maximum) == 0x1bc, "BHActorBoundsImage.maximum offset");
 /* Byte-addressed inputs preserve the original VC5 unaligned-load codegen and
    unordered comparisons. Typed float arrays generate different instructions. */
-#define LOW(i) (*(const float *)((const char *)bounds_image + 0x1b0 + 4 * (i)))
-#define HIGH(i) (*(const float *)((const char *)bounds_image + 0x1bc + 4 * (i)))
+#define LOW(i) (*(const float *)((const char *)&((const BHActorBoundsImage *)bounds_image)->minimum + 4 * (i)))
+#define HIGH(i) (*(const float *)((const char *)&((const BHActorBoundsImage *)bounds_image)->maximum + 4 * (i)))
 #define POINT(i) (*(float *)((char *)point + 4 * (i)))
 
 void bh_actor_bounds_clamp(const void *bounds_image, void *point)

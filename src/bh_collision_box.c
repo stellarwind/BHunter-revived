@@ -21,12 +21,12 @@ typedef struct BHBoxPayload
     unsigned long leaf_count;
     BHBspLeaf leaves[6];
 } BHBoxPayload;
-typedef char box_payload_size[sizeof(BHBoxPayload) == 1408 ? 1 : -1];
-typedef char box_vertices[offsetof(BHBoxPayload, vertices) == 72 ? 1 : -1];
-typedef char box_edges[offsetof(BHBoxPayload, edges) == 556 ? 1 : -1];
-typedef char box_faces[offsetof(BHBoxPayload, faces) == 944 ? 1 : -1];
-typedef char box_nodes[offsetof(BHBoxPayload, nodes) == 1020 ? 1 : -1];
-typedef char box_leaves[offsetof(BHBoxPayload, leaves) == 1360 ? 1 : -1];
+static_assert(sizeof(BHBoxPayload) == 1408, "BHBoxPayload size");
+static_assert(offsetof(BHBoxPayload, vertices) == 72, "BHBoxPayload.vertices offset");
+static_assert(offsetof(BHBoxPayload, edges) == 556, "BHBoxPayload.edges offset");
+static_assert(offsetof(BHBoxPayload, faces) == 944, "BHBoxPayload.faces offset");
+static_assert(offsetof(BHBoxPayload, nodes) == 1020, "BHBoxPayload.nodes offset");
+static_assert(offsetof(BHBoxPayload, leaves) == 1360, "BHBoxPayload.leaves offset");
 int bh_collision_box_build(BHCollisionModel *model, const BHVec3 *extent, const BHVec3 *padding)
 {
     static const unsigned char face_vertices[6][4] = {{0, 4, 6, 2}, {3, 7, 5, 1}, {1, 5, 4, 0},

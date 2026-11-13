@@ -3,12 +3,12 @@
 static unsigned long phase(BHEntity *e)
 {
     unsigned long n;
-    memcpy(&n, (unsigned char *)e + 0x1bc, 4);
+    memcpy(&n, &e->menu.input_phase, 4);
     return n;
 }
 static void set_phase(BHEntity *e, unsigned long n)
 {
-    memcpy((unsigned char *)e + 0x1bc, &n, 4);
+    memcpy(&e->menu.input_phase, &n, 4);
 }
 static void prime(BHPlayerInputState *s)
 {
@@ -23,7 +23,7 @@ static int real_commit(BHMenuKeyCommit f)
 static void capture_tick(BHEntity *e)
 {
     BHInputKeyCapture *c;
-    memcpy(&c, e->payload, sizeof(c));
+    memcpy(&c, &e->bindings.key_capture, sizeof(c));
     if (c && c->entity == e)
         bh_input_key_capture_step(c);
 }
@@ -37,7 +37,7 @@ int bh_input_key_capture_begin(BHInputKeyCapture *c)
     if (!e)
         return 0;
     set_phase(e, 0);
-    memcpy(e->payload, &c, sizeof(c));
+    memcpy(&e->bindings.key_capture, &c, sizeof(c));
     e->step = capture_tick;
     c->entity = e;
     c->error = 0;

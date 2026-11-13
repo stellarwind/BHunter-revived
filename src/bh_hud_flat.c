@@ -4,7 +4,7 @@
 #include <float.h>
 #include <stddef.h>
 
-typedef char flat_weapon_ammo_offset[offsetof(BHHudWeaponAmmo, amount) == 0x10c ? 1 : -1];
+static_assert(offsetof(BHHudWeaponAmmo, amount) == 0x10c, "BHHudWeaponAmmo.amount offset");
 static int fail(BHHudFlatContext *c, BHHudFlatError e)
 {
     if (c)

@@ -3,16 +3,16 @@
 #include <stddef.h>
 #include <string.h>
 
-typedef char target_query_offset[offsetof(BHEntity, query) == 0xd0 ? 1 : -1];
-typedef char target_payload_offset[offsetof(BHEntity, payload) == 0xe4 ? 1 : -1];
-typedef char target_signed_word[sizeof(long) == 4 ? 1 : -1];
-typedef char target_pointer_word[sizeof(BHEntity *) == 4 ? 1 : -1];
-typedef char target_packet_position[offsetof(BHEntityPositionPacket, position) == 4 ? 1 : -1];
+static_assert(offsetof(BHEntity, query) == 0xd0, "BHEntity.query offset");
+static_assert(offsetof(BHEntity, payload) == 0xe4, "BHEntity.payload offset");
+static_assert(sizeof(long) == 4, "long size");
+static_assert(sizeof(BHEntity *) == 4, "target pointer word");
+static_assert(offsetof(BHEntityPositionPacket, position) == 4, "BHEntityPositionPacket.position offset");
 typedef union BHTargetQueryPacket {
     BHEntityPositionPacket position;
     unsigned long words[10];
 } BHTargetQueryPacket;
-typedef char target_packet_capacity[sizeof(BHTargetQueryPacket) == 40 ? 1 : -1];
+static_assert(sizeof(BHTargetQueryPacket) == 40, "BHTargetQueryPacket size");
 
 static __inline float selection_stored(double value)
 {
@@ -41,7 +41,7 @@ int bh_target_select(BHEntity *player, BHEntity *head, const BHEntity *excluded,
     result->score = best;
     if (player)
     {
-        memcpy(&eligible, player->payload + 0x154, 4);
+        memcpy(&eligible, &player->player.bounty_pending, 4);
         if (eligible)
         {
             x = (double)player->position.x - origin->x;
@@ -49,7 +49,7 @@ int bh_target_select(BHEntity *player, BHEntity *head, const BHEntity *excluded,
             z = (double)player->position.z - origin->z;
             stored_x = selection_stored(x);
             stored_z = selection_stored(z);
-            memcpy(&weight, player->payload + 0x150, 4);
+            memcpy(&weight, &player->player.fine, 4);
             best = (float)(sqrt((x * stored_x + y * y) + z * stored_z) / (double)weight);
             result->target = player;
             result->score = best;
@@ -60,7 +60,7 @@ int bh_target_select(BHEntity *player, BHEntity *head, const BHEntity *excluded,
         if (result->visited >= limit)
             return 0;
         ++result->visited;
-        memcpy(&kind, head->payload + 24, 4);
+        memcpy(&kind, &head->actor.kind, 4);
         if (head != excluded && kind == 2)
         {
             if (!head->query)
@@ -72,7 +72,7 @@ int bh_target_select(BHEntity *player, BHEntity *head, const BHEntity *excluded,
             z = (double)packet.position.position.z - origin->z;
             stored_x = selection_stored(x);
             stored_y = selection_stored(y);
-            memcpy(&weight, head->payload + 28, 4);
+            memcpy(&weight, &head->actor.bounty_token, 4);
             score = sqrt((x * stored_x + y * stored_y) + z * z) / (double)weight;
             /* FCOM's C0 is set for less OR unordered, not just C '<'. */
             if (!(score >= best))
@@ -82,7 +82,7 @@ int bh_target_select(BHEntity *player, BHEntity *head, const BHEntity *excluded,
                 result->score = best;
             }
         }
-        memcpy(&head, head->payload + 12, 4);
+        memcpy(&head, &head->actor.global_next, 4);
     }
     return 1;
 }

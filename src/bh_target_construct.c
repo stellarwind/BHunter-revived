@@ -24,14 +24,14 @@ static void identity(BHMat34 *m)
 static BHTargetConstructSlot *slot(BHEntity *entity)
 {
     BHTargetConstructSlot *target_slot;
-    memcpy(&target_slot, entity->payload + 608, 4);
+    memcpy(&target_slot, &entity->bindings.target_construct, 4);
     return target_slot;
 }
 static void refresh(BHEntity *entity, void *p)
 {
     BHTargetConstructSlot *target_slot = slot(entity);
     (void)p;
-    memcpy((char *)entity + 0x128, &target_slot->body.owner, 4);
+    memcpy((char *)&entity->target.owner, &target_slot->body.owner, 4);
     if (bh_target_draw(target_slot->context->draw, entity) < 1)
         target_slot->context->error = 1;
 }
@@ -119,7 +119,7 @@ int bh_target_construct_sync(BHTargetConstructContext *ctx)
        Membership rebuild must retain that hint, including sleeping actors. */
         body->world = entity->world;
         body->model_index = m;
-        memcpy(&body->flags, (char *)entity + 0x114, 4);
+        memcpy(&body->flags, (char *)&entity->target.emission, 4);
         if (retain && (n >= ctx->roster_count || !same_body(ctx->roster + n, body) || m >= ctx->model_count ||
                        ctx->models[m] != body->geometry))
             retain = 0;
@@ -355,7 +355,7 @@ static BHTargetConstructSlot *begin(BHTargetConstructContext *ctx, const BHVec3 
     if (!bh_debris_bind(ctx->debris, &target_slot->body, entity, &target_slot->state, mass, .9f, &inertia))
         goto rejected;
     entity->inertia = inertia;
-    memcpy(entity->payload + 608, &target_slot, 4);
+    memcpy(&entity->bindings.target_construct, &target_slot, 4);
     return target_slot;
 rejected:
     bh_entity_release(ctx->debris->pool, entity);
@@ -395,6 +395,7 @@ static BHEntity *finish(BHTargetConstructContext *ctx, BHTargetConstructSlot *ta
         ds.local_anchor = *anchor;
     bh_target_draw_state_write(entity, &ds);
     bh_target_step_write(entity, &ts);
+    /* Original target constructor clears this unrecovered payload word. */
     memset((char *)entity + 0xe8, 0, 4);
     entity->collision_bsp = target_slot->collision.geometry.bsp;
     for (n = 0; n < ctx->debris->registry_capacity && ctx->debris->registry[n]; ++n)

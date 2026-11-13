@@ -4,9 +4,9 @@
 #include <math.h>
 #include <stddef.h>
 
-typedef char attachment_navigation_first[offsetof(BHWorldGeometry, navigation) == 0 ? 1 : -1];
-typedef char attachment_portal_stride[sizeof(BHPortal) == 60 ? 1 : -1];
-typedef char attachment_neighbor_offset[offsetof(BHPortal, neighbor) == 56 ? 1 : -1];
+static_assert(offsetof(BHWorldGeometry, navigation) == 0, "BHWorldGeometry.navigation offset");
+static_assert(sizeof(BHPortal) == 60, "BHPortal size");
+static_assert(offsetof(BHPortal, neighbor) == 56, "BHPortal.neighbor offset");
 typedef struct RadarEndpoint
 {
     float x, z, radius;

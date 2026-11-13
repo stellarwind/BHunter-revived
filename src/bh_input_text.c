@@ -5,12 +5,12 @@
 static unsigned long phase(BHEntity *e)
 {
     unsigned long p;
-    memcpy(&p, (unsigned char *)e + 0x1bc, 4);
+    memcpy(&p, &e->menu.input_phase, 4);
     return p;
 }
 static void set_phase(BHEntity *e, unsigned long p)
 {
-    memcpy((unsigned char *)e + 0x1bc, &p, 4);
+    memcpy(&e->menu.input_phase, &p, 4);
 }
 static void prime(BHPlayerInputState *s)
 {
@@ -29,12 +29,12 @@ static int valid(BHInputTextCapture *c)
     if (!c || !c->pool || !c->input || !c->snapshot || !c->state || !c->menu || !c->rows || !c->sound || !c->buffer ||
         !c->capacity || c->limit < 0 || (unsigned long)c->limit >= c->capacity)
         return 0;
-    if (c->limit > 15 || (c->commit == BH_TEXT_COMMIT_PROFILE ? !c->profile
-                           : c->commit != BH_TEXT_COMMIT_ADDRESS || !c->address_commit))
+    if (c->limit > 15 ||
+        (c->commit == BH_TEXT_COMMIT_PROFILE ? !c->profile : c->commit != BH_TEXT_COMMIT_ADDRESS || !c->address_commit))
         return 0;
     end = (const char *)memchr(c->buffer, 0, c->capacity);
-    return end && c->length >= 0 && c->length <= c->limit &&
-           end - c->buffer == c->length && row_valid(c) && (unsigned long)c->menu->selection < c->rows->count;
+    return end && c->length >= 0 && c->length <= c->limit && end - c->buffer == c->length && row_valid(c) &&
+           (unsigned long)c->menu->selection < c->rows->count;
 }
 static void sound(BHInputTextCapture *c, float pitch)
 {
@@ -49,8 +49,7 @@ static void paint(BHInputTextCapture *c)
     for (i = 0; i < n; ++i)
         if (c->buffer[i] >= 'a' && c->buffer[i] <= 'z')
             c->buffer[i] -= 32;
-    sprintf(c->display, "%s_%s", c->buffer + first,
-            c->commit == BH_TEXT_COMMIT_ADDRESS ? "\nA Join  B Back" : "");
+    sprintf(c->display, "%s_%s", c->buffer + first, c->commit == BH_TEXT_COMMIT_ADDRESS ? "\nA Join  B Back" : "");
     ++c->repaints;
     if (!bh_menu_row_refresh(c->rows, (unsigned long)c->menu->selection, NULL, c->display))
         c->error = 1;
@@ -58,7 +57,7 @@ static void paint(BHInputTextCapture *c)
 static void text_tick(BHEntity *e)
 {
     BHInputTextCapture *c;
-    memcpy(&c, e->payload, 4);
+    memcpy(&c, &e->bindings.text_capture, 4);
     if (c && c->entity == e)
         bh_input_text_step(c);
 }
@@ -105,7 +104,7 @@ static int begin(BHInputTextCapture *c, int initial_paint)
     if (!e)
         return 0;
     set_phase(e, 0);
-    memcpy(e->payload, &c, 4);
+    memcpy(&e->bindings.text_capture, &c, 4);
     e->step = text_tick;
     c->entity = e;
     c->error = 0;

@@ -1,8 +1,8 @@
 #include "bh_input_evaluate.h"
 #include <stddef.h>
 #include <string.h>
-typedef char history_offset[offsetof(BHInputSnapshot, history) == 510 ? 1 : -1];
-typedef char history_head_offset[offsetof(BHInputSnapshot, history_head) == 542 ? 1 : -1];
+static_assert(offsetof(BHInputSnapshot, history) == 510, "BHInputSnapshot.history offset");
+static_assert(offsetof(BHInputSnapshot, history_head) == 542, "BHInputSnapshot.history_head offset");
 static int key(const BHInputSnapshot *s, const unsigned char *history, unsigned short index, int previous)
 {
     if (previous && index == 255)

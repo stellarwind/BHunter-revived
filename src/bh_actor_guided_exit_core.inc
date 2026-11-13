@@ -22,8 +22,11 @@ static __inline float guided_float_spill(double value)
    retained x87 intermediates, including the vertical value times its spill. */
 int bh_actor_guided_exit_core(const BHEntity *actor, void *room_image, int incoming)
 {
-    const BHActorExitModelRecord *model = bh_actor_exit_counts + *(int *)((char *)room_image + 0xf8);
-    char *geometry = (char *)room_image + 0xe8;
+    BHActorExitRoomImage *room = (BHActorExitRoomImage *)room_image;
+    const BHActorExitModelRecord *model = bh_actor_exit_counts + room->count_record;
+    /* The borrowed room image embeds the portal image at this ABI boundary. */
+    char *geometry =
+        (char *)room_image + offsetof(BHActorExitRoomImage, portals) - offsetof(BHActorPortalImage, portals);
     float best = 9.0e37f;
     BHVec3 anchor, normal, side, point;
     int i, choice;
@@ -32,19 +35,19 @@ int bh_actor_guided_exit_core(const BHEntity *actor, void *room_image, int incom
     bh_actor_portal_normal_core(geometry, incoming, (float *)&normal);
     bh_vec3_cross(&bh_actor_guided_up, &normal, &side);
     choice = incoming;
-    for (i = 0, portal = (BHPortal *)(geometry + 0xe4); i < model->portal_count; ++i, ++portal)
+    for (i = 0, portal = room->portals; i < model->portal_count; ++i, ++portal)
     {
         unsigned long flags;
         double vertical, lateral;
         float stored_vertical, score;
         if (i == incoming || !portal->neighbor)
             continue;
-        flags = *(unsigned long *)((char *)portal->neighbor + 0x114);
-        if ((flags & 0x10) && *(int *)((char *)actor + 0xfc) > 0)
+        flags = ((BHActorExitNeighborImage *)portal->neighbor)->flags;
+        if ((flags & 0x10) && *(int *)&actor->actor.kind > 0)
             continue;
-        if ((flags & 0x20) && (*(int *)((char *)actor + 0xfc) == 0 || *(int *)((char *)actor + 0xfc) == 6))
+        if ((flags & 0x20) && (*(int *)&actor->actor.kind == 0 || *(int *)&actor->actor.kind == 6))
             continue;
-        if (portal->direction != (((BHPortal *)(geometry + 0xe4))[incoming].direction ^ 4UL))
+        if (portal->direction != ((room->portals)[incoming].direction ^ 4UL))
             continue;
         bh_actor_portal_center_core(geometry, i, (float *)&point);
         point.x -= anchor.x;

@@ -1,3 +1,4 @@
+#include "bh_field_access.h"
 #include "bh_pulse_projectile.h"
 #include "bh_round.h"
 #include "bh_fp.h"
@@ -5,20 +6,6 @@
 #include <math.h>
 #include <string.h>
 static const BHVec3 zero = {0, 0, 0}, acceleration = {0, -.002f, 0};
-static void get(const BHEntity *entity, unsigned long a, void *p, unsigned long n)
-{
-    memcpy(p, (const unsigned char *)entity + a, n);
-}
-static void put(BHEntity *entity, unsigned long a, const void *p, unsigned long n)
-{
-    memcpy((unsigned char *)entity + a, p, n);
-}
-static float scalar(const BHEntity *entity, unsigned long a)
-{
-    float f;
-    get(entity, a, &f, 4);
-    return f;
-}
 static float stored(double x)
 {
     float f;
@@ -28,7 +15,7 @@ static float stored(double x)
 static BHPulseProjectileContext *context(BHEntity *entity)
 {
     BHPulseProjectileContext *ctx;
-    memcpy(&ctx, entity->payload + 600, 4);
+    memcpy(&ctx, &entity->bindings.pulse_projectile, 4);
     return ctx;
 }
 static int live(BHPulseProjectileContext *ctx, BHEntity *entity, unsigned long gen)
@@ -47,10 +34,10 @@ static void announce(BHPulseProjectileContext *ctx, BHEntity *entity)
     unsigned char payload[2];
     BHWorldGeometry *world;
     BHPacketWriter writer;
-    get(entity, 0x120, &sync, 4);
+    memcpy(&sync, &entity->projectile.sync_identity, 4);
     if (ctx->peers <= 1 || !sync)
         return;
-    get(entity, 0x124, &world, 4);
+    memcpy(&world, &entity->projectile.world, 4);
     if (!world)
         return;
     found = ctx->effects->response_index ? bh_binding_find(ctx->effects->response_index, world, NULL) : -1;
@@ -107,15 +94,15 @@ void bh_pulse_projectile_tick(BHEntity *entity)
     b = ctx->effects;
     ctx->error = 0;
     generation = entity->generation;
-    raw_life = (double)scalar(entity, 0xe8) - 1.0 / 30;
+    raw_life = (double)bh_field_f32(&entity->projectile.countdown) - 1.0 / 30;
     life = stored(raw_life);
-    phase = stored((double)scalar(entity, 0xec) + scalar(entity, 0xf0));
-    put(entity, 0xec, &phase, 4);
-    put(entity, 0xe8, &life, 4);
+    phase = stored((double)bh_field_f32(&entity->pulse.phase) + bh_field_f32(&entity->pulse.phase_step));
+    memcpy(&entity->pulse.phase, &phase, 4);
+    memcpy(&entity->projectile.countdown, &life, 4);
     if (raw_life < 3)
     {
-        drift = stored((double)scalar(entity, 0xf0) * .92);
-        put(entity, 0xf0, &drift, 4);
+        drift = stored((double)bh_field_f32(&entity->pulse.phase_step) * .92);
+        memcpy(&entity->pulse.phase_step, &drift, 4);
     }
     if (raw_life < .2 && raw_life >= .16666666666666669)
     {
@@ -123,10 +110,10 @@ void bh_pulse_projectile_tick(BHEntity *entity)
         if (ctx->error)
             return;
         bh_script_debris_create(ctx->debris, 30, &entity->position, 4, 50, 1);
-        get(entity, 0x11c, &identity, 4);
+        memcpy(&identity, &entity->projectile.identity, 4);
         *ctx->identity = identity;
         ctx->debris->origin_tag = identity;
-        get(entity, 0x130, &source, 4);
+        memcpy(&source, &entity->projectile.secondary, 4);
         bh_script_explosion_create(ctx->explosion, &entity->position, 1.5f, 27, 1, (unsigned long)source);
         *ctx->identity = ctx->debris->origin_tag;
         if (!live(ctx, entity, generation))
@@ -167,21 +154,21 @@ void bh_pulse_projectile_tick(BHEntity *entity)
         bh_entity_release(b->pool, entity);
         return;
     }
-    get(entity, 0xf4, &velocity, 12);
-    get(entity, 0x10c, &base, 12);
+    memcpy(&velocity, &entity->pulse.velocity, 12);
+    memcpy(&base, &entity->pulse.base, 12);
     for (i = 0; i < 3; i++)
     {
         ((float *)&entity->origin)[i] = stored((double)((float *)&base)[i] + ((float *)&velocity)[i]);
         ((float *)&velocity)[i] = stored((double)((float *)&velocity)[i] * .95);
     }
-    put(entity, 0xf4, &velocity, 12);
+    memcpy(&entity->pulse.velocity, &velocity, 12);
     power = pow((double)life, .25);
     offset = (1 - power) * cos((double)life * 3) * (-1.0 / 6);
     end.x = stored((double)entity->position.x + (double)entity->origin.x / 30);
     end.y = stored((double)entity->position.y + ((double)entity->origin.y / 30 - offset));
     end.z = stored((double)entity->position.z + (double)entity->origin.z / 30);
-    get(entity, 0x124, &cached, 4);
-    get(entity, 0x128, &ignore, 4);
+    memcpy(&cached, &entity->projectile.world, 4);
+    memcpy(&ignore, &entity->projectile.ignore, 4);
     self.kind = BH_WORLD_HIT_ACTOR;
     self.object.actor = ignore;
     result = bh_world_segment_run(b->segment, ignore ? &self : NULL, &cached, &entity->position, &end, -1, &hit);
@@ -190,8 +177,8 @@ void bh_pulse_projectile_tick(BHEntity *entity)
         ctx->error = 2;
         return;
     }
-    put(entity, 0x124, &cached, 4);
-    get(entity, 0x118, &sound, 4);
+    memcpy(&entity->projectile.world, &cached, 4);
+    memcpy(&sound, &entity->projectile.sound, 4);
     if (!result)
         entity->position = end;
     else if (hit.object.kind == BH_WORLD_HIT_GEOMETRY && (hit.material_flags & 4))
@@ -214,26 +201,26 @@ void bh_pulse_projectile_tick(BHEntity *entity)
     }
     else
     {
-        get(entity, 0xf4, &velocity, 12);
+        memcpy(&velocity, &entity->pulse.velocity, 12);
         dot = (((double)velocity.x * hit.normal.x + (double)velocity.y * hit.normal.y) +
                (double)velocity.z * hit.normal.z) *
               (-2);
         for (i = 0; i < 3; i++)
             ((float *)&velocity)[i] = stored((double)((float *)&hit.normal)[i] * dot + ((float *)&velocity)[i]);
-        put(entity, 0xf4, &velocity, 12);
+        memcpy(&entity->pulse.velocity, &velocity, 12);
         dot = (((double)base.x * hit.normal.x + (double)base.y * hit.normal.y) + (double)base.z * hit.normal.z) * (-2);
         for (i = 0; i < 3; i++)
             ((float *)&base)[i] = stored((double)((float *)&hit.normal)[i] * dot + ((float *)&base)[i]);
         ignore = NULL;
-        put(entity, 0x128, &ignore, 4);
+        memcpy(&entity->projectile.ignore, &ignore, 4);
         entity->position = hit.point;
         for (i = 0; i < 3; i++)
         {
             ((float *)&velocity)[i] = stored((double)((float *)&velocity)[i] * .9);
             ((float *)&base)[i] = stored((double)((float *)&base)[i] * .9);
         }
-        put(entity, 0xf4, &velocity, 12);
-        put(entity, 0x10c, &base, 12);
+        memcpy(&entity->pulse.velocity, &velocity, 12);
+        memcpy(&entity->pulse.base, &base, 12);
         bh_sound_request(b->sound, ctx->bounce_sound, 1, 1, &entity->position, &zero);
         bh_contact_spark_create(b->contacts, &entity->position, .75f, 3);
         bh_contact_spark_create(b->contacts, &entity->position, 1, 2);
@@ -250,8 +237,7 @@ BHEntity *bh_pulse_projectile_create(BHPulseProjectileContext *ctx, BHWorldGeome
     unsigned long sync, i;
     BHHomingProjectileContext *b;
     if (!ctx || !position || !base || !velocity || !ctx->effects || !ctx->lifetime || !ctx->draw || !ctx->draw->queue ||
-        !ctx->identity || !ctx->debris || !ctx->explosion ||
-        !bh_math_environment_supported())
+        !ctx->identity || !ctx->debris || !ctx->explosion || !bh_math_environment_supported())
         return NULL;
     b = ctx->effects;
     if (!b->pool || !b->sound || !b->segment || !b->particles || !b->contacts || ctx->lifetime->pool != b->pool ||
@@ -268,33 +254,33 @@ BHEntity *bh_pulse_projectile_create(BHPulseProjectileContext *ctx, BHWorldGeome
     state.secondary = source;
     entity->position = *position;
     f = stored((double)rand() * (1.0 / 5120));
-    put(entity, 0xec, &f, 4);
+    memcpy(&entity->pulse.phase, &f, 4);
     f = 1.0f / 30;
-    put(entity, 0xf0, &f, 4);
-    put(entity, 0xf4, velocity, 12);
-    put(entity, 0x10c, base, 12);
+    memcpy(&entity->pulse.phase_step, &f, 4);
+    memcpy(&entity->pulse.velocity, velocity, 12);
+    memcpy(&entity->pulse.base, base, 12);
     for (i = 0; i < 3; i++)
         ((float *)&entity->origin)[i] = stored((double)((const float *)velocity)[i] + ((const float *)base)[i]);
     entity->origin = *velocity;
-    memcpy(entity->payload + 600, &ctx, 4);
+    memcpy(&entity->bindings.pulse_projectile, &ctx, 4);
     entity->step = bh_pulse_projectile_tick;
     entity->refresh = draw;
     bh_projectile_lifetime_bind(ctx->lifetime, entity, &state);
     state.sound = bh_sound_request(b->sound, ctx->loop_sound, 1, 1, position, &entity->origin);
-    put(entity, 0x118, &state.sound, 4);
-    put(entity, 0x124, &world, 4);
-    put(entity, 0x128, &source, 4);
+    memcpy(&entity->projectile.sound, &state.sound, 4);
+    memcpy(&entity->projectile.world, &world, 4);
+    memcpy(&entity->projectile.ignore, &source, 4);
     sync = 0;
     if (ctx->sync_identity)
     {
         sync = *ctx->sync_identity;
         *ctx->sync_identity = 0;
     }
-    put(entity, 0x120, &sync, 4);
+    memcpy(&entity->projectile.sync_identity, &sync, 4);
     if (state.identity)
     {
         f = stored((double)state.countdown - (-.3));
-        put(entity, 0xe8, &f, 4);
+        memcpy(&entity->projectile.countdown, &f, 4);
     }
     return entity;
 }

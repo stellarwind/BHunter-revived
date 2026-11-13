@@ -4,12 +4,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef char weapon_payload_offset[offsetof(BHEntity, payload) == 0xe4 ? 1 : -1];
-typedef char weapon_player_velocity_offset[offsetof(BHEntity, origin) == 0x48 ? 1 : -1];
-typedef char weapon_common_size[sizeof(BHWeaponCommonState) == 0x30 ? 1 : -1];
-typedef char weapon_hud_offset[offsetof(BHWeaponCommonState, hud) == 0x10 ? 1 : -1];
-typedef char weapon_ammo_offset[offsetof(BHWeaponCommonState, ammo) == 0x24 ? 1 : -1];
-typedef char weapon_delay_offset[offsetof(BHWeaponCommonState, delay) == 0x2c ? 1 : -1];
+static_assert(offsetof(BHWeaponCommonState, cached_world) == 0x1c, "weapon cached world offset");
+
+static_assert(offsetof(BHEntity, payload) == 0xe4, "BHEntity.payload offset");
+static_assert(offsetof(BHEntity, origin) == 0x48, "BHEntity.origin offset");
+static_assert(sizeof(BHWeaponCommonState) == 0x30, "BHWeaponCommonState size");
+static_assert(offsetof(BHWeaponCommonState, hud) == 0x10, "BHWeaponCommonState.hud offset");
+static_assert(offsetof(BHWeaponCommonState, ammo) == 0x24, "BHWeaponCommonState.ammo offset");
+static_assert(offsetof(BHWeaponCommonState, delay) == 0x2c, "BHWeaponCommonState.delay offset");
 BHWeaponCommonState *bh_weapon_common_state(BHEntity *weapon)
 {
     return weapon ? (BHWeaponCommonState *)(weapon->payload + 4) : NULL;

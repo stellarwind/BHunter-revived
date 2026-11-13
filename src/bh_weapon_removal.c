@@ -1,7 +1,7 @@
 #include "bh_weapon_removal.h"
 #include <stddef.h>
-typedef char removed_packet_size[sizeof(BHWeaponRemovedPacket) == 8 ? 1 : -1];
-typedef char removed_entity_offset[offsetof(BHWeaponRemovedPacket, entity) == 4 ? 1 : -1];
+static_assert(sizeof(BHWeaponRemovedPacket) == 8, "BHWeaponRemovedPacket size");
+static_assert(offsetof(BHWeaponRemovedPacket, entity) == 4, "BHWeaponRemovedPacket.entity offset");
 int bh_weapon_target_removed(BHSoundQueue *sound, BHEntity *weapon, const BHWeaponRemovedPacket *packet)
 {
     BHWeaponCommonState *state;

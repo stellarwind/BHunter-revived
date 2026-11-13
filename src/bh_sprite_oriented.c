@@ -5,11 +5,11 @@
 #include <stddef.h>
 #include <string.h>
 
-typedef char path_size[sizeof(BHSpriteOrientedVertex) == 0x54 ? 1 : -1];
-typedef char path_prev[offsetof(BHSpriteOrientedVertex, previous) == 0x3c ? 1 : -1];
-typedef char path_next[offsetof(BHSpriteOrientedVertex, next) == 0x40 ? 1 : -1];
-typedef char path_flags[offsetof(BHSpriteOrientedVertex, flags) == 0x44 ? 1 : -1];
-typedef char path_width[offsetof(BHSpriteOrientedVertex, width) == 0x4c ? 1 : -1];
+static_assert(sizeof(BHSpriteOrientedVertex) == 0x54, "BHSpriteOrientedVertex size");
+static_assert(offsetof(BHSpriteOrientedVertex, previous) == 0x3c, "BHSpriteOrientedVertex.previous offset");
+static_assert(offsetof(BHSpriteOrientedVertex, next) == 0x40, "BHSpriteOrientedVertex.next offset");
+static_assert(offsetof(BHSpriteOrientedVertex, flags) == 0x44, "BHSpriteOrientedVertex.flags offset");
+static_assert(offsetof(BHSpriteOrientedVertex, width) == 0x4c, "BHSpriteOrientedVertex.width offset");
 
 static int fail(BHSpriteOrientedContext *c, BHSpriteOrientedError e)
 {

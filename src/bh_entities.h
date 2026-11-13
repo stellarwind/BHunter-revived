@@ -1,6 +1,8 @@
 #ifndef BH_ENTITIES_H
 #define BH_ENTITIES_H
 #include <stdint.h>
+#include "bh_entity_payloads.h"
+#include "bh_entity_bindings.h"
 #include "bh_flyby_fields.h"
 #include "bh_math.h"
 #include "bh_player_fields.h"
@@ -19,27 +21,55 @@ typedef struct BHActorFields
     BHEntityStep draw;
     BHEntity *global_previous, *global_next, *room_next, *room_previous;
     unsigned long kind;
+    long bounty_token;
+    unsigned long sound, sound_frames, sound_resource;
+    union {
+        unsigned long bound_resource, city_id;
+    };
+    unsigned long model_resource, destroy_when_faded;
+    union {
+        unsigned long death_tag;
+        long radar_id;
+    };
+    BHVec3 route_start, route_end, portal_center, route_first, route_second;
+    BHVec3 offset, offset_velocity, draw_offset;
+    float phase, duration, speed, u, v, damage, speed_scale, fade;
+    void *script_path;
+    struct BHWorldGeometry *current, *next;
+    union {
+        BHEntity *damage_source;
+        unsigned long damage_source_identity;
+    };
+    float jitter, pursuit;
+    union {
+        BHEntity *target;
+        BHEntity *radar_owner;
+        unsigned long target_identity;
+    };
+    BHVec3 saved_end, saved_tangent;
+    unsigned long forced_pursuit;
+    long burst_frames;
+    unsigned short primary_weapon, secondary_weapon, attack_frame, attack_cooldown;
+    unsigned short tick, duration_ticks;
+    unsigned long random;
 } BHActorFields;
 
 struct BHEntity
 {
     unsigned long flags, generation, kind;
     BHVec3 position;
-    union
-    {
+    union {
         unsigned char opaque0[48];
         struct
         {
             BHVec3 basis[3], euler;
         };
     };
-    union
-    {
+    union {
         BHVec3 origin;
         BHVec3 velocity;
     };
-    union
-    {
+    union {
         unsigned char opaque1[96];
         struct
         {
@@ -47,16 +77,19 @@ struct BHEntity
             BHMat34 last_clear;
         };
     };
-    float lifetime, scale;
-    union
-    {
+    union {
+        float lifetime, mass;
+    };
+    union {
+        float scale, friction;
+    };
+    union {
         unsigned char opaque2a[4];
         struct BHGeometry *collision_geometry;
         const struct BHBsp *collision_bsp;
     };
     float collision_radius; /* verified +c0 broad-phase extent, 0040af20 */
-    union
-    {
+    union {
         unsigned char opaque2b[4];
         struct BHWorldGeometry *world;
     };
@@ -65,10 +98,29 @@ struct BHEntity
     BHEntityCallback query;
     BHEntity *query_next, *query_previous, *previous, *next;
     /* Recycled slots share the same storage across entity types. */
-    union
-    {
+    union {
         unsigned char payload[636];
+        BHEntityBindings bindings;
         BHActorFields actor;
+        BHMenuFields menu;
+        BHFlashFields flash;
+        BHScriptEmitterFields emitter;
+        BHAttachedSoundFields attached_sound;
+        BHScriptDebrisFields fragment;
+        BHPuffFields puff;
+        BHWorldEntityFields placement;
+        BHScriptLifetimeFields script_lifetime;
+        BHScriptSensorFields sensor;
+        BHScriptVMFields script_vm;
+        BHExplosionFields explosion;
+        BHEffectFields effect;
+        BHAreaProjectileFields area_projectile;
+        BHPulseFields pulse;
+        BHProjectileFields projectile;
+        BHTrailEmitterFields trail;
+        BHTrailNodeFields trail_node;
+        BHHitMarkerFields marker;
+        BHTargetFields target;
         BHFlybyFields flyby;
         BHPlayerFields player;
         BHRemoteFields remote;

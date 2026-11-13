@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef char radius_offset[offsetof(BHEntity, collision_radius) == 0xc0 ? 1 : -1];
+static_assert(offsetof(BHEntity, collision_radius) == 0xc0, "BHEntity.collision_radius offset");
 typedef struct Frame
 {
     BHWorldGeometry *world;

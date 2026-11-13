@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef char command_size[sizeof(BHDrawCommand) == 0x54 ? 1 : -1];
-typedef char command_link[offsetof(BHDrawCommand, next) == 0x50 ? 1 : -1];
+static_assert(sizeof(BHDrawCommand) == 0x54, "BHDrawCommand size");
+static_assert(offsetof(BHDrawCommand, next) == 0x50, "BHDrawCommand.next offset");
 static void *allocate(unsigned long size, void *user)
 {
     return malloc(size);

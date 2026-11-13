@@ -17,7 +17,7 @@ static BHPickupRoom *binding(BHActorRouteContext *ctx, BHWorldGeometry *world)
 BHScriptActorPath bh_script_actor_route_path(const BHEntity *entity)
 {
     BHScriptActorPath p;
-    memcpy(&p, (const char *)entity + 0x1a0, 4);
+    memcpy(&p, (char *)&entity->actor.script_path, 4);
     return p;
 }
 static int error(BHActorRouteContext *ctx, BHActorRouteError e)
@@ -50,7 +50,8 @@ int bh_script_actor_route_advance(BHActorRouteContext *ctx, BHEntity *entity)
         return error(ctx, BH_ACTOR_ROUTE_TOPOLOGY);
     next = entity->actor.room_next;
     prev = entity->actor.room_previous;
-    if ((prev ? prev->actor.room_next != entity : old->actors != entity) || (next && next->actor.room_previous != entity))
+    if ((prev ? prev->actor.room_next != entity : old->actors != entity) ||
+        (next && next->actor.room_previous != entity))
         return error(ctx, BH_ACTOR_ROUTE_TOPOLOGY);
     at = old->actors;
     for (n = 0; at && at != entity && n < ctx->actor_limit; ++n)
@@ -167,7 +168,7 @@ int bh_script_actor_route_advance(BHActorRouteContext *ctx, BHEntity *entity)
     state.next = (BHWorldGeometry *)world->navigation.portals[outgoing].neighbor;
     bh_actor_route_write(entity, &state);
     entity->world = world;
-    memcpy((char *)entity + 0x1a0, &path, 4);
+    memcpy((char *)&entity->actor.script_path, &path, 4);
     ctx->error = BH_ACTOR_ROUTE_OK;
     return 1;
 }

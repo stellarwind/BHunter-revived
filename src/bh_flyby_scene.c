@@ -10,10 +10,10 @@
 #include <math.h>
 #include <float.h>
 
-typedef char flyby_scene_pointer_size[sizeof(void *) == 4 ? 1 : -1];
-typedef char flyby_scene_payload_offset[offsetof(BHEntity, payload) == 0xe4 ? 1 : -1];
-typedef char flyby_scene_input_state_offset[offsetof(BHPlayerInputList, state) == 0x2010 ? 1 : -1];
-typedef char flyby_scene_crt_random[RAND_MAX == 32767 ? 1 : -1];
+static_assert(sizeof(void *) == 4, "flyby scene pointer size");
+static_assert(offsetof(BHEntity, payload) == 0xe4, "BHEntity.payload offset");
+static_assert(offsetof(BHPlayerInputList, state) == 0x2010, "BHPlayerInputList.state offset");
+static_assert(RAND_MAX == 32767, "flyby scene crt random");
 
 static BHFlybyScene *flyby_bindings;
 

@@ -1,14 +1,9 @@
+#include "bh_field_access.h"
 #include "bh_pulse_visual.h"
 #include "bh_round.h"
 #include "bh_fp.h"
 #include <string.h>
 #include <math.h>
-static float scalar(const BHEntity *e, unsigned long a)
-{
-    float f;
-    memcpy(&f, (const unsigned char *)e + a, 4);
-    return f;
-}
 static float stored(double x)
 {
     float f;
@@ -33,8 +28,8 @@ int bh_pulse_visual_draw(BHPulseVisualContext *c, const BHEntity *e)
     if (!c || !e || !c->queue || !bh_math_environment_supported())
         return -1;
     c->error = 0;
-    lifetime = scalar(e, 0xe8);
-    phase = scalar(e, 0xec);
+    lifetime = bh_field_f32(&e->projectile.countdown);
+    phase = bh_field_f32(&e->pulse.phase);
     angles.x = stored((double)phase + phase);
     angles.y = stored(sin((double)phase * 1.7) * 1.5);
     angles.z = 0;

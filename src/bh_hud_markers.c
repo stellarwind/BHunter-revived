@@ -7,9 +7,9 @@
 #include <float.h>
 #include <string.h>
 
-typedef char hud_marker_query_offset[offsetof(BHEntity, query) == 0xd0 ? 1 : -1];
-typedef char hud_marker_payload_offset[offsetof(BHEntity, payload) == 0xe4 ? 1 : -1];
-typedef char hud_marker_pointer_size[sizeof(BHEntity *) == 4 ? 1 : -1];
+static_assert(offsetof(BHEntity, query) == 0xd0, "BHEntity.query offset");
+static_assert(offsetof(BHEntity, payload) == 0xe4, "BHEntity.payload offset");
+static_assert(sizeof(BHEntity *) == 4, "hud marker pointer size");
 typedef union BHHudMarkerPacket {
     BHEntityPositionPacket position;
     unsigned long words[10];
@@ -144,7 +144,7 @@ int bh_hud_markers_draw(BHHudMarkers *c, BHEntity *head, const BHVec3 *player, c
                 kind = head->actor.kind;
                 if (kind == 8)
                 {
-                    memcpy(&status, head->payload + 48, 2);
+                    memcpy(&status, &head->remote.slot, 2);
                     label_width = (float)multiply(unit, 24);
                     bh_round_float(&label_v, (double)status * .125);
                     if (!rectangle(c, c->status_image, ((double)x - scale * 2.0) - (double)unit * (-9.5),

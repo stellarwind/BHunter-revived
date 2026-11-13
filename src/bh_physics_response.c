@@ -8,9 +8,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef char contact_packet_size[sizeof(BHPhysicsContactPacket) == 36 ? 1 : -1];
-typedef char contact_packet_impulse[offsetof(BHPhysicsContactPacket, impulse) == 0x1c ? 1 : -1];
-typedef char contact_packet_severity[offsetof(BHPhysicsContactPacket, severity) == 0x20 ? 1 : -1];
+static_assert(sizeof(BHPhysicsContactPacket) == 36, "BHPhysicsContactPacket size");
+static_assert(offsetof(BHPhysicsContactPacket, impulse) == 0x1c, "BHPhysicsContactPacket.impulse offset");
+static_assert(offsetof(BHPhysicsContactPacket, severity) == 0x20, "BHPhysicsContactPacket.severity offset");
 static int vector_ok(const BHVec3 *v)
 {
     return v && _finite(v->x) && _finite(v->y) && _finite(v->z);

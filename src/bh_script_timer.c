@@ -5,9 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef char state_size[sizeof(BHScriptTimerState) == 48 ? 1 : -1];
-typedef char state_offset[offsetof(BHEntity, payload) + 4 == 0xe8 ? 1 : -1];
-typedef char countdown_offset[offsetof(BHScriptTimerState, countdown) == 44 ? 1 : -1];
+static_assert(sizeof(BHScriptTimerState) == 48, "BHScriptTimerState size");
+static_assert(offsetof(BHEntity, payload) + 4 == 0xe8, "state offset");
+static_assert(offsetof(BHScriptTimerState, countdown) == 44, "BHScriptTimerState.countdown offset");
 
 static void template_timer(BHEntity *entity, void *packet);
 static void template_timer2(BHEntity *entity, void *packet);
@@ -18,17 +18,17 @@ static void delete_tick(BHEntity *entity);
 
 static BHScriptTimerState *state(BHEntity *entity)
 {
-    return (BHScriptTimerState *)(entity->payload + 4);
+    return bh_script_timer_fields(entity);
 }
 static BHScriptTimerContext *context(BHEntity *entity)
 {
     BHScriptTimerContext *result;
-    memcpy(&result, entity->payload + 52, sizeof(result));
+    memcpy(&result, &entity->bindings.script_timer, sizeof(result));
     return result;
 }
 static void bind_context(BHEntity *entity, BHScriptTimerContext *ctx)
 {
-    memcpy(entity->payload + 52, &ctx, sizeof(ctx));
+    memcpy(&entity->bindings.script_timer, &ctx, sizeof(ctx));
 }
 static int live(const BHScriptTimerContext *ctx, const BHEntity *entity, unsigned long generation)
 {

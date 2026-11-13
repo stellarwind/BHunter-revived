@@ -19,22 +19,13 @@ typedef struct DamagePacket
     float amount;
     unsigned long target;
 } DamagePacket;
-typedef char explosion_layout[sizeof(void *) == 4 && offsetof(BHEntity, payload) == 0xe4 && sizeof(BlastPacket) == 24 &&
-                                      sizeof(DamagePacket) == 12
-                                  ? 1
-                                  : -1];
-static void load(const BHEntity *entity, unsigned long offset, void *out, unsigned long n)
-{
-    memcpy(out, (const unsigned char *)entity + offset, n);
-}
-static void store(BHEntity *entity, unsigned long offset, const void *in, unsigned long n)
-{
-    memcpy((unsigned char *)entity + offset, in, n);
-}
+static_assert(sizeof(void *) == 4 && offsetof(BHEntity, payload) == 0xe4 && sizeof(BlastPacket) == 24 &&
+                  sizeof(DamagePacket) == 12,
+              "explosion layout");
 static BHScriptExplosionContext *context(const BHEntity *entity)
 {
     BHScriptExplosionContext *ctx;
-    memcpy(&ctx, entity->payload + 624, 4);
+    memcpy(&ctx, &entity->bindings.explosion, 4);
     return ctx;
 }
 static int live(BHScriptExplosionContext *ctx, BHEntity *entity, unsigned long generation)
@@ -48,36 +39,36 @@ int bh_script_explosion_read(const BHEntity *entity, BHScriptExplosionState *sta
 {
     if (!entity || !state)
         return 0;
-    load(entity, 0xe8, &state->age, 4);
-    load(entity, 0xec, &state->duration, 4);
-    load(entity, 0xf4, state->direction, 96);
-    load(entity, 0x154, state->angle, 32);
-    load(entity, 0x174, state->spin, 32);
-    load(entity, 0x194, &state->radius, 4);
-    load(entity, 0x198, &state->magnitude, 4);
-    load(entity, 0x19c, &state->probability, 4);
-    load(entity, 0x1ac, &state->sound_resource, 4);
-    load(entity, 0x1b0, &state->origin_tag, 4);
-    load(entity, 0x1b4, &state->target, 4);
-    load(entity, 0x1b8, &state->visual_only, 4);
+    memcpy(&state->age, &entity->explosion.age, 4);
+    memcpy(&state->duration, &entity->explosion.duration, 4);
+    memcpy(state->direction, &entity->explosion.direction, 96);
+    memcpy(state->angle, &entity->explosion.angle, 32);
+    memcpy(state->spin, &entity->explosion.spin, 32);
+    memcpy(&state->radius, &entity->explosion.radius, 4);
+    memcpy(&state->magnitude, &entity->explosion.magnitude, 4);
+    memcpy(&state->probability, &entity->explosion.probability, 4);
+    memcpy(&state->sound_resource, &entity->explosion.sound_resource, 4);
+    memcpy(&state->origin_tag, &entity->explosion.origin_tag, 4);
+    memcpy(&state->target, &entity->explosion.target_identity, 4);
+    memcpy(&state->visual_only, &entity->explosion.visual_only, 4);
     return 1;
 }
 int bh_script_explosion_write(BHEntity *entity, const BHScriptExplosionState *state)
 {
     if (!entity || !state)
         return 0;
-    store(entity, 0xe8, &state->age, 4);
-    store(entity, 0xec, &state->duration, 4);
-    store(entity, 0xf4, state->direction, 96);
-    store(entity, 0x154, state->angle, 32);
-    store(entity, 0x174, state->spin, 32);
-    store(entity, 0x194, &state->radius, 4);
-    store(entity, 0x198, &state->magnitude, 4);
-    store(entity, 0x19c, &state->probability, 4);
-    store(entity, 0x1ac, &state->sound_resource, 4);
-    store(entity, 0x1b0, &state->origin_tag, 4);
-    store(entity, 0x1b4, &state->target, 4);
-    store(entity, 0x1b8, &state->visual_only, 4);
+    memcpy(&entity->explosion.age, &state->age, 4);
+    memcpy(&entity->explosion.duration, &state->duration, 4);
+    memcpy(&entity->explosion.direction, state->direction, 96);
+    memcpy(&entity->explosion.angle, state->angle, 32);
+    memcpy(&entity->explosion.spin, state->spin, 32);
+    memcpy(&entity->explosion.radius, &state->radius, 4);
+    memcpy(&entity->explosion.magnitude, &state->magnitude, 4);
+    memcpy(&entity->explosion.probability, &state->probability, 4);
+    memcpy(&entity->explosion.sound_resource, &state->sound_resource, 4);
+    memcpy(&entity->explosion.origin_tag, &state->origin_tag, 4);
+    memcpy(&entity->explosion.target_identity, &state->target, 4);
+    memcpy(&entity->explosion.visual_only, &state->visual_only, 4);
     return 1;
 }
 static int valid(BHScriptExplosionContext *ctx, const BHVec3 *p, float duration, float magnitude, float probability)
@@ -150,7 +141,7 @@ static BHEntity *create(BHScriptExplosionContext *ctx, const BHVec3 *p, float du
         bh_round_float(state.spin + i, ((double)r - 16384.0) * .0000025);
     }
     bh_script_explosion_write(e, &state);
-    memcpy(e->payload + 624, &ctx, 4);
+    memcpy(&e->bindings.explosion, &ctx, 4);
     e->refresh = bh_script_explosion_refresh;
     e->step = bh_script_explosion_tick;
     bh_entity_set_query(ctx->pool, e, bh_actor_target_removed);
@@ -175,11 +166,11 @@ static BHEntity *create(BHScriptExplosionContext *ctx, const BHVec3 *p, float du
         ctx->debris->origin_tag = origin_tag;
     if (!live(ctx, e, generation))
         return NULL;
-    load(e, 0x1b0, &state.origin_tag, 4);
+    memcpy(&state.origin_tag, &e->explosion.origin_tag, 4);
     if (!visual_only && !state.origin_tag)
     {
         damage.event = 0;
-        load(e, 0x1b4, &damage.target, 4);
+        memcpy(&damage.target, &e->explosion.target_identity, 4);
         damage.amount = secondary ? .4f : .6f;
         if (secondary)
             bh_round_float(&radius, (double)square * .05);
@@ -233,7 +224,7 @@ void bh_script_explosion_tick(BHEntity *entity)
     bh_script_explosion_read(entity, &state);
     age = (double)state.age - (-1.0 / 30.0);
     bh_round_float(&state.age, age);
-    store(entity, 0xe8, &state.age, 4);
+    memcpy(&entity->explosion.age, &state.age, 4);
     if (!_isnan(age) && !_isnan(state.duration) && age > state.duration)
     {
         bh_entity_release(ctx->pool, entity);
@@ -268,12 +259,12 @@ void bh_script_explosion_tick(BHEntity *entity)
     old = state.magnitude;
     bh_round_float(&state.magnitude, old * .95);
     bh_round_float(&state.radius, (double)state.radius - old * (-1.0 / 30.0));
-    store(entity, 0x198, &state.magnitude, 4);
-    store(entity, 0x194, &state.radius, 4);
+    memcpy(&entity->explosion.magnitude, &state.magnitude, 4);
+    memcpy(&entity->explosion.radius, &state.radius, 4);
     for (i = 0; i < 8; ++i)
     {
         bh_round_float(state.angle + i, (double)state.spin[i] + state.angle[i]);
-        store(entity, 0x154 + i * 4, state.angle + i, 4);
+        memcpy(&entity->explosion.angle[i], state.angle + i, 4);
     }
 }
 void bh_script_explosion_refresh(BHEntity *entity, void *packet)

@@ -7,18 +7,10 @@
 #include <stdlib.h>
 #include <string.h>
 static const BHVec3 zero = {0, 0, 0};
-static void get(const BHEntity *entity, unsigned long a, void *p, unsigned long n)
-{
-    memcpy(p, (const unsigned char *)entity + a, n);
-}
-static void put(BHEntity *entity, unsigned long a, const void *p, unsigned long n)
-{
-    memcpy((unsigned char *)entity + a, p, n);
-}
 static BHHomingProjectileContext *context(BHEntity *entity)
 {
     BHHomingProjectileContext *ctx;
-    memcpy(&ctx, entity->payload + 608, 4);
+    memcpy(&ctx, &entity->bindings.homing_projectile, 4);
     return ctx;
 }
 static int live(BHHomingProjectileContext *ctx, BHEntity *entity, unsigned long generation)
@@ -46,8 +38,8 @@ int bh_ballistic_projectile_bind(BHBallisticProjectileContext *owner, BHEntity *
     if (ctx->particles->pool != ctx->pool || ctx->contacts->pool != ctx->pool || ctx->flash->pool != ctx->pool ||
         ctx->markers->pool != ctx->pool)
         return 0;
-    memcpy(entity->payload + 608, &ctx, 4);
-    memcpy(entity->payload + 612, &entity->generation, 4);
+    memcpy(&entity->bindings.homing_projectile, &ctx, 4);
+    memcpy(&entity->bindings.projectile_generation, &entity->generation, 4);
     entity->step = bh_ballistic_projectile_tick;
     ctx->error = 0;
     return 1;
@@ -159,18 +151,18 @@ void bh_ballistic_projectile_tick(BHEntity *entity)
     int result, is_world, decision;
     if (!ctx || !bh_math_environment_supported())
         return;
-    memcpy(&generation, entity->payload + 612, 4);
+    memcpy(&generation, &entity->bindings.projectile_generation, 4);
     if (!live(ctx, entity, generation))
     {
         ctx->error = 3;
         return;
     }
     ctx->error = 0;
-    get(entity, 0xe8, &life, 4);
-    get(entity, 0x118, &voice, 4);
+    memcpy(&life, &entity->projectile.countdown, 4);
+    memcpy(&voice, &entity->projectile.sound, 4);
     remaining = (double)life - (1.0 / 30.0);
     bh_round_float(&life, remaining);
-    put(entity, 0xe8, &life, 4);
+    memcpy(&entity->projectile.countdown, &life, 4);
     if (!(remaining > 0))
     {
         retire(ctx, entity, voice);
@@ -179,10 +171,10 @@ void bh_ballistic_projectile_tick(BHEntity *entity)
     old = entity->position;
     velocity = entity->origin;
     offset(&end, &old, &velocity, -1.0 / 30.0);
-    get(entity, 0x124, &cached, 4);
-    get(entity, 0x128, &ignore, 4);
-    get(entity, 0x11c, &suppress, 4);
-    get(entity, 0x130, &source, 4);
+    memcpy(&cached, &entity->projectile.world, 4);
+    memcpy(&ignore, &entity->projectile.ignore, 4);
+    memcpy(&suppress, &entity->projectile.identity, 4);
+    memcpy(&source, &entity->projectile.secondary, 4);
     self.kind = ignore ? BH_WORLD_HIT_ACTOR : BH_WORLD_HIT_END;
     self.object.actor = ignore;
     memset(&hit, 0, sizeof(hit));
@@ -192,7 +184,7 @@ void bh_ballistic_projectile_tick(BHEntity *entity)
         ctx->error = 2;
         return;
     }
-    put(entity, 0x124, &cached, 4);
+    memcpy(&entity->projectile.world, &cached, 4);
     if (!result)
     {
         if (cached)
@@ -245,7 +237,7 @@ void bh_ballistic_projectile_tick(BHEntity *entity)
                         return;
                     }
                 }
-                get(actor, 0xf4, &actor, 4);
+                actor = actor->actor.room_next;
             }
         }
         entity->position = end;
@@ -286,7 +278,7 @@ void bh_ballistic_projectile_tick(BHEntity *entity)
     decision = rand();
     if (_isnan(incidence) || (double)incidence < (double)decision * (1.0 / 24000.0))
     {
-        put(entity, 0x128, &none, 4);
+        memcpy(&entity->projectile.ignore, &none, 4);
         entity->position = point;
         bh_round_float(&entity->origin.x, (double)normal.x * ((double)stored_dot * (-2.0)) + velocity.x);
         bh_round_float(&entity->origin.y, (double)normal.y * ((double)stored_dot * (-2.0)) + velocity.y);
@@ -308,7 +300,7 @@ void bh_ballistic_projectile_tick(BHEntity *entity)
         bh_round_float(&entity->origin.y, (double)entity->origin.y * .75);
         bh_round_float(&entity->origin.z, (double)entity->origin.z * .75);
         bh_round_float(&life, (double)life * .75);
-        put(entity, 0xe8, &life, 4);
+        memcpy(&entity->projectile.countdown, &life, 4);
         bh_round_float(&impulse, (double)incidence * (-.1));
         bh_round_float(&damage, (double)incidence * .25);
         hit_packets(ctx, response, &point, &normal, impulse, damage, suppress, source);

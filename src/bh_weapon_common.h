@@ -12,7 +12,11 @@ typedef struct BHWeaponCommonState
     unsigned long word_e8, available_ec, word_f0, word_f4;
     BHWeaponHudState hud;
     long word_100;
-    unsigned long word_104, word_108;
+    union {
+        struct BHWorldGeometry *cached_world;
+        unsigned long word_104; /* original fixture alias */
+    };
+    unsigned long word_108;
     long ammo, ammo_limit, delay;
 } BHWeaponCommonState;
 /* Source field adapter over the real BHEntity allocation. No allocation,

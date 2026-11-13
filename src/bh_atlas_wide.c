@@ -1,11 +1,9 @@
 #include "bh_atlas_wide.h"
 #include <string.h>
 #include <stddef.h>
-typedef char wide_unit_size[sizeof(unsigned short) == 2 ? 1 : -1];
-typedef char wide_record_layout[sizeof(BHTextCommand) == 84 && offsetof(BHTextCommand, text) == 12 &&
-                                        offsetof(BHTextCommand, next) == 80
-                                    ? 1
-                                    : -1];
+static_assert(sizeof(unsigned short) == 2, "wide unit size");
+static_assert(sizeof(BHTextCommand) == 84 && offsetof(BHTextCommand, text) == 12 && offsetof(BHTextCommand, next) == 80,
+              "wide record layout");
 static long wrapped_add(long a, long b)
 {
     unsigned long bits = (unsigned long)a + (unsigned long)b;

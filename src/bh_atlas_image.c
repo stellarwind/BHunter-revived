@@ -2,11 +2,11 @@
 #include "bh_pcx_reader.h"
 #include <stddef.h>
 #include <string.h>
-typedef char atlas_size[sizeof(BHAtlasImage) == 0x13ac ? 1 : -1];
-typedef char atlas_palette[offsetof(BHAtlasImage, palette) == 0x84 ? 1 : -1];
-typedef char atlas_format[offsetof(BHAtlasImage, pixel) == 0x384 ? 1 : -1];
-typedef char atlas_rectangles[offsetof(BHAtlasImage, rectangles) == 0x3a8 ? 1 : -1];
-typedef char atlas_surface[offsetof(BHAtlasImage, surface) == 0x13a8 ? 1 : -1];
+static_assert(sizeof(BHAtlasImage) == 0x13ac, "BHAtlasImage size");
+static_assert(offsetof(BHAtlasImage, palette) == 0x84, "BHAtlasImage.palette offset");
+static_assert(offsetof(BHAtlasImage, pixel) == 0x384, "BHAtlasImage.pixel offset");
+static_assert(offsetof(BHAtlasImage, rectangles) == 0x3a8, "BHAtlasImage.rectangles offset");
+static_assert(offsetof(BHAtlasImage, surface) == 0x13a8, "BHAtlasImage.surface offset");
 static int fail(BHAtlasContext *c, BHTextureError error)
 {
     if (c)

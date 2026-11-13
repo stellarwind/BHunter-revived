@@ -1,32 +1,33 @@
 #include "bh_actor_exit_image.h"
+#include "bh_entities.h"
 #include <stddef.h>
 
-typedef char exit_model_stride[sizeof(BHActorExitModelRecord) == 0x174 ? 1 : -1];
-typedef char exit_count_offset[offsetof(BHActorExitModelRecord, portal_count) == 0x18 ? 1 : -1];
-typedef char exit_room_descriptor[offsetof(BHActorExitRoomImage, count_record) == 0xf8 ? 1 : -1];
-typedef char exit_room_portals[offsetof(BHActorExitRoomImage, portals) == 0x1cc ? 1 : -1];
-typedef char exit_portal_neighbor[offsetof(BHPortal, neighbor) == 0x38 ? 1 : -1];
-typedef char exit_neighbor_flags[offsetof(BHActorExitNeighborImage, flags) == 0x114 ? 1 : -1];
-
-#define EXIT_INT(p, o) (*(int *)((unsigned char *)(p) + (o)))
-#define EXIT_UINT(p, o) (*(unsigned int *)((unsigned char *)(p) + (o)))
-#define EXIT_POINTER(p, o) (*(void **)((unsigned char *)(p) + (o)))
+static_assert(sizeof(BHActorExitModelRecord) == 0x174, "BHActorExitModelRecord size");
+static_assert(offsetof(BHActorExitModelRecord, portal_count) == 0x18, "BHActorExitModelRecord.portal_count offset");
+static_assert(offsetof(BHActorExitRoomImage, count_record) == 0xf8, "BHActorExitRoomImage.count_record offset");
+static_assert(offsetof(BHActorExitRoomImage, flags) == 0x114, "BHActorExitRoomImage.flags offset");
+static_assert(sizeof(BHActorExitRoomImage) == 0x334, "BHActorExitRoomImage size");
+static_assert(offsetof(BHActorExitRoomImage, portals) == 0x1cc, "BHActorExitRoomImage.portals offset");
+static_assert(offsetof(BHPortal, neighbor) == 0x38, "BHPortal.neighbor offset");
+static_assert(offsetof(BHActorExitNeighborImage, flags) == 0x114, "BHActorExitNeighborImage.flags offset");
 
 int bh_actor_choose_exit_core(void *actor, void *room_image, void *preferred_image, int excluded)
 {
+    BHEntity *entity = (BHEntity *)actor;
+    BHActorExitRoomImage *room = (BHActorExitRoomImage *)room_image;
     int eligible = 0, allowed[10], i, count;
-    const BHActorExitModelRecord *model = bh_actor_exit_counts + EXIT_INT(room_image, 0xf8);
+    const BHActorExitModelRecord *model = bh_actor_exit_counts + room->count_record;
     if (preferred_image)
     {
         for (i = 0; i < model->portal_count; ++i)
         {
-            void *neighbor = EXIT_POINTER(room_image, 0x204 + i * 60);
+            void *neighbor = room->portals[i].neighbor;
             if (neighbor == preferred_image && neighbor &&
-                (!(EXIT_UINT(neighbor, 0x114) & 0x10) || EXIT_INT(actor, 0xfc) <= 0))
+                (!(((BHActorExitNeighborImage *)neighbor)->flags & 0x10) || (*(int *)&entity->actor.kind) <= 0))
             {
-                if (!(EXIT_UINT(neighbor, 0x114) & 0x20))
+                if (!(((BHActorExitNeighborImage *)neighbor)->flags & 0x20))
                     return i;
-                if (EXIT_INT(actor, 0xfc) != 0 && EXIT_INT(actor, 0xfc) != 6)
+                if ((*(int *)&entity->actor.kind) != 0 && (*(int *)&entity->actor.kind) != 6)
                     return i;
             }
         }
@@ -34,9 +35,11 @@ int bh_actor_choose_exit_core(void *actor, void *room_image, void *preferred_ima
     count = model->portal_count;
     for (i = 0; i < count; ++i)
     {
-        void *neighbor = EXIT_POINTER(room_image, 0x204 + i * 60);
-        if (!neighbor || ((EXIT_UINT(neighbor, 0x114) & 0x10) && EXIT_INT(actor, 0xfc) > 0) ||
-            ((EXIT_UINT(neighbor, 0x114) & 0x20) && (EXIT_INT(actor, 0xfc) == 0 || EXIT_INT(actor, 0xfc) == 6)) ||
+        void *neighbor = room->portals[i].neighbor;
+        if (!neighbor ||
+            ((((BHActorExitNeighborImage *)neighbor)->flags & 0x10) && (*(int *)&entity->actor.kind) > 0) ||
+            ((((BHActorExitNeighborImage *)neighbor)->flags & 0x20) &&
+             ((*(int *)&entity->actor.kind) == 0 || (*(int *)&entity->actor.kind) == 6)) ||
             i == excluded)
             allowed[i] = 0;
         else
@@ -48,10 +51,9 @@ int bh_actor_choose_exit_core(void *actor, void *room_image, void *preferred_ima
     if (eligible)
     {
         unsigned int state, rank;
-        EXIT_UINT(actor, 0x1e8) =
-            ((EXIT_UINT(actor, 0x1e8) * -0x1ca90000) | ((EXIT_UINT(actor, 0x1e8) * 0xe357) >> 16)) ^
-            EXIT_UINT(actor, 0x1e8);
-        state = EXIT_UINT(actor, 0x1e8);
+        entity->actor.random =
+            ((entity->actor.random * -0x1ca90000) | ((entity->actor.random * 0xe357) >> 16)) ^ entity->actor.random;
+        state = entity->actor.random;
         rank = ((state & 0x7fff) * eligible) >> 15;
         i = -1;
         do
@@ -67,7 +69,3 @@ int bh_actor_choose_exit_core(void *actor, void *room_image, void *preferred_ima
 
 const BHActorExitModelRecord bh_actor_exit_counts[7] = {{{0}, 0, {0}}, {{0}, 1, {0}}, {{0}, 2, {0}}, {{0}, 3, {0}},
                                                         {{0}, 4, {0}}, {{0}, 5, {0}}, {{0}, 6, {0}}};
-
-#undef EXIT_INT
-#undef EXIT_UINT
-#undef EXIT_POINTER

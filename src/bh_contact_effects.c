@@ -7,11 +7,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef char spark_state_size[sizeof(BHSparkState) == 48 ? 1 : -1];
-typedef char spark_velocity_offset[offsetof(BHSparkState, velocity) == 0x24 ? 1 : -1];
-typedef char impact_age_offset[offsetof(BHImpactState, age) == 0x18 ? 1 : -1];
-typedef char impact_normal_offset[offsetof(BHImpactState, normal) == 0x2c ? 1 : -1];
-typedef char state_payload_offset[offsetof(BHEntity, payload) + 4 == 0xe8 ? 1 : -1];
+static_assert(sizeof(BHSparkState) == 48, "BHSparkState size");
+static_assert(offsetof(BHSparkState, velocity) == 0x24, "BHSparkState.velocity offset");
+static_assert(offsetof(BHImpactState, age) == 0x18, "BHImpactState.age offset");
+static_assert(offsetof(BHImpactState, normal) == 0x2c, "BHImpactState.normal offset");
+static_assert(offsetof(BHEntity, payload) + 4 == 0xe8, "state payload offset");
 static void spark_tick(BHEntity *entity);
 static void spark_refresh(BHEntity *entity, void *packet);
 static void impact_tick(BHEntity *entity);
@@ -20,12 +20,12 @@ static void rays_refresh(BHEntity *entity, void *packet);
 static BHContactEffects *context(BHEntity *entity)
 {
     BHContactEffects *ctx;
-    memcpy(&ctx, entity->payload + 64, sizeof(ctx));
+    memcpy(&ctx, &entity->bindings.contact_effects, sizeof(ctx));
     return ctx;
 }
 static void bind(BHEntity *entity, BHContactEffects *ctx)
 {
-    memcpy(entity->payload + 64, &ctx, sizeof(ctx));
+    memcpy(&entity->bindings.contact_effects, &ctx, sizeof(ctx));
 }
 static BHSparkState *spark(BHEntity *entity)
 {

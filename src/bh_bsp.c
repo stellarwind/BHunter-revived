@@ -6,12 +6,12 @@
 #include <math.h>
 #include <float.h>
 
-typedef char material_size[sizeof(BHBspMaterial) == 32 ? 1 : -1];
-typedef char vertex_size[sizeof(BHBspVertex) == 60 ? 1 : -1];
-typedef char edge_size[sizeof(BHBspEdge) == 16 ? 1 : -1];
-typedef char face_size[sizeof(BHBspFace) == 12 ? 1 : -1];
-typedef char node_size[sizeof(BHBspNode) == 56 ? 1 : -1];
-typedef char leaf_size[sizeof(BHBspLeaf) == 8 ? 1 : -1];
+static_assert(sizeof(BHBspMaterial) == 32, "BHBspMaterial size");
+static_assert(sizeof(BHBspVertex) == 60, "BHBspVertex size");
+static_assert(sizeof(BHBspEdge) == 16, "BHBspEdge size");
+static_assert(sizeof(BHBspFace) == 12, "BHBspFace size");
+static_assert(sizeof(BHBspNode) == 56, "BHBspNode size");
+static_assert(sizeof(BHBspLeaf) == 8, "BHBspLeaf size");
 static const unsigned long strides[] = {32, 60, 16, 12, 56, 8};
 static void *allocate(unsigned long n, void *user)
 {

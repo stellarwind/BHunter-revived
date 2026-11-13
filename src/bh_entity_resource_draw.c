@@ -3,9 +3,9 @@
 #include <stddef.h>
 #include <string.h>
 
-typedef char payload_phase_offset[offsetof(BHEntity, payload) + 0x18 == 0xfc ? 1 : -1];
-typedef char payload_resource_offset[offsetof(BHEntity, payload) + 0x30 == 0x114 ? 1 : -1];
-typedef char position_offset[offsetof(BHEntity, position) == 0x0c ? 1 : -1];
+static_assert(offsetof(BHEntity, payload) + 0x18 == 0xfc, "payload phase offset");
+static_assert(offsetof(BHEntity, payload) + 0x30 == 0x114, "payload resource offset");
+static_assert(offsetof(BHEntity, position) == 0x0c, "BHEntity.position offset");
 
 static void read_payload(const BHEntity *entity, unsigned long offset, void *out, unsigned long length)
 {

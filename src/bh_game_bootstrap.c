@@ -31,7 +31,7 @@ typedef struct BHBootstrapRowSpec
 } BHBootstrapRowSpec;
 #include "bh_bootstrap_data.h"
 #define N(a) (sizeof(a) / sizeof((a)[0]))
-typedef char mission_action_alias[sizeof(BHMenuMissionRow) == sizeof(BHMenuMissionAction) ? 1 : -1];
+static_assert(sizeof(BHMenuMissionRow) == sizeof(BHMenuMissionAction), "mission action alias");
 static int fail(BHGameBootstrap *c, int error)
 {
     c->error = error;

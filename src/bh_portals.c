@@ -2,8 +2,8 @@
 #include <stddef.h>
 #include <string.h>
 
-typedef char portal_size_check[sizeof(BHPortal) == 60 ? 1 : -1];
-typedef char portal_neighbor_check[offsetof(BHPortal, neighbor) == 56 ? 1 : -1];
+static_assert(sizeof(BHPortal) == 60, "BHPortal size");
+static_assert(offsetof(BHPortal, neighbor) == 56, "BHPortal.neighbor offset");
 
 static int finite_word(float value)
 {

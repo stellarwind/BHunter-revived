@@ -7,13 +7,13 @@
 #include <float.h>
 #include <math.h>
 
-typedef char camera_mode_size[sizeof(BHCameraModeState) == 0x30 ? 1 : -1];
-typedef char camera_state_size[sizeof(BHCameraState) == 0x9c ? 1 : -1];
-typedef char camera_blend_offset[offsetof(BHCameraState, blend_remaining) == 0x68 ? 1 : -1];
-typedef char camera_elapsed_offset[offsetof(BHCameraState, elapsed) == 0x70 ? 1 : -1];
-typedef char camera_position_offset[offsetof(BHCameraState, position) == 0x78 ? 1 : -1];
-typedef char camera_angles_offset[offsetof(BHCameraState, angles) == 0x84 ? 1 : -1];
-typedef char camera_velocity_offset[offsetof(BHCameraState, velocity) == 0x90 ? 1 : -1];
+static_assert(sizeof(BHCameraModeState) == 0x30, "BHCameraModeState size");
+static_assert(sizeof(BHCameraState) == 0x9c, "BHCameraState size");
+static_assert(offsetof(BHCameraState, blend_remaining) == 0x68, "BHCameraState.blend_remaining offset");
+static_assert(offsetof(BHCameraState, elapsed) == 0x70, "BHCameraState.elapsed offset");
+static_assert(offsetof(BHCameraState, position) == 0x78, "BHCameraState.position offset");
+static_assert(offsetof(BHCameraState, angles) == 0x84, "BHCameraState.angles offset");
+static_assert(offsetof(BHCameraState, velocity) == 0x90, "BHCameraState.velocity offset");
 
 int bh_camera_state_init(BHCameraState *state, long mode)
 {

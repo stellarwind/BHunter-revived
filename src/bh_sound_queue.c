@@ -7,12 +7,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef char voice_size[sizeof(BHSoundVoice) == 0x48 ? 1 : -1];
-typedef char voice_generation[offsetof(BHSoundVoice, generation) == 0x3e ? 1 : -1];
-typedef char voice_flags[offsetof(BHSoundVoice, pending) == 0x46 ? 1 : -1];
-typedef char resource_size[sizeof(BHSoundResource) == 0xac ? 1 : -1];
-typedef char resource_count[offsetof(BHSoundResource, buffer_count) == 0x4c ? 1 : -1];
-typedef char resource_voices[offsetof(BHSoundResource, voices) == 0x9c ? 1 : -1];
+static_assert(sizeof(BHSoundVoice) == 0x48, "BHSoundVoice size");
+static_assert(offsetof(BHSoundVoice, generation) == 0x3e, "BHSoundVoice.generation offset");
+static_assert(offsetof(BHSoundVoice, pending) == 0x46, "BHSoundVoice.pending offset");
+static_assert(sizeof(BHSoundResource) == 0xac, "BHSoundResource size");
+static_assert(offsetof(BHSoundResource, buffer_count) == 0x4c, "BHSoundResource.buffer_count offset");
+static_assert(offsetof(BHSoundResource, voices) == 0x9c, "BHSoundResource.voices offset");
 static void *allocate(unsigned long size, void *user)
 {
     return malloc(size);

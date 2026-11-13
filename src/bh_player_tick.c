@@ -1,4 +1,5 @@
 #include "bh_player_tick.h"
+#include "bh_rail_wagon.h"
 #include "bh_player_propulsion.h"
 #include "bh_input_evaluate.h"
 #include "bh_round.h"
@@ -21,16 +22,6 @@ static float rf(double v)
     float f;
     bh_round_float(&f, v);
     return f;
-}
-static unsigned long word(BHEntity *entity, unsigned long o)
-{
-    unsigned long n;
-    memcpy(&n, (char *)entity + o, 4);
-    return n;
-}
-static void setword(BHEntity *entity, unsigned long o, unsigned long n)
-{
-    memcpy((char *)entity + o, &n, 4);
 }
 static int fail(BHPlayerTick *ctx, int n)
 {
@@ -406,11 +397,11 @@ static int near_contacts(BHPlayerTick *ctx)
         if (distance < 12.25)
         {
             ++ctx->near_contacts;
-            if (kind == 9 && word(actor, 0x12c) == (unsigned long)actor && distance < 6.0025 && !word(actor, 0x134) &&
-                !word(actor, 0x138))
+            if (kind == 9 && bh_rail_wagon_state(actor)->leader == actor && distance < 6.0025 &&
+                !bh_rail_wagon_state(actor)->rider && !bh_rail_wagon_state(actor)->checkpoint)
             {
-                setword(actor, 0x134, (unsigned long)entity);
-                setword(actor, 0x138, word(actor, 0x128));
+                bh_rail_wagon_state(actor)->rider = entity;
+                bh_rail_wagon_state(actor)->checkpoint = bh_rail_wagon_state(actor)->segment;
                 sound(ctx, ctx->resources.target_cue, 2, .7f, &entity->position, &entity->origin);
                 sound(ctx, ctx->resources.lock_cue, 2, 1, &entity->position, &entity->origin);
             }
@@ -490,7 +481,7 @@ static void ring_refresh(BHEntity *entity, void *unused)
 {
     BHPlayerTick *ctx;
     (void)unused;
-    memcpy(&ctx, entity->payload + 528, 4);
+    memcpy(&ctx, &entity->bindings.player_tick, 4);
     if (ctx && ctx->contacts && ctx->camera_yaw)
         bh_impact_ring_draw(ctx->contacts->queue, ctx->resources.water_ring, entity, ctx->camera_yaw);
 }
@@ -509,7 +500,7 @@ static void ring(BHPlayerTick *ctx, const BHVec3 *position, const BHVec3 *normal
     state = bh_contact_impact_state(ctx->contacts, entity);
     state->size = size;
     state->duration = rf((double)size * .1);
-    memcpy(entity->payload + 528, &ctx, 4);
+    memcpy(&entity->bindings.player_tick, &ctx, 4);
     entity->refresh = ring_refresh;
 }
 static int ground(BHPlayerTick *ctx)
@@ -878,8 +869,9 @@ static int damage_timers(BHPlayerTick *ctx)
     unsigned long i, image, handle;
     short countdown;
     speed = rf(((double)forward.x * motion.x + (double)forward.z * motion.z) + (double)forward.y * motion.y);
-    bh_sound_update(ctx->sound, entity->player.engine_sound, state->mode ? rf(.3 + (double)entity->player.engine_output * .05) : 0,
-                    rf(.5 + fabs(speed) * .01), &entity->position, &motion);
+    bh_sound_update(ctx->sound, entity->player.engine_sound,
+                    state->mode ? rf(.3 + (double)entity->player.engine_output * .05) : 0, rf(.5 + fabs(speed) * .01),
+                    &entity->position, &motion);
     /* The player still ticks behind the flyby menu. It must not recreate
        damage/boost loops after return_menu has retired their handles. */
     if (!state->mode)
@@ -1016,7 +1008,8 @@ static int damage_timers(BHPlayerTick *ctx)
         }
         if (timer <= 0)
         {
-            entity->player.shield_time = 0; /* Source lifetime fix: the original threshold stop can be followed by a restart during the final second. Retire the owned voice at actual expiry. */
+            entity->player.shield_time =
+                0; /* Source lifetime fix: the original threshold stop can be followed by a restart during the final second. Retire the owned voice at actual expiry. */
             handle = entity->player.shield_sound;
             if (handle != BH_SOUND_INVALID)
             {
@@ -1102,9 +1095,9 @@ int bh_player_tick(BHPlayerTick *ctx)
         return fail(ctx, ctx->error ? ctx->error : 3);
     recoil(entity);
     /* Send a single pose for a transition tick, after the model or spawn changes. */
-    send_death_pose = state->mode > 1 && (state->death_frames == DEATH_WRECK_FRAME - 1 ||
-                                         state->death_frames == DEATH_HIDE_FRAME - 1 ||
-                                         state->death_frames == DEATH_RESPAWN_FRAME - 1);
+    send_death_pose = state->mode > 1 &&
+                      (state->death_frames == DEATH_WRECK_FRAME - 1 || state->death_frames == DEATH_HIDE_FRAME - 1 ||
+                       state->death_frames == DEATH_RESPAWN_FRAME - 1);
     if (!send_death_pose && !send_pose(ctx, 0))
         return fail(ctx, ctx->error ? ctx->error : 3);
     if (!state->damage_warning)

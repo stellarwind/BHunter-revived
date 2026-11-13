@@ -1,13 +1,21 @@
 #ifndef BH_CONFIG_H
 #define BH_CONFIG_H
 
-/* Recovered x86 payload layout; field semantics beyond the flags/device name
-   and profile links remain opaque. Source ownership context is explicit. */
+/* Recovered x86 profile layout. The byte view is retained for exact disk I/O. */
 typedef struct BHInputProfile
 {
     unsigned long flags;
     struct BHInputProfile *next, *previous;
-    unsigned char payload[60];
+    union {
+        unsigned char payload[60];
+        struct
+        {
+            char name[16];
+            unsigned char motion_keys[6], motion_joystick[3], motion_mouse[3];
+            unsigned char primary_keys[9], secondary_keys[9], camera_keys[10];
+            unsigned char camera_joystick[2], camera_mouse[2];
+        };
+    };
     const struct BHInputProfile *baseline;
 } BHInputProfile;
 typedef void *(*BHConfigAllocate)(unsigned long bytes, void *user);
@@ -28,9 +36,21 @@ typedef enum BHConfigError
     BH_CONFIG_LIMIT,
     BH_CONFIG_CONTAINER
 } BHConfigError;
+typedef struct BHConfigSettings
+{
+    unsigned short hardware_flags;
+    short unlocked_mission;
+    long hardware_acceleration, resolution;
+    char device_name[128];
+    unsigned char reserved[276];
+} BHConfigSettings;
+
 typedef struct BHConfig
 {
-    unsigned char settings[416];
+    union {
+        unsigned char settings[416];
+        BHConfigSettings values;
+    };
     BHInputProfile *profiles;
     unsigned long profile_count;
     int loaded_defaults;

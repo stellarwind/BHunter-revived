@@ -112,7 +112,7 @@ int bh_weapon_empty_dispatch(BHWeaponEmptyContext *context, BHWeaponRegistry *re
         context->error = BH_WEAPON_EMPTY_STALE;
         return 0;
     }
-    if (state->method_124 == 0x00433dc0UL)
+    if (state->trigger_identity == 0x00433dc0UL)
         return bh_weapon_index9_trigger(context, entity, player);
-    return bh_weapon_empty_trigger(context, state->method_124, entity, player);
+    return bh_weapon_empty_trigger(context, state->trigger_identity, entity, player);
 }

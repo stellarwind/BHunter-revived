@@ -32,13 +32,9 @@ static BHEntity *response_query_select(BHActorResponseContext *c, BHEntity *e, c
     }
     return result.target;
 }
-#define RESPONSE_QUERY_FLOAT(offset) (*(float *)((char *)e + (offset)))
-#define RESPONSE_QUERY_WORD(offset) (*(unsigned long *)((char *)e + (offset)))
-#define RESPONSE_QUERY_SHORT(offset) (*(unsigned short *)((char *)e + (offset)))
-#define RESPONSE_QUERY_VEC(offset) ((BHVec3 *)((char *)e + (offset)))
 #define RESPONSE_QUERY_CURVE(phase, destination)                                                                       \
-    bh_camera_curve((phase), (destination), RESPONSE_QUERY_VEC(0x120), RESPONSE_QUERY_VEC(0x144),                      \
-                    RESPONSE_QUERY_VEC(0x150), RESPONSE_QUERY_VEC(0x12c))
+    bh_camera_curve((phase), (destination), &e->actor.route_start, &e->actor.route_first, &e->actor.route_second,      \
+                    &e->actor.route_end)
 
 void bh_actor_response_query_core(BHEntity *e, void *packet, BHActorResponseContext *c)
 {
@@ -60,15 +56,15 @@ void bh_actor_response_query_core(BHEntity *e, void *packet, BHActorResponseCont
     case 4:
         if (unlink_actor(c, e))
         {
-            bh_sound_stop(c->damage->route->sound, RESPONSE_QUERY_WORD(0x104));
+            bh_sound_stop(c->damage->route->sound, e->actor.sound);
             bh_entity_release(c->vehicles->pool, e);
         }
         return;
     case 17:
-        if (p[1] == RESPONSE_QUERY_WORD(0x1b8))
-            RESPONSE_QUERY_WORD(0x1b8) = 0;
-        if (p[1] == RESPONSE_QUERY_WORD(0x1ac))
-            RESPONSE_QUERY_WORD(0x1ac) = 0;
+        if (p[1] == e->actor.target_identity)
+            e->actor.target_identity = 0;
+        if (p[1] == e->actor.damage_source_identity)
+            e->actor.damage_source_identity = 0;
         return;
     case 13:
         p[5] = 1;
@@ -76,27 +72,27 @@ void bh_actor_response_query_core(BHEntity *e, void *packet, BHActorResponseCont
         return;
     case 2:
         e->step = bh_actor_response_tick;
-        RESPONSE_QUERY_FLOAT(0x168) = response_query_stored((double)f[4] * f[7] + RESPONSE_QUERY_FLOAT(0x168));
-        RESPONSE_QUERY_FLOAT(0x16c) = response_query_stored((double)f[5] * f[7] + RESPONSE_QUERY_FLOAT(0x16c));
-        RESPONSE_QUERY_FLOAT(0x170) = response_query_stored((double)f[6] * f[7] + RESPONSE_QUERY_FLOAT(0x170));
+        e->actor.offset_velocity.x = response_query_stored((double)f[4] * f[7] + e->actor.offset_velocity.x);
+        e->actor.offset_velocity.y = response_query_stored((double)f[5] * f[7] + e->actor.offset_velocity.y);
+        e->actor.offset_velocity.z = response_query_stored((double)f[6] * f[7] + e->actor.offset_velocity.z);
         return;
     case 11:
-        if (RESPONSE_QUERY_FLOAT(0x19c) >= .15)
+        if (e->actor.fade >= .15)
         {
-            retained = (double)RESPONSE_QUERY_FLOAT(0x19c) - .1;
-            RESPONSE_QUERY_FLOAT(0x19c) = response_query_stored(retained);
+            retained = (double)e->actor.fade - .1;
+            e->actor.fade = response_query_stored(retained);
             if (retained < .1)
-                RESPONSE_QUERY_FLOAT(0x19c) = .1f;
+                e->actor.fade = .1f;
             e->step = bh_actor_response_tick;
         }
-        else if (RESPONSE_QUERY_WORD(0x118))
+        else if (e->actor.destroy_when_faded)
         {
-            RESPONSE_QUERY_FLOAT(0x194) = 2;
+            e->actor.damage = 2;
             e->step = bh_actor_response_tick;
         }
         return;
     case 0:
-        type = RESPONSE_QUERY_WORD(0xfc);
+        type = e->actor.kind;
         severity = f[1];
         if (type == 6)
         {
@@ -109,37 +105,35 @@ void bh_actor_response_query_core(BHEntity *e, void *packet, BHActorResponseCont
             else
                 severity = 0;
         }
-        if (p[2] && RESPONSE_QUERY_FLOAT(0x194) + severity > .2 && p[2] != (unsigned long)e)
-            RESPONSE_QUERY_WORD(0x1b8) = p[2];
+        if (p[2] && e->actor.damage + severity > .2 && p[2] != (unsigned long)e)
+            e->actor.target_identity = p[2];
         if (type == 2 || type == 6)
         {
-            if (!RESPONSE_QUERY_FLOAT(0x188))
+            if (!e->actor.speed)
                 return;
-            ratio = (double)RESPONSE_QUERY_FLOAT(0x180) / RESPONSE_QUERY_FLOAT(0x184);
-            numerator =
-                ((double)RESPONSE_QUERY_FLOAT(0x188) * RESPONSE_QUERY_FLOAT(0x198)) * RESPONSE_QUERY_FLOAT(0x184);
-            scale_wide = (double)RESPONSE_QUERY_FLOAT(0x198) - severity * (-10.0);
+            ratio = (double)e->actor.phase / e->actor.duration;
+            numerator = ((double)e->actor.speed * e->actor.speed_scale) * e->actor.duration;
+            scale_wide = (double)e->actor.speed_scale - severity * (-10.0);
             scale = response_query_stored(scale_wide);
             if (scale_wide > 2)
                 scale = 2;
-            duration = numerator / ((double)RESPONSE_QUERY_FLOAT(0x188) * scale);
+            duration = numerator / ((double)e->actor.speed * scale);
             phase = ratio * duration;
             if (!response_query_timing_valid(c, duration, phase))
                 return;
-            RESPONSE_QUERY_FLOAT(0x198) = response_query_stored(scale_wide);
+            e->actor.speed_scale = response_query_stored(scale_wide);
             if (scale_wide > 2)
-                RESPONSE_QUERY_FLOAT(0x198) = 2;
-            RESPONSE_QUERY_FLOAT(0x184) = response_query_stored(duration);
-            RESPONSE_QUERY_FLOAT(0x180) = response_query_stored(phase);
-            RESPONSE_QUERY_SHORT(0x1e6) = (unsigned short)(__int64)(duration * 30);
-            RESPONSE_QUERY_SHORT(0x1e4) =
-                (unsigned short)(__int64)((short)bh_actor_route_now(c->damage->route) - phase * 30);
+                e->actor.speed_scale = 2;
+            e->actor.duration = response_query_stored(duration);
+            e->actor.phase = response_query_stored(phase);
+            e->actor.duration_ticks = (unsigned short)(__int64)(duration * 30);
+            e->actor.tick = (unsigned short)(__int64)((short)bh_actor_route_now(c->damage->route) - phase * 30);
         }
         e->step = bh_actor_response_tick;
-        retained = severity + RESPONSE_QUERY_FLOAT(0x194);
-        RESPONSE_QUERY_FLOAT(0x194) = response_query_stored(retained);
+        retained = severity + e->actor.damage;
+        e->actor.damage = response_query_stored(retained);
         if (retained >= 1)
-            RESPONSE_QUERY_WORD(0x1ac) = p[2];
+            e->actor.damage_source_identity = p[2];
         return;
     case 1:
     case 3:
@@ -149,14 +143,14 @@ void bh_actor_response_query_core(BHEntity *e, void *packet, BHActorResponseCont
     default:
         return;
     }
-    ratio = (double)RESPONSE_QUERY_FLOAT(0x180) / RESPONSE_QUERY_FLOAT(0x184);
+    ratio = (double)e->actor.phase / e->actor.duration;
     t = response_query_stored(ratio);
     if (p[0] == 3)
     {
         RESPONSE_QUERY_CURVE(t, (BHVec3 *)(f + 1));
-        f[1] = response_query_stored((double)RESPONSE_QUERY_FLOAT(0x15c) + f[1]);
-        f[2] = response_query_stored((double)RESPONSE_QUERY_FLOAT(0x160) + f[2]);
-        f[3] = response_query_stored((double)RESPONSE_QUERY_FLOAT(0x164) + f[3]);
+        f[1] = response_query_stored((double)e->actor.offset.x + f[1]);
+        f[2] = response_query_stored((double)e->actor.offset.y + f[2]);
+        f[3] = response_query_stored((double)e->actor.offset.z + f[3]);
         return;
     }
     /* The original network query samples before, at, after in that order. */
@@ -165,19 +159,19 @@ void bh_actor_response_query_core(BHEntity *e, void *packet, BHActorResponseCont
     RESPONSE_QUERY_CURVE(t, &at);
     if (p[0] == 15)
     {
-        at.x = response_query_stored((double)RESPONSE_QUERY_FLOAT(0x15c) + at.x);
-        at.y = response_query_stored((double)RESPONSE_QUERY_FLOAT(0x160) + at.y);
-        at.z = response_query_stored((double)RESPONSE_QUERY_FLOAT(0x164) + at.z);
+        at.x = response_query_stored((double)e->actor.offset.x + at.x);
+        at.y = response_query_stored((double)e->actor.offset.y + at.y);
+        at.z = response_query_stored((double)e->actor.offset.z + at.z);
         selected = response_query_select(c, e, &at);
         if (!c->error)
-            RESPONSE_QUERY_WORD(0x1b8) = (unsigned long)selected;
+            e->actor.target_identity = (unsigned long)selected;
         return;
     }
     if (p[0] == 1)
     {
-        dx = ((double)RESPONSE_QUERY_FLOAT(0x15c) + at.x) - f[1];
-        dy = ((double)RESPONSE_QUERY_FLOAT(0x160) + at.y) - f[2];
-        dz = ((double)RESPONSE_QUERY_FLOAT(0x164) + at.z) - f[3];
+        dx = ((double)e->actor.offset.x + at.x) - f[1];
+        dy = ((double)e->actor.offset.y + at.y) - f[2];
+        dz = ((double)e->actor.offset.z + at.z) - f[3];
         delta.x = response_query_stored(dx);
         delta.y = response_query_stored(dy);
         delta.z = response_query_stored(dz);
@@ -186,12 +180,12 @@ void bh_actor_response_query_core(BHEntity *e, void *packet, BHActorResponseCont
         if (root > 0 && length < f[5])
         {
             factor = (((1.0 - (double)length / f[5]) * f[4]) * .003) / length;
-            *(volatile float *)((char *)e + 0x168) =
-                response_query_stored(factor * delta.x + RESPONSE_QUERY_FLOAT(0x168));
-            *(volatile float *)((char *)e + 0x16c) =
-                response_query_stored(factor * delta.y + RESPONSE_QUERY_FLOAT(0x16c));
-            *(volatile float *)((char *)e + 0x170) =
-                response_query_stored(factor * delta.z + RESPONSE_QUERY_FLOAT(0x170));
+            *(volatile float *)&e->actor.offset_velocity =
+                response_query_stored(factor * delta.x + e->actor.offset_velocity.x);
+            *(volatile float *)(&e->actor.offset_velocity.y) =
+                response_query_stored(factor * delta.y + e->actor.offset_velocity.y);
+            *(volatile float *)(&e->actor.offset_velocity.z) =
+                response_query_stored(factor * delta.z + e->actor.offset_velocity.z);
             *(BHEntityStep volatile *)&e->step = bh_actor_response_tick;
         }
         return;
@@ -209,12 +203,8 @@ void bh_actor_response_query_core(BHEntity *e, void *packet, BHActorResponseCont
     f[7] = response_query_stored((px - (double)f[4]) * 30);
     f[8] = response_query_stored((py - (double)f[5]) * 30);
     f[9] = response_query_stored((pz - nz) * 30);
-    f[1] = response_query_stored((double)RESPONSE_QUERY_FLOAT(0x15c) + at.x);
-    f[2] = response_query_stored((double)RESPONSE_QUERY_FLOAT(0x160) + at.y);
-    f[3] = response_query_stored((double)RESPONSE_QUERY_FLOAT(0x164) + at.z);
+    f[1] = response_query_stored((double)e->actor.offset.x + at.x);
+    f[2] = response_query_stored((double)e->actor.offset.y + at.y);
+    f[3] = response_query_stored((double)e->actor.offset.z + at.z);
 }
-#undef RESPONSE_QUERY_FLOAT
-#undef RESPONSE_QUERY_WORD
-#undef RESPONSE_QUERY_SHORT
-#undef RESPONSE_QUERY_VEC
 #undef RESPONSE_QUERY_CURVE

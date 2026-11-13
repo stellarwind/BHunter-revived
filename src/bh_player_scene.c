@@ -18,9 +18,9 @@
 #include <math.h>
 #include <float.h>
 
-typedef char scene_player_pointer_size[sizeof(void *) == 4 ? 1 : -1];
-typedef char scene_player_payload_offset[offsetof(BHEntity, payload) == 0xe4 ? 1 : -1];
-typedef char scene_random_range[RAND_MAX == 32767 ? 1 : -1];
+static_assert(sizeof(void *) == 4, "scene player pointer size");
+static_assert(offsetof(BHEntity, payload) == 0xe4, "BHEntity.payload offset");
+static_assert(RAND_MAX == 32767, "scene random range");
 
 static float stored(double n)
 {
@@ -104,10 +104,9 @@ static void aim(BHPlayerScene *scene)
             gauge = 0;
         else if (gauge > 1)
             gauge = 1;
-        velocity =
-            stored(((double)entity->velocity.x * forward.x + (double)entity->velocity.y * forward.y +
-                    (double)entity->velocity.z * forward.z) *
-                   .006666666666666667);
+        velocity = stored(((double)entity->velocity.x * forward.x + (double)entity->velocity.y * forward.y +
+                           (double)entity->velocity.z * forward.z) *
+                          .006666666666666667);
         if (!(velocity >= 0))
             velocity = 0;
         else if (velocity > 1)
@@ -443,8 +442,7 @@ int bh_player_scene_draw(BHPlayerScene *scene)
         attached[2] = bh_interpolation_mark();
 #endif
         scene->markers->display_width = *scene->display_width;
-        if (!bh_hud_markers_draw(scene->markers, *scene->actor_head, &entity->position,
-                                 &entity->player.frame_phase))
+        if (!bh_hud_markers_draw(scene->markers, *scene->actor_head, &entity->position, &entity->player.frame_phase))
             fail(scene, BH_PLAYER_SCENE_OWNER);
         {
             BHEntity *pickup = *scene->pickup_head;

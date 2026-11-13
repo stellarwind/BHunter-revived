@@ -1,7 +1,7 @@
 #include "bh_player_reset.h"
 
-typedef char reset_player_table_fits[sizeof(BHEntity) >= 0x2bb ? 1 : -1];
-typedef char reset_weapon_state_offset[sizeof(void *) == 4 ? 1 : -1];
+static_assert(sizeof(BHEntity) >= 0x2bb, "reset player table fits");
+static_assert(sizeof(void *) == 4, "reset weapon state offset");
 
 static int player_live(BHEntityPool *pool, BHEntity *player)
 {

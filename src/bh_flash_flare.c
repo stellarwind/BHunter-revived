@@ -35,16 +35,16 @@ static int greater_equal(double a, double b)
 static BHFlashFlareContext *context(BHEntity *e)
 {
     BHFlashFlareContext *c;
-    memcpy(&c, e->payload + 464, 4);
+    memcpy(&c, &e->bindings.flash_flare, 4);
     return c;
 }
 int bh_flash_flare_bind(BHFlashFlareContext *c, BHEntity *e, float lifetime, float strength, float size)
 {
     if (!c || !c->pool || !c->queue || !c->queue->commands || !bh_script_flash_bind(c->pool, e, lifetime))
         return 0;
-    memcpy(e->payload + 8, &strength, 4);
-    memcpy(e->payload + 12, &size, 4);
-    memcpy(e->payload + 464, &c, 4);
+    memcpy(&e->flash.strength, &strength, 4);
+    memcpy(&e->flash.size, &size, 4);
+    memcpy(&e->bindings.flash_flare, &c, 4);
     e->refresh = bh_flash_flare_refresh;
     return 1;
 }
@@ -53,9 +53,9 @@ void bh_flash_flare_refresh(BHEntity *e, void *packet)
     BHFlashFlareContext *c = context(e);
     float life, strength, size, value;
     (void)packet;
-    memcpy(&life, e->payload + 4, 4);
-    memcpy(&strength, e->payload + 8, 4);
-    memcpy(&size, e->payload + 12, 4);
+    memcpy(&life, &e->flash.countdown, 4);
+    memcpy(&strength, &e->flash.strength, 4);
+    memcpy(&size, &e->flash.size, 4);
     bh_round_float(&value, (1.0 - (double)life * 10.0) * strength);
     bh_flare_queue(c->queue, &e->position, size, value, c->textures[0], c->textures[1], c->textures[2], c->textures[3],
                    0);

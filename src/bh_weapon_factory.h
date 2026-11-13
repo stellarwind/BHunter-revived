@@ -8,8 +8,25 @@ typedef struct BHWeaponObjectState
 {
     BHWeaponCommonState common; /* original +e8..+117 */
     unsigned long word_118;     /* factory leaves this word alone */
-    unsigned long method_11c, method_120, method_124;
-    unsigned long method_128, method_12c, method_130;
+    /* Offset aliases retain the original fixture vocabulary without extra storage. */
+    union {
+        unsigned long ready_identity, method_11c;
+    };
+    union {
+        unsigned long cancel_identity, method_120;
+    };
+    union {
+        unsigned long trigger_identity, method_124;
+    };
+    union {
+        unsigned long fire_identity, method_128;
+    };
+    union {
+        unsigned long tick_identity, method_12c;
+    };
+    union {
+        unsigned long hud_identity, method_130;
+    };
 } BHWeaponObjectState;
 typedef struct BHWeaponRecord
 {

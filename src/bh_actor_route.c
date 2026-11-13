@@ -7,18 +7,8 @@
 #include <string.h>
 #include <float.h>
 
-typedef char route_actor_links[offsetof(BHEntity, payload) == 0xe4 && sizeof(void *) == 4 ? 1 : -1];
-typedef char route_actor_owner[offsetof(BHEntity, opaque2b) == 0xc4 ? 1 : -1];
-static void read_field(const BHEntity *entity, unsigned long offset, void *out, unsigned long n)
-{
-    memcpy(out, (const unsigned char *)entity + offset, n);
-}
-static void write_field(BHEntity *entity, unsigned long offset, const void *in, unsigned long n)
-{
-    memcpy((unsigned char *)entity + offset, in, n);
-}
-#define READ(member, offset) read_field(entity, offset, &state->member, sizeof(state->member))
-#define WRITE(member, offset) write_field(entity, offset, &state->member, sizeof(state->member))
+static_assert(offsetof(BHEntity, payload) == 0xe4 && sizeof(void *) == 4, "route actor links");
+static_assert(offsetof(BHEntity, world) == 0xc4, "BHEntity.world offset");
 unsigned short bh_actor_route_now(const BHActorRouteContext *ctx)
 {
     return (unsigned short)*ctx->live_tick;
@@ -31,54 +21,52 @@ int bh_actor_route_read(const BHEntity *entity, BHActorRouteState *state)
 {
     if (!entity || !state)
         return 0;
-    READ(current, 0x1a4);
-    READ(next, 0x1a8);
-    READ(controls[0], 0x120);
-    READ(controls[1], 0x144);
-    READ(controls[2], 0x150);
-    READ(controls[3], 0x12c);
-    READ(portal_center, 0x138);
-    READ(phase, 0x180);
-    READ(duration, 0x184);
-    READ(speed, 0x188);
-    READ(u, 0x18c);
-    READ(v, 0x190);
-    READ(speed_scale, 0x198);
-    READ(jitter, 0x1b0);
-    READ(sound, 0x104);
-    READ(sound_frames, 0x108);
-    READ(random, 0x1e8);
-    READ(tick, 0x1e4);
-    READ(duration_ticks, 0x1e6);
+    state->current = entity->actor.current;
+    state->next = entity->actor.next;
+    state->controls[0] = entity->actor.route_start;
+    state->controls[1] = entity->actor.route_first;
+    state->controls[2] = entity->actor.route_second;
+    state->controls[3] = entity->actor.route_end;
+    state->portal_center = entity->actor.portal_center;
+    state->phase = entity->actor.phase;
+    state->duration = entity->actor.duration;
+    state->speed = entity->actor.speed;
+    state->u = entity->actor.u;
+    state->v = entity->actor.v;
+    state->speed_scale = entity->actor.speed_scale;
+    state->jitter = entity->actor.jitter;
+    state->sound = entity->actor.sound;
+    state->sound_frames = entity->actor.sound_frames;
+    state->random = entity->actor.random;
+    state->tick = entity->actor.tick;
+    state->duration_ticks = entity->actor.duration_ticks;
     return 1;
 }
 int bh_actor_route_write(BHEntity *entity, const BHActorRouteState *state)
 {
     if (!entity || !state)
         return 0;
-    WRITE(current, 0x1a4);
-    WRITE(next, 0x1a8);
-    WRITE(controls[0], 0x120);
-    WRITE(controls[1], 0x144);
-    WRITE(controls[2], 0x150);
-    WRITE(controls[3], 0x12c);
-    WRITE(portal_center, 0x138);
-    WRITE(phase, 0x180);
-    WRITE(duration, 0x184);
-    WRITE(speed, 0x188);
-    WRITE(u, 0x18c);
-    WRITE(v, 0x190);
-    WRITE(speed_scale, 0x198);
-    WRITE(jitter, 0x1b0);
-    WRITE(sound, 0x104);
-    WRITE(sound_frames, 0x108);
-    WRITE(random, 0x1e8);
-    WRITE(tick, 0x1e4);
-    WRITE(duration_ticks, 0x1e6);
+    entity->actor.current = state->current;
+    entity->actor.next = state->next;
+    entity->actor.route_start = state->controls[0];
+    entity->actor.route_first = state->controls[1];
+    entity->actor.route_second = state->controls[2];
+    entity->actor.route_end = state->controls[3];
+    entity->actor.portal_center = state->portal_center;
+    entity->actor.phase = state->phase;
+    entity->actor.duration = state->duration;
+    entity->actor.speed = state->speed;
+    entity->actor.u = state->u;
+    entity->actor.v = state->v;
+    entity->actor.speed_scale = state->speed_scale;
+    entity->actor.jitter = state->jitter;
+    entity->actor.sound = state->sound;
+    entity->actor.sound_frames = state->sound_frames;
+    entity->actor.random = state->random;
+    entity->actor.tick = state->tick;
+    entity->actor.duration_ticks = state->duration_ticks;
     return 1;
 }
-#undef READ
-#undef WRITE
 static int fail(BHActorRouteContext *ctx, BHActorRouteError e)
 {
     if (ctx)
@@ -238,7 +226,7 @@ int bh_actor_route_advance(BHActorRouteContext *ctx, BHEntity *entity)
         return fail(ctx, BH_ACTOR_ROUTE_TOPOLOGY);
     }
     image.count_record = (int)count;
-    *(unsigned long *)((char *)&image + 0x114) = room->query_flags;
+    image.flags = room->query_flags;
     binding.context = ctx;
     binding.room = &image;
     binding.current_identity = state.current ? (void *)&image : NULL;

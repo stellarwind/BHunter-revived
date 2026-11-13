@@ -9,6 +9,11 @@ typedef struct BHScriptWaitState
     long expected, variable_remaining, variable_expected;
     unsigned long retained28, retained2c;
 } BHScriptWaitState;
+static __inline BHScriptWaitState *bh_script_wait_fields(BHEntity *entity)
+{
+    return (BHScriptWaitState *)(entity->payload + 4);
+}
+
 typedef struct BHScriptWaitPacket
 {
     long event;

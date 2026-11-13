@@ -18,7 +18,7 @@ static void combine(int *status, int result)
 static BHVec3 angles(const BHEntity *entity, float roll)
 {
     BHVec3 velocity, result;
-    memcpy(&velocity, (const unsigned char *)entity + 0xf8, 12);
+    memcpy(&velocity, (char *)&entity->effect.velocity, 12);
     bh_round_float(&result.x, atan2((double)velocity.x, velocity.z));
     bh_round_float(&result.y,
                    atan2(-(double)velocity.y, sqrt((double)velocity.z * velocity.z + (double)velocity.x * velocity.x)));
@@ -34,7 +34,7 @@ int bh_effect_directional_draw(BHEffectDrawContext *ctx, const BHEntity *entity)
         return -1;
     rotation = angles(entity, 0);
     combine(&status, bh_draw_submit_resource(ctx->queue, 0, ctx->directional_model, &entity->position, &rotation, 1));
-    memcpy(&phase, (const unsigned char *)entity + 0xe8, 4);
+    memcpy(&phase, (char *)&entity->effect.lifetime, 4);
     bh_round_float(&angle, (double)phase * 1.5);
     combine(&status, bh_flare_queue(ctx->queue, &entity->position, 4, 50, ctx->timed_texture, 0, 0, 0, angle));
     return status;
@@ -47,10 +47,10 @@ int bh_effect_variable_draw(BHEffectDrawContext *ctx, const BHEntity *entity)
     int status = 1;
     if (!valid(ctx, entity))
         return -1;
-    memcpy(&model, (const unsigned char *)entity + 0x148, 4);
+    memcpy(&model, (char *)&entity->effect.model_resource, 4);
     if (model)
     {
-        memcpy(&roll, (const unsigned char *)entity + 0xf0, 4);
+        memcpy(&roll, (char *)&entity->effect.roll, 4);
         rotation = angles(entity, roll);
         combine(&status, bh_draw_submit_resource(ctx->queue, 0, model, &entity->position, &rotation, 1));
     }

@@ -1,6 +1,6 @@
 #include "bh_view_cull.h"
 #include "bh_round.h"
-typedef char cull_mask_size[sizeof(unsigned long) == 4 ? 1 : -1];
+static_assert(sizeof(unsigned long) == 4, "cull mask size");
 static double plane_distance(const BHViewPlane *p, float x, float y, float z)
 {
     return (((double)x * p->normal.x + (double)y * p->normal.y) + (double)z * p->normal.z) - p->offset;

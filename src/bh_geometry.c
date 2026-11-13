@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stddef.h>
 
-typedef char face_info_layout[sizeof(BHFaceInfo) == 44 && offsetof(BHFaceInfo, normal) == 28 ? 1 : -1];
+static_assert(sizeof(BHFaceInfo) == 44 && offsetof(BHFaceInfo, normal) == 28, "face info layout");
 /* 0044e060 publishes one process-persistent descriptor at004e0f98. Faces
    without a node normal retain its previous normal, even across owners. */
 static BHFaceInfo enumeration_descriptor;

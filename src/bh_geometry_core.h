@@ -16,13 +16,13 @@ typedef struct BHGeometryCoreView
     const BHBspFace *faces;
 } BHGeometryCoreView;
 
-typedef char geometry_core_vertices[offsetof(BHGeometryCoreView, vertices) == 0x44 ? 1 : -1];
-typedef char geometry_core_edges[offsetof(BHGeometryCoreView, edges) == 0x4c ? 1 : -1];
-typedef char geometry_core_flags[offsetof(BHGeometryCoreView, flags) == 0x78 ? 1 : -1];
-typedef char geometry_core_faces[offsetof(BHGeometryCoreView, faces) == 0x7c ? 1 : -1];
-typedef char geometry_core_vertex_stride[sizeof(BHBspVertex) == 60 ? 1 : -1];
-typedef char geometry_core_edge_stride[sizeof(BHBspEdge) == 16 ? 1 : -1];
-typedef char geometry_core_face_stride[sizeof(BHBspFace) == 12 ? 1 : -1];
+static_assert(offsetof(BHGeometryCoreView, vertices) == 0x44, "BHGeometryCoreView.vertices offset");
+static_assert(offsetof(BHGeometryCoreView, edges) == 0x4c, "BHGeometryCoreView.edges offset");
+static_assert(offsetof(BHGeometryCoreView, flags) == 0x78, "BHGeometryCoreView.flags offset");
+static_assert(offsetof(BHGeometryCoreView, faces) == 0x7c, "BHGeometryCoreView.faces offset");
+static_assert(sizeof(BHBspVertex) == 60, "BHBspVertex size");
+static_assert(sizeof(BHBspEdge) == 16, "BHBspEdge size");
+static_assert(sizeof(BHBspFace) == 12, "BHBspFace size");
 
 void bh_geometry_set_flags_core(BHGeometryCoreView *, long face, unsigned long flags);
 unsigned long bh_geometry_get_flags_core(const BHGeometryCoreView *, long face);

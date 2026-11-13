@@ -1,3 +1,4 @@
+#include "bh_field_access.h"
 #include "bh_actor_response.h"
 #include "bh_actor_vehicle_step.h"
 #include "bh_camera_curve.h"
@@ -15,7 +16,7 @@
 static BHActorAttackContext *vehicle_tick_context(BHEntity *entity)
 {
     BHActorAttackContext *ctx;
-    memcpy(&ctx, entity->payload + 596, 4);
+    memcpy(&ctx, &entity->bindings.actor_attack, 4);
     return ctx;
 }
 void bh_actor_attack_bound(BHEntity *entity)
@@ -32,36 +33,10 @@ void bh_actor_pursuit_bound(BHEntity *entity)
 }
 /* These are source field views, not distinct original owners. Emit the direct
    loads/stores used throughout 0043a1d0/00439910. */
-static __inline unsigned long word(BHEntity *entity, unsigned long o)
-{
-    unsigned long v;
-    memcpy(&v, (char *)entity + o, 4);
-    return v;
-}
-static __inline void setword(BHEntity *entity, unsigned long o, unsigned long v)
-{
-    memcpy((char *)entity + o, &v, 4);
-}
-static __inline float number(BHEntity *entity, unsigned long o)
-{
-    float v;
-    memcpy(&v, (char *)entity + o, 4);
-    return v;
-}
-static __inline void real(BHEntity *entity, unsigned long o, float v)
-{
-    memcpy((char *)entity + o, &v, 4);
-}
-static __inline short short_value(BHEntity *entity, unsigned long o)
-{
-    short v;
-    memcpy(&v, (char *)entity + o, 2);
-    return v;
-}
 static __inline BHActorResponseContext *context(BHEntity *entity)
 {
     BHActorResponseContext *ctx;
-    memcpy(&ctx, entity->payload + 588, 4);
+    memcpy(&ctx, &entity->bindings.actor_response, 4);
     return ctx;
 }
 static int live(BHActorResponseContext *ctx, BHEntity *entity)
@@ -81,32 +56,34 @@ static int unlink_actor(BHActorResponseContext *ctx, BHEntity *entity)
         ctx->error = 2;
         return 0;
     }
-    p = (BHEntity *)word(entity, 0xf8);
-    n = (BHEntity *)word(entity, 0xf4);
-    if ((p ? (BHEntity *)word(p, 0xf4) : room->actors) != entity || (n && (BHEntity *)word(n, 0xf8) != entity))
+    p = (BHEntity *)bh_field_u32(&entity->actor.room_previous);
+    n = (BHEntity *)bh_field_u32(&entity->actor.room_next);
+    if ((p ? (BHEntity *)bh_field_u32(&p->actor.room_next) : room->actors) != entity ||
+        (n && (BHEntity *)bh_field_u32(&n->actor.room_previous) != entity))
     {
         ctx->error = 2;
         return 0;
     }
     if (p)
-        setword(p, 0xf4, (unsigned long)n);
+        bh_field_store_u32(&p->actor.room_next, (unsigned long)n);
     else
         room->actors = n;
     if (n)
-        setword(n, 0xf8, (unsigned long)p);
-    p = (BHEntity *)word(entity, 0xec);
-    n = (BHEntity *)word(entity, 0xf0);
-    if ((p ? (BHEntity *)word(p, 0xf0) : ctx->vehicles->head) != entity || (n && (BHEntity *)word(n, 0xec) != entity))
+        bh_field_store_u32(&n->actor.room_previous, (unsigned long)p);
+    p = (BHEntity *)bh_field_u32(&entity->actor.global_previous);
+    n = (BHEntity *)bh_field_u32(&entity->actor.global_next);
+    if ((p ? (BHEntity *)bh_field_u32(&p->actor.global_next) : ctx->vehicles->head) != entity ||
+        (n && (BHEntity *)bh_field_u32(&n->actor.global_previous) != entity))
     {
         ctx->error = 2;
         return 0;
     }
     if (p)
-        setword(p, 0xf0, (unsigned long)n);
+        bh_field_store_u32(&p->actor.global_next, (unsigned long)n);
     else
         ctx->vehicles->head = n;
     if (n)
-        setword(n, 0xec, (unsigned long)p);
+        bh_field_store_u32(&n->actor.global_previous, (unsigned long)p);
     --ctx->vehicles->count;
     return 1;
 }
@@ -122,7 +99,7 @@ int bh_actor_response_bind(BHActorResponseContext *ctx, BHEntity *entity)
         !entity || ctx->damage->pool != ctx->vehicles->pool || ctx->vehicles->route != ctx->damage->route ||
         !live(ctx, entity))
         return 0;
-    memcpy(entity->payload + 588, &ctx, 4);
+    memcpy(&entity->bindings.actor_response, &ctx, 4);
     return bh_entity_set_query(ctx->vehicles->pool, entity, bh_actor_response_query);
 }
 #include "bh_actor_response_query_core.inc"
@@ -139,7 +116,8 @@ void bh_actor_response_query(BHEntity *entity, void *packet)
     event = *(unsigned long *)packet;
     if (event == 0 || event == 1 || event == 3 || event == 15 || event == 16)
     {
-        if (!bh_math_environment_supported() || number(entity, 0x184) <= 0 || !_finite(number(entity, 0x184)))
+        if (!bh_math_environment_supported() || bh_field_f32(&entity->actor.duration) <= 0 ||
+            !_finite(bh_field_f32(&entity->actor.duration)))
         {
             ctx->error = 3;
             return;
@@ -168,7 +146,7 @@ void bh_actor_response_tick(BHEntity *entity)
         ctx->error = 2;
         return;
     }
-    if (number(entity, 0x184) <= 0 || !number(entity, 0x188))
+    if (bh_field_f32(&entity->actor.duration) <= 0 || !bh_field_f32(&entity->actor.speed))
     {
         ctx->error = 3;
         return;

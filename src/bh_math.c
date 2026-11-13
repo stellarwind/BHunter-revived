@@ -2,9 +2,9 @@
 #include <math.h>
 #include <stddef.h>
 
-typedef char check_vec_size[sizeof(BHVec3) == 12 ? 1 : -1];
-typedef char check_matrix_size[sizeof(BHMat34) == 48 ? 1 : -1];
-typedef char check_vector_z[offsetof(BHVec3, z) == 8 ? 1 : -1];
+static_assert(sizeof(BHVec3) == 12, "BHVec3 size");
+static_assert(sizeof(BHMat34) == 48, "BHMat34 size");
+static_assert(offsetof(BHVec3, z) == 8, "BHVec3.z offset");
 
 /* 00401000. Distinct output required. Preserve each output's original
    x87 sum grouping; a uniform dot-product loop changes cancellation. */

@@ -1,19 +1,10 @@
+#include "bh_message_panel.h"
 #include "bh_menu_actions.h"
 #include "bh_platform.h"
 #include "bh_round.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-static long get(const void *p, unsigned long o)
-{
-    long v;
-    memcpy(&v, (const unsigned char *)p + o, 4);
-    return v;
-}
-static void put(void *p, unsigned long o, long v)
-{
-    memcpy((unsigned char *)p + o, &v, 4);
-}
 static int bounded(const char *s, unsigned long n)
 {
     return s && memchr(s, 0, n) != NULL;
@@ -125,9 +116,9 @@ void bh_menu_action_video(BHMenuActions *c, long row)
     c->error = 0;
     if (row == 0 || row == 2)
     {
-        unsigned long offset = row == 0 ? 4 : 8;
-        value = get(c->config->settings, offset);
-        put(c->config->settings, offset, 1 - (value & 1));
+        long *setting = row == 0 ? &c->config->values.hardware_acceleration : &c->config->values.resolution;
+        value = *setting;
+        *setting = 1 - (value & 1);
     }
     else if (row == 1)
     {
@@ -143,12 +134,12 @@ void bh_menu_action_video(BHMenuActions *c, long row)
                 c->error = 1;
                 return;
             }
-            if (!_stricmp(c->devices[i].name, (char *)c->config->settings + 12))
+            if (!_stricmp(c->devices[i].name, c->config->values.device_name))
                 index = i;
         }
         if (++index >= (long)c->device_count)
             index = 0;
-        strcpy((char *)c->config->settings + 12, c->devices[index].name);
+        strcpy(c->config->values.device_name, c->devices[index].name);
     }
     refresh(c, row);
 #endif
@@ -233,7 +224,7 @@ static int named(BHInputProfile *start, BHInputProfile *exclude, const char *nam
     BHInputProfile *p = start;
     do
     {
-        if (p != exclude && !_stricmp((const char *)p + 12, name))
+        if (p != exclude && !_stricmp(p->name, name))
             return 1;
         p = p->next;
     } while (p != start);
@@ -277,11 +268,11 @@ void bh_menu_action_profile_promote(BHMenuActions *c, long unused)
     p->baseline = base;
     strncpy(prefix, c->player_name, 12);
     prefix[12] = 0;
-    sprintf((char *)clone + 12, "%s #%d", prefix, suffix);
-    while (suffix < 9 && named(p, clone, (char *)clone + 12))
+    sprintf(clone->name, "%s #%d", prefix, suffix);
+    while (suffix < 9 && named(p, clone, clone->name))
     {
         ++suffix;
-        sprintf((char *)clone + 12, "%s #%d", prefix, suffix);
+        sprintf(clone->name, "%s #%d", prefix, suffix);
     }
     clone->flags = 1;
     *c->profiles->current = clone;
@@ -314,11 +305,11 @@ void bh_menu_action_graphics_notice(BHMenuActions *c, long unused)
     m->arena_used += sizeof(text);
     if (m->panel_entity && m->panel_step_identity && *m->panel_step_identity == 0x442950UL)
     {
-        memcpy(&time, m->panel_entity->payload + 4, 4);
+        memcpy(&time, &bh_message_panel_fields(m->panel_entity)->timer, 4);
         if (time > .5f)
         {
             time = .5f;
-            memcpy(m->panel_entity->payload + 4, &time, 4);
+            memcpy(&bh_message_panel_fields(m->panel_entity)->timer, &time, 4);
         }
     }
 #endif

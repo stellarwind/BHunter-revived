@@ -1,20 +1,10 @@
 #include "bh_actor_vehicle_lifetime.h"
 #include <string.h>
-static __inline BHEntity *link_at(BHEntity *entity, unsigned long offset)
-{
-    BHEntity *p;
-    memcpy(&p, (char *)entity + offset, 4);
-    return p;
-}
-static __inline void set_link(BHEntity *entity, unsigned long offset, BHEntity *p)
-{
-    memcpy((char *)entity + offset, &p, 4);
-}
 static BHPickupRoom *vehicle_release_room(BHActorVehicleLifetimeContext *ctx, BHEntity *actor)
 {
     BHWorldGeometry *current;
     unsigned long i;
-    memcpy(&current, (char *)actor + 0x1a4, 4);
+    memcpy(&current, (char *)&actor->actor.current, 4);
     return bh_actor_route_room(ctx->route, current);
 }
 static BHPickupRoom *vehicle_release_notice_room(BHActorVehicleLifetimeContext *ctx, BHEntity *actor, void *packet)
@@ -34,13 +24,15 @@ int bh_actor_vehicle_release(BHActorVehicleLifetimeContext *ctx, BHEntity *entit
     room = vehicle_release_room(ctx, entity);
     if (!room)
         return 0;
-    previous = link_at(entity, 0xf8);
-    next = link_at(entity, 0xf4);
-    if ((previous ? link_at(previous, 0xf4) : room->actors) != entity || (next && link_at(next, 0xf8) != entity))
+    previous = entity->actor.room_previous;
+    next = entity->actor.room_next;
+    if ((previous ? previous->actor.room_next : room->actors) != entity ||
+        (next && next->actor.room_previous != entity))
         return 0;
-    previous = link_at(entity, 0xec);
-    next = link_at(entity, 0xf0);
-    if ((previous ? link_at(previous, 0xf0) : ctx->head) != entity || (next && link_at(next, 0xec) != entity))
+    previous = entity->actor.global_previous;
+    next = entity->actor.global_next;
+    if ((previous ? previous->actor.global_next : ctx->head) != entity ||
+        (next && next->actor.global_previous != entity))
         return 0;
     return bh_actor_vehicle_release_core(entity, ctx);
 }

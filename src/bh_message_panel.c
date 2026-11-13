@@ -6,8 +6,8 @@
 #include <stddef.h>
 #include <string.h>
 
-typedef char message_panel_fields_size[sizeof(BHMessagePanelFields) == 20 ? 1 : -1];
-typedef char message_panel_cursor_offset[offsetof(BHMessagePanelFields, cursor) == 12 ? 1 : -1];
+static_assert(sizeof(BHMessagePanelFields) == 20, "BHMessagePanelFields size");
+static_assert(offsetof(BHMessagePanelFields, cursor) == 12, "BHMessagePanelFields.cursor offset");
 static BHMessagePanel *active_panel;
 
 BHMessagePanelFields *bh_message_panel_fields(BHEntity *entity)

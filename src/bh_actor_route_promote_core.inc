@@ -31,12 +31,6 @@ static __inline void promote_tangent(BHVec3 *out, const BHVec3 *point, const BHV
     out->z = promote_stored((double)point->z - (double)delta->z * (-1.3));
 }
 
-#define PROMOTE_FLOAT(offset) (*(float *)((char *)a + (offset)))
-#define PROMOTE_VEC(offset) (*(BHVec3 *)((char *)a + (offset)))
-#define PROMOTE_WORD(offset) (*(unsigned short *)((char *)a + (offset)))
-#define PROMOTE_WORLD(offset) (*(BHWorldGeometry **)((char *)a + (offset)))
-#define PROMOTE_LINK(actor, offset) (*(BHEntity **)((char *)(actor) + (offset)))
-
 int bh_actor_route_promote_core(BHEntity *a, const BHActorRoutePromotionBinding *binding, long incoming, long outgoing)
 {
     const BHPortal *in = binding->incoming, *out = binding->outgoing;
@@ -47,66 +41,64 @@ int bh_actor_route_promote_core(BHEntity *a, const BHActorRoutePromotionBinding 
     double length, duration, test_width;
     unsigned short ticks;
 
-    previous = PROMOTE_LINK(a, 0xf8);
+    previous = a->actor.room_previous;
     if (previous)
-        PROMOTE_LINK(previous, 0xf4) = PROMOTE_LINK(a, 0xf4);
+        previous->actor.room_next = a->actor.room_next;
     else
-        binding->old_room->actors = PROMOTE_LINK(a, 0xf4);
-    next = PROMOTE_LINK(a, 0xf4);
+        binding->old_room->actors = a->actor.room_next;
+    next = a->actor.room_next;
     if (next)
-        PROMOTE_LINK(next, 0xf8) = PROMOTE_LINK(a, 0xf8);
-    PROMOTE_WORLD(0x1a4) = PROMOTE_WORLD(0x1a8);
-    PROMOTE_WORLD(0xc4) = PROMOTE_WORLD(0x1a4);
-    PROMOTE_VEC(0x120) = PROMOTE_VEC(0x12c);
-    PROMOTE_LINK(a, 0xf4) = binding->room->actors;
+        next->actor.room_previous = a->actor.room_previous;
+    a->actor.current = a->actor.next;
+    a->world = a->actor.current;
+    a->actor.route_start = a->actor.route_end;
+    a->actor.room_next = binding->room->actors;
     binding->room->actors = a;
-    PROMOTE_LINK(a, 0xf8) = NULL;
-    next = PROMOTE_LINK(a, 0xf4);
+    a->actor.room_previous = NULL;
+    next = a->actor.room_next;
     if (next)
-        PROMOTE_LINK(next, 0xf8) = a;
+        next->actor.room_previous = a;
 
-    u = promote_stored((1.0 - (double)PROMOTE_FLOAT(0x18c)) * out->scratch[1] +
-                       (double)PROMOTE_FLOAT(0x18c) * out->scratch[0]);
-    v = promote_stored((1.0 - (double)PROMOTE_FLOAT(0x190)) * out->scratch[3] +
-                       (double)PROMOTE_FLOAT(0x190) * out->scratch[2]);
+    u = promote_stored((1.0 - (double)a->actor.u) * out->scratch[1] + (double)a->actor.u * out->scratch[0]);
+    v = promote_stored((1.0 - (double)a->actor.v) * out->scratch[3] + (double)a->actor.v * out->scratch[2]);
     cu = promote_stored(((double)out->scratch[1] + out->scratch[0]) * .5);
     cv = promote_stored(((double)out->scratch[3] + out->scratch[2]) * .5);
     plane = promote_stored((double)out->plane);
-    PROMOTE_WORLD(0x1a8) = (BHWorldGeometry *)out->neighbor;
+    a->actor.next = (BHWorldGeometry *)out->neighbor;
     switch (out->direction & 3UL)
     {
     case 0:
-        PROMOTE_FLOAT(0x13c) = cu;
-        PROMOTE_FLOAT(0x140) = cv;
-        PROMOTE_FLOAT(0x130) = u;
-        PROMOTE_FLOAT(0x138) = plane;
-        PROMOTE_FLOAT(0x12c) = plane;
-        PROMOTE_FLOAT(0x134) = v;
+        a->actor.portal_center.y = cu;
+        a->actor.portal_center.z = cv;
+        a->actor.route_end.y = u;
+        a->actor.portal_center.x = plane;
+        a->actor.route_end.x = plane;
+        a->actor.route_end.z = v;
         break;
     case 1:
-        PROMOTE_FLOAT(0x138) = cu;
-        PROMOTE_FLOAT(0x140) = cv;
-        PROMOTE_FLOAT(0x12c) = u;
-        PROMOTE_FLOAT(0x13c) = plane;
-        PROMOTE_FLOAT(0x130) = plane;
-        PROMOTE_FLOAT(0x134) = v;
+        a->actor.portal_center.x = cu;
+        a->actor.portal_center.z = cv;
+        a->actor.route_end.x = u;
+        a->actor.portal_center.y = plane;
+        a->actor.route_end.y = plane;
+        a->actor.route_end.z = v;
         break;
     default:
-        PROMOTE_FLOAT(0x138) = cu;
-        PROMOTE_FLOAT(0x13c) = cv;
-        PROMOTE_FLOAT(0x12c) = u;
-        PROMOTE_FLOAT(0x140) = plane;
-        PROMOTE_FLOAT(0x130) = v;
-        PROMOTE_FLOAT(0x134) = plane;
+        a->actor.portal_center.x = cu;
+        a->actor.portal_center.y = cv;
+        a->actor.route_end.x = u;
+        a->actor.portal_center.z = plane;
+        a->actor.route_end.y = v;
+        a->actor.route_end.z = plane;
         break;
     }
     if (out->direction == (in->direction ^ 4UL) && (world->query_flags & 8))
     {
-        PROMOTE_VEC(0x12c) = PROMOTE_VEC(0x120);
-        PROMOTE_FLOAT(0x12c + 4 * (out->direction & 3UL)) = plane;
-        promote_difference(&delta, &PROMOTE_VEC(0x12c), &PROMOTE_VEC(0x120));
-        PROMOTE_VEC(0x144) = PROMOTE_VEC(0x12c);
-        PROMOTE_VEC(0x150) = PROMOTE_VEC(0x120);
+        a->actor.route_end = a->actor.route_start;
+        ((float *)&a->actor.route_end)[(out->direction & 3UL)] = plane;
+        promote_difference(&delta, &a->actor.route_end, &a->actor.route_start);
+        a->actor.route_first = a->actor.route_end;
+        a->actor.route_second = a->actor.route_start;
         length = bh_vec3_snap_axis(&delta);
         length += length;
     }
@@ -114,31 +106,31 @@ int bh_actor_route_promote_core(BHEntity *a, const BHActorRoutePromotionBinding 
     {
         center.x = promote_stored(((double)world->minimum.x + world->maximum.x) * .5);
         center.z = promote_stored(((double)world->minimum.z + world->maximum.z) * .5);
-        center.y = promote_stored(((double)PROMOTE_FLOAT(0x130) + PROMOTE_FLOAT(0x124)) * .5);
-        promote_difference(&delta, &center, &PROMOTE_VEC(0x120));
+        center.y = promote_stored(((double)a->actor.route_end.y + a->actor.route_start.y) * .5);
+        promote_difference(&delta, &center, &a->actor.route_start);
         first_length = promote_stored(bh_vec3_snap_axis(&delta));
-        promote_tangent(&PROMOTE_VEC(0x144), &PROMOTE_VEC(0x120), &delta);
-        promote_difference(&delta, &center, &PROMOTE_VEC(0x12c));
+        promote_tangent(&a->actor.route_first, &a->actor.route_start, &delta);
+        promote_difference(&delta, &center, &a->actor.route_end);
         length = bh_vec3_snap_axis(&delta) + first_length;
-        promote_tangent(&PROMOTE_VEC(0x150), &PROMOTE_VEC(0x12c), &delta);
+        promote_tangent(&a->actor.route_second, &a->actor.route_end, &delta);
         if (incoming == outgoing)
         {
             reverse_z = -delta.z;
-            PROMOTE_FLOAT(0x144) = promote_stored((double)reverse_z + PROMOTE_FLOAT(0x144));
-            PROMOTE_FLOAT(0x148) = promote_stored((double)PROMOTE_FLOAT(0x148) - 2);
-            PROMOTE_FLOAT(0x14c) = promote_stored((double)PROMOTE_FLOAT(0x14c) + delta.x);
-            PROMOTE_FLOAT(0x150) = promote_stored((double)PROMOTE_FLOAT(0x150) - reverse_z);
-            PROMOTE_FLOAT(0x154) = promote_stored((double)PROMOTE_FLOAT(0x154) - (-2));
-            PROMOTE_FLOAT(0x158) = promote_stored((double)PROMOTE_FLOAT(0x158) - delta.x);
+            a->actor.route_first.x = promote_stored((double)reverse_z + a->actor.route_first.x);
+            a->actor.route_first.y = promote_stored((double)a->actor.route_first.y - 2);
+            a->actor.route_first.z = promote_stored((double)a->actor.route_first.z + delta.x);
+            a->actor.route_second.x = promote_stored((double)a->actor.route_second.x - reverse_z);
+            a->actor.route_second.y = promote_stored((double)a->actor.route_second.y - (-2));
+            a->actor.route_second.z = promote_stored((double)a->actor.route_second.z - delta.x);
         }
     }
-    PROMOTE_FLOAT(0x180) = 0;
-    duration = promote_stored(length / ((double)PROMOTE_FLOAT(0x188) * PROMOTE_FLOAT(0x198)));
-    PROMOTE_FLOAT(0x184) = (float)duration;
+    a->actor.phase = 0;
+    duration = promote_stored(length / ((double)a->actor.speed * a->actor.speed_scale));
+    a->actor.duration = (float)duration;
     if (!duration_ticks(duration, &ticks))
         return 0;
-    PROMOTE_WORD(0x1e6) = ticks;
-    PROMOTE_WORD(0x1e4) = bh_actor_route_now(binding->context);
+    a->actor.duration_ticks = ticks;
+    a->actor.tick = bh_actor_route_now(binding->context);
     test_width = (double)out->scratch[1] - out->scratch[0];
     width = promote_stored(test_width);
     if (test_width < 30)
@@ -158,20 +150,14 @@ int bh_actor_route_promote_core(BHEntity *a, const BHActorRoutePromotionBinding 
                     width = promote_stored(test_width);
                 if (width < 30)
                 {
-                    duration = (double)PROMOTE_FLOAT(0x184) / (((double)width - (-10.0)) * .025);
-                    PROMOTE_FLOAT(0x184) = promote_stored(duration);
+                    duration = (double)a->actor.duration / (((double)width - (-10.0)) * .025);
+                    a->actor.duration = promote_stored(duration);
                     if (!duration_ticks(duration, &ticks))
                         return 0;
-                    PROMOTE_WORD(0x1e6) = ticks;
+                    a->actor.duration_ticks = ticks;
                 }
             }
         }
     }
-    return _finite(PROMOTE_FLOAT(0x184)) != 0;
+    return _finite(a->actor.duration) != 0;
 }
-#undef PROMOTE_FLOAT
-#undef PROMOTE_VEC
-#undef PROMOTE_WORD
-#undef PROMOTE_WORLD
-
-#undef PROMOTE_LINK

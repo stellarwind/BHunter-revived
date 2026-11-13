@@ -19,7 +19,29 @@ int bh_weapon_dispatch(BHWeaponDispatch *c, unsigned int selection, BHWeaponSlot
     }
     c->error = 0;
     ++c->calls;
-    memcpy(&id, (char *)weapon + slot - 0xe8, 4);
+    switch (slot)
+    {
+    case BH_WEAPON_READY:
+        id = weapon->ready_identity;
+        break;
+    case BH_WEAPON_CANCEL:
+        id = weapon->cancel_identity;
+        break;
+    case BH_WEAPON_TRIGGER:
+        id = weapon->trigger_identity;
+        break;
+    case BH_WEAPON_FIRE:
+        id = weapon->fire_identity;
+        break;
+    case BH_WEAPON_TICK:
+        id = weapon->tick_identity;
+        break;
+    case BH_WEAPON_HUD:
+        id = weapon->hud_identity;
+        break;
+    default:
+        return 0;
+    }
     c->identity = id;
     switch (id)
     {
@@ -123,13 +145,11 @@ int bh_weapon_dispatch(BHWeaponDispatch *c, unsigned int selection, BHWeaponSlot
         p.position = c->player->position;
         p.forward = c->player->basis[2];
         p.aim = c->player->player.aim_direction;
-        if (c->arc_hud)
-            result = bh_weapon_hud_arc(c->arc_hud, &weapon->common.hud, &p);
+        result = bh_weapon_hud_arc(c->arc_hud, &weapon->common.hud, &p);
         break;
     case 0x004314f0UL:
         if (c->target_hud)
-            if (c->target_hud)
-                result = bh_weapon_hud_target_draw(c->target_hud, &weapon->common.hud);
+            result = bh_weapon_hud_target_draw(c->target_hud, &weapon->common.hud);
         break;
     default:
         c->error = 2;

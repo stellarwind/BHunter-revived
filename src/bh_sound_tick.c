@@ -6,9 +6,9 @@
 #include <math.h>
 #include <string.h>
 
-typedef char distance_offset[offsetof(BHSoundVoice, distance_squared) == 0x2c ? 1 : -1];
-typedef char listener_offset[offsetof(BHSoundVoice, listener_index) == 0x40 ? 1 : -1];
-typedef char range_offset[offsetof(BHSoundResource, audible_range) == 0x94 ? 1 : -1];
+static_assert(offsetof(BHSoundVoice, distance_squared) == 0x2c, "BHSoundVoice.distance_squared offset");
+static_assert(offsetof(BHSoundVoice, listener_index) == 0x40, "BHSoundVoice.listener_index offset");
+static_assert(offsetof(BHSoundResource, audible_range) == 0x94, "BHSoundResource.audible_range offset");
 static int native_result(BHSoundQueue *sound_queue, BHSoundTickStats *s, long hr)
 {
     sound_queue->last_hresult = hr;

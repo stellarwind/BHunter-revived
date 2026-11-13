@@ -1,7 +1,7 @@
 #include "bh_world_edit.h"
 #include "bh_round.h"
 #include <stddef.h>
-typedef char editor_geometry_first[offsetof(BHWorldEditPlacement, geometry) == 0 ? 1 : -1];
+static_assert(offsetof(BHWorldEditPlacement, geometry) == 0, "BHWorldEditPlacement.geometry offset");
 static long add(long a, long b)
 {
     return (long)((unsigned long)a + (unsigned long)b);

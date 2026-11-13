@@ -2,8 +2,8 @@
 #include "bh_atlas_text.h"
 #include <string.h>
 #include <stddef.h>
-typedef char menu_row_layout
-    [sizeof(BHMenuRow) == 28 && offsetof(BHMenuRow, title) == 12 && offsetof(BHMenuRow, refresh) == 24 ? 1 : -1];
+static_assert(sizeof(BHMenuRow) == 28 && offsetof(BHMenuRow, title) == 12 && offsetof(BHMenuRow, refresh) == 24,
+              "menu row layout");
 static short yadd(short value, int add)
 {
     unsigned short bits = (unsigned short)value + (unsigned short)add;

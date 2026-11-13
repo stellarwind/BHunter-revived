@@ -2,15 +2,14 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
-typedef char draw_model_vertices[offsetof(BHModel, vertices) == 0x44 ? 1 : -1];
-typedef char draw_model_faces[offsetof(BHModel, faces) == 0x54 ? 1 : -1];
-typedef char draw_model_nodes[offsetof(BHModel, nodes) == 0x5c ? 1 : -1];
-typedef char draw_model_leaves[offsetof(BHModel, leaves) == 0x64 ? 1 : -1];
-typedef char draw_model_images[offsetof(BHModel, images) == 0x68 ? 1 : -1];
-typedef char draw_vertex_size[sizeof(BHBspVertex) == sizeof(BHClipVertex) && sizeof(BHClipVertex) == 60 ? 1 : -1];
-typedef char
-    draw_vertex_frame[offsetof(BHClipVertex, frame) == 0x34 && offsetof(BHClipVertex, projected) == 0x38 ? 1 : -1];
-typedef char draw_image_flags[offsetof(BHTextureImage, flags) == 0x50 ? 1 : -1];
+static_assert(offsetof(BHModel, vertices) == 0x44, "BHModel.vertices offset");
+static_assert(offsetof(BHModel, faces) == 0x54, "BHModel.faces offset");
+static_assert(offsetof(BHModel, nodes) == 0x5c, "BHModel.nodes offset");
+static_assert(offsetof(BHModel, leaves) == 0x64, "BHModel.leaves offset");
+static_assert(offsetof(BHModel, images) == 0x68, "BHModel.images offset");
+static_assert(sizeof(BHBspVertex) == sizeof(BHClipVertex) && sizeof(BHClipVertex) == 60, "draw vertex size");
+static_assert(offsetof(BHClipVertex, frame) == 0x34 && offsetof(BHClipVertex, projected) == 0x38, "draw vertex frame");
+static_assert(offsetof(BHTextureImage, flags) == 0x50, "BHTextureImage.flags offset");
 static void *allocate(unsigned long bytes, void *user)
 {
     return malloc(bytes);

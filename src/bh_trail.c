@@ -1,3 +1,4 @@
+#include "bh_field_access.h"
 #include "bh_trail.h"
 #ifdef BH_SDL_BACKEND
 #include "bh_render_interpolation.h"
@@ -8,41 +9,21 @@
 #include <string.h>
 #include <math.h>
 #include <float.h>
-static void get(const BHEntity *e, unsigned long o, void *p, unsigned long n)
+static void trail_number(float *field, double value)
 {
-    memcpy(p, (const unsigned char *)e + o, n);
-}
-static void put(BHEntity *e, unsigned long o, const void *p, unsigned long n)
-{
-    memcpy((unsigned char *)e + o, p, n);
-}
-static float scalar(const BHEntity *e, unsigned long o)
-{
-    float f;
-    get(e, o, &f, 4);
-    return f;
-}
-static void number(BHEntity *e, unsigned long o, double v)
-{
-    float f;
-    bh_round_float(&f, v);
-    put(e, o, &f, 4);
-}
-static BHEntity *link(const BHEntity *e, unsigned long o)
-{
-    BHEntity *p;
-    get(e, o, &p, 4);
-    return p;
+    float stored;
+    bh_round_float(&stored, value);
+    memcpy(field, &stored, sizeof(stored));
 }
 static BHTrailContext *context(BHEntity *e)
 {
     BHTrailContext *p;
-    memcpy(&p, e->payload + 600, 4);
+    memcpy(&p, &e->bindings.trail, 4);
     return p;
 }
 static void bind_context(BHEntity *e, BHTrailContext *c)
 {
-    memcpy(e->payload + 600, &c, 4);
+    memcpy(&e->bindings.trail, &c, 4);
 }
 static int live(BHEntityPool *p, BHEntity *e)
 {
@@ -66,21 +47,21 @@ int bh_trail_bind(BHTrailContext *c, BHEntity *e, const BHTrailParameters *p)
             return 0;
         generation = p->attached->generation;
     }
-    put(e, 0xe8, &generation, 4);
-    put(e, 0xec, &p->bucket, 4);
-    put(e, 0xf0, &p->point_word, 4);
-    put(e, 0xf4, &p->attached, 4);
-    put(e, 0xf8, &zero, 4);
-    put(e, 0xfc, &p->lifetime, 4);
-    put(e, 0x100, &p->decay, 4);
-    put(e, 0x104, &p->interval, 4);
-    put(e, 0x108, &p->node_lifetime, 4);
-    put(e, 0x10c, &p->width, 4);
-    number(e, 0x110, 0);
-    put(e, 0x114, &p->width_step, 4);
-    put(e, 0x118, &p->texture_scale, 4);
-    put(e, 0x11c, &p->image, 4);
-    put(e, 0x120, &p->drift, 12);
+    memcpy(&e->trail.attachment_generation, &generation, 4);
+    memcpy(&e->trail.bucket, &p->bucket, 4);
+    memcpy(&e->trail.point_word, &p->point_word, 4);
+    memcpy(&e->trail.attached, &p->attached, 4);
+    memcpy(&e->trail.newest, &zero, 4);
+    memcpy(&e->trail.lifetime, &p->lifetime, 4);
+    memcpy(&e->trail.decay, &p->decay, 4);
+    memcpy(&e->trail.interval, &p->interval, 4);
+    memcpy(&e->trail.node_lifetime, &p->node_lifetime, 4);
+    memcpy(&e->trail.width, &p->width, 4);
+    trail_number(&e->trail.countdown, 0);
+    memcpy(&e->trail.width_step, &p->width_step, 4);
+    memcpy(&e->trail.texture_scale, &p->texture_scale, 4);
+    memcpy(&e->trail.image, &p->image, 4);
+    memcpy(&e->trail.drift, &p->drift, 12);
     bind_context(e, c);
     e->step = bh_trail_generate;
     e->refresh = NULL;
@@ -162,24 +143,25 @@ void bh_trail_node_tick(BHEntity *e)
     double next;
     if (!c || !bh_math_environment_supported())
         return;
-    next = (double)scalar(e, 0xf0) - scalar(e, 0x100);
-    number(e, 0xf0, next);
+    next = (double)bh_field_f32(&e->trail_node.alpha) - bh_field_f32(&e->trail_node.decay);
+    trail_number(&e->trail_node.alpha, next);
     if (next < 0)
     {
-        older = link(e, 0xec);
-        newer = link(e, 0xe8);
+        older = e->trail_node.older;
+        newer = e->trail_node.newer;
         if (older)
-            put(older, 0xe8, &newer, 4);
+            memcpy(&older->trail_node.newer, &newer, 4);
         if (newer)
-            put(newer, 0xec, &older, 4);
+            memcpy(&newer->trail_node.older, &older, 4);
         bh_entity_release(c->pool, e);
         return;
     }
-    get(e, 0x114, &drift, 12);
-    number(e, 0xc, (double)drift.x + e->position.x);
-    number(e, 0x10, (double)drift.y + e->position.y);
-    number(e, 0x14, (double)drift.z + e->position.z);
-    number(e, 0xf4, (double)scalar(e, 0x104) + scalar(e, 0xf4));
+    memcpy(&drift, &e->trail_node.drift, 12);
+    trail_number(&e->position.x, (double)drift.x + e->position.x);
+    trail_number(&e->position.y, (double)drift.y + e->position.y);
+    trail_number(&e->position.z, (double)drift.z + e->position.z);
+    trail_number(&e->trail_node.width,
+                 (double)bh_field_f32(&e->trail_node.width_step) + bh_field_f32(&e->trail_node.width));
 }
 void bh_trail_refresh(BHEntity *e, void *unused)
 {
@@ -189,32 +171,32 @@ void bh_trail_refresh(BHEntity *e, void *unused)
     unsigned long bucket, image, count = 0, n = 0;
     float zero = 0;
     (void)unused;
-    if (!c || !link(e, 0xec))
+    if (!c || !e->trail_node.older)
         return;
-    get(e, 0x108, &bucket, 4);
+    memcpy(&bucket, &e->trail_node.bucket, 4);
     header = bh_queue_reserve(c->queue, (long)bucket);
     if (!header)
         return;
-    get(e, 0x110, &image, 4);
+    memcpy(&image, &e->trail_node.image, 4);
     header->resource = image;
-    for (node = e; node && n++ < c->pool->capacity; node = link(node, 0xec))
+    for (node = e; node && n++ < c->pool->capacity; node = node->trail_node.older)
     {
         point = bh_queue_reserve(c->queue, (long)bucket);
         if (!point)
             continue;
         point->kind = BH_DRAW_PATH_POINT;
         memcpy(&point->resource, &node->position, 12);
-        get(node, 0xf4, point->words + 2, 4);
-        get(node, 0xf8, point->words + 4, 4);
-        get(node, 0xfc, point->words + 5, 4);
-        get(node, 0x10c, point->words + 6, 4);
-        if (count && link(node, 0xec))
-            get(node, 0xf0, point->words + 3, 4);
+        memcpy(point->words + 2, &node->trail_node.width, 4);
+        memcpy(point->words + 4, &node->trail_node.texture_phase, 4);
+        memcpy(point->words + 5, &node->trail_node.distance, 4);
+        memcpy(point->words + 6, &node->trail_node.point_word, 4);
+        if (count && node->trail_node.older)
+            memcpy(point->words + 3, &node->trail_node.alpha, 4);
         else
             memcpy(point->words + 3, &zero, 4);
 #ifdef BH_SDL_BACKEND
         {
-            BHEntity *older = link(node, 0xec);
+            BHEntity *older = node->trail_node.older;
             bh_interpolation_trail_point((unsigned long)(point - c->queue->commands), (unsigned long)node,
                                          node->generation, (unsigned long)older, older ? older->generation : 0, image);
         }
@@ -235,25 +217,25 @@ void bh_trail_generate(BHEntity *e)
     BHVec3 drift;
     if (!c || !bh_math_environment_supported())
         return;
-    lifetime = scalar(e, 0xfc);
+    lifetime = bh_field_f32(&e->trail.lifetime);
     next = lifetime - (1.0 / 30.0);
-    number(e, 0xfc, next);
+    trail_number(&e->trail.lifetime, next);
     if (lifetime > 0 && !(next > 0))
     {
         bh_entity_release(c->pool, e);
         return;
     }
-    next = (double)scalar(e, 0x110) - (1.0 / 30.0);
-    number(e, 0x110, next);
+    next = (double)bh_field_f32(&e->trail.countdown) - (1.0 / 30.0);
+    trail_number(&e->trail.countdown, next);
     if (next > 0)
         return;
-    number(e, 0x110, (double)scalar(e, 0x104) + next);
-    attached = link(e, 0xf4);
-    get(e, 0xe8, &generation, 4);
+    trail_number(&e->trail.countdown, (double)bh_field_f32(&e->trail.interval) + next);
+    attached = e->trail.attached;
+    memcpy(&generation, &e->trail.attachment_generation, 4);
     if (attached && attached->generation != generation)
     {
         attached = NULL;
-        put(e, 0xf4, &attached, 4);
+        memcpy(&e->trail.attached, &attached, 4);
     }
     if (attached)
     {
@@ -269,16 +251,16 @@ void bh_trail_generate(BHEntity *e)
         ++c->failures;
         return;
     }
-    older = link(e, 0xf8);
-    put(node, 0xec, &older, 4);
+    older = e->trail.newest;
+    memcpy(&node->trail_node.older, &older, 4);
     attached = NULL;
-    put(node, 0xe8, &attached, 4);
+    memcpy(&node->trail_node.newer, &attached, 4);
     if (older)
     {
-        put(older, 0xe8, &node, 4);
+        memcpy(&older->trail_node.newer, &node, 4);
         older->refresh = NULL;
     }
-    put(e, 0xf8, &node, 4);
+    memcpy(&e->trail.newest, &node, 4);
     node->position = e->position;
     if (older)
     {
@@ -288,29 +270,30 @@ void bh_trail_generate(BHEntity *e)
         bh_round_float(&stored_x, dx);
         bh_round_float(&stored_z, dz);
         length = sqrt((dx * stored_x + dy * dy) + dz * stored_z);
-        number(node, 0xfc, (double)scalar(older, 0xfc) + length);
+        trail_number(&node->trail_node.distance, (double)bh_field_f32(&older->trail_node.distance) + length);
     }
     else
-        number(node, 0xfc, 0);
-    number(node, 0xf0, scalar(e, 0x108));
-    number(node, 0x100, scalar(e, 0x100));
-    lifetime = scalar(e, 0xfc);
+        trail_number(&node->trail_node.distance, 0);
+    trail_number(&node->trail_node.alpha, bh_field_f32(&e->trail.node_lifetime));
+    trail_number(&node->trail_node.decay, bh_field_f32(&e->trail.decay));
+    lifetime = bh_field_f32(&e->trail.lifetime);
     if (lifetime > 0 && lifetime < 4)
     {
-        number(node, 0xf0, (double)scalar(node, 0xf0) * lifetime * .25f);
-        number(node, 0x100, (double)scalar(node, 0x100) * lifetime * .25f);
+        trail_number(&node->trail_node.alpha, (double)bh_field_f32(&node->trail_node.alpha) * lifetime * .25f);
+        trail_number(&node->trail_node.decay, (double)bh_field_f32(&node->trail_node.decay) * lifetime * .25f);
     }
-    number(node, 0xf4, scalar(e, 0x10c));
-    number(node, 0x104, scalar(e, 0x114));
-    get(e, 0xf0, &generation, 4);
-    put(node, 0x10c, &generation, 4);
-    get(e, 0xec, &generation, 4);
-    put(node, 0x108, &generation, 4);
-    get(e, 0x11c, &generation, 4);
-    put(node, 0x110, &generation, 4);
-    get(e, 0x120, &drift, 12);
-    put(node, 0x114, &drift, 12);
-    number(node, 0xf8, (double)scalar(e, 0x118) * scalar(e, 0xfc));
+    trail_number(&node->trail_node.width, bh_field_f32(&e->trail.width));
+    trail_number(&node->trail_node.width_step, bh_field_f32(&e->trail.width_step));
+    memcpy(&generation, &e->trail.point_word, 4);
+    memcpy(&node->trail_node.point_word, &generation, 4);
+    memcpy(&generation, &e->trail.bucket, 4);
+    memcpy(&node->trail_node.bucket, &generation, 4);
+    memcpy(&generation, &e->trail.image, 4);
+    memcpy(&node->trail_node.image, &generation, 4);
+    memcpy(&drift, &e->trail.drift, 12);
+    memcpy(&node->trail_node.drift, &drift, 12);
+    trail_number(&node->trail_node.texture_phase,
+                 (double)bh_field_f32(&e->trail.texture_scale) * bh_field_f32(&e->trail.lifetime));
     bind_context(node, c);
     node->refresh = bh_trail_refresh;
     node->step = bh_trail_node_tick;

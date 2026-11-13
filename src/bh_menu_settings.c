@@ -1,5 +1,6 @@
 #include "bh_menu_settings.h"
-typedef char profile_width[sizeof(BHInputProfile) == 76 ? 1 : -1];
+#include <stddef.h>
+static_assert(sizeof(BHInputProfile) == 76, "BHInputProfile size");
 
 static void selection(BHMenuSettingsMenu *menu, long index)
 {
@@ -24,7 +25,7 @@ void bh_menu_submenu_first(BHMenuSettings *s)
     s->action = (long)((unsigned long)s->current_index + 14UL);
 }
 static void assign(BHMenuSettings *s, BHMenuSettingsMenu *menu, const unsigned char *input, long index,
-                   unsigned long offset, long count)
+                   unsigned char *keys, long count)
 {
     if (!s || !s->input_profile || !row_valid(menu, index))
         return;
@@ -32,23 +33,23 @@ static void assign(BHMenuSettings *s, BHMenuSettingsMenu *menu, const unsigned c
     {
         if (!input)
             return;
-        ((unsigned char *)s->input_profile)[offset + (unsigned long)index - 1] = *input;
+        keys[index - 1] = *input;
     }
     refresh(menu, index);
 }
 void bh_menu_keys_motion(BHMenuSettings *s, BHMenuSettingsMenu *m, const unsigned char *p, long i)
 {
-    assign(s, m, p, i, 0x1c, 6);
+    assign(s, m, p, i, s && s->input_profile ? s->input_profile->motion_keys : NULL, 6);
 }
 void bh_menu_keys_weapons(BHMenuSettings *s, BHMenuSettingsMenu *m, const unsigned char *p, long i)
 {
-    assign(s, m, p, i, 0x28, 9);
+    assign(s, m, p, i, s && s->input_profile ? s->input_profile->primary_keys : NULL, 9);
 }
 void bh_menu_keys_camera(BHMenuSettings *s, BHMenuSettingsMenu *m, const unsigned char *p, long i)
 {
-    assign(s, m, p, i, 0x31, 9);
+    assign(s, m, p, i, s && s->input_profile ? s->input_profile->secondary_keys : NULL, 9);
 }
 void bh_menu_keys_extra(BHMenuSettings *s, BHMenuSettingsMenu *m, const unsigned char *p, long i)
 {
-    assign(s, m, p, i, 0x3a, 10);
+    assign(s, m, p, i, s && s->input_profile ? s->input_profile->camera_keys : NULL, 10);
 }

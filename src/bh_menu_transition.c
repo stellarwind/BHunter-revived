@@ -1,3 +1,4 @@
+#include "bh_message_panel.h"
 #include "bh_menu_transition.h"
 #include "bh_round.h"
 #include <string.h>
@@ -5,23 +6,23 @@
 static BHMenuTransition *context(BHEntity *e)
 {
     BHMenuTransition *c;
-    memcpy(&c, e->payload + 600, 4);
+    memcpy(&c, &e->bindings.menu_transition, 4);
     return c;
 }
 static void put_time(BHEntity *e, double t)
 {
-    memcpy((char *)e + 0x1f8, &t, 8);
+    memcpy((char *)&e->menu.transition_time, &t, 8);
 }
 double bh_menu_transition_time(const BHEntity *e)
 {
     double t;
-    memcpy(&t, (const char *)e + 0x1f8, 8);
+    memcpy(&t, (char *)&e->menu.transition_time, 8);
     return t;
 }
 static int live(BHMenuTransition *c, BHEntity *e)
 {
     unsigned long g;
-    memcpy(&g, e->payload + 604, 4);
+    memcpy(&g, &e->bindings.transition_generation, 4);
     return bh_entity_is_active(c->pool, e) && e->generation == g;
 }
 int bh_menu_transition_bind(BHMenuTransition *c, BHEntity *e, double t, long attempts)
@@ -35,10 +36,10 @@ int bh_menu_transition_bind(BHMenuTransition *c, BHEntity *e, double t, long att
             break;
     if (!p)
         return 0;
-    memcpy(e->payload + 600, &c, 4);
-    memcpy(e->payload + 604, &e->generation, 4);
+    memcpy(&e->bindings.menu_transition, &c, 4);
+    memcpy(&e->bindings.transition_generation, &e->generation, 4);
     put_time(e, t);
-    memcpy((char *)e + 0x1c0, &attempts, 4);
+    memcpy((char *)&e->menu.attempts, &attempts, 4);
     return 1;
 }
 static float clamp(double v)
@@ -114,18 +115,18 @@ static void warning(BHMenuTransition *c)
     ++c->warnings;
     if (m->panel_entity && m->panel_step_identity && *m->panel_step_identity == 0x442950)
     {
-        memcpy(&timer, (char *)m->panel_entity + 0xe8, 4);
+        memcpy(&timer, &bh_message_panel_fields(m->panel_entity)->timer, 4);
         if (timer > .5f)
         {
             timer = .5f;
-            memcpy((char *)m->panel_entity + 0xe8, &timer, 4);
+            memcpy(&bh_message_panel_fields(m->panel_entity)->timer, &timer, 4);
         }
     }
 }
 static long attempts(BHEntity *e)
 {
     long n;
-    memcpy(&n, (char *)e + 0x1c0, 4);
+    memcpy(&n, (char *)&e->menu.attempts, 4);
     return n;
 }
 static void retry(BHMenuTransition *c, BHEntity *e)
@@ -135,7 +136,7 @@ static void retry(BHMenuTransition *c, BHEntity *e)
         warning(c);
     put_time(e, 5);
     ++n;
-    memcpy((char *)e + 0x1c0, &n, 4);
+    memcpy((char *)&e->menu.attempts, &n, 4);
 }
 void bh_menu_music_tick(BHEntity *e)
 {

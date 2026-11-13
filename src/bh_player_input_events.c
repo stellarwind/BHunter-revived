@@ -1,8 +1,8 @@
 #include "bh_player_input_events.h"
 #include <stddef.h>
 #include <string.h>
-typedef char event_payload_offset[offsetof(BHEntity, payload) == 0xe4 ? 1 : -1];
-typedef char event_query_offset[offsetof(BHEntity, query) == 0xd0 ? 1 : -1];
+static_assert(offsetof(BHEntity, payload) == 0xe4, "BHEntity.payload offset");
+static_assert(offsetof(BHEntity, query) == 0xd0, "BHEntity.query offset");
 void bh_player_input_bind_kind4(BHPlayerInputList *list, long index)
 {
     if (list->count < index + 1)

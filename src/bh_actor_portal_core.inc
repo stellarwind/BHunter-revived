@@ -1,12 +1,12 @@
 #include "bh_actor_portal_image.h"
 #include <stddef.h>
 
-typedef char actor_portal_offset[offsetof(BHActorPortalImage, portals) == 0xe4 ? 1 : -1];
-typedef char actor_portal_stride[sizeof(BHPortal) == 60 ? 1 : -1];
+static_assert(offsetof(BHActorPortalImage, portals) == 0xe4, "BHActorPortalImage.portals offset");
+static_assert(sizeof(BHPortal) == 60, "BHPortal size");
 
 void bh_actor_portal_normal_core(void *geometry_image, int index, float *out)
 {
-    switch (*(int *)((unsigned char *)geometry_image + 0xe4 + index * 60))
+    switch (((BHActorPortalImage *)geometry_image)->portals[index].direction)
     {
     case 0:
         out[0] = 1;

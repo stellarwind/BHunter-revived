@@ -4,10 +4,9 @@
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
-typedef char particle_layout[sizeof(BHScriptParticleState) == 84 && offsetof(BHScriptParticleState, velocity) == 60 &&
-                                     offsetof(BHEntity, payload) == 0xe4
-                                 ? 1
-                                 : -1];
+static_assert(sizeof(BHScriptParticleState) == 84 && offsetof(BHScriptParticleState, velocity) == 60 &&
+                  offsetof(BHEntity, payload) == 0xe4,
+              "particle layout");
 static BHScriptParticleState *state(BHEntity *entity)
 {
     return (BHScriptParticleState *)(entity->payload + 4);
@@ -15,7 +14,7 @@ static BHScriptParticleState *state(BHEntity *entity)
 static BHScriptParticleContext *context(BHEntity *entity)
 {
     BHScriptParticleContext *ctx;
-    memcpy(&ctx, entity->payload + 440, 4);
+    memcpy(&ctx, &entity->bindings.script_particles, 4);
     return ctx;
 }
 static int live(BHEntityPool *pool, BHEntity *entity)
@@ -74,7 +73,7 @@ BHEntity *bh_script_particle_create(BHScriptParticleContext *ctx, unsigned long 
     s->frame = (unsigned long)rand() & 7;
     s->resource = resource;
     s->bucket = bucket;
-    memcpy(entity->payload + 440, &ctx, 4);
+    memcpy(&entity->bindings.script_particles, &ctx, 4);
     entity->step = bh_script_particle_tick;
     entity->refresh = bh_script_particle_refresh;
     ctx->error = BH_PARTICLE_OK;
@@ -123,18 +122,10 @@ void bh_script_particle_refresh(BHEntity *entity, void *packet)
     if (r < 0)
         ctx->error = BH_PARTICLE_QUEUE;
 }
-static void get(BHEntity *entity, unsigned long o, void *p, unsigned long n)
-{
-    memcpy(p, (unsigned char *)entity + o, n);
-}
-static void put(BHEntity *entity, unsigned long o, const void *p, unsigned long n)
-{
-    memcpy((unsigned char *)entity + o, p, n);
-}
 static BHScriptEmitterContext *emitter_context(BHEntity *entity)
 {
     BHScriptEmitterContext *ctx;
-    memcpy(&ctx, entity->payload + 448, 4);
+    memcpy(&ctx, &entity->bindings.script_emitter, 4);
     return ctx;
 }
 static const BHScriptTimerActor *actor_record(BHScriptEmitterContext *ctx, BHEntity *entity)
@@ -149,13 +140,13 @@ int bh_script_emitter_read(BHEntity *entity, BHScriptEmitterState *state)
 {
     if (!entity || !state)
         return 0;
-    get(entity, 0xf0, &state->actor, 4);
-    get(entity, 0xf4, &state->script_loaded, 4);
-    get(entity, 0x128, &state->countdown, 4);
-    get(entity, 0x12c, &state->spread, 4);
-    get(entity, 0x130, &state->velocity, 12);
-    get(entity, 0x13c, &state->acceleration, 12);
-    get(entity, 0x10c, &state->size, 4);
+    memcpy(&state->actor, &entity->emitter.actor, 4);
+    memcpy(&state->script_loaded, &entity->emitter.script_loaded, 4);
+    memcpy(&state->countdown, &entity->emitter.countdown, 4);
+    memcpy(&state->spread, &entity->emitter.spread, 4);
+    memcpy(&state->velocity, &entity->emitter.velocity, 12);
+    memcpy(&state->acceleration, &entity->emitter.acceleration, 12);
+    memcpy(&state->size, &entity->emitter.size, 4);
     return 1;
 }
 int bh_script_emitter_bind(BHScriptEmitterContext *ctx, BHEntity *entity, const BHScriptEmitterState *state, int steam)
@@ -165,9 +156,9 @@ int bh_script_emitter_bind(BHScriptEmitterContext *ctx, BHEntity *entity, const 
     if (!ctx || !ctx->lifetime || !ctx->particles || !ctx->particles->pool || !ctx->lifetime->timers.pool ||
         ctx->particles->pool != ctx->lifetime->timers.pool || !entity || !state || !actor_record(ctx, state->actor))
         return 0;
-    get(entity, 0xfc, retained, 4);
-    get(entity, 0x104, retained + 4, 4);
-    get(entity, 0x180, retained + 8, 4);
+    memcpy(retained, &entity->script_lifetime.sound, 4);
+    memcpy(retained + 4, &entity->script_lifetime.mission_resource, 4);
+    memcpy(retained + 8, &entity->script_lifetime.mission_countdown, 4);
     memset(&base, 0, sizeof(base));
     base.actor = state->actor;
     base.script_loaded = state->script_loaded;
@@ -175,13 +166,13 @@ int bh_script_emitter_bind(BHScriptEmitterContext *ctx, BHEntity *entity, const 
     base.delta = state->velocity;
     if (!bh_script_lifetime_bind(ctx->lifetime, entity, &base, bh_script_sensor_query))
         return 0;
-    put(entity, 0xfc, retained, 4);
-    put(entity, 0x104, retained + 4, 4);
-    put(entity, 0x180, retained + 8, 4);
-    put(entity, 0x12c, &state->spread, 4);
-    put(entity, 0x13c, &state->acceleration, 12);
-    put(entity, 0x10c, &state->size, 4);
-    memcpy(entity->payload + 448, &ctx, 4);
+    memcpy(&entity->script_lifetime.sound, retained, 4);
+    memcpy(&entity->script_lifetime.mission_resource, retained + 4, 4);
+    memcpy(&entity->script_lifetime.mission_countdown, retained + 8, 4);
+    memcpy(&entity->emitter.spread, &state->spread, 4);
+    memcpy(&entity->emitter.acceleration, &state->acceleration, 12);
+    memcpy(&entity->emitter.size, &state->size, 4);
+    memcpy(&entity->bindings.script_emitter, &ctx, 4);
     entity->step = steam ? bh_script_steam_tick : bh_script_fountain_tick;
     entity->refresh = steam ? bh_script_steam_refresh : NULL;
     ctx->error = BH_PARTICLE_OK;
@@ -206,7 +197,7 @@ static int countdown(BHEntity *entity, float value)
         return 0;
     n = (double)value - (1.0 / 30.0);
     bh_round_float(&value, n);
-    put(entity, 0x128, &value, 4);
+    memcpy(&entity->emitter.countdown, &value, 4);
     return !(n > 0);
 }
 void bh_script_fountain_tick(BHEntity *entity)

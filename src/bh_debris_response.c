@@ -5,15 +5,15 @@
 #include <math.h>
 #include <string.h>
 
-typedef char blast_size[sizeof(BHDebrisBlastPacket) == 24 ? 1 : -1];
-typedef char blast_radius[offsetof(BHDebrisBlastPacket, radius) == 20 ? 1 : -1];
-typedef char bridge_size[sizeof(((BHEntity *)0)->payload) == 636 && sizeof(void *) == 4 ? 1 : -1];
+static_assert(sizeof(BHDebrisBlastPacket) == 24, "BHDebrisBlastPacket size");
+static_assert(offsetof(BHDebrisBlastPacket, radius) == 20, "BHDebrisBlastPacket.radius offset");
+static_assert(sizeof(((BHEntity *)0)->payload) == 636 && sizeof(void *) == 4, "bridge size");
 static BHDebrisBody *body_of(BHEntity *entity)
 {
     BHDebrisBody *body;
     if (!entity)
         return NULL;
-    memcpy(&body, entity->payload + 632, sizeof(body));
+    memcpy(&body, &entity->bindings.debris_body, sizeof(body));
     return body;
 }
 static int live(BHDebrisContext *ctx, BHEntity *entity)
@@ -100,7 +100,7 @@ int bh_debris_bind(BHDebrisContext *ctx, BHDebrisBody *body, BHEntity *entity, B
     if (!bh_entity_set_query(ctx->pool, entity, bh_debris_receive))
         return 0;
     *body = next;
-    memcpy(entity->payload + 632, &body, sizeof(body));
+    memcpy(&entity->bindings.debris_body, &body, sizeof(body));
     return 1;
 }
 int bh_debris_unbind(BHDebrisBody *body)

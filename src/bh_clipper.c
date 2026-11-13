@@ -4,9 +4,9 @@
 #include <string.h>
 #include <stddef.h>
 #include <float.h>
-typedef char vertex_size[sizeof(BHClipVertex) == 60 ? 1 : -1];
-typedef char vertex_next[offsetof(BHClipVertex, next) == 0x2c ? 1 : -1];
-typedef char vertex_cache[offsetof(BHClipVertex, projected) == 0x38 ? 1 : -1];
+static_assert(sizeof(BHClipVertex) == 60, "BHClipVertex size");
+static_assert(offsetof(BHClipVertex, next) == 0x2c, "BHClipVertex.next offset");
+static_assert(offsetof(BHClipVertex, projected) == 0x38, "BHClipVertex.projected offset");
 static BHClipVertex *fail(BHClipContext *c, BHClipError e)
 {
     if (c)

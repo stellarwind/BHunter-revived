@@ -126,8 +126,8 @@ int bh_mission_story_dispatch(BHMissionStory *c, const long packet[3])
             break;
         case STORY_FINALE:
             clear(c);
-            if (!c->player || !c->camera || c->camera != &c->player->player.camera ||
-                !c->force_control || !c->force_gate)
+            if (!c->player || !c->camera || c->camera != &c->player->player.camera || !c->force_control ||
+                !c->force_gate)
             {
                 c->error = 1;
                 break;
@@ -237,7 +237,7 @@ int bh_mission_story_dispatch(BHMissionStory *c, const long packet[3])
 void bh_mission_story_query(BHEntity *e, void *packet)
 {
     BHMissionStory *c;
-    memcpy(&c, e->payload + 548, 4);
+    memcpy(&c, &e->bindings.mission_story, 4);
     if (c)
         bh_mission_story_dispatch(c, (const long *)packet);
 }
@@ -251,7 +251,7 @@ int bh_mission_story_bind(BHMissionStory *c, BHEntity *e)
     for (at = pool->active; at && n++ < pool->capacity; at = at->next)
         if (at == e)
         {
-            memcpy(e->payload + 548, &c, 4);
+            memcpy(&e->bindings.mission_story, &c, 4);
             return bh_entity_set_query(pool, e, bh_mission_story_query);
         }
     return 0;

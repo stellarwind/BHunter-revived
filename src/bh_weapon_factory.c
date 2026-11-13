@@ -4,13 +4,20 @@
 #include <stddef.h>
 #include <string.h>
 
-typedef char weapon_object_size[sizeof(BHWeaponObjectState) == 0x4c ? 1 : -1];
-typedef char weapon_object_method_offset[offsetof(BHWeaponObjectState, method_11c) == 0x34 ? 1 : -1];
-typedef char weapon_object_hud_offset[offsetof(BHWeaponObjectState, method_130) == 0x48 ? 1 : -1];
-typedef char weapon_entity_fit[sizeof(((BHEntity *)0)->payload) >= 0x50 ? 1 : -1];
+static_assert(sizeof(BHWeaponObjectState) == 0x4c, "BHWeaponObjectState size");
+static_assert(offsetof(BHWeaponObjectState, ready_identity) == 0x34, "BHWeaponObjectState.ready_identity offset");
+static_assert(offsetof(BHWeaponObjectState, hud_identity) == 0x48, "BHWeaponObjectState.hud_identity offset");
+static_assert(sizeof(((BHEntity *)0)->payload) >= 0x50, "weapon entity fit");
 
 /* The addresses identify the actual six entries of each PE table record at
    0048fa60. They are not executable pointers in this source-built target. */
+static_assert(offsetof(BHWeaponObjectState, ready_identity) == 0x34, "BHWeaponObjectState.ready_identity offset");
+static_assert(offsetof(BHWeaponObjectState, cancel_identity) == 0x38, "BHWeaponObjectState.cancel_identity offset");
+static_assert(offsetof(BHWeaponObjectState, trigger_identity) == 0x3c, "BHWeaponObjectState.trigger_identity offset");
+static_assert(offsetof(BHWeaponObjectState, fire_identity) == 0x40, "BHWeaponObjectState.fire_identity offset");
+static_assert(offsetof(BHWeaponObjectState, tick_identity) == 0x44, "BHWeaponObjectState.tick_identity offset");
+static_assert(offsetof(BHWeaponObjectState, hud_identity) == 0x48, "BHWeaponObjectState.hud_identity offset");
+
 static const unsigned long methods[10][6] = {
     {0x004309b0UL, 0x0047d680UL, 0x0042f730UL, 0x004305f0UL, 0x00431050UL, 0x0047d680UL},
     {0x004309b0UL, 0x0047d680UL, 0x0042f730UL, 0x0042f7a0UL, 0x00431050UL, 0x0047d680UL},
@@ -113,17 +120,17 @@ BHEntity *bh_weapon_factory_create(BHWeaponFactory *factory, unsigned int index)
     state->common.hud.target = NULL;
     state->common.hud.charge = 0;
     state->common.word_100 = -1;
-    state->common.word_104 = 0;
+    state->common.cached_world = NULL;
     state->common.word_108 = 0;
     state->common.ammo = 0;
     state->common.ammo_limit = ammo_limits[index];
     state->common.delay = 0;
-    state->method_12c = methods[index][0];
-    state->method_130 = methods[index][1];
-    state->method_124 = methods[index][2];
-    state->method_128 = methods[index][3];
-    state->method_11c = methods[index][4];
-    state->method_120 = methods[index][5];
+    state->tick_identity = methods[index][0];
+    state->hud_identity = methods[index][1];
+    state->trigger_identity = methods[index][2];
+    state->fire_identity = methods[index][3];
+    state->ready_identity = methods[index][4];
+    state->cancel_identity = methods[index][5];
     record->entity = entity;
     record->generation = entity->generation;
     record->constructor_index = index;
@@ -152,9 +159,9 @@ int bh_weapon_registry_resolve(BHWeaponRegistry *registry, unsigned int selectio
     if (record->constructor_index != selection || !live(registry, record))
         return 0;
     current = bh_weapon_object_state(record->entity);
-    if (current->method_12c != methods[selection][0] || current->method_130 != methods[selection][1] ||
-        current->method_124 != methods[selection][2] || current->method_128 != methods[selection][3] ||
-        current->method_11c != methods[selection][4] || current->method_120 != methods[selection][5])
+    if (current->tick_identity != methods[selection][0] || current->hud_identity != methods[selection][1] ||
+        current->trigger_identity != methods[selection][2] || current->fire_identity != methods[selection][3] ||
+        current->ready_identity != methods[selection][4] || current->cancel_identity != methods[selection][5])
         return 0;
     *entity = record->entity;
     *state = current;
@@ -167,7 +174,7 @@ int bh_weapon_registry_hud(BHWeaponRegistry *registry, unsigned int selection, B
         *identity = 0;
     if (!identity || !bh_weapon_registry_resolve(registry, selection, entity, state))
         return 0;
-    *identity = (*state)->method_130;
+    *identity = (*state)->hud_identity;
     return 1;
 }
 int bh_weapon_method_available(unsigned long identity)
@@ -208,7 +215,7 @@ int bh_weapon_factory_tick(BHWeaponFactory *factory, unsigned int selection)
         factory->error = BH_WEAPON_FACTORY_STALE;
         return 0;
     }
-    switch (state->method_12c)
+    switch (state->tick_identity)
     {
     case 0x004309b0UL:
         result = bh_weapon_delay_tick(entity);

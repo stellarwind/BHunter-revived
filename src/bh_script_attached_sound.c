@@ -3,19 +3,11 @@
 #include "bh_round.h"
 #include <stddef.h>
 #include <string.h>
-typedef char field_layout[sizeof(void *) == 4 && offsetof(BHEntity, payload) == 0xe4 ? 1 : -1];
-static void get(BHEntity *entity, unsigned long at, void *out)
-{
-    memcpy(out, (unsigned char *)entity + at, 4);
-}
-static void put(BHEntity *entity, unsigned long at, const void *value)
-{
-    memcpy((unsigned char *)entity + at, value, 4);
-}
+static_assert(sizeof(void *) == 4 && offsetof(BHEntity, payload) == 0xe4, "field layout");
 static BHScriptLifetimeContext *context(BHEntity *entity)
 {
     BHScriptLifetimeContext *ctx;
-    memcpy(&ctx, entity->payload + 400, 4);
+    memcpy(&ctx, &entity->bindings.script_lifetime, 4);
     return ctx;
 }
 static const BHScriptTimerActor *actor_record(BHScriptLifetimeContext *ctx, BHEntity *actor)
@@ -26,12 +18,12 @@ int bh_script_attached_sound_read(BHEntity *entity, BHScriptAttachedSoundState *
 {
     if (!entity || !state)
         return 0;
-    get(entity, 0xf0, &state->actor);
-    get(entity, 0xf4, &state->script_loaded);
-    get(entity, 0xfc, &state->handle);
-    get(entity, 0x100, &state->resource);
-    get(entity, 0x104, &state->level);
-    get(entity, 0x108, &state->target);
+    memcpy(&state->actor, &entity->attached_sound.actor, 4);
+    memcpy(&state->script_loaded, &entity->attached_sound.script_loaded, 4);
+    memcpy(&state->handle, &entity->attached_sound.handle, 4);
+    memcpy(&state->resource, &entity->attached_sound.resource, 4);
+    memcpy(&state->level, &entity->attached_sound.level, 4);
+    memcpy(&state->target, &entity->attached_sound.target, 4);
     return 1;
 }
 int bh_script_attached_sound_bind(BHScriptLifetimeContext *ctx, BHEntity *entity,
@@ -44,22 +36,22 @@ int bh_script_attached_sound_bind(BHScriptLifetimeContext *ctx, BHEntity *entity
        outside its specified binding footprint by restoring its unused writes. */
     {
         unsigned char retained[24];
-        memcpy(retained, (unsigned char *)entity + 0x128, 4);
-        memcpy(retained + 4, (unsigned char *)entity + 0x130, 12);
-        memcpy(retained + 16, (unsigned char *)entity + 0x180, 4);
+        memcpy(retained, (char *)&entity->script_lifetime.countdown, 4);
+        memcpy(retained + 4, (char *)&entity->script_lifetime.delta, 12);
+        memcpy(retained + 16, (char *)&entity->script_lifetime.mission_countdown, 4);
         memset(&base, 0, sizeof(base));
         base.actor = state->actor;
         base.script_loaded = state->script_loaded;
         base.sound = state->handle;
         if (!bh_script_lifetime_bind(ctx, entity, &base, bh_script_sound_actor_query))
             return 0;
-        memcpy((unsigned char *)entity + 0x128, retained, 4);
-        memcpy((unsigned char *)entity + 0x130, retained + 4, 12);
-        memcpy((unsigned char *)entity + 0x180, retained + 16, 4);
+        memcpy((char *)&entity->script_lifetime.countdown, retained, 4);
+        memcpy((char *)&entity->script_lifetime.delta, retained + 4, 12);
+        memcpy((char *)&entity->script_lifetime.mission_countdown, retained + 16, 4);
     }
-    put(entity, 0x100, &state->resource);
-    put(entity, 0x104, &state->level);
-    put(entity, 0x108, &state->target);
+    memcpy(&entity->attached_sound.resource, &state->resource, 4);
+    memcpy(&entity->attached_sound.level, &state->level, 4);
+    memcpy(&entity->attached_sound.target, &state->target, 4);
     entity->step = bh_script_attached_sound_tick;
     return 1;
 }
@@ -84,12 +76,12 @@ void bh_script_attached_sound_tick(BHEntity *entity)
     {
         next = (unsigned long)state.level + 1UL;
         memcpy(&state.level, &next, 4);
-        put(entity, 0x104, &state.level);
+        memcpy(&entity->attached_sound.level, &state.level, 4);
         if (state.level == 1)
         {
             state.handle = bh_sound_request(ctx->sounds, state.resource, 0.066666670143604278564453125f, 1,
                                             &state.actor->position, &zero);
-            put(entity, 0xfc, &state.handle);
+            memcpy(&entity->attached_sound.handle, &state.handle, 4);
         }
         else
         {
@@ -101,12 +93,12 @@ void bh_script_attached_sound_tick(BHEntity *entity)
     {
         next = (unsigned long)state.level - 1UL;
         memcpy(&state.level, &next, 4);
-        put(entity, 0x104, &state.level);
+        memcpy(&entity->attached_sound.level, &state.level, 4);
         if (state.level == 0)
         {
             bh_sound_stop(ctx->sounds, state.handle);
             state.handle = BH_SOUND_INVALID;
-            put(entity, 0xfc, &state.handle);
+            memcpy(&entity->attached_sound.handle, &state.handle, 4);
         }
         else
         {
@@ -119,12 +111,12 @@ void bh_script_attached_sound_tick(BHEntity *entity)
         if (actor->active)
         {
             state.target = 15;
-            put(entity, 0x108, &state.target);
+            memcpy(&entity->attached_sound.target, &state.target, 4);
         }
     }
     else if (!actor->active)
     {
         state.target = 0;
-        put(entity, 0x108, &state.target);
+        memcpy(&entity->attached_sound.target, &state.target, 4);
     }
 }

@@ -1,3 +1,4 @@
+#include "bh_field_access.h"
 #include "bh_actor_pursuit_route.h"
 #include "bh_target_selection.h"
 #include "bh_target_steering.h"
@@ -14,26 +15,6 @@ static float stored(double d)
 {
     float f;
     bh_round_float(&f, d);
-    return f;
-}
-static void read(BHEntity *entity, unsigned long o, void *p, unsigned long n)
-{
-    memcpy(p, (char *)entity + o, n);
-}
-static void write(BHEntity *entity, unsigned long o, const void *p, unsigned long n)
-{
-    memcpy((char *)entity + o, p, n);
-}
-static long value(BHEntity *entity, unsigned long o)
-{
-    long v;
-    read(entity, o, &v, 4);
-    return v;
-}
-static float number(BHEntity *entity, unsigned long o)
-{
-    float f;
-    read(entity, o, &f, 4);
     return f;
 }
 static int fail(BHActorPursuitRouteContext *ctx, BHActorRouteError err)
@@ -83,7 +64,7 @@ int bh_actor_pursuit_target_controls(BHActorPursuitRouteContext *ctx, BHEntity *
     BHActorRouteState state;
     TargetMotion motion;
     BHVec3 saved_end, saved_tangent;
-    BHEntity *target = (BHEntity *)value(entity, 0x1b8);
+    BHEntity *target = (BHEntity *)bh_field_i32(&entity->actor.target);
     unsigned long i;
     long forced;
     bh_actor_route_read(entity, &state);
@@ -95,15 +76,15 @@ int bh_actor_pursuit_target_controls(BHActorPursuitRouteContext *ctx, BHEntity *
             stored((double)((float *)&state.controls[2])[i] * .4 - ((float *)&state.controls[3])[i] * (-.6));
     /* 00439564..00439618 commit all six tangent words before target query.
        Its synchronous callback must observe them in the real entity. */
-    write(entity, 0x144, state.controls + 1, 12);
-    write(entity, 0x150, state.controls + 2, 12);
+    memcpy(&entity->actor.route_first, state.controls + 1, 12);
+    memcpy(&entity->actor.route_second, state.controls + 2, 12);
     if (!query(target, &motion))
         return fail(ctx, BH_ACTOR_ROUTE_ARGUMENT);
     bh_actor_route_read(entity, &state);
     saved_end = state.controls[3];
     saved_tangent = state.controls[2];
-    write(entity, 0x1bc, &saved_end, 12);
-    write(entity, 0x1c8, &saved_tangent, 12);
+    memcpy(&entity->actor.saved_end, &saved_end, 12);
+    memcpy(&entity->actor.saved_tangent, &saved_tangent, 12);
     for (i = 0; i < 3; ++i)
     {
         double predicted =
@@ -116,15 +97,15 @@ int bh_actor_pursuit_target_controls(BHActorPursuitRouteContext *ctx, BHEntity *
             stored((i ? predicted : (double)state.controls[3].x) -
                    (((double)((float *)&state.controls[0])[i] - ((float *)&saved_end)[i]) * (-.25)));
     }
-    write(entity, 0x12c, state.controls + 3, 12);
-    write(entity, 0x150, state.controls + 2, 12);
-    bh_world_clamp_point(state.current, (BHVec3 *)((char *)entity + 0x12c));
-    bh_world_clamp_point(state.current, (BHVec3 *)((char *)entity + 0x150));
+    memcpy(&entity->actor.route_end, state.controls + 3, 12);
+    memcpy(&entity->actor.route_second, state.controls + 2, 12);
+    bh_world_clamp_point(state.current, (BHVec3 *)&entity->actor.route_end);
+    bh_world_clamp_point(state.current, (BHVec3 *)&entity->actor.route_second);
     bh_actor_route_read(entity, &state);
     if (!reset_duration(ctx, entity, &state))
         return 0;
     forced = 1;
-    write(entity, 0x1d4, &forced, 4);
+    memcpy(&entity->actor.forced_pursuit, &forced, 4);
     return 1;
 }
 int bh_actor_pursuit_route(BHActorPursuitRouteContext *ctx, BHEntity *entity)
@@ -148,29 +129,29 @@ int bh_actor_pursuit_route(BHActorPursuitRouteContext *ctx, BHEntity *entity)
         return fail(ctx, BH_ACTOR_ROUTE_ARGUMENT);
     bh_actor_route_read(entity, &state);
     room = state.next;
-    target = (BHEntity *)value(entity, 0x1b8);
+    target = (BHEntity *)bh_field_i32(&entity->actor.target);
     if (state.sound_frames)
     {
         --state.sound_frames;
-        write(entity, 0x108, &state.sound_frames, 4);
+        memcpy(&entity->actor.sound_frames, &state.sound_frames, 4);
         if (!state.sound_frames && state.sound != BH_SOUND_INVALID)
         {
             if (!ctx->route->sound)
                 return fail(ctx, BH_ACTOR_ROUTE_ARGUMENT);
             bh_sound_stop(ctx->route->sound, state.sound);
             state.sound = BH_SOUND_INVALID;
-            write(entity, 0x104, &state.sound, 4);
+            memcpy(&entity->actor.sound, &state.sound, 4);
         }
     }
-    if (value(entity, 0xfc) == 1 && (!target || rand() < 0x1000))
+    if (bh_field_i32(&entity->actor.kind) == 1 && (!target || rand() < 0x1000))
     {
         if (!bh_target_select(ctx->player, ctx->actor_head_owner ? *ctx->actor_head_owner : ctx->actor_head, entity,
                               state.controls + 3, ctx->actor_limit, &selected))
             return fail(ctx, BH_ACTOR_ROUTE_ARGUMENT);
         target = selected.target;
-        write(entity, 0x1b8, &target, 4);
+        memcpy(&entity->actor.target, &target, 4);
     }
-    forced = value(entity, 0x1d4);
+    forced = bh_field_i32(&entity->actor.forced_pursuit);
     if (forced)
     {
         state.controls[0] = state.controls[3];
@@ -180,12 +161,12 @@ int bh_actor_pursuit_route(BHActorPursuitRouteContext *ctx, BHEntity *entity)
                        ((float *)&state.controls[0])[i]);
         bh_world_clamp_point(state.current, state.controls);
         bh_world_clamp_point(state.current, state.controls + 1);
-        read(entity, 0x1bc, state.controls + 3, 12);
-        read(entity, 0x1c8, state.controls + 2, 12);
+        memcpy(state.controls + 3, &entity->actor.saved_end, 12);
+        memcpy(state.controls + 2, &entity->actor.saved_tangent, 12);
         if (!reset_duration(ctx, entity, &state))
             return 0;
         forced = 0;
-        write(entity, 0x1d4, &forced, 4);
+        memcpy(&entity->actor.forced_pursuit, &forced, 4);
         ctx->route->error = BH_ACTOR_ROUTE_OK;
         return 1;
     }
@@ -194,13 +175,13 @@ int bh_actor_pursuit_route(BHActorPursuitRouteContext *ctx, BHEntity *entity)
     index = bh_navigation_find(ctx->navigation, room);
     if (index < 0)
         return fail(ctx, BH_ACTOR_ROUTE_TOPOLOGY);
-    if (value(entity, 0xfc) == 6 && ctx->city_ids)
+    if (bh_field_i32(&entity->actor.kind) == 6 && ctx->city_ids)
     {
         new_city = ctx->city_ids[index];
-        old_city = value(entity, 0x110);
+        old_city = bh_field_i32(&entity->actor.bound_resource);
         if (new_city != -1 && new_city != old_city)
         {
-            write(entity, 0x110, &new_city, 4);
+            memcpy(&entity->actor.bound_resource, &new_city, 4);
             if (old_city != -1 && elapsed32(ctx->clock, ctx->last_report) > 1800)
             {
                 if (new_city < 0 || (unsigned long)new_city >= ctx->city_count || !ctx->city_names || !ctx->messages ||
@@ -216,7 +197,7 @@ int bh_actor_pursuit_route(BHActorPursuitRouteContext *ctx, BHEntity *entity)
     for (i = 0; i < room->navigation.count; ++i)
         if ((BHWorldGeometry *)room->navigation.portals[i].neighbor == state.current || incoming < 0)
             incoming = (long)i;
-    pursuit = number(entity, 0x1b4);
+    pursuit = bh_field_f32(&entity->actor.pursuit);
     if (room->query_flags & 8)
     {
         if (!bh_route_guided_exit(entity, room, incoming, &outgoing))
@@ -229,7 +210,7 @@ int bh_actor_pursuit_route(BHActorPursuitRouteContext *ctx, BHEntity *entity)
     }
     else
     {
-        read(target, 0xc4, &target_world, 4);
+        memcpy(&target_world, &target->world, 4);
         if (rand() > 0xccc)
         {
             if (target_world)
@@ -278,16 +259,16 @@ int bh_actor_pursuit_route(BHActorPursuitRouteContext *ctx, BHEntity *entity)
     factor = 1.0 - state.jitter;
     state.u = stored(factor * state.u - ((double)state.jitter * rand()) * (-1.0 / 32768.0));
     state.v = stored(factor * state.v - ((double)rand() * state.jitter) * (-1.0 / 32768.0));
-    write(entity, 0x18c, &state.u, 4);
-    write(entity, 0x190, &state.v, 4);
+    memcpy(&entity->actor.u, &state.u, 4);
+    memcpy(&entity->actor.v, &state.v, 4);
     if (!bh_actor_route_promote(ctx->route, entity, incoming, outgoing))
         return 0;
     bh_actor_route_read(entity, &state);
-    target = (BHEntity *)value(entity, 0x1b8);
+    target = (BHEntity *)bh_field_i32(&entity->actor.target);
     if (target)
     {
         short protected_player = 0;
-        read(target, 0xc4, &target_world, 4);
+        memcpy(&target_world, &target->world, 4);
         if (target == ctx->player)
             protected_player = target->player.disabled_frames;
         if (target_world == state.current && (!protected_player || target != ctx->player))

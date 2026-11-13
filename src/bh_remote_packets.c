@@ -1,3 +1,4 @@
+#include "bh_field_access.h"
 #include "bh_remote_packets.h"
 #ifdef BH_SDL_BACKEND
 #include "bh_render_interpolation.h"
@@ -6,16 +7,6 @@
 static void setword(BHEntity *entity, unsigned long o, unsigned long n)
 {
     memcpy((char *)entity + o, &n, 4);
-}
-static short half(BHEntity *entity, unsigned long o)
-{
-    short n;
-    memcpy(&n, (char *)entity + o, 2);
-    return n;
-}
-static void sethalf(BHEntity *entity, unsigned long o, unsigned short n)
-{
-    memcpy((char *)entity + o, &n, 2);
 }
 static short signed16(unsigned long n)
 {
@@ -65,7 +56,7 @@ static int done(BHRemotePackets *packets)
 static void query(BHEntity *entity, void *p)
 {
     BHRemotePackets *packets;
-    memcpy(&packets, entity->payload + 536, 4);
+    memcpy(&packets, &entity->bindings.remote_packets, 4);
     if (packets && packets->query)
     {
         packets->query->sound = packets->tick->sound;
@@ -82,9 +73,9 @@ int bh_remote_entity_draw(BHRemotePackets *packets, BHEntity *entity)
 #endif
     if (!packets || !entity || !packets->render || !packets->simulation_tick)
         return 0;
-    memcpy(&bound, entity->payload + 536, 4);
-    if (bound != packets || !packets->remote || half(entity, 0x114) < 0 ||
-        half(entity, 0x114) > 7 || packets->remote[half(entity, 0x114)] != entity)
+    memcpy(&bound, &entity->bindings.remote_packets, 4);
+    if (bound != packets || !packets->remote || bh_field_i16(&entity->remote.slot) < 0 ||
+        bh_field_i16(&entity->remote.slot) > 7 || packets->remote[bh_field_i16(&entity->remote.slot)] != entity)
         return 0;
     packets->render->tick = (unsigned short)*packets->simulation_tick;
 #ifdef BH_SDL_BACKEND
@@ -185,12 +176,12 @@ int bh_remote_spawn_packet(BHRemotePackets *packets, void *p, unsigned long n, u
         return 0;
     }
     packets->remote[slot] = entity;
-    sethalf(entity, 0x114, slot);
-    setword(entity, 0x138, id);
-    sethalf(entity, 0x116, 0xffff);
+    bh_field_store_u16(&entity->remote.slot, slot);
+    bh_field_store_u32(&entity->remote.player_id, id);
+    bh_field_store_u16(&entity->remote.roster_slot, 0xffff);
     for (i = 1; i < 8; ++i)
         if (packets->network->players[i].active && packets->network->players[i].id == id)
-            sethalf(entity, 0x116, (unsigned short)i);
+            bh_field_store_u16(&entity->remote.roster_slot, (unsigned short)i);
     bh_remote_bind_draw(packets, entity, slot);
     stamp = (unsigned short)*packets->simulation_tick;
     entity->remote.newest.tick = stamp;
@@ -200,21 +191,22 @@ int bh_remote_spawn_packet(BHRemotePackets *packets, void *p, unsigned long n, u
     entity->remote.middle.position = entity->remote.middle.angles = (BHVec3){0};
     entity->remote.newest.position = entity->remote.newest.angles = (BHVec3){0};
     for (j = 0; j < 19 && name[j]; ++j)
-        *((char *)entity + 0x11e + j) = (char)name[j];
-    *((char *)entity + 0x11e + j) = 0;
+        entity->remote.name[j] = (char)name[j];
+    entity->remote.name[j] = 0;
     entity->flags |= 0x100;
     entity->remote.pose_flags = 0;
-    sethalf(entity, 0x11c, 0);
+    bh_field_store_u16(&entity->remote.score, 0);
     entity->velocity = (BHVec3){0};
     entity->angular_velocity = (BHVec3){0};
     entity->acceleration = (BHVec3){0};
     entity->angular_acceleration = (BHVec3){0};
     entity->actor.kind = 8;
+    /* Original constructor clears +100; its remaining role is unrecovered. */
     setword(entity, 0x100, 0);
-    setword(entity, 0x108, 0);
-    setword(entity, 0x110, BH_SOUND_INVALID);
-    setword(entity, 0x104, BH_SOUND_INVALID);
-    setword(entity, 0x10c, packets->engine_sounds[slot]);
+    bh_field_store_u32(&entity->remote.sound_frames, 0);
+    bh_field_store_u32(&entity->remote.reserved_sound, BH_SOUND_INVALID);
+    bh_field_store_u32(&entity->remote.engine_sound, BH_SOUND_INVALID);
+    bh_field_store_u32(&entity->remote.engine_resource, packets->engine_sounds[slot]);
     next = *packets->head;
     entity->actor.global_next = next;
     *packets->head = entity;
@@ -232,16 +224,16 @@ int bh_remote_spawn_packet(BHRemotePackets *packets, void *p, unsigned long n, u
             next->actor.room_previous = entity;
     }
     entity->remote.newest.world = world;
-    memcpy(entity->payload + 536, &packets, 4);
+    memcpy(&entity->bindings.remote_packets, &packets, 4);
     if (!bh_remote_tick_bind(packets->tick, entity) || !bh_entity_set_query(packets->pool, entity, query))
     {
         packets->error = 1;
         return 0;
     }
-    setword(entity, 0x134, 0);
-    sethalf(entity, 0x118, 0);
+    bh_field_store_u32(&entity->remote.cached_world, 0);
+    bh_field_store_u16(&entity->remote.muzzle_phase, 0);
     for (i = 0; i < 9; ++i)
-        sethalf(entity, 0x19c + 12 * i, 0);
+        bh_field_store_u16(&entity->remote.firing[i].remaining, 0);
     ++packets->spawns;
     return done(packets);
 }
@@ -286,15 +278,15 @@ int bh_remote_shot_packet(BHRemotePackets *packets, void *p, unsigned long n, un
     entity = packets->remote[slot];
     if (!entity)
         return 1;
-    offset = 0x19c + 12 * type;
-    sethalf(entity, offset + 6, count);
-    setword(entity, offset + 8, (unsigned long)target);
+
+    bh_field_store_u16(&entity->remote.firing[type].packet_count, count);
+    bh_field_store_u32(&entity->remote.firing[type].target, (unsigned long)target);
     if (type == 5)
     {
-        if (!half(entity, 0x1d8))
-            sethalf(entity, 0x1d8, 60);
-        else if (half(entity, 0x1d8) < 30)
-            sethalf(entity, 0x1d8, 30);
+        if (!bh_field_i16(&entity->remote.firing[5].remaining))
+            bh_field_store_u16(&entity->remote.firing[5].remaining, 60);
+        else if (bh_field_i16(&entity->remote.firing[5].remaining) < 30)
+            bh_field_store_u16(&entity->remote.firing[5].remaining, 30);
         return done(packets);
     }
     if (count == 1)
@@ -318,9 +310,11 @@ int bh_remote_shot_packet(BHRemotePackets *packets, void *p, unsigned long n, un
     }
     if (count)
     {
-        sethalf(entity, offset, (unsigned short)((unsigned short)half(entity, offset) + count));
-        sethalf(entity, offset + 2, spacing);
-        sethalf(entity, offset + 4, (unsigned short)(0 - (unsigned short)lag));
+        bh_field_store_u16(
+            &entity->remote.firing[type].remaining,
+            (unsigned short)((unsigned short)bh_field_i16(&entity->remote.firing[type].remaining) + count));
+        bh_field_store_u16(&entity->remote.firing[type].spacing, spacing);
+        bh_field_store_u16(&entity->remote.firing[type].countdown, (unsigned short)(0 - (unsigned short)lag));
         packets->queued += count;
     }
     return done(packets);

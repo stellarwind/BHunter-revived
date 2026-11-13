@@ -12,29 +12,6 @@
 #include <string.h>
 #include <stddef.h>
 
-/* Projection of the actual entity words read/written by 00434920. Controls
-   are interleaved in the entity; do not snapshot or reorder them in a state. */
-typedef struct BHActorVehiclePoseImage
-{
-    unsigned char other000[0x104];
-    unsigned long sound, sound_frames, sound_resource, other110, resource;
-    unsigned char other118[8];
-    BHVec3 start, end, center, first, second, offset;
-    unsigned char other168[0x34];
-    float fade;
-    unsigned char other1a0[0x44];
-    unsigned short tick, duration_ticks;
-} BHActorVehiclePoseImage;
-typedef char pose_sound_offset[offsetof(BHActorVehiclePoseImage, sound) == 0x104 ? 1 : -1];
-typedef char pose_resource_offset[offsetof(BHActorVehiclePoseImage, resource) == 0x114 ? 1 : -1];
-typedef char pose_start_offset[offsetof(BHActorVehiclePoseImage, start) == 0x120 ? 1 : -1];
-typedef char pose_end_offset[offsetof(BHActorVehiclePoseImage, end) == 0x12c ? 1 : -1];
-typedef char pose_first_offset[offsetof(BHActorVehiclePoseImage, first) == 0x144 ? 1 : -1];
-typedef char pose_second_offset[offsetof(BHActorVehiclePoseImage, second) == 0x150 ? 1 : -1];
-typedef char pose_offset_offset[offsetof(BHActorVehiclePoseImage, offset) == 0x15c ? 1 : -1];
-typedef char pose_fade_offset[offsetof(BHActorVehiclePoseImage, fade) == 0x19c ? 1 : -1];
-typedef char pose_tick_offset[offsetof(BHActorVehiclePoseImage, tick) == 0x1e4 ? 1 : -1];
-typedef char pose_duration_offset[offsetof(BHActorVehiclePoseImage, duration_ticks) == 0x1e6 ? 1 : -1];
 /* Most assignments use the pinned compiler's retained FST value. Only the
    tangent operands consumed from float memory need a forced representation
    reload; rounding all intermediates changes the original operation graph. */
@@ -68,7 +45,7 @@ static void glow_sprite(BHActorVehicleDrawContext *ctx, BHEntity *entity, unsign
 }
 void bh_actor_vehicle_pose_core(BHActorVehicleDrawContext *ctx, BHEntity *entity, unsigned short tick)
 {
-    BHActorVehiclePoseImage *a = (BHActorVehiclePoseImage *)entity;
+    BHActorFields *a = &entity->actor;
     BHVec3 before, p, after, angles, velocity, local, glow;
     BHMat34 matrix;
     short se;
@@ -78,9 +55,11 @@ void bh_actor_vehicle_pose_core(BHActorVehicleDrawContext *ctx, BHEntity *entity
     unsigned long damage_frame;
     se = (short)(tick - a->tick);
     phase = natural((double)se / (short)a->duration_ticks);
-    bh_camera_curve(natural((double)phase - 1.0 / 30.0), &before, &a->start, &a->first, &a->second, &a->end);
-    bh_camera_curve(phase, &p, &a->start, &a->first, &a->second, &a->end);
-    bh_camera_curve(natural((double)phase - (-1.0 / 30.0)), &after, &a->start, &a->first, &a->second, &a->end);
+    bh_camera_curve(natural((double)phase - 1.0 / 30.0), &before, &a->route_start, &a->route_first, &a->route_second,
+                    &a->route_end);
+    bh_camera_curve(phase, &p, &a->route_start, &a->route_first, &a->route_second, &a->route_end);
+    bh_camera_curve(natural((double)phase - (-1.0 / 30.0)), &after, &a->route_start, &a->route_first, &a->route_second,
+                    &a->route_end);
     before.x = natural((double)a->offset.x + before.x);
     before.y = natural((double)a->offset.y + before.y);
     before.z = natural((double)a->offset.z + before.z);
@@ -108,7 +87,7 @@ void bh_actor_vehicle_pose_core(BHActorVehicleDrawContext *ctx, BHEntity *entity
     angles.y = 0;
     angles.z = natural(bank * 3.141592653589793);
 
-    bh_draw_submit_resource(ctx->queue, 0, a->resource, &p, &angles, 1);
+    bh_draw_submit_resource(ctx->queue, 0, a->model_resource, &p, &angles, 1);
     fade = a->fade;
     if (fade < 1)
     {
@@ -118,7 +97,7 @@ void bh_actor_vehicle_pose_core(BHActorVehicleDrawContext *ctx, BHEntity *entity
         angle = natural((double)rand() * (1.0 / 4096.0));
         bh_draw_billboard(ctx->queue, 3, ctx->damage_resource, &p, size, size, angle, damage_frame, alpha);
     }
-    if (a->resource == ctx->glowing_model)
+    if (a->model_resource == ctx->glowing_model)
     {
         matrix.m[0][0] = 1;
         matrix.m[0][1] = 0;
@@ -168,7 +147,7 @@ int bh_actor_vehicle_draw(BHActorVehicleDrawContext *ctx, BHEntity *entity)
             ctx->error = BH_ACTOR_ROUTE_ARGUMENT;
         return 0;
     }
-    if (!bh_math_environment_supported() || !((BHActorVehiclePoseImage *)entity)->duration_ticks)
+    if (!bh_math_environment_supported() || !entity->actor.duration_ticks)
     {
         ctx->error = BH_ACTOR_ROUTE_NUMERICAL;
         return 0;

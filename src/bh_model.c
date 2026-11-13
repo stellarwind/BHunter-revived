@@ -4,11 +4,11 @@
 #include <string.h>
 #include <stddef.h>
 
-typedef char model_size[sizeof(BHModel) == 0x80 ? 1 : -1];
-typedef char model_transform[offsetof(BHModel, transform) == 8 ? 1 : -1];
-typedef char model_materials[offsetof(BHModel, materials) == 0x3c ? 1 : -1];
-typedef char model_images[offsetof(BHModel, images) == 0x68 ? 1 : -1];
-typedef char model_runtime[offsetof(BHModel, runtime) == 0x6c ? 1 : -1];
+static_assert(sizeof(BHModel) == 0x80, "BHModel size");
+static_assert(offsetof(BHModel, transform) == 8, "BHModel.transform offset");
+static_assert(offsetof(BHModel, materials) == 0x3c, "BHModel.materials offset");
+static_assert(offsetof(BHModel, images) == 0x68, "BHModel.images offset");
+static_assert(offsetof(BHModel, runtime) == 0x6c, "BHModel.runtime offset");
 static void *allocate(unsigned long n, void *user)
 {
     return malloc(n);

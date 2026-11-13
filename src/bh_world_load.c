@@ -1,3 +1,4 @@
+#include "bh_field_access.h"
 #include "bh_world_load.h"
 #include "bh_vfile.h"
 #include "bh_round.h"
@@ -33,12 +34,12 @@ static void sync(BHEditorWorld *w)
     {
         n = w->nodes[i];
         g = &n->placement.geometry;
-        memcpy((char *)n->entity + 0x150, &g->transform, 48);
-        memcpy((char *)n->entity + 0x180, &g->inverse, 48);
-        memcpy((char *)n->entity + 0x1b0, &g->minimum, 12);
-        memcpy((char *)n->entity + 0x1bc, &g->maximum, 12);
+        memcpy(&n->entity->placement.transform, &g->transform, 48);
+        memcpy(&n->entity->placement.inverse, &g->inverse, 48);
+        memcpy(&n->entity->placement.minimum, &g->minimum, 12);
+        memcpy(&n->entity->placement.maximum, &g->maximum, 12);
         o = (BHEditorNode *)g->owner;
-        setword(n->entity, 0x1c8, (unsigned long)(o ? o->entity : 0));
+        bh_field_store_u32(&n->entity->placement.owner, (unsigned long)(o ? o->entity : 0));
     }
 }
 int bh_world_load(BHWorldLoad *c, const char *name)
@@ -123,27 +124,28 @@ int bh_world_load(BHWorldLoad *c, const char *name)
         {
             n->placement.coordinates[j] = coordinates[j];
             ((float *)&e->position)[j] = rf((double)coordinates[j]);
-            setword(e, 0xe8 + 4 * j, (unsigned long)coordinates[j]);
+            bh_field_store_u32(&e->placement.coordinates[j], (unsigned long)coordinates[j]);
         }
         n->placement.geometry.position = e->position;
-        setword(e, 0xf4, n->placement.geometry.flags);
+        bh_field_store_u32(&e->placement.orientation_flags, n->placement.geometry.flags);
         n->placement.angles.x = rf((n->placement.geometry.flags & 3) * 1.5707963267948966);
         e->euler = n->placement.angles;
-        setword(e, 0x134, 0);
-        setword(e, 0x138, 0);
-        setword(e, 0x13c, 0x437a0000);
-        setword(e, 0x128, 0);
-        setword(e, 0x12c, 0);
+        bh_field_store_u32(&e->placement.editor_yaw, 0);
+        bh_field_store_u32(&e->placement.editor_pitch, 0);
+        bh_field_store_u32(&e->placement.editor_radius, 0x437a0000);
+        e->placement.actors = NULL;
+        bh_field_store_u32(&e->placement.attachments, 0);
+        /* +100 is initialized here; no recovered consumer establishes its meaning. */
         setword(e, 0x100, 0);
-        setword(e, 0x104, 0);
-        setword(e, 0x148, 0);
-        setword(e, 0x14c, 0);
-        setword(e, 0x11c, 0xffffffffUL);
-        setword(e, 0xf8, index);
-        setword(e, 0xfc, 0);
-        setword(e, 0x118, i);
-        setword(e, 0x114, block->definition.flags);
-        memcpy((char *)e + 0x334, block->definition.values, 16);
+        e->placement.activity_frames = 0;
+        bh_field_store_u32(&e->placement.damage, 0);
+        bh_field_store_u32(&e->placement.damage_source, 0);
+        bh_field_store_u32(&e->placement.city_id, 0xffffffffUL);
+        bh_field_store_u32(&e->placement.model_index, index);
+        bh_field_store_u32(&e->placement.radar_visited, 0);
+        bh_field_store_u32(&e->placement.placement_index, i);
+        bh_field_store_u32(&e->placement.query_flags, block->definition.flags);
+        memcpy((char *)&e->placement.script_values, block->definition.values, 16);
         e->step = 0;
         if (!bh_editor_world_attach(w, n))
         {
@@ -160,8 +162,8 @@ int bh_world_load(BHWorldLoad *c, const char *name)
         {
             n->placement.geometry.previous = &last->placement.geometry;
             last->placement.geometry.navigation.next = &n->placement.geometry.navigation;
-            setword(e, 0x120, (unsigned long)last->entity);
-            setword(last->entity, 0x124, (unsigned long)e);
+            bh_field_store_u32(&e->placement.previous, (unsigned long)last->entity);
+            bh_field_store_u32(&last->entity->placement.next, (unsigned long)e);
         }
         last = n;
         if (!bh_rail_placement(c->rails, model, &e->position, &n->placement.angles))
@@ -171,8 +173,8 @@ int bh_world_load(BHWorldLoad *c, const char *name)
         return end(c, file, 3);
     last->placement.geometry.navigation.next = &first->placement.geometry.navigation;
     first->placement.geometry.previous = &last->placement.geometry;
-    setword(last->entity, 0x124, (unsigned long)first->entity);
-    setword(first->entity, 0x120, (unsigned long)last->entity);
+    bh_field_store_u32(&last->entity->placement.next, (unsigned long)first->entity);
+    bh_field_store_u32(&first->entity->placement.previous, (unsigned long)last->entity);
     w->selection = first;
     if (!bh_rail_link(c->rails))
         return end(c, file, 5);
@@ -184,7 +186,7 @@ int bh_world_load(BHWorldLoad *c, const char *name)
         index = cursor;
         for (k = 0; k < w->count; ++k)
         {
-            memcpy(&j, (char *)w->nodes[index]->entity + 0x118, 4);
+            memcpy(&j, &w->nodes[index]->entity->placement.placement_index, 4);
             if (j == id)
                 break;
             index = (index + 1) % w->count;
@@ -192,7 +194,7 @@ int bh_world_load(BHWorldLoad *c, const char *name)
         cursor = index;
         if (k < w->count)
         {
-            memcpy((char *)w->nodes[index]->entity + 0x334, vars, 16);
+            memcpy(&w->nodes[index]->entity->placement.script_values, vars, 16);
             ++c->overrides;
         }
         position = bh_vfile_tell(file);
@@ -206,7 +208,7 @@ int bh_world_load(BHWorldLoad *c, const char *name)
         memset(c->states + i, 0, sizeof(*c->states));
         c->states[i].entity = n->entity;
         c->states[i].active = 1;
-        memcpy(c->states[i].variables, (char *)n->entity + 0x334, 16);
+        memcpy(c->states[i].variables, &n->entity->placement.script_values, 16);
         actor = vm->actors + i;
         actor->state = c->states + i;
         actor->world = &n->placement.geometry;
@@ -235,10 +237,10 @@ int bh_world_load(BHWorldLoad *c, const char *name)
                 life.sound = 0;
                 if (!bh_script_lifetime_bind(vm->lifetime, timer, &life, bh_script_unloaded_query))
                     return end(c, file, 6);
-                setword(timer, 0xf8, 1);
-                setword(timer, 0x100, 0);
-                setword(timer, 0x114, 0);
-                setword(timer, 0xe8, (unsigned long)block->definition.script);
+                bh_script_timer_fields(timer)->remaining = 1;
+                bh_script_timer_fields(timer)->high = 0;
+                bh_script_timer_fields(timer)->countdown = 0;
+                bh_script_timer_fields(timer)->fired = block->definition.script;
                 timer->position = pool->origin;
                 timer->step = bh_script_timer_unconditional_step();
                 ++c->timers;
@@ -252,7 +254,7 @@ int bh_world_load(BHWorldLoad *c, const char *name)
                 }
             }
         }
-        setword(w->nodes[(i + 1) % w->count]->entity, 0xb4, 0x47c35000UL);
+        bh_field_store_u32(&w->nodes[(i + 1) % w->count]->entity->mass, 0x47c35000UL);
     }
     if (!bh_editor_control_bind(c->editor, first))
         return end(c, file, 6);

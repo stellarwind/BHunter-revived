@@ -14,6 +14,12 @@ typedef struct BHScriptTimerState
     float countdown;
 } BHScriptTimerState;
 
+/* Shared typed storage view for template construction and timer callbacks. */
+static __inline BHScriptTimerState *bh_script_timer_fields(BHEntity *entity)
+{
+    return (BHScriptTimerState *)(entity->payload + 4);
+}
+
 typedef struct BHScriptTimerActor
 {
     BHEntity *entity;

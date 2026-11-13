@@ -6,12 +6,6 @@ static int fail(BHActorRouteContext *ctx, BHActorRouteError e)
         ctx->error = e;
     return 0;
 }
-static BHEntity *link_value(const BHEntity *entity, unsigned long offset)
-{
-    BHEntity *p;
-    memcpy(&p, (const unsigned char *)entity + offset, 4);
-    return p;
-}
 #include "bh_actor_route_release_core.inc"
 #include "bh_actor_route_due_core.inc"
 int bh_actor_route_due(BHActorRouteContext *ctx, BHEntity *entity)
@@ -40,16 +34,16 @@ int bh_actor_route_release(BHActorRouteContext *ctx, BHEntityPool *pool, BHEntit
     room = bh_actor_route_room(ctx, state.current);
     if (!room)
         return fail(ctx, BH_ACTOR_ROUTE_TOPOLOGY);
-    next = link_value(entity, 0xf4);
-    previous = link_value(entity, 0xf8);
-    if ((previous ? link_value(previous, 0xf4) != entity : room->actors != entity) ||
-        (next && link_value(next, 0xf8) != entity))
+    next = entity->actor.room_next;
+    previous = entity->actor.room_previous;
+    if ((previous ? previous->actor.room_next != entity : room->actors != entity) ||
+        (next && next->actor.room_previous != entity))
         return fail(ctx, BH_ACTOR_ROUTE_TOPOLOGY);
     at = room->actors;
     n = 0;
     while (at && at != entity && n < ctx->actor_limit)
     {
-        at = link_value(at, 0xf4);
+        at = at->actor.room_next;
         ++n;
     }
     if (at != entity || n >= ctx->actor_limit)

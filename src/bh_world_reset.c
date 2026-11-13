@@ -1,3 +1,4 @@
+#include "bh_field_access.h"
 #include "bh_world_reset.h"
 #include "bh_rotation.h"
 #include "bh_round.h"
@@ -90,8 +91,8 @@ int bh_world_reset(BHWorldReset *c)
         identity(&motion.world_to_local);
         bh_mat34_rotate_y(-angle, &motion.world_to_local);
         bh_mat34_translate_local(-position.x, -position.y, -position.z, &motion.world_to_local);
-        setword(e, 0x148, 0);
-        setword(e, 0x14c, 0);
+        bh_field_store_u32(&e->placement.damage, 0);
+        bh_field_store_u32(&e->placement.damage_source, 0);
         dx = stored((double)old.x - position.x);
         dy = stored((double)old.y - position.y);
         dz = (double)old.z - position.z;
@@ -102,7 +103,7 @@ int bh_world_reset(BHWorldReset *c)
         motion.minimum.z = stored((double)motion.minimum.z - dz);
         motion.maximum.z = stored((double)motion.maximum.z - dz);
         e->origin = zero;
-        setword(e, 0x114, n->definition->flags);
+        bh_field_store_u32(&e->placement.query_flags, n->definition->flags);
         bh_script_motion_actor_write(e, &motion);
         w->position = position;
         w->query_flags = n->definition->flags;
@@ -127,10 +128,10 @@ int bh_world_reset(BHWorldReset *c)
                     c->error = 2;
                     return 0;
                 }
-                setword(timer, 0xf8, 1);
-                setword(timer, 0x100, 0);
-                setword(timer, 0x114, 0);
-                setword(timer, 0xe8, (unsigned long)n->definition->script);
+                bh_script_timer_fields(timer)->remaining = 1;
+                bh_script_timer_fields(timer)->high = 0;
+                bh_script_timer_fields(timer)->countdown = 0;
+                bh_script_timer_fields(timer)->fired = n->definition->script;
                 timer->position = pool->origin;
                 timer->step = bh_script_timer_unconditional_step();
                 ++c->timers;
@@ -147,7 +148,7 @@ int bh_world_reset(BHWorldReset *c)
                 }
             }
         }
-        setword(c->nodes[(i + 1) % c->count].entity, 0xb4, 0x47c35000UL);
+        bh_field_store_u32(&c->nodes[(i + 1) % c->count].entity->mass, 0x47c35000UL);
     }
     return 1;
 }

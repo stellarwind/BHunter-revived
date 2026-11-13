@@ -121,7 +121,7 @@ int bh_menu_runtime_bind(BHMenuRuntime *m)
             break;
     if (!p)
         return 0;
-    memcpy(m->entity->payload + 608, &m, 4);
+    memcpy(&m->entity->bindings.menu_runtime, &m, 4);
     m->entity->step = bh_menu_runtime_step_entity;
     m->entity->refresh = bh_menu_runtime_refresh_entity;
     return 1;
@@ -129,7 +129,7 @@ int bh_menu_runtime_bind(BHMenuRuntime *m)
 static BHMenuRuntime *binding(BHEntity *e)
 {
     BHMenuRuntime *m;
-    memcpy(&m, e->payload + 608, 4);
+    memcpy(&m, &e->bindings.menu_runtime, 4);
     return m;
 }
 void bh_menu_runtime_step_entity(BHEntity *e)
@@ -366,10 +366,6 @@ static void fade_refresh(BHEntity *e, void *unused)
     (void)unused;
     bh_menu_music_fade(e);
 }
-static void put(BHEntity *e, unsigned long o, const void *v, unsigned long n)
-{
-    memcpy((char *)e + o, v, n);
-}
 int bh_menu_runtime_return(BHMenuRuntimeContext *c)
 {
     BHMenuRuntime *root;
@@ -398,24 +394,26 @@ int bh_menu_runtime_return(BHMenuRuntimeContext *c)
     }
     *c->waypoint = 10;
     l = 0;
-    put(camera, 0xc4, &l, 4);
+    memcpy(&camera->world, &l, 4);
     camera->position = f->starts[10].position;
-    put(camera, 0x23c, &camera->position, 12);
-    put(camera, 0x248, &camera->position, 12);
+    memcpy(&camera->flyby.previous_position, &camera->position, 12);
+    memcpy(&camera->flyby.older_position, &camera->position, 12);
     l = 10;
-    put(camera, 0x284, &l, 4);
+    memcpy(&camera->flyby.waypoint_index, &l, 4);
     axis.x = 1;
     axis.y = axis.z = 0;
-    put(camera, 0x18, &axis, 12);
+    memcpy(&camera->basis[0], &axis, 12);
     axis.x = 0;
     axis.y = 1;
-    put(camera, 0x24, &axis, 12);
+    memcpy(&camera->basis[1], &axis, 12);
     axis.y = 0;
     axis.z = 1;
-    put(camera, 0x30, &axis, 12);
-    for (i = 0; i < 4; ++i)
-        put(camera, 0x48 + i * 12, &zero, 12);
-    put(camera, 0x3c, &angles, 12);
+    memcpy(&camera->basis[2], &axis, 12);
+    camera->velocity = zero;
+    camera->angular_velocity = zero;
+    camera->acceleration = zero;
+    camera->angular_acceleration = zero;
+    memcpy(&camera->euler, &angles, 12);
     if (!bh_camera_state_init(&s->camera, 10))
         return fail(c);
     s->position = s->previous_position = s->older_position = camera->position;
@@ -432,15 +430,15 @@ int bh_menu_runtime_return(BHMenuRuntimeContext *c)
     s->route.waypoint_index = 10;
     s->route.current =
         bh_world_locate(f->flyby_camera->route->first, f->flyby_camera->route->scene_count, NULL, &camera->position, 0);
-    put(camera, 0xc4, &s->route.current, 4);
-    put(camera, 0x160, &camera->position, 12);
-    put(camera, 0x16c, &angles, 12);
+    memcpy(&camera->world, &s->route.current, 4);
+    memcpy(&camera->flyby.camera.position, &camera->position, 12);
+    memcpy(&camera->flyby.camera.angles, &angles, 12);
     {
         double time = 0;
-        put(camera, 0x1f8, &time, 8);
+        memcpy(&camera->flyby.orbit_time, &time, 8);
     }
     l = 0;
-    put(camera, 0x1dc, &l, 4);
+    memcpy(&camera->flyby.route_phase, &l, 4);
     camera->step = bh_flyby_scene_camera_step_entity;
     camera->refresh = bh_flyby_scene_refresh_entity;
     for (i = 0; i < 50; ++i)

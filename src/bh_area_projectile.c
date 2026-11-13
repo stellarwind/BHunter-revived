@@ -1,3 +1,4 @@
+#include "bh_field_access.h"
 #include "bh_area_projectile.h"
 #include "bh_callback_helpers.h"
 #include "bh_physics_response.h"
@@ -5,20 +6,6 @@
 #include "bh_fp.h"
 #include <string.h>
 static const BHVec3 zero = {0, 0, 0};
-static void get(const BHEntity *entity, unsigned long a, void *p, unsigned long n)
-{
-    memcpy(p, (const unsigned char *)entity + a, n);
-}
-static void put(BHEntity *entity, unsigned long a, const void *p, unsigned long n)
-{
-    memcpy((unsigned char *)entity + a, p, n);
-}
-static float number(const BHEntity *entity, unsigned long a)
-{
-    float f;
-    get(entity, a, &f, 4);
-    return f;
-}
 static float stored(double x)
 {
     float f;
@@ -28,7 +15,7 @@ static float stored(double x)
 static BHAreaProjectileContext *context(const BHEntity *entity)
 {
     BHAreaProjectileContext *ctx;
-    memcpy(&ctx, entity->payload + 600, 4);
+    memcpy(&ctx, &entity->bindings.area_projectile, 4);
     return ctx;
 }
 static int live(BHAreaProjectileContext *ctx, BHEntity *entity, unsigned long gen)
@@ -85,7 +72,7 @@ static int packets(BHAreaProjectileContext *ctx, BHEntity *entity, BHEntity *tar
         ctx->error = 3;
         return 0;
     }
-    get(entity, 0xf4, &suppress, 4);
+    memcpy(&suppress, &entity->area_projectile.identity, 4);
     if (!suppress)
     {
         if (!live(ctx, target, target_generation) || !target->query)
@@ -94,8 +81,8 @@ static int packets(BHAreaProjectileContext *ctx, BHEntity *entity, BHEntity *tar
             return 0;
         }
         direct.event = 0;
-        direct.amount = stored((double)number(entity, 0xe8) * damage);
-        get(entity, 0x104, &direct.source, 4);
+        direct.amount = stored((double)bh_field_f32(&entity->area_projectile.strength) * damage);
+        memcpy(&direct.source, &entity->area_projectile.source, 4);
         target->query(target, &direct);
         if (!live(ctx, entity, generation))
         {
@@ -124,18 +111,18 @@ void bh_area_projectile_tick(BHEntity *entity)
     b = ctx->effects;
     ctx->error = 0;
     generation = entity->generation;
-    raw_radius = (double)number(entity, 0xec) + 2.0 / 3.0;
-    raw_power = (double)number(entity, 0xe8) * .99;
+    raw_radius = (double)bh_field_f32(&entity->area_projectile.radius) + 2.0 / 3.0;
+    raw_power = (double)bh_field_f32(&entity->area_projectile.strength) * .99;
     radius = stored(raw_radius);
     power = stored(raw_power);
-    put(entity, 0xec, &radius, 4);
-    put(entity, 0xe8, &power, 4);
+    memcpy(&entity->area_projectile.radius, &radius, 4);
+    memcpy(&entity->area_projectile.strength, &power, 4);
     if (raw_radius > 25)
     {
         ignore = NULL;
-        put(entity, 0xfc, &ignore, 4);
+        memcpy(&entity->area_projectile.ignore, &ignore, 4);
     }
-    get(entity, 0xf0, &sound, 4);
+    memcpy(&sound, &entity->area_projectile.sound, 4);
     if (raw_power < .1)
     {
         bh_sound_stop(b->sound, sound);
@@ -145,8 +132,8 @@ void bh_area_projectile_tick(BHEntity *entity)
     end.x = stored((double)entity->position.x + (double)entity->origin.x / 30);
     end.y = stored((double)entity->position.y + (double)entity->origin.y / 30);
     end.z = stored((double)entity->position.z + (double)entity->origin.z / 30);
-    get(entity, 0xf8, &cached, 4);
-    get(entity, 0xfc, &ignore, 4);
+    memcpy(&cached, &entity->area_projectile.world, 4);
+    memcpy(&ignore, &entity->area_projectile.ignore, 4);
     self.kind = BH_WORLD_HIT_ACTOR;
     self.object.actor = ignore;
     result = bh_world_segment_run(b->segment, ignore ? &self : NULL, &cached, &entity->position, &end, -1, &hit);
@@ -155,7 +142,7 @@ void bh_area_projectile_tick(BHEntity *entity)
         ctx->error = 2;
         return;
     }
-    put(entity, 0xf8, &cached, 4);
+    memcpy(&entity->area_projectile.world, &cached, 4);
     if (!result)
         entity->position = end;
     else
@@ -164,7 +151,7 @@ void bh_area_projectile_tick(BHEntity *entity)
                (double)entity->origin.x * hit.normal.x) *
               (-2);
         power = stored((double)power * .9);
-        put(entity, 0xe8, &power, 4);
+        memcpy(&entity->area_projectile.strength, &power, 4);
         entity->origin.x = stored((double)hit.normal.x * dot + entity->origin.x);
         entity->origin.y = stored((double)hit.normal.y * dot + entity->origin.y);
         entity->origin.z = stored((double)hit.normal.z * dot + entity->origin.z);
@@ -204,21 +191,21 @@ void bh_area_projectile_tick(BHEntity *entity)
             delta.z = stored((double)sample.position.z - entity->position.z);
             if (((double)delta.z * delta.z + (double)delta.y * delta.y) + (double)delta.x * delta.x < range)
             {
-                power = number(entity, 0xe8);
+                power = bh_field_f32(&entity->area_projectile.strength);
                 bh_sound_request(b->sound, ctx->hit_sound, power, 3, &entity->position, &zero);
                 power = stored((double)power * .9);
-                put(entity, 0xe8, &power, 4);
+                memcpy(&entity->area_projectile.strength, &power, 4);
                 if (!packets(ctx, entity, actor, &entity->position, 16, .15))
                     return;
                 ++ctx->room_hits;
             }
-            get(actor, 0xf4, &actor, 4);
+            actor = actor->actor.room_next;
         }
     }
     for (i = 0; i < b->segment->actor_count; i++)
     {
         actor = b->segment->actors[i].entity;
-        get(entity, 0xfc, &ignore, 4);
+        memcpy(&ignore, &entity->area_projectile.ignore, 4);
         if (actor == ignore)
             continue;
         delta.x = stored((double)actor->position.x - entity->position.x);
@@ -226,10 +213,10 @@ void bh_area_projectile_tick(BHEntity *entity)
         delta.z = stored((double)actor->position.z - entity->position.z);
         if (((double)delta.z * delta.z + (double)delta.y * delta.y) + (double)delta.x * delta.x < range)
         {
-            power = number(entity, 0xe8);
+            power = bh_field_f32(&entity->area_projectile.strength);
             bh_sound_request(b->sound, ctx->hit_sound, stored((double)power + power), 3, &entity->position, &zero);
             power = stored((double)power * .9);
-            put(entity, 0xe8, &power, 4);
+            memcpy(&entity->area_projectile.strength, &power, 4);
             delta.x = -delta.x;
             delta.y = -delta.y;
             delta.z = -delta.z;
@@ -242,7 +229,8 @@ void bh_area_projectile_tick(BHEntity *entity)
             ++ctx->global_hits;
         }
     }
-    bh_sound_update(b->sound, sound, number(entity, 0xe8), 1, &entity->position, &entity->origin);
+    bh_sound_update(b->sound, sound, bh_field_f32(&entity->area_projectile.strength), 1, &entity->position,
+                    &entity->origin);
 }
 BHEntity *bh_area_projectile_create(BHAreaProjectileContext *ctx, BHWorldGeometry *world, const BHVec3 *position,
                                     const BHVec3 *velocity, BHEntity *source, float strength)
@@ -262,21 +250,21 @@ BHEntity *bh_area_projectile_create(BHAreaProjectileContext *ctx, BHWorldGeometr
         return NULL;
     identity = *ctx->identity;
     *ctx->identity = 0;
-    put(entity, 0xe8, &strength, 4);
-    put(entity, 0xec, &radius, 4);
-    put(entity, 0xf4, &identity, 4);
+    memcpy(&entity->area_projectile.strength, &strength, 4);
+    memcpy(&entity->area_projectile.radius, &radius, 4);
+    memcpy(&entity->area_projectile.identity, &identity, 4);
     entity->position = *position;
     entity->origin.x = stored((double)velocity->x * 300);
     entity->origin.y = stored((double)velocity->y * 300);
     entity->origin.z = stored((double)velocity->z * 300);
-    memcpy(entity->payload + 600, &ctx, 4);
+    memcpy(&entity->bindings.area_projectile, &ctx, 4);
     entity->step = bh_area_projectile_tick;
     entity->refresh = draw;
     bh_entity_set_query(b->pool, entity, bh_pickup_target_removed);
     sound = bh_sound_request(b->sound, ctx->loop_sound, 1, 1, position, &entity->origin);
-    put(entity, 0xf0, &sound, 4);
-    put(entity, 0xfc, &source, 4);
-    put(entity, 0xf8, &world, 4);
-    put(entity, 0x104, &source, 4);
+    memcpy(&entity->area_projectile.sound, &sound, 4);
+    memcpy(&entity->area_projectile.ignore, &source, 4);
+    memcpy(&entity->area_projectile.world, &world, 4);
+    memcpy(&entity->area_projectile.source, &source, 4);
     return entity;
 }

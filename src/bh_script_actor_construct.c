@@ -1,3 +1,4 @@
+#include "bh_field_access.h"
 #include "bh_script_actor_construct.h"
 #include "bh_script_actor_tick.h"
 #include "bh_actor_route_lifetime.h"
@@ -6,15 +7,7 @@
 #include "bh_fp.h"
 #include <stdlib.h>
 #include <string.h>
-typedef char constructor_abi[sizeof(void *) == 4 && sizeof(unsigned long) == 4 ? 1 : -1];
-static void put(BHEntity *entity, unsigned long off, const void *v, unsigned long n)
-{
-    memcpy((char *)entity + off, v, n);
-}
-static void word(BHEntity *entity, unsigned long off, unsigned long v)
-{
-    put(entity, off, &v, 4);
-}
+static_assert(sizeof(void *) == 4 && sizeof(unsigned long) == 4, "constructor abi");
 static void real_clock(BHEntity *entity)
 {
     BHScriptActorContext *ctx = bh_script_actor_context(entity);
@@ -38,7 +31,7 @@ static void real_vehicle_draw(BHEntity *entity)
 void bh_script_actor_present(BHEntity *entity)
 {
     BHEntityStep draw;
-    memcpy(&draw, (char *)entity + 0xe8, 4);
+    memcpy(&draw, (char *)&entity->actor.draw, 4);
     if (draw)
         draw(entity);
 }
@@ -74,7 +67,7 @@ BHEntity *bh_script_actor_construct(BHScriptActorConstructorContext *ctx, const 
     entity->origin = zero;
     entity->flags |= 0x100;
     state.current = state.next = world;
-    put(entity, 0xc4, &world, 4);
+    memcpy(&entity->world, &world, 4);
     head = room->actors;
     entity->actor.room_next = head;
     room->actors = entity;
@@ -99,16 +92,16 @@ BHEntity *bh_script_actor_construct(BHScriptActorConstructorContext *ctx, const 
     state.tick = (unsigned short)(bh_actor_route_now(route) - 30);
     state.sound = BH_SOUND_INVALID;
     bh_actor_route_write(entity, &state);
-    put(entity, 0x15c, &zero, 12);
-    put(entity, 0x168, &zero, 12);
-    word(entity, 0x19c, 0x3f800000);
-    word(entity, 0x1b0, 0x3e4ccccd);
-    word(entity, 0x100, 0);
-    word(entity, 0x118, 0);
-    word(entity, 0x11c, 0);
-    word(entity, 0x1ac, 0);
-    word(entity, 0x114, ctx->model_resources[type]);
-    word(entity, 0x10c, ctx->sound_resource);
+    memcpy(&entity->actor.offset, &zero, 12);
+    memcpy(&entity->actor.offset_velocity, &zero, 12);
+    bh_field_store_u32(&entity->actor.fade, 0x3f800000);
+    bh_field_store_u32(&entity->actor.jitter, 0x3e4ccccd);
+    bh_field_store_u32(&entity->actor.bounty_token, 0);
+    bh_field_store_u32(&entity->actor.destroy_when_faded, 0);
+    bh_field_store_u32(&entity->actor.death_tag, 0);
+    bh_field_store_u32(&entity->actor.damage_source, 0);
+    bh_field_store_u32(&entity->actor.model_resource, ctx->model_resources[type]);
+    bh_field_store_u32(&entity->actor.sound_resource, ctx->sound_resource);
     entity->actor.kind = type < 2 ? 4 : 5;
     if (type < 2)
     {
@@ -122,8 +115,8 @@ BHEntity *bh_script_actor_construct(BHScriptActorConstructorContext *ctx, const 
         offset = zero;
         draw = real_vehicle_draw;
     }
-    put(entity, 0x174, &offset, 12);
-    put(entity, 0xe8, &draw, 4);
+    memcpy(&entity->actor.draw_offset, &offset, 12);
+    memcpy(&entity->actor.draw, &draw, 4);
     entity->step = type == 2 ? real_phase : real_clock;
     if (!bh_script_actor_bind(callbacks, entity) || !bh_script_actor_route_advance(route, entity))
     {

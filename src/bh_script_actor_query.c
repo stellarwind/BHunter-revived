@@ -3,8 +3,8 @@
 #include "bh_round.h"
 #include "bh_fp.h"
 #include <string.h>
-typedef char packet_layout[sizeof(BHScriptActorQueryPacket) == 40 ? 1 : -1];
-typedef char callback_abi[sizeof(void *) == 4 && sizeof(unsigned long) == 4 ? 1 : -1];
+static_assert(sizeof(BHScriptActorQueryPacket) == 40, "BHScriptActorQueryPacket size");
+static_assert(sizeof(void *) == 4 && sizeof(unsigned long) == 4, "callback abi");
 static float stored(double v)
 {
     float f;
@@ -18,14 +18,14 @@ static int live(BHEntityPool *pool, BHEntity *entity)
 BHScriptActorContext *bh_script_actor_context(BHEntity *entity)
 {
     BHScriptActorContext *ctx;
-    memcpy(&ctx, entity->payload + 560, 4);
+    memcpy(&ctx, &entity->bindings.script_actor, 4);
     return ctx;
 }
 int bh_script_actor_bind(BHScriptActorContext *ctx, BHEntity *entity)
 {
     if (!ctx || !ctx->pool || !ctx->route || !ctx->route->live_tick || !entity || !live(ctx->pool, entity))
         return 0;
-    memcpy(entity->payload + 560, &ctx, 4);
+    memcpy(&entity->bindings.script_actor, &ctx, 4);
     return bh_entity_set_query(ctx->pool, entity, bh_script_actor_query);
 }
 void bh_script_actor_cleanup(BHEntity *entity)
@@ -57,17 +57,17 @@ void bh_script_actor_query(BHEntity *entity, void *packet)
         return;
     case 17:
         memcpy(&target, (char *)packet + 4, 4);
-        memcpy(&watched, (char *)entity + 0x1b8, 4);
+        memcpy(&watched, (char *)&entity->actor.target, 4);
         if (watched == target)
         {
             watched = NULL;
-            memcpy((char *)entity + 0x1b8, &watched, 4);
+            memcpy((char *)&entity->actor.target, &watched, 4);
         }
-        memcpy(&watched, (char *)entity + 0x1ac, 4);
+        memcpy(&watched, (char *)&entity->actor.damage_source, 4);
         if (watched == target)
         {
             watched = NULL;
-            memcpy((char *)entity + 0x1ac, &watched, 4);
+            memcpy((char *)&entity->actor.damage_source, &watched, 4);
         }
         return;
     case 4:
@@ -96,7 +96,7 @@ void bh_script_actor_query(BHEntity *entity, void *packet)
     memcpy(&sd, &state.duration_ticks, 2);
     t = (double)se / sd;
     phase = stored(t);
-    memcpy(&offset, (char *)entity + 0x15c, 12);
+    memcpy(&offset, (char *)&entity->actor.offset, 12);
     if (p->event == 3)
     {
         path(phase, &p->position, state.controls, state.controls + 1, state.controls + 2, state.controls + 3);

@@ -1,37 +1,10 @@
+#include "bh_field_access.h"
 #include "bh_effect_split_tick.h"
 #include "bh_round.h"
 #include "bh_fp.h"
 #include <stdlib.h>
 #include <string.h>
 static const BHVec3 zero = {0, 0, 0}, acceleration = {0, -.002f, 0};
-static void get(const BHEntity *entity, unsigned long a, void *p, unsigned long n)
-{
-    memcpy(p, (const unsigned char *)entity + a, n);
-}
-static void put(BHEntity *entity, unsigned long a, const void *p, unsigned long n)
-{
-    memcpy((unsigned char *)entity + a, p, n);
-}
-static float scalar(const BHEntity *entity, unsigned long a)
-{
-    float f;
-    get(entity, a, &f, 4);
-    return f;
-}
-static unsigned long word(const BHEntity *entity, unsigned long a)
-{
-    unsigned long n;
-    get(entity, a, &n, 4);
-    return n;
-}
-static void value(BHEntity *entity, unsigned long a, float f)
-{
-    put(entity, a, &f, 4);
-}
-static void integer(BHEntity *entity, unsigned long a, unsigned long n)
-{
-    put(entity, a, &n, 4);
-}
 static float stored(double x)
 {
     float f;
@@ -41,7 +14,7 @@ static float stored(double x)
 static BHEffectProjectileContext *context(BHEntity *entity)
 {
     BHEffectProjectileContext *ctx;
-    memcpy(&ctx, entity->payload + 608, 4);
+    memcpy(&ctx, &entity->bindings.effect_projectile, 4);
     return ctx;
 }
 static int live(BHEffectProjectileContext *ctx, BHEntity *entity, unsigned long gen)
@@ -100,7 +73,7 @@ int bh_effect_split_cascade(BHEntity *entity, const BHVec3 *normal)
     if (!ctx || !ctx->split || !normal || !bh_math_environment_supported())
         return 0;
     s = ctx->split;
-    count = (long)word(entity, 0x12c);
+    count = (long)bh_field_u32(&entity->effect.split_count);
     if (count < 1 || count > 33)
     {
         s->error = 1;
@@ -108,10 +81,10 @@ int bh_effect_split_cascade(BHEntity *entity, const BHVec3 *normal)
         return 0;
     }
     generation = entity->generation;
-    identity = word(entity, 0x130);
-    source = (BHEntity *)word(entity, 0x144);
-    world = (BHWorldGeometry *)word(entity, 0x138);
-    bh_sound_stop(ctx->effects->sound, word(entity, 0x128));
+    identity = bh_field_u32(&entity->effect.origin_tag);
+    source = (BHEntity *)bh_field_u32(&entity->effect.source);
+    world = (BHWorldGeometry *)bh_field_u32(&entity->effect.world);
+    bh_sound_stop(ctx->effects->sound, bh_field_u32(&entity->effect.sound));
     if (count >= 9)
     {
         ctx->debris->origin_tag = identity;
@@ -131,7 +104,7 @@ int bh_effect_split_cascade(BHEntity *entity, const BHVec3 *normal)
         return 0;
     }
     remaining = count - 1;
-    integer(entity, 0x12c, (unsigned long)remaining);
+    bh_field_store_u32(&entity->effect.split_count, (unsigned long)remaining);
     if (remaining)
     {
         groups = remaining;
@@ -140,15 +113,15 @@ int bh_effect_split_cascade(BHEntity *entity, const BHVec3 *normal)
         for (i = 0; i < groups; i++)
             children[i] = 1;
         extra = remaining - groups;
-        integer(entity, 0x12c, (unsigned long)(extra - 1));
+        bh_field_store_u32(&entity->effect.split_count, (unsigned long)(extra - 1));
         for (i = 0; i < extra; i++)
         {
             j = (long)((unsigned long)random_value(ctx) * groups / 32768);
             ++children[j];
-            integer(entity, 0x12c, (unsigned long)(extra - i - 2));
+            bh_field_store_u32(&entity->effect.split_count, (unsigned long)(extra - i - 2));
         }
         gain = (float)(remaining * 5);
-        get(entity, 0xf8, &old, 12);
+        memcpy(&old, &entity->effect.velocity, 12);
         for (i = 0; i < groups; i++)
         {
             for (j = 0; j < 3; j++)
@@ -199,28 +172,28 @@ void bh_effect_split_tick(BHEntity *entity)
     ctx->error = 0;
     s->error = 0;
     generation = entity->generation;
-    unignore = (double)scalar(entity, 0xec) - 1.0 / 30;
-    value(entity, 0xec, stored(unignore));
+    unignore = (double)bh_field_f32(&entity->effect.grace) - 1.0 / 30;
+    bh_field_store_f32(&entity->effect.grace, stored(unignore));
     if (unignore < 0)
-        integer(entity, 0x13c, 0);
-    remaining = (double)scalar(entity, 0xe8) - 1.0 / 30;
-    value(entity, 0xe8, stored(remaining));
+        bh_field_store_u32(&entity->effect.ignore, 0);
+    remaining = (double)bh_field_f32(&entity->effect.lifetime) - 1.0 / 30;
+    bh_field_store_f32(&entity->effect.lifetime, stored(remaining));
     if (remaining <= 0)
     {
         if (!packet(ctx, entity, 1, &zero))
             return;
-        if (word(entity, 0x130))
-            integer(entity, 0x130, 1);
+        if (bh_field_u32(&entity->effect.origin_tag))
+            bh_field_store_u32(&entity->effect.origin_tag, 1);
         bh_effect_split_cascade(entity, &zero);
         return;
     }
-    get(entity, 0xf8, &movement, 12);
+    memcpy(&movement, &entity->effect.velocity, 12);
     for (i = 0; i < 3; i++)
     {
-        ((float *)&movement)[i] = stored((double)((float *)&movement)[i] * scalar(entity, 0xf4));
+        ((float *)&movement)[i] = stored((double)((float *)&movement)[i] * bh_field_f32(&entity->effect.multiplier));
         ((float *)&end)[i] = stored((double)((float *)&entity->position)[i] + ((float *)&movement)[i]);
     }
-    put(entity, 0xf8, &movement, 12);
+    memcpy(&entity->effect.velocity, &movement, 12);
     r = random_value(ctx);
     speed = stored((double)r * (1.0 / 32768));
     r = random_value(ctx);
@@ -235,8 +208,8 @@ void bh_effect_split_tick(BHEntity *entity)
     bh_script_particle_create(b->particles, b->first_image, 3, &entity->position, &random_velocity, &acceleration, .2f,
                               angle, 6, spin, .9f, .95f, .6f, .4f);
     ++ctx->particles;
-    cached = (BHWorldGeometry *)word(entity, 0x138);
-    ignore = (BHEntity *)word(entity, 0x13c);
+    cached = (BHWorldGeometry *)bh_field_u32(&entity->effect.world);
+    ignore = (BHEntity *)bh_field_u32(&entity->effect.ignore);
     self.kind = BH_WORLD_HIT_ACTOR;
     self.object.actor = ignore;
     result = bh_world_segment_run(b->segment, ignore ? &self : NULL, &cached, &entity->position, &end, 4, &hit);
@@ -245,8 +218,8 @@ void bh_effect_split_tick(BHEntity *entity)
         ctx->error = 2;
         return;
     }
-    put(entity, 0x138, &cached, 4);
-    sound = word(entity, 0x128);
+    memcpy(&entity->effect.world, &cached, 4);
+    sound = bh_field_u32(&entity->effect.sound);
     if (result && hit.object.kind == BH_WORLD_HIT_GEOMETRY && (hit.material_flags & 4))
     {
         for (i = 0; i < 3; i++)
@@ -264,7 +237,7 @@ void bh_effect_split_tick(BHEntity *entity)
         ++s->liquid_hits;
         return;
     }
-    identity = word(entity, 0x130);
+    identity = bh_field_u32(&entity->effect.origin_tag);
     if (result && identity != 1)
     {
         normal = hit.normal;
@@ -306,7 +279,7 @@ void bh_effect_split_tick(BHEntity *entity)
             }
             damage.event = 0;
             damage.amount = 1;
-            damage.source = (BHEntity *)word(entity, 0x144);
+            damage.source = (BHEntity *)bh_field_u32(&entity->effect.source);
             /* Original00404eb2 calls even the RET sentinel, then00404ec1 always
      cascades. NULL is the source representation of that no-op callback;
      it must not strand the projectile on the wall after emitting trails. */
@@ -326,18 +299,19 @@ void bh_effect_split_tick(BHEntity *entity)
     for (i = 0; i < 3; i++)
         ((float *)&drift)[i] = stored((double)((float *)&movement)[i] * 30);
     bh_sound_update(b->sound, sound, 1, 2, &entity->position, &drift);
-    value(entity, 0xfc, stored((double)scalar(entity, 0xfc) - (-.001091111111111111)));
-    if (!identity && (long)word(entity, 0x12c) > 1 && random_value(ctx) < 1024)
+    bh_field_store_f32(&entity->effect.velocity.y,
+                       stored((double)bh_field_f32(&entity->effect.velocity.y) - (-.001091111111111111)));
+    if (!identity && (long)bh_field_u32(&entity->effect.split_count) > 1 && random_value(ctx) < 1024)
     {
         for (i = 0; i < 3; i++)
             ((float *)&random_velocity)[i] = stored((double)(random_value(ctx) - 16384) * (1.0 / 262144));
         flash(ctx, &entity->position);
         bh_sound_request(b->sound, ctx->ricochet_sound, 1, 2, &entity->position, &drift);
-        get(entity, 0xf8, &movement, 12);
+        memcpy(&movement, &entity->effect.velocity, 12);
         for (i = 0; i < 3; i++)
             ((float *)&movement)[i] =
                 stored((double)((float *)&movement)[i] - (double)(random_value(ctx) - 16384) * (-1.0 / 131072));
-        put(entity, 0xf8, &movement, 12);
+        memcpy(&entity->effect.velocity, &movement, 12);
         r = random_value(ctx);
         spin = stored((double)(r - 16384) * (1.0 / 16384));
         r = random_value(ctx);

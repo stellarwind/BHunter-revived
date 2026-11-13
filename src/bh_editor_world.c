@@ -1,3 +1,4 @@
+#include "bh_field_access.h"
 #include "bh_editor_world.h"
 #include "bh_camera_queue.h"
 #include "bh_horizon_queue.h"
@@ -15,23 +16,7 @@ static float stored(double v)
     bh_round_float(&f, v);
     return f;
 }
-static unsigned long word(BHEntity *e, unsigned long o)
-{
-    unsigned long v;
-    memcpy(&v, (char *)e + o, 4);
-    return v;
-}
 static void setword(BHEntity *e, unsigned long o, unsigned long v)
-{
-    memcpy((char *)e + o, &v, 4);
-}
-static float number(BHEntity *e, unsigned long o)
-{
-    float f;
-    memcpy(&f, (char *)e + o, 4);
-    return f;
-}
-static void real(BHEntity *e, unsigned long o, float v)
 {
     memcpy((char *)e + o, &v, 4);
 }
@@ -74,7 +59,7 @@ static void refresh(BHEntity *e, void *packet)
 {
     BHEditorNode *n;
     (void)packet;
-    memcpy(&n, e->payload + 560, 4);
+    memcpy(&n, &e->bindings.editor_node, 4);
     if (n)
         bh_editor_world_draw(n->context, n);
 }
@@ -83,7 +68,7 @@ BHEditorNode *bh_editor_world_node(BHEntity *e)
     BHEditorNode *n;
     if (!e)
         return 0;
-    memcpy(&n, e->payload + 560, 4);
+    memcpy(&n, &e->bindings.editor_node, 4);
     return n;
 }
 BHEntityCallback bh_editor_world_draw_callback(void)
@@ -97,7 +82,7 @@ int bh_editor_world_attach(BHEditorWorld *c, BHEditorNode *n)
         return 0;
     n->context = c;
     n->heap_owned = 0;
-    memcpy(n->entity->payload + 560, &n, 4);
+    memcpy(&n->entity->bindings.editor_node, &n, 4);
     n->entity->refresh = refresh;
     c->nodes[c->count++] = n;
     return 1;
@@ -230,7 +215,7 @@ int bh_editor_world_draw(BHEditorWorld *c, BHEditorNode *n)
         from.y = stored(dy);
         from.z = stored(dz);
         distance = stored(sqrt((double)from.x * from.x + (double)from.y * from.y + (double)from.z * from.z));
-        radius = number(c->selection->entity, 0x13c);
+        radius = bh_field_f32(&c->selection->entity->placement.editor_radius);
         if (400.0 - (double)radius * (-.5) < distance)
             return 1;
         if (200.0 - (double)radius * (-.25) < distance && owner)
@@ -242,8 +227,9 @@ int bh_editor_world_draw(BHEditorWorld *c, BHEditorNode *n)
         if (!segment(c, 3, c->selection_image, &at, &to))
             return 0;
     }
-    bucket = (word(n->entity, 0x114) & 1) ? 3 : 0;
-    modulation = n == c->selection ? stored(.75 - sin((double)number(n->entity, 0x130)) * (-.25)) : 1;
+    bucket = (bh_field_u32(&n->entity->placement.query_flags) & 1) ? 3 : 0;
+    modulation =
+        n == c->selection ? stored(.75 - sin((double)bh_field_f32(&n->entity->placement.selection_phase)) * (-.25)) : 1;
     angles = n->entity->euler;
     if (bh_draw_submit_resource(c->queue, bucket, b->resource, &n->entity->position, &angles, modulation) != 1)
     {
@@ -254,9 +240,9 @@ int bh_editor_world_draw(BHEditorWorld *c, BHEditorNode *n)
         return 1;
     if (n == c->selection)
     {
-        yaw = number(n->entity, 0x134);
-        pitch = number(n->entity, 0x138);
-        radius = number(n->entity, 0x13c);
+        yaw = bh_field_f32(&n->entity->placement.editor_yaw);
+        pitch = bh_field_f32(&n->entity->placement.editor_pitch);
+        radius = bh_field_f32(&n->entity->placement.editor_radius);
         if (!_finite(yaw) || !_finite(pitch) || !_finite(radius))
         {
             c->error = 1;
@@ -329,7 +315,7 @@ int bh_editor_world_draw(BHEditorWorld *c, BHEditorNode *n)
     for (i = 0; i < 8; ++i)
         if (b->definition.used_mask & (1UL << i))
         {
-            memcpy(&value, (char *)n->entity + 0x334 + i * 2, 2);
+            memcpy(&value, &n->entity->placement.script_values[i], 2);
             sprintf(buffer, "%s=%d (default %d)", b->definition.names[i], (int)value, (int)b->definition.values[i]);
             if (!text(c, 0, (short)text_y, buffer, c->numeric && c->numeric->selected == (long)i ? 0xffffff : 0x808080))
                 return 0;
@@ -428,24 +414,25 @@ BHEditorNode *bh_editor_world_clone(BHEditorWorld *c, long x, long y, long z, BH
     n->placement.geometry.flags = prototype->placement.geometry.flags;
     n->placement.geometry.query_flags = block->definition.flags;
     e->kind = 1;
-    memcpy((char *)e + 0x134, (char *)prototype->entity + 0x134, 12);
-    setword(e, 0x128, 0);
-    setword(e, 0x12c, 0);
+    memcpy((char *)&e->placement.editor_yaw, &prototype->entity->placement.editor_yaw, 12);
+    e->placement.actors = NULL;
+    bh_field_store_u32(&e->placement.attachments, 0);
+    /* +100 is initialized here; no recovered consumer establishes its meaning. */
     setword(e, 0x100, 0);
-    setword(e, 0x104, 0);
-    setword(e, 0x148, 0);
-    setword(e, 0x14c, 0);
-    setword(e, 0x11c, 0xffffffffUL);
-    setword(e, 0xfc, 0);
-    setword(e, 0xf8, n->model_index);
-    setword(e, 0xf4, n->placement.geometry.flags);
-    setword(e, 0x114, block->definition.flags);
-    memcpy((char *)e + 0x334, (char *)prototype->entity + 0x334, 16);
+    e->placement.activity_frames = 0;
+    bh_field_store_u32(&e->placement.damage, 0);
+    bh_field_store_u32(&e->placement.damage_source, 0);
+    bh_field_store_u32(&e->placement.city_id, 0xffffffffUL);
+    bh_field_store_u32(&e->placement.radar_visited, 0);
+    bh_field_store_u32(&e->placement.model_index, n->model_index);
+    bh_field_store_u32(&e->placement.orientation_flags, n->placement.geometry.flags);
+    bh_field_store_u32(&e->placement.query_flags, block->definition.flags);
+    memcpy((char *)&e->placement.script_values, &prototype->entity->placement.script_values, 16);
     angle = stored((n->placement.geometry.flags & 3UL) * 1.5707963267948966);
     n->placement.angles.x = angle;
-    real(e, 0x3c, angle);
-    real(e, 0x40, 0);
-    real(e, 0x44, 0);
+    bh_field_store_f32(&e->euler.x, angle);
+    bh_field_store_f32(&e->euler.y, 0);
+    bh_field_store_f32(&e->euler.z, 0);
     delta[0] = x;
     delta[1] = y;
     delta[2] = z;
@@ -454,7 +441,7 @@ BHEditorNode *bh_editor_world_clone(BHEditorWorld *c, long x, long y, long z, BH
         coordinate = signed_word((unsigned long)prototype->placement.coordinates[i] + (unsigned long)delta[i]);
         coordinate = (coordinate / grid) * grid;
         n->placement.coordinates[i] = coordinate;
-        setword(e, 0xe8 + 4 * i, (unsigned long)coordinate);
+        bh_field_store_u32(&e->placement.coordinates[i], (unsigned long)coordinate);
         ((float *)&e->position)[i] = stored((double)((coordinate / grid) * grid));
     }
     n->placement.geometry.position = e->position;
@@ -471,10 +458,10 @@ BHEditorNode *bh_editor_world_clone(BHEditorWorld *c, long x, long y, long z, BH
     n->placement.geometry.navigation.next = &next->placement.geometry.navigation;
     after->placement.geometry.navigation.next = &n->placement.geometry.navigation;
     next->placement.geometry.previous = &n->placement.geometry;
-    setword(e, 0x120, (unsigned long)after->entity);
-    setword(e, 0x124, (unsigned long)next->entity);
-    setword(after->entity, 0x124, (unsigned long)e);
-    setword(next->entity, 0x120, (unsigned long)e);
+    bh_field_store_u32(&e->placement.previous, (unsigned long)after->entity);
+    bh_field_store_u32(&e->placement.next, (unsigned long)next->entity);
+    bh_field_store_u32(&after->entity->placement.next, (unsigned long)e);
+    bh_field_store_u32(&next->entity->placement.previous, (unsigned long)e);
     if (c->numeric)
         c->numeric->selected = -1;
     c->error = 0;

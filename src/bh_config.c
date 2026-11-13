@@ -11,6 +11,24 @@ static_assert(offsetof(BHInputProfile, next) == 4 && offsetof(BHInputProfile, pr
 static_assert(offsetof(BHInputProfile, baseline) == 72, "input profile baseline offset");
 
 #include "bh_config_defaults.h"
+
+static_assert(sizeof(BHConfigSettings) == 416, "configuration disk size");
+static_assert(offsetof(BHConfigSettings, hardware_flags) == 0, "configuration hardware_flags");
+static_assert(offsetof(BHConfigSettings, unlocked_mission) == 2, "configuration unlocked_mission");
+static_assert(offsetof(BHConfigSettings, hardware_acceleration) == 4, "configuration hardware_acceleration");
+static_assert(offsetof(BHConfigSettings, resolution) == 8, "configuration resolution");
+static_assert(offsetof(BHConfigSettings, device_name) == 12, "configuration device_name");
+static_assert(offsetof(BHInputProfile, name) == 12, "profile name");
+static_assert(offsetof(BHInputProfile, motion_keys) == 28, "profile motion_keys");
+static_assert(offsetof(BHInputProfile, motion_joystick) == 34, "profile motion_joystick");
+static_assert(offsetof(BHInputProfile, motion_mouse) == 37, "profile motion_mouse");
+static_assert(offsetof(BHInputProfile, primary_keys) == 40, "profile primary_keys");
+static_assert(offsetof(BHInputProfile, secondary_keys) == 49, "profile secondary_keys");
+static_assert(offsetof(BHInputProfile, camera_keys) == 58, "profile camera_keys");
+static_assert(offsetof(BHInputProfile, camera_joystick) == 68, "profile camera_joystick");
+static_assert(offsetof(BHInputProfile, camera_mouse) == 70, "profile camera_mouse");
+static_assert(offsetof(BHInputProfile, baseline) == 72, "profile baseline");
+
 static_assert(sizeof(default_settings) == sizeof(((BHConfig *)0)->settings), "default settings size");
 
 typedef struct ProfileNode
@@ -144,7 +162,7 @@ int bh_config_valid(const BHConfig *config)
     const ProfileNode *node;
     unsigned long i, allocations = 0;
     if (!config || !config->profiles || !config->profile_count || config->profile_count > 4096 ||
-        !terminated(config->settings + 12, 128))
+        !terminated((const unsigned char *)config->values.device_name, 128))
         return 0;
     node = (const ProfileNode *)config->owned_nodes;
     while (node)
@@ -160,7 +178,7 @@ int bh_config_valid(const BHConfig *config)
         if (!member(config, profile) || !member(config, profile->next) || !member(config, profile->previous))
             return 0;
         if (profile->next->previous != profile || profile->previous->next != profile ||
-            !terminated(profile->payload, 16))
+            !terminated((const unsigned char *)profile->name, 16))
             return 0;
         profile = profile->next;
         if (profile == config->profiles && i + 1 != config->profile_count)
@@ -294,7 +312,7 @@ int bh_config_load(BHConfig *config, const char *path)
             next.error = BH_CONFIG_IO;
             goto close_rejected;
         }
-        if (!terminated(next.settings + 12, 128))
+        if (!terminated((const unsigned char *)next.values.device_name, 128))
         {
             next.error = BH_CONFIG_FORMAT;
             goto close_rejected;
@@ -374,7 +392,7 @@ int bh_config_bootstrap(BHConfig *config, const char *path, const BHDeviceName *
     if (!bh_config_load(config, path))
         return 0;
     for (i = 0; i < count; i++)
-        if (!_stricmp(devices[i].name, (char *)config->settings + 12))
+        if (!_stricmp(devices[i].name, config->values.device_name))
         {
             selected = i;
             found = 1;
@@ -384,7 +402,7 @@ int bh_config_bootstrap(BHConfig *config, const char *path, const BHDeviceName *
         config->settings[0] = 0;
         config->settings[1] = 0;
     }
-    strcpy((char *)config->settings + 12, devices[selected].name);
+    strcpy(config->values.device_name, devices[selected].name);
     memcpy(&hardware, config->settings, 2);
     config->settings[0] = 0;
     config->settings[1] = 0;

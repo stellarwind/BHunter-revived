@@ -69,17 +69,17 @@ int bh_script_actor_draw(BHScriptActorDrawContext *ctx, BHEntity *entity)
     smoke(ctx, &p);
     sn = sin(angles.x);
     cs = cos(angles.x);
-    memcpy(&offset, (char *)entity + 0x174, 12);
+    memcpy(&offset, (char *)&entity->actor.draw_offset, 12);
     p.x = stored((double)p.x + ((double)offset.z * sn - (double)offset.x * cs));
     p.y = stored((double)offset.y + p.y);
     p.z = stored((double)p.z + (double)offset.z * cs + (double)offset.x * sn);
-    memcpy(&resource, (char *)entity + 0x114, 4);
+    memcpy(&resource, (char *)&entity->actor.model_resource, 4);
     bh_draw_submit_resource(ctx->queue, 0, resource, &p, &angles, 1);
     velocity.x = stored(((double)q.x - p.x) * 30);
     velocity.y = stored(((double)q.y - p.y) * 30);
     velocity.z = stored(((double)q.z - p.z) * 30);
     entity->velocity = velocity;
-    memcpy((char *)entity + 0x108, &frames, 4);
+    memcpy((char *)&entity->actor.sound_frames, &frames, 4);
     ctx->error = BH_ACTOR_ROUTE_OK;
     return 1;
 }
@@ -114,7 +114,7 @@ int bh_script_actor_vehicle_draw(BHScriptActorDrawContext *ctx, BHEntity *entity
     bh_camera_curve(t, &p, state.controls, state.controls + 1, state.controls + 2, state.controls + 3);
     bh_camera_curve(stored((double)t - (-1.0 / 30.0)), &q, state.controls, state.controls + 1, state.controls + 2,
                     state.controls + 3);
-    memcpy(&offset, (char *)entity + 0x15c, 12);
+    memcpy(&offset, (char *)&entity->actor.offset, 12);
     previous.x = stored((double)offset.x + previous.x);
     previous.y = stored((double)offset.y + previous.y);
     previous.z = stored((double)offset.z + previous.z);
@@ -137,11 +137,11 @@ int bh_script_actor_vehicle_draw(BHScriptActorDrawContext *ctx, BHEntity *entity
     smoke(ctx, &p);
     sn = sin(angles.x);
     cs = cos(angles.x);
-    memcpy(&offset, (char *)entity + 0x174, 12);
+    memcpy(&offset, (char *)&entity->actor.draw_offset, 12);
     p.x = stored((double)p.x + ((double)offset.z * sn - (double)offset.x * cs));
     p.y = stored((double)offset.y + p.y);
     p.z = stored((double)p.z + (double)offset.x * sn + (double)offset.z * cs);
-    memcpy(&resource, (char *)entity + 0x114, 4);
+    memcpy(&resource, (char *)&entity->actor.model_resource, 4);
     bh_draw_submit_resource(ctx->queue, 0, resource, &p, &angles, 1);
     if (resource == ctx->glowing_model)
     {
@@ -164,7 +164,7 @@ int bh_script_actor_vehicle_draw(BHScriptActorDrawContext *ctx, BHEntity *entity
     velocity.y = stored(((double)q.y - p.y) * 30);
     velocity.z = stored(((double)q.z - p.z) * 30);
     entity->velocity = velocity;
-    memcpy((char *)entity + 0x108, &frames, 4);
+    memcpy((char *)&entity->actor.sound_frames, &frames, 4);
     ctx->error = BH_ACTOR_ROUTE_OK;
     return 1;
 }

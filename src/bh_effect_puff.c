@@ -1,17 +1,8 @@
+#include "bh_field_access.h"
 #include "bh_effect_puff.h"
 #include "bh_round.h"
 #include <math.h>
 #include <string.h>
-static void get(const BHEntity *entity, unsigned long a, void *p, unsigned long n)
-{
-    memcpy(p, (const char *)entity + a, n);
-}
-static float scalar(const BHEntity *entity, unsigned long a)
-{
-    float f;
-    get(entity, a, &f, 4);
-    return f;
-}
 static float rf(double x)
 {
     float f;
@@ -25,14 +16,14 @@ static unsigned long advance(unsigned long x)
 static BHEffectPuffContext *context(BHEntity *entity)
 {
     BHEffectPuffContext *ctx;
-    memcpy(&ctx, entity->payload + 624, 4);
+    memcpy(&ctx, &entity->bindings.effect_puff, 4);
     return ctx;
 }
 int bh_effect_puff_bind(BHEffectPuffContext *ctx, BHEntity *entity, int ring)
 {
     if (!ctx || !ctx->queue || !entity)
         return 0;
-    memcpy(entity->payload + 624, &ctx, 4);
+    memcpy(&entity->bindings.effect_puff, &ctx, 4);
     entity->refresh = ring ? bh_effect_puff_ring_draw : bh_effect_puff_random_draw;
     return 1;
 }
@@ -55,12 +46,12 @@ void bh_effect_puff_random_draw(BHEntity *entity, void *ignored)
     unsigned long seed, image;
     int i;
     (void)ignored;
-    if (!ctx || !(scalar(entity, 0x198) <= 0))
+    if (!ctx || !(bh_field_f32(&entity->puff.delay) <= 0))
         return;
-    alpha = rf((double)scalar(entity, 0xe8) / scalar(entity, 0xec));
-    size = rf((1.0 - alpha) * scalar(entity, 0x194));
-    get(entity, 0x1a8, &seed, 4);
-    get(entity, 0xf0, &image, 4);
+    alpha = rf((double)bh_field_f32(&entity->puff.lifetime) / bh_field_f32(&entity->puff.duration));
+    size = rf((1.0 - alpha) * bh_field_f32(&entity->puff.size));
+    memcpy(&seed, &entity->puff.seed, 4);
+    memcpy(&image, &entity->puff.image, 4);
     for (i = 0; i < 48; ++i)
     {
         seed = advance(seed);
@@ -86,11 +77,11 @@ void bh_effect_puff_ring_draw(BHEntity *entity, void *ignored)
     unsigned long image;
     int i;
     (void)ignored;
-    if (!ctx || !(scalar(entity, 0x198) <= 0))
+    if (!ctx || !(bh_field_f32(&entity->puff.delay) <= 0))
         return;
-    alpha = rf((double)scalar(entity, 0xe8) / scalar(entity, 0xec));
-    size = rf((1.0 - alpha) * scalar(entity, 0x194));
-    get(entity, 0xf0, &image, 4);
+    alpha = rf((double)bh_field_f32(&entity->puff.lifetime) / bh_field_f32(&entity->puff.duration));
+    size = rf((1.0 - alpha) * bh_field_f32(&entity->puff.size));
+    memcpy(&image, &entity->puff.image, 4);
     w = rf((double)size * .10799224746714915);
     h = rf((double)size * (1.0 / 3.0));
     for (i = 0; i < 64; ++i)

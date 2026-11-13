@@ -5,8 +5,8 @@
 #include <string.h>
 #include <stddef.h>
 
-typedef char raster_screen_layout[offsetof(BHClipVertex, sx) == 0x20 && offsetof(BHClipVertex, sy) == 0x24 ? 1 : -1];
-typedef char raster_uv_layout[offsetof(BHClipVertex, u) == 0x18 && offsetof(BHClipVertex, v) == 0x1c ? 1 : -1];
+static_assert(offsetof(BHClipVertex, sx) == 0x20 && offsetof(BHClipVertex, sy) == 0x24, "raster screen layout");
+static_assert(offsetof(BHClipVertex, u) == 0x18 && offsetof(BHClipVertex, v) == 0x1c, "raster uv layout");
 typedef struct RasterEdge
 {
     BHClipVertex *below;

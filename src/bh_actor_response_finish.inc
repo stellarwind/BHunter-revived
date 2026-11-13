@@ -1,9 +1,8 @@
+#include "bh_field_access.h"
 /* Remaining death/healthy return of00439910. Source lifetime/legacy-angle and
    checked registry adapters are explicit; they are not new original owners. */
-#define RESPONSE_FINISH_VEC(o) ((BHVec3 *)((char *)e + (o)))
 #define RESPONSE_FINISH_CURVE(t, p)                                                                                    \
-    bh_camera_curve((t), (p), RESPONSE_FINISH_VEC(0x120), RESPONSE_FINISH_VEC(0x144), RESPONSE_FINISH_VEC(0x150),      \
-                    RESPONSE_FINISH_VEC(0x12c))
+    bh_camera_curve((t), (p), &e->actor.route_start, &e->actor.route_first, &e->actor.route_second, &e->actor.route_end)
 void bh_actor_response_finish(BHEntity *e, BHActorResponseContext *c, const BHVec3 *death_position, int smoked)
 {
     BHActorDamageContext *d = c->damage;
@@ -20,9 +19,10 @@ void bh_actor_response_finish(BHEntity *e, BHActorResponseContext *c, const BHVe
         BHEntity *actor;
         long tag;
     } packet;
-    if (!smoked || number(e, 0x194) < 1)
+    if (!smoked || bh_field_f32(&e->actor.damage) < 1)
     {
-        if (number(e, 0x194) < .05 && word(e, 0x198) == 0x3f800000UL && word(e, 0x19c) == 0x3f800000UL)
+        if (bh_field_f32(&e->actor.damage) < .05 && bh_field_u32(&e->actor.speed_scale) == 0x3f800000UL &&
+            bh_field_u32(&e->actor.fade) == 0x3f800000UL)
             e->step = bh_actor_vehicle_tick;
         return;
     }
@@ -32,8 +32,8 @@ void bh_actor_response_finish(BHEntity *e, BHActorResponseContext *c, const BHVe
         return;
     }
     bh_entity_set_query(d->pool, e, 0);
-    bh_sound_stop(d->route->sound, word(e, 0x104));
-    t = response_query_stored((double)number(e, 0x180) / number(e, 0x184));
+    bh_sound_stop(d->route->sound, bh_field_u32(&e->actor.sound));
+    t = response_query_stored((double)bh_field_f32(&e->actor.phase) / bh_field_f32(&e->actor.duration));
     RESPONSE_FINISH_CURVE(response_query_stored((double)t - 1.0 / 30.0), &before);
     RESPONSE_FINISH_CURVE(t, &at);
     RESPONSE_FINISH_CURVE(response_query_stored((double)t - (-1.0 / 30.0)), &after);
@@ -46,21 +46,21 @@ void bh_actor_response_finish(BHEntity *e, BHActorResponseContext *c, const BHVe
     spin.x = response_query_stored(((double)rand() - 16384) * (1.0 / 4096.0));
     spin.y = response_query_stored(((double)rand() - 16384) * (1.0 / 4096.0));
     spin.z = response_query_stored(((double)rand() - 16384) * (1.0 / 4096.0));
-    slot = short_value(e, 0x1dc);
+    slot = bh_field_i16(&e->actor.primary_weapon);
     if (!slot)
         first = 10;
     else if (slot == 1)
         first = 12;
     else if (slot == 2)
         first = 11;
-    slot = short_value(e, 0x1de);
+    slot = bh_field_i16(&e->actor.secondary_weapon);
     if (!slot)
         second = 5;
     else if (slot == 1)
         second = 3;
     else if (slot == 2)
         second = 6;
-    type = word(e, 0xfc);
+    type = bh_field_u32(&e->actor.kind);
     row = type == 6 ? 3 : type == 1 ? 1 : 2;
     if (!bh_remote_choose_slot(d->loot_rows, d->loot_row_count, row, first, second, &loot))
     {
@@ -68,7 +68,7 @@ void bh_actor_response_finish(BHEntity *e, BHActorResponseContext *c, const BHVe
         return;
     }
     /* The original reloads kind after loot, and again after cue allocation. */
-    if (word(e, 0xfc) == 6 && (mission = bh_entity_acquire(d->pool)) != 0)
+    if (bh_field_u32(&e->actor.kind) == 6 && (mission = bh_entity_acquire(d->pool)) != 0)
     {
         if (!bh_script_lifetime_bind_context(c->mission, mission))
         {
@@ -76,29 +76,28 @@ void bh_actor_response_finish(BHEntity *e, BHActorResponseContext *c, const BHVe
             c->error = 1;
             return;
         }
-        *(volatile float *)((char *)mission + 0x180) = 1.5f;
-        *(volatile unsigned long *)((char *)mission + 0x104) = c->mission_resource;
+        *(volatile float *)(&mission->script_lifetime.mission_countdown) = 1.5f;
+        *(volatile unsigned long *)(&mission->script_lifetime.mission_resource) = c->mission_resource;
         *(BHEntityStep volatile *)&mission->step = bh_mission_sound_tick;
     }
-    special = word(e, 0xfc) == 6;
-    token = word(e, 0x100);
-    owner = (BHEntity *)word(e, 0x1ac);
+    special = bh_field_u32(&e->actor.kind) == 6;
+    token = bh_field_u32(&e->actor.bounty_token);
+    owner = (BHEntity *)bh_field_u32(&e->actor.damage_source);
     draw = rand();
-    material = word(e, 0x114);
+    material = bh_field_u32(&e->actor.model_resource);
     strength = response_query_stored(1.0 - (double)draw * (-1.0 / 16384.0));
     bh_target_construct_moving(d->targets, death_position, d->legacy_death_angles, &velocity, &spin, material, 10000,
                                strength, owner, (long)token, loot, special);
     packet.event = 17;
     packet.actor = e;
     bh_entities_query(d->pool, 0, 0, 0, 0, &packet);
-    if (word(e, 0x11c))
+    if (bh_field_u32(&e->actor.death_tag))
     {
         packet.event = 14;
-        packet.tag = (long)word(e, 0x11c);
+        packet.tag = (long)bh_field_u32(&e->actor.death_tag);
         bh_entities_query(d->pool, 0, 0, 0, 0, &packet);
     }
     if (unlink_actor(c, e))
         bh_entity_release(d->pool, e);
 }
-#undef RESPONSE_FINISH_VEC
 #undef RESPONSE_FINISH_CURVE

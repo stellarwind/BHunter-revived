@@ -8,7 +8,7 @@
 #include <float.h>
 #include <ctype.h>
 #undef isdigit
-typedef char rail_segment_size[sizeof(BHRailSegment) == 44 && offsetof(BHRailSegment, visited) == 40 ? 1 : -1];
+static_assert(sizeof(BHRailSegment) == 44 && offsetof(BHRailSegment, visited) == 40, "rail segment size");
 static void *allocate(unsigned long n, void *u)
 {
     return malloc(n);

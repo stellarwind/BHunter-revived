@@ -3,11 +3,10 @@
 #include <float.h>
 #include <stddef.h>
 #include <string.h>
-typedef char depth_layout_z[offsetof(BHClipVertex, point) + offsetof(BHVec3, z) == 0x14 ? 1 : -1];
-typedef char depth_layout_u[offsetof(BHClipVertex, u) == 0x18 ? 1 : -1];
-typedef char depth_layout_scalar[offsetof(BHClipVertex, unknown28) == 0x28 ? 1 : -1];
-typedef char
-    depth_layout_links[offsetof(BHClipVertex, next) == 0x2c && offsetof(BHClipVertex, previous) == 0x30 ? 1 : -1];
+static_assert(offsetof(BHClipVertex, point) + offsetof(BHVec3, z) == 0x14, "depth layout z");
+static_assert(offsetof(BHClipVertex, u) == 0x18, "BHClipVertex.u offset");
+static_assert(offsetof(BHClipVertex, unknown28) == 0x28, "BHClipVertex.unknown28 offset");
+static_assert(offsetof(BHClipVertex, next) == 0x2c && offsetof(BHClipVertex, previous) == 0x30, "depth layout links");
 static int fail(BHDepthSplitContext *c, BHDepthSplitError e)
 {
     if (c)

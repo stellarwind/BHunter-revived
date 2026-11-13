@@ -1,17 +1,8 @@
+#include "bh_field_access.h"
 #include "bh_projectile_create.h"
 #include "bh_round.h"
 #include <string.h>
 #include <stdlib.h>
-static float scalar(const BHEntity *entity, unsigned long o)
-{
-    float f;
-    memcpy(&f, (const unsigned char *)entity + o, 4);
-    return f;
-}
-static void put(BHEntity *entity, unsigned long o, const void *v, unsigned long n)
-{
-    memcpy((unsigned char *)entity + o, v, n);
-}
 static float stored(double v)
 {
     float f;
@@ -73,8 +64,8 @@ int bh_projectile_pulse_draw(BHProjectileDrawContext *ctx, const BHEntity *entit
     if (!ctx || !ctx->queue || !entity)
         return -1;
     ctx->error = 0;
-    alpha = stored((double)scalar(entity, 0xe8) * .5);
-    size = scalar(entity, 0xec);
+    alpha = stored((double)bh_field_f32(&entity->area_projectile.strength) * .5);
+    size = bh_field_f32(&entity->area_projectile.radius);
     r = rand();
     ++ctx->random_calls;
     angle = stored((double)r * (1.0 / 4096.0));
@@ -85,7 +76,7 @@ int bh_projectile_pulse_draw(BHProjectileDrawContext *ctx, const BHEntity *entit
 static BHProjectileDrawContext *draw_context(BHEntity *entity)
 {
     BHProjectileDrawContext *ctx;
-    memcpy(&ctx, entity->payload + 616, 4);
+    memcpy(&ctx, &entity->bindings.projectile_draw, 4);
     return ctx;
 }
 static void ballistic_draw(BHEntity *entity, void *unused)
@@ -141,7 +132,7 @@ static BHEntity *create(BHProjectileCreateContext *ctx, BHWorldGeometry *world, 
         bh_entity_release(ctx->lifetime->pool, entity);
         return NULL;
     }
-    memcpy(entity->payload + 616, &ctx->draw, 4);
+    memcpy(&entity->bindings.projectile_draw, &ctx->draw, 4);
     entity->refresh = homing ? homing_draw : ballistic_draw;
     if (homing)
         state.sound = BH_SOUND_INVALID;
@@ -155,18 +146,18 @@ static BHEntity *create(BHProjectileCreateContext *ctx, BHWorldGeometry *world, 
     if (!homing)
     {
         state.sound = bh_sound_request(ctx->lifetime->sound, ctx->loop_sound, 1, 1.5f, p, v);
-        put(entity, 0x118, &state.sound, 4);
+        memcpy(&entity->projectile.sound, &state.sound, 4);
         bh_sound_request(ctx->lifetime->sound, ctx->launch_sound, .75f, 4, p, v);
     }
-    put(entity, 0x128, &source, 4);
-    put(entity, 0x124, &world, 4);
+    memcpy(&entity->projectile.ignore, &source, 4);
+    memcpy(&entity->projectile.world, &world, 4);
     if (homing && target)
     {
         packet.event = 3;
         target->query(target, &packet);
-        put(entity, 0x100, &packet.position, 12);
+        memcpy(&entity->projectile.target_position, &packet.position, 12);
     }
-    put(entity, 0x120, &zero, 4);
+    memcpy(&entity->projectile.sync_identity, &zero, 4);
     return entity;
 }
 BHEntity *bh_projectile_create_ballistic(BHProjectileCreateContext *ctx, BHWorldGeometry *world, BHEntity *entity,

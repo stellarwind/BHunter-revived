@@ -2,37 +2,37 @@
 #include <stddef.h>
 #include <string.h>
 
-typedef char wait_state_size[sizeof(BHScriptWaitState) == 48 ? 1 : -1];
-typedef char wait_state_start[offsetof(BHEntity, payload) + 4 == 0xe8 ? 1 : -1];
-typedef char wait_context_start[offsetof(BHEntity, payload) + 52 == 0x118 ? 1 : -1];
-typedef char wait_packet_expected[offsetof(BHScriptWaitPacket, expected) == 8 ? 1 : -1];
+static_assert(sizeof(BHScriptWaitState) == 48, "BHScriptWaitState size");
+static_assert(offsetof(BHEntity, payload) + 4 == 0xe8, "wait state start");
+static_assert(offsetof(BHEntity, payload) + 52 == 0x118, "wait context start");
+static_assert(offsetof(BHScriptWaitPacket, expected) == 8, "BHScriptWaitPacket.expected offset");
 typedef struct FiredPacket
 {
     long event;
     BHEntity *actor;
     unsigned char unspecified[32];
 } FiredPacket;
-typedef char fired_packet_size[sizeof(FiredPacket) == 40 ? 1 : -1];
+static_assert(sizeof(FiredPacket) == 40, "FiredPacket size");
 static BHScriptWaitState *state(BHEntity *entity)
 {
-    return (BHScriptWaitState *)(entity->payload + 4);
+    return bh_script_wait_fields(entity);
 }
 static BHScriptTimerContext *owner(BHEntity *entity)
 {
     BHScriptTimerContext *ctx;
-    memcpy(&ctx, entity->payload + 52, 4);
+    memcpy(&ctx, &entity->bindings.script_timer, 4);
     return ctx;
 }
 static unsigned long bound_generation(BHEntity *entity)
 {
     unsigned long n;
-    memcpy(&n, entity->payload + 56, 4);
+    memcpy(&n, &entity->bindings.wait_generation, 4);
     return n;
 }
 static void bind(BHEntity *entity, BHScriptTimerContext *ctx)
 {
-    memcpy(entity->payload + 52, &ctx, 4);
-    memcpy(entity->payload + 56, &entity->generation, 4);
+    memcpy(&entity->bindings.script_timer, &ctx, 4);
+    memcpy(&entity->bindings.wait_generation, &entity->generation, 4);
 }
 static int live(BHScriptTimerContext *ctx, BHEntity *entity, unsigned long generation)
 {

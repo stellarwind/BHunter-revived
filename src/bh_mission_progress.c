@@ -1,6 +1,6 @@
 #include "bh_mission_progress.h"
 #include <string.h>
-typedef char mission_abi[sizeof(short) == 2 && sizeof(long) == 4 && sizeof(void *) == 4 ? 1 : -1];
+static_assert(sizeof(short) == 2 && sizeof(long) == 4 && sizeof(void *) == 4, "mission abi");
 BHEntity *bh_mission_progress(BHMissionProgressContext *c, long progression)
 {
     short old;
@@ -15,11 +15,11 @@ BHEntity *bh_mission_progress(BHMissionProgressContext *c, long progression)
     }
     c->error = 0;
     c->save_result = -1;
-    memcpy(&old, c->config->settings + 2, 2);
+    memcpy(&old, &c->config->values.unlocked_mission, 2);
     if ((long)old < progression)
     {
         low = (unsigned short)(unsigned long)progression;
-        memcpy(c->config->settings + 2, &low, 2);
+        memcpy(&c->config->values.unlocked_mission, &low, 2);
         ++c->save_attempts;
         c->save_result = bh_config_save(c->config, c->path);
         if (!c->save_result)

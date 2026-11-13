@@ -2,10 +2,6 @@
 #include "bh_fp.h"
 #include <string.h>
 #include <float.h>
-static void word(BHEntity *e, unsigned long at, unsigned long value)
-{
-    memcpy((unsigned char *)e + at, &value, 4);
-}
 static void publish(BHEntity *e, const BHFlybyCameraState *state)
 {
     e->position = state->position;
@@ -92,9 +88,8 @@ BHEntity *bh_flyby_construct(BHFlybyConstruct *c)
     e->flyby.camera = state->camera;
     e->flyby.camera.position = position;
     e->flyby.camera.angles = state->angles;
-    word(e, 0x1f8, 0);
-    word(e, 0x1fc, 0);
-    word(e, 0x1dc, 0);
+    e->flyby.orbit_time = 0;
+    e->flyby.route_phase = 0;
     state->route.current = bh_world_locate(camera->route->first, camera->route->scene_count, NULL, &position, 0);
     e->world = state->route.current;
     if (!bh_flyby_scene_bind(s))

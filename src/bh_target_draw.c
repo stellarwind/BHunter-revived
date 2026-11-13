@@ -4,28 +4,28 @@
 #include <float.h>
 #include <stddef.h>
 #include <string.h>
-typedef char target_layout
-    [sizeof(void *) == 4 && offsetof(BHEntity, payload) == 0xe4 && offsetof(BHEntity, opaque0) == 0x18 ? 1 : -1];
+static_assert(sizeof(void *) == 4 && offsetof(BHEntity, payload) == 0xe4 && offsetof(BHEntity, opaque0) == 0x18,
+              "target layout");
 int bh_target_draw_state_read(const BHEntity *entity, BHTargetDrawState *state)
 {
     if (!entity || !state)
         return 0;
-    memcpy(&state->local_anchor, (const unsigned char *)entity + 0xf0, 12);
-    memcpy(&state->number, (const unsigned char *)entity + 0x118, 4);
-    memcpy(&state->flags, (const unsigned char *)entity + 0x120, 4);
-    memcpy(&state->resource, (const unsigned char *)entity + 0x124, 4);
-    memcpy(&state->owner, (const unsigned char *)entity + 0x128, 4);
+    memcpy(&state->local_anchor, (char *)&entity->target.local_anchor, 12);
+    memcpy(&state->number, (char *)&entity->target.number, 4);
+    memcpy(&state->flags, (char *)&entity->target.flags, 4);
+    memcpy(&state->resource, (char *)&entity->target.resource, 4);
+    memcpy(&state->owner, (char *)&entity->target.owner, 4);
     return 1;
 }
 int bh_target_draw_state_write(BHEntity *entity, const BHTargetDrawState *state)
 {
     if (!entity || !state)
         return 0;
-    memcpy((unsigned char *)entity + 0xf0, &state->local_anchor, 12);
-    memcpy((unsigned char *)entity + 0x118, &state->number, 4);
-    memcpy((unsigned char *)entity + 0x120, &state->flags, 4);
-    memcpy((unsigned char *)entity + 0x124, &state->resource, 4);
-    memcpy((unsigned char *)entity + 0x128, &state->owner, 4);
+    memcpy((char *)&entity->target.local_anchor, &state->local_anchor, 12);
+    memcpy((char *)&entity->target.number, &state->number, 4);
+    memcpy((char *)&entity->target.flags, &state->flags, 4);
+    memcpy((char *)&entity->target.resource, &state->resource, 4);
+    memcpy((char *)&entity->target.owner, &state->owner, 4);
     return 1;
 }
 static float rounded(double value)

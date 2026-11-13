@@ -52,6 +52,7 @@ BHEntity *bh_pickup_spawn(BHPickupContext *context, const BHVec3 *position, long
                           long offer, long token, float fade);
 BHPickupContext *bh_pickup_context(BHEntity *entity);
 BHPickupState *bh_pickup_state(BHEntity *entity);
+const BHPickupState *bh_pickup_state_const(const BHEntity *entity);
 void bh_pickup_tick(BHEntity *entity);                /* 004415a0 */
 void bh_pickup_query(BHEntity *entity, void *packet); /* 00441570 */
 void bh_pickup_cleanup(BHEntity *entity);             /* 004414d0 */

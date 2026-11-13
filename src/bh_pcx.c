@@ -3,7 +3,7 @@
 #include <string.h>
 #define MAX_INPUT (64UL * 1024UL * 1024UL)
 #define MAX_PIXELS (16UL * 1024UL * 1024UL)
-typedef char pcx_integer_sizes[(sizeof(unsigned long) == 4 && sizeof(unsigned short) == 2) ? 1 : -1];
+static_assert((sizeof(unsigned long) == 4 && sizeof(unsigned short) == 2), "pcx integer sizes");
 static unsigned long u16(const unsigned char *p)
 {
     return (unsigned long)p[0] | ((unsigned long)p[1] << 8);

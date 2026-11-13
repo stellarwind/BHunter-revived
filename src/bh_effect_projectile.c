@@ -1,3 +1,4 @@
+#include "bh_field_access.h"
 #include "bh_effect_projectile.h"
 #include "bh_round.h"
 #include "bh_effect_orbit_tick.h"
@@ -8,28 +9,6 @@
 #include <stdlib.h>
 #include <string.h>
 static const BHVec3 zero = {0, 0, 0};
-static void get(const BHEntity *entity, unsigned long at, void *out, unsigned long n)
-{
-    memcpy(out, (const char *)entity + at, n);
-}
-static void put(BHEntity *entity, unsigned long at, const void *in, unsigned long n)
-{
-    memcpy((char *)entity + at, in, n);
-}
-static float scalar(BHEntity *entity, unsigned long at)
-{
-    float f;
-    get(entity, at, &f, 4);
-    return f;
-}
-static void value(BHEntity *entity, unsigned long at, float f)
-{
-    put(entity, at, &f, 4);
-}
-static void word(BHEntity *entity, unsigned long at, unsigned long n)
-{
-    put(entity, at, &n, 4);
-}
 static float rf(double d)
 {
     float f;
@@ -39,13 +18,13 @@ static float rf(double d)
 static BHEffectProjectileContext *context(BHEntity *entity)
 {
     BHEffectProjectileContext *ctx;
-    memcpy(&ctx, entity->payload + 608, 4);
+    memcpy(&ctx, &entity->bindings.effect_projectile, 4);
     return ctx;
 }
 static int live(BHEffectProjectileContext *ctx, BHEntity *entity)
 {
     unsigned long g;
-    memcpy(&g, entity->payload + 612, 4);
+    memcpy(&g, &entity->bindings.projectile_generation, 4);
     return bh_entity_is_active(ctx->effects->pool, entity) && entity->generation == g;
 }
 int bh_effect_projectile_bind(BHEffectProjectileContext *ctx, BHEntity *entity, int orbit)
@@ -61,12 +40,12 @@ int bh_effect_projectile_bind(BHEffectProjectileContext *ctx, BHEntity *entity, 
     ctx->cleanup.pool = ctx->effects->pool;
     ctx->cleanup.sound = ctx->effects->sound;
     step = entity->step;
-    get(entity, 0x128, &handle, 4);
+    memcpy(&handle, &entity->effect.sound, 4);
     if (!bh_effect_cleanup_bind(&ctx->cleanup, entity, handle))
         return 0;
     entity->step = step;
-    memcpy(entity->payload + 608, &ctx, 4);
-    memcpy(entity->payload + 612, &entity->generation, 4);
+    memcpy(&entity->bindings.effect_projectile, &ctx, 4);
+    memcpy(&entity->bindings.projectile_generation, &entity->generation, 4);
     return bh_entity_set_query(ctx->effects->pool, entity, orbit ? bh_effect_orbit_query : bh_effect_linear_query);
 }
 static int random_value(BHEffectProjectileContext *ctx)
@@ -104,15 +83,15 @@ static void terminate_effects(BHEffectProjectileContext *ctx, BHEntity *entity)
     BHVec3 v;
     int i, j;
     float *o = &v.x;
-    value(entity, 0xe8, 3);
+    bh_field_store_f32(&entity->effect.lifetime, 3);
     entity->origin = zero;
-    put(entity, 0x60, &zero, 12);
-    get(entity, 0x128, &handle, 4);
+    memcpy(&entity->acceleration, &zero, 12);
+    memcpy(&handle, &entity->effect.sound, 4);
     bh_sound_stop(ctx->effects->sound, handle);
-    word(entity, 0x128, BH_SOUND_INVALID);
+    bh_field_store_u32(&entity->effect.sound, BH_SOUND_INVALID);
     bh_sound_request(ctx->effects->sound, ctx->blast_sound, 4, 1, &entity->position, &zero);
     bh_sound_request(ctx->effects->sound, ctx->impact_sound, 1, 1, &entity->position, &zero);
-    word(entity, 0x12c, 1);
+    bh_field_store_u32(&entity->effect.split_count, 1);
     flash(ctx, entity, 500, 8);
     bh_script_debris_create(ctx->debris, 10, &entity->position, 2, 20, .5f);
     for (i = 0; i < 6; ++i)
@@ -125,12 +104,12 @@ static void terminate_effects(BHEffectProjectileContext *ctx, BHEntity *entity)
 static void detach(BHEffectProjectileContext *ctx, BHEntity *entity, BHEffectPacket *p)
 {
     unsigned long n;
-    get(entity, 0x140, &n, 4);
+    memcpy(&n, &entity->effect.target, 4);
     if (n == (unsigned long)p->words[1])
-        word(entity, 0x140, 0);
-    get(entity, 0x144, &n, 4);
+        bh_field_store_u32(&entity->effect.target, 0);
+    memcpy(&n, &entity->effect.source, 4);
     if (n == (unsigned long)p->words[1])
-        word(entity, 0x144, 0);
+        bh_field_store_u32(&entity->effect.source, 0);
     (void)ctx;
 }
 static void retire(BHEffectProjectileContext *ctx, BHEntity *entity)
@@ -147,18 +126,18 @@ static void synchronize(BHEffectProjectileContext *ctx, BHEntity *entity, BHEffe
     double speed;
     int i;
     float *o = &v.x;
-    get(entity, 0x130, &id, 4);
+    memcpy(&id, &entity->effect.origin_tag, 4);
     if ((unsigned long)p->words[1] != id)
         return;
     p->words[1] = -1;
     kind = p->words[2];
     if (kind == 0 || kind == 1)
     {
-        value(entity, 0xe8, 0);
+        bh_field_store_f32(&entity->effect.lifetime, 0);
         if (!kind)
         {
             ++entity->generation;
-            memcpy(entity->payload + 612, &entity->generation, 4);
+            memcpy(&entity->bindings.projectile_generation, &entity->generation, 4);
         }
         memcpy(&entity->position, p->floats + 4, 12);
         return;
@@ -172,10 +151,10 @@ static void synchronize(BHEffectProjectileContext *ctx, BHEntity *entity, BHEffe
     if (kind != 4 || orbit)
         return;
     memcpy(&entity->position, p->floats + 4, 12);
-    get(entity, 0xf8, &v, 12);
+    memcpy(&v, &entity->effect.velocity, 12);
     speed = sqrt(((double)v.x * v.x + (double)v.y * v.y) + (double)v.z * v.z);
     for (i = 0; i < 3; ++i)
-        value(entity, 0xf8 + i * 4, rf((double)p->floats[7 + i] * speed));
+        bh_field_store_f32(&((float *)&entity->effect.velocity)[i], rf((double)p->floats[7 + i] * speed));
     for (i = 0; i < 3; ++i)
         o[i] = rf(((double)random_value(ctx) - 16384) * (1.0 / 262144.0));
     flash(ctx, entity, 100, 4);
@@ -194,11 +173,11 @@ void bh_effect_orbit_query(BHEntity *entity, void *packet)
     switch (p->words[0])
     {
     case 3:
-        phase = (double)scalar(entity, 0xe8) * 50;
+        phase = (double)bh_field_f32(&entity->effect.lifetime) * 50;
         sn = rf(sin(phase));
         cs = rf(cos(phase));
-        get(entity, 0x110, &a, 12);
-        get(entity, 0x11c, &b, 12);
+        memcpy(&a, &entity->effect.orbit_first, 12);
+        memcpy(&b, &entity->effect.orbit_second, 12);
         p->floats[1] = rf(((double)entity->position.x + (double)a.x * cs) + (double)b.x * sn);
         p->floats[2] = rf(((double)entity->position.y + (double)a.y * cs) + (double)b.y * sn);
         p->floats[3] = rf(((double)entity->position.z + (double)a.z * cs) + (double)b.z * sn);
@@ -251,11 +230,11 @@ static void fixed(BHEntity *entity, void *p)
     if (ctx && ctx->draw)
         bh_effect_fixed_draw(ctx->draw, entity);
 }
-static void scaled(BHEntity *entity, unsigned long a, const BHVec3 *v, double n)
+static void scaled(BHVec3 *out, const BHVec3 *v, double n)
 {
-    value(entity, a, rf((double)v->x * n));
-    value(entity, a + 4, rf((double)v->y * n));
-    value(entity, a + 8, rf((double)v->z * n));
+    out->x = rf((double)v->x * n);
+    out->y = rf((double)v->y * n);
+    out->z = rf((double)v->z * n);
 }
 static int constructor_context(BHEffectProjectileContext *ctx)
 {
@@ -269,19 +248,19 @@ static BHEntity *acquire(BHEffectProjectileContext *ctx, BHWorldGeometry *world,
     if (!entity)
         return NULL;
     entity->position = *p;
-    value(entity, 0xe8, life);
-    value(entity, 0xec, grace);
-    word(entity, 0x130, ctx->debris->origin_tag);
+    bh_field_store_f32(&entity->effect.lifetime, life);
+    bh_field_store_f32(&entity->effect.grace, grace);
+    bh_field_store_u32(&entity->effect.origin_tag, ctx->debris->origin_tag);
     ctx->debris->origin_tag = 0;
-    put(entity, 0x144, &source, 4);
-    put(entity, 0x138, &world, 4);
+    memcpy(&entity->effect.source, &source, 4);
+    memcpy(&entity->effect.world, &world, 4);
     return entity;
 }
 static void identity(BHEffectProjectileContext *ctx, BHEntity *entity)
 {
     if (ctx->pending_identity)
     {
-        word(entity, 0x134, *ctx->pending_identity);
+        bh_field_store_u32(&entity->effect.sync_identity, *ctx->pending_identity);
         *ctx->pending_identity = 0;
     }
 }
@@ -296,11 +275,11 @@ BHEntity *bh_effect_orbit_create(BHEffectProjectileContext *ctx, BHWorldGeometry
     entity = acquire(ctx, world, source, p, life, 1);
     if (!entity)
         return NULL;
-    scaled(entity, 0xf8, v, 1.0 / 30.0);
-    scaled(entity, 0x104, acc, 1.0 / 15.0);
-    scaled(entity, 0x110, a, .1);
-    scaled(entity, 0x11c, b, .1);
-    word(entity, 0x128, BH_SOUND_INVALID);
+    scaled(&entity->effect.velocity, v, 1.0 / 30.0);
+    scaled(&entity->effect.acceleration, acc, 1.0 / 15.0);
+    scaled(&entity->effect.orbit_first, a, .1);
+    scaled(&entity->effect.orbit_second, b, .1);
+    bh_field_store_u32(&entity->effect.sound, BH_SOUND_INVALID);
     ctx->orbit->core = ctx;
     if (!bh_effect_orbit_tick_bind(ctx->orbit, entity))
     {
@@ -311,9 +290,9 @@ BHEntity *bh_effect_orbit_create(BHEffectProjectileContext *ctx, BHWorldGeometry
     entity->refresh = directional;
     bh_trail_create_pair(ctx->trails, ctx->trail_image, 3, 0, p, entity, life, 2, 30, 1, 0, 1, &zero, 16, NULL, NULL);
     voice = bh_sound_request(ctx->effects->sound, ctx->loop_sound, 1, 1, p, v);
-    word(entity, 0x128, voice);
-    put(entity, 0x13c, &source, 4);
-    put(entity, 0x140, &target, 4);
+    bh_field_store_u32(&entity->effect.sound, voice);
+    memcpy(&entity->effect.ignore, &source, 4);
+    memcpy(&entity->effect.target, &target, 4);
     identity(ctx, entity);
     return entity;
 }
@@ -323,15 +302,15 @@ static BHEntity *split_create(BHEffectProjectileContext *ctx, BHWorldGeometry *w
     BHEntity *entity;
     BHEntity *ignore;
     unsigned long voice;
-    if (!constructor_context(ctx) || !ctx->split || !ctx->effects->segment ||
-        !ctx->effects->contacts || !ctx->effects->markers || !ctx->explosion || !ctx->trails || !p || !v)
+    if (!constructor_context(ctx) || !ctx->split || !ctx->effects->segment || !ctx->effects->contacts ||
+        !ctx->effects->markers || !ctx->explosion || !ctx->trails || !p || !v)
         return NULL;
     entity = acquire(ctx, world, source, p, life, 1);
     if (!entity)
         return NULL;
-    word(entity, 0x148, model);
-    scaled(entity, 0xf8, v, 1.0 / 30.0);
-    word(entity, 0x128, BH_SOUND_INVALID);
+    bh_field_store_u32(&entity->effect.model_resource, model);
+    scaled(&entity->effect.velocity, v, 1.0 / 30.0);
+    bh_field_store_u32(&entity->effect.sound, BH_SOUND_INVALID);
     if (!bh_effect_projectile_bind(ctx, entity, 0))
     {
         ctx->error = 1;
@@ -341,12 +320,12 @@ static BHEntity *split_create(BHEffectProjectileContext *ctx, BHWorldGeometry *w
     entity->step = bh_effect_split_tick;
     entity->refresh = variable;
     voice = shard ? BH_SOUND_INVALID : bh_sound_request(ctx->effects->sound, ctx->loop_sound, 1, .5f, p, v);
-    word(entity, 0x128, voice);
+    bh_field_store_u32(&entity->effect.sound, voice);
     ignore = shard ? NULL : source;
-    put(entity, 0x13c, &ignore, 4);
-    word(entity, 0x12c, (unsigned long)count);
-    value(entity, 0xf4, multiplier);
-    value(entity, 0xf0, rf((double)random_value(ctx) * .0001953125));
+    memcpy(&entity->effect.ignore, &ignore, 4);
+    bh_field_store_u32(&entity->effect.split_count, (unsigned long)count);
+    bh_field_store_f32(&entity->effect.multiplier, multiplier);
+    bh_field_store_f32(&entity->effect.roll, rf((double)random_value(ctx) * .0001953125));
     identity(ctx, entity);
     return entity;
 }
@@ -367,16 +346,15 @@ BHEntity *bh_effect_accelerated_create(BHEffectProjectileContext *ctx, BHWorldGe
 {
     BHEntity *entity;
     unsigned long voice;
-    if (!constructor_context(ctx) || !ctx->accelerated || !ctx->accelerated->puffs ||
-        !ctx->effects->segment || !ctx->effects->contacts || !ctx->effects->markers || !ctx->explosion ||
-        !ctx->trails || !p || !v || !acc)
+    if (!constructor_context(ctx) || !ctx->accelerated || !ctx->accelerated->puffs || !ctx->effects->segment ||
+        !ctx->effects->contacts || !ctx->effects->markers || !ctx->explosion || !ctx->trails || !p || !v || !acc)
         return NULL;
     entity = acquire(ctx, world, source, p, 0, 2);
     if (!entity)
         return NULL;
     entity->origin = *v;
-    put(entity, 0x60, acc, 12);
-    word(entity, 0x128, BH_SOUND_INVALID);
+    memcpy(&entity->acceleration, acc, 12);
+    bh_field_store_u32(&entity->effect.sound, BH_SOUND_INVALID);
     if (!bh_effect_projectile_bind(ctx, entity, 0))
     {
         ctx->error = 1;
@@ -385,12 +363,12 @@ BHEntity *bh_effect_accelerated_create(BHEffectProjectileContext *ctx, BHWorldGe
     }
     entity->step = bh_effect_accelerated_tick;
     entity->refresh = fixed;
-    put(entity, 0x13c, &source, 4);
-    value(entity, 0xf0, rf((double)random_value(ctx) * .0001953125));
-    word(entity, 0x12c, 0);
-    value(entity, 0xf4, 0);
+    memcpy(&entity->effect.ignore, &source, 4);
+    bh_field_store_f32(&entity->effect.roll, rf((double)random_value(ctx) * .0001953125));
+    bh_field_store_u32(&entity->effect.split_count, 0);
+    bh_field_store_f32(&entity->effect.multiplier, 0);
     voice = bh_sound_request(ctx->effects->sound, ctx->second_loop_sound, 0, .5f, p, v);
-    word(entity, 0x128, voice);
+    bh_field_store_u32(&entity->effect.sound, voice);
     identity(ctx, entity);
     return entity;
 }
