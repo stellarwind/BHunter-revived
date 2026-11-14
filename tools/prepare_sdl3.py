@@ -79,12 +79,19 @@ def prepare(out, *, gnu=True, compiler=None, symbols=False):
     cache.mkdir(parents=True, exist_ok=True)
     import_lib = cache / ("libBHunterGPU.dll.a" if gnu else "BHunterGPU.lib")
     sources = [
-        ROOT / "src/bh_sdl_gpu.cpp",
+        ROOT / "src/SDL/bh_sdl_gpu.cpp",
+        ROOT / "src/SDL/bh_sdl_platform.cpp",
+        ROOT / "src/SDL/bh_sdl_text.cpp",
+        ROOT / "src/SDL/bh_sdl_input.cpp",
         ROOT / "src/bh_sdl_audio.cpp",
         ROOT / "src/bh_game_settings.cpp",
     ]
     inputs = [
         *sources,
+        ROOT / "src/SDL/bh_sdl_input.h",
+        ROOT / "src/SDL/bh_sdl_gpu.h",
+        ROOT / "src/SDL/bh_sdl_diagnostics.h",
+        ROOT / "src/SDL/bh_sdl_text.h",
         ROOT / "src/bh_sdl_adapter.h",
         ROOT / "src/bh_render_types.h",
         ROOT / "src/bh_sdl_audio.h",

@@ -1,62 +1,23 @@
-#include "bh_sdl_audio.h"
-// SDL owns the native window, device, textures and presentation. The adapter
-// retains the restored engine's 32-bit data ABI, never creates a COM object.
+// SDL GPU resources and the legacy graphics ABI. The platform owns the window.
 #define CINTERFACE
-#include "bh_sdl_adapter.h"
-#include "bh_video_layout.h"
-#include "bh_overlay_text.h"
-#include "bh_game_settings.h"
+#include "../bh_sdl_adapter.h"
+#include "bh_sdl_gpu.h"
+#include "bh_sdl_diagnostics.h"
+#include "../bh_video_layout.h"
+#include "bh_sdl_text.h"
 #include <SDL3/SDL.h>
 #include <algorithm>
 #include <array>
-#include <cmath>
 #include <cstdio>
-#include <cstdlib>
 #include <cstring>
-#include "shaders/bh_gpu_shaders.h"
+#include "../shaders/bh_gpu_shaders.h"
 #include <map>
-#include <filesystem>
-#include <string>
+#include <memory>
 #include <vector>
 
 namespace
 {
-#include "bh_overlay_atlas.inc"
-
-constexpr unsigned base64_digit(char digit)
-{
-    if (digit >= 'A' && digit <= 'Z')
-        return digit - 'A';
-    if (digit >= 'a' && digit <= 'z')
-        return digit - 'a' + 26;
-    if (digit >= '0' && digit <= '9')
-        return digit - '0' + 52;
-    return digit == '+' ? 62 : 63;
-}
-
-constexpr auto decode_overlay_font()
-{
-    constexpr size_t length = sizeof(overlay_font_base64) - 1;
-    static_assert(length % 4 == 0);
-    constexpr size_t padding = (overlay_font_base64[length - 1] == '=') +
-                               (overlay_font_base64[length - 2] == '=');
-    std::array<unsigned char, length / 4 * 3 - padding> bytes{};
-    unsigned bits = 0, pending = 0;
-    size_t out = 0;
-    for (size_t i = 0; i < length - padding; ++i)
-    {
-        bits = (bits << 6) | base64_digit(overlay_font_base64[i]);
-        pending += 6;
-        if (pending >= 8)
-        {
-            pending -= 8;
-            bytes[out++] = (unsigned char)(bits >> pending);
-        }
-    }
-    return bytes;
-}
-
-constexpr auto overlay_font_bytes = decode_overlay_font();
+using bh_sdl_diagnostics::set_error;
 
 struct Object
 {
@@ -90,8 +51,8 @@ struct Batch
     Surface *texture;
     unsigned blend, src, dst, depth, write, key, fog, fog_color, cull;
 };
-SDL_Window *window;
-SDL_Gamepad *gamepad;
+SDL_Window *output_window; // Borrowed from the platform until renderer shutdown.
+bh_sdl_gpu::Display (*query_display)();
 SDL_GPUDevice *device;
 SDL_GPUShader *vs, *fs;
 SDL_GPUSampler *sampler;
@@ -108,50 +69,10 @@ std::vector<Batch> batches;
 std::vector<Surface *> surfaces;
 std::array<unsigned, 256> states{};
 Surface *white;
-BHOverlayFont overlay_font{};
-BHPlatformInput input_callback;
-void *message_user;
-BHPlatformTextInput text_callback;
-void *text_user;
-unsigned long text_gamepad_buttons;
-char error_text[1024];
-char report_text[1024];
-bool quitting, hidden;
-std::vector<std::pair<int, int>> modes;
-int selected_resolution = 0;
-void output_size(int &w, int &h)
-{
-    if (!SDL_GetWindowSizeInPixels(window, &w, &h))
-    {
-        w = bh_game_settings.window_width;
-        h = bh_game_settings.window_height;
-    }
-    if (bh_game_settings.borderless && !modes.empty())
-    {
-        w = modes[selected_resolution].first;
-        h = modes[selected_resolution].second;
-    }
-    w = std::max(w, 1);
-    h = std::max(h, 1);
-}
-void canvas_margins(float &x, float &y)
-{
-    int w, h;
-    output_size(w, h);
-    const auto &selected = bh_game_aspects[bh_game_settings.aspect];
-    float aspect = (float)selected.numerator / selected.denominator;
-    /* The selector groups common modes (e.g. 2560x1080 and 3440x1440 are
-       both sold as 21:9). Use the chosen mode's exact shape in Borderless,
-       never the desktop's shape, so its pixels and the UI stay square. */
-    if (bh_game_settings.borderless && !modes.empty() &&
-        video_layout_aspect_matches(w, h, selected.numerator, selected.denominator))
-        aspect = (float)w / h;
-    video_layout_canvas(aspect, &x, &y);
-}
 void viewport_geometry(float &x, float &y, float &w, float &h, float &scale)
 {
-    float mx, my;
-    canvas_margins(mx, my);
+    const auto display = query_display();
+    const float mx = display.margin_x, my = display.margin_y;
     w = 640 + 2 * mx;
     h = 480 + 2 * my;
     scale = std::min(target_w / w, target_h / h);
@@ -159,61 +80,6 @@ void viewport_geometry(float &x, float &y, float &w, float &h, float &scale)
     h *= scale;
     x = (target_w - w) * .5f;
     y = (target_h - h) * .5f;
-}
-bool matching_mode(int index)
-{
-    const auto &aspect = bh_game_aspects[bh_game_settings.aspect];
-    return video_layout_aspect_matches(modes[index].first, modes[index].second, aspect.numerator, aspect.denominator);
-}
-void select_matching_mode()
-{
-    if (modes.empty() || matching_mode(selected_resolution))
-        return;
-    int best = -1;
-    long long distance = 0;
-    const auto current = modes[selected_resolution];
-    for (int i = 0; i < (int)modes.size(); ++i)
-        if (matching_mode(i))
-        {
-            long long delta =
-                std::llabs((long long)modes[i].first * modes[i].second - (long long)current.first * current.second);
-            if (best < 0 || delta < distance)
-            {
-                best = i;
-                distance = delta;
-            }
-        }
-    if (best >= 0)
-        selected_resolution = best;
-}
-void finish_modes(int saved_width, int saved_height)
-{
-    const std::pair<int, int> render_sizes[] = {
-        {640, 480},   {800, 600},  {1024, 768}, {1280, 960},  {1600, 1200}, {1920, 1440}, {2560, 1920}, {2880, 2160},
-        {854, 480},   {960, 540},  {1280, 720}, {1366, 768},  {1600, 900},  {1920, 1080}, {2560, 1440}, {3200, 1800},
-        {3840, 2160}, {1120, 480}, {1680, 720}, {2560, 1080}, {3440, 1440}, {3840, 1600},
-        {768, 480},   {1280, 800}, {1440, 900}, {1680, 1050}, {1920, 1200}, {2560, 1600}, {3456, 2160}};
-    const auto &aspect = bh_game_aspects[bh_game_settings.aspect];
-    if (saved_width >= 640 && saved_height >= 480 && saved_width <= 3840 && saved_height <= 2160 &&
-        video_layout_aspect_matches(saved_width, saved_height, aspect.numerator, aspect.denominator) &&
-        std::find(modes.begin(), modes.end(), std::make_pair(saved_width, saved_height)) == modes.end())
-        modes.push_back({saved_width, saved_height});
-    for (auto size : render_sizes)
-        if (std::find(modes.begin(), modes.end(), size) == modes.end())
-            modes.push_back(size);
-    if (modes.empty())
-        modes.push_back({bh_game_settings.window_width, bh_game_settings.window_height});
-    std::sort(modes.begin(), modes.end());
-    selected_resolution = std::clamp(selected_resolution, 0, (int)modes.size() - 1);
-    auto saved_mode = std::find(modes.begin(), modes.end(), std::make_pair(saved_width, saved_height));
-    if (saved_mode != modes.end())
-        selected_resolution = (int)(saved_mode - modes.begin());
-    select_matching_mode();
-}
-std::string settings_directory;
-void set_error(const char *context)
-{
-    snprintf(error_text, sizeof(error_text), "%s: %s", context, SDL_GetError());
 }
 unsigned addref(void *p)
 {
@@ -258,162 +124,6 @@ DDPIXELFORMAT pixel_format(unsigned bits = 16)
     }
     return p;
 }
-void save_settings()
-{
-    if (!window || hidden)
-        return;
-    const auto resolution = modes.empty() ? std::make_pair(bh_game_settings.window_width, bh_game_settings.window_height)
-                                          : modes[selected_resolution];
-    bh_game_settings.render_width = resolution.first;
-    bh_game_settings.render_height = resolution.second;
-    bh_game_settings_save();
-}
-void remember_window()
-{
-    auto flags = SDL_GetWindowFlags(window);
-    if (!(flags & (SDL_WINDOW_FULLSCREEN | SDL_WINDOW_MINIMIZED)))
-    {
-        bh_game_settings.maximized = (flags & SDL_WINDOW_MAXIMIZED) != 0;
-        if (!bh_game_settings.maximized)
-        {
-            SDL_GetWindowPosition(window, &bh_game_settings.window_x, &bh_game_settings.window_y);
-            SDL_GetWindowSize(window, &bh_game_settings.window_width, &bh_game_settings.window_height);
-        }
-    }
-    save_settings();
-}
-/* Special and OEM keys keep the original saved binding numbers. Printable
-   letters follow the layout's keycode; physical OEM positions retain VK IDs. */
-unsigned binding_key(SDL_Scancode scan, SDL_Keycode key)
-{
-    if (key >= SDLK_A && key <= SDLK_Z)
-        return 'A' + key - SDLK_A;
-    if (key >= SDLK_0 && key <= SDLK_9)
-        return '0' + key - SDLK_0;
-    /* Non-Latin layouts still need usable legacy letter/digit bindings. */
-    if (scan >= SDL_SCANCODE_A && scan <= SDL_SCANCODE_Z)
-        return 'A' + scan - SDL_SCANCODE_A;
-    if (scan >= SDL_SCANCODE_1 && scan <= SDL_SCANCODE_9)
-        return '1' + scan - SDL_SCANCODE_1;
-    if (scan == SDL_SCANCODE_0)
-        return '0';
-    if (scan >= SDL_SCANCODE_F1 && scan <= SDL_SCANCODE_F12)
-        return 112 + scan - SDL_SCANCODE_F1;
-    if (scan >= SDL_SCANCODE_F13 && scan <= SDL_SCANCODE_F24)
-        return 124 + scan - SDL_SCANCODE_F13;
-    if (scan >= SDL_SCANCODE_KP_1 && scan <= SDL_SCANCODE_KP_9)
-        return 97 + scan - SDL_SCANCODE_KP_1;
-    switch (scan)
-    {
-    case SDL_SCANCODE_BACKSPACE:
-        return 8;
-    case SDL_SCANCODE_TAB:
-        return 9;
-    case SDL_SCANCODE_RETURN:
-    case SDL_SCANCODE_KP_ENTER:
-        return 13;
-    case SDL_SCANCODE_LSHIFT:
-    case SDL_SCANCODE_RSHIFT:
-        return 16;
-    case SDL_SCANCODE_LCTRL:
-    case SDL_SCANCODE_RCTRL:
-        return 17;
-    case SDL_SCANCODE_LALT:
-    case SDL_SCANCODE_RALT:
-        return 18;
-    case SDL_SCANCODE_PAUSE:
-        return 19;
-    case SDL_SCANCODE_CAPSLOCK:
-        return 20;
-    case SDL_SCANCODE_ESCAPE:
-        return 27;
-    case SDL_SCANCODE_SPACE:
-        return 32;
-    case SDL_SCANCODE_PAGEUP:
-        return 33;
-    case SDL_SCANCODE_PAGEDOWN:
-        return 34;
-    case SDL_SCANCODE_END:
-        return 35;
-    case SDL_SCANCODE_HOME:
-        return 36;
-    case SDL_SCANCODE_LEFT:
-        return 37;
-    case SDL_SCANCODE_UP:
-        return 38;
-    case SDL_SCANCODE_RIGHT:
-        return 39;
-    case SDL_SCANCODE_DOWN:
-        return 40;
-    case SDL_SCANCODE_PRINTSCREEN:
-        return 44;
-    case SDL_SCANCODE_INSERT:
-        return 45;
-    case SDL_SCANCODE_DELETE:
-        return 46;
-    case SDL_SCANCODE_LGUI:
-        return 91;
-    case SDL_SCANCODE_RGUI:
-        return 92;
-    case SDL_SCANCODE_APPLICATION:
-        return 93;
-    case SDL_SCANCODE_KP_0:
-        return 96;
-    case SDL_SCANCODE_KP_MULTIPLY:
-        return 106;
-    case SDL_SCANCODE_KP_PLUS:
-        return 107;
-    case SDL_SCANCODE_KP_MINUS:
-        return 109;
-    case SDL_SCANCODE_KP_PERIOD:
-        return 110;
-    case SDL_SCANCODE_KP_DIVIDE:
-        return 111;
-    case SDL_SCANCODE_NUMLOCKCLEAR:
-        return 144;
-    case SDL_SCANCODE_SCROLLLOCK:
-        return 145;
-    case SDL_SCANCODE_SEMICOLON:
-        return 186;
-    case SDL_SCANCODE_EQUALS:
-        return 187;
-    case SDL_SCANCODE_COMMA:
-        return 188;
-    case SDL_SCANCODE_MINUS:
-        return 189;
-    case SDL_SCANCODE_PERIOD:
-        return 190;
-    case SDL_SCANCODE_SLASH:
-        return 191;
-    case SDL_SCANCODE_GRAVE:
-        return 192;
-    case SDL_SCANCODE_LEFTBRACKET:
-        return 219;
-    case SDL_SCANCODE_BACKSLASH:
-        return 220;
-    case SDL_SCANCODE_RIGHTBRACKET:
-        return 221;
-    case SDL_SCANCODE_APOSTROPHE:
-        return 222;
-    case SDL_SCANCODE_NONUSBACKSLASH:
-        return 226;
-    default:
-        return 0;
-    }
-}
-std::array<unsigned, SDL_SCANCODE_COUNT> held_keys{};
-void input_event(BHPlatformEventType type, unsigned key, bool down, bool repeat = false)
-{
-    BHPlatformEvent event{type, key, down, repeat};
-    if (input_callback)
-        input_callback(&event, message_user);
-}
-void lose_focus()
-{
-    bh_sdl_set_relative_mouse(0);
-    held_keys.fill(0);
-    input_event(BH_PLATFORM_FOCUS, 0, false);
-}
 SDL_GPUTexture *make_texture(unsigned w, unsigned h, SDL_GPUTextureFormat format, SDL_GPUTextureUsageFlags usage)
 {
     SDL_GPUTextureCreateInfo info{};
@@ -446,8 +156,8 @@ bool ensure_commands()
 }
 bool ensure_targets()
 {
-    int w, h;
-    output_size(w, h);
+    const auto display = query_display();
+    int w = display.width, h = display.height;
     float limit = std::min(1.f, std::min(3840.f / w, 2160.f / h));
     /* The game uses x87 PC53. Some i386 libcs assume extended precision in lroundf. */
     w = std::max(1, (int)(w * limit + .5f));
@@ -476,10 +186,10 @@ bool begin_pass(SDL_GPULoadOp color_load = SDL_GPU_LOADOP_LOAD, SDL_GPULoadOp de
 {
     if (!ensure_commands() || !ensure_targets())
         return false;
-    float mx, my;
-    canvas_margins(mx, my);
-    if (mx != applied_margin_x || my != applied_margin_y || bh_game_settings.aspect != applied_aspect ||
-        bh_game_settings.borderless != applied_mode)
+    const auto display = query_display();
+    const float mx = display.margin_x, my = display.margin_y;
+    if (mx != applied_margin_x || my != applied_margin_y || display.aspect != applied_aspect ||
+        display.borderless != applied_mode)
         targets_fresh = true;
     if (pass && !targets_fresh && color_load == SDL_GPU_LOADOP_LOAD && depth_load == SDL_GPU_LOADOP_LOAD)
         return true;
@@ -511,8 +221,8 @@ bool begin_pass(SDL_GPULoadOp color_load = SDL_GPU_LOADOP_LOAD, SDL_GPULoadOp de
     targets_fresh = false;
     applied_margin_x = mx;
     applied_margin_y = my;
-    applied_aspect = bh_game_settings.aspect;
-    applied_mode = bh_game_settings.borderless;
+    applied_aspect = display.aspect;
+    applied_mode = display.borderless;
     float x, y, w, h, scale;
     viewport_geometry(x, y, w, h, scale);
     SDL_GPUViewport viewport{x, y, w, h, 0, 1};
@@ -663,7 +373,7 @@ bool upload(Surface *s)
     s->uploaded = s->version;
     return true;
 }
-bool flush()
+bool record_pending_draws()
 {
     if (vertices.empty())
         return true;
@@ -672,23 +382,30 @@ bool flush()
         return false;
     unsigned size = vertices.size() * sizeof(Vertex);
     SDL_GPUTransferBufferCreateInfo tinfo{SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD, size, 0};
-    auto *transfer = SDL_CreateGPUTransferBuffer(device, &tinfo);
-    SDL_GPUBufferCreateInfo binfo{SDL_GPU_BUFFERUSAGE_VERTEX, size, 0};
-    auto *buffer = SDL_CreateGPUBuffer(device, &binfo);
-    if (!transfer || !buffer)
+    auto release_transfer = [gpu = device](SDL_GPUTransferBuffer *handle) {
+        SDL_ReleaseGPUTransferBuffer(gpu, handle);
+    };
+    std::unique_ptr<SDL_GPUTransferBuffer, decltype(release_transfer)> transfer(
+        SDL_CreateGPUTransferBuffer(device, &tinfo), release_transfer);
+    if (!transfer)
         return false;
-    auto *mapped = SDL_MapGPUTransferBuffer(device, transfer, false);
+    SDL_GPUBufferCreateInfo binfo{SDL_GPU_BUFFERUSAGE_VERTEX, size, 0};
+    auto release_buffer = [gpu = device](SDL_GPUBuffer *handle) { SDL_ReleaseGPUBuffer(gpu, handle); };
+    std::unique_ptr<SDL_GPUBuffer, decltype(release_buffer)> buffer(SDL_CreateGPUBuffer(device, &binfo), release_buffer);
+    if (!buffer)
+        return false;
+    auto *mapped = SDL_MapGPUTransferBuffer(device, transfer.get(), false);
     if (!mapped)
         return false;
     memcpy(mapped, vertices.data(), size);
-    SDL_UnmapGPUTransferBuffer(device, transfer);
+    SDL_UnmapGPUTransferBuffer(device, transfer.get());
     auto *copy = SDL_BeginGPUCopyPass(commands);
-    SDL_GPUTransferBufferLocation src{transfer, 0};
-    SDL_GPUBufferRegion dst{buffer, 0, size};
+    SDL_GPUTransferBufferLocation src{transfer.get(), 0};
+    SDL_GPUBufferRegion dst{buffer.get(), 0, size};
     SDL_UploadToGPUBuffer(copy, &src, &dst, false);
     SDL_EndGPUCopyPass(copy);
-    float mx, my;
-    canvas_margins(mx, my);
+    const auto display = query_display();
+    const float mx = display.margin_x, my = display.margin_y;
     float canvas[4] = {320 + mx, 240 + my, 0, 0};
     SDL_PushGPUVertexUniformData(commands, 0, canvas, sizeof(canvas));
     for (auto &b : batches)
@@ -700,7 +417,7 @@ bool flush()
         if (!p)
             return false;
         SDL_BindGPUGraphicsPipeline(pass, p);
-        SDL_GPUBufferBinding binding{buffer, 0};
+        SDL_GPUBufferBinding binding{buffer.get(), 0};
         SDL_BindGPUVertexBuffers(pass, 0, &binding, 1);
         SDL_GPUTextureSamplerBinding texture{s->gpu, sampler};
         SDL_BindGPUFragmentSamplers(pass, 0, &texture, 1);
@@ -717,13 +434,11 @@ bool flush()
     }
     vertices.clear();
     batches.clear();
-    SDL_ReleaseGPUTransferBuffer(device, transfer);
-    SDL_ReleaseGPUBuffer(device, buffer);
     return true;
 }
 bool clear_target(bool color, bool depth, unsigned value = 0)
 {
-    if (!flush())
+    if (!record_pending_draws())
         return false;
     SDL_FColor c{((value >> 16) & 255) / 255.f, ((value >> 8) & 255) / 255.f, (value & 255) / 255.f, 1};
     return begin_pass(color ? SDL_GPU_LOADOP_CLEAR : SDL_GPU_LOADOP_LOAD,
@@ -755,7 +470,7 @@ bool draw_surface(Surface *s, bool overlay = false)
     states[D3DRENDERSTATE_FOGENABLE] = 0;
     HRESULT hr = bh_IDirect3DDevice2_DrawPrimitive(nullptr, D3DPT_TRIANGLEFAN, D3DVT_TLVERTEX, v, 4, 0);
     states = saved;
-    return SUCCEEDED(hr) && flush();
+    return SUCCEEDED(hr) && record_pending_draws();
 }
 void present_target(SDL_GPUTexture *destination, unsigned width, unsigned height)
 {
@@ -773,12 +488,12 @@ void present_target(SDL_GPUTexture *destination, unsigned width, unsigned height
 }
 bool present()
 {
-    if (!flush() || !ensure_commands() || !ensure_targets())
+    if (!record_pending_draws() || !ensure_commands() || !ensure_targets())
         return false;
     end_pass();
     SDL_GPUTexture *swap = nullptr;
     Uint32 w, h;
-    if (!SDL_WaitAndAcquireGPUSwapchainTexture(commands, window, &swap, &w, &h))
+    if (!SDL_WaitAndAcquireGPUSwapchainTexture(commands, output_window, &swap, &w, &h))
     {
         set_error("Acquire swapchain");
         return false;
@@ -793,7 +508,7 @@ bool present()
 }
 std::vector<unsigned> readback()
 {
-    if (!flush() || !ensure_commands() || !ensure_targets())
+    if (!record_pending_draws() || !ensure_commands() || !ensure_targets())
         return {};
     end_pass();
     unsigned size = target_w * target_h * 4;
@@ -854,206 +569,100 @@ Surface *make_surface(const DDSURFACEDESC &d)
     surfaces.push_back(s);
     return s;
 }
-void find_gamepad()
-{
-    if (gamepad && SDL_GamepadConnected(gamepad))
-        return;
-    if (gamepad)
-        SDL_CloseGamepad(gamepad);
-    gamepad = nullptr;
-    text_gamepad_buttons = 0;
-    int count = 0;
-    auto *ids = SDL_GetGamepads(&count);
-    for (int i = 0; i < count && !gamepad; ++i)
-        gamepad = SDL_OpenGamepad(ids[i]);
-    SDL_free(ids);
-}
-void stick(SDL_GamepadAxis horizontal, SDL_GamepadAxis vertical, float &x, float &y)
-{
-    const int raw_x = SDL_GetGamepadAxis(gamepad, horizontal);
-    const int raw_y = SDL_GetGamepadAxis(gamepad, vertical);
-    x = raw_x / (raw_x < 0 ? 32768.0f : 32767.0f);
-    y = raw_y / (raw_y < 0 ? 32768.0f : 32767.0f);
-    const float length = std::sqrt(x * x + y * y);
-    const float scale = length > .18f ? (std::min(length, 1.0f) - .18f) / (.82f * length) : 0.0f;
-    x *= scale;
-    y *= scale;
-}
-float trigger(SDL_GamepadAxis axis)
-{
-    return std::clamp((SDL_GetGamepadAxis(gamepad, axis) / 32767.0f - .05f) / .95f, 0.0f, 1.0f);
-}
-void read_gamepad(BHGamepadState *state, bool focused)
-{
-    *state = {};
-    if (!focused || !gamepad || !SDL_GamepadConnected(gamepad))
-        return;
-    float x, y;
-    stick(SDL_GAMEPAD_AXIS_LEFTX, SDL_GAMEPAD_AXIS_LEFTY, x, y);
-    state->axes[BH_PAD_STEER] = x;
-    state->axes[BH_PAD_LIFT] = -y;
-    state->axes[BH_PAD_MENU_Y] = y;
-    stick(SDL_GAMEPAD_AXIS_RIGHTX, SDL_GAMEPAD_AXIS_RIGHTY, x, y);
-    state->axes[BH_PAD_AIM_X] = x;
-    state->axes[BH_PAD_AIM_Y] = -y;
-    state->axes[BH_PAD_THRUST] = trigger(SDL_GAMEPAD_AXIS_RIGHT_TRIGGER) - trigger(SDL_GAMEPAD_AXIS_LEFT_TRIGGER);
-    static const SDL_GamepadButton buttons[] = {
-        SDL_GAMEPAD_BUTTON_SOUTH,     SDL_GAMEPAD_BUTTON_EAST,          SDL_GAMEPAD_BUTTON_WEST,
-        SDL_GAMEPAD_BUTTON_NORTH,     SDL_GAMEPAD_BUTTON_LEFT_SHOULDER, SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER,
-        SDL_GAMEPAD_BUTTON_START,     SDL_GAMEPAD_BUTTON_BACK,          SDL_GAMEPAD_BUTTON_DPAD_UP,
-        SDL_GAMEPAD_BUTTON_DPAD_DOWN, SDL_GAMEPAD_BUTTON_DPAD_LEFT,     SDL_GAMEPAD_BUTTON_DPAD_RIGHT};
-    for (unsigned i = 0; i < std::size(buttons); ++i)
-        if (SDL_GetGamepadButton(gamepad, buttons[i]))
-            state->buttons |= 1UL << i;
-    // Keep a text editor's confirm/cancel press out of the menu below it.
-    text_gamepad_buttons &= state->buttons;
-    state->buttons &= ~text_gamepad_buttons;
-}
-#ifdef __linux__
-void enable_deck_keyboard()
-{
-    // Direct launches on the Deck desktop may lack Steam's launch environment.
-    if (!SDL_GetHintBoolean("SteamDeck", false))
-    {
-        char product[32] = {};
-        FILE *file = fopen("/sys/devices/virtual/dmi/id/product_name", "r");
-        if (file)
-        {
-            if (fscanf(file, "%31s", product) != 1)
-                product[0] = '\0';
-            fclose(file);
-        }
-        if (strcmp(product, "Jupiter") && strcmp(product, "Galileo"))
-            return;
-        // Older SDL X11 backends use SteamDeck for this capability.
-        SDL_SetHintWithPriority("SteamDeck", "1", SDL_HINT_DEFAULT);
-    }
-    SDL_SetHintWithPriority("SDL_ENABLE_STEAM_SCREEN_KEYBOARD", "1", SDL_HINT_DEFAULT);
-    SDL_SetHintWithPriority(SDL_HINT_ENABLE_SCREEN_KEYBOARD, "1", SDL_HINT_DEFAULT);
-}
-#endif
-void apply_mode()
-{
-    if (!bh_game_settings.borderless)
-    {
-        SDL_SetWindowFullscreen(window, false);
-        SDL_SyncWindow(window);
-        SDL_SetWindowSize(window, bh_game_settings.window_width, bh_game_settings.window_height);
-        SDL_SetWindowPosition(window, bh_game_settings.window_x, bh_game_settings.window_y);
-        if (bh_game_settings.maximized)
-            SDL_MaximizeWindow(window);
-    }
-    else
-    {
-        SDL_SetWindowFullscreenMode(window, nullptr);
-        SDL_SetWindowFullscreen(window, true);
-    }
-    SDL_SyncWindow(window);
-    save_settings();
-}
 } // namespace
+
+namespace bh_sdl_gpu
+{
+bool open(SDL_Window *output, Display (*display)())
+{
+    output_window = output;
+    query_display = display;
+    device = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_SPIRV, false, "vulkan");
+    if (!device || !SDL_ClaimWindowForGPUDevice(device, output_window))
+    {
+        set_error("Create Vulkan device");
+        return false;
+    }
+    SDL_SetGPUSwapchainParameters(device, output_window, SDL_GPU_SWAPCHAINCOMPOSITION_SDR, SDL_GPU_PRESENTMODE_VSYNC);
+    SDL_SetGPUAllowedFramesInFlight(device, 1);
+    vs = shader(spirv_vertex, sizeof(spirv_vertex), "VSMain", SDL_GPU_SHADERSTAGE_VERTEX);
+    if (vs)
+        fs = shader(spirv_fragment, sizeof(spirv_fragment), "PSMain", SDL_GPU_SHADERSTAGE_FRAGMENT);
+    if (!vs || !fs)
+    {
+        set_error("Create shaders");
+        return false;
+    }
+    SDL_GPUSamplerCreateInfo sinfo{};
+    sinfo.min_filter = sinfo.mag_filter = SDL_GPU_FILTER_LINEAR;
+    sinfo.mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_NEAREST;
+    sinfo.address_mode_u = sinfo.address_mode_v = sinfo.address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_REPEAT;
+    sampler = SDL_CreateGPUSampler(device, &sinfo);
+    DDSURFACEDESC desc{};
+    desc.dwWidth = desc.dwHeight = 1;
+    desc.ddpfPixelFormat = pixel_format(32);
+    white = make_surface(desc);
+    memset(white->pixels.data(), 255, 4);
+    return true;
+}
+
+void reset_draw_state()
+{
+    states.fill(0);
+    targets_fresh = true;
+}
+
+void close()
+{
+    record_pending_draws();
+    end_pass();
+    if (commands)
+    {
+        SDL_SubmitGPUCommandBuffer(commands);
+        commands = nullptr;
+    }
+    if (device)
+    {
+        SDL_WaitForGPUIdle(device);
+        release(white);
+        white = nullptr;
+        for (auto &p : pipelines)
+            SDL_ReleaseGPUGraphicsPipeline(device, p.second);
+        pipelines.clear();
+        if (color_target)
+            SDL_ReleaseGPUTexture(device, color_target);
+        if (depth_target)
+            SDL_ReleaseGPUTexture(device, depth_target);
+        if (vs)
+            SDL_ReleaseGPUShader(device, vs);
+        if (fs)
+            SDL_ReleaseGPUShader(device, fs);
+        if (sampler)
+            SDL_ReleaseGPUSampler(device, sampler);
+        if (output_window)
+            SDL_ReleaseWindowFromGPUDevice(device, output_window);
+        SDL_DestroyGPUDevice(device);
+        device = nullptr;
+    }
+    color_target = depth_target = nullptr;
+    vs = fs = nullptr;
+    sampler = nullptr;
+    applied_margin_x = applied_margin_y = -1;
+    applied_aspect = applied_mode = -1;
+    output_window = nullptr;
+    query_display = nullptr;
+}
+} // namespace bh_sdl_gpu
+
 extern "C"
 {
-    int bh_sdl_open(int hide, BHPlatformInput callback, void *user)
-    {
-        hidden = hide != 0;
-        input_callback = callback;
-        quitting = false;
-        held_keys.fill(0);
-        message_user = user;
-        if (window && device)
-        {
-            // A new world owns new draw state, but can use the existing swapchain.
-            states.fill(0);
-            targets_fresh = true;
-            return 1;
-        }
-#ifdef __linux__
-        enable_deck_keyboard();
-#endif
-        if (!SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS))
-        {
-            set_error("SDL init");
-            return 0;
-        }
-        /* A missing controller subsystem must not prevent keyboard play. */
-        if (SDL_InitSubSystem(SDL_INIT_GAMEPAD))
-            find_gamepad();
-        if (hidden)
-        {
-            bh_game_settings.window_width = 640;
-            bh_game_settings.window_height = 480;
-            bh_game_settings.borderless = false;
-            bh_game_settings.maximized = false;
-            bh_game_settings.aspect = 0;
-        }
-        window = SDL_CreateWindow("BHunter", bh_game_settings.window_width, bh_game_settings.window_height,
-                                  SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY | SDL_WINDOW_HIDDEN);
-        if (!window)
-        {
-            set_error("Create window");
-            return 0;
-        }
-        SDL_SetWindowMinimumSize(window, 640, 480);
-        SDL_SetWindowPosition(window, bh_game_settings.window_x, bh_game_settings.window_y);
-        int count = 0;
-        auto **available = SDL_GetFullscreenDisplayModes(SDL_GetDisplayForWindow(window), &count);
-        for (int i = 0; i < count; ++i)
-        {
-            auto *m = available[i];
-            std::pair<int, int> size{m->w, m->h};
-            if (m->w >= 640 && m->h >= 480 && m->w <= 3840 && m->h <= 2160 &&
-                std::find(modes.begin(), modes.end(), size) == modes.end())
-                modes.push_back(size);
-        }
-        SDL_free(available);
-        finish_modes(bh_game_settings.render_width, bh_game_settings.render_height);
-        device = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_SPIRV, false, "vulkan");
-        if (!device || !SDL_ClaimWindowForGPUDevice(device, window))
-        {
-            set_error("Create Vulkan device");
-            return 0;
-        }
-        SDL_SetGPUSwapchainParameters(device, window, SDL_GPU_SWAPCHAINCOMPOSITION_SDR, SDL_GPU_PRESENTMODE_VSYNC);
-        SDL_SetGPUAllowedFramesInFlight(device, 1);
-        vs = shader(spirv_vertex, sizeof(spirv_vertex), "VSMain", SDL_GPU_SHADERSTAGE_VERTEX);
-        if (vs)
-            fs = shader(spirv_fragment, sizeof(spirv_fragment), "PSMain", SDL_GPU_SHADERSTAGE_FRAGMENT);
-        if (!vs || !fs)
-        {
-            set_error("Create shaders");
-            return 0;
-        }
-        SDL_GPUSamplerCreateInfo sinfo{};
-        sinfo.min_filter = sinfo.mag_filter = SDL_GPU_FILTER_LINEAR;
-        sinfo.mipmap_mode = SDL_GPU_SAMPLERMIPMAPMODE_NEAREST;
-        sinfo.address_mode_u = sinfo.address_mode_v = sinfo.address_mode_w = SDL_GPU_SAMPLERADDRESSMODE_REPEAT;
-        sampler = SDL_CreateGPUSampler(device, &sinfo);
-        DDSURFACEDESC desc{};
-        desc.dwWidth = desc.dwHeight = 1;
-        desc.ddpfPixelFormat = pixel_format(32);
-        white = make_surface(desc);
-        memset(white->pixels.data(), 255, 4);
-        apply_mode();
-        clear_target(true, true);
-        if (!hidden)
-        {
-            SDL_HideCursor();
-            SDL_ShowWindow(window);
-        }
-        return 1;
-    }
     int bh_gpu_text(void *surface, int x, int y, const char *text, unsigned long rgb)
     {
         auto *destination = (Surface *)surface;
         if (!destination || !text || !memchr(text, 0, 59))
             return 0;
-        if (!overlay_font.mask &&
-            !bh_overlay_font_read(&overlay_font, overlay_font_bytes.data(), overlay_font_bytes.size()))
-        {
-            snprintf(error_text, sizeof(error_text), "Invalid embedded overlay font atlas");
+        if (!bh_sdl_text::prepare())
             return 0;
-        }
         Surface *output = destination;
         if (destination->target)
         {
@@ -1070,7 +679,7 @@ extern "C"
         }
         /* Flush earlier draws before changing CPU storage. This also keeps
            a texture used by an earlier batch coherent with subsequent uploads. */
-        if (!flush())
+        if (!record_pending_draws())
             return 0;
         if (destination->target)
             std::fill(output->pixels.begin(), output->pixels.end(), 0);
@@ -1090,262 +699,10 @@ extern "C"
                                (format.dwRGBBitCount + 7) / 8,
                                {format.dwRBitMask, format.dwGBitMask, format.dwBBitMask},
                                output->palette ? palette.data() : nullptr};
-        if (!bh_overlay_text(&canvas, &overlay_font, x, y, text, rgb))
+        if (!bh_sdl_text::rasterize(canvas, x, y, text, rgb))
             return 0;
         ++output->version;
         return destination->target ? draw_surface(output, true) : 1;
-    }
-    int bh_sdl_active()
-    {
-        return window && (SDL_GetWindowFlags(window) & SDL_WINDOW_INPUT_FOCUS) &&
-               !(SDL_GetWindowFlags(window) & SDL_WINDOW_MINIMIZED);
-    }
-    void bh_sdl_set_relative_mouse(int enabled)
-    {
-        const bool relative = enabled && bh_sdl_active();
-        if (window && SDL_GetWindowRelativeMouseMode(window) != relative &&
-            SDL_SetWindowRelativeMouseMode(window, relative))
-            SDL_GetRelativeMouseState(nullptr, nullptr);
-    }
-    void bh_sdl_relative_mouse(float *x, float *y)
-    {
-        *x = *y = 0;
-        if (bh_sdl_active() && SDL_GetWindowRelativeMouseMode(window))
-            SDL_GetRelativeMouseState(x, y);
-    }
-    unsigned bh_sdl_key_character(unsigned key)
-    {
-        if (key >= 'A' && key <= 'Z')
-            return key;
-        if (key >= '0' && key <= '9')
-            return key;
-        if (key == 32)
-            return 32;
-        if (key >= 96 && key <= 105)
-            return '0' + key - 96;
-        for (int i = 1; i < SDL_SCANCODE_COUNT; ++i)
-        {
-            auto scan = (SDL_Scancode)i;
-            auto code = SDL_GetKeyFromScancode(scan, SDL_KMOD_NONE, false);
-            if (binding_key(scan, code) == key && code >= 32 && code < 127)
-                return (unsigned)code;
-        }
-        return 0;
-    }
-    uint32_t bh_sdl_ticks()
-    {
-        return (uint32_t)SDL_GetTicks();
-    }
-    uint64_t bh_sdl_nanoseconds()
-    {
-        return SDL_GetTicksNS();
-    }
-    void bh_sdl_delay(uint32_t milliseconds)
-    {
-        SDL_Delay(milliseconds);
-    }
-    int bh_sdl_paths(const char *assets, const char *settings)
-    {
-        namespace fs = std::filesystem;
-        std::error_code error;
-        const char *base = SDL_GetBasePath();
-        if (!base)
-            return 0;
-        auto root = fs::absolute(assets ? fs::path(assets) : fs::path(base), error);
-        if (error)
-            return 0;
-        auto output = settings ? fs::absolute(fs::path(settings), error) : root;
-        if (error || !fs::is_directory(output, error) || error)
-            return 0;
-        settings_directory = output.generic_string();
-        fs::current_path(root, error);
-        return !error;
-    }
-    const char *bh_sdl_settings_file(const char *name)
-    {
-        static std::string path;
-        path = (std::filesystem::path(settings_directory) / name).generic_string();
-        return path.c_str();
-    }
-    void bh_sdl_error_dialog()
-    {
-        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "BHunter",
-                                 report_text[0] ? report_text : "The game stopped before startup completed.", window);
-    }
-    void bh_sdl_report_error(const char *details)
-    {
-        snprintf(report_text, sizeof(report_text), "%s", details);
-        fprintf(stderr, "%s\n", report_text);
-    }
-    double __cdecl bh_sdl_seconds()
-    {
-        return SDL_GetTicksNS() / 1000000000.0;
-    }
-    void __cdecl bh_sdl_pace()
-    {
-        static Uint64 deadline = 0;
-        const Uint64 interval = 1000000000ULL / 60;
-        Uint64 now = SDL_GetTicksNS();
-        if (!deadline || now > deadline + interval * 4)
-            deadline = now;
-        deadline += interval;
-        if (deadline > now)
-            SDL_DelayPrecise(deadline - now);
-    }
-    int bh_sdl_text_begin(BHPlatformTextInput callback, void *user)
-    {
-        if (!window || !callback || text_callback)
-            return 0;
-        const auto properties = SDL_CreateProperties();
-        const bool started = properties &&
-                             SDL_SetBooleanProperty(properties, SDL_PROP_TEXTINPUT_MULTILINE_BOOLEAN, false) &&
-                             SDL_StartTextInputWithProperties(window, properties);
-        SDL_DestroyProperties(properties);
-        if (!started)
-            return 0;
-        text_callback = callback;
-        text_user = user;
-        return 1;
-    }
-    void bh_sdl_text_end()
-    {
-        if (!text_callback)
-            return;
-        text_callback = nullptr;
-        text_user = nullptr;
-        SDL_StopTextInput(window);
-    }
-    int __cdecl bh_sdl_poll()
-    {
-        bh_audio_poll();
-        SDL_Event event;
-        while (SDL_PollEvent(&event))
-        {
-            if ((event.type == SDL_EVENT_AUDIO_DEVICE_ADDED || event.type == SDL_EVENT_AUDIO_DEVICE_REMOVED) &&
-                !event.adevice.recording)
-                bh_audio_device_changed();
-            switch (event.type)
-            {
-            case SDL_EVENT_GAMEPAD_ADDED:
-            case SDL_EVENT_GAMEPAD_REMOVED:
-                find_gamepad();
-                break;
-            case SDL_EVENT_GAMEPAD_BUTTON_DOWN:
-            case SDL_EVENT_GAMEPAD_BUTTON_UP:
-                if (gamepad && event.gbutton.which == SDL_GetGamepadID(gamepad) &&
-                    (event.gbutton.button == SDL_GAMEPAD_BUTTON_SOUTH ||
-                     event.gbutton.button == SDL_GAMEPAD_BUTTON_EAST))
-                {
-                    const bool submit = event.gbutton.button == SDL_GAMEPAD_BUTTON_SOUTH;
-                    const unsigned long button = 1UL << (submit ? BH_PAD_SOUTH : BH_PAD_EAST);
-                    if (event.type == SDL_EVENT_GAMEPAD_BUTTON_UP)
-                        text_gamepad_buttons &= ~button;
-                    else if (text_callback)
-                    {
-                        text_gamepad_buttons |= button;
-                        text_callback(submit ? BH_PLATFORM_TEXT_SUBMIT : BH_PLATFORM_TEXT_CANCEL, nullptr, text_user);
-                    }
-                }
-                break;
-            case SDL_EVENT_TEXT_INPUT:
-                if (text_callback && event.text.windowID == SDL_GetWindowID(window))
-                    text_callback(BH_PLATFORM_TEXT_INSERT, event.text.text, text_user);
-                break;
-            case SDL_EVENT_QUIT:
-            case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
-                quitting = true;
-                break;
-            case SDL_EVENT_KEY_DOWN:
-            case SDL_EVENT_KEY_UP: {
-                if (event.key.windowID != SDL_GetWindowID(window))
-                    break;
-                auto scan = event.key.scancode;
-                if (scan <= SDL_SCANCODE_UNKNOWN || scan >= SDL_SCANCODE_COUNT)
-                    break;
-                if (event.type == SDL_EVENT_KEY_DOWN && !event.key.repeat && event.key.key == SDLK_RETURN &&
-                    (event.key.mod & SDL_KMOD_ALT))
-                {
-                    remember_window();
-                    bh_game_settings.borderless = !bh_game_settings.borderless;
-                    apply_mode();
-                    break;
-                }
-                if (event.key.down)
-                {
-                    if (text_callback)
-                    {
-                        const auto key = event.key.key;
-                        if (key == SDLK_BACKSPACE)
-                        {
-                            text_callback(BH_PLATFORM_TEXT_BACKSPACE, nullptr, text_user);
-                            break;
-                        }
-                        if (key == SDLK_RETURN || key == SDLK_KP_ENTER || key == SDLK_ESCAPE)
-                        {
-                            if (!event.key.repeat)
-                                text_callback(key == SDLK_ESCAPE ? BH_PLATFORM_TEXT_CANCEL : BH_PLATFORM_TEXT_SUBMIT,
-                                              nullptr, text_user);
-                            break;
-                        }
-                    }
-                    if (!held_keys[scan])
-                        held_keys[scan] = binding_key(scan, event.key.key);
-                    if (held_keys[scan])
-                        input_event(BH_PLATFORM_KEY, held_keys[scan], true, event.key.repeat);
-                }
-                else
-                {
-                    const unsigned key = held_keys[scan];
-                    held_keys[scan] = 0;
-                    /* Two physical modifiers may share a saved binding ID. */
-                    if (key && std::find(held_keys.begin(), held_keys.end(), key) == held_keys.end())
-                        input_event(BH_PLATFORM_KEY, key, false);
-                }
-                break;
-            }
-            case SDL_EVENT_MOUSE_BUTTON_DOWN:
-            case SDL_EVENT_MOUSE_BUTTON_UP:
-                if (event.button.windowID == SDL_GetWindowID(window))
-                {
-                    unsigned key = event.button.button == SDL_BUTTON_LEFT     ? 1
-                                   : event.button.button == SDL_BUTTON_RIGHT  ? 2
-                                   : event.button.button == SDL_BUTTON_MIDDLE ? 4
-                                   : event.button.button == SDL_BUTTON_X1     ? 5
-                                   : event.button.button == SDL_BUTTON_X2     ? 6
-                                                                              : 0;
-                    if (key)
-                        input_event(BH_PLATFORM_KEY, key, event.button.down);
-                }
-                break;
-            case SDL_EVENT_WINDOW_FOCUS_LOST:
-            case SDL_EVENT_WINDOW_MINIMIZED:
-                if (event.window.windowID == SDL_GetWindowID(window))
-                    lose_focus();
-                break;
-            case SDL_EVENT_WINDOW_FOCUS_GAINED:
-                if (event.window.windowID == SDL_GetWindowID(window))
-                    input_event(BH_PLATFORM_FOCUS, 0, true);
-                break;
-            case SDL_EVENT_WINDOW_MOVED:
-            case SDL_EVENT_WINDOW_RESIZED:
-            case SDL_EVENT_WINDOW_MAXIMIZED:
-            case SDL_EVENT_WINDOW_RESTORED:
-                remember_window();
-                break;
-            default:
-                break;
-            }
-        }
-        return !quitting;
-    }
-    void __cdecl bh_sdl_gamepad(BHGamepadState *state)
-    {
-        read_gamepad(state, window && (SDL_GetWindowFlags(window) & SDL_WINDOW_INPUT_FOCUS) &&
-                                !(SDL_GetWindowFlags(window) & SDL_WINDOW_MINIMIZED));
-    }
-    const char *__cdecl bh_sdl_error()
-    {
-        return error_text;
     }
     const char *bh_sdl_gpu_driver()
     {
@@ -1355,118 +712,6 @@ extern "C"
     int bh_sdl_clear_frame()
     {
         return clear_target(true, true);
-    }
-    void __cdecl bh_sdl_close()
-    {
-        bh_sdl_text_end();
-        if (gamepad)
-        {
-            SDL_CloseGamepad(gamepad);
-            gamepad = nullptr;
-        }
-        if (window)
-            remember_window();
-        flush();
-        end_pass();
-        if (commands)
-        {
-            SDL_SubmitGPUCommandBuffer(commands);
-            commands = nullptr;
-        }
-        if (device)
-        {
-            SDL_WaitForGPUIdle(device);
-            release(white);
-            white = nullptr;
-            for (auto &p : pipelines)
-                SDL_ReleaseGPUGraphicsPipeline(device, p.second);
-            pipelines.clear();
-            if (color_target)
-                SDL_ReleaseGPUTexture(device, color_target);
-            if (depth_target)
-                SDL_ReleaseGPUTexture(device, depth_target);
-            if (vs)
-                SDL_ReleaseGPUShader(device, vs);
-            if (fs)
-                SDL_ReleaseGPUShader(device, fs);
-            if (sampler)
-                SDL_ReleaseGPUSampler(device, sampler);
-            if (window)
-                SDL_ReleaseWindowFromGPUDevice(device, window);
-            SDL_DestroyGPUDevice(device);
-            device = nullptr;
-        }
-        color_target = depth_target = nullptr;
-        vs = fs = nullptr;
-        sampler = nullptr;
-        applied_margin_x = applied_margin_y = -1;
-        applied_aspect = applied_mode = -1;
-        modes.clear();
-        if (window)
-        {
-            SDL_ShowCursor();
-            SDL_DestroyWindow(window);
-        }
-        window = nullptr;
-        overlay_font = {};
-        SDL_Quit();
-    }
-    void __cdecl bh_sdl_video_cycle(int row)
-    {
-        if (row == 0)
-        {
-            remember_window();
-            bh_game_settings.borderless = !bh_game_settings.borderless;
-            apply_mode();
-        }
-        if (row == 1)
-        {
-            bh_game_settings.aspect = (bh_game_settings.aspect + 1) % std::size(bh_game_aspects);
-            select_matching_mode();
-        }
-        if (row == 2 && bh_game_settings.borderless && !modes.empty())
-        {
-            for (int i = 1; i <= (int)modes.size(); ++i)
-            {
-                int next = (selected_resolution + i) % modes.size();
-                if (matching_mode(next))
-                {
-                    selected_resolution = next;
-                    break;
-                }
-            }
-        }
-        save_settings();
-    }
-    const char *__cdecl bh_sdl_video_label(int row)
-    {
-        static char text[64];
-        if (row == 0)
-            return bh_game_settings.borderless ? "Borderless" : "Windowed";
-        if (row == 1)
-            return bh_game_aspects[bh_game_settings.aspect].label;
-        if (!bh_game_settings.borderless)
-            return "Resize window";
-        if (!modes.empty() && !matching_mode(selected_resolution))
-            return "Unavailable";
-        int w, h;
-        SDL_GetWindowSizeInPixels(window, &w, &h);
-        if (bh_game_settings.borderless && !modes.empty())
-        {
-            w = modes[selected_resolution].first;
-            h = modes[selected_resolution].second;
-        }
-        snprintf(text, sizeof(text), "%d x %d", w, h);
-        return text;
-    }
-    int bh_sdl_fov_degrees()
-    {
-        return bh_game_settings.field_of_view;
-    }
-    void __cdecl bh_sdl_canvas_margins(float *x, float *y)
-    {
-        if (window && x && y)
-            canvas_margins(*x, *y);
     }
     HRESULT __cdecl bh_gpu_create(GUID *, LPDIRECTDRAW *out, void *)
     {
@@ -1542,7 +787,7 @@ extern "C"
     }
     HRESULT __cdecl bh_IDirect3DDevice2_EndScene(void *self)
     {
-        return flush() ? DD_OK : E_FAIL;
+        return record_pending_draws() ? DD_OK : E_FAIL;
     }
     HRESULT __cdecl bh_IDirect3DDevice2_EnumTextureFormats(void *self, LPD3DENUMTEXTUREFORMATSCALLBACK cb, void *ctx)
     {
@@ -1648,7 +893,7 @@ extern "C"
     {
         if (dwStartingEntry + dwCount > 256)
             return E_INVALIDARG;
-        if (!flush())
+        if (!record_pending_draws())
             return E_FAIL;
         memcpy(((Palette *)self)->entries + dwStartingEntry, lpEntries, dwCount * sizeof(PALETTEENTRY));
         for (auto *s : surfaces)
@@ -1705,7 +950,7 @@ extern "C"
                 ((value >> 11) & 31) * 255 / 31 << 16 | ((value >> 5) & 63) * 255 / 63 << 8 | (value & 31) * 255 / 31;
             return clear_target(true, false, rgb) ? DD_OK : E_FAIL;
         }
-        if (!flush())
+        if (!record_pending_draws())
             return E_FAIL;
         if (dwFlags & DDBLT_COLORFILL)
         {
@@ -1797,8 +1042,8 @@ extern "C"
                 return E_FAIL;
             float vx, vy, vw, vh, scale;
             viewport_geometry(vx, vy, vw, vh, scale);
-            float mx, my;
-            canvas_margins(mx, my);
+            const auto display = query_display();
+            const float mx = display.margin_x, my = display.margin_y;
             float scale_x = vw / (640 + 2 * mx), scale_y = vh / (480 + 2 * my);
             float ox = vx + mx * scale_x, oy = vy + my * scale_y;
             for (unsigned y = 0; y < s->desc.dwHeight; ++y)
