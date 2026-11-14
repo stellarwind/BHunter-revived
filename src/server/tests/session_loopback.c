@@ -1,6 +1,6 @@
 #include "../bh_server_session.h"
 #include "../bh_server_traffic.h"
-#include "../../bh_vfile.h"
+#include "../../Assets/bh_vfile.h"
 #include <enet/enet.h>
 #include <stdio.h>
 #include <stdlib.h>

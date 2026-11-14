@@ -1,0 +1,224 @@
+#include "bh_vm_queries.h"
+#include "../../Math/bh_fp.h"
+#include "../../Math/bh_round.h"
+#include <math.h>
+#include <string.h>
+static int live(BHEntityPool *p, const BHEntity *e)
+{
+    return bh_entity_is_active(p, e);
+}
+static BHBlockDamageContext *damage_context(BHEntity *e)
+{
+    BHBlockDamageContext *c;
+    memcpy(&c, &e->bindings.block_damage, 4);
+    return c;
+}
+int bh_block_damage_read(const BHEntity *e, BHBlockDamageState *s)
+{
+    if (!e || !s)
+        return 0;
+    memcpy(&s->health, &e->placement.damage, 4);
+    memcpy(&s->owner, &e->placement.damage_source, 4);
+    return 1;
+}
+int bh_block_damage_bind(BHEntityPool *p, BHEntity *e, BHBlockDamageContext *c, const BHBlockDamageState *s, int only)
+{
+    if (!live(p, e) || !c || !c->world || !s)
+        return 0;
+    memcpy(&e->placement.damage, &s->health, 4);
+    memcpy(&e->placement.damage_source, &s->owner, 4);
+    memcpy(&e->bindings.block_damage, &c, 4);
+    return bh_entity_set_query(p, e, only ? bh_block_player_damage_query : bh_block_damage_query);
+}
+static void damage(BHEntity *e, float value)
+{
+    float health;
+    memcpy(&health, &e->placement.damage, 4);
+    bh_round_float(&health, (double)health - (double)value * (-10.0f));
+    memcpy(&e->placement.damage, &health, 4);
+}
+void bh_block_player_damage_query(BHEntity *e, void *packet)
+{
+    long event;
+    BHEntity *owner, *watched;
+    float amount;
+    BHBlockDamageContext *c = damage_context(e);
+    memcpy(&event, packet, 4);
+    if (event == 0)
+    {
+        memcpy(&owner, (char *)packet + 8, 4);
+        if (owner == c->player)
+        {
+            memcpy(&amount, (char *)packet + 4, 4);
+            damage(e, amount);
+            memcpy(&e->placement.damage_source, &owner, 4);
+        }
+    }
+    else if (event == 17)
+    {
+        memcpy(&watched, &e->placement.damage_source, 4);
+        memcpy(&owner, (char *)packet + 4, 4);
+        if (owner == watched)
+        {
+            owner = NULL;
+            memcpy(&e->placement.damage_source, &owner, 4);
+        }
+    }
+}
+void bh_block_damage_query(BHEntity *e, void *packet)
+{
+    long event;
+    BHEntity *owner, *watched;
+    float amount, health, distance, x, y, z;
+    double dx, dy, dz, length;
+    BHDebrisBlastPacket blast;
+    BHBlockDamageContext *c = damage_context(e);
+    memcpy(&event, packet, 4);
+    switch (event)
+    {
+    case 0:
+        memcpy(&amount, (char *)packet + 4, 4);
+        damage(e, amount);
+        memcpy(&owner, (char *)packet + 8, 4);
+        memcpy(&e->placement.damage_source, &owner, 4);
+        return;
+    case 2:
+        memcpy(&amount, (char *)packet + 0x20, 4);
+        damage(e, amount);
+        return;
+    case 17:
+        memcpy(&watched, &e->placement.damage_source, 4);
+        memcpy(&owner, (char *)packet + 4, 4);
+        if (owner == watched)
+        {
+            owner = NULL;
+            memcpy(&e->placement.damage_source, &owner, 4);
+        }
+        return;
+    case 1:
+        memcpy(&blast, packet, sizeof(blast));
+        /* Original X midpoint is spilled; Y midpoint stays extended until its
+       delta is formed. Z midpoint spills before subtraction. Each delta is
+       stored before a retained extended copy multiplies that binary32 spill. */
+        bh_round_float(&x, ((double)c->world->minimum.x + c->world->maximum.x) * .5);
+        bh_round_float(&z, ((double)c->world->minimum.z + c->world->maximum.z) * .5);
+        dx = (double)x - blast.center.x;
+        dy = ((double)c->world->minimum.y + c->world->maximum.y) * .5 - blast.center.y;
+        dz = (double)z - blast.center.z;
+        bh_round_float(&x, dx);
+        bh_round_float(&y, dy);
+        bh_round_float(&z, dz);
+        length = sqrt((dx * x + dy * y) + dz * z);
+        bh_round_float(&distance, length);
+        if (distance > 0 && distance < blast.radius)
+        {
+            memcpy(&health, &e->placement.damage, 4);
+            bh_round_float(&health, (double)health -
+                                        ((double)blast.strength * (1.0 - (double)distance / blast.radius)) * (-.0008));
+            memcpy(&e->placement.damage, &health, 4);
+        }
+        return;
+    default:
+        return;
+    }
+}
+static BHRadarQueryContext *radar_context(BHEntity *e)
+{
+    BHRadarQueryContext *c;
+    memcpy(&c, &e->bindings.radar_query, 4);
+    return c;
+}
+int bh_radar_query_bind(BHRadarQueryContext *c, BHEntity *e, BHEntity *owner, long id)
+{
+    BHEntity *zero = NULL;
+    if (!c || !c->lifetime || c->lifetime->timers.pool != c->pool || !c->lifetime->sounds || !live(c->pool, e) ||
+        c->count >= 65535)
+        return 0;
+    memcpy(&e->actor.global_previous, &zero, 4);
+    memcpy(&e->actor.global_next, &c->head, 4);
+    if (c->head)
+        memcpy(&c->head->actor.global_previous, &e, 4);
+    memcpy(&e->actor.radar_id, &id, 4);
+    memcpy(&e->actor.radar_owner, &owner, 4);
+    memcpy(&e->bindings.radar_query, &c, 4);
+    if (!bh_entity_set_query(c->pool, e, bh_radar_entity_query))
+        return 0;
+    c->head = e;
+    ++c->count;
+    return 1;
+}
+static int retire(BHRadarQueryContext *c, BHEntity *e)
+{
+    BHEntity *prev = e->actor.global_previous, *next = e->actor.global_next;
+    if (!c->count || !live(c->pool, e) || (prev && (!live(c->pool, prev) || prev->actor.global_next != e)) ||
+        (next && (!live(c->pool, next) || next->actor.global_previous != e)) || (!prev && c->head != e))
+    {
+        c->error = 1;
+        return 0;
+    }
+    if (prev)
+        memcpy(&prev->actor.global_next, &next, 4);
+    else
+        c->head = next;
+    if (next)
+        memcpy(&next->actor.global_previous, &prev, 4);
+    --c->count;
+    if (!bh_entity_release(c->pool, e))
+    {
+        c->error = 1;
+        return 0;
+    }
+    return 1;
+}
+void bh_radar_entity_query(BHEntity *e, void *packet)
+{
+    BHRadarQueryContext *c = radar_context(e);
+    long event, id, matched;
+    BHEntity *owner, *incoming, *sound;
+    BHScriptLifetimeState state;
+    BHVec3 zero = {0, 0, 0};
+    memcpy(&event, packet, 4);
+    switch (event)
+    {
+    case 3:
+        memcpy((char *)packet + 4, &e->position, 12);
+        return;
+    case 16:
+        memcpy((char *)packet + 4, &e->position, 12);
+        memcpy((char *)packet + 16, &zero, 12);
+        memcpy((char *)packet + 28, &zero, 12);
+        return;
+    case 14:
+        memcpy(&id, &e->actor.radar_id, 4);
+        memcpy(&matched, (char *)packet + 8, 4);
+        if (id && matched == id)
+            retire(c, e);
+        return;
+    case 20:
+        retire(c, e);
+        return;
+    case 17:
+        memcpy(&owner, &e->actor.radar_owner, 4);
+        memcpy(&incoming, (char *)packet + 4, 4);
+        if (owner != incoming)
+            return;
+        if (!retire(c, e))
+            return;
+        sound = bh_entity_acquire(c->pool);
+        if (!sound)
+            return;
+        memset(&state, 0, sizeof(state));
+        state.mission_resource = c->retired_sound;
+        state.mission_countdown = 1.5f;
+        if (!bh_script_lifetime_bind(c->lifetime, sound, &state, NULL))
+        {
+            bh_entity_release(c->pool, sound);
+            c->error = 1;
+            return;
+        }
+        sound->step = bh_mission_sound_tick;
+        return;
+    default:
+        return;
+    }
+}

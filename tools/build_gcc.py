@@ -118,7 +118,7 @@ def main():
             "cxx_version": subprocess.check_output([args.cxx, "--version"], text=True),
         },
     }
-    embedded_config = ROOT / "src/bh_config_defaults.bin"
+    embedded_config = ROOT / "src/Config/bh_config_defaults.bin"
     dependencies = [
         path
         for path in (ROOT / "src").rglob("*")
@@ -178,7 +178,7 @@ def main():
         else [
             ROOT / "src" / name
             for name in sorted(
-                set(contexts) | {"bh_game_app.c", "bh_game_main.c"} | ({"bh_random.c"} if linux else set())
+                set(contexts) | {"Game/bh_game_app.c", "bh_game_main.c"} | ({"Math/bh_random.c"} if linux else set())
             )
         ]
     )
@@ -209,7 +209,7 @@ def main():
         obj = objects_dir / (source.stem + ".o")
         objects.append(obj)
         flags = []
-        for flag in contexts.get(source.name, []):
+        for flag in contexts.get(source.relative_to(ROOT).as_posix().removeprefix("src/"), []):
             if flag.startswith(("/DDIRECT3D_VERSION=", "/DDIRECTDRAW_VERSION=")):
                 continue
             if flag.startswith("/D"):
@@ -225,7 +225,7 @@ def main():
             "-std=gnu23",
             "-O2",
             *architecture,
-            *(["-include", ROOT / "src/bh_linux_compat.h"] if linux else []),
+            *(["-include", ROOT / "src/Platform/bh_linux_compat.h"] if linux else []),
             *(["-g"] if args.symbols else []),
             "-fno-strict-aliasing",
             "-fwrapv",
@@ -290,8 +290,8 @@ def main():
             ROOT / "src/SDL/bh_sdl_platform.cpp",
             ROOT / "src/SDL/bh_sdl_text.cpp",
             ROOT / "src/SDL/bh_sdl_input.cpp",
-            ROOT / "src/bh_sdl_audio.cpp",
-            ROOT / "src/bh_game_settings.cpp",
+            ROOT / "src/SDL/bh_sdl_audio.cpp",
+            ROOT / "src/Config/bh_game_settings.cpp",
             INI_SOURCE,
             "@" + str(response),
             "-Wl,--gc-sections",

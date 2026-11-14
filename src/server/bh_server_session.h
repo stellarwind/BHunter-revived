@@ -1,7 +1,7 @@
 #ifndef BH_SERVER_SESSION_H
 #define BH_SERVER_SESSION_H
 
-#include "../bh_network_game.h"
+#include "../Network/bh_network_game.h"
 
 typedef struct BHServerSession
 {

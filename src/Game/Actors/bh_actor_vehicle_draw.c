@@ -1,0 +1,158 @@
+#include "bh_actor_vehicle_draw.h"
+#include "../../Graphics/bh_draw_submit.h"
+#include "../../Camera/bh_camera_curve.h"
+#include "../../Math/bh_rotation.h"
+#include "../../Math/bh_fp.h"
+#ifdef BH_SDL_BACKEND
+#include "../../Graphics/bh_render_interpolation.h"
+#endif
+#include <math.h>
+#include <float.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stddef.h>
+
+/* Most assignments use the pinned compiler's retained FST value. Only the
+   tangent operands consumed from float memory need a forced representation
+   reload; rounding all intermediates changes the original operation graph. */
+static __inline float natural(double x)
+{
+    return (float)x;
+}
+static __inline float stored(double x)
+{
+    union {
+        float value;
+        volatile unsigned long bits;
+    } written, read;
+    written.value = (float)x;
+    read.bits = written.bits;
+    return read.value;
+}
+/* Each lamp keeps its identity when the optional damage sprite appears. */
+static void glow_sprite(BHActorVehicleDrawContext *ctx, BHEntity *entity, unsigned long part, unsigned long resource,
+                        const BHVec3 *point, float alpha)
+{
+#ifdef BH_SDL_BACKEND
+    unsigned long index = ctx->queue->count;
+    if (bh_draw_billboard(ctx->queue, 3, resource, point, 2, 2, 0, 0, alpha) > 0)
+        bh_interpolation_part(index, (unsigned long)entity, entity->generation, part);
+#else
+    (void)entity;
+    (void)part;
+    bh_draw_billboard(ctx->queue, 3, resource, point, 2, 2, 0, 0, alpha);
+#endif
+}
+void bh_actor_vehicle_pose_core(BHActorVehicleDrawContext *ctx, BHEntity *entity, unsigned short tick)
+{
+    BHActorFields *a = &entity->actor;
+    BHVec3 before, p, after, angles, velocity, local, glow;
+    BHMat34 matrix;
+    short se;
+    float phase, dx, dz, px, size, alpha, angle;
+    double bank, clock, next_x, next_z, wide_dx, wide_dz, wide_px, wide_pz;
+    float fade;
+    unsigned long damage_frame;
+    se = (short)(tick - a->tick);
+    phase = natural((double)se / (short)a->duration_ticks);
+    bh_camera_curve(natural((double)phase - 1.0 / 30.0), &before, &a->route_start, &a->route_first, &a->route_second,
+                    &a->route_end);
+    bh_camera_curve(phase, &p, &a->route_start, &a->route_first, &a->route_second, &a->route_end);
+    bh_camera_curve(natural((double)phase - (-1.0 / 30.0)), &after, &a->route_start, &a->route_first, &a->route_second,
+                    &a->route_end);
+    before.x = natural((double)a->offset.x + before.x);
+    before.y = natural((double)a->offset.y + before.y);
+    before.z = natural((double)a->offset.z + before.z);
+    p.x = natural((double)a->offset.x + p.x);
+    p.y = natural((double)a->offset.y + p.y);
+    p.z = natural((double)a->offset.z + p.z);
+    /* 00434a28..00434b0c: FST publishes the rounded after position and
+       differences without discarding their retained x87 values. The second
+       tangent's Z difference never reloads a float for its square/product. */
+    next_x = (double)a->offset.x + after.x;
+    next_z = (double)a->offset.z + after.z;
+    after.x = natural(next_x);
+    after.z = natural(next_z);
+    wide_dx = next_x - p.x;
+    wide_dz = next_z - p.z;
+    dx = stored(wide_dx);
+    dz = stored(wide_dz);
+    wide_px = (double)p.x - before.x;
+    wide_pz = (double)p.z - before.z;
+    px = stored(wide_px);
+    after.y = natural((double)a->offset.y + after.y);
+    bank =
+        ((wide_pz * dx - (double)px * dz) / sqrt(wide_dx * dx + wide_dz * dz)) / sqrt(wide_px * px + wide_pz * wide_pz);
+    angles.x = natural(atan2(dx, dz));
+    angles.y = 0;
+    angles.z = natural(bank * 3.141592653589793);
+
+    bh_draw_submit_resource(ctx->queue, 0, a->model_resource, &p, &angles, 1);
+    fade = a->fade;
+    if (fade < 1)
+    {
+        size = natural(4.0 - (double)rand() * (-1.0 / 16384.0));
+        alpha = natural(1.0 - fade);
+        damage_frame = (unsigned long)rand() & 7;
+        angle = natural((double)rand() * (1.0 / 4096.0));
+        bh_draw_billboard(ctx->queue, 3, ctx->damage_resource, &p, size, size, angle, damage_frame, alpha);
+    }
+    if (a->model_resource == ctx->glowing_model)
+    {
+        matrix.m[0][0] = 1;
+        matrix.m[0][1] = 0;
+        matrix.m[0][2] = 0;
+        matrix.m[0][3] = 0;
+        matrix.m[1][0] = 0;
+        matrix.m[1][1] = 1;
+        matrix.m[1][2] = 0;
+        matrix.m[1][3] = 0;
+        matrix.m[2][0] = 0;
+        matrix.m[2][1] = 0;
+        matrix.m[2][2] = 1;
+        matrix.m[2][3] = 0;
+        bh_mat34_translate_world(p.x, p.y, p.z, &matrix);
+        bh_mat34_rotate_y(angles.x, &matrix);
+        bh_mat34_rotate_x(angles.y, &matrix);
+        bh_mat34_rotate_z(angles.z, &matrix);
+        clock = (double)ctx->animation_clock * .03125;
+#define POSE_GLOW(part, gx, rate, resource)                                                                            \
+    local.x = (gx);                                                                                                    \
+    local.y = -.95f;                                                                                                   \
+    local.z = -.65f;                                                                                                   \
+    bh_mat34_transform_point(&matrix, &local, &glow);                                                                  \
+    alpha = natural((sin(clock * (rate)) - (-1.0)) * .5);                                                              \
+    glow_sprite(ctx, entity, (part), (resource), &glow, alpha)
+        POSE_GLOW(0, .6f, 25.5, ctx->glow_first);
+        POSE_GLOW(1, .2f, 18.5, ctx->glow_first);
+        POSE_GLOW(2, -.2f, 28.5, ctx->glow_second);
+        POSE_GLOW(3, -.6f, 23.5, ctx->glow_second);
+#undef POSE_GLOW
+    }
+    a->sound_frames = 2;
+    velocity.x = natural((double)a->fade * ((double)after.x - p.x) * 30);
+    velocity.y = natural((double)a->fade * ((double)after.y - p.y) * 30);
+    velocity.z = natural(((double)after.z - p.z) * a->fade * 30);
+    if (a->sound == BH_SOUND_INVALID)
+        a->sound = bh_sound_request(ctx->sound, a->sound_resource, 1, 1, &p, &velocity);
+    else
+        bh_sound_update(ctx->sound, a->sound, 1, 1, &p, &velocity);
+}
+
+int bh_actor_vehicle_draw(BHActorVehicleDrawContext *ctx, BHEntity *entity)
+{
+    if (!ctx || !ctx->queue || !ctx->sound || !entity)
+    {
+        if (ctx)
+            ctx->error = BH_ACTOR_ROUTE_ARGUMENT;
+        return 0;
+    }
+    if (!bh_math_environment_supported() || !entity->actor.duration_ticks)
+    {
+        ctx->error = BH_ACTOR_ROUTE_NUMERICAL;
+        return 0;
+    }
+    bh_actor_vehicle_pose_core(ctx, entity, ctx->clock ? bh_actor_route_now(ctx->clock) : ctx->tick);
+    ctx->error = BH_ACTOR_ROUTE_OK;
+    return 1;
+}

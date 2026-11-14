@@ -1,0 +1,98 @@
+#ifndef BH_GAME_BOOTSTRAP_H
+#define BH_GAME_BOOTSTRAP_H
+#include "Player/bh_player_create.h"
+#include "../Physics/bh_collision_resource.h"
+#include "Scripts/bh_script_blocks.h"
+#include "../World/bh_world_load.h"
+#include "Editor/bh_editor_input.h"
+#include "Actors/bh_flyby_construct.h"
+#include "bh_mission_story.h"
+#include "UI/bh_menu_object.h"
+#include "../Audio/bh_sound_load.h"
+#include "../Graphics/bh_render_material.h"
+#define BH_BOOTSTRAP_MENUS 14
+#define BH_BOOTSTRAP_ROWS 32
+typedef struct BHBootstrapBinding
+{
+    unsigned long identity;
+    unsigned long *destination;
+} BHBootstrapBinding;
+typedef struct BHBootstrapValue
+{
+    unsigned long identity, value, kind;
+} BHBootstrapValue;
+typedef struct BHGameBootstrap BHGameBootstrap;
+typedef struct BHBootstrapMenu
+{
+    BHMenuActions actions;
+    BHMenuEdits edits;
+    BHGameBootstrap *owner;
+    BHMenuObject object;
+    BHMenuRuntime runtime;
+    BHMenuActionsRoot root;
+    BHMenuSettingsMenu settings;
+    BHMenuPresent present;
+    BHMenuPresentRow present_rows[BH_BOOTSTRAP_ROWS];
+    BHMenuRow *rows[BH_BOOTSTRAP_ROWS];
+    BHMenuSettingsRow settings_rows[BH_BOOTSTRAP_ROWS];
+    BHMenuSettingsRow *row_pointers[BH_BOOTSTRAP_ROWS];
+    BHMenuAction action[BH_BOOTSTRAP_ROWS];
+    BHMenuMissionAction edit_action[BH_BOOTSTRAP_ROWS];
+    BHMenuRuntime *destinations[BH_BOOTSTRAP_ROWS];
+    unsigned long refresh[BH_BOOTSTRAP_ROWS], identity;
+} BHBootstrapMenu;
+struct BHGameBootstrap
+{
+    BHCollisionResourcePath collision_path;
+    BHTextureContext *textures;
+    BHRenderResources *resources;
+    BHSoundLoad *sounds;
+    BHAtlasContext *atlas;
+    BHTextQueue *text;
+    BHScriptBlocks *blocks;
+    BHWorldLoad *world;
+    int custom_level;
+    BHEditorInput *editor;
+    BHNavigation *navigation;
+    BHPlayerCreate *player;
+    BHMissionStory *story;
+    unsigned long (*availability)[32];
+    BHPlayerInputOwner *inputs;
+    BHEntityPool *pool;
+    BHInputSnapshot *snapshot;
+    BHFlybyConstruct *flyby;
+    BHMenuRuntimeContext *runtime;
+    BHMenuActions *actions;
+    BHMenuEdits *edits;
+    BHMessagePanel *panel;
+    BHMenuTransition *transition;
+    BHMenuPresent *present;
+    /* Count-zero composition phases:1world,2player,3menus,4all resources,
+    5font pages ready before flyby construction.
+    Callback must initialize actual source registries, never supply substitutes. */
+    int (*compose)(BHGameBootstrap *, unsigned long, void *);
+    void *compose_user;
+    const BHBootstrapBinding *bindings;
+    unsigned long binding_count;
+    BHBootstrapValue values[256];
+    unsigned long value_count;
+    BHBootstrapMenu menus[BH_BOOTSTRAP_MENUS];
+    BHAtlasPage *confirmation, *menu_font, *graffiti;
+    BHPlayerInputList *all_keys;
+    char computer_name[256], player_name[21];
+    unsigned long menus_created, rows_created, resources_loaded, aliases;
+    int error;
+};
+/* Whole004474c0. Declarative literal data retains all original resource loads,
+   aliases, sound arguments and twelve menus with static rows.
+   original identities are data lookup keys, never callable/mapped addresses.
+   Context/prototypes and owned menu storage survive every installed callback.
+   No tick, rendering drain, native peer or device input is executed here.
+   Sources bound before call may still invoke platform/resource constructors;
+   synthetic checks use controlled source resource failures. A successful full
+   asset/native bootstrap is an explicit outstanding integration question. */
+int bh_game_bootstrap(BHGameBootstrap *);
+unsigned long bh_bootstrap_value(const BHGameBootstrap *, unsigned long identity);
+int bh_bootstrap_menus(BHGameBootstrap *); /* count-zero family composition */
+int bh_bootstrap_resources(BHGameBootstrap *, unsigned long stage);
+#endif

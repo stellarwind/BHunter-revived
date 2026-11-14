@@ -1,7 +1,7 @@
 #ifndef BH_SDL_TEXT_H
 #define BH_SDL_TEXT_H
 
-#include "../bh_overlay_text.h"
+#include "../Graphics/Textures/bh_overlay_text.h"
 
 namespace bh_sdl_text
 {

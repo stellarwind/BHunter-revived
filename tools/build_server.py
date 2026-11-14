@@ -32,7 +32,7 @@ def main():
     enet = ROOT / "third_party/enet"
     platform = "win32" if windows else "unix"
     architecture = [] if windows else [
-        "-m32", "-march=i686", "-mfpmath=387", "-include", "src/bh_linux_compat.h",
+        "-m32", "-march=i686", "-mfpmath=387", "-include", "src/Platform/bh_linux_compat.h",
     ]
     libraries = ["-lwinmm", "-lws2_32"] if windows else []
     out = (ROOT / args.output_dir).resolve()
@@ -45,7 +45,7 @@ def main():
                 cc, "-std=gnu23", "-O2", "-flto", "-fno-strict-aliasing", *architecture,
                 "-I", str(enet / "include"),
                 "src/server/bh_server_main.c", "src/server/bh_server_session.c", "src/server/bh_server_traffic.c",
-                "src/bh_network_game.c", "src/bh_network_codec.c", "src/bh_vfile.c",
+                "src/Network/bh_network_game.c", "src/Network/bh_network_codec.c", "src/Assets/bh_vfile.c",
                 *(str(enet / f"{name}.c") for name in (
                     "callbacks", "compress", "host", "list", "packet", "peer", "protocol", platform,
                 )),

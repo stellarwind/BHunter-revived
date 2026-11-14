@@ -5,7 +5,7 @@
 
 namespace
 {
-#include "../bh_overlay_atlas.inc"
+#include "../Graphics/Textures/bh_overlay_atlas.inc"
 
 constexpr unsigned base64_digit(char digit)
 {

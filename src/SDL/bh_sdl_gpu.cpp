@@ -1,8 +1,8 @@
 // Native BH renderer resources backed by SDL GPU. The platform owns the window.
-#include "../bh_renderer.h"
+#include "../Graphics/bh_renderer.h"
 #include "bh_sdl_gpu.h"
 #include "bh_sdl_diagnostics.h"
-#include "../bh_video_layout.h"
+#include "../Graphics/bh_video_layout.h"
 #include "bh_sdl_text.h"
 #include <SDL3/SDL.h>
 #include <algorithm>

@@ -16,7 +16,7 @@ def main():
     enet = root / "third_party/enet"
     platform = "win32" if windows else "unix"
     flags = [] if windows else [
-        "-m32", "-march=i686", "-mfpmath=387", "-include", "src/bh_linux_compat.h",
+        "-m32", "-march=i686", "-mfpmath=387", "-include", "src/Platform/bh_linux_compat.h",
     ]
     libraries = ["-lwinmm", "-lws2_32"] if windows else []
     with TemporaryDirectory() as output:
@@ -26,7 +26,7 @@ def main():
                 os.environ.get("BH_GCC", "gcc"), "-std=gnu23", "-O2", "-flto",
                 "-fno-strict-aliasing", *flags, "-I", str(enet / "include"),
                 "src/server/tests/session_loopback.c", "src/server/bh_server_session.c",
-                "src/server/bh_server_traffic.c", "src/bh_network_game.c", "src/bh_network_codec.c", "src/bh_vfile.c",
+                "src/server/bh_server_traffic.c", "src/Network/bh_network_game.c", "src/Network/bh_network_codec.c", "src/Assets/bh_vfile.c",
                 *(str(source) for source in sorted(enet.glob("*.c"))
                   if source.stem not in {"win32", "unix"} or source.stem == platform),
                 *libraries, "-o", str(executable),

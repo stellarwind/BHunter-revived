@@ -1,9 +1,9 @@
-#include "bh_game_app.h"
-#include "bh_platform.h"
+#include "Game/bh_game_app.h"
+#include "Platform/bh_platform.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "bh_network_game.h"
+#include "Network/bh_network_game.h"
 int main(int argc, char **argv)
 {
     const char *assets = 0, *settings = 0, *level = NULL;
