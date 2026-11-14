@@ -1,34 +1,34 @@
 # BHunter
 
 <p align="center">
-  <img src="assets/cover.png" alt="BHunter cover art">
+  <img src="media/cover.webp" alt="BHunter cover art">
 </p>
 
 <table>
   <tr>
-    <td align="center"><a href="screenshots/1.webp"><img src="screenshots/1.webp" alt="BHunter screenshot 1" width="280"></a></td>
-    <td align="center"><a href="screenshots/2.webp"><img src="screenshots/2.webp" alt="BHunter screenshot 2" width="280"></a></td>
-    <td align="center"><a href="screenshots/3.webp"><img src="screenshots/3.webp" alt="BHunter screenshot 3" width="280"></a></td>
+    <td align="center"><a href="media/1.webp"><img src="media/1.webp" alt="BHunter screenshot 1" width="280"></a></td>
+    <td align="center"><a href="media/2.webp"><img src="media/2.webp" alt="BHunter screenshot 2" width="280"></a></td>
+    <td align="center"><a href="media/3.webp"><img src="media/3.webp" alt="BHunter screenshot 3" width="280"></a></td>
   </tr>
   <tr>
-    <td align="center"><a href="screenshots/4.webp"><img src="screenshots/4.webp" alt="BHunter screenshot 4" width="280"></a></td>
-    <td align="center"><a href="screenshots/5.webp"><img src="screenshots/5.webp" alt="BHunter screenshot 5" width="280"></a></td>
-    <td align="center"><a href="screenshots/6.webp"><img src="screenshots/6.webp" alt="BHunter screenshot 6" width="280"></a></td>
+    <td align="center"><a href="media/4.webp"><img src="media/4.webp" alt="BHunter screenshot 4" width="280"></a></td>
+    <td align="center"><a href="media/5.webp"><img src="media/5.webp" alt="BHunter screenshot 5" width="280"></a></td>
+    <td align="center"><a href="media/6.webp"><img src="media/6.webp" alt="BHunter screenshot 6" width="280"></a></td>
   </tr>
   <tr>
-    <td align="center"><a href="screenshots/7.webp"><img src="screenshots/7.webp" alt="BHunter screenshot 7" width="280"></a></td>
-    <td align="center"><a href="screenshots/8.webp"><img src="screenshots/8.webp" alt="BHunter screenshot 8" width="280"></a></td>
-    <td align="center"><a href="screenshots/9.webp"><img src="screenshots/9.webp" alt="BHunter screenshot 9" width="280"></a></td>
+    <td align="center"><a href="media/7.webp"><img src="media/7.webp" alt="BHunter screenshot 7" width="280"></a></td>
+    <td align="center"><a href="media/8.webp"><img src="media/8.webp" alt="BHunter screenshot 8" width="280"></a></td>
+    <td align="center"><a href="media/9.webp"><img src="media/9.webp" alt="BHunter screenshot 9" width="280"></a></td>
   </tr>
   <tr>
-    <td align="center"><a href="screenshots/10.webp"><img src="screenshots/10.webp" alt="BHunter screenshot 10" width="280"></a></td>
-    <td align="center"><a href="screenshots/11.webp"><img src="screenshots/11.webp" alt="BHunter screenshot 11" width="280"></a></td>
-    <td align="center"><a href="screenshots/12.webp"><img src="screenshots/12.webp" alt="BHunter screenshot 12" width="280"></a></td>
+    <td align="center"><a href="media/10.webp"><img src="media/10.webp" alt="BHunter screenshot 10" width="280"></a></td>
+    <td align="center"><a href="media/11.webp"><img src="media/11.webp" alt="BHunter screenshot 11" width="280"></a></td>
+    <td align="center"><a href="media/12.webp"><img src="media/12.webp" alt="BHunter screenshot 12" width="280"></a></td>
   </tr>
   <tr>
-    <td align="center"><a href="screenshots/13.webp"><img src="screenshots/13.webp" alt="BHunter screenshot 13" width="280"></a></td>
-    <td align="center"><a href="screenshots/14.webp"><img src="screenshots/14.webp" alt="BHunter screenshot 14" width="280"></a></td>
-    <td align="center"><a href="screenshots/15.webp"><img src="screenshots/15.webp" alt="BHunter screenshot 15" width="280"></a></td>
+    <td align="center"><a href="media/13.webp"><img src="media/13.webp" alt="BHunter screenshot 13" width="280"></a></td>
+    <td align="center"><a href="media/14.webp"><img src="media/14.webp" alt="BHunter screenshot 14" width="280"></a></td>
+    <td align="center"><a href="media/15.webp"><img src="media/15.webp" alt="BHunter screenshot 15" width="280"></a></td>
   </tr>
 </table>
 
@@ -65,7 +65,7 @@ Requires Python 3.10+ and a **32-bit MinGW-w64 GCC toolchain** with `gcc` and `g
 Place your original `Bhunter.bin` in `GAME_DATA` or `build/GAME_DATA`, then run:
 
 ```bat
-build.cmd
+tools\build.cmd
 build\BHunter-source.exe
 ```
 
@@ -88,4 +88,4 @@ This source restoration was decompiled, reconstructed and built with the assista
 
 ## License
 
-Restoration code: [MIT](LICENSE). Original game assets remain the property of their respective owners. Bundled [SDL3](https://github.com/libsdl-org/SDL/tree/release-3.4.18) uses the zlib license, included in the release.
+Restoration code: [MIT](LICENSES/LICENSE). Original game assets remain the property of their respective owners. Bundled [SDL3](https://github.com/libsdl-org/SDL/tree/release-3.4.18) uses the zlib license, included in the release.
