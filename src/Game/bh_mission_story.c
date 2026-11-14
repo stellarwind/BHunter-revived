@@ -24,80 +24,80 @@ typedef struct StoryMessage
     const char *text;
 } StoryMessage;
 #include "bh_mission_story_data.h"
-static void cue(BHMissionStory *c, long progression)
+static void cue(BHMissionStory *story, long progression)
 {
-    if (!c->progress)
+    if (!story->progress)
     {
-        c->error = 1;
+        story->error = 1;
         return;
     }
-    ++c->cues;
-    bh_mission_progress(c->progress, progression);
-    if (c->progress->error)
-        c->error = 3;
+    ++story->cues;
+    bh_mission_progress(story->progress, progression);
+    if (story->progress->error)
+        story->error = 3;
 }
-static void clear(BHMissionStory *c)
+static void clear(BHMissionStory *story)
 {
     unsigned long visited;
-    if (!c->player || !c->actors || !c->actor_limit)
+    if (!story->player || !story->actors || !story->actor_limit)
     {
-        c->error = 1;
+        story->error = 1;
         return;
     }
-    c->player->player.bounty_pending = 0;
-    c->player->player.fine = 0;
-    ++c->broadcasts;
-    if (!bh_player_input_broadcast(*c->actors, c->actor_limit, &visited))
-        c->error = 4;
+    story->player->player.bounty_pending = 0;
+    story->player->player.fine = 0;
+    ++story->broadcasts;
+    if (!bh_player_input_broadcast(*story->actors, story->actor_limit, &visited))
+        story->error = 4;
 }
-static void enable(BHMissionStory *c, unsigned long row, unsigned long index)
+static void enable(BHMissionStory *story, unsigned long row, unsigned long index)
 {
-    if (!c->availability[row][index])
+    if (!story->availability[row][index])
     {
-        c->availability[row][index] = 1;
-        ++c->availability[row][31];
+        story->availability[row][index] = 1;
+        ++story->availability[row][31];
     }
 }
-int bh_mission_story_dispatch(BHMissionStory *c, const long packet[3])
+int bh_mission_story_dispatch(BHMissionStory *story, const long packet[3])
 {
-    const StoryMessage *m = 0;
-    unsigned long i;
+    const StoryMessage *message = 0;
+    unsigned long message_index, weapon_slot;
     BHEntity *weapon, *actual;
-    BHWeaponObjectState *s;
+    BHWeaponObjectState *weapon_state;
     unsigned long handle;
-    if (!c || !packet)
+    if (!story || !packet)
     {
-        if (c)
-            c->error = 1;
+        if (story)
+            story->error = 1;
         return 0;
     }
-    c->error = 0;
-    ++c->calls;
+    story->error = 0;
+    ++story->calls;
     if (packet[0] != 14)
         return 1;
-    for (i = 0; i < sizeof(messages) / sizeof(messages[0]); ++i)
-        if (messages[i].id == packet[2])
+    for (message_index = 0; message_index < sizeof(messages) / sizeof(messages[0]); ++message_index)
+        if (messages[message_index].id == packet[2])
         {
-            m = messages + i;
+            message = messages + message_index;
             break;
         }
-    if (m)
+    if (message)
     {
-        if (!c->messages)
+        if (!story->messages)
         {
-            c->error = 1;
+            story->error = 1;
             return 0;
         }
-        ++c->queued;
-        if (!bh_message_enqueue(c->messages, m->text))
-            c->error = 2;
-        switch (m->action)
+        ++story->queued;
+        if (!bh_message_enqueue(story->messages, message->text))
+            story->error = 2;
+        switch (message->action)
         {
         case STORY_MESSAGE:
             break;
         case STORY_COMPLETE:
         case STORY_PROGRESS_ZERO:
-            cue(c, 0);
+            cue(story, 0);
             break;
         case STORY_UNLOCK_1:
         case STORY_UNLOCK_2:
@@ -105,154 +105,156 @@ int bh_mission_story_dispatch(BHMissionStory *c, const long packet[3])
         case STORY_UNLOCK_4:
         case STORY_UNLOCK_5:
         case STORY_UNLOCK_6:
-            cue(c, (long)m->action - STORY_UNLOCK_1 + 1);
+            cue(story, (long)message->action - STORY_UNLOCK_1 + 1);
             break;
         case STORY_PROGRESS_SEVEN:
-            cue(c, 7);
+            cue(story, 7);
             break;
         case STORY_PROGRESS_EIGHT:
-            cue(c, 8);
+            cue(story, 8);
             break;
         case STORY_CLEAR:
-            clear(c);
+            clear(story);
             break;
         case STORY_END_ONE:
-            clear(c);
-            cue(c, 0);
-            if (c->ending)
-                *c->ending = 1;
+            clear(story);
+            cue(story, 0);
+            if (story->ending)
+                *story->ending = 1;
             else
-                c->error = 1;
+                story->error = 1;
             break;
         case STORY_FINALE:
-            clear(c);
-            if (!c->player || !c->camera || c->camera != &c->player->player.camera || !c->force_control ||
-                !c->force_gate)
+            clear(story);
+            if (!story->player || !story->camera || story->camera != &story->player->player.camera ||
+                !story->force_control || !story->force_gate)
             {
-                c->error = 1;
+                story->error = 1;
                 break;
             }
-            if (!bh_camera_state_set_mode(c->camera, 8))
-                c->error = 5;
-            *c->force_control = bh_player_force_control_a;
-            *c->force_gate = 0;
+            if (!bh_camera_state_set_mode(story->camera, 8))
+                story->error = 5;
+            *story->force_control = bh_player_force_control_a;
+            *story->force_gate = 0;
             break;
         }
-        return !c->error;
+        return !story->error;
     }
     switch (packet[2])
     {
     case 0x960:
-        if (!c->ending)
+        if (!story->ending)
         {
-            c->error = 1;
+            story->error = 1;
             break;
         }
-        *c->ending = 2;
+        *story->ending = 2;
         break;
     case 3000:
-        cue(c, 0);
+        cue(story, 0);
         break;
     case 3001:
     case 3002:
     case 3003:
     case 3004:
     case 3005:
-        if (!c->availability)
+        if (!story->availability)
         {
-            c->error = 1;
+            story->error = 1;
             break;
         }
         switch (packet[2])
         {
         case 3001:
-            enable(c, 0, 0);
-            enable(c, 0, 10);
-            enable(c, 1, 10);
-            enable(c, 1, 3);
-            enable(c, 2, 10);
-            enable(c, 2, 3);
-            enable(c, 3, 5);
+            enable(story, 0, 0);
+            enable(story, 0, 10);
+            enable(story, 1, 10);
+            enable(story, 1, 3);
+            enable(story, 2, 10);
+            enable(story, 2, 3);
+            enable(story, 3, 5);
             break;
         case 3002:
-            enable(c, 0, 3);
-            enable(c, 1, 11);
-            enable(c, 1, 5);
-            enable(c, 2, 11);
-            enable(c, 2, 5);
-            enable(c, 3, 7);
+            enable(story, 0, 3);
+            enable(story, 1, 11);
+            enable(story, 1, 5);
+            enable(story, 2, 11);
+            enable(story, 2, 5);
+            enable(story, 3, 7);
             break;
         case 3003:
-            enable(c, 0, 1);
-            enable(c, 1, 7);
-            enable(c, 2, 6);
+            enable(story, 0, 1);
+            enable(story, 1, 7);
+            enable(story, 2, 6);
             break;
         case 3004:
-            enable(c, 0, 2);
-            enable(c, 1, 12);
-            enable(c, 2, 12);
-            enable(c, 3, 12);
-            enable(c, 3, 8);
+            enable(story, 0, 2);
+            enable(story, 1, 12);
+            enable(story, 2, 12);
+            enable(story, 3, 12);
+            enable(story, 3, 8);
             break;
         case 3005:
-            enable(c, 0, 6);
+            enable(story, 0, 6);
             break;
         }
         break;
     case 3006:
-        if (!c->sound)
+        if (!story->sound)
         {
-            c->error = 1;
+            story->error = 1;
             return 0;
         }
-        handle = bh_sound_request(c->sound, c->pickup_sound, 1, .7f, 0, 0);
+        handle = bh_sound_request(story->sound, story->pickup_sound, 1, .7f, 0, 0);
         if (handle == BH_SOUND_INVALID)
-            c->error = 6;
-        if (!c->player || !c->weapons)
+            story->error = 6;
+        if (!story->player || !story->weapons)
         {
-            c->error = 1;
+            story->error = 1;
             break;
         }
-        for (i = 5; i < 10; ++i)
+        for (weapon_slot = 5; weapon_slot < 10; ++weapon_slot)
         {
-            if (!bh_weapon_registry_resolve(c->weapons, i, &weapon, &s))
+            if (!bh_weapon_registry_resolve(story->weapons, weapon_slot, &weapon, &weapon_state))
             {
-                c->error = 1;
+                story->error = 1;
                 break;
             }
-            actual = c->player->player.weapons[i];
+            actual = story->player->player.weapons[weapon_slot];
             if (actual != weapon)
             {
-                c->error = 1;
+                story->error = 1;
                 break;
             }
-            s->common.ammo = 0;
-            if (s->common.ammo_limit < 0)
-                s->common.ammo = s->common.ammo_limit;
+            weapon_state->common.ammo = 0;
+            if (weapon_state->common.ammo_limit < 0)
+                weapon_state->common.ammo = weapon_state->common.ammo_limit;
         }
         break;
     }
-    return !c->error;
+    return !story->error;
 }
-void bh_mission_story_query(BHEntity *e, void *packet)
+void bh_mission_story_query(BHEntity *entity, void *packet)
 {
-    BHMissionStory *c;
-    memcpy(&c, &e->bindings.mission_story, 4);
-    if (c)
-        bh_mission_story_dispatch(c, (const long *)packet);
+    BHMissionStory *story;
+    memcpy(&story, &entity->bindings.mission_story, 4);
+    if (story)
+        bh_mission_story_dispatch(story, (const long *)packet);
 }
-int bh_mission_story_bind(BHMissionStory *c, BHEntity *e)
+int bh_mission_story_bind(BHMissionStory *story, BHEntity *entity)
 {
-    BHEntity *at;
+    BHEntity *active_entity;
     BHEntityPool *pool;
-    unsigned long n = 0;
-    if (!c || !e || !c->progress || !c->progress->lifetime || !(pool = c->progress->lifetime->timers.pool))
+    unsigned long visited = 0;
+    if (!story || !entity || !story->progress || !story->progress->lifetime ||
+        !(pool = story->progress->lifetime->timers.pool))
         return 0;
-    for (at = pool->active; at && n++ < pool->capacity; at = at->next)
-        if (at == e)
+    for (active_entity = pool->active; active_entity && visited++ < pool->capacity;
+         active_entity = active_entity->next)
+        if (active_entity == entity)
         {
-            memcpy(&e->bindings.mission_story, &c, 4);
-            return bh_entity_set_query(pool, e, bh_mission_story_query);
+            memcpy(&entity->bindings.mission_story, &story, 4);
+            return bh_entity_set_query(pool, entity, bh_mission_story_query);
         }
     return 0;
 }

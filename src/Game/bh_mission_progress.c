@@ -1,46 +1,47 @@
 #include "bh_mission_progress.h"
 #include <string.h>
 static_assert(sizeof(short) == 2 && sizeof(long) == 4 && sizeof(void *) == 4, "mission abi");
-BHEntity *bh_mission_progress(BHMissionProgressContext *c, long progression)
+BHEntity *bh_mission_progress(BHMissionProgressContext *context, long progression)
 {
     short old;
     unsigned short low;
-    BHEntity *e;
-    BHScriptLifetimeState s;
-    if (!c || !c->config || !c->path || !c->lifetime || !c->lifetime->timers.pool || !c->lifetime->sounds)
+    BHEntity *cue_entity;
+    BHScriptLifetimeState cue_state;
+    if (!context || !context->config || !context->path || !context->lifetime ||
+        !context->lifetime->timers.pool || !context->lifetime->sounds)
     {
-        if (c)
-            c->error = 1;
+        if (context)
+            context->error = 1;
         return NULL;
     }
-    c->error = 0;
-    c->save_result = -1;
-    memcpy(&old, &c->config->values.unlocked_mission, 2);
+    context->error = 0;
+    context->save_result = -1;
+    memcpy(&old, &context->config->values.unlocked_mission, 2);
     if ((long)old < progression)
     {
         low = (unsigned short)(unsigned long)progression;
-        memcpy(&c->config->values.unlocked_mission, &low, 2);
-        ++c->save_attempts;
-        c->save_result = bh_config_save(c->config, c->path);
-        if (!c->save_result)
-            c->error = 2;
+        memcpy(&context->config->values.unlocked_mission, &low, 2);
+        ++context->save_attempts;
+        context->save_result = bh_config_save(context->config, context->path);
+        if (!context->save_result)
+            context->error = 2;
     }
-    e = bh_entity_acquire(c->lifetime->timers.pool);
-    if (!e)
+    cue_entity = bh_entity_acquire(context->lifetime->timers.pool);
+    if (!cue_entity)
     {
-        c->error = 3;
+        context->error = 3;
         return NULL;
     }
     /* Bind actual lifetime context without overwriting unrelated recycled words. */
-    bh_script_lifetime_read(e, &s);
-    s.mission_countdown = 4;
-    s.mission_resource = progression < 1 ? c->first_sound : c->unlocked_sound;
-    if (!bh_script_lifetime_bind(c->lifetime, e, &s, NULL))
+    bh_script_lifetime_read(cue_entity, &cue_state);
+    cue_state.mission_countdown = 4;
+    cue_state.mission_resource = progression < 1 ? context->first_sound : context->unlocked_sound;
+    if (!bh_script_lifetime_bind(context->lifetime, cue_entity, &cue_state, NULL))
     {
-        c->error = 4;
-        bh_entity_release(c->lifetime->timers.pool, e);
+        context->error = 4;
+        bh_entity_release(context->lifetime->timers.pool, cue_entity);
         return NULL;
     }
-    e->step = bh_mission_sound_tick;
-    return e;
+    cue_entity->step = bh_mission_sound_tick;
+    return cue_entity;
 }
