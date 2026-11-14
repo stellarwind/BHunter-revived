@@ -384,6 +384,8 @@ bool record_pending_draws()
         return false;
     unsigned size = vertices.size() * sizeof(Vertex);
     SDL_GPUTransferBufferCreateInfo tinfo{SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD, size, 0};
+    // unique_ptr calls this lambda to release the transfer buffer when the function exits,
+    // including on early returns.
     auto release_transfer = [gpu = device](SDL_GPUTransferBuffer *handle) {
         SDL_ReleaseGPUTransferBuffer(gpu, handle);
     };
@@ -392,6 +394,8 @@ bool record_pending_draws()
     if (!transfer)
         return false;
     SDL_GPUBufferCreateInfo binfo{SDL_GPU_BUFFERUSAGE_VERTEX, size, 0};
+    // unique_ptr calls this lambda to release the vertex buffer when the function exits,
+    // including on early returns.
     auto release_buffer = [gpu = device](SDL_GPUBuffer *handle) { SDL_ReleaseGPUBuffer(gpu, handle); };
     std::unique_ptr<SDL_GPUBuffer, decltype(release_buffer)> buffer(SDL_CreateGPUBuffer(device, &binfo), release_buffer);
     if (!buffer)
