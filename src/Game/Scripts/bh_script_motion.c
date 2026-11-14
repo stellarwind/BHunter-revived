@@ -15,28 +15,28 @@ static int live(BHEntityPool *pool, const BHEntity *entity)
 {
     return bh_entity_is_active(pool, entity);
 }
-int bh_script_motion_actor_read(const BHEntity *entity, BHScriptMotionActor *s)
+int bh_script_motion_actor_read(const BHEntity *entity, BHScriptMotionActor *script_motion_actor)
 {
-    if (!entity || !s)
+    if (!entity || !script_motion_actor)
         return 0;
-    memcpy(&s->angles, &entity->euler, 12);
-    memcpy(&s->minimum, &entity->placement.minimum, 12);
-    memcpy(&s->maximum, &entity->placement.maximum, 12);
-    memcpy(&s->local_to_world, &entity->placement.transform, 48);
-    memcpy(&s->world_to_local, &entity->placement.inverse, 48);
-    memcpy(&s->attachments, &entity->placement.attachments, 4);
+    memcpy(&script_motion_actor->angles, &entity->euler, 12);
+    memcpy(&script_motion_actor->minimum, &entity->placement.minimum, 12);
+    memcpy(&script_motion_actor->maximum, &entity->placement.maximum, 12);
+    memcpy(&script_motion_actor->local_to_world, &entity->placement.transform, 48);
+    memcpy(&script_motion_actor->world_to_local, &entity->placement.inverse, 48);
+    memcpy(&script_motion_actor->attachments, &entity->placement.attachments, 4);
     return 1;
 }
-int bh_script_motion_actor_write(BHEntity *entity, const BHScriptMotionActor *s)
+int bh_script_motion_actor_write(BHEntity *entity, const BHScriptMotionActor *script_motion_actor)
 {
-    if (!entity || !s)
+    if (!entity || !script_motion_actor)
         return 0;
-    memcpy(&entity->euler, &s->angles, 12);
-    memcpy(&entity->placement.minimum, &s->minimum, 12);
-    memcpy(&entity->placement.maximum, &s->maximum, 12);
-    memcpy(&entity->placement.transform, &s->local_to_world, 48);
-    memcpy(&entity->placement.inverse, &s->world_to_local, 48);
-    memcpy(&entity->placement.attachments, &s->attachments, 4);
+    memcpy(&entity->euler, &script_motion_actor->angles, 12);
+    memcpy(&entity->placement.minimum, &script_motion_actor->minimum, 12);
+    memcpy(&entity->placement.maximum, &script_motion_actor->maximum, 12);
+    memcpy(&entity->placement.transform, &script_motion_actor->local_to_world, 48);
+    memcpy(&entity->placement.inverse, &script_motion_actor->world_to_local, 48);
+    memcpy(&entity->placement.attachments, &script_motion_actor->attachments, 4);
     return 1;
 }
 BHEntity *bh_script_motion_attachment_next(const BHEntity *entity)
@@ -111,35 +111,35 @@ int bh_script_motion_bind(BHScriptMotionContext *ctx, BHEntity *entity, const BH
     entity->step = rotate ? bh_script_rotate_tick : bh_script_translate_tick;
     return 1;
 }
-static void add(BHVec3 *v, const BHVec3 *d)
+static void add(BHVec3 *vector, const BHVec3 *delta)
 {
-    bh_round_float(&v->x, (double)v->x + d->x);
-    bh_round_float(&v->y, (double)v->y + d->y);
-    bh_round_float(&v->z, (double)v->z + d->z);
+    bh_round_float(&vector->x, (double)vector->x + delta->x);
+    bh_round_float(&vector->y, (double)vector->y + delta->y);
+    bh_round_float(&vector->z, (double)vector->z + delta->z);
 }
 static void publish(BHScriptMotionContext *ctx, BHEntity *entity)
 {
     unsigned long i;
     BHScriptMotionActor a;
-    const BHScriptMotionBinding *b;
+    const BHScriptMotionBinding *script_motion_binding;
     for (i = 0; ctx->bindings && i < ctx->binding_count; ++i)
     {
-        b = ctx->bindings + i;
-        if (b->entity != entity)
+        script_motion_binding = ctx->bindings + i;
+        if (script_motion_binding->entity != entity)
             continue;
-        if (!b->world)
+        if (!script_motion_binding->world)
         {
             ctx->error = BH_MOTION_ARGUMENT;
             return;
         }
         bh_script_motion_actor_read(entity, &a);
-        b->world->position = entity->position;
-        b->world->transform = a.local_to_world;
-        b->world->inverse = a.world_to_local;
-        b->world->minimum = a.minimum;
-        b->world->maximum = a.maximum;
-        if (b->draw_angles)
-            *b->draw_angles = a.angles;
+        script_motion_binding->world->position = entity->position;
+        script_motion_binding->world->transform = a.local_to_world;
+        script_motion_binding->world->inverse = a.world_to_local;
+        script_motion_binding->world->minimum = a.minimum;
+        script_motion_binding->world->maximum = a.maximum;
+        if (script_motion_binding->draw_angles)
+            *script_motion_binding->draw_angles = a.angles;
         return;
     }
 }
@@ -158,7 +158,7 @@ void bh_script_translate_tick(BHEntity *entity)
     BHScriptMotionContext *ctx = context(entity);
     BHScriptLifetimeState state;
     BHScriptMotionActor a;
-    BHEntity *p;
+    BHEntity *parent;
     BHVec3 delta;
     bh_script_lifetime_read(entity, &state);
     if (!valid(ctx, entity, &state, 0))
@@ -172,10 +172,10 @@ void bh_script_translate_tick(BHEntity *entity)
     bh_mat34_translate_local(-delta.x, -delta.y, -delta.z, &a.world_to_local);
     bh_script_motion_actor_write(state.actor, &a);
     publish(ctx, state.actor);
-    for (p = attachments(ctx, state.actor, a.attachments); p; p = bh_script_motion_attachment_next(p))
+    for (parent = attachments(ctx, state.actor, a.attachments); parent; parent = bh_script_motion_attachment_next(parent))
     {
-        add(&p->position, &delta);
-        publish(ctx, p);
+        add(&parent->position, &delta);
+        publish(ctx, parent);
     }
     if (expire(entity, state.countdown))
     {

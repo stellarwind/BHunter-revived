@@ -192,21 +192,21 @@ static int decrease(BHScriptSensorContext *ctx, BHEntity *entity, int final_even
     bh_entity_release(ctx->lifetime->timers.pool, entity);
     return 1;
 }
-static int in_box(const BHEntity *entity, const BHEntity *p)
+static int in_box(const BHEntity *entity, const BHEntity *current_entity)
 {
     BHVec3 low, high;
     memcpy(&low, (char *)&entity->placement.minimum, 12);
     memcpy(&high, (char *)&entity->placement.maximum, 12);
     /* Retain the original unequal C0 versus C0|C3 tests, including asymmetric
     unordered bound behavior. Ordinary six ordered <= comparisons differ. */
-    return greater_equal(p->position.x, low.x) && !greater(p->position.x, high.x) && !greater(low.y, p->position.y) &&
-           greater_equal(high.y, p->position.y) && !greater(low.z, p->position.z) &&
-           greater_equal(high.z, p->position.z);
+    return greater_equal(current_entity->position.x, low.x) && !greater(current_entity->position.x, high.x) && !greater(low.y, current_entity->position.y) &&
+           greater_equal(high.y, current_entity->position.y) && !greater(low.z, current_entity->position.z) &&
+           greater_equal(high.z, current_entity->position.z);
 }
-static int nearby(BHEntity *entity, BHEntity *b, long threshold)
+static int nearby(BHEntity *entity, BHEntity *candidate, long threshold)
 {
-    double x = (double)entity->position.x - b->position.x, y = (double)entity->position.y - b->position.y,
-           z = (double)entity->position.z - b->position.z;
+    double x = (double)entity->position.x - candidate->position.x, y = (double)entity->position.y - candidate->position.y,
+           z = (double)entity->position.z - candidate->position.z;
     float rx, rz;
     bh_round_float(&rx, x);
     bh_round_float(&rz, z);

@@ -13,9 +13,9 @@ typedef union BHArcPacket {
     BHEntityPositionPacket position;
     unsigned long words[10];
 } BHArcPacket;
-static int finite_vec(const BHVec3 *v)
+static int finite_vec(const BHVec3 *vector)
 {
-    return v && _finite(v->x) && _finite(v->y) && _finite(v->z);
+    return vector && _finite(vector->x) && _finite(vector->y) && _finite(vector->z);
 }
 static int fail(BHArcContext *ctx, BHArcError e)
 {

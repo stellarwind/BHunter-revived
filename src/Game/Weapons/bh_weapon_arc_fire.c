@@ -13,9 +13,9 @@ static float stored(double x)
 int bh_weapon_arc_fire(BHWeaponArcFireContext *ctx, BHEntity *weapon_entity, BHEntity *entity)
 {
     BHWeaponCommonState *weapon_state;
-    BHWeaponFireContext *f;
+    BHWeaponFireContext *weapon_fire_context;
     BHVec3 point, side, up, recoil;
-    BHEntity *e, *target;
+    BHEntity *current_entity, *target;
     long packet[10];
     unsigned long i;
     float progress, spin, angle;
@@ -23,11 +23,11 @@ int bh_weapon_arc_fire(BHWeaponArcFireContext *ctx, BHEntity *weapon_entity, BHE
     if (!ctx || !ctx->fire || !weapon_entity || !entity || !ctx->particles || !ctx->flash ||
         ctx->particles->pool != ctx->flash->pool || !bh_math_environment_supported())
         return 0;
-    f = ctx->fire;
-    if (!f->sound)
+    weapon_fire_context = ctx->fire;
+    if (!weapon_fire_context->sound)
         return 0;
     weapon_state = bh_weapon_common_state(weapon_entity);
-    f->error = 0;
+    weapon_fire_context->error = 0;
     if (weapon_state->ammo)
         weapon_state->word_108 = 1;
     if (weapon_state->word_e8)
@@ -69,18 +69,18 @@ int bh_weapon_arc_fire(BHWeaponArcFireContext *ctx, BHEntity *weapon_entity, BHE
     angle = stored((double)r * (1.0 / 4096));
     bh_script_particle_create(ctx->particles, ctx->first_image, 3, &point, NULL, NULL, .4f, angle, 24, 0, .8f, 1, .5f,
                               1);
-    e = bh_entity_acquire(ctx->flash->pool);
-    if (e)
+    current_entity = bh_entity_acquire(ctx->flash->pool);
+    if (current_entity)
     {
-        e->position = point;
-        bh_flash_flare_bind(ctx->flash, e, .1f, 30, 2);
+        current_entity->position = point;
+        bh_flash_flare_bind(ctx->flash, current_entity, .1f, 30, 2);
     }
     target = weapon_state->hud.target;
     if (target && weapon_state->hud.charge >= 48)
     {
         if (!target->query)
         {
-            f->error = 2;
+            weapon_fire_context->error = 2;
             return 0;
         }
         packet[0] = 11;
@@ -94,10 +94,10 @@ int bh_weapon_arc_fire(BHWeaponArcFireContext *ctx, BHEntity *weapon_entity, BHE
         ((float *)&recoil)[i] = stored((double)((float *)&recoil)[i] - ((double)r - 16384) * (-1.0 / 16384));
     }
     entity->player.recoil_velocity = recoil;
-    bh_sound_request(f->sound, ctx->sound, .4f, 3, &point, &zero);
+    bh_sound_request(weapon_fire_context->sound, ctx->sound, .4f, 3, &point, &zero);
     weapon_state->word_e8 = 4;
-    if (f->peers > 1)
-        bh_weapon_fire_packet(f, 1, 0, 5, weapon_state->hud.target);
+    if (weapon_fire_context->peers > 1)
+        bh_weapon_fire_packet(weapon_fire_context, 1, 0, 5, weapon_state->hud.target);
     ++ctx->shots;
-    return f->error == 0;
+    return weapon_fire_context->error == 0;
 }

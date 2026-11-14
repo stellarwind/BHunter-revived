@@ -14,14 +14,14 @@ static int valid(BHWeaponEffectFireContext *ctx, BHEntity *weapon_entity, BHEnti
 }
 static void sync(BHWeaponEffectFireContext *ctx)
 {
-    BHWeaponFireContext *f = ctx->fire;
-    if (f->peers > 1 && ctx->projectile->pending_identity)
-        *ctx->projectile->pending_identity = ((unsigned long)f->local_id | 0x4000UL) << 16 | f->sender;
+    BHWeaponFireContext *weapon_fire_context = ctx->fire;
+    if (weapon_fire_context->peers > 1 && ctx->projectile->pending_identity)
+        *ctx->projectile->pending_identity = ((unsigned long)weapon_fire_context->local_id | 0x4000UL) << 16 | weapon_fire_context->sender;
 }
 static int alternate(BHWeaponEffectFireContext *ctx, BHEntity *weapon_entity, BHEntity *entity, int split)
 {
     BHWeaponCommonState *weapon_state = bh_weapon_common_state(weapon_entity);
-    BHWeaponFireContext *f = ctx->fire;
+    BHWeaponFireContext *weapon_fire_context = ctx->fire;
     BHVec3 right, up, side, forward, muzzle, velocity, recoil;
     BHWorldGeometry *world;
     BHEntity *target;
@@ -30,11 +30,11 @@ static int alternate(BHWeaponEffectFireContext *ctx, BHEntity *weapon_entity, BH
     double dot, gain;
     phase = weapon_state->word_e8;
     memcpy(&timer, phase ? &weapon_state->word_f0 : &weapon_state->word_f4, 4);
-    f->error = 0;
+    weapon_fire_context->error = 0;
     if (timer > 0)
         return 1;
     if (!weapon_state->ammo)
-        return bh_weapon_fire_empty(f, entity);
+        return bh_weapon_fire_empty(weapon_fire_context, entity);
     target = weapon_state->hud.charge >= 48 ? weapon_state->hud.target : NULL;
     weapon_state->ammo = (long)((unsigned long)weapon_state->ammo - 1);
     weapon_state->word_e8 = phase ? 0 : 1;
@@ -74,15 +74,15 @@ static int alternate(BHWeaponEffectFireContext *ctx, BHEntity *weapon_entity, BH
                 ((float *)&velocity)[i] = stored((double)((float *)&side)[i] * dot + ((float *)&velocity)[i]);
         }
         bh_effect_split_create(ctx->projectile, world, entity, &muzzle, &velocity, 3, 10, ctx->split_model, 1);
-        if (f->peers > 1)
-            bh_weapon_fire_packet(f, 1, 0, 6, NULL);
+        if (weapon_fire_context->peers > 1)
+            bh_weapon_fire_packet(weapon_fire_context, 1, 0, 6, NULL);
     }
     else
     {
         bh_effect_orbit_create(ctx->projectile, world, entity, &muzzle, &entity->origin, &right, &up, &forward, 8,
                                target);
-        if (f->peers > 1)
-            bh_weapon_fire_packet(f, 1, 0, 3, target);
+        if (weapon_fire_context->peers > 1)
+            bh_weapon_fire_packet(weapon_fire_context, 1, 0, 3, target);
     }
     recoil = entity->player.recoil_velocity;
     for (i = 0; i < 3; i++)
@@ -90,8 +90,8 @@ static int alternate(BHWeaponEffectFireContext *ctx, BHEntity *weapon_entity, BH
             stored(((double)((float *)&recoil)[i] - (double)((float *)&forward)[i] * (split ? -3 : -4)) -
                    (double)((float *)&right)[i] * (phase ? -.5 : .5));
     entity->player.recoil_velocity = recoil;
-    ++f->shots;
-    return f->error == 0;
+    ++weapon_fire_context->shots;
+    return weapon_fire_context->error == 0;
 }
 int bh_weapon_effect_orbit_fire(BHWeaponEffectFireContext *ctx, BHEntity *weapon_entity, BHEntity *entity)
 {
@@ -108,7 +108,7 @@ int bh_weapon_effect_split_fire(BHWeaponEffectFireContext *ctx, BHEntity *weapon
 int bh_weapon_effect_accelerated_fire(BHWeaponEffectFireContext *ctx, BHEntity *weapon_entity, BHEntity *entity)
 {
     BHWeaponCommonState *weapon_state;
-    BHWeaponFireContext *f;
+    BHWeaponFireContext *weapon_fire_context;
     BHVec3 up, forward, muzzle, acc, recoil;
     BHWorldGeometry *world;
     float timer;
@@ -116,18 +116,18 @@ int bh_weapon_effect_accelerated_fire(BHWeaponEffectFireContext *ctx, BHEntity *
     if (!valid(ctx, weapon_entity, entity) || !ctx->projectile->accelerated)
         return 0;
     weapon_state = bh_weapon_common_state(weapon_entity);
-    f = ctx->fire;
-    f->error = 0;
+    weapon_fire_context = ctx->fire;
+    weapon_fire_context->error = 0;
     memcpy(&timer, &weapon_state->word_f0, 4);
     if (!(timer <= 0))
         return 1;
     if (!weapon_state->ammo)
-        return bh_weapon_fire_empty(f, entity);
+        return bh_weapon_fire_empty(weapon_fire_context, entity);
     weapon_state->ammo = (long)((unsigned long)weapon_state->ammo - 1);
     timer = 2;
     memcpy(&weapon_state->word_f0, &timer, 4);
-    bh_sound_request(f->sound, ctx->shot_sound, 1, .6f, &entity->position, &entity->origin);
-    bh_sound_request(f->sound, ctx->shot_sound, 1, 1.3f, &entity->position, &entity->origin);
+    bh_sound_request(weapon_fire_context->sound, ctx->shot_sound, 1, .6f, &entity->position, &entity->origin);
+    bh_sound_request(weapon_fire_context->sound, ctx->shot_sound, 1, 1.3f, &entity->position, &entity->origin);
     up = entity->basis[1];
     forward = entity->player.aim_direction;
     for (i = 0; i < 3; i++)
@@ -139,12 +139,12 @@ int bh_weapon_effect_accelerated_fire(BHWeaponEffectFireContext *ctx, BHEntity *
     sync(ctx);
     world = entity->world;
     bh_effect_accelerated_create(ctx->projectile, world, entity, &muzzle, &entity->origin, &acc);
-    if (f->peers > 1)
-        bh_weapon_fire_packet(f, 1, 0, 7, NULL);
+    if (weapon_fire_context->peers > 1)
+        bh_weapon_fire_packet(weapon_fire_context, 1, 0, 7, NULL);
     recoil = entity->player.recoil_velocity;
     for (i = 0; i < 3; i++)
         ((float *)&recoil)[i] = stored((double)((float *)&recoil)[i] - (double)((float *)&forward)[i] * (-10));
     entity->player.recoil_velocity = recoil;
-    ++f->shots;
-    return f->error == 0;
+    ++weapon_fire_context->shots;
+    return weapon_fire_context->error == 0;
 }

@@ -18,21 +18,21 @@ static void release(void *p, void *user)
 {
     free(p);
 }
-static int fail(BHModelDrawContext *c, BHModelDrawError error)
+static int fail(BHModelDrawContext *context, BHModelDrawError error)
 {
-    if (c)
-        c->error = error;
+    if (context)
+        context->error = error;
     return 0;
 }
-static unsigned long vertex_frame(const BHClipVertex *v)
+static unsigned long vertex_frame(const BHClipVertex *vertex)
 {
     unsigned long frame;
-    memcpy(&frame, &v->frame, 4);
+    memcpy(&frame, &vertex->frame, 4);
     return frame;
 }
-static void set_frame(BHClipVertex *v, unsigned long frame)
+static void set_frame(BHClipVertex *vertex, unsigned long frame)
 {
-    memcpy(&v->frame, &frame, 4);
+    memcpy(&vertex->frame, &frame, 4);
 }
 void bh_model_draw_cache_dispose(BHModelDrawCache *cache)
 {
@@ -59,19 +59,19 @@ void bh_model_draw_cache_reset(BHModelDrawCache *cache)
     if (cache->face_frames)
         memset(cache->face_frames, 0, cache->face_count * 4);
 }
-int bh_model_draw_cache_init(BHModelDrawCache *cache, const BHModel *model, const BHSceneAllocator *a)
+int bh_model_draw_cache_init(BHModelDrawCache *cache, const BHModel *model, const BHSceneAllocator *scene_allocator)
 {
     BHModelDrawCache next;
     unsigned long i;
-    if (!cache || !model || (a && (!a->allocate || !a->release)) || model->vertex_count > 65535 ||
+    if (!cache || !model || (scene_allocator && (!scene_allocator->allocate || !scene_allocator->release)) || model->vertex_count > 65535 ||
         model->face_count > 65535 || model->node_count > 65535 || (model->vertex_count && !model->vertices) ||
         (model->face_count && !model->faces) || (model->edge_count && !model->edges) ||
         (model->node_count && !model->nodes) || (model->leaf_count && !model->leaves) ||
         (model->material_count && !model->images))
         return 0;
     memset(&next, 0, sizeof(next));
-    if (a)
-        next.allocator = *a;
+    if (scene_allocator)
+        next.allocator = *scene_allocator;
     else
     {
         next.allocator.allocate = allocate;
@@ -103,137 +103,137 @@ int bh_model_draw_cache_init(BHModelDrawCache *cache, const BHModel *model, cons
     *cache = next;
     return 1;
 }
-int bh_model_draw_context_init(BHModelDrawContext *c, const BHModel *model, BHModelDrawCache *cache,
+int bh_model_draw_context_init(BHModelDrawContext *context, const BHModel *model, BHModelDrawCache *cache,
                                const BHViewCamera *view, BHClipContext *clip, unsigned long frame,
                                unsigned long texture_mask, unsigned long color, BHModelPolygonEmit emit, void *user)
 {
-    if (!c || !model || !cache || cache->model != model || !view || !clip || !frame || !emit ||
+    if (!context || !model || !cache || cache->model != model || !view || !clip || !frame || !emit ||
         !bh_clip_set_camera(clip, &view->projected))
         return 0;
-    memset(c, 0, sizeof(*c));
-    c->model = model;
-    c->cache = cache;
-    c->view = view;
-    c->clip = clip;
-    c->frame = frame;
-    c->texture_mask = texture_mask;
-    c->color = color;
-    c->emit = emit;
-    c->user = user;
+    memset(context, 0, sizeof(*context));
+    context->model = model;
+    context->cache = cache;
+    context->view = view;
+    context->clip = clip;
+    context->frame = frame;
+    context->texture_mask = texture_mask;
+    context->color = color;
+    context->emit = emit;
+    context->user = user;
     return 1;
 }
-int bh_model_draw_face(BHModelDrawContext *c, long face)
+int bh_model_draw_face(BHModelDrawContext *context, long face)
 {
-    const BHModel *m;
-    const BHBspFace *f;
+    const BHModel *model;
+    const BHBspFace *bsp_face;
     const BHBspEdge *edge;
     BHTextureImage *image;
-    BHClipVertex *first = NULL, *previous = NULL, *v, *ring;
+    BHClipVertex *first = NULL, *previous = NULL, *vertex, *ring;
     long e;
     unsigned long steps = 0;
-    if (!c || !c->model || !c->cache || face < 0 || (unsigned long)face >= c->model->face_count)
-        return fail(c, BH_MODEL_DRAW_ARGUMENT);
-    m = c->model;
-    f = m->faces + face;
-    if (c->cache->face_frames[face] == c->frame)
+    if (!context || !context->model || !context->cache || face < 0 || (unsigned long)face >= context->model->face_count)
+        return fail(context, BH_MODEL_DRAW_ARGUMENT);
+    model = context->model;
+    bsp_face = model->faces + face;
+    if (context->cache->face_frames[face] == context->frame)
         return 1;
-    c->cache->face_frames[face] = c->frame;
-    ++c->faces_marked;
-    if (f->material < 0 || (unsigned long)f->material >= m->material_count)
-        return fail(c, BH_MODEL_DRAW_TOPOLOGY);
-    image = m->images[f->material];
-    if (!image || !(c->texture_mask & image->flags))
+    context->cache->face_frames[face] = context->frame;
+    ++context->faces_marked;
+    if (bsp_face->material < 0 || (unsigned long)bsp_face->material >= model->material_count)
+        return fail(context, BH_MODEL_DRAW_TOPOLOGY);
+    image = model->images[bsp_face->material];
+    if (!image || !(context->texture_mask & image->flags))
         return 1;
-    e = f->first_edge;
+    e = bsp_face->first_edge;
     do
     {
-        if (e < 0 || (unsigned long)e >= m->edge_count || ++steps > m->edge_count)
-            return fail(c, BH_MODEL_DRAW_TOPOLOGY);
-        edge = m->edges + e;
-        if (edge->vertex < 0 || (unsigned long)edge->vertex >= c->cache->vertex_count)
-            return fail(c, BH_MODEL_DRAW_TOPOLOGY);
-        v = c->cache->vertices + edge->vertex;
+        if (e < 0 || (unsigned long)e >= model->edge_count || ++steps > model->edge_count)
+            return fail(context, BH_MODEL_DRAW_TOPOLOGY);
+        edge = model->edges + e;
+        if (edge->vertex < 0 || (unsigned long)edge->vertex >= context->cache->vertex_count)
+            return fail(context, BH_MODEL_DRAW_TOPOLOGY);
+        vertex = context->cache->vertices + edge->vertex;
         if (!first)
-            first = v;
-        v->u = edge->u;
-        v->v = edge->v;
-        if (vertex_frame(v) != c->frame)
+            first = vertex;
+        vertex->u = edge->u;
+        vertex->v = edge->v;
+        if (vertex_frame(vertex) != context->frame)
         {
-            set_frame(v, c->frame);
-            v->projected = 0;
-            bh_mat34_transform_point(&c->view->projected, &v->local, &v->point);
-            ++c->vertices_transformed;
+            set_frame(vertex, context->frame);
+            vertex->projected = 0;
+            bh_mat34_transform_point(&context->view->projected, &vertex->local, &vertex->point);
+            ++context->vertices_transformed;
         }
         if (previous)
         {
-            previous->next = v;
-            v->previous = previous;
+            previous->next = vertex;
+            vertex->previous = previous;
         }
-        previous = v;
+        previous = vertex;
         e = edge->next;
     } while (e >= 0);
     first->previous = previous;
     previous->next = first;
-    ring = bh_clip_polygon(c->clip, previous, image);
+    ring = bh_clip_polygon(context->clip, previous, image);
     if (!ring)
     {
-        if (c->clip->error != BH_CLIP_OK)
-            return fail(c, BH_MODEL_DRAW_CLIP);
+        if (context->clip->error != BH_CLIP_OK)
+            return fail(context, BH_MODEL_DRAW_CLIP);
         return 1;
     }
-    if (!c->emit(ring, image, c->color, c->user))
-        return fail(c, BH_MODEL_DRAW_EMIT);
-    ++c->polygons_emitted;
+    if (!context->emit(ring, image, context->color, context->user))
+        return fail(context, BH_MODEL_DRAW_EMIT);
+    ++context->polygons_emitted;
     return 1;
 }
-int bh_model_draw_leaf_chain(BHModelDrawContext *c, long leaf)
+int bh_model_draw_leaf_chain(BHModelDrawContext *context, long leaf)
 {
     unsigned long steps = 0;
-    const BHBspLeaf *p;
-    if (!c || !c->model)
-        return fail(c, BH_MODEL_DRAW_ARGUMENT);
+    const BHBspLeaf *bsp_leaf;
+    if (!context || !context->model)
+        return fail(context, BH_MODEL_DRAW_ARGUMENT);
     while (leaf >= 0)
     {
-        if ((unsigned long)leaf >= c->model->leaf_count || ++steps > c->model->leaf_count)
-            return fail(c, BH_MODEL_DRAW_TOPOLOGY);
-        p = c->model->leaves + leaf;
-        if (!bh_model_draw_face(c, p->face))
+        if ((unsigned long)leaf >= context->model->leaf_count || ++steps > context->model->leaf_count)
+            return fail(context, BH_MODEL_DRAW_TOPOLOGY);
+        bsp_leaf = context->model->leaves + leaf;
+        if (!bh_model_draw_face(context, bsp_leaf->face))
             return 0;
-        leaf = p->next;
+        leaf = bsp_leaf->next;
     }
     return 1;
 }
 /* Full sign-tree reduction retains x87 addition ordering. The exceptional
    branch finishes with Z+(X+Y), all others with X+(Y+Z). */
-static double support(const BHBspNode *node, const BHViewPlane *p, int maximum)
+static double support(const BHBspNode *node, const BHViewPlane *view_plane, int maximum)
 {
     double x, y, z;
-    float nx = p->normal.x, ny = p->normal.y, nz = p->normal.z;
+    float nx = view_plane->normal.x, ny = view_plane->normal.y, nz = view_plane->normal.z;
     x = (double)nx * ((maximum ? (nx >= 0) : (nx < 0)) ? node->maximum[0] : node->minimum[0]);
     y = (double)ny * ((maximum ? (ny >= 0) : (ny < 0)) ? node->maximum[1] : node->minimum[1]);
     z = (double)nz * ((maximum ? (nz >= 0) : (nz < 0)) ? node->maximum[2] : node->minimum[2]);
     if (maximum ? (nx >= 0 && nz < 0) : (nx < 0 && nz >= 0))
-        return (z + (x + y)) - p->offset;
-    return (x + (y + z)) - p->offset;
+        return (z + (x + y)) - view_plane->offset;
+    return (x + (y + z)) - view_plane->offset;
 }
-int bh_model_draw_unlit(BHModelDrawContext *c, long node, unsigned long mask)
+int bh_model_draw_unlit(BHModelDrawContext *context, long node, unsigned long mask)
 {
     unsigned long count = 1, slot, bit;
     BHModelDrawTask *task;
-    const BHBspNode *n;
+    const BHBspNode *bsp_node;
     double side;
-    if (!c || !c->model || !c->cache || !c->cache->tasks || !c->view)
-        return fail(c, BH_MODEL_DRAW_ARGUMENT);
-    c->error = BH_MODEL_DRAW_OK;
-    c->cache->tasks[0].node = node;
-    c->cache->tasks[0].mask = mask;
-    c->cache->tasks[0].phase = 0;
+    if (!context || !context->model || !context->cache || !context->cache->tasks || !context->view)
+        return fail(context, BH_MODEL_DRAW_ARGUMENT);
+    context->error = BH_MODEL_DRAW_OK;
+    context->cache->tasks[0].node = node;
+    context->cache->tasks[0].mask = mask;
+    context->cache->tasks[0].phase = 0;
     while (count)
     {
-        task = c->cache->tasks + count - 1;
+        task = context->cache->tasks + count - 1;
         if (task->phase)
         {
-            if (!bh_model_draw_leaf_chain(c, task->leaf))
+            if (!bh_model_draw_leaf_chain(context, task->leaf))
                 return 0;
             task->node = task->tail;
             task->phase = 0;
@@ -244,13 +244,13 @@ int bh_model_draw_unlit(BHModelDrawContext *c, long node, unsigned long mask)
             --count;
             continue;
         }
-        if ((unsigned long)task->node >= c->model->node_count)
-            return fail(c, BH_MODEL_DRAW_TOPOLOGY);
-        n = c->model->nodes + task->node;
-        ++c->nodes_visited;
+        if ((unsigned long)task->node >= context->model->node_count)
+            return fail(context, BH_MODEL_DRAW_TOPOLOGY);
+        bsp_node = context->model->nodes + task->node;
+        ++context->nodes_visited;
         for (slot = 0, bit = 1; slot < 6; ++slot, bit *= 2)
             if (task->mask & bit)
-                if (support(n, c->view->planes + slot, 0) >= 0)
+                if (support(bsp_node, context->view->planes + slot, 0) >= 0)
                     break;
         if (slot < 6)
         {
@@ -259,28 +259,28 @@ int bh_model_draw_unlit(BHModelDrawContext *c, long node, unsigned long mask)
         }
         for (slot = 0, bit = 1; slot < 6; ++slot, bit *= 2)
             if (task->mask & bit)
-                if (support(n, c->view->planes + slot, 1) < 0)
+                if (support(bsp_node, context->view->planes + slot, 1) < 0)
                     task->mask &= (0xffffUL ^ bit);
-        side = ((double)n->normal[2] * c->view->position.z + (double)n->normal[1] * c->view->position.y) +
-               (double)n->normal[0] * c->view->position.x + n->plane;
+        side = ((double)bsp_node->normal[2] * context->view->position.z + (double)bsp_node->normal[1] * context->view->position.y) +
+               (double)bsp_node->normal[0] * context->view->position.x + bsp_node->plane;
         task->phase = 1;
         if (side < 0)
         {
-            task->leaf = n->back_leaf;
-            task->tail = n->back_node;
-            node = n->front_node;
+            task->leaf = bsp_node->back_leaf;
+            task->tail = bsp_node->back_node;
+            node = bsp_node->front_node;
         }
         else
         {
-            task->leaf = n->front_leaf;
-            task->tail = n->front_node;
-            node = n->back_node;
+            task->leaf = bsp_node->front_leaf;
+            task->tail = bsp_node->front_node;
+            node = bsp_node->back_node;
         }
-        if (count >= c->cache->task_capacity)
-            return fail(c, BH_MODEL_DRAW_TOPOLOGY);
-        c->cache->tasks[count].node = node;
-        c->cache->tasks[count].mask = task->mask;
-        c->cache->tasks[count].phase = 0;
+        if (count >= context->cache->task_capacity)
+            return fail(context, BH_MODEL_DRAW_TOPOLOGY);
+        context->cache->tasks[count].node = node;
+        context->cache->tasks[count].mask = task->mask;
+        context->cache->tasks[count].phase = 0;
         ++count;
     }
     return 1;

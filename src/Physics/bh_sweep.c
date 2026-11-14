@@ -47,26 +47,26 @@ static void apply(BHMat34 *pose, const BHVec3 *movement, const BHVec3 *angles)
     bh_mat34_rotate_y(angles->y, pose);
     bh_mat34_rotate_z(angles->z, pose);
 }
-static void scale(const BHVec3 *v, float fraction, BHVec3 *out)
+static void scale(const BHVec3 *vector, float fraction, BHVec3 *out)
 {
-    bh_round_float(&out->x, (double)v->x * fraction);
-    bh_round_float(&out->y, (double)v->y * fraction);
-    bh_round_float(&out->z, (double)v->z * fraction);
+    bh_round_float(&out->x, (double)vector->x * fraction);
+    bh_round_float(&out->y, (double)vector->y * fraction);
+    bh_round_float(&out->z, (double)vector->z * fraction);
 }
-static void midpoint(const BHVec3 *a, const BHVec3 *b, BHVec3 *out)
+static void midpoint(const BHVec3 *first_vector, const BHVec3 *second_vector, BHVec3 *out)
 {
-    bh_round_float(&out->x, ((double)a->x + b->x) * .5);
-    bh_round_float(&out->y, ((double)a->y + b->y) * .5);
-    bh_round_float(&out->z, ((double)a->z + b->z) * .5);
+    bh_round_float(&out->x, ((double)first_vector->x + second_vector->x) * .5);
+    bh_round_float(&out->y, ((double)first_vector->y + second_vector->y) * .5);
+    bh_round_float(&out->z, ((double)first_vector->z + second_vector->z) * .5);
 }
-static void angle_midpoint(const BHVec3 *a, const BHVec3 *b, BHVec3 *out)
+static void angle_midpoint(const BHVec3 *first_vector, const BHVec3 *second_vector, BHVec3 *out)
 {
     float x_sum;
     /* 0044dda8/0044ddb4 spill only the angle-X sum before halving. */
-    bh_round_float(&x_sum, (double)a->x + b->x);
+    bh_round_float(&x_sum, (double)first_vector->x + second_vector->x);
     bh_round_float(&out->x, (double)x_sum * .5);
-    bh_round_float(&out->y, ((double)a->y + b->y) * .5);
-    bh_round_float(&out->z, ((double)a->z + b->z) * .5);
+    bh_round_float(&out->y, ((double)first_vector->y + second_vector->y) * .5);
+    bh_round_float(&out->z, ((double)first_vector->z + second_vector->z) * .5);
 }
 static int mesh(BHSweepQuery *query, const BHMat34 *pose, const BHMat34 *world, const BHMat34 *local, BHMat34 *relative,
                 BHCollisionHit *out)

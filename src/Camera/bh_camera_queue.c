@@ -1,50 +1,50 @@
 #include "bh_camera_queue.h"
 #include <string.h>
 
-int bh_camera_queue_pose(BHDrawQueue *q, const BHVec3 *position, const BHVec3 *angles)
+int bh_camera_queue_pose(BHDrawQueue *queue, const BHVec3 *position, const BHVec3 *angles)
 {
     unsigned long tail, index;
     BHDrawCommand *command;
-    if (!q || !q->commands || !position || !angles || q->count < 9 || q->count > q->capacity)
+    if (!queue || !queue->commands || !position || !angles || queue->count < 9 || queue->count > queue->capacity)
     {
-        if (q)
-            q->error = BH_DRAW_ARGUMENT;
+        if (queue)
+            queue->error = BH_DRAW_ARGUMENT;
         return -1;
     }
-    if (q->count == q->capacity)
+    if (queue->count == queue->capacity)
     {
-        q->error = BH_DRAW_FULL;
+        queue->error = BH_DRAW_FULL;
         return 0;
     }
-    tail = q->commands[0].resource;
-    if (tail >= q->count || (q->commands[tail].next != BH_DRAW_END && q->commands[tail].next >= q->count))
+    tail = queue->commands[0].resource;
+    if (tail >= queue->count || (queue->commands[tail].next != BH_DRAW_END && queue->commands[tail].next >= queue->count))
     {
-        q->error = BH_DRAW_TOPOLOGY;
+        queue->error = BH_DRAW_TOPOLOGY;
         return -1;
     }
-    index = q->count++;
-    command = q->commands + index;
-    command->next = q->commands[tail].next;
-    q->commands[tail].next = index;
-    q->commands[0].resource = index;
+    index = queue->count++;
+    command = queue->commands + index;
+    command->next = queue->commands[tail].next;
+    queue->commands[tail].next = index;
+    queue->commands[0].resource = index;
     command->kind = BH_DRAW_CAMERA;
     /* Original payload starts at +4, occupying the semantic resource word. */
     memcpy(&command->resource, position, 12);
     memcpy(command->words + 2, angles, 12);
-    q->error = BH_DRAW_OK;
+    queue->error = BH_DRAW_OK;
     return 1;
 }
 
-int bh_camera_queue_execute(const BHViewConfig *view, BHMainCamera *camera, const BHDrawQueue *q,
+int bh_camera_queue_execute(const BHViewConfig *view, BHMainCamera *camera, const BHDrawQueue *queue,
                             const BHDrawCommand *command, unsigned long *next)
 {
     float pose[6];
     unsigned long following;
     int ok;
-    if (!view || !camera || !q || !q->commands || !command || !next || command->kind != BH_DRAW_CAMERA)
+    if (!view || !camera || !queue || !queue->commands || !command || !next || command->kind != BH_DRAW_CAMERA)
         return 0;
     following = command->next;
-    if (following != BH_DRAW_END && following >= q->count)
+    if (following != BH_DRAW_END && following >= queue->count)
         return 0;
     memcpy(pose, &command->resource, sizeof(pose));
     ok = bh_main_camera_pose(view, camera, (double)pose[0], (double)pose[1], (double)pose[2], (double)pose[3],

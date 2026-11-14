@@ -11,14 +11,14 @@ static BHProjectileLifetime *context(BHEntity *entity)
     memcpy(&c, &entity->bindings.projectile_lifetime, 4);
     return c;
 }
-static int live(BHProjectileLifetime *c, const BHEntity *entity, int bound)
+static int live(BHProjectileLifetime *projectile_lifetime, const BHEntity *entity, int bound)
 {
     unsigned long g;
-    if (!c || !c->pool || !c->sound || !entity)
+    if (!projectile_lifetime || !projectile_lifetime->pool || !projectile_lifetime->sound || !entity)
         return 0;
     if (bound)
         memcpy(&g, &entity->bindings.lifetime_generation, 4);
-    return bh_entity_is_active(c->pool, entity) && (!bound || entity->generation == g);
+    return bh_entity_is_active(projectile_lifetime->pool, entity) && (!bound || entity->generation == g);
 }
 int bh_projectile_query_state(const BHEntity *entity, BHProjectileQueryState *state)
 {
@@ -31,45 +31,45 @@ int bh_projectile_query_state(const BHEntity *entity, BHProjectileQueryState *st
     memcpy(&state->secondary, &entity->projectile.secondary, 4);
     return 1;
 }
-int bh_projectile_lifetime_bind(BHProjectileLifetime *c, BHEntity *entity, const BHProjectileQueryState *state)
+int bh_projectile_lifetime_bind(BHProjectileLifetime *projectile_lifetime, BHEntity *entity, const BHProjectileQueryState *state)
 {
-    if (!state || !live(c, entity, 0))
+    if (!state || !live(projectile_lifetime, entity, 0))
         return 0;
     memcpy(&entity->projectile.countdown, &state->countdown, 4);
     memcpy(&entity->projectile.sound, &state->sound, 4);
     memcpy(&entity->projectile.identity, &state->identity, 4);
     memcpy(&entity->projectile.target, &state->target, 4);
     memcpy(&entity->projectile.secondary, &state->secondary, 4);
-    memcpy(&entity->bindings.projectile_lifetime, &c, 4);
+    memcpy(&entity->bindings.projectile_lifetime, &projectile_lifetime, 4);
     memcpy(&entity->bindings.lifetime_generation, &entity->generation, 4);
-    c->error = 0;
-    return bh_entity_set_query(c->pool, entity, bh_projectile_query);
+    projectile_lifetime->error = 0;
+    return bh_entity_set_query(projectile_lifetime->pool, entity, bh_projectile_query);
 }
 void bh_projectile_cleanup(BHEntity *entity)
 {
-    BHProjectileLifetime *c = context(entity);
+    BHProjectileLifetime *projectile_lifetime = context(entity);
     unsigned long handle;
-    if (!live(c, entity, 1))
+    if (!live(projectile_lifetime, entity, 1))
     {
-        if (c)
-            c->error = 1;
+        if (projectile_lifetime)
+            projectile_lifetime->error = 1;
         return;
     }
     memcpy(&handle, &entity->projectile.sound, 4);
-    bh_sound_stop(c->sound, handle);
-    bh_entity_release(c->pool, entity);
+    bh_sound_stop(projectile_lifetime->sound, handle);
+    bh_entity_release(projectile_lifetime->pool, entity);
 }
 void bh_projectile_query(BHEntity *entity, void *packet)
 {
-    BHProjectileLifetime *c = context(entity);
+    BHProjectileLifetime *projectile_lifetime = context(entity);
     BHProjectileQueryState state;
     long event;
     unsigned long identity, kind;
     BHEntity *removed;
-    if (!packet || !live(c, entity, 1))
+    if (!packet || !live(projectile_lifetime, entity, 1))
     {
-        if (c)
-            c->error = 1;
+        if (projectile_lifetime)
+            projectile_lifetime->error = 1;
         return;
     }
     memcpy(&event, packet, 4);
@@ -77,7 +77,7 @@ void bh_projectile_query(BHEntity *entity, void *packet)
     if (event == 20)
     {
         entity->step = bh_projectile_cleanup;
-        bh_entity_set_query(c->pool, entity, NULL);
+        bh_entity_set_query(projectile_lifetime->pool, entity, NULL);
         entity->refresh = NULL;
         return;
     }

@@ -2,77 +2,77 @@
 #include "../../Math/bh_fp.h"
 #include <string.h>
 #include <float.h>
-static void publish(BHEntity *e, const BHFlybyCameraState *state)
+static void publish(BHEntity *flyby, const BHFlybyCameraState *state)
 {
-    e->position = state->position;
-    e->flyby.previous_position = state->previous_position;
-    e->flyby.older_position = state->older_position;
-    e->basis[0] = state->basis_x;
-    e->basis[1] = state->basis_y;
-    e->basis[2] = state->basis_z;
-    e->euler = state->angles;
-    e->velocity = state->velocity;
-    e->flyby.camera = state->camera;
-    e->world = state->route.current;
+    flyby->position = state->position;
+    flyby->flyby.previous_position = state->previous_position;
+    flyby->flyby.older_position = state->older_position;
+    flyby->basis[0] = state->basis_x;
+    flyby->basis[1] = state->basis_y;
+    flyby->basis[2] = state->basis_z;
+    flyby->euler = state->angles;
+    flyby->velocity = state->velocity;
+    flyby->flyby.camera = state->camera;
+    flyby->world = state->route.current;
 }
-BHEntity *bh_flyby_construct(BHFlybyConstruct *c)
+BHEntity *bh_flyby_construct(BHFlybyConstruct *flyby_construct)
 {
-    BHFlybyScene *s;
+    BHFlybyScene *flyby_scene;
     BHFlybyCameraState *state;
     BHFlybyCameraContext *camera;
-    BHEntity *e, *previous;
+    BHEntity *flyby, *previous;
     BHVec3 zero = {0, 0, 0}, position;
     long selected;
     unsigned long i;
     float pi = 3.1415927410125732421875f;
-    if (!c || !(s = c->scene) || !c->current_camera || !s->entities || !s->flyby_state || !(camera = s->flyby_camera) ||
-        !camera->route || !camera->camera || !s->starts || s->start_count <= 23 || !s->selected_waypoint ||
-        !s->mode_count || !s->player_slot || !s->player_camera || !s->current_player || !*s->current_player ||
-        s->bound_entity || s->player_camera->starts != s->starts || s->player_camera->start_count != s->start_count ||
+    if (!flyby_construct || !(flyby_scene = flyby_construct->scene) || !flyby_construct->current_camera || !flyby_scene->entities || !flyby_scene->flyby_state || !(camera = flyby_scene->flyby_camera) ||
+        !camera->route || !camera->camera || !flyby_scene->starts || flyby_scene->start_count <= 23 || !flyby_scene->selected_waypoint ||
+        !flyby_scene->mode_count || !flyby_scene->player_slot || !flyby_scene->player_camera || !flyby_scene->current_player || !*flyby_scene->current_player ||
+        flyby_scene->bound_entity || flyby_scene->player_camera->starts != flyby_scene->starts || flyby_scene->player_camera->start_count != flyby_scene->start_count ||
         !bh_math_environment_supported())
     {
-        if (c)
-            c->error = 1;
+        if (flyby_construct)
+            flyby_construct->error = 1;
         return NULL;
     }
-    selected = *s->selected_waypoint;
-    if (selected < 0 || (unsigned long)selected >= s->start_count || camera->starts != s->starts ||
-        camera->start_count != s->start_count)
+    selected = *flyby_scene->selected_waypoint;
+    if (selected < 0 || (unsigned long)selected >= flyby_scene->start_count || camera->starts != flyby_scene->starts ||
+        camera->start_count != flyby_scene->start_count)
     {
-        c->error = 1;
+        flyby_construct->error = 1;
         return NULL;
     }
-    position = s->starts[selected].position;
+    position = flyby_scene->starts[selected].position;
     if (!_finite(position.x) || !_finite(position.y) || !_finite(position.z))
     {
-        c->error = 1;
+        flyby_construct->error = 1;
         return NULL;
     }
-    e = bh_entity_acquire(s->entities);
-    if (!e)
+    flyby = bh_entity_acquire(flyby_scene->entities);
+    if (!flyby)
     {
-        c->error = 2;
+        flyby_construct->error = 2;
         return NULL;
     }
-    previous = *c->current_camera;
-    *c->current_camera = e;
-    s->camera_entity = e;
-    c->settled = 0;
-    c->error = 0;
-    e->position = position;
-    e->world = NULL;
-    e->flyby.previous_position = position;
-    e->flyby.older_position = position;
-    e->flyby.waypoint_index = selected;
-    e->basis[0] = (BHVec3){1, 0, 0};
-    e->basis[1] = (BHVec3){0, 1, 0};
-    e->basis[2] = (BHVec3){0, 0, 1};
-    e->velocity = zero;
-    e->angular_velocity = zero;
-    e->acceleration = zero;
-    e->angular_acceleration = zero;
-    e->euler = (BHVec3){pi, 0, 0};
-    state = s->flyby_state;
+    previous = *flyby_construct->current_camera;
+    *flyby_construct->current_camera = flyby;
+    flyby_scene->camera_entity = flyby;
+    flyby_construct->settled = 0;
+    flyby_construct->error = 0;
+    flyby->position = position;
+    flyby->world = NULL;
+    flyby->flyby.previous_position = position;
+    flyby->flyby.older_position = position;
+    flyby->flyby.waypoint_index = selected;
+    flyby->basis[0] = (BHVec3){1, 0, 0};
+    flyby->basis[1] = (BHVec3){0, 1, 0};
+    flyby->basis[2] = (BHVec3){0, 0, 1};
+    flyby->velocity = zero;
+    flyby->angular_velocity = zero;
+    flyby->acceleration = zero;
+    flyby->angular_acceleration = zero;
+    flyby->euler = (BHVec3){pi, 0, 0};
+    state = flyby_scene->flyby_state;
     state->position = state->previous_position = state->older_position = position;
     state->angles.x = pi;
     state->angles.y = state->angles.z = 0;
@@ -85,34 +85,34 @@ BHEntity *bh_flyby_construct(BHFlybyConstruct *c)
     state->orbit_time = 0;
     if (!bh_camera_state_init(&state->camera, 10))
         goto failed;
-    e->flyby.camera = state->camera;
-    e->flyby.camera.position = position;
-    e->flyby.camera.angles = state->angles;
-    e->flyby.orbit_time = 0;
-    e->flyby.route_phase = 0;
+    flyby->flyby.camera = state->camera;
+    flyby->flyby.camera.position = position;
+    flyby->flyby.camera.angles = state->angles;
+    flyby->flyby.orbit_time = 0;
+    flyby->flyby.route_phase = 0;
     state->route.current = bh_world_locate(camera->route->first, camera->route->scene_count, NULL, &position, 0);
-    e->world = state->route.current;
-    if (!bh_flyby_scene_bind(s))
+    flyby->world = state->route.current;
+    if (!bh_flyby_scene_bind(flyby_scene))
         goto failed;
     for (i = 0; i < 50; ++i)
     {
-        e->step(e);
-        if (s->error != BH_FLYBY_SCENE_OK)
+        flyby->step(flyby);
+        if (flyby_scene->error != BH_FLYBY_SCENE_OK)
             goto failed;
-        ++c->settled;
-        publish(e, state);
+        ++flyby_construct->settled;
+        publish(flyby, state);
     }
-    s->player_camera->player = *s->current_player;
-    s->player_camera->player_count = *s->mode_count;
-    s->player_camera->local_player_index = *s->player_slot;
-    if (!bh_player_camera_reset(s->player_camera, 23))
+    flyby_scene->player_camera->player = *flyby_scene->current_player;
+    flyby_scene->player_camera->player_count = *flyby_scene->mode_count;
+    flyby_scene->player_camera->local_player_index = *flyby_scene->player_slot;
+    if (!bh_player_camera_reset(flyby_scene->player_camera, 23))
         goto failed;
-    return e;
+    return flyby;
 failed:
-    c->error = 3;
-    bh_flyby_scene_unbind(s);
-    bh_entity_release(s->entities, e);
-    s->camera_entity = NULL;
-    *c->current_camera = previous;
+    flyby_construct->error = 3;
+    bh_flyby_scene_unbind(flyby_scene);
+    bh_entity_release(flyby_scene->entities, flyby);
+    flyby_scene->camera_entity = NULL;
+    *flyby_construct->current_camera = previous;
     return NULL;
 }

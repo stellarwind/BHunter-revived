@@ -813,10 +813,10 @@ static void sdl_input(const BHPlatformEvent *event, void *user)
 static BHTextureImage *image(unsigned long handle, void *user)
 {
     BHGameApp *app = (BHGameApp *)user;
-    BHTextureImage *p;
-    for (p = app->render_mode.engine.textures.images; p; p = p->next)
-        if ((unsigned long)p == handle)
-            return p;
+    BHTextureImage *texture_image;
+    for (texture_image = app->render_mode.engine.textures.images; texture_image; texture_image = texture_image->next)
+        if ((unsigned long)texture_image == handle)
+            return texture_image;
     return 0;
 }
 static int polygon(BHClipVertex *ring, BHTextureImage *texture, unsigned long color, void *user)
@@ -1053,15 +1053,15 @@ static int platform(BHGameApp *app)
 }
 static void binding(BHGameApp *app, unsigned long identity, unsigned long *destination)
 {
-    BHBootstrapBinding *b;
+    BHBootstrapBinding *bootstrap_binding;
     if (app->binding_count >= N(app->bindings))
     {
         app->error = 1;
         return;
     }
-    b = app->bindings + app->binding_count++;
-    b->identity = identity;
-    b->destination = destination;
+    bootstrap_binding = app->bindings + app->binding_count++;
+    bootstrap_binding->identity = identity;
+    bootstrap_binding->destination = destination;
 }
 #define B(id, field) binding(app, id, (unsigned long *)&app->field)
 static void resource_bindings(BHGameApp *app)

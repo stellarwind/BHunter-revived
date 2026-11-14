@@ -3,31 +3,31 @@
 #include <math.h>
 #include <float.h>
 #include <string.h>
-int bh_screen_region_draw(BHScreenQuadContext *c, BHTextureImage *image, float x, float y, float width, float height,
+int bh_screen_region_draw(BHScreenQuadContext *context, BHTextureImage *image, float x, float y, float width, float height,
                           float angle, unsigned char flags, float modulation, float u, float u_extent, float uv_v,
                           float v_extent, float output_depth)
 {
-    BHClipVertex v[4], *ring, *p;
+    BHClipVertex v[4], *ring, *vertex;
     double w, h, r, cs, sn, hs, hc, conversion;
     float hw, hh, radius, cw, sw, negative_hs, stored_hc, bx, by, depth;
     float u0, u1, v0, v1;
     unsigned long i, n, color;
     long shade;
-    if (!c || !c->view || !c->clip || !c->emit || !image || !_finite(x) || !_finite(y) || !_finite(width) ||
+    if (!context || !context->view || !context->clip || !context->emit || !image || !_finite(x) || !_finite(y) || !_finite(width) ||
         !_finite(height) || !_finite(angle) || !_finite(modulation) || !_finite(u) || !_finite(u_extent) ||
-        !_finite(uv_v) || !_finite(v_extent) || !_finite(output_depth) || !_finite(c->view->near_z))
+        !_finite(uv_v) || !_finite(v_extent) || !_finite(output_depth) || !_finite(context->view->near_z))
         return 0;
-    c->emitted = c->culled = 0;
+    context->emitted = context->culled = 0;
     w = (double)width * .5;
     h = (double)height * .5;
     bh_round_float(&hw, w);
     bh_round_float(&hh, h);
     r = sqrt(w * hw + h * hh);
     bh_round_float(&radius, r);
-    if (!(c->view->left < r + x && x - radius < c->view->right && c->view->top < radius + y &&
-          y - radius < c->view->bottom))
+    if (!(context->view->left < r + x && x - radius < context->view->right && context->view->top < radius + y &&
+          y - radius < context->view->bottom))
     {
-        c->culled = 1;
+        context->culled = 1;
         return 1;
     }
     memset(v, 0, sizeof(v));
@@ -90,31 +90,31 @@ int bh_screen_region_draw(BHScreenQuadContext *c, BHTextureImage *image, float x
         v[i].next = v + (i + 1) % 4;
         v[i].previous = v + (i + 3) % 4;
     }
-    ring = bh_screen_clip_polygon(c->clip, v, c->view->near_z);
+    ring = bh_screen_clip_polygon(context->clip, v, context->view->near_z);
     if (!ring)
     {
-        if (c->clip->error != BH_CLIP_OK)
+        if (context->clip->error != BH_CLIP_OK)
             return 0;
-        c->culled = 1;
+        context->culled = 1;
         return 1;
     }
     conversion = (double)modulation * -255.0;
     if (!_finite(conversion) || conversion < -2147483648.0 || conversion > 2147483647.0)
         return 0;
     shade = (long)conversion;
-    color = c->base_color - (unsigned long)shade * 0x10101UL;
+    color = context->base_color - (unsigned long)shade * 0x10101UL;
     depth = output_depth;
-    p = ring;
+    vertex = ring;
     n = 0;
     do
     {
         if (++n > 12)
             return 0;
-        p->point.z = depth;
-        p = p->next;
-    } while (p != ring);
-    if (!c->emit(ring, image, color, c->emit_user))
+        vertex->point.z = depth;
+        vertex = vertex->next;
+    } while (vertex != ring);
+    if (!context->emit(ring, image, color, context->emit_user))
         return 0;
-    c->emitted = 1;
+    context->emitted = 1;
     return 1;
 }

@@ -9,393 +9,393 @@ static float rf(double v)
     bh_round_float(&f, v);
     return f;
 }
-static int fail(BHMenuRuntimeContext *c)
+static int fail(BHMenuRuntimeContext *context)
 {
-    if (c)
-        c->error = 1;
+    if (context)
+        context->error = 1;
     return 0;
 }
-static BHMenuSettingsMenu *menu(BHMenuRuntime *m)
+static BHMenuSettingsMenu *menu(BHMenuRuntime *runtime)
 {
-    return m->actions->menu;
+    return runtime->actions->menu;
 }
-static int valid(BHMenuRuntime *m)
+static int valid(BHMenuRuntime *runtime)
 {
-    BHMenuSettingsMenu *s;
-    if (!m || !m->context || !m->entity || !m->actions || !(s = m->actions->menu) || !s->rows || !s->row_count ||
-        s->row_count > 4096 || !m->destinations || !m->input || !m->actions->row_actions ||
-        m->actions->action_count < s->row_count || s->selection < 0 || (unsigned long)s->selection >= s->row_count)
+    BHMenuSettingsMenu *menu_settings_menu;
+    if (!runtime || !runtime->context || !runtime->entity || !runtime->actions || !(menu_settings_menu = runtime->actions->menu) || !menu_settings_menu->rows || !menu_settings_menu->row_count ||
+        menu_settings_menu->row_count > 4096 || !runtime->destinations || !runtime->input || !runtime->actions->row_actions ||
+        runtime->actions->action_count < menu_settings_menu->row_count || menu_settings_menu->selection < 0 || (unsigned long)menu_settings_menu->selection >= menu_settings_menu->row_count)
         return 0;
     return 1;
 }
-static int actionable(BHMenuRuntime *m, long i)
+static int actionable(BHMenuRuntime *runtime, long i)
 {
-    return m->destinations[i] || m->actions->row_actions[i] || (m->edit_actions && m->edit_actions[i]);
+    return runtime->destinations[i] || runtime->actions->row_actions[i] || (runtime->edit_actions && runtime->edit_actions[i]);
 }
-static int blocked(BHMenuRuntime *m)
+static int blocked(BHMenuRuntime *runtime)
 {
-    if (m->input_blocked)
+    if (runtime->input_blocked)
         return 1;
-    if (m->action_context && m->action_context->text && m->action_context->text->entity &&
-        m->action_context->text->menu == menu(m))
+    if (runtime->action_context && runtime->action_context->text && runtime->action_context->text->entity &&
+        runtime->action_context->text->menu == menu(runtime))
         return 1;
-    return m->edit_context && m->edit_context->capture && m->edit_context->capture->entity &&
-           m->edit_context->capture->menu == menu(m);
+    return runtime->edit_context && runtime->edit_context->capture && runtime->edit_context->capture->entity &&
+           runtime->edit_context->capture->menu == menu(runtime);
 }
-static int choose(BHMenuRuntime *m, int direction, int advance)
+static int choose(BHMenuRuntime *runtime, int direction, int advance)
 {
-    BHMenuSettingsMenu *s = menu(m);
+    BHMenuSettingsMenu *menu_settings_menu = menu(runtime);
     unsigned long i;
-    for (i = 0; i < s->row_count; ++i)
+    for (i = 0; i < menu_settings_menu->row_count; ++i)
     {
         if (advance)
         {
-            s->selection += direction;
-            if (s->selection < 0)
-                s->selection = (long)s->row_count - 1;
-            if ((unsigned long)s->selection >= s->row_count)
-                s->selection = 0;
+            menu_settings_menu->selection += direction;
+            if (menu_settings_menu->selection < 0)
+                menu_settings_menu->selection = (long)menu_settings_menu->row_count - 1;
+            if ((unsigned long)menu_settings_menu->selection >= menu_settings_menu->row_count)
+                menu_settings_menu->selection = 0;
         }
-        if (actionable(m, s->selection))
+        if (actionable(runtime, menu_settings_menu->selection))
             return 1;
         advance = 1;
     }
-    return fail(m->context);
+    return fail(runtime->context);
 }
-static void refresh(BHMenuRuntime *m)
+static void refresh(BHMenuRuntime *runtime)
 {
     unsigned long i;
-    BHMenuSettingsMenu *s = menu(m);
-    for (i = 0; i < s->row_count; ++i)
-        if (s->rows[i] && s->rows[i]->refresh)
+    BHMenuSettingsMenu *menu_settings_menu = menu(runtime);
+    for (i = 0; i < menu_settings_menu->row_count; ++i)
+        if (menu_settings_menu->rows[i] && menu_settings_menu->rows[i]->refresh)
         {
-            ++m->context->refreshes;
-            s->rows[i]->refresh(s, (long)i);
+            ++runtime->context->refreshes;
+            menu_settings_menu->rows[i]->refresh(menu_settings_menu, (long)i);
         }
 }
-static unsigned long sound(BHMenuRuntimeContext *c, unsigned long resource, float level)
+static unsigned long sound(BHMenuRuntimeContext *context, unsigned long resource, float level)
 {
-    ++c->sounds;
-    return bh_sound_request(c->sound, resource, level, 1, NULL, NULL);
+    ++context->sounds;
+    return bh_sound_request(context->sound, resource, level, 1, NULL, NULL);
 }
-static void stop_slide(BHMenuRuntime *m)
+static void stop_slide(BHMenuRuntime *runtime)
 {
-    if (m->slide_voice != BH_SOUND_INVALID)
+    if (runtime->slide_voice != BH_SOUND_INVALID)
     {
-        bh_sound_stop(m->context->sound, m->slide_voice);
-        m->slide_voice = BH_SOUND_INVALID;
+        bh_sound_stop(runtime->context->sound, runtime->slide_voice);
+        runtime->slide_voice = BH_SOUND_INVALID;
     }
 }
-static void drain(BHMenuRuntime *m, unsigned long first, unsigned long last)
+static void drain(BHMenuRuntime *runtime, unsigned long first, unsigned long last)
 {
     unsigned long i;
     for (i = first; i <= last; ++i)
-        bh_player_input_transition(&m->input_state, i);
+        bh_player_input_transition(&runtime->input_state, i);
 }
-static int activate(BHMenuRuntime *m)
+static int activate(BHMenuRuntime *runtime)
 {
-    if (!valid(m))
-        return fail(m ? m->context : NULL);
-    m->entity->step = bh_menu_runtime_step_entity;
-    m->entity->refresh = bh_menu_runtime_refresh_entity;
-    if (m->waypoint >= 0)
-        *m->context->waypoint = m->waypoint;
-    m->distance = 100;
-    m->exiting = 0;
-    if (!bh_input_set_enabled(m->input, m->context->snapshot, 1))
-        m->context->error = 1;
-    refresh(m);
-    if (!valid(m))
-        return fail(m->context);
-    return choose(m, 1, 0);
+    if (!valid(runtime))
+        return fail(runtime ? runtime->context : NULL);
+    runtime->entity->step = bh_menu_runtime_step_entity;
+    runtime->entity->refresh = bh_menu_runtime_refresh_entity;
+    if (runtime->waypoint >= 0)
+        *runtime->context->waypoint = runtime->waypoint;
+    runtime->distance = 100;
+    runtime->exiting = 0;
+    if (!bh_input_set_enabled(runtime->input, runtime->context->snapshot, 1))
+        runtime->context->error = 1;
+    refresh(runtime);
+    if (!valid(runtime))
+        return fail(runtime->context);
+    return choose(runtime, 1, 0);
 }
-int bh_menu_runtime_bind(BHMenuRuntime *m)
+int bh_menu_runtime_bind(BHMenuRuntime *runtime)
 {
-    BHEntity *p;
+    BHEntity *active_entity;
     unsigned long n = 0;
-    if (!valid(m) || !m->context->pool || !m->context->snapshot || !m->context->sound || !m->context->waypoint ||
-        !m->context->stay || !m->context->input_changed || !m->context->mode || !m->context->paused)
+    if (!valid(runtime) || !runtime->context->pool || !runtime->context->snapshot || !runtime->context->sound || !runtime->context->waypoint ||
+        !runtime->context->stay || !runtime->context->input_changed || !runtime->context->mode || !runtime->context->paused)
         return 0;
-    for (p = m->context->pool->active; p && n++ < m->context->pool->capacity; p = p->next)
-        if (p == m->entity)
+    for (active_entity = runtime->context->pool->active; active_entity && n++ < runtime->context->pool->capacity; active_entity = active_entity->next)
+        if (active_entity == runtime->entity)
             break;
-    if (!p)
+    if (!active_entity)
         return 0;
-    memcpy(&m->entity->bindings.menu_runtime, &m, 4);
-    m->entity->step = bh_menu_runtime_step_entity;
-    m->entity->refresh = bh_menu_runtime_refresh_entity;
+    memcpy(&runtime->entity->bindings.menu_runtime, &runtime, 4);
+    runtime->entity->step = bh_menu_runtime_step_entity;
+    runtime->entity->refresh = bh_menu_runtime_refresh_entity;
     return 1;
 }
-static BHMenuRuntime *binding(BHEntity *e)
+static BHMenuRuntime *binding(BHEntity *entity)
 {
     BHMenuRuntime *m;
-    memcpy(&m, &e->bindings.menu_runtime, 4);
+    memcpy(&m, &entity->bindings.menu_runtime, 4);
     return m;
 }
 void bh_menu_runtime_step_entity(BHEntity *e)
 {
-    BHMenuRuntime *m = binding(e);
-    if (m && m->entity == e)
-        bh_menu_runtime_step(m);
+    BHMenuRuntime *runtime = binding(e);
+    if (runtime && runtime->entity == e)
+        bh_menu_runtime_step(runtime);
 }
 void bh_menu_runtime_refresh_entity(BHEntity *e, void *unused)
 {
-    BHMenuRuntime *m = binding(e);
-    BHMenuPresent *p;
+    BHMenuRuntime *runtime = binding(e);
+    BHMenuPresent *menu_present;
     (void)unused;
-    if (!m || m->entity != e || !(p = m->present))
+    if (!runtime || runtime->entity != e || !(menu_present = runtime->present))
         return;
-    p->phase = m->phase;
-    p->selection = menu(m)->selection;
-    p->display_selection = menu(m)->display_selection;
-    p->push = m->push;
-    p->distance = m->distance;
-    p->capture = (unsigned long)m->capture;
-    p->application_mode = *m->context->mode;
-    bh_menu_present(p);
+    menu_present->phase = runtime->phase;
+    menu_present->selection = menu(runtime)->selection;
+    menu_present->display_selection = menu(runtime)->display_selection;
+    menu_present->push = runtime->push;
+    menu_present->distance = runtime->distance;
+    menu_present->capture = (unsigned long)runtime->capture;
+    menu_present->application_mode = *runtime->context->mode;
+    bh_menu_present(menu_present);
 }
-static int press(BHMenuRuntime *m, int back)
+static int press(BHMenuRuntime *runtime, int back)
 {
-    BHMenuRuntimeContext *c = m->context;
-    BHMenuSettingsMenu *s = menu(m);
+    BHMenuRuntimeContext *context = runtime->context;
+    BHMenuSettingsMenu *menu_settings_menu = menu(runtime);
     BHMenuRuntime *destination;
     BHMenuAction action;
     long selected;
     if (!back)
-        *c->input_changed = 1;
-    sound(c, c->move_sound, .6f);
+        *context->input_changed = 1;
+    sound(context, context->move_sound, .6f);
     if (back)
-        s->selection = m->back_selection;
-    selected = s->selection;
-    if (selected < 0 || (unsigned long)selected >= s->row_count)
-        return fail(c);
-    action = m->actions->row_actions[selected];
+        menu_settings_menu->selection = runtime->back_selection;
+    selected = menu_settings_menu->selection;
+    if (selected < 0 || (unsigned long)selected >= menu_settings_menu->row_count)
+        return fail(context);
+    action = runtime->actions->row_actions[selected];
     if (action)
     {
-        if (!m->action_context)
-            return fail(c);
-        m->action_context->menu = s;
-        action(m->action_context, selected);
+        if (!runtime->action_context)
+            return fail(context);
+        runtime->action_context->menu = menu_settings_menu;
+        action(runtime->action_context, selected);
     }
-    else if (m->edit_actions && m->edit_actions[selected])
+    else if (runtime->edit_actions && runtime->edit_actions[selected])
     {
-        if (!m->edit_context)
-            return fail(c);
-        m->edit_context->menu = s;
-        m->edit_actions[selected](m->edit_context, selected);
+        if (!runtime->edit_context)
+            return fail(context);
+        runtime->edit_context->menu = menu_settings_menu;
+        runtime->edit_actions[selected](runtime->edit_context, selected);
     }
-    if (!valid(m))
-        return fail(c);
-    selected = s->selection;
-    destination = m->destinations[selected];
-    if (*c->stay || destination == m)
+    if (!valid(runtime))
+        return fail(context);
+    selected = menu_settings_menu->selection;
+    destination = runtime->destinations[selected];
+    if (*context->stay || destination == runtime)
     {
-        *c->stay = 0;
-        m->capture = 1;
-        return choose(m, 1, 0);
+        *context->stay = 0;
+        runtime->capture = 1;
+        return choose(runtime, 1, 0);
     }
-    sound(c, c->open_sound, 1);
-    drain(m, 4, 10);
-    bh_input_set_enabled(m->input, c->snapshot, 0);
-    m->exiting = 1;
+    sound(context, context->open_sound, 1);
+    drain(runtime, 4, 10);
+    bh_input_set_enabled(runtime->input, context->snapshot, 0);
+    runtime->exiting = 1;
     if (destination && !activate(destination))
         return 0;
     return 1;
 }
-int bh_menu_runtime_step(BHMenuRuntime *m)
+int bh_menu_runtime_step(BHMenuRuntime *runtime)
 {
-    BHMenuRuntimeContext *c;
-    BHMenuSettingsMenu *s;
+    BHMenuRuntimeContext *context;
+    BHMenuSettingsMenu *menu_settings_menu;
     double v, next;
     float f;
     short mouse;
     unsigned long raw;
     int pressed;
     unsigned char a, b, d, e;
-    if (!valid(m))
-        return fail(m ? m->context : NULL);
-    c = m->context;
-    s = menu(m);
-    if (!bh_math_environment_supported() || !_finite(s->display_selection) || !_finite(m->push) ||
-        !_finite(m->distance) || !_finite(m->scroll))
-        return fail(c);
-    if (*c->paused == 1)
+    if (!valid(runtime))
+        return fail(runtime ? runtime->context : NULL);
+    context = runtime->context;
+    menu_settings_menu = menu(runtime);
+    if (!bh_math_environment_supported() || !_finite(menu_settings_menu->display_selection) || !_finite(runtime->push) ||
+        !_finite(runtime->distance) || !_finite(runtime->scroll))
+        return fail(context);
+    if (*context->paused == 1)
         return 1;
-    ++m->phase;
-    if (m->pending_selection >= 0)
+    ++runtime->phase;
+    if (runtime->pending_selection >= 0)
     {
-        if ((unsigned long)m->pending_selection >= s->row_count)
-            return fail(c);
-        s->selection = m->pending_selection;
+        if ((unsigned long)runtime->pending_selection >= menu_settings_menu->row_count)
+            return fail(context);
+        menu_settings_menu->selection = runtime->pending_selection;
     }
-    m->pending_selection = -1;
-    if ((m == c->ship_menu || m == c->network_ship_menu) && s->selection < 3)
-        *c->waypoint = s->selection + 14;
-    if (!m->exiting && !blocked(m))
+    runtime->pending_selection = -1;
+    if ((runtime == context->ship_menu || runtime == context->network_ship_menu) && menu_settings_menu->selection < 3)
+        *context->waypoint = menu_settings_menu->selection + 14;
+    if (!runtime->exiting && !blocked(runtime))
     {
-        bh_player_input_apply_packet(&m->input_state, m->input->state);
-        if (m->distance >= 10)
+        bh_player_input_apply_packet(&runtime->input_state, runtime->input->state);
+        if (runtime->distance >= 10)
         {
-            drain(m, 0, 1);
-            drain(m, 4, 10);
+            drain(runtime, 0, 1);
+            drain(runtime, 4, 10);
         }
         else
         {
-            raw = m->input_state.values[2];
+            raw = runtime->input_state.values[2];
             mouse = (short)(raw >> 16);
-            m->scroll = rf((double)m->scroll - (double)mouse * .0025);
-            memcpy(&f, m->input_state.values + 3, 4);
+            runtime->scroll = rf((double)runtime->scroll - (double)mouse * .0025);
+            memcpy(&f, runtime->input_state.values + 3, 4);
             if (!_finite(f))
-                return fail(c);
+                return fail(context);
             if (f < -.35)
-                m->scroll = rf((double)m->scroll - (-.1));
+                runtime->scroll = rf((double)runtime->scroll - (-.1));
             else if (f > .35)
-                m->scroll = rf((double)m->scroll - .1);
-            a = bh_player_input_transition(&m->input_state, 0);
-            if (a == 0 || m->scroll > 1)
+                runtime->scroll = rf((double)runtime->scroll - .1);
+            a = bh_player_input_transition(&runtime->input_state, 0);
+            if (a == 0 || runtime->scroll > 1)
             {
-                if (m->scroll > 1)
-                    m->scroll = rf((double)m->scroll - 1);
-                *c->input_changed = 1;
-                sound(c, c->move_sound, .6f);
-                if (!choose(m, -1, 1))
+                if (runtime->scroll > 1)
+                    runtime->scroll = rf((double)runtime->scroll - 1);
+                *context->input_changed = 1;
+                sound(context, context->move_sound, .6f);
+                if (!choose(runtime, -1, 1))
                     return 0;
             }
-            a = bh_player_input_transition(&m->input_state, 1);
-            if (a == 0 || m->scroll < -1)
+            a = bh_player_input_transition(&runtime->input_state, 1);
+            if (a == 0 || runtime->scroll < -1)
             {
-                if (m->scroll < -1)
-                    m->scroll = rf((double)m->scroll + 1);
-                *c->input_changed = 1;
-                sound(c, c->move_sound, .6f);
-                if (!choose(m, 1, 1))
+                if (runtime->scroll < -1)
+                    runtime->scroll = rf((double)runtime->scroll + 1);
+                *context->input_changed = 1;
+                sound(context, context->move_sound, .6f);
+                if (!choose(runtime, 1, 1))
                     return 0;
             }
-            a = bh_player_input_transition(&m->input_state, 4);
-            b = bh_player_input_transition(&m->input_state, 5);
-            d = bh_player_input_transition(&m->input_state, 6);
-            e = bh_player_input_transition(&m->input_state, 7);
+            a = bh_player_input_transition(&runtime->input_state, 4);
+            b = bh_player_input_transition(&runtime->input_state, 5);
+            d = bh_player_input_transition(&runtime->input_state, 6);
+            e = bh_player_input_transition(&runtime->input_state, 7);
             pressed = a == 0 || b == 0 || d == 0 || e == 0;
-            if (pressed && !press(m, 0))
+            if (pressed && !press(runtime, 0))
                 return 0;
-            if (m->back_selection >= 0)
+            if (runtime->back_selection >= 0)
             {
-                a = bh_player_input_transition(&m->input_state, 8);
-                b = bh_player_input_transition(&m->input_state, 9);
-                d = bh_player_input_transition(&m->input_state, 10);
+                a = bh_player_input_transition(&runtime->input_state, 8);
+                b = bh_player_input_transition(&runtime->input_state, 9);
+                d = bh_player_input_transition(&runtime->input_state, 10);
                 if (a == 0 || b == 0 || d == 0)
                 {
-                    if (!press(m, 1))
+                    if (!press(runtime, 1))
                         return 0;
-                    return !c->error;
+                    return !context->error;
                 }
             }
         }
     }
-    if ((float)s->selection != s->display_selection || (m->capture && m->push > 0))
+    if ((float)menu_settings_menu->selection != menu_settings_menu->display_selection || (runtime->capture && runtime->push > 0))
     {
-        if (m->push <= 0)
+        if (runtime->push <= 0)
         {
-            if (m->slide_voice == BH_SOUND_INVALID)
-                m->slide_voice = sound(c, c->slide_sound, 1);
-            if (s->display_selection > (float)s->selection)
+            if (runtime->slide_voice == BH_SOUND_INVALID)
+                runtime->slide_voice = sound(context, context->slide_sound, 1);
+            if (menu_settings_menu->display_selection > (float)menu_settings_menu->selection)
             {
-                next = (double)s->display_selection - .2;
-                s->display_selection = rf(next);
-                if (next < (float)s->selection)
-                    s->display_selection = (float)s->selection;
+                next = (double)menu_settings_menu->display_selection - .2;
+                menu_settings_menu->display_selection = rf(next);
+                if (next < (float)menu_settings_menu->selection)
+                    menu_settings_menu->display_selection = (float)menu_settings_menu->selection;
             }
-            else if (s->display_selection < (float)s->selection)
+            else if (menu_settings_menu->display_selection < (float)menu_settings_menu->selection)
             {
-                next = (double)s->display_selection - (-.2);
-                s->display_selection = rf(next);
-                if (next > (float)s->selection)
-                    s->display_selection = (float)s->selection;
+                next = (double)menu_settings_menu->display_selection - (-.2);
+                menu_settings_menu->display_selection = rf(next);
+                if (next > (float)menu_settings_menu->selection)
+                    menu_settings_menu->display_selection = (float)menu_settings_menu->selection;
             }
         }
         else
         {
-            if (m->push == 1)
-                sound(c, c->open_sound, 1);
-            next = (double)m->push - .2;
-            m->push = rf(next);
+            if (runtime->push == 1)
+                sound(context, context->open_sound, 1);
+            next = (double)runtime->push - .2;
+            runtime->push = rf(next);
             if (next < 0)
-                m->push = 0;
-            if (m->capture && m->push == 0)
-                m->capture = 0;
+                runtime->push = 0;
+            if (runtime->capture && runtime->push == 0)
+                runtime->capture = 0;
         }
     }
     else
     {
-        stop_slide(m);
-        if (!blocked(m))
+        stop_slide(runtime);
+        if (!blocked(runtime))
         {
-            if (m->push == 0)
-                sound(c, c->press_sound, 1);
-            if (m->push < 1)
+            if (runtime->push == 0)
+                sound(context, context->press_sound, 1);
+            if (runtime->push < 1)
             {
-                next = (double)m->push - (-.2);
-                m->push = rf(next);
+                next = (double)runtime->push - (-.2);
+                runtime->push = rf(next);
                 if (next > 1)
-                    m->push = 1;
+                    runtime->push = 1;
             }
         }
     }
-    if (m->distance > 4.5)
+    if (runtime->distance > 4.5)
     {
-        v = (double)m->distance - ((double)m->distance - 4.5) * .4;
-        m->distance = rf(v);
+        v = (double)runtime->distance - ((double)runtime->distance - 4.5) * .4;
+        runtime->distance = rf(v);
         if (v < 4.5)
-            m->distance = 4.5f;
+            runtime->distance = 4.5f;
     }
-    if (m->exiting)
+    if (runtime->exiting)
     {
-        next = (double)m->distance - (2.0 / 3.0);
-        m->distance = rf(next);
+        next = (double)runtime->distance - (2.0 / 3.0);
+        runtime->distance = rf(next);
         if (next < -5)
         {
-            stop_slide(m);
-            m->entity->refresh = NULL;
-            m->entity->step = NULL;
+            stop_slide(runtime);
+            runtime->entity->refresh = NULL;
+            runtime->entity->step = NULL;
         }
     }
-    return !c->error;
+    return !context->error;
 }
 static void fade_refresh(BHEntity *e, void *unused)
 {
     (void)unused;
     bh_menu_music_fade(e);
 }
-int bh_menu_runtime_return(BHMenuRuntimeContext *c)
+int bh_menu_runtime_return(BHMenuRuntimeContext *context)
 {
     BHMenuRuntime *root;
-    BHFlybyScene *f;
-    BHFlybyCameraState *s;
-    BHEntity *camera, *e;
+    BHFlybyScene *flyby_scene;
+    BHFlybyCameraState *flyby_camera_state;
+    BHEntity *camera, *entity;
     BHVec3 zero = {0, 0, 0}, axis, angles = {3.14159265358979323846f, 0, 0};
     long l;
     unsigned long i;
-    if (!c || !(root = c->root) || !valid(root) || root->context != c || !(f = c->flyby) || !(s = f->flyby_state) ||
-        !f->flyby_camera || !f->flyby_camera->route || !f->starts || f->start_count <= 10 ||
-        !(camera = f->camera_entity) || !c->transition || c->transition->pool != c->pool || f->entities != c->pool ||
-        f->selected_waypoint != c->waypoint || f->mode_count != c->mode || !c->mode)
-        return fail(c);
-    if (f->bound_entity != camera || f->bound_generation != camera->generation)
-        return fail(c);
-    *c->mode = 0;
+    if (!context || !(root = context->root) || !valid(root) || root->context != context || !(flyby_scene = context->flyby) || !(flyby_camera_state = flyby_scene->flyby_state) ||
+        !flyby_scene->flyby_camera || !flyby_scene->flyby_camera->route || !flyby_scene->starts || flyby_scene->start_count <= 10 ||
+        !(camera = flyby_scene->camera_entity) || !context->transition || context->transition->pool != context->pool || flyby_scene->entities != context->pool ||
+        flyby_scene->selected_waypoint != context->waypoint || flyby_scene->mode_count != context->mode || !context->mode)
+        return fail(context);
+    if (flyby_scene->bound_entity != camera || flyby_scene->bound_generation != camera->generation)
+        return fail(context);
+    *context->mode = 0;
     if (!activate(root))
         return 0;
-    e = bh_entity_acquire(c->pool);
-    if (e)
+    entity = bh_entity_acquire(context->pool);
+    if (entity)
     {
-        bh_menu_transition_bind(c->transition, e, 2, 0);
-        e->step = bh_menu_fade_expiry;
-        e->refresh = fade_refresh;
+        bh_menu_transition_bind(context->transition, entity, 2, 0);
+        entity->step = bh_menu_fade_expiry;
+        entity->refresh = fade_refresh;
     }
-    *c->waypoint = 10;
+    *context->waypoint = 10;
     l = 0;
     memcpy(&camera->world, &l, 4);
-    camera->position = f->starts[10].position;
+    camera->position = flyby_scene->starts[10].position;
     memcpy(&camera->flyby.previous_position, &camera->position, 12);
     memcpy(&camera->flyby.older_position, &camera->position, 12);
     l = 10;
@@ -414,23 +414,23 @@ int bh_menu_runtime_return(BHMenuRuntimeContext *c)
     camera->acceleration = zero;
     camera->angular_acceleration = zero;
     memcpy(&camera->euler, &angles, 12);
-    if (!bh_camera_state_init(&s->camera, 10))
-        return fail(c);
-    s->position = s->previous_position = s->older_position = camera->position;
-    s->angles = angles;
-    s->velocity = zero;
-    s->basis_x.x = 1;
-    s->basis_x.y = s->basis_x.z = 0;
-    s->basis_y.y = 1;
-    s->basis_y.x = s->basis_y.z = 0;
-    s->basis_z.z = 1;
-    s->basis_z.x = s->basis_z.y = 0;
-    s->orbit_time = 0;
-    s->route.phase = 0;
-    s->route.waypoint_index = 10;
-    s->route.current =
-        bh_world_locate(f->flyby_camera->route->first, f->flyby_camera->route->scene_count, NULL, &camera->position, 0);
-    memcpy(&camera->world, &s->route.current, 4);
+    if (!bh_camera_state_init(&flyby_camera_state->camera, 10))
+        return fail(context);
+    flyby_camera_state->position = flyby_camera_state->previous_position = flyby_camera_state->older_position = camera->position;
+    flyby_camera_state->angles = angles;
+    flyby_camera_state->velocity = zero;
+    flyby_camera_state->basis_x.x = 1;
+    flyby_camera_state->basis_x.y = flyby_camera_state->basis_x.z = 0;
+    flyby_camera_state->basis_y.y = 1;
+    flyby_camera_state->basis_y.x = flyby_camera_state->basis_y.z = 0;
+    flyby_camera_state->basis_z.z = 1;
+    flyby_camera_state->basis_z.x = flyby_camera_state->basis_z.y = 0;
+    flyby_camera_state->orbit_time = 0;
+    flyby_camera_state->route.phase = 0;
+    flyby_camera_state->route.waypoint_index = 10;
+    flyby_camera_state->route.current =
+        bh_world_locate(flyby_scene->flyby_camera->route->first, flyby_scene->flyby_camera->route->scene_count, NULL, &camera->position, 0);
+    memcpy(&camera->world, &flyby_camera_state->route.current, 4);
     memcpy(&camera->flyby.camera.position, &camera->position, 12);
     memcpy(&camera->flyby.camera.angles, &angles, 12);
     {
@@ -444,20 +444,20 @@ int bh_menu_runtime_return(BHMenuRuntimeContext *c)
     for (i = 0; i < 50; ++i)
     {
         camera->step(camera);
-        ++c->camera_steps;
-        if (f->error != BH_FLYBY_SCENE_OK)
-            return fail(c);
+        ++context->camera_steps;
+        if (flyby_scene->error != BH_FLYBY_SCENE_OK)
+            return fail(context);
     }
-    if (!c->transition->music)
+    if (!context->transition->music)
     {
-        e = bh_entity_acquire(c->pool);
-        if (!e)
-            return fail(c);
-        c->transition->range_ready = 0;
-        c->transition->music = e;
-        if (!bh_menu_transition_bind(c->transition, e, .2, 0))
-            return fail(c);
-        e->step = bh_menu_music_tick;
+        entity = bh_entity_acquire(context->pool);
+        if (!entity)
+            return fail(context);
+        context->transition->range_ready = 0;
+        context->transition->music = entity;
+        if (!bh_menu_transition_bind(context->transition, entity, .2, 0))
+            return fail(context);
+        entity->step = bh_menu_music_tick;
     }
-    return !c->error;
+    return !context->error;
 }

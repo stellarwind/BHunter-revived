@@ -72,7 +72,7 @@ static void announce(BHPulseProjectileContext *ctx, BHEntity *entity)
 void bh_pulse_projectile_tick(BHEntity *entity)
 {
     BHPulseProjectileContext *ctx = context(entity);
-    BHHomingProjectileContext *b;
+    BHHomingProjectileContext *effects;
     float life, phase, spin, angle, drift;
     BHVec3 velocity, base, random_velocity, end, point;
     BHWorldGeometry *cached;
@@ -91,7 +91,7 @@ void bh_pulse_projectile_tick(BHEntity *entity)
     } damage;
     if (!ctx || !bh_math_environment_supported())
         return;
-    b = ctx->effects;
+    effects = ctx->effects;
     ctx->error = 0;
     generation = entity->generation;
     raw_life = (double)bh_field_f32(&entity->projectile.countdown) - 1.0 / 30;
@@ -126,7 +126,7 @@ void bh_pulse_projectile_tick(BHEntity *entity)
             damage.event = 0;
             damage.amount = 1;
             damage.source = source;
-            bh_entities_query(b->pool, 0, 0, &entity->position, 30, &damage);
+            bh_entities_query(effects->pool, 0, 0, &entity->position, 30, &damage);
             if (!live(ctx, entity, generation))
             {
                 ctx->error = 3;
@@ -146,12 +146,12 @@ void bh_pulse_projectile_tick(BHEntity *entity)
         spin = stored(((double)r - 16384) * (1.0 / 16384));
         r = rand();
         angle = stored((double)r * (1.0 / 512));
-        bh_script_particle_create(b->particles, b->first_image, 3, &entity->position, &random_velocity, &acceleration,
+        bh_script_particle_create(effects->particles, effects->first_image, 3, &entity->position, &random_velocity, &acceleration,
                                   .2f, angle, 5, spin, .9f, .95f, .5f, .15f);
     }
     if (life <= 0)
     {
-        bh_entity_release(b->pool, entity);
+        bh_entity_release(effects->pool, entity);
         return;
     }
     memcpy(&velocity, &entity->pulse.velocity, 12);
@@ -171,7 +171,7 @@ void bh_pulse_projectile_tick(BHEntity *entity)
     memcpy(&ignore, &entity->projectile.ignore, 4);
     self.kind = BH_WORLD_HIT_ACTOR;
     self.object.actor = ignore;
-    result = bh_world_segment_run(b->segment, ignore ? &self : NULL, &cached, &entity->position, &end, -1, &hit);
+    result = bh_world_segment_run(effects->segment, ignore ? &self : NULL, &cached, &entity->position, &end, -1, &hit);
     if (result < 0)
     {
         ctx->error = 2;
@@ -186,16 +186,16 @@ void bh_pulse_projectile_tick(BHEntity *entity)
         point.x = stored((double)hit.point.x + (double)hit.normal.x * .5);
         point.y = stored((double)hit.point.y + (double)hit.normal.y * .5);
         point.z = stored((double)hit.point.z + (double)hit.normal.z * .5);
-        contact = bh_contact_impact_create(b->contacts, &point, &hit.normal, 4);
+        contact = bh_contact_impact_create(effects->contacts, &point, &hit.normal, 4);
         if (contact)
         {
-            impact = bh_contact_impact_state(b->contacts, contact);
+            impact = bh_contact_impact_state(effects->contacts, contact);
             impact->duration = 1;
             impact->size = 10;
-            bh_sound_request(b->sound, b->liquid_sound, stored(10.0 / 6), 1, &point, &zero);
+            bh_sound_request(effects->sound, effects->liquid_sound, stored(10.0 / 6), 1, &point, &zero);
         }
-        bh_sound_stop(b->sound, sound);
-        bh_entity_release(b->pool, entity);
+        bh_sound_stop(effects->sound, sound);
+        bh_entity_release(effects->pool, entity);
         ++ctx->liquid_hits;
         return;
     }
@@ -221,12 +221,12 @@ void bh_pulse_projectile_tick(BHEntity *entity)
         }
         memcpy(&entity->pulse.velocity, &velocity, 12);
         memcpy(&entity->pulse.base, &base, 12);
-        bh_sound_request(b->sound, ctx->bounce_sound, 1, 1, &entity->position, &zero);
-        bh_contact_spark_create(b->contacts, &entity->position, .75f, 3);
-        bh_contact_spark_create(b->contacts, &entity->position, 1, 2);
+        bh_sound_request(effects->sound, ctx->bounce_sound, 1, 1, &entity->position, &zero);
+        bh_contact_spark_create(effects->contacts, &entity->position, .75f, 3);
+        bh_contact_spark_create(effects->contacts, &entity->position, 1, 2);
         ++ctx->bounces;
     }
-    bh_sound_update(b->sound, sound, 1, 1, &entity->position, &entity->origin);
+    bh_sound_update(effects->sound, sound, 1, 1, &entity->position, &entity->origin);
 }
 BHEntity *bh_pulse_projectile_create(BHPulseProjectileContext *ctx, BHWorldGeometry *world, BHEntity *source,
                                      const BHVec3 *position, const BHVec3 *base, const BHVec3 *velocity)
@@ -235,16 +235,16 @@ BHEntity *bh_pulse_projectile_create(BHPulseProjectileContext *ctx, BHWorldGeome
     BHProjectileQueryState state;
     float f;
     unsigned long sync, i;
-    BHHomingProjectileContext *b;
+    BHHomingProjectileContext *effects;
     if (!ctx || !position || !base || !velocity || !ctx->effects || !ctx->lifetime || !ctx->draw || !ctx->draw->queue ||
         !ctx->identity || !ctx->debris || !ctx->explosion || !bh_math_environment_supported())
         return NULL;
-    b = ctx->effects;
-    if (!b->pool || !b->sound || !b->segment || !b->particles || !b->contacts || ctx->lifetime->pool != b->pool ||
-        ctx->lifetime->sound != b->sound || ctx->debris->pool != b->pool || ctx->explosion->pool != b->pool ||
+    effects = ctx->effects;
+    if (!effects->pool || !effects->sound || !effects->segment || !effects->particles || !effects->contacts || ctx->lifetime->pool != effects->pool ||
+        ctx->lifetime->sound != effects->sound || ctx->debris->pool != effects->pool || ctx->explosion->pool != effects->pool ||
         ctx->explosion->debris != ctx->debris)
         return NULL;
-    entity = bh_entity_acquire(b->pool);
+    entity = bh_entity_acquire(effects->pool);
     if (!entity)
         return NULL;
     bh_projectile_query_state(entity, &state);
@@ -266,7 +266,7 @@ BHEntity *bh_pulse_projectile_create(BHPulseProjectileContext *ctx, BHWorldGeome
     entity->step = bh_pulse_projectile_tick;
     entity->refresh = draw;
     bh_projectile_lifetime_bind(ctx->lifetime, entity, &state);
-    state.sound = bh_sound_request(b->sound, ctx->loop_sound, 1, 1, position, &entity->origin);
+    state.sound = bh_sound_request(effects->sound, ctx->loop_sound, 1, 1, position, &entity->origin);
     memcpy(&entity->projectile.sound, &state.sound, 4);
     memcpy(&entity->projectile.world, &world, 4);
     memcpy(&entity->projectile.ignore, &source, 4);

@@ -17,17 +17,17 @@ static void refresh(BHMenuSettingsMenu *menu, long index)
     if (method)
         method(menu, index);
 }
-void bh_menu_submenu_first(BHMenuSettings *s)
+void bh_menu_submenu_first(BHMenuSettings *menu_settings)
 {
-    if (!s || !s->ship_menu)
+    if (!menu_settings || !menu_settings->ship_menu)
         return;
-    selection(s->ship_menu, s->current_index);
-    s->action = (long)((unsigned long)s->current_index + 14UL);
+    selection(menu_settings->ship_menu, menu_settings->current_index);
+    menu_settings->action = (long)((unsigned long)menu_settings->current_index + 14UL);
 }
-static void assign(BHMenuSettings *s, BHMenuSettingsMenu *menu, const unsigned char *input, long index,
+static void assign(BHMenuSettings *menu_settings, BHMenuSettingsMenu *menu, const unsigned char *input, long index,
                    unsigned char *keys, long count)
 {
-    if (!s || !s->input_profile || !row_valid(menu, index))
+    if (!menu_settings || !menu_settings->input_profile || !row_valid(menu, index))
         return;
     if (index >= 1 && index <= count)
     {
@@ -37,19 +37,19 @@ static void assign(BHMenuSettings *s, BHMenuSettingsMenu *menu, const unsigned c
     }
     refresh(menu, index);
 }
-void bh_menu_keys_motion(BHMenuSettings *s, BHMenuSettingsMenu *m, const unsigned char *p, long i)
+void bh_menu_keys_motion(BHMenuSettings *menu_settings, BHMenuSettingsMenu *m, const unsigned char *p, long i)
 {
-    assign(s, m, p, i, s && s->input_profile ? s->input_profile->motion_keys : NULL, 6);
+    assign(menu_settings, m, p, i, menu_settings && menu_settings->input_profile ? menu_settings->input_profile->motion_keys : NULL, 6);
 }
-void bh_menu_keys_weapons(BHMenuSettings *s, BHMenuSettingsMenu *m, const unsigned char *p, long i)
+void bh_menu_keys_weapons(BHMenuSettings *menu_settings, BHMenuSettingsMenu *m, const unsigned char *p, long i)
 {
-    assign(s, m, p, i, s && s->input_profile ? s->input_profile->primary_keys : NULL, 9);
+    assign(menu_settings, m, p, i, menu_settings && menu_settings->input_profile ? menu_settings->input_profile->primary_keys : NULL, 9);
 }
-void bh_menu_keys_camera(BHMenuSettings *s, BHMenuSettingsMenu *m, const unsigned char *p, long i)
+void bh_menu_keys_camera(BHMenuSettings *menu_settings, BHMenuSettingsMenu *m, const unsigned char *p, long i)
 {
-    assign(s, m, p, i, s && s->input_profile ? s->input_profile->secondary_keys : NULL, 9);
+    assign(menu_settings, m, p, i, menu_settings && menu_settings->input_profile ? menu_settings->input_profile->secondary_keys : NULL, 9);
 }
-void bh_menu_keys_extra(BHMenuSettings *s, BHMenuSettingsMenu *m, const unsigned char *p, long i)
+void bh_menu_keys_extra(BHMenuSettings *menu_settings, BHMenuSettingsMenu *m, const unsigned char *p, long i)
 {
-    assign(s, m, p, i, s && s->input_profile ? s->input_profile->camera_keys : NULL, 10);
+    assign(menu_settings, m, p, i, menu_settings && menu_settings->input_profile ? menu_settings->input_profile->camera_keys : NULL, 10);
 }

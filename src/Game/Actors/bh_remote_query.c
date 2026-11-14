@@ -81,7 +81,7 @@ static int retire(BHRemoteQuery *query, BHEntity *entity)
     query->remote[slot] = NULL;
     return bh_entity_release(query->pool, entity);
 }
-int bh_remote_query(BHRemoteQuery *query, BHEntity *entity, BHRemoteQueryPacket *p)
+int bh_remote_query(BHRemoteQuery *query, BHEntity *entity, BHRemoteQueryPacket *remote_query_packet)
 {
     BHVec3 position;
     BHWorldGeometry *world;
@@ -91,10 +91,10 @@ int bh_remote_query(BHRemoteQuery *query, BHEntity *entity, BHRemoteQueryPacket 
     unsigned short id;
     unsigned char severity;
     float value;
-    if (!query || !entity || !p)
+    if (!query || !entity || !remote_query_packet)
         return fail(query);
     query->error = 0;
-    switch (p->words[0])
+    switch (remote_query_packet->words[0])
     {
     case 0:
         if (!query->transport || !query->remote)
@@ -110,8 +110,8 @@ int bh_remote_query(BHRemoteQuery *query, BHEntity *entity, BHRemoteQueryPacket 
         if (i == query->world_count)
             return fail(query);
         memcpy(&recipient, (char *)&entity->remote.player_id, 4);
-        target = p->damage.attacker;
-        value = p->damage.severity;
+        target = remote_query_packet->damage.attacker;
+        value = remote_query_packet->damage.severity;
         if (!_finite(value) || value < -1000000)
             return fail(query);
         if (value > 1.99)
@@ -149,18 +149,18 @@ int bh_remote_query(BHRemoteQuery *query, BHEntity *entity, BHRemoteQueryPacket 
     case 16:
         if (!bh_remote_predict_position(entity, query->tick, &position))
             return fail(query);
-        memcpy(p->floats + 1, &position, 12);
-        if (p->words[0] == 16)
+        memcpy(remote_query_packet->floats + 1, &position, 12);
+        if (remote_query_packet->words[0] == 16)
             for (j = 0; j < 2; j++)
                 for (i = 0; i < 3; i++)
                 {
                     memcpy(&value, (char *)&entity->velocity + j * 0x18 + i * 4, 4);
-                    bh_round_float(p->floats + 4 + j * 3 + i, (double)value * (j ? 900.0 : 30.0));
+                    bh_round_float(remote_query_packet->floats + 4 + j * 3 + i, (double)value * (j ? 900.0 : 30.0));
                 }
         return 1;
     case 17:
         for (i = 0; i < 9; i++)
-            if (link(entity, 0x1a4 + i * 12) == p->removed.actor)
+            if (link(entity, 0x1a4 + i * 12) == remote_query_packet->removed.actor)
                 set_link(entity, 0x1a4 + i * 12, NULL);
         return 1;
     case 20:

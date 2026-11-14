@@ -84,7 +84,7 @@ static double squared(double x, double y, double z)
     bh_round_float(&rz, z);
     return (x * rx + y * ry) + z * rz;
 }
-int bh_route_plan(const BHNavigation *n, BHWorldGeometry *first, unsigned long count, BHWorldGeometry *current,
+int bh_route_plan(const BHNavigation *navigation, BHWorldGeometry *first, unsigned long count, BHWorldGeometry *current,
                   const BHVec3 *lookup_goal, const BHVec3 *projection_goal, BHRoutePlan *out)
 {
     BHWorldGeometry *destination;
@@ -93,16 +93,16 @@ int bh_route_plan(const BHNavigation *n, BHWorldGeometry *first, unsigned long c
     BHVec3 normal;
     double dx, dot, length_a, length_b;
     float dy, dz, rounded_dot;
-    if (!n || !current || !lookup_goal || !projection_goal || !out || !n->routes.cells ||
-        n->routes.node_count != n->junction_count || !bh_math_environment_supported())
+    if (!navigation || !current || !lookup_goal || !projection_goal || !out || !navigation->routes.cells ||
+        navigation->routes.node_count != navigation->junction_count || !bh_math_environment_supported())
         return 0;
     destination = bh_world_locate(first, count, NULL, lookup_goal, 0);
-    source_index = bh_navigation_find(n, current);
-    destination_index = bh_navigation_find(n, destination);
-    if (source_index < 0 || destination_index < 0 || (unsigned long)source_index >= n->junction_count ||
-        (unsigned long)destination_index >= n->junction_count)
+    source_index = bh_navigation_find(navigation, current);
+    destination_index = bh_navigation_find(navigation, destination);
+    if (source_index < 0 || destination_index < 0 || (unsigned long)source_index >= navigation->junction_count ||
+        (unsigned long)destination_index >= navigation->junction_count)
         return 0;
-    slot = n->routes.cells[destination_index * n->junction_count + source_index].exit_slot;
+    slot = navigation->routes.cells[destination_index * navigation->junction_count + source_index].exit_slot;
     if (slot < 0 || slot >= 6 || !current->navigation.portals[slot].neighbor)
         return 0;
     memset(&next, 0, sizeof(next));

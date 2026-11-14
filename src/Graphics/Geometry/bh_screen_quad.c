@@ -3,29 +3,29 @@
 #include <math.h>
 #include <float.h>
 #include <string.h>
-int bh_screen_quad_draw(BHScreenQuadContext *c, BHTextureImage *image, float x, float y, float width, float height,
+int bh_screen_quad_draw(BHScreenQuadContext *context, BHTextureImage *image, float x, float y, float width, float height,
                         float angle, unsigned char flags, float modulation)
 {
-    BHClipVertex v[4], *ring, *p;
+    BHClipVertex v[4], *ring, *vertex;
     double w, h, r, cs, sn, hs, hc, conversion;
     float hw, hh, radius, cw, sw, negative_hs, stored_hc, bx, by, depth;
     float u0, u1, v0, v1;
     unsigned long i, n, color;
     long shade;
-    if (!c || !c->view || !c->clip || !c->emit || !image || !_finite(x) || !_finite(y) || !_finite(width) ||
-        !_finite(height) || !_finite(angle) || !_finite(modulation) || !_finite(c->view->near_z))
+    if (!context || !context->view || !context->clip || !context->emit || !image || !_finite(x) || !_finite(y) || !_finite(width) ||
+        !_finite(height) || !_finite(angle) || !_finite(modulation) || !_finite(context->view->near_z))
         return 0;
-    c->emitted = c->culled = 0;
+    context->emitted = context->culled = 0;
     w = (double)width * .5;
     h = (double)height * .5;
     bh_round_float(&hw, w);
     bh_round_float(&hh, h);
     r = sqrt(w * hw + h * hh);
     bh_round_float(&radius, r);
-    if (!(c->view->left < r + x && x - radius < c->view->right && c->view->top < radius + y &&
-          y - radius < c->view->bottom))
+    if (!(context->view->left < r + x && x - radius < context->view->right && context->view->top < radius + y &&
+          y - radius < context->view->bottom))
     {
-        c->culled = 1;
+        context->culled = 1;
         return 1;
     }
     memset(v, 0, sizeof(v));
@@ -78,86 +78,86 @@ int bh_screen_quad_draw(BHScreenQuadContext *c, BHTextureImage *image, float x, 
         v[i].next = v + (i + 1) % 4;
         v[i].previous = v + (i + 3) % 4;
     }
-    ring = bh_screen_clip_polygon(c->clip, v, c->view->near_z);
+    ring = bh_screen_clip_polygon(context->clip, v, context->view->near_z);
     if (!ring)
     {
-        if (c->clip->error != BH_CLIP_OK)
+        if (context->clip->error != BH_CLIP_OK)
             return 0;
-        c->culled = 1;
+        context->culled = 1;
         return 1;
     }
     conversion = (double)modulation * -255.0;
     if (!_finite(conversion) || conversion < -2147483648.0 || conversion > 2147483647.0)
         return 0;
     shade = (long)conversion;
-    color = c->base_color - (unsigned long)shade * 0x10101UL;
-    bh_round_float(&depth, (double)c->view->near_z - (-.01));
-    p = ring;
+    color = context->base_color - (unsigned long)shade * 0x10101UL;
+    bh_round_float(&depth, (double)context->view->near_z - (-.01));
+    vertex = ring;
     n = 0;
     do
     {
         if (++n > 12)
             return 0;
-        p->point.z = depth;
-        p = p->next;
-    } while (p != ring);
-    if (!c->emit(ring, image, color, c->emit_user))
+        vertex->point.z = depth;
+        vertex = vertex->next;
+    } while (vertex != ring);
+    if (!context->emit(ring, image, color, context->emit_user))
         return 0;
-    c->emitted = 1;
+    context->emitted = 1;
     return 1;
 }
-int bh_screen_quad_queue(BHDrawQueue *q, unsigned long bucket, unsigned long image, float x, float y, float width,
+int bh_screen_quad_queue(BHDrawQueue *queue, unsigned long bucket, unsigned long image, float x, float y, float width,
                          float height, float angle, unsigned long flags, float modulation)
 {
     static const unsigned long headers[9] = {1, 2, 3, 4, 5, 0, 6, 7, 8};
     unsigned long header, tail, index;
-    BHDrawCommand *p;
-    if (!q || !q->commands || q->count < 9 || q->count > q->capacity)
+    BHDrawCommand *command;
+    if (!queue || !queue->commands || queue->count < 9 || queue->count > queue->capacity)
     {
-        if (q)
-            q->error = BH_DRAW_ARGUMENT;
+        if (queue)
+            queue->error = BH_DRAW_ARGUMENT;
         return -1;
     }
-    if (q->count == q->capacity)
+    if (queue->count == queue->capacity)
     {
-        q->error = BH_DRAW_FULL;
+        queue->error = BH_DRAW_FULL;
         return 0;
     }
     header = bucket < 9 ? headers[bucket] : 0;
-    tail = q->commands[header].resource;
-    if (tail >= q->count || (q->commands[tail].next != BH_DRAW_END && q->commands[tail].next >= q->count))
+    tail = queue->commands[header].resource;
+    if (tail >= queue->count || (queue->commands[tail].next != BH_DRAW_END && queue->commands[tail].next >= queue->count))
     {
-        q->error = BH_DRAW_TOPOLOGY;
+        queue->error = BH_DRAW_TOPOLOGY;
         return -1;
     }
-    index = q->count++;
-    p = q->commands + index;
-    p->next = q->commands[tail].next;
-    q->commands[tail].next = index;
-    q->commands[header].resource = index;
-    p->resource = image;
-    memcpy(p->words, &x, 4);
-    memcpy(p->words + 1, &y, 4);
-    memcpy(p->words + 2, &width, 4);
-    memcpy(p->words + 3, &height, 4);
-    memcpy(p->words + 4, &angle, 4);
-    p->kind = BH_DRAW_SCREEN_QUAD;
-    p->words[6] = flags;
-    memcpy(p->words + 5, &modulation, 4);
-    q->error = BH_DRAW_OK;
+    index = queue->count++;
+    command = queue->commands + index;
+    command->next = queue->commands[tail].next;
+    queue->commands[tail].next = index;
+    queue->commands[header].resource = index;
+    command->resource = image;
+    memcpy(command->words, &x, 4);
+    memcpy(command->words + 1, &y, 4);
+    memcpy(command->words + 2, &width, 4);
+    memcpy(command->words + 3, &height, 4);
+    memcpy(command->words + 4, &angle, 4);
+    command->kind = BH_DRAW_SCREEN_QUAD;
+    command->words[6] = flags;
+    memcpy(command->words + 5, &modulation, 4);
+    queue->error = BH_DRAW_OK;
     return 1;
 }
-int bh_screen_quad_execute(BHScreenQuadSubmit *c, const BHDrawCommand *command, unsigned long *next)
+int bh_screen_quad_execute(BHScreenQuadSubmit *screen_quad_submit, const BHDrawCommand *command, unsigned long *next)
 {
     float f[6];
     BHTextureImage *image;
     int ok;
-    if (!c || !c->draw || !c->lookup || !command || !next || command->kind != BH_DRAW_SCREEN_QUAD)
+    if (!screen_quad_submit || !screen_quad_submit->draw || !screen_quad_submit->lookup || !command || !next || command->kind != BH_DRAW_SCREEN_QUAD)
         return 0;
-    image = c->lookup(command->resource, c->lookup_user);
+    image = screen_quad_submit->lookup(command->resource, screen_quad_submit->lookup_user);
     memcpy(f, command->words, sizeof(f));
     ok = image
-             ? bh_screen_quad_draw(c->draw, image, f[0], f[1], f[2], f[3], f[4], (unsigned char)command->words[6], f[5])
+             ? bh_screen_quad_draw(screen_quad_submit->draw, image, f[0], f[1], f[2], f[3], f[4], (unsigned char)command->words[6], f[5])
              : 0;
     *next = command->next;
     return ok;

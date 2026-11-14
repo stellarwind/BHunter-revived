@@ -4,32 +4,32 @@
 #include "../../Math/bh_round.h"
 #include <string.h>
 #include <float.h>
-static void restore(BHLoadingDisplay *c, BHRenderSurface *surface)
+static void restore(BHLoadingDisplay *loading_display, BHRenderSurface *surface)
 {
     if (surface && bh_renderer_surface_status(surface) == DDERR_SURFACELOST)
     {
-        ++c->restores;
+        ++loading_display->restores;
         bh_renderer_surface_restore(surface);
     }
 }
-static int wedge(BHLoadingDisplay *c, const BHLoadingBlitTarget *t, int n, float a, float b)
+static int wedge(BHLoadingDisplay *loading_display, const BHLoadingBlitTarget *t, int n, float a, float b)
 {
-    ++c->wedge_calls;
+    ++loading_display->wedge_calls;
     switch (n)
     {
     case 0:
-        return bh_loading_blit_top(&c->blit, t, a, b);
+        return bh_loading_blit_top(&loading_display->blit, t, a, b);
     case 1:
-        return bh_loading_blit_right(&c->blit, t, a, b);
+        return bh_loading_blit_right(&loading_display->blit, t, a, b);
     case 2:
-        return bh_loading_blit_bottom(&c->blit, t, a, b);
+        return bh_loading_blit_bottom(&loading_display->blit, t, a, b);
     case 3:
-        return bh_loading_blit_left(&c->blit, t, a, b);
+        return bh_loading_blit_left(&loading_display->blit, t, a, b);
     default:
-        return bh_loading_blit_top_last(&c->blit, t, a, b);
+        return bh_loading_blit_top_last(&loading_display->blit, t, a, b);
     }
 }
-int bh_loading_display(BHLoadingDisplay *c, float progress)
+int bh_loading_display(BHLoadingDisplay *loading_display, float progress)
 {
     BHLoadingImages *im;
     DDSURFACEDESC desc;
@@ -42,11 +42,11 @@ int bh_loading_display(BHLoadingDisplay *c, float progress)
     long old_redraw = 0;
     float previous;
     int ok = 1;
-    if (!c)
+    if (!loading_display)
         return 0;
-    ++c->calls;
-    im = c->images;
-    if (!im || !im->arena || !c->color)
+    ++loading_display->calls;
+    im = loading_display->images;
+    if (!im || !im->arena || !loading_display->color)
         return 1;
     if (im->stage == 0 && im->redraw_count == 2)
     {
@@ -71,78 +71,78 @@ int bh_loading_display(BHLoadingDisplay *c, float progress)
             }
             else if (im->stage == 2)
             {
-                c->previous[0] = c->previous[1] = -1.0f;
-                c->baseline = progress;
-                bh_round_float(&c->scale, 1.0 / (1.0 - (double)progress));
+                loading_display->previous[0] = loading_display->previous[1] = -1.0f;
+                loading_display->baseline = progress;
+                bh_round_float(&loading_display->scale, 1.0 / (1.0 - (double)progress));
             }
         }
         if (!old_redraw)
             return 1;
     }
-    if (im->stage < 0 || im->stage > 2 || !c->primary || c->width <= 0 || c->height <= 0 || c->width > 640 ||
-        c->height > 480)
+    if (im->stage < 0 || im->stage > 2 || !loading_display->primary || loading_display->width <= 0 || loading_display->height <= 0 || loading_display->width > 640 ||
+        loading_display->height > 480)
     {
-        ++c->failures;
+        ++loading_display->failures;
         return 0;
     }
     offset = im->stage == 0 ? 0x96000UL : im->stage == 1 ? 0xe1000UL : 0;
-    if (offset > im->arena_bytes || (unsigned long)c->width * (unsigned long)c->height > im->arena_bytes - offset)
+    if (offset > im->arena_bytes || (unsigned long)loading_display->width * (unsigned long)loading_display->height > im->arena_bytes - offset)
     {
-        ++c->failures;
+        ++loading_display->failures;
         return 0;
     }
     indices = im->stage == 0 ? im->midas_indexed : im->stage == 1 ? im->iel_indexed : im->indexed;
     native = im->stage == 0 ? im->midas_native : im->stage == 1 ? im->iel_native : im->native;
-    bh_round_float(&c->normalized, ((double)progress - c->baseline) * c->scale);
-    restore(c, c->color);
+    bh_round_float(&loading_display->normalized, ((double)progress - loading_display->baseline) * loading_display->scale);
+    restore(loading_display, loading_display->color);
     memset(&desc, 0, sizeof(desc));
     desc.dwSize = sizeof(desc);
-    c->lock_result = bh_renderer_surface_lock(c->color, &desc);
-    if (c->lock_result != DD_OK)
+    loading_display->lock_result = bh_renderer_surface_lock(loading_display->color, &desc);
+    if (loading_display->lock_result != DD_OK)
     {
-        ++c->failures;
+        ++loading_display->failures;
         return 0;
     }
-    ++c->locks;
+    ++loading_display->locks;
     depth = im->pixel_bytes;
     pitch_bytes = desc.lPitch < 0 ? 0UL - (unsigned long)desc.lPitch : (unsigned long)desc.lPitch;
-    span = (unsigned __int64)pitch_bytes * (unsigned long)c->height;
-    needed = (unsigned __int64)(unsigned long)c->width * depth;
+    span = (unsigned __int64)pitch_bytes * (unsigned long)loading_display->height;
+    needed = (unsigned __int64)(unsigned long)loading_display->width * depth;
     /* Lock returns logical row0, including for bottom-up native storage. The
        wedge span uses the lower allocation address and a signed row0 offset. */
-    row_offset = desc.lPitch < 0 ? (unsigned long)((unsigned __int64)pitch_bytes * (c->height - 1)) : 0;
+    row_offset = desc.lPitch < 0 ? (unsigned long)((unsigned __int64)pitch_bytes * (loading_display->height - 1)) : 0;
     if (!pitch_bytes || pitch_bytes < needed || span > 0xffffffffUL ||
-        (desc.lPitch < 0 && ((unsigned __int64)pitch_bytes * (c->height - 1) > 0x7fffffffUL ||
+        (desc.lPitch < 0 && ((unsigned __int64)pitch_bytes * (loading_display->height - 1) > 0x7fffffffUL ||
                              (unsigned long)desc.lpSurface < row_offset)) ||
         (unsigned __int64)((unsigned long)desc.lpSurface - row_offset) + span > ((unsigned __int64)1 << 32) ||
-        desc.dwWidth < (unsigned long)c->width || desc.dwHeight < (unsigned long)c->height)
+        desc.dwWidth < (unsigned long)loading_display->width || desc.dwHeight < (unsigned long)loading_display->height)
     {
-        bh_renderer_surface_unlock(c->color);
-        ++c->unlocks;
-        ++c->failures;
+        bh_renderer_surface_unlock(loading_display->color);
+        ++loading_display->unlocks;
+        ++loading_display->failures;
         return 0;
     }
-    if (c->alternate)
+    if (loading_display->alternate)
     {
-        previous = c->previous[0];
-        c->previous[0] = c->normalized;
-        c->alternate = 0;
+        previous = loading_display->previous[0];
+        loading_display->previous[0] = loading_display->normalized;
+        loading_display->alternate = 0;
     }
     else
     {
-        previous = c->previous[1];
-        c->previous[1] = c->normalized;
-        c->alternate = 1;
+        previous = loading_display->previous[1];
+        loading_display->previous[1] = loading_display->normalized;
+        loading_display->alternate = 1;
     }
     source = im->arena + offset;
     if (_isnan(previous) || previous < 0.0f || old_redraw)
     {
-        ++c->full_copies;
+        ++loading_display->full_copies;
         row = (unsigned char *)desc.lpSurface;
-        for (y = 0; y < (unsigned long)c->height; ++y)
+        for (y = 0; y < (unsigned long)loading_display->height; ++y)
         {
             out = row;
-            for (x = 0; x < (unsigned long)c->width; ++x)
+            for (x = 0; x < (unsigned long)loading_display->width; ++x)
             {
                 value = *source++;
                 if (depth == 1)
@@ -167,69 +167,69 @@ int bh_loading_display(BHLoadingDisplay *c, float progress)
                     out += 4;
                 }
             }
-            if (y + 1 < (unsigned long)c->height)
+            if (y + 1 < (unsigned long)loading_display->height)
                 row += desc.lPitch;
         }
         previous = 0.0f;
     }
-    c->blit.images = im;
-    c->blit.width = c->width;
-    c->blit.height = c->height;
+    loading_display->blit.images = im;
+    loading_display->blit.width = loading_display->width;
+    loading_display->blit.height = loading_display->height;
     target.base = (unsigned char *)desc.lpSurface - row_offset;
     target.bytes = (unsigned long)span;
     target.row0 = (long)row_offset;
     target.pitch = desc.lPitch;
-    if (!old_redraw && !_isnan(c->normalized) && !_isnan(previous) && c->normalized != previous)
+    if (!old_redraw && !_isnan(loading_display->normalized) && !_isnan(previous) && loading_display->normalized != previous)
     {
-        if (!(c->normalized > 0.125f))
-            ok = wedge(c, &target, 0, previous, c->normalized) && ok;
+        if (!(loading_display->normalized > 0.125f))
+            ok = wedge(loading_display, &target, 0, previous, loading_display->normalized) && ok;
         else
         {
-            ok = wedge(c, &target, 0, previous, 0.125f) && ok;
-            if (!(c->normalized > 0.375f))
-                ok = wedge(c, &target, 1, 0.125f, c->normalized) && ok;
+            ok = wedge(loading_display, &target, 0, previous, 0.125f) && ok;
+            if (!(loading_display->normalized > 0.375f))
+                ok = wedge(loading_display, &target, 1, 0.125f, loading_display->normalized) && ok;
             else
             {
-                ok = wedge(c, &target, 1, 0.125f, 0.375f) && ok;
-                if (!(c->normalized > 0.625f))
-                    ok = wedge(c, &target, 2, 0.375f, c->normalized) && ok;
+                ok = wedge(loading_display, &target, 1, 0.125f, 0.375f) && ok;
+                if (!(loading_display->normalized > 0.625f))
+                    ok = wedge(loading_display, &target, 2, 0.375f, loading_display->normalized) && ok;
                 else
                 {
-                    ok = wedge(c, &target, 2, 0.375f, 0.625f) && ok;
-                    if (!(c->normalized > 0.875f))
-                        ok = wedge(c, &target, 3, 0.625f, c->normalized) && ok;
+                    ok = wedge(loading_display, &target, 2, 0.375f, 0.625f) && ok;
+                    if (!(loading_display->normalized > 0.875f))
+                        ok = wedge(loading_display, &target, 3, 0.625f, loading_display->normalized) && ok;
                     else
                     {
-                        ok = wedge(c, &target, 3, 0.625f, 0.875f) && ok;
-                        ok = wedge(c, &target, 4, 0.875f, c->normalized > 1.0f ? 1.0f : c->normalized) && ok;
+                        ok = wedge(loading_display, &target, 3, 0.625f, 0.875f) && ok;
+                        ok = wedge(loading_display, &target, 4, 0.875f, loading_display->normalized > 1.0f ? 1.0f : loading_display->normalized) && ok;
                     }
                 }
             }
         }
     }
-    c->unlock_result = bh_renderer_surface_unlock(c->color);
-    ++c->unlocks;
-    restore(c, c->color);
-    if (c->software && c->software_target)
+    loading_display->unlock_result = bh_renderer_surface_unlock(loading_display->color);
+    ++loading_display->unlocks;
+    restore(loading_display, loading_display->color);
+    if (loading_display->software && loading_display->software_target)
     {
-        restore(c, c->software_target);
-        c->copy_result = bh_renderer_surface_copy(c->software_target, 0, 0, c->color, NULL);
+        restore(loading_display, loading_display->software_target);
+        loading_display->copy_result = bh_renderer_surface_copy(loading_display->software_target, 0, 0, loading_display->color, NULL);
     }
-    restore(c, c->primary);
-    restore(c, c->back);
-    if (c->present)
+    restore(loading_display, loading_display->primary);
+    restore(loading_display, loading_display->back);
+    if (loading_display->present)
     {
-        ++c->presentations;
-        c->flip_result = c->present(c->color, c->present_user);
+        ++loading_display->presentations;
+        loading_display->flip_result = loading_display->present(loading_display->color, loading_display->present_user);
     }
     else
     {
-        ++c->flips;
-        c->flip_result = bh_renderer_surface_present(c->primary);
+        ++loading_display->flips;
+        loading_display->flip_result = bh_renderer_surface_present(loading_display->primary);
     }
-    if (!ok || FAILED(c->flip_result))
+    if (!ok || FAILED(loading_display->flip_result))
     {
-        ++c->failures;
+        ++loading_display->failures;
         return 0;
     }
     return 1;

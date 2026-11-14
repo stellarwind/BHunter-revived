@@ -2,18 +2,18 @@
 #include "../Graphics/Geometry/bh_clipper.h"
 #include "bh_portal_visibility.h"
 #include <string.h>
-static int project(const BHDrawQueue *q, unsigned long at, const BHMainCamera *camera, const BHViewConfig *view,
+static int project(const BHDrawQueue *queue, unsigned long at, const BHMainCamera *camera, const BHViewConfig *view,
                    BHPortalClipCache *cache, float bounds[4], unsigned long depth)
 {
     const BHDrawCommand *command;
     BHVec3 corners[4];
-    BHClipVertex vertices[4], *ring, *p;
+    BHClipVertex vertices[4], *ring, *vertex;
     BHClipContext clip;
     unsigned long i, parent;
     float near_z, far_z, motion, enclosing[4];
-    if (!q || !q->commands || at >= q->count || !camera || !view || depth > 64)
+    if (!queue || !queue->commands || at >= queue->count || !camera || !view || depth > 64)
         return 0;
-    command = q->commands + at;
+    command = queue->commands + at;
     if (command->kind != BH_DRAW_CLIP_RECT || command->resource != BH_PORTAL_CLIP_WORLD)
         return 0;
     if (cache && at < BH_PORTAL_CLIP_CAPACITY && cache->ready[at])
@@ -25,7 +25,7 @@ static int project(const BHDrawQueue *q, unsigned long at, const BHMainCamera *c
     if (parent != BH_DRAW_END)
     {
         /* A strict backward link bounds recursion and rejects cycles. */
-        if (parent >= at || !project(q, parent, camera, view, cache, enclosing, depth + 1))
+        if (parent >= at || !project(queue, parent, camera, view, cache, enclosing, depth + 1))
             return 0;
     }
     else
@@ -63,19 +63,19 @@ static int project(const BHDrawQueue *q, unsigned long at, const BHMainCamera *c
             {
                 bounds[0] = bounds[1] = 9e37f;
                 bounds[2] = bounds[3] = -9e37f;
-                p = ring;
+                vertex = ring;
                 do
                 {
-                    if (p->sx < bounds[0])
-                        bounds[0] = p->sx;
-                    if (p->sy < bounds[1])
-                        bounds[1] = p->sy;
-                    if (bounds[2] < p->sx)
-                        bounds[2] = p->sx;
-                    if (bounds[3] < p->sy)
-                        bounds[3] = p->sy;
-                    p = p->next;
-                } while (p != ring);
+                    if (vertex->sx < bounds[0])
+                        bounds[0] = vertex->sx;
+                    if (vertex->sy < bounds[1])
+                        bounds[1] = vertex->sy;
+                    if (bounds[2] < vertex->sx)
+                        bounds[2] = vertex->sx;
+                    if (bounds[3] < vertex->sy)
+                        bounds[3] = vertex->sy;
+                    vertex = vertex->next;
+                } while (vertex != ring);
             }
         }
     }

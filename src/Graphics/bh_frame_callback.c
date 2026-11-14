@@ -1,8 +1,8 @@
 #include "bh_frame_callback.h"
-void bh_frame_callback_set(BHFrameCallback *c, BHFrameRenderCallback render)
+void bh_frame_callback_set(BHFrameCallback *frame_callback, BHFrameRenderCallback render)
 {
-    if (c)
-        c->render = render;
+    if (frame_callback)
+        frame_callback->render = render;
 }
 int bh_frame_callback_start(BHFrameCallback *c)
 {

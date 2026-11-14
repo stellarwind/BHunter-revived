@@ -15,35 +15,35 @@ typedef union BHHudMarkerPacket {
     unsigned long words[10];
 } BHHudMarkerPacket;
 
-static int fail(BHHudMarkers *c, BHHudMarkersError error)
+static int fail(BHHudMarkers *hud_markers, BHHudMarkersError error)
 {
-    if (c)
-        c->error = error;
+    if (hud_markers)
+        hud_markers->error = error;
     return 0;
 }
 static long multiply(long a, unsigned long b)
 {
     return (long)((unsigned long)a * b);
 }
-static int rectangle(BHHudMarkers *c, unsigned long image, double x, double y, float width, float height, float angle,
+static int rectangle(BHHudMarkers *hud_markers, unsigned long image, double x, double y, float width, float height, float angle,
                      float alpha, float u, float du, float v, float dv, float depth)
 {
     float sx, sy;
     int r;
     bh_round_float(&sx, x);
     bh_round_float(&sy, y);
-    r = bh_pickup_rect_queue(c->projection->queue, 3, image, sx, sy, width, height, angle, 0, alpha, u, du, v, dv,
+    r = bh_pickup_rect_queue(hud_markers->projection->queue, 3, image, sx, sy, width, height, angle, 0, alpha, u, du, v, dv,
                              depth);
-    ++c->attempted;
+    ++hud_markers->attempted;
     if (r > 0)
-        ++c->queued;
+        ++hud_markers->queued;
     else if (!r)
-        ++c->dropped;
+        ++hud_markers->dropped;
     else
-        return fail(c, BH_HUD_MARKERS_QUEUE);
+        return fail(hud_markers, BH_HUD_MARKERS_QUEUE);
     return 1;
 }
-int bh_hud_markers_draw(BHHudMarkers *c, BHEntity *head, const BHVec3 *player, const unsigned char *player_flags)
+int bh_hud_markers_draw(BHHudMarkers *hud_markers, BHEntity *head, const BHVec3 *player, const unsigned char *player_flags)
 {
     BHHudMarkerPacket packet;
     BHVec3 point;
@@ -55,20 +55,20 @@ int bh_hud_markers_draw(BHHudMarkers *c, BHEntity *head, const BHVec3 *player, c
 #endif
     float corner_u, label_v, x, y, z, scale, alpha, size, label_width;
     double raw_alpha, raw_depth, minimum;
-    if (!c || !c->projection || !c->projection->queue || !c->projection->camera || !c->projection->view || !c->radar ||
-        !player || !player_flags || c->radar->queue != c->projection->queue || c->display_width <= 0)
-        return fail(c, BH_HUD_MARKERS_ARGUMENT);
-    c->error = BH_HUD_MARKERS_OK;
-    c->visited = c->attempted = c->queued = c->dropped = c->projected = 0;
-    unit = c->display_width / 160;
+    if (!hud_markers || !hud_markers->projection || !hud_markers->projection->queue || !hud_markers->projection->camera || !hud_markers->projection->view || !hud_markers->radar ||
+        !player || !player_flags || hud_markers->radar->queue != hud_markers->projection->queue || hud_markers->display_width <= 0)
+        return fail(hud_markers, BH_HUD_MARKERS_ARGUMENT);
+    hud_markers->error = BH_HUD_MARKERS_OK;
+    hud_markers->visited = hud_markers->attempted = hud_markers->queued = hud_markers->dropped = hud_markers->projected = 0;
+    unit = hud_markers->display_width / 160;
     packet.position.event = 3;
     while (head)
     {
-        if (c->visited >= c->limit)
-            return fail(c, BH_HUD_MARKERS_LIMIT);
-        ++c->visited;
+        if (hud_markers->visited >= hud_markers->limit)
+            return fail(hud_markers, BH_HUD_MARKERS_LIMIT);
+        ++hud_markers->visited;
         if (!head->query)
-            return fail(c, BH_HUD_MARKERS_CALLBACK);
+            return fail(hud_markers, BH_HUD_MARKERS_CALLBACK);
         head->query(head, &packet);
         kind = head->actor.kind;
         extended = skip = 0;
@@ -99,44 +99,44 @@ int bh_hud_markers_draw(BHHudMarkers *c, BHEntity *head, const BHVec3 *player, c
             skip = *player_flags & 2;
             break;
         default:
-            return fail(c, BH_HUD_MARKERS_KIND);
+            return fail(hud_markers, BH_HUD_MARKERS_KIND);
         }
         point = packet.position.position;
-        if (!bh_radar_marker(c->radar, player, &point, radar_kind, extended, skip))
-            return fail(c, BH_HUD_MARKERS_QUEUE);
-        c->attempted += c->radar->attempted;
-        c->queued += c->radar->queued;
-        c->dropped += c->radar->dropped;
+        if (!bh_radar_marker(hud_markers->radar, player, &point, radar_kind, extended, skip))
+            return fail(hud_markers, BH_HUD_MARKERS_QUEUE);
+        hud_markers->attempted += hud_markers->radar->attempted;
+        hud_markers->queued += hud_markers->radar->queued;
+        hud_markers->dropped += hud_markers->radar->dropped;
         x = point.x;
         y = point.y;
         z = point.z;
-        if (bh_pickup_project(c->projection, &x, &y, &z, &scale))
+        if (bh_pickup_project(hud_markers->projection, &x, &y, &z, &scale))
         {
             if (!_finite(x) || !_finite(y) || !_finite(z) || !_finite(scale))
-                return fail(c, BH_HUD_MARKERS_NUMERICAL);
-            ++c->projected;
-            raw_alpha = ((double)scale * 100.0) / (double)c->display_width;
+                return fail(hud_markers, BH_HUD_MARKERS_NUMERICAL);
+            ++hud_markers->projected;
+            raw_alpha = ((double)scale * 100.0) / (double)hud_markers->display_width;
             bh_round_float(&alpha, raw_alpha);
             if (raw_alpha > 1.0)
                 alpha = 1;
             if ((double)alpha > .1)
             {
                 raw_depth = (double)z - 8.0;
-                minimum = (double)c->projection->view->near_z - (-.01);
+                minimum = (double)hud_markers->projection->view->near_z - (-.01);
                 bh_round_float(&z, raw_depth);
                 if (raw_depth < minimum)
                     bh_round_float(&z, minimum);
                 size = (float)multiply(unit, 4);
 #ifdef BH_SDL_BACKEND
-                marker_start = c->projection->queue->count;
+                marker_start = hud_markers->projection->queue->count;
 #endif
-                if (!rectangle(c, c->brackets_image, (double)x - scale * 2.0, (double)y - scale * 2.0, size, size, 0,
+                if (!rectangle(hud_markers, hud_markers->brackets_image, (double)x - scale * 2.0, (double)y - scale * 2.0, size, size, 0,
                                alpha, corner_u, .25f, 0, .25f, z) ||
-                    !rectangle(c, c->brackets_image, (double)x - (double)scale * (-2.0), (double)y - scale * 2.0, size,
+                    !rectangle(hud_markers, hud_markers->brackets_image, (double)x - (double)scale * (-2.0), (double)y - scale * 2.0, size,
                                size, 1.5707963705062866211f, alpha, corner_u, .25f, 0, .25f, z) ||
-                    !rectangle(c, c->brackets_image, (double)x - scale * 2.0, (double)y - (double)scale * (-2.0), size,
+                    !rectangle(hud_markers, hud_markers->brackets_image, (double)x - scale * 2.0, (double)y - (double)scale * (-2.0), size,
                                size, -1.5707963705062866211f, alpha, corner_u, .25f, 0, .25f, z) ||
-                    !rectangle(c, c->brackets_image, (double)x - (double)scale * (-2.0),
+                    !rectangle(hud_markers, hud_markers->brackets_image, (double)x - (double)scale * (-2.0),
                                (double)y - (double)scale * (-2.0), size, size, -3.1415927410125732422f, alpha, corner_u,
                                .25f, 0, .25f, z))
                     return 0;
@@ -147,7 +147,7 @@ int bh_hud_markers_draw(BHHudMarkers *c, BHEntity *head, const BHVec3 *player, c
                     memcpy(&status, &head->remote.slot, 2);
                     label_width = (float)multiply(unit, 24);
                     bh_round_float(&label_v, (double)status * .125);
-                    if (!rectangle(c, c->status_image, ((double)x - scale * 2.0) - (double)unit * (-9.5),
+                    if (!rectangle(hud_markers, hud_markers->status_image, ((double)x - scale * 2.0) - (double)unit * (-9.5),
                                    ((double)y - (double)scale * (-2.0)) - (double)unit * (-4.5), label_width, size, 0,
                                    alpha, 0, .75f, label_v, .125f, z))
                         return 0;
@@ -155,7 +155,7 @@ int bh_hud_markers_draw(BHHudMarkers *c, BHEntity *head, const BHVec3 *player, c
                 else
                 {
                     label_width = (float)multiply(unit, 16);
-                    if (!rectangle(c, c->brackets_image, ((double)x - scale * 2.0) + (double)multiply(unit, 6),
+                    if (!rectangle(hud_markers, hud_markers->brackets_image, ((double)x - scale * 2.0) + (double)multiply(unit, 6),
                                    ((double)multiply(unit, 5) - (double)scale * (-2.0)) + y, label_width, size, 0,
                                    alpha, 0, .5f, label_v, .125f, z))
                         return 0;
@@ -163,9 +163,9 @@ int bh_hud_markers_draw(BHHudMarkers *c, BHEntity *head, const BHVec3 *player, c
 #ifdef BH_SDL_BACKEND
                 /* Preserve pixel-sized corners/labels, but project their world
                    anchor and perspective offsets with the sampled camera. */
-                for (marker_index = marker_start; marker_index < c->projection->queue->count; ++marker_index)
+                for (marker_index = marker_start; marker_index < hud_markers->projection->queue->count; ++marker_index)
                 {
-                    BHDrawCommand *command = c->projection->queue->commands + marker_index;
+                    BHDrawCommand *command = hud_markers->projection->queue->commands + marker_index;
                     unsigned long corner = marker_index - marker_start;
                     float sx, sy, fx = corner < 4 && (corner & 1) ? 2.0f : -2.0f;
                     float fy = corner < 2 ? -2.0f : 2.0f;

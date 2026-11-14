@@ -182,14 +182,14 @@ void SDLCALL mix(void *, SDL_AudioStream *stream, int additional, int)
 }
 BHAudioBuffer *publish(std::shared_ptr<AudioClip> clip, bool music = false)
 {
-    auto v = std::make_unique<BHAudioBuffer>();
-    v->clip = std::move(clip);
-    v->frequency = v->clip->rate;
-    v->end = double(v->clip->frames);
-    v->music = music;
+    auto buffer = std::make_unique<BHAudioBuffer>();
+    buffer->clip = std::move(clip);
+    buffer->frequency = buffer->clip->rate;
+    buffer->end = double(buffer->clip->frames);
+    buffer->music = music;
     std::lock_guard<std::mutex> guard(mixer_mutex);
-    voices.push_back(v.get());
-    return v.release();
+    voices.push_back(buffer.get());
+    return buffer.release();
 }
 BHAudioBuffer *publish_music(const std::shared_ptr<AudioClip> &clip, unsigned long *ms)
 {
@@ -235,14 +235,14 @@ extern "C"
         bh_audio_poll();
         return &device;
     }
-    void bh_audio_retain(BHAudioDevice *d)
+    void bh_audio_retain(BHAudioDevice *audio_device)
     {
-        if (d)
-            ++d->refs;
+        if (audio_device)
+            ++audio_device->refs;
     }
-    void bh_audio_release(BHAudioDevice *d)
+    void bh_audio_release(BHAudioDevice *audio_device)
     {
-        if (!d || !d->refs || --d->refs)
+        if (!audio_device || !audio_device->refs || --audio_device->refs)
             return;
         SDL_DestroyAudioStream(output);
         output = nullptr;
@@ -261,26 +261,26 @@ extern "C"
             return -1;
         try
         {
-            auto c = std::make_shared<AudioClip>();
-            c->rate = rate;
-            c->channels = channels;
-            c->stride = stride;
-            c->frames = bytes / stride;
-            c->pcm.resize(bytes / (bits / 8));
+            auto clip = std::make_shared<AudioClip>();
+            clip->rate = rate;
+            clip->channels = channels;
+            clip->stride = stride;
+            clip->frames = bytes / stride;
+            clip->pcm.resize(bytes / (bits / 8));
             auto p = static_cast<const unsigned char *>(data);
-            for (size_t i = 0; i < c->pcm.size(); ++i)
+            for (size_t i = 0; i < clip->pcm.size(); ++i)
             {
                 if (bits == 8)
-                    c->pcm[i] = (int(p[i]) - 128) / 128.0f;
+                    clip->pcm[i] = (int(p[i]) - 128) / 128.0f;
                 else
                 {
                     int n = p[i * 2] | (unsigned(p[i * 2 + 1]) << 8);
                     if (n >= 32768)
                         n -= 65536;
-                    c->pcm[i] = n / 32768.0f;
+                    clip->pcm[i] = n / 32768.0f;
                 }
             }
-            *out = publish(c);
+            *out = publish(clip);
             return 0;
         }
         catch (...)
@@ -288,14 +288,14 @@ extern "C"
             return -1;
         }
     }
-    int bh_audio_duplicate(BHAudioDevice *d, BHAudioBuffer *v, BHAudioBuffer **out)
+    int bh_audio_duplicate(BHAudioDevice *d, BHAudioBuffer *buffer, BHAudioBuffer **out)
     {
-        if (!d || !v || !out)
+        if (!d || !buffer || !out)
             return -1;
         *out = nullptr;
         try
         {
-            *out = publish(v->clip);
+            *out = publish(buffer->clip);
             return 0;
         }
         catch (...)
@@ -303,98 +303,98 @@ extern "C"
             return -1;
         }
     }
-    void bh_audio_buffer_retain(BHAudioBuffer *v)
+    void bh_audio_buffer_retain(BHAudioBuffer *buffer)
     {
-        if (v)
+        if (buffer)
         {
             std::lock_guard<std::mutex> guard(mixer_mutex);
-            ++v->refs;
+            ++buffer->refs;
         }
     }
-    void bh_audio_buffer_release(BHAudioBuffer *v)
+    void bh_audio_buffer_release(BHAudioBuffer *buffer)
     {
-        if (!v)
+        if (!buffer)
             return;
         std::lock_guard<std::mutex> guard(mixer_mutex);
-        if (--v->refs)
+        if (--buffer->refs)
             return;
-        voices.erase(std::remove(voices.begin(), voices.end(), v), voices.end());
-        delete v;
+        voices.erase(std::remove(voices.begin(), voices.end(), buffer), voices.end());
+        delete buffer;
     }
-    int bh_audio_stop(BHAudioBuffer *v)
+    int bh_audio_stop(BHAudioBuffer *buffer)
     {
-        if (!v)
+        if (!buffer)
             return -1;
         std::lock_guard<std::mutex> guard(mixer_mutex);
-        v->playing = false;
+        buffer->playing = false;
         return 0;
     }
-    int bh_audio_frequency(BHAudioBuffer *v, unsigned long *hz)
+    int bh_audio_frequency(BHAudioBuffer *buffer, unsigned long *hz)
     {
-        if (!v || !hz)
+        if (!buffer || !hz)
             return -1;
         std::lock_guard<std::mutex> guard(mixer_mutex);
-        *hz = v->frequency;
+        *hz = buffer->frequency;
         return 0;
     }
-    int bh_audio_position(BHAudioBuffer *v, unsigned long *play, unsigned long *write)
+    int bh_audio_position(BHAudioBuffer *buffer, unsigned long *play, unsigned long *write)
     {
-        if (!v || !play || !write)
+        if (!buffer || !play || !write)
             return -1;
         std::lock_guard<std::mutex> guard(mixer_mutex);
         // Completed buffers report their last frame, keeping priority division defined.
-        *play = static_cast<unsigned long>(std::min(v->cursor, v->end - 1)) * v->clip->stride;
+        *play = static_cast<unsigned long>(std::min(buffer->cursor, buffer->end - 1)) * buffer->clip->stride;
         *write = *play;
         return 0;
     }
-    int bh_audio_volume(BHAudioBuffer *v, long db)
+    int bh_audio_volume(BHAudioBuffer *buffer, long db)
     {
-        if (!v || db < -10000 || db > 0)
+        if (!buffer || db < -10000 || db > 0)
             return -1;
         std::lock_guard<std::mutex> guard(mixer_mutex);
-        v->gain = db == -10000 ? 0 : float(std::pow(10.0, db / 2000.0));
+        buffer->gain = db == -10000 ? 0 : float(std::pow(10.0, db / 2000.0));
         return 0;
     }
-    int bh_audio_pan(BHAudioBuffer *v, long pan)
+    int bh_audio_pan(BHAudioBuffer *buffer, long pan)
     {
-        if (!v || pan < -10000 || pan > 10000)
+        if (!buffer || pan < -10000 || pan > 10000)
             return -1;
         std::lock_guard<std::mutex> guard(mixer_mutex);
-        v->left = pan > 0 ? (pan == 10000 ? 0 : float(std::pow(10.0, -pan / 2000.0))) : 1;
-        v->right = pan < 0 ? (pan == -10000 ? 0 : float(std::pow(10.0, pan / 2000.0))) : 1;
+        buffer->left = pan > 0 ? (pan == 10000 ? 0 : float(std::pow(10.0, -pan / 2000.0))) : 1;
+        buffer->right = pan < 0 ? (pan == -10000 ? 0 : float(std::pow(10.0, pan / 2000.0))) : 1;
         return 0;
     }
-    int bh_audio_pitch(BHAudioBuffer *v, unsigned long hz)
+    int bh_audio_pitch(BHAudioBuffer *buffer, unsigned long hz)
     {
-        if (!v || (hz && hz < 100) || hz > 200000)
+        if (!buffer || (hz && hz < 100) || hz > 200000)
             return -1;
         std::lock_guard<std::mutex> guard(mixer_mutex);
-        v->frequency = hz ? hz : v->clip->rate;
+        buffer->frequency = hz ? hz : buffer->clip->rate;
         return 0;
     }
-    int bh_audio_seek(BHAudioBuffer *v, unsigned long bytes)
+    int bh_audio_seek(BHAudioBuffer *buffer, unsigned long bytes)
     {
-        if (!v || bytes >= v->clip->frames * v->clip->stride)
+        if (!buffer || bytes >= buffer->clip->frames * buffer->clip->stride)
             return -1;
         std::lock_guard<std::mutex> guard(mixer_mutex);
-        v->cursor = bytes / v->clip->stride;
+        buffer->cursor = bytes / buffer->clip->stride;
         return 0;
     }
-    int bh_audio_play(BHAudioBuffer *v, unsigned long, unsigned long, unsigned long flags)
+    int bh_audio_play(BHAudioBuffer *buffer, unsigned long, unsigned long, unsigned long flags)
     {
-        if (!v)
+        if (!buffer)
             return -1;
         std::lock_guard<std::mutex> guard(mixer_mutex);
-        v->loop = (flags & 1) != 0;
-        v->playing = true;
+        buffer->loop = (flags & 1) != 0;
+        buffer->playing = true;
         return 0;
     }
-    int bh_audio_status(BHAudioBuffer *v, unsigned long *status)
+    int bh_audio_status(BHAudioBuffer *buffer, unsigned long *status)
     {
-        if (!v || !status)
+        if (!buffer || !status)
             return -1;
         std::lock_guard<std::mutex> guard(mixer_mutex);
-        *status = v->playing ? 1 : 0;
+        *status = buffer->playing ? 1 : 0;
         return 0;
     }
     BHAudioBuffer *bh_audio_load_music(const char *path, unsigned long *ms)
@@ -405,9 +405,9 @@ extern "C"
         // decode cache, so a twenty-minute track does not consume hundreds of MB.
         try
         {
-            auto c = std::make_shared<AudioClip>();
-            c->file = std::make_unique<MusicFile>();
-            auto &f = *c->file;
+            auto clip = std::make_shared<AudioClip>();
+            clip->file = std::make_unique<MusicFile>();
+            auto &f = *clip->file;
             f.io = SDL_IOFromFile(path, "rb");
             if (!f.io)
                 return nullptr;
@@ -428,14 +428,14 @@ extern "C"
                     Uint64(frames) > std::numeric_limits<Uint64>::max() / 1000 ||
                     Uint64(frames) * 1000 / info.sample_rate > std::numeric_limits<unsigned long>::max())
                     return nullptr;
-                c->channels = unsigned(info.channels);
-                c->rate = info.sample_rate;
-                c->stride = c->channels * sizeof(float);
-                c->frames = size_t(frames);
-                if (!f.refill_vorbis(0, c->frames, c->channels))
+                clip->channels = unsigned(info.channels);
+                clip->rate = info.sample_rate;
+                clip->stride = clip->channels * sizeof(float);
+                clip->frames = size_t(frames);
+                if (!f.refill_vorbis(0, clip->frames, clip->channels))
                     return nullptr;
-                std::copy_n(f.decoded, c->channels, f.first);
-                return publish_music(c, ms);
+                std::copy_n(f.decoded, clip->channels, f.first);
+                return publish_music(clip, ms);
             }
             if (std::memcmp(header, "RIFF", 4) || std::memcmp(header + 8, "WAVE", 4))
                 return nullptr;
@@ -460,12 +460,12 @@ extern "C"
                 {
                     if (length < 16 || SDL_ReadIO(f.io, fmt, 16) != 16 || fmt[0] != 1 || fmt[1] != 0)
                         return nullptr;
-                    c->channels = fmt[2] | (unsigned(fmt[3]) << 8);
-                    c->rate = u32(fmt + 4);
+                    clip->channels = fmt[2] | (unsigned(fmt[3]) << 8);
+                    clip->rate = u32(fmt + 4);
                     f.bits = fmt[14] | (unsigned(fmt[15]) << 8);
-                    c->stride = c->channels * (f.bits / 8);
-                    if ((c->channels != 1 && c->channels != 2) || (f.bits != 8 && f.bits != 16) || c->rate < 100 ||
-                        c->rate > 192000 || (fmt[12] | (unsigned(fmt[13]) << 8)) != c->stride)
+                    clip->stride = clip->channels * (f.bits / 8);
+                    if ((clip->channels != 1 && clip->channels != 2) || (f.bits != 8 && f.bits != 16) || clip->rate < 100 ||
+                        clip->rate > 192000 || (fmt[12] | (unsigned(fmt[13]) << 8)) != clip->stride)
                         return nullptr;
                     format = true;
                 }
@@ -477,10 +477,10 @@ extern "C"
                 }
                 at += 8 + Uint64(length) + (length & 1);
             }
-            if (!format || !data || !sample_bytes || sample_bytes % c->stride)
+            if (!format || !data || !sample_bytes || sample_bytes % clip->stride)
                 return nullptr;
-            c->frames = sample_bytes / c->stride;
-            return publish_music(c, ms);
+            clip->frames = sample_bytes / clip->stride;
+            return publish_music(clip, ms);
         }
         catch (...)
         {
@@ -488,20 +488,20 @@ extern "C"
         }
     }
 
-    int bh_audio_music_range(BHAudioBuffer *v, unsigned long from, unsigned long to, int loop)
+    int bh_audio_music_range(BHAudioBuffer *buffer, unsigned long from, unsigned long to, int loop)
     {
-        if (!v)
+        if (!buffer)
             return -1;
         std::lock_guard<std::mutex> guard(mixer_mutex);
-        double begin = double(from) * v->clip->rate / 1000;
-        double end = std::min(double(to) * v->clip->rate / 1000, double(v->clip->frames));
+        double begin = double(from) * buffer->clip->rate / 1000;
+        double end = std::min(double(to) * buffer->clip->rate / 1000, double(buffer->clip->frames));
         if (begin >= end)
             return -1;
-        v->begin = begin;
-        v->end = end;
-        v->cursor = begin;
-        v->loop = loop != 0;
-        v->playing = true;
+        buffer->begin = begin;
+        buffer->end = end;
+        buffer->cursor = begin;
+        buffer->loop = loop != 0;
+        buffer->playing = true;
         return 0;
     }
     void bh_audio_effects_gain(float gain)

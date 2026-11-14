@@ -42,9 +42,9 @@ static BHScriptVMActor *actor(BHScriptVMContext *ctx, BHEntity *entity)
             return ctx->actors + i;
     return 0;
 }
-static BHEntity *owner(BHScriptVMActor *a)
+static BHEntity *owner(BHScriptVMActor *script_vm_actor)
 {
-    return a->state->owner ? a->state->owner->entity : a->state->entity;
+    return script_vm_actor->state->owner ? script_vm_actor->state->owner->entity : script_vm_actor->state->entity;
 }
 static int live(BHEntityPool *pool, BHEntity *entity)
 {
@@ -123,10 +123,10 @@ static void random_point(BHEntity *entity, BHVec3 *p, int inner)
         ((float *)p)[i] = rf(((float *)&lo)[i] * t + ((float *)&hi)[i] * (1 - t));
     }
 }
-static int delta(BHScriptVMActor *a, const long *args, double scale, BHVec3 *v)
+static int delta(BHScriptVMActor *script_vm_actor, const long *args, double scale, BHVec3 *vector)
 {
     double x = args[0], y = args[1], z = args[2];
-    switch (a->orientation)
+    switch (script_vm_actor->orientation)
     {
     case 0:
         break;
@@ -145,15 +145,15 @@ static int delta(BHScriptVMActor *a, const long *args, double scale, BHVec3 *v)
     default:
         return 0;
     }
-    v->x = rf(x * scale);
-    v->y = rf(y * scale);
-    v->z = rf(z * scale);
+    vector->x = rf(x * scale);
+    vector->y = rf(y * scale);
+    vector->z = rf(z * scale);
     return 1;
 }
-static void portal_extent(BHPortal *p, const BHVec3 *point, float first, float second)
+static void portal_extent(BHPortal *portal, const BHVec3 *point, float first, float second)
 {
     float u, v, w, hu, hv;
-    switch (p->direction)
+    switch (portal->direction)
     {
     case 0:
     case 4:
@@ -182,13 +182,13 @@ static void portal_extent(BHPortal *p, const BHVec3 *point, float first, float s
     default:
         return;
     }
-    if (p->overlap[0] <= u && u <= p->overlap[1] && p->overlap[2] <= v && v <= p->overlap[3] &&
-        (double)p->plane - .5 <= w && w <= (double)p->plane - (-.5))
+    if (portal->overlap[0] <= u && u <= portal->overlap[1] && portal->overlap[2] <= v && v <= portal->overlap[3] &&
+        (double)portal->plane - .5 <= w && w <= (double)portal->plane - (-.5))
     {
-        p->scratch[0] = rf((double)u - hu);
-        p->scratch[1] = rf((double)u + hu);
-        p->scratch[2] = rf((double)v - hv);
-        p->scratch[3] = rf((double)v + hv);
+        portal->scratch[0] = rf((double)u - hu);
+        portal->scratch[1] = rf((double)u + hu);
+        portal->scratch[2] = rf((double)v - hv);
+        portal->scratch[3] = rf((double)v + hv);
     }
 }
 static void radar_query(BHEntity *entity, void *packet)
@@ -203,37 +203,37 @@ static void radar_query(BHEntity *entity, void *packet)
 }
 static int radar(BHScriptVMContext *ctx, BHEntity *entity, BHEntity *watched, const BHVec3 *p, long remove)
 {
-    BHEntity *e;
-    BHActorVehicleLifetimeContext *v;
+    BHEntity *actor;
+    BHActorVehicleLifetimeContext *actor_vehicle_lifetime_context;
     if (!ctx->radar || !ctx->launch || !ctx->launch->actors)
     {
         ctx->error = 1;
         return 0;
     }
-    e = bh_entity_acquire(pool(ctx));
-    if (!e)
+    actor = bh_entity_acquire(pool(ctx));
+    if (!actor)
         return 0;
-    e->position = *p;
-    e->flags |= 0x100;
-    e->actor.sound_frames = 0;
-    e->actor.kind = 6;
-    e->actor.radar_id = 0;
-    v = ctx->launch->actors->response->vehicles;
-    ctx->radar->head = v->head;
-    ctx->radar->count = v->count;
-    if (!bh_radar_query_bind(ctx->radar, e, watched, remove))
+    actor->position = *p;
+    actor->flags |= 0x100;
+    actor->actor.sound_frames = 0;
+    actor->actor.kind = 6;
+    actor->actor.radar_id = 0;
+    actor_vehicle_lifetime_context = ctx->launch->actors->response->vehicles;
+    ctx->radar->head = actor_vehicle_lifetime_context->head;
+    ctx->radar->count = actor_vehicle_lifetime_context->count;
+    if (!bh_radar_query_bind(ctx->radar, actor, watched, remove))
     {
-        bh_entity_release(pool(ctx), e);
+        bh_entity_release(pool(ctx), actor);
         ctx->error = 2;
         return 0;
     }
-    v->head = ctx->radar->head;
-    v->count = ctx->radar->count;
-    memcpy(&e->bindings.radar_vm, &ctx, 4);
-    bh_entity_set_query(pool(ctx), e, radar_query);
+    actor_vehicle_lifetime_context->head = ctx->radar->head;
+    actor_vehicle_lifetime_context->count = ctx->radar->count;
+    memcpy(&actor->bindings.radar_vm, &ctx, 4);
+    bh_entity_set_query(pool(ctx), actor, radar_query);
     return 1;
 }
-static int execute(BHScriptVMContext *ctx, BHEntity *node, BHEntity *target, BHScriptVMActor *a, BHScriptVMState *state)
+static int execute(BHScriptVMContext *ctx, BHEntity *node, BHEntity *target, BHScriptVMActor *script_vm_actor, BHScriptVMState *state)
 {
     BHEntity *entity, *effective;
     BHScriptVMActor *binding;
@@ -264,7 +264,7 @@ static int execute(BHScriptVMContext *ctx, BHEntity *node, BHEntity *target, BHS
     {
     case 0:
     case 16:
-        effective = state->opcode == 16 ? owner(a) : target;
+        effective = state->opcode == 16 ? owner(script_vm_actor) : target;
         binding = actor(ctx, effective);
         if (!binding)
         {
@@ -371,7 +371,7 @@ static int execute(BHScriptVMContext *ctx, BHEntity *node, BHEntity *target, BHS
         life.countdown = (float)args[0];
         if (state->opcode == 5)
         {
-            if (!delta(a, args + 1, 1.0 / 30.0, &life.delta))
+            if (!delta(script_vm_actor, args + 1, 1.0 / 30.0, &life.delta))
             {
                 ctx->error = 3;
                 return 0;
@@ -410,7 +410,7 @@ static int execute(BHScriptVMContext *ctx, BHEntity *node, BHEntity *target, BHS
         emitter.script_loaded = ctx->script_loading;
         emitter.countdown = (float)args[0];
         emitter.size = args[4];
-        if (!delta(a, args + 1, 1.0 / 30.0, &emitter.velocity))
+        if (!delta(script_vm_actor, args + 1, 1.0 / 30.0, &emitter.velocity))
         {
             ctx->error = 3;
             return 0;
@@ -473,16 +473,16 @@ static int execute(BHScriptVMContext *ctx, BHEntity *node, BHEntity *target, BHS
         sensor.countdown = rf((double)rand() * (state->opcode == 10 ? (1.0 / 131072.0) : (1.0 / 32768.0)));
         if (state->opcode != 10)
         {
-            if (!a->world)
+            if (!script_vm_actor->world)
             {
                 ctx->error = 1;
                 return 0;
             }
-            a->damage.world = a->world;
-            a->damage.player = ctx->sensors->player;
+            script_vm_actor->damage.world = script_vm_actor->world;
+            script_vm_actor->damage.player = ctx->sensors->player;
             damage.health = bh_script_sensor_damage(target);
             memcpy(&damage.owner, (char *)&target->placement.damage_source, 4);
-            if (!bh_block_damage_bind(pool(ctx), target, &a->damage, &damage, state->opcode == 22))
+            if (!bh_block_damage_bind(pool(ctx), target, &script_vm_actor->damage, &damage, state->opcode == 22))
             {
                 ctx->error = 2;
                 return 0;
@@ -547,7 +547,7 @@ static int execute(BHScriptVMContext *ctx, BHEntity *node, BHEntity *target, BHS
         for (i = 0; i < 3; ++i)
             ((float *)&velocity)[i] = rf((double)((float *)&velocity)[i] * t);
         angles = target->euler;
-        bh_target_construct_box(ctx->targets, &p, &angles, &velocity, &spin, a->resource, (float)args[3],
+        bh_target_construct_box(ctx->targets, &p, &angles, &velocity, &spin, script_vm_actor->resource, (float)args[3],
                                 (float)args[0],
                                 args[1] ? (BHEntity *)bh_field_u32(&target->placement.damage_source) : 0, args[2],
                                 &anchor, &minimum, &maximum, 0);
@@ -558,7 +558,7 @@ static int execute(BHScriptVMContext *ctx, BHEntity *node, BHEntity *target, BHS
             ctx->error = 1;
             return 0;
         }
-        binding = actor(ctx, owner(a));
+        binding = actor(ctx, owner(script_vm_actor));
         if (!binding || !binding->world || args[0] < 0 || args[0] > 65535)
         {
             ctx->error = 1;
@@ -578,7 +578,7 @@ static int execute(BHScriptVMContext *ctx, BHEntity *node, BHEntity *target, BHS
         }
         break;
     case 19:
-        effective = owner(a);
+        effective = owner(script_vm_actor);
         bh_field_store_u32(&effective->placement.city_id, (unsigned long)args[0]);
         break;
     case 20:
@@ -600,7 +600,7 @@ static int execute(BHScriptVMContext *ctx, BHEntity *node, BHEntity *target, BHS
             return 0;
         }
         d.x = d.y = d.z = 0;
-        switch (a->orientation)
+        switch (script_vm_actor->orientation)
         {
         case 0:
             d.z = 1;
@@ -621,7 +621,7 @@ static int execute(BHScriptVMContext *ctx, BHEntity *node, BHEntity *target, BHS
         bh_rail_wagon_spawn(ctx->rails, &target->position, &d);
         break;
     case 23:
-        binding = actor(ctx, owner(a));
+        binding = actor(ctx, owner(script_vm_actor));
         if (!binding || !binding->world || binding->world->navigation.count > 6)
         {
             ctx->error = 1;
@@ -660,22 +660,22 @@ static int execute(BHScriptVMContext *ctx, BHEntity *node, BHEntity *target, BHS
 void bh_script_vm_query(BHEntity *entity, void *packet)
 {
     BHScriptVMContext *ctx = context(entity);
-    BHScriptTimerPacket *p = (BHScriptTimerPacket *)packet;
-    BHScriptVMActor *a;
+    BHScriptTimerPacket *script_timer_packet = (BHScriptTimerPacket *)packet;
+    BHScriptVMActor *script_vm_actor;
     BHScriptVMState state;
     unsigned long i, generation;
     BHEntity *next;
     if (!ctx || !packet || !live(pool(ctx), entity))
         return;
     bh_script_vm_read(entity, &state);
-    if (p->event == 4 || (!state.loaded && p->event == 20))
+    if (script_timer_packet->event == 4 || (!state.loaded && script_timer_packet->event == 20))
     {
         bh_entity_release(pool(ctx), entity);
         return;
     }
-    if (p->event != 8)
+    if (script_timer_packet->event != 8)
         return;
-    if (ctx->depth >= 32 || !bh_math_environment_supported() || !(a = actor(ctx, p->actor)))
+    if (ctx->depth >= 32 || !bh_math_environment_supported() || !(script_vm_actor = actor(ctx, script_timer_packet->actor)))
     {
         ctx->error = 1;
         return;
@@ -694,12 +694,12 @@ void bh_script_vm_query(BHEntity *entity, void *packet)
                     --ctx->depth;
                     return;
                 }
-                state.args[i] = a->state->variables[state.selectors[i]];
+                state.args[i] = script_vm_actor->state->variables[state.selectors[i]];
                 entity->script_vm.args[i] = state.args[i];
             }
     }
     ++ctx->executed;
-    if (execute(ctx, entity, p->actor, a, &state) && live(pool(ctx), entity) && entity->generation == generation)
+    if (execute(ctx, entity, script_timer_packet->actor, script_vm_actor, &state) && live(pool(ctx), entity) && entity->generation == generation)
     {
         next = (BHEntity *)bh_field_u32(&entity->script_vm.next);
         if (next)

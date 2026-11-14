@@ -83,11 +83,11 @@ int bh_script_actor_route_advance(BHActorRouteContext *ctx, BHEntity *entity)
         outgoing = incoming;
         for (i = 0; i < world->navigation.count; ++i)
         {
-            const BHPortal *p = world->navigation.portals + i;
-            if ((long)i == incoming || !p->neighbor ||
-                p->direction != (world->navigation.portals[incoming].direction ^ 4UL))
+            const BHPortal *portal = world->navigation.portals + i;
+            if ((long)i == incoming || !portal->neighbor ||
+                portal->direction != (world->navigation.portals[incoming].direction ^ 4UL))
                 continue;
-            if (!bh_portal_center(p, &end))
+            if (!bh_portal_center(portal, &end))
                 return error(ctx, BH_ACTOR_ROUTE_TOPOLOGY);
             delta.x = rounded((double)end.x - start.x);
             delta.y = rounded((double)end.y - start.y);

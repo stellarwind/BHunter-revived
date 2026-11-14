@@ -71,11 +71,11 @@ int bh_script_explosion_write(BHEntity *entity, const BHScriptExplosionState *st
     memcpy(&entity->explosion.visual_only, &state->visual_only, 4);
     return 1;
 }
-static int valid(BHScriptExplosionContext *ctx, const BHVec3 *p, float duration, float magnitude, float probability)
+static int valid(BHScriptExplosionContext *ctx, const BHVec3 *vector, float duration, float magnitude, float probability)
 {
     return ctx && ctx->pool && ctx->queue && ctx->queue->commands && ctx->sound && ctx->debris && ctx->flash &&
            ctx->debris->pool == ctx->pool && ctx->debris->queue == ctx->queue && ctx->flash->pool == ctx->pool &&
-           ctx->flash->queue == ctx->queue && p && _finite(p->x) && _finite(p->y) && _finite(p->z) &&
+           ctx->flash->queue == ctx->queue && vector && _finite(vector->x) && _finite(vector->y) && _finite(vector->z) &&
            _finite(duration) && _finite(magnitude) && _finite(probability) && magnitude >= 0 &&
            bh_math_environment_supported();
 }
@@ -83,7 +83,7 @@ static BHEntity *create(BHScriptExplosionContext *ctx, const BHVec3 *p, float du
                         float probability, unsigned long sound, unsigned long target, int secondary, int visual_only)
 {
     BHScriptExplosionState state;
-    BHEntity *flash, *e;
+    BHEntity *flash, *entity;
     BHVec3 zero = {0, 0, 0};
     BlastPacket blast;
     DamagePacket damage;
@@ -105,14 +105,14 @@ static BHEntity *create(BHScriptExplosionContext *ctx, const BHVec3 *p, float du
         flash->position = *p;
         bh_flash_flare_bind(ctx->flash, flash, .1f, 250, 4);
     }
-    e = bh_entity_acquire(ctx->pool);
-    if (!e)
+    entity = bh_entity_acquire(ctx->pool);
+    if (!entity)
     {
         ctx->error = BH_EXPLOSION_POOL;
         return NULL;
     }
-    generation = e->generation;
-    e->position = *p;
+    generation = entity->generation;
+    entity->position = *p;
     state.age = 0;
     state.duration = duration;
     state.radius = 0;
@@ -140,11 +140,11 @@ static BHEntity *create(BHScriptExplosionContext *ctx, const BHVec3 *p, float du
         r = rand();
         bh_round_float(state.spin + i, ((double)r - 16384.0) * .0000025);
     }
-    bh_script_explosion_write(e, &state);
-    memcpy(&e->bindings.explosion, &ctx, 4);
-    e->refresh = bh_script_explosion_refresh;
-    e->step = bh_script_explosion_tick;
-    bh_entity_set_query(ctx->pool, e, bh_actor_target_removed);
+    bh_script_explosion_write(entity, &state);
+    memcpy(&entity->bindings.explosion, &ctx, 4);
+    entity->refresh = bh_script_explosion_refresh;
+    entity->step = bh_script_explosion_tick;
+    bh_entity_set_query(ctx->pool, entity, bh_actor_target_removed);
     blast.event = 1;
     blast.point = *p;
     bh_round_float(&square, (double)magnitude * magnitude);
@@ -152,7 +152,7 @@ static BHEntity *create(BHScriptExplosionContext *ctx, const BHVec3 *p, float du
     bh_round_float(&blast.radius, (double)magnitude * 5.0);
     if (!visual_only && !bh_entities_query(ctx->pool, 0, 0, NULL, 0, &blast))
         ctx->error = BH_EXPLOSION_QUERY;
-    if (!live(ctx, e, generation))
+    if (!live(ctx, entity, generation))
         return NULL;
     bh_round_float(&size, (double)magnitude * .125);
     bh_round_float(&speed, (double)magnitude * 3.0);
@@ -164,13 +164,13 @@ static BHEntity *create(BHScriptExplosionContext *ctx, const BHVec3 *p, float du
         bh_script_debris_create(ctx->debris, (long)count, p, 4, speed, size);
     if (visual_only)
         ctx->debris->origin_tag = origin_tag;
-    if (!live(ctx, e, generation))
+    if (!live(ctx, entity, generation))
         return NULL;
-    memcpy(&state.origin_tag, &e->explosion.origin_tag, 4);
+    memcpy(&state.origin_tag, &entity->explosion.origin_tag, 4);
     if (!visual_only && !state.origin_tag)
     {
         damage.event = 0;
-        memcpy(&damage.target, &e->explosion.target_identity, 4);
+        memcpy(&damage.target, &entity->explosion.target_identity, 4);
         damage.amount = secondary ? .4f : .6f;
         if (secondary)
             bh_round_float(&radius, (double)square * .05);
@@ -178,7 +178,7 @@ static BHEntity *create(BHScriptExplosionContext *ctx, const BHVec3 *p, float du
             bh_round_float(&radius, (double)magnitude + magnitude);
         if (!bh_entities_query(ctx->pool, 0, 0, p, radius, &damage))
             ctx->error = BH_EXPLOSION_QUERY;
-        if (!live(ctx, e, generation))
+        if (!live(ctx, entity, generation))
             return NULL;
         if (secondary)
         {
@@ -186,11 +186,11 @@ static BHEntity *create(BHScriptExplosionContext *ctx, const BHVec3 *p, float du
             bh_round_float(&radius, (double)magnitude * .5);
             if (!bh_entities_query(ctx->pool, 0, 0, p, radius, &damage))
                 ctx->error = BH_EXPLOSION_QUERY;
-            if (!live(ctx, e, generation))
+            if (!live(ctx, entity, generation))
                 return NULL;
         }
     }
-    return e;
+    return entity;
 }
 BHEntity *bh_script_explosion_create(BHScriptExplosionContext *ctx, const BHVec3 *p, float duration, float magnitude,
                                      float probability, unsigned long target)

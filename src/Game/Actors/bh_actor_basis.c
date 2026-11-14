@@ -24,15 +24,15 @@ static void add(BHVec3 *sum, const BHVec3 *value)
     bh_round_float(&sum->y, (double)value->y + sum->y);
     bh_round_float(&sum->z, (double)value->z + sum->z);
 }
-static double reciprocal(const BHVec3 *v)
+static double reciprocal(const BHVec3 *vector)
 {
-    return 1 / sqrt(((double)v->x * v->x + (double)v->y * v->y) + (double)v->z * v->z);
+    return 1 / sqrt(((double)vector->x * vector->x + (double)vector->y * vector->y) + (double)vector->z * vector->z);
 }
-static void scaled(const BHVec3 *v, double scale, BHVec3 *out)
+static void scaled(const BHVec3 *vector, double scale, BHVec3 *out)
 {
-    bh_round_float(&out->x, (double)v->x * scale);
-    bh_round_float(&out->y, (double)v->y * scale);
-    bh_round_float(&out->z, (double)v->z * scale);
+    bh_round_float(&out->x, (double)vector->x * scale);
+    bh_round_float(&out->y, (double)vector->y * scale);
+    bh_round_float(&out->z, (double)vector->z * scale);
 }
 static void groups(BHActorBasisContext *ctx, const long *definition, BHActorBasisGroup *out,
                    BHActorBasisIndices *indices, BHActorBasisScale *scales, unsigned long *count)

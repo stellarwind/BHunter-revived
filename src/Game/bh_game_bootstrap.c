@@ -32,100 +32,100 @@ typedef struct BHBootstrapRowSpec
 #include "bh_bootstrap_data.h"
 #define N(a) (sizeof(a) / sizeof((a)[0]))
 static_assert(sizeof(BHMenuMissionRow) == sizeof(BHMenuMissionAction), "mission action alias");
-static int fail(BHGameBootstrap *c, int error)
+static int fail(BHGameBootstrap *game_bootstrap, int error)
 {
-    c->error = error;
+    game_bootstrap->error = error;
     return 0;
 }
-unsigned long bh_bootstrap_value(const BHGameBootstrap *c, unsigned long identity)
+unsigned long bh_bootstrap_value(const BHGameBootstrap *game_bootstrap, unsigned long identity)
 {
     unsigned long i;
-    if (c)
-        for (i = 0; i < c->value_count; ++i)
-            if (c->values[i].identity == identity)
-                return c->values[i].value;
+    if (game_bootstrap)
+        for (i = 0; i < game_bootstrap->value_count; ++i)
+            if (game_bootstrap->values[i].identity == identity)
+                return game_bootstrap->values[i].value;
     return 0;
 }
-static int store(BHGameBootstrap *c, unsigned long identity, unsigned long value, unsigned long kind)
+static int store(BHGameBootstrap *game_bootstrap, unsigned long identity, unsigned long value, unsigned long kind)
 {
     unsigned long i;
-    for (i = 0; i < c->value_count; ++i)
-        if (c->values[i].identity == identity)
+    for (i = 0; i < game_bootstrap->value_count; ++i)
+        if (game_bootstrap->values[i].identity == identity)
             break;
-    if (i == N(c->values))
-        return fail(c, 2);
-    if (i == c->value_count)
-        ++c->value_count;
-    c->values[i].identity = identity;
-    c->values[i].value = value;
-    c->values[i].kind = kind;
-    for (i = 0; i < c->binding_count; ++i)
-        if (c->bindings[i].identity == identity)
+    if (i == N(game_bootstrap->values))
+        return fail(game_bootstrap, 2);
+    if (i == game_bootstrap->value_count)
+        ++game_bootstrap->value_count;
+    game_bootstrap->values[i].identity = identity;
+    game_bootstrap->values[i].value = value;
+    game_bootstrap->values[i].kind = kind;
+    for (i = 0; i < game_bootstrap->binding_count; ++i)
+        if (game_bootstrap->bindings[i].identity == identity)
         {
-            if (!c->bindings[i].destination)
-                return fail(c, 1);
-            *c->bindings[i].destination = value;
+            if (!game_bootstrap->bindings[i].destination)
+                return fail(game_bootstrap, 1);
+            *game_bootstrap->bindings[i].destination = value;
         }
     return 1;
 }
 static int scale_captain(BHGameBootstrap *);
-static int resources(BHGameBootstrap *c, const BHBootstrapResource *ops, unsigned long count)
+static int resources(BHGameBootstrap *game_bootstrap, const BHBootstrapResource *ops, unsigned long count)
 {
     unsigned long i, v;
-    const BHBootstrapResource *r;
+    const BHBootstrapResource *bootstrap_resource;
     for (i = 0; i < count; ++i)
     {
-        r = ops + i;
+        bootstrap_resource = ops + i;
         v = 0;
-        switch (r->kind)
+        switch (bootstrap_resource->kind)
         {
         case 1:
-            if (!c->textures)
-                return fail(c, 1);
-            v = (unsigned long)bh_texture_image_load(c->textures, r->name);
+            if (!game_bootstrap->textures)
+                return fail(game_bootstrap, 1);
+            v = (unsigned long)bh_texture_image_load(game_bootstrap->textures, bootstrap_resource->name);
             if (!v)
-                return fail(c, 3);
+                return fail(game_bootstrap, 3);
             break;
         case 2:
-            if (!c->sounds)
-                return fail(c, 1);
-            v = bh_sound_load(c->sounds, r->name, r->range, r->level, (unsigned short)r->streaming, (float)r->argument);
+            if (!game_bootstrap->sounds)
+                return fail(game_bootstrap, 1);
+            v = bh_sound_load(game_bootstrap->sounds, bootstrap_resource->name, bootstrap_resource->range, bootstrap_resource->level, (unsigned short)bootstrap_resource->streaming, (float)bootstrap_resource->argument);
             if (v == BH_SOUND_INVALID)
-                return fail(c, 4);
+                return fail(game_bootstrap, 4);
             break;
         case 3:
-            if (!c->resources)
-                return fail(c, 1);
-            v = bh_render_resources_load_model(c->resources, r->name);
+            if (!game_bootstrap->resources)
+                return fail(game_bootstrap, 1);
+            v = bh_render_resources_load_model(game_bootstrap->resources, bootstrap_resource->name);
             if (!v)
-                return fail(c, 5);
+                return fail(game_bootstrap, 5);
             break;
         case 4:
-            v = bh_bootstrap_value(c, (unsigned long)r->argument);
-            ++c->aliases;
+            v = bh_bootstrap_value(game_bootstrap, (unsigned long)bootstrap_resource->argument);
+            ++game_bootstrap->aliases;
             break;
         case 5:
             v = 0;
             break;
         case 6:
-            if (!c->sounds || !c->sounds->queue)
-                return fail(c, 1);
-            bh_sound_set_voice_limit(c->sounds->queue, r->identity);
+            if (!game_bootstrap->sounds || !game_bootstrap->sounds->queue)
+                return fail(game_bootstrap, 1);
+            bh_sound_set_voice_limit(game_bootstrap->sounds->queue, bootstrap_resource->identity);
             continue;
         case 9:
-            if (!scale_captain(c))
+            if (!scale_captain(game_bootstrap))
                 return 0;
             continue;
         case 7:
-            if (!bh_texture_policy_set(c->textures, r->identity, (unsigned long)r->argument))
-                return fail(c, 3);
+            if (!bh_texture_policy_set(game_bootstrap->textures, bootstrap_resource->identity, (unsigned long)bootstrap_resource->argument))
+                return fail(game_bootstrap, 3);
             continue;
         default:
-            return fail(c, 1);
+            return fail(game_bootstrap, 1);
         }
-        if (!store(c, r->identity, v, r->kind))
+        if (!store(game_bootstrap, bootstrap_resource->identity, v, bootstrap_resource->kind))
             return 0;
-        ++c->resources_loaded;
+        ++game_bootstrap->resources_loaded;
     }
     return 1;
 }
@@ -153,50 +153,50 @@ int bh_bootstrap_resources(BHGameBootstrap *c, unsigned long stage)
         return fail(c, 1);
     }
 }
-static BHBootstrapMenu *menu(BHGameBootstrap *c, unsigned long id)
+static BHBootstrapMenu *menu(BHGameBootstrap *game_bootstrap, unsigned long id)
 {
     unsigned long i;
     for (i = 0; i < BH_BOOTSTRAP_MENUS; ++i)
-        if (c->menus[i].identity == id)
-            return c->menus + i;
+        if (game_bootstrap->menus[i].identity == id)
+            return game_bootstrap->menus + i;
     return 0;
 }
 static BHBootstrapMenu *action_menu(BHMenuActions *a)
 {
     return (BHBootstrapMenu *)((char *)a - offsetof(BHBootstrapMenu, actions));
 }
-static void submenu_first(BHMenuActions *a, long index)
+static void submenu_first(BHMenuActions *menu_actions, long index)
 {
     (void)index;
-    bh_menu_submenu_first(a->settings);
+    bh_menu_submenu_first(menu_actions->settings);
 }
-static void network_ship_picker(BHMenuActions *a, long index)
+static void network_ship_picker(BHMenuActions *menu_actions, long index)
 {
-    BHMenuRuntime *picker = action_menu(a)->owner->runtime->network_ship_menu;
+    BHMenuRuntime *picker = action_menu(menu_actions)->owner->runtime->network_ship_menu;
     (void)index;
-    if (a->network_ship)
+    if (menu_actions->network_ship)
     {
-        picker->actions->menu->selection = *a->network_ship;
-        picker->actions->menu->display_selection = (float)*a->network_ship;
+        picker->actions->menu->selection = *menu_actions->network_ship;
+        picker->actions->menu->display_selection = (float)*menu_actions->network_ship;
     }
 }
-static void network_ship_select(BHMenuActions *a, long index)
+static void network_ship_select(BHMenuActions *menu_actions, long index)
 {
-    if (a->network_ship)
-        *a->network_ship = index;
+    if (menu_actions->network_ship)
+        *menu_actions->network_ship = index;
 }
-static void save(BHMenuActions *a, long index)
+static void save(BHMenuActions *menu_actions, long index)
 {
     (void)index;
-    if (!bh_config_save(a->config, a->save_path))
-        a->error = 1;
+    if (!bh_config_save(menu_actions->config, menu_actions->save_path))
+        menu_actions->error = 1;
 }
-static void quit(BHMenuActions *a, long index)
+static void quit(BHMenuActions *menu_actions, long index)
 {
-    BHBootstrapMenu *m = action_menu(a);
+    BHBootstrapMenu *bootstrap_menu = action_menu(menu_actions);
     (void)index;
-    if (!m->owner->transition || !bh_menu_quit_begin(m->owner->transition))
-        a->error = 1;
+    if (!bootstrap_menu->owner->transition || !bh_menu_quit_begin(bootstrap_menu->owner->transition))
+        menu_actions->error = 1;
 }
 static BHMenuAction action(unsigned long id)
 {
@@ -252,18 +252,18 @@ static BHMenuMissionAction edit_action(unsigned long id)
         return 0;
     }
 }
-static void row_refresh(BHMenuSettingsMenu *s, long row)
+static void row_refresh(BHMenuSettingsMenu *menu_settings_menu, long row)
 {
-    BHBootstrapMenu *m = (BHBootstrapMenu *)s->user;
+    BHBootstrapMenu *bootstrap_menu = (BHBootstrapMenu *)menu_settings_menu->user;
     BHMenuMissionAction fn = 0;
-    if (!m || row < 0 || (unsigned long)row >= s->row_count)
+    if (!bootstrap_menu || row < 0 || (unsigned long)row >= menu_settings_menu->row_count)
         return;
-    m->edits.menu = s;
-    m->edits.rows = &m->object.rows;
-    switch (m->refresh[row])
+    bootstrap_menu->edits.menu = menu_settings_menu;
+    bootstrap_menu->edits.rows = &bootstrap_menu->object.rows;
+    switch (bootstrap_menu->refresh[row])
     {
     case 0x42d920:
-        bh_menu_network_address(&m->actions, row);
+        bh_menu_network_address(&bootstrap_menu->actions, row);
         return;
     case 0x42d1b0:
         fn = bh_menu_edit_video;
@@ -288,164 +288,164 @@ static void row_refresh(BHMenuSettingsMenu *s, long row)
         break;
     }
     if (fn)
-        fn(&m->edits, row);
+        fn(&bootstrap_menu->edits, row);
 }
 static void initial_refresh(void *s, long index)
 {
     row_refresh((BHMenuSettingsMenu *)s, index);
 }
-static int add_row(BHGameBootstrap *c, const BHBootstrapRowSpec *r)
+static int add_row(BHGameBootstrap *game_bootstrap, const BHBootstrapRowSpec *bootstrap_row_spec)
 {
-    BHBootstrapMenu *m = menu(c, r->menu), *destination;
+    BHBootstrapMenu *bootstrap_menu = menu(game_bootstrap, bootstrap_row_spec->menu), *destination;
     unsigned long row;
     unsigned char body[512], *p = 0;
     BHMenuRow *made;
-    if (!m)
-        return fail(c, 1);
-    row = m->object.rows.count;
+    if (!bootstrap_menu)
+        return fail(game_bootstrap, 1);
+    row = bootstrap_menu->object.rows.count;
     if (row >= BH_BOOTSTRAP_ROWS)
-        return fail(c, 2);
-    if (r->body)
+        return fail(game_bootstrap, 2);
+    if (bootstrap_row_spec->body)
     {
-        const char *text = r->body;
+        const char *text = bootstrap_row_spec->body;
         if (strlen(text) >= sizeof(body))
-            return fail(c, 2);
+            return fail(game_bootstrap, 2);
         strcpy((char *)body, text);
         p = body;
     }
-    destination = r->destination ? menu(c, r->destination) : 0;
-    if (r->destination && !destination)
-        return fail(c, 1);
-    m->action[row] = action(r->action);
-    m->edit_action[row] = edit_action(r->action);
-    if (r->action && !m->action[row] && !m->edit_action[row])
-        return fail(c, 6);
-    made = bh_menu_object_add_row(&m->object, bh_bootstrap_value(c, r->button), (const unsigned char *)r->title, p,
-                                  r->destination, r->action, r->refresh ? initial_refresh : 0);
+    destination = bootstrap_row_spec->destination ? menu(game_bootstrap, bootstrap_row_spec->destination) : 0;
+    if (bootstrap_row_spec->destination && !destination)
+        return fail(game_bootstrap, 1);
+    bootstrap_menu->action[row] = action(bootstrap_row_spec->action);
+    bootstrap_menu->edit_action[row] = edit_action(bootstrap_row_spec->action);
+    if (bootstrap_row_spec->action && !bootstrap_menu->action[row] && !bootstrap_menu->edit_action[row])
+        return fail(game_bootstrap, 6);
+    made = bh_menu_object_add_row(&bootstrap_menu->object, bh_bootstrap_value(game_bootstrap, bootstrap_row_spec->button), (const unsigned char *)bootstrap_row_spec->title, p,
+                                  bootstrap_row_spec->destination, bootstrap_row_spec->action, bootstrap_row_spec->refresh ? initial_refresh : 0);
     if (!made)
-        return fail(c, 7);
-    m->destinations[row] = destination ? &destination->runtime : 0;
-    m->refresh[row] = r->refresh;
-    m->settings_rows[row].refresh = r->refresh ? row_refresh : 0;
-    m->row_pointers[row] = &m->settings_rows[row];
-    m->settings.row_count = m->object.rows.count;
-    m->present_rows[row].row = made;
-    m->present_rows[row].image_handle = (unsigned long)made->image;
-    m->present.row_count = m->object.rows.count;
-    ++c->rows_created;
+        return fail(game_bootstrap, 7);
+    bootstrap_menu->destinations[row] = destination ? &destination->runtime : 0;
+    bootstrap_menu->refresh[row] = bootstrap_row_spec->refresh;
+    bootstrap_menu->settings_rows[row].refresh = bootstrap_row_spec->refresh ? row_refresh : 0;
+    bootstrap_menu->row_pointers[row] = &bootstrap_menu->settings_rows[row];
+    bootstrap_menu->settings.row_count = bootstrap_menu->object.rows.count;
+    bootstrap_menu->present_rows[row].row = made;
+    bootstrap_menu->present_rows[row].image_handle = (unsigned long)made->image;
+    bootstrap_menu->present.row_count = bootstrap_menu->object.rows.count;
+    ++game_bootstrap->rows_created;
     return 1;
 }
-int bh_bootstrap_menus(BHGameBootstrap *c)
+int bh_bootstrap_menus(BHGameBootstrap *game_bootstrap)
 {
     unsigned long i, j;
-    BHBootstrapMenu *m;
-    if (!c || !c->pool || !c->inputs || !c->atlas || !c->text || !c->runtime || !c->actions || !c->edits)
-        return c ? fail(c, 1) : 0;
+    BHBootstrapMenu *bootstrap_menu;
+    if (!game_bootstrap || !game_bootstrap->pool || !game_bootstrap->inputs || !game_bootstrap->atlas || !game_bootstrap->text || !game_bootstrap->runtime || !game_bootstrap->actions || !game_bootstrap->edits)
+        return game_bootstrap ? fail(game_bootstrap, 1) : 0;
     for (i = 0; i < BH_BOOTSTRAP_MENUS; ++i)
     {
-        m = c->menus + i;
-        if (m->object.entity)
-            return fail(c, 1);
-        m->identity = menu_specs[i].identity;
-        m->owner = c;
-        m->actions = *c->actions;
-        m->edits = *c->edits;
-        if (!bh_menu_object_create(&m->object, c->pool, c->inputs, menu_specs[i].tag, "") ||
-            !bh_menu_object_rows_init(&m->object, c->atlas, c->text, m->rows, BH_BOOTSTRAP_ROWS))
-            return fail(c, 7);
-        m->root.menu = &m->settings;
-        m->root.row_actions = m->action;
-        m->root.action_count = BH_BOOTSTRAP_ROWS;
-        m->settings.rows = m->row_pointers;
-        m->settings.user = m;
-        m->actions.menu = &m->settings;
-        m->actions.rows = &m->object.rows;
-        m->edits.menu = &m->settings;
-        m->edits.rows = &m->object.rows;
-        if (c->present)
-            m->present = *c->present;
-        m->present.rows = m->present_rows;
-        m->runtime.context = c->runtime;
-        m->runtime.entity = m->object.entity;
-        m->runtime.actions = &m->root;
-        m->runtime.action_context = &m->actions;
-        m->runtime.edit_context = &m->edits;
-        m->runtime.edit_actions = m->edit_action;
-        m->runtime.destinations = m->destinations;
-        m->runtime.input = m->object.input;
-        m->runtime.present = &m->present;
-        m->runtime.pending_selection = -1;
-        m->runtime.back_selection = menu_backs[i];
-        m->runtime.slide_voice = BH_SOUND_INVALID;
-        m->runtime.waypoint = (long)menu_specs[i].tag;
-        ++c->menus_created;
+        bootstrap_menu = game_bootstrap->menus + i;
+        if (bootstrap_menu->object.entity)
+            return fail(game_bootstrap, 1);
+        bootstrap_menu->identity = menu_specs[i].identity;
+        bootstrap_menu->owner = game_bootstrap;
+        bootstrap_menu->actions = *game_bootstrap->actions;
+        bootstrap_menu->edits = *game_bootstrap->edits;
+        if (!bh_menu_object_create(&bootstrap_menu->object, game_bootstrap->pool, game_bootstrap->inputs, menu_specs[i].tag, "") ||
+            !bh_menu_object_rows_init(&bootstrap_menu->object, game_bootstrap->atlas, game_bootstrap->text, bootstrap_menu->rows, BH_BOOTSTRAP_ROWS))
+            return fail(game_bootstrap, 7);
+        bootstrap_menu->root.menu = &bootstrap_menu->settings;
+        bootstrap_menu->root.row_actions = bootstrap_menu->action;
+        bootstrap_menu->root.action_count = BH_BOOTSTRAP_ROWS;
+        bootstrap_menu->settings.rows = bootstrap_menu->row_pointers;
+        bootstrap_menu->settings.user = bootstrap_menu;
+        bootstrap_menu->actions.menu = &bootstrap_menu->settings;
+        bootstrap_menu->actions.rows = &bootstrap_menu->object.rows;
+        bootstrap_menu->edits.menu = &bootstrap_menu->settings;
+        bootstrap_menu->edits.rows = &bootstrap_menu->object.rows;
+        if (game_bootstrap->present)
+            bootstrap_menu->present = *game_bootstrap->present;
+        bootstrap_menu->present.rows = bootstrap_menu->present_rows;
+        bootstrap_menu->runtime.context = game_bootstrap->runtime;
+        bootstrap_menu->runtime.entity = bootstrap_menu->object.entity;
+        bootstrap_menu->runtime.actions = &bootstrap_menu->root;
+        bootstrap_menu->runtime.action_context = &bootstrap_menu->actions;
+        bootstrap_menu->runtime.edit_context = &bootstrap_menu->edits;
+        bootstrap_menu->runtime.edit_actions = bootstrap_menu->edit_action;
+        bootstrap_menu->runtime.destinations = bootstrap_menu->destinations;
+        bootstrap_menu->runtime.input = bootstrap_menu->object.input;
+        bootstrap_menu->runtime.present = &bootstrap_menu->present;
+        bootstrap_menu->runtime.pending_selection = -1;
+        bootstrap_menu->runtime.back_selection = menu_backs[i];
+        bootstrap_menu->runtime.slide_voice = BH_SOUND_INVALID;
+        bootstrap_menu->runtime.waypoint = (long)menu_specs[i].tag;
+        ++game_bootstrap->menus_created;
     }
     for (i = 0; i < N(row_specs); ++i)
-        if (!add_row(c, row_specs + i))
+        if (!add_row(game_bootstrap, row_specs + i))
             return 0;
 
     for (i = 0; i < BH_BOOTSTRAP_MENUS; ++i)
     {
         for (j = 0; j < 9; ++j)
-            c->menus[i].edits.mission_rows[j] = (BHMenuMissionRow *)(menu(c, 0x4ce450)->edit_action + j);
-        c->menus[i].edits.mission_menu = &menu(c, 0x4ce450)->settings;
+            game_bootstrap->menus[i].edits.mission_rows[j] = (BHMenuMissionRow *)(menu(game_bootstrap, 0x4ce450)->edit_action + j);
+        game_bootstrap->menus[i].edits.mission_menu = &menu(game_bootstrap, 0x4ce450)->settings;
     }
-    if (c->actions->settings)
-        c->actions->settings->ship_menu = &menu(c, 0x4cdc9c)->settings;
-    c->runtime->root = &menu(c, 0x495e40)->runtime;
-    c->runtime->network_menu = &menu(c, 0x4d1488)->runtime;
-    c->runtime->network_ship_menu = &menu(c, 0x4cdca0)->runtime;
-    c->runtime->ship_menu = &menu(c, 0x4cdc9c)->runtime;
+    if (game_bootstrap->actions->settings)
+        game_bootstrap->actions->settings->ship_menu = &menu(game_bootstrap, 0x4cdc9c)->settings;
+    game_bootstrap->runtime->root = &menu(game_bootstrap, 0x495e40)->runtime;
+    game_bootstrap->runtime->network_menu = &menu(game_bootstrap, 0x4d1488)->runtime;
+    game_bootstrap->runtime->network_ship_menu = &menu(game_bootstrap, 0x4cdca0)->runtime;
+    game_bootstrap->runtime->ship_menu = &menu(game_bootstrap, 0x4cdc9c)->runtime;
     for (i = 0; i < BH_BOOTSTRAP_MENUS; ++i)
     {
-        m = c->menus + i;
-        if (!bh_menu_runtime_bind(&m->runtime))
-            return fail(c, 8);
-        m->object.entity->step = 0;
-        m->object.entity->refresh = 0;
+        bootstrap_menu = game_bootstrap->menus + i;
+        if (!bh_menu_runtime_bind(&bootstrap_menu->runtime))
+            return fail(game_bootstrap, 8);
+        bootstrap_menu->object.entity->step = 0;
+        bootstrap_menu->object.entity->refresh = 0;
     }
-    m = menu(c, 0x495e40);
-    m->runtime.entity->step = bh_menu_runtime_step_entity;
-    m->runtime.entity->refresh = bh_menu_runtime_refresh_entity;
-    m->runtime.distance = 100;
-    m->runtime.exiting = 0;
-    if (m->runtime.waypoint >= 0)
-        *c->runtime->waypoint = m->runtime.waypoint;
-    if (!bh_input_set_enabled(m->runtime.input, c->snapshot, 1))
-        return fail(c, 8);
-    for (i = 0; i < m->settings.row_count; ++i)
-        if (m->settings_rows[i].refresh)
-            m->settings_rows[i].refresh(&m->settings, (long)i);
-    for (i = 0; i < m->settings.row_count; ++i)
-        if (m->destinations[m->settings.selection] || m->action[m->settings.selection] ||
-            m->edit_action[m->settings.selection])
+    bootstrap_menu = menu(game_bootstrap, 0x495e40);
+    bootstrap_menu->runtime.entity->step = bh_menu_runtime_step_entity;
+    bootstrap_menu->runtime.entity->refresh = bh_menu_runtime_refresh_entity;
+    bootstrap_menu->runtime.distance = 100;
+    bootstrap_menu->runtime.exiting = 0;
+    if (bootstrap_menu->runtime.waypoint >= 0)
+        *game_bootstrap->runtime->waypoint = bootstrap_menu->runtime.waypoint;
+    if (!bh_input_set_enabled(bootstrap_menu->runtime.input, game_bootstrap->snapshot, 1))
+        return fail(game_bootstrap, 8);
+    for (i = 0; i < bootstrap_menu->settings.row_count; ++i)
+        if (bootstrap_menu->settings_rows[i].refresh)
+            bootstrap_menu->settings_rows[i].refresh(&bootstrap_menu->settings, (long)i);
+    for (i = 0; i < bootstrap_menu->settings.row_count; ++i)
+        if (bootstrap_menu->destinations[bootstrap_menu->settings.selection] || bootstrap_menu->action[bootstrap_menu->settings.selection] ||
+            bootstrap_menu->edit_action[bootstrap_menu->settings.selection])
             break;
         else
-            m->settings.selection = (m->settings.selection + 1) % m->settings.row_count;
-    if (i == m->settings.row_count)
-        return fail(c, 8);
+            bootstrap_menu->settings.selection = (bootstrap_menu->settings.selection + 1) % bootstrap_menu->settings.row_count;
+    if (i == bootstrap_menu->settings.row_count)
+        return fail(game_bootstrap, 8);
     return 1;
 }
-static int font(BHGameBootstrap *c, BHAtlasPage **page, unsigned long identity, unsigned long size)
+static int font(BHGameBootstrap *game_bootstrap, BHAtlasPage **page, unsigned long identity, unsigned long size)
 {
-    *page = bh_atlas_page_create(c->atlas, "textures\\tvfont.pcx", size);
-    return *page && store(c, identity, (unsigned long)bh_atlas_page_image(*page), 1);
+    *page = bh_atlas_page_create(game_bootstrap->atlas, "textures\\tvfont.pcx", size);
+    return *page && store(game_bootstrap, identity, (unsigned long)bh_atlas_page_image(*page), 1);
 }
-static int scale_captain(BHGameBootstrap *c)
+static int scale_captain(BHGameBootstrap *game_bootstrap)
 {
-    const BHDrawResource *r = bh_render_resources_lookup(bh_bootstrap_value(c, 0x4d047c), c->resources);
+    const BHDrawResource *draw_resource = bh_render_resources_lookup(bh_bootstrap_value(game_bootstrap, 0x4d047c), game_bootstrap->resources);
     BHModelDrawCache *cache;
-    if (!r || r->tag != BH_RESOURCE_TAG_MODEL)
-        return fail(c, 5);
-    cache = r->data.model.instance->cache;
-    return bh_model_scale(r->data.model.instance->model, 3, 3, 3, &cache, 1) ? 1 : fail(c, 5);
+    if (!draw_resource || draw_resource->tag != BH_RESOURCE_TAG_MODEL)
+        return fail(game_bootstrap, 5);
+    cache = draw_resource->data.model.instance->cache;
+    return bh_model_scale(draw_resource->data.model.instance->model, 3, 3, 3, &cache, 1) ? 1 : fail(game_bootstrap, 5);
 }
 static void fade_refresh(BHEntity *e, void *packet)
 {
     (void)packet;
     bh_menu_music_fade(e);
 }
-int bh_game_bootstrap(BHGameBootstrap *c)
+int bh_game_bootstrap(BHGameBootstrap *game_bootstrap)
 {
     BHVFile *file;
     BHBootstrapResource r;
@@ -454,47 +454,47 @@ int bh_game_bootstrap(BHGameBootstrap *c)
     BHBootstrapMenu *m;
     const BHDrawResource *resource;
     BHModel *model;
-    BHEntity *e;
+    BHEntity *entity;
     unsigned long i;
     long width, index;
     static const char *confirm[3] = {"Abandon", "Game ?", "[Y/N]"};
     static const long ys[3] = {13, 26, 40};
-    if (!c || !c->textures || !c->resources || !c->sounds || !c->atlas || !c->text || !c->blocks || !c->world ||
-        !c->player || !c->pool || !c->inputs || !c->story || !c->availability || !c->panel || !c->transition)
-        return c ? fail(c, 1) : 0;
-    c->error = 0;
-    if (!bh_bootstrap_resources(c, 0) || !bh_texture_set_path(c->textures, "textures", 0) ||
-        !bh_collision_resource_path(&c->collision_path, "bsp", 0))
-        return fail(c, c->error ? c->error : 3);
-    c->blocks->collision_prefix = c->collision_path.prefix;
-    c->blocks->collision_search = c->collision_path.search;
-    c->player->prefix = c->collision_path.prefix;
-    c->player->search = c->collision_path.search;
-    if (bh_script_blocks_load(c->blocks, "bsp\\blocks.txt"))
+    if (!game_bootstrap || !game_bootstrap->textures || !game_bootstrap->resources || !game_bootstrap->sounds || !game_bootstrap->atlas || !game_bootstrap->text || !game_bootstrap->blocks || !game_bootstrap->world ||
+        !game_bootstrap->player || !game_bootstrap->pool || !game_bootstrap->inputs || !game_bootstrap->story || !game_bootstrap->availability || !game_bootstrap->panel || !game_bootstrap->transition)
+        return game_bootstrap ? fail(game_bootstrap, 1) : 0;
+    game_bootstrap->error = 0;
+    if (!bh_bootstrap_resources(game_bootstrap, 0) || !bh_texture_set_path(game_bootstrap->textures, "textures", 0) ||
+        !bh_collision_resource_path(&game_bootstrap->collision_path, "bsp", 0))
+        return fail(game_bootstrap, game_bootstrap->error ? game_bootstrap->error : 3);
+    game_bootstrap->blocks->collision_prefix = game_bootstrap->collision_path.prefix;
+    game_bootstrap->blocks->collision_search = game_bootstrap->collision_path.search;
+    game_bootstrap->player->prefix = game_bootstrap->collision_path.prefix;
+    game_bootstrap->player->search = game_bootstrap->collision_path.search;
+    if (bh_script_blocks_load(game_bootstrap->blocks, "bsp\\blocks.txt"))
     {
-        if (!bh_world_load(c->world, c->custom_level ? "level.lev" : "test.lev") ||
-            (c->custom_level && (!c->world->editor->world->count || c->world->skipped)))
-            return fail(c, 9);
-        first = (c->world->editor->world->count ? &c->world->editor->world->nodes[0]->placement.geometry : 0);
+        if (!bh_world_load(game_bootstrap->world, game_bootstrap->custom_level ? "level.lev" : "test.lev") ||
+            (game_bootstrap->custom_level && (!game_bootstrap->world->editor->world->count || game_bootstrap->world->skipped)))
+            return fail(game_bootstrap, 9);
+        first = (game_bootstrap->world->editor->world->count ? &game_bootstrap->world->editor->world->nodes[0]->placement.geometry : 0);
         if (first)
         {
-            if (!c->editor || !c->navigation || !bh_editor_input_setup(c->editor))
-                return fail(c, 1);
-            file = c->custom_level ? bh_vfile_open_level("level.pth") : bh_vfile_open("test.pth", "rb");
-            index = bh_navigation_build(c->navigation, first, c->world->editor->world->count, file);
+            if (!game_bootstrap->editor || !game_bootstrap->navigation || !bh_editor_input_setup(game_bootstrap->editor))
+                return fail(game_bootstrap, 1);
+            file = game_bootstrap->custom_level ? bh_vfile_open_level("level.pth") : bh_vfile_open("test.pth", "rb");
+            index = bh_navigation_build(game_bootstrap->navigation, first, game_bootstrap->world->editor->world->count, file);
             if (file)
                 bh_vfile_close(file);
             if (!index)
-                return fail(c, 9);
+                return fail(game_bootstrap, 9);
         }
     }
-    else if (c->custom_level)
-        return fail(c, 9);
-    if (c->compose && !c->compose(c, 1, c->compose_user))
-        return fail(c, 11);
+    else if (game_bootstrap->custom_level)
+        return fail(game_bootstrap, 9);
+    if (game_bootstrap->compose && !game_bootstrap->compose(game_bootstrap, 1, game_bootstrap->compose_user))
+        return fail(game_bootstrap, 11);
     bh_vfile_preload("bsp\\hun_lod1.BSP", "rb");
     bh_vfile_preload("bsp\\hun_lod2.BSP", "rb");
-    if (!bh_texture_set_path(c->textures, "textures", 0) || !bh_bootstrap_resources(c, 1))
+    if (!bh_texture_set_path(game_bootstrap->textures, "textures", 0) || !bh_bootstrap_resources(game_bootstrap, 1))
         return 0;
     r.kind = 1;
     r.identity = 0x4d1aa0;
@@ -502,44 +502,44 @@ int bh_game_bootstrap(BHGameBootstrap *c)
     r.range = r.level = 0;
     r.streaming = 0;
     r.argument = 0;
-    if (!resources(c, &r, 1) || !font(c, &c->confirmation, 0x4962f4, 64))
-        return fail(c, 7);
-    if (!bh_atlas_page_clear(c->atlas, c->confirmation, 0))
-        return fail(c, 7);
+    if (!resources(game_bootstrap, &r, 1) || !font(game_bootstrap, &game_bootstrap->confirmation, 0x4962f4, 64))
+        return fail(game_bootstrap, 7);
+    if (!bh_atlas_page_clear(game_bootstrap->atlas, game_bootstrap->confirmation, 0))
+        return fail(game_bootstrap, 7);
     for (i = 0; i < 3; ++i)
     {
-        width = bh_atlas_page_text_width(c->confirmation, (const unsigned char *)confirm[i]);
-        bh_atlas_page_cursor(c->confirmation, (long)(32 - (double)width * .5), ys[i]);
-        bh_atlas_page_text(c->confirmation, (const unsigned char *)confirm[i]);
+        width = bh_atlas_page_text_width(game_bootstrap->confirmation, (const unsigned char *)confirm[i]);
+        bh_atlas_page_cursor(game_bootstrap->confirmation, (long)(32 - (double)width * .5), ys[i]);
+        bh_atlas_page_text(game_bootstrap->confirmation, (const unsigned char *)confirm[i]);
     }
-    if (!bh_player_create(c->player, 0, &start, 1, bh_bootstrap_value(c, 0x4d1964)))
-        return fail(c, 10);
-    if (c->compose && !c->compose(c, 2, c->compose_user))
-        return fail(c, 11);
-    e = bh_entity_acquire(c->pool);
-    if (e)
+    if (!bh_player_create(game_bootstrap->player, 0, &start, 1, bh_bootstrap_value(game_bootstrap, 0x4d1964)))
+        return fail(game_bootstrap, 10);
+    if (game_bootstrap->compose && !game_bootstrap->compose(game_bootstrap, 2, game_bootstrap->compose_user))
+        return fail(game_bootstrap, 11);
+    entity = bh_entity_acquire(game_bootstrap->pool);
+    if (entity)
     {
-        c->story->player = *c->player->current;
-        if (!bh_mission_story_bind(c->story, e))
-            return fail(c, 10);
-        memset(c->availability, 0, 4 * 32 * 4);
+        game_bootstrap->story->player = *game_bootstrap->player->current;
+        if (!bh_mission_story_bind(game_bootstrap->story, entity))
+            return fail(game_bootstrap, 10);
+        memset(game_bootstrap->availability, 0, 4 * 32 * 4);
     }
-    if (!font(c, &c->menu_font, 0x4cdb9c, 128) || !bh_bootstrap_resources(c, 2))
-        return fail(c, c->error ? c->error : 7);
-    c->graffiti = bh_atlas_page_create(c->atlas, "textures\\graffiti.pcx", 128);
-    if (!c->graffiti || !store(c, 0x4d1910, (unsigned long)bh_atlas_page_image(c->graffiti), 1))
-        return fail(c, 7);
-    for (i = 0; i < c->blocks->count; ++i)
-        if (!_stricmp(c->blocks->blocks[i].definition.name, "graffiti.bsp"))
+    if (!font(game_bootstrap, &game_bootstrap->menu_font, 0x4cdb9c, 128) || !bh_bootstrap_resources(game_bootstrap, 2))
+        return fail(game_bootstrap, game_bootstrap->error ? game_bootstrap->error : 7);
+    game_bootstrap->graffiti = bh_atlas_page_create(game_bootstrap->atlas, "textures\\graffiti.pcx", 128);
+    if (!game_bootstrap->graffiti || !store(game_bootstrap, 0x4d1910, (unsigned long)bh_atlas_page_image(game_bootstrap->graffiti), 1))
+        return fail(game_bootstrap, 7);
+    for (i = 0; i < game_bootstrap->blocks->count; ++i)
+        if (!_stricmp(game_bootstrap->blocks->blocks[i].definition.name, "graffiti.bsp"))
         {
-            resource = bh_render_resources_lookup(c->blocks->blocks[i].resource, c->resources);
+            resource = bh_render_resources_lookup(game_bootstrap->blocks->blocks[i].resource, game_bootstrap->resources);
             if (!resource || resource->tag != BH_RESOURCE_TAG_MODEL)
-                return fail(c, 5);
+                return fail(game_bootstrap, 5);
             model = resource->data.model.instance->model;
             index = bh_model_image_find(model, "win.pcx");
-            bh_model_image_replace(model, index, bh_atlas_page_image(c->graffiti));
+            bh_model_image_replace(model, index, bh_atlas_page_image(game_bootstrap->graffiti));
         }
-    bh_text_queue_clear(c->text, c->graffiti, 0);
+    bh_text_queue_clear(game_bootstrap->text, game_bootstrap->graffiti, 0);
     {
         const char *name = bh_game_settings_player_name();
         if (!*name)
@@ -549,64 +549,64 @@ int bh_game_bootstrap(BHGameBootstrap *c)
                 name = getenv("HOSTNAME");
             if (!name || !*name)
                 name = "BHunter";
-            strncpy(c->computer_name, name, sizeof(c->computer_name) - 1);
-            c->computer_name[sizeof(c->computer_name) - 1] = 0;
-            name = c->computer_name;
+            strncpy(game_bootstrap->computer_name, name, sizeof(game_bootstrap->computer_name) - 1);
+            game_bootstrap->computer_name[sizeof(game_bootstrap->computer_name) - 1] = 0;
+            name = game_bootstrap->computer_name;
         }
-        strncpy(c->player_name, name, sizeof(c->player_name) - 1);
-        c->player_name[sizeof(c->player_name) - 1] = 0;
+        strncpy(game_bootstrap->player_name, name, sizeof(game_bootstrap->player_name) - 1);
+        game_bootstrap->player_name[sizeof(game_bootstrap->player_name) - 1] = 0;
     }
-    c->all_keys = bh_player_input_create(c->inputs, 0);
-    if (!c->all_keys)
-        return fail(c, 10);
+    game_bootstrap->all_keys = bh_player_input_create(game_bootstrap->inputs, 0);
+    if (!game_bootstrap->all_keys)
+        return fail(game_bootstrap, 10);
     for (i = 0; i < 255; ++i)
-        bh_player_input_bind_key(c->all_keys, (long)i, "", 0, 0, (unsigned short)i);
-    if (c->compose && !c->compose(c, 5, c->compose_user))
-        return fail(c, 11);
-    if ((!c->flyby || !bh_flyby_construct(c->flyby)) || !bh_bootstrap_menus(c))
-        return fail(c, c->error ? c->error : 10);
-    if (c->compose && !c->compose(c, 3, c->compose_user))
-        return fail(c, 11);
-    if (!c->transition->cd_ready)
+        bh_player_input_bind_key(game_bootstrap->all_keys, (long)i, "", 0, 0, (unsigned short)i);
+    if (game_bootstrap->compose && !game_bootstrap->compose(game_bootstrap, 5, game_bootstrap->compose_user))
+        return fail(game_bootstrap, 11);
+    if ((!game_bootstrap->flyby || !bh_flyby_construct(game_bootstrap->flyby)) || !bh_bootstrap_menus(game_bootstrap))
+        return fail(game_bootstrap, game_bootstrap->error ? game_bootstrap->error : 10);
+    if (game_bootstrap->compose && !game_bootstrap->compose(game_bootstrap, 3, game_bootstrap->compose_user))
+        return fail(game_bootstrap, 11);
+    if (!game_bootstrap->transition->cd_ready)
     {
-        e = bh_entity_acquire(c->pool);
-        if (!e || !bh_menu_transition_bind(c->transition, e, 2, 0))
-            return fail(c, 10);
-        c->transition->music = e;
-        e->step = bh_menu_music_tick;
+        entity = bh_entity_acquire(game_bootstrap->pool);
+        if (!entity || !bh_menu_transition_bind(game_bootstrap->transition, entity, 2, 0))
+            return fail(game_bootstrap, 10);
+        game_bootstrap->transition->music = entity;
+        entity->step = bh_menu_music_tick;
     }
     r.identity = 0x4d4424;
     r.name = "win.bmp";
-    if (!resources(c, &r, 1))
+    if (!resources(game_bootstrap, &r, 1))
         return 0;
-    e = bh_entity_acquire(c->pool);
-    if (e)
+    entity = bh_entity_acquire(game_bootstrap->pool);
+    if (entity)
     {
-        if (!bh_menu_transition_bind(c->transition, e, 2, 0))
-            return fail(c, 10);
-        e->step = bh_menu_fade_expiry;
-        e->refresh = fade_refresh;
+        if (!bh_menu_transition_bind(game_bootstrap->transition, entity, 2, 0))
+            return fail(game_bootstrap, 10);
+        entity->step = bh_menu_fade_expiry;
+        entity->refresh = fade_refresh;
     }
-    if (!bh_bootstrap_resources(c, 3) || !bh_texture_set_path(c->textures, "textures", 0) ||
-        !bh_bootstrap_resources(c, 4))
-        return fail(c, c->error ? c->error : 3);
-    c->panel->page = bh_atlas_page_create(c->atlas, "textures\\tvfont.pcx", 128);
-    if (!c->panel->page)
-        return fail(c, 7);
-    store(c, 0x497228, (unsigned long)bh_atlas_page_image(c->panel->page), 1);
+    if (!bh_bootstrap_resources(game_bootstrap, 3) || !bh_texture_set_path(game_bootstrap->textures, "textures", 0) ||
+        !bh_bootstrap_resources(game_bootstrap, 4))
+        return fail(game_bootstrap, game_bootstrap->error ? game_bootstrap->error : 3);
+    game_bootstrap->panel->page = bh_atlas_page_create(game_bootstrap->atlas, "textures\\tvfont.pcx", 128);
+    if (!game_bootstrap->panel->page)
+        return fail(game_bootstrap, 7);
+    store(game_bootstrap, 0x497228, (unsigned long)bh_atlas_page_image(game_bootstrap->panel->page), 1);
     for (i = 0; i < 12; ++i)
-        c->panel->icon_images[i] = bh_bootstrap_value(c, 0x4df1d8 + i * 4);
-    c->panel->tv_on_sound = bh_bootstrap_value(c, 0x4d1988);
-    c->panel->tv_off_sound = bh_bootstrap_value(c, 0x496324);
-    c->panel->tv_char_sound = bh_bootstrap_value(c, 0x496570);
-    if (!bh_message_panel_create(c->panel))
-        return fail(c, 10);
+        game_bootstrap->panel->icon_images[i] = bh_bootstrap_value(game_bootstrap, 0x4df1d8 + i * 4);
+    game_bootstrap->panel->tv_on_sound = bh_bootstrap_value(game_bootstrap, 0x4d1988);
+    game_bootstrap->panel->tv_off_sound = bh_bootstrap_value(game_bootstrap, 0x496324);
+    game_bootstrap->panel->tv_char_sound = bh_bootstrap_value(game_bootstrap, 0x496570);
+    if (!bh_message_panel_create(game_bootstrap->panel))
+        return fail(game_bootstrap, 10);
     r.kind = 3;
     r.identity = 0x4d0478;
     r.name = "RCWAGON.BSP";
-    if (!resources(c, &r, 1))
+    if (!resources(game_bootstrap, &r, 1))
         return 0;
-    if (c->compose && !c->compose(c, 4, c->compose_user))
-        return fail(c, 11);
+    if (game_bootstrap->compose && !game_bootstrap->compose(game_bootstrap, 4, game_bootstrap->compose_user))
+        return fail(game_bootstrap, 11);
     return 1;
 }

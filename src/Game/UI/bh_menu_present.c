@@ -3,69 +3,69 @@
 #include "../../Math/bh_round.h"
 #include <math.h>
 #include <string.h>
-int bh_menu_light_queue(BHDrawQueue *q, unsigned long bucket, long enabled, float x, float y, float z, float direct,
+int bh_menu_light_queue(BHDrawQueue *queue, unsigned long bucket, long enabled, float x, float y, float z, float direct,
                         float ambient, unsigned long dc, unsigned long ac)
 {
     static const unsigned long map[9] = {1, 2, 3, 4, 5, 0, 6, 7, 8};
     unsigned long h, t, i;
-    BHDrawCommand *c;
+    BHDrawCommand *command;
     float values[5];
-    if (!q || !q->commands || q->count < 9 || q->count > q->capacity)
+    if (!queue || !queue->commands || queue->count < 9 || queue->count > queue->capacity)
     {
-        if (q)
-            q->error = BH_DRAW_ARGUMENT;
+        if (queue)
+            queue->error = BH_DRAW_ARGUMENT;
         return -1;
     }
-    if (q->count == q->capacity)
+    if (queue->count == queue->capacity)
     {
-        q->error = BH_DRAW_FULL;
+        queue->error = BH_DRAW_FULL;
         return 0;
     }
     h = bucket < 9 ? map[bucket] : 0;
-    t = q->commands[h].resource;
-    if (t >= q->count || (q->commands[t].next != BH_DRAW_END && q->commands[t].next >= q->count))
+    t = queue->commands[h].resource;
+    if (t >= queue->count || (queue->commands[t].next != BH_DRAW_END && queue->commands[t].next >= queue->count))
     {
-        q->error = BH_DRAW_TOPOLOGY;
+        queue->error = BH_DRAW_TOPOLOGY;
         return -1;
     }
-    i = q->count++;
-    c = q->commands + i;
-    c->next = q->commands[t].next;
-    q->commands[t].next = i;
-    q->commands[h].resource = i;
-    c->kind = BH_DRAW_LIGHT;
-    c->resource = (unsigned long)enabled;
-    c->words[0] = dc;
-    c->words[1] = ac;
+    i = queue->count++;
+    command = queue->commands + i;
+    command->next = queue->commands[t].next;
+    queue->commands[t].next = i;
+    queue->commands[h].resource = i;
+    command->kind = BH_DRAW_LIGHT;
+    command->resource = (unsigned long)enabled;
+    command->words[0] = dc;
+    command->words[1] = ac;
     values[0] = x;
     values[1] = y;
     values[2] = z;
     values[3] = direct;
     values[4] = ambient;
-    memcpy(c->words + 2, values, 20);
-    q->error = BH_DRAW_OK;
+    memcpy(command->words + 2, values, 20);
+    queue->error = BH_DRAW_OK;
     return 1;
 }
-int bh_menu_light_execute(BHLightConfig *light, const BHDrawCommand *c, unsigned long *next)
+int bh_menu_light_execute(BHLightConfig *light, const BHDrawCommand *command, unsigned long *next)
 {
     float f[5];
     int ok;
-    if (!light || !c || !next || c->kind != BH_DRAW_LIGHT)
+    if (!light || !command || !next || command->kind != BH_DRAW_LIGHT)
         return 0;
-    memcpy(f, c->words + 2, 20);
-    ok = bh_light_configure(light, (long)c->resource, f[0], f[1], f[2], f[3], f[4], c->words[0], c->words[1]);
-    *next = c->next;
+    memcpy(f, command->words + 2, 20);
+    ok = bh_light_configure(light, (long)command->resource, f[0], f[1], f[2], f[3], f[4], command->words[0], command->words[1]);
+    *next = command->next;
     return ok;
 }
-static void record(BHMenuPresent *p, int status)
+static void record(BHMenuPresent *menu_present, int status)
 {
     if (status > 0)
-        ++p->queued;
+        ++menu_present->queued;
     else
     {
-        ++p->dropped;
+        ++menu_present->dropped;
         if (status < 0)
-            p->error = 1;
+            menu_present->error = 1;
     }
 }
 static float rf(double x)
@@ -74,32 +74,32 @@ static float rf(double x)
     bh_round_float(&out, x);
     return out;
 }
-static void light(BHMenuPresent *p, const BHVec3 *v, int selected)
+static void light(BHMenuPresent *menu_present, const BHVec3 *vector, int selected)
 {
-    record(p, bh_menu_light_queue(p->queue, 0, 1, v->x, v->y, v->z, 1, .4f, selected ? 0xff8080 : 0x80ffa0,
+    record(menu_present, bh_menu_light_queue(menu_present->queue, 0, 1, vector->x, vector->y, vector->z, 1, .4f, selected ? 0xff8080 : 0x80ffa0,
                                   selected ? 0xff8080 : 0xff80a0));
 }
-int bh_menu_present(BHMenuPresent *p)
+int bh_menu_present(BHMenuPresent *menu_present)
 {
     BHMat34 basis, m;
     BHVec3 x = {1, 0, 0}, y = {0, 1, 0}, z = {0, 0, 1}, right, up, forward, ld, base, axis, point, normal, cross, pose;
     double a, s, c, scale, v;
     float theta, brightness;
     unsigned long i;
-    if (!p)
+    if (!menu_present)
         return 0;
-    p->queued = p->dropped = 0;
-    p->error = 0;
-    if (!p->eye || p->application_mode >= 1)
+    menu_present->queued = menu_present->dropped = 0;
+    menu_present->error = 0;
+    if (!menu_present->eye || menu_present->application_mode >= 1)
         return 1;
-    if (!p->angles || !p->queue || (p->row_count && !p->rows) || p->row_count > 4096)
+    if (!menu_present->angles || !menu_present->queue || (menu_present->row_count && !menu_present->rows) || menu_present->row_count > 4096)
         return 0;
     memset(&basis, 0, sizeof(basis));
     basis.m[0][0] = basis.m[1][1] = basis.m[2][2] = 1;
-    a = rf((p->phase & 127UL) * 0.04908738521234052);
-    bh_mat34_rotate_y(p->angles->x, &basis);
-    bh_mat34_rotate_x(p->angles->y, &basis);
-    bh_mat34_rotate_z(p->angles->z, &basis);
+    a = rf((menu_present->phase & 127UL) * 0.04908738521234052);
+    bh_mat34_rotate_y(menu_present->angles->x, &basis);
+    bh_mat34_rotate_x(menu_present->angles->y, &basis);
+    bh_mat34_rotate_z(menu_present->angles->z, &basis);
     bh_mat34_transform_direction(&basis, &x, &right);
     bh_mat34_transform_direction(&basis, &y, &up);
     bh_mat34_transform_direction(&basis, &z, &forward);
@@ -108,18 +108,18 @@ int bh_menu_present(BHMenuPresent *p)
     ld.x = rf(up.x * s + right.x * c + forward.x);
     ld.y = rf(up.y * s + right.y * c + forward.y);
     ld.z = rf(up.z * s + forward.z + right.z * c);
-    base.x = rf(p->distance * forward.x + p->eye->x);
-    base.y = rf(p->eye->y + p->distance * forward.y);
-    base.z = rf(p->distance * forward.z + p->eye->z);
-    light(p, &ld, 0);
-    theta = rf(p->display_selection * 0.39269908169872414);
-    bh_mat34_rotate_x(rf(-p->display_selection * 0.39269908169872414), &basis);
+    base.x = rf(menu_present->distance * forward.x + menu_present->eye->x);
+    base.y = rf(menu_present->eye->y + menu_present->distance * forward.y);
+    base.z = rf(menu_present->distance * forward.z + menu_present->eye->z);
+    light(menu_present, &ld, 0);
+    theta = rf(menu_present->display_selection * 0.39269908169872414);
+    bh_mat34_rotate_x(rf(-menu_present->display_selection * 0.39269908169872414), &basis);
     brightness = rf(.9 - (sin(a * 13.0) + cos(a * 17.0)) * (-.04));
-    for (i = 0; i < p->row_count; ++i)
+    for (i = 0; i < menu_present->row_count; ++i)
     {
-        if (!p->rows[i].row)
+        if (!menu_present->rows[i].row)
         {
-            p->error = 1;
+            menu_present->error = 1;
             break;
         }
         m = basis;
@@ -138,11 +138,11 @@ int bh_menu_present(BHMenuPresent *p)
         point.x = rf(base.x + forward.x * scale);
         point.y = rf(forward.y * scale + base.y);
         point.z = rf(base.z + forward.z * scale);
-        if ((float)i == p->display_selection)
+        if ((float)i == menu_present->display_selection)
         {
-            point.x = rf(forward.x * (-p->push) + point.x);
-            point.y = rf(forward.y * (-p->push) + point.y);
-            point.z = rf(forward.z * (-p->push) + point.z);
+            point.x = rf(forward.x * (-menu_present->push) + point.x);
+            point.y = rf(forward.y * (-menu_present->push) + point.y);
+            point.z = rf(forward.z * (-menu_present->push) + point.z);
         }
         s = sin(theta);
         scale = s * (-1.5);
@@ -156,20 +156,20 @@ int bh_menu_present(BHMenuPresent *p)
         cross.x = -cross.x;
         cross.y = -cross.y;
         cross.z = -cross.z;
-        record(p, bh_quad_queue(p->queue, 7, p->rows[i].image_handle, &point, &cross, &normal, 1, .4f, 0, 0,
-                                i == (unsigned long)p->selection ? brightness : rf(brightness * .4), 0, 1, 0, .5f));
-        if (p->capture && i == (unsigned long)p->selection)
+        record(menu_present, bh_quad_queue(menu_present->queue, 7, menu_present->rows[i].image_handle, &point, &cross, &normal, 1, .4f, 0, 0,
+                                i == (unsigned long)menu_present->selection ? brightness : rf(brightness * .4), 0, 1, 0, .5f));
+        if (menu_present->capture && i == (unsigned long)menu_present->selection)
         {
-            light(p, &ld, 1);
-            record(p, bh_draw_submit_resource(p->queue, 0, p->rows[i].row->identity, &point, &pose, 1));
-            light(p, &ld, 0);
+            light(menu_present, &ld, 1);
+            record(menu_present, bh_draw_submit_resource(menu_present->queue, 0, menu_present->rows[i].row->identity, &point, &pose, 1));
+            light(menu_present, &ld, 0);
         }
         else
-            record(p, bh_draw_submit_resource(p->queue, 0, p->rows[i].row->identity, &point, &pose, 1));
-        record(p, bh_draw_submit_resource(p->queue, 3, p->frame_resource, &point, &pose, 1));
+            record(menu_present, bh_draw_submit_resource(menu_present->queue, 0, menu_present->rows[i].row->identity, &point, &pose, 1));
+        record(menu_present, bh_draw_submit_resource(menu_present->queue, 3, menu_present->frame_resource, &point, &pose, 1));
         bh_mat34_rotate_x(.3926991f, &basis);
         theta = rf(theta - 0.39269908169872414);
     }
-    record(p, bh_menu_light_queue(p->queue, 0, 0, 0, 0, 0, 0, 0, 0, 0));
-    return !p->error;
+    record(menu_present, bh_menu_light_queue(menu_present->queue, 0, 0, 0, 0, 0, 0, 0, 0, 0));
+    return !menu_present->error;
 }

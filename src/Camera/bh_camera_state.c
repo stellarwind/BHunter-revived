@@ -126,9 +126,9 @@ void bh_camera_mode_smooth(BHCameraStateContext *context, BHCameraModeState *mod
                    wrap_stored(wrap_stored((double)angles->z - mode->angles.z) * weight + mode->angles.z));
 }
 
-static int vector_finite(const BHVec3 *v)
+static int vector_finite(const BHVec3 *vector)
 {
-    return _finite(v->x) && _finite(v->y) && _finite(v->z);
+    return _finite(vector->x) && _finite(vector->y) && _finite(vector->z);
 }
 static int mode_finite(const BHCameraModeState *mode)
 {

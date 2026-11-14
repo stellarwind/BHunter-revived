@@ -68,9 +68,9 @@ int bh_target_step_bind(BHTargetStepContext *ctx, const BHTargetStepState *state
     ctx->error = 0;
     return 1;
 }
-static double norm(const BHVec3 *v)
+static double norm(const BHVec3 *vector)
 {
-    return ((double)v->x * v->x + (double)v->y * v->y) + (double)v->z * v->z;
+    return ((double)vector->x * vector->x + (double)vector->y * vector->y) + (double)vector->z * vector->z;
 }
 static void sample(BHVec3 *out, BHEntity *entity, const BHTargetStepState *state)
 {

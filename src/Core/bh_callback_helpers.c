@@ -39,15 +39,15 @@ void bh_marker_query(BHEntity *entity, void *packet)
     else if (event == 3)
         memcpy((unsigned char *)packet + 4, &entity->position, 12);
 }
-void bh_vec3_interpolate(float factor, BHVec3 *out, const BHVec3 *a, const BHVec3 *b)
+void bh_vec3_interpolate(float factor, BHVec3 *out, const BHVec3 *first, const BHVec3 *second)
 {
     double x, y, z;
-    if (!out || !a || !b)
+    if (!out || !first || !second)
         return;
-    x = ((double)b->x - a->x) * factor + a->x;
-    y = ((double)b->y - a->y) * factor;
-    z = ((double)b->z - a->z) * factor;
+    x = ((double)second->x - first->x) * factor + first->x;
+    y = ((double)second->y - first->y) * factor;
+    z = ((double)second->z - first->z) * factor;
     out->x = (float)x;
-    out->y = (float)(y + a->y);
-    out->z = (float)(z + a->z);
+    out->y = (float)(y + first->y);
+    out->z = (float)(z + first->z);
 }

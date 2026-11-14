@@ -1193,14 +1193,14 @@ int bh_player_tick(BHPlayerTick *ctx)
 }
 int bh_player_tick_bind(BHPlayerTick *ctx, BHEntity *entity)
 {
-    BHEntity *p;
+    BHEntity *active_entity;
     unsigned long n = 0;
     if (!ctx || !entity || !ctx->pool || bound_player)
         return 0;
-    for (p = ctx->pool->active; p && n++ < ctx->pool->capacity; p = p->next)
-        if (p == entity)
+    for (active_entity = ctx->pool->active; active_entity && n++ < ctx->pool->capacity; active_entity = active_entity->next)
+        if (active_entity == entity)
             break;
-    if (p != entity)
+    if (active_entity != entity)
         return 0;
     ctx->player = entity;
     ctx->generation = entity->generation;

@@ -9,70 +9,70 @@ static void refresh(BHMenuSettingsMenu *menu, long index)
     if (callback)
         callback(menu, index);
 }
-int bh_menu_profile_commit(BHMenuProfileContext *c, BHMenuSettingsMenu *menu, const char *name, long index)
+int bh_menu_profile_commit(BHMenuProfileContext *context, BHMenuSettingsMenu *menu, const char *name, long index)
 {
-    BHInputProfile *current, *p, *found = NULL;
+    BHInputProfile *current, *input_profile, *found = NULL;
     unsigned long i, n;
     int okay = 1;
-    if (!c || !c->config || !c->current || !c->pending_selection || !menu || !name)
+    if (!context || !context->config || !context->current || !context->pending_selection || !menu || !name)
         return 0;
-    c->error = 0;
+    context->error = 0;
     if (!memchr(name, 0, 16))
     {
-        c->error = 1;
+        context->error = 1;
         return 0;
     }
     n = (unsigned long)strlen(name);
     if (n)
     {
-        if (!bh_config_valid(c->config) || !(*c->current))
+        if (!bh_config_valid(context->config) || !(*context->current))
         {
-            c->error = 1;
+            context->error = 1;
             return 0;
         }
-        current = *c->current;
-        p = current;
+        current = *context->current;
+        input_profile = current;
         /* Require the actual current pointer to belong to the real config ring. */
-        found = c->config->profiles;
-        for (i = 0; i < c->config->profile_count && found != current; ++i)
+        found = context->config->profiles;
+        for (i = 0; i < context->config->profile_count && found != current; ++i)
             found = found->next;
-        if (i == c->config->profile_count)
+        if (i == context->config->profile_count)
         {
-            c->error = 1;
+            context->error = 1;
             return 0;
         }
         found = NULL;
         do
         {
-            if (!_stricmp(name, (const char *)p->payload))
+            if (!_stricmp(name, (const char *)input_profile->payload))
             {
-                found = p;
+                found = input_profile;
                 break;
             }
-            p = p->next;
-        } while (p != current);
+            input_profile = input_profile->next;
+        } while (input_profile != current);
         if (found)
         {
-            *c->current = found;
+            *context->current = found;
             refresh(menu, 0);
         }
         else
         {
-            found = bh_config_profile_clone_after(c->config, current);
+            found = bh_config_profile_clone_after(context->config, current);
             if (found)
             {
                 memcpy(found->payload, name, n + 1);
                 found->flags = 1;
-                *c->current = found;
+                *context->current = found;
                 refresh(menu, 0);
             }
             else
             {
-                c->error = 1;
+                context->error = 1;
                 okay = 0;
             }
         }
-        *c->pending_selection = 0;
+        *context->pending_selection = 0;
     }
     refresh(menu, index);
     return okay;

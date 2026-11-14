@@ -3,47 +3,47 @@
 #include <string.h>
 #include <math.h>
 #include <float.h>
-int bh_view_reset_viewport(BHViewConfig *c, long width, long height)
+int bh_view_reset_viewport(BHViewConfig *view, long width, long height)
 {
-    if (!c || width <= 0 || height <= 0)
+    if (!view || width <= 0 || height <= 0)
         return 0;
-    c->origin_x = c->origin_y = c->left = c->top = 0;
-    c->width = c->right = (float)width;
-    c->height = c->bottom = (float)height;
-    c->margin_x = c->margin_y = 0;
+    view->origin_x = view->origin_y = view->left = view->top = 0;
+    view->width = view->right = (float)width;
+    view->height = view->bottom = (float)height;
+    view->margin_x = view->margin_y = 0;
     return 1;
 }
-int bh_view_config_init(BHViewConfig *c, long width, long height)
+int bh_view_config_init(BHViewConfig *view, long width, long height)
 {
     BHViewConfig next;
     memset(&next, 0, sizeof(next));
     next.fov = 1.0471975803375244f;
     next.near_z = 1;
     next.far_z = 100000;
-    if (!c || !bh_view_reset_viewport(&next, width, height))
+    if (!view || !bh_view_reset_viewport(&next, width, height))
         return 0;
-    *c = next;
+    *view = next;
     return 1;
 }
-int bh_view_clip_rect(BHViewConfig *c, float x, float y, float width, float height)
+int bh_view_clip_rect(BHViewConfig *view, float x, float y, float width, float height)
 {
     float right, bottom;
-    if (!c || !_finite(x) || !_finite(y) || !_finite(width) || !_finite(height))
+    if (!view || !_finite(x) || !_finite(y) || !_finite(width) || !_finite(height))
         return 0;
     bh_round_float(&right, (double)x + width);
     bh_round_float(&bottom, (double)y + height);
-    if (x < -c->margin_x)
-        x = c->margin_x == 0 ? 0.0f : -c->margin_x;
-    if (c->width + c->margin_x < right)
-        right = c->width + c->margin_x;
-    if (y < -c->margin_y)
-        y = c->margin_y == 0 ? 0.0f : -c->margin_y;
-    if (c->height + c->margin_y < bottom)
-        bottom = c->height + c->margin_y;
-    c->left = x;
-    c->right = right;
-    c->top = y;
-    c->bottom = bottom;
+    if (x < -view->margin_x)
+        x = view->margin_x == 0 ? 0.0f : -view->margin_x;
+    if (view->width + view->margin_x < right)
+        right = view->width + view->margin_x;
+    if (y < -view->margin_y)
+        y = view->margin_y == 0 ? 0.0f : -view->margin_y;
+    if (view->height + view->margin_y < bottom)
+        bottom = view->height + view->margin_y;
+    view->left = x;
+    view->right = right;
+    view->top = y;
+    view->bottom = bottom;
     return 1;
 }
 static void plane(BHViewPlane *out, const BHMat34 *inverse, const BHVec3 *position, float x, float y, float z,
@@ -59,27 +59,28 @@ static void plane(BHViewPlane *out, const BHMat34 *inverse, const BHVec3 *positi
     bh_round_float(&out->offset, ((double)out->normal.z * position->z + (double)out->normal.y * position->y) +
                                      (double)out->normal.x * position->x);
 }
-int bh_view_camera_build(const BHViewConfig *c, const BHMat34 *camera, BHViewCamera *out)
+int bh_view_camera_build(const BHViewConfig *view, const BHMat34 *camera, BHViewCamera *out)
 {
     BHViewCamera next;
     BHVec3 local, point;
     unsigned long i, j;
     float half, offset_x, offset_y, cosine, sine, vertical;
     double focal, retained_x, retained_cosine;
-    if (!c || !camera || !out || !_finite(c->fov) || c->fov <= 0 || c->fov >= 3.141592653589793 || !_finite(c->width) ||
-        !_finite(c->height) || c->width <= 0 || c->height <= 0 || !_finite(c->origin_x) || !_finite(c->origin_y) ||
-        !_finite(c->near_z) || !_finite(c->far_z) || c->near_z <= 0 || c->far_z < c->near_z)
+    if (!view || !camera || !out || !_finite(view->fov) || view->fov <= 0 || view->fov >= 3.141592653589793 ||
+        !_finite(view->width) || !_finite(view->height) || view->width <= 0 || view->height <= 0 ||
+        !_finite(view->origin_x) || !_finite(view->origin_y) ||
+        !_finite(view->near_z) || !_finite(view->far_z) || view->near_z <= 0 || view->far_z < view->near_z)
         return 0;
     for (i = 0; i < 12; ++i)
         if (!_finite(((const float *)camera)[i]))
             return 0;
     memset(&next, 0, sizeof(next));
     next.projected = *camera;
-    bh_round_float(&half, (double)c->fov * .5);
-    focal = ((double)c->width * .5) / tan((double)c->fov * .5);
-    retained_x = (double)c->origin_x - (double)c->width * -.5;
+    bh_round_float(&half, (double)view->fov * .5);
+    focal = ((double)view->width * .5) / tan((double)view->fov * .5);
+    retained_x = (double)view->origin_x - (double)view->width * -.5;
     bh_round_float(&offset_x, retained_x);
-    bh_round_float(&offset_y, (double)c->origin_y - (double)c->height * -.5);
+    bh_round_float(&offset_y, (double)view->origin_y - (double)view->height * -.5);
     bh_round_float(&next.focal, focal);
     retained_cosine = cos((double)half);
     bh_round_float(&cosine, retained_cosine);
@@ -90,28 +91,28 @@ int bh_view_camera_build(const BHViewConfig *c, const BHMat34 *camera, BHViewCam
                        focal * camera->m[0][j] + (j ? offset_x : retained_x) * camera->m[2][j]);
         bh_round_float(&next.projected.m[1][j], focal * camera->m[1][j] + (double)offset_y * camera->m[2][j]);
     }
-    bh_round_float(&vertical, (retained_cosine * c->width) / c->height);
-    if (c->margin_x > 0)
-        bh_round_float(&cosine, (double)cosine * c->width / (c->width + 2 * c->margin_x));
-    if (c->margin_y > 0)
-        bh_round_float(&vertical, (double)vertical * c->height / (c->height + 2 * c->margin_y));
+    bh_round_float(&vertical, (retained_cosine * view->width) / view->height);
+    if (view->margin_x > 0)
+        bh_round_float(&cosine, (double)cosine * view->width / (view->width + 2 * view->margin_x));
+    if (view->margin_y > 0)
+        bh_round_float(&vertical, (double)vertical * view->height / (view->height + 2 * view->margin_y));
     bh_mat34_inverse_rigid(camera, &next.inverse);
     local.x = local.y = local.z = 0;
     bh_mat34_transform_point(&next.inverse, &local, &next.position);
     plane(next.planes + BH_VIEW_NEAR, &next.inverse, &next.position, 0, 0, -1, 0);
-    local.z = c->near_z;
+    local.z = view->near_z;
     bh_mat34_transform_point(&next.inverse, &local, &point);
     bh_round_float(&next.planes[BH_VIEW_NEAR].offset, ((double)point.z * next.planes[BH_VIEW_NEAR].normal.z +
                                                        (double)point.y * next.planes[BH_VIEW_NEAR].normal.y) +
                                                           (double)point.x * next.planes[BH_VIEW_NEAR].normal.x);
     plane(next.planes + BH_VIEW_FAR, &next.inverse, &next.position, 0, 0, 1, 0);
-    local.z = c->far_z;
+    local.z = view->far_z;
     bh_mat34_transform_point(&next.inverse, &local, &point);
     bh_round_float(&next.planes[BH_VIEW_FAR].offset, ((double)point.z * next.planes[BH_VIEW_FAR].normal.z +
                                                       (double)point.y * next.planes[BH_VIEW_FAR].normal.y) +
                                                          (double)point.x * next.planes[BH_VIEW_FAR].normal.x);
-    plane(next.planes + BH_VIEW_RIGHT, &next.inverse, &next.position, cosine, 0, sine, c->margin_x > 0);
-    plane(next.planes + BH_VIEW_LEFT, &next.inverse, &next.position, -cosine, 0, sine, c->margin_x > 0);
+    plane(next.planes + BH_VIEW_RIGHT, &next.inverse, &next.position, cosine, 0, sine, view->margin_x > 0);
+    plane(next.planes + BH_VIEW_LEFT, &next.inverse, &next.position, -cosine, 0, sine, view->margin_x > 0);
     plane(next.planes + BH_VIEW_TOP, &next.inverse, &next.position, 0, -vertical, sine, 1);
     plane(next.planes + BH_VIEW_BOTTOM, &next.inverse, &next.position, 0, vertical, sine, 1);
     for (i = 0; i < 12; ++i)

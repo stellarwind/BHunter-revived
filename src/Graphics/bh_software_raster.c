@@ -17,10 +17,10 @@ typedef struct RasterGradient
 {
     long z, u, v;
 } RasterGradient;
-static int fail(BHSoftwareRaster *c, BHRasterError e)
+static int fail(BHSoftwareRaster *software_raster, BHRasterError e)
 {
-    if (c)
-        c->error = e;
+    if (software_raster)
+        software_raster->error = e;
     return 0;
 }
 static float stored(double x)
@@ -37,7 +37,7 @@ static long sub32(long a, long b)
 {
     return (long)((unsigned long)a - (unsigned long)b);
 }
-static long integer(BHSoftwareRaster *c, double x)
+static long integer(BHSoftwareRaster *software_raster, double x)
 {
     __int64 value;
     /* VC5 __ftol returns signed64, and these owners store EAX only. A masked
@@ -47,19 +47,19 @@ static long integer(BHSoftwareRaster *c, double x)
        outside this source adapter's existing control-only FP contract. */
     if (!_finite(x) || x < -9223372036854775808.0 || x >= 9223372036854775808.0)
     {
-        c->rejected_value = x;
-        ++c->masked_conversions;
+        software_raster->rejected_value = x;
+        ++software_raster->masked_conversions;
         return 0;
     }
     value = (__int64)x;
     return (long)value;
 }
-static int gradient(BHSoftwareRaster *c, BHClipVertex *left, BHClipVertex *right, BHClipVertex *la, BHClipVertex *ra,
+static int gradient(BHSoftwareRaster *software_raster, BHClipVertex *left, BHClipVertex *right, BHClipVertex *la, BHClipVertex *ra,
                     int bottom, RasterGradient *out)
 {
     double d, divisor, dy_left, dy_right, z, nu, nv;
     float rounded_d;
-    double scale = (double)(c->texture_width - 1);
+    double scale = (double)(software_raster->texture_width - 1);
     if (la == ra)
     {
         dy_left = (double)left->sy - la->sy;
@@ -68,8 +68,8 @@ static int gradient(BHSoftwareRaster *c, BHClipVertex *left, BHClipVertex *right
             dy_left = stored(dy_left);
         d = ((double)right->sx - ra->sx) * dy_left - ((double)left->sx - la->sx) * dy_right;
         rounded_d = stored(d);
-        z = (((double)c->near_z / right->point.z - (double)c->near_z / ra->point.z) * dy_left -
-             ((double)c->near_z / left->point.z - (double)c->near_z / la->point.z) * dy_right) *
+        z = (((double)software_raster->near_z / right->point.z - (double)software_raster->near_z / ra->point.z) * dy_left -
+             ((double)software_raster->near_z / left->point.z - (double)software_raster->near_z / la->point.z) * dy_right) *
             16777216.0 / d;
         nu = ((double)right->u - ra->u) * dy_left - ((double)left->u - la->u) * dy_right;
         nv = ((double)right->v - ra->v) * dy_left - ((double)left->v - la->v) * dy_right;
@@ -79,55 +79,55 @@ static int gradient(BHSoftwareRaster *c, BHClipVertex *left, BHClipVertex *right
     {
         d = (double)ra->sx - la->sx;
         divisor = bottom ? d : (double)stored(d);
-        z = ((double)c->near_z / ra->point.z - (double)c->near_z / la->point.z) * 16777216.0 / divisor;
+        z = ((double)software_raster->near_z / ra->point.z - (double)software_raster->near_z / la->point.z) * 16777216.0 / divisor;
         nu = (double)ra->u - la->u;
         nv = (double)ra->v - la->v;
     }
-    out->z = integer(c, z);
-    out->u = integer(c, (nu * scale) * 65536.0 / divisor);
-    out->v = integer(c, (nv * scale) * 65536.0 / divisor);
+    out->z = integer(software_raster, z);
+    out->u = integer(software_raster, (nu * scale) * 65536.0 / divisor);
+    out->v = integer(software_raster, (nv * scale) * 65536.0 / divisor);
     return 1;
 }
-static BHClipVertex *walk(BHClipVertex *p, long y, int reverse, int below)
+static BHClipVertex *walk(BHClipVertex *vertex, long y, int reverse, int below)
 {
     unsigned long i = 0;
     do
     {
-        p = reverse ? p->previous : p->next;
+        vertex = reverse ? vertex->previous : vertex->next;
         if (++i > 1024)
             return NULL;
-    } while (below ? (long)p->sy <= y : (long)p->sy >= y);
-    return p;
+    } while (below ? (long)vertex->sy <= y : (long)vertex->sy >= y);
+    return vertex;
 }
-static void left_edge(BHSoftwareRaster *c, RasterEdge *edge, long y)
+static void left_edge(BHSoftwareRaster *software_raster, RasterEdge *edge, long y)
 {
-    BHClipVertex *b = edge->below, *a = b->previous;
-    double inv = 1.0 / ((double)b->sy - a->sy);
-    float inverse = stored(inv), delta = stored((double)(y + 1) - a->sy);
-    double scale = (double)(c->texture_width - 1), bu = ((double)a->u * scale) * 65536.0;
-    double bv = ((double)a->v * scale) * 65536.0, bz = ((double)c->near_z / a->point.z) * 16777216.0;
-    double dx = ((double)b->sx - a->sx) * inverse;
-    double du = ((((double)b->u * scale) * 65536.0) - bu) * inv;
-    double dv = ((((double)b->v * scale) * 65536.0) - bv) * inverse;
-    double dz = (((double)c->near_z / b->point.z) * 16777216.0 - bz) * inverse;
+    BHClipVertex *below = edge->below, *above = below->previous;
+    double inv = 1.0 / ((double)below->sy - above->sy);
+    float inverse = stored(inv), delta = stored((double)(y + 1) - above->sy);
+    double scale = (double)(software_raster->texture_width - 1), bu = ((double)above->u * scale) * 65536.0;
+    double bv = ((double)above->v * scale) * 65536.0, bz = ((double)software_raster->near_z / above->point.z) * 16777216.0;
+    double dx = ((double)below->sx - above->sx) * inverse;
+    double du = ((((double)below->u * scale) * 65536.0) - bu) * inv;
+    double dv = ((((double)below->v * scale) * 65536.0) - bv) * inverse;
+    double dz = (((double)software_raster->near_z / below->point.z) * 16777216.0 - bz) * inverse;
     edge->dx = stored(dx);
     edge->du = stored(du);
     edge->dv = stored(dv);
     edge->dz = stored(dz);
-    edge->x = stored(dx * delta + a->sx);
+    edge->x = stored(dx * delta + above->sx);
     edge->u = stored(du * delta + stored(bu));
     edge->v = stored(dv * delta + stored(bv));
     edge->z = dz * delta + stored(bz);
 }
 static void right_edge(RasterEdge *edge, long y)
 {
-    BHClipVertex *b = edge->below, *a = b->next;
-    edge->dx = stored(((double)b->sx - a->sx) * (1.0 / ((double)b->sy - a->sy)));
-    edge->x = stored(((double)(y + 1) - a->sy) * edge->dx + a->sx);
+    BHClipVertex *below = edge->below, *above = below->next;
+    edge->dx = stored(((double)below->sx - above->sx) * (1.0 / ((double)below->sy - above->sy)));
+    edge->x = stored(((double)(y + 1) - above->sy) * edge->dx + above->sx);
 }
-static int run(BHSoftwareRaster *c, BHClipVertex *ring, int packed, int masked, int shaded, int blend, int policy)
+static int run(BHSoftwareRaster *software_raster, BHClipVertex *ring, int packed, int masked, int shaded, int blend, int policy)
 {
-    BHClipVertex *p, *minimum, *maximum, *a, *b;
+    BHClipVertex *vertex, *minimum, *maximum, *left_vertex, *right_vertex;
     RasterEdge left, right;
     RasterGradient top, end, step;
     const unsigned char *shade_i;
@@ -138,90 +138,90 @@ static int run(BHSoftwareRaster *c, BHClipVertex *ring, int packed, int masked, 
     unsigned char *row;
     double sum = 0, scalar;
     float value;
-    if (!c || !ring || !c->pixels || !c->depth || !c->texels || !c->image || !c->tables || !c->image->dither ||
-        (!c->image->screen && packed && !shaded && !blend) ||
-        c->tables->bytes_per_pixel != (unsigned long)(packed ? 2 : 1) || !c->width || !c->height || c->width > 4096 ||
-        c->height > 4096 || !_finite(c->near_z) || c->near_z <= 0 || c->texture_width < 2 || c->texture_width > 2048 ||
-        (c->texture_width & (c->texture_width - 1)) ||
-        (c->pitch >= 0 ? c->pitch : -(double)c->pitch) < c->width * (packed ? 2 : 1) ||
-        (c->depth_pitch >= 0 ? c->depth_pitch : -(double)c->depth_pitch) < c->width * 2 || (c->depth_pitch & 1) ||
+    if (!software_raster || !ring || !software_raster->pixels || !software_raster->depth || !software_raster->texels || !software_raster->image || !software_raster->tables || !software_raster->image->dither ||
+        (!software_raster->image->screen && packed && !shaded && !blend) ||
+        software_raster->tables->bytes_per_pixel != (unsigned long)(packed ? 2 : 1) || !software_raster->width || !software_raster->height || software_raster->width > 4096 ||
+        software_raster->height > 4096 || !_finite(software_raster->near_z) || software_raster->near_z <= 0 || software_raster->texture_width < 2 || software_raster->texture_width > 2048 ||
+        (software_raster->texture_width & (software_raster->texture_width - 1)) ||
+        (software_raster->pitch >= 0 ? software_raster->pitch : -(double)software_raster->pitch) < software_raster->width * (packed ? 2 : 1) ||
+        (software_raster->depth_pitch >= 0 ? software_raster->depth_pitch : -(double)software_raster->depth_pitch) < software_raster->width * 2 || (software_raster->depth_pitch & 1) ||
         !bh_math_environment_supported())
-        return fail(c, BH_RASTER_ARGUMENT);
-    c->error = BH_RASTER_OK;
-    c->spans = c->visited = c->written = 0;
-    if (c->shade_offset >= 131072 - 255 || (blend && c->blend_plane >= 8))
-        return fail(c, BH_RASTER_ARGUMENT);
-    p = minimum = maximum = ring;
+        return fail(software_raster, BH_RASTER_ARGUMENT);
+    software_raster->error = BH_RASTER_OK;
+    software_raster->spans = software_raster->visited = software_raster->written = 0;
+    if (software_raster->shade_offset >= 131072 - 255 || (blend && software_raster->blend_plane >= 8))
+        return fail(software_raster, BH_RASTER_ARGUMENT);
+    vertex = minimum = maximum = ring;
     do
     {
-        if (!p || !p->next || !p->previous || p->next->previous != p || p->previous->next != p || ++n > 1024)
-            return fail(c, BH_RASTER_TOPOLOGY);
-        if (!_finite(p->sx) || !_finite(p->sy) || !_finite(p->u) || !_finite(p->v) || !_finite(p->point.z) ||
-            p->point.z <= 0)
-            return fail(c, BH_RASTER_NUMERICAL);
-        if (p->sx < 0 || p->sx > c->width || p->sy < 0 || p->sy > c->height)
-            return fail(c, BH_RASTER_BOUNDS);
-        if (p->sy < minimum->sy)
-            minimum = p;
-        if (p->sy > maximum->sy)
-            maximum = p;
-        if (c->attribute)
+        if (!vertex || !vertex->next || !vertex->previous || vertex->next->previous != vertex || vertex->previous->next != vertex || ++n > 1024)
+            return fail(software_raster, BH_RASTER_TOPOLOGY);
+        if (!_finite(vertex->sx) || !_finite(vertex->sy) || !_finite(vertex->u) || !_finite(vertex->v) || !_finite(vertex->point.z) ||
+            vertex->point.z <= 0)
+            return fail(software_raster, BH_RASTER_NUMERICAL);
+        if (vertex->sx < 0 || vertex->sx > software_raster->width || vertex->sy < 0 || vertex->sy > software_raster->height)
+            return fail(software_raster, BH_RASTER_BOUNDS);
+        if (vertex->sy < minimum->sy)
+            minimum = vertex;
+        if (vertex->sy > maximum->sy)
+            maximum = vertex;
+        if (software_raster->attribute)
         {
-            memcpy(&value, &p->unknown28, 4);
+            memcpy(&value, &vertex->unknown28, 4);
             if (!_finite(value))
-                return fail(c, BH_RASTER_NUMERICAL);
+                return fail(software_raster, BH_RASTER_NUMERICAL);
             sum += value;
         }
-        p = p->next;
-    } while (p != ring);
+        vertex = vertex->next;
+    } while (vertex != ring);
     if (n < 3)
-        return fail(c, BH_RASTER_TOPOLOGY);
+        return fail(software_raster, BH_RASTER_TOPOLOGY);
     first = (long)minimum->sy;
     last = (long)maximum->sy;
     if (first >= last)
         return 1;
-    shade_i = c->tables->shade_indexed ? c->tables->shade_indexed + c->shade_offset : NULL;
-    shade_p = c->tables->shade_native ? c->tables->shade_native + c->shade_offset : NULL;
-    if (c->attribute)
+    shade_i = software_raster->tables->shade_indexed ? software_raster->tables->shade_indexed + software_raster->shade_offset : NULL;
+    shade_p = software_raster->tables->shade_native ? software_raster->tables->shade_native + software_raster->shade_offset : NULL;
+    if (software_raster->attribute)
     {
         scalar = 255.0 - (sum / n) * 255.0;
-        x = integer(c, scalar);
+        x = integer(software_raster, scalar);
         if (x < 0)
             x = 0;
         else if (x > 255)
             x = 255;
-        c->attribute_row = (unsigned long)x;
-        if (!c->gradient)
-            return fail(c, BH_RASTER_ARGUMENT);
+        software_raster->attribute_row = (unsigned long)x;
+        if (!software_raster->gradient)
+            return fail(software_raster, BH_RASTER_ARGUMENT);
         if (packed)
         {
-            if (!c->gradient->packed)
-                return fail(c, BH_RASTER_ARGUMENT);
-            shade_p = c->gradient->packed + c->attribute_row * 256;
+            if (!software_raster->gradient->packed)
+                return fail(software_raster, BH_RASTER_ARGUMENT);
+            shade_p = software_raster->gradient->packed + software_raster->attribute_row * 256;
         }
         else
         {
-            if (!c->gradient->indexed)
-                return fail(c, BH_RASTER_ARGUMENT);
-            shade_i = c->gradient->indexed + c->attribute_row * 256;
+            if (!software_raster->gradient->indexed)
+                return fail(software_raster, BH_RASTER_ARGUMENT);
+            shade_i = software_raster->gradient->indexed + software_raster->attribute_row * 256;
         }
     }
     if (shaded && ((packed && !blend) ? !shade_p : !shade_i))
-        return fail(c, BH_RASTER_ARGUMENT);
-    if (blend && (packed ? !c->tables->blend_native : !c->tables->blend_indexed))
-        return fail(c, BH_RASTER_ARGUMENT);
-    a = walk(minimum, first, 0, 1);
-    b = walk(minimum, first, 1, 1);
-    if (!a || !b)
-        return fail(c, BH_RASTER_TOPOLOGY);
-    if (!gradient(c, a, b, a->previous, b->next, 0, &top))
+        return fail(software_raster, BH_RASTER_ARGUMENT);
+    if (blend && (packed ? !software_raster->tables->blend_native : !software_raster->tables->blend_indexed))
+        return fail(software_raster, BH_RASTER_ARGUMENT);
+    left_vertex = walk(minimum, first, 0, 1);
+    right_vertex = walk(minimum, first, 1, 1);
+    if (!left_vertex || !right_vertex)
+        return fail(software_raster, BH_RASTER_TOPOLOGY);
+    if (!gradient(software_raster, left_vertex, right_vertex, left_vertex->previous, right_vertex->next, 0, &top))
         return 0;
-    a = walk(maximum, last, 1, 0);
-    b = walk(maximum, last, 0, 0);
-    if (!a || !b)
-        return fail(c, BH_RASTER_TOPOLOGY);
+    left_vertex = walk(maximum, last, 1, 0);
+    right_vertex = walk(maximum, last, 0, 0);
+    if (!left_vertex || !right_vertex)
+        return fail(software_raster, BH_RASTER_TOPOLOGY);
     /* Bottom gradients use the upper vertices as their edge tips. */
-    if (!gradient(c, a, b, a->next, b->previous, 1, &end))
+    if (!gradient(software_raster, left_vertex, right_vertex, left_vertex->next, right_vertex->previous, 1, &end))
         return 0;
     rows = last - first;
     step.z = sub32(end.z, top.z) / rows;
@@ -230,8 +230,8 @@ static int run(BHSoftwareRaster *c, BHClipVertex *ring, int packed, int masked, 
     memset(&left, 0, sizeof(left));
     memset(&right, 0, sizeof(right));
     left.below = right.below = minimum;
-    mask = c->texture_width - 1;
-    for (i = c->texture_width; i > 1; i >>= 1)
+    mask = software_raster->texture_width - 1;
+    for (i = software_raster->texture_width; i > 1; i >>= 1)
         ++log;
     for (y = first; y < last; y++)
     {
@@ -239,8 +239,8 @@ static int run(BHSoftwareRaster *c, BHClipVertex *ring, int packed, int masked, 
         {
             left.below = walk(left.below, y, 0, 1);
             if (!left.below)
-                return fail(c, BH_RASTER_TOPOLOGY);
-            left_edge(c, &left, y);
+                return fail(software_raster, BH_RASTER_TOPOLOGY);
+            left_edge(software_raster, &left, y);
         }
         else
         {
@@ -253,47 +253,47 @@ static int run(BHSoftwareRaster *c, BHClipVertex *ring, int packed, int masked, 
         {
             right.below = walk(right.below, y, 1, 1);
             if (!right.below)
-                return fail(c, BH_RASTER_TOPOLOGY);
+                return fail(software_raster, BH_RASTER_TOPOLOGY);
             right_edge(&right, y);
         }
         else
             right.x = stored((double)right.x + right.dx);
         if (!_finite(left.x) || !_finite(right.x))
-            return fail(c, BH_RASTER_NUMERICAL);
+            return fail(software_raster, BH_RASTER_NUMERICAL);
         if (right.x < left.x)
             return 1;
-        x = integer(c, left.x);
-        count = integer(c, (double)right.x - x);
-        u = integer(c, left.u);
-        v = integer(c, left.v);
-        z = integer(c, left.z);
-        if (x < 0 || count < 0 || (unsigned long)x > c->width || (unsigned long)count > c->width - (unsigned long)x)
-            return fail(c, BH_RASTER_BOUNDS);
-        row = c->pixels + y * c->pitch;
-        depth_row = (unsigned short *)((unsigned char *)c->depth + y * c->depth_pitch);
+        x = integer(software_raster, left.x);
+        count = integer(software_raster, (double)right.x - x);
+        u = integer(software_raster, left.u);
+        v = integer(software_raster, left.v);
+        z = integer(software_raster, left.z);
+        if (x < 0 || count < 0 || (unsigned long)x > software_raster->width || (unsigned long)count > software_raster->width - (unsigned long)x)
+            return fail(software_raster, BH_RASTER_BOUNDS);
+        row = software_raster->pixels + y * software_raster->pitch;
+        depth_row = (unsigned short *)((unsigned char *)software_raster->depth + y * software_raster->depth_pitch);
         parity = ((unsigned long)y & 1) * 512 + ((unsigned long)x & 1) * 256;
-        ++c->spans;
+        ++software_raster->spans;
         for (i = 0; i < (unsigned long)count; i++)
         {
-            ++c->visited;
+            ++software_raster->visited;
             depth = (unsigned short)((unsigned long)z >> 8);
             if (policy == 2 || depth_row[x] <= depth)
             {
                 texel =
-                    c->texels[((unsigned long)(u >> 16) & mask) + (((unsigned long)(v >> (16 - log)) & (mask << log)))];
+                    software_raster->texels[((unsigned long)(u >> 16) & mask) + (((unsigned long)(v >> (16 - log)) & (mask << log)))];
                 if (!masked || texel)
                 {
                     if (packed && !shaded && !blend)
                     {
                         destination = (unsigned short *)row;
-                        destination[x] = c->image->screen[parity + texel];
-                        ++c->written;
+                        destination[x] = software_raster->image->screen[parity + texel];
+                        ++software_raster->written;
                         if (policy != 1)
                             depth_row[x] = depth;
                     }
                     else
                     {
-                        mapped = c->image->dither[parity + texel];
+                        mapped = software_raster->image->dither[parity + texel];
                         if (shaded && (!packed || blend))
                             mapped = shade_i[mapped];
                         if (!blend)
@@ -302,7 +302,7 @@ static int run(BHSoftwareRaster *c, BHClipVertex *ring, int packed, int masked, 
                                 ((unsigned short *)row)[x] = shade_p[mapped];
                             else
                                 row[x] = (unsigned char)mapped;
-                            ++c->written;
+                            ++software_raster->written;
                             if (policy != 1)
                                 depth_row[x] = depth;
                         }
@@ -312,16 +312,16 @@ static int run(BHSoftwareRaster *c, BHClipVertex *ring, int packed, int masked, 
                             {
                                 unsigned long color = ((unsigned short *)row)[x], outer = 0, j;
                                 for (j = 0; j < 3; j++)
-                                    outer += (color & c->tables->rgb332_mask[j])
-                                             << ((unsigned long)c->tables->rgb332_shift[j] & 31);
+                                    outer += (color & software_raster->tables->rgb332_mask[j])
+                                             << ((unsigned long)software_raster->tables->rgb332_shift[j] & 31);
                                 ((unsigned short *)row)[x] =
-                                    c->tables->blend_native[c->blend_plane * 65536 + (outer & 65535) + mapped];
+                                    software_raster->tables->blend_native[software_raster->blend_plane * 65536 + (outer & 65535) + mapped];
                             }
                             else
                                 row[x] =
-                                    c->tables
-                                        ->blend_indexed[c->blend_plane * 65536 + (unsigned long)row[x] * 256 + mapped];
-                            ++c->written;
+                                    software_raster->tables
+                                        ->blend_indexed[software_raster->blend_plane * 65536 + (unsigned long)row[x] * 256 + mapped];
+                            ++software_raster->written;
                         }
                     }
                 }

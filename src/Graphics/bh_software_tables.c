@@ -5,18 +5,18 @@ static unsigned long clipped(unsigned long n)
 {
     return n > 255 ? 255 : n;
 }
-static unsigned char indexed(const BHTextureTables *t, const unsigned long rgb[3])
+static unsigned char indexed(const BHTextureTables *texture_tables, const unsigned long rgb[3])
 {
-    return (unsigned char)((t->quant[1][rgb[0]] * 7 + t->quant[2][rgb[1]]) * 6 + t->quant[1][rgb[2]]);
+    return (unsigned char)((texture_tables->quant[1][rgb[0]] * 7 + texture_tables->quant[2][rgb[1]]) * 6 + texture_tables->quant[1][rgb[2]]);
 }
-static unsigned short packed(const BHTextureContext *q, const unsigned long rgb[3])
+static unsigned short packed(const BHTextureContext *texture_context, const unsigned long rgb[3])
 {
     unsigned long i, value = 0;
     for (i = 0; i < 3; ++i)
-        value += (rgb[i] >> (q->display_right[i] & 31)) << (q->display_left[i] & 31);
+        value += (rgb[i] >> (texture_context->display_right[i] & 31)) << (texture_context->display_left[i] & 31);
     return (unsigned short)value;
 }
-static int display(const BHTextureContext *q, const unsigned long masks[3], BHSoftwareTables *t)
+static int display(const BHTextureContext *texture_context, const unsigned long masks[3], BHSoftwareTables *software_tables)
 {
     unsigned long i, mask, low, bits, extra, target, used = 0;
     if (!masks)
@@ -39,44 +39,44 @@ static int display(const BHTextureContext *q, const unsigned long masks[3], BHSo
             mask >>= 1;
         }
         target = i == 2 ? 2 : 3;
-        if (mask || bits < target || bits > 8 || low != q->display_left[i] || 8 - bits != q->display_right[i])
+        if (mask || bits < target || bits > 8 || low != texture_context->display_left[i] || 8 - bits != texture_context->display_right[i])
             return 0;
         extra = bits - target;
-        t->rgb332_mask[i] = ((1UL << target) - 1) << (extra + low);
-        t->rgb332_shift[i] = (long)(i == 0 ? 13 : i == 1 ? 10 : 8) - (long)extra - (long)low;
+        software_tables->rgb332_mask[i] = ((1UL << target) - 1) << (extra + low);
+        software_tables->rgb332_shift[i] = (long)(i == 0 ? 13 : i == 1 ? 10 : 8) - (long)extra - (long)low;
     }
     return 1;
 }
-void bh_software_tables_dispose(BHSoftwareTables *t)
+void bh_software_tables_dispose(BHSoftwareTables *software_tables)
 {
-    if (!t)
+    if (!software_tables)
         return;
-    if (t->allocator.release)
+    if (software_tables->allocator.release)
     {
-        if (t->shade_indexed)
-            t->allocator.release(t->shade_indexed, t->allocator.user);
-        if (t->blend_indexed)
-            t->allocator.release(t->blend_indexed, t->allocator.user);
-        if (t->shade_native)
-            t->allocator.release(t->shade_native, t->allocator.user);
-        if (t->blend_native)
-            t->allocator.release(t->blend_native, t->allocator.user);
+        if (software_tables->shade_indexed)
+            software_tables->allocator.release(software_tables->shade_indexed, software_tables->allocator.user);
+        if (software_tables->blend_indexed)
+            software_tables->allocator.release(software_tables->blend_indexed, software_tables->allocator.user);
+        if (software_tables->shade_native)
+            software_tables->allocator.release(software_tables->shade_native, software_tables->allocator.user);
+        if (software_tables->blend_native)
+            software_tables->allocator.release(software_tables->blend_native, software_tables->allocator.user);
     }
-    memset(t, 0, sizeof(*t));
+    memset(software_tables, 0, sizeof(*software_tables));
 }
-int bh_software_tables_initialize(BHSoftwareTables *out, BHTextureContext *q, unsigned long mode,
+int bh_software_tables_initialize(BHSoftwareTables *out, BHTextureContext *texture_context, unsigned long mode,
                                   const unsigned long masks[3])
 {
     BHSoftwareTables t;
     unsigned char palette[256][3];
     unsigned long outer, inner, c, plane, weight, rgb[3], base[3], offset;
-    if (!out || !q || !q->allocator.allocate || !q->allocator.release || (mode != 1 && mode != 2) ||
+    if (!out || !texture_context || !texture_context->allocator.allocate || !texture_context->allocator.release || (mode != 1 && mode != 2) ||
         out->shade_indexed || out->blend_indexed || out->shade_native || out->blend_native)
         return 0;
     memset(&t, 0, sizeof(t));
-    t.allocator = q->allocator;
+    t.allocator = texture_context->allocator;
     t.bytes_per_pixel = mode;
-    if (mode == 2 && !display(q, masks, &t))
+    if (mode == 2 && !display(texture_context, masks, &t))
         return 0;
     for (inner = 0; inner < 256; ++inner)
     {
@@ -89,7 +89,7 @@ int bh_software_tables_initialize(BHSoftwareTables *out, BHTextureContext *q, un
     t.shade_indexed = (unsigned char *)t.allocator.allocate(0x20000, t.allocator.user);
     if (!t.shade_indexed)
         goto failed;
-    if (!bh_texture_tables_init(q))
+    if (!bh_texture_tables_init(texture_context))
         goto failed;
     for (outer = 0; outer < 256; ++outer)
         for (inner = 0; inner < 256; ++inner)
@@ -97,11 +97,11 @@ int bh_software_tables_initialize(BHSoftwareTables *out, BHTextureContext *q, un
             for (c = 0; c < 3; ++c)
                 rgb[c] = palette[inner][c] * outer / 255;
             offset = outer * 256 + inner;
-            t.shade_indexed[offset] = indexed(&q->tables, rgb);
+            t.shade_indexed[offset] = indexed(&texture_context->tables, rgb);
             rgb[0] = palette[inner][0] * ((outer >> 5) & 7) / 7;
             rgb[1] = palette[inner][1] * ((outer >> 2) & 7) / 7;
             rgb[2] = palette[inner][2] * (outer & 3) / 3;
-            t.shade_indexed[65536 + offset] = indexed(&q->tables, rgb);
+            t.shade_indexed[65536 + offset] = indexed(&texture_context->tables, rgb);
         }
     if (mode == 1)
     {
@@ -120,11 +120,11 @@ int bh_software_tables_initialize(BHSoftwareTables *out, BHTextureContext *q, un
                 for (c = 0; c < 3; ++c)
                     rgb[c] = palette[inner][c] * outer / 255;
                 offset = outer * 256 + inner;
-                t.shade_native[offset] = packed(q, rgb);
+                t.shade_native[offset] = packed(texture_context, rgb);
                 rgb[0] = palette[inner][0] * ((outer >> 5) & 7) / 7;
                 rgb[1] = palette[inner][1] * ((outer >> 2) & 7) / 7;
                 rgb[2] = palette[inner][2] * (outer & 3) / 3;
-                t.shade_native[65536 + offset] = packed(q, rgb);
+                t.shade_native[65536 + offset] = packed(texture_context, rgb);
             }
         t.blend_native = (unsigned short *)t.allocator.allocate(0x100000, t.allocator.user);
         if (!t.blend_native)
@@ -161,9 +161,9 @@ int bh_software_tables_initialize(BHSoftwareTables *out, BHTextureContext *q, un
                 }
                 offset = plane * 65536 + outer * 256 + inner;
                 if (mode == 1)
-                    t.blend_indexed[offset] = indexed(&q->tables, rgb);
+                    t.blend_indexed[offset] = indexed(&texture_context->tables, rgb);
                 else
-                    t.blend_native[offset] = packed(q, rgb);
+                    t.blend_native[offset] = packed(texture_context, rgb);
             }
         }
     *out = t;

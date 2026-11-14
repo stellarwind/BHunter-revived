@@ -91,13 +91,13 @@ static void homing_draw(BHEntity *entity, void *unused)
 }
 static int valid(BHProjectileCreateContext *ctx, int homing)
 {
-    BHHomingProjectileContext *b;
+    BHHomingProjectileContext *effects;
     if (!ctx || !ctx->lifetime || !ctx->lifetime->pool || !ctx->lifetime->sound || !ctx->draw || !ctx->draw->queue ||
         !ctx->next_identity)
         return 0;
-    b = homing ? ctx->homing : (ctx->ballistic ? &ctx->ballistic->bindings : NULL);
-    return b && b->pool == ctx->lifetime->pool && b->sound == ctx->lifetime->sound && b->particles && b->contacts &&
-           b->flash && b->markers && b->segment;
+    effects = homing ? ctx->homing : (ctx->ballistic ? &ctx->ballistic->bindings : NULL);
+    return effects && effects->pool == ctx->lifetime->pool && effects->sound == ctx->lifetime->sound && effects->particles && effects->contacts &&
+           effects->flash && effects->markers && effects->segment;
 }
 static BHEntity *create(BHProjectileCreateContext *ctx, BHWorldGeometry *world, BHEntity *source, const BHVec3 *p,
                         const BHVec3 *v, float lifetime, BHEntity *target, int homing)

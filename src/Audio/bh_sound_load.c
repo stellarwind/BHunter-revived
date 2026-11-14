@@ -6,12 +6,12 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
-static unsigned long fail(BHSoundLoad *c, BHSoundLoadError error)
+static unsigned long fail(BHSoundLoad *sound_load, BHSoundLoadError error)
 {
-    if (c)
+    if (sound_load)
     {
-        c->error = error;
-        ++c->failures;
+        sound_load->error = error;
+        ++sound_load->failures;
     }
     return BH_SOUND_INVALID;
 }
@@ -23,21 +23,21 @@ static unsigned short u16(const unsigned char *p)
 {
     return (unsigned short)(p[0] | ((unsigned short)p[1] << 8));
 }
-static void *allocate(BHSoundLoad *c, unsigned long bytes)
+static void *allocate(BHSoundLoad *sound_load, unsigned long bytes)
 {
-    ++c->allocations;
-    return c->file_allocator.allocate ? c->file_allocator.allocate(bytes, c->file_allocator.user) : malloc(bytes);
+    ++sound_load->allocations;
+    return sound_load->file_allocator.allocate ? sound_load->file_allocator.allocate(bytes, sound_load->file_allocator.user) : malloc(bytes);
 }
-static void release(BHSoundLoad *c, void *p)
+static void release(BHSoundLoad *sound_load, void *p)
 {
     if (!p)
         return;
-    if (c->file_allocator.release)
-        c->file_allocator.release(p, c->file_allocator.user);
+    if (sound_load->file_allocator.release)
+        sound_load->file_allocator.release(p, sound_load->file_allocator.user);
     else
         free(p);
 }
-unsigned long bh_sound_load(BHSoundLoad *c, const char *name, float range, float level, unsigned short streaming,
+unsigned long bh_sound_load(BHSoundLoad *sound_load, const char *name, float range, float level, unsigned short streaming,
                             float denominator)
 {
     BHSoundQueue *sound_queue;
@@ -51,71 +51,71 @@ unsigned long bh_sound_load(BHSoundLoad *c, const char *name, float range, float
     BHSoundResource *resource;
     double volume;
     int random;
-    if (!c)
+    if (!sound_load)
         return BH_SOUND_INVALID;
-    c->error = BH_SOUND_LOAD_OK;
-    if (!(sound_queue = c->queue) || !name || strlen(name) >= 64 || !sound_queue->device ||
+    sound_load->error = BH_SOUND_LOAD_OK;
+    if (!(sound_queue = sound_load->queue) || !name || strlen(name) >= 64 || !sound_queue->device ||
         sound_queue->voice_limit_policy < 1 || sound_queue->voice_limit_policy > 3 ||
-        (!!c->file_allocator.allocate != !!c->file_allocator.release))
-        return fail(c, BH_SOUND_LOAD_ARGUMENT);
+        (!!sound_load->file_allocator.allocate != !!sound_load->file_allocator.release))
+        return fail(sound_load, BH_SOUND_LOAD_ARGUMENT);
     if (!bh_math_environment_supported())
-        return fail(c, BH_SOUND_LOAD_NUMERICAL);
+        return fail(sound_load, BH_SOUND_LOAD_NUMERICAL);
     file = bh_vfile_open(name, "rb");
     if (!file)
-        return fail(c, BH_SOUND_LOAD_IO);
-    ++c->files;
+        return fail(sound_load, BH_SOUND_LOAD_IO);
+    ++sound_load->files;
     if (bh_vfile_seek(file, 0, SEEK_END) || (length = bh_vfile_tell(file)) <= 0 || length > 64L * 1024L * 1024L ||
         bh_vfile_seek(file, 0, SEEK_SET))
     {
         bh_vfile_close(file);
-        return fail(c, BH_SOUND_LOAD_IO);
+        return fail(sound_load, BH_SOUND_LOAD_IO);
     }
-    c->file_bytes = (unsigned long)length;
-    bytes = (unsigned char *)allocate(c, (unsigned long)length);
+    sound_load->file_bytes = (unsigned long)length;
+    bytes = (unsigned char *)allocate(sound_load, (unsigned long)length);
     if (!bytes)
     {
         bh_vfile_close(file);
-        return fail(c, BH_SOUND_LOAD_MEMORY);
+        return fail(sound_load, BH_SOUND_LOAD_MEMORY);
     }
     if (bh_vfile_read(bytes, (unsigned long)length, 1, file) != 1)
     {
         bh_vfile_close(file);
-        release(c, bytes);
-        return fail(c, BH_SOUND_LOAD_IO);
+        release(sound_load, bytes);
+        return fail(sound_load, BH_SOUND_LOAD_IO);
     }
     bh_vfile_close(file);
     if (!bh_riff_scan(bytes, (unsigned long)length, &format, &samples, &sample_bytes) || !format || !samples ||
         !sample_bytes)
     {
-        release(c, bytes);
-        return fail(c, BH_SOUND_LOAD_FORMAT);
+        release(sound_load, bytes);
+        return fail(sound_load, BH_SOUND_LOAD_FORMAT);
     }
     format_bytes = u32(format - 4);
     if (format_bytes < 16 || u16(format) != 1)
     {
-        release(c, bytes);
-        return fail(c, BH_SOUND_LOAD_FORMAT);
+        release(sound_load, bytes);
+        return fail(sound_load, BH_SOUND_LOAD_FORMAT);
     }
-    ++c->native_calls;
-    c->create_result = bh_audio_create(sound_queue->device, samples, sample_bytes, u16(format + 2), u16(format + 14),
+    ++sound_load->native_calls;
+    sound_load->create_result = bh_audio_create(sound_queue->device, samples, sample_bytes, u16(format + 2), u16(format + 14),
                                        u32(format + 4), &buffer);
-    release(c, bytes);
-    if (c->create_result)
-        return fail(c, BH_SOUND_LOAD_NATIVE);
-    first_size = c->first_bytes = sample_bytes;
-    c->second_bytes = 0;
-    c->lock_result = c->unlock_result = 0;
+    release(sound_load, bytes);
+    if (sound_load->create_result)
+        return fail(sound_load, BH_SOUND_LOAD_NATIVE);
+    first_size = sound_load->first_bytes = sample_bytes;
+    sound_load->second_bytes = 0;
+    sound_load->lock_result = sound_load->unlock_result = 0;
     resource = bh_sound_resource_allocate(sound_queue);
     if (!resource)
     {
         bh_audio_buffer_release(buffer);
-        ++c->releases;
-        return fail(c, BH_SOUND_LOAD_MEMORY);
+        ++sound_load->releases;
+        return fail(sound_load, BH_SOUND_LOAD_MEMORY);
     }
     strcpy(resource->name, name);
-    ++c->native_calls;
-    c->frequency_result = bh_audio_frequency(buffer, &frequency);
-    if (c->frequency_result == 0)
+    ++sound_load->native_calls;
+    sound_load->frequency_result = bh_audio_frequency(buffer, &frequency);
+    if (sound_load->frequency_result == 0)
         bh_round_float(&resource->base_frequency, (double)frequency);
     else
         resource->base_frequency = 22050.0f;
@@ -140,6 +140,6 @@ unsigned long bh_sound_load(BHSoundLoad *c, const char *name, float range, float
         resource->cached_volume[i] = resource->cached_frequency[i] = resource->cached_pan[i] = -100000;
         resource->voices[i] = NULL;
     }
-    ++c->loads;
+    ++sound_load->loads;
     return resource->index;
 }

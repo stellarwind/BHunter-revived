@@ -95,8 +95,8 @@ int bh_script_lifetime_read(BHEntity *entity, BHScriptLifetimeState *state)
 }
 void bh_script_unloaded_query(BHEntity *entity, void *packet)
 {
-    BHScriptTimerPacket *p = (BHScriptTimerPacket *)packet;
-    if (p->event == 20 && !loaded(entity))
+    BHScriptTimerPacket *script_timer_packet = (BHScriptTimerPacket *)packet;
+    if (script_timer_packet->event == 20 && !loaded(entity))
         release_entity(entity);
 }
 /* Original FCOM precedes FSTP. Test unrounded subtraction and include unordered
@@ -121,39 +121,39 @@ void bh_script_sound_expiry(BHEntity *entity)
 }
 void bh_script_motion_query(BHEntity *entity, void *packet)
 {
-    BHScriptTimerPacket *p = (BHScriptTimerPacket *)packet;
-    BHEntity *a;
+    BHScriptTimerPacket *script_timer_packet = (BHScriptTimerPacket *)packet;
+    BHEntity *first_actor;
     BHVec3 d;
-    if (p->event == 4 || (!loaded(entity) && p->event == 20))
+    if (script_timer_packet->event == 4 || (!loaded(entity) && script_timer_packet->event == 20))
     {
         release_entity(entity);
         return;
     }
-    if (p->event == 10 && p->actor == actor(entity))
+    if (script_timer_packet->event == 10 && script_timer_packet->actor == actor(entity))
     {
-        a = actor(entity);
+        first_actor = actor(entity);
         memcpy(&d, &entity->script_lifetime.delta, 12);
-        bh_round_float(&a->origin.x, (double)a->origin.x - d.x);
-        bh_round_float(&a->origin.y, (double)a->origin.y - d.y);
-        bh_round_float(&a->origin.z, (double)a->origin.z - d.z);
+        bh_round_float(&first_actor->origin.x, (double)first_actor->origin.x - d.x);
+        bh_round_float(&first_actor->origin.y, (double)first_actor->origin.y - d.y);
+        bh_round_float(&first_actor->origin.z, (double)first_actor->origin.z - d.z);
         defer(entity);
     }
 }
 void bh_script_sensor_query(BHEntity *entity, void *packet)
 {
-    BHScriptTimerPacket *p = (BHScriptTimerPacket *)packet;
-    if (p->event == 4 || (!loaded(entity) && p->event == 20))
+    BHScriptTimerPacket *script_timer_packet = (BHScriptTimerPacket *)packet;
+    if (script_timer_packet->event == 4 || (!loaded(entity) && script_timer_packet->event == 20))
     {
         release_entity(entity);
         return;
     }
-    if (p->event == 10 && p->actor == actor(entity))
+    if (script_timer_packet->event == 10 && script_timer_packet->actor == actor(entity))
         defer(entity);
 }
 void bh_script_sound_query(BHEntity *entity, void *packet)
 {
-    BHScriptTimerPacket *p = (BHScriptTimerPacket *)packet;
-    if (p->event == 4 || (!loaded(entity) && p->event == 20))
+    BHScriptTimerPacket *script_timer_packet = (BHScriptTimerPacket *)packet;
+    if (script_timer_packet->event == 4 || (!loaded(entity) && script_timer_packet->event == 20))
     {
         stop(entity);
         release_entity(entity);
@@ -161,14 +161,14 @@ void bh_script_sound_query(BHEntity *entity, void *packet)
 }
 void bh_script_sound_actor_query(BHEntity *entity, void *packet)
 {
-    BHScriptTimerPacket *p = (BHScriptTimerPacket *)packet;
-    if (p->event == 4 || p->event == 20)
+    BHScriptTimerPacket *script_timer_packet = (BHScriptTimerPacket *)packet;
+    if (script_timer_packet->event == 4 || script_timer_packet->event == 20)
     {
         stop(entity);
         release_entity(entity);
         return;
     }
-    if (p->event == 9 && p->actor == actor(entity))
+    if (script_timer_packet->event == 9 && script_timer_packet->actor == actor(entity))
     {
         stop(entity);
         defer(entity);

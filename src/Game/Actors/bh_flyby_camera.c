@@ -12,51 +12,51 @@ static float stored(double v)
     bh_round_float(&out, v);
     return out;
 }
-static int finite_vector(const BHVec3 *v)
+static int finite_vector(const BHVec3 *vector)
 {
-    return _finite(v->x) && _finite(v->y) && _finite(v->z);
+    return _finite(vector->x) && _finite(vector->y) && _finite(vector->z);
 }
-static BHVec3 orbit(const BHPlayerCameraStart *p, double t)
+static BHVec3 orbit(const BHPlayerCameraStart *player_camera_start, double t)
 {
     BHVec3 out;
     float radius, height;
     double oscillation;
-    memcpy(&radius, p->metadata, 4);
-    memcpy(&height, p->metadata + 1, 4);
+    memcpy(&radius, player_camera_start->metadata, 4);
+    memcpy(&height, player_camera_start->metadata + 1, 4);
     oscillation = (cos(1 - t * (-.037)) * sin(t * .071)) * cos(t * .217);
-    out.x = stored((double)p->position.x + (double)radius * oscillation);
+    out.x = stored((double)player_camera_start->position.x + (double)radius * oscillation);
     oscillation = (sin(1 - t * (-.087)) * cos(t * .041)) * cos(t * .173);
-    out.y = stored((double)height * oscillation + p->position.y);
+    out.y = stored((double)height * oscillation + player_camera_start->position.y);
     oscillation = (sin(1 - t * (-.057)) * cos(t * .091)) * cos(t * .13);
-    out.z = stored((double)p->position.z + (double)radius * oscillation);
+    out.z = stored((double)player_camera_start->position.z + (double)radius * oscillation);
     return out;
 }
-static int plan(BHFlybyCameraContext *c, BHFlybyCameraState *s)
+static int plan(BHFlybyCameraContext *context, BHFlybyCameraState *flyby_camera_state)
 {
     BHRoutePlan p;
-    if (!bh_route_plan(c->route->navigation, c->route->first, c->route->scene_count, s->route.current,
-                       &c->starts[c->route->selected_waypoint].position, &c->starts[s->route.waypoint_index].position,
+    if (!bh_route_plan(context->route->navigation, context->route->first, context->route->scene_count, flyby_camera_state->route.current,
+                       &context->starts[context->route->selected_waypoint].position, &context->starts[flyby_camera_state->route.waypoint_index].position,
                        &p))
         return 0;
-    s->route.next = p.next;
-    s->route.curve[0] = p.goal;
-    s->route.curve[1] = p.portal_center;
-    s->route.curve[2] = p.projected;
-    s->route.curve[3] = p.anchor;
-    s->route.parameter_rate = p.parameter_rate;
+    flyby_camera_state->route.next = p.next;
+    flyby_camera_state->route.curve[0] = p.goal;
+    flyby_camera_state->route.curve[1] = p.portal_center;
+    flyby_camera_state->route.curve[2] = p.projected;
+    flyby_camera_state->route.curve[3] = p.anchor;
+    flyby_camera_state->route.parameter_rate = p.parameter_rate;
     return 1;
 }
-static void combine(BHVec3 *out, const BHVec3 *a, float a_weight, const BHVec3 *b, float b_weight)
+static void combine(BHVec3 *out, const BHVec3 *first_vector, float a_weight, const BHVec3 *second_vector, float b_weight)
 {
     BHVec3 scaled;
-    scaled.x = stored((double)b->x * b_weight);
-    scaled.y = stored((double)b->y * b_weight);
-    scaled.z = stored((double)b->z * b_weight);
-    out->x = stored((double)a->x * a_weight + scaled.x);
-    out->y = stored((double)a->y * a_weight + scaled.y);
-    out->z = stored((double)a->z * a_weight + scaled.z);
+    scaled.x = stored((double)second_vector->x * b_weight);
+    scaled.y = stored((double)second_vector->y * b_weight);
+    scaled.z = stored((double)second_vector->z * b_weight);
+    out->x = stored((double)first_vector->x * a_weight + scaled.x);
+    out->y = stored((double)first_vector->y * a_weight + scaled.y);
+    out->z = stored((double)first_vector->z * a_weight + scaled.z);
 }
-static int publish(BHFlybyCameraContext *c, unsigned long index)
+static int publish(BHFlybyCameraContext *context, unsigned long index)
 {
     const char *cursor = flyby_credits[index];
     char line[128];
@@ -64,7 +64,7 @@ static int publish(BHFlybyCameraContext *c, unsigned long index)
     short y = 1;
     long width, x;
     int result = 1, r;
-    r = bh_text_queue_clear(c->text, c->credit_font, 0);
+    r = bh_text_queue_clear(context->text, context->credit_font, 0);
     if (r < 0)
         return -1;
     if (!r)
@@ -85,9 +85,9 @@ static int publish(BHFlybyCameraContext *c, unsigned long index)
             y = (short)(y + 7);
         else
         {
-            width = bh_atlas_page_text_width(c->credit_font, (const unsigned char *)line);
+            width = bh_atlas_page_text_width(context->credit_font, (const unsigned char *)line);
             x = 64 - (short)(width / 2);
-            r = bh_text_queue_text(c->text, c->credit_font, line, x, y);
+            r = bh_text_queue_text(context->text, context->credit_font, line, x, y);
             if (r < 0)
                 return -1;
             if (!r)
@@ -106,42 +106,42 @@ static double wrap_yaw(float value)
         return fmod((double)value - pi, 2 * pi) + pi;
     return value;
 }
-static int credits(BHFlybyCameraContext *c, const BHFlybyCameraState *s)
+static int credits(BHFlybyCameraContext *context, const BHFlybyCameraState *flyby_camera_state)
 {
     double yaw;
     int trigger, arm, r;
-    if (s->route.waypoint_index == 13)
+    if (flyby_camera_state->route.waypoint_index == 13)
     {
-        yaw = wrap_yaw(s->camera.angles.x);
+        yaw = wrap_yaw(flyby_camera_state->camera.angles.x);
         trigger = -1.4353981633974482 < yaw && yaw < -.13539816339744826;
         arm = 1.956194490192345 < yaw && yaw < 2.7561944901923447;
         if (arm)
-            c->credits->gate = 1;
-        if (trigger && c->credits->gate == 1)
+            context->credits->gate = 1;
+        if (trigger && context->credits->gate == 1)
         {
-            c->credits->gate = 0;
-            r = publish(c, c->credits->index);
-            if (++c->credits->index > 14)
-                c->credits->index = 0;
+            context->credits->gate = 0;
+            r = publish(context, context->credits->index);
+            if (++context->credits->index > 14)
+                context->credits->index = 0;
             return r;
         }
     }
-    else if (c->credits->gate != -1)
+    else if (context->credits->gate != -1)
     {
-        c->credits->gate = -1;
-        r = publish(c, 0);
-        c->credits->index = 1;
+        context->credits->gate = -1;
+        r = publish(context, 0);
+        context->credits->index = 1;
         return r;
     }
     return 1;
 }
-static int failure(BHFlybyCameraContext *c, const char *stage)
+static int failure(BHFlybyCameraContext *context, const char *stage)
 {
-    if (c)
-        c->last_failure = stage;
+    if (context)
+        context->last_failure = stage;
     return -1;
 }
-int bh_flyby_camera_step(BHFlybyCameraContext *c, BHFlybyCameraState *s)
+int bh_flyby_camera_step(BHFlybyCameraContext *context, BHFlybyCameraState *flyby_camera_state)
 {
     BHVec3 desired, curve;
     BHCameraInput input;
@@ -153,85 +153,85 @@ int bh_flyby_camera_step(BHFlybyCameraContext *c, BHFlybyCameraState *s)
     unsigned long selected;
     float radius, height;
     int result;
-    if (!c || !s || !c->route || !c->camera || !c->starts || !c->text || !c->credit_font || !c->credit_font->atlas ||
-        !c->credits || !c->start_count || c->credits->index >= 15 || s->route.waypoint_index >= c->start_count ||
-        c->route->selected_waypoint >= c->start_count || c->route->selected_waypoint >= c->route->waypoint_count ||
-        !c->route->waypoints || !_finite(s->orbit_time) || !finite_vector(&s->position) ||
-        !finite_vector(&s->previous_position) || !finite_vector(&s->older_position) || !_finite(s->route.phase) ||
-        s->route.phase < 0 || s->route.phase > 3 ||
-        (s->route.phase > 0 && (!_finite(s->route.parameter_rate) || s->route.parameter_rate <= 0)))
-        return failure(c, "validate camera and route state");
-    selected = c->route->selected_waypoint;
-    if (!finite_vector(&c->starts[s->route.waypoint_index].position) ||
-        memcmp(&c->starts[selected].position, c->route->waypoints + selected, 12))
-        return failure(c, "validate waypoint positions");
-    memcpy(&radius, c->starts[s->route.waypoint_index].metadata, 4);
-    memcpy(&height, c->starts[s->route.waypoint_index].metadata + 1, 4);
+    if (!context || !flyby_camera_state || !context->route || !context->camera || !context->starts || !context->text || !context->credit_font || !context->credit_font->atlas ||
+        !context->credits || !context->start_count || context->credits->index >= 15 || flyby_camera_state->route.waypoint_index >= context->start_count ||
+        context->route->selected_waypoint >= context->start_count || context->route->selected_waypoint >= context->route->waypoint_count ||
+        !context->route->waypoints || !_finite(flyby_camera_state->orbit_time) || !finite_vector(&flyby_camera_state->position) ||
+        !finite_vector(&flyby_camera_state->previous_position) || !finite_vector(&flyby_camera_state->older_position) || !_finite(flyby_camera_state->route.phase) ||
+        flyby_camera_state->route.phase < 0 || flyby_camera_state->route.phase > 3 ||
+        (flyby_camera_state->route.phase > 0 && (!_finite(flyby_camera_state->route.parameter_rate) || flyby_camera_state->route.parameter_rate <= 0)))
+        return failure(context, "validate camera and route state");
+    selected = context->route->selected_waypoint;
+    if (!finite_vector(&context->starts[flyby_camera_state->route.waypoint_index].position) ||
+        memcmp(&context->starts[selected].position, context->route->waypoints + selected, 12))
+        return failure(context, "validate waypoint positions");
+    memcpy(&radius, context->starts[flyby_camera_state->route.waypoint_index].metadata, 4);
+    memcpy(&height, context->starts[flyby_camera_state->route.waypoint_index].metadata + 1, 4);
     if (!_finite(radius) || !_finite(height))
-        return failure(c, "validate orbit metadata");
-    s->orbit_time -= -0.03333333333333333;
-    if (s->route.waypoint_index == 13)
-        s->orbit_time -= -0.016666666666666666;
-    t = s->orbit_time;
-    desired = orbit(c->starts + s->route.waypoint_index, t);
-    phase = s->route.phase;
+        return failure(context, "validate orbit metadata");
+    flyby_camera_state->orbit_time -= -0.03333333333333333;
+    if (flyby_camera_state->route.waypoint_index == 13)
+        flyby_camera_state->orbit_time -= -0.016666666666666666;
+    t = flyby_camera_state->orbit_time;
+    desired = orbit(context->starts + flyby_camera_state->route.waypoint_index, t);
+    phase = flyby_camera_state->route.phase;
     if (phase == 0)
     {
-        if (s->route.waypoint_index != selected)
+        if (flyby_camera_state->route.waypoint_index != selected)
         {
-            if (!plan(c, s))
-                return failure(c, "plan route");
-            s->route.phase = stored((double)s->route.phase + s->route.parameter_rate);
-            if (!bh_camera_state_set_mode(&s->camera, 10))
-                return failure(c, "enter travel camera mode");
+            if (!plan(context, flyby_camera_state))
+                return failure(context, "plan route");
+            flyby_camera_state->route.phase = stored((double)flyby_camera_state->route.phase + flyby_camera_state->route.parameter_rate);
+            if (!bh_camera_state_set_mode(&flyby_camera_state->camera, 10))
+                return failure(context, "enter travel camera mode");
         }
     }
     else if (phase > 2)
     {
         u = stored((double)phase - 2);
-        bh_camera_curve(u, &curve, s->route.curve, s->route.curve + 1, s->route.curve + 2, s->route.curve + 3);
+        bh_camera_curve(u, &curve, flyby_camera_state->route.curve, flyby_camera_state->route.curve + 1, flyby_camera_state->route.curve + 2, flyby_camera_state->route.curve + 3);
         combine(&desired, &desired, u, &curve, stored(1.0 - u));
-        advanced = (double)phase + s->route.parameter_rate;
-        s->route.phase = stored(advanced);
+        advanced = (double)phase + flyby_camera_state->route.parameter_rate;
+        flyby_camera_state->route.phase = stored(advanced);
         if (advanced > 3)
         {
             mode = (selected == 14 || selected == 15 || selected == 16) ? 8 : selected == 13 ? 11 : 10;
-            if (!bh_camera_state_set_mode(&s->camera, mode))
-                return failure(c, "enter destination camera mode");
-            s->route.phase = 0;
+            if (!bh_camera_state_set_mode(&flyby_camera_state->camera, mode))
+                return failure(context, "enter destination camera mode");
+            flyby_camera_state->route.phase = 0;
         }
     }
     else if (phase > 1)
     {
         u = stored((double)phase - 1);
-        bh_camera_curve(u, &desired, s->route.curve, s->route.curve + 1, s->route.curve + 2, s->route.curve + 3);
-        advanced = (double)phase + s->route.parameter_rate;
-        s->route.phase = stored(advanced);
-        if (advanced > 2 && !bh_camera_route_advance(c->route, &s->route))
-            return failure(c, "advance portal route");
+        bh_camera_curve(u, &desired, flyby_camera_state->route.curve, flyby_camera_state->route.curve + 1, flyby_camera_state->route.curve + 2, flyby_camera_state->route.curve + 3);
+        advanced = (double)phase + flyby_camera_state->route.parameter_rate;
+        flyby_camera_state->route.phase = stored(advanced);
+        if (advanced > 2 && !bh_camera_route_advance(context->route, &flyby_camera_state->route))
+            return failure(context, "advance portal route");
     }
     else
     {
-        bh_camera_curve(phase, &curve, s->route.curve, s->route.curve + 1, s->route.curve + 2, s->route.curve + 3);
+        bh_camera_curve(phase, &curve, flyby_camera_state->route.curve, flyby_camera_state->route.curve + 1, flyby_camera_state->route.curve + 2, flyby_camera_state->route.curve + 3);
         amount = stored(1.0 - phase);
         combine(&desired, &desired, amount, &curve, phase);
-        advanced = (double)phase + s->route.parameter_rate;
-        s->route.phase = stored(advanced);
-        if (advanced > 1 && !bh_camera_route_advance(c->route, &s->route))
-            return failure(c, "enter first portal");
+        advanced = (double)phase + flyby_camera_state->route.parameter_rate;
+        flyby_camera_state->route.phase = stored(advanced);
+        if (advanced > 1 && !bh_camera_route_advance(context->route, &flyby_camera_state->route))
+            return failure(context, "enter first portal");
     }
-    s->older_position = s->previous_position;
-    s->previous_position = s->position;
-    s->position.x = stored((double)s->position.x * .6 - (double)desired.x * (-.4));
-    s->position.y = stored((double)s->position.y * .6 - (double)desired.y * (-.4));
-    s->position.z = stored((double)s->position.z * .6 - (double)desired.z * (-.4));
-    dx = (double)s->position.x - s->previous_position.x;
-    dz = (double)s->position.z - s->previous_position.z;
+    flyby_camera_state->older_position = flyby_camera_state->previous_position;
+    flyby_camera_state->previous_position = flyby_camera_state->position;
+    flyby_camera_state->position.x = stored((double)flyby_camera_state->position.x * .6 - (double)desired.x * (-.4));
+    flyby_camera_state->position.y = stored((double)flyby_camera_state->position.y * .6 - (double)desired.y * (-.4));
+    flyby_camera_state->position.z = stored((double)flyby_camera_state->position.z * .6 - (double)desired.z * (-.4));
+    dx = (double)flyby_camera_state->position.x - flyby_camera_state->previous_position.x;
+    dz = (double)flyby_camera_state->position.z - flyby_camera_state->previous_position.z;
     rounded_dx = stored(dx);
     rounded_dz = stored(dz);
     length = sqrt(dx * rounded_dx + dz * rounded_dz);
-    old_dx = (double)s->previous_position.x - s->older_position.x;
-    old_dz = (double)s->previous_position.z - s->older_position.z;
+    old_dx = (double)flyby_camera_state->previous_position.x - flyby_camera_state->older_position.x;
+    old_dz = (double)flyby_camera_state->previous_position.z - flyby_camera_state->older_position.z;
     if (length != 0)
         turn = (old_dz * rounded_dx - old_dx * rounded_dz) / length;
     rounded_old_dx = stored(old_dx);
@@ -241,32 +241,32 @@ int bh_flyby_camera_step(BHFlybyCameraContext *c, BHFlybyCameraState *s)
         turn /= old_length;
     else
         turn = 0;
-    s->angles.x = stored(atan2(rounded_dx, rounded_dz));
-    s->angles.z = stored(turn * 7.853981633974483);
-    s->angles.y = stored(((double)s->previous_position.y - s->position.y) * .5);
-    s->velocity.x = stored((double)stored(dx) * 30);
-    s->velocity.y = stored((double)stored((double)s->position.y - s->previous_position.y) * 30);
-    s->velocity.z = stored((double)stored(dz) * 30);
-    bh_mat34_rotate_y(s->angles.x, &rotation);
-    bh_mat34_rotate_x(s->angles.y, &rotation);
-    bh_mat34_rotate_z(s->angles.z, &rotation);
+    flyby_camera_state->angles.x = stored(atan2(rounded_dx, rounded_dz));
+    flyby_camera_state->angles.z = stored(turn * 7.853981633974483);
+    flyby_camera_state->angles.y = stored(((double)flyby_camera_state->previous_position.y - flyby_camera_state->position.y) * .5);
+    flyby_camera_state->velocity.x = stored((double)stored(dx) * 30);
+    flyby_camera_state->velocity.y = stored((double)stored((double)flyby_camera_state->position.y - flyby_camera_state->previous_position.y) * 30);
+    flyby_camera_state->velocity.z = stored((double)stored(dz) * 30);
+    bh_mat34_rotate_y(flyby_camera_state->angles.x, &rotation);
+    bh_mat34_rotate_x(flyby_camera_state->angles.y, &rotation);
+    bh_mat34_rotate_z(flyby_camera_state->angles.z, &rotation);
     axis.x = 1;
     axis.y = axis.z = 0;
-    bh_mat34_transform_direction(&rotation, &axis, &s->basis_x);
+    bh_mat34_transform_direction(&rotation, &axis, &flyby_camera_state->basis_x);
     axis.y = 1;
     axis.x = 0;
-    bh_mat34_transform_direction(&rotation, &axis, &s->basis_y);
+    bh_mat34_transform_direction(&rotation, &axis, &flyby_camera_state->basis_y);
     axis.z = 1;
     axis.y = 0;
-    bh_mat34_transform_direction(&rotation, &axis, &s->basis_z);
-    input.target = s->position;
-    input.angles = s->angles;
-    input.basis_x = s->basis_x;
-    input.basis_y = s->basis_y;
-    input.basis_z = s->basis_z;
-    input.actor_token = c->actor_token;
-    if (!bh_camera_state_update(c->camera, &s->camera, &input, 0.03333333333333333, 0, 0))
-        return failure(c, "update camera pose");
-    result = credits(c, s);
-    return result < 0 ? failure(c, "queue credits text") : result;
+    bh_mat34_transform_direction(&rotation, &axis, &flyby_camera_state->basis_z);
+    input.target = flyby_camera_state->position;
+    input.angles = flyby_camera_state->angles;
+    input.basis_x = flyby_camera_state->basis_x;
+    input.basis_y = flyby_camera_state->basis_y;
+    input.basis_z = flyby_camera_state->basis_z;
+    input.actor_token = context->actor_token;
+    if (!bh_camera_state_update(context->camera, &flyby_camera_state->camera, &input, 0.03333333333333333, 0, 0))
+        return failure(context, "update camera pose");
+    result = credits(context, flyby_camera_state);
+    return result < 0 ? failure(context, "queue credits text") : result;
 }

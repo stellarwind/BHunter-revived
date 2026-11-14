@@ -47,7 +47,7 @@ static int unlink_actor(BHActorResponseContext *ctx, BHEntity *entity)
 {
     BHActorRouteState state;
     BHPickupRoom *room = 0;
-    BHEntity *p, *n;
+    BHEntity *previous, *next;
     unsigned long i;
     bh_actor_route_read(entity, &state);
     room = bh_actor_route_room(ctx->damage->route, state.current);
@@ -56,34 +56,34 @@ static int unlink_actor(BHActorResponseContext *ctx, BHEntity *entity)
         ctx->error = 2;
         return 0;
     }
-    p = (BHEntity *)bh_field_u32(&entity->actor.room_previous);
-    n = (BHEntity *)bh_field_u32(&entity->actor.room_next);
-    if ((p ? (BHEntity *)bh_field_u32(&p->actor.room_next) : room->actors) != entity ||
-        (n && (BHEntity *)bh_field_u32(&n->actor.room_previous) != entity))
+    previous = (BHEntity *)bh_field_u32(&entity->actor.room_previous);
+    next = (BHEntity *)bh_field_u32(&entity->actor.room_next);
+    if ((previous ? (BHEntity *)bh_field_u32(&previous->actor.room_next) : room->actors) != entity ||
+        (next && (BHEntity *)bh_field_u32(&next->actor.room_previous) != entity))
     {
         ctx->error = 2;
         return 0;
     }
-    if (p)
-        bh_field_store_u32(&p->actor.room_next, (unsigned long)n);
+    if (previous)
+        bh_field_store_u32(&previous->actor.room_next, (unsigned long)next);
     else
-        room->actors = n;
-    if (n)
-        bh_field_store_u32(&n->actor.room_previous, (unsigned long)p);
-    p = (BHEntity *)bh_field_u32(&entity->actor.global_previous);
-    n = (BHEntity *)bh_field_u32(&entity->actor.global_next);
-    if ((p ? (BHEntity *)bh_field_u32(&p->actor.global_next) : ctx->vehicles->head) != entity ||
-        (n && (BHEntity *)bh_field_u32(&n->actor.global_previous) != entity))
+        room->actors = next;
+    if (next)
+        bh_field_store_u32(&next->actor.room_previous, (unsigned long)previous);
+    previous = (BHEntity *)bh_field_u32(&entity->actor.global_previous);
+    next = (BHEntity *)bh_field_u32(&entity->actor.global_next);
+    if ((previous ? (BHEntity *)bh_field_u32(&previous->actor.global_next) : ctx->vehicles->head) != entity ||
+        (next && (BHEntity *)bh_field_u32(&next->actor.global_previous) != entity))
     {
         ctx->error = 2;
         return 0;
     }
-    if (p)
-        bh_field_store_u32(&p->actor.global_next, (unsigned long)n);
+    if (previous)
+        bh_field_store_u32(&previous->actor.global_next, (unsigned long)next);
     else
-        ctx->vehicles->head = n;
-    if (n)
-        bh_field_store_u32(&n->actor.global_previous, (unsigned long)p);
+        ctx->vehicles->head = next;
+    if (next)
+        bh_field_store_u32(&next->actor.global_previous, (unsigned long)previous);
     --ctx->vehicles->count;
     return 1;
 }
@@ -128,14 +128,14 @@ void bh_actor_response_query(BHEntity *entity, void *packet)
 void bh_actor_response_tick(BHEntity *entity)
 {
     BHActorResponseContext *ctx = context(entity);
-    BHActorDamageContext *d;
+    BHActorDamageContext *actor_damage_context;
     BHVec3 death_position;
     int smoke;
     if (!ctx || !live(ctx, entity))
         return;
     ctx->error = 0;
-    d = ctx->damage;
-    if (!d->particles || !d->fragments || !d->targets || !d->loot_rows || !ctx->mission ||
+    actor_damage_context = ctx->damage;
+    if (!actor_damage_context->particles || !actor_damage_context->fragments || !actor_damage_context->targets || !actor_damage_context->loot_rows || !ctx->mission ||
         !bh_math_environment_supported())
     {
         ctx->error = 1;

@@ -77,70 +77,70 @@ void bh_interpolation_attach(unsigned long start, unsigned long end, unsigned lo
         if (tracked->commands[i].kind == BH_DRAW_QUAD || tracked->commands[i].kind == BH_DRAW_ORIENTED)
             identities[i].attachment = model + 1;
 }
-static void model_rotation(const BHDrawCommand *c, BHMat34 *m)
+static void model_rotation(const BHDrawCommand *command, BHMat34 *m)
 {
     static const BHMat34 identity = {{{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}}};
     float pose[6];
-    memcpy(pose, c->words, sizeof(pose));
+    memcpy(pose, command->words, sizeof(pose));
     *m = identity;
     bh_mat34_rotate_y(pose[3], m);
     bh_mat34_rotate_x(pose[4], m);
     bh_mat34_rotate_z(pose[5], m);
 }
-static unsigned long key(const BHDrawCommand *c, const BHDrawIdentity *id)
+static unsigned long key(const BHDrawCommand *command, const BHDrawIdentity *id)
 {
-    return (id->owner * 2654435761UL ^ id->generation * 2246822519UL ^ id->ordinal * 3266489917UL ^ c->kind) &
+    return (id->owner * 2654435761UL ^ id->generation * 2246822519UL ^ id->ordinal * 3266489917UL ^ command->kind) &
            (BH_INTERPOLATION_HASH - 1);
 }
-static int same(const BHDrawCommand *a, const BHDrawCommand *b, const BHDrawIdentity *ai, const BHDrawIdentity *bi)
+static int same(const BHDrawCommand *first_command, const BHDrawCommand *second_command, const BHDrawIdentity *ai, const BHDrawIdentity *bi)
 {
-    return a->kind == b->kind &&
-           (a->kind == BH_DRAW_CAMERA || a->kind == BH_DRAW_PATH_POINT || a->resource == b->resource) &&
-           (a->kind != BH_DRAW_FLARE || !memcmp(a->words + 6, b->words + 6, 16)) && ai->owner == bi->owner &&
+    return first_command->kind == second_command->kind &&
+           (first_command->kind == BH_DRAW_CAMERA || first_command->kind == BH_DRAW_PATH_POINT || first_command->resource == second_command->resource) &&
+           (first_command->kind != BH_DRAW_FLARE || !memcmp(first_command->words + 6, second_command->words + 6, 16)) && ai->owner == bi->owner &&
            ai->generation == bi->generation && ai->ordinal == bi->ordinal;
 }
-void bh_interpolation_capture(BHRenderInterpolation *s, const BHDrawQueue *q, long scene)
+void bh_interpolation_capture(BHRenderInterpolation *render_interpolation, const BHDrawQueue *queue, long scene)
 {
     unsigned long i, slot;
-    if (!s || !q || !q->commands || q->count > BH_INTERPOLATION_CAPACITY)
+    if (!render_interpolation || !queue || !queue->commands || queue->count > BH_INTERPOLATION_CAPACITY)
         return;
-    if (s->ready && scene == s->scene)
+    if (render_interpolation->ready && scene == render_interpolation->scene)
     {
-        s->previous_count = s->current_count;
-        memcpy(s->previous, s->current, s->previous_count * sizeof(BHDrawCommand));
-        memcpy(s->previous_ids, s->current_ids, s->previous_count * sizeof(BHDrawIdentity));
+        render_interpolation->previous_count = render_interpolation->current_count;
+        memcpy(render_interpolation->previous, render_interpolation->current, render_interpolation->previous_count * sizeof(BHDrawCommand));
+        memcpy(render_interpolation->previous_ids, render_interpolation->current_ids, render_interpolation->previous_count * sizeof(BHDrawIdentity));
     }
     else
-        s->previous_count = 0;
-    memcpy(s->current, q->commands, q->count * sizeof(BHDrawCommand));
-    memcpy(s->current_ids, identities, q->count * sizeof(BHDrawIdentity));
-    s->current_count = q->count;
-    s->scene = scene;
-    s->ready = 1;
-    s->sampled = 0;
-    for (i = 9; i < s->current_count; ++i)
-        if (s->current[i].kind == BH_DRAW_FLARE)
-            s->flare_strength[i] = s->current[i].words[4];
-    memset(s->hash, 0, sizeof(s->hash));
-    for (i = 9; i < s->previous_count; ++i)
+        render_interpolation->previous_count = 0;
+    memcpy(render_interpolation->current, queue->commands, queue->count * sizeof(BHDrawCommand));
+    memcpy(render_interpolation->current_ids, identities, queue->count * sizeof(BHDrawIdentity));
+    render_interpolation->current_count = queue->count;
+    render_interpolation->scene = scene;
+    render_interpolation->ready = 1;
+    render_interpolation->sampled = 0;
+    for (i = 9; i < render_interpolation->current_count; ++i)
+        if (render_interpolation->current[i].kind == BH_DRAW_FLARE)
+            render_interpolation->flare_strength[i] = render_interpolation->current[i].words[4];
+    memset(render_interpolation->hash, 0, sizeof(render_interpolation->hash));
+    for (i = 9; i < render_interpolation->previous_count; ++i)
     {
-        BHDrawCommand *c = s->previous + i;
-        if (!spatial(c->kind) || (!s->previous_ids[i].owner && c->kind != BH_DRAW_CAMERA))
+        BHDrawCommand *command = render_interpolation->previous + i;
+        if (!spatial(command->kind) || (!render_interpolation->previous_ids[i].owner && command->kind != BH_DRAW_CAMERA))
             continue;
-        slot = key(c, s->previous_ids + i);
-        while (s->hash[slot])
+        slot = key(command, render_interpolation->previous_ids + i);
+        while (render_interpolation->hash[slot])
             slot = (slot + 1) & (BH_INTERPOLATION_HASH - 1);
-        s->hash[slot] = i + 1;
+        render_interpolation->hash[slot] = i + 1;
     }
 }
-static BHDrawCommand *previous_match(BHRenderInterpolation *s, const BHDrawCommand *c, const BHDrawIdentity *id)
+static BHDrawCommand *previous_match(BHRenderInterpolation *render_interpolation, const BHDrawCommand *c, const BHDrawIdentity *id)
 {
     unsigned long slot = key(c, id);
-    while (s->hash[slot])
+    while (render_interpolation->hash[slot])
     {
-        unsigned long at = s->hash[slot] - 1;
-        if (same(c, s->previous + at, id, s->previous_ids + at))
-            return s->previous + at;
+        unsigned long at = render_interpolation->hash[slot] - 1;
+        if (same(c, render_interpolation->previous + at, id, render_interpolation->previous_ids + at))
+            return render_interpolation->previous + at;
         slot = (slot + 1) & (BH_INTERPOLATION_HASH - 1);
     }
     return 0;
@@ -168,41 +168,41 @@ static void blend(unsigned long *out, const unsigned long *old, float alpha, int
     value = a + alpha * delta;
     memcpy(out, &value, 4);
 }
-BHDrawQueue *bh_interpolation_sample(BHRenderInterpolation *s, float alpha)
+BHDrawQueue *bh_interpolation_sample(BHRenderInterpolation *render_interpolation, float alpha)
 {
     unsigned long i, j, count, angle_start, last_anchor = BH_DRAW_END;
     BHMat34 delta;
     BHVec3 anchor_current, anchor_rendered;
-    if (!s || !s->ready)
+    if (!render_interpolation || !render_interpolation->ready)
         return 0;
     if (!_finite(alpha) || alpha < 0)
         alpha = 0;
     if (alpha > 1)
         alpha = 1;
-    memcpy(s->output, s->current, s->current_count * sizeof(BHDrawCommand));
-    for (i = 9; i < s->current_count; ++i)
+    memcpy(render_interpolation->output, render_interpolation->current, render_interpolation->current_count * sizeof(BHDrawCommand));
+    for (i = 9; i < render_interpolation->current_count; ++i)
     {
-        BHDrawCommand *c = s->output + i, *old = 0;
+        BHDrawCommand *command = render_interpolation->output + i, *old = 0;
         unsigned long *to, *from;
-        if (c->kind == BH_DRAW_FLARE)
-            c->words[4] = s->flare_strength[i];
-        if (s->current_ids[i].attachment || !spatial(c->kind) ||
-            (c->kind == BH_DRAW_RECT && c->words[12] != BH_RECT_WORLD_MARKER) ||
-            (!s->current_ids[i].owner && c->kind != BH_DRAW_CAMERA))
+        if (command->kind == BH_DRAW_FLARE)
+            command->words[4] = render_interpolation->flare_strength[i];
+        if (render_interpolation->current_ids[i].attachment || !spatial(command->kind) ||
+            (command->kind == BH_DRAW_RECT && command->words[12] != BH_RECT_WORLD_MARKER) ||
+            (!render_interpolation->current_ids[i].owner && command->kind != BH_DRAW_CAMERA))
             continue;
-        old = previous_match(s, c, s->current_ids + i);
-        if (!old && c->kind == BH_DRAW_PATH_POINT && s->current_ids[i].older_owner)
+        old = previous_match(render_interpolation, command, render_interpolation->current_ids + i);
+        if (!old && command->kind == BH_DRAW_PATH_POINT && render_interpolation->current_ids[i].older_owner)
         {
-            BHDrawIdentity older = s->current_ids[i];
+            BHDrawIdentity older = render_interpolation->current_ids[i];
             older.owner = older.older_owner;
             older.generation = older.older_generation;
-            old = previous_match(s, c, &older);
+            old = previous_match(render_interpolation, command, &older);
         }
         if (!old)
             continue;
-        to = (c->kind == BH_DRAW_CAMERA || c->kind == BH_DRAW_PATH_POINT) ? &c->resource
-             : c->kind == BH_DRAW_RECT                                    ? c->words + 13
-                                                                          : c->words;
+        to = (command->kind == BH_DRAW_CAMERA || command->kind == BH_DRAW_PATH_POINT) ? &command->resource
+             : command->kind == BH_DRAW_RECT                                    ? command->words + 13
+                                                                          : command->words;
         from = (old->kind == BH_DRAW_CAMERA || old->kind == BH_DRAW_PATH_POINT) ? &old->resource
                : old->kind == BH_DRAW_RECT                                      ? old->words + 13
                                                                                 : old->words;
@@ -213,47 +213,47 @@ BHDrawQueue *bh_interpolation_sample(BHRenderInterpolation *s, float alpha)
                 break;
         if (j != 3)
             continue;
-        count = c->kind == BH_DRAW_ORIENTED || c->kind == BH_DRAW_QUAD                                         ? 9
-                : c->kind == BH_DRAW_MODEL_RESOURCE || c->kind == BH_DRAW_CAMERA || c->kind == BH_DRAW_SEGMENT ? 6
+        count = command->kind == BH_DRAW_ORIENTED || command->kind == BH_DRAW_QUAD                                         ? 9
+                : command->kind == BH_DRAW_MODEL_RESOURCE || command->kind == BH_DRAW_CAMERA || command->kind == BH_DRAW_SEGMENT ? 6
                                                                                                                : 3;
-        angle_start = c->kind == BH_DRAW_MODEL_RESOURCE || c->kind == BH_DRAW_CAMERA ? 3 : count;
+        angle_start = command->kind == BH_DRAW_MODEL_RESOURCE || command->kind == BH_DRAW_CAMERA ? 3 : count;
         for (j = 0; j < count; ++j)
             blend(to + j, from + j, alpha, j >= angle_start);
         /* Only motion is shared by flare samples. Strength remains the exact
            per-publication consumer state above; never lerp or restore it. */
-        if (c->kind == BH_DRAW_PATH_POINT)
+        if (command->kind == BH_DRAW_PATH_POINT)
         {
-            blend(c->words + 2, old->words + 2, alpha, 0);
-            blend(c->words + 3, old->words + 3, alpha, 0);
+            blend(command->words + 2, old->words + 2, alpha, 0);
+            blend(command->words + 3, old->words + 3, alpha, 0);
         }
-        if (c->kind == BH_DRAW_BILLBOARD)
-            blend(c->words + 5, old->words + 5, alpha, 1);
-        if (c->kind == BH_DRAW_ORIENTED || c->kind == BH_DRAW_QUAD)
-            blend(c->words + 11, old->words + 11, alpha, 1);
+        if (command->kind == BH_DRAW_BILLBOARD)
+            blend(command->words + 5, old->words + 5, alpha, 1);
+        if (command->kind == BH_DRAW_ORIENTED || command->kind == BH_DRAW_QUAD)
+            blend(command->words + 11, old->words + 11, alpha, 1);
     }
     /* Rebase current HUD vertices through the same sampled vehicle transform.
        This also preserves newly appearing digits and avoids shearing on turns. */
-    for (i = 9; i < s->current_count; ++i)
-        if (s->current_ids[i].attachment)
+    for (i = 9; i < render_interpolation->current_count; ++i)
+        if (render_interpolation->current_ids[i].attachment)
         {
             BHMat34 current, inverse, rendered;
             BHVec3 point, result;
-            unsigned long anchor = s->current_ids[i].attachment - 1;
-            if (anchor >= s->current_count || !memcmp(s->current[anchor].words, s->output[anchor].words, 24))
+            unsigned long anchor = render_interpolation->current_ids[i].attachment - 1;
+            if (anchor >= render_interpolation->current_count || !memcmp(render_interpolation->current[anchor].words, render_interpolation->output[anchor].words, 24))
                 continue;
             if (anchor != last_anchor)
             {
-                model_rotation(s->current + anchor, &current);
-                model_rotation(s->output + anchor, &rendered);
-                memcpy(&anchor_current, s->current[anchor].words, sizeof(anchor_current));
-                memcpy(&anchor_rendered, s->output[anchor].words, sizeof(anchor_rendered));
+                model_rotation(render_interpolation->current + anchor, &current);
+                model_rotation(render_interpolation->output + anchor, &rendered);
+                memcpy(&anchor_current, render_interpolation->current[anchor].words, sizeof(anchor_current));
+                memcpy(&anchor_rendered, render_interpolation->output[anchor].words, sizeof(anchor_rendered));
                 bh_mat34_inverse_rigid(&current, &inverse);
                 bh_mat34_multiply(&rendered, &inverse, &delta);
                 last_anchor = anchor;
             }
             for (j = 0; j < 9; j += 3)
             {
-                memcpy(&point, s->current[i].words + j, sizeof(point));
+                memcpy(&point, render_interpolation->current[i].words + j, sizeof(point));
                 /* Subtract the origin before rotating to avoid cancellation
                    between large world coordinates and tiny cockpit offsets. */
                 if (!j)
@@ -269,52 +269,52 @@ BHDrawQueue *bh_interpolation_sample(BHRenderInterpolation *s, float alpha)
                     result.y += anchor_rendered.y;
                     result.z += anchor_rendered.z;
                 }
-                memcpy(s->output[i].words + j, &result, sizeof(result));
+                memcpy(render_interpolation->output[i].words + j, &result, sizeof(result));
             }
         }
-    s->sampled = 1;
-    s->queue.commands = s->output;
-    s->queue.count = s->current_count;
-    s->queue.capacity = BH_INTERPOLATION_CAPACITY;
-    return &s->queue;
+    render_interpolation->sampled = 1;
+    render_interpolation->queue.commands = render_interpolation->output;
+    render_interpolation->queue.count = render_interpolation->current_count;
+    render_interpolation->queue.capacity = BH_INTERPOLATION_CAPACITY;
+    return &render_interpolation->queue;
 }
 
-void bh_interpolation_rendered(BHRenderInterpolation *s)
+void bh_interpolation_rendered(BHRenderInterpolation *render_interpolation)
 {
     unsigned long i;
-    if (!s || !s->sampled)
+    if (!render_interpolation || !render_interpolation->sampled)
         return;
-    for (i = 9; i < s->current_count; ++i)
-        if (s->current[i].kind == BH_DRAW_FLARE)
-            s->flare_strength[i] = s->output[i].words[4];
-    s->sampled = 0;
+    for (i = 9; i < render_interpolation->current_count; ++i)
+        if (render_interpolation->current[i].kind == BH_DRAW_FLARE)
+            render_interpolation->flare_strength[i] = render_interpolation->output[i].words[4];
+    render_interpolation->sampled = 0;
 }
 
-unsigned long bh_simulation_advance(BHSimulationClock *c, double now)
+unsigned long bh_simulation_advance(BHSimulationClock *simulation_clock, double now)
 {
     unsigned long ticks;
     double elapsed;
-    if (!c || !_finite(now))
+    if (!simulation_clock || !_finite(now))
         return 0;
-    if (!c->ready)
+    if (!simulation_clock->ready)
     {
-        c->last = now;
-        c->remainder = 0;
-        c->ready = 1;
+        simulation_clock->last = now;
+        simulation_clock->remainder = 0;
+        simulation_clock->ready = 1;
         return 1;
     }
-    elapsed = now - c->last;
-    c->last = now;
+    elapsed = now - simulation_clock->last;
+    simulation_clock->last = now;
     if (elapsed < 0)
         elapsed = 0;
     /* Bound catch-up after a debugger stop, resize drag or suspended process.
        Audio still advances once per actual simulation tick, never per render. */
     if (elapsed > .25)
         elapsed = .25;
-    c->remainder += elapsed;
-    ticks = (unsigned long)floor((c->remainder + 1e-9) * 30.0);
-    c->remainder -= ticks / 30.0;
-    if (c->remainder < 0)
-        c->remainder = 0;
+    simulation_clock->remainder += elapsed;
+    ticks = (unsigned long)floor((simulation_clock->remainder + 1e-9) * 30.0);
+    simulation_clock->remainder -= ticks / 30.0;
+    if (simulation_clock->remainder < 0)
+        simulation_clock->remainder = 0;
     return ticks;
 }

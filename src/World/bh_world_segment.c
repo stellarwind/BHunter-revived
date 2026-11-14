@@ -12,66 +12,66 @@ static_assert(offsetof(BHEntity, collision_radius) == 0xc0, "BHEntity.collision_
 static_assert(offsetof(BHEntity, query) == 0xd0, "BHEntity.query offset");
 static_assert(offsetof(BHEntity, payload) == 0xe4, "BHEntity.payload offset");
 
-BHWorldSegmentRoom *bh_world_segment_room(BHWorldSegmentContext *q, const BHWorldGeometry *w)
+BHWorldSegmentRoom *bh_world_segment_room(BHWorldSegmentContext *segment_context, const BHWorldGeometry *w)
 {
     unsigned long i;
-    if (q->room_index)
+    if (segment_context->room_index)
     {
-        i = ((unsigned long)w >> 4) & q->room_index_mask;
-        while (q->room_index[i])
+        i = ((unsigned long)w >> 4) & segment_context->room_index_mask;
+        while (segment_context->room_index[i])
         {
-            if (q->room_index[i]->world == w)
-                return q->room_index[i];
-            i = (i + 1) & q->room_index_mask;
+            if (segment_context->room_index[i]->world == w)
+                return segment_context->room_index[i];
+            i = (i + 1) & segment_context->room_index_mask;
         }
         return NULL;
     }
-    for (i = 0; i < q->room_count; ++i)
-        if (q->rooms[i].world == w)
-            return q->rooms + i;
+    for (i = 0; i < segment_context->room_count; ++i)
+        if (segment_context->rooms[i].world == w)
+            return segment_context->rooms + i;
     return NULL;
 }
-int bh_world_segment_index_rooms(BHWorldSegmentContext *q, BHWorldSegmentRoom **workspace, unsigned long capacity)
+int bh_world_segment_index_rooms(BHWorldSegmentContext *segment_context, BHWorldSegmentRoom **workspace, unsigned long capacity)
 {
     unsigned long i, slot;
-    if (!q || q->busy)
+    if (!segment_context || segment_context->busy)
         return 0;
-    q->room_index = NULL;
-    q->room_index_mask = 0;
-    if (!q->rooms || !q->room_count || q->room_count > 65535 || !workspace || capacity < q->room_count * 2 ||
+    segment_context->room_index = NULL;
+    segment_context->room_index_mask = 0;
+    if (!segment_context->rooms || !segment_context->room_count || segment_context->room_count > 65535 || !workspace || capacity < segment_context->room_count * 2 ||
         capacity > 131072 || (capacity & (capacity - 1)))
         return 0;
     memset(workspace, 0, capacity * sizeof(*workspace));
-    for (i = 0; i < q->room_count; ++i)
+    for (i = 0; i < segment_context->room_count; ++i)
     {
-        if (!q->rooms[i].world)
+        if (!segment_context->rooms[i].world)
             return 0;
-        slot = ((unsigned long)q->rooms[i].world >> 4) & (capacity - 1);
+        slot = ((unsigned long)segment_context->rooms[i].world >> 4) & (capacity - 1);
         while (workspace[slot])
         {
-            if (workspace[slot]->world == q->rooms[i].world)
+            if (workspace[slot]->world == segment_context->rooms[i].world)
                 return 0;
             slot = (slot + 1) & (capacity - 1);
         }
-        workspace[slot] = q->rooms + i;
+        workspace[slot] = segment_context->rooms + i;
     }
-    q->room_index = workspace;
-    q->room_index_mask = capacity - 1;
+    segment_context->room_index = workspace;
+    segment_context->room_index_mask = capacity - 1;
     return 1;
 }
-static int fail(BHWorldSegmentContext *q, BHWorldSegmentError e)
+static int fail(BHWorldSegmentContext *segment_context, BHWorldSegmentError e)
 {
-    q->error = e;
+    segment_context->error = e;
     return -1;
 }
-static int finite_vec(const BHVec3 *v)
+static int finite_vec(const BHVec3 *vector)
 {
-    return v && _finite(v->x) && _finite(v->y) && _finite(v->z);
+    return vector && _finite(vector->x) && _finite(vector->y) && _finite(vector->z);
 }
-static int contains(const BHWorldGeometry *w, const BHVec3 *p)
+static int contains(const BHWorldGeometry *world, const BHVec3 *point)
 {
-    return w->minimum.x <= p->x && p->x <= w->maximum.x && w->minimum.y <= p->y && p->y <= w->maximum.y &&
-           w->minimum.z <= p->z && p->z <= w->maximum.z;
+    return world->minimum.x <= point->x && point->x <= world->maximum.x && world->minimum.y <= point->y && point->y <= world->maximum.y &&
+           world->minimum.z <= point->z && point->z <= world->maximum.z;
 }
 static int excluded(const BHWorldHit *self, BHWorldGeometry *w, BHEntity *e)
 {
@@ -83,7 +83,7 @@ int bh_world_segment_init(BHWorldSegmentContext *q, BHWorldGeometry *first, unsi
                           unsigned long actor_count, unsigned long max_room_actors)
 {
     BHWorldSegmentContext next;
-    BHWorldGeometry *p;
+    BHWorldGeometry *world;
     unsigned long i, j;
     if (!q || !first || !count || count > 65535 || !rooms || room_count != count || actor_count > 65535 ||
         (actor_count && !actors) || !max_room_actors || max_room_actors > 65535)
@@ -96,29 +96,29 @@ int bh_world_segment_init(BHWorldSegmentContext *q, BHWorldGeometry *first, unsi
     next.actors = actors;
     next.actor_count = actor_count;
     next.max_room_actors = max_room_actors;
-    p = first;
+    world = first;
     for (i = 0; i < count; ++i)
     {
-        if (!p || (i && p == first) || !bh_world_segment_room(&next, p) || p->navigation.count > 6)
+        if (!world || (i && world == first) || !bh_world_segment_room(&next, world) || world->navigation.count > 6)
             return 0;
         for (j = 0; j < i; ++j)
             if (rooms[j].world == rooms[i].world)
                 return 0;
-        p = (BHWorldGeometry *)p->navigation.next;
+        world = (BHWorldGeometry *)world->navigation.next;
     }
-    if (p != first)
+    if (world != first)
         return 0;
     for (i = 0; i < actor_count; ++i)
         if (!actors[i].entity || actors[i].entity->kind)
             return 0;
     for (i = 0; i < count; ++i)
     {
-        p = rooms[i].world;
-        if (p->owner && !bh_world_segment_room(&next, p->owner))
+        world = rooms[i].world;
+        if (world->owner && !bh_world_segment_room(&next, world->owner))
             return 0;
-        for (j = 0; j < p->navigation.count; ++j)
-            if (p->navigation.portals[j].neighbor &&
-                !bh_world_segment_room(&next, (BHWorldGeometry *)p->navigation.portals[j].neighbor))
+        for (j = 0; j < world->navigation.count; ++j)
+            if (world->navigation.portals[j].neighbor &&
+                !bh_world_segment_room(&next, (BHWorldGeometry *)world->navigation.portals[j].neighbor))
                 return 0;
     }
     *q = next;
@@ -150,23 +150,23 @@ static long material(unsigned long bits)
 }
 /* First strict crossing in slot order. Original 0040ba40 compares the matched
    opening at portal+24 (+1e4 in the world object), not the model aperture. */
-static BHWorldGeometry *crossing(BHWorldGeometry *w, const BHVec3 *a, const BHVec3 *b, BHVec3 *point)
+static BHWorldGeometry *crossing(BHWorldGeometry *world, const BHVec3 *a, const BHVec3 *b, BHVec3 *point)
 {
     unsigned long i, axis, u, v;
     const float *start = (const float *)a, *end = (const float *)b;
-    BHPortal *p;
+    BHPortal *portal;
     double plane, t, s, du, dv, upper_u;
     float tt, ss, plane_float, stored_u, stored_v;
     BHVec3 at;
-    for (i = 0; i < w->navigation.count; ++i)
+    for (i = 0; i < world->navigation.count; ++i)
     {
-        p = w->navigation.portals + i;
-        if (!p->neighbor || p->direction > 6 || p->direction == 3)
+        portal = world->navigation.portals + i;
+        if (!portal->neighbor || portal->direction > 6 || portal->direction == 3)
             continue;
-        axis = p->direction & 3;
-        bh_round_float(&plane_float, (double)p->plane);
+        axis = portal->direction & 3;
+        bh_round_float(&plane_float, (double)portal->plane);
         plane = plane_float;
-        if (p->direction < 4)
+        if (portal->direction < 4)
         {
             if (!(end[axis] < plane && plane < start[axis]))
                 continue;
@@ -188,27 +188,27 @@ static BHWorldGeometry *crossing(BHWorldGeometry *w, const BHVec3 *a, const BHVe
         upper_u = axis == 0 ? stored_u : du;
         if (axis == 2)
             dv = stored_v; /* Z crossing stores Y before both tests. */
-        if (p->overlap[0] < du && upper_u < p->overlap[1] && p->overlap[2] < dv && dv < p->overlap[3])
+        if (portal->overlap[0] < du && upper_u < portal->overlap[1] && portal->overlap[2] < dv && dv < portal->overlap[3])
         {
             ((float *)&at)[axis] = plane_float;
             ((float *)&at)[u] = stored_u;
             ((float *)&at)[v] = stored_v;
             *point = at;
-            return (BHWorldGeometry *)p->neighbor;
+            return (BHWorldGeometry *)portal->neighbor;
         }
     }
     return NULL;
 }
-static int geometry(BHWorldSegmentContext *q, BHWorldGeometry *w, const BHVec3 *a, BHVec3 *end, BHWorldSegmentHit *out)
+static int geometry(BHWorldSegmentContext *q, BHWorldGeometry *world, const BHVec3 *a, BHVec3 *end, BHWorldSegmentHit *out)
 {
-    BHWorldSegmentRoom *binding = bh_world_segment_room(q, w);
+    BHWorldSegmentRoom *binding = bh_world_segment_room(q, world);
     BHSegmentHit hit;
     int result;
     if (!binding)
         return fail(q, BH_WORLD_SEGMENT_TOPOLOGY);
     if (!binding->query)
         return 0;
-    result = bh_segment_query_run(binding->query, a, end, &w->transform, &w->inverse, &hit);
+    result = bh_segment_query_run(binding->query, a, end, &world->transform, &world->inverse, &hit);
     if (result < 0)
         return fail(q, BH_WORLD_SEGMENT_DEPENDENCY);
     if (result)
@@ -217,18 +217,18 @@ static int geometry(BHWorldSegmentContext *q, BHWorldGeometry *w, const BHVec3 *
         out->point = hit.point;
         out->normal = hit.normal;
         out->object.kind = BH_WORLD_HIT_GEOMETRY;
-        out->object.object.geometry = w;
+        out->object.object.geometry = world;
         out->material_flags = material(hit.flags);
     }
     return result;
 }
-static BHEntity *actor_next(BHEntity *e)
+static BHEntity *actor_next(BHEntity *actor)
 {
     BHEntity *next;
-    memcpy(&next, &e->actor.room_next, sizeof(next));
+    memcpy(&next, &actor->actor.room_next, sizeof(next));
     return next;
 }
-static int bh_world_segment_room_trace(BHWorldSegmentContext *q, const BHWorldHit *self, BHWorldGeometry *w,
+static int bh_world_segment_room_trace(BHWorldSegmentContext *segment_context, const BHWorldHit *self, BHWorldGeometry *world,
                                        const BHVec3 *start, const BHVec3 *end, float radius, const BHVec3 *direction,
                                        BHWorldSegmentHit *out)
 {
@@ -241,15 +241,15 @@ static int bh_world_segment_room_trace(BHWorldSegmentContext *q, const BHWorldHi
     double dot, dx, dy, dz, ds, hit_length, px, py, pz;
     unsigned long steps, rooms = 0;
     int result, found;
-    while (w)
+    while (world)
     {
-        if (++rooms > q->world_count + 1)
-            return fail(q, BH_WORLD_SEGMENT_TOPOLOGY);
-        binding = bh_world_segment_room(q, w);
+        if (++rooms > segment_context->world_count + 1)
+            return fail(segment_context, BH_WORLD_SEGMENT_TOPOLOGY);
+        binding = bh_world_segment_room(segment_context, world);
         if (!binding)
-            return fail(q, BH_WORLD_SEGMENT_TOPOLOGY);
+            return fail(segment_context, BH_WORLD_SEGMENT_TOPOLOGY);
         limit = *end;
-        neighbor = crossing(w, &a, end, &limit);
+        neighbor = crossing(world, &a, end, &limit);
         hit_point = limit;
         found = 0;
         bh_round_float(&length,
@@ -262,17 +262,17 @@ static int bh_world_segment_room_trace(BHWorldSegmentContext *q, const BHWorldHi
             packet.event = 3;
             while (actor)
             {
-                if (++steps > q->max_room_actors)
-                    return fail(q, BH_WORLD_SEGMENT_TOPOLOGY);
+                if (++steps > segment_context->max_room_actors)
+                    return fail(segment_context, BH_WORLD_SEGMENT_TOPOLOGY);
                 if (actor->kind)
-                    return fail(q, BH_WORLD_SEGMENT_ARGUMENT);
+                    return fail(segment_context, BH_WORLD_SEGMENT_ARGUMENT);
                 if (!excluded(self, NULL, actor))
                 {
                     if (!actor->query)
-                        return fail(q, BH_WORLD_SEGMENT_DEPENDENCY);
+                        return fail(segment_context, BH_WORLD_SEGMENT_DEPENDENCY);
                     actor->query(actor, &packet);
                     if (!finite_vec(&packet.position))
-                        return fail(q, BH_WORLD_SEGMENT_DEPENDENCY);
+                        return fail(segment_context, BH_WORLD_SEGMENT_DEPENDENCY);
                     dot = projection(&packet.position, &a, direction);
                     bh_round_float(&along, dot);
                     if (dot >= 0 && along <= length)
@@ -307,20 +307,20 @@ static int bh_world_segment_room_trace(BHWorldSegmentContext *q, const BHWorldHi
                 actor = actor_next(actor);
             }
         }
-        if ((w->query_flags & 2) && !excluded(self, w, NULL))
+        if ((world->query_flags & 2) && !excluded(self, world, NULL))
         {
-            result = geometry(q, w, &a, &hit_point, out);
+            result = geometry(segment_context, world, &a, &hit_point, out);
             if (result < 0)
                 return -1;
             if (result)
                 found = 1;
         }
-        child = (BHWorldGeometry *)w->navigation.next;
+        child = (BHWorldGeometry *)world->navigation.next;
         steps = 0;
         while (child && child->owner)
         {
-            if (++steps > q->world_count || !bh_world_segment_room(q, child))
-                return fail(q, BH_WORLD_SEGMENT_TOPOLOGY);
+            if (++steps > segment_context->world_count || !bh_world_segment_room(segment_context, child))
+                return fail(segment_context, BH_WORLD_SEGMENT_TOPOLOGY);
             if ((child->query_flags & 2) && !excluded(self, child, NULL) &&
                 (child->minimum.x <= a.x || child->minimum.x <= hit_point.x) &&
                 (a.x <= child->maximum.x || hit_point.x <= child->maximum.x) &&
@@ -329,7 +329,7 @@ static int bh_world_segment_room_trace(BHWorldSegmentContext *q, const BHWorldHi
                 (child->minimum.z <= a.z || child->minimum.z <= hit_point.z) &&
                 (a.z <= child->maximum.z || hit_point.z <= child->maximum.z))
             {
-                result = geometry(q, child, &a, &hit_point, out);
+                result = geometry(segment_context, child, &a, &hit_point, out);
                 if (result < 0)
                     return -1;
                 if (result)
@@ -338,73 +338,73 @@ static int bh_world_segment_room_trace(BHWorldSegmentContext *q, const BHWorldHi
             child = (BHWorldGeometry *)child->navigation.next;
         }
         if (!child)
-            return fail(q, BH_WORLD_SEGMENT_TOPOLOGY);
+            return fail(segment_context, BH_WORLD_SEGMENT_TOPOLOGY);
         if (found)
             return 1;
         if (!neighbor)
             return 0;
         a = limit;
-        w = neighbor;
+        world = neighbor;
     }
     return 0;
 }
-static void actor_pose(const BHEntity *e, BHMat34 *pose)
+static void actor_pose(const BHEntity *entity, BHMat34 *pose)
 {
     unsigned long i, j;
     float value;
     for (i = 0; i < 3; ++i)
         for (j = 0; j < 3; ++j)
         {
-            memcpy(&value, e->opaque0 + (i * 3 + j) * 4, 4);
+            memcpy(&value, entity->opaque0 + (i * 3 + j) * 4, 4);
             pose->m[j][i] = value;
         }
-    pose->m[0][3] = e->position.x;
-    pose->m[1][3] = e->position.y;
-    pose->m[2][3] = e->position.z;
+    pose->m[0][3] = entity->position.x;
+    pose->m[1][3] = entity->position.y;
+    pose->m[2][3] = entity->position.z;
 }
-static int bh_world_segment_actor_trace(BHWorldSegmentContext *q, const BHWorldHit *self, const BHVec3 *a,
+static int bh_world_segment_actor_trace(BHWorldSegmentContext *segment_context, const BHWorldHit *self, const BHVec3 *vector,
                                         const BHVec3 *end, const BHVec3 *direction, BHWorldSegmentHit *out)
 {
     unsigned long i;
-    BHEntity *e;
+    BHEntity *entity;
     BHMat34 pose, inverse;
     BHVec3 limit = *end;
     BHSegmentHit hit;
     float length, along, stored_y, stored_z;
     double dot, dx, dy, dz;
     int found = 0, result;
-    bh_round_float(&length, projection(end, a, direction));
-    for (i = 0; i < q->actor_count; ++i)
+    bh_round_float(&length, projection(end, vector, direction));
+    for (i = 0; i < segment_context->actor_count; ++i)
     {
-        e = q->actors[i].entity;
-        if (!e)
-            return fail(q, BH_WORLD_SEGMENT_TOPOLOGY);
-        if (e->kind)
-            return fail(q, BH_WORLD_SEGMENT_ARGUMENT);
-        if (excluded(self, NULL, e))
+        entity = segment_context->actors[i].entity;
+        if (!entity)
+            return fail(segment_context, BH_WORLD_SEGMENT_TOPOLOGY);
+        if (entity->kind)
+            return fail(segment_context, BH_WORLD_SEGMENT_ARGUMENT);
+        if (excluded(self, NULL, entity))
             continue;
-        dot = projection(&e->position, a, direction);
+        dot = projection(&entity->position, vector, direction);
         bh_round_float(&along, dot);
-        if (!(-(double)e->collision_radius < dot && along < (double)length + e->collision_radius))
+        if (!(-(double)entity->collision_radius < dot && along < (double)length + entity->collision_radius))
             continue;
-        dx = ((double)along * direction->x + a->x) - e->position.x;
-        dy = ((double)along * direction->y + a->y) - e->position.y;
-        dz = ((double)along * direction->z + a->z) - e->position.z;
+        dx = ((double)along * direction->x + vector->x) - entity->position.x;
+        dy = ((double)along * direction->y + vector->y) - entity->position.y;
+        dz = ((double)along * direction->z + vector->z) - entity->position.z;
         bh_round_float(&stored_y, dy);
         bh_round_float(&stored_z, dz);
-        if (!((dx * dx + dy * stored_y) + dz * stored_z < (double)e->collision_radius * e->collision_radius))
+        if (!((dx * dx + dy * stored_y) + dz * stored_z < (double)entity->collision_radius * entity->collision_radius))
             continue;
-        if (!q->actors[i].query)
+        if (!segment_context->actors[i].query)
             continue;
-        actor_pose(e, &pose);
+        actor_pose(entity, &pose);
         bh_mat34_inverse_rigid(&pose, &inverse);
-        result = bh_segment_query_run(q->actors[i].query, a, &limit, &pose, &inverse, &hit);
+        result = bh_segment_query_run(segment_context->actors[i].query, vector, &limit, &pose, &inverse, &hit);
         if (result < 0)
-            return fail(q, BH_WORLD_SEGMENT_DEPENDENCY);
+            return fail(segment_context, BH_WORLD_SEGMENT_DEPENDENCY);
         if (result)
         {
-            dot = (((double)hit.point.y - a->y) * direction->y + ((double)hit.point.x - a->x) * direction->x) +
-                  ((double)hit.point.z - a->z) * direction->z;
+            dot = (((double)hit.point.y - vector->y) * direction->y + ((double)hit.point.x - vector->x) * direction->x) +
+                  ((double)hit.point.z - vector->z) * direction->z;
             bh_round_float(&along, dot);
             if (dot < length)
             {
@@ -413,7 +413,7 @@ static int bh_world_segment_actor_trace(BHWorldSegmentContext *q, const BHWorldH
                 out->point = hit.point;
                 out->normal = hit.normal;
                 out->object.kind = BH_WORLD_HIT_ACTOR;
-                out->object.object.actor = e;
+                out->object.object.actor = entity;
                 found = 1;
                 /* Original global actor pass does not overwrite output+2c. */
             }
@@ -421,7 +421,7 @@ static int bh_world_segment_actor_trace(BHWorldSegmentContext *q, const BHWorldH
     }
     return found;
 }
-int bh_world_segment_run(BHWorldSegmentContext *q, const BHWorldHit *self, BHWorldGeometry **cached,
+int bh_world_segment_run(BHWorldSegmentContext *segment_context, const BHWorldHit *self, BHWorldGeometry **cached,
                          const BHVec3 *start, const BHVec3 *end, float radius, BHWorldSegmentHit *out)
 {
     BHWorldGeometry *owner, *old;
@@ -429,33 +429,33 @@ int bh_world_segment_run(BHWorldSegmentContext *q, const BHWorldHit *self, BHWor
     BHVec3 direction, limit;
     int a, b;
     double denominator, numerator;
-    if (!q)
+    if (!segment_context)
         return -1;
     if (!cached || !out)
-        return fail(q, BH_WORLD_SEGMENT_ARGUMENT);
-    if (q->busy)
-        return fail(q, BH_WORLD_SEGMENT_BUSY);
+        return fail(segment_context, BH_WORLD_SEGMENT_ARGUMENT);
+    if (segment_context->busy)
+        return fail(segment_context, BH_WORLD_SEGMENT_BUSY);
     if (!finite_vec(start) || !finite_vec(end) || !_finite(radius) || !bh_math_environment_supported())
-        return fail(q, BH_WORLD_SEGMENT_ARGUMENT);
-    if (q->refresh_actors && !q->refresh_actors(q, q->refresh_user))
-        return fail(q, BH_WORLD_SEGMENT_DEPENDENCY);
+        return fail(segment_context, BH_WORLD_SEGMENT_ARGUMENT);
+    if (segment_context->refresh_actors && !segment_context->refresh_actors(segment_context, segment_context->refresh_user))
+        return fail(segment_context, BH_WORLD_SEGMENT_DEPENDENCY);
     old = *cached;
-    if (old && !bh_world_segment_room(q, old))
-        return fail(q, BH_WORLD_SEGMENT_TOPOLOGY);
+    if (old && !bh_world_segment_room(segment_context, old))
+        return fail(segment_context, BH_WORLD_SEGMENT_TOPOLOGY);
     original = *out;
     hit = original;
     hit.material_flags = 0;
     owner = old;
     if (!owner || !contains(owner, start))
     {
-        owner = bh_world_locate(q->first, q->world_count, old, start, 0);
+        owner = bh_world_locate(segment_context->first, segment_context->world_count, old, start, 0);
         if (!owner)
             owner = old;
     }
     if (!owner)
     {
         out->material_flags = 0;
-        q->error = BH_WORLD_SEGMENT_OK;
+        segment_context->error = BH_WORLD_SEGMENT_OK;
         return 0;
     }
     bh_round_float(&direction.x, (double)end->x - start->x);
@@ -464,19 +464,19 @@ int bh_world_segment_run(BHWorldSegmentContext *q, const BHWorldHit *self, BHWor
     bh_vec3_normalize(&direction);
     *cached = owner;
     out->material_flags = 0;
-    q->busy = 1;
-    q->error = BH_WORLD_SEGMENT_OK;
-    a = bh_world_segment_room_trace(q, self, owner, start, end, radius, &direction, &hit);
+    segment_context->busy = 1;
+    segment_context->error = BH_WORLD_SEGMENT_OK;
+    a = bh_world_segment_room_trace(segment_context, self, owner, start, end, radius, &direction, &hit);
     if (a < 0)
     {
-        q->busy = 0;
+        segment_context->busy = 0;
         *cached = old;
         *out = original;
         return -1;
     }
     limit = a ? hit.point : *end;
-    b = bh_world_segment_actor_trace(q, self, start, &limit, &direction, &hit);
-    q->busy = 0;
+    b = bh_world_segment_actor_trace(segment_context, self, start, &limit, &direction, &hit);
+    segment_context->busy = 0;
     if (b < 0)
     {
         *cached = old;

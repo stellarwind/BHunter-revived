@@ -16,10 +16,10 @@ static float rounded(double x)
     bh_round_float(&f, x);
     return f;
 }
-static void identity(BHMat34 *m)
+static void identity(BHMat34 *matrix)
 {
-    memset(m, 0, sizeof(*m));
-    m->m[0][0] = m->m[1][1] = m->m[2][2] = 1;
+    memset(matrix, 0, sizeof(*matrix));
+    matrix->m[0][0] = matrix->m[1][1] = matrix->m[2][2] = 1;
 }
 static BHTargetConstructSlot *slot(BHEntity *entity)
 {
@@ -47,11 +47,11 @@ static void step(BHEntity *entity)
     if (ctx->synced_retirements != ctx->debris->pool->retirements && !bh_target_construct_sync(ctx))
         ctx->error = 1;
 }
-static int same_body(const BHPhysicsStepBody *body, const BHPhysicsStepBody *b)
+static int same_body(const BHPhysicsStepBody *body, const BHPhysicsStepBody *physics_step_body)
 {
-    return body->entity == b->entity && body->generation == b->generation && body->physics == b->physics &&
-           body->geometry == b->geometry && body->target_world == b->target_world &&
-           body->target_local == b->target_local && body->model_index == b->model_index;
+    return body->entity == physics_step_body->entity && body->generation == physics_step_body->generation && body->physics == physics_step_body->physics &&
+           body->geometry == physics_step_body->geometry && body->target_world == physics_step_body->target_world &&
+           body->target_local == physics_step_body->target_local && body->model_index == physics_step_body->model_index;
 }
 int bh_target_construct_sync(BHTargetConstructContext *ctx)
 {
@@ -213,7 +213,7 @@ int bh_target_construct_dispose(BHTargetConstructContext *ctx)
     ctx->roster_count = ctx->model_count = 0;
     return 1;
 }
-static int placement(BHTargetConstructContext *ctx, BHTargetConstructSlot *target_slot, BHGeometry *g, float radius)
+static int placement(BHTargetConstructContext *ctx, BHTargetConstructSlot *target_slot, BHGeometry *geometry, float radius)
 {
     const BHPhysicsStepBody *body = ctx->placement_focus;
     BHSweepQuery q;
@@ -241,7 +241,7 @@ static int placement(BHTargetConstructContext *ctx, BHTargetConstructSlot *targe
     bh_mat34_inverse_rigid(&fm, &fi);
     memset(&q, 0, sizeof(q));
     memset(&hit, 0, sizeof(hit));
-    if (!bh_sweep_init(&q, g, body->geometry))
+    if (!bh_sweep_init(&q, geometry, body->geometry))
         return 0;
     r = bh_physics_overlap(&q, &target_slot->state.pose, &fm, &fi, &hit);
     while (r > 0)
@@ -258,7 +258,7 @@ static int placement(BHTargetConstructContext *ctx, BHTargetConstructSlot *targe
             entity->position.x = rounded((double)entity->position.x + d.x * scale);
             entity->position.y = rounded((double)entity->position.y + d.y * scale);
             entity->position.z = rounded((double)entity->position.z + d.z * scale);
-            r = bh_collision_cached_contact(g->bsp, hit.a_face, &target_slot->state.pose, body->geometry->bsp,
+            r = bh_collision_cached_contact(geometry->bsp, hit.a_face, &target_slot->state.pose, body->geometry->bsp,
                                             hit.b_face, hit.b_node, &fm, &fi, &hit.normal, &hit.contact);
         } while (r > 0);
         if (r < 0)
@@ -268,7 +268,7 @@ static int placement(BHTargetConstructContext *ctx, BHTargetConstructSlot *targe
     bh_sweep_dispose(&q);
     return r == 0;
 }
-static BHTargetConstructSlot *begin(BHTargetConstructContext *ctx, const BHVec3 *p, const BHVec3 *a, float mass,
+static BHTargetConstructSlot *begin(BHTargetConstructContext *ctx, const BHVec3 *p, const BHVec3 *vector, float mass,
                                     int box)
 {
     BHTargetConstructSlot *target_slot = NULL;
@@ -276,7 +276,7 @@ static BHTargetConstructSlot *begin(BHTargetConstructContext *ctx, const BHVec3 
     BHMat34 rotation;
     unsigned long i, end;
     BHVec3 inertia;
-    if (!ctx || !p || !a || !ctx->draw || !ctx->pickups || !ctx->particles || !ctx->explosions || !ctx->mode ||
+    if (!ctx || !p || !vector || !ctx->draw || !ctx->pickups || !ctx->particles || !ctx->explosions || !ctx->mode ||
         !ctx->debris || !ctx->slots || !ctx->roster || !ctx->models || !bh_math_environment_supported() ||
         !_finite(mass))
     {
@@ -328,9 +328,9 @@ static BHTargetConstructSlot *begin(BHTargetConstructContext *ctx, const BHVec3 
     entity->world = NULL;
     memset(&target_slot->state, 0, sizeof(target_slot->state));
     identity(&rotation);
-    bh_mat34_rotate_y(a->x, &rotation);
-    bh_mat34_rotate_x(a->y, &rotation);
-    bh_mat34_rotate_z(a->z, &rotation);
+    bh_mat34_rotate_y(vector->x, &rotation);
+    bh_mat34_rotate_x(vector->y, &rotation);
+    bh_mat34_rotate_z(vector->z, &rotation);
     target_slot->state.pose = rotation;
     for (i = 0; i < 3; ++i)
         target_slot->state.pose.m[i][3] = ((const float *)p)[i];
@@ -347,7 +347,7 @@ static BHTargetConstructSlot *begin(BHTargetConstructContext *ctx, const BHVec3 
                    entity->collision_radius))
         goto rejected;
     target_slot->state.last_clear = target_slot->state.pose;
-    target_slot->state.euler = *a;
+    target_slot->state.euler = *vector;
     bh_mat34_inverse_rigid(&target_slot->state.pose, &target_slot->inverse);
     inertia.x = inertia.y = inertia.z = rounded((double)mass * 1.73);
     /* The real binder requires a fresh body with no entity yet. */
@@ -451,19 +451,19 @@ BHEntity *bh_target_construct_moving(BHTargetConstructContext *ctx, const BHVec3
         return NULL;
     return finish(ctx, target_slot, resource, v, w, countdown, owner, token, loot, counter, 0x2000, &zero, NULL, NULL);
 }
-static void local_direction(const BHMat34 *m, const BHVec3 *v, BHVec3 *out)
+static void local_direction(const BHMat34 *matrix, const BHVec3 *vector, BHVec3 *out)
 {
-    out->x = rounded(((double)m->m[2][0] * v->z + (double)m->m[1][0] * v->y) + (double)m->m[0][0] * v->x);
-    out->y = rounded(((double)m->m[1][1] * v->y + (double)m->m[2][1] * v->z) + (double)m->m[0][1] * v->x);
-    out->z = rounded(((double)m->m[2][2] * v->z + (double)m->m[1][2] * v->y) + (double)m->m[0][2] * v->x);
+    out->x = rounded(((double)matrix->m[2][0] * vector->z + (double)matrix->m[1][0] * vector->y) + (double)matrix->m[0][0] * vector->x);
+    out->y = rounded(((double)matrix->m[1][1] * vector->y + (double)matrix->m[2][1] * vector->z) + (double)matrix->m[0][1] * vector->x);
+    out->z = rounded(((double)matrix->m[2][2] * vector->z + (double)matrix->m[1][2] * vector->y) + (double)matrix->m[0][2] * vector->x);
 }
-static void local_point(const BHMat34 *m, const BHVec3 *v, BHVec3 *out)
+static void local_point(const BHMat34 *matrix, const BHVec3 *vector, BHVec3 *out)
 {
-    float x = rounded((double)v->x - m->m[0][3]);
-    double y = (double)v->y - m->m[1][3], z = (double)v->z - m->m[2][3];
-    out->x = rounded(((double)m->m[2][0] * z + (double)m->m[1][0] * y) + (double)m->m[0][0] * x);
-    out->y = rounded(((double)m->m[2][1] * z + (double)m->m[1][1] * y) + (double)m->m[0][1] * x);
-    out->z = rounded(((double)m->m[2][2] * z + (double)m->m[1][2] * y) + (double)m->m[0][2] * x);
+    float x = rounded((double)vector->x - matrix->m[0][3]);
+    double y = (double)vector->y - matrix->m[1][3], z = (double)vector->z - matrix->m[2][3];
+    out->x = rounded(((double)matrix->m[2][0] * z + (double)matrix->m[1][0] * y) + (double)matrix->m[0][0] * x);
+    out->y = rounded(((double)matrix->m[2][1] * z + (double)matrix->m[1][1] * y) + (double)matrix->m[0][1] * x);
+    out->z = rounded(((double)matrix->m[2][2] * z + (double)matrix->m[1][2] * y) + (double)matrix->m[0][2] * x);
 }
 BHEntity *bh_target_construct_box(BHTargetConstructContext *ctx, const BHVec3 *p, const BHVec3 *a, const BHVec3 *v,
                                   const BHVec3 *w, unsigned long resource, float mass, float countdown, BHEntity *owner,

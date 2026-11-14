@@ -4,53 +4,53 @@
 #include <math.h>
 #include <string.h>
 
-static int fail(BHSpriteBillboardContext *c, BHSpriteBillboardError error)
+static int fail(BHSpriteBillboardContext *context, BHSpriteBillboardError error)
 {
-    if (c)
-        c->error = error;
+    if (context)
+        context->error = error;
     return 0;
 }
-static void point(BHClipVertex *p, float x, float y, float u, float v)
+static void point(BHClipVertex *vertex, float x, float y, float u, float v)
 {
-    p->sx = x;
-    p->sy = y;
-    p->u = u;
-    p->v = v;
+    vertex->sx = x;
+    vertex->sy = y;
+    vertex->u = u;
+    vertex->v = v;
 }
-int bh_sprite_billboard_draw(BHSpriteBillboardContext *c, BHTextureImage *image, float x, float y, float z, float width,
+int bh_sprite_billboard_draw(BHSpriteBillboardContext *context, BHTextureImage *image, float x, float y, float z, float width,
                              float height, float angle, unsigned long flags, float modulation)
 {
     BHVec3 world, projected;
-    BHClipVertex quad[4], *ring, *p;
+    BHClipVertex quad[4], *ring, *vertex;
     float cx, cy, half_width, half_height, radius, cs, sn, hc, hs, ws, hsin;
     float u0, u1, v0, v1;
     double conversion;
     int shade;
     unsigned long i, steps;
-    if (!c || !image || !c->camera || !c->config || !c->clip || !c->emit || !_finite(x) || !_finite(y) || !_finite(z) ||
-        !_finite(width) || !_finite(height) || !_finite(angle) || !_finite(modulation) || !_finite(c->camera->focal) ||
-        c->camera->focal <= 0 || !_finite(c->config->near_z) || !_finite(c->config->far_z) || c->config->near_z <= 0 ||
-        c->config->far_z < c->config->near_z)
-        return fail(c, BH_SPRITE_BILLBOARD_ARGUMENT);
-    c->error = BH_SPRITE_BILLBOARD_OK;
-    c->emitted = 0;
+    if (!context || !image || !context->camera || !context->config || !context->clip || !context->emit || !_finite(x) || !_finite(y) || !_finite(z) ||
+        !_finite(width) || !_finite(height) || !_finite(angle) || !_finite(modulation) || !_finite(context->camera->focal) ||
+        context->camera->focal <= 0 || !_finite(context->config->near_z) || !_finite(context->config->far_z) || context->config->near_z <= 0 ||
+        context->config->far_z < context->config->near_z)
+        return fail(context, BH_SPRITE_BILLBOARD_ARGUMENT);
+    context->error = BH_SPRITE_BILLBOARD_OK;
+    context->emitted = 0;
     world.x = x;
     world.y = y;
     world.z = z;
-    bh_mat34_transform_point(&c->camera->projected, &world, &projected);
+    bh_mat34_transform_point(&context->camera->projected, &world, &projected);
     if (!_finite(projected.x) || !_finite(projected.y) || !_finite(projected.z))
-        return fail(c, BH_SPRITE_BILLBOARD_NUMERICAL);
-    if (projected.z < c->config->near_z || c->config->far_z < projected.z)
+        return fail(context, BH_SPRITE_BILLBOARD_NUMERICAL);
+    if (projected.z < context->config->near_z || context->config->far_z < projected.z)
         return 1;
-    bh_round_float(&half_width, ((double)width * ((double)c->camera->focal / projected.z)) * .5);
-    bh_round_float(&half_height, ((double)height * ((double)c->camera->focal / projected.z)) * .5);
+    bh_round_float(&half_width, ((double)width * ((double)context->camera->focal / projected.z)) * .5);
+    bh_round_float(&half_height, ((double)height * ((double)context->camera->focal / projected.z)) * .5);
     bh_round_float(&cx, (double)projected.x / projected.z);
     bh_round_float(&cy, (double)projected.y / projected.z);
     bh_round_float(&radius, sqrt((double)half_height * half_height + (double)half_width * half_width));
     if (!_finite(half_width) || !_finite(half_height) || !_finite(cx) || !_finite(cy) || !_finite(radius))
-        return fail(c, BH_SPRITE_BILLBOARD_NUMERICAL);
-    if (!(c->config->left < radius + cx && cx - radius < c->config->right && c->config->top < radius + cy &&
-          cy - radius < c->config->bottom))
+        return fail(context, BH_SPRITE_BILLBOARD_NUMERICAL);
+    if (!(context->config->left < radius + cx && cx - radius < context->config->right && context->config->top < radius + cy &&
+          cy - radius < context->config->bottom))
         return 1;
     u0 = (flags & 1) ? 1.0f : 0.0f;
     u1 = 1.0f - u0;
@@ -103,29 +103,29 @@ int bh_sprite_billboard_draw(BHSpriteBillboardContext *c, BHTextureImage *image,
         quad[i].next = quad + (i + 1) % 4;
         quad[i].previous = quad + (i + 3) % 4;
     }
-    ring = bh_screen_clip_polygon(c->clip, quad, c->config->near_z);
+    ring = bh_screen_clip_polygon(context->clip, quad, context->config->near_z);
     if (!ring)
     {
-        if (c->clip->error != BH_CLIP_OK)
-            return fail(c, BH_SPRITE_BILLBOARD_CLIP);
+        if (context->clip->error != BH_CLIP_OK)
+            return fail(context, BH_SPRITE_BILLBOARD_CLIP);
         return 1;
     }
     conversion = (double)modulation * -255.0;
     if (!_finite(conversion) || conversion < -2147483648.0 || conversion > 2147483647.0)
-        return fail(c, BH_SPRITE_BILLBOARD_NUMERICAL);
+        return fail(context, BH_SPRITE_BILLBOARD_NUMERICAL);
     shade = (int)conversion;
-    c->color = c->base_color - (unsigned long)shade * 0x10101UL;
-    p = ring;
+    context->color = context->base_color - (unsigned long)shade * 0x10101UL;
+    vertex = ring;
     steps = 0;
     do
     {
         if (++steps > 12)
-            return fail(c, BH_SPRITE_BILLBOARD_CLIP);
-        p->point.z = projected.z;
-        p = p->next;
-    } while (p != ring);
-    if (!c->emit(ring, image, c->color, c->emit_user))
-        return fail(c, BH_SPRITE_BILLBOARD_EMIT);
-    c->emitted = 1;
+            return fail(context, BH_SPRITE_BILLBOARD_CLIP);
+        vertex->point.z = projected.z;
+        vertex = vertex->next;
+    } while (vertex != ring);
+    if (!context->emit(ring, image, context->color, context->emit_user))
+        return fail(context, BH_SPRITE_BILLBOARD_EMIT);
+    context->emitted = 1;
     return 1;
 }

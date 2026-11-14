@@ -10,15 +10,15 @@ static_assert(sizeof(void *) == 4, "player camera pointer size");
 static_assert(offsetof(BHEntity, position) == 0xc, "BHEntity.position offset");
 static_assert(offsetof(BHEntity, payload) == 0xe4, "BHEntity.payload offset");
 
-static int finite_vector(const BHVec3 *v)
+static int finite_vector(const BHVec3 *vector)
 {
-    return _finite(v->x) && _finite(v->y) && _finite(v->z);
+    return _finite(vector->x) && _finite(vector->y) && _finite(vector->z);
 }
-static void translate(BHVec3 *v, const BHVec3 *delta, double delta_x)
+static void translate(BHVec3 *vector, const BHVec3 *delta, double delta_x)
 {
-    bh_round_float(&v->x, (double)v->x + delta_x);
-    bh_round_float(&v->y, (double)v->y + delta->y);
-    bh_round_float(&v->z, (double)v->z + delta->z);
+    bh_round_float(&vector->x, (double)vector->x + delta_x);
+    bh_round_float(&vector->y, (double)vector->y + delta->y);
+    bh_round_float(&vector->z, (double)vector->z + delta->z);
 }
 BHCameraState *bh_player_camera_state(BHEntity *player)
 {

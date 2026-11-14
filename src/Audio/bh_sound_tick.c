@@ -9,12 +9,12 @@
 static_assert(offsetof(BHSoundVoice, distance_squared) == 0x2c, "BHSoundVoice.distance_squared offset");
 static_assert(offsetof(BHSoundVoice, listener_index) == 0x40, "BHSoundVoice.listener_index offset");
 static_assert(offsetof(BHSoundResource, audible_range) == 0x94, "BHSoundResource.audible_range offset");
-static int native_result(BHSoundQueue *sound_queue, BHSoundTickStats *s, long hr)
+static int native_result(BHSoundQueue *sound_queue, BHSoundTickStats *sound_tick_stats, long hr)
 {
     sound_queue->last_hresult = hr;
     if (hr != 0)
     {
-        s->last_error = hr;
+        sound_tick_stats->last_error = hr;
         sound_queue->error = BH_SOUND_BACKEND;
         return 0;
     }
@@ -32,28 +32,28 @@ static long clamp(long value, long low, long high)
 {
     return value < low ? low : value > high ? high : value;
 }
-static void select_listener(BHSoundQueue *sound_queue, BHSoundVoice *v, BHVec3 *scratch)
+static void select_listener(BHSoundQueue *sound_queue, BHSoundVoice *voice, BHVec3 *scratch)
 {
     double x, y, z, distance = 0;
-    v->distance_squared = 9e37f;
-    if (v->positioned)
+    voice->distance_squared = 9e37f;
+    if (voice->positioned)
     {
-        x = (double)v->position.x - sound_queue->listener.x;
-        y = (double)v->position.y - sound_queue->listener.y;
-        z = (double)v->position.z - sound_queue->listener.z;
+        x = (double)voice->position.x - sound_queue->listener.x;
+        y = (double)voice->position.y - sound_queue->listener.y;
+        z = (double)voice->position.z - sound_queue->listener.z;
         bh_round_float(&scratch->x, x);
         bh_round_float(&scratch->y, y);
         bh_round_float(&scratch->z, z);
         distance = (x * scratch->x + y * scratch->y) + z * scratch->z;
     }
-    if (distance < v->distance_squared)
+    if (distance < voice->distance_squared)
     {
-        bh_round_float(&v->distance_squared, distance);
-        v->cached = *scratch;
-        v->listener_index = 0;
+        bh_round_float(&voice->distance_squared, distance);
+        voice->cached = *scratch;
+        voice->listener_index = 0;
     }
 }
-static void spatial(BHSoundQueue *sound_queue, BHSoundResource *r, BHSoundVoice *v, float *attenuation, double *pan,
+static void spatial(BHSoundQueue *sound_queue, BHSoundResource *resource, BHSoundVoice *voice, float *attenuation, double *pan,
                     float *factor)
 {
     double length, dot, n;
@@ -61,103 +61,103 @@ static void spatial(BHSoundQueue *sound_queue, BHSoundResource *r, BHSoundVoice 
     *attenuation = 0;
     *pan = 0;
     *factor = 1;
-    if (!v->positioned)
+    if (!voice->positioned)
         return;
-    length = sqrt((double)v->distance_squared);
+    length = sqrt((double)voice->distance_squared);
     bh_round_float(&distance, length);
-    if (length > r->audible_range)
-        bh_round_float(attenuation, -(((double)distance - r->audible_range) / r->audible_range) * 1000.0);
+    if (length > resource->audible_range)
+        bh_round_float(attenuation, -(((double)distance - resource->audible_range) / resource->audible_range) * 1000.0);
     if (distance == 0)
         return;
-    if (r->streaming)
-        dot = ((double)v->cached.y * sound_queue->listener_right.y +
-               (double)v->cached.z * sound_queue->listener_right.z) +
-              (double)v->cached.x * sound_queue->listener_right.x;
+    if (resource->streaming)
+        dot = ((double)voice->cached.y * sound_queue->listener_right.y +
+               (double)voice->cached.z * sound_queue->listener_right.z) +
+              (double)voice->cached.x * sound_queue->listener_right.x;
     else
-        dot = ((double)v->cached.x * sound_queue->listener_right.x +
-               (double)v->cached.y * sound_queue->listener_right.y) +
-              (double)v->cached.z * sound_queue->listener_right.z;
+        dot = ((double)voice->cached.x * sound_queue->listener_right.x +
+               (double)voice->cached.y * sound_queue->listener_right.y) +
+              (double)voice->cached.z * sound_queue->listener_right.z;
     n = dot / distance;
     *pan = (n * n) * (n > 0 ? 10000.0 : -10000.0);
-    if (v->moving)
+    if (voice->moving)
     {
-        if (r->streaming)
-            dot = (((double)v->velocity.y - sound_queue->listener_velocity.y) * v->cached.y +
-                   ((double)v->velocity.z - sound_queue->listener_velocity.z) * v->cached.z) +
-                  ((double)v->velocity.x - sound_queue->listener_velocity.x) * v->cached.x;
+        if (resource->streaming)
+            dot = (((double)voice->velocity.y - sound_queue->listener_velocity.y) * voice->cached.y +
+                   ((double)voice->velocity.z - sound_queue->listener_velocity.z) * voice->cached.z) +
+                  ((double)voice->velocity.x - sound_queue->listener_velocity.x) * voice->cached.x;
         else
-            dot = (((double)v->velocity.x - sound_queue->listener_velocity.x) * v->cached.x +
-                   ((double)v->velocity.y - sound_queue->listener_velocity.y) * v->cached.y) +
-                  ((double)v->velocity.z - sound_queue->listener_velocity.z) * v->cached.z;
+            dot = (((double)voice->velocity.x - sound_queue->listener_velocity.x) * voice->cached.x +
+                   ((double)voice->velocity.y - sound_queue->listener_velocity.y) * voice->cached.y) +
+                  ((double)voice->velocity.z - sound_queue->listener_velocity.z) * voice->cached.z;
         bh_round_float(factor, 1.0 - (-(dot / distance)) * (-1.0 / 330.0));
     }
 }
-static void stop(BHSoundQueue *sound_queue, BHSoundResource *r, unsigned long slot, BHSoundTickStats *s)
+static void stop(BHSoundQueue *sound_queue, BHSoundResource *resource, unsigned long slot, BHSoundTickStats *sound_tick_stats)
 {
-    ++s->stop_calls;
-    native_result(sound_queue, s, bh_audio_stop(r->buffers[slot]));
-    r->playing[slot] = 0;
+    ++sound_tick_stats->stop_calls;
+    native_result(sound_queue, sound_tick_stats, bh_audio_stop(resource->buffers[slot]));
+    resource->playing[slot] = 0;
 }
-static void parameters(BHSoundQueue *sound_queue, BHSoundResource *r, BHSoundVoice *v, unsigned long slot, float master,
-                       BHSoundTickStats *s)
+static void parameters(BHSoundQueue *sound_queue, BHSoundResource *resource, BHSoundVoice *voice, unsigned long slot, float master,
+                       BHSoundTickStats *sound_tick_stats)
 {
     float attenuation, factor;
     double pan_value;
     long volume, pan, frequency;
     long hr;
-    spatial(sound_queue, r, v, &attenuation, &pan_value, &factor);
-    volume = clamp(truncate_low(((double)v->volume + attenuation) + master), -10000, 0);
-    if (r->streaming && volume < -3500)
+    spatial(sound_queue, resource, voice, &attenuation, &pan_value, &factor);
+    volume = clamp(truncate_low(((double)voice->volume + attenuation) + master), -10000, 0);
+    if (resource->streaming && volume < -3500)
     {
-        if (r->playing[slot])
-            stop(sound_queue, r, slot, s);
+        if (resource->playing[slot])
+            stop(sound_queue, resource, slot, sound_tick_stats);
         return;
     }
     pan = clamp(truncate_low(pan_value), -10000, 10000);
-    frequency = truncate_low((double)v->frequency * factor);
+    frequency = truncate_low((double)voice->frequency * factor);
     if (volume < -3500)
     {
-        if (r->playing[slot])
-            stop(sound_queue, r, slot, s);
-        v->pending = 0;
+        if (resource->playing[slot])
+            stop(sound_queue, resource, slot, sound_tick_stats);
+        voice->pending = 0;
         return;
     }
-    if (r->cached_volume[slot] != volume)
+    if (resource->cached_volume[slot] != volume)
     {
-        ++s->volume_calls;
-        native_result(sound_queue, s, bh_audio_volume(r->buffers[slot], volume));
-        r->cached_volume[slot] = volume;
+        ++sound_tick_stats->volume_calls;
+        native_result(sound_queue, sound_tick_stats, bh_audio_volume(resource->buffers[slot], volume));
+        resource->cached_volume[slot] = volume;
     }
-    if (r->cached_pan[slot] != pan)
+    if (resource->cached_pan[slot] != pan)
     {
-        ++s->pan_calls;
-        native_result(sound_queue, s, bh_audio_pan(r->buffers[slot], pan));
-        r->cached_pan[slot] = pan;
+        ++sound_tick_stats->pan_calls;
+        native_result(sound_queue, sound_tick_stats, bh_audio_pan(resource->buffers[slot], pan));
+        resource->cached_pan[slot] = pan;
     }
-    if (r->cached_frequency[slot] != frequency)
+    if (resource->cached_frequency[slot] != frequency)
     {
-        ++s->frequency_calls;
-        hr = bh_audio_pitch(r->buffers[slot], (unsigned long)frequency);
-        native_result(sound_queue, s, hr);
-        r->cached_frequency[slot] = frequency;
+        ++sound_tick_stats->frequency_calls;
+        hr = bh_audio_pitch(resource->buffers[slot], (unsigned long)frequency);
+        native_result(sound_queue, sound_tick_stats, hr);
+        resource->cached_frequency[slot] = frequency;
     }
-    if (r->streaming ? !r->playing[slot] : v->pending != 0)
+    if (resource->streaming ? !resource->playing[slot] : voice->pending != 0)
     {
-        if (!r->streaming)
-            v->pending = 0;
-        ++s->position_calls;
-        native_result(sound_queue, s, bh_audio_seek(r->buffers[slot], 0));
-        ++s->play_calls;
-        native_result(sound_queue, s, bh_audio_play(r->buffers[slot], 0, 0, r->streaming ? 1 : 0));
-        r->playing[slot] = 1;
+        if (!resource->streaming)
+            voice->pending = 0;
+        ++sound_tick_stats->position_calls;
+        native_result(sound_queue, sound_tick_stats, bh_audio_seek(resource->buffers[slot], 0));
+        ++sound_tick_stats->play_calls;
+        native_result(sound_queue, sound_tick_stats, bh_audio_play(resource->buffers[slot], 0, 0, resource->streaming ? 1 : 0));
+        resource->playing[slot] = 1;
     }
 }
 int bh_sound_tick(BHSoundQueue *sound_queue, float dt, float master, BHSoundTickStats *out)
 {
     BHSoundTickStats stats;
     BHVec3 scratch = {0, 0, 0};
-    BHSoundResource *r;
-    BHSoundVoice *v, *best[4], *swap;
+    BHSoundResource *resource;
+    BHSoundVoice *voice, *best[4], *swap;
     unsigned long i, j, k, n, walk;
     unsigned long status;
     double phase;
@@ -179,39 +179,39 @@ int bh_sound_tick(BHSoundQueue *sound_queue, float dt, float master, BHSoundTick
     }
     for (i = 0; i < sound_queue->resource_count; ++i)
     {
-        r = sound_queue->resources[i];
-        if (!r || r->buffer_count < 1 || r->buffer_count > 3 || r->voice_limit < 1 || r->voice_limit > 3)
+        resource = sound_queue->resources[i];
+        if (!resource || resource->buffer_count < 1 || resource->buffer_count > 3 || resource->voice_limit < 1 || resource->voice_limit > 3)
         {
             sound_queue->error = BH_SOUND_TOPOLOGY;
             break;
         }
-        for (j = 0; j < r->buffer_count; ++j)
-            if (!r->buffers[j])
+        for (j = 0; j < resource->buffer_count; ++j)
+            if (!resource->buffers[j])
                 break;
-        if (j != r->buffer_count)
+        if (j != resource->buffer_count)
         {
             sound_queue->error = BH_SOUND_TOPOLOGY;
             break;
         }
-        if (!_finite(r->phase) || !_finite(r->time_scale) || !_finite(r->audible_range))
+        if (!_finite(resource->phase) || !_finite(resource->time_scale) || !_finite(resource->audible_range))
         {
             sound_queue->error = BH_SOUND_NUMERICAL;
             break;
         }
-        phase = (double)r->phase - dt;
-        bh_round_float(&r->phase, phase);
+        phase = (double)resource->phase - dt;
+        bh_round_float(&resource->phase, phase);
         if (!(phase < 0))
             continue;
-        phase += r->time_scale;
-        bh_round_float(&r->phase, phase);
+        phase += resource->time_scale;
+        bh_round_float(&resource->phase, phase);
         if (phase < 0)
-            r->phase = 0;
-        if (r->streaming)
+            resource->phase = 0;
+        if (resource->streaming)
         {
             n = 0;
-            for (v = r->stream_head; v && n < r->voice_limit; v = v->next)
+            for (voice = resource->stream_head; voice && n < resource->voice_limit; voice = voice->next)
                 ++n;
-            while (!r->no_more && r->buffer_count < n)
+            while (!resource->no_more && resource->buffer_count < n)
             {
                 ++stats.duplicate_calls;
                 if (!sound_queue->device)
@@ -220,32 +220,32 @@ int bh_sound_tick(BHSoundQueue *sound_queue, float dt, float master, BHSoundTick
                     break;
                 }
                 sound_queue->last_hresult =
-                    bh_audio_duplicate(sound_queue->device, r->buffers[0], r->buffers + r->buffer_count);
+                    bh_audio_duplicate(sound_queue->device, resource->buffers[0], resource->buffers + resource->buffer_count);
                 if (sound_queue->last_hresult == 0)
                 {
-                    ++r->buffer_count;
-                    if (r->buffer_count == r->voice_limit)
-                        r->no_more = 1;
+                    ++resource->buffer_count;
+                    if (resource->buffer_count == resource->voice_limit)
+                        resource->no_more = 1;
                 }
                 else
                 {
-                    r->buffers[r->buffer_count] = NULL;
-                    r->no_more = 1;
+                    resource->buffers[resource->buffer_count] = NULL;
+                    resource->no_more = 1;
                 }
             }
-            if (n > r->buffer_count)
-                n = r->buffer_count;
+            if (n > resource->buffer_count)
+                n = resource->buffer_count;
             memset(best, 0, sizeof(best));
             walk = 0;
-            for (v = r->stream_head; v; v = v->next)
+            for (voice = resource->stream_head; voice; voice = voice->next)
             {
                 if (++walk > sound_queue->voice_count)
                 {
                     sound_queue->error = BH_SOUND_TOPOLOGY;
                     break;
                 }
-                select_listener(sound_queue, v, &scratch);
-                best[n] = v;
+                select_listener(sound_queue, voice, &scratch);
+                best[n] = voice;
                 for (k = n; k && (!best[k - 1] || best[k]->distance_squared < best[k - 1]->distance_squared); --k)
                 {
                     swap = best[k - 1];
@@ -256,41 +256,41 @@ int bh_sound_tick(BHSoundQueue *sound_queue, float dt, float master, BHSoundTick
             if (walk > sound_queue->voice_count)
                 break;
             for (j = 0; j < n; ++j)
-                parameters(sound_queue, r, best[j], j, master, &stats);
-            for (j = n; j < r->buffer_count; ++j)
-                if (r->playing[j])
-                    stop(sound_queue, r, j, &stats);
+                parameters(sound_queue, resource, best[j], j, master, &stats);
+            for (j = n; j < resource->buffer_count; ++j)
+                if (resource->playing[j])
+                    stop(sound_queue, resource, j, &stats);
         }
         else
         {
-            for (j = 0; j < r->buffer_count; ++j)
+            for (j = 0; j < resource->buffer_count; ++j)
             {
-                v = r->voices[j];
-                if (r->playing[j] && v && !v->pending)
+                voice = resource->voices[j];
+                if (resource->playing[j] && voice && !voice->pending)
                 {
                     status = 0;
                     ++stats.status_calls;
-                    native_result(sound_queue, &stats, bh_audio_status(r->buffers[j], &status));
+                    native_result(sound_queue, &stats, bh_audio_status(resource->buffers[j], &status));
                     if (!(status & 1))
                     {
-                        r->playing[j] = 0;
-                        ++v->generation;
-                        v->next = sound_queue->free_voices;
-                        sound_queue->free_voices = v;
-                        r->voices[j] = NULL;
+                        resource->playing[j] = 0;
+                        ++voice->generation;
+                        voice->next = sound_queue->free_voices;
+                        sound_queue->free_voices = voice;
+                        resource->voices[j] = NULL;
                         ++stats.recycled;
                     }
                 }
             }
-            for (j = 0; j < r->buffer_count; ++j)
+            for (j = 0; j < resource->buffer_count; ++j)
             {
-                v = r->voices[j];
-                if (!v)
+                voice = resource->voices[j];
+                if (!voice)
                     continue;
-                if (v->pending && r->playing[j])
-                    stop(sound_queue, r, j, &stats);
-                select_listener(sound_queue, v, &scratch);
-                parameters(sound_queue, r, v, j, master, &stats);
+                if (voice->pending && resource->playing[j])
+                    stop(sound_queue, resource, j, &stats);
+                select_listener(sound_queue, voice, &scratch);
+                parameters(sound_queue, resource, voice, j, master, &stats);
             }
         }
     }

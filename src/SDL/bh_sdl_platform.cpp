@@ -217,9 +217,9 @@ extern "C"
         auto **available = SDL_GetFullscreenDisplayModes(SDL_GetDisplayForWindow(window), &count);
         for (int i = 0; i < count; ++i)
         {
-            auto *m = available[i];
-            std::pair<int, int> size{m->w, m->h};
-            if (m->w >= 640 && m->h >= 480 && m->w <= 3840 && m->h <= 2160 &&
+            auto *mode = available[i];
+            std::pair<int, int> size{mode->w, mode->h};
+            if (mode->w >= 640 && mode->h >= 480 && mode->w <= 3840 && mode->h <= 2160 &&
                 std::find(modes.begin(), modes.end(), size) == modes.end())
                 modes.push_back(size);
         }

@@ -6,16 +6,16 @@
 #include <stddef.h>
 #include <string.h>
 static_assert(sizeof(void *) == 4 && offsetof(BHEntity, payload) == 0xe4, "marker layout");
-static BHEntity **owner_head(BHHitMarkerContext *c, BHEntity *owner)
+static BHEntity **owner_head(BHHitMarkerContext *marker_context, BHEntity *owner)
 {
     BHEntity **head = NULL;
-    if (c->owner_head)
-        head = c->owner_head(owner, c->owner_head_user);
+    if (marker_context->owner_head)
+        head = marker_context->owner_head(owner, marker_context->owner_head_user);
     return head ? head : &owner->placement.attachments;
 }
-static int unlink_owner(BHHitMarkerContext *c, BHEntity *e)
+static int unlink_owner(BHHitMarkerContext *marker_context, BHEntity *marker)
 {
-    BHEntity *owner = e->marker.owner, *older = e->marker.owner_older, *newer = e->marker.owner_newer;
+    BHEntity *owner = marker->marker.owner, *older = marker->marker.owner_older, *newer = marker->marker.owner_newer;
     if (!owner)
         return 0;
     if (older)
@@ -23,41 +23,43 @@ static int unlink_owner(BHHitMarkerContext *c, BHEntity *e)
     if (newer)
         (newer->marker.owner_older = older);
     else
-        *owner_head(c, owner) = older;
+        *owner_head(marker_context, owner) = older;
     return 1;
 }
-BHEntity *bh_hit_marker_create(BHHitMarkerContext *c, const BHVec3 *p, const BHVec3 *n, float size, unsigned long flags,
-                               BHEntity *owner)
+BHEntity *bh_hit_marker_create(BHHitMarkerContext *marker_context, const BHVec3 *hit_position, const BHVec3 *hit_normal,
+                               float size, unsigned long flags, BHEntity *owner)
 {
-    BHEntity *e, *prior, *old, **head;
+    BHEntity *marker, *prior, *old, **head;
     BHVec3 normal, position, up;
     BHHitMarkerDraw draw = bh_hit_marker_draw;
     double dot;
-    if (!c || !c->pool || !c->queue || !p || !n || !owner || c->count > 200 || !bh_math_environment_supported())
+    if (!marker_context || !marker_context->pool || !marker_context->queue || !hit_position || !hit_normal || !owner ||
+        marker_context->count > 200 || !bh_math_environment_supported())
     {
-        if (c)
-            c->error = BH_HIT_MARKER_ARGUMENT;
+        if (marker_context)
+            marker_context->error = BH_HIT_MARKER_ARGUMENT;
         return NULL;
     }
-    if ((c->count && (!c->oldest || !c->newest)) || (!c->count && (c->oldest || c->newest)))
+    if ((marker_context->count && (!marker_context->oldest || !marker_context->newest)) ||
+        (!marker_context->count && (marker_context->oldest || marker_context->newest)))
     {
-        c->error = BH_HIT_MARKER_TOPOLOGY;
+        marker_context->error = BH_HIT_MARKER_TOPOLOGY;
         return NULL;
     }
-    normal = *n;
-    position = *p;
-    e = bh_entity_acquire(c->pool);
-    if (!e)
+    normal = *hit_normal;
+    position = *hit_position;
+    marker = bh_entity_acquire(marker_context->pool);
+    if (!marker)
     {
-        c->error = BH_HIT_MARKER_POOL;
+        marker_context->error = BH_HIT_MARKER_POOL;
         return NULL;
     }
-    bh_field_store_f32(&e->marker.age, 0);
-    bh_field_store_f32(&e->marker.lifetime, 30);
-    bh_field_store_f32(&e->marker.size, size);
-    bh_field_store_f32(&e->marker.u, (float)(flags & 1) * .5f);
-    bh_field_store_f32(&e->marker.v, (float)(flags & 2) * .25f);
-    memcpy((char *)&e->marker.normal, &normal, 12);
+    bh_field_store_f32(&marker->marker.age, 0);
+    bh_field_store_f32(&marker->marker.lifetime, 30);
+    bh_field_store_f32(&marker->marker.size, size);
+    bh_field_store_f32(&marker->marker.u, (float)(flags & 1) * .5f);
+    bh_field_store_f32(&marker->marker.v, (float)(flags & 2) * .25f);
+    memcpy((char *)&marker->marker.normal, &normal, 12);
     dot = ((double)normal.x * 0.0 + (double)normal.z * 0.0) + (double)normal.y;
     if (dot < .5 && dot > -.5)
     {
@@ -71,83 +73,83 @@ BHEntity *bh_hit_marker_create(BHHitMarkerContext *c, const BHVec3 *p, const BHV
         up.y = 0;
         up.z = 1;
     }
-    memcpy((char *)&e->marker.up, &up, 12);
-    e->position = position;
-    memcpy((char *)&e->marker.draw, &draw, 4);
-    memcpy(&e->bindings.hit_marker, &c, 4);
-    head = owner_head(c, owner);
-    (e->marker.owner = owner);
+    memcpy((char *)&marker->marker.up, &up, 12);
+    marker->position = position;
+    memcpy((char *)&marker->marker.draw, &draw, 4);
+    memcpy(&marker->bindings.hit_marker, &marker_context, 4);
+    head = owner_head(marker_context, owner);
+    (marker->marker.owner = owner);
     prior = *head;
-    (e->marker.owner_newer = NULL);
-    (e->marker.owner_older = prior);
-    *head = e;
+    (marker->marker.owner_newer = NULL);
+    (marker->marker.owner_older = prior);
+    *head = marker;
     if (prior)
-        (prior->marker.owner_newer = e);
-    e->step = NULL;
-    e->refresh = NULL;
-    bh_entity_set_query(c->pool, e, bh_marker_query);
-    if (c->count == 200)
+        (prior->marker.owner_newer = marker);
+    marker->step = NULL;
+    marker->refresh = NULL;
+    bh_entity_set_query(marker_context->pool, marker, bh_marker_query);
+    if (marker_context->count == 200)
     {
-        old = c->oldest;
-        c->oldest = old->marker.newer;
-        (c->oldest->marker.older = NULL);
-        unlink_owner(c, old);
-        bh_entity_release(c->pool, old);
+        old = marker_context->oldest;
+        marker_context->oldest = old->marker.newer;
+        (marker_context->oldest->marker.older = NULL);
+        unlink_owner(marker_context, old);
+        bh_entity_release(marker_context->pool, old);
     }
     else
-        ++c->count;
-    if (c->count == 1)
-        c->oldest = e;
-    (e->marker.older = c->newest);
-    if (c->newest)
-        (c->newest->marker.newer = e);
-    c->newest = e;
-    c->error = BH_HIT_MARKER_OK;
-    return e;
+        ++marker_context->count;
+    if (marker_context->count == 1)
+        marker_context->oldest = marker;
+    (marker->marker.older = marker_context->newest);
+    if (marker_context->newest)
+        (marker_context->newest->marker.newer = marker);
+    marker_context->newest = marker;
+    marker_context->error = BH_HIT_MARKER_OK;
+    return marker;
 }
-void bh_hit_marker_draw(BHEntity *e)
+void bh_hit_marker_draw(BHEntity *marker)
 {
-    BHHitMarkerContext *c;
+    BHHitMarkerContext *marker_context;
     BHVec3 up, normal;
     float size;
-    int r;
-    if (!e)
+    int result;
+    if (!marker)
         return;
-    memcpy(&c, &e->bindings.hit_marker, 4);
-    if (!c)
+    memcpy(&marker_context, &marker->bindings.hit_marker, 4);
+    if (!marker_context)
         return;
-    size = bh_field_f32(&e->marker.size);
+    size = bh_field_f32(&marker->marker.size);
     if (!(size > 0))
         return;
-    memcpy(&up, (char *)&e->marker.up, 12);
-    memcpy(&normal, (char *)&e->marker.normal, 12);
-    r = bh_quad_queue(c->queue, 0, c->image, &e->position, &up, &normal, size, size, 0, 0, 1,
-                      bh_field_f32(&e->marker.u), .5f, bh_field_f32(&e->marker.v), .5f);
-    c->error = r == 1 ? BH_HIT_MARKER_OK : BH_HIT_MARKER_QUEUE;
+    memcpy(&up, (char *)&marker->marker.up, 12);
+    memcpy(&normal, (char *)&marker->marker.normal, 12);
+    result = bh_quad_queue(marker_context->queue, 0, marker_context->image, &marker->position, &up, &normal, size, size,
+                           0, 0, 1, bh_field_f32(&marker->marker.u), .5f, bh_field_f32(&marker->marker.v), .5f);
+    marker_context->error = result == 1 ? BH_HIT_MARKER_OK : BH_HIT_MARKER_QUEUE;
 }
-int bh_hit_marker_dispose(BHHitMarkerContext *c)
+int bh_hit_marker_dispose(BHHitMarkerContext *marker_context)
 {
-    BHEntity *e, *next;
-    if (!c || !c->pool)
+    BHEntity *marker, *next;
+    if (!marker_context || !marker_context->pool)
         return 0;
-    while (c->count)
+    while (marker_context->count)
     {
-        e = c->oldest;
-        if (!e || !unlink_owner(c, e))
+        marker = marker_context->oldest;
+        if (!marker || !unlink_owner(marker_context, marker))
         {
-            c->error = BH_HIT_MARKER_TOPOLOGY;
+            marker_context->error = BH_HIT_MARKER_TOPOLOGY;
             return 0;
         }
-        next = c->count > 1 ? e->marker.newer : NULL;
-        if (!bh_entity_release(c->pool, e))
+        next = marker_context->count > 1 ? marker->marker.newer : NULL;
+        if (!bh_entity_release(marker_context->pool, marker))
         {
-            c->error = BH_HIT_MARKER_POOL;
+            marker_context->error = BH_HIT_MARKER_POOL;
             return 0;
         }
-        c->oldest = next;
-        --c->count;
+        marker_context->oldest = next;
+        --marker_context->count;
     }
-    c->newest = NULL;
-    c->error = BH_HIT_MARKER_OK;
+    marker_context->newest = NULL;
+    marker_context->error = BH_HIT_MARKER_OK;
     return 1;
 }

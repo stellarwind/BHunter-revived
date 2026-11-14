@@ -55,16 +55,16 @@ static int random_value(BHEffectProjectileContext *ctx)
 }
 static void flash(BHEffectProjectileContext *ctx, BHEntity *entity, float strength, float size)
 {
-    BHEntity *f = bh_entity_acquire(ctx->effects->pool);
-    if (f)
+    BHEntity *flash_entity = bh_entity_acquire(ctx->effects->pool);
+    if (flash_entity)
     {
-        f->position = entity->position;
-        bh_flash_flare_bind(ctx->effects->flash, f, .1f, strength, size);
+        flash_entity->position = entity->position;
+        bh_flash_flare_bind(ctx->effects->flash, flash_entity, .1f, strength, size);
         ++ctx->flashes;
     }
 }
-static void particle(BHEffectProjectileContext *ctx, BHEntity *entity, const BHVec3 *v, float size, float size_rate,
-                     float lifetime, float alpha)
+static void particle(BHEffectProjectileContext *ctx, BHEntity *entity, const BHVec3 *velocity, float size,
+                     float size_rate, float lifetime, float alpha)
 {
     BHVec3 gravity = {0, -.002f, 0};
     float spin, angle;
@@ -73,8 +73,8 @@ static void particle(BHEffectProjectileContext *ctx, BHEntity *entity, const BHV
     spin = rf(((double)r - 16384) * (1.0 / 16384.0));
     r = random_value(ctx);
     angle = rf((double)r * (1.0 / 512.0));
-    if (bh_script_particle_create(ctx->effects->particles, ctx->smoke_image, 3, &entity->position, v, &gravity, size,
-                                  angle, size_rate, spin, .9f, .95f, lifetime, alpha))
+    if (bh_script_particle_create(ctx->effects->particles, ctx->smoke_image, 3, &entity->position, velocity, &gravity,
+                                  size, angle, size_rate, spin, .9f, .95f, lifetime, alpha))
         ++ctx->particles;
 }
 static void terminate_effects(BHEffectProjectileContext *ctx, BHEntity *entity)
@@ -101,14 +101,14 @@ static void terminate_effects(BHEffectProjectileContext *ctx, BHEntity *entity)
         particle(ctx, entity, &v, .5f, 20, 1, .8f);
     }
 }
-static void detach(BHEffectProjectileContext *ctx, BHEntity *entity, BHEffectPacket *p)
+static void detach(BHEffectProjectileContext *ctx, BHEntity *entity, BHEffectPacket *packet)
 {
     unsigned long n;
     memcpy(&n, &entity->effect.target, 4);
-    if (n == (unsigned long)p->words[1])
+    if (n == (unsigned long)packet->words[1])
         bh_field_store_u32(&entity->effect.target, 0);
     memcpy(&n, &entity->effect.source, 4);
-    if (n == (unsigned long)p->words[1])
+    if (n == (unsigned long)packet->words[1])
         bh_field_store_u32(&entity->effect.source, 0);
     (void)ctx;
 }
@@ -118,7 +118,7 @@ static void retire(BHEffectProjectileContext *ctx, BHEntity *entity)
     bh_entity_set_query(ctx->effects->pool, entity, NULL);
     entity->refresh = NULL;
 }
-static void synchronize(BHEffectProjectileContext *ctx, BHEntity *entity, BHEffectPacket *p, int orbit)
+static void synchronize(BHEffectProjectileContext *ctx, BHEntity *entity, BHEffectPacket *packet, int orbit)
 {
     unsigned long id;
     long kind;
@@ -127,10 +127,10 @@ static void synchronize(BHEffectProjectileContext *ctx, BHEntity *entity, BHEffe
     int i;
     float *o = &v.x;
     memcpy(&id, &entity->effect.origin_tag, 4);
-    if ((unsigned long)p->words[1] != id)
+    if ((unsigned long)packet->words[1] != id)
         return;
-    p->words[1] = -1;
-    kind = p->words[2];
+    packet->words[1] = -1;
+    kind = packet->words[2];
     if (kind == 0 || kind == 1)
     {
         bh_field_store_f32(&entity->effect.lifetime, 0);
@@ -139,38 +139,38 @@ static void synchronize(BHEffectProjectileContext *ctx, BHEntity *entity, BHEffe
             ++entity->generation;
             memcpy(&entity->bindings.projectile_generation, &entity->generation, 4);
         }
-        memcpy(&entity->position, p->floats + 4, 12);
+        memcpy(&entity->position, packet->floats + 4, 12);
         return;
     }
     if (kind == 2)
     {
-        memcpy(&entity->position, p->floats + 4, 12);
+        memcpy(&entity->position, packet->floats + 4, 12);
         terminate_effects(ctx, entity);
         return;
     }
     if (kind != 4 || orbit)
         return;
-    memcpy(&entity->position, p->floats + 4, 12);
+    memcpy(&entity->position, packet->floats + 4, 12);
     memcpy(&v, &entity->effect.velocity, 12);
     speed = sqrt(((double)v.x * v.x + (double)v.y * v.y) + (double)v.z * v.z);
     for (i = 0; i < 3; ++i)
-        bh_field_store_f32(&((float *)&entity->effect.velocity)[i], rf((double)p->floats[7 + i] * speed));
+        bh_field_store_f32(&((float *)&entity->effect.velocity)[i], rf((double)packet->floats[7 + i] * speed));
     for (i = 0; i < 3; ++i)
         o[i] = rf(((double)random_value(ctx) - 16384) * (1.0 / 262144.0));
     flash(ctx, entity, 100, 4);
     bh_sound_request(ctx->effects->sound, ctx->ricochet_sound, 1, 2, &entity->position, &zero);
     particle(ctx, entity, &v, .1f, 4, .5f, 1);
 }
-void bh_effect_orbit_query(BHEntity *entity, void *packet)
+void bh_effect_orbit_query(BHEntity *entity, void *raw_packet)
 {
     BHEffectProjectileContext *ctx = context(entity);
-    BHEffectPacket *p = (BHEffectPacket *)packet;
+    BHEffectPacket *packet = (BHEffectPacket *)raw_packet;
     float sn, cs;
     double phase;
     BHVec3 a, b;
-    if (!ctx || !p || !live(ctx, entity))
+    if (!ctx || !packet || !live(ctx, entity))
         return;
-    switch (p->words[0])
+    switch (packet->words[0])
     {
     case 3:
         phase = (double)bh_field_f32(&entity->effect.lifetime) * 50;
@@ -178,15 +178,15 @@ void bh_effect_orbit_query(BHEntity *entity, void *packet)
         cs = rf(cos(phase));
         memcpy(&a, &entity->effect.orbit_first, 12);
         memcpy(&b, &entity->effect.orbit_second, 12);
-        p->floats[1] = rf(((double)entity->position.x + (double)a.x * cs) + (double)b.x * sn);
-        p->floats[2] = rf(((double)entity->position.y + (double)a.y * cs) + (double)b.y * sn);
-        p->floats[3] = rf(((double)entity->position.z + (double)a.z * cs) + (double)b.z * sn);
+        packet->floats[1] = rf(((double)entity->position.x + (double)a.x * cs) + (double)b.x * sn);
+        packet->floats[2] = rf(((double)entity->position.y + (double)a.y * cs) + (double)b.y * sn);
+        packet->floats[3] = rf(((double)entity->position.z + (double)a.z * cs) + (double)b.z * sn);
         break;
     case 17:
-        detach(ctx, entity, p);
+        detach(ctx, entity, packet);
         break;
     case 18:
-        synchronize(ctx, entity, p, 1);
+        synchronize(ctx, entity, packet, 1);
         break;
     case 20:
         retire(ctx, entity);
@@ -195,17 +195,17 @@ void bh_effect_orbit_query(BHEntity *entity, void *packet)
         break;
     }
 }
-void bh_effect_linear_query(BHEntity *entity, void *packet)
+void bh_effect_linear_query(BHEntity *entity, void *raw_packet)
 {
     BHEffectProjectileContext *ctx = context(entity);
-    BHEffectPacket *p = (BHEffectPacket *)packet;
-    if (!ctx || !p || !live(ctx, entity))
+    BHEffectPacket *packet = (BHEffectPacket *)raw_packet;
+    if (!ctx || !packet || !live(ctx, entity))
         return;
-    if (p->words[0] == 17)
-        detach(ctx, entity, p);
-    else if (p->words[0] == 18)
-        synchronize(ctx, entity, p, 0);
-    else if (p->words[0] == 20)
+    if (packet->words[0] == 17)
+        detach(ctx, entity, packet);
+    else if (packet->words[0] == 18)
+        synchronize(ctx, entity, packet, 0);
+    else if (packet->words[0] == 20)
         retire(ctx, entity);
 }
 
@@ -230,11 +230,11 @@ static void fixed(BHEntity *entity, void *p)
     if (ctx && ctx->draw)
         bh_effect_fixed_draw(ctx->draw, entity);
 }
-static void scaled(BHVec3 *out, const BHVec3 *v, double n)
+static void scaled(BHVec3 *out, const BHVec3 *vector, double scale)
 {
-    out->x = rf((double)v->x * n);
-    out->y = rf((double)v->y * n);
-    out->z = rf((double)v->z * n);
+    out->x = rf((double)vector->x * scale);
+    out->y = rf((double)vector->y * scale);
+    out->z = rf((double)vector->z * scale);
 }
 static int constructor_context(BHEffectProjectileContext *ctx)
 {

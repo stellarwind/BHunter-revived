@@ -14,34 +14,34 @@ static void reset_bounds(BHVec3 *minimum, BHVec3 *maximum)
     memcpy(&maximum->x, &hi, 4);
     maximum->y = maximum->z = maximum->x;
 }
-static void include_point(BHVec3 *minimum, BHVec3 *maximum, const BHVec3 *p)
+static void include_point(BHVec3 *minimum, BHVec3 *maximum, const BHVec3 *point)
 {
-    if (p->x < minimum->x)
-        minimum->x = p->x;
-    if (maximum->x < p->x)
-        maximum->x = p->x;
-    if (p->y < minimum->y)
-        minimum->y = p->y;
-    if (maximum->y < p->y)
-        maximum->y = p->y;
-    if (p->z < minimum->z)
-        minimum->z = p->z;
-    if (maximum->z < p->z)
-        maximum->z = p->z;
+    if (point->x < minimum->x)
+        minimum->x = point->x;
+    if (maximum->x < point->x)
+        maximum->x = point->x;
+    if (point->y < minimum->y)
+        minimum->y = point->y;
+    if (maximum->y < point->y)
+        maximum->y = point->y;
+    if (point->z < minimum->z)
+        minimum->z = point->z;
+    if (maximum->z < point->z)
+        maximum->z = point->z;
 }
 static void model_bounds(BHFaceInfo *face, void *user)
 {
-    BHGeometryModel *m = (BHGeometryModel *)user;
+    BHGeometryModel *geometry_model = (BHGeometryModel *)user;
     BHVec3 p;
     unsigned long i;
     for (i = 0; i < face->vertices; ++i)
     {
         if (!bh_geometry_vertex(face->geometry, face->face, i, &p))
         {
-            m->error = face->geometry->error;
+            geometry_model->error = face->geometry->error;
             return;
         }
-        include_point(&m->minimum, &m->maximum, &p);
+        include_point(&geometry_model->minimum, &geometry_model->maximum, &p);
     }
 }
 static unsigned long material_flag(const char *name)
@@ -58,38 +58,38 @@ static unsigned long material_flag(const char *name)
 }
 static void classify(BHFaceInfo *face, void *user)
 {
-    BHGeometryModel *m = (BHGeometryModel *)user;
+    BHGeometryModel *geometry_model = (BHGeometryModel *)user;
     unsigned long flag = material_flag(face->texture), old;
     if (flag == 1)
-        m->portal_faces[m->portal_count++] = face->face;
+        geometry_model->portal_faces[geometry_model->portal_count++] = face->face;
     if (flag == 4)
-        m->flags |= 0x40;
+        geometry_model->flags |= 0x40;
     if (flag)
     {
         if (!bh_geometry_get_flags(face->geometry, face->face, &old) ||
             !bh_geometry_set_flags(face->geometry, face->face, old | flag))
-            m->error = face->geometry->error;
+            geometry_model->error = face->geometry->error;
     }
 }
-int bh_geometry_model_init(BHGeometryModel *m, BHGeometry *g, long grid, unsigned long flags)
+int bh_geometry_model_init(BHGeometryModel *m, BHGeometry *geometry, long grid, unsigned long flags)
 {
     BHGeometryModel next;
-    const BHBsp *b;
+    const BHBsp *bsp;
     unsigned long i, portals = 0;
-    if (!m || !g || !g->bsp || !g->face_flags || g->enumerating || grid <= 0)
+    if (!m || !geometry || !geometry->bsp || !geometry->face_flags || geometry->enumerating || grid <= 0)
         return 0;
-    b = g->bsp;
-    for (i = 0; i < b->counts[3]; ++i)
-        if (material_flag(b->materials[b->faces[i].material].texture) == 1 && ++portals > 6)
+    bsp = geometry->bsp;
+    for (i = 0; i < bsp->counts[3]; ++i)
+        if (material_flag(bsp->materials[bsp->faces[i].material].texture) == 1 && ++portals > 6)
             return 0;
     memset(&next, 0, sizeof(next));
-    next.geometry = g;
+    next.geometry = geometry;
     next.grid = grid;
     next.flags = flags;
     reset_bounds(&next.minimum, &next.maximum);
-    if (!bh_geometry_each_face(g, model_bounds, &next) || next.error)
+    if (!bh_geometry_each_face(geometry, model_bounds, &next) || next.error)
         return 0;
-    if (!bh_geometry_each_face(g, classify, &next) || next.error)
+    if (!bh_geometry_each_face(geometry, classify, &next) || next.error)
         return 0;
     *m = next;
     return 1;
@@ -132,7 +132,7 @@ typedef struct WorldBoundsWork
 static void world_bounds(BHFaceInfo *face, void *user)
 {
     WorldBoundsWork *work = (WorldBoundsWork *)user;
-    BHWorldGeometry *p = work->placement;
+    BHWorldGeometry *world = work->placement;
     BHVec3 v, out;
     unsigned long i;
     for (i = 0; i < face->vertices; ++i)
@@ -142,49 +142,49 @@ static void world_bounds(BHFaceInfo *face, void *user)
             work->failed = 1;
             return;
         }
-        bh_mat34_transform_point(&p->transform, &v, &out);
+        bh_mat34_transform_point(&world->transform, &v, &out);
         if (!_finite(out.x) || !_finite(out.y) || !_finite(out.z))
         {
             work->failed = 1;
             return;
         }
-        include_point(&p->minimum, &p->maximum, &out);
+        include_point(&world->minimum, &world->maximum, &out);
     }
 }
-int bh_world_geometry_build(BHWorldGeometry *p, unsigned long ring_count)
+int bh_world_geometry_build(BHWorldGeometry *world, unsigned long ring_count)
 {
     BHWorldGeometry next, *previous;
-    const BHGeometryModel *m;
+    const BHGeometryModel *geometry_model;
     BHFaceInfo face;
     BHVec3 normal, origin, point, vertex, zero = {0, 0, 0};
     BHPortal *portal;
     unsigned long i, j, axis, u, v;
     float angle;
     WorldBoundsWork bounds;
-    if (!valid_scene(p, ring_count) || !bh_math_environment_supported())
+    if (!valid_scene(world, ring_count) || !bh_math_environment_supported())
         return 0;
-    next = *p;
-    m = p->model;
+    next = *world;
+    geometry_model = world->model;
     next.owner = NULL;
     next.transform = next.inverse = identity;
-    bh_mat34_translate_local(p->position.x, p->position.y, p->position.z, &next.transform);
-    bh_round_float(&angle, (double)(p->flags & 3UL) * 1.5707963267948966);
+    bh_mat34_translate_local(world->position.x, world->position.y, world->position.z, &next.transform);
+    bh_round_float(&angle, (double)(world->flags & 3UL) * 1.5707963267948966);
     bh_mat34_rotate_y(angle, &next.transform);
     bh_mat34_rotate_y(-angle, &next.inverse);
-    bh_mat34_translate_local(-p->position.x, -p->position.y, -p->position.z, &next.inverse);
-    if (!m->portal_count)
+    bh_mat34_translate_local(-world->position.x, -world->position.y, -world->position.z, &next.inverse);
+    if (!geometry_model->portal_count)
     {
-        previous = p->previous;
-        while (previous != p && !previous->model->portal_count)
+        previous = world->previous;
+        while (previous != world && !previous->model->portal_count)
             previous = previous->previous;
         if (previous->model->portal_count)
             next.owner = previous;
     }
-    next.navigation.count = m->portal_count;
+    next.navigation.count = geometry_model->portal_count;
     memset(&face, 0, sizeof(face));
-    for (i = 0; i < m->portal_count; ++i)
+    for (i = 0; i < geometry_model->portal_count; ++i)
     {
-        if (!bh_geometry_face(m->geometry, m->portal_faces[i], &face))
+        if (!bh_geometry_face(geometry_model->geometry, geometry_model->portal_faces[i], &face))
             return 0;
         bh_mat34_transform_point(&next.transform, &face.normal, &normal);
         bh_mat34_transform_point(&next.transform, &zero, &origin);
@@ -216,7 +216,7 @@ int bh_world_geometry_build(BHWorldGeometry *p, unsigned long ring_count)
                 portal->direction = normal.z > 0.9 ? 2 : 6;
             }
         }
-        if (!plane_coordinate(((float *)&point)[axis], m->grid, &portal->plane))
+        if (!plane_coordinate(((float *)&point)[axis], geometry_model->grid, &portal->plane))
             return 0;
         {
             unsigned long lo = 0x7e876abdUL, hi = 0xfe876abdUL;
@@ -227,7 +227,7 @@ int bh_world_geometry_build(BHWorldGeometry *p, unsigned long ring_count)
         }
         for (j = 0; j < face.vertices; ++j)
         {
-            if (!bh_geometry_vertex(m->geometry, face.face, j, &vertex))
+            if (!bh_geometry_vertex(geometry_model->geometry, face.face, j, &vertex))
                 return 0;
             bh_mat34_transform_point(&next.transform, &vertex, &point);
             if (((float *)&point)[u] < portal->aperture[0])
@@ -245,11 +245,11 @@ int bh_world_geometry_build(BHWorldGeometry *p, unsigned long ring_count)
     reset_bounds(&next.minimum, &next.maximum);
     bounds.placement = &next;
     bounds.failed = 0;
-    if (!bh_geometry_each_face(m->geometry, world_bounds, &bounds) || bounds.failed)
+    if (!bh_geometry_each_face(geometry_model->geometry, world_bounds, &bounds) || bounds.failed)
         return 0;
     if (!_finite(next.minimum.x) || !_finite(next.minimum.y) || !_finite(next.minimum.z) || !_finite(next.maximum.x) ||
         !_finite(next.maximum.y) || !_finite(next.maximum.z))
         return 0;
-    *p = next;
+    *world = next;
     return 1;
 }

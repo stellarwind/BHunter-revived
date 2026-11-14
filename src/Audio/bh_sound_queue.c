@@ -27,9 +27,9 @@ static int fail(BHSoundQueue *sound_queue, BHSoundQueueError error)
         sound_queue->error = error;
     return 0;
 }
-static int vector_ok(const BHVec3 *v)
+static int vector_ok(const BHVec3 *vector)
 {
-    return !v || (_finite(v->x) && _finite(v->y) && _finite(v->z));
+    return !vector || (_finite(vector->x) && _finite(vector->y) && _finite(vector->z));
 }
 int bh_sound_queue_init(BHSoundQueue *sound_queue, BHAudioDevice *device, BHAudioBuffer *primary,
                         const BHSceneAllocator *allocator)
@@ -79,56 +79,56 @@ static int reserve(BHSoundQueue *sound_queue, void ***table, unsigned long *capa
 }
 BHSoundResource *bh_sound_resource_allocate(BHSoundQueue *sound_queue)
 {
-    BHSoundResource *r;
+    BHSoundResource *resource;
     if (!sound_queue || !sound_queue->allocator.allocate)
         return NULL;
     if (sound_queue->free_resources)
     {
-        r = sound_queue->free_resources;
-        sound_queue->free_resources = r->free_next;
-        return r;
+        resource = sound_queue->free_resources;
+        sound_queue->free_resources = resource->free_next;
+        return resource;
     }
     if (!reserve(sound_queue, (void ***)&sound_queue->resources, &sound_queue->resource_capacity,
                  sound_queue->resource_count))
         return NULL;
-    r = (BHSoundResource *)sound_queue->allocator.allocate(sizeof(*r), sound_queue->allocator.user);
-    if (!r)
+    resource = (BHSoundResource *)sound_queue->allocator.allocate(sizeof(*resource), sound_queue->allocator.user);
+    if (!resource)
     {
         fail(sound_queue, BH_SOUND_MEMORY);
         return NULL;
     }
     /* Defined zero bytes for fresh, otherwise unspecified original payload.
        Recycled records retain payload exactly as the original freelist does. */
-    memset(r, 0, sizeof(*r));
-    r->index = (unsigned short)sound_queue->resource_count;
-    sound_queue->resources[sound_queue->resource_count++] = r;
-    return r;
+    memset(resource, 0, sizeof(*resource));
+    resource->index = (unsigned short)sound_queue->resource_count;
+    sound_queue->resources[sound_queue->resource_count++] = resource;
+    return resource;
 }
 BHSoundVoice *bh_sound_voice_allocate(BHSoundQueue *sound_queue)
 {
-    BHSoundVoice *v;
+    BHSoundVoice *voice;
     if (!sound_queue || !sound_queue->allocator.allocate)
         return NULL;
     if (sound_queue->free_voices)
     {
-        v = sound_queue->free_voices;
-        sound_queue->free_voices = v->next;
-        v->generation = (unsigned short)(v->generation + 1);
-        return v;
+        voice = sound_queue->free_voices;
+        sound_queue->free_voices = voice->next;
+        voice->generation = (unsigned short)(voice->generation + 1);
+        return voice;
     }
     if (!reserve(sound_queue, (void ***)&sound_queue->voices, &sound_queue->voice_capacity, sound_queue->voice_count))
         return NULL;
-    v = (BHSoundVoice *)sound_queue->allocator.allocate(sizeof(*v), sound_queue->allocator.user);
-    if (!v)
+    voice = (BHSoundVoice *)sound_queue->allocator.allocate(sizeof(*voice), sound_queue->allocator.user);
+    if (!voice)
     {
         fail(sound_queue, BH_SOUND_MEMORY);
         return NULL;
     }
-    memset(v, 0, sizeof(*v));
-    v->index = (unsigned short)sound_queue->voice_count;
-    v->generation = 0;
-    sound_queue->voices[sound_queue->voice_count++] = v;
-    return v;
+    memset(voice, 0, sizeof(*voice));
+    voice->index = (unsigned short)sound_queue->voice_count;
+    voice->generation = 0;
+    sound_queue->voices[sound_queue->voice_count++] = voice;
+    return voice;
 }
 int bh_sound_queue_dispose(BHSoundQueue *sound_queue)
 {
@@ -137,12 +137,12 @@ int bh_sound_queue_dispose(BHSoundQueue *sound_queue)
         return 0;
     for (i = 0; i < sound_queue->resource_count; ++i)
     {
-        BHSoundResource *r = sound_queue->resources[i];
-        for (j = 0; j < r->buffer_count && j < 3; ++j)
-            if (r->buffers[j])
+        BHSoundResource *resource = sound_queue->resources[i];
+        for (j = 0; j < resource->buffer_count && j < 3; ++j)
+            if (resource->buffers[j])
             {
-                bh_audio_stop(r->buffers[j]);
-                bh_audio_buffer_release(r->buffers[j]);
+                bh_audio_stop(resource->buffers[j]);
+                bh_audio_buffer_release(resource->buffers[j]);
             }
     }
     for (i = 0; i < sound_queue->resource_count; ++i)
@@ -253,26 +253,26 @@ static int request_arguments(BHSoundQueue *sound_queue, float level, float pitch
     return sound_queue && _finite(level) && level >= 0 && _finite(pitch) && vector_ok(position) &&
            vector_ok(velocity) && bh_math_environment_supported();
 }
-static void voice_parameters(BHSoundVoice *v, float level, float pitch, const BHVec3 *position, const BHVec3 *velocity)
+static void voice_parameters(BHSoundVoice *voice, float level, float pitch, const BHVec3 *position, const BHVec3 *velocity)
 {
     double db;
-    v->positioned = position != NULL;
+    voice->positioned = position != NULL;
     if (position)
-        v->position = *position;
-    v->moving = velocity != NULL;
+        voice->position = *position;
+    voice->moving = velocity != NULL;
     if (velocity)
-        v->velocity = *velocity;
+        voice->velocity = *velocity;
     db = level == 0 ? -10000.0 : log((double)level) * (-1000.0) / log(.5);
     if (db <= -10000)
         db = -10000;
-    bh_round_float(&v->volume, (double)v->resource->base_volume + db);
-    bh_round_float(&v->frequency, (double)v->resource->base_frequency * pitch);
+    bh_round_float(&voice->volume, (double)voice->resource->base_volume + db);
+    bh_round_float(&voice->frequency, (double)voice->resource->base_frequency * pitch);
 }
 unsigned long bh_sound_request(BHSoundQueue *sound_queue, unsigned long id, float level, float pitch,
                                const BHVec3 *position, const BHVec3 *velocity)
 {
-    BHSoundResource *r;
-    BHSoundVoice *v, *old;
+    BHSoundResource *resource;
+    BHSoundVoice *voice, *old;
     unsigned long slot = BH_SOUND_INVALID, i, worst = 0;
     float priority, score, new_priority;
     if (id == BH_SOUND_INVALID)
@@ -282,51 +282,51 @@ unsigned long bh_sound_request(BHSoundQueue *sound_queue, unsigned long id, floa
         fail(sound_queue, BH_SOUND_ARGUMENT);
         return BH_SOUND_INVALID;
     }
-    r = sound_queue->resources[id];
-    if (!r->streaming)
+    resource = sound_queue->resources[id];
+    if (!resource->streaming)
     {
-        if (r->buffer_count < 1 || r->buffer_count > 3 || r->voice_limit < 1 || r->voice_limit > 3)
+        if (resource->buffer_count < 1 || resource->buffer_count > 3 || resource->voice_limit < 1 || resource->voice_limit > 3)
         {
             fail(sound_queue, BH_SOUND_TOPOLOGY);
             return BH_SOUND_INVALID;
         }
-        for (i = 0; i < r->buffer_count; ++i)
-            if (!r->voices[i])
+        for (i = 0; i < resource->buffer_count; ++i)
+            if (!resource->voices[i])
             {
                 slot = i;
                 break;
             }
         if (slot == BH_SOUND_INVALID)
         {
-            if (!r->no_more)
+            if (!resource->no_more)
             {
-                if (!sound_queue->device || r->buffer_count >= 3)
+                if (!sound_queue->device || resource->buffer_count >= 3)
                 {
                     fail(sound_queue, BH_SOUND_TOPOLOGY);
                     return BH_SOUND_INVALID;
                 }
                 sound_queue->last_hresult =
-                    bh_audio_duplicate(sound_queue->device, r->buffers[0], r->buffers + r->buffer_count);
+                    bh_audio_duplicate(sound_queue->device, resource->buffers[0], resource->buffers + resource->buffer_count);
                 if (sound_queue->last_hresult == 0)
                 {
-                    ++r->buffer_count;
-                    if (r->buffer_count == r->voice_limit)
-                        r->no_more = 1;
-                    slot = r->buffer_count - 1;
+                    ++resource->buffer_count;
+                    if (resource->buffer_count == resource->voice_limit)
+                        resource->no_more = 1;
+                    slot = resource->buffer_count - 1;
                 }
                 else
                 {
-                    r->buffers[r->buffer_count] = NULL;
-                    r->no_more = 1;
+                    resource->buffers[resource->buffer_count] = NULL;
+                    resource->no_more = 1;
                 }
             }
             if (slot == BH_SOUND_INVALID)
             {
-                if (!bh_sound_priority(sound_queue, r->voices[0]->positioned, &r->voices[0]->position, r, 0, &priority))
+                if (!bh_sound_priority(sound_queue, resource->voices[0]->positioned, &resource->voices[0]->position, resource, 0, &priority))
                     return BH_SOUND_INVALID;
-                for (i = 1; i < r->buffer_count; ++i)
+                for (i = 1; i < resource->buffer_count; ++i)
                 {
-                    if (!bh_sound_priority(sound_queue, r->voices[i]->positioned, &r->voices[i]->position, r, i,
+                    if (!bh_sound_priority(sound_queue, resource->voices[i]->positioned, &resource->voices[i]->position, resource, i,
                                            &score))
                         return BH_SOUND_INVALID;
                     if (priority < score)
@@ -335,7 +335,7 @@ unsigned long bh_sound_request(BHSoundQueue *sound_queue, unsigned long id, floa
                         worst = i;
                     }
                 }
-                if (!bh_sound_priority(sound_queue, position != NULL, position, r, -1, &new_priority))
+                if (!bh_sound_priority(sound_queue, position != NULL, position, resource, -1, &new_priority))
                     return BH_SOUND_INVALID;
                 if (priority < new_priority)
                 {
@@ -345,49 +345,49 @@ unsigned long bh_sound_request(BHSoundQueue *sound_queue, unsigned long id, floa
                 slot = worst;
             }
         }
-        old = r->voices[slot];
+        old = resource->voices[slot];
         if (old)
         {
             old->generation = (unsigned short)(old->generation + 1);
             old->next = sound_queue->free_voices;
             sound_queue->free_voices = old;
         }
-        v = bh_sound_voice_allocate(sound_queue);
-        if (!v)
+        voice = bh_sound_voice_allocate(sound_queue);
+        if (!voice)
             return BH_SOUND_INVALID;
-        v->resource = r;
-        voice_parameters(v, level, pitch, position, velocity);
-        v->pending = 1;
-        r->voices[slot] = v;
-        r->phase = 0;
+        voice->resource = resource;
+        voice_parameters(voice, level, pitch, position, velocity);
+        voice->pending = 1;
+        resource->voices[slot] = voice;
+        resource->phase = 0;
     }
     else
     {
-        v = bh_sound_voice_allocate(sound_queue);
-        if (!v)
+        voice = bh_sound_voice_allocate(sound_queue);
+        if (!voice)
             return BH_SOUND_INVALID;
-        v->resource = r;
-        voice_parameters(v, level, pitch, position, velocity);
-        v->next = r->stream_head;
-        if (v->next)
-            v->next->previous = v;
-        v->previous = NULL;
-        r->stream_head = v;
+        voice->resource = resource;
+        voice_parameters(voice, level, pitch, position, velocity);
+        voice->next = resource->stream_head;
+        if (voice->next)
+            voice->next->previous = voice;
+        voice->previous = NULL;
+        resource->stream_head = voice;
     }
     sound_queue->error = BH_SOUND_OK;
-    return (unsigned long)v->index + ((unsigned long)v->generation << 16);
+    return (unsigned long)voice->index + ((unsigned long)voice->generation << 16);
 }
 BHSoundVoice *bh_sound_voice(BHSoundQueue *sound_queue, unsigned long handle)
 {
-    BHSoundVoice *v;
+    BHSoundVoice *voice;
     long signed_value;
     if (!sound_queue || handle == BH_SOUND_INVALID || (handle & 0xffff) >= sound_queue->voice_count)
         return NULL;
-    v = sound_queue->voices[handle & 0xffff];
+    voice = sound_queue->voices[handle & 0xffff];
     memcpy(&signed_value, &handle, 4);
-    if ((long)v->generation != signed_value / 65536)
+    if ((long)voice->generation != signed_value / 65536)
         return NULL;
-    return v;
+    return voice;
 }
 int bh_sound_update(BHSoundQueue *sound_queue, unsigned long handle, float level, float pitch, const BHVec3 *position,
                     const BHVec3 *velocity)
@@ -410,65 +410,65 @@ int bh_sound_update(BHSoundQueue *sound_queue, unsigned long handle, float level
 }
 int bh_sound_stop(BHSoundQueue *sound_queue, unsigned long handle)
 {
-    BHSoundVoice *v;
-    BHSoundResource *r;
+    BHSoundVoice *voice;
+    BHSoundResource *resource;
     unsigned long i;
     int backend_ok = 1;
-    v = bh_sound_voice(sound_queue, handle);
-    if (!v)
+    voice = bh_sound_voice(sound_queue, handle);
+    if (!voice)
     {
         fail(sound_queue, BH_SOUND_STALE);
         return 0;
     }
-    r = v->resource;
-    if (!r)
+    resource = voice->resource;
+    if (!resource)
         return fail(sound_queue, BH_SOUND_TOPOLOGY);
-    if (!r->streaming)
+    if (!resource->streaming)
     {
-        for (i = 0; i < r->buffer_count && i < 3; ++i)
-            if (r->voices[i] == v)
+        for (i = 0; i < resource->buffer_count && i < 3; ++i)
+            if (resource->voices[i] == voice)
                 break;
-        if (i >= r->buffer_count || i >= 3)
+        if (i >= resource->buffer_count || i >= 3)
             return fail(sound_queue, BH_SOUND_TOPOLOGY);
-        r->voices[i] = NULL;
-        r->playing[i] = 0;
-        sound_queue->last_hresult = bh_audio_stop(r->buffers[i]);
+        resource->voices[i] = NULL;
+        resource->playing[i] = 0;
+        sound_queue->last_hresult = bh_audio_stop(resource->buffers[i]);
         backend_ok = sound_queue->last_hresult == 0;
     }
     else
     {
-        if (v->previous)
-            v->previous->next = v->next;
+        if (voice->previous)
+            voice->previous->next = voice->next;
         else
-            r->stream_head = v->next;
-        if (v->next)
-            v->next->previous = v->previous;
+            resource->stream_head = voice->next;
+        if (voice->next)
+            voice->next->previous = voice->previous;
         /* A loop's native buffers outlive its requests. Retire the last
            request synchronously: a throttled tick (or no active listener)
            must not leave a warning/projectile/menu loop playing forever. */
-        if (!r->stream_head)
-            for (i = 0; i < r->buffer_count && i < 3; ++i)
-                if (r->playing[i])
+        if (!resource->stream_head)
+            for (i = 0; i < resource->buffer_count && i < 3; ++i)
+                if (resource->playing[i])
                 {
-                    sound_queue->last_hresult = bh_audio_stop(r->buffers[i]);
+                    sound_queue->last_hresult = bh_audio_stop(resource->buffers[i]);
                     if (sound_queue->last_hresult != 0)
                         backend_ok = 0;
-                    r->playing[i] = 0;
+                    resource->playing[i] = 0;
                 }
         /* Shared resources must reselect surviving requests on the next tick. */
-        r->phase = 0;
+        resource->phase = 0;
     }
-    v->generation = (unsigned short)(v->generation + 1);
-    v->next = sound_queue->free_voices;
-    sound_queue->free_voices = v;
+    voice->generation = (unsigned short)(voice->generation + 1);
+    voice->next = sound_queue->free_voices;
+    sound_queue->free_voices = voice;
     sound_queue->error = backend_ok ? BH_SOUND_OK : BH_SOUND_BACKEND;
     return backend_ok;
 }
 
 int bh_sound_stop_all(BHSoundQueue *sound_queue)
 {
-    BHSoundResource *r;
-    BHSoundVoice *v;
+    BHSoundResource *resource;
+    BHSoundVoice *voice;
     unsigned long i, j;
     int backend_ok = 1;
     if (!sound_queue || (sound_queue->resource_count && !sound_queue->resources) ||
@@ -476,29 +476,29 @@ int bh_sound_stop_all(BHSoundQueue *sound_queue)
         return fail(sound_queue, BH_SOUND_ARGUMENT);
     for (i = 0; i < sound_queue->resource_count; ++i)
     {
-        r = sound_queue->resources[i];
-        for (j = 0; j < r->buffer_count && j < 3; ++j)
-            if (r->buffers[j])
+        resource = sound_queue->resources[i];
+        for (j = 0; j < resource->buffer_count && j < 3; ++j)
+            if (resource->buffers[j])
             {
-                sound_queue->last_hresult = bh_audio_stop(r->buffers[j]);
+                sound_queue->last_hresult = bh_audio_stop(resource->buffers[j]);
                 if (sound_queue->last_hresult != 0)
                     backend_ok = 0;
             }
-        r->stream_head = NULL;
-        memset(r->voices, 0, sizeof(r->voices));
-        memset(r->playing, 0, sizeof(r->playing));
-        r->phase = 0;
+        resource->stream_head = NULL;
+        memset(resource->voices, 0, sizeof(resource->voices));
+        memset(resource->playing, 0, sizeof(resource->playing));
+        resource->phase = 0;
     }
     sound_queue->free_voices = NULL;
     for (i = 0; i < sound_queue->voice_count; ++i)
     {
-        v = sound_queue->voices[i];
-        ++v->generation;
-        v->resource = NULL;
-        v->pending = 0;
-        v->previous = NULL;
-        v->next = sound_queue->free_voices;
-        sound_queue->free_voices = v;
+        voice = sound_queue->voices[i];
+        ++voice->generation;
+        voice->resource = NULL;
+        voice->pending = 0;
+        voice->previous = NULL;
+        voice->next = sound_queue->free_voices;
+        sound_queue->free_voices = voice;
     }
     sound_queue->error = backend_ok ? BH_SOUND_OK : BH_SOUND_BACKEND;
     return backend_ok;

@@ -9,18 +9,18 @@ static int key(const BHInputSnapshot *s, const unsigned char *history, unsigned 
         return history[0] != 0;
     return ((const unsigned char *)s)[index + (previous ? 255 : 0)] != 0;
 }
-static int binding_key(const BHInputSnapshot *s, const unsigned char *history, const BHInputBinding *b, int previous)
+static int binding_key(const BHInputSnapshot *input_snapshot, const unsigned char *history, const BHInputBinding *input_binding, int previous)
 {
-    unsigned long buttons = previous ? s->previous_gamepad_buttons : s->gamepad.buttons;
-    unsigned int index = b->flags & BH_INPUT_GAMEPAD_INDEX;
-    return key(s, history, b->key[0], previous) ||
-           ((b->flags & BH_INPUT_GAMEPAD) && index <= BH_PAD_RIGHT && (buttons & (1UL << index)));
+    unsigned long buttons = previous ? input_snapshot->previous_gamepad_buttons : input_snapshot->gamepad.buttons;
+    unsigned int index = input_binding->flags & BH_INPUT_GAMEPAD_INDEX;
+    return key(input_snapshot, history, input_binding->key[0], previous) ||
+           ((input_binding->flags & BH_INPUT_GAMEPAD) && index <= BH_PAD_RIGHT && (buttons & (1UL << index)));
 }
 int bh_input_evaluate(BHPlayerInputList *list, BHInputSnapshot *snapshot, int full)
 {
     unsigned char output[0x120], down[256], up[256], history[32], head;
     unsigned long n_down = 0, n_up = 0, at = 2, records = 0, i, j, n, pad;
-    BHInputBinding *b;
+    BHInputBinding *input_binding;
     float value, mouse;
     const char *end;
     int match;
@@ -30,52 +30,52 @@ int bh_input_evaluate(BHPlayerInputList *list, BHInputSnapshot *snapshot, int fu
     head = snapshot->history_head;
     for (i = 0; i < (unsigned long)list->count; ++i)
     {
-        b = list->bindings + i;
-        if ((b->kind == 1 && (b->modifiers > 255 || b->key[0] > 255)) ||
-            (b->kind == 2 && (b->modifiers > 255 || b->key[0] > 255 || b->key[1] > 255)))
+        input_binding = list->bindings + i;
+        if ((input_binding->kind == 1 && (input_binding->modifiers > 255 || input_binding->key[0] > 255)) ||
+            (input_binding->kind == 2 && (input_binding->modifiers > 255 || input_binding->key[0] > 255 || input_binding->key[1] > 255)))
             return 0;
-        switch (b->kind)
+        switch (input_binding->kind)
         {
         case 1:
             if (full)
             {
-                if (binding_key(snapshot, history, b, 0) && (!b->modifiers || key(snapshot, history, b->modifiers, 0)))
+                if (binding_key(snapshot, history, input_binding, 0) && (!input_binding->modifiers || key(snapshot, history, input_binding->modifiers, 0)))
                     down[n_down++] = (unsigned char)i;
                 else
                     up[n_up++] = (unsigned char)i;
             }
-            else if (binding_key(snapshot, history, b, 0))
+            else if (binding_key(snapshot, history, input_binding, 0))
             {
-                if (!binding_key(snapshot, history, b, 1) && (!b->modifiers || key(snapshot, history, b->modifiers, 0)))
+                if (!binding_key(snapshot, history, input_binding, 1) && (!input_binding->modifiers || key(snapshot, history, input_binding->modifiers, 0)))
                     down[n_down++] = (unsigned char)i;
             }
-            else if (binding_key(snapshot, history, b, 1))
+            else if (binding_key(snapshot, history, input_binding, 1))
                 up[n_up++] = (unsigned char)i;
             break;
         case 2:
             if (at + 6 > sizeof(output))
                 return 0;
-            j = b->key[2];
+            j = input_binding->key[2];
             value = (j >= 1 && j <= 16) ? snapshot->axes[(j - 1) / 2] : 0;
             if (j >= 1 && j <= 16 && !(j & 1))
                 value = -value;
-            j = b->key[3];
+            j = input_binding->key[3];
             mouse = (j >= 1 && j <= 4) ? snapshot->mouse_axes[(j - 1) / 2] : 0;
             if (j >= 1 && j <= 4 && !(j & 1))
                 mouse = -mouse;
             value = value + mouse;
-            j = b->flags & BH_INPUT_GAMEPAD_INDEX;
-            if ((b->flags & BH_INPUT_GAMEPAD) && j < BH_PAD_AXIS_COUNT)
+            j = input_binding->flags & BH_INPUT_GAMEPAD_INDEX;
+            if ((input_binding->flags & BH_INPUT_GAMEPAD) && j < BH_PAD_AXIS_COUNT)
                 value += snapshot->gamepad.axes[j];
             if (!(value >= -1))
                 value = -1;
             else if (value > 1)
                 value = 1;
-            if (!b->modifiers || key(snapshot, history, b->modifiers, 0))
+            if (!input_binding->modifiers || key(snapshot, history, input_binding->modifiers, 0))
             {
-                if (b->key[0] && key(snapshot, history, b->key[0], 0))
+                if (input_binding->key[0] && key(snapshot, history, input_binding->key[0], 0))
                     value = 1;
-                if (b->key[1] && key(snapshot, history, b->key[1], 0))
+                if (input_binding->key[1] && key(snapshot, history, input_binding->key[1], 0))
                     value = -1;
             }
             output[at++] = 2;
@@ -88,20 +88,20 @@ int bh_input_evaluate(BHPlayerInputList *list, BHInputSnapshot *snapshot, int fu
         case 4:
             if (at + 6 > sizeof(output))
                 return 0;
-            output[at++] = b->kind;
+            output[at++] = input_binding->kind;
             output[at++] = (unsigned char)i;
-            memcpy(output + at, b->kind == 3 ? snapshot->pair3 : snapshot->pair4, 4);
+            memcpy(output + at, input_binding->kind == 3 ? snapshot->pair3 : snapshot->pair4, 4);
             at += 4;
             ++records;
             break;
         case 5:
-            end = (const char *)memchr(b->name, 0, 20);
+            end = (const char *)memchr(input_binding->name, 0, 20);
             if (!end)
                 return 0;
-            n = (unsigned long)(end - b->name);
+            n = (unsigned long)(end - input_binding->name);
             match = 1;
             for (j = 0; j < n; ++j)
-                if ((int)(signed char)b->name[n - j - 1] != (int)history[(head - j - 1) & 31])
+                if ((int)(signed char)input_binding->name[n - j - 1] != (int)history[(head - j - 1) & 31])
                 {
                     match = 0;
                     break;

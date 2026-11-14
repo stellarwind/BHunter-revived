@@ -45,7 +45,7 @@ static void glow_sprite(BHActorVehicleDrawContext *ctx, BHEntity *entity, unsign
 }
 void bh_actor_vehicle_pose_core(BHActorVehicleDrawContext *ctx, BHEntity *entity, unsigned short tick)
 {
-    BHActorFields *a = &entity->actor;
+    BHActorFields *actor_fields = &entity->actor;
     BHVec3 before, p, after, angles, velocity, local, glow;
     BHMat34 matrix;
     short se;
@@ -53,24 +53,24 @@ void bh_actor_vehicle_pose_core(BHActorVehicleDrawContext *ctx, BHEntity *entity
     double bank, clock, next_x, next_z, wide_dx, wide_dz, wide_px, wide_pz;
     float fade;
     unsigned long damage_frame;
-    se = (short)(tick - a->tick);
-    phase = natural((double)se / (short)a->duration_ticks);
-    bh_camera_curve(natural((double)phase - 1.0 / 30.0), &before, &a->route_start, &a->route_first, &a->route_second,
-                    &a->route_end);
-    bh_camera_curve(phase, &p, &a->route_start, &a->route_first, &a->route_second, &a->route_end);
-    bh_camera_curve(natural((double)phase - (-1.0 / 30.0)), &after, &a->route_start, &a->route_first, &a->route_second,
-                    &a->route_end);
-    before.x = natural((double)a->offset.x + before.x);
-    before.y = natural((double)a->offset.y + before.y);
-    before.z = natural((double)a->offset.z + before.z);
-    p.x = natural((double)a->offset.x + p.x);
-    p.y = natural((double)a->offset.y + p.y);
-    p.z = natural((double)a->offset.z + p.z);
+    se = (short)(tick - actor_fields->tick);
+    phase = natural((double)se / (short)actor_fields->duration_ticks);
+    bh_camera_curve(natural((double)phase - 1.0 / 30.0), &before, &actor_fields->route_start, &actor_fields->route_first, &actor_fields->route_second,
+                    &actor_fields->route_end);
+    bh_camera_curve(phase, &p, &actor_fields->route_start, &actor_fields->route_first, &actor_fields->route_second, &actor_fields->route_end);
+    bh_camera_curve(natural((double)phase - (-1.0 / 30.0)), &after, &actor_fields->route_start, &actor_fields->route_first, &actor_fields->route_second,
+                    &actor_fields->route_end);
+    before.x = natural((double)actor_fields->offset.x + before.x);
+    before.y = natural((double)actor_fields->offset.y + before.y);
+    before.z = natural((double)actor_fields->offset.z + before.z);
+    p.x = natural((double)actor_fields->offset.x + p.x);
+    p.y = natural((double)actor_fields->offset.y + p.y);
+    p.z = natural((double)actor_fields->offset.z + p.z);
     /* 00434a28..00434b0c: FST publishes the rounded after position and
        differences without discarding their retained x87 values. The second
        tangent's Z difference never reloads a float for its square/product. */
-    next_x = (double)a->offset.x + after.x;
-    next_z = (double)a->offset.z + after.z;
+    next_x = (double)actor_fields->offset.x + after.x;
+    next_z = (double)actor_fields->offset.z + after.z;
     after.x = natural(next_x);
     after.z = natural(next_z);
     wide_dx = next_x - p.x;
@@ -80,15 +80,15 @@ void bh_actor_vehicle_pose_core(BHActorVehicleDrawContext *ctx, BHEntity *entity
     wide_px = (double)p.x - before.x;
     wide_pz = (double)p.z - before.z;
     px = stored(wide_px);
-    after.y = natural((double)a->offset.y + after.y);
+    after.y = natural((double)actor_fields->offset.y + after.y);
     bank =
         ((wide_pz * dx - (double)px * dz) / sqrt(wide_dx * dx + wide_dz * dz)) / sqrt(wide_px * px + wide_pz * wide_pz);
     angles.x = natural(atan2(dx, dz));
     angles.y = 0;
     angles.z = natural(bank * 3.141592653589793);
 
-    bh_draw_submit_resource(ctx->queue, 0, a->model_resource, &p, &angles, 1);
-    fade = a->fade;
+    bh_draw_submit_resource(ctx->queue, 0, actor_fields->model_resource, &p, &angles, 1);
+    fade = actor_fields->fade;
     if (fade < 1)
     {
         size = natural(4.0 - (double)rand() * (-1.0 / 16384.0));
@@ -97,7 +97,7 @@ void bh_actor_vehicle_pose_core(BHActorVehicleDrawContext *ctx, BHEntity *entity
         angle = natural((double)rand() * (1.0 / 4096.0));
         bh_draw_billboard(ctx->queue, 3, ctx->damage_resource, &p, size, size, angle, damage_frame, alpha);
     }
-    if (a->model_resource == ctx->glowing_model)
+    if (actor_fields->model_resource == ctx->glowing_model)
     {
         matrix.m[0][0] = 1;
         matrix.m[0][1] = 0;
@@ -129,14 +129,14 @@ void bh_actor_vehicle_pose_core(BHActorVehicleDrawContext *ctx, BHEntity *entity
         POSE_GLOW(3, -.6f, 23.5, ctx->glow_second);
 #undef POSE_GLOW
     }
-    a->sound_frames = 2;
-    velocity.x = natural((double)a->fade * ((double)after.x - p.x) * 30);
-    velocity.y = natural((double)a->fade * ((double)after.y - p.y) * 30);
-    velocity.z = natural(((double)after.z - p.z) * a->fade * 30);
-    if (a->sound == BH_SOUND_INVALID)
-        a->sound = bh_sound_request(ctx->sound, a->sound_resource, 1, 1, &p, &velocity);
+    actor_fields->sound_frames = 2;
+    velocity.x = natural((double)actor_fields->fade * ((double)after.x - p.x) * 30);
+    velocity.y = natural((double)actor_fields->fade * ((double)after.y - p.y) * 30);
+    velocity.z = natural(((double)after.z - p.z) * actor_fields->fade * 30);
+    if (actor_fields->sound == BH_SOUND_INVALID)
+        actor_fields->sound = bh_sound_request(ctx->sound, actor_fields->sound_resource, 1, 1, &p, &velocity);
     else
-        bh_sound_update(ctx->sound, a->sound, 1, 1, &p, &velocity);
+        bh_sound_update(ctx->sound, actor_fields->sound, 1, 1, &p, &velocity);
 }
 
 int bh_actor_vehicle_draw(BHActorVehicleDrawContext *ctx, BHEntity *entity)

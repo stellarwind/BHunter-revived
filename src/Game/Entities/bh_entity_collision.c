@@ -48,27 +48,27 @@ static void apply(BHMat34 *pose, const BHVec3 *movement, const BHVec3 *angles)
     bh_mat34_rotate_y(angles->y, pose);
     bh_mat34_rotate_z(angles->z, pose);
 }
-static int candidate(BHCollisionCandidate *c, BHMat34 *pose, const BHVec3 *movement, const BHVec3 *angles, int fallback,
+static int candidate(BHCollisionCandidate *collision_candidate, BHMat34 *pose, const BHVec3 *movement, const BHVec3 *angles, int fallback,
                      BHSweepHit *out, int single)
 {
     BHVec3 relative;
     int result, moving;
     /* Original +8==0 bodies use their own rigid mesh. Collision-enable flags
        and per-tick relative translation belong to nonzero-kind world nodes. */
-    if (c->object.kind == BH_WORLD_HIT_GEOMETRY)
+    if (collision_candidate->object.kind == BH_WORLD_HIT_GEOMETRY)
     {
-        if (!(c->flags & 2))
+        if (!(collision_candidate->flags & 2))
             return 0;
-        moving = c->movement.x != 0 || c->movement.y != 0 || c->movement.z != 0;
+        moving = collision_candidate->movement.x != 0 || collision_candidate->movement.y != 0 || collision_candidate->movement.z != 0;
         if (moving)
         {
-            bh_round_float(&relative.x, (double)movement->x - c->movement.x);
-            bh_round_float(&relative.y, (double)movement->y - c->movement.y);
-            bh_round_float(&relative.z, (double)movement->z - c->movement.z);
-            bh_mat34_translate_world(c->movement.x, c->movement.y, c->movement.z, pose);
-            result = bh_sweep_run(c->sweep, pose, &relative, angles, &c->world, &c->local, fallback, out);
+            bh_round_float(&relative.x, (double)movement->x - collision_candidate->movement.x);
+            bh_round_float(&relative.y, (double)movement->y - collision_candidate->movement.y);
+            bh_round_float(&relative.z, (double)movement->z - collision_candidate->movement.z);
+            bh_mat34_translate_world(collision_candidate->movement.x, collision_candidate->movement.y, collision_candidate->movement.z, pose);
+            result = bh_sweep_run(collision_candidate->sweep, pose, &relative, angles, &collision_candidate->world, &collision_candidate->local, fallback, out);
             if (result == 0 && single)
-                bh_mat34_translate_world(-c->movement.x, -c->movement.y, -c->movement.z, pose);
+                bh_mat34_translate_world(-collision_candidate->movement.x, -collision_candidate->movement.y, -collision_candidate->movement.z, pose);
             if (result == 1)
             {
                 bh_round_float(&out->motion.x, (double)out->motion.x * 1.5);
@@ -78,7 +78,7 @@ static int candidate(BHCollisionCandidate *c, BHMat34 *pose, const BHVec3 *movem
             return result;
         }
     }
-    return bh_sweep_run(c->sweep, pose, movement, angles, &c->world, &c->local, fallback, out);
+    return bh_sweep_run(collision_candidate->sweep, pose, movement, angles, &collision_candidate->world, &collision_candidate->local, fallback, out);
 }
 static int finite_matrix(const BHMat34 *m)
 {

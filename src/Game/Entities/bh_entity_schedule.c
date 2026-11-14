@@ -50,17 +50,17 @@ static void activity_tick(BHEntity *entity)
     if (!room->frame_active)
         entity->step = NULL;
 }
-static int fail(BHEntityScheduleContext *c, BHEntityScheduleError e)
+static int fail(BHEntityScheduleContext *context, BHEntityScheduleError e)
 {
-    if (c)
-        c->error = e;
+    if (context)
+        context->error = e;
     return 0;
 }
 static int queued(BHEntityScheduleContext *c, int status)
 {
     return status < 0 ? fail(c, BH_SCHEDULE_QUEUE) : 1;
 }
-static int resource_draw(BHEntityScheduleContext *c, BHEntityScheduleRoom *room, int linked)
+static int resource_draw(BHEntityScheduleContext *context, BHEntityScheduleRoom *room, int linked)
 {
     unsigned long flags = room->room->world->query_flags, bucket;
     const BHVec3 *point = &room->room->world->position;
@@ -69,16 +69,16 @@ static int resource_draw(BHEntityScheduleContext *c, BHEntityScheduleRoom *room,
     bucket = (flags & 1) ? 3 : 0;
     if (!(flags & 1) && (room->resource_flags & 0x40))
     {
-        if (!queued(c, bh_draw_controls_state(c->queue, 0, 1)) ||
-            !queued(c, bh_draw_submit_resource(c->queue, 0, room->resource, point, &room->angles, 1)) ||
-            !queued(c, bh_draw_controls_state(c->queue, 0, -1)) || !queued(c, bh_draw_controls_state(c->queue, 3, 2)) ||
-            !queued(c, bh_draw_submit_resource(c->queue, 3, room->resource, point, &room->angles, 1)) ||
-            !queued(c, bh_draw_controls_state(c->queue, 3, -1)))
+        if (!queued(context, bh_draw_controls_state(context->queue, 0, 1)) ||
+            !queued(context, bh_draw_submit_resource(context->queue, 0, room->resource, point, &room->angles, 1)) ||
+            !queued(context, bh_draw_controls_state(context->queue, 0, -1)) || !queued(context, bh_draw_controls_state(context->queue, 3, 2)) ||
+            !queued(context, bh_draw_submit_resource(context->queue, 3, room->resource, point, &room->angles, 1)) ||
+            !queued(context, bh_draw_controls_state(context->queue, 3, -1)))
             return 0;
         if (!linked)
             return 1; /* original root special case jumps past default */
     }
-    return queued(c, bh_draw_submit_resource(c->queue, bucket, room->resource, point, &room->angles, 1));
+    return queued(context, bh_draw_submit_resource(context->queue, bucket, room->resource, point, &room->angles, 1));
 }
 static int resource(BHEntityScheduleContext *c, BHEntityScheduleRoom *room, int linked)
 {
@@ -92,59 +92,59 @@ static int resource(BHEntityScheduleContext *c, BHEntityScheduleRoom *room, int 
 #endif
     return result;
 }
-static BHEntityStep draw_method(BHEntity *e)
+static BHEntityStep draw_method(BHEntity *actor)
 {
     BHEntityStep method;
-    memcpy(&method, &e->actor.draw, sizeof(method));
+    memcpy(&method, &actor->actor.draw, sizeof(method));
     return method;
 }
-static int draw_children(BHEntityScheduleContext *c, BHEntity *head, int pickups)
+static int draw_children(BHEntityScheduleContext *context, BHEntity *head, int pickups)
 {
     unsigned long count = 0;
-    BHEntity *e = head, *next;
+    BHEntity *actor = head, *next;
     BHEntityStep draw;
 #ifdef BH_SDL_BACKEND
     unsigned long mark, identity, generation;
 #endif
-    while (e)
+    while (actor)
     {
-        if (++count > c->max_entities)
-            return fail(c, BH_SCHEDULE_TOPOLOGY);
-        draw = draw_method(e);
+        if (++count > context->max_entities)
+            return fail(context, BH_SCHEDULE_TOPOLOGY);
+        draw = draw_method(actor);
         if (!draw)
-            return fail(c, BH_SCHEDULE_ARGUMENT);
+            return fail(context, BH_SCHEDULE_ARGUMENT);
 #ifdef BH_SDL_BACKEND
         mark = bh_interpolation_mark();
-        identity = (unsigned long)e;
-        generation = e->generation;
+        identity = (unsigned long)actor;
+        generation = actor->generation;
 #endif
-        draw(e); /* original +e8 indirect method */
+        draw(actor); /* original +e8 indirect method */
 #ifdef BH_SDL_BACKEND
         bh_interpolation_stamp(mark, identity, generation);
 #endif
-        next = pickups ? bh_pickup_state(e)->room_next : e->actor.room_next;
-        e = next; /* deliberately read after callback: mutation is observable */
+        next = pickups ? bh_pickup_state(actor)->room_next : actor->actor.room_next;
+        actor = next; /* deliberately read after callback: mutation is observable */
     }
     return 1;
 }
-static int ghost_draw(BHEntityScheduleContext *c, BHEntityScheduleRoom *r)
+static int ghost_draw(BHEntityScheduleContext *context, BHEntityScheduleRoom *entity_schedule_room)
 {
-    BHWorldGeometry *w = r->room->world;
+    BHWorldGeometry *world = entity_schedule_room->room->world;
     volatile BHVec3 center;
     BHVec3 point;
     float distance;
     volatile float blend, alpha;
     volatile float dx32, dy32, offset_x, offset_y, offset_z;
     volatile float weighted_x, weighted_y, weighted_z, blended_x, blended_y;
-    const BHVec3 *eye = c->overlay_position;
+    const BHVec3 *eye = context->overlay_position;
     double dx, dy, dz;
-    if (!(w->query_flags & 4) || !(w->query_flags & 0x180))
+    if (!(world->query_flags & 4) || !(world->query_flags & 0x180))
         return 1;
     if (!eye)
-        return fail(c, BH_SCHEDULE_ARGUMENT);
-    center.x = (w->minimum.x + w->maximum.x) * .5f;
-    center.y = (w->query_flags & 0x80) ? w->maximum.y : w->minimum.y;
-    center.z = (w->minimum.z + w->maximum.z) * .5f;
+        return fail(context, BH_SCHEDULE_ARGUMENT);
+    center.x = (world->minimum.x + world->maximum.x) * .5f;
+    center.y = (world->query_flags & 0x80) ? world->maximum.y : world->minimum.y;
+    center.z = (world->minimum.z + world->maximum.z) * .5f;
     dx = (double)center.x - eye->x;
     dy = (double)center.y - eye->y;
     dz = (double)center.z - eye->z;
@@ -163,9 +163,9 @@ static int ghost_draw(BHEntityScheduleContext *c, BHEntityScheduleRoom *r)
         alpha = 1.0f - (distance - 150.0f) * (1.0f / 30.0f);
     /* Preserve the original spill graph, including its asymmetric Z sum:
        X/Y sums reload binary32, while Z subtracts before its final store. */
-    offset_x = center.x - w->position.x;
-    offset_y = center.y - w->position.y;
-    offset_z = center.z - w->position.z;
+    offset_x = center.x - world->position.x;
+    offset_y = center.y - world->position.y;
+    offset_z = center.z - world->position.z;
     weighted_x = (float)((double)center.x * (1.0 - blend));
     weighted_y = (float)((double)center.y * (1.0 - blend));
     weighted_z = (float)((double)center.z * (1.0 - blend));
@@ -174,24 +174,24 @@ static int ghost_draw(BHEntityScheduleContext *c, BHEntityScheduleRoom *r)
     point.x = blended_x - offset_x;
     point.y = blended_y - offset_y;
     point.z = (float)(((double)eye->z * blend + weighted_z) - offset_z);
-    return queued(c, bh_draw_submit_resource(c->queue, 3, r->resource, &point, &r->angles, alpha));
+    return queued(context, bh_draw_submit_resource(context->queue, 3, entity_schedule_room->resource, &point, &entity_schedule_room->angles, alpha));
 }
-static int ghost(BHEntityScheduleContext *c, BHEntityScheduleRoom *r)
+static int ghost(BHEntityScheduleContext *c, BHEntityScheduleRoom *entity_schedule_room)
 {
     int result;
 #ifdef BH_SDL_BACKEND
     unsigned long mark = bh_interpolation_mark();
 #endif
-    result = ghost_draw(c, r);
+    result = ghost_draw(c, entity_schedule_room);
 #ifdef BH_SDL_BACKEND
-    bh_interpolation_stamp(mark, (unsigned long)r->room->world, 1);
+    bh_interpolation_stamp(mark, (unsigned long)entity_schedule_room->room->world, 1);
 #endif
     return result;
 }
-static int faces_camera(const BHPortal *p, const BHVec3 *position)
+static int faces_camera(const BHPortal *portal, const BHVec3 *position)
 {
-    double plane = (double)p->plane; /* original FILD keeps integer precision */
-    switch (p->direction)
+    double plane = (double)portal->plane; /* original FILD keeps integer precision */
+    switch (portal->direction)
     {
     case 0:
         return plane < position->x;
@@ -209,20 +209,20 @@ static int faces_camera(const BHPortal *p, const BHVec3 *position)
         return 0;
     }
 }
-static void portal_quad(const BHPortal *p, BHVec3 q[4])
+static void portal_quad(const BHPortal *portal, BHVec3 q[4])
 {
-    float plane = (float)p->plane, a = p->overlap[0], b = p->overlap[1], lo = p->overlap[2], hi = p->overlap[3];
+    float plane = (float)portal->plane, a = portal->overlap[0], b = portal->overlap[1], lo = portal->overlap[2], hi = portal->overlap[3];
     unsigned long i;
     for (i = 0; i < 4; ++i)
     {
         float u = (i == 0 || i == 3) ? a : b, v = i < 2 ? lo : hi;
-        if (p->direction == 0 || p->direction == 4)
+        if (portal->direction == 0 || portal->direction == 4)
         {
             q[i].x = plane;
             q[i].y = u;
             q[i].z = v;
         }
-        else if (p->direction == 1 || p->direction == 5)
+        else if (portal->direction == 1 || portal->direction == 5)
         {
             q[i].x = u;
             q[i].y = plane;
@@ -242,14 +242,14 @@ typedef struct BHPortalPath
     const struct BHPortalPath *previous;
 } BHPortalPath;
 
-static int schedule(BHEntityScheduleContext *c, BHEntityScheduleRoom *r, unsigned long depth, unsigned long parent_clip,
+static int schedule(BHEntityScheduleContext *context, BHEntityScheduleRoom *entity_schedule_room, unsigned long depth, unsigned long parent_clip,
                     const BHPortalPath *previous, double near_radius_squared)
 {
     BHEntityScheduleRoom *other;
     BHWorldGeometry *world;
     BHPortal *portal;
     BHClipContext clip;
-    BHClipVertex input[4], *ring, *v;
+    BHClipVertex input[4], *ring, *vertex;
     BHVec3 corners[4], projected[4];
     BHViewConfig saved;
     float left, right, top, bottom;
@@ -259,67 +259,67 @@ static int schedule(BHEntityScheduleContext *c, BHEntityScheduleRoom *r, unsigne
     const BHPortalPath *ancestor;
     int near_camera;
 #endif
-    if (depth > c->max_depth)
-        return fail(c, BH_SCHEDULE_DEPTH);
-    if (!r || !r->room || !r->room->world)
-        return fail(c, BH_SCHEDULE_ARGUMENT);
-    path.room = r;
+    if (depth > context->max_depth)
+        return fail(context, BH_SCHEDULE_DEPTH);
+    if (!entity_schedule_room || !entity_schedule_room->room || !entity_schedule_room->room->world)
+        return fail(context, BH_SCHEDULE_ARGUMENT);
+    path.room = entity_schedule_room;
     path.previous = previous;
-    world = r->room->world;
-    if (!resource(c, r, 0))
+    world = entity_schedule_room->room->world;
+    if (!resource(context, entity_schedule_room, 0))
         return 0;
-    r->frame_active = 1;
-    r->frame_remaining = 30;
-    if (r->activity)
-        *r->activity = 30;
-    if (r->activity_entity)
+    entity_schedule_room->frame_active = 1;
+    entity_schedule_room->frame_remaining = 30;
+    if (entity_schedule_room->activity)
+        *entity_schedule_room->activity = 30;
+    if (entity_schedule_room->activity_entity)
     {
-        memcpy(&r->activity_entity->bindings.room_activity, &r, 4);
-        memcpy(&r->activity_entity->placement.activity_frames, &r->frame_remaining, 4);
-        r->activity_entity->step = activity_tick;
+        memcpy(&entity_schedule_room->activity_entity->bindings.room_activity, &entity_schedule_room, 4);
+        memcpy(&entity_schedule_room->activity_entity->placement.activity_frames, &entity_schedule_room->frame_remaining, 4);
+        entity_schedule_room->activity_entity->step = activity_tick;
     }
-    if (!r->frame_seen || r->last_frame != c->frame)
+    if (!entity_schedule_room->frame_seen || entity_schedule_room->last_frame != context->frame)
     {
-        r->last_frame = c->frame;
-        r->frame_seen = 1;
-        if (!draw_children(c, r->room->actors, 0))
+        entity_schedule_room->last_frame = context->frame;
+        entity_schedule_room->frame_seen = 1;
+        if (!draw_children(context, entity_schedule_room->room->actors, 0))
             return 0;
-        if ((world->query_flags & 4) && !draw_children(c, r->room->pickups, 1))
+        if ((world->query_flags & 4) && !draw_children(context, entity_schedule_room->room->pickups, 1))
             return 0;
     }
-    other = r->next;
+    other = entity_schedule_room->next;
     n = 0;
     while (other)
     {
-        if (++n > c->max_rooms)
-            return fail(c, BH_SCHEDULE_TOPOLOGY);
+        if (++n > context->max_rooms)
+            return fail(context, BH_SCHEDULE_TOPOLOGY);
         if (!other->linked_active)
             break;
         if (!other->room || !other->room->world)
-            return fail(c, BH_SCHEDULE_TOPOLOGY);
-        if (!resource(c, other, 1) || !ghost(c, other))
+            return fail(context, BH_SCHEDULE_TOPOLOGY);
+        if (!resource(context, other, 1) || !ghost(context, other))
             return 0;
-        if ((other->room->world->query_flags & 4) && !draw_children(c, other->room->pickups, 1))
+        if ((other->room->world->query_flags & 4) && !draw_children(context, other->room->pickups, 1))
             return 0;
         other = other->next;
     }
     if (world->navigation.count > 6)
-        return fail(c, BH_SCHEDULE_TOPOLOGY);
+        return fail(context, BH_SCHEDULE_TOPOLOGY);
     for (i = 0; i < world->navigation.count; ++i)
     {
         portal = world->navigation.portals + i;
-        other = r->portal_targets[i];
+        other = entity_schedule_room->portal_targets[i];
         if (!portal->neighbor || !other)
             continue;
 #ifdef BH_SDL_BACKEND
         /* Both render buckets need a portal window. A full queue may drop
            commands normally; never stamp a window that was not allocated. */
-        if (c->queue->count >= c->queue->capacity || c->queue->capacity - c->queue->count < 2)
+        if (context->queue->count >= context->queue->capacity || context->queue->capacity - context->queue->count < 2)
             continue;
 #endif
         if (portal->neighbor && other->room && other->room->world &&
             portal->neighbor != &other->room->world->navigation)
-            return fail(c, BH_SCHEDULE_TOPOLOGY);
+            return fail(context, BH_SCHEDULE_TOPOLOGY);
         portal_quad(portal, corners);
 #ifdef BH_SDL_BACKEND
         for (ancestor = &path; ancestor; ancestor = ancestor->previous)
@@ -327,92 +327,92 @@ static int schedule(BHEntityScheduleContext *c, BHEntityScheduleRoom *r, unsigne
                 break;
         if (ancestor)
             continue;
-        near_camera = bh_portal_camera_touches(corners, &c->camera->position, near_radius_squared);
+        near_camera = bh_portal_camera_touches(corners, &context->camera->position, near_radius_squared);
         if (near_camera)
         {
-            left = c->viewport->left;
-            right = c->viewport->right;
-            top = c->viewport->top;
-            bottom = c->viewport->bottom;
+            left = context->viewport->left;
+            right = context->viewport->right;
+            top = context->viewport->top;
+            bottom = context->viewport->bottom;
         }
         else
 #endif
         {
-            if (!faces_camera(portal, &c->camera->position))
+            if (!faces_camera(portal, &context->camera->position))
                 continue;
             for (j = 0; j < 4; ++j)
-                bh_mat34_transform_point(&c->camera->projected, corners + j, projected + j);
-            if (!bh_clip_init(&clip, c->viewport->near_z, c->viewport->far_z, c->viewport->left, c->viewport->right,
-                              c->viewport->top, c->viewport->bottom))
-                return fail(c, BH_SCHEDULE_CLIP);
+                bh_mat34_transform_point(&context->camera->projected, corners + j, projected + j);
+            if (!bh_clip_init(&clip, context->viewport->near_z, context->viewport->far_z, context->viewport->left, context->viewport->right,
+                              context->viewport->top, context->viewport->bottom))
+                return fail(context, BH_SCHEDULE_CLIP);
             ring = bh_entity_schedule_clip_portal(&clip, input, projected);
             if (!ring)
             {
                 if (clip.error != BH_CLIP_OK)
-                    return fail(c, BH_SCHEDULE_CLIP);
+                    return fail(context, BH_SCHEDULE_CLIP);
                 continue;
             }
             left = top = 9e37f;
             right = bottom = -9e37f;
-            v = ring;
+            vertex = ring;
             do
             {
-                if (v->sx < left)
-                    left = v->sx;
-                if (right < v->sx)
-                    right = v->sx;
-                if (v->sy < top)
-                    top = v->sy;
-                if (bottom < v->sy)
-                    bottom = v->sy;
-                v = v->next;
-            } while (v != ring);
+                if (vertex->sx < left)
+                    left = vertex->sx;
+                if (right < vertex->sx)
+                    right = vertex->sx;
+                if (vertex->sy < top)
+                    top = vertex->sy;
+                if (bottom < vertex->sy)
+                    bottom = vertex->sy;
+                vertex = vertex->next;
+            } while (vertex != ring);
         }
-        saved = *c->viewport;
-        c->viewport->left = left;
-        c->viewport->right = right;
-        c->viewport->top = top;
-        c->viewport->bottom = bottom;
-        child_clip = c->queue->count;
+        saved = *context->viewport;
+        context->viewport->left = left;
+        context->viewport->right = right;
+        context->viewport->top = top;
+        context->viewport->bottom = bottom;
+        child_clip = context->queue->count;
 #ifdef BH_SDL_BACKEND
-        if (!queued(c, bh_draw_controls_portal_clip(c->queue, 0, corners, parent_clip, c->viewport->near_z,
-                                                    c->viewport->far_z)) ||
-            !queued(c, bh_draw_controls_portal_clip(c->queue, 3, corners, parent_clip, c->viewport->near_z,
-                                                    c->viewport->far_z)))
+        if (!queued(context, bh_draw_controls_portal_clip(context->queue, 0, corners, parent_clip, context->viewport->near_z,
+                                                    context->viewport->far_z)) ||
+            !queued(context, bh_draw_controls_portal_clip(context->queue, 3, corners, parent_clip, context->viewport->near_z,
+                                                    context->viewport->far_z)))
 #else
-        if (!queued(c, bh_draw_controls_clip_rect(c->queue, 0, left, top, right - left, bottom - top)) ||
-            !queued(c, bh_draw_controls_clip_rect(c->queue, 3, left, top, right - left, bottom - top)))
+        if (!queued(context, bh_draw_controls_clip_rect(context->queue, 0, left, top, right - left, bottom - top)) ||
+            !queued(context, bh_draw_controls_clip_rect(context->queue, 3, left, top, right - left, bottom - top)))
 #endif
         {
-            *c->viewport = saved;
+            *context->viewport = saved;
             return 0;
         }
 #ifdef BH_SDL_BACKEND
-        memcpy(c->queue->commands[child_clip].words + 15, &c->portal_camera_motion, 4);
-        memcpy(c->queue->commands[child_clip + 1].words + 15, &c->portal_camera_motion, 4);
+        memcpy(context->queue->commands[child_clip].words + 15, &context->portal_camera_motion, 4);
+        memcpy(context->queue->commands[child_clip + 1].words + 15, &context->portal_camera_motion, 4);
 #endif
-        j = schedule(c, other, depth + 1, child_clip, &path, near_radius_squared);
-        *c->viewport = saved;
+        j = schedule(context, other, depth + 1, child_clip, &path, near_radius_squared);
+        *context->viewport = saved;
         if (!j)
             return 0;
     }
     return 1;
 }
-int bh_entity_schedule(BHEntityScheduleContext *c, BHEntityScheduleRoom *room)
+int bh_entity_schedule(BHEntityScheduleContext *context, BHEntityScheduleRoom *room)
 {
     double radius = 0;
-    if (!c || !c->queue || !c->viewport || !c->camera || !room || !c->max_rooms || !c->max_entities || !c->max_depth)
-        return fail(c, BH_SCHEDULE_ARGUMENT);
-    c->error = BH_SCHEDULE_OK;
+    if (!context || !context->queue || !context->viewport || !context->camera || !room || !context->max_rooms || !context->max_entities || !context->max_depth)
+        return fail(context, BH_SCHEDULE_ARGUMENT);
+    context->error = BH_SCHEDULE_OK;
 #ifdef BH_SDL_BACKEND
     {
         float bounds[4];
-        bounds[0] = c->viewport->left;
-        bounds[1] = c->viewport->top;
-        bounds[2] = c->viewport->right;
-        bounds[3] = c->viewport->bottom;
-        radius = bh_portal_camera_radius(&c->camera->projected, c->viewport->near_z, bounds, c->portal_camera_motion);
+        bounds[0] = context->viewport->left;
+        bounds[1] = context->viewport->top;
+        bounds[2] = context->viewport->right;
+        bounds[3] = context->viewport->bottom;
+        radius = bh_portal_camera_radius(&context->camera->projected, context->viewport->near_z, bounds, context->portal_camera_motion);
     }
 #endif
-    return schedule(c, room, 0, BH_DRAW_END, NULL, radius);
+    return schedule(context, room, 0, BH_DRAW_END, NULL, radius);
 }

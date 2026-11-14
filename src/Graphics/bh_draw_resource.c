@@ -5,14 +5,14 @@
 
 static const BHMat34 identity = {{{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}}};
 
-static int fail(BHDrawResourceContext *c, BHDrawResourceError error)
+static int fail(BHDrawResourceContext *context, BHDrawResourceError error)
 {
-    if (c)
-        c->error = error;
+    if (context)
+        context->error = error;
     return 0;
 }
 
-static int draw(BHDrawResourceContext *c, const BHDrawResource *resource, double x, double y, double z, double ry,
+static int draw(BHDrawResourceContext *context, const BHDrawResource *resource, double x, double y, double z, double ry,
                 double rx, double rz, float modulation, unsigned int depth)
 {
     unsigned long i, first;
@@ -22,72 +22,72 @@ static int draw(BHDrawResourceContext *c, const BHDrawResource *resource, double
     float distance;
     double exact_distance;
     if (!resource || depth > 32)
-        return fail(c, BH_DRAW_RESOURCE_TOPOLOGY);
+        return fail(context, BH_DRAW_RESOURCE_TOPOLOGY);
     switch (resource->tag)
     {
     case BH_RESOURCE_TAG_MODEL:
         if (!resource->data.model.instance)
-            return fail(c, BH_DRAW_RESOURCE_ARGUMENT);
+            return fail(context, BH_DRAW_RESOURCE_ARGUMENT);
         if (!bh_model_instance_draw(resource->data.model.instance, x, y, z, ry, rx, rz, modulation))
         {
-            return fail(c, BH_DRAW_RESOURCE_MODEL);
+            return fail(context, BH_DRAW_RESOURCE_MODEL);
         }
-        ++c->dispatched;
+        ++context->dispatched;
         if (!resource->data.model.instance->drawn)
-            ++c->culled;
+            ++context->culled;
         return 1;
     case BH_RESOURCE_TAG_LOD:
         if (resource->data.lod.count > 5 || !_finite(resource->data.lod.radius) || resource->data.lod.radius < 0)
-            return fail(c, BH_DRAW_RESOURCE_ARGUMENT);
+            return fail(context, BH_DRAW_RESOURCE_ARGUMENT);
         /* FST [depth] is non-popping: the near comparison still uses the
            extended plane result; far and threshold comparisons reload the
            binary32 stored depth. */
-        exact_distance = ((((double)c->camera->planes[0].normal.z * z + (double)c->camera->planes[0].normal.x * x) +
-                           (double)c->camera->planes[0].normal.y * y) -
-                          (double)c->camera->planes[0].offset);
+        exact_distance = ((((double)context->camera->planes[0].normal.z * z + (double)context->camera->planes[0].normal.x * x) +
+                           (double)context->camera->planes[0].normal.y * y) -
+                          (double)context->camera->planes[0].offset);
         distance = (float)exact_distance;
-        if ((double)c->config->near_z - resource->data.lod.radius > exact_distance ||
-            distance > (double)c->config->far_z + resource->data.lod.radius)
+        if ((double)context->config->near_z - resource->data.lod.radius > exact_distance ||
+            distance > (double)context->config->far_z + resource->data.lod.radius)
         {
-            ++c->culled;
+            ++context->culled;
             return 1;
         }
         for (i = 0; i < resource->data.lod.count; ++i)
         {
             if (!_finite(resource->data.lod.thresholds[i]))
-                return fail(c, BH_DRAW_RESOURCE_ARGUMENT);
+                return fail(context, BH_DRAW_RESOURCE_ARGUMENT);
             if (distance <= resource->data.lod.thresholds[i])
                 break;
         }
         if (i == resource->data.lod.count)
         {
-            ++c->culled;
+            ++context->culled;
             return 1;
         }
         if (!resource->data.lod.children[i])
-            return fail(c, BH_DRAW_RESOURCE_TOPOLOGY);
-        return draw(c, resource->data.lod.children[i], x, y, z, ry, rx, rz, modulation, depth + 1);
+            return fail(context, BH_DRAW_RESOURCE_TOPOLOGY);
+        return draw(context, resource->data.lod.children[i], x, y, z, ry, rx, rz, modulation, depth + 1);
     case BH_RESOURCE_TAG_BILLBOARD:
-        if (!c->billboard || !resource->data.billboard.image)
-            return fail(c, BH_DRAW_RESOURCE_ARGUMENT);
-        if (!bh_sprite_billboard_draw(c->billboard, resource->data.billboard.image, (float)x, (float)y, (float)z,
+        if (!context->billboard || !resource->data.billboard.image)
+            return fail(context, BH_DRAW_RESOURCE_ARGUMENT);
+        if (!bh_sprite_billboard_draw(context->billboard, resource->data.billboard.image, (float)x, (float)y, (float)z,
                                       resource->data.billboard.width, resource->data.billboard.height,
                                       resource->data.billboard.angle, resource->data.billboard.flags & 255UL,
                                       modulation))
-            return fail(c, BH_DRAW_RESOURCE_BILLBOARD);
-        ++c->dispatched;
-        if (!c->billboard->emitted)
-            ++c->culled;
+            return fail(context, BH_DRAW_RESOURCE_BILLBOARD);
+        ++context->dispatched;
+        if (!context->billboard->emitted)
+            ++context->culled;
         return 1;
     case BH_RESOURCE_TAG_RIBBON:
-        if (!c->oriented || !c->oriented->path || !resource->data.ribbon.image)
-            return fail(c, BH_DRAW_RESOURCE_ARGUMENT);
-        if (c->oriented->used > c->oriented->capacity || c->oriented->capacity - c->oriented->used < 2)
-            return fail(c, BH_DRAW_RESOURCE_CAPACITY);
+        if (!context->oriented || !context->oriented->path || !resource->data.ribbon.image)
+            return fail(context, BH_DRAW_RESOURCE_ARGUMENT);
+        if (context->oriented->used > context->oriented->capacity || context->oriented->capacity - context->oriented->used < 2)
+            return fail(context, BH_DRAW_RESOURCE_CAPACITY);
         if (!_finite(resource->data.ribbon.local_end.x) || !_finite(resource->data.ribbon.local_end.y) ||
             !_finite(resource->data.ribbon.local_end.z) || !_finite(resource->data.ribbon.start_width) ||
             !_finite(resource->data.ribbon.end_width))
-            return fail(c, BH_DRAW_RESOURCE_ARGUMENT);
+            return fail(context, BH_DRAW_RESOURCE_ARGUMENT);
         rotation = identity;
         bh_mat34_rotate_y((float)ry, &rotation);
         bh_mat34_rotate_x((float)rx, &rotation);
@@ -99,11 +99,11 @@ static int draw(BHDrawResourceContext *c, const BHDrawResource *resource, double
         end.x = (float)((double)offset.x + x);
         end.y = (float)((double)offset.y + y);
         end.z = (float)((double)offset.z + z);
-        first = c->oriented->used;
-        path = c->oriented->path + first;
+        first = context->oriented->used;
+        path = context->oriented->path + first;
         memset(path, 0, 2 * sizeof(*path));
-        bh_mat34_transform_point(&c->camera->projected, &origin, &path[0].point);
-        bh_mat34_transform_point(&c->camera->projected, &end, &path[1].point);
+        bh_mat34_transform_point(&context->camera->projected, &origin, &path[0].point);
+        bh_mat34_transform_point(&context->camera->projected, &end, &path[1].point);
         if (first)
         {
             path[0].previous = path - 1;
@@ -117,11 +117,11 @@ static int draw(BHDrawResourceContext *c, const BHDrawResource *resource, double
         path[1].width = resource->data.ribbon.end_width;
         path[0].texture_end = (float)first;
         path[1].texture_end = (float)(first + 1);
-        c->oriented->used = first + 2;
-        c->oriented->image = resource->data.ribbon.image;
-        if (!bh_sprite_oriented_draw(c->oriented))
-            return fail(c, BH_DRAW_RESOURCE_RIBBON);
-        ++c->dispatched;
+        context->oriented->used = first + 2;
+        context->oriented->image = resource->data.ribbon.image;
+        if (!bh_sprite_oriented_draw(context->oriented))
+            return fail(context, BH_DRAW_RESOURCE_RIBBON);
+        ++context->dispatched;
         return 1;
     /* Unsigned jump-table bounds check falls through to the common epilogue
        for every tag outside 0..3, including negative signed bit patterns. */
@@ -130,14 +130,14 @@ static int draw(BHDrawResourceContext *c, const BHDrawResource *resource, double
     }
 }
 
-int bh_draw_resource(BHDrawResourceContext *c, const BHDrawResource *resource, double x, double y, double z,
+int bh_draw_resource(BHDrawResourceContext *context, const BHDrawResource *resource, double x, double y, double z,
                      double rotate_y, double rotate_x, double rotate_z, float modulation)
 {
-    if (!c || !resource || !c->camera || !c->config || !_finite(x) || !_finite(y) || !_finite(z) ||
+    if (!context || !resource || !context->camera || !context->config || !_finite(x) || !_finite(y) || !_finite(z) ||
         !_finite(rotate_y) || !_finite(rotate_x) || !_finite(rotate_z) || !_finite(modulation))
-        return fail(c, BH_DRAW_RESOURCE_ARGUMENT);
-    c->error = BH_DRAW_RESOURCE_OK;
-    c->dispatched = 0;
-    c->culled = 0;
-    return draw(c, resource, x, y, z, rotate_y, rotate_x, rotate_z, modulation, 0);
+        return fail(context, BH_DRAW_RESOURCE_ARGUMENT);
+    context->error = BH_DRAW_RESOURCE_OK;
+    context->dispatched = 0;
+    context->culled = 0;
+    return draw(context, resource, x, y, z, rotate_y, rotate_x, rotate_z, modulation, 0);
 }

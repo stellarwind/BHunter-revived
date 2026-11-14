@@ -5,7 +5,7 @@
 static_assert(sizeof(BHAtlasPage) == 0x28, "BHAtlasPage size");
 static_assert(offsetof(BHAtlasPage, last_color) == 0xc, "BHAtlasPage.last_color offset");
 static_assert(offsetof(BHAtlasPage, size) == 0x20, "BHAtlasPage.size offset");
-static void discard(BHTextureContext *q, BHTextureImage *image)
+static void discard(BHTextureContext *texture_context, BHTextureImage *image)
 {
     if (!image)
         return;
@@ -14,61 +14,61 @@ static void discard(BHTextureContext *q, BHTextureImage *image)
     if (image->source)
         bh_renderer_surface_release(image->source);
     if (image->runs)
-        q->allocator.release(image->runs, q->allocator.user);
+        texture_context->allocator.release(image->runs, texture_context->allocator.user);
     if (image->vertices)
-        q->allocator.release(image->vertices, q->allocator.user);
+        texture_context->allocator.release(image->vertices, texture_context->allocator.user);
     if (image->dither)
-        q->allocator.release(image->dither, q->allocator.user);
+        texture_context->allocator.release(image->dither, texture_context->allocator.user);
     if (image->screen)
-        q->allocator.release(image->screen, q->allocator.user);
-    q->allocator.release(image, q->allocator.user);
+        texture_context->allocator.release(image->screen, texture_context->allocator.user);
+    texture_context->allocator.release(image, texture_context->allocator.user);
 }
-static int native(BHTextureContext *q, HRESULT hr)
+static int native(BHTextureContext *texture_context, HRESULT hr)
 {
-    q->last_hresult = hr;
+    texture_context->last_hresult = hr;
     if (hr != DD_OK)
     {
-        q->error = BH_TEXTURE_BACKEND;
+        texture_context->error = BH_TEXTURE_BACKEND;
         return 0;
     }
     return 1;
 }
 BHAtlasPage *bh_atlas_page_create(BHAtlasContext *context, const char *name, unsigned long size)
 {
-    BHTextureContext *q;
+    BHTextureContext *texture_context;
     BHTextureImage *image;
     BHAtlasImage *atlas;
     BHAtlasPage *page = NULL;
     DDSURFACEDESC desc;
     PALETTEENTRY entries[256];
     unsigned long i;
-    if (!context || !(q = context->textures) || !q->draw || !q->allocator.allocate || !q->allocator.release || !name ||
+    if (!context || !(texture_context = context->textures) || !texture_context->draw || !texture_context->allocator.allocate || !texture_context->allocator.release || !name ||
         !size || size > 4096)
         return NULL;
-    q->error = BH_TEXTURE_OK;
-    q->last_hresult = DD_OK;
-    image = (BHTextureImage *)q->allocator.allocate(sizeof(*image), q->allocator.user);
+    texture_context->error = BH_TEXTURE_OK;
+    texture_context->last_hresult = DD_OK;
+    image = (BHTextureImage *)texture_context->allocator.allocate(sizeof(*image), texture_context->allocator.user);
     if (!image)
     {
-        q->error = BH_TEXTURE_MEMORY;
+        texture_context->error = BH_TEXTURE_MEMORY;
         return NULL;
     }
     memset(image, 0, sizeof(*image));
     image->flags = 1;
     strcpy(image->name, "@@@PAGE@@@");
-    image->format = bh_texture_request_format(q, size, size, 8, 1);
+    image->format = bh_texture_request_format(texture_context, size, size, 8, 1);
     if (!image->format)
         goto failed;
     atlas = bh_atlas_image_load(context, name, &image->format->pixel);
     if (!atlas)
     {
-        q->error = context->error;
+        texture_context->error = context->error;
         goto failed;
     }
-    page = (BHAtlasPage *)q->allocator.allocate(sizeof(*page), q->allocator.user);
+    page = (BHAtlasPage *)texture_context->allocator.allocate(sizeof(*page), texture_context->allocator.user);
     if (!page)
     {
-        q->error = BH_TEXTURE_MEMORY;
+        texture_context->error = BH_TEXTURE_MEMORY;
         goto failed;
     }
     memset(page, 0, sizeof(*page));
@@ -81,7 +81,7 @@ BHAtlasPage *bh_atlas_page_create(BHAtlasContext *context, const char *name, uns
     desc.dwWidth = desc.dwHeight = size;
     desc.ddsCaps.dwCaps = 0x1800;
     desc.ddpfPixelFormat = image->format->pixel;
-    if (!native(q, bh_renderer_surface_create(q->draw, &desc, &image->source)))
+    if (!native(texture_context, bh_renderer_surface_create(texture_context->draw, &desc, &image->source)))
         goto failed;
     if (image->format->pixel.dwRGBBitCount < 9)
     {
@@ -92,38 +92,38 @@ BHAtlasPage *bh_atlas_page_create(BHAtlasContext *context, const char *name, uns
             entries[i].peBlue = atlas->palette[i * 3 + 2];
             entries[i].peFlags = 0;
         }
-        if (!native(q, bh_renderer_palette_create(q->draw, entries, &image->palette)) ||
-            !native(q, bh_renderer_surface_set_palette(image->source, image->palette)))
+        if (!native(texture_context, bh_renderer_palette_create(texture_context->draw, entries, &image->palette)) ||
+            !native(texture_context, bh_renderer_surface_set_palette(image->source, image->palette)))
             goto failed;
-        if (!bh_texture_palette_tables(q, image, (const unsigned char *)entries, 1024))
+        if (!bh_texture_palette_tables(texture_context, image, (const unsigned char *)entries, 1024))
             goto failed;
     }
-    image->runs = (unsigned long *)q->allocator.allocate(0x80, q->allocator.user);
-    image->vertices = (D3DTLVERTEX *)q->allocator.allocate(0xc00, q->allocator.user);
+    image->runs = (unsigned long *)texture_context->allocator.allocate(0x80, texture_context->allocator.user);
+    image->vertices = (D3DTLVERTEX *)texture_context->allocator.allocate(0xc00, texture_context->allocator.user);
     if (!image->runs || !image->vertices)
     {
-        q->error = BH_TEXTURE_MEMORY;
+        texture_context->error = BH_TEXTURE_MEMORY;
         goto failed;
     }
     image->vertex_capacity = 0x60;
-    image->next = q->images;
-    q->images = image;
+    image->next = texture_context->images;
+    texture_context->images = image;
     page->image = image;
     page->surface = image->source;
     return page;
 failed:
     if (page)
-        q->allocator.release(page, q->allocator.user);
-    discard(q, image);
+        texture_context->allocator.release(page, texture_context->allocator.user);
+    discard(texture_context, image);
     return NULL;
 }
 int bh_atlas_page_dispose(BHAtlasContext *context, BHAtlasPage *page)
 {
-    BHTextureContext *q;
+    BHTextureContext *texture_context;
     BHTextureImage **at, *image;
-    if (!context || !(q = context->textures) || !q->allocator.release || !page || !(image = page->image))
+    if (!context || !(texture_context = context->textures) || !texture_context->allocator.release || !page || !(image = page->image))
         return 0;
-    for (at = &q->images; *at && *at != image; at = &(*at)->next)
+    for (at = &texture_context->images; *at && *at != image; at = &(*at)->next)
     {
     }
     if (!*at)
@@ -132,7 +132,7 @@ int bh_atlas_page_dispose(BHAtlasContext *context, BHAtlasPage *page)
     if (image->resident && image->resident->image == image)
         image->resident->image = NULL;
     image->resident = NULL;
-    discard(q, image);
-    q->allocator.release(page, q->allocator.user);
+    discard(texture_context, image);
+    texture_context->allocator.release(page, texture_context->allocator.user);
     return 1;
 }

@@ -47,7 +47,7 @@ static unsigned long nearest(unsigned long color, const unsigned char *palette)
 }
 int bh_atlas_page_clear(BHAtlasContext *context, BHAtlasPage *page, unsigned long color)
 {
-    BHTextureContext *q;
+    BHTextureContext *texture_context;
     DDSURFACEDESC lock;
     HRESULT hr;
     unsigned long bits, bytes, x, y, i;
@@ -55,17 +55,17 @@ int bh_atlas_page_clear(BHAtlasContext *context, BHAtlasPage *page, unsigned lon
 
     if (!page)
         return 1;
-    if (!context || !(q = context->textures) || !page->atlas || !page->image || !page->surface || !page->size ||
+    if (!context || !(texture_context = context->textures) || !page->atlas || !page->image || !page->surface || !page->size ||
         page->size > 4096)
         return 0;
     bits = page->atlas->pixel.dwRGBBitCount;
     bytes = (bits + 7) / 8;
     if (bits != 8 && bits != 16 && bits != 24 && bits != 32)
     {
-        q->error = BH_TEXTURE_FORMAT;
+        texture_context->error = BH_TEXTURE_FORMAT;
         return 0;
     }
-    q->error = BH_TEXTURE_OK;
+    texture_context->error = BH_TEXTURE_OK;
     if (page->last_color != color)
     {
         page->last_color = color;
@@ -74,14 +74,14 @@ int bh_atlas_page_clear(BHAtlasContext *context, BHAtlasPage *page, unsigned lon
     memset(&lock, 0, sizeof(lock));
     lock.dwSize = sizeof(lock);
     hr = bh_renderer_surface_lock(page->surface, &lock);
-    q->last_hresult = hr;
+    texture_context->last_hresult = hr;
     ok = hr == DD_OK;
     if (ok)
     {
         if (!lock.lpSurface || lock.dwWidth < page->size || lock.dwHeight < page->size ||
             lock.lPitch < (long)(page->size * bytes))
         {
-            q->error = BH_TEXTURE_TOPOLOGY;
+            texture_context->error = BH_TEXTURE_TOPOLOGY;
             ok = 0;
         }
         if (ok)
@@ -93,15 +93,15 @@ int bh_atlas_page_clear(BHAtlasContext *context, BHAtlasPage *page, unsigned lon
                         out[i] = (unsigned char)(page->packed_color >> (8 * i));
                 }
         hr = bh_renderer_surface_unlock(page->surface);
-        q->last_hresult = hr;
+        texture_context->last_hresult = hr;
         if (hr != DD_OK)
         {
-            q->error = BH_TEXTURE_BACKEND;
+            texture_context->error = BH_TEXTURE_BACKEND;
             ok = 0;
         }
     }
     else
-        q->error = BH_TEXTURE_BACKEND;
+        texture_context->error = BH_TEXTURE_BACKEND;
     page->left = page->cursor_x = page->cursor_y = page->line_height = 0;
     if (page->image->resident)
         page->image->resident->pixels_dirty = 1;

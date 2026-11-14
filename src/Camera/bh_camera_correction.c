@@ -2,16 +2,16 @@
 #include "../Math/bh_round.h"
 #include <string.h>
 
-static BHWorldSegmentRoom *binding(BHWorldSegmentContext *q, BHWorldGeometry *w)
+static BHWorldSegmentRoom *binding(BHWorldSegmentContext *query, BHWorldGeometry *world)
 {
-    return bh_world_segment_room(q, w);
+    return bh_world_segment_room(query, world);
 }
 int bh_camera_correct(BHCameraCorrectionOwner *owner, BHVec3 *eye, const BHVec3 *target, BHEntity *self)
 {
     BHWorldSegmentHit hit;
     BHWorldHit excluded;
     BHWorldGeometry *old_cached, *second_cached, *old_selected, *selected, *world;
-    BHWorldSegmentRoom *r;
+    BHWorldSegmentRoom *room_binding;
     BHVec3 first, second, result, old_eye;
     double amount;
     int found;
@@ -38,13 +38,13 @@ int bh_camera_correct(BHCameraCorrectionOwner *owner, BHVec3 *eye, const BHVec3 
     if (hit.object.kind == BH_WORLD_HIT_GEOMETRY)
     {
         world = hit.object.object.geometry;
-        r = binding(owner->query, world);
-        if (r && r->kind)
+        room_binding = binding(owner->query, world);
+        if (room_binding && room_binding->kind)
         {
             if (world->owner)
                 world = world->owner;
-            r = binding(owner->query, world);
-            if (r && r->kind)
+            room_binding = binding(owner->query, world);
+            if (room_binding && room_binding->kind)
                 selected = world;
         }
     }

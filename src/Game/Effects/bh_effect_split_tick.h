@@ -7,8 +7,8 @@ typedef struct BHEffectSplitContext
     unsigned long split_sound, cascades, collisions, jitters, liquid_hits;
     int error;
 } BHEffectSplitContext;
-/* Count-zero actual borrowed family binding. Caller initializes c->split and
-   c->network and actual effect dependencies before constructors. */
+/* Count-zero actual borrowed family binding. Caller initializes the projectile context's
+   split and network members and actual effect dependencies before constructors. */
 void bh_effect_split_tick(BHEntity *);                   /*004047c0*/
 int bh_effect_split_cascade(BHEntity *, const BHVec3 *); /*004044c0*/
 /* Parent-owned actual constructor dependency; definition is required at link. */

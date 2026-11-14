@@ -14,7 +14,7 @@ static float stored(double v)
     bh_round_float(&f, v);
     return f;
 }
-static void smoke(BHScriptActorDrawContext *ctx, const BHVec3 *p)
+static void smoke(BHScriptActorDrawContext *ctx, const BHVec3 *position)
 {
     BHVec3 velocity, acceleration = {0, -.003f, 0}, point;
     float angular, angle;
@@ -23,8 +23,8 @@ static void smoke(BHScriptActorDrawContext *ctx, const BHVec3 *p)
     velocity.x = stored((double)(rand() - 0x4000) * (1.0 / 131072.0));
     velocity.y = stored((double)(rand() - 0x4000) * (1.0 / 131072.0));
     velocity.z = stored((double)(rand() - 0x4000) * (1.0 / 131072.0));
-    point = *p;
-    point.y = stored((double)p->y - (-2.0));
+    point = *position;
+    point.y = stored((double)position->y - (-2.0));
     angular = stored((double)(rand() - 0x4000) * (1.0 / 16384.0));
     angle = stored((double)rand() * (1.0 / 512.0));
     bh_script_particle_create(ctx->particles, ctx->smoke_resource, 3, &point, &velocity, &acceleration, 1, angle, 15,

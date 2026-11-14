@@ -32,56 +32,57 @@ static int greater_equal(double a, double b)
 {
     return !_isnan(a) && !_isnan(b) && a >= b;
 }
-static BHFlashFlareContext *context(BHEntity *e)
+static BHFlashFlareContext *context(BHEntity *entity)
 {
-    BHFlashFlareContext *c;
-    memcpy(&c, &e->bindings.flash_flare, 4);
-    return c;
+    BHFlashFlareContext *flash_context;
+    memcpy(&flash_context, &entity->bindings.flash_flare, 4);
+    return flash_context;
 }
-int bh_flash_flare_bind(BHFlashFlareContext *c, BHEntity *e, float lifetime, float strength, float size)
+int bh_flash_flare_bind(BHFlashFlareContext *flash_context, BHEntity *entity, float lifetime, float strength, float size)
 {
-    if (!c || !c->pool || !c->queue || !c->queue->commands || !bh_script_flash_bind(c->pool, e, lifetime))
+    if (!flash_context || !flash_context->pool || !flash_context->queue || !flash_context->queue->commands ||
+        !bh_script_flash_bind(flash_context->pool, entity, lifetime))
         return 0;
-    memcpy(&e->flash.strength, &strength, 4);
-    memcpy(&e->flash.size, &size, 4);
-    memcpy(&e->bindings.flash_flare, &c, 4);
-    e->refresh = bh_flash_flare_refresh;
+    memcpy(&entity->flash.strength, &strength, 4);
+    memcpy(&entity->flash.size, &size, 4);
+    memcpy(&entity->bindings.flash_flare, &flash_context, 4);
+    entity->refresh = bh_flash_flare_refresh;
     return 1;
 }
-void bh_flash_flare_refresh(BHEntity *e, void *packet)
+void bh_flash_flare_refresh(BHEntity *entity, void *packet)
 {
-    BHFlashFlareContext *c = context(e);
+    BHFlashFlareContext *flash_context = context(entity);
     float life, strength, size, value;
     (void)packet;
-    memcpy(&life, &e->flash.countdown, 4);
-    memcpy(&strength, &e->flash.strength, 4);
-    memcpy(&size, &e->flash.size, 4);
+    memcpy(&life, &entity->flash.countdown, 4);
+    memcpy(&strength, &entity->flash.strength, 4);
+    memcpy(&size, &entity->flash.size, 4);
     bh_round_float(&value, (1.0 - (double)life * 10.0) * strength);
-    bh_flare_queue(c->queue, &e->position, size, value, c->textures[0], c->textures[1], c->textures[2], c->textures[3],
-                   0);
+    bh_flare_queue(flash_context->queue, &entity->position, size, value, flash_context->textures[0],
+                   flash_context->textures[1], flash_context->textures[2], flash_context->textures[3], 0);
 }
-int bh_flare_queue(BHDrawQueue *q, const BHVec3 *p, float size, float strength, unsigned long first,
+int bh_flare_queue(BHDrawQueue *queue, const BHVec3 *position, float size, float strength, unsigned long first,
                    unsigned long second, unsigned long third, unsigned long fourth, float angle)
 {
-    BHDrawCommand *c;
-    if (!p)
+    BHDrawCommand *command;
+    if (!position)
         return -1;
-    c = bh_queue_reserve(q, 7);
-    if (!c)
-        return q && q->error == BH_DRAW_FULL ? 0 : -1;
-    c->kind = BH_DRAW_FLARE;
-    c->resource = 0;
-    memcpy(c->words, p, 12);
-    store(c->words + 3, size);
-    store(c->words + 4, strength);
-    store(c->words + 5, angle);
-    c->words[6] = first;
-    c->words[7] = second;
-    c->words[8] = third;
-    c->words[9] = fourth ? fourth : third;
+    command = bh_queue_reserve(queue, 7);
+    if (!command)
+        return queue && queue->error == BH_DRAW_FULL ? 0 : -1;
+    command->kind = BH_DRAW_FLARE;
+    command->resource = 0;
+    memcpy(command->words, position, 12);
+    store(command->words + 3, size);
+    store(command->words + 4, strength);
+    store(command->words + 5, angle);
+    command->words[6] = first;
+    command->words[7] = second;
+    command->words[8] = third;
+    command->words[9] = fourth ? fourth : third;
     return 1;
 }
-int bh_flare_execute(BHFlareSubmit *c, BHDrawCommand *command, unsigned long *next)
+int bh_flare_execute(BHFlareSubmit *submit, BHDrawCommand *command, unsigned long *next)
 {
     float x, y, scale, norm, dx, dy, gain, remaining, size, alpha, sx, sy, angle;
     double normalized, threshold, deltax, deltay, radius, weight, product, n;
@@ -89,29 +90,29 @@ int bh_flare_execute(BHFlareSubmit *c, BHDrawCommand *command, unsigned long *ne
     unsigned long i, id;
     BHTextureImage *image;
     int ok = 1;
-    if (!c || !c->camera || !c->view || !c->screen || !c->screen->draw || !c->screen->lookup || !command || !next ||
-        command->kind != BH_DRAW_FLARE || c->width < 2 || c->height <= 0 || !(c->camera->focal > 0) ||
-        !(c->view->near_z > 0) || !bh_math_environment_supported())
+    if (!submit || !submit->camera || !submit->view || !submit->screen || !submit->screen->draw || !submit->screen->lookup ||
+        !command || !next || command->kind != BH_DRAW_FLARE || submit->width < 2 || submit->height <= 0 ||
+        !(submit->camera->focal > 0) || !(submit->view->near_z > 0) || !bh_math_environment_supported())
         return 0;
-    c->attempted = c->emitted = c->culled = c->failures = 0;
+    submit->attempted = submit->emitted = submit->culled = submit->failures = 0;
     x = number(command->words);
     y = number(command->words + 1);
     scale = number(command->words + 2);
-    if (!bh_project_point_scale(c->camera, c->view, &x, &y, &scale))
+    if (!bh_project_point_scale(submit->camera, submit->view, &x, &y, &scale))
     {
-        ++c->culled;
+        ++submit->culled;
         *next = command->next;
         return 1;
     }
-    halfx = c->width / 2;
-    halfy = c->height / 2;
+    halfx = submit->width / 2;
+    halfy = submit->height / 2;
     threshold = 1.0 / (double)scale;
     normalized = (double)number(command->words + 4) / halfx;
     bh_round_float(&norm, normalized);
     store(command->words + 4, norm);
     if (greater(threshold, normalized))
     {
-        ++c->culled;
+        ++submit->culled;
         *next = command->next;
         return 1;
     }
@@ -120,14 +121,14 @@ int bh_flare_execute(BHFlareSubmit *c, BHDrawCommand *command, unsigned long *ne
     bh_round_float(&dx, deltax);
     bh_round_float(&dy, deltay);
     radius = sqrt(deltax * dx + deltay * dy);
-    if (greater_equal(radius, (double)c->height))
+    if (greater_equal(radius, (double)submit->height))
     {
-        ++c->culled;
+        ++submit->culled;
         *next = command->next;
         return 1;
     }
     weight = ((double)norm - threshold) / (double)norm;
-    bh_round_float(&gain, weight * (1.0 - radius / (double)c->height));
+    bh_round_float(&gain, weight * (1.0 - radius / (double)submit->height));
     product = (double)gain * 14.0;
     bh_round_float(&remaining, product);
     if (greater(product, 2.0) && !command->words[8] && !command->words[9])
@@ -137,7 +138,7 @@ int bh_flare_execute(BHFlareSubmit *c, BHDrawCommand *command, unsigned long *ne
     magnitude never reads beyond the complete original immutable table. */
     if (greater(remaining, 14))
     {
-        ++c->failures;
+        ++submit->failures;
         *next = command->next;
         return 0;
     }
@@ -152,20 +153,20 @@ int bh_flare_execute(BHFlareSubmit *c, BHDrawCommand *command, unsigned long *ne
             n = rows[i].size;
             if (n < 0)
                 n = -((n * (double)number(command->words + 3)) * scale);
-            bh_round_float(&size, (n * (double)c->width) * .0015625);
+            bh_round_float(&size, (n * (double)submit->width) * .0015625);
             bh_round_float(&sx, (double)dx * rows[i].position + halfx);
             bh_round_float(&sy, (double)dy * rows[i].position + halfy);
-            ++c->attempted;
-            image = c->screen->lookup(id, c->screen->lookup_user);
-            if (!image || !bh_screen_quad_draw(c->screen->draw, image, sx, sy, size, size, angle, 0, alpha))
+            ++submit->attempted;
+            image = submit->screen->lookup(id, submit->screen->lookup_user);
+            if (!image || !bh_screen_quad_draw(submit->screen->draw, image, sx, sy, size, size, angle, 0, alpha))
             {
-                ++c->failures;
+                ++submit->failures;
                 ok = 0;
             }
-            else if (c->screen->draw->emitted)
-                ++c->emitted;
+            else if (submit->screen->draw->emitted)
+                ++submit->emitted;
             else
-                ++c->culled;
+                ++submit->culled;
         }
         ++i;
         n = (double)remaining - 1.0;

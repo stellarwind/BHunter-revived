@@ -28,9 +28,9 @@ static int valid(BHWeaponArcLifecycleContext *ctx, BHEntity *weapon)
     begin(ctx);
     return ctx->sound && weapon ? 1 : error(ctx, BH_WEAPON_ARC_LIFECYCLE_ARGUMENT);
 }
-static int finite_vector(const BHVec3 *p)
+static int finite_vector(const BHVec3 *vector)
 {
-    return _finite(p->x) && _finite(p->y) && _finite(p->z);
+    return _finite(vector->x) && _finite(vector->y) && _finite(vector->z);
 }
 static const BHVec3 *aim(const BHEntity *entity)
 {

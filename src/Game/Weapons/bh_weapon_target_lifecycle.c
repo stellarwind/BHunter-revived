@@ -17,9 +17,9 @@ static int fail(BHWeaponTargetContext *ctx, BHWeaponTargetError e)
         ctx->error = e;
     return 0;
 }
-static int finite_vector(const BHVec3 *v)
+static int finite_vector(const BHVec3 *vector)
 {
-    return _finite(v->x) && _finite(v->y) && _finite(v->z);
+    return _finite(vector->x) && _finite(vector->y) && _finite(vector->z);
 }
 BHVec3 *bh_weapon_target_player_aim(BHEntity *entity)
 {
@@ -71,19 +71,19 @@ int bh_weapon_target_cancel(BHWeaponTargetContext *ctx, BHEntity *weapon_entity)
     weapon_state->word_100 = -1;
     return ctx->error == BH_WEAPON_TARGET_OK;
 }
-static int query(BHWeaponTargetContext *ctx, BHEntity *entity, BHEntityPositionPacket *p)
+static int query(BHWeaponTargetContext *ctx, BHEntity *entity, BHEntityPositionPacket *entity_position_packet)
 {
     if (!entity || !entity->query)
         return fail(ctx, BH_WEAPON_TARGET_CALLBACK);
     ++ctx->queries;
-    entity->query(entity, p);
-    return finite_vector(&p->position) ? 1 : fail(ctx, BH_WEAPON_TARGET_NUMERICAL);
+    entity->query(entity, entity_position_packet);
+    return finite_vector(&entity_position_packet->position) ? 1 : fail(ctx, BH_WEAPON_TARGET_NUMERICAL);
 }
 int bh_weapon_target_update(BHWeaponTargetContext *ctx, BHEntity *weapon_entity, const BHEntity *entity)
 {
     BHWeaponCommonState *weapon_state = bh_weapon_common_state(weapon_entity);
     const BHVec3 *aim;
-    BHEntity *e, *next;
+    BHEntity *actor, *next;
     BHVec3 d;
     union {
         BHEntityPositionPacket packet;
@@ -121,12 +121,12 @@ int bh_weapon_target_update(BHWeaponTargetContext *ctx, BHEntity *weapon_entity,
     }
     if (!weapon_state->hud.target)
     {
-        e = ctx->actors_owner ? *ctx->actors_owner : ctx->actors;
-        while (e)
+        actor = ctx->actors_owner ? *ctx->actors_owner : ctx->actors;
+        while (actor)
         {
             if (++visited > ctx->max_actors)
                 return fail(ctx, BH_WEAPON_TARGET_LIMIT);
-            if (!query(ctx, e, &packet.packet))
+            if (!query(ctx, actor, &packet.packet))
                 return 0;
             aim = bh_weapon_target_player_aim((BHEntity *)entity);
             if (!finite_vector(&entity->position) || !finite_vector(aim))
@@ -153,13 +153,13 @@ int bh_weapon_target_update(BHWeaponTargetContext *ctx, BHEntity *weapon_entity,
                         ctx->error = BH_WEAPON_TARGET_WORLD;
                     if (!result)
                     {
-                        weapon_state->hud.target = e;
+                        weapon_state->hud.target = actor;
                         best = dot;
                     }
                 }
             }
-            memcpy(&next, &e->actor.global_next, 4);
-            e = next;
+            memcpy(&next, &actor->actor.global_next, 4);
+            actor = next;
         }
         weapon_state->hud.charge = 0;
         return ctx->error == BH_WEAPON_TARGET_OK;

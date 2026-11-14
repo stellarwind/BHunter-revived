@@ -77,40 +77,40 @@ int bh_collision_model_load(BHCollisionModel *model, const char *name, const cha
 #include "../Math/bh_round.h"
 #include <float.h>
 
-static double face_dot(const BHVec3 *n, const BHVec3 *p)
+static double face_dot(const BHVec3 *normal, const BHVec3 *point)
 {
-    return ((double)n->x * p->x + (double)n->y * p->y) + (double)n->z * p->z;
+    return ((double)normal->x * point->x + (double)normal->y * point->y) + (double)normal->z * point->z;
 }
-static int face_vertex(const BHBsp *b, long edge, const BHMat34 *transform, BHVec3 *p)
+static int face_vertex(const BHBsp *bsp, long edge, const BHMat34 *transform, BHVec3 *point)
 {
     long v;
     BHVec3 transformed;
-    if (edge < 0 || (unsigned long)edge >= b->counts[2])
+    if (edge < 0 || (unsigned long)edge >= bsp->counts[2])
         return 0;
-    v = b->edges[edge].vertex;
-    if (v < 0 || (unsigned long)v >= b->counts[1])
+    v = bsp->edges[edge].vertex;
+    if (v < 0 || (unsigned long)v >= bsp->counts[1])
         return 0;
-    p->x = b->vertices[v].x;
-    p->y = b->vertices[v].y;
-    p->z = b->vertices[v].z;
-    if (!_finite(p->x) || !_finite(p->y) || !_finite(p->z))
+    point->x = bsp->vertices[v].x;
+    point->y = bsp->vertices[v].y;
+    point->z = bsp->vertices[v].z;
+    if (!_finite(point->x) || !_finite(point->y) || !_finite(point->z))
         return 0;
     if (transform)
     {
-        bh_mat34_transform_point(transform, p, &transformed);
-        *p = transformed;
+        bh_mat34_transform_point(transform, point, &transformed);
+        *point = transformed;
     }
-    return _finite(p->x) && _finite(p->y) && _finite(p->z);
+    return _finite(point->x) && _finite(point->y) && _finite(point->z);
 }
-static double cut_distance(const BHVec3 *n, const BHVec3 *p, float plane, int first, int cached)
+static double cut_distance(const BHVec3 *normal, const BHVec3 *point, float plane, int first, int cached)
 {
     /* Only standalone0044cc20's first cut sums X/Y before Z. Inline0044c200
        and both second cuts sum Y/Z before X, including the initial vertex. */
     if (first && cached)
-        return ((double)n->z * p->z + ((double)n->x * p->x + (double)n->y * p->y)) + plane;
-    return (((double)n->y * p->y + (double)n->z * p->z) + (double)n->x * p->x) + plane;
+        return ((double)normal->z * point->z + ((double)normal->x * point->x + (double)normal->y * point->y)) + plane;
+    return (((double)normal->y * point->y + (double)normal->z * point->z) + (double)normal->x * point->x) + plane;
 }
-static int face_cut(const BHBsp *b, long face, const BHMat34 *transform, const BHVec3 *n, float plane, int first,
+static int face_cut(const BHBsp *bsp, long face, const BHMat34 *transform, const BHVec3 *n, float plane, int first,
                     BHVec3 result[2], int cached)
 {
     BHVec3 start, previous, current;
@@ -120,21 +120,21 @@ static int face_cut(const BHBsp *b, long face, const BHMat34 *transform, const B
     float previous_product, current_product;
     double right;
     double d, inverse;
-    if (!b || !b->faces || !b->edges || !b->vertices || face < 0 || (unsigned long)face >= b->counts[3])
+    if (!bsp || !bsp->faces || !bsp->edges || !bsp->vertices || face < 0 || (unsigned long)face >= bsp->counts[3])
         return -1;
-    edge = b->faces[face].first_edge;
-    if (!face_vertex(b, edge, transform, &start))
+    edge = bsp->faces[face].first_edge;
+    if (!face_vertex(bsp, edge, transform, &start))
         return -1;
     previous = start;
     bh_round_float(&previous_distance, cut_distance(n, &previous, plane, first, cached));
     do
     {
-        if (++steps > b->counts[2])
+        if (++steps > bsp->counts[2])
             return -1;
-        next = b->edges[edge].next;
+        next = bsp->edges[edge].next;
         if (next < 0)
             current = start;
-        else if (!face_vertex(b, next, transform, &current))
+        else if (!face_vertex(bsp, next, transform, &current))
             return -1;
         d = cut_distance(n, &current, plane, first, cached);
         if (d * previous_distance < 0)
@@ -171,7 +171,7 @@ static int face_cut(const BHBsp *b, long face, const BHMat34 *transform, const B
     } while (edge >= 0);
     return 0;
 }
-static int face_contact(const BHBsp *a, long a_face, const BHMat34 *a_to_b, const BHBsp *b, long b_face, long b_node,
+static int face_contact(const BHBsp *a, long a_face, const BHMat34 *a_to_b, const BHBsp *bsp, long b_face, long b_node,
                         const BHMat34 *b_to_world, const BHVec3 *world_normal, BHFaceContact *out, int cached)
 {
     BHVec3 first[2], second[2], direction, side, midpoint, plane_normal;
@@ -181,21 +181,21 @@ static int face_contact(const BHBsp *a, long a_face, const BHMat34 *a_to_b, cons
     double offset, retained_x;
     unsigned long i;
     int result;
-    if (!a || !b || !a_to_b || !b_to_world || !world_normal || !out || !b->nodes || b_node < 0 ||
-        (unsigned long)b_node >= b->counts[4] || !bh_math_environment_supported())
+    if (!a || !bsp || !a_to_b || !b_to_world || !world_normal || !out || !bsp->nodes || b_node < 0 ||
+        (unsigned long)b_node >= bsp->counts[4] || !bh_math_environment_supported())
         return -1;
     for (i = 0; i < 12; ++i)
         if (!_finite(((const float *)a_to_b)[i]) || !_finite(((const float *)b_to_world)[i]))
             return -1;
     for (i = 0; i < 3; ++i)
     {
-        ((float *)&plane_normal)[i] = b->nodes[b_node].normal[i];
+        ((float *)&plane_normal)[i] = bsp->nodes[b_node].normal[i];
         if (!_finite(((const float *)&plane_normal)[i]) || !_finite(((const float *)world_normal)[i]))
             return -1;
     }
-    if (!_finite(b->nodes[b_node].plane))
+    if (!_finite(bsp->nodes[b_node].plane))
         return -1;
-    result = face_cut(a, a_face, a_to_b, &plane_normal, b->nodes[b_node].plane, 1, first, cached);
+    result = face_cut(a, a_face, a_to_b, &plane_normal, bsp->nodes[b_node].plane, 1, first, cached);
     if (result != 1)
         return result;
     for (i = 0; i < 3; ++i)
@@ -211,7 +211,7 @@ static int face_contact(const BHBsp *a, long a_face, const BHMat34 *a_to_b, cons
         offset = offset_spill;
     }
     bh_round_float(&extent, face_dot(&direction, &first[1]) + offset);
-    result = face_cut(b, b_face, NULL, &side, side_plane, 0, second, cached);
+    result = face_cut(bsp, b_face, NULL, &side, side_plane, 0, second, cached);
     if (result != 1)
         return result;
     retained_x = face_dot(&direction, &second[0]) + offset;

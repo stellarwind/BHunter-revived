@@ -9,5 +9,5 @@ void bh_marker_query(BHEntity *entity, void *packet);          /* 00407b00 */
 void bh_pickup_target_removed(BHEntity *entity, void *packet); /* 00442330 */
 /* 00436670, factor first in original ABI. PC53 intermediate arithmetic;
    exact source/destination aliases supported. Partial vector overlap excluded. */
-void bh_vec3_interpolate(float factor, BHVec3 *out, const BHVec3 *a, const BHVec3 *b);
+void bh_vec3_interpolate(float factor, BHVec3 *out, const BHVec3 *first, const BHVec3 *second);
 #endif

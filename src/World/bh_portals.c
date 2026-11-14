@@ -24,14 +24,14 @@ static int valid_ring(BHPortalNode *node, unsigned long count)
             return 0;
         for (j = 0; j < current->count; ++j)
         {
-            BHPortal *p = &current->portals[j];
-            if (p->direction > 6 || p->direction == 3)
+            BHPortal *portal = &current->portals[j];
+            if (portal->direction > 6 || portal->direction == 3)
                 return 0;
             for (k = 0; k < 4; ++k)
-                if (!finite_word(p->aperture[k]) || !finite_word(p->overlap[k]) || !finite_word(p->scratch[k]))
+                if (!finite_word(portal->aperture[k]) || !finite_word(portal->overlap[k]) || !finite_word(portal->scratch[k]))
                     return 0;
-            if (p->aperture[0] > p->aperture[1] || p->aperture[2] > p->aperture[3] || p->overlap[0] > p->overlap[1] ||
-                p->overlap[2] > p->overlap[3])
+            if (portal->aperture[0] > portal->aperture[1] || portal->aperture[2] > portal->aperture[3] || portal->overlap[0] > portal->overlap[1] ||
+                portal->overlap[2] > portal->overlap[3])
                 return 0;
         }
         current = current->next;
@@ -43,36 +43,36 @@ int bh_portals_match(BHPortalNode *node, unsigned long ring_count)
 {
     unsigned long slot, other_slot, k;
     BHPortalNode *other;
-    BHPortal *p, *q;
+    BHPortal *portal, *other_portal;
     if (!valid_ring(node, ring_count))
         return 0;
     for (slot = 0; slot < node->count; ++slot)
     {
-        p = &node->portals[slot];
-        for (other = node->next; other != node && !p->neighbor; other = other->next)
+        portal = &node->portals[slot];
+        for (other = node->next; other != node && !portal->neighbor; other = other->next)
         {
-            for (other_slot = 0; other_slot < other->count && !p->neighbor; ++other_slot)
+            for (other_slot = 0; other_slot < other->count && !portal->neighbor; ++other_slot)
             {
-                q = &other->portals[other_slot];
+                other_portal = &other->portals[other_slot];
                 /* Original FSUB operands are double constants +0.1/-0.1.
                    Do not round the expanded/shrunken boundary to float. */
-                if (q->direction != (p->direction ^ 4UL) || q->plane != p->plane ||
-                    !((double)q->aperture[0] < (double)p->aperture[1] - 0.1) ||
-                    !((double)p->aperture[0] + 0.1 < (double)q->aperture[1]) ||
-                    !((double)q->aperture[2] < (double)p->aperture[3] - 0.1) ||
-                    !((double)p->aperture[2] + 0.1 < (double)q->aperture[3]))
+                if (other_portal->direction != (portal->direction ^ 4UL) || other_portal->plane != portal->plane ||
+                    !((double)other_portal->aperture[0] < (double)portal->aperture[1] - 0.1) ||
+                    !((double)portal->aperture[0] + 0.1 < (double)other_portal->aperture[1]) ||
+                    !((double)other_portal->aperture[2] < (double)portal->aperture[3] - 0.1) ||
+                    !((double)portal->aperture[2] + 0.1 < (double)other_portal->aperture[3]))
                     continue;
-                p->neighbor = other;
-                if (p->overlap[0] < q->aperture[0])
-                    p->overlap[0] = q->aperture[0];
-                if (q->aperture[1] < p->overlap[1])
-                    p->overlap[1] = q->aperture[1];
-                if (p->overlap[2] < q->aperture[2])
-                    p->overlap[2] = q->aperture[2];
-                if (q->aperture[3] < p->overlap[3])
-                    p->overlap[3] = q->aperture[3];
+                portal->neighbor = other;
+                if (portal->overlap[0] < other_portal->aperture[0])
+                    portal->overlap[0] = other_portal->aperture[0];
+                if (other_portal->aperture[1] < portal->overlap[1])
+                    portal->overlap[1] = other_portal->aperture[1];
+                if (portal->overlap[2] < other_portal->aperture[2])
+                    portal->overlap[2] = other_portal->aperture[2];
+                if (other_portal->aperture[3] < portal->overlap[3])
+                    portal->overlap[3] = other_portal->aperture[3];
                 for (k = 0; k < 4; ++k)
-                    p->scratch[k] = p->overlap[k];
+                    portal->scratch[k] = portal->overlap[k];
             }
         }
     }

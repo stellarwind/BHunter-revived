@@ -35,9 +35,9 @@ static BHImpactState *impact(BHEntity *entity)
 {
     return (BHImpactState *)(entity->payload + 4);
 }
-static int finite_vector(const BHVec3 *v)
+static int finite_vector(const BHVec3 *vector)
 {
-    return v && _finite(v->x) && _finite(v->y) && _finite(v->z);
+    return vector && _finite(vector->x) && _finite(vector->y) && _finite(vector->z);
 }
 static int live(BHContactEffects *ctx, BHEntity *entity)
 {
@@ -61,12 +61,12 @@ int bh_contact_effects_init(BHContactEffects *ctx, BHEntityPool *pool, BHDrawQue
 }
 int bh_contact_effects_dispose(BHContactEffects *ctx)
 {
-    BHEntity *p;
+    BHEntity *entity;
     unsigned long count = 0;
     if (!ctx || !ctx->pool)
         return 0;
-    for (p = ctx->pool->active; p && count++ < ctx->pool->capacity; p = p->next)
-        if ((p->step == spark_tick || p->step == impact_tick) && context(p) == ctx)
+    for (entity = ctx->pool->active; entity && count++ < ctx->pool->capacity; entity = entity->next)
+        if ((entity->step == spark_tick || entity->step == impact_tick) && context(entity) == ctx)
         {
             ctx->error = BH_EFFECT_CONTEXT;
             return 0;

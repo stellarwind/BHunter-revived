@@ -13,83 +13,83 @@ static void release(void *memory, void *user)
 {
     free(memory);
 }
-int bh_input_devices_bind(BHInputDevices *d, BHInputCollection *c, const BHSceneAllocator *a)
+int bh_input_devices_bind(BHInputDevices *input_devices, BHInputCollection *input_collection, const BHSceneAllocator *scene_allocator)
 {
     unsigned long i;
-    if (!d || !c || !c->snapshot || !c->lists || (a && (!a->allocate || !a->release)))
+    if (!input_devices || !input_collection || !input_collection->snapshot || !input_collection->lists || (scene_allocator && (!scene_allocator->allocate || !scene_allocator->release)))
         return 0;
-    memset(d, 0, sizeof(*d));
-    d->collection = c;
+    memset(input_devices, 0, sizeof(*input_devices));
+    input_devices->collection = input_collection;
     for (i = 0; i < 255; ++i)
-        d->names[i] = bh_input_key_defaults[i];
-    if (a)
-        d->allocator = *a;
+        input_devices->names[i] = bh_input_key_defaults[i];
+    if (scene_allocator)
+        input_devices->allocator = *scene_allocator;
     else
     {
-        d->allocator.allocate = allocate;
-        d->allocator.release = release;
+        input_devices->allocator.allocate = allocate;
+        input_devices->allocator.release = release;
     }
     return 1;
 }
-int bh_input_devices_start(BHInputDevices *d)
+int bh_input_devices_start(BHInputDevices *input_devices)
 {
-    BHInputCollection *c;
-    BHInputSnapshot *s;
+    BHInputCollection *input_collection;
+    BHInputSnapshot *input_snapshot;
     unsigned long i, character, bytes;
     char *name;
     int replace;
-    if (!d || !(c = d->collection) || !(s = c->snapshot) || !c->lists || c->lists->first ||
-        !d->allocator.allocate || !d->allocator.release)
+    if (!input_devices || !(input_collection = input_devices->collection) || !(input_snapshot = input_collection->snapshot) || !input_collection->lists || input_collection->lists->first ||
+        !input_devices->allocator.allocate || !input_devices->allocator.release)
         return 0;
-    d->allocation_failures = 0;
+    input_devices->allocation_failures = 0;
     for (i = 0; i < 255; ++i)
     {
         character = bh_sdl_key_character((unsigned)i) & 255;
         replace = character != i && i >= 65 && i <= 90 && character >= 65 && character <= 90;
-        if (replace || !d->names[i])
+        if (replace || !input_devices->names[i])
         {
-            if (d->allocated[i])
-                d->allocator.release((void *)d->names[i], d->allocator.user);
-            d->allocated[i] = 0;
+            if (input_devices->allocated[i])
+                input_devices->allocator.release((void *)input_devices->names[i], input_devices->allocator.user);
+            input_devices->allocated[i] = 0;
             bytes = replace || character >= 32 ? 8 : 10;
-            name = (char *)d->allocator.allocate(bytes, d->allocator.user);
-            d->names[i] = name;
+            name = (char *)input_devices->allocator.allocate(bytes, input_devices->allocator.user);
+            input_devices->names[i] = name;
             if (!name)
             {
-                ++d->allocation_failures;
+                ++input_devices->allocation_failures;
                 continue;
             }
-            d->allocated[i] = 1;
+            input_devices->allocated[i] = 1;
             if (replace || character >= 32)
                 sprintf(name, "Key '%c'", (int)character);
             else
                 sprintf(name, "Key #%d", (int)i);
         }
     }
-    s->history_head = 0;
-    memset(s->history, 0, 32);
-    memset(s->current, 0, 255);
-    memset(s->previous, 0, 255);
-    memset(s->axes, 0, sizeof(s->axes));
-    memset(&s->gamepad, 0, sizeof(s->gamepad));
-    s->previous_gamepad_buttons = 0;
-    s->pair4[0] = s->pair4[1] = 0;
-    s->pair3[0] = s->pair3[1] = 512;
-    s->mouse_axes[0] = s->mouse_axes[1] = 0;
-    return !d->allocation_failures;
+    input_snapshot->history_head = 0;
+    memset(input_snapshot->history, 0, 32);
+    memset(input_snapshot->current, 0, 255);
+    memset(input_snapshot->previous, 0, 255);
+    memset(input_snapshot->axes, 0, sizeof(input_snapshot->axes));
+    memset(&input_snapshot->gamepad, 0, sizeof(input_snapshot->gamepad));
+    input_snapshot->previous_gamepad_buttons = 0;
+    input_snapshot->pair4[0] = input_snapshot->pair4[1] = 0;
+    input_snapshot->pair3[0] = input_snapshot->pair3[1] = 512;
+    input_snapshot->mouse_axes[0] = input_snapshot->mouse_axes[1] = 0;
+    return !input_devices->allocation_failures;
 }
-void bh_input_devices_dispose(BHInputDevices *d)
+void bh_input_devices_dispose(BHInputDevices *input_devices)
 {
     unsigned long i;
-    if (!d)
+    if (!input_devices)
         return;
-    if (d->allocator.release)
+    if (input_devices->allocator.release)
         for (i = 0; i < 255; ++i)
-            if (d->allocated[i])
-                d->allocator.release((void *)d->names[i], d->allocator.user);
+            if (input_devices->allocated[i])
+                input_devices->allocator.release((void *)input_devices->names[i], input_devices->allocator.user);
     for (i = 0; i < 255; ++i)
     {
-        d->allocated[i] = 0;
-        d->names[i] = bh_input_key_defaults[i];
+        input_devices->allocated[i] = 0;
+        input_devices->names[i] = bh_input_key_defaults[i];
     }
 }

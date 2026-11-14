@@ -7,59 +7,59 @@
 #include "../Platform/bh_platform.h"
 #endif
 
-static int error(BHFrameDisplay *d, BHFrameRenderError value)
+static int error(BHFrameDisplay *frame_display, BHFrameRenderError value)
 {
-    if (d)
-        d->error = value;
+    if (frame_display)
+        frame_display->error = value;
     return 0;
 }
-static int native(BHFrameDisplay *d, HRESULT hr)
+static int native(BHFrameDisplay *frame_display, HRESULT hr)
 {
-    ++d->native_calls;
-    d->last_hresult = hr;
+    ++frame_display->native_calls;
+    frame_display->last_hresult = hr;
     if (FAILED(hr))
     {
-        ++d->failures;
-        d->error = BH_FRAME_RENDER_NATIVE;
+        ++frame_display->failures;
+        frame_display->error = BH_FRAME_RENDER_NATIVE;
         return 0;
     }
     return 1;
 }
-static int rect(BHFrameDisplay *d, RECT *r, long *rows)
+static int rect(BHFrameDisplay *frame_display, RECT *result_rect, long *rows)
 {
-    if (!_finite(d->left) || !_finite(d->top) || d->left < 0.0f || d->top < 0.0f || d->left > 640.0f || d->top > 480.0f)
-        return error(d, BH_FRAME_RENDER_BOUNDS);
-    r->left = (long)d->left;
-    r->top = (long)d->top;
-    r->right = 640;
-    r->bottom = 480;
-    *rows = (long)((double)480.0 - (double)d->top);
+    if (!_finite(frame_display->left) || !_finite(frame_display->top) || frame_display->left < 0.0f || frame_display->top < 0.0f || frame_display->left > 640.0f || frame_display->top > 480.0f)
+        return error(frame_display, BH_FRAME_RENDER_BOUNDS);
+    result_rect->left = (long)frame_display->left;
+    result_rect->top = (long)frame_display->top;
+    result_rect->right = 640;
+    result_rect->bottom = 480;
+    *rows = (long)((double)480.0 - (double)frame_display->top);
     return 1;
 }
-static int flush_and_cycle(BHFrameDisplay *d)
+static int flush_and_cycle(BHFrameDisplay *frame_display)
 {
     BHTextureImage *image, *slow, *fast;
     int ok = 1;
-    slow = fast = d->textures->images;
+    slow = fast = frame_display->textures->images;
     while (fast && fast->next)
     {
         slow = slow->next;
         fast = fast->next->next;
         if (slow == fast)
-            return error(d, BH_FRAME_RENDER_TOPOLOGY);
+            return error(frame_display, BH_FRAME_RENDER_TOPOLOGY);
     }
-    d->textures->frame = (long)((unsigned long)d->textures->frame + 1);
-    for (image = d->textures->images; image; image = image->next)
+    frame_display->textures->frame = (long)((unsigned long)frame_display->textures->frame + 1);
+    for (image = frame_display->textures->images; image; image = image->next)
     {
-        ++d->flushes;
-        if (!bh_texture_draw_flush(d->textures, image, NULL))
+        ++frame_display->flushes;
+        if (!bh_texture_draw_flush(frame_display->textures, image, NULL))
             ok = 0;
     }
-    if (!native(d, bh_renderer_record_draws(d->textures->device)))
+    if (!native(frame_display, bh_renderer_record_draws(frame_display->textures->device)))
         ok = 0;
     return ok;
 }
-static int clear_depth(BHFrameDisplay *d, int game_frame)
+static int clear_depth(BHFrameDisplay *frame_display, int game_frame)
 {
     RECT r;
     DDBLTFX fx;
@@ -67,44 +67,44 @@ static int clear_depth(BHFrameDisplay *d, int game_frame)
     int ok = 1;
     unsigned long width, bytes, at;
     long y;
-    if (!d || !d->textures)
-        return error(d, BH_FRAME_RENDER_ARGUMENT);
-    d->error = BH_FRAME_RENDER_OK;
-    if (!d->auxiliary || (!d->textures->software && !d->textures->device))
-        return error(d, BH_FRAME_RENDER_BINDING);
-    if (!rect(d, &r, &rows))
+    if (!frame_display || !frame_display->textures)
+        return error(frame_display, BH_FRAME_RENDER_ARGUMENT);
+    frame_display->error = BH_FRAME_RENDER_OK;
+    if (!frame_display->auxiliary || (!frame_display->textures->software && !frame_display->textures->device))
+        return error(frame_display, BH_FRAME_RENDER_BINDING);
+    if (!rect(frame_display, &r, &rows))
         return 0;
-    if (!d->textures->software && !flush_and_cycle(d))
+    if (!frame_display->textures->software && !flush_and_cycle(frame_display))
         ok = 0;
 #ifdef BH_SDL_BACKEND
     /* The horizon normally covers the color target, but rasterized edges
        can leave pixels from the previous frame's damage fade. */
-    if (game_frame && !d->textures->software)
-        return native(d, bh_sdl_clear_frame() ? DD_OK : E_FAIL) && ok;
+    if (game_frame && !frame_display->textures->software)
+        return native(frame_display, bh_sdl_clear_frame() ? DD_OK : E_FAIL) && ok;
 #else
     (void)game_frame;
 #endif
-    if (d->textures->software && d->locked)
+    if (frame_display->textures->software && frame_display->locked)
     {
         width = (unsigned long)(r.right - r.left);
         bytes = width * 2;
-        if (!d->auxiliary_pixels || d->auxiliary_pitch <= 0 || bytes > (unsigned long)d->auxiliary_pitch ||
-            (unsigned long)r.top * (unsigned long)d->auxiliary_pitch + width * 2 > d->auxiliary_bytes ||
+        if (!frame_display->auxiliary_pixels || frame_display->auxiliary_pitch <= 0 || bytes > (unsigned long)frame_display->auxiliary_pitch ||
+            (unsigned long)r.top * (unsigned long)frame_display->auxiliary_pitch + width * 2 > frame_display->auxiliary_bytes ||
             (rows > 0 &&
-             (unsigned long)(r.top + rows - 1) * (unsigned long)d->auxiliary_pitch + (unsigned long)r.left * 2 + bytes >
-                 d->auxiliary_bytes))
-            return error(d, BH_FRAME_RENDER_BOUNDS);
+             (unsigned long)(r.top + rows - 1) * (unsigned long)frame_display->auxiliary_pitch + (unsigned long)r.left * 2 + bytes >
+                 frame_display->auxiliary_bytes))
+            return error(frame_display, BH_FRAME_RENDER_BOUNDS);
         for (y = 0; y < rows; y++)
         {
-            at = (unsigned long)(r.top + y) * (unsigned long)d->auxiliary_pitch + (unsigned long)r.left * 2;
-            memset(d->auxiliary_pixels + at, 0, bytes);
+            at = (unsigned long)(r.top + y) * (unsigned long)frame_display->auxiliary_pitch + (unsigned long)r.left * 2;
+            memset(frame_display->auxiliary_pixels + at, 0, bytes);
         }
         return ok;
     }
     memset(&fx, 0, sizeof(fx));
     fx.dwSize = sizeof(fx);
     fx.dwFillDepth = 0;
-    if (!native(d, bh_renderer_surface_blit(d->auxiliary, &r, NULL, NULL, DDBLT_WAIT | DDBLT_DEPTHFILL, &fx)))
+    if (!native(frame_display, bh_renderer_surface_blit(frame_display->auxiliary, &r, NULL, NULL, DDBLT_WAIT | DDBLT_DEPTHFILL, &fx)))
         ok = 0;
     return ok;
 }
@@ -116,16 +116,16 @@ int bh_frame_clear_game(BHFrameDisplay *d)
 {
     return clear_depth(d, 1);
 }
-static unsigned long color_value(BHFrameDisplay *d, long red, long green, long blue)
+static unsigned long color_value(BHFrameDisplay *frame_display, long red, long green, long blue)
 {
-    BHTextureContext *q = d->textures;
-    if (d->indexed_color == 1)
+    BHTextureContext *texture_context = frame_display->textures;
+    if (frame_display->indexed_color == 1)
         return (unsigned long)(((red * 5) / 255) * 42 + ((green * 6) / 255) * 6 + (blue * 5) / 255);
-    return (unsigned long)(((red >> (q->display_right[0] & 31)) << (q->display_left[0] & 31)) +
-                           ((green >> (q->display_right[1] & 31)) << (q->display_left[1] & 31)) +
-                           ((blue >> (q->display_right[2] & 31)) << (q->display_left[2] & 31)));
+    return (unsigned long)(((red >> (texture_context->display_right[0] & 31)) << (texture_context->display_left[0] & 31)) +
+                           ((green >> (texture_context->display_right[1] & 31)) << (texture_context->display_left[1] & 31)) +
+                           ((blue >> (texture_context->display_right[2] & 31)) << (texture_context->display_left[2] & 31)));
 }
-int bh_frame_clear_color(BHFrameDisplay *d, long red, long green, long blue)
+int bh_frame_clear_color(BHFrameDisplay *frame_display, long red, long green, long blue)
 {
     RECT r;
     DDBLTFX fx;
@@ -133,59 +133,59 @@ int bh_frame_clear_color(BHFrameDisplay *d, long red, long green, long blue)
     long rows;
     int ok = 1, attempt;
     HRESULT hr;
-    if (!d || !d->textures)
-        return error(d, BH_FRAME_RENDER_ARGUMENT);
-    d->error = BH_FRAME_RENDER_OK;
+    if (!frame_display || !frame_display->textures)
+        return error(frame_display, BH_FRAME_RENDER_ARGUMENT);
+    frame_display->error = BH_FRAME_RENDER_OK;
     if (red < 0 || red > 255 || green < 0 || green > 255 || blue < 0 || blue > 255)
-        return error(d, BH_FRAME_RENDER_ARGUMENT);
-    if (!d->color || !d->auxiliary || (!d->textures->software && !d->textures->device))
-        return error(d, BH_FRAME_RENDER_BINDING);
-    if (!rect(d, &r, &rows))
+        return error(frame_display, BH_FRAME_RENDER_ARGUMENT);
+    if (!frame_display->color || !frame_display->auxiliary || (!frame_display->textures->software && !frame_display->textures->device))
+        return error(frame_display, BH_FRAME_RENDER_BINDING);
+    if (!rect(frame_display, &r, &rows))
         return 0;
-    if (!d->textures->software && !flush_and_cycle(d))
+    if (!frame_display->textures->software && !flush_and_cycle(frame_display))
         ok = 0;
     memset(&fx, 0, sizeof(fx));
     fx.dwSize = sizeof(fx);
-    fx.dwFillColor = color_value(d, red, green, blue);
-    if (d->locked)
+    fx.dwFillColor = color_value(frame_display, red, green, blue);
+    if (frame_display->locked)
     {
-        if (!native(d, bh_renderer_surface_unlock(d->color)))
+        if (!native(frame_display, bh_renderer_surface_unlock(frame_display->color)))
             ok = 0;
     }
-    if (!native(d, bh_renderer_surface_blit(d->color, &r, NULL, NULL, DDBLT_WAIT | DDBLT_COLORFILL, &fx)))
+    if (!native(frame_display, bh_renderer_surface_blit(frame_display->color, &r, NULL, NULL, DDBLT_WAIT | DDBLT_COLORFILL, &fx)))
         ok = 0;
-    if (d->locked)
+    if (frame_display->locked)
     {
         for (attempt = 0; attempt < 500; attempt++)
         {
             memset(&desc, 0, sizeof(desc));
             desc.dwSize = sizeof(desc);
-            hr = bh_renderer_surface_lock(d->color, &desc);
-            ++d->native_calls;
-            d->last_hresult = hr;
+            hr = bh_renderer_surface_lock(frame_display->color, &desc);
+            ++frame_display->native_calls;
+            frame_display->last_hresult = hr;
             if (hr == DD_OK)
             {
-                d->color_pixels = (unsigned char *)desc.lpSurface;
-                d->color_pitch = desc.lPitch;
-                if (d->atlas)
-                    d->atlas->scan_step = (unsigned long)desc.lPitch;
+                frame_display->color_pixels = (unsigned char *)desc.lpSurface;
+                frame_display->color_pitch = desc.lPitch;
+                if (frame_display->atlas)
+                    frame_display->atlas->scan_step = (unsigned long)desc.lPitch;
                 break;
             }
-            ++d->failures;
-            d->error = BH_FRAME_RENDER_NATIVE;
+            ++frame_display->failures;
+            frame_display->error = BH_FRAME_RENDER_NATIVE;
             ok = 0;
             bh_platform_delay(1);
-            ++d->sleeps;
+            ++frame_display->sleeps;
         }
         if (attempt == 500)
         {
-            bh_frame_clear_depth(d);
-            return error(d, BH_FRAME_RENDER_NATIVE);
+            bh_frame_clear_depth(frame_display);
+            return error(frame_display, BH_FRAME_RENDER_NATIVE);
         }
     }
-    if (!bh_frame_clear_depth(d))
+    if (!bh_frame_clear_depth(frame_display))
         ok = 0;
     if (!ok)
-        d->error = BH_FRAME_RENDER_NATIVE;
+        frame_display->error = BH_FRAME_RENDER_NATIVE;
     return ok;
 }

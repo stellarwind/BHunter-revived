@@ -24,24 +24,24 @@ static int random_value(BHEffectProjectileContext *ctx)
     ++ctx->random_calls;
     return rand();
 }
-static void offset(BHVec3 *p, const BHVec3 *a, const BHVec3 *n, double d)
+static void offset(BHVec3 *point, const BHVec3 *origin, const BHVec3 *normal, double distance)
 {
-    p->x = rf((double)a->x + (double)n->x * d);
-    p->y = rf((double)a->y + (double)n->y * d);
-    p->z = rf((double)a->z + (double)n->z * d);
+    point->x = rf((double)origin->x + (double)normal->x * distance);
+    point->y = rf((double)origin->y + (double)normal->y * distance);
+    point->z = rf((double)origin->z + (double)normal->z * distance);
 }
 static void retire(BHEffectProjectileContext *ctx, BHEntity *entity)
 {
     bh_sound_stop(ctx->effects->sound, bh_field_u32(&entity->effect.sound));
     bh_entity_release(ctx->effects->pool, entity);
 }
-static BHEntity *response(BHHomingProjectileContext *ctx, const BHWorldSegmentHit *h)
+static BHEntity *response(BHHomingProjectileContext *ctx, const BHWorldSegmentHit *hit)
 {
     unsigned long i;
-    if (h->object.kind != BH_WORLD_HIT_GEOMETRY)
-        return h->object.object.actor;
+    if (hit->object.kind != BH_WORLD_HIT_GEOMETRY)
+        return hit->object.object.actor;
     {
-        const BHHomingWorldResponse *binding = bh_homing_world_response(ctx, h->object.object.geometry);
+        const BHHomingWorldResponse *binding = bh_homing_world_response(ctx, hit->object.object.geometry);
         if (binding)
         {
             return binding->receiver;
@@ -52,31 +52,31 @@ static BHEntity *response(BHHomingProjectileContext *ctx, const BHWorldSegmentHi
 static void puff(BHEffectProjectileContext *ctx, BHEntity *entity, unsigned long image, float life, float delay,
                  float size, int ring)
 {
-    BHEntity *p = bh_entity_acquire(ctx->effects->pool);
-    BHEffectAcceleratedContext *a = ctx->accelerated;
+    BHEntity *puff_entity = bh_entity_acquire(ctx->effects->pool);
+    BHEffectAcceleratedContext *accelerated = ctx->accelerated;
     unsigned long seed;
-    if (!p)
+    if (!puff_entity)
         return;
-    p->position = entity->position;
-    memcpy(&p->puff.image, &image, 4);
-    bh_field_store_f32(&p->puff.duration, life);
-    bh_field_store_f32(&p->puff.size, size);
-    bh_delayed_expiry_bind(ctx->effects->pool, p, life, delay);
+    puff_entity->position = entity->position;
+    memcpy(&puff_entity->puff.image, &image, 4);
+    bh_field_store_f32(&puff_entity->puff.duration, life);
+    bh_field_store_f32(&puff_entity->puff.size, size);
+    bh_delayed_expiry_bind(ctx->effects->pool, puff_entity, life, delay);
     if (!ring)
     {
         seed = (unsigned long)random_value(ctx);
         seed = seed * 32768UL + (unsigned long)random_value(ctx);
         seed = seed * 32768UL + (unsigned long)random_value(ctx);
-        memcpy(&p->puff.seed, &seed, 4);
+        memcpy(&puff_entity->puff.seed, &seed, 4);
     }
-    bh_effect_puff_bind(a->puffs, p, ring);
-    ++a->puff_entities;
+    bh_effect_puff_bind(accelerated->puffs, puff_entity, ring);
+    ++accelerated->puff_entities;
 }
 void bh_effect_accelerated_tick(BHEntity *entity)
 {
     BHEffectProjectileContext *ctx = context(entity);
-    BHEffectAcceleratedContext *a;
-    BHHomingProjectileContext *b;
+    BHEffectAcceleratedContext *accelerated;
+    BHHomingProjectileContext *effects;
     BHVec3 v, acc, end, old, p, n, smoke, gravity = {0, -.002f, 0}, drift = {0, -1, 0};
     BHWorldGeometry *cached;
     BHEntity *ignore, *owner, *impact, *receiver, *marker;
@@ -95,12 +95,12 @@ void bh_effect_accelerated_tick(BHEntity *entity)
     } damage;
     if (!ctx || !ctx->accelerated || !bh_math_environment_supported())
         return;
-    a = ctx->accelerated;
-    b = ctx->effects;
+    accelerated = ctx->accelerated;
+    effects = ctx->effects;
     memcpy(&generation, &entity->bindings.projectile_generation, 4);
     if (entity->generation != generation)
     {
-        a->error = 1;
+        accelerated->error = 1;
         return;
     }
     next = (double)bh_field_f32(&entity->effect.grace) - 1.0 / 30.0;
@@ -121,7 +121,7 @@ void bh_effect_accelerated_tick(BHEntity *entity)
     {
         r1 = rf((double)random_value(ctx) / 32768.0);
         r2 = rf((double)random_value(ctx) / 32768.0);
-        bh_contact_spark_create(b->contacts, &entity->position, r2, r1);
+        bh_contact_spark_create(effects->contacts, &entity->position, r2, r1);
     }
     smoke.x = rf(((double)random_value(ctx) - 16384) * .000002);
     smoke.y = rf(((double)random_value(ctx) - 16384) * .000002);
@@ -129,10 +129,10 @@ void bh_effect_accelerated_tick(BHEntity *entity)
     if (!(random_value(ctx) & 3))
     {
         pitch = rf(2.0 - (double)random_value(ctx) * (-1.0 / 16384.0));
-        bh_sound_request(b->sound, ctx->ricochet_sound, .5f, pitch, &entity->position, &entity->origin);
+        bh_sound_request(effects->sound, ctx->ricochet_sound, .5f, pitch, &entity->position, &entity->origin);
         spin = rf(((double)random_value(ctx) - 16384) / 16384.0);
         angle = rf((double)random_value(ctx) / 512.0);
-        bh_script_particle_create(b->particles, ctx->smoke_image, 3, &entity->position, &smoke, &gravity, .2f, angle, 6,
+        bh_script_particle_create(effects->particles, ctx->smoke_image, 3, &entity->position, &smoke, &gravity, .2f, angle, 6,
                                   spin, .9f, .95f, .6f, .6f);
     }
     if (!bh_field_u32(&entity->effect.split_count))
@@ -153,43 +153,43 @@ void bh_effect_accelerated_tick(BHEntity *entity)
         speed = sqrt(((double)entity->origin.y * entity->origin.y + (double)rf(z * z)) +
                      (double)entity->origin.x * entity->origin.x);
         voice = bh_field_u32(&entity->effect.sound);
-        bh_sound_update(b->sound, voice, rf(speed * .02), .5f, &old, &entity->origin);
+        bh_sound_update(effects->sound, voice, rf(speed * .02), .5f, &old, &entity->origin);
         memcpy(&cached, &entity->effect.world, 4);
         memcpy(&ignore, &entity->effect.ignore, 4);
         self.kind = ignore ? BH_WORLD_HIT_ACTOR : BH_WORLD_HIT_END;
         self.object.actor = ignore;
         memset(&hit, 0, sizeof(hit));
-        result = bh_world_segment_run(b->segment, ignore ? &self : NULL, &cached, &old, &end, -1, &hit);
+        result = bh_world_segment_run(effects->segment, ignore ? &self : NULL, &cached, &old, &end, -1, &hit);
         memcpy(&entity->effect.world, &cached, 4);
         if (result < 0)
         {
-            a->error = 2;
+            accelerated->error = 2;
             return;
         }
         world = result && hit.object.kind == BH_WORLD_HIT_GEOMETRY;
         if (world && (hit.material_flags & 4))
         {
             offset(&p, &hit.point, &hit.normal, .5);
-            impact = bh_contact_impact_create(b->contacts, &p, &hit.normal, 4);
+            impact = bh_contact_impact_create(effects->contacts, &p, &hit.normal, 4);
             if (impact)
             {
-                state = bh_contact_impact_state(b->contacts, impact);
+                state = bh_contact_impact_state(effects->contacts, impact);
                 state->age = 0;
                 state->duration = 1.5f;
                 state->size = 15;
-                bh_sound_request(b->sound, b->liquid_sound, 2.5f, .6666667f, &p, &zero);
+                bh_sound_request(effects->sound, effects->liquid_sound, 2.5f, .6666667f, &p, &zero);
             }
-            ++a->liquid_hits;
+            ++accelerated->liquid_hits;
             retire(ctx, entity);
             return;
         }
         suppress = bh_field_u32(&entity->effect.origin_tag);
         if (result && !suppress)
         {
-            ++a->collisions;
+            ++accelerated->collisions;
             bh_field_store_f32(&entity->effect.lifetime, 3);
             n = hit.normal;
-            receiver = response(b, &hit);
+            receiver = response(effects, &hit);
             if (world && !(hit.material_flags & 2))
             {
                 if (((double)entity->origin.x * n.x + (double)entity->origin.y * n.y) + (double)entity->origin.z * n.z >
@@ -202,10 +202,10 @@ void bh_effect_accelerated_tick(BHEntity *entity)
                 offset(&p, &hit.point, &n, .15);
                 if (!receiver)
                 {
-                    a->error = 3;
+                    accelerated->error = 3;
                     return;
                 }
-                marker = bh_hit_marker_create(b->markers, &p, &n, 6, 0, receiver);
+                marker = bh_hit_marker_create(effects->markers, &p, &n, 6, 0, receiver);
                 bh_trail_create_pair(ctx->trails, ctx->trail_image, 3, 0, &p, marker, 15, 5, 6, .5f, .3f, .2f, &drift,
                                      .75f, NULL, NULL);
             }
@@ -214,7 +214,7 @@ void bh_effect_accelerated_tick(BHEntity *entity)
             offset(&entity->position, &hit.point, &v, -1);
             entity->origin = zero;
             memcpy(&entity->acceleration, &zero, 12);
-            bh_sound_stop(b->sound, voice);
+            bh_sound_stop(effects->sound, voice);
             voice = BH_SOUND_INVALID;
             memcpy(&entity->effect.sound, &voice, 4);
             if (ctx->network)
@@ -229,27 +229,27 @@ void bh_effect_accelerated_tick(BHEntity *entity)
     bh_field_store_f32(&entity->effect.lifetime, rf(next));
     if (next < 2.0 && next >= 1.9666666666666666)
     {
-        voice = bh_sound_request(b->sound, a->interval_sound, 1, 1, &entity->position, &zero);
+        voice = bh_sound_request(effects->sound, accelerated->interval_sound, 1, 1, &entity->position, &zero);
         memcpy(&entity->effect.sound, &voice, 4);
     }
     if (!(bh_field_f32(&entity->effect.lifetime) < 0))
         return;
-    bh_sound_stop(b->sound, bh_field_u32(&entity->effect.sound));
-    bh_sound_request(b->sound, a->expiry_sound, 1, 1, &entity->position, &zero);
+    bh_sound_stop(effects->sound, bh_field_u32(&entity->effect.sound));
+    bh_sound_request(effects->sound, accelerated->expiry_sound, 1, 1, &entity->position, &zero);
     ctx->debris->origin_tag = bh_field_u32(&entity->effect.origin_tag);
     memcpy(&owner, &entity->effect.source, 4);
     bh_script_explosion_create(ctx->explosion, &entity->position, 1.2f, 30, 1, (unsigned long)owner);
-    puff(ctx, entity, a->ring_image, 1, 0, 800, 1);
-    puff(ctx, entity, a->second_ring_image, 1, .1f, 400, 1);
-    puff(ctx, entity, a->random_image, 1, .05f, 100, 0);
-    puff(ctx, entity, a->ring_image, .25f, .4f, 200, 1);
-    puff(ctx, entity, a->random_image, .5f, .5f, 50, 0);
+    puff(ctx, entity, accelerated->ring_image, 1, 0, 800, 1);
+    puff(ctx, entity, accelerated->second_ring_image, 1, .1f, 400, 1);
+    puff(ctx, entity, accelerated->random_image, 1, .05f, 100, 0);
+    puff(ctx, entity, accelerated->ring_image, .25f, .4f, 200, 1);
+    puff(ctx, entity, accelerated->random_image, .5f, .5f, 50, 0);
     if (!bh_field_u32(&entity->effect.origin_tag))
     {
         damage.event = 0;
         damage.amount = 1;
         damage.source = owner;
-        bh_entities_query(b->pool, 0, 0, &entity->position, 100, &damage);
+        bh_entities_query(effects->pool, 0, 0, &entity->position, 100, &damage);
     }
-    bh_entity_release(b->pool, entity);
+    bh_entity_release(effects->pool, entity);
 }

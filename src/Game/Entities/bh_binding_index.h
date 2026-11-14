@@ -48,11 +48,11 @@ static long bh_binding_find(const BHBindingIndex *index, const void *a, const vo
     slot = bh_binding_hash(a, b) & (index->capacity - 1);
     for (remaining = index->capacity; remaining; --remaining)
     {
-        const BHBindingEntry *e = index->entries + slot;
-        if (!e->value)
+        const BHBindingEntry *binding_entry = index->entries + slot;
+        if (!binding_entry->value)
             return -1;
-        if (e->first == a && e->second == b)
-            return (long)(e->value - 1);
+        if (binding_entry->first == a && binding_entry->second == b)
+            return (long)(binding_entry->value - 1);
         slot = (slot + 1) & (index->capacity - 1);
     }
     return -1;
@@ -62,15 +62,15 @@ static int bh_binding_insert(BHBindingIndex *index, const void *a, const void *b
     unsigned long slot = bh_binding_hash(a, b) & (index->capacity - 1), remaining;
     for (remaining = index->capacity; remaining; --remaining)
     {
-        BHBindingEntry *e = index->entries + slot;
-        if (!e->value)
+        BHBindingEntry *binding_entry = index->entries + slot;
+        if (!binding_entry->value)
         {
-            e->first = a;
-            e->second = b;
-            e->value = value + 1;
+            binding_entry->first = a;
+            binding_entry->second = b;
+            binding_entry->value = value + 1;
             return 1;
         }
-        if (e->first == a && e->second == b)
+        if (binding_entry->first == a && binding_entry->second == b)
             return 0;
         slot = (slot + 1) & (index->capacity - 1);
     }

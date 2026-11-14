@@ -35,29 +35,29 @@ static BHPickupRoom *room(BHRemotePackets *packets, BHWorldGeometry *world)
 }
 static int move(BHRemotePackets *packets, BHEntity *entity, BHWorldGeometry *old, BHWorldGeometry *next)
 {
-    BHPickupRoom *a = old ? room(packets, old) : 0, *b = next ? room(packets, next) : 0;
+    BHPickupRoom *first_pickup_room = old ? room(packets, old) : 0, *second_pickup_room = next ? room(packets, next) : 0;
     BHEntity *previous = entity->actor.room_previous, *following = entity->actor.room_next, *head;
     if (old == next)
         return 1;
-    if ((old && !a) || (next && !b))
+    if ((old && !first_pickup_room) || (next && !second_pickup_room))
         return 0;
-    if (a && ((previous ? previous->actor.room_next : a->actors) != entity ||
+    if (first_pickup_room && ((previous ? previous->actor.room_next : first_pickup_room->actors) != entity ||
               (following && following->actor.room_previous != entity)))
         return 0;
-    if (a)
+    if (first_pickup_room)
     {
         if (previous)
             previous->actor.room_next = following;
         else
-            a->actors = following;
+            first_pickup_room->actors = following;
         if (following)
             following->actor.room_previous = previous;
     }
-    if (b)
+    if (second_pickup_room)
     {
-        head = b->actors;
+        head = second_pickup_room->actors;
         entity->actor.room_next = head;
-        b->actors = entity;
+        second_pickup_room->actors = entity;
         entity->actor.room_previous = 0;
         if (head)
             head->actor.room_previous = entity;

@@ -5,59 +5,59 @@
 #include <math.h>
 #include <float.h>
 #include <string.h>
-static void error(BHHorizonContext *c, BHHorizonError e)
+static void error(BHHorizonContext *context, BHHorizonError e)
 {
-    if (c->error == BH_HORIZON_OK)
-        c->error = e;
+    if (context->error == BH_HORIZON_OK)
+        context->error = e;
 }
-static int native(BHHorizonContext *c, HRESULT h)
+static int native(BHHorizonContext *context, HRESULT h)
 {
-    ++c->state->native_calls;
-    c->state->last_hresult = h;
+    ++context->state->native_calls;
+    context->state->last_hresult = h;
     if (FAILED(h))
     {
-        ++c->state->failures;
-        error(c, BH_HORIZON_BACKEND);
+        ++context->state->failures;
+        error(context, BH_HORIZON_BACKEND);
         return 0;
     }
     return 1;
 }
-static void state(BHHorizonContext *c, D3DRENDERSTATETYPE type, unsigned long value)
+static void state(BHHorizonContext *context, D3DRENDERSTATETYPE type, unsigned long value)
 {
-    native(c, bh_renderer_set_state(c->state->textures->device, type, value));
+    native(context, bh_renderer_set_state(context->state->textures->device, type, value));
 }
-int bh_horizon_init(BHHorizonContext *c, const BHMainCamera *camera, BHAttributeClipContext *clip,
+int bh_horizon_init(BHHorizonContext *context, const BHMainCamera *camera, BHAttributeClipContext *clip,
                     BHRenderState *render, BHHorizonColor *colors, BHHorizonEmit emit, void *user)
 {
-    if (!c || !camera || !clip || !render || !render->textures || !emit ||
+    if (!context || !camera || !clip || !render || !render->textures || !emit ||
         (render->textures->software && (!colors || colors->textures != render->textures)))
         return 0;
-    memset(c, 0, sizeof(*c));
-    c->camera = camera;
-    c->clip = clip;
-    c->state = render;
-    c->colors = colors;
-    c->emit = emit;
-    c->user = user;
-    c->color_mode = 1;
+    memset(context, 0, sizeof(*context));
+    context->camera = camera;
+    context->clip = clip;
+    context->state = render;
+    context->colors = colors;
+    context->emit = emit;
+    context->user = user;
+    context->color_mode = 1;
     return 1;
 }
 /* UV normally consumes retained world sums before their binary32 stores.
    First inner X and last inner Z instead reload the stored local coordinate. */
-static void vertex(BHClipVertex *v, const BHMat34 *projected, double x, double y, double z, float inverse_scale,
+static void vertex(BHClipVertex *clip_vertex, const BHMat34 *projected, double x, double y, double z, float inverse_scale,
                    int reload_x, int reload_z, unsigned long alpha)
 {
     BHVec3 world;
     bh_round_float(&world.x, x);
     bh_round_float(&world.y, y);
     bh_round_float(&world.z, z);
-    bh_round_float(&v->u, (reload_x ? (double)world.x : x) * inverse_scale);
-    bh_round_float(&v->v, (reload_z ? (double)world.z : z) * inverse_scale);
-    bh_mat34_transform_point(projected, &world, &v->point);
-    v->unknown28 = alpha;
-    v->projected = 0;
+    bh_round_float(&clip_vertex->u, (reload_x ? (double)world.x : x) * inverse_scale);
+    bh_round_float(&clip_vertex->v, (reload_z ? (double)world.z : z) * inverse_scale);
+    bh_mat34_transform_point(projected, &world, &clip_vertex->point);
+    clip_vertex->unknown28 = alpha;
+    clip_vertex->projected = 0;
 }
-static void polygon(BHHorizonContext *c, BHTextureImage *image, BHClipVertex **v, unsigned long n, int gradient)
+static void polygon(BHHorizonContext *context, BHTextureImage *image, BHClipVertex **v, unsigned long n, int gradient)
 {
     BHClipVertex *ring;
     unsigned long i;
@@ -66,25 +66,25 @@ static void polygon(BHHorizonContext *c, BHTextureImage *image, BHClipVertex **v
         v[i]->next = v[(i + 1) % n];
         v[i]->previous = v[(i + n - 1) % n];
     }
-    ++c->attempted;
-    ring = bh_attribute_clip_polygon(c->clip, v[0], 1);
+    ++context->attempted;
+    ring = bh_attribute_clip_polygon(context->clip, v[0], 1);
     if (!ring)
     {
-        if (c->clip->error != BH_CLIP_OK)
+        if (context->clip->error != BH_CLIP_OK)
         {
-            error(c, BH_HORIZON_CLIP);
+            error(context, BH_HORIZON_CLIP);
         }
         return;
     }
-    if (!c->emit(ring, image, gradient, c->rgb, c->user))
-        error(c, BH_HORIZON_EMIT);
+    if (!context->emit(ring, image, gradient, context->rgb, context->user))
+        error(context, BH_HORIZON_EMIT);
     else
-        ++c->emitted;
+        ++context->emitted;
 }
-int bh_horizon_draw(BHHorizonContext *c, BHTextureImage *image, float texture_scale, float height, float outer_radius,
+int bh_horizon_draw(BHHorizonContext *context, BHTextureImage *image, float texture_scale, float height, float outer_radius,
                     float inner_radius, unsigned long color)
 {
-    BHTextureContext *q;
+    BHTextureContext *texture_context;
     BHTextureImage *im, *slow, *fast;
     BHClipVertex v[9], *ring[4];
     BHVec3 inner[2], outer[2];
@@ -92,49 +92,49 @@ int bh_horizon_draw(BHHorizonContext *c, BHTextureImage *image, float texture_sc
     double ratio, sx, sz, x, z;
     unsigned long old_depth, i, j;
     long signed_color = (long)color;
-    if (!c || !c->camera || !c->clip || !c->state || !(q = c->state->textures) || !c->emit || !image ||
-        (!q->software && !q->device) || (q->software && (!c->colors || c->colors->textures != q)) ||
+    if (!context || !context->camera || !context->clip || !context->state || !(texture_context = context->state->textures) || !context->emit || !image ||
+        (!texture_context->software && !texture_context->device) || (texture_context->software && (!context->colors || context->colors->textures != texture_context)) ||
         !_finite(texture_scale) || !texture_scale || !_finite(height) || !_finite(outer_radius) || !outer_radius ||
         !_finite(inner_radius))
         return 0;
-    c->error = BH_HORIZON_OK;
-    c->attempted = c->emitted = 0;
+    context->error = BH_HORIZON_OK;
+    context->attempted = context->emitted = 0;
     for (i = 0; i < 12; ++i)
-        if (!_finite(((const float *)&c->camera->projected)[i]))
+        if (!_finite(((const float *)&context->camera->projected)[i]))
         {
-            error(c, BH_HORIZON_ARGUMENT);
+            error(context, BH_HORIZON_ARGUMENT);
             return 0;
         }
-    if (!_finite(c->camera->position.x) || !_finite(c->camera->position.z) || !_finite(c->camera->angles.x))
+    if (!_finite(context->camera->position.x) || !_finite(context->camera->position.z) || !_finite(context->camera->angles.x))
     {
-        error(c, BH_HORIZON_ARGUMENT);
+        error(context, BH_HORIZON_ARGUMENT);
         return 0;
     }
-    if (!q->software)
+    if (!texture_context->software)
     {
-        slow = fast = q->images;
+        slow = fast = texture_context->images;
         while (fast && fast->next)
         {
             slow = slow->next;
             fast = fast->next->next;
             if (slow == fast)
             {
-                error(c, BH_HORIZON_ARGUMENT);
+                error(context, BH_HORIZON_ARGUMENT);
                 return 0;
             }
         }
     }
-    old_depth = c->state->depth;
-    bh_round_float(&sine, sin((double)c->camera->angles.x));
-    bh_round_float(&cosine, cos((double)c->camera->angles.x));
+    old_depth = context->state->depth;
+    bh_round_float(&sine, sin((double)context->camera->angles.x));
+    bh_round_float(&cosine, cos((double)context->camera->angles.x));
     negative_sine = -sine;
-    if (!bh_render_depth(c->state, 2))
-        error(c, BH_HORIZON_BACKEND);
-    c->rgb[0] = (float)((unsigned long)(signed_color / 65536L) & 255UL);
-    c->rgb[1] = (float)((unsigned long)(signed_color / 256L) & 255UL);
-    c->rgb[2] = (float)(color & 255UL);
-    if (q->software && !bh_horizon_color_prepare(c->colors, c->color_mode, color))
-        error(c, BH_HORIZON_COLOR);
+    if (!bh_render_depth(context->state, 2))
+        error(context, BH_HORIZON_BACKEND);
+    context->rgb[0] = (float)((unsigned long)(signed_color / 65536L) & 255UL);
+    context->rgb[1] = (float)((unsigned long)(signed_color / 256L) & 255UL);
+    context->rgb[2] = (float)(color & 255UL);
+    if (texture_context->software && !bh_horizon_color_prepare(context->colors, context->color_mode, color))
+        error(context, BH_HORIZON_COLOR);
     ratio = (double)height / outer_radius;
     bh_round_float(&ratio_stored, ratio);
     bh_round_float(&inverse_scale, 1.0 / texture_scale);
@@ -161,30 +161,30 @@ int bh_horizon_draw(BHHorizonContext *c, BHTextureImage *image, float texture_sc
         bh_round_float(&outer[i].z, (double)factor[i][2] * outer_radius);
     }
     memset(v, 0, sizeof(v));
-    x = c->camera->position.x;
-    z = c->camera->position.z;
-    vertex(v, &c->camera->projected, x, -height, z, inverse_scale, 0, 0, 0);
+    x = context->camera->position.x;
+    z = context->camera->position.z;
+    vertex(v, &context->camera->projected, x, -height, z, inverse_scale, 0, 0, 0);
     for (i = 0; i < 4; ++i)
     {
         j = i & 1;
-        vertex(v + 1 + i, &c->camera->projected, i < 2 ? x + inner[j].x : x - inner[j].x,
+        vertex(v + 1 + i, &context->camera->projected, i < 2 ? x + inner[j].x : x - inner[j].x,
                i < 2 ? (double)-height + inner[j].y : (double)-height - inner[j].y,
                i < 2 ? z + inner[j].z : z - inner[j].z, inverse_scale, i == 0, i == 3, 0);
-        vertex(v + 5 + i, &c->camera->projected, i < 2 ? x + outer[j].x : x - outer[j].x,
+        vertex(v + 5 + i, &context->camera->projected, i < 2 ? x + outer[j].x : x - outer[j].x,
                i < 2 ? (double)-height + outer[j].y : (double)-height - outer[j].y,
                i < 2 ? z + outer[j].z : z - outer[j].z, inverse_scale, 0, 0, 0x3f800000UL);
     }
-    if (!q->software)
+    if (!texture_context->software)
     {
-        state(c, D3DRENDERSTATE_FOGENABLE, 1);
-        state(c, D3DRENDERSTATE_FOGCOLOR, color);
+        state(context, D3DRENDERSTATE_FOGENABLE, 1);
+        state(context, D3DRENDERSTATE_FOGCOLOR, color);
     }
     for (i = 0; i < 4; ++i)
     {
         ring[0] = v + 1 + i;
         ring[1] = v + 1 + (i + 1) % 4;
         ring[2] = v;
-        polygon(c, image, ring, 3, !q->software);
+        polygon(context, image, ring, 3, !texture_context->software);
     }
     for (i = 0; i < 4; ++i)
     {
@@ -192,75 +192,75 @@ int bh_horizon_draw(BHHorizonContext *c, BHTextureImage *image, float texture_sc
         ring[1] = v + 5 + (i + 1) % 4;
         ring[2] = v + 1 + (i + 1) % 4;
         ring[3] = v + 1 + i;
-        polygon(c, image, ring, 4, 1);
+        polygon(context, image, ring, 4, 1);
     }
-    if (!q->software)
+    if (!texture_context->software)
     {
-        q->frame = (long)((unsigned long)q->frame + 1);
-        ++c->state->barriers;
-        for (im = q->images; im; im = im->next)
-            if (!bh_texture_draw_flush(q, im, NULL))
-                error(c, BH_HORIZON_BACKEND);
-        native(c, bh_renderer_record_draws(q->device));
+        texture_context->frame = (long)((unsigned long)texture_context->frame + 1);
+        ++context->state->barriers;
+        for (im = texture_context->images; im; im = im->next)
+            if (!bh_texture_draw_flush(texture_context, im, NULL))
+                error(context, BH_HORIZON_BACKEND);
+        native(context, bh_renderer_record_draws(texture_context->device));
     }
-    if (!bh_render_depth(c->state, old_depth))
-        error(c, BH_HORIZON_BACKEND);
-    if (!q->software)
-        state(c, D3DRENDERSTATE_FOGENABLE, 0);
-    return c->error == BH_HORIZON_OK;
+    if (!bh_render_depth(context->state, old_depth))
+        error(context, BH_HORIZON_BACKEND);
+    if (!texture_context->software)
+        state(context, D3DRENDERSTATE_FOGENABLE, 0);
+    return context->error == BH_HORIZON_OK;
 }
 int bh_horizon_native_emit(BHClipVertex *ring, BHTextureImage *image, int gradient, const float rgb[3], void *user)
 {
-    BHHorizonNative *n = (BHHorizonNative *)user;
-    BHTextureContext *q;
-    BHClipVertex *p;
+    BHHorizonNative *horizon_native = (BHHorizonNative *)user;
+    BHTextureContext *texture_context;
+    BHClipVertex *vertex;
     D3DTLVERTEX *vertices;
     unsigned long count = 0, i;
     float scalar;
     double fog;
     int ok;
-    if (!n || !(q = n->textures) || q->software || !_finite(n->near_z) || n->near_z <= 0 || !q->allocator.allocate ||
-        !q->allocator.release || !ring || !image || !gradient)
+    if (!horizon_native || !(texture_context = horizon_native->textures) || texture_context->software || !_finite(horizon_native->near_z) || horizon_native->near_z <= 0 || !texture_context->allocator.allocate ||
+        !texture_context->allocator.release || !ring || !image || !gradient)
         return 0;
-    p = ring;
+    vertex = ring;
     do
     {
-        if (!p || !p->next || !p->previous || p->next->previous != p || p->previous->next != p || ++count > 2048)
+        if (!vertex || !vertex->next || !vertex->previous || vertex->next->previous != vertex || vertex->previous->next != vertex || ++count > 2048)
             return 0;
-        memcpy(&scalar, &p->unknown28, 4);
+        memcpy(&scalar, &vertex->unknown28, 4);
         fog = (double)scalar * -255.0;
-        if (!_finite(p->sx) || !_finite(p->sy) || !_finite(p->point.z) || p->point.z <= 0 || !_finite(p->u) ||
-            !_finite(p->v) || !_finite(fog) || fog < -2147483648.0 || fog > 2147483647.0)
+        if (!_finite(vertex->sx) || !_finite(vertex->sy) || !_finite(vertex->point.z) || vertex->point.z <= 0 || !_finite(vertex->u) ||
+            !_finite(vertex->v) || !_finite(fog) || fog < -2147483648.0 || fog > 2147483647.0)
             return 0;
-        p = p->next;
-    } while (p != ring);
+        vertex = vertex->next;
+    } while (vertex != ring);
     if (count < 3)
         return 0;
-    vertices = (D3DTLVERTEX *)q->allocator.allocate(count * sizeof(*vertices), q->allocator.user);
+    vertices = (D3DTLVERTEX *)texture_context->allocator.allocate(count * sizeof(*vertices), texture_context->allocator.user);
     if (!vertices)
         return 0;
     memset(vertices, 0, count * sizeof(*vertices));
-    p = ring;
+    vertex = ring;
     for (i = 0; i < count; ++i)
     {
-        vertices[i].sx = p->sx;
-        vertices[i].sy = p->sy;
-        bh_round_float(&vertices[i].sz, (double)n->near_z / p->point.z);
-        bh_round_float(&vertices[i].rhw, 1.0 / p->point.z);
-        memcpy(&scalar, &p->unknown28, 4);
+        vertices[i].sx = vertex->sx;
+        vertices[i].sy = vertex->sy;
+        bh_round_float(&vertices[i].sz, (double)horizon_native->near_z / vertex->point.z);
+        bh_round_float(&vertices[i].rhw, 1.0 / vertex->point.z);
+        memcpy(&scalar, &vertex->unknown28, 4);
         fog = (double)scalar * -255.0;
         vertices[i].color = 0xffffffUL;
         vertices[i].specular = 0xff000000UL + (unsigned long)(long)fog * 0x01000000UL;
-        vertices[i].tu = p->u;
-        vertices[i].tv = p->v;
-        p = p->next;
+        vertices[i].tu = vertex->u;
+        vertices[i].tv = vertex->v;
+        vertex = vertex->next;
     }
-    ok = bh_texture_draw_polygon(q, image, vertices, count);
-    q->allocator.release(vertices, q->allocator.user);
+    ok = bh_texture_draw_polygon(texture_context, image, vertices, count);
+    texture_context->allocator.release(vertices, texture_context->allocator.user);
     if (ok)
     {
-        ++n->polygons;
-        n->vertices += count;
+        ++horizon_native->polygons;
+        horizon_native->vertices += count;
     }
     return ok;
 }

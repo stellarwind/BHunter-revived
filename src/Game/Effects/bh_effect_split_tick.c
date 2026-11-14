@@ -62,7 +62,7 @@ static void flash(BHEffectProjectileContext *ctx, const BHVec3 *p)
 int bh_effect_split_cascade(BHEntity *entity, const BHVec3 *normal)
 {
     BHEffectProjectileContext *ctx = context(entity);
-    BHEffectSplitContext *s;
+    BHEffectSplitContext *split;
     BHWorldGeometry *world;
     BHEntity *source;
     BHVec3 velocity, old;
@@ -72,11 +72,11 @@ int bh_effect_split_cascade(BHEntity *entity, const BHVec3 *normal)
     double coefficient;
     if (!ctx || !ctx->split || !normal || !bh_math_environment_supported())
         return 0;
-    s = ctx->split;
+    split = ctx->split;
     count = (long)bh_field_u32(&entity->effect.split_count);
     if (count < 1 || count > 33)
     {
-        s->error = 1;
+        split->error = 1;
         ctx->error = 1;
         return 0;
     }
@@ -93,11 +93,11 @@ int bh_effect_split_cascade(BHEntity *entity, const BHVec3 *normal)
     else if (count >= 4)
     {
         ctx->debris->origin_tag = identity;
-        bh_script_explosion_secondary(ctx->explosion, &entity->position, 1, 4, 1, s->split_sound,
+        bh_script_explosion_secondary(ctx->explosion, &entity->position, 1, 4, 1, split->split_sound,
                                       (unsigned long)source);
     }
     else if (count > 1)
-        bh_sound_request(ctx->effects->sound, s->split_sound, 1, 1.2f, &entity->position, &zero);
+        bh_sound_request(ctx->effects->sound, split->split_sound, 1, 1.2f, &entity->position, &zero);
     if (!live(ctx, entity, generation))
     {
         ctx->error = 3;
@@ -141,14 +141,14 @@ int bh_effect_split_cascade(BHEntity *entity, const BHVec3 *normal)
         }
     }
     bh_entity_release(ctx->effects->pool, entity);
-    ++s->cascades;
+    ++split->cascades;
     return 1;
 }
 void bh_effect_split_tick(BHEntity *entity)
 {
     BHEffectProjectileContext *ctx = context(entity);
-    BHHomingProjectileContext *b;
-    BHEffectSplitContext *s;
+    BHHomingProjectileContext *effects;
+    BHEffectSplitContext *split;
     BHVec3 movement, end, random_velocity, normal, point, drift, normalized;
     BHWorldGeometry *cached;
     BHEntity *ignore, *response, *contact, *marker;
@@ -167,10 +167,10 @@ void bh_effect_split_tick(BHEntity *entity)
     } damage;
     if (!ctx || !ctx->split || !bh_math_environment_supported())
         return;
-    b = ctx->effects;
-    s = ctx->split;
+    effects = ctx->effects;
+    split = ctx->split;
     ctx->error = 0;
-    s->error = 0;
+    split->error = 0;
     generation = entity->generation;
     unignore = (double)bh_field_f32(&entity->effect.grace) - 1.0 / 30;
     bh_field_store_f32(&entity->effect.grace, stored(unignore));
@@ -198,21 +198,21 @@ void bh_effect_split_tick(BHEntity *entity)
     speed = stored((double)r * (1.0 / 32768));
     r = random_value(ctx);
     lifetime = stored((double)r * (1.0 / 65536));
-    bh_contact_spark_create(b->contacts, &entity->position, lifetime, speed);
+    bh_contact_spark_create(effects->contacts, &entity->position, lifetime, speed);
     for (i = 0; i < 3; i++)
         ((float *)&random_velocity)[i] = stored((double)(random_value(ctx) - 16384) * .000002);
     r = random_value(ctx);
     spin = stored((double)(r - 16384) * (1.0 / 16384));
     r = random_value(ctx);
     angle = stored((double)r * (1.0 / 512));
-    bh_script_particle_create(b->particles, b->first_image, 3, &entity->position, &random_velocity, &acceleration, .2f,
+    bh_script_particle_create(effects->particles, effects->first_image, 3, &entity->position, &random_velocity, &acceleration, .2f,
                               angle, 6, spin, .9f, .95f, .6f, .4f);
     ++ctx->particles;
     cached = (BHWorldGeometry *)bh_field_u32(&entity->effect.world);
     ignore = (BHEntity *)bh_field_u32(&entity->effect.ignore);
     self.kind = BH_WORLD_HIT_ACTOR;
     self.object.actor = ignore;
-    result = bh_world_segment_run(b->segment, ignore ? &self : NULL, &cached, &entity->position, &end, 4, &hit);
+    result = bh_world_segment_run(effects->segment, ignore ? &self : NULL, &cached, &entity->position, &end, 4, &hit);
     if (result < 0)
     {
         ctx->error = 2;
@@ -224,17 +224,17 @@ void bh_effect_split_tick(BHEntity *entity)
     {
         for (i = 0; i < 3; i++)
             ((float *)&point)[i] = stored((double)((float *)&hit.point)[i] - (double)((float *)&hit.normal)[i] * (-.5));
-        contact = bh_contact_impact_create(b->contacts, &point, &hit.normal, 4);
+        contact = bh_contact_impact_create(effects->contacts, &point, &hit.normal, 4);
         if (contact)
         {
-            impact = bh_contact_impact_state(b->contacts, contact);
+            impact = bh_contact_impact_state(effects->contacts, contact);
             impact->duration = 1;
             impact->size = 10;
-            bh_sound_request(b->sound, b->liquid_sound, stored(10.0 / 6), 1, &point, &zero);
+            bh_sound_request(effects->sound, effects->liquid_sound, stored(10.0 / 6), 1, &point, &zero);
         }
-        bh_sound_stop(b->sound, sound);
-        bh_entity_release(b->pool, entity);
-        ++s->liquid_hits;
+        bh_sound_stop(effects->sound, sound);
+        bh_entity_release(effects->pool, entity);
+        ++split->liquid_hits;
         return;
     }
     identity = bh_field_u32(&entity->effect.origin_tag);
@@ -260,7 +260,7 @@ void bh_effect_split_tick(BHEntity *entity)
                 ctx->error = 2;
                 return;
             }
-            marker = bh_hit_marker_create(b->markers, &point, &normal, 3, 1, response);
+            marker = bh_hit_marker_create(effects->markers, &point, &normal, 3, 1, response);
             drift.x = 0;
             drift.y = -1;
             drift.z = 0;
@@ -291,14 +291,14 @@ void bh_effect_split_tick(BHEntity *entity)
                 return;
             }
         }
-        ++s->collisions;
+        ++split->collisions;
         bh_effect_split_cascade(entity, &normal);
         return;
     }
     entity->position = end;
     for (i = 0; i < 3; i++)
         ((float *)&drift)[i] = stored((double)((float *)&movement)[i] * 30);
-    bh_sound_update(b->sound, sound, 1, 2, &entity->position, &drift);
+    bh_sound_update(effects->sound, sound, 1, 2, &entity->position, &drift);
     bh_field_store_f32(&entity->effect.velocity.y,
                        stored((double)bh_field_f32(&entity->effect.velocity.y) - (-.001091111111111111)));
     if (!identity && (long)bh_field_u32(&entity->effect.split_count) > 1 && random_value(ctx) < 1024)
@@ -306,7 +306,7 @@ void bh_effect_split_tick(BHEntity *entity)
         for (i = 0; i < 3; i++)
             ((float *)&random_velocity)[i] = stored((double)(random_value(ctx) - 16384) * (1.0 / 262144));
         flash(ctx, &entity->position);
-        bh_sound_request(b->sound, ctx->ricochet_sound, 1, 2, &entity->position, &drift);
+        bh_sound_request(effects->sound, ctx->ricochet_sound, 1, 2, &entity->position, &drift);
         memcpy(&movement, &entity->effect.velocity, 12);
         for (i = 0; i < 3; i++)
             ((float *)&movement)[i] =
@@ -316,12 +316,12 @@ void bh_effect_split_tick(BHEntity *entity)
         spin = stored((double)(r - 16384) * (1.0 / 16384));
         r = random_value(ctx);
         angle = stored((double)r * (1.0 / 512));
-        bh_script_particle_create(b->particles, ctx->smoke_image, 3, &entity->position, &random_velocity, &acceleration,
+        bh_script_particle_create(effects->particles, ctx->smoke_image, 3, &entity->position, &random_velocity, &acceleration,
                                   .1f, angle, 4, spin, .9f, .95f, .5f, 1);
         ++ctx->particles;
         bh_vec3_normalize_to(&movement, &normalized);
         if (!packet(ctx, entity, 4, &normalized))
             return;
-        ++s->jitters;
+        ++split->jitters;
     }
 }

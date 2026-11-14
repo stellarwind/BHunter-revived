@@ -7,30 +7,30 @@ static short wrap(long value)
     memcpy(&result, &bits, 2);
     return result;
 }
-int bh_editor_numeric_key(BHEditorNumericContext *c, BHEntity *e, long key)
+int bh_editor_numeric_key(BHEditorNumericContext *context, BHEntity *entity, long key)
 {
     short value, digit;
     unsigned char *field;
-    if (!c)
+    if (!context)
         return 0;
-    if (c->selected < 0)
+    if (context->selected < 0)
         return 1;
-    if (!e || c->selected >= 8)
+    if (!entity || context->selected >= 8)
         return 0;
-    field = (unsigned char *)&e->placement.script_values[c->selected];
+    field = (unsigned char *)&entity->placement.script_values[context->selected];
     digit = wrap(key);
     memcpy(&value, field, 2);
-    switch (c->entry_state)
+    switch (context->entry_state)
     {
     case 0:
         if (key >= 0)
         {
-            c->entry_state = 1;
+            context->entry_state = 1;
             value = digit;
         }
         else
         {
-            c->entry_state = 2;
+            context->entry_state = 2;
             value = 0;
         }
         break;
@@ -41,18 +41,18 @@ int bh_editor_numeric_key(BHEditorNumericContext *c, BHEntity *e, long key)
                 value = wrap((long)value - 1000);
             value = wrap((long)value * 10);
             value = wrap((long)value + digit);
-            c->entry_state = 1;
+            context->entry_state = 1;
         }
         else
         {
-            c->entry_state = 2;
+            context->entry_state = 2;
             value = wrap(-(long)value);
         }
         break;
     case 2:
         if (key < 0)
         {
-            c->entry_state = 1;
+            context->entry_state = 1;
             value = wrap(-(long)value);
         }
         else

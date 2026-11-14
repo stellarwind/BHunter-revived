@@ -9,9 +9,9 @@ static_assert(offsetof(BHSoundQueue, listener_velocity) - offsetof(BHSoundQueue,
               "listener position velocity");
 static_assert(offsetof(BHSoundQueue, listener_right) - offsetof(BHSoundQueue, listener) == 24, "listener right offset");
 static_assert(offsetof(BHSoundQueue, listener_active) - offsetof(BHSoundQueue, listener) == 36, "listener flag offset");
-static int vector_ok(const BHVec3 *v)
+static int vector_ok(const BHVec3 *vector)
 {
-    return v && _finite(v->x) && _finite(v->y) && _finite(v->z);
+    return vector && _finite(vector->x) && _finite(vector->y) && _finite(vector->z);
 }
 int bh_sound_listener(BHSoundQueue *sound_queue, unsigned long index, long enabled, const BHVec3 *position,
                       const BHVec3 *angles, const BHVec3 *velocity)

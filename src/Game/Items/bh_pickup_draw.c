@@ -90,19 +90,19 @@ int bh_pickup_rect_queue(BHDrawQueue *queue, unsigned long bucket, unsigned long
     return 1;
 }
 
-static void vertex(BHClipVertex *p, float x, float y, float u, float v)
+static void vertex(BHClipVertex *clip_vertex, float x, float y, float u, float v)
 {
-    p->sx = x;
-    p->sy = y;
-    p->u = u;
-    p->v = v;
+    clip_vertex->sx = x;
+    clip_vertex->sy = y;
+    clip_vertex->u = u;
+    clip_vertex->v = v;
 }
 
 int bh_pickup_rect_draw(BHPickupDrawContext *ctx, BHTextureImage *image, float x, float y, float width, float height,
                         float angle, unsigned long flags, float alpha, float u, float u_extent, float v, float v_extent,
                         float depth)
 {
-    BHClipVertex quad[4], *ring, *p;
+    BHClipVertex quad[4], *ring, *clip_vertex;
     float half_width, half_height, radius;
     float u0, u1, v0, v1, cs, sn, xw, yw, wx, hy;
     double conversion;
@@ -186,15 +186,15 @@ int bh_pickup_rect_draw(BHPickupDrawContext *ctx, BHTextureImage *image, float x
         return 0;
     shade = (long)conversion;
     color = 0x80000000UL - (unsigned long)shade * 0x10101UL;
-    p = ring;
+    clip_vertex = ring;
     n = 0;
     do
     {
         if (++n > 12)
             return 0;
-        p->point.z = depth;
-        p = p->next;
-    } while (p != ring);
+        clip_vertex->point.z = depth;
+        clip_vertex = clip_vertex->next;
+    } while (clip_vertex != ring);
     return ctx->emit(ring, image, color, ctx->emit_user);
 }
 

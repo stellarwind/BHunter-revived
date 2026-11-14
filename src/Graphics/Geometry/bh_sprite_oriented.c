@@ -11,14 +11,14 @@ static_assert(offsetof(BHSpriteOrientedVertex, next) == 0x40, "BHSpriteOrientedV
 static_assert(offsetof(BHSpriteOrientedVertex, flags) == 0x44, "BHSpriteOrientedVertex.flags offset");
 static_assert(offsetof(BHSpriteOrientedVertex, width) == 0x4c, "BHSpriteOrientedVertex.width offset");
 
-static int fail(BHSpriteOrientedContext *c, BHSpriteOrientedError e)
+static int fail(BHSpriteOrientedContext *context, BHSpriteOrientedError e)
 {
-    c->error = e;
+    context->error = e;
     return 0;
 }
-static int in_pool(const BHSpriteOrientedContext *c, const BHSpriteOrientedVertex *p)
+static int in_pool(const BHSpriteOrientedContext *context, const BHSpriteOrientedVertex *p)
 {
-    return p >= c->path && p < c->path + c->used;
+    return p >= context->path && p < context->path + context->used;
 }
 static float interpolate(float a, float b, float za, float zb, float near_z)
 {
@@ -26,73 +26,73 @@ static float interpolate(float a, float b, float za, float zb, float near_z)
     bh_round_float(&out, (((double)near_z - zb) * a + ((double)za - near_z) * b) / ((double)za - zb));
     return out;
 }
-static BHSpriteOrientedVertex *intersection(BHSpriteOrientedContext *c, BHSpriteOrientedVertex *a,
-                                            BHSpriteOrientedVertex *b)
+static BHSpriteOrientedVertex *intersection(BHSpriteOrientedContext *context, BHSpriteOrientedVertex *first_sprite_oriented_vertex,
+                                            BHSpriteOrientedVertex *second_sprite_oriented_vertex)
 {
-    BHSpriteOrientedVertex *v;
-    float az = a->point.z, bz = b->point.z;
-    if (c->used >= c->capacity || az == bz)
+    BHSpriteOrientedVertex *sprite_oriented_vertex;
+    float az = first_sprite_oriented_vertex->point.z, bz = second_sprite_oriented_vertex->point.z;
+    if (context->used >= context->capacity || az == bz)
         return NULL;
-    v = c->path + c->used++;
-    v->point.x = interpolate(a->point.x, b->point.x, az, bz, c->near_z);
-    v->point.y = interpolate(a->point.y, b->point.y, az, bz, c->near_z);
-    v->point.z = c->near_z;
-    v->texture_start = interpolate(a->texture_start, b->texture_start, az, bz, c->near_z);
-    v->width = interpolate(a->width, b->width, az, bz, c->near_z);
-    v->texture_end = interpolate(a->texture_end, b->texture_end, az, bz, c->near_z);
-    v->flags = a->flags;
-    v->previous = v->next = NULL;
-    return v;
+    sprite_oriented_vertex = context->path + context->used++;
+    sprite_oriented_vertex->point.x = interpolate(first_sprite_oriented_vertex->point.x, second_sprite_oriented_vertex->point.x, az, bz, context->near_z);
+    sprite_oriented_vertex->point.y = interpolate(first_sprite_oriented_vertex->point.y, second_sprite_oriented_vertex->point.y, az, bz, context->near_z);
+    sprite_oriented_vertex->point.z = context->near_z;
+    sprite_oriented_vertex->texture_start = interpolate(first_sprite_oriented_vertex->texture_start, second_sprite_oriented_vertex->texture_start, az, bz, context->near_z);
+    sprite_oriented_vertex->width = interpolate(first_sprite_oriented_vertex->width, second_sprite_oriented_vertex->width, az, bz, context->near_z);
+    sprite_oriented_vertex->texture_end = interpolate(first_sprite_oriented_vertex->texture_end, second_sprite_oriented_vertex->texture_end, az, bz, context->near_z);
+    sprite_oriented_vertex->flags = first_sprite_oriented_vertex->flags;
+    sprite_oriented_vertex->previous = sprite_oriented_vertex->next = NULL;
+    return sprite_oriented_vertex;
 }
-static void set_scalar(BHClipVertex *v, float value)
+static void set_scalar(BHClipVertex *vertex, float value)
 {
-    memcpy(&v->unknown28, &value, 4);
+    memcpy(&vertex->unknown28, &value, 4);
 }
-static void set_vertex(BHClipVertex *v, float x, float y, float z, float u, float t, float scalar)
+static void set_vertex(BHClipVertex *vertex, float x, float y, float z, float u, float t, float scalar)
 {
-    memset(v, 0, sizeof(*v));
-    v->sx = x;
-    v->sy = y;
-    v->point.z = z;
-    v->u = u;
-    v->v = t;
-    set_scalar(v, scalar);
+    memset(vertex, 0, sizeof(*vertex));
+    vertex->sx = x;
+    vertex->sy = y;
+    vertex->point.z = z;
+    vertex->u = u;
+    vertex->v = t;
+    set_scalar(vertex, scalar);
 }
-static int polygon(BHSpriteOrientedContext *c, BHClipVertex *vertices, const unsigned char *indices,
+static int polygon(BHSpriteOrientedContext *context, BHClipVertex *vertices, const unsigned char *indices,
                    unsigned long count)
 {
     unsigned long i;
     BHClipVertex *ring;
     for (i = 0; i < count; ++i)
     {
-        BHClipVertex *v = vertices + indices[i];
-        v->next = vertices + indices[(i + 1) % count];
-        v->previous = vertices + indices[(i + count - 1) % count];
+        BHClipVertex *vertex = vertices + indices[i];
+        vertex->next = vertices + indices[(i + 1) % count];
+        vertex->previous = vertices + indices[(i + count - 1) % count];
     }
-    ring = bh_attribute_clip_polygon(c->clip, vertices + indices[0], 0);
+    ring = bh_attribute_clip_polygon(context->clip, vertices + indices[0], 0);
     if (!ring)
     {
-        if (c->clip->error != BH_CLIP_OK)
-            return fail(c, BH_SPRITE_ORIENTED_CLIP);
+        if (context->clip->error != BH_CLIP_OK)
+            return fail(context, BH_SPRITE_ORIENTED_CLIP);
         return 1;
     }
-    if (!c->emit(ring, c->image, c->color, c->emit_user))
-        return fail(c, BH_SPRITE_ORIENTED_EMIT);
-    ++c->polygons_emitted;
+    if (!context->emit(ring, context->image, context->color, context->emit_user))
+        return fail(context, BH_SPRITE_ORIENTED_EMIT);
+    ++context->polygons_emitted;
     return 1;
 }
-static int emit_segment(BHSpriteOrientedContext *c, BHSpriteOrientedVertex *a, BHSpriteOrientedVertex *b)
+static int emit_segment(BHSpriteOrientedContext *c, BHSpriteOrientedVertex *first_sprite_oriented_vertex, BHSpriteOrientedVertex *second_sprite_oriented_vertex)
 {
     BHClipVertex v[5];
     float near_t, far_t, near_side, far_side, middle;
-    unsigned long flags = a->flags;
+    unsigned long flags = first_sprite_oriented_vertex->flags;
     unsigned char quad[4] = {0, 1, 3, 2};
     unsigned char narrow_far_0[3] = {4, 0, 1}, narrow_far_1[3] = {4, 1, 3}, narrow_far_2[3] = {0, 4, 2};
     unsigned char narrow_near_0[3] = {4, 2, 0}, narrow_near_1[3] = {4, 3, 2}, narrow_near_2[3] = {4, 1, 3};
-    if (!_finite(a->texture_end) || (double)a->texture_end < -2147483648.0 || (double)a->texture_end >= 2147483648.0)
+    if (!_finite(first_sprite_oriented_vertex->texture_end) || (double)first_sprite_oriented_vertex->texture_end < -2147483648.0 || (double)first_sprite_oriented_vertex->texture_end >= 2147483648.0)
         return fail(c, BH_SPRITE_ORIENTED_NUMERICAL);
-    near_t = a->texture_end - (float)(int)a->texture_end;
-    far_t = b->texture_end - (float)(int)a->texture_end;
+    near_t = first_sprite_oriented_vertex->texture_end - (float)(int)first_sprite_oriented_vertex->texture_end;
+    far_t = second_sprite_oriented_vertex->texture_end - (float)(int)first_sprite_oriented_vertex->texture_end;
     if (flags & 1)
     {
         near_t = 1.0f - near_t;
@@ -102,94 +102,94 @@ static int emit_segment(BHSpriteOrientedContext *c, BHSpriteOrientedVertex *a, B
     far_side = 1.0f - near_side;
     if (flags & 4)
     {
-        set_vertex(v + 0, a->corners[0].x, a->corners[0].y, a->point.z, near_side, near_t, a->texture_start);
-        set_vertex(v + 1, a->corners[1].x, a->corners[1].y, a->point.z, far_side, near_t, a->texture_start);
-        set_vertex(v + 2, a->corners[3].x, a->corners[3].y, b->point.z, near_side, far_t, b->texture_start);
-        set_vertex(v + 3, a->corners[2].x, a->corners[2].y, b->point.z, far_side, far_t, b->texture_start);
+        set_vertex(v + 0, first_sprite_oriented_vertex->corners[0].x, first_sprite_oriented_vertex->corners[0].y, first_sprite_oriented_vertex->point.z, near_side, near_t, first_sprite_oriented_vertex->texture_start);
+        set_vertex(v + 1, first_sprite_oriented_vertex->corners[1].x, first_sprite_oriented_vertex->corners[1].y, first_sprite_oriented_vertex->point.z, far_side, near_t, first_sprite_oriented_vertex->texture_start);
+        set_vertex(v + 2, first_sprite_oriented_vertex->corners[3].x, first_sprite_oriented_vertex->corners[3].y, second_sprite_oriented_vertex->point.z, near_side, far_t, second_sprite_oriented_vertex->texture_start);
+        set_vertex(v + 3, first_sprite_oriented_vertex->corners[2].x, first_sprite_oriented_vertex->corners[2].y, second_sprite_oriented_vertex->point.z, far_side, far_t, second_sprite_oriented_vertex->texture_start);
     }
     else
     {
-        set_vertex(v + 0, a->corners[0].x, a->corners[0].y, a->point.z, near_t, near_side, a->texture_start);
-        set_vertex(v + 1, a->corners[1].x, a->corners[1].y, a->point.z, near_t, far_side, a->texture_start);
-        set_vertex(v + 2, a->corners[3].x, a->corners[3].y, b->point.z, far_t, near_side, b->texture_start);
-        set_vertex(v + 3, a->corners[2].x, a->corners[2].y, b->point.z, far_t, far_side, b->texture_start);
+        set_vertex(v + 0, first_sprite_oriented_vertex->corners[0].x, first_sprite_oriented_vertex->corners[0].y, first_sprite_oriented_vertex->point.z, near_t, near_side, first_sprite_oriented_vertex->texture_start);
+        set_vertex(v + 1, first_sprite_oriented_vertex->corners[1].x, first_sprite_oriented_vertex->corners[1].y, first_sprite_oriented_vertex->point.z, near_t, far_side, first_sprite_oriented_vertex->texture_start);
+        set_vertex(v + 2, first_sprite_oriented_vertex->corners[3].x, first_sprite_oriented_vertex->corners[3].y, second_sprite_oriented_vertex->point.z, far_t, near_side, second_sprite_oriented_vertex->texture_start);
+        set_vertex(v + 3, first_sprite_oriented_vertex->corners[2].x, first_sprite_oriented_vertex->corners[2].y, second_sprite_oriented_vertex->point.z, far_t, far_side, second_sprite_oriented_vertex->texture_start);
     }
-    if (a->width <= 2.0f * b->width)
+    if (first_sprite_oriented_vertex->width <= 2.0f * second_sprite_oriented_vertex->width)
     {
-        if (b->width <= a->width)
+        if (second_sprite_oriented_vertex->width <= first_sprite_oriented_vertex->width)
             return polygon(c, v, quad, 4);
         /* Original 00455f70 introduces a far-edge midpoint and emits three
            rings for a widening segment. */
         middle = 0.5f;
-        set_vertex(v + 4, (v[2].sx + v[3].sx) * middle, (v[2].sy + v[3].sy) * middle, b->point.z,
-                   (v[2].u + v[3].u) * middle, (v[2].v + v[3].v) * middle, b->texture_start);
+        set_vertex(v + 4, (v[2].sx + v[3].sx) * middle, (v[2].sy + v[3].sy) * middle, second_sprite_oriented_vertex->point.z,
+                   (v[2].u + v[3].u) * middle, (v[2].v + v[3].v) * middle, second_sprite_oriented_vertex->texture_start);
         return polygon(c, v, narrow_far_0, 3) && polygon(c, v, narrow_far_1, 3) && polygon(c, v, narrow_far_2, 3);
     }
     /* A sharply narrowing segment uses a near-edge midpoint. */
     middle = 0.5f;
-    set_vertex(v + 4, (v[0].sx + v[1].sx) * middle, (v[0].sy + v[1].sy) * middle, a->point.z,
-               (v[0].u + v[1].u) * middle, (v[0].v + v[1].v) * middle, a->texture_start);
+    set_vertex(v + 4, (v[0].sx + v[1].sx) * middle, (v[0].sy + v[1].sy) * middle, first_sprite_oriented_vertex->point.z,
+               (v[0].u + v[1].u) * middle, (v[0].v + v[1].v) * middle, first_sprite_oriented_vertex->texture_start);
     return polygon(c, v, narrow_near_0, 3) && polygon(c, v, narrow_near_1, 3) && polygon(c, v, narrow_near_2, 3);
 }
-int bh_sprite_oriented_ribbon(BHSpriteOrientedContext *c, BHSpriteOrientedVertex *head)
+int bh_sprite_oriented_ribbon(BHSpriteOrientedContext *context, BHSpriteOrientedVertex *head)
 {
-    BHSpriteOrientedVertex *p, *q;
+    BHSpriteOrientedVertex *sprite_oriented_vertex, *other_sprite_oriented_vertex;
     unsigned long n = 0;
-    if (!c || !head || !c->path || !c->used || c->used > c->capacity || !c->clip || !c->emit ||
-        !_finite(c->projection_scale))
-        return c ? fail(c, BH_SPRITE_ORIENTED_ARGUMENT) : 0;
-    for (p = head; p; p = p->next)
+    if (!context || !head || !context->path || !context->used || context->used > context->capacity || !context->clip || !context->emit ||
+        !_finite(context->projection_scale))
+        return context ? fail(context, BH_SPRITE_ORIENTED_ARGUMENT) : 0;
+    for (sprite_oriented_vertex = head; sprite_oriented_vertex; sprite_oriented_vertex = sprite_oriented_vertex->next)
     {
-        if (!in_pool(c, p) || ++n > c->used || !_finite(p->point.x) || !_finite(p->point.y) || !_finite(p->point.z) ||
-            p->point.z == 0 || !_finite(p->width) || !_finite(p->texture_start) || !_finite(p->texture_end))
-            return fail(c, BH_SPRITE_ORIENTED_TOPOLOGY);
-        bh_round_float(&p->point.x, (double)p->point.x / p->point.z);
-        bh_round_float(&p->point.y, (double)p->point.y / p->point.z);
-        bh_round_float(&p->width, ((double)c->projection_scale * 0.5 / p->point.z) * p->width);
+        if (!in_pool(context, sprite_oriented_vertex) || ++n > context->used || !_finite(sprite_oriented_vertex->point.x) || !_finite(sprite_oriented_vertex->point.y) || !_finite(sprite_oriented_vertex->point.z) ||
+            sprite_oriented_vertex->point.z == 0 || !_finite(sprite_oriented_vertex->width) || !_finite(sprite_oriented_vertex->texture_start) || !_finite(sprite_oriented_vertex->texture_end))
+            return fail(context, BH_SPRITE_ORIENTED_TOPOLOGY);
+        bh_round_float(&sprite_oriented_vertex->point.x, (double)sprite_oriented_vertex->point.x / sprite_oriented_vertex->point.z);
+        bh_round_float(&sprite_oriented_vertex->point.y, (double)sprite_oriented_vertex->point.y / sprite_oriented_vertex->point.z);
+        bh_round_float(&sprite_oriented_vertex->width, ((double)context->projection_scale * 0.5 / sprite_oriented_vertex->point.z) * sprite_oriented_vertex->width);
     }
-    for (p = head; p && p->next; p = p->next)
+    for (sprite_oriented_vertex = head; sprite_oriented_vertex && sprite_oriented_vertex->next; sprite_oriented_vertex = sprite_oriented_vertex->next)
     {
         BHVec3 dir;
         float dx, dy, aw, bw;
-        q = p->next;
-        dir.x = q->point.x - p->point.x;
-        dir.y = q->point.y - p->point.y;
+        other_sprite_oriented_vertex = sprite_oriented_vertex->next;
+        dir.x = other_sprite_oriented_vertex->point.x - sprite_oriented_vertex->point.x;
+        dir.y = other_sprite_oriented_vertex->point.y - sprite_oriented_vertex->point.y;
         dir.z = 0;
         /* 0045601b ignores the normalization result. A zero projected edge
            leaves dir zero and still builds its degenerate finite corners. */
         bh_vec3_normalize(&dir);
         dx = -dir.y;
         dy = dir.x;
-        aw = p->width;
-        bw = q->width;
-        p->corners[0].x = p->point.x - dx * aw;
-        p->corners[0].y = p->point.y - dy * aw;
-        p->corners[0].z = 0;
-        p->corners[1].x = p->point.x + dx * aw;
-        p->corners[1].y = p->point.y + dy * aw;
-        p->corners[1].z = 0;
-        p->corners[2].x = q->point.x + dx * bw;
-        p->corners[2].y = q->point.y + dy * bw;
-        p->corners[2].z = 0;
-        p->corners[3].x = q->point.x - dx * bw;
-        p->corners[3].y = q->point.y - dy * bw;
-        p->corners[3].z = 0;
+        aw = sprite_oriented_vertex->width;
+        bw = other_sprite_oriented_vertex->width;
+        sprite_oriented_vertex->corners[0].x = sprite_oriented_vertex->point.x - dx * aw;
+        sprite_oriented_vertex->corners[0].y = sprite_oriented_vertex->point.y - dy * aw;
+        sprite_oriented_vertex->corners[0].z = 0;
+        sprite_oriented_vertex->corners[1].x = sprite_oriented_vertex->point.x + dx * aw;
+        sprite_oriented_vertex->corners[1].y = sprite_oriented_vertex->point.y + dy * aw;
+        sprite_oriented_vertex->corners[1].z = 0;
+        sprite_oriented_vertex->corners[2].x = other_sprite_oriented_vertex->point.x + dx * bw;
+        sprite_oriented_vertex->corners[2].y = other_sprite_oriented_vertex->point.y + dy * bw;
+        sprite_oriented_vertex->corners[2].z = 0;
+        sprite_oriented_vertex->corners[3].x = other_sprite_oriented_vertex->point.x - dx * bw;
+        sprite_oriented_vertex->corners[3].y = other_sprite_oriented_vertex->point.y - dy * bw;
+        sprite_oriented_vertex->corners[3].z = 0;
     }
-    for (p = head; p && p->next && p->next->next; p = p->next)
+    for (sprite_oriented_vertex = head; sprite_oriented_vertex && sprite_oriented_vertex->next && sprite_oriented_vertex->next->next; sprite_oriented_vertex = sprite_oriented_vertex->next)
     {
         BHVec3 center, u, v, sum;
         double dot, den, scale, offset_z;
         float offset_x, offset_y;
-        q = p->next;
-        bh_round_float(&center.x, ((double)p->corners[3].x + p->corners[2].x) * 0.5);
-        bh_round_float(&center.y, ((double)p->corners[3].y + p->corners[2].y) * 0.5);
-        bh_round_float(&center.z, ((double)p->corners[3].z + p->corners[2].z) * 0.5);
-        bh_round_float(&u.x, (double)p->corners[2].x - center.x);
-        bh_round_float(&u.y, (double)p->corners[2].y - center.y);
-        bh_round_float(&u.z, (double)p->corners[2].z - center.z);
-        bh_round_float(&v.x, (double)q->corners[1].x - center.x);
-        bh_round_float(&v.y, (double)q->corners[1].y - center.y);
-        bh_round_float(&v.z, (double)q->corners[1].z - center.z);
+        other_sprite_oriented_vertex = sprite_oriented_vertex->next;
+        bh_round_float(&center.x, ((double)sprite_oriented_vertex->corners[3].x + sprite_oriented_vertex->corners[2].x) * 0.5);
+        bh_round_float(&center.y, ((double)sprite_oriented_vertex->corners[3].y + sprite_oriented_vertex->corners[2].y) * 0.5);
+        bh_round_float(&center.z, ((double)sprite_oriented_vertex->corners[3].z + sprite_oriented_vertex->corners[2].z) * 0.5);
+        bh_round_float(&u.x, (double)sprite_oriented_vertex->corners[2].x - center.x);
+        bh_round_float(&u.y, (double)sprite_oriented_vertex->corners[2].y - center.y);
+        bh_round_float(&u.z, (double)sprite_oriented_vertex->corners[2].z - center.z);
+        bh_round_float(&v.x, (double)other_sprite_oriented_vertex->corners[1].x - center.x);
+        bh_round_float(&v.y, (double)other_sprite_oriented_vertex->corners[1].y - center.y);
+        bh_round_float(&v.z, (double)other_sprite_oriented_vertex->corners[1].z - center.z);
         den = sqrt((double)u.x * u.x + (double)u.y * u.y) * sqrt((double)v.x * v.x + (double)v.y * v.y);
         dot = (((double)u.z * v.z + (double)u.y * v.y) + (double)u.x * v.x) / den;
         /* 00456238 FCOM /0045626e tests C0 alone: unordered 0/0 also takes
@@ -203,89 +203,89 @@ int bh_sprite_oriented_ribbon(BHSpriteOrientedContext *c, BHSpriteOrientedVertex
         bh_round_float(&offset_x, (double)sum.x * scale);
         bh_round_float(&offset_y, (double)sum.y * scale);
         offset_z = (double)sum.z * scale;
-        bh_round_float(&p->corners[2].x, (double)center.x + offset_x);
-        bh_round_float(&p->corners[2].y, (double)center.y + offset_y);
-        bh_round_float(&p->corners[2].z, (double)center.z + offset_z);
-        q->corners[1] = p->corners[2];
-        bh_round_float(&p->corners[3].x, (double)center.x - offset_x);
-        bh_round_float(&p->corners[3].y, (double)center.y - offset_y);
-        bh_round_float(&p->corners[3].z, (double)center.z - offset_z);
-        q->corners[0] = p->corners[3];
+        bh_round_float(&sprite_oriented_vertex->corners[2].x, (double)center.x + offset_x);
+        bh_round_float(&sprite_oriented_vertex->corners[2].y, (double)center.y + offset_y);
+        bh_round_float(&sprite_oriented_vertex->corners[2].z, (double)center.z + offset_z);
+        other_sprite_oriented_vertex->corners[1] = sprite_oriented_vertex->corners[2];
+        bh_round_float(&sprite_oriented_vertex->corners[3].x, (double)center.x - offset_x);
+        bh_round_float(&sprite_oriented_vertex->corners[3].y, (double)center.y - offset_y);
+        bh_round_float(&sprite_oriented_vertex->corners[3].z, (double)center.z - offset_z);
+        other_sprite_oriented_vertex->corners[0] = sprite_oriented_vertex->corners[3];
     }
-    for (p = head; p && p->next; p = p->next)
-        if (!emit_segment(c, p, p->next))
+    for (sprite_oriented_vertex = head; sprite_oriented_vertex && sprite_oriented_vertex->next; sprite_oriented_vertex = sprite_oriented_vertex->next)
+        if (!emit_segment(context, sprite_oriented_vertex, sprite_oriented_vertex->next))
             return 0;
-    ++c->paths_emitted;
+    ++context->paths_emitted;
     return 1;
 }
-int bh_sprite_oriented_draw(BHSpriteOrientedContext *c)
+int bh_sprite_oriented_draw(BHSpriteOrientedContext *context)
 {
-    BHSpriteOrientedVertex *p, *next, *first, *v;
+    BHSpriteOrientedVertex *sprite_oriented_vertex, *next, *first, *input_sprite_oriented_vertex;
     unsigned long original, steps = 0, back_steps;
-    if (!c || !c->path || !c->capacity || c->used > c->capacity || !c->clip || !c->emit || !_finite(c->near_z) ||
-        c->near_z <= 0 || !_finite(c->projection_scale))
-        return c ? fail(c, BH_SPRITE_ORIENTED_ARGUMENT) : 0;
-    c->error = BH_SPRITE_ORIENTED_OK;
-    c->paths_emitted = c->polygons_emitted = 0;
-    if (!c->used)
+    if (!context || !context->path || !context->capacity || context->used > context->capacity || !context->clip || !context->emit || !_finite(context->near_z) ||
+        context->near_z <= 0 || !_finite(context->projection_scale))
+        return context ? fail(context, BH_SPRITE_ORIENTED_ARGUMENT) : 0;
+    context->error = BH_SPRITE_ORIENTED_OK;
+    context->paths_emitted = context->polygons_emitted = 0;
+    if (!context->used)
         return 1;
-    original = c->used;
-    p = c->path;
-    while (p)
+    original = context->used;
+    sprite_oriented_vertex = context->path;
+    while (sprite_oriented_vertex)
     {
-        if (!in_pool(c, p) || ++steps > original + c->capacity)
-            return fail(c, BH_SPRITE_ORIENTED_TOPOLOGY);
-        next = p->next;
+        if (!in_pool(context, sprite_oriented_vertex) || ++steps > original + context->capacity)
+            return fail(context, BH_SPRITE_ORIENTED_TOPOLOGY);
+        next = sprite_oriented_vertex->next;
         if (!next)
             break;
-        if (!in_pool(c, next) || !_finite(p->point.z) || !_finite(next->point.z))
-            return fail(c, BH_SPRITE_ORIENTED_TOPOLOGY);
-        if (p->point.z < c->near_z && next->point.z >= c->near_z)
+        if (!in_pool(context, next) || !_finite(sprite_oriented_vertex->point.z) || !_finite(next->point.z))
+            return fail(context, BH_SPRITE_ORIENTED_TOPOLOGY);
+        if (sprite_oriented_vertex->point.z < context->near_z && next->point.z >= context->near_z)
         {
-            v = intersection(c, p, next);
-            if (!v)
-                return fail(c, BH_SPRITE_ORIENTED_CAPACITY);
-            v->next = next;
-            next->previous = v;
-            p = next;
+            input_sprite_oriented_vertex = intersection(context, sprite_oriented_vertex, next);
+            if (!input_sprite_oriented_vertex)
+                return fail(context, BH_SPRITE_ORIENTED_CAPACITY);
+            input_sprite_oriented_vertex->next = next;
+            next->previous = input_sprite_oriented_vertex;
+            sprite_oriented_vertex = next;
         }
-        else if (p->point.z >= c->near_z && next->point.z < c->near_z)
+        else if (sprite_oriented_vertex->point.z >= context->near_z && next->point.z < context->near_z)
         {
-            v = intersection(c, p, next);
-            if (!v)
-                return fail(c, BH_SPRITE_ORIENTED_CAPACITY);
-            v->previous = p;
-            p->next = v;
+            input_sprite_oriented_vertex = intersection(context, sprite_oriented_vertex, next);
+            if (!input_sprite_oriented_vertex)
+                return fail(context, BH_SPRITE_ORIENTED_CAPACITY);
+            input_sprite_oriented_vertex->previous = sprite_oriented_vertex;
+            sprite_oriented_vertex->next = input_sprite_oriented_vertex;
             next->previous = NULL;
-            first = p;
+            first = sprite_oriented_vertex;
             back_steps = 0;
             while (first->previous)
             {
-                if (!in_pool(c, first->previous) || ++back_steps > c->used)
-                    return fail(c, BH_SPRITE_ORIENTED_TOPOLOGY);
+                if (!in_pool(context, first->previous) || ++back_steps > context->used)
+                    return fail(context, BH_SPRITE_ORIENTED_TOPOLOGY);
                 first = first->previous;
             }
-            if (!bh_sprite_oriented_ribbon(c, first))
+            if (!bh_sprite_oriented_ribbon(context, first))
                 return 0;
-            c->used = original;
-            p = next;
+            context->used = original;
+            sprite_oriented_vertex = next;
         }
         else
-            p = next;
+            sprite_oriented_vertex = next;
     }
-    if (p && p->previous && p->point.z >= c->near_z)
+    if (sprite_oriented_vertex && sprite_oriented_vertex->previous && sprite_oriented_vertex->point.z >= context->near_z)
     {
-        first = p;
+        first = sprite_oriented_vertex;
         back_steps = 0;
         while (first->previous)
         {
-            if (!in_pool(c, first->previous) || ++back_steps > c->used)
-                return fail(c, BH_SPRITE_ORIENTED_TOPOLOGY);
+            if (!in_pool(context, first->previous) || ++back_steps > context->used)
+                return fail(context, BH_SPRITE_ORIENTED_TOPOLOGY);
             first = first->previous;
         }
-        if (!bh_sprite_oriented_ribbon(c, first))
+        if (!bh_sprite_oriented_ribbon(context, first))
             return 0;
     }
-    c->used = 0;
+    context->used = 0;
     return 1;
 }

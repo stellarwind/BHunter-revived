@@ -35,12 +35,12 @@ typedef struct TargetMotion
     long event;
     BHVec3 position, velocity, acceleration;
 } TargetMotion;
-static int query(BHEntity *target, TargetMotion *p)
+static int query(BHEntity *target, TargetMotion *target_motion)
 {
     if (!target || !target->query)
         return 0;
-    p->event = 16;
-    target->query(target, p);
+    target_motion->event = 16;
+    target->query(target, target_motion);
     return 1;
 }
 static int reset_duration(BHActorPursuitRouteContext *ctx, BHEntity *entity, BHActorRouteState *state)

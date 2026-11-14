@@ -1,78 +1,78 @@
 #include "bh_renderer.h"
 #include "bh_present_begin.h"
 #include <string.h>
-static int result(BHPresentBegin *c, HRESULT hr)
+static int result(BHPresentBegin *present_begin, HRESULT hr)
 {
-    ++c->native_calls;
-    c->last_hresult = hr;
+    ++present_begin->native_calls;
+    present_begin->last_hresult = hr;
     if (FAILED(hr))
     {
-        ++c->failures;
+        ++present_begin->failures;
         return 0;
     }
     return 1;
 }
-static int restore(BHPresentBegin *c, BHRenderSurface *s, int *lost)
+static int restore(BHPresentBegin *present_begin, BHRenderSurface *s, int *lost)
 {
     HRESULT hr;
     *lost = 0;
     if (!s)
         return 1;
     hr = bh_renderer_surface_status(s);
-    ++c->native_calls;
-    c->last_hresult = hr;
+    ++present_begin->native_calls;
+    present_begin->last_hresult = hr;
     if (hr == DDERR_SURFACELOST)
     {
         *lost = 1;
-        ++c->restores;
-        return result(c, bh_renderer_surface_restore(s));
+        ++present_begin->restores;
+        return result(present_begin, bh_renderer_surface_restore(s));
     }
     if (FAILED(hr))
     {
-        ++c->failures;
+        ++present_begin->failures;
         return 0;
     }
     return 1;
 }
-int bh_present_begin(BHPresentBegin *c)
+int bh_present_begin(BHPresentBegin *present_begin)
 {
-    BHPresentContext *p;
+    BHPresentContext *present_context;
     BHFadeContext *fade;
     BHTextureContext *textures;
     DDSURFACEDESC desc;
     BHTextureSlot *slot;
     unsigned long i;
     int lost, ok = 1;
-    if (!c || !(p = c->present) || !(fade = p->fade) || !fade->render || !(textures = fade->render->textures))
+    if (!present_begin || !(present_context = present_begin->present) || !(fade = present_context->fade) || !fade->render || !(textures = fade->render->textures))
         return 0;
     if (textures->software)
     {
-        if (!p->color || !p->auxiliary || p->locked)
+        if (!present_context->color || !present_context->auxiliary || present_context->locked)
             return 0;
     }
     else if (!textures->device)
         return 0;
-    if (!restore(c, p->color, &lost))
+    if (!restore(present_begin, present_context->color, &lost))
         ok = 0;
-    if (!restore(c, p->auxiliary, &lost))
+    if (!restore(present_begin, present_context->auxiliary, &lost))
         ok = 0;
     if (textures->software)
     {
         memset(&desc, 0, sizeof(desc));
         desc.dwSize = sizeof(desc);
         /* Original Lock flags are zero, not DDLOCK_WAIT. */
-        if (!result(c, bh_renderer_surface_lock(p->color, &desc)))
+        if (!result(present_begin, bh_renderer_surface_lock(present_context->color, &desc)))
             return 0;
         fade->pixels = (unsigned char *)desc.lpSurface;
         fade->pitch = desc.lPitch;
-        if (!result(c, bh_renderer_surface_lock(p->auxiliary, &desc)))
+        if (!result(present_begin, bh_renderer_surface_lock(present_context->auxiliary, &desc)))
         {
-            result(c, bh_renderer_surface_unlock(p->color));
+            result(present_begin, bh_renderer_surface_unlock(present_context->color));
             return 0;
         }
-        c->auxiliary_pixels = (unsigned char *)desc.lpSurface;
-        c->auxiliary_pitch = desc.lPitch;
-        p->locked = 1;
+        present_begin->auxiliary_pixels = (unsigned char *)desc.lpSurface;
+        present_begin->auxiliary_pitch = desc.lPitch;
+        present_context->locked = 1;
     }
     else
     {
@@ -81,14 +81,14 @@ int bh_present_begin(BHPresentBegin *c)
             {
                 if (!slot->surface)
                     return 0;
-                if (!restore(c, slot->surface, &lost))
+                if (!restore(present_begin, slot->surface, &lost))
                     ok = 0;
                 if (lost)
                 {
                     if (slot->image)
                         slot->image->resident = NULL;
                     slot->image = NULL;
-                    ++c->invalidations;
+                    ++present_begin->invalidations;
                 }
             }
     }

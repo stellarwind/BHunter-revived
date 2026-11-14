@@ -1,10 +1,10 @@
 #include "bh_scene_bindings.h"
 #include <string.h>
 
-static int fail(BHSceneBindings *b, BHSceneBindingsError error)
+static int fail(BHSceneBindings *scene_bindings, BHSceneBindingsError error)
 {
-    if (b)
-        b->error = error;
+    if (scene_bindings)
+        scene_bindings->error = error;
     return 0;
 }
 static long find_world(const BHSceneBindingInput *inputs, unsigned long count, const BHWorldGeometry *world)
@@ -15,46 +15,46 @@ static long find_world(const BHSceneBindingInput *inputs, unsigned long count, c
             return (long)i;
     return -1;
 }
-int bh_scene_bindings_init(BHSceneBindings *b, const BHSceneBindingInput *inputs, unsigned long count,
+int bh_scene_bindings_init(BHSceneBindings *scene_bindings, const BHSceneBindingInput *inputs, unsigned long count,
                            BHPickupRoom *rooms, BHEntityScheduleRoom *scheduled, BHRenderResources *resources,
                            BHEntityScheduleContext *context)
 {
     BHWorldGeometry *cursor;
     unsigned long i, j, roots = 0;
-    if (!b || !inputs || !count || count > 65535UL || !rooms || !scheduled || !resources || !context ||
-        !context->queue || !context->viewport || !context->camera || !resources->models || b->rooms || b->scheduled ||
-        b->scene_count)
-        return fail(b, BH_BINDINGS_ARGUMENT);
+    if (!scene_bindings || !inputs || !count || count > 65535UL || !rooms || !scheduled || !resources || !context ||
+        !context->queue || !context->viewport || !context->camera || !resources->models || scene_bindings->rooms || scene_bindings->scheduled ||
+        scene_bindings->scene_count)
+        return fail(scene_bindings, BH_BINDINGS_ARGUMENT);
     cursor = inputs[0].world;
     for (i = 0; i < count; ++i)
     {
         const BHSceneBindingInput *item = inputs + i;
-        BHWorldGeometry *w = item->world;
-        if (!w || w != cursor || !w->navigation.next || !w->previous ||
-            w->previous->navigation.next != &w->navigation || w->navigation.count > 6)
-            return fail(b, BH_BINDINGS_TOPOLOGY);
+        BHWorldGeometry *world = item->world;
+        if (!world || world != cursor || !world->navigation.next || !world->previous ||
+            world->previous->navigation.next != &world->navigation || world->navigation.count > 6)
+            return fail(scene_bindings, BH_BINDINGS_TOPOLOGY);
         for (j = 0; j < i; ++j)
-            if (inputs[j].world == w)
-                return fail(b, BH_BINDINGS_TOPOLOGY);
-        if (w->owner)
+            if (inputs[j].world == world)
+                return fail(scene_bindings, BH_BINDINGS_TOPOLOGY);
+        if (world->owner)
         {
-            if (w->owner == w || find_world(inputs, count, w->owner) < 0 || w->owner->owner)
-                return fail(b, BH_BINDINGS_TOPOLOGY);
+            if (world->owner == world || find_world(inputs, count, world->owner) < 0 || world->owner->owner)
+                return fail(scene_bindings, BH_BINDINGS_TOPOLOGY);
         }
         else
             ++roots;
-        if ((w->query_flags & 4) && !bh_render_resources_lookup(item->resource, resources))
-            return fail(b, BH_BINDINGS_RESOURCE);
-        for (j = 0; j < w->navigation.count; ++j)
+        if ((world->query_flags & 4) && !bh_render_resources_lookup(item->resource, resources))
+            return fail(scene_bindings, BH_BINDINGS_RESOURCE);
+        for (j = 0; j < world->navigation.count; ++j)
         {
-            const BHPortalNode *neighbor = w->navigation.portals[j].neighbor;
+            const BHPortalNode *neighbor = world->navigation.portals[j].neighbor;
             if (neighbor && find_world(inputs, count, (const BHWorldGeometry *)neighbor) < 0)
-                return fail(b, BH_BINDINGS_TOPOLOGY);
+                return fail(scene_bindings, BH_BINDINGS_TOPOLOGY);
         }
-        cursor = (BHWorldGeometry *)w->navigation.next;
+        cursor = (BHWorldGeometry *)world->navigation.next;
     }
     if (cursor != inputs[0].world || !roots)
-        return fail(b, BH_BINDINGS_TOPOLOGY);
+        return fail(scene_bindings, BH_BINDINGS_TOPOLOGY);
     memset(rooms, 0, count * sizeof(*rooms));
     memset(scheduled, 0, count * sizeof(*scheduled));
     for (i = 0; i < count; ++i)
@@ -73,32 +73,32 @@ int bh_scene_bindings_init(BHSceneBindings *b, const BHSceneBindingInput *inputs
     }
     for (i = 0; i < count; ++i)
     {
-        const BHWorldGeometry *w = inputs[i].world;
-        for (j = 0; j < w->navigation.count; ++j)
+        const BHWorldGeometry *world_geometry = inputs[i].world;
+        for (j = 0; j < world_geometry->navigation.count; ++j)
         {
-            const BHPortalNode *neighbor = w->navigation.portals[j].neighbor;
+            const BHPortalNode *neighbor = world_geometry->navigation.portals[j].neighbor;
             if (neighbor)
                 scheduled[i].portal_targets[j] =
                     scheduled + find_world(inputs, count, (const BHWorldGeometry *)neighbor);
         }
     }
-    b->first = inputs[0].world;
-    b->cached = NULL;
-    b->scene_count = count;
-    b->rooms = rooms;
-    b->scheduled = scheduled;
-    b->schedule_context = context;
-    b->error = BH_BINDINGS_OK;
+    scene_bindings->first = inputs[0].world;
+    scene_bindings->cached = NULL;
+    scene_bindings->scene_count = count;
+    scene_bindings->rooms = rooms;
+    scene_bindings->scheduled = scheduled;
+    scene_bindings->schedule_context = context;
+    scene_bindings->error = BH_BINDINGS_OK;
     return 1;
 }
-BHEntityScheduleRoom *bh_scene_bindings_schedule(const BHSceneBindings *b, const BHWorldGeometry *world)
+BHEntityScheduleRoom *bh_scene_bindings_schedule(const BHSceneBindings *scene_bindings, const BHWorldGeometry *world)
 {
     unsigned long i;
-    if (!b || !world || !b->rooms || !b->scheduled)
+    if (!scene_bindings || !world || !scene_bindings->rooms || !scene_bindings->scheduled)
         return NULL;
-    for (i = 0; i < b->scene_count; ++i)
-        if (b->rooms[i].world == world)
-            return b->scheduled + i;
+    for (i = 0; i < scene_bindings->scene_count; ++i)
+        if (scene_bindings->rooms[i].world == world)
+            return scene_bindings->scheduled + i;
     return NULL;
 }
 void bh_scene_bindings_dispose(BHSceneBindings *b)

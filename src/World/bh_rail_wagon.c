@@ -19,254 +19,254 @@ static_assert(sizeof(BHRailWagonPose) == 48 && offsetof(BHEntity, opaque0) == 0x
                   offsetof(BHRailWagonState, kind) == 20 && offsetof(BHRailWagonState, segment) == 64 &&
                   offsetof(BHRailWagonState, checkpoint) == 80 && sizeof(Private) + 580 <= 636,
               "wagon layout");
-static BHRailWagonState *state(BHEntity *e)
+static BHRailWagonState *state(BHEntity *entity)
 {
-    return (BHRailWagonState *)(e->payload + 4);
+    return (BHRailWagonState *)(entity->payload + 4);
 }
-static Private *private_data(BHEntity *e)
+static Private *private_data(BHEntity *entity)
 {
-    return (Private *)(e->payload + 580);
+    return (Private *)(entity->payload + 580);
 }
-BHRailWagonPose *bh_rail_wagon_pose(BHEntity *e)
+BHRailWagonPose *bh_rail_wagon_pose(BHEntity *entity)
 {
-    return e ? (BHRailWagonPose *)e->opaque0 : NULL;
+    return entity ? (BHRailWagonPose *)entity->opaque0 : NULL;
 }
-static void failure(BHRailWagonContext *c, BHRailWagonError error)
+static void failure(BHRailWagonContext *context, BHRailWagonError error)
 {
-    if (c)
+    if (context)
     {
-        ++c->failures;
-        c->error = error;
+        ++context->failures;
+        context->error = error;
     }
 }
-static int live(BHRailWagonContext *c, BHEntity *e, unsigned long generation)
+static int live(BHRailWagonContext *context, BHEntity *entity, unsigned long generation)
 {
-    return bh_entity_is_active(c->pool, e) && e->generation == generation;
+    return bh_entity_is_active(context->pool, entity) && entity->generation == generation;
 }
-static int member(BHRailWagonContext *c, BHEntity *e)
+static int member(BHRailWagonContext *context, BHEntity *e)
 {
-    return bh_entity_is_active(c->pool, e);
+    return bh_entity_is_active(context->pool, e);
 }
-static int wagon(BHRailWagonContext *c, BHEntity *e)
+static int wagon(BHRailWagonContext *c, BHEntity *entity)
 {
-    return e && member(c, e) && (e->step == bh_rail_wagon_tick || e->step == bh_rail_wagon_follow) &&
-           state(e)->kind == 9 && private_data(e)->context == c;
+    return entity && member(c, entity) && (entity->step == bh_rail_wagon_tick || entity->step == bh_rail_wagon_follow) &&
+           state(entity)->kind == 9 && private_data(entity)->context == c;
 }
-BHRailWagonState *bh_rail_wagon_state(BHEntity *e)
+BHRailWagonState *bh_rail_wagon_state(BHEntity *entity)
 {
-    return e && (e->step == bh_rail_wagon_tick || e->step == bh_rail_wagon_follow) ? state(e) : NULL;
+    return entity && (entity->step == bh_rail_wagon_tick || entity->step == bh_rail_wagon_follow) ? state(entity) : NULL;
 }
 static BHRailWagonContext *owner(BHEntity *e)
 {
-    BHRailWagonContext *c;
+    BHRailWagonContext *context;
     if (!bh_rail_wagon_state(e))
         return NULL;
-    c = private_data(e)->context;
-    if (!c || !c->pool || !wagon(c, e))
+    context = private_data(e)->context;
+    if (!context || !context->pool || !wagon(context, e))
         return NULL;
-    return c;
+    return context;
 }
-static int segment(BHRailWagonContext *c, BHRailSegment *s)
+static int segment(BHRailWagonContext *context, BHRailSegment *s)
 {
-    unsigned long base = (unsigned long)c->rails->segments, at = (unsigned long)s;
-    return s && at >= base && at - base < (unsigned long)c->rails->count * sizeof(*s) && (at - base) % sizeof(*s) == 0;
+    unsigned long base = (unsigned long)context->rails->segments, at = (unsigned long)s;
+    return s && at >= base && at - base < (unsigned long)context->rails->count * sizeof(*s) && (at - base) % sizeof(*s) == 0;
 }
-static BHRailSegment *walk(BHRailWagonContext *c, BHRailSegment *s, int next)
+static BHRailSegment *walk(BHRailWagonContext *c, BHRailSegment *rail_segment, int next)
 {
-    BHRailSegment *p;
-    if (!segment(c, s))
+    BHRailSegment *current_rail_segment;
+    if (!segment(c, rail_segment))
     {
         failure(c, BH_WAGON_TOPOLOGY);
         return NULL;
     }
-    p = next ? s->next : s->previous;
-    if (!segment(c, p) || !_finite(p->length) || p->length <= 0)
+    current_rail_segment = next ? rail_segment->next : rail_segment->previous;
+    if (!segment(c, current_rail_segment) || !_finite(current_rail_segment->length) || current_rail_segment->length <= 0)
     {
         failure(c, BH_WAGON_TOPOLOGY);
         return NULL;
     }
-    return p;
+    return current_rail_segment;
 }
-static int ready(BHRailWagonContext *c, BHRailWagonState *s)
+static int ready(BHRailWagonContext *c, BHRailWagonState *rail_wagon_state)
 {
-    if (!segment(c, s->segment) || !_finite(s->duration) || s->duration <= 0 || !_finite(s->speed) || s->speed <= 0 ||
-        !_finite(s->elapsed) || !bh_math_environment_supported())
+    if (!segment(c, rail_wagon_state->segment) || !_finite(rail_wagon_state->duration) || rail_wagon_state->duration <= 0 || !_finite(rail_wagon_state->speed) || rail_wagon_state->speed <= 0 ||
+        !_finite(rail_wagon_state->elapsed) || !bh_math_environment_supported())
     {
         failure(c, BH_WAGON_NUMERICAL);
         return 0;
     }
     return 1;
 }
-static BHPickupRoom *room(BHRailWagonContext *c, BHWorldGeometry *w)
+static BHPickupRoom *room(BHRailWagonContext *context, BHWorldGeometry *w)
 {
     unsigned long i;
-    for (i = 0; i < c->room_count; ++i)
-        if (c->rooms[i].world == w)
-            return c->rooms + i;
+    for (i = 0; i < context->room_count; ++i)
+        if (context->rooms[i].world == w)
+            return context->rooms + i;
     return NULL;
 }
-static BHEntity *actor_next(BHEntity *e)
+static BHEntity *actor_next(BHEntity *actor)
 {
     BHEntity *p;
-    memcpy(&p, &e->actor.room_next, 4);
+    memcpy(&p, &actor->actor.room_next, 4);
     return p;
 }
-static BHEntity *actor_previous(BHEntity *e)
+static BHEntity *actor_previous(BHEntity *actor)
 {
     BHEntity *p;
-    memcpy(&p, &e->actor.room_previous, 4);
+    memcpy(&p, &actor->actor.room_previous, 4);
     return p;
 }
-static void actor_next_set(BHEntity *e, BHEntity *v)
+static void actor_next_set(BHEntity *actor, BHEntity *v)
 {
-    memcpy(&e->actor.room_next, &v, 4);
+    memcpy(&actor->actor.room_next, &v, 4);
 }
-static void actor_previous_set(BHEntity *e, BHEntity *v)
+static void actor_previous_set(BHEntity *actor, BHEntity *v)
 {
-    memcpy(&e->actor.room_previous, &v, 4);
+    memcpy(&actor->actor.room_previous, &v, 4);
 }
 static int unlink_room(BHRailWagonContext *c, BHEntity *e)
 {
-    BHRailWagonState *s = state(e);
-    BHPickupRoom *r = room(c, private_data(e)->world);
-    if (!r || (s->actor_previous && (!member(c, s->actor_previous) || actor_next(s->actor_previous) != e)) ||
-        (!s->actor_previous && r->actors != e) ||
-        (s->actor_next && (!member(c, s->actor_next) || actor_previous(s->actor_next) != e)))
+    BHRailWagonState *rail_wagon_state = state(e);
+    BHPickupRoom *pickup_room = room(c, private_data(e)->world);
+    if (!pickup_room || (rail_wagon_state->actor_previous && (!member(c, rail_wagon_state->actor_previous) || actor_next(rail_wagon_state->actor_previous) != e)) ||
+        (!rail_wagon_state->actor_previous && pickup_room->actors != e) ||
+        (rail_wagon_state->actor_next && (!member(c, rail_wagon_state->actor_next) || actor_previous(rail_wagon_state->actor_next) != e)))
     {
         failure(c, BH_WAGON_WORLD);
         return 0;
     }
-    if (s->actor_previous)
-        actor_next_set(s->actor_previous, s->actor_next);
+    if (rail_wagon_state->actor_previous)
+        actor_next_set(rail_wagon_state->actor_previous, rail_wagon_state->actor_next);
     else
-        r->actors = s->actor_next;
-    if (s->actor_next)
-        actor_previous_set(s->actor_next, s->actor_previous);
+        pickup_room->actors = rail_wagon_state->actor_next;
+    if (rail_wagon_state->actor_next)
+        actor_previous_set(rail_wagon_state->actor_next, rail_wagon_state->actor_previous);
     return 1;
 }
-static void prepend(BHRailWagonContext *c, BHEntity *e, BHWorldGeometry *w)
+static void prepend(BHRailWagonContext *c, BHEntity *entity, BHWorldGeometry *w)
 {
-    BHRailWagonState *s = state(e);
-    BHPickupRoom *r = room(c, w);
-    private_data(e)->world = w;
-    memcpy(e->opaque2b, &w, 4);
-    s->actor_next = r->actors;
-    s->actor_previous = NULL;
-    r->actors = e;
-    if (s->actor_next)
-        actor_previous_set(s->actor_next, e);
+    BHRailWagonState *rail_wagon_state = state(entity);
+    BHPickupRoom *pickup_room = room(c, w);
+    private_data(entity)->world = w;
+    memcpy(entity->opaque2b, &w, 4);
+    rail_wagon_state->actor_next = pickup_room->actors;
+    rail_wagon_state->actor_previous = NULL;
+    pickup_room->actors = entity;
+    if (rail_wagon_state->actor_next)
+        actor_previous_set(rail_wagon_state->actor_next, entity);
 }
-static int migrate(BHRailWagonContext *c, BHEntity *e, const BHVec3 *point)
+static int migrate(BHRailWagonContext *context, BHEntity *e, const BHVec3 *point)
 {
-    BHWorldGeometry *w = bh_world_locate(c->first_world, c->world_count, private_data(e)->world, point, 0);
+    BHWorldGeometry *w = bh_world_locate(context->first_world, context->world_count, private_data(e)->world, point, 0);
     if (w && w != private_data(e)->world)
     {
-        BHPickupRoom *r = room(c, w);
-        if (!r || (r->actors && !member(c, r->actors)))
+        BHPickupRoom *pickup_room = room(context, w);
+        if (!pickup_room || (pickup_room->actors && !member(context, pickup_room->actors)))
         {
-            failure(c, BH_WAGON_WORLD);
+            failure(context, BH_WAGON_WORLD);
             return 0;
         }
-        if (!unlink_room(c, e))
+        if (!unlink_room(context, e))
             return 0;
-        prepend(c, e, w);
-        ++c->migrations;
+        prepend(context, e, w);
+        ++context->migrations;
     }
     return 1;
 }
-static void difference(const BHVec3 *a, const BHVec3 *b, BHVec3 *d)
+static void difference(const BHVec3 *first, const BHVec3 *second, BHVec3 *delta)
 {
-    bh_round_float(&d->x, (double)a->x - b->x);
-    bh_round_float(&d->y, (double)a->y - b->y);
-    bh_round_float(&d->z, (double)a->z - b->z);
+    bh_round_float(&delta->x, (double)first->x - second->x);
+    bh_round_float(&delta->y, (double)first->y - second->y);
+    bh_round_float(&delta->z, (double)first->z - second->z);
 }
-static void direction(BHRailWagonState *s, BHVec3 *d)
+static void direction(BHRailWagonState *rail_wagon_state, BHVec3 *d)
 {
-    difference(s->direction ? &s->segment->end : &s->segment->start,
-               s->direction ? &s->segment->start : &s->segment->end, d);
+    difference(rail_wagon_state->direction ? &rail_wagon_state->segment->end : &rail_wagon_state->segment->start,
+               rail_wagon_state->direction ? &rail_wagon_state->segment->start : &rail_wagon_state->segment->end, d);
 }
-static void interpolate(BHRailSegment *s, int forward, double ratio, BHVec3 *out, BHVec3 *delta)
+static void interpolate(BHRailSegment *rail_segment, int forward, double ratio, BHVec3 *out, BHVec3 *delta)
 {
-    const BHVec3 *a = forward ? &s->start : &s->end, *b = forward ? &s->end : &s->start;
+    const BHVec3 *from = forward ? &rail_segment->start : &rail_segment->end, *to = forward ? &rail_segment->end : &rail_segment->start;
     float dx, dy, dz;
-    bh_round_float(&dx, (double)b->x - a->x);
-    bh_round_float(&dy, (double)b->y - a->y);
-    bh_round_float(&dz, (double)b->z - a->z);
-    bh_round_float(&out->x, ((double)b->x - a->x) * ratio + a->x);
-    bh_round_float(&out->y, ((double)b->y - a->y) * ratio + a->y);
-    bh_round_float(&out->z, ((double)b->z - a->z) * ratio + a->z);
+    bh_round_float(&dx, (double)to->x - from->x);
+    bh_round_float(&dy, (double)to->y - from->y);
+    bh_round_float(&dz, (double)to->z - from->z);
+    bh_round_float(&out->x, ((double)to->x - from->x) * ratio + from->x);
+    bh_round_float(&out->y, ((double)to->y - from->y) * ratio + from->y);
+    bh_round_float(&out->z, ((double)to->z - from->z) * ratio + from->z);
     if (delta)
     {
-        bh_round_float(&delta->x, (double)dx / s->length);
-        bh_round_float(&delta->y, (double)dy / s->length);
-        bh_round_float(&delta->z, (double)dz / s->length);
+        bh_round_float(&delta->x, (double)dx / rail_segment->length);
+        bh_round_float(&delta->y, (double)dy / rail_segment->length);
+        bh_round_float(&delta->z, (double)dz / rail_segment->length);
     }
 }
-static void draw_point(BHRailWagonState *s, BHVec3 *point, BHVec3 *delta)
+static void draw_point(BHRailWagonState *rail_wagon_state, BHVec3 *point, BHVec3 *delta)
 {
-    const BHVec3 *a = s->direction ? &s->segment->start : &s->segment->end;
-    double ratio = (double)s->elapsed / s->duration;
-    direction(s, delta);
-    bh_round_float(&point->x, (double)delta->x * ratio + a->x);
-    bh_round_float(&point->y, (double)delta->y * ratio + a->y);
-    bh_round_float(&point->z, (double)delta->z * ratio + a->z);
+    const BHVec3 *from = rail_wagon_state->direction ? &rail_wagon_state->segment->start : &rail_wagon_state->segment->end;
+    double ratio = (double)rail_wagon_state->elapsed / rail_wagon_state->duration;
+    direction(rail_wagon_state, delta);
+    bh_round_float(&point->x, (double)delta->x * ratio + from->x);
+    bh_round_float(&point->y, (double)delta->y * ratio + from->y);
+    bh_round_float(&point->z, (double)delta->z * ratio + from->z);
 }
-static void pose_matrix(BHEntity *e, BHMat34 *m)
+static void pose_matrix(BHEntity *entity, BHMat34 *matrix)
 {
-    BHRailWagonPose *p = bh_rail_wagon_pose(e);
-    m->m[0][0] = p->right.x;
-    m->m[0][1] = p->up.x;
-    m->m[0][2] = p->forward.x;
-    m->m[0][3] = e->position.x;
-    m->m[1][0] = p->right.y;
-    m->m[1][1] = p->up.y;
-    m->m[1][2] = p->forward.y;
-    m->m[1][3] = e->position.y;
-    m->m[2][0] = p->right.z;
-    m->m[2][1] = p->up.z;
-    m->m[2][2] = p->forward.z;
-    m->m[2][3] = e->position.z;
+    BHRailWagonPose *rail_wagon_pose = bh_rail_wagon_pose(entity);
+    matrix->m[0][0] = rail_wagon_pose->right.x;
+    matrix->m[0][1] = rail_wagon_pose->up.x;
+    matrix->m[0][2] = rail_wagon_pose->forward.x;
+    matrix->m[0][3] = entity->position.x;
+    matrix->m[1][0] = rail_wagon_pose->right.y;
+    matrix->m[1][1] = rail_wagon_pose->up.y;
+    matrix->m[1][2] = rail_wagon_pose->forward.y;
+    matrix->m[1][3] = entity->position.y;
+    matrix->m[2][0] = rail_wagon_pose->right.z;
+    matrix->m[2][1] = rail_wagon_pose->up.z;
+    matrix->m[2][2] = rail_wagon_pose->forward.z;
+    matrix->m[2][3] = entity->position.z;
 }
 static void align(BHEntity *e, const BHVec3 *delta)
 {
     BHMat34 m;
     BHVec3 v, unit;
-    BHRailWagonPose *p = bh_rail_wagon_pose(e);
+    BHRailWagonPose *rail_wagon_pose = bh_rail_wagon_pose(e);
     double angle;
     float negative;
-    bh_vec3_normalize_to(delta, &p->forward);
-    bh_vec3_cross(&p->up, &p->forward, &p->right);
-    p->right.y = 0;
-    bh_vec3_normalize(&p->right);
-    bh_vec3_cross(&p->forward, &p->right, &p->up);
+    bh_vec3_normalize_to(delta, &rail_wagon_pose->forward);
+    bh_vec3_cross(&rail_wagon_pose->up, &rail_wagon_pose->forward, &rail_wagon_pose->right);
+    rail_wagon_pose->right.y = 0;
+    bh_vec3_normalize(&rail_wagon_pose->right);
+    bh_vec3_cross(&rail_wagon_pose->forward, &rail_wagon_pose->right, &rail_wagon_pose->up);
     pose_matrix(e, &m);
     unit.x = 0;
     unit.y = 0;
     unit.z = 1;
     bh_mat34_transform_direction(&m, &unit, &v);
     angle = atan2(v.x, v.z);
-    bh_round_float(&p->angles.x, angle);
+    bh_round_float(&rail_wagon_pose->angles.x, angle);
     bh_round_float(&negative, -angle);
     bh_mat34_rotate_world_y(negative, &m);
     bh_mat34_transform_direction(&m, &unit, &v);
     angle = atan2(-(double)v.y, v.z);
-    bh_round_float(&p->angles.y, angle);
+    bh_round_float(&rail_wagon_pose->angles.y, angle);
     bh_round_float(&negative, -angle);
     bh_mat34_rotate_world_x(negative, &m);
     unit.x = 1;
     unit.z = 0;
     bh_mat34_transform_direction(&m, &unit, &v);
-    bh_round_float(&p->angles.z, atan2(v.y, v.x));
+    bh_round_float(&rail_wagon_pose->angles.z, atan2(v.y, v.x));
 }
-static void cooldown(BHRailWagonContext *c, BHRailWagonState *s)
+static void cooldown(BHRailWagonContext *context, BHRailWagonState *rail_wagon_state)
 {
-    if (s->sound_cooldown)
+    if (rail_wagon_state->sound_cooldown)
     {
-        s->sound_cooldown = (long)((unsigned long)s->sound_cooldown - 1);
-        if (!s->sound_cooldown && s->sound_instance != BH_SOUND_INVALID)
+        rail_wagon_state->sound_cooldown = (long)((unsigned long)rail_wagon_state->sound_cooldown - 1);
+        if (!rail_wagon_state->sound_cooldown && rail_wagon_state->sound_instance != BH_SOUND_INVALID)
         {
-            bh_sound_stop(c->sound, s->sound_instance);
-            s->sound_instance = BH_SOUND_INVALID;
+            bh_sound_stop(context->sound, rail_wagon_state->sound_instance);
+            rail_wagon_state->sound_instance = BH_SOUND_INVALID;
         }
     }
 }
@@ -280,12 +280,12 @@ static double wrapped(double difference)
         return fmod((double)stored - PI, 2 * PI) + PI;
     return stored;
 }
-static int rider_update(BHRailWagonContext *c, BHEntity *e)
+static int rider_update(BHRailWagonContext *context, BHEntity *e)
 {
-    BHRailWagonState *s = state(e);
-    BHRailWagonPose *p = bh_rail_wagon_pose(e), *r;
-    BHEntity *rider = s->rider;
-    BHRailSegment *rail = s->segment;
+    BHRailWagonState *rail_wagon_state = state(e);
+    BHRailWagonPose *rail_wagon_pose = bh_rail_wagon_pose(e), *result_rail_wagon_pose;
+    BHEntity *rider = rail_wagon_state->rider;
+    BHRailSegment *rail = rail_wagon_state->segment;
     BHVec3 velocity, d;
     double distance, ratio, dx, dy, dz, px, py, pz, complement;
     float inv, yaw, pitch, roll, stored_y, stored_z;
@@ -293,64 +293,64 @@ static int rider_update(BHRailWagonContext *c, BHEntity *e)
     int crossed = 0;
     if (!rider)
         return 1;
-    if (!live(c, rider, private_data(e)->rider_generation))
+    if (!live(context, rider, private_data(e)->rider_generation))
     {
-        failure(c, BH_WAGON_LIFETIME);
+        failure(context, BH_WAGON_LIFETIME);
         return 0;
     }
-    r = bh_rail_wagon_pose(rider);
-    direction(s, &d);
-    bh_round_float(&inv, 1.0 / s->duration);
+    result_rail_wagon_pose = bh_rail_wagon_pose(rider);
+    direction(rail_wagon_state, &d);
+    bh_round_float(&inv, 1.0 / rail_wagon_state->duration);
     bh_round_float(&velocity.x, (double)d.x * inv);
     bh_round_float(&velocity.y, (double)d.y * inv);
     bh_round_float(&velocity.z, (double)d.z * inv);
-    cooldown(c, s);
-    distance = (double)s->elapsed * s->speed - (-5.0);
+    cooldown(context, rail_wagon_state);
+    distance = (double)rail_wagon_state->elapsed * rail_wagon_state->speed - (-5.0);
     if (distance > rail->length)
     {
         distance -= rail->length;
-        rail = walk(c, rail, s->direction);
+        rail = walk(context, rail, rail_wagon_state->direction);
         if (!rail)
             return 0;
         crossed = 1;
     }
     ratio = distance / rail->length;
     {
-        const BHVec3 *a = s->direction ? &rail->end : &rail->start, *b = s->direction ? &rail->start : &rail->end;
+        const BHVec3 *from = rail_wagon_state->direction ? &rail->end : &rail->start, *to = rail_wagon_state->direction ? &rail->start : &rail->end;
         float f;
         bh_round_float(&f, ratio);
         complement = 1.0 - (crossed ? ratio : (double)f);
-        px = (double)a->x * f + (double)b->x * complement;
-        py = (double)a->y * f + (double)b->y * complement;
-        pz = (double)a->z * f + (double)b->z * complement;
+        px = (double)from->x * f + (double)to->x * complement;
+        py = (double)from->y * f + (double)to->y * complement;
+        pz = (double)from->z * f + (double)to->z * complement;
     }
     bh_round_float(&stored_y, py);
     bh_round_float(&stored_z, pz);
-    bh_round_float(&rider->position.x, px - (double)p->up.x * 5.0);
-    bh_round_float(&rider->position.y, (double)stored_y - (double)p->up.y * 5.0);
-    bh_round_float(&rider->position.z, (double)stored_z - (double)p->up.z * 5.0);
+    bh_round_float(&rider->position.x, px - (double)rail_wagon_pose->up.x * 5.0);
+    bh_round_float(&rider->position.y, (double)stored_y - (double)rail_wagon_pose->up.y * 5.0);
+    bh_round_float(&rider->position.z, (double)stored_z - (double)rail_wagon_pose->up.z * 5.0);
     rider->origin = velocity;
-    r->right = p->right;
-    r->up = p->up;
-    r->forward = p->forward;
-    dx = wrapped((double)p->angles.x - r->angles.x);
-    dy = wrapped((double)p->angles.y - r->angles.y);
-    dz = wrapped((double)p->angles.z - r->angles.z);
+    result_rail_wagon_pose->right = rail_wagon_pose->right;
+    result_rail_wagon_pose->up = rail_wagon_pose->up;
+    result_rail_wagon_pose->forward = rail_wagon_pose->forward;
+    dx = wrapped((double)rail_wagon_pose->angles.x - result_rail_wagon_pose->angles.x);
+    dy = wrapped((double)rail_wagon_pose->angles.y - result_rail_wagon_pose->angles.y);
+    dz = wrapped((double)rail_wagon_pose->angles.z - result_rail_wagon_pose->angles.z);
     bh_round_float(&yaw, dx);
     bh_round_float(&pitch, dy);
     bh_round_float(&roll, dz);
     if (_isnan(yaw) || yaw < -3 * PI / 4 || yaw > 3 * PI / 4)
-        r->angles = p->angles;
+        result_rail_wagon_pose->angles = rail_wagon_pose->angles;
     else
     {
-        bh_round_float(&r->angles.x, (double)r->angles.x - yaw * (-0.2));
-        bh_round_float(&r->angles.y, (double)r->angles.y - pitch * (-0.2));
-        bh_round_float(&r->angles.z, (double)r->angles.z + roll);
+        bh_round_float(&result_rail_wagon_pose->angles.x, (double)result_rail_wagon_pose->angles.x - yaw * (-0.2));
+        bh_round_float(&result_rail_wagon_pose->angles.y, (double)result_rail_wagon_pose->angles.y - pitch * (-0.2));
+        bh_round_float(&result_rail_wagon_pose->angles.z, (double)result_rail_wagon_pose->angles.z + roll);
     }
     memcpy(rider->payload + (0x23c - 0xe4), &clear, 4);
-    memcpy(rider->opaque1, &c->pool->origin, 12);
-    memcpy(rider->opaque1 + 12, &c->pool->origin, 12);
-    memcpy(rider->opaque1 + 24, &c->pool->origin, 12);
+    memcpy(rider->opaque1, &context->pool->origin, 12);
+    memcpy(rider->opaque1 + 12, &context->pool->origin, 12);
+    memcpy(rider->opaque1 + 24, &context->pool->origin, 12);
     return 1;
 }
 int bh_rail_wagon_set_rider(BHEntity *e, BHEntity *rider, BHRailSegment *checkpoint)
@@ -365,141 +365,141 @@ int bh_rail_wagon_set_rider(BHEntity *e, BHEntity *rider, BHRailSegment *checkpo
 }
 void bh_rail_wagon_draw(BHEntity *e)
 {
-    BHRailWagonContext *c = owner(e);
-    BHRailWagonState *s;
+    BHRailWagonContext *context = owner(e);
+    BHRailWagonState *rail_wagon_state;
     BHVec3 point, delta, velocity;
     float pitch;
     double inv;
-    BHRailWagonPose *p;
-    if (!c)
+    BHRailWagonPose *rail_wagon_pose;
+    if (!context)
         return;
-    s = state(e);
-    if (!ready(c, s))
+    rail_wagon_state = state(e);
+    if (!ready(context, rail_wagon_state))
         return;
-    ++c->draws;
-    p = bh_rail_wagon_pose(e);
-    draw_point(s, &point, &delta);
-    if (bh_draw_submit_resource(c->queue, 0, c->model, &point, &p->angles, 1) < 0)
-        failure(c, BH_WAGON_DRAW);
-    inv = 1.0 / s->duration;
+    ++context->draws;
+    rail_wagon_pose = bh_rail_wagon_pose(e);
+    draw_point(rail_wagon_state, &point, &delta);
+    if (bh_draw_submit_resource(context->queue, 0, context->model, &point, &rail_wagon_pose->angles, 1) < 0)
+        failure(context, BH_WAGON_DRAW);
+    inv = 1.0 / rail_wagon_state->duration;
     bh_round_float(&velocity.x, (double)delta.x * inv);
     bh_round_float(&velocity.y, (double)delta.y * inv);
     bh_round_float(&velocity.z, (double)delta.z * inv);
-    bh_round_float(&pitch, (double)s->speed * 0.02);
-    s->sound_cooldown = 2;
-    if (s->sound_instance == BH_SOUND_INVALID)
-        s->sound_instance = bh_sound_request(c->sound, s->sound_resource, 1, pitch, &point, &velocity);
-    else if (bh_sound_update(c->sound, s->sound_instance, 1, pitch, &point, &velocity) < 0)
-        failure(c, BH_WAGON_SOUND);
+    bh_round_float(&pitch, (double)rail_wagon_state->speed * 0.02);
+    rail_wagon_state->sound_cooldown = 2;
+    if (rail_wagon_state->sound_instance == BH_SOUND_INVALID)
+        rail_wagon_state->sound_instance = bh_sound_request(context->sound, rail_wagon_state->sound_resource, 1, pitch, &point, &velocity);
+    else if (bh_sound_update(context->sound, rail_wagon_state->sound_instance, 1, pitch, &point, &velocity) < 0)
+        failure(context, BH_WAGON_SOUND);
 }
-void bh_rail_wagon_tick(BHEntity *e)
+void bh_rail_wagon_tick(BHEntity *entity)
 {
-    BHRailWagonContext *c = owner(e);
-    BHRailWagonState *s;
+    BHRailWagonContext *context = owner(entity);
+    BHRailWagonState *rail_wagon_state;
     BHVec3 delta;
     double elapsed, speed;
     unsigned long steps = 0;
-    if (!c)
+    if (!context)
         return;
-    s = state(e);
-    if (!ready(c, s))
+    rail_wagon_state = state(entity);
+    if (!ready(context, rail_wagon_state))
         return;
-    ++c->steps;
-    elapsed = (double)s->elapsed - (-1.0 / 30.0);
-    bh_round_float(&s->elapsed, elapsed);
-    if (!_isnan(elapsed) && elapsed >= s->duration)
+    ++context->steps;
+    elapsed = (double)rail_wagon_state->elapsed - (-1.0 / 30.0);
+    bh_round_float(&rail_wagon_state->elapsed, elapsed);
+    if (!_isnan(elapsed) && elapsed >= rail_wagon_state->duration)
         do
         {
-            cooldown(c, s);
-            bh_round_float(&s->elapsed, (double)s->elapsed - s->duration);
-            s->segment = walk(c, s->segment, s->direction);
-            if (!s->segment)
+            cooldown(context, rail_wagon_state);
+            bh_round_float(&rail_wagon_state->elapsed, (double)rail_wagon_state->elapsed - rail_wagon_state->duration);
+            rail_wagon_state->segment = walk(context, rail_wagon_state->segment, rail_wagon_state->direction);
+            if (!rail_wagon_state->segment)
                 return;
-            direction(s, &delta);
-            e->position = s->direction ? s->segment->start : s->segment->end;
-            speed = (double)s->speed - (double)s->segment->rise * (s->direction ? -0.8 : 0.8);
-            bh_round_float(&s->speed, speed);
+            direction(rail_wagon_state, &delta);
+            entity->position = rail_wagon_state->direction ? rail_wagon_state->segment->start : rail_wagon_state->segment->end;
+            speed = (double)rail_wagon_state->speed - (double)rail_wagon_state->segment->rise * (rail_wagon_state->direction ? -0.8 : 0.8);
+            bh_round_float(&rail_wagon_state->speed, speed);
             if (_isnan(speed) || speed < 30)
-                s->speed = 30;
-            bh_round_float(&s->duration, (double)s->segment->length / s->speed);
-            if (s->segment == s->checkpoint)
+                rail_wagon_state->speed = 30;
+            bh_round_float(&rail_wagon_state->duration, (double)rail_wagon_state->segment->length / rail_wagon_state->speed);
+            if (rail_wagon_state->segment == rail_wagon_state->checkpoint)
             {
-                if (s->rider)
-                    s->rider = NULL;
+                if (rail_wagon_state->rider)
+                    rail_wagon_state->rider = NULL;
                 else
-                    s->checkpoint = NULL;
+                    rail_wagon_state->checkpoint = NULL;
             }
-            if (!migrate(c, e, &e->position))
+            if (!migrate(context, entity, &entity->position))
                 return;
-            align(e, &delta);
-            ++c->transitions;
+            align(entity, &delta);
+            ++context->transitions;
             if (++steps > 20000)
             {
-                failure(c, BH_WAGON_TOPOLOGY);
+                failure(context, BH_WAGON_TOPOLOGY);
                 return;
             }
-        } while (s->elapsed >= s->duration);
-    rider_update(c, e);
+        } while (rail_wagon_state->elapsed >= rail_wagon_state->duration);
+    rider_update(context, entity);
 }
 void bh_rail_wagon_follow(BHEntity *e)
 {
-    BHRailWagonContext *c = owner(e);
-    BHRailWagonState *s, *leader;
+    BHRailWagonContext *context = owner(e);
+    BHRailWagonState *rail_wagon_state, *leader;
     BHEntity *parent;
     BHRailSegment *rail;
     BHVec3 delta;
     double elapsed, distance;
     unsigned long n = 0;
-    if (!c)
+    if (!context)
         return;
-    s = state(e);
-    if (!ready(c, s))
+    rail_wagon_state = state(e);
+    if (!ready(context, rail_wagon_state))
         return;
-    ++c->follows;
-    parent = s->leader;
-    if (!wagon(c, parent) || !live(c, parent, private_data(e)->leader_generation))
+    ++context->follows;
+    parent = rail_wagon_state->leader;
+    if (!wagon(context, parent) || !live(context, parent, private_data(e)->leader_generation))
     {
-        failure(c, BH_WAGON_LIFETIME);
+        failure(context, BH_WAGON_LIFETIME);
         return;
     }
     leader = state(parent);
-    if (!ready(c, leader))
+    if (!ready(context, leader))
         return;
-    elapsed = (double)s->elapsed - (-1.0 / 30.0);
-    bh_round_float(&s->elapsed, elapsed);
-    if (!_isnan(elapsed) && elapsed < s->duration && s->speed == leader->speed)
+    elapsed = (double)rail_wagon_state->elapsed - (-1.0 / 30.0);
+    bh_round_float(&rail_wagon_state->elapsed, elapsed);
+    if (!_isnan(elapsed) && elapsed < rail_wagon_state->duration && rail_wagon_state->speed == leader->speed)
         return;
     rail = leader->segment;
-    distance = ((double)leader->elapsed * rail->length) / leader->duration - s->spacing;
+    distance = ((double)leader->elapsed * rail->length) / leader->duration - rail_wagon_state->spacing;
     while (_isnan(distance) || distance < 0)
     {
-        rail = walk(c, rail, !s->direction);
+        rail = walk(context, rail, !rail_wagon_state->direction);
         if (!rail)
             return;
         distance += rail->length;
         if (++n > 20000)
         {
-            failure(c, BH_WAGON_TOPOLOGY);
+            failure(context, BH_WAGON_TOPOLOGY);
             return;
         }
     }
-    s->speed = leader->speed;
-    bh_round_float(&s->duration, (double)rail->length / s->speed);
-    bh_round_float(&s->elapsed, distance / s->speed);
-    if (s->segment != rail)
+    rail_wagon_state->speed = leader->speed;
+    bh_round_float(&rail_wagon_state->duration, (double)rail->length / rail_wagon_state->speed);
+    bh_round_float(&rail_wagon_state->elapsed, distance / rail_wagon_state->speed);
+    if (rail_wagon_state->segment != rail)
     {
-        if (!migrate(c, e, &rail->start))
+        if (!migrate(context, e, &rail->start))
             return;
-        s->segment = rail;
-        cooldown(c, s);
-        direction(s, &delta);
+        rail_wagon_state->segment = rail;
+        cooldown(context, rail_wagon_state);
+        direction(rail_wagon_state, &delta);
         align(e, &delta);
     }
 }
-void bh_rail_wagon_query(BHEntity *e, void *packet)
+void bh_rail_wagon_query(BHEntity *entity, void *packet)
 {
-    BHRailWagonContext *c = owner(e);
-    BHRailWagonState *s, *other;
+    BHRailWagonContext *context = owner(entity);
+    BHRailWagonState *rail_wagon_state, *other;
     long event;
     BHEntity *target;
     BHRailSegment *rail;
@@ -507,49 +507,49 @@ void bh_rail_wagon_query(BHEntity *e, void *packet)
     unsigned long i;
     BHVec3 point;
     float ratio;
-    if (!c || !packet)
+    if (!context || !packet)
         return;
-    s = state(e);
-    ++c->queries;
+    rail_wagon_state = state(entity);
+    ++context->queries;
     memcpy(&event, packet, 4);
     if (event == 4 || event == 20)
     {
-        if (!unlink_room(c, e))
+        if (!unlink_room(context, entity))
             return;
-        bh_sound_stop(c->sound, s->sound_instance);
-        ++c->removed;
-        bh_entity_release(c->pool, e);
+        bh_sound_stop(context->sound, rail_wagon_state->sound_instance);
+        ++context->removed;
+        bh_entity_release(context->pool, entity);
         return;
     }
-    if (!ready(c, s))
+    if (!ready(context, rail_wagon_state))
         return;
     if (event == 3)
     {
-        bh_round_float(&ratio, (double)s->elapsed / s->duration);
-        interpolate(s->segment, s->direction, ratio, &point, NULL);
-        bh_round_float(&point.x, (double)point.x - (double)bh_rail_wagon_pose(e)->up.x * 5.0);
-        bh_round_float(&point.y, (double)point.y - (double)bh_rail_wagon_pose(e)->up.y * 5.0);
-        bh_round_float(&point.z, (double)point.z - (double)bh_rail_wagon_pose(e)->up.z * 5.0);
+        bh_round_float(&ratio, (double)rail_wagon_state->elapsed / rail_wagon_state->duration);
+        interpolate(rail_wagon_state->segment, rail_wagon_state->direction, ratio, &point, NULL);
+        bh_round_float(&point.x, (double)point.x - (double)bh_rail_wagon_pose(entity)->up.x * 5.0);
+        bh_round_float(&point.y, (double)point.y - (double)bh_rail_wagon_pose(entity)->up.y * 5.0);
+        bh_round_float(&point.z, (double)point.z - (double)bh_rail_wagon_pose(entity)->up.z * 5.0);
         memcpy((unsigned char *)packet + 4, &point, 12);
         return;
     }
     if (event != 19)
         return;
     memcpy(&target, (unsigned char *)packet + 4, 4);
-    if (!wagon(c, target))
+    if (!wagon(context, target))
     {
-        failure(c, BH_WAGON_LIFETIME);
+        failure(context, BH_WAGON_LIFETIME);
         return;
     }
     other = state(target);
-    if (!ready(c, other) || other->direction != s->direction)
+    if (!ready(context, other) || other->direction != rail_wagon_state->direction)
         return;
-    rail = s->segment;
+    rail = rail_wagon_state->segment;
     distance = ((double)other->elapsed * other->segment->length) / other->duration -
-               ((double)s->elapsed * rail->length) / s->duration;
+               ((double)rail_wagon_state->elapsed * rail->length) / rail_wagon_state->duration;
     for (i = 0; i < 10; ++i)
     {
-        rail = walk(c, rail, !s->direction);
+        rail = walk(context, rail, !rail_wagon_state->direction);
         if (!rail)
             return;
         distance -= rail->length;
@@ -557,7 +557,7 @@ void bh_rail_wagon_query(BHEntity *e, void *packet)
     for (i = 0; rail != other->segment; ++i)
     {
         distance += rail->length;
-        rail = walk(c, rail, s->direction);
+        rail = walk(context, rail, rail_wagon_state->direction);
         if (!rail)
             return;
         if (i >= 20)
@@ -566,30 +566,30 @@ void bh_rail_wagon_query(BHEntity *e, void *packet)
     if (_isnan(distance) || distance < 0)
     {
         distance = -distance;
-        if (s->leader != e && (_isnan(distance) || distance < s->spacing))
+        if (rail_wagon_state->leader != entity && (_isnan(distance) || distance < rail_wagon_state->spacing))
             return;
-        bh_round_float(&s->spacing, distance);
-        s->leader = target;
-        private_data(e)->leader_generation = target->generation;
-        e->step = bh_rail_wagon_follow;
+        bh_round_float(&rail_wagon_state->spacing, distance);
+        rail_wagon_state->leader = target;
+        private_data(entity)->leader_generation = target->generation;
+        entity->step = bh_rail_wagon_follow;
     }
     else
     {
         if (other->leader != target && distance < other->spacing)
             return;
         bh_round_float(&other->spacing, distance);
-        other->leader = e;
-        private_data(target)->leader_generation = e->generation;
+        other->leader = entity;
+        private_data(target)->leader_generation = entity->generation;
         target->step = bh_rail_wagon_follow;
     }
-    ++c->couples;
+    ++context->couples;
 }
-BHEntity *bh_rail_wagon_spawn(BHRailWagonContext *c, const BHVec3 *position, const BHVec3 *angles)
+BHEntity *bh_rail_wagon_spawn(BHRailWagonContext *context, const BHVec3 *position, const BHVec3 *angles)
 {
     BHWorldGeometry *w;
-    BHEntity *e;
-    BHRailWagonState *s;
-    BHRailWagonPose *p;
+    BHEntity *entity;
+    BHRailWagonState *rail_wagon_state;
+    BHRailWagonPose *rail_wagon_pose;
     BHMat34 m;
     BHVec3 delta, offset, unit;
     long i, best = -1;
@@ -601,28 +601,28 @@ BHEntity *bh_rail_wagon_spawn(BHRailWagonContext *c, const BHVec3 *position, con
         long event;
         BHEntity *entity;
     } packet;
-    if (!c || !c->rails || !c->rails->segments || c->rails->count < 1 || c->rails->count > 200 || !c->pool ||
-        !c->first_world || !c->world_count || !c->rooms || !c->room_count || !c->queue || !c->model || !c->sound ||
+    if (!context || !context->rails || !context->rails->segments || context->rails->count < 1 || context->rails->count > 200 || !context->pool ||
+        !context->first_world || !context->world_count || !context->rooms || !context->room_count || !context->queue || !context->model || !context->sound ||
         !position || !angles || !bh_math_environment_supported())
     {
-        failure(c, BH_WAGON_ARGUMENT);
+        failure(context, BH_WAGON_ARGUMENT);
         return NULL;
     }
-    w = bh_world_locate(c->first_world, c->world_count, NULL, position, 0);
+    w = bh_world_locate(context->first_world, context->world_count, NULL, position, 0);
     if (!w)
         return NULL;
-    if (!room(c, w) || (room(c, w)->actors && !member(c, room(c, w)->actors)))
+    if (!room(context, w) || (room(context, w)->actors && !member(context, room(context, w)->actors)))
     {
-        failure(c, BH_WAGON_WORLD);
+        failure(context, BH_WAGON_WORLD);
         return NULL;
     }
-    for (i = 0; i < c->rails->count; ++i)
+    for (i = 0; i < context->rails->count; ++i)
     {
-        BHRailSegment *r = c->rails->segments + i;
-        dx = (double)r->end.x - r->start.x;
-        dy = (double)r->end.y - r->start.y;
-        difference(&r->end, &r->start, &delta);
-        difference(position, &r->start, &offset);
+        BHRailSegment *rail_segment = context->rails->segments + i;
+        dx = (double)rail_segment->end.x - rail_segment->start.x;
+        dy = (double)rail_segment->end.y - rail_segment->start.y;
+        difference(&rail_segment->end, &rail_segment->start, &delta);
+        difference(position, &rail_segment->start, &offset);
         bh_round_float(&len, (dx * delta.x + dy * delta.y) + (double)delta.z * delta.z);
         if (len <= 0 || !_finite(len))
             continue;
@@ -642,35 +642,35 @@ BHEntity *bh_rail_wagon_spawn(BHRailWagonContext *c, const BHVec3 *position, con
     }
     if (best < 0)
         return NULL;
-    e = bh_entity_acquire(c->pool);
-    if (!e)
+    entity = bh_entity_acquire(context->pool);
+    if (!entity)
     {
-        failure(c, BH_WAGON_POOL);
+        failure(context, BH_WAGON_POOL);
         return NULL;
     }
-    s = state(e);
-    p = bh_rail_wagon_pose(e);
-    private_data(e)->context = c;
-    private_data(e)->leader_generation = e->generation;
-    private_data(e)->rider_generation = 0;
-    e->position = *position;
-    p->angles = *angles;
-    e->flags |= 0x100;
-    e->step = bh_rail_wagon_tick;
-    s->elapsed = chosen;
-    s->duration = 1;
-    s->speed = 30;
-    s->draw = bh_rail_wagon_draw;
-    s->sound_instance = BH_SOUND_INVALID;
-    s->sound_resource = c->sound_resource;
-    s->kind = 9;
-    s->subtype = 0;
-    s->sound_cooldown = 0;
-    s->secondary_instance = BH_SOUND_INVALID;
-    s->leader = e;
-    s->rider = NULL;
-    s->checkpoint = NULL;
-    prepend(c, e, w);
+    rail_wagon_state = state(entity);
+    rail_wagon_pose = bh_rail_wagon_pose(entity);
+    private_data(entity)->context = context;
+    private_data(entity)->leader_generation = entity->generation;
+    private_data(entity)->rider_generation = 0;
+    entity->position = *position;
+    rail_wagon_pose->angles = *angles;
+    entity->flags |= 0x100;
+    entity->step = bh_rail_wagon_tick;
+    rail_wagon_state->elapsed = chosen;
+    rail_wagon_state->duration = 1;
+    rail_wagon_state->speed = 30;
+    rail_wagon_state->draw = bh_rail_wagon_draw;
+    rail_wagon_state->sound_instance = BH_SOUND_INVALID;
+    rail_wagon_state->sound_resource = context->sound_resource;
+    rail_wagon_state->kind = 9;
+    rail_wagon_state->subtype = 0;
+    rail_wagon_state->sound_cooldown = 0;
+    rail_wagon_state->secondary_instance = BH_SOUND_INVALID;
+    rail_wagon_state->leader = entity;
+    rail_wagon_state->rider = NULL;
+    rail_wagon_state->checkpoint = NULL;
+    prepend(context, entity, w);
     memset(&m, 0, sizeof(m));
     m.m[0][0] = m.m[1][1] = m.m[2][2] = 1;
     bh_mat34_rotate_y(angles->x, &m);
@@ -678,30 +678,30 @@ BHEntity *bh_rail_wagon_spawn(BHRailWagonContext *c, const BHVec3 *position, con
     bh_mat34_rotate_z(angles->z, &m);
     unit.x = 1;
     unit.y = unit.z = 0;
-    bh_mat34_transform_direction(&m, &unit, &p->right);
+    bh_mat34_transform_direction(&m, &unit, &rail_wagon_pose->right);
     unit.x = 0;
     unit.y = 1;
-    bh_mat34_transform_direction(&m, &unit, &p->up);
+    bh_mat34_transform_direction(&m, &unit, &rail_wagon_pose->up);
     unit.y = 0;
     unit.z = 1;
-    bh_mat34_transform_direction(&m, &unit, &p->forward);
-    s->segment = c->rails->segments + best;
-    projection = (((double)s->segment->end.y - s->segment->start.y) * p->forward.y +
-                  ((double)s->segment->end.z - s->segment->start.z) * p->forward.z) +
-                 ((double)s->segment->end.x - s->segment->start.x) * p->forward.x;
-    s->direction = !_isnan(projection) && projection >= 0;
-    if (!s->direction)
-        bh_round_float(&s->elapsed, 1.0 - s->elapsed);
-    generation = e->generation;
+    bh_mat34_transform_direction(&m, &unit, &rail_wagon_pose->forward);
+    rail_wagon_state->segment = context->rails->segments + best;
+    projection = (((double)rail_wagon_state->segment->end.y - rail_wagon_state->segment->start.y) * rail_wagon_pose->forward.y +
+                  ((double)rail_wagon_state->segment->end.z - rail_wagon_state->segment->start.z) * rail_wagon_pose->forward.z) +
+                 ((double)rail_wagon_state->segment->end.x - rail_wagon_state->segment->start.x) * rail_wagon_pose->forward.x;
+    rail_wagon_state->direction = !_isnan(projection) && projection >= 0;
+    if (!rail_wagon_state->direction)
+        bh_round_float(&rail_wagon_state->elapsed, 1.0 - rail_wagon_state->elapsed);
+    generation = entity->generation;
     packet.event = 19;
-    packet.entity = e;
-    bh_entities_query(c->pool, 0, 0, NULL, 0, &packet);
-    if (!live(c, e, generation))
+    packet.entity = entity;
+    bh_entities_query(context->pool, 0, 0, NULL, 0, &packet);
+    if (!live(context, entity, generation))
     {
-        failure(c, BH_WAGON_LIFETIME);
+        failure(context, BH_WAGON_LIFETIME);
         return NULL;
     }
-    bh_entity_set_query(c->pool, e, bh_rail_wagon_query);
-    ++c->spawned;
-    return e;
+    bh_entity_set_query(context->pool, entity, bh_rail_wagon_query);
+    ++context->spawned;
+    return entity;
 }

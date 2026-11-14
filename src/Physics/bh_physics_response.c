@@ -11,9 +11,9 @@
 static_assert(sizeof(BHPhysicsContactPacket) == 36, "BHPhysicsContactPacket size");
 static_assert(offsetof(BHPhysicsContactPacket, impulse) == 0x1c, "BHPhysicsContactPacket.impulse offset");
 static_assert(offsetof(BHPhysicsContactPacket, severity) == 0x20, "BHPhysicsContactPacket.severity offset");
-static int vector_ok(const BHVec3 *v)
+static int vector_ok(const BHVec3 *vector)
 {
-    return v && _finite(v->x) && _finite(v->y) && _finite(v->z);
+    return vector && _finite(vector->x) && _finite(vector->y) && _finite(vector->z);
 }
 static int matrix_ok(const BHMat34 *m)
 {
@@ -25,9 +25,9 @@ static int matrix_ok(const BHMat34 *m)
             return 0;
     return 1;
 }
-static double reverse_dot(const BHVec3 *a, const BHVec3 *b)
+static double reverse_dot(const BHVec3 *first_vector, const BHVec3 *second_vector)
 {
-    return ((double)a->z * b->z + (double)a->y * b->y) + (double)a->x * b->x;
+    return ((double)first_vector->z * second_vector->z + (double)first_vector->y * second_vector->y) + (double)first_vector->x * second_vector->x;
 }
 int bh_physics_overlap(BHSweepQuery *query, const BHMat34 *pose, const BHMat34 *world, const BHMat34 *local,
                        BHCollisionHit *out)

@@ -2,15 +2,15 @@
 #include "../Platform/bh_platform.h"
 #include <stdio.h>
 #include <string.h>
-static unsigned long phase(BHEntity *e)
+static unsigned long phase(BHEntity *menu_entity)
 {
     unsigned long p;
-    memcpy(&p, &e->menu.input_phase, 4);
+    memcpy(&p, &menu_entity->menu.input_phase, 4);
     return p;
 }
-static void set_phase(BHEntity *e, unsigned long p)
+static void set_phase(BHEntity *menu_entity, unsigned long p)
 {
-    memcpy(&e->menu.input_phase, &p, 4);
+    memcpy(&menu_entity->menu.input_phase, &p, 4);
 }
 static void prime(BHPlayerInputState *s)
 {
@@ -18,118 +18,118 @@ static void prime(BHPlayerInputState *s)
     for (i = 0; i < 255; ++i)
         bh_player_input_transition(s, i);
 }
-static int row_valid(BHInputTextCapture *c)
+static int row_valid(BHInputTextCapture *input_text_capture)
 {
-    long i = c->menu->selection;
-    return i >= 0 && (unsigned long)i < c->menu->row_count && c->menu->rows && c->menu->rows[i];
+    long i = input_text_capture->menu->selection;
+    return i >= 0 && (unsigned long)i < input_text_capture->menu->row_count && input_text_capture->menu->rows && input_text_capture->menu->rows[i];
 }
-static int valid(BHInputTextCapture *c)
+static int valid(BHInputTextCapture *input_text_capture)
 {
     const char *end;
-    if (!c || !c->pool || !c->input || !c->snapshot || !c->state || !c->menu || !c->rows || !c->sound || !c->buffer ||
-        !c->capacity || c->limit < 0 || (unsigned long)c->limit >= c->capacity)
+    if (!input_text_capture || !input_text_capture->pool || !input_text_capture->input || !input_text_capture->snapshot || !input_text_capture->state || !input_text_capture->menu || !input_text_capture->rows || !input_text_capture->sound || !input_text_capture->buffer ||
+        !input_text_capture->capacity || input_text_capture->limit < 0 || (unsigned long)input_text_capture->limit >= input_text_capture->capacity)
         return 0;
-    if (c->limit > 15 ||
-        (c->commit == BH_TEXT_COMMIT_PROFILE ? !c->profile : c->commit != BH_TEXT_COMMIT_ADDRESS || !c->address_commit))
+    if (input_text_capture->limit > 15 ||
+        (input_text_capture->commit == BH_TEXT_COMMIT_PROFILE ? !input_text_capture->profile : input_text_capture->commit != BH_TEXT_COMMIT_ADDRESS || !input_text_capture->address_commit))
         return 0;
-    end = (const char *)memchr(c->buffer, 0, c->capacity);
-    return end && c->length >= 0 && c->length <= c->limit && end - c->buffer == c->length && row_valid(c) &&
-           (unsigned long)c->menu->selection < c->rows->count;
+    end = (const char *)memchr(input_text_capture->buffer, 0, input_text_capture->capacity);
+    return end && input_text_capture->length >= 0 && input_text_capture->length <= input_text_capture->limit && end - input_text_capture->buffer == input_text_capture->length && row_valid(input_text_capture) &&
+           (unsigned long)input_text_capture->menu->selection < input_text_capture->rows->count;
 }
-static void sound(BHInputTextCapture *c, float pitch)
+static void sound(BHInputTextCapture *input_text_capture, float pitch)
 {
-    ++c->sounds;
-    c->last_voice = bh_sound_request(c->sound, c->sound_resource, .6f, pitch, NULL, NULL);
-    if (c->last_voice == BH_SOUND_INVALID)
-        c->error = 1;
+    ++input_text_capture->sounds;
+    input_text_capture->last_voice = bh_sound_request(input_text_capture->sound, input_text_capture->sound_resource, .6f, pitch, NULL, NULL);
+    if (input_text_capture->last_voice == BH_SOUND_INVALID)
+        input_text_capture->error = 1;
 }
-static void paint(BHInputTextCapture *c)
+static void paint(BHInputTextCapture *input_text_capture)
 {
-    unsigned long i, n = (unsigned long)strlen(c->buffer), first = n > 17 ? n - 17 : 0;
+    unsigned long i, n = (unsigned long)strlen(input_text_capture->buffer), first = n > 17 ? n - 17 : 0;
     for (i = 0; i < n; ++i)
-        if (c->buffer[i] >= 'a' && c->buffer[i] <= 'z')
-            c->buffer[i] -= 32;
-    sprintf(c->display, "%s_%s", c->buffer + first, c->commit == BH_TEXT_COMMIT_ADDRESS ? "\nA Join  B Back" : "");
-    ++c->repaints;
-    if (!bh_menu_row_refresh(c->rows, (unsigned long)c->menu->selection, NULL, c->display))
-        c->error = 1;
+        if (input_text_capture->buffer[i] >= 'a' && input_text_capture->buffer[i] <= 'z')
+            input_text_capture->buffer[i] -= 32;
+    sprintf(input_text_capture->display, "%s_%s", input_text_capture->buffer + first, input_text_capture->commit == BH_TEXT_COMMIT_ADDRESS ? "\nA Join  B Back" : "");
+    ++input_text_capture->repaints;
+    if (!bh_menu_row_refresh(input_text_capture->rows, (unsigned long)input_text_capture->menu->selection, NULL, input_text_capture->display))
+        input_text_capture->error = 1;
 }
-static void text_tick(BHEntity *e)
+static void text_tick(BHEntity *entity)
 {
-    BHInputTextCapture *c;
-    memcpy(&c, &e->bindings.text_capture, 4);
-    if (c && c->entity == e)
-        bh_input_text_step(c);
+    BHInputTextCapture *input_text_capture;
+    memcpy(&input_text_capture, &entity->bindings.text_capture, 4);
+    if (input_text_capture && input_text_capture->entity == entity)
+        bh_input_text_step(input_text_capture);
 }
 static void address_input(BHPlatformTextEvent event, const char *text, void *user)
 {
-    BHInputTextCapture *c = user;
+    BHInputTextCapture *input_text_capture = user;
     BHMenuSettingsRefresh refresh;
-    long length = c->length;
+    long length = input_text_capture->length;
     if (event == BH_PLATFORM_TEXT_CANCEL || event == BH_PLATFORM_TEXT_SUBMIT)
     {
-        if (!bh_input_text_cancel(c))
+        if (!bh_input_text_cancel(input_text_capture))
             return;
-        sound(c, 1);
+        sound(input_text_capture, 1);
         if (event == BH_PLATFORM_TEXT_SUBMIT)
-            c->address_commit(c->address_user, c->buffer);
-        else if ((refresh = c->menu->rows[c->menu->selection]->refresh) != NULL)
-            refresh(c->menu, c->menu->selection);
+            input_text_capture->address_commit(input_text_capture->address_user, input_text_capture->buffer);
+        else if ((refresh = input_text_capture->menu->rows[input_text_capture->menu->selection]->refresh) != NULL)
+            refresh(input_text_capture->menu, input_text_capture->menu->selection);
         return;
     }
     if (event == BH_PLATFORM_TEXT_BACKSPACE)
     {
-        if (c->length > 0)
-            --c->length;
+        if (input_text_capture->length > 0)
+            --input_text_capture->length;
     }
     else if (event == BH_PLATFORM_TEXT_INSERT)
     {
-        for (; *text && c->length < c->limit; ++text)
+        for (; *text && input_text_capture->length < input_text_capture->limit; ++text)
             if ((*text >= '0' && *text <= '9') || *text == '.')
-                c->buffer[c->length++] = *text;
+                input_text_capture->buffer[input_text_capture->length++] = *text;
     }
-    if (c->length != length)
+    if (input_text_capture->length != length)
     {
-        c->buffer[c->length] = 0;
-        sound(c, 1);
-        paint(c);
+        input_text_capture->buffer[input_text_capture->length] = 0;
+        sound(input_text_capture, 1);
+        paint(input_text_capture);
     }
 }
-static int begin(BHInputTextCapture *c, int initial_paint)
+static int begin(BHInputTextCapture *input_text_capture, int initial_paint)
 {
-    BHEntity *e;
-    if (!c || c->entity || !valid(c))
+    BHEntity *entity;
+    if (!input_text_capture || input_text_capture->entity || !valid(input_text_capture))
         return 0;
-    e = bh_entity_acquire(c->pool);
-    if (!e)
+    entity = bh_entity_acquire(input_text_capture->pool);
+    if (!entity)
         return 0;
-    set_phase(e, 0);
-    memcpy(&e->bindings.text_capture, &c, 4);
-    e->step = text_tick;
-    c->entity = e;
-    c->error = 0;
-    if (c->commit == BH_TEXT_COMMIT_ADDRESS)
+    set_phase(entity, 0);
+    memcpy(&entity->bindings.text_capture, &input_text_capture, 4);
+    entity->step = text_tick;
+    input_text_capture->entity = entity;
+    input_text_capture->error = 0;
+    if (input_text_capture->commit == BH_TEXT_COMMIT_ADDRESS)
     {
-        e->step = NULL;
-        if (!bh_sdl_text_begin(address_input, c))
+        entity->step = NULL;
+        if (!bh_sdl_text_begin(address_input, input_text_capture))
         {
-            bh_entity_release(c->pool, e);
-            c->entity = NULL;
+            bh_entity_release(input_text_capture->pool, entity);
+            input_text_capture->entity = NULL;
             return 0;
         }
         if (initial_paint)
-            paint(c);
-        return !c->error;
+            paint(input_text_capture);
+        return !input_text_capture->error;
     }
     if (initial_paint)
-        paint(c);
-    if (!bh_input_set_enabled(c->input, c->snapshot, 1))
+        paint(input_text_capture);
+    if (!bh_input_set_enabled(input_text_capture->input, input_text_capture->snapshot, 1))
     {
-        bh_entity_release(c->pool, e);
-        c->entity = NULL;
+        bh_entity_release(input_text_capture->pool, entity);
+        input_text_capture->entity = NULL;
         return 0;
     }
-    return !c->error;
+    return !input_text_capture->error;
 }
 int bh_input_text_begin(BHInputTextCapture *c)
 {
@@ -139,25 +139,25 @@ int bh_input_text_begin_painted(BHInputTextCapture *c)
 {
     return begin(c, 1);
 }
-int bh_input_text_step(BHInputTextCapture *c)
+int bh_input_text_step(BHInputTextCapture *input_text_capture)
 {
     BHEntity *e;
     unsigned long p;
     long key;
     BHMenuSettingsRefresh refresh;
-    if (!c || !c->entity || c->commit != BH_TEXT_COMMIT_PROFILE || !valid(c))
+    if (!input_text_capture || !input_text_capture->entity || input_text_capture->commit != BH_TEXT_COMMIT_PROFILE || !valid(input_text_capture))
         return 0;
-    e = c->entity;
-    c->error = 0;
-    if (!bh_player_input_apply_packet_checked(c->state, c->input->state, sizeof(c->input->state)))
+    e = input_text_capture->entity;
+    input_text_capture->error = 0;
+    if (!bh_player_input_apply_packet_checked(input_text_capture->state, input_text_capture->input->state, sizeof(input_text_capture->input->state)))
     {
-        c->error = 1;
+        input_text_capture->error = 1;
         return 0;
     }
     p = phase(e);
     if (!p)
     {
-        prime(c->state);
+        prime(input_text_capture->state);
         set_phase(e, 1);
         return 1;
     }
@@ -165,22 +165,22 @@ int bh_input_text_step(BHInputTextCapture *c)
     {
         for (key = 0; key < 255; ++key)
         {
-            if (bh_player_input_transition(c->state, (unsigned long)key) != 0)
+            if (bh_player_input_transition(input_text_capture->state, (unsigned long)key) != 0)
                 continue;
-            sound(c, 1);
+            sound(input_text_capture, 1);
             if (key == 27)
                 set_phase(e, 3);
             else if (key == 13)
                 set_phase(e, 2);
             else if (key == 8)
             {
-                sound(c, .7f);
-                if (c->length > 0)
-                    c->buffer[--c->length] = 0;
+                sound(input_text_capture, .7f);
+                if (input_text_capture->length > 0)
+                    input_text_capture->buffer[--input_text_capture->length] = 0;
                 else
                 {
-                    sound(c, .5f);
-                    c->buffer[c->length] = 0;
+                    sound(input_text_capture, .5f);
+                    input_text_capture->buffer[input_text_capture->length] = 0;
                 }
             }
             else
@@ -188,66 +188,66 @@ int bh_input_text_step(BHInputTextCapture *c)
                 key = (long)bh_sdl_key_character((unsigned)key);
                 if (key < 0)
                 {
-                    c->error = 1;
+                    input_text_capture->error = 1;
                     return 0;
                 }
-                if (key >= 32 && (key != 32 || c->length > 0))
+                if (key >= 32 && (key != 32 || input_text_capture->length > 0))
                 {
-                    if (c->length < c->limit)
+                    if (input_text_capture->length < input_text_capture->limit)
                     {
-                        sound(c, 1);
-                        c->buffer[c->length++] = (char)key;
-                        c->buffer[c->length] = 0;
+                        sound(input_text_capture, 1);
+                        input_text_capture->buffer[input_text_capture->length++] = (char)key;
+                        input_text_capture->buffer[input_text_capture->length] = 0;
                     }
                     else
                     {
-                        sound(c, .7f);
-                        sound(c, .5f);
+                        sound(input_text_capture, .7f);
+                        sound(input_text_capture, .5f);
                     }
                 }
             }
-            paint(c);
+            paint(input_text_capture);
         }
-        return !c->error;
+        return !input_text_capture->error;
     }
     if (p != 2 && p != 3)
         return 1;
     if (p == 2)
-        while (c->length > 0 && c->buffer[c->length - 1] == ' ')
-            c->buffer[--c->length] = 0;
-    prime(c->state);
-    if (!bh_input_set_enabled(c->input, c->snapshot, 0))
-        c->error = 1;
-    c->commit = BH_TEXT_COMMIT_NONE;
+        while (input_text_capture->length > 0 && input_text_capture->buffer[input_text_capture->length - 1] == ' ')
+            input_text_capture->buffer[--input_text_capture->length] = 0;
+    prime(input_text_capture->state);
+    if (!bh_input_set_enabled(input_text_capture->input, input_text_capture->snapshot, 0))
+        input_text_capture->error = 1;
+    input_text_capture->commit = BH_TEXT_COMMIT_NONE;
     if (p == 2)
     {
-        if (!bh_menu_profile_commit(c->profile, c->menu, c->buffer, c->menu->selection))
-            c->error = 1;
+        if (!bh_menu_profile_commit(input_text_capture->profile, input_text_capture->menu, input_text_capture->buffer, input_text_capture->menu->selection))
+            input_text_capture->error = 1;
     }
     else
     {
-        refresh = c->menu->rows[c->menu->selection]->refresh;
+        refresh = input_text_capture->menu->rows[input_text_capture->menu->selection]->refresh;
         if (refresh)
-            refresh(c->menu, c->menu->selection);
+            refresh(input_text_capture->menu, input_text_capture->menu->selection);
     }
-    if (!bh_entity_release(c->pool, e))
-        c->error = 1;
+    if (!bh_entity_release(input_text_capture->pool, e))
+        input_text_capture->error = 1;
     else
-        c->entity = NULL;
-    return !c->error;
+        input_text_capture->entity = NULL;
+    return !input_text_capture->error;
 }
-int bh_input_text_cancel(BHInputTextCapture *c)
+int bh_input_text_cancel(BHInputTextCapture *input_text_capture)
 {
     int okay = 1;
-    if (!c || !c->entity || c->pool->dispatch_depth)
+    if (!input_text_capture || !input_text_capture->entity || input_text_capture->pool->dispatch_depth)
         return 0;
-    if (c->commit == BH_TEXT_COMMIT_ADDRESS)
+    if (input_text_capture->commit == BH_TEXT_COMMIT_ADDRESS)
         bh_sdl_text_end();
     else
-        okay = bh_input_set_enabled(c->input, c->snapshot, 0);
-    if (!bh_entity_release(c->pool, c->entity))
+        okay = bh_input_set_enabled(input_text_capture->input, input_text_capture->snapshot, 0);
+    if (!bh_entity_release(input_text_capture->pool, input_text_capture->entity))
         return 0;
-    c->entity = NULL;
-    c->commit = BH_TEXT_COMMIT_NONE;
+    input_text_capture->entity = NULL;
+    input_text_capture->commit = BH_TEXT_COMMIT_NONE;
     return okay;
 }

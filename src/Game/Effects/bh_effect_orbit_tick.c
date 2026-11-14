@@ -33,10 +33,10 @@ static int announce(BHEffectOrbitTickContext *ctx, BHEntity *entity)
 }
 static void explode(BHEffectOrbitTickContext *ctx, BHEntity *entity)
 {
-    BHEffectProjectileContext *b = ctx->core;
-    b->debris->origin_tag = bh_field_u32(&entity->effect.origin_tag);
-    bh_sound_stop(b->effects->sound, bh_field_u32(&entity->effect.sound));
-    bh_script_explosion_create(b->explosion, &entity->position, 1.2f, 15, 1, bh_field_u32(&entity->effect.source));
+    BHEffectProjectileContext *core = ctx->core;
+    core->debris->origin_tag = bh_field_u32(&entity->effect.origin_tag);
+    bh_sound_stop(core->effects->sound, bh_field_u32(&entity->effect.sound));
+    bh_script_explosion_create(core->explosion, &entity->position, 1.2f, 15, 1, bh_field_u32(&entity->effect.source));
 }
 static void direct(BHEntity *target, float amount, unsigned long source)
 {
@@ -73,12 +73,12 @@ static int motion(BHEffectOrbitTickContext *ctx, BHEntity *entity, BHEntity *tar
 }
 static BHEntity *receiver(BHEffectOrbitTickContext *ctx, BHWorldSegmentHit *hit)
 {
-    BHHomingProjectileContext *b = ctx->core->effects;
+    BHHomingProjectileContext *effects = ctx->core->effects;
     unsigned long i;
     if (hit->object.kind == BH_WORLD_HIT_ACTOR)
         return hit->object.object.actor;
     {
-        const BHHomingWorldResponse *binding = bh_homing_world_response(b, hit->object.object.geometry);
+        const BHHomingWorldResponse *binding = bh_homing_world_response(effects, hit->object.object.geometry);
         if (binding)
         {
             return binding->receiver;
@@ -91,7 +91,7 @@ void bh_effect_orbit_tick(BHEntity *entity)
 {
     BHEffectProjectileContext *core;
     BHEffectOrbitTickContext *ctx;
-    BHHomingProjectileContext *b;
+    BHHomingProjectileContext *effects;
     BHEntity *target, *actor, *ignore, *contact, *response, *marker;
     BHWorldGeometry *cached;
     BHWorldSegmentRoom *room = 0;
@@ -106,7 +106,7 @@ void bh_effect_orbit_tick(BHEntity *entity)
     if (!core || !core->orbit)
         return;
     ctx = core->orbit;
-    b = core->effects;
+    effects = core->effects;
     memcpy(&gen, &entity->bindings.projectile_generation, 4);
     if (!live(ctx, entity, gen) || !bh_math_environment_supported())
     {
@@ -139,7 +139,7 @@ void bh_effect_orbit_tick(BHEntity *entity)
             ctx->error = 3;
             return;
         }
-        bh_entity_release(b->pool, entity);
+        bh_entity_release(effects->pool, entity);
         ++ctx->expired;
         return;
     }
@@ -167,7 +167,7 @@ void bh_effect_orbit_tick(BHEntity *entity)
                 return;
             }
             direct(target, rf(1.2 - (double)rf(length) * .1), source);
-            bh_entity_release(b->pool, entity);
+            bh_entity_release(effects->pool, entity);
             ++ctx->proximity;
             return;
         }
@@ -186,7 +186,7 @@ void bh_effect_orbit_tick(BHEntity *entity)
     ignore = (BHEntity *)bh_field_u32(&entity->effect.ignore);
     if (cached && !identity)
     {
-        room = bh_world_segment_room(b->segment, cached);
+        room = bh_world_segment_room(effects->segment, cached);
         if (!room)
         {
             ctx->error = 2;
@@ -194,7 +194,7 @@ void bh_effect_orbit_tick(BHEntity *entity)
         }
         for (actor = room->actors_owner ? *room->actors_owner : NULL, n = 0; actor;)
         {
-            if (++n > b->segment->max_room_actors)
+            if (++n > effects->segment->max_room_actors)
             {
                 ctx->error = 2;
                 return;
@@ -219,7 +219,7 @@ void bh_effect_orbit_tick(BHEntity *entity)
                         ctx->error = 3;
                         return;
                     }
-                    bh_entity_release(b->pool, entity);
+                    bh_entity_release(effects->pool, entity);
                     direct(actor, rf(1.2 - sqrt(length) * .1), source);
                     ++ctx->proximity;
                     return;
@@ -236,7 +236,7 @@ void bh_effect_orbit_tick(BHEntity *entity)
     memcpy(&entity->effect.velocity, &velocity, 12);
     self.kind = ignore ? BH_WORLD_HIT_ACTOR : BH_WORLD_HIT_END;
     self.object.actor = ignore;
-    result = bh_world_segment_run(b->segment, ignore ? &self : 0, &cached, &entity->position, &end, -1, &hit);
+    result = bh_world_segment_run(effects->segment, ignore ? &self : 0, &cached, &entity->position, &end, -1, &hit);
     if (result < 0)
     {
         ctx->error = 2;
@@ -248,15 +248,15 @@ void bh_effect_orbit_tick(BHEntity *entity)
     {
         for (i = 0; i < 3; ++i)
             ((float *)&point)[i] = rf((double)((float *)&hit.point)[i] - ((float *)&hit.normal)[i] * (-.5));
-        contact = bh_contact_impact_create(b->contacts, &point, &hit.normal, 4);
+        contact = bh_contact_impact_create(effects->contacts, &point, &hit.normal, 4);
         if (contact)
         {
-            impact = bh_contact_impact_state(b->contacts, contact);
+            impact = bh_contact_impact_state(effects->contacts, contact);
             impact->duration = 1.2f;
             impact->size = 12;
-            bh_sound_request(b->sound, b->liquid_sound, rf((double)impact->size / 6), .8333333f, &point, &zero);
+            bh_sound_request(effects->sound, effects->liquid_sound, rf((double)impact->size / 6), .8333333f, &point, &zero);
         }
-        bh_sound_stop(b->sound, bh_field_u32(&entity->effect.sound));
+        bh_sound_stop(effects->sound, bh_field_u32(&entity->effect.sound));
         {
             struct
             {
@@ -265,14 +265,14 @@ void bh_effect_orbit_tick(BHEntity *entity)
             } p;
             p.event = 17;
             p.actor = entity;
-            bh_entities_query(b->pool, 0, 0, 0, 0, &p);
+            bh_entities_query(effects->pool, 0, 0, 0, 0, &p);
         }
         if (!live(ctx, entity, gen))
         {
             ctx->error = 3;
             return;
         }
-        bh_entity_release(b->pool, entity);
+        bh_entity_release(effects->pool, entity);
         ++ctx->liquid_hits;
         return;
     }
@@ -281,7 +281,7 @@ void bh_effect_orbit_tick(BHEntity *entity)
         entity->position = end;
         for (i = 0; i < 3; ++i)
             ((float *)&velocity)[i] = rf((double)((float *)&velocity)[i] * 30);
-        bh_sound_update(b->sound, bh_field_u32(&entity->effect.sound), 1, 1, &entity->position, &velocity);
+        bh_sound_update(effects->sound, bh_field_u32(&entity->effect.sound), 1, 1, &entity->position, &velocity);
         return;
     }
     response = receiver(ctx, &hit);
@@ -305,7 +305,7 @@ void bh_effect_orbit_tick(BHEntity *entity)
             ctx->error = 2;
             return;
         }
-        marker = bh_hit_marker_create(b->markers, &point, &normal, 5, 1, response);
+        marker = bh_hit_marker_create(effects->markers, &point, &normal, 5, 1, response);
         bh_trail_create_pair(core->trails, core->trail_image, 3, 0, &point, marker, 10, 5, 6, .5f, .3f, .2f, &drift,
                              .5f, 0, 0);
     }
@@ -322,6 +322,6 @@ void bh_effect_orbit_tick(BHEntity *entity)
         return;
     }
     direct(response, 1, source);
-    bh_entity_release(b->pool, entity);
+    bh_entity_release(effects->pool, entity);
     ++ctx->world_hits;
 }

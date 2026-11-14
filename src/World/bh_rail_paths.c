@@ -17,46 +17,46 @@ static void release(void *p, void *u)
 {
     free(p);
 }
-static int fail(BHRailPaths *p)
+static int fail(BHRailPaths *rail_paths)
 {
-    if (p)
-        ++p->failures;
+    if (rail_paths)
+        ++rail_paths->failures;
     return 0;
 }
-int bh_rail_paths_init(BHRailPaths *p, const BHSceneAllocator *a)
+int bh_rail_paths_init(BHRailPaths *rail_paths, const BHSceneAllocator *scene_allocator)
 {
-    if (!p || (a && (!a->allocate || !a->release)))
+    if (!rail_paths || (scene_allocator && (!scene_allocator->allocate || !scene_allocator->release)))
         return 0;
-    memset(p, 0, sizeof(*p));
-    if (a)
-        p->allocator = *a;
+    memset(rail_paths, 0, sizeof(*rail_paths));
+    if (scene_allocator)
+        rail_paths->allocator = *scene_allocator;
     else
     {
-        p->allocator.allocate = allocate;
-        p->allocator.release = release;
+        rail_paths->allocator.allocate = allocate;
+        rail_paths->allocator.release = release;
     }
-    p->segments = (BHRailSegment *)p->allocator.allocate(200UL * sizeof(BHRailSegment), p->allocator.user);
-    if (!p->segments)
-        return fail(p);
-    memset(p->segments, 0, 200UL * sizeof(BHRailSegment));
+    rail_paths->segments = (BHRailSegment *)rail_paths->allocator.allocate(200UL * sizeof(BHRailSegment), rail_paths->allocator.user);
+    if (!rail_paths->segments)
+        return fail(rail_paths);
+    memset(rail_paths->segments, 0, 200UL * sizeof(BHRailSegment));
     return 1;
 }
-void bh_rail_paths_dispose(BHRailPaths *p)
+void bh_rail_paths_dispose(BHRailPaths *rail_paths)
 {
-    if (!p)
+    if (!rail_paths)
         return;
-    if (p->segments)
-        p->allocator.release(p->segments, p->allocator.user);
-    p->segments = NULL;
-    p->count = p->chain_count = 0;
+    if (rail_paths->segments)
+        rail_paths->allocator.release(rail_paths->segments, rail_paths->allocator.user);
+    rail_paths->segments = NULL;
+    rail_paths->count = rail_paths->chain_count = 0;
 }
-static int valid(const BHRailPaths *p)
+static int valid(const BHRailPaths *rail_paths)
 {
-    return p && p->segments && p->count >= 0 && p->count <= 200 && p->chain_count >= 0 && p->chain_count <= p->count;
+    return rail_paths && rail_paths->segments && rail_paths->count >= 0 && rail_paths->count <= 200 && rail_paths->chain_count >= 0 && rail_paths->chain_count <= rail_paths->count;
 }
-static double metric(const BHVec3 *a, const BHVec3 *b)
+static double metric(const BHVec3 *first_vector, const BHVec3 *second_vector)
 {
-    double x = (double)a->x - b->x, y = (double)a->y - b->y, z = (double)a->z - b->z;
+    double x = (double)first_vector->x - second_vector->x, y = (double)first_vector->y - second_vector->y, z = (double)first_vector->z - second_vector->z;
     float rx, rz;
     bh_round_float(&rx, x);
     bh_round_float(&rz, z);
@@ -70,42 +70,42 @@ int bh_rail_near(const BHVec3 *a, const BHVec3 *b)
     d = metric(a, b);
     return _isnan(d) || d < 0.25;
 }
-static int alias(const BHRailPaths *p, const void *v)
+static int alias(const BHRailPaths *rail_paths, const void *v)
 {
-    unsigned long at = (unsigned long)v, base = (unsigned long)p->segments;
+    unsigned long at = (unsigned long)v, base = (unsigned long)rail_paths->segments;
     return at >= base && at < base + 200UL * sizeof(BHRailSegment);
 }
-static void transform(BHVec3 *out, const BHVec3 *v, const BHVec3 *position, double sine, double cosine)
+static void transform(BHVec3 *out, const BHVec3 *vector, const BHVec3 *position, double sine, double cosine)
 {
-    bh_round_float(&out->x, (double)v->x * cosine + (double)v->z * sine);
-    out->y = v->y;
-    bh_round_float(&out->z, (double)v->z * cosine - (double)v->x * sine);
+    bh_round_float(&out->x, (double)vector->x * cosine + (double)vector->z * sine);
+    out->y = vector->y;
+    bh_round_float(&out->z, (double)vector->z * cosine - (double)vector->x * sine);
     bh_round_float(&out->x, (double)out->x + position->x);
     bh_round_float(&out->y, (double)out->y + position->y);
     bh_round_float(&out->z, (double)out->z + position->z);
 }
-int bh_rail_add(BHRailPaths *p, const BHVec3 *start, const BHVec3 *end, const BHVec3 *position, const BHVec3 *rotation)
+int bh_rail_add(BHRailPaths *rail_paths, const BHVec3 *start, const BHVec3 *end, const BHVec3 *position, const BHVec3 *rotation)
 {
-    BHRailSegment *s;
+    BHRailSegment *rail_segment;
     double sine, cosine;
-    if (!valid(p) || !start || !end || !position || !rotation || !bh_math_environment_supported())
-        return fail(p);
-    if (p->count == 200)
+    if (!valid(rail_paths) || !start || !end || !position || !rotation || !bh_math_environment_supported())
+        return fail(rail_paths);
+    if (rail_paths->count == 200)
     {
-        ++p->dropped;
+        ++rail_paths->dropped;
         return 1;
     }
-    if (!_finite(rotation->x) || fabs(rotation->x) > 1000000 || alias(p, start) || alias(p, end) ||
-        alias(p, position) || alias(p, rotation))
-        return fail(p);
+    if (!_finite(rotation->x) || fabs(rotation->x) > 1000000 || alias(rail_paths, start) || alias(rail_paths, end) ||
+        alias(rail_paths, position) || alias(rail_paths, rotation))
+        return fail(rail_paths);
     sine = sin((double)rotation->x);
     cosine = cos((double)rotation->x);
-    s = p->segments + p->count++;
-    transform(&s->start, start, position, sine, cosine);
-    transform(&s->end, end, position, sine, cosine);
-    s->next = s->previous = NULL;
-    s->visited = 0;
-    ++p->additions;
+    rail_segment = rail_paths->segments + rail_paths->count++;
+    transform(&rail_segment->start, start, position, sine, cosine);
+    transform(&rail_segment->end, end, position, sine, cosine);
+    rail_segment->next = rail_segment->previous = NULL;
+    rail_segment->visited = 0;
+    ++rail_paths->additions;
     return 1;
 }
 static int part(BHRailPaths *p, const BHVec3 *position, const BHVec3 *rotation, float x1, float y1, float z1, float x2,
@@ -120,77 +120,77 @@ static int part(BHRailPaths *p, const BHVec3 *position, const BHVec3 *rotation, 
     b.z = z2;
     return bh_rail_add(p, &a, &b, position, rotation);
 }
-int bh_rail_placement(BHRailPaths *p, const char *name, const BHVec3 *position, const BHVec3 *rotation)
+int bh_rail_placement(BHRailPaths *rail_paths, const char *name, const BHVec3 *position, const BHVec3 *rotation)
 {
-    if (!p || !name || !position || !rotation)
-        return fail(p);
-    ++p->placements;
+    if (!rail_paths || !name || !position || !rotation)
+        return fail(rail_paths);
+    ++rail_paths->placements;
     if (_strnicmp(name, "RC_", 3) || !isdigit((int)(signed char)name[3]))
         return 1;
     switch (name[3])
     {
     case '0':
-        return part(p, position, rotation, 5, 0, 0, 5, 0, 10);
+        return part(rail_paths, position, rotation, 5, 0, 0, 5, 0, 10);
     case '1':
-        return part(p, position, rotation, 5, 0, 0, 5, 0, 20);
+        return part(rail_paths, position, rotation, 5, 0, 0, 5, 0, 20);
     case '2':
-        return part(p, position, rotation, 5, -10, 0, 5, 0, 20);
+        return part(rail_paths, position, rotation, 5, -10, 0, 5, 0, 20);
     case '3':
-        return part(p, position, rotation, 5, 0, 0, 5, -10, 10);
+        return part(rail_paths, position, rotation, 5, 0, 0, 5, -10, 10);
     case '4':
-        return part(p, position, rotation, 5, -20, 10, 5, 0, 20);
+        return part(rail_paths, position, rotation, 5, -20, 10, 5, 0, 20);
     case '5':
-        return part(p, position, rotation, 5, 0, 0, 5, -20, 0);
+        return part(rail_paths, position, rotation, 5, 0, 0, 5, -20, 0);
     case '6':
-        return part(p, position, rotation, 5, -20, 10, 5, 0, 20);
+        return part(rail_paths, position, rotation, 5, -20, 10, 5, 0, 20);
     case '7':
-        if (!part(p, position, rotation, 5, 0, 0, 10, -6.66f, 18))
+        if (!part(rail_paths, position, rotation, 5, 0, 0, 10, -6.66f, 18))
             return 0;
-        if (!part(p, position, rotation, 10, -6.66f, 18, 22, -13.33f, 30))
+        if (!part(rail_paths, position, rotation, 10, -6.66f, 18, 22, -13.33f, 30))
             return 0;
-        return part(p, position, rotation, 22, -13.33f, 30, 40, -20, 35);
+        return part(rail_paths, position, rotation, 22, -13.33f, 30, 40, -20, 35);
     case '8':
-        if (!part(p, position, rotation, 35, 0, 0, 30, -6.66f, 18))
+        if (!part(rail_paths, position, rotation, 35, 0, 0, 30, -6.66f, 18))
             return 0;
-        if (!part(p, position, rotation, 30, -6.66f, 18, 18, -13.33f, 30))
+        if (!part(rail_paths, position, rotation, 30, -6.66f, 18, 18, -13.33f, 30))
             return 0;
-        return part(p, position, rotation, 18, -13.33f, 30, 0, -20, 35);
+        return part(rail_paths, position, rotation, 18, -13.33f, 30, 0, -20, 35);
     case '9':
-        if (!part(p, position, rotation, 5, 0, 0, 10, 0, 18))
+        if (!part(rail_paths, position, rotation, 5, 0, 0, 10, 0, 18))
             return 0;
-        if (!part(p, position, rotation, 10, 0, 18, 22, 0, 30))
+        if (!part(rail_paths, position, rotation, 10, 0, 18, 22, 0, 30))
             return 0;
-        return part(p, position, rotation, 22, 0, 30, 40, 0, 35);
+        return part(rail_paths, position, rotation, 22, 0, 30, 40, 0, 35);
     }
     return 1;
 }
-static int pointer(const BHRailPaths *p, const BHRailSegment *v)
+static int pointer(const BHRailPaths *rail_paths, const BHRailSegment *v)
 {
-    unsigned long at = (unsigned long)v, base = (unsigned long)p->segments;
-    return !v || (at >= base && at - base < (unsigned long)p->count * sizeof(*v) && (at - base) % sizeof(*v) == 0);
+    unsigned long at = (unsigned long)v, base = (unsigned long)rail_paths->segments;
+    return !v || (at >= base && at - base < (unsigned long)rail_paths->count * sizeof(*v) && (at - base) % sizeof(*v) == 0);
 }
-int bh_rail_link(BHRailPaths *p)
+int bh_rail_link(BHRailPaths *rail_paths)
 {
     long i;
     BHRailSegment temporary, *head, *current, *candidate;
     BHVec3 point;
     int found;
-    if (!valid(p) || !bh_math_environment_supported())
-        return fail(p);
-    for (i = 0; i < p->count; ++i)
-        if (!pointer(p, p->segments[i].next) || !pointer(p, p->segments[i].previous))
-            return fail(p);
+    if (!valid(rail_paths) || !bh_math_environment_supported())
+        return fail(rail_paths);
+    for (i = 0; i < rail_paths->count; ++i)
+        if (!pointer(rail_paths, rail_paths->segments[i].next) || !pointer(rail_paths, rail_paths->segments[i].previous))
+            return fail(rail_paths);
     for (;;)
     {
-        for (i = 0; i < p->count && p->segments[i].visited; ++i)
+        for (i = 0; i < rail_paths->count && rail_paths->segments[i].visited; ++i)
         {
         }
-        if (i == p->count)
+        if (i == rail_paths->count)
             break;
-        if (p->chain_count >= p->count)
-            return fail(p);
-        head = p->segments + p->chain_count;
-        candidate = p->segments + i;
+        if (rail_paths->chain_count >= rail_paths->count)
+            return fail(rail_paths);
+        head = rail_paths->segments + rail_paths->chain_count;
+        candidate = rail_paths->segments + i;
         temporary = *head;
         *head = *candidate;
         *candidate = temporary;
@@ -198,15 +198,15 @@ int bh_rail_link(BHRailPaths *p)
             candidate->next->previous = candidate;
         if (candidate->previous)
             candidate->previous->next = candidate;
-        ++p->chain_count;
+        ++rail_paths->chain_count;
         head->visited = 1;
         current = head;
         for (;;)
         {
             found = 0;
-            for (i = 0; i < p->count; ++i)
+            for (i = 0; i < rail_paths->count; ++i)
             {
-                candidate = p->segments + i;
+                candidate = rail_paths->segments + i;
                 if (candidate->visited)
                     continue;
                 if (bh_rail_near(&current->end, &candidate->start) && !bh_rail_near(&current->start, &candidate->end))
@@ -237,9 +237,9 @@ int bh_rail_link(BHRailPaths *p)
             head->previous = current;
         }
     }
-    for (i = 0; i < p->count; ++i)
+    for (i = 0; i < rail_paths->count; ++i)
     {
-        current = p->segments + i;
+        current = rail_paths->segments + i;
         bh_round_float(&current->length, sqrt(metric(&current->end, &current->start)));
         bh_round_float(&current->rise, (double)current->end.y - current->start.y);
     }

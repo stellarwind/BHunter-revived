@@ -28,16 +28,16 @@ typedef struct BHHomingProjectileContext
     const BHBindingIndex *response_index; /* optional immutable scene identities */
 } BHHomingProjectileContext;
 /* Typed live receiver lookup; the optional index stores only array positions. */
-static __inline const BHHomingWorldResponse *bh_homing_world_response(const BHHomingProjectileContext *c,
+static __inline const BHHomingWorldResponse *bh_homing_world_response(const BHHomingProjectileContext *context,
                                                                       const BHWorldGeometry *world)
 {
     unsigned long i;
-    long found = c->response_index ? bh_binding_find(c->response_index, world, NULL) : -1;
-    if (found >= 0 && (unsigned long)found < c->response_count && c->responses[found].world == world)
-        return c->responses + found;
-    for (i = 0; i < c->response_count; ++i)
-        if (c->responses[i].world == world)
-            return c->responses + i;
+    long found = context->response_index ? bh_binding_find(context->response_index, world, NULL) : -1;
+    if (found >= 0 && (unsigned long)found < context->response_count && context->responses[found].world == world)
+        return context->responses + found;
+    for (i = 0; i < context->response_count; ++i)
+        if (context->responses[i].world == world)
+            return context->responses + i;
     return NULL;
 }
 /* Count-zero binding over an actual acquired projectile. Original fields e8,

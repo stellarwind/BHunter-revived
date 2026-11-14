@@ -15,20 +15,20 @@ static float rf(double v)
     bh_round_float(&f, v);
     return f;
 }
-static void offset(BHVec3 *out, const BHVec3 *p, const BHVec3 *n, double factor)
+static void offset(BHVec3 *out, const BHVec3 *point, const BHVec3 *normal, double factor)
 {
-    bh_round_float(&out->x, (double)p->x - (double)n->x * factor);
-    bh_round_float(&out->y, (double)p->y - (double)n->y * factor);
-    bh_round_float(&out->z, (double)p->z - (double)n->z * factor);
+    bh_round_float(&out->x, (double)point->x - (double)normal->x * factor);
+    bh_round_float(&out->y, (double)point->y - (double)normal->y * factor);
+    bh_round_float(&out->z, (double)point->z - (double)normal->z * factor);
 }
-static BHEntity *receiver(BHWeaponPulseContext *ctx, const BHWorldSegmentHit *h, int *world)
+static BHEntity *receiver(BHWeaponPulseContext *ctx, const BHWorldSegmentHit *hit, int *world)
 {
     unsigned long i;
-    *world = h->object.kind == BH_WORLD_HIT_GEOMETRY;
+    *world = hit->object.kind == BH_WORLD_HIT_GEOMETRY;
     if (!*world)
-        return h->object.object.actor;
+        return hit->object.object.actor;
     {
-        const BHHomingWorldResponse *binding = bh_homing_world_response(&ctx->effects, h->object.object.geometry);
+        const BHHomingWorldResponse *binding = bh_homing_world_response(&ctx->effects, hit->object.object.geometry);
         if (binding)
             return binding->receiver;
     }
@@ -66,7 +66,7 @@ static void flash(BHWeaponPulseContext *ctx, const BHVec3 *p)
 static int hitscan(BHWeaponPulseContext *ctx, BHEntity *player, const BHVec3 *position, const BHVec3 *up,
                    const BHVec3 *heading, const BHVec3 *base_velocity)
 {
-    BHHomingProjectileContext *b;
+    BHHomingProjectileContext *effects;
     BHVec3 muzzle, velocity, direction, end, trail, trail_end, a, point, normal;
     BHWorldGeometry *cached;
     BHWorldSegmentHit hit;
@@ -80,19 +80,19 @@ static int hitscan(BHWeaponPulseContext *ctx, BHEntity *player, const BHVec3 *po
     int random, world = 0, result;
     if (!ctx || !ctx->debris)
         return 0;
-    b = &ctx->effects;
-    if (!b->pool || !b->segment || !b->sound || !b->particles || !b->contacts || !b->flash || !b->markers ||
-        ctx->debris->pool != b->pool || b->response_count > 65535 || (b->response_count && !b->responses))
+    effects = &ctx->effects;
+    if (!effects->pool || !effects->segment || !effects->sound || !effects->particles || !effects->contacts || !effects->flash || !effects->markers ||
+        ctx->debris->pool != effects->pool || effects->response_count > 65535 || (effects->response_count && !effects->responses))
         return 0;
     ctx->error = 0;
     for (i = 0; i < 3; ++i)
         ((float *)&muzzle)[i] =
             rf(((double)((float *)position)[i] - ((float *)heading)[i] * (-1.2)) - ((float *)up)[i] * (-.5));
     random = rand();
-    bh_sound_request(b->sound, ctx->shot_sound, 1, rf(.9 - (double)random * (-.000006103515625)), &muzzle,
+    bh_sound_request(effects->sound, ctx->shot_sound, 1, rf(.9 - (double)random * (-.000006103515625)), &muzzle,
                      base_velocity);
     random = rand();
-    bh_flare_queue(b->particles->queue, &muzzle, 2, 30, ctx->flare_image, 0, 0, 0, rf((double)random * (1.0 / 5200)));
+    bh_flare_queue(effects->particles->queue, &muzzle, 2, 30, ctx->flare_image, 0, 0, 0, rf((double)random * (1.0 / 5200)));
     out = &velocity.x;
     h = (float *)heading;
     for (i = 0; i < 3; ++i)
@@ -106,7 +106,7 @@ static int hitscan(BHWeaponPulseContext *ctx, BHEntity *player, const BHVec3 *po
     spin = rf(((double)random - 16384) * (1.0 / 16384));
     random = rand();
     angle = rf((double)random * (1.0 / 512));
-    bh_script_particle_create(b->particles, ctx->smoke_image, 3, &muzzle, &velocity, &acceleration, .1f, angle, 8, spin,
+    bh_script_particle_create(effects->particles, ctx->smoke_image, 3, &muzzle, &velocity, &acceleration, .1f, angle, 8, spin,
                               .9f, .95f, .5f, .2f);
     direction = *heading;
     out = &direction.x;
@@ -124,13 +124,13 @@ static int hitscan(BHWeaponPulseContext *ctx, BHEntity *player, const BHVec3 *po
         random = rand();
         out[i] = rf((3 - (double)random * (-1.0 / 8192)) * r[i] + h[i]);
     }
-    bh_draw_segment(b->particles->queue, 3, ctx->trail_image, &muzzle, &trail, .3f, .01f, 1, 0, 0);
+    bh_draw_segment(effects->particles->queue, 3, ctx->trail_image, &muzzle, &trail, .3f, .01f, 1, 0, 0);
     offset(&end, &muzzle, &direction, -125);
     memcpy(&cached, &player->remote.cached_world, 4);
     self.kind = BH_WORLD_HIT_ACTOR;
     self.object.actor = player;
     memset(&hit, 0, sizeof(hit));
-    result = bh_world_segment_run(b->segment, &self, &cached, &muzzle, &end, 3, &hit);
+    result = bh_world_segment_run(effects->segment, &self, &cached, &muzzle, &end, 3, &hit);
     if (result < 0)
     {
         ctx->error = 2;
@@ -147,11 +147,11 @@ static int hitscan(BHWeaponPulseContext *ctx, BHEntity *player, const BHVec3 *po
             return 0;
         if (!world || !(hit.material_flags & 4))
         {
-            bh_sound_request(b->sound, b->hit_sound, 1, 2, &point, &zero);
+            bh_sound_request(effects->sound, effects->hit_sound, 1, 2, &point, &zero);
             impact_particles(ctx, &point);
             flash(ctx, &point);
-            bh_contact_spark_create(b->contacts, &point, .75f, 3);
-            bh_contact_spark_create(b->contacts, &point, 1, 2);
+            bh_contact_spark_create(effects->contacts, &point, .75f, 3);
+            bh_contact_spark_create(effects->contacts, &point, 1, 2);
             if (world && !(hit.material_flags & 2))
             {
                 dot =
@@ -168,7 +168,7 @@ static int hitscan(BHWeaponPulseContext *ctx, BHEntity *player, const BHVec3 *po
                     ctx->error = 2;
                     return 0;
                 }
-                bh_hit_marker_create(b->markers, &a, &normal, .7f, 3, target);
+                bh_hit_marker_create(effects->markers, &a, &normal, .7f, 3, target);
             }
             out = &velocity.x;
             for (i = 0; i < 3; ++i)
@@ -177,14 +177,14 @@ static int hitscan(BHWeaponPulseContext *ctx, BHEntity *player, const BHVec3 *po
                 bh_round_float(out + i, ((double)random - 16384) * (1.0 / 262144));
             }
             random = rand();
-            image = (random & 1) ? ctx->smoke_image : b->first_image;
+            image = (random & 1) ? ctx->smoke_image : effects->first_image;
             duration = (random & 1) ? 1.0f : .5f;
             factor = (random & 1) ? .75 : .5;
             random = rand();
             bh_round_float(&spin, ((double)random - 16384) * (1.0 / 16384));
             random = rand();
             bh_round_float(&angle, (double)random * (1.0 / 512));
-            bh_script_particle_create(b->particles, image, 3, &point, &velocity, &acceleration, .1f, angle, 8, spin,
+            bh_script_particle_create(effects->particles, image, 3, &point, &velocity, &acceleration, .1f, angle, 8, spin,
                                       .9f, .95f, duration, (float)factor);
             random = rand();
             if (random & 1)
@@ -211,13 +211,13 @@ static int hitscan(BHWeaponPulseContext *ctx, BHEntity *player, const BHVec3 *po
             offset(&a, &point, &normal, -.5);
             random = rand();
             bh_round_float(&duration, .7 - (double)random * (-1.52587890625e-6));
-            contact = bh_contact_impact_create(b->contacts, &a, &normal, 4);
+            contact = bh_contact_impact_create(effects->contacts, &a, &normal, 4);
             if (contact)
             {
-                impact = bh_contact_impact_state(b->contacts, contact);
+                impact = bh_contact_impact_state(effects->contacts, contact);
                 impact->duration = duration;
                 impact->size = 7;
-                bh_sound_request(b->sound, b->liquid_sound, (float)(7.0 / 6.0), (float)(1.0 / duration), &a, &zero);
+                bh_sound_request(effects->sound, effects->liquid_sound, (float)(7.0 / 6.0), (float)(1.0 / duration), &a, &zero);
             }
         }
     }
@@ -229,9 +229,9 @@ static int hitscan(BHWeaponPulseContext *ctx, BHEntity *player, const BHVec3 *po
     for (i = 0; i < 3; ++i)
         bh_round_float(out + i, factor * r[i] + h[i]);
     offset(&trail_end, &trail, &direction, -3);
-    bh_draw_segment(b->particles->queue, 3, ctx->trail_image, &trail, &trail_end, .3f, .01f, .5f, 0, 0);
+    bh_draw_segment(effects->particles->queue, 3, ctx->trail_image, &trail, &trail_end, .3f, .01f, .5f, 0, 0);
     offset(&trail_end, &trail, &direction, 3);
-    bh_draw_segment(b->particles->queue, 3, ctx->trail_image, &trail, &trail_end, .3f, .01f, .5f, 0, 0);
+    bh_draw_segment(effects->particles->queue, 3, ctx->trail_image, &trail, &trail_end, .3f, .01f, .5f, 0, 0);
     return ctx->error == 0;
 }
 
@@ -241,10 +241,10 @@ static void add(BHVec3 *out, const BHVec3 *a, const BHVec3 *b, double factor)
     for (i = 0; i < 3; ++i)
         ((float *)out)[i] = rf((double)((const float *)a)[i] + ((const float *)b)[i] * factor);
 }
-static void identity(BHMat34 *m)
+static void identity(BHMat34 *matrix)
 {
-    memset(m, 0, sizeof(*m));
-    m->m[0][0] = m->m[1][1] = m->m[2][2] = 1;
+    memset(matrix, 0, sizeof(*matrix));
+    matrix->m[0][0] = matrix->m[1][1] = matrix->m[2][2] = 1;
 }
 static int shot(BHRemoteFire *fire, BHEntity *entity, short tick, short previous, unsigned long type, BHEntity *target)
 {

@@ -12,29 +12,29 @@ static float stored(double x)
     bh_round_float(&value, x);
     return value;
 }
-static float component(const BHVec3 *v, int i)
+static float component(const BHVec3 *vector, int i)
 {
-    return i == 0 ? v->x : i == 1 ? v->y : v->z;
+    return i == 0 ? vector->x : i == 1 ? vector->y : vector->z;
 }
-static void put(BHVec3 *v, int i, double x)
+static void put(BHVec3 *vector, int i, double x)
 {
     float f = stored(x);
     if (i == 0)
-        v->x = f;
+        vector->x = f;
     else if (i == 1)
-        v->y = f;
+        vector->y = f;
     else
-        v->z = f;
+        vector->z = f;
 }
-static BHVec3 history(const BHCameraModeState *s)
+static BHVec3 history(const BHCameraModeState *state)
 {
-    BHVec3 v;
-    memcpy(&v, s->mode_data, 12);
-    return v;
+    BHVec3 position;
+    memcpy(&position, state->mode_data, 12);
+    return position;
 }
-static void remember(BHCameraModeState *s, const BHVec3 *p)
+static void remember(BHCameraModeState *state, const BHVec3 *position)
 {
-    memcpy(s->mode_data, p, 12);
+    memcpy(state->mode_data, position, 12);
 }
 
 void bh_camera_look_at(BHVec3 *angles, const BHVec3 *target, const BHVec3 *eye, const BHVec3 *up)
@@ -63,35 +63,36 @@ void bh_camera_look_at(BHVec3 *angles, const BHVec3 *target, const BHVec3 *eye, 
     *angles = result;
 }
 
-void bh_camera_mode_0(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
+void bh_camera_mode_0(BHCameraStateContext *context, BHCameraModeState *state, const BHCameraInput *in)
 {
-    BHVec3 p;
+    BHVec3 position;
     int i;
     for (i = 0; i < 3; ++i)
-        put(&p, i, (double)component(&in->target, i) - (double)component(&in->basis_y, i) * .3);
-    bh_camera_mode_smooth(c, s, &p, &in->angles, .05, .5);
+        put(&position, i, (double)component(&in->target, i) - (double)component(&in->basis_y, i) * .3);
+    bh_camera_mode_smooth(context, state, &position, &in->angles, .05, .5);
 }
-static void chase(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in, double pr, double ar)
+static void chase(BHCameraStateContext *context, BHCameraModeState *state, const BHCameraInput *in,
+                  double position_rate, double angle_rate)
 {
-    BHVec3 p;
+    BHVec3 position;
     int i;
     for (i = 0; i < 3; ++i)
-        put(&p, i,
+        put(&position, i,
             (double)component(&in->basis_y, i) * -2.5 +
                 stored((double)component(&in->basis_z, i) * -7.5 + component(&in->target, i)));
-    bh_camera_mode_smooth(c, s, &p, &in->angles, pr, ar);
+    bh_camera_mode_smooth(context, state, &position, &in->angles, position_rate, angle_rate);
 }
-void bh_camera_mode_1(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
+void bh_camera_mode_1(BHCameraStateContext *context, BHCameraModeState *state, const BHCameraInput *in)
 {
-    chase(c, s, in, .8, .9);
+    chase(context, state, in, .8, .9);
 }
-void bh_camera_mode_10(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
+void bh_camera_mode_10(BHCameraStateContext *context, BHCameraModeState *state, const BHCameraInput *in)
 {
-    chase(c, s, in, .85, .98);
+    chase(context, state, in, .85, .98);
 }
-void bh_camera_mode_2(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
+void bh_camera_mode_2(BHCameraStateContext *context, BHCameraModeState *state, const BHCameraInput *in)
 {
-    BHVec3 p, a;
+    BHVec3 position, angles;
     double z;
     int i;
     for (i = 0; i < 3; ++i)
@@ -99,61 +100,61 @@ void bh_camera_mode_2(BHCameraStateContext *c, BHCameraModeState *s, const BHCam
         z = (double)component(&in->basis_z, i) * 15;
         if (i)
             z = stored(z);
-        put(&p, i, z + component(&in->target, i) + stored((double)component(&in->basis_y, i) * 2));
+        put(&position, i, z + component(&in->target, i) + stored((double)component(&in->basis_y, i) * 2));
     }
-    a.x = stored((double)in->angles.x - (-3.14159265358979323846));
-    a.y = -in->angles.y;
-    a.z = -in->angles.z;
-    bh_camera_mode_smooth(c, s, &p, &a, .5, .5);
+    angles.x = stored((double)in->angles.x - (-3.14159265358979323846));
+    angles.y = -in->angles.y;
+    angles.z = -in->angles.z;
+    bh_camera_mode_smooth(context, state, &position, &angles, .5, .5);
 }
-void bh_camera_mode_3(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
+void bh_camera_mode_3(BHCameraStateContext *context, BHCameraModeState *state, const BHCameraInput *in)
 {
-    BHVec3 p = in->target, a;
-    p.y = stored((double)p.y - 15);
-    a.x = in->angles.x;
-    a.y = -1.5707963705062866f;
-    a.z = 0;
-    bh_camera_mode_smooth(c, s, &p, &a, .5, .5);
+    BHVec3 position = in->target, angles;
+    position.y = stored((double)position.y - 15);
+    angles.x = in->angles.x;
+    angles.y = -1.5707963705062866f;
+    angles.z = 0;
+    bh_camera_mode_smooth(context, state, &position, &angles, .5, .5);
 }
-void bh_camera_mode_4(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
+void bh_camera_mode_4(BHCameraStateContext *context, BHCameraModeState *state, const BHCameraInput *in)
 {
-    BHVec3 p, a;
+    BHVec3 position, angles;
     double co = cos((double)in->angles.x), si = sin((double)in->angles.x);
-    p.x = stored((double)in->target.x - co * 15);
-    p.y = in->target.y;
-    p.z = stored((double)in->target.z - si * -15);
-    a.x = stored((double)in->angles.x - (-1.5707963267948966));
-    a.y = a.z = 0;
-    bh_camera_mode_smooth(c, s, &p, &a, .5, .5);
+    position.x = stored((double)in->target.x - co * 15);
+    position.y = in->target.y;
+    position.z = stored((double)in->target.z - si * -15);
+    angles.x = stored((double)in->angles.x - (-1.5707963267948966));
+    angles.y = angles.z = 0;
+    bh_camera_mode_smooth(context, state, &position, &angles, .5, .5);
 }
-void bh_camera_mode_5(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
+void bh_camera_mode_5(BHCameraStateContext *context, BHCameraModeState *state, const BHCameraInput *in)
 {
-    BHVec3 p, a;
+    BHVec3 position, angles;
     double co = cos((double)in->angles.x), si = sin((double)in->angles.x);
-    p.x = stored((double)in->target.x - co * -15);
-    p.y = in->target.y;
-    p.z = stored((double)in->target.z - si * 15);
-    a.x = stored((double)in->angles.x - 1.5707963267948966);
-    a.y = a.z = 0;
-    bh_camera_mode_smooth(c, s, &p, &a, .5, .5);
+    position.x = stored((double)in->target.x - co * -15);
+    position.y = in->target.y;
+    position.z = stored((double)in->target.z - si * 15);
+    angles.x = stored((double)in->angles.x - 1.5707963267948966);
+    angles.y = angles.z = 0;
+    bh_camera_mode_smooth(context, state, &position, &angles, .5, .5);
 }
-void bh_camera_mode_6(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
+void bh_camera_mode_6(BHCameraStateContext *context, BHCameraModeState *state, const BHCameraInput *in)
 {
-    BHVec3 p = in->target, a;
-    p.y = stored((double)p.y - (-15));
-    a.x = in->angles.x;
-    a.y = 1.5707963705062866f;
-    a.z = 0;
-    bh_camera_mode_smooth(c, s, &p, &a, .5, .5);
+    BHVec3 position = in->target, angles;
+    position.y = stored((double)position.y - (-15));
+    angles.x = in->angles.x;
+    angles.y = 1.5707963705062866f;
+    angles.z = 0;
+    bh_camera_mode_smooth(context, state, &position, &angles, .5, .5);
 }
-void bh_camera_mode_7(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
+void bh_camera_mode_7(BHCameraStateContext *context, BHCameraModeState *state, const BHCameraInput *in)
 {
-    BHVec3 previous, d, p, a;
+    BHVec3 previous, d, position, angles;
     double scale, raw[3], motion;
     int i;
-    if (s->first_update)
-        remember(s, &in->target);
-    previous = history(s);
+    if (state->first_update)
+        remember(state, &in->target);
+    previous = history(state);
     for (i = 0; i < 3; ++i)
     {
         motion = ((double)component(&in->target, i) - component(&previous, i)) * -30;
@@ -168,65 +169,68 @@ void bh_camera_mode_7(BHCameraStateContext *c, BHCameraModeState *s, const BHCam
         motion = (double)component(&d, i) * scale;
         if (i)
             motion = stored(motion);
-        put(&p, i, motion + component(&in->target, i));
+        put(&position, i, motion + component(&in->target, i));
     }
-    bh_camera_look_at(&a, &in->target, &p, &in->basis_y);
-    bh_camera_mode_smooth(c, s, &p, &a, .965, .95);
-    remember(s, &in->target);
+    bh_camera_look_at(&angles, &in->target, &position, &in->basis_y);
+    bh_camera_mode_smooth(context, state, &position, &angles, .965, .95);
+    remember(state, &in->target);
 }
-static double movement_radius(const BHVec3 *p, const BHVec3 *previous)
+static double movement_radius(const BHVec3 *position, const BHVec3 *previous)
 {
-    double x = (double)p->x - previous->x, y = (double)p->y - previous->y, z = (double)p->z - previous->z;
+    double x = (double)position->x - previous->x,
+           y = (double)position->y - previous->y,
+           z = (double)position->z - previous->z;
     return 10 - sqrt((x * stored(x) + y * y) + z * stored(z)) * -30;
 }
-void bh_camera_mode_8(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
+void bh_camera_mode_8(BHCameraStateContext *context, BHCameraModeState *state, const BHCameraInput *in)
 {
-    BHVec3 old, p, a, up = {0, 1, 0};
+    BHVec3 old, position, angles, up = {0, 1, 0};
     double phase, range, si, co;
     float radius;
-    if (s->first_update)
-        remember(s, &in->target);
-    old = history(s);
-    phase = (double)s->seed_yaw + c->elapsed;
+    if (state->first_update)
+        remember(state, &in->target);
+    old = history(state);
+    phase = (double)state->seed_yaw + context->elapsed;
     range = movement_radius(&in->target, &old);
     radius = stored(range);
     si = sin(phase);
     co = cos(phase);
-    p.x = stored((double)radius * si + in->target.x);
-    p.y = stored((double)in->target.y + stored((sin(c->elapsed * 1.3) * cos(c->elapsed * 1.7)) * range * .1));
-    p.z = stored((double)in->target.z + stored((double)radius * co));
-    bh_camera_look_at(&a, &in->target, &p, &up);
-    bh_camera_mode_smooth(c, s, &p, &a, .5, .5);
-    remember(s, &in->target);
+    position.x = stored((double)radius * si + in->target.x);
+    position.y = stored((double)in->target.y +
+                        stored((sin(context->elapsed * 1.3) * cos(context->elapsed * 1.7)) * range * .1));
+    position.z = stored((double)in->target.z + stored((double)radius * co));
+    bh_camera_look_at(&angles, &in->target, &position, &up);
+    bh_camera_mode_smooth(context, state, &position, &angles, .5, .5);
+    remember(state, &in->target);
 }
-void bh_camera_mode_11(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
+void bh_camera_mode_11(BHCameraStateContext *context, BHCameraModeState *state, const BHCameraInput *in)
 {
-    BHVec3 old, p, a, up = {0, 1, 0};
+    BHVec3 old, position, angles, up = {0, 1, 0};
     double phase, warped, range;
     float radius, t;
-    if (s->first_update)
-        remember(s, &in->target);
-    old = history(s);
-    warped = (c->elapsed - sin(c->elapsed * 3.7) * -0.2631578947368421) * .65;
+    if (state->first_update)
+        remember(state, &in->target);
+    old = history(state);
+    warped = (context->elapsed - sin(context->elapsed * 3.7) * -0.2631578947368421) * .65;
     t = stored(warped);
     range = movement_radius(&in->target, &old);
     radius = stored(range);
-    phase = (double)s->seed_yaw + t;
-    p.x = stored(sin(phase) * radius + in->target.x);
-    p.y = stored((double)in->target.y + stored((sin(warped * 1.3) * cos((double)t * 1.7)) * range * .1));
-    p.z = stored((double)in->target.z + stored((double)radius * cos((double)stored(phase))));
-    bh_camera_look_at(&a, &in->target, &p, &up);
-    bh_camera_mode_smooth(c, s, &p, &a, .5, .95);
-    remember(s, &in->target);
+    phase = (double)state->seed_yaw + t;
+    position.x = stored(sin(phase) * radius + in->target.x);
+    position.y = stored((double)in->target.y + stored((sin(warped * 1.3) * cos((double)t * 1.7)) * range * .1));
+    position.z = stored((double)in->target.z + stored((double)radius * cos((double)stored(phase))));
+    bh_camera_look_at(&angles, &in->target, &position, &up);
+    bh_camera_mode_smooth(context, state, &position, &angles, .5, .95);
+    remember(state, &in->target);
 }
-void bh_camera_mode_9(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
+void bh_camera_mode_9(BHCameraStateContext *context, BHCameraModeState *state, const BHCameraInput *in)
 {
-    BHVec3 old, d, p, a, up = {0, 1, 0};
+    BHVec3 old, d, position, angles, up = {0, 1, 0};
     double scale, distance, raw[3], v, base_x;
     int i;
-    if (s->first_update)
+    if (state->first_update)
     {
-        remember(s, &in->target);
+        remember(state, &in->target);
         for (i = 0; i < 3; ++i)
         {
             raw[i] = (double)component(&in->basis_z, i) * .02 * 75;
@@ -238,17 +242,17 @@ void bh_camera_mode_9(BHCameraStateContext *c, BHCameraModeState *s, const BHCam
             v = (double)component(&d, i) * scale;
             if (i == 1)
                 v = stored(v);
-            put(&s->position, i, v + component(&in->target, i));
+            put(&state->position, i, v + component(&in->target, i));
         }
     }
     for (i = 0; i < 3; ++i)
-        raw[i] = (double)component(&in->target, i) - component(&s->position, i);
+        raw[i] = (double)component(&in->target, i) - component(&state->position, i);
     distance = sqrt((raw[0] * raw[0] + raw[1] * stored(raw[1])) + raw[2] * stored(raw[2]));
     if (distance <= 75)
-        p = s->position;
+        position = state->position;
     else
     {
-        old = history(s);
+        old = history(state);
         for (i = 0; i < 3; ++i)
         {
             v = (double)component(&in->target, i) - component(&old, i);
@@ -259,23 +263,23 @@ void bh_camera_mode_9(BHCameraStateContext *c, BHCameraModeState *s, const BHCam
         }
         scale = 50 / sqrt((raw[0] * d.x + raw[1] * d.y) + raw[2] * raw[2]);
         base_x = (double)d.x * scale + in->target.x;
-        p.x = stored(base_x);
-        p.y = stored((double)in->target.y + stored((double)d.y * scale));
-        p.z = stored((double)in->target.z + stored(raw[2] * scale));
+        position.x = stored(base_x);
+        position.y = stored((double)in->target.y + stored((double)d.y * scale));
+        position.z = stored((double)in->target.z + stored(raw[2] * scale));
         for (i = 0; i < 3; ++i)
-            put(&p, i, (i ? component(&p, i) : base_x) - ((double)rand() - 16384) * -0.00048828125);
+            put(&position, i, (i ? component(&position, i) : base_x) - ((double)rand() - 16384) * -0.00048828125);
     }
-    bh_camera_look_at(&a, &in->target, &p, &up);
-    bh_camera_mode_smooth(c, s, &p, &a, 0, 0);
-    remember(s, &in->target);
+    bh_camera_look_at(&angles, &in->target, &position, &up);
+    bh_camera_mode_smooth(context, state, &position, &angles, 0, 0);
+    remember(state, &in->target);
 }
-int bh_camera_mode_update(BHCameraStateContext *c, BHCameraModeState *s, const BHCameraInput *in)
+int bh_camera_mode_update(BHCameraStateContext *context, BHCameraModeState *state, const BHCameraInput *in)
 {
     static void (*const modes[12])(BHCameraStateContext *, BHCameraModeState *, const BHCameraInput *) = {
         bh_camera_mode_0, bh_camera_mode_1, bh_camera_mode_2, bh_camera_mode_3, bh_camera_mode_4,  bh_camera_mode_5,
         bh_camera_mode_6, bh_camera_mode_7, bh_camera_mode_8, bh_camera_mode_9, bh_camera_mode_10, bh_camera_mode_11};
-    if (!c || !s || !in || s->mode < 0 || s->mode >= 12)
+    if (!context || !state || !in || state->mode < 0 || state->mode >= 12)
         return 0;
-    modes[s->mode](c, s, in);
+    modes[state->mode](context, state, in);
     return 1;
 }

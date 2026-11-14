@@ -9,32 +9,32 @@ static float stored(double value)
     bh_round_float(&result, value);
     return result;
 }
-static int vector_ok(const BHVec3 *v)
+static int vector_ok(const BHVec3 *vector)
 {
-    return v && _finite(v->x) && _finite(v->y) && _finite(v->z);
+    return vector && _finite(vector->x) && _finite(vector->y) && _finite(vector->z);
 }
-static int search(const BHActorBasisGroup *g, const BHActorBasisScale *s, unsigned long n, const BHVec3 *v, int *first,
+static int search(const BHActorBasisGroup *g, const BHActorBasisScale *s, unsigned long n, const BHVec3 *vector, int *first,
                   int *second, float *a, float *b, int torque)
 {
     unsigned long i, j;
     float best, p, q, d, den, x, y;
     double wa, wb, rx, ry, rz, length;
-    const BHVec3 *u, *w, *raw_u, *raw_w;
+    const BHVec3 *first_unit, *second_unit, *raw_u, *raw_w;
     *a = 0;
     *b = 0;
     *first = 0;
     *second = 0;
-    best = stored(sqrt(((double)v->x * v->x + (double)v->z * v->z) + (double)v->y * v->y));
+    best = stored(sqrt(((double)vector->x * vector->x + (double)vector->z * vector->z) + (double)vector->y * vector->y));
     for (i = 0; i < n; ++i)
         for (j = i + 1; j < n; ++j)
         {
-            u = torque ? &g[i].unit_torque : &g[i].unit_direction;
-            w = torque ? &g[j].unit_torque : &g[j].unit_direction;
+            first_unit = torque ? &g[i].unit_torque : &g[i].unit_direction;
+            second_unit = torque ? &g[j].unit_torque : &g[j].unit_direction;
             raw_u = torque ? &g[i].torque : &g[i].direction;
             raw_w = torque ? &g[j].torque : &g[j].direction;
-            p = stored(((double)u->x * v->x + (double)u->y * v->y) + (double)u->z * v->z);
-            q = stored(((double)w->x * v->x + (double)w->z * v->z) + (double)w->y * v->y);
-            d = stored(((double)u->x * w->x + (double)u->y * w->y) + (double)u->z * w->z);
+            p = stored(((double)first_unit->x * vector->x + (double)first_unit->y * vector->y) + (double)first_unit->z * vector->z);
+            q = stored(((double)second_unit->x * vector->x + (double)second_unit->z * vector->z) + (double)second_unit->y * vector->y);
+            d = stored(((double)first_unit->x * second_unit->x + (double)first_unit->y * second_unit->y) + (double)first_unit->z * second_unit->z);
             den = stored(1.0 - (double)d * d);
             if (!(den > 0))
                 continue;
@@ -51,9 +51,9 @@ static int search(const BHActorBasisGroup *g, const BHActorBasisScale *s, unsign
             wb = (double)y * (torque ? s[j].torque : s[j].direction);
             if (wb > 1000000.0)
                 wb = 1000000;
-            rx = (double)raw_u->x * x + (double)raw_w->x * wb + v->x;
-            ry = (double)v->y + (double)raw_u->y * x + (double)raw_w->y * wb;
-            rz = (double)v->z + (double)raw_u->z * x + (double)raw_w->z * wb;
+            rx = (double)raw_u->x * x + (double)raw_w->x * wb + vector->x;
+            ry = (double)vector->y + (double)raw_u->y * x + (double)raw_w->y * wb;
+            rz = (double)vector->z + (double)raw_u->z * x + (double)raw_w->z * wb;
             length = sqrt(rx * stored(rx) + ry * stored(ry) + rz * stored(rz));
             if (length < best)
             {

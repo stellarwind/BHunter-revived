@@ -2,10 +2,10 @@
 #include "../../Math/bh_round.h"
 #include <float.h>
 #include <string.h>
-static int fail(BHModelDrawLitContext *c, BHModelDrawLitError error)
+static int fail(BHModelDrawLitContext *context, BHModelDrawLitError error)
 {
-    if (c)
-        c->error = error;
+    if (context)
+        context->error = error;
     return 0;
 }
 int bh_model_draw_lit_context_init(BHModelDrawLitContext *c, BHModelDrawContext *draw, const BHLightContext *prepared,
@@ -45,16 +45,16 @@ int bh_model_draw_lit_context_init(BHModelDrawLitContext *c, BHModelDrawContext 
     return 1;
 }
 /* This owner has different x87 sum scheduling from00458470. */
-static double lit_support(const BHBspNode *node, const BHViewPlane *p, int maximum)
+static double lit_support(const BHBspNode *node, const BHViewPlane *view_plane, int maximum)
 {
     double x, y, z;
-    float nx = p->normal.x, ny = p->normal.y, nz = p->normal.z;
+    float nx = view_plane->normal.x, ny = view_plane->normal.y, nz = view_plane->normal.z;
     x = (double)nx * ((maximum ? (nx >= 0) : (nx < 0)) ? node->maximum[0] : node->minimum[0]);
     y = (double)ny * ((maximum ? (ny >= 0) : (ny < 0)) ? node->maximum[1] : node->minimum[1]);
     z = (double)nz * ((maximum ? (nz >= 0) : (nz < 0)) ? node->maximum[2] : node->minimum[2]);
     if (maximum ? (ny < 0 && nz >= 0) : (ny >= 0 && nz < 0))
-        return (z + (x + y)) - p->offset;
-    return (y + (x + z)) - p->offset;
+        return (z + (x + y)) - view_plane->offset;
+    return (y + (x + z)) - view_plane->offset;
 }
 static int truncate_channel(double value, unsigned long *out)
 {
@@ -65,31 +65,31 @@ static int truncate_channel(double value, unsigned long *out)
     *out = n < 0 ? 0 : n > 255 ? 255 : (unsigned long)n;
     return 1;
 }
-static int shade(BHModelDrawLitContext *c, const BHBspNode *node)
+static int shade(BHModelDrawLitContext *context, const BHBspNode *node)
 {
     BHVec3 point, normal;
     unsigned long dynamic = 0, red = 0, green = 0, blue = 0;
     double alignment, side;
-    BHModelDrawContext *draw = c->draw;
+    BHModelDrawContext *draw = context->draw;
     normal.x = node->normal[0];
     normal.y = node->normal[1];
     normal.z = node->normal[2];
-    if (c->point_enabled)
+    if (context->point_enabled)
     {
         bh_round_float(&point.x, ((double)node->minimum[0] + node->maximum[0]) * .5);
         bh_round_float(&point.y, ((double)node->minimum[1] + node->maximum[1]) * .5);
         bh_round_float(&point.z, ((double)node->minimum[2] + node->maximum[2]) * .5);
-        if (!bh_light_evaluate_prepared(c->prepared, &point, &normal, c->scale, &dynamic))
-            return fail(c, BH_MODEL_DRAW_LIT_LIGHT);
+        if (!bh_light_evaluate_prepared(context->prepared, &point, &normal, context->scale, &dynamic))
+            return fail(context, BH_MODEL_DRAW_LIT_LIGHT);
         red = (dynamic >> 16) & 255;
         green = (dynamic >> 8) & 255;
         blue = dynamic & 255;
     }
-    if (c->directional->enabled)
+    if (context->directional->enabled)
     {
-        alignment = (((double)normal.x * c->local_direction.x + (double)normal.y * c->local_direction.y) +
-                     (double)normal.z * c->local_direction.z) *
-                    c->scale;
+        alignment = (((double)normal.x * context->local_direction.x + (double)normal.y * context->local_direction.y) +
+                     (double)normal.z * context->local_direction.z) *
+                    context->scale;
         side = ((double)normal.z * draw->view->position.z + (double)normal.y * draw->view->position.y) +
                (double)normal.x * draw->view->position.x + node->plane;
         /* 0045a403 takes the negative-side branch to0045a5d8; that path
@@ -98,29 +98,29 @@ static int shade(BHModelDrawLitContext *c, const BHBspNode *node)
             alignment = -alignment;
         if (alignment < 0)
             alignment = 0;
-        if (!truncate_channel((alignment * c->directional->directional[0] + red) + c->directional->ambient[0], &red) ||
-            !truncate_channel((alignment * c->directional->directional[1] + green) + c->directional->ambient[1],
+        if (!truncate_channel((alignment * context->directional->directional[0] + red) + context->directional->ambient[0], &red) ||
+            !truncate_channel((alignment * context->directional->directional[1] + green) + context->directional->ambient[1],
                               &green) ||
-            !truncate_channel((alignment * c->directional->directional[2] + blue) + c->directional->ambient[2], &blue))
-            return fail(c, BH_MODEL_DRAW_LIT_NUMERICAL);
+            !truncate_channel((alignment * context->directional->directional[2] + blue) + context->directional->ambient[2], &blue))
+            return fail(context, BH_MODEL_DRAW_LIT_NUMERICAL);
     }
-    draw->color = ((red * 256 + green) * 256 + blue) + c->base_color;
-    ++c->nodes_shaded;
+    draw->color = ((red * 256 + green) * 256 + blue) + context->base_color;
+    ++context->nodes_shaded;
     return 1;
 }
-int bh_model_draw_lit(BHModelDrawLitContext *c, long node, unsigned long mask)
+int bh_model_draw_lit(BHModelDrawLitContext *context, long node, unsigned long mask)
 {
     BHModelDrawContext *draw;
     unsigned long count = 1, slot, bit;
     BHModelDrawTask *task;
-    const BHBspNode *n;
+    const BHBspNode *bsp_node;
     double side;
-    if (!c || !c->draw || !c->directional)
-        return fail(c, BH_MODEL_DRAW_LIT_ARGUMENT);
-    draw = c->draw;
+    if (!context || !context->draw || !context->directional)
+        return fail(context, BH_MODEL_DRAW_LIT_ARGUMENT);
+    draw = context->draw;
     if (!draw->model || !draw->cache || !draw->cache->tasks || !draw->view)
-        return fail(c, BH_MODEL_DRAW_LIT_ARGUMENT);
-    c->error = BH_MODEL_DRAW_LIT_OK;
+        return fail(context, BH_MODEL_DRAW_LIT_ARGUMENT);
+    context->error = BH_MODEL_DRAW_LIT_OK;
     draw->error = BH_MODEL_DRAW_OK;
     draw->cache->tasks[0].node = node;
     draw->cache->tasks[0].mask = mask;
@@ -130,11 +130,11 @@ int bh_model_draw_lit(BHModelDrawLitContext *c, long node, unsigned long mask)
         task = draw->cache->tasks + count - 1;
         if (task->phase)
         {
-            n = draw->model->nodes + task->node;
-            if (!shade(c, n))
+            bsp_node = draw->model->nodes + task->node;
+            if (!shade(context, bsp_node))
                 return 0;
             if (!bh_model_draw_leaf_chain(draw, task->leaf))
-                return fail(c, BH_MODEL_DRAW_LIT_DRAW);
+                return fail(context, BH_MODEL_DRAW_LIT_DRAW);
             task->node = task->tail;
             task->phase = 0;
             continue;
@@ -145,12 +145,12 @@ int bh_model_draw_lit(BHModelDrawLitContext *c, long node, unsigned long mask)
             continue;
         }
         if ((unsigned long)task->node >= draw->model->node_count)
-            return fail(c, BH_MODEL_DRAW_LIT_ARGUMENT);
-        n = draw->model->nodes + task->node;
+            return fail(context, BH_MODEL_DRAW_LIT_ARGUMENT);
+        bsp_node = draw->model->nodes + task->node;
         ++draw->nodes_visited;
         for (slot = 0, bit = 1; slot < 6; ++slot, bit *= 2)
             if (task->mask & bit)
-                if (lit_support(n, draw->view->planes + slot, 0) >= 0)
+                if (lit_support(bsp_node, draw->view->planes + slot, 0) >= 0)
                     break;
         if (slot < 6)
         {
@@ -159,25 +159,25 @@ int bh_model_draw_lit(BHModelDrawLitContext *c, long node, unsigned long mask)
         }
         for (slot = 0, bit = 1; slot < 6; ++slot, bit *= 2)
             if (task->mask & bit)
-                if (lit_support(n, draw->view->planes + slot, 1) < 0)
+                if (lit_support(bsp_node, draw->view->planes + slot, 1) < 0)
                     task->mask &= (0xffffUL ^ bit);
-        side = ((double)n->normal[2] * draw->view->position.z + (double)n->normal[1] * draw->view->position.y) +
-               (double)n->normal[0] * draw->view->position.x + n->plane;
+        side = ((double)bsp_node->normal[2] * draw->view->position.z + (double)bsp_node->normal[1] * draw->view->position.y) +
+               (double)bsp_node->normal[0] * draw->view->position.x + bsp_node->plane;
         task->phase = 1;
         if (side < 0)
         {
-            task->leaf = n->back_leaf;
-            task->tail = n->back_node;
-            node = n->front_node;
+            task->leaf = bsp_node->back_leaf;
+            task->tail = bsp_node->back_node;
+            node = bsp_node->front_node;
         }
         else
         {
-            task->leaf = n->front_leaf;
-            task->tail = n->front_node;
-            node = n->back_node;
+            task->leaf = bsp_node->front_leaf;
+            task->tail = bsp_node->front_node;
+            node = bsp_node->back_node;
         }
         if (count >= draw->cache->task_capacity)
-            return fail(c, BH_MODEL_DRAW_LIT_ARGUMENT);
+            return fail(context, BH_MODEL_DRAW_LIT_ARGUMENT);
         draw->cache->tasks[count].node = node;
         draw->cache->tasks[count].mask = task->mask;
         draw->cache->tasks[count].phase = 0;

@@ -19,17 +19,17 @@ static int live(BHEntityPool *p, BHEntity *e)
 {
     return bh_entity_is_active(p, e);
 }
-static void identity(BHMat34 *m)
+static void identity(BHMat34 *matrix)
 {
-    memset(m, 0, sizeof(*m));
-    m->m[0][0] = m->m[1][1] = m->m[2][2] = 1;
+    memset(matrix, 0, sizeof(*matrix));
+    matrix->m[0][0] = matrix->m[1][1] = matrix->m[2][2] = 1;
 }
-int bh_world_reset(BHWorldReset *c)
+int bh_world_reset(BHWorldReset *world_reset)
 {
-    BHWorldResetNode *n;
+    BHWorldResetNode *world_reset_node;
     BHEntityPool *pool;
-    BHEntity *e, *timer;
-    BHWorldGeometry *w;
+    BHEntity *entity, *timer;
+    BHWorldGeometry *world;
     BHScriptMotionActor motion;
     BHScriptLifetimeState life;
     BHScriptVMState vm;
@@ -37,62 +37,62 @@ int bh_world_reset(BHWorldReset *c)
     unsigned long i, j, next;
     float angle, dx, dy;
     double dz;
-    if (!c || !c->vm || !c->vm->lifetime || !(pool = c->vm->lifetime->timers.pool) || !c->nodes || !c->count ||
-        c->count > 65535 || !c->loot_rows || !bh_math_environment_supported())
+    if (!world_reset || !world_reset->vm || !world_reset->vm->lifetime || !(pool = world_reset->vm->lifetime->timers.pool) || !world_reset->nodes || !world_reset->count ||
+        world_reset->count > 65535 || !world_reset->loot_rows || !bh_math_environment_supported())
     {
-        if (c)
-            c->error = 1;
+        if (world_reset)
+            world_reset->error = 1;
         return 0;
     }
-    c->error = 0;
-    c->timers = c->immediate = 0;
-    for (i = 0; i < c->count; ++i)
-        if (!c->nodes[i].entity || !c->nodes[i].placement || !c->nodes[i].definition || !live(pool, c->nodes[i].entity))
+    world_reset->error = 0;
+    world_reset->timers = world_reset->immediate = 0;
+    for (i = 0; i < world_reset->count; ++i)
+        if (!world_reset->nodes[i].entity || !world_reset->nodes[i].placement || !world_reset->nodes[i].definition || !live(pool, world_reset->nodes[i].entity))
         {
-            c->error = 1;
+            world_reset->error = 1;
             return 0;
         }
-    for (i = 0; i < c->count; ++i)
+    for (i = 0; i < world_reset->count; ++i)
     {
-        n = c->nodes + i;
-        next = (i + 1) % c->count;
-        if (n->placement->geometry.navigation.next != &c->nodes[next].placement->geometry.navigation ||
-            n->placement->geometry.previous != &c->nodes[(i + c->count - 1) % c->count].placement->geometry)
+        world_reset_node = world_reset->nodes + i;
+        next = (i + 1) % world_reset->count;
+        if (world_reset_node->placement->geometry.navigation.next != &world_reset->nodes[next].placement->geometry.navigation ||
+            world_reset_node->placement->geometry.previous != &world_reset->nodes[(i + world_reset->count - 1) % world_reset->count].placement->geometry)
         {
-            c->error = 1;
+            world_reset->error = 1;
             return 0;
         }
     }
-    memset(c->loot_rows, 0, 4 * 32 * 4);
-    for (i = 0; i < c->count; ++i)
+    memset(world_reset->loot_rows, 0, 4 * 32 * 4);
+    for (i = 0; i < world_reset->count; ++i)
     {
-        n = c->nodes + i;
-        e = n->entity;
-        w = &n->placement->geometry;
-        old = e->position;
-        bh_script_motion_actor_read(e, &motion);
-        angle = stored((w->flags & 3UL) * 1.5707963267948966);
+        world_reset_node = world_reset->nodes + i;
+        entity = world_reset_node->entity;
+        world = &world_reset_node->placement->geometry;
+        old = entity->position;
+        bh_script_motion_actor_read(entity, &motion);
+        angle = stored((world->flags & 3UL) * 1.5707963267948966);
         motion.angles.x = angle;
         motion.angles.y = motion.angles.z = 0;
         for (j = 0; j < 3; ++j)
         {
-            ((float *)&position)[j] = stored((double)n->placement->coordinates[j]);
+            ((float *)&position)[j] = stored((double)world_reset_node->placement->coordinates[j]);
             if (!_finite(((float *)&old)[j]) || !_finite(((float *)&motion.minimum)[j]) ||
                 !_finite(((float *)&motion.maximum)[j]))
             {
-                c->error = 3;
+                world_reset->error = 3;
                 return 0;
             }
         }
-        e->position = position;
+        entity->position = position;
         identity(&motion.local_to_world);
         bh_mat34_translate_local(position.x, position.y, position.z, &motion.local_to_world);
         bh_mat34_rotate_y(angle, &motion.local_to_world);
         identity(&motion.world_to_local);
         bh_mat34_rotate_y(-angle, &motion.world_to_local);
         bh_mat34_translate_local(-position.x, -position.y, -position.z, &motion.world_to_local);
-        bh_field_store_u32(&e->placement.damage, 0);
-        bh_field_store_u32(&e->placement.damage_source, 0);
+        bh_field_store_u32(&entity->placement.damage, 0);
+        bh_field_store_u32(&entity->placement.damage_source, 0);
         dx = stored((double)old.x - position.x);
         dy = stored((double)old.y - position.y);
         dz = (double)old.z - position.z;
@@ -102,53 +102,53 @@ int bh_world_reset(BHWorldReset *c)
         motion.maximum.y = stored((double)motion.maximum.y - dy);
         motion.minimum.z = stored((double)motion.minimum.z - dz);
         motion.maximum.z = stored((double)motion.maximum.z - dz);
-        e->origin = zero;
-        bh_field_store_u32(&e->placement.query_flags, n->definition->flags);
-        bh_script_motion_actor_write(e, &motion);
-        w->position = position;
-        w->query_flags = n->definition->flags;
-        w->transform = motion.local_to_world;
-        w->inverse = motion.world_to_local;
-        w->minimum = motion.minimum;
-        w->maximum = motion.maximum;
-        n->placement->angles = motion.angles;
-        if (n->draw_angles)
-            *n->draw_angles = motion.angles;
-        if (n->definition->script)
+        entity->origin = zero;
+        bh_field_store_u32(&entity->placement.query_flags, world_reset_node->definition->flags);
+        bh_script_motion_actor_write(entity, &motion);
+        world->position = position;
+        world->query_flags = world_reset_node->definition->flags;
+        world->transform = motion.local_to_world;
+        world->inverse = motion.world_to_local;
+        world->minimum = motion.minimum;
+        world->maximum = motion.maximum;
+        world_reset_node->placement->angles = motion.angles;
+        if (world_reset_node->draw_angles)
+            *world_reset_node->draw_angles = motion.angles;
+        if (world_reset_node->definition->script)
         {
             timer = bh_entity_acquire(pool);
             if (timer)
             {
                 bh_script_lifetime_read(timer, &life);
-                life.actor = e;
-                life.script_loaded = c->vm->script_loading;
+                life.actor = entity;
+                life.script_loaded = world_reset->vm->script_loading;
                 life.sound = 0;
-                if (!bh_script_lifetime_bind(c->vm->lifetime, timer, &life, bh_script_unloaded_query))
+                if (!bh_script_lifetime_bind(world_reset->vm->lifetime, timer, &life, bh_script_unloaded_query))
                 {
-                    c->error = 2;
+                    world_reset->error = 2;
                     return 0;
                 }
                 bh_script_timer_fields(timer)->remaining = 1;
                 bh_script_timer_fields(timer)->high = 0;
                 bh_script_timer_fields(timer)->countdown = 0;
-                bh_script_timer_fields(timer)->fired = n->definition->script;
+                bh_script_timer_fields(timer)->fired = world_reset_node->definition->script;
                 timer->position = pool->origin;
                 timer->step = bh_script_timer_unconditional_step();
-                ++c->timers;
-                if (n->definition->script->query == bh_script_vm_query &&
-                    bh_script_vm_read(n->definition->script, &vm) && vm.opcode == 20)
+                ++world_reset->timers;
+                if (world_reset_node->definition->script->query == bh_script_vm_query &&
+                    bh_script_vm_read(world_reset_node->definition->script, &vm) && vm.opcode == 20)
                 {
-                    ++c->immediate;
+                    ++world_reset->immediate;
                     timer->step(timer);
-                    if (c->vm->error)
+                    if (world_reset->vm->error)
                     {
-                        c->error = 2;
+                        world_reset->error = 2;
                         return 0;
                     }
                 }
             }
         }
-        bh_field_store_u32(&c->nodes[(i + 1) % c->count].entity->mass, 0x47c35000UL);
+        bh_field_store_u32(&world_reset->nodes[(i + 1) % world_reset->count].entity->mass, 0x47c35000UL);
     }
     return 1;
 }

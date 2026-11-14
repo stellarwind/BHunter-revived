@@ -3,18 +3,18 @@
 #include <float.h>
 #include <math.h>
 
-static int finite_vector(const BHVec3 *v)
+static int finite_vector(const BHVec3 *vector)
 {
-    return v && _finite(v->x) && _finite(v->y) && _finite(v->z);
+    return vector && _finite(vector->x) && _finite(vector->y) && _finite(vector->z);
 }
-static int valid(const BHLightContext *c, const BHVec3 *point, const BHVec3 *normal, float scale, int prepared,
+static int valid(const BHLightContext *context, const BHVec3 *point, const BHVec3 *normal, float scale, int prepared,
                  unsigned long *result)
 {
-    const BHLight *p, *slow, *fast;
+    const BHLight *light, *slow, *fast;
     unsigned long type;
-    if (!c || !result || !_finite(scale))
+    if (!context || !result || !_finite(scale))
         return 0;
-    slow = fast = c->lights;
+    slow = fast = context->lights;
     while (fast && fast->next)
     {
         slow = slow->next;
@@ -22,23 +22,23 @@ static int valid(const BHLightContext *c, const BHVec3 *point, const BHVec3 *nor
         if (slow == fast)
             return 0;
     }
-    for (p = c->lights; p; p = p->next)
+    for (light = context->lights; light; light = light->next)
     {
-        type = prepared ? p->prepared_type : p->type;
+        type = prepared ? light->prepared_type : light->type;
         if (type == 1 || type == 2)
-            if (!_finite(p->effective_intensity))
+            if (!_finite(light->effective_intensity))
                 return 0;
         if (type >= 2 && type <= 4 && !finite_vector(normal))
             return 0;
         if (type == 2 || type == 4)
-            if (!finite_vector(prepared ? &p->local_direction : &p->direction))
+            if (!finite_vector(prepared ? &light->local_direction : &light->direction))
                 return 0;
         if (type == 3 || type == 4)
         {
-            if (!finite_vector(point) || !finite_vector(prepared ? &p->local_position : &p->position) ||
-                !_finite(p->intensity) || !_finite(p->range))
+            if (!finite_vector(point) || !finite_vector(prepared ? &light->local_position : &light->position) ||
+                !_finite(light->intensity) || !_finite(light->range))
                 return 0;
-            if (type == 4 && (!_finite(p->inner_cos) || !_finite(p->outer_cos)))
+            if (type == 4 && (!_finite(light->inner_cos) || !_finite(light->outer_cos)))
                 return 0;
         }
     }
@@ -49,34 +49,34 @@ static unsigned long channel(double value)
     int n = (int)value; /* verified CRT __ftol supplies truncation toward zero */
     return n < 0 ? 0 : (n > 255 ? 255 : (unsigned long)n);
 }
-static int evaluate(const BHLightContext *c, const BHVec3 *point, const BHVec3 *normal, float scale,
+static int evaluate(const BHLightContext *context, const BHVec3 *point, const BHVec3 *normal, float scale,
                     unsigned long *result, int prepared)
 {
-    const BHLight *p;
+    const BHLight *light;
     const BHVec3 *position, *direction;
     double red = 0, green = 0, strength, x, y, z, distance, attenuation, alignment, rr, gg, bb;
     float blue = 0, stored_x, stored_y, stored_z, stored_distance, stored_strength, stored_alignment, stored_green;
     unsigned long type, packed;
-    if (c && c->reference_override)
-        point = prepared ? &c->local_reference : c->reference_override;
-    if (!valid(c, point, normal, scale, prepared, result))
+    if (context && context->reference_override)
+        point = prepared ? &context->local_reference : context->reference_override;
+    if (!valid(context, point, normal, scale, prepared, result))
         return 0;
-    for (p = c->lights; p; p = p->next)
+    for (light = context->lights; light; light = light->next)
     {
-        type = prepared ? p->prepared_type : p->type;
+        type = prepared ? light->prepared_type : light->type;
         if (type < 1 || type > 4)
             continue;
-        position = prepared ? &p->local_position : &p->position;
-        direction = prepared ? &p->local_direction : &p->direction;
+        position = prepared ? &light->local_position : &light->position;
+        direction = prepared ? &light->local_direction : &light->direction;
         if (type == 1)
-            strength = p->effective_intensity;
+            strength = light->effective_intensity;
         else if (type == 2)
         {
             strength = -(((double)normal->y * direction->y + (double)normal->z * direction->z) +
                          (double)normal->x * direction->x);
             if (!(strength > 0))
                 continue;
-            strength *= p->effective_intensity;
+            strength *= light->effective_intensity;
         }
         else
         {
@@ -97,7 +97,7 @@ static int evaluate(const BHLightContext *c, const BHVec3 *point, const BHVec3 *
                the masked original and makes no positive contribution. */
             if (stored_distance == 0)
                 continue;
-            attenuation = p->range > 0 ? 1.0 - (double)stored_distance / p->range : 1.0;
+            attenuation = light->range > 0 ? 1.0 - (double)stored_distance / light->range : 1.0;
             if (attenuation < 0)
                 attenuation = 0;
             if (type == 4)
@@ -119,23 +119,23 @@ static int evaluate(const BHLightContext *c, const BHVec3 *point, const BHVec3 *
             else
                 strength =
                     -(((double)normal->y * y + (double)normal->z * stored_z) + (double)normal->x * x) / stored_distance;
-            bh_round_float(&stored_strength, (strength * p->intensity) * attenuation);
+            bh_round_float(&stored_strength, (strength * light->intensity) * attenuation);
             strength = stored_strength;
             if (type == 4)
             {
-                if (alignment < p->outer_cos)
+                if (alignment < light->outer_cos)
                     strength = 0;
-                else if (stored_alignment < p->inner_cos)
+                else if (stored_alignment < light->inner_cos)
                     strength =
-                        (((double)stored_alignment - p->outer_cos) / ((double)p->inner_cos - p->outer_cos)) * strength;
+                        (((double)stored_alignment - light->outer_cos) / ((double)light->inner_cos - light->outer_cos)) * strength;
             }
             if (!(strength > 0))
                 continue;
         }
-        red += ((p->color >> 16) & 255) * strength;
-        green += ((p->color >> 8) & 255) * strength;
+        red += ((light->color >> 16) & 255) * strength;
+        green += ((light->color >> 8) & 255) * strength;
         /* Only blue is rounded after each addition in the original. */
-        bh_round_float(&blue, (p->color & 255) * strength + blue);
+        bh_round_float(&blue, (light->color & 255) * strength + blue);
     }
     bh_round_float(&stored_green, green);
     rr = red * scale;

@@ -3,9 +3,9 @@
 #include <math.h>
 #include <float.h>
 #include <string.h>
-static int vector(const BHVec3 *v)
+static int vector(const BHVec3 *vec3)
 {
-    return v && _finite(v->x) && _finite(v->y) && _finite(v->z);
+    return vec3 && _finite(vec3->x) && _finite(vec3->y) && _finite(vec3->z);
 }
 static int fail(BHRadarContext *radar, BHRadarError error)
 {

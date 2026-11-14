@@ -2,35 +2,35 @@
 #include <float.h>
 #include <math.h>
 #include <string.h>
-static BHCdNotify *notify(BHMediaControl *c)
+static BHCdNotify *notify(BHMediaControl *media_control)
 {
-    return c && c->audio ? c->audio->notify : 0;
+    return media_control && media_control->audio ? media_control->audio->notify : 0;
 }
 int bh_cd_play_range(BHMediaControl *c, unsigned long from, unsigned long to, unsigned long ms, unsigned long frame,
                      long repeat)
 {
-    BHCdNotify *n = notify(c);
-    if (!n || !n->cd)
+    BHCdNotify *cd_notify = notify(c);
+    if (!cd_notify || !cd_notify->cd)
         return 0;
-    if (!n->cd->device)
+    if (!cd_notify->cd->device)
         return 1;
-    n->from_track = from;
-    n->cd->playing = repeat;
-    n->minute_second = ms;
-    n->frame = frame;
-    n->end_track = to;
-    return bh_cd_play_retained(n);
+    cd_notify->from_track = from;
+    cd_notify->cd->playing = repeat;
+    cd_notify->minute_second = ms;
+    cd_notify->frame = frame;
+    cd_notify->end_track = to;
+    return bh_cd_play_retained(cd_notify);
 }
-void bh_cd_stop(BHMediaControl *c)
+void bh_cd_stop(BHMediaControl *media_control)
 {
-    BHCdNotify *n = notify(c);
-    if (!n || !n->cd)
+    BHCdNotify *cd_notify = notify(media_control);
+    if (!cd_notify || !cd_notify->cd)
         return;
-    n->cd->playing = 0;
-    if (n->cd->device)
+    cd_notify->cd->playing = 0;
+    if (cd_notify->cd->device)
     {
-        ++c->stops;
-        c->stop_result = bh_audio_stop(n->cd->device);
+        ++media_control->stops;
+        media_control->stop_result = bh_audio_stop(cd_notify->cd->device);
     }
 }
 /* Original FNSTSW C0 first comparison sends unordered to zero. The product
@@ -46,27 +46,27 @@ static unsigned long packed(float volume)
     word = (unsigned long)(v * 65535.0);
     return (word << 16) + word;
 }
-void bh_cd_set_volume(BHMediaControl *c, float v)
+void bh_cd_set_volume(BHMediaControl *media_control, float v)
 {
-    BHCdNotify *n = notify(c);
-    if (!n || !n->cd)
+    BHCdNotify *cd_notify = notify(media_control);
+    if (!cd_notify || !cd_notify->cd)
         return;
-    c->aux_packed = packed(v);
-    ++c->aux_writes;
-    n->cd->local_volume = (float)((c->aux_packed & 65535UL) * (1.0 / 65535.0));
+    media_control->aux_packed = packed(v);
+    ++media_control->aux_writes;
+    cd_notify->cd->local_volume = (float)((media_control->aux_packed & 65535UL) * (1.0 / 65535.0));
     /* The public volume slider is linear; translate to mixer hundredths dB. */
-    if (n->cd->device)
+    if (cd_notify->cd->device)
     {
-        float gain = n->cd->local_volume;
-        c->aux_result = bh_audio_volume(n->cd->device, gain > 0 ? (long)(2000.0 * log10(gain)) : -10000);
+        float gain = cd_notify->cd->local_volume;
+        media_control->aux_result = bh_audio_volume(cd_notify->cd->device, gain > 0 ? (long)(2000.0 * log10(gain)) : -10000);
     }
 }
-void bh_wave_set_volume(BHMediaControl *c, float v)
+void bh_wave_set_volume(BHMediaControl *media_control, float v)
 {
-    if (!c || !c->audio)
+    if (!media_control || !media_control->audio)
         return;
-    c->wave_packed = packed(v);
-    ++c->wave_writes;
-    bh_audio_effects_gain((float)((c->wave_packed & 65535UL) * (1.0 / 65535.0)));
-    c->wave_result = 0;
+    media_control->wave_packed = packed(v);
+    ++media_control->wave_writes;
+    bh_audio_effects_gain((float)((media_control->wave_packed & 65535UL) * (1.0 / 65535.0)));
+    media_control->wave_result = 0;
 }

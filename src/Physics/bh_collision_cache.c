@@ -2,54 +2,54 @@
 #include "../Math/bh_round.h"
 #include <string.h>
 #include <math.h>
-void bh_collision_cache_dispose(BHCollisionCache *c)
+void bh_collision_cache_dispose(BHCollisionCache *collision_cache)
 {
-    if (!c)
+    if (!collision_cache)
         return;
-    if (c->allocator.release)
+    if (collision_cache->allocator.release)
     {
-        if (c->face_flags)
-            c->allocator.release(c->face_flags, c->allocator.user);
-        if (c->centers)
-            c->allocator.release(c->centers, c->allocator.user);
-        if (c->radii)
-            c->allocator.release(c->radii, c->allocator.user);
-        if (c->squared_radii)
-            c->allocator.release(c->squared_radii, c->allocator.user);
-        if (c->faces)
-            c->allocator.release(c->faces, c->allocator.user);
+        if (collision_cache->face_flags)
+            collision_cache->allocator.release(collision_cache->face_flags, collision_cache->allocator.user);
+        if (collision_cache->centers)
+            collision_cache->allocator.release(collision_cache->centers, collision_cache->allocator.user);
+        if (collision_cache->radii)
+            collision_cache->allocator.release(collision_cache->radii, collision_cache->allocator.user);
+        if (collision_cache->squared_radii)
+            collision_cache->allocator.release(collision_cache->squared_radii, collision_cache->allocator.user);
+        if (collision_cache->faces)
+            collision_cache->allocator.release(collision_cache->faces, collision_cache->allocator.user);
     }
-    memset(c, 0, sizeof(*c));
+    memset(collision_cache, 0, sizeof(*collision_cache));
 }
-int bh_collision_cache_prepare(BHCollisionCache *c, const BHBsp *b, const BHSceneAllocator *a)
+int bh_collision_cache_prepare(BHCollisionCache *collision_cache, const BHBsp *bsp, const BHSceneAllocator *a)
 {
     BHCollisionCache n;
     unsigned long i, j;
     float sum, rx, rz;
     double x, y, z;
     float *center;
-    if (!c || !b)
+    if (!collision_cache || !bsp)
         return 0;
-    if (c->centers)
+    if (collision_cache->centers)
     {
-        if (c->bsp == b)
+        if (collision_cache->bsp == bsp)
             return 1;
-        c->error = BH_BSP_ARGUMENT;
+        collision_cache->error = BH_BSP_ARGUMENT;
         return 0;
     }
-    if (!b->faces || !b->nodes || !b->counts[3] || !b->counts[4] || b->counts[3] > 65535 || b->counts[4] > 65535)
+    if (!bsp->faces || !bsp->nodes || !bsp->counts[3] || !bsp->counts[4] || bsp->counts[3] > 65535 || bsp->counts[4] > 65535)
     {
-        c->error = BH_BSP_ARGUMENT;
+        collision_cache->error = BH_BSP_ARGUMENT;
         return 0;
     }
     memset(&n, 0, sizeof(n));
-    n.bsp = b;
-    n.allocator = a ? *a : b->allocator;
-    n.face_count = b->counts[3];
-    n.node_count = b->counts[4];
+    n.bsp = bsp;
+    n.allocator = a ? *a : bsp->allocator;
+    n.face_count = bsp->counts[3];
+    n.node_count = bsp->counts[4];
     if (!n.allocator.allocate || !n.allocator.release)
     {
-        c->error = BH_BSP_ARGUMENT;
+        collision_cache->error = BH_BSP_ARGUMENT;
         return 0;
     }
     n.face_flags = n.allocator.allocate(n.face_count * 4, n.allocator.user);
@@ -69,7 +69,7 @@ int bh_collision_cache_prepare(BHCollisionCache *c, const BHBsp *b, const BHScen
         goto memory;
     for (i = 0; i < n.face_count; ++i)
     {
-        n.faces[i] = b->faces[i];
+        n.faces[i] = bsp->faces[i];
         n.faces[i].runtime = 0;
         n.face_flags[i] = 0;
     }
@@ -78,21 +78,21 @@ int bh_collision_cache_prepare(BHCollisionCache *c, const BHBsp *b, const BHScen
         center = &n.centers[i].x;
         for (j = 0; j < 3; ++j)
         {
-            bh_round_float(&sum, (double)b->nodes[i].minimum[j] + b->nodes[i].maximum[j]);
+            bh_round_float(&sum, (double)bsp->nodes[i].minimum[j] + bsp->nodes[i].maximum[j]);
             bh_round_float(center + j, (double)sum * 0.5);
         }
-        x = (double)b->nodes[i].maximum[0] - center[0];
-        y = (double)b->nodes[i].maximum[1] - center[1];
-        z = (double)b->nodes[i].maximum[2] - center[2];
+        x = (double)bsp->nodes[i].maximum[0] - center[0];
+        y = (double)bsp->nodes[i].maximum[1] - center[1];
+        z = (double)bsp->nodes[i].maximum[2] - center[2];
         bh_round_float(&rx, x);
         bh_round_float(&rz, z);
         bh_round_float(n.squared_radii + i, (x * rx + y * y) + z * rz);
         bh_round_float(n.radii + i, sqrt((double)n.squared_radii[i]));
     }
-    *c = n;
+    *collision_cache = n;
     return 1;
 memory:
     bh_collision_cache_dispose(&n);
-    c->error = BH_BSP_MEMORY;
+    collision_cache->error = BH_BSP_MEMORY;
     return 0;
 }

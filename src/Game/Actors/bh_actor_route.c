@@ -84,19 +84,19 @@ BHPickupRoom *bh_actor_route_room(BHActorRouteContext *ctx, const BHWorldGeometr
             return ctx->rooms + i;
     return NULL;
 }
-static int vector_finite(const BHVec3 *v)
+static int vector_finite(const BHVec3 *vector)
 {
-    return _finite(v->x) && _finite(v->y) && _finite(v->z);
+    return _finite(vector->x) && _finite(vector->y) && _finite(vector->z);
 }
-static int portal_valid(const BHPortal *p)
+static int portal_valid(const BHPortal *portal)
 {
     unsigned long i;
-    if (p->direction > 6 || p->direction == 3)
+    if (portal->direction > 6 || portal->direction == 3)
         return 0;
     for (i = 0; i < 4; ++i)
-        if (!_finite(p->scratch[i]))
+        if (!_finite(portal->scratch[i]))
             return 0;
-    return p->scratch[0] <= p->scratch[1] && p->scratch[2] <= p->scratch[3];
+    return portal->scratch[0] <= portal->scratch[1] && portal->scratch[2] <= portal->scratch[3];
 }
 static int duration_ticks(double duration, unsigned short *out)
 {

@@ -94,18 +94,18 @@ void viewport_geometry(float &x, float &y, float &w, float &h, float &scale)
     x = (target_w - w) * .5f;
     y = (target_h - h) * .5f;
 }
-unsigned addref(BHRenderObject *p)
+unsigned addref(BHRenderObject *render_object)
 {
-    return p ? ++p->refs : 0;
+    return render_object ? ++render_object->refs : 0;
 }
 unsigned release(BHRenderObject *p)
 {
     if (!p)
         return 0;
-    auto *o = p;
-    unsigned n = --o->refs;
+    auto *object = p;
+    unsigned n = --object->refs;
     if (!n)
-        delete o;
+        delete object;
     return n;
 }
 DDPIXELFORMAT pixel_format(unsigned bits = 16)
@@ -571,21 +571,21 @@ SDL_GPUShader *shader(const Uint8 *code, size_t size, const char *entry, SDL_GPU
 }
 Surface *make_surface(const DDSURFACEDESC &d)
 {
-    auto *s = new Surface;
-    s->desc = d;
-    s->primary = (d.ddsCaps.dwCaps & DDSCAPS_PRIMARYSURFACE) != 0;
-    if (!s->desc.dwWidth)
-        s->desc.dwWidth = 640;
-    if (!s->desc.dwHeight)
-        s->desc.dwHeight = 480;
-    if (!s->desc.ddpfPixelFormat.dwRGBBitCount)
-        s->desc.ddpfPixelFormat = pixel_format();
-    s->desc.lPitch = s->desc.dwWidth * ((s->desc.ddpfPixelFormat.dwRGBBitCount + 7) / 8);
-    s->pixels.resize(s->desc.lPitch * s->desc.dwHeight);
-    s->keyed = (d.dwFlags & DDSD_CKSRCBLT) != 0;
-    s->target = (d.ddsCaps.dwCaps & DDSCAPS_3DDEVICE) != 0;
-    surfaces.push_back(s);
-    return s;
+    auto *surface = new Surface;
+    surface->desc = d;
+    surface->primary = (d.ddsCaps.dwCaps & DDSCAPS_PRIMARYSURFACE) != 0;
+    if (!surface->desc.dwWidth)
+        surface->desc.dwWidth = 640;
+    if (!surface->desc.dwHeight)
+        surface->desc.dwHeight = 480;
+    if (!surface->desc.ddpfPixelFormat.dwRGBBitCount)
+        surface->desc.ddpfPixelFormat = pixel_format();
+    surface->desc.lPitch = surface->desc.dwWidth * ((surface->desc.ddpfPixelFormat.dwRGBBitCount + 7) / 8);
+    surface->pixels.resize(surface->desc.lPitch * surface->desc.dwHeight);
+    surface->keyed = (d.dwFlags & DDSD_CKSRCBLT) != 0;
+    surface->target = (d.ddsCaps.dwCaps & DDSCAPS_3DDEVICE) != 0;
+    surfaces.push_back(surface);
+    return surface;
 }
 } // namespace
 
@@ -860,9 +860,9 @@ extern "C"
         if (!record_pending_draws())
             return E_FAIL;
         memcpy((self)->entries + dwStartingEntry, lpEntries, dwCount * sizeof(PALETTEENTRY));
-        for (auto *s : surfaces)
-            if (s->palette == self)
-                ++s->version;
+        for (auto *surface : surfaces)
+            if (surface->palette == self)
+                ++surface->version;
         return DD_OK;
     }
     HRESULT __cdecl bh_renderer_surface_attach_depth(BHRenderSurface *self, BHRenderSurface *lpDDSAttachedSurface)
@@ -977,11 +977,11 @@ extern "C"
     }
     HRESULT __cdecl bh_renderer_surface_backbuffer(BHRenderSurface *self, BHRenderSurface **lplpDDAttachedSurface)
     {
-        auto *s = self;
-        if (!s->back)
+        auto *surface = self;
+        if (!surface->back)
             return DDERR_NOTFOUND;
-        addref(s->back);
-        *lplpDDAttachedSurface = s->back;
+        addref(surface->back);
+        *lplpDDAttachedSurface = surface->back;
         return DD_OK;
     }
     HRESULT __cdecl bh_renderer_surface_format(BHRenderSurface *self, LPDDPIXELFORMAT lpDDPixelFormat)
@@ -995,8 +995,8 @@ extern "C"
     }
     HRESULT __cdecl bh_renderer_surface_lock(BHRenderSurface *self, LPDDSURFACEDESC lpDDSurfaceDesc)
     {
-        auto *s = self;
-        if (s->target)
+        auto *surface = self;
+        if (surface->target)
         {
             auto pixels = readback();
             if (pixels.empty())
@@ -1007,20 +1007,20 @@ extern "C"
             const float mx = display.margin_x, my = display.margin_y;
             float scale_x = vw / (640 + 2 * mx), scale_y = vh / (480 + 2 * my);
             float ox = vx + mx * scale_x, oy = vy + my * scale_y;
-            for (unsigned y = 0; y < s->desc.dwHeight; ++y)
-                for (unsigned x = 0; x < s->desc.dwWidth; ++x)
+            for (unsigned y = 0; y < surface->desc.dwHeight; ++y)
+                for (unsigned x = 0; x < surface->desc.dwWidth; ++x)
                 {
                     unsigned px = std::min(target_w - 1, (unsigned)(ox + x * scale_x)),
                              py = std::min(target_h - 1, (unsigned)(oy + y * scale_y));
                     unsigned c = pixels[py * target_w + px];
                     unsigned short v = ((c & 255) >> 3) << 11 | (((c >> 8) & 255) >> 2) << 5 | (((c >> 16) & 255) >> 3);
-                    memcpy(s->pixels.data() + y * s->desc.lPitch + x * 2, &v, 2);
+                    memcpy(surface->pixels.data() + y * surface->desc.lPitch + x * 2, &v, 2);
                 }
         }
-        if (s->target)
-            s->locked_pixels = s->pixels;
-        *lpDDSurfaceDesc = s->desc;
-        lpDDSurfaceDesc->lpSurface = s->pixels.data();
+        if (surface->target)
+            surface->locked_pixels = surface->pixels;
+        *lpDDSurfaceDesc = surface->desc;
+        lpDDSurfaceDesc->lpSurface = surface->pixels.data();
         return DD_OK;
     }
     HRESULT __cdecl bh_renderer_surface_restore(BHRenderSurface *self)
@@ -1029,23 +1029,23 @@ extern "C"
     }
     HRESULT __cdecl bh_renderer_surface_set_palette(BHRenderSurface *self, BHRenderPalette *lpDDPalette)
     {
-        auto *s = self;
+        auto *surface = self;
         addref(lpDDPalette);
-        release(s->palette);
-        s->palette = lpDDPalette;
-        ++s->version;
+        release(surface->palette);
+        surface->palette = lpDDPalette;
+        ++surface->version;
         return DD_OK;
     }
     HRESULT __cdecl bh_renderer_surface_unlock(BHRenderSurface *self)
     {
-        auto *s = self;
-        ++s->version;
-        if (s->target && s->pixels != s->locked_pixels)
+        auto *surface = self;
+        ++surface->version;
+        if (surface->target && surface->pixels != surface->locked_pixels)
         {
-            s->locked_pixels.clear();
-            return draw_surface(s) ? DD_OK : E_FAIL;
+            surface->locked_pixels.clear();
+            return draw_surface(surface) ? DD_OK : E_FAIL;
         }
-        s->locked_pixels.clear();
+        surface->locked_pixels.clear();
         return DD_OK;
     }
     ULONG __cdecl bh_renderer_retain(BHRenderer *self)
@@ -1055,23 +1055,23 @@ extern "C"
     HRESULT __cdecl bh_renderer_palette_create(BHRenderer *self, LPPALETTEENTRY lpColorTable,
                                                BHRenderPalette **lplpDDPalette)
     {
-        auto *p = new Palette;
-        memcpy(p->entries, lpColorTable, sizeof(p->entries));
-        *lplpDDPalette = p;
+        auto *palette = new Palette;
+        memcpy(palette->entries, lpColorTable, sizeof(palette->entries));
+        *lplpDDPalette = palette;
         return DD_OK;
     }
     HRESULT __cdecl bh_renderer_surface_create(BHRenderer *self, LPDDSURFACEDESC lpDDSurfaceDesc,
                                                BHRenderSurface **lplpDDSurface)
     {
-        auto *s = make_surface(*lpDDSurfaceDesc);
-        if (s->primary && (lpDDSurfaceDesc->dwFlags & DDSD_BACKBUFFERCOUNT))
+        auto *surface = make_surface(*lpDDSurfaceDesc);
+        if (surface->primary && (lpDDSurfaceDesc->dwFlags & DDSD_BACKBUFFERCOUNT))
         {
             DDSURFACEDESC back = *lpDDSurfaceDesc;
             back.dwFlags &= ~DDSD_BACKBUFFERCOUNT;
             back.ddsCaps.dwCaps = DDSCAPS_3DDEVICE | DDSCAPS_BACKBUFFER;
-            s->back = make_surface(back);
+            surface->back = make_surface(back);
         }
-        *lplpDDSurface = s;
+        *lplpDDSurface = surface;
         return DD_OK;
     }
 }

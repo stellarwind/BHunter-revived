@@ -43,7 +43,7 @@ BHEntity *bh_script_particle_create(BHScriptParticleContext *ctx, unsigned long 
                                     float lifetime, float alpha)
 {
     BHEntity *entity;
-    BHScriptParticleState *s;
+    BHScriptParticleState *script_particle_state;
     BHVec3 zero = {0, 0, 0};
     if (!ctx || !ctx->pool || !ctx->queue || !p || !bh_math_environment_supported())
     {
@@ -57,22 +57,22 @@ BHEntity *bh_script_particle_create(BHScriptParticleContext *ctx, unsigned long 
         ctx->error = BH_PARTICLE_POOL;
         return NULL;
     }
-    s = state(entity);
+    script_particle_state = state(entity);
     entity->position = *p;
-    s->lifetime = lifetime;
-    s->velocity = v ? *v : zero;
-    s->acceleration = a ? *a : zero;
-    s->size = size;
-    s->angle = angle;
-    bh_round_float(&s->size_step, (double)size_rate * (1.0 / 30.0));
-    bh_round_float(&s->angular_step, (double)angular_rate * (1.0 / 30.0));
-    s->size_decay = size_decay;
-    s->angular_decay = angular_decay;
-    s->alpha = alpha;
-    bh_round_float(&s->alpha_step, ((double)alpha * (-1.0 / 30.0)) / lifetime);
-    s->frame = (unsigned long)rand() & 7;
-    s->resource = resource;
-    s->bucket = bucket;
+    script_particle_state->lifetime = lifetime;
+    script_particle_state->velocity = v ? *v : zero;
+    script_particle_state->acceleration = a ? *a : zero;
+    script_particle_state->size = size;
+    script_particle_state->angle = angle;
+    bh_round_float(&script_particle_state->size_step, (double)size_rate * (1.0 / 30.0));
+    bh_round_float(&script_particle_state->angular_step, (double)angular_rate * (1.0 / 30.0));
+    script_particle_state->size_decay = size_decay;
+    script_particle_state->angular_decay = angular_decay;
+    script_particle_state->alpha = alpha;
+    bh_round_float(&script_particle_state->alpha_step, ((double)alpha * (-1.0 / 30.0)) / lifetime);
+    script_particle_state->frame = (unsigned long)rand() & 7;
+    script_particle_state->resource = resource;
+    script_particle_state->bucket = bucket;
     memcpy(&entity->bindings.script_particles, &ctx, 4);
     entity->step = bh_script_particle_tick;
     entity->refresh = bh_script_particle_refresh;
@@ -82,15 +82,15 @@ BHEntity *bh_script_particle_create(BHScriptParticleContext *ctx, unsigned long 
 void bh_script_particle_tick(BHEntity *entity)
 {
     BHScriptParticleContext *ctx = context(entity);
-    BHScriptParticleState *s = state(entity);
+    BHScriptParticleState *script_particle_state = state(entity);
     double next, x;
     if (!bh_math_environment_supported())
     {
         ctx->error = BH_PARTICLE_NUMERICAL;
         return;
     }
-    next = (double)s->lifetime - (1.0 / 30.0);
-    bh_round_float(&s->lifetime, next);
+    next = (double)script_particle_state->lifetime - (1.0 / 30.0);
+    bh_round_float(&script_particle_state->lifetime, next);
     if (!(next > 0))
     {
         bh_entity_release(ctx->pool, entity);
@@ -98,27 +98,27 @@ void bh_script_particle_tick(BHEntity *entity)
     }
     /* X's velocity sum survives its binary32 store on the original x87 stack.
     Y/Z position additions reload their rounded stored velocity instead. */
-    x = (double)s->acceleration.x + s->velocity.x;
-    bh_round_float(&s->velocity.x, x);
-    bh_round_float(&s->velocity.y, (double)s->acceleration.y + s->velocity.y);
-    bh_round_float(&s->velocity.z, (double)s->acceleration.z + s->velocity.z);
+    x = (double)script_particle_state->acceleration.x + script_particle_state->velocity.x;
+    bh_round_float(&script_particle_state->velocity.x, x);
+    bh_round_float(&script_particle_state->velocity.y, (double)script_particle_state->acceleration.y + script_particle_state->velocity.y);
+    bh_round_float(&script_particle_state->velocity.z, (double)script_particle_state->acceleration.z + script_particle_state->velocity.z);
     bh_round_float(&entity->position.x, (double)entity->position.x + x);
-    bh_round_float(&entity->position.y, (double)s->velocity.y + entity->position.y);
-    bh_round_float(&entity->position.z, (double)s->velocity.z + entity->position.z);
-    bh_round_float(&s->angle, (double)s->angular_step + s->angle);
-    bh_round_float(&s->size, (double)s->size_step + s->size);
-    bh_round_float(&s->angular_step, (double)s->angular_decay * s->angular_step);
-    bh_round_float(&s->size_step, (double)s->size_decay * s->size_step);
-    bh_round_float(&s->alpha, (double)s->alpha_step + s->alpha);
+    bh_round_float(&entity->position.y, (double)script_particle_state->velocity.y + entity->position.y);
+    bh_round_float(&entity->position.z, (double)script_particle_state->velocity.z + entity->position.z);
+    bh_round_float(&script_particle_state->angle, (double)script_particle_state->angular_step + script_particle_state->angle);
+    bh_round_float(&script_particle_state->size, (double)script_particle_state->size_step + script_particle_state->size);
+    bh_round_float(&script_particle_state->angular_step, (double)script_particle_state->angular_decay * script_particle_state->angular_step);
+    bh_round_float(&script_particle_state->size_step, (double)script_particle_state->size_decay * script_particle_state->size_step);
+    bh_round_float(&script_particle_state->alpha, (double)script_particle_state->alpha_step + script_particle_state->alpha);
 }
 void bh_script_particle_refresh(BHEntity *entity, void *packet)
 {
     BHScriptParticleContext *ctx = context(entity);
-    BHScriptParticleState *s = state(entity);
+    BHScriptParticleState *script_particle_state = state(entity);
     int r;
     (void)packet;
-    r = bh_draw_billboard(ctx->queue, s->bucket, s->resource, &entity->position, s->size, s->size, s->angle, s->frame,
-                          s->alpha);
+    r = bh_draw_billboard(ctx->queue, script_particle_state->bucket, script_particle_state->resource, &entity->position, script_particle_state->size, script_particle_state->size, script_particle_state->angle, script_particle_state->frame,
+                          script_particle_state->alpha);
     if (r < 0)
         ctx->error = BH_PARTICLE_QUEUE;
 }
@@ -180,15 +180,15 @@ int bh_script_emitter_bind(BHScriptEmitterContext *ctx, BHEntity *entity, const 
 }
 static int active(BHScriptEmitterContext *ctx, BHEntity *entity)
 {
-    const BHScriptTimerActor *a = actor_record(ctx, entity);
-    if (!a)
+    const BHScriptTimerActor *script_timer_actor = actor_record(ctx, entity);
+    if (!script_timer_actor)
     {
         ctx->error = BH_PARTICLE_ACTOR;
         return 0;
     }
-    if (a->owner)
-        a = a->owner;
-    return a->active != 0;
+    if (script_timer_actor->owner)
+        script_timer_actor = script_timer_actor->owner;
+    return script_timer_actor->active != 0;
 }
 static int countdown(BHEntity *entity, float value)
 {

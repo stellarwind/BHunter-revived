@@ -4,15 +4,15 @@
 #include <math.h>
 #include <string.h>
 
-static int fail(BHSpriteQuadContext *c, BHSpriteQuadError e)
+static int fail(BHSpriteQuadContext *context, BHSpriteQuadError e)
 {
-    if (c)
-        c->error = e;
+    if (context)
+        context->error = e;
     return 0;
 }
-static int finite_vec(const BHVec3 *v)
+static int finite_vec(const BHVec3 *vector)
 {
-    return v && _finite(v->x) && _finite(v->y) && _finite(v->z);
+    return vector && _finite(vector->x) && _finite(vector->y) && _finite(vector->z);
 }
 static int integer(double n, int *out)
 {
@@ -30,7 +30,7 @@ static int channel(double n, float modulation, unsigned long *out)
     *out = result < 0 ? 0 : result > 255 ? 255 : (unsigned long)result;
     return 1;
 }
-int bh_sprite_quad_draw(BHSpriteQuadContext *c, BHTextureImage *image, const BHVec3 *center, const BHVec3 *normal,
+int bh_sprite_quad_draw(BHSpriteQuadContext *context, BHTextureImage *image, const BHVec3 *center, const BHVec3 *normal,
                         const BHVec3 *up, float width, float height, float angle, unsigned char flags, float modulation,
                         float u, float u_extent, float v, float v_extent)
 {
@@ -40,20 +40,20 @@ int bh_sprite_quad_draw(BHSpriteQuadContext *c, BHTextureImage *image, const BHV
     float sn, cs, su[3], u1, v1;
     unsigned long i, dynamic = 0, red, green, blue;
     int back = 0, shade;
-    if (!c || !image || !c->camera || !c->clip || !c->directional || !c->emit ||
-        (c->point_enabled && !c->world_lights) || !finite_vec(center) || !finite_vec(normal) || !finite_vec(up) ||
-        !finite_vec(&c->camera->position) || !_finite(width) || !_finite(height) || !_finite(angle) ||
+    if (!context || !image || !context->camera || !context->clip || !context->directional || !context->emit ||
+        (context->point_enabled && !context->world_lights) || !finite_vec(center) || !finite_vec(normal) || !finite_vec(up) ||
+        !finite_vec(&context->camera->position) || !_finite(width) || !_finite(height) || !_finite(angle) ||
         !_finite(modulation) || !_finite(u) || !_finite(u_extent) || !_finite(v) || !_finite(v_extent))
-        return fail(c, BH_SPRITE_QUAD_ARGUMENT);
+        return fail(context, BH_SPRITE_QUAD_ARGUMENT);
     origin = *center;
     n.x = -normal->x;
     n.y = -normal->y;
     n.z = -normal->z;
     t = *up;
-    c->error = BH_SPRITE_QUAD_OK;
-    c->emitted = 0;
-    side = (((double)c->camera->position.x - origin.x) * n.x + ((double)c->camera->position.y - origin.y) * n.y) +
-           ((double)c->camera->position.z - origin.z) * n.z;
+    context->error = BH_SPRITE_QUAD_OK;
+    context->emitted = 0;
+    side = (((double)context->camera->position.x - origin.x) * n.x + ((double)context->camera->position.y - origin.y) * n.y) +
+           ((double)context->camera->position.z - origin.z) * n.z;
     if (side > 0)
     {
         if (!(flags & 8))
@@ -96,7 +96,7 @@ int bh_sprite_quad_draw(BHSpriteQuadContext *c, BHTextureImage *image, const BHV
     bh_round_float(&r.y, ((double)r.y * width) * .5);
     bh_round_float(&r.z, (rz * width) * .5);
     if (!finite_vec(&n) || !finite_vec(&t) || !finite_vec(&r))
-        return fail(c, BH_SPRITE_QUAD_NUMERICAL);
+        return fail(context, BH_SPRITE_QUAD_NUMERICAL);
     memset(quad, 0, sizeof(quad));
     /* A(-r,+t), B(-r,-t), C(+r,-t), D(+r,+t). */
     for (i = 0; i < 3; ++i)
@@ -152,24 +152,24 @@ int bh_sprite_quad_draw(BHSpriteQuadContext *c, BHTextureImage *image, const BHV
     {
         quad[i].next = quad + (i + (back ? 3 : 1)) % 4;
         quad[i].previous = quad + (i + (back ? 1 : 3)) % 4;
-        bh_mat34_transform_point(&c->camera->projected, &quad[i].local, &quad[i].point);
+        bh_mat34_transform_point(&context->camera->projected, &quad[i].local, &quad[i].point);
     }
-    ring = bh_clip_polygon(c->clip, quad, image);
+    ring = bh_clip_polygon(context->clip, quad, image);
     if (!ring)
     {
-        if (c->clip->error != BH_CLIP_OK)
-            return fail(c, BH_SPRITE_QUAD_CLIP);
+        if (context->clip->error != BH_CLIP_OK)
+            return fail(context, BH_SPRITE_QUAD_CLIP);
         return 1;
     }
-    if (!c->directional->enabled && !c->point_enabled)
+    if (!context->directional->enabled && !context->point_enabled)
     {
         if (!integer((double)modulation * -255.0, &shade))
-            return fail(c, BH_SPRITE_QUAD_NUMERICAL);
-        c->color = c->base_color - (unsigned long)shade * 0x10101UL;
+            return fail(context, BH_SPRITE_QUAD_NUMERICAL);
+        context->color = context->base_color - (unsigned long)shade * 0x10101UL;
     }
     else
     {
-        if (c->point_enabled)
+        if (context->point_enabled)
         {
             light_normal = n;
             if (!back)
@@ -178,34 +178,34 @@ int bh_sprite_quad_draw(BHSpriteQuadContext *c, BHTextureImage *image, const BHV
                 light_normal.y = -n.y;
                 light_normal.z = -n.z;
             }
-            if (!bh_light_evaluate_world(c->world_lights, &origin, &light_normal, modulation, &dynamic))
-                return fail(c, BH_SPRITE_QUAD_LIGHT);
+            if (!bh_light_evaluate_world(context->world_lights, &origin, &light_normal, modulation, &dynamic))
+                return fail(context, BH_SPRITE_QUAD_LIGHT);
         }
-        if (c->directional->enabled)
+        if (context->directional->enabled)
         {
-            if (!finite_vec(&c->directional->direction))
-                return fail(c, BH_SPRITE_QUAD_ARGUMENT);
-            alignment = ((double)n.x * c->directional->direction.x + (double)n.y * c->directional->direction.y) +
-                        (double)n.z * c->directional->direction.z;
+            if (!finite_vec(&context->directional->direction))
+                return fail(context, BH_SPRITE_QUAD_ARGUMENT);
+            alignment = ((double)n.x * context->directional->direction.x + (double)n.y * context->directional->direction.y) +
+                        (double)n.z * context->directional->direction.z;
             if (!back)
                 alignment = -alignment;
             if (alignment < 0)
                 alignment = 0;
-            if (!channel((alignment * c->directional->directional[0] + ((dynamic >> 16) & 255)) +
-                             c->directional->ambient[0],
+            if (!channel((alignment * context->directional->directional[0] + ((dynamic >> 16) & 255)) +
+                             context->directional->ambient[0],
                          modulation, &red) ||
-                !channel((alignment * c->directional->directional[1] + ((dynamic >> 8) & 255)) +
-                             c->directional->ambient[1],
+                !channel((alignment * context->directional->directional[1] + ((dynamic >> 8) & 255)) +
+                             context->directional->ambient[1],
                          modulation, &green) ||
-                !channel((alignment * c->directional->directional[2] + (dynamic & 255)) + c->directional->ambient[2],
+                !channel((alignment * context->directional->directional[2] + (dynamic & 255)) + context->directional->ambient[2],
                          modulation, &blue))
-                return fail(c, BH_SPRITE_QUAD_NUMERICAL);
+                return fail(context, BH_SPRITE_QUAD_NUMERICAL);
             dynamic = (red * 256 + green) * 256 + blue;
         }
-        c->color = dynamic + c->base_color;
+        context->color = dynamic + context->base_color;
     }
-    if (!c->emit(ring, image, c->color, c->emit_user))
-        return fail(c, BH_SPRITE_QUAD_EMIT);
-    c->emitted = 1;
+    if (!context->emit(ring, image, context->color, context->emit_user))
+        return fail(context, BH_SPRITE_QUAD_EMIT);
+    context->emitted = 1;
     return 1;
 }

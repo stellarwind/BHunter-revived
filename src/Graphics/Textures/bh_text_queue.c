@@ -16,35 +16,35 @@ void bh_text_queue_init(BHTextQueue *q)
     if (q)
         memset(q, 0, sizeof(*q));
 }
-unsigned long bh_text_queue_count(const BHTextQueue *q)
+unsigned long bh_text_queue_count(const BHTextQueue *text_queue)
 {
-    return q ? (q->write - q->read) & 255 : 0;
+    return text_queue ? (text_queue->write - text_queue->read) & 255 : 0;
 }
-static BHTextCommand *reserve(BHTextQueue *q)
+static BHTextCommand *reserve(BHTextQueue *text_queue)
 {
-    unsigned long previous = q->write, index = previous & 255;
-    q->write = advance(previous);
-    if ((q->write & 255) == (q->read & 255))
+    unsigned long previous = text_queue->write, index = previous & 255;
+    text_queue->write = advance(previous);
+    if ((text_queue->write & 255) == (text_queue->read & 255))
     {
-        q->write = previous;
-        q->error = BH_TEXT_QUEUE_FULL;
+        text_queue->write = previous;
+        text_queue->error = BH_TEXT_QUEUE_FULL;
         return NULL;
     }
-    q->error = BH_TEXT_QUEUE_OK;
-    return q->commands + index;
+    text_queue->error = BH_TEXT_QUEUE_OK;
+    return text_queue->commands + index;
 }
-int bh_text_queue_text(BHTextQueue *q, BHAtlasPage *page, const char *text, long x, long y)
+int bh_text_queue_text(BHTextQueue *text_queue, BHAtlasPage *page, const char *text, long x, long y)
 {
     BHTextCommand *command;
     unsigned short bits;
-    if (!q)
+    if (!text_queue)
         return -1;
     if (!text)
     {
-        q->error = BH_TEXT_QUEUE_ARGUMENT;
+        text_queue->error = BH_TEXT_QUEUE_ARGUMENT;
         return -1;
     }
-    command = reserve(q);
+    command = reserve(text_queue);
     if (!command)
         return 0;
     command->kind = BH_TEXT_COMMAND_TEXT;
@@ -81,17 +81,17 @@ unsigned long bh_text_queue_execute_clear(BHAtlasContext *atlas, const BHTextCom
     bh_atlas_page_clear(atlas, command->page, command->position.color);
     return command->next;
 }
-int bh_text_queue_drain(BHTextQueue *q, BHAtlasContext *atlas, unsigned long *processed)
+int bh_text_queue_drain(BHTextQueue *text_queue, BHAtlasContext *atlas, unsigned long *processed)
 {
     BHTextCommand *command;
     unsigned long count = 0;
     if (processed)
         *processed = 0;
-    if (!q)
+    if (!text_queue)
         return -1;
-    while ((q->read & 255) != (q->write & 255))
+    while ((text_queue->read & 255) != (text_queue->write & 255))
     {
-        command = q->commands + (q->read & 255);
+        command = text_queue->commands + (text_queue->read & 255);
         switch (command->kind)
         {
         case BH_TEXT_COMMAND_TEXT:
@@ -101,15 +101,15 @@ int bh_text_queue_drain(BHTextQueue *q, BHAtlasContext *atlas, unsigned long *pr
             bh_text_queue_execute_clear(atlas, command);
             break;
         default:
-            q->error = BH_TEXT_QUEUE_KIND;
+            text_queue->error = BH_TEXT_QUEUE_KIND;
             if (processed)
                 *processed = count;
             return -1;
         }
-        q->read = advance(q->read);
+        text_queue->read = advance(text_queue->read);
         ++count;
     }
-    q->error = BH_TEXT_QUEUE_OK;
+    text_queue->error = BH_TEXT_QUEUE_OK;
     if (processed)
         *processed = count;
     return 1;

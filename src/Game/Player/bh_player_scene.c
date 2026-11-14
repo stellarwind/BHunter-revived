@@ -55,9 +55,9 @@ static int fail(BHPlayerScene *scene, BHPlayerSceneError error)
         scene->error = error;
     return 0;
 }
-static int finite_vec(const BHVec3 *v)
+static int finite_vec(const BHVec3 *vector)
 {
-    return _finite(v->x) && _finite(v->y) && _finite(v->z);
+    return _finite(vector->x) && _finite(vector->y) && _finite(vector->z);
 }
 static BHVec3 combined(const BHVec3 *position, const BHVec3 *right, const BHVec3 *up, const BHVec3 *forward, float x,
                        float y, float z)

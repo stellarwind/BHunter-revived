@@ -16,15 +16,15 @@ static void release(void *p, void *user)
 {
     free(p);
 }
-static int fail(BHGeometry *g, BHBspError e)
+static int fail(BHGeometry *geometry, BHBspError e)
 {
-    if (g)
-        g->error = e;
+    if (geometry)
+        geometry->error = e;
     return 0;
 }
-static int face_index(BHGeometry *g, long face)
+static int face_index(BHGeometry *geometry, long face)
 {
-    return g && g->bsp && g->face_flags && face >= 0 && (unsigned long)face < g->bsp->counts[3];
+    return geometry && geometry->bsp && geometry->face_flags && face >= 0 && (unsigned long)face < geometry->bsp->counts[3];
 }
 
 int bh_geometry_init(BHGeometry *g, const BHBsp *bsp, const BHSceneAllocator *allocator)
@@ -52,145 +52,145 @@ int bh_geometry_init(BHGeometry *g, const BHBsp *bsp, const BHSceneAllocator *al
     *g = next;
     return 1;
 }
-int bh_geometry_dispose(BHGeometry *g)
+int bh_geometry_dispose(BHGeometry *geometry)
 {
-    if (!g || g->enumerating)
-        return fail(g, BH_BSP_ARGUMENT);
-    if (g->face_flags)
-        g->allocator.release(g->face_flags, g->allocator.user);
-    memset(g, 0, sizeof(*g));
+    if (!geometry || geometry->enumerating)
+        return fail(geometry, BH_BSP_ARGUMENT);
+    if (geometry->face_flags)
+        geometry->allocator.release(geometry->face_flags, geometry->allocator.user);
+    memset(geometry, 0, sizeof(*geometry));
     return 1;
 }
-int bh_geometry_set_flags(BHGeometry *g, long face, unsigned long flags)
+int bh_geometry_set_flags(BHGeometry *geometry, long face, unsigned long flags)
 {
     BHGeometryCoreView view;
-    if (!face_index(g, face))
-        return fail(g, BH_BSP_ARGUMENT);
-    view.flags = g->face_flags;
+    if (!face_index(geometry, face))
+        return fail(geometry, BH_BSP_ARGUMENT);
+    view.flags = geometry->face_flags;
     bh_geometry_set_flags_core(&view, face, flags);
-    g->error = BH_BSP_OK;
+    geometry->error = BH_BSP_OK;
     return 1;
 }
-int bh_geometry_get_flags(BHGeometry *g, long face, unsigned long *flags)
+int bh_geometry_get_flags(BHGeometry *geometry, long face, unsigned long *flags)
 {
     BHGeometryCoreView view;
-    if (!face_index(g, face) || !flags)
-        return fail(g, BH_BSP_ARGUMENT);
-    view.flags = g->face_flags;
+    if (!face_index(geometry, face) || !flags)
+        return fail(geometry, BH_BSP_ARGUMENT);
+    view.flags = geometry->face_flags;
     *flags = bh_geometry_get_flags_core(&view, face);
-    g->error = BH_BSP_OK;
+    geometry->error = BH_BSP_OK;
     return 1;
 }
-int bh_geometry_vertex(BHGeometry *g, long face, long ordinal, BHVec3 *out)
+int bh_geometry_vertex(BHGeometry *geometry, long face, long ordinal, BHVec3 *out)
 {
-    const BHBsp *b;
+    const BHBsp *bsp;
     BHGeometryCoreView view;
     long requested = ordinal;
     long edge;
     unsigned long steps = 0;
-    if (!face_index(g, face) || ordinal < 0 || !out)
-        return fail(g, BH_BSP_ARGUMENT);
-    b = g->bsp;
-    edge = b->faces[face].first_edge;
-    while (ordinal && edge >= 0 && (unsigned long)edge < b->counts[2] && steps++ < b->counts[2])
+    if (!face_index(geometry, face) || ordinal < 0 || !out)
+        return fail(geometry, BH_BSP_ARGUMENT);
+    bsp = geometry->bsp;
+    edge = bsp->faces[face].first_edge;
+    while (ordinal && edge >= 0 && (unsigned long)edge < bsp->counts[2] && steps++ < bsp->counts[2])
     {
-        edge = b->edges[edge].next;
+        edge = bsp->edges[edge].next;
         --ordinal;
     }
-    if (ordinal || edge < 0 || (unsigned long)edge >= b->counts[2] || b->edges[edge].vertex < 0 ||
-        (unsigned long)b->edges[edge].vertex >= b->counts[1])
-        return fail(g, BH_BSP_FORMAT);
-    view.vertices = b->vertices;
-    view.edges = b->edges;
-    view.faces = b->faces;
+    if (ordinal || edge < 0 || (unsigned long)edge >= bsp->counts[2] || bsp->edges[edge].vertex < 0 ||
+        (unsigned long)bsp->edges[edge].vertex >= bsp->counts[1])
+        return fail(geometry, BH_BSP_FORMAT);
+    view.vertices = bsp->vertices;
+    view.edges = bsp->edges;
+    view.faces = bsp->faces;
     bh_geometry_vertex_core(&view, face, requested, out);
-    g->error = BH_BSP_OK;
+    geometry->error = BH_BSP_OK;
     return 1;
 }
-int bh_geometry_face(BHGeometry *g, long face, BHFaceInfo *out)
+int bh_geometry_face(BHGeometry *geometry, long face, BHFaceInfo *out)
 {
-    const BHBsp *b;
+    const BHBsp *bsp;
     BHFaceInfo next;
     long edge, root;
     unsigned long i, j, steps;
     int found;
-    if (!face_index(g, face) || !out)
-        return fail(g, BH_BSP_ARGUMENT);
-    b = g->bsp;
+    if (!face_index(geometry, face) || !out)
+        return fail(geometry, BH_BSP_ARGUMENT);
+    bsp = geometry->bsp;
     next = *out;
     next.face = face;
     next.vertices = 0;
-    next.geometry = g;
-    next.flags = g->face_flags[face];
-    if (b->faces[face].material < 0 || (unsigned long)b->faces[face].material >= b->counts[0])
-        return fail(g, BH_BSP_FORMAT);
-    next.texture = b->materials[b->faces[face].material].texture;
-    edge = b->faces[face].first_edge;
+    next.geometry = geometry;
+    next.flags = geometry->face_flags[face];
+    if (bsp->faces[face].material < 0 || (unsigned long)bsp->faces[face].material >= bsp->counts[0])
+        return fail(geometry, BH_BSP_FORMAT);
+    next.texture = bsp->materials[bsp->faces[face].material].texture;
+    edge = bsp->faces[face].first_edge;
     while (edge >= 0)
     {
-        if ((unsigned long)edge >= b->counts[2] || next.vertices++ >= b->counts[2])
-            return fail(g, BH_BSP_CYCLE);
-        edge = b->edges[edge].next;
+        if ((unsigned long)edge >= bsp->counts[2] || next.vertices++ >= bsp->counts[2])
+            return fail(geometry, BH_BSP_CYCLE);
+        edge = bsp->edges[edge].next;
     }
-    if (!bh_geometry_vertex(g, face, 0, &next.point))
+    if (!bh_geometry_vertex(geometry, face, 0, &next.point))
         return 0;
     /* Preserve exact scan/overwrite order, including the first predecessor
        when next chains share a tail. The decoded BSP owns acyclic chains. */
-    for (i = 0; i < b->counts[5]; ++i)
-        if (b->leaves[i].face == face)
+    for (i = 0; i < bsp->counts[5]; ++i)
+        if (bsp->leaves[i].face == face)
         {
             root = (long)i;
             steps = 0;
             do
             {
                 found = 0;
-                for (j = 0; j < b->counts[5]; ++j)
-                    if (b->leaves[j].next == root)
+                for (j = 0; j < bsp->counts[5]; ++j)
+                    if (bsp->leaves[j].next == root)
                     {
                         root = (long)j;
                         found = 1;
                         break;
                     }
-                if (found && ++steps > b->counts[5])
-                    return fail(g, BH_BSP_CYCLE);
+                if (found && ++steps > bsp->counts[5])
+                    return fail(geometry, BH_BSP_CYCLE);
             } while (found);
-            for (j = 0; j < b->counts[4]; ++j)
+            for (j = 0; j < bsp->counts[4]; ++j)
             {
-                const BHBspNode *n = b->nodes + j;
-                if (n->front_leaf == root)
-                    memcpy(&next.normal, n->normal, 12);
-                else if (n->back_leaf == root)
+                const BHBspNode *bsp_node = bsp->nodes + j;
+                if (bsp_node->front_leaf == root)
+                    memcpy(&next.normal, bsp_node->normal, 12);
+                else if (bsp_node->back_leaf == root)
                 {
-                    next.normal.x = -n->normal[0];
-                    next.normal.y = -n->normal[1];
-                    next.normal.z = -n->normal[2];
+                    next.normal.x = -bsp_node->normal[0];
+                    next.normal.y = -bsp_node->normal[1];
+                    next.normal.z = -bsp_node->normal[2];
                 }
             }
         }
     *out = next;
-    g->error = BH_BSP_OK;
+    geometry->error = BH_BSP_OK;
     return 1;
 }
-int bh_geometry_each_face(BHGeometry *g, BHFaceCallback callback, void *user)
+int bh_geometry_each_face(BHGeometry *geometry, BHFaceCallback callback, void *user)
 {
     unsigned long i;
     int active;
-    if (!g || !g->bsp || !callback)
-        return fail(g, BH_BSP_ARGUMENT);
+    if (!geometry || !geometry->bsp || !callback)
+        return fail(geometry, BH_BSP_ARGUMENT);
     /* 0044e060 keeps its loop/model state on the caller's stack. Nested
        enumeration shares the descriptor and must preserve the outer lifetime. */
-    active = g->enumerating;
-    g->enumerating = 1;
-    for (i = 0; i < g->bsp->counts[3]; ++i)
+    active = geometry->enumerating;
+    geometry->enumerating = 1;
+    for (i = 0; i < geometry->bsp->counts[3]; ++i)
     {
-        if (!bh_geometry_face(g, (long)i, &enumeration_descriptor))
+        if (!bh_geometry_face(geometry, (long)i, &enumeration_descriptor))
         {
-            g->enumerating = active;
+            geometry->enumerating = active;
             return 0;
         }
         callback(&enumeration_descriptor, user);
     }
-    g->enumerating = active;
-    g->error = BH_BSP_OK;
+    geometry->enumerating = active;
+    geometry->error = BH_BSP_OK;
     return 1;
 }

@@ -3,63 +3,63 @@
 #include "../Math/bh_round.h"
 #include <float.h>
 #include <string.h>
-static int fail(BHTextureContext *q, BHTextureError error)
+static int fail(BHTextureContext *texture_context, BHTextureError error)
 {
-    if (q)
-        q->error = error;
+    if (texture_context)
+        texture_context->error = error;
     return 0;
 }
 int bh_native_attribute_emit(BHClipVertex *ring, BHTextureImage *image, unsigned long base_color, void *user)
 {
     BHNativePrimitive *native = (BHNativePrimitive *)user;
-    BHTextureContext *q;
-    BHClipVertex *p;
+    BHTextureContext *texture_context;
+    BHClipVertex *vertex;
     D3DTLVERTEX *vertices;
     unsigned long count = 0, i;
     float scalar;
     double gray;
     int ok;
-    if (!native || !(q = native->textures))
+    if (!native || !(texture_context = native->textures))
         return 0;
-    if (q->software)
-        return fail(q, BH_TEXTURE_BACKEND);
-    if (!ring || !image || !q->allocator.allocate || !q->allocator.release || !_finite(native->near_z) ||
+    if (texture_context->software)
+        return fail(texture_context, BH_TEXTURE_BACKEND);
+    if (!ring || !image || !texture_context->allocator.allocate || !texture_context->allocator.release || !_finite(native->near_z) ||
         native->near_z <= 0)
-        return fail(q, BH_TEXTURE_ARGUMENT);
-    p = ring;
+        return fail(texture_context, BH_TEXTURE_ARGUMENT);
+    vertex = ring;
     do
     {
-        if (!p || !p->next || !p->previous || p->next->previous != p || p->previous->next != p || ++count > 2048)
-            return fail(q, BH_TEXTURE_TOPOLOGY);
-        memcpy(&scalar, &p->unknown28, 4);
+        if (!vertex || !vertex->next || !vertex->previous || vertex->next->previous != vertex || vertex->previous->next != vertex || ++count > 2048)
+            return fail(texture_context, BH_TEXTURE_TOPOLOGY);
+        memcpy(&scalar, &vertex->unknown28, 4);
         gray = (double)scalar * -255.0;
-        if (!_finite(p->sx) || !_finite(p->sy) || !_finite(p->point.z) || p->point.z <= 0 || !_finite(p->u) ||
-            !_finite(p->v) || !_finite(gray) || gray < -2147483648.0 || gray > 2147483647.0)
-            return fail(q, BH_TEXTURE_ARGUMENT);
-        p = p->next;
-    } while (p != ring);
+        if (!_finite(vertex->sx) || !_finite(vertex->sy) || !_finite(vertex->point.z) || vertex->point.z <= 0 || !_finite(vertex->u) ||
+            !_finite(vertex->v) || !_finite(gray) || gray < -2147483648.0 || gray > 2147483647.0)
+            return fail(texture_context, BH_TEXTURE_ARGUMENT);
+        vertex = vertex->next;
+    } while (vertex != ring);
     if (count < 3)
-        return fail(q, BH_TEXTURE_TOPOLOGY);
-    vertices = (D3DTLVERTEX *)q->allocator.allocate(count * sizeof(*vertices), q->allocator.user);
+        return fail(texture_context, BH_TEXTURE_TOPOLOGY);
+    vertices = (D3DTLVERTEX *)texture_context->allocator.allocate(count * sizeof(*vertices), texture_context->allocator.user);
     if (!vertices)
-        return fail(q, BH_TEXTURE_MEMORY);
+        return fail(texture_context, BH_TEXTURE_MEMORY);
     memset(vertices, 0, count * sizeof(*vertices));
-    p = ring;
+    vertex = ring;
     for (i = 0; i < count; ++i)
     {
-        vertices[i].sx = p->sx;
-        vertices[i].sy = p->sy;
-        bh_round_float(&vertices[i].sz, (double)native->near_z / p->point.z);
-        bh_round_float(&vertices[i].rhw, 1.0 / p->point.z);
-        memcpy(&scalar, &p->unknown28, 4);
+        vertices[i].sx = vertex->sx;
+        vertices[i].sy = vertex->sy;
+        bh_round_float(&vertices[i].sz, (double)native->near_z / vertex->point.z);
+        bh_round_float(&vertices[i].rhw, 1.0 / vertex->point.z);
+        memcpy(&scalar, &vertex->unknown28, 4);
         gray = (double)scalar * -255.0;
         vertices[i].color = base_color - (unsigned long)(long)gray * 0x10101UL;
-        vertices[i].tu = p->u;
-        vertices[i].tv = p->v;
-        p = p->next;
+        vertices[i].tu = vertex->u;
+        vertices[i].tv = vertex->v;
+        vertex = vertex->next;
     }
-    ok = bh_texture_draw_polygon(q, image, vertices, count);
-    q->allocator.release(vertices, q->allocator.user);
+    ok = bh_texture_draw_polygon(texture_context, image, vertices, count);
+    texture_context->allocator.release(vertices, texture_context->allocator.user);
     if (ok)
     {
         ++native->polygons;

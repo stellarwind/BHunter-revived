@@ -14,130 +14,130 @@ static void release(void *memory, void *user)
 {
     free(memory);
 }
-static int fail(BHFrameBuffers *c, BHFrameBufferError error)
+static int fail(BHFrameBuffers *frame_buffers, BHFrameBufferError error)
 {
-    if (c)
-        c->error = error;
+    if (frame_buffers)
+        frame_buffers->error = error;
     return 0;
 }
-int bh_frame_buffers_bind(BHFrameBuffers *c, const BHSceneAllocator *a)
+int bh_frame_buffers_bind(BHFrameBuffers *frame_buffers, const BHSceneAllocator *scene_allocator)
 {
-    if (!c || (a && (!a->allocate || !a->release)))
+    if (!frame_buffers || (scene_allocator && (!scene_allocator->allocate || !scene_allocator->release)))
         return 0;
-    memset(c, 0, sizeof(*c));
-    c->active = c->latest = -1;
-    if (a)
-        c->allocator = *a;
+    memset(frame_buffers, 0, sizeof(*frame_buffers));
+    frame_buffers->active = frame_buffers->latest = -1;
+    if (scene_allocator)
+        frame_buffers->allocator = *scene_allocator;
     else
     {
-        c->allocator.allocate = allocate;
-        c->allocator.release = release;
+        frame_buffers->allocator.allocate = allocate;
+        frame_buffers->allocator.release = release;
     }
     return 1;
 }
-int bh_frame_buffers_start(BHFrameBuffers *c, BHFrameProduce produce, void *produce_user, double fps,
+int bh_frame_buffers_start(BHFrameBuffers *frame_buffers, BHFrameProduce produce, void *produce_user, double fps,
                            unsigned long bytes)
 {
     void *data[3];
     unsigned long i, j;
     double delay;
-    if (!c || !c->allocator.allocate || !c->allocator.release || !produce || !_finite(fps) || fps <= 0 || !bytes ||
-        c->writing)
-        return fail(c, BH_FRAME_BUFFER_ARGUMENT);
+    if (!frame_buffers || !frame_buffers->allocator.allocate || !frame_buffers->allocator.release || !produce || !_finite(fps) || fps <= 0 || !bytes ||
+        frame_buffers->writing)
+        return fail(frame_buffers, BH_FRAME_BUFFER_ARGUMENT);
     for (i = 0; i < 3; ++i)
-        if (c->slots[i].data)
-            return fail(c, BH_FRAME_BUFFER_BUSY);
+        if (frame_buffers->slots[i].data)
+            return fail(frame_buffers, BH_FRAME_BUFFER_BUSY);
     delay = 1000.0 / fps;
     if (delay < 1.0)
         delay = 1.0;
     if (!_finite(delay))
-        return fail(c, BH_FRAME_BUFFER_ARGUMENT);
+        return fail(frame_buffers, BH_FRAME_BUFFER_ARGUMENT);
     for (i = 0; i < 3; ++i)
     {
-        data[i] = c->allocator.allocate(bytes, c->allocator.user);
+        data[i] = frame_buffers->allocator.allocate(bytes, frame_buffers->allocator.user);
         if (!data[i])
         {
             for (j = 0; j < i; ++j)
-                c->allocator.release(data[j], c->allocator.user);
-            return fail(c, BH_FRAME_BUFFER_MEMORY);
+                frame_buffers->allocator.release(data[j], frame_buffers->allocator.user);
+            return fail(frame_buffers, BH_FRAME_BUFFER_MEMORY);
         }
     }
-    c->produce = produce;
-    c->produce_user = produce_user;
-    c->delay_ms = delay;
-    c->bytes = bytes;
-    c->active = c->latest = -1;
+    frame_buffers->produce = produce;
+    frame_buffers->produce_user = produce_user;
+    frame_buffers->delay_ms = delay;
+    frame_buffers->bytes = bytes;
+    frame_buffers->active = frame_buffers->latest = -1;
     for (i = 0; i < 3; ++i)
     {
-        c->slots[i].data = data[i];
-        c->slots[i].busy = 0;
-        c->slots[i].age = 3;
+        frame_buffers->slots[i].data = data[i];
+        frame_buffers->slots[i].busy = 0;
+        frame_buffers->slots[i].age = 3;
     }
-    c->error = BH_FRAME_BUFFER_OK;
+    frame_buffers->error = BH_FRAME_BUFFER_OK;
     return 1;
 }
-void *bh_frame_buffers_acquire(BHFrameBuffers *c)
+void *bh_frame_buffers_acquire(BHFrameBuffers *frame_buffers)
 {
     unsigned long i;
     long best = -1, age = -1;
-    if (!c || !c->bytes)
+    if (!frame_buffers || !frame_buffers->bytes)
     {
-        fail(c, BH_FRAME_BUFFER_ARGUMENT);
+        fail(frame_buffers, BH_FRAME_BUFFER_ARGUMENT);
         return NULL;
     }
-    if (c->writing)
+    if (frame_buffers->writing)
     {
-        fail(c, BH_FRAME_BUFFER_BUSY);
+        fail(frame_buffers, BH_FRAME_BUFFER_BUSY);
         return NULL;
     }
     for (i = 0; i < 3; ++i)
-        if (!c->slots[i].busy && c->slots[i].age > age)
+        if (!frame_buffers->slots[i].busy && frame_buffers->slots[i].age > age)
         {
             best = (long)i;
-            age = c->slots[i].age;
+            age = frame_buffers->slots[i].age;
         }
     if (best < 0)
     {
-        fail(c, BH_FRAME_BUFFER_EMPTY);
+        fail(frame_buffers, BH_FRAME_BUFFER_EMPTY);
         return NULL;
     }
-    c->active = best;
-    c->slots[best].busy = 1;
-    c->slots[best].age = -1;
-    c->writing = 1;
-    c->error = BH_FRAME_BUFFER_OK;
-    return c->slots[best].data;
+    frame_buffers->active = best;
+    frame_buffers->slots[best].busy = 1;
+    frame_buffers->slots[best].age = -1;
+    frame_buffers->writing = 1;
+    frame_buffers->error = BH_FRAME_BUFFER_OK;
+    return frame_buffers->slots[best].data;
 }
-int bh_frame_buffers_publish(BHFrameBuffers *c)
+int bh_frame_buffers_publish(BHFrameBuffers *frame_buffers)
 {
     unsigned long i, bits;
-    if (!c || !c->writing || c->active < 0 || c->active > 2)
-        return fail(c, BH_FRAME_BUFFER_ARGUMENT);
+    if (!frame_buffers || !frame_buffers->writing || frame_buffers->active < 0 || frame_buffers->active > 2)
+        return fail(frame_buffers, BH_FRAME_BUFFER_ARGUMENT);
     for (i = 0; i < 3; ++i)
     {
-        bits = (unsigned long)c->slots[i].age + 1;
-        memcpy(&c->slots[i].age, &bits, 4);
+        bits = (unsigned long)frame_buffers->slots[i].age + 1;
+        memcpy(&frame_buffers->slots[i].age, &bits, 4);
     }
-    c->slots[c->active].busy = 0;
-    c->latest = c->active;
-    c->writing = 0;
-    c->error = BH_FRAME_BUFFER_OK;
+    frame_buffers->slots[frame_buffers->active].busy = 0;
+    frame_buffers->latest = frame_buffers->active;
+    frame_buffers->writing = 0;
+    frame_buffers->error = BH_FRAME_BUFFER_OK;
     return 1;
 }
-int bh_frame_buffers_dispose(BHFrameBuffers *c)
+int bh_frame_buffers_dispose(BHFrameBuffers *frame_buffers)
 {
     unsigned long i;
-    if (!c || c->writing)
-        return fail(c, BH_FRAME_BUFFER_BUSY);
-    if (c->allocator.release)
+    if (!frame_buffers || frame_buffers->writing)
+        return fail(frame_buffers, BH_FRAME_BUFFER_BUSY);
+    if (frame_buffers->allocator.release)
         for (i = 0; i < 3; ++i)
-            if (c->slots[i].data)
+            if (frame_buffers->slots[i].data)
             {
-                c->allocator.release(c->slots[i].data, c->allocator.user);
-                c->slots[i].data = NULL;
+                frame_buffers->allocator.release(frame_buffers->slots[i].data, frame_buffers->allocator.user);
+                frame_buffers->slots[i].data = NULL;
             }
-    c->bytes = 0;
-    c->active = c->latest = -1;
-    c->error = BH_FRAME_BUFFER_OK;
+    frame_buffers->bytes = 0;
+    frame_buffers->active = frame_buffers->latest = -1;
+    frame_buffers->error = BH_FRAME_BUFFER_OK;
     return 1;
 }

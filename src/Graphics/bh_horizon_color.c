@@ -1,67 +1,67 @@
 #include "bh_horizon_color.h"
 #include <string.h>
-int bh_horizon_color_init(BHHorizonColor *c, BHTextureContext *textures)
+int bh_horizon_color_init(BHHorizonColor *horizon_color, BHTextureContext *textures)
 {
-    if (!c || !textures || !textures->allocator.allocate || !textures->allocator.release)
+    if (!horizon_color || !textures || !textures->allocator.allocate || !textures->allocator.release)
         return 0;
-    memset(c, 0, sizeof(*c));
-    c->textures = textures;
-    c->allocator = textures->allocator;
+    memset(horizon_color, 0, sizeof(*horizon_color));
+    horizon_color->textures = textures;
+    horizon_color->allocator = textures->allocator;
     return 1;
 }
-void bh_horizon_color_dispose(BHHorizonColor *c)
+void bh_horizon_color_dispose(BHHorizonColor *horizon_color)
 {
-    if (!c)
+    if (!horizon_color)
         return;
-    if (c->indexed)
-        c->allocator.release(c->indexed, c->allocator.user);
-    if (c->packed)
-        c->allocator.release(c->packed, c->allocator.user);
-    memset(c, 0, sizeof(*c));
+    if (horizon_color->indexed)
+        horizon_color->allocator.release(horizon_color->indexed, horizon_color->allocator.user);
+    if (horizon_color->packed)
+        horizon_color->allocator.release(horizon_color->packed, horizon_color->allocator.user);
+    memset(horizon_color, 0, sizeof(*horizon_color));
 }
-int bh_horizon_color_prepare(BHHorizonColor *c, unsigned long mode, unsigned long color)
+int bh_horizon_color_prepare(BHHorizonColor *horizon_color, unsigned long mode, unsigned long color)
 {
     unsigned long row, i, base[3], constant[3], value[3], packed, j;
-    BHTextureContext *q;
-    if (!c || !c->textures || !c->allocator.allocate || !c->allocator.release)
+    BHTextureContext *texture_context;
+    if (!horizon_color || !horizon_color->textures || !horizon_color->allocator.allocate || !horizon_color->allocator.release)
     {
-        if (c)
-            c->error = BH_HORIZON_COLOR_ARGUMENT;
+        if (horizon_color)
+            horizon_color->error = BH_HORIZON_COLOR_ARGUMENT;
         return 0;
     }
-    q = c->textures;
-    if (!bh_texture_tables_init(q))
+    texture_context = horizon_color->textures;
+    if (!bh_texture_tables_init(texture_context))
     {
-        c->error = BH_HORIZON_COLOR_ARGUMENT;
+        horizon_color->error = BH_HORIZON_COLOR_ARGUMENT;
         return 0;
     }
     if (mode == 1)
     {
-        if (c->indexed && color == c->color)
+        if (horizon_color->indexed && color == horizon_color->color)
         {
-            c->error = BH_HORIZON_COLOR_OK;
+            horizon_color->error = BH_HORIZON_COLOR_OK;
             return 1;
         }
-        if (!c->indexed)
-            c->indexed = (unsigned char *)c->allocator.allocate(65536, c->allocator.user);
-        if (!c->indexed)
+        if (!horizon_color->indexed)
+            horizon_color->indexed = (unsigned char *)horizon_color->allocator.allocate(65536, horizon_color->allocator.user);
+        if (!horizon_color->indexed)
         {
-            c->error = BH_HORIZON_COLOR_MEMORY;
+            horizon_color->error = BH_HORIZON_COLOR_MEMORY;
             return 0;
         }
     }
     else
     {
-        if (c->packed && color == c->color)
+        if (horizon_color->packed && color == horizon_color->color)
         {
-            c->error = BH_HORIZON_COLOR_OK;
+            horizon_color->error = BH_HORIZON_COLOR_OK;
             return 1;
         }
-        if (!c->packed)
-            c->packed = (unsigned short *)c->allocator.allocate(131072, c->allocator.user);
-        if (!c->packed)
+        if (!horizon_color->packed)
+            horizon_color->packed = (unsigned short *)horizon_color->allocator.allocate(131072, horizon_color->allocator.user);
+        if (!horizon_color->packed)
         {
-            c->error = BH_HORIZON_COLOR_MEMORY;
+            horizon_color->error = BH_HORIZON_COLOR_MEMORY;
             return 0;
         }
     }
@@ -77,19 +77,19 @@ int bh_horizon_color_prepare(BHHorizonColor *c, unsigned long mode, unsigned lon
             for (j = 0; j < 3; ++j)
                 value[j] = (base[j] * row + constant[j] * (255 - row)) / 255;
             if (mode == 1)
-                c->indexed[row * 256 + i] =
-                    (unsigned char)((q->tables.quant[1][value[0]] * 7 + q->tables.quant[2][value[1]]) * 6 +
-                                    q->tables.quant[1][value[2]]);
+                horizon_color->indexed[row * 256 + i] =
+                    (unsigned char)((texture_context->tables.quant[1][value[0]] * 7 + texture_context->tables.quant[2][value[1]]) * 6 +
+                                    texture_context->tables.quant[1][value[2]]);
             else
             {
                 packed = 0;
                 for (j = 0; j < 3; ++j)
-                    packed += (value[j] >> (q->display_right[j] & 31)) << (q->display_left[j] & 31);
-                c->packed[row * 256 + i] = (unsigned short)packed;
+                    packed += (value[j] >> (texture_context->display_right[j] & 31)) << (texture_context->display_left[j] & 31);
+                horizon_color->packed[row * 256 + i] = (unsigned short)packed;
             }
         }
-    c->color = color;
-    ++c->fills;
-    c->error = BH_HORIZON_COLOR_OK;
+    horizon_color->color = color;
+    ++horizon_color->fills;
+    horizon_color->error = BH_HORIZON_COLOR_OK;
     return 1;
 }

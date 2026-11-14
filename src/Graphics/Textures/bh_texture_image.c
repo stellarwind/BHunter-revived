@@ -4,45 +4,45 @@
 #include <string.h>
 #include <ctype.h>
 
-static int fail(BHTextureContext *q, BHTextureError error)
+static int fail(BHTextureContext *texture_context, BHTextureError error)
 {
-    if (q)
-        q->error = error;
+    if (texture_context)
+        texture_context->error = error;
     return 0;
 }
-static int native(BHTextureContext *q, HRESULT hr)
+static int native(BHTextureContext *texture_context, HRESULT hr)
 {
-    q->last_hresult = hr;
-    return hr == DD_OK ? 1 : fail(q, BH_TEXTURE_BACKEND);
+    texture_context->last_hresult = hr;
+    return hr == DD_OK ? 1 : fail(texture_context, BH_TEXTURE_BACKEND);
 }
-int bh_texture_set_path(BHTextureContext *q, const char *prefix, long policy)
+int bh_texture_set_path(BHTextureContext *texture_context, const char *prefix, long policy)
 {
     unsigned long n;
-    if (!q || !prefix || (n = strlen(prefix)) > 254)
-        return fail(q, BH_TEXTURE_ARGUMENT);
-    strcpy(q->prefix, prefix);
-    q->search = -1;
+    if (!texture_context || !prefix || (n = strlen(prefix)) > 254)
+        return fail(texture_context, BH_TEXTURE_ARGUMENT);
+    strcpy(texture_context->prefix, prefix);
+    texture_context->search = -1;
     if (n)
     {
         if (prefix[n - 1] != '\\')
         {
-            q->prefix[n] = '\\';
-            q->prefix[n + 1] = 0;
+            texture_context->prefix[n] = '\\';
+            texture_context->prefix[n + 1] = 0;
         }
         if (policy >= 0 && policy < 3)
-            q->search = policy;
+            texture_context->search = policy;
     }
     return 1;
 }
-static void message(BHTextureContext *q, const char *tag, const char *name, int deduplicate)
+static void message(BHTextureContext *texture_context, const char *tag, const char *name, int deduplicate)
 {
-    unsigned long used = strlen(q->errors), a = strlen(tag), b = strlen(name);
-    if (deduplicate && strstr(q->errors, name))
+    unsigned long used = strlen(texture_context->errors), a = strlen(tag), b = strlen(name);
+    if (deduplicate && strstr(texture_context->errors, name))
         return;
-    if (used + a + b < sizeof(q->errors))
+    if (used + a + b < sizeof(texture_context->errors))
     {
-        memcpy(q->errors + used, tag, a);
-        memcpy(q->errors + used + a, name, b + 1);
+        memcpy(texture_context->errors + used, tag, a);
+        memcpy(texture_context->errors + used + a, name, b + 1);
     }
 }
 static int canonicalize_texture_name(const char *name, char *out)
@@ -57,12 +57,12 @@ static int canonicalize_texture_name(const char *name, char *out)
         strcpy(out + n - 4, ".PCX");
     return 1;
 }
-static int open_reader(BHTextureContext *q, BHPcxReader *reader, const char *name)
+static int open_reader(BHTextureContext *texture_context, BHPcxReader *reader, const char *name)
 {
     char path[284];
-    strcpy(path, q->prefix);
+    strcpy(path, texture_context->prefix);
     strcat(path, name);
-    switch (q->search)
+    switch (texture_context->search)
     {
     case -1:
         return bh_pcx_reader_open(reader, name);
@@ -76,13 +76,13 @@ static int open_reader(BHTextureContext *q, BHPcxReader *reader, const char *nam
         return 0;
     }
 }
-static unsigned long packed(const unsigned char *rgb, const DDPIXELFORMAT *p)
+static unsigned long packed(const unsigned char *rgb, const DDPIXELFORMAT *format)
 {
     unsigned long masks[3], i, mask, out = 0;
     int shift;
-    masks[0] = p->dwRBitMask;
-    masks[1] = p->dwGBitMask;
-    masks[2] = p->dwBBitMask;
+    masks[0] = format->dwRBitMask;
+    masks[1] = format->dwGBitMask;
+    masks[2] = format->dwBBitMask;
     for (i = 0; i < 3; ++i)
     {
         shift = -8;
@@ -92,7 +92,7 @@ static unsigned long packed(const unsigned char *rgb, const DDPIXELFORMAT *p)
     }
     return out;
 }
-static void discard(BHTextureContext *q, BHTextureImage *image)
+static void discard(BHTextureContext *texture_context, BHTextureImage *image)
 {
     if (!image)
         return;
@@ -101,16 +101,16 @@ static void discard(BHTextureContext *q, BHTextureImage *image)
     if (image->source)
         bh_renderer_surface_release(image->source);
     if (image->runs)
-        q->allocator.release(image->runs, q->allocator.user);
+        texture_context->allocator.release(image->runs, texture_context->allocator.user);
     if (image->vertices)
-        q->allocator.release(image->vertices, q->allocator.user);
+        texture_context->allocator.release(image->vertices, texture_context->allocator.user);
     if (image->dither)
-        q->allocator.release(image->dither, q->allocator.user);
+        texture_context->allocator.release(image->dither, texture_context->allocator.user);
     if (image->screen)
-        q->allocator.release(image->screen, q->allocator.user);
-    q->allocator.release(image, q->allocator.user);
+        texture_context->allocator.release(image->screen, texture_context->allocator.user);
+    texture_context->allocator.release(image, texture_context->allocator.user);
 }
-BHTextureImage *bh_texture_load(BHTextureContext *q, const char *name)
+BHTextureImage *bh_texture_load(BHTextureContext *texture_context, const char *name)
 {
     char key[28];
     BHTextureImage *image;
@@ -121,44 +121,44 @@ BHTextureImage *bh_texture_load(BHTextureContext *q, const char *name)
     unsigned long colors[256], i, j, x, y, bytes;
     unsigned char index;
     int ok = 1;
-    if (!q || !q->allocator.allocate || !q->draw || !canonicalize_texture_name(name, key))
+    if (!texture_context || !texture_context->allocator.allocate || !texture_context->draw || !canonicalize_texture_name(name, key))
     {
-        fail(q, BH_TEXTURE_ARGUMENT);
+        fail(texture_context, BH_TEXTURE_ARGUMENT);
         return NULL;
     }
-    q->error = BH_TEXTURE_OK;
-    for (image = q->images; image; image = image->next)
+    texture_context->error = BH_TEXTURE_OK;
+    for (image = texture_context->images; image; image = image->next)
         if (!_stricmp(key, image->name))
             return image;
-    image = (BHTextureImage *)q->allocator.allocate(sizeof(*image), q->allocator.user);
+    image = (BHTextureImage *)texture_context->allocator.allocate(sizeof(*image), texture_context->allocator.user);
     if (!image)
     {
-        fail(q, BH_TEXTURE_MEMORY);
+        fail(texture_context, BH_TEXTURE_MEMORY);
         return NULL;
     }
     memset(image, 0, sizeof(*image));
     strcpy(image->name, key);
     image->flags = 1;
     bh_pcx_reader_init(&reader);
-    if (!open_reader(q, &reader, key))
+    if (!open_reader(texture_context, &reader, key))
     {
-        fail(q, BH_TEXTURE_IO);
-        message(q, "\nLOADERR:", key, 1);
+        fail(texture_context, BH_TEXTURE_IO);
+        message(texture_context, "\nLOADERR:", key, 1);
         goto failed;
     }
-    bh_pcx_palette(&palette, reader.palette, q->palette_mode, q->palette_color);
+    bh_pcx_palette(&palette, reader.palette, texture_context->palette_mode, texture_context->palette_color);
     memcpy(reader.map, palette.indices, 256);
-    image->format = bh_texture_request_format(q, reader.width, reader.height, 8, 1);
+    image->format = bh_texture_request_format(texture_context, reader.width, reader.height, 8, 1);
     if (!image->format)
     {
-        message(q, "\nFORMATERR:", key, 0);
+        message(texture_context, "\nFORMATERR:", key, 0);
         goto failed;
     }
     bytes = (image->format->pixel.dwRGBBitCount + 7) / 8;
     if (bytes < 1 || bytes > 4)
     {
-        fail(q, BH_TEXTURE_FORMAT);
-        message(q, "\nFORMATERR:", key, 0);
+        fail(texture_context, BH_TEXTURE_FORMAT);
+        message(texture_context, "\nFORMATERR:", key, 0);
         goto failed;
     }
     memset(&desc, 0, sizeof(desc));
@@ -167,10 +167,10 @@ BHTextureImage *bh_texture_load(BHTextureContext *q, const char *name)
     desc.dwWidth = reader.width;
     desc.dwHeight = reader.height;
     desc.ddpfPixelFormat = image->format->pixel;
-    desc.ddsCaps.dwCaps = q->software ? 0x840 : 0x1800;
-    if (!native(q, bh_renderer_surface_create(q->draw, &desc, &image->source)))
+    desc.ddsCaps.dwCaps = texture_context->software ? 0x840 : 0x1800;
+    if (!native(texture_context, bh_renderer_surface_create(texture_context->draw, &desc, &image->source)))
     {
-        message(q, "\nALLOCERR:", key, 0);
+        message(texture_context, "\nALLOCERR:", key, 0);
         goto failed;
     }
     if (bytes == 1)
@@ -182,10 +182,10 @@ BHTextureImage *bh_texture_load(BHTextureContext *q, const char *name)
             entries[i].peBlue = palette.rgb[i * 3 + 2];
             entries[i].peFlags = 0;
         }
-        if (!native(q, bh_renderer_palette_create(q->draw, entries, &image->palette)) ||
-            !native(q, bh_renderer_surface_set_palette(image->source, image->palette)))
+        if (!native(texture_context, bh_renderer_palette_create(texture_context->draw, entries, &image->palette)) ||
+            !native(texture_context, bh_renderer_surface_set_palette(image->source, image->palette)))
             goto failed;
-        if (!bh_texture_palette_tables(q, image, (const unsigned char *)entries, 1024))
+        if (!bh_texture_palette_tables(texture_context, image, (const unsigned char *)entries, 1024))
             goto failed;
     }
     else
@@ -193,17 +193,17 @@ BHTextureImage *bh_texture_load(BHTextureContext *q, const char *name)
             colors[i] = packed(palette.rgb + i * 3, &image->format->pixel);
     memset(&lock, 0, sizeof(lock));
     lock.dwSize = sizeof(lock);
-    if (!native(q, bh_renderer_surface_lock(image->source, &lock)))
+    if (!native(texture_context, bh_renderer_surface_lock(image->source, &lock)))
         goto failed;
     if (lock.lPitch < (long)(reader.width * bytes))
-        ok = fail(q, BH_TEXTURE_TOPOLOGY);
+        ok = fail(texture_context, BH_TEXTURE_TOPOLOGY);
     for (y = 0; ok && y < reader.height; ++y)
         for (x = 0; x < reader.width; ++x)
         {
             unsigned char *out = (unsigned char *)lock.lpSurface + y * lock.lPitch + x * bytes;
             if (!bh_pcx_reader_next(&reader, &index))
             {
-                ok = fail(q, BH_TEXTURE_IO);
+                ok = fail(texture_context, BH_TEXTURE_IO);
                 break;
             }
             if (bytes == 1)
@@ -212,29 +212,29 @@ BHTextureImage *bh_texture_load(BHTextureContext *q, const char *name)
                 for (j = 0; j < bytes; ++j)
                     out[j] = (unsigned char)(colors[index] >> (j * 8));
         }
-    if (!native(q, bh_renderer_surface_unlock(image->source)))
+    if (!native(texture_context, bh_renderer_surface_unlock(image->source)))
         ok = 0;
     if (!ok)
         goto failed;
     if (!bh_pcx_reader_close(&reader))
     {
-        fail(q, BH_TEXTURE_IO);
+        fail(texture_context, BH_TEXTURE_IO);
         goto failed;
     }
-    image->runs = (unsigned long *)q->allocator.allocate(0x80, q->allocator.user);
-    image->vertices = (D3DTLVERTEX *)q->allocator.allocate(0xc00, q->allocator.user);
+    image->runs = (unsigned long *)texture_context->allocator.allocate(0x80, texture_context->allocator.user);
+    image->vertices = (D3DTLVERTEX *)texture_context->allocator.allocate(0xc00, texture_context->allocator.user);
     if (!image->runs || !image->vertices)
     {
-        fail(q, BH_TEXTURE_MEMORY);
+        fail(texture_context, BH_TEXTURE_MEMORY);
         goto failed;
     }
     image->vertex_capacity = 0x60;
-    image->next = q->images;
-    q->images = image;
+    image->next = texture_context->images;
+    texture_context->images = image;
     return image;
 failed:
     if (reader.file)
         bh_pcx_reader_close(&reader);
-    discard(q, image);
+    discard(texture_context, image);
     return NULL;
 }

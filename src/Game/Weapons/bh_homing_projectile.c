@@ -17,11 +17,11 @@ static int live(BHHomingProjectileContext *ctx, BHEntity *entity, unsigned long 
 {
     return bh_entity_is_active(ctx->pool, entity) && entity->generation == generation;
 }
-static void offset(BHVec3 *out, const BHVec3 *p, const BHVec3 *n, double factor)
+static void offset(BHVec3 *out, const BHVec3 *point, const BHVec3 *normal, double factor)
 {
-    bh_round_float(&out->x, (double)p->x - (double)n->x * factor);
-    bh_round_float(&out->y, (double)p->y - (double)n->y * factor);
-    bh_round_float(&out->z, (double)p->z - (double)n->z * factor);
+    bh_round_float(&out->x, (double)point->x - (double)normal->x * factor);
+    bh_round_float(&out->y, (double)point->y - (double)normal->y * factor);
+    bh_round_float(&out->z, (double)point->z - (double)normal->z * factor);
 }
 int bh_homing_projectile_bind(BHHomingProjectileContext *ctx, BHEntity *entity)
 {
@@ -39,17 +39,17 @@ int bh_homing_projectile_bind(BHHomingProjectileContext *ctx, BHEntity *entity)
     ctx->error = 0;
     return 1;
 }
-static int receiver(BHHomingProjectileContext *ctx, const BHWorldSegmentHit *h, BHEntity **out, int *world)
+static int receiver(BHHomingProjectileContext *ctx, const BHWorldSegmentHit *hit, BHEntity **out, int *world)
 {
     unsigned long i;
-    *world = h->object.kind == BH_WORLD_HIT_GEOMETRY;
+    *world = hit->object.kind == BH_WORLD_HIT_GEOMETRY;
     if (!*world)
     {
-        *out = h->object.object.actor;
+        *out = hit->object.object.actor;
         return *out != NULL;
     }
     {
-        const BHHomingWorldResponse *binding = bh_homing_world_response(ctx, h->object.object.geometry);
+        const BHHomingWorldResponse *binding = bh_homing_world_response(ctx, hit->object.object.geometry);
         if (binding)
         {
             *out = binding->receiver;

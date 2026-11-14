@@ -34,63 +34,63 @@ int bh_draw_queue_init(BHDrawQueue *q, unsigned long capacity, const BHSceneAllo
     *q = next;
     return bh_draw_queue_begin(q);
 }
-int bh_draw_queue_dispose(BHDrawQueue *q)
+int bh_draw_queue_dispose(BHDrawQueue *queue)
 {
-    if (!q)
+    if (!queue)
         return 0;
-    if (q->commands)
-        q->allocator.release(q->commands, q->allocator.user);
-    memset(q, 0, sizeof(*q));
+    if (queue->commands)
+        queue->allocator.release(queue->commands, queue->allocator.user);
+    memset(queue, 0, sizeof(*queue));
     return 1;
 }
-int bh_draw_queue_begin(BHDrawQueue *q)
+int bh_draw_queue_begin(BHDrawQueue *queue)
 {
     unsigned long i;
-    if (!q || !q->commands || q->capacity < 9)
+    if (!queue || !queue->commands || queue->capacity < 9)
         return 0;
-    q->count = 9;
-    q->error = BH_DRAW_OK;
+    queue->count = 9;
+    queue->error = BH_DRAW_OK;
     for (i = 0; i < 9; ++i)
     {
-        q->commands[i].kind = (i == 0 || i == 6 || i == 8) ? BH_DRAW_NOP : BH_DRAW_STATE;
-        q->commands[i].resource = i; /* original header's tail pointer, as an index */
-        q->commands[i].next = i == 8 ? BH_DRAW_END : i + 1;
+        queue->commands[i].kind = (i == 0 || i == 6 || i == 8) ? BH_DRAW_NOP : BH_DRAW_STATE;
+        queue->commands[i].resource = i; /* original header's tail pointer, as an index */
+        queue->commands[i].next = i == 8 ? BH_DRAW_END : i + 1;
         if (i >= 1 && i <= 5)
-            q->commands[i].words[0] = i - 1;
+            queue->commands[i].words[0] = i - 1;
         if (i == 7)
-            q->commands[i].words[0] = 3;
+            queue->commands[i].words[0] = 3;
     }
     return 1;
 }
-static BHDrawCommand *append(BHDrawQueue *q, unsigned long bucket)
+static BHDrawCommand *append(BHDrawQueue *queue, unsigned long bucket)
 {
     static const unsigned long mapping[9] = {1, 2, 3, 4, 5, 0, 6, 7, 8};
     unsigned long header, tail, index;
     BHDrawCommand *command;
-    if (!q || !q->commands || q->count < 9 || q->count > q->capacity)
+    if (!queue || !queue->commands || queue->count < 9 || queue->count > queue->capacity)
     {
-        if (q)
-            q->error = BH_DRAW_ARGUMENT;
+        if (queue)
+            queue->error = BH_DRAW_ARGUMENT;
         return NULL;
     }
-    if (q->count == q->capacity)
+    if (queue->count == queue->capacity)
     {
-        q->error = BH_DRAW_FULL;
+        queue->error = BH_DRAW_FULL;
         return NULL;
     }
     header = bucket < 9 ? mapping[bucket] : 0;
-    tail = q->commands[header].resource;
-    if (tail >= q->count || (q->commands[tail].next != BH_DRAW_END && q->commands[tail].next >= q->count))
+    tail = queue->commands[header].resource;
+    if (tail >= queue->count || (queue->commands[tail].next != BH_DRAW_END && queue->commands[tail].next >= queue->count))
     {
-        q->error = BH_DRAW_TOPOLOGY;
+        queue->error = BH_DRAW_TOPOLOGY;
         return NULL;
     }
-    index = q->count++;
-    command = q->commands + index;
-    command->next = q->commands[tail].next;
-    q->commands[tail].next = index;
-    q->commands[header].resource = index;
-    q->error = BH_DRAW_OK;
+    index = queue->count++;
+    command = queue->commands + index;
+    command->next = queue->commands[tail].next;
+    queue->commands[tail].next = index;
+    queue->commands[header].resource = index;
+    queue->error = BH_DRAW_OK;
     return command;
 }
 static void put(unsigned long *out, float value)
@@ -101,9 +101,9 @@ static void point(unsigned long *out, const BHVec3 *value)
 {
     memcpy(out, value, 12);
 }
-static int unavailable(const BHDrawQueue *q)
+static int unavailable(const BHDrawQueue *queue)
 {
-    return q && q->error == BH_DRAW_FULL ? 0 : -1;
+    return queue && queue->error == BH_DRAW_FULL ? 0 : -1;
 }
 int bh_draw_billboard(BHDrawQueue *q, unsigned long bucket, unsigned long resource, const BHVec3 *position, float width,
                       float height, float angle, unsigned long frame, float alpha)

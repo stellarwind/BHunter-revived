@@ -10,26 +10,26 @@ static float stored(double x)
     bh_round_float(&f, x);
     return f;
 }
-static void result(BHPulseVisualContext *c, int n)
+static void result(BHPulseVisualContext *context, int n)
 {
-    ++c->attempted;
+    ++context->attempted;
     if (n > 0)
-        ++c->queued;
+        ++context->queued;
     else if (n < 0)
-        c->error = -1;
-    else if (!c->error)
-        c->error = 1;
+        context->error = -1;
+    else if (!context->error)
+        context->error = 1;
 }
-int bh_pulse_visual_draw(BHPulseVisualContext *c, const BHEntity *e)
+int bh_pulse_visual_draw(BHPulseVisualContext *context, const BHEntity *projectile)
 {
     BHVec3 angles, direction, position;
     float lifetime, phase, envelope, offset, size;
     unsigned long i;
-    if (!c || !e || !c->queue || !bh_math_environment_supported())
+    if (!context || !projectile || !context->queue || !bh_math_environment_supported())
         return -1;
-    c->error = 0;
-    lifetime = bh_field_f32(&e->projectile.countdown);
-    phase = bh_field_f32(&e->pulse.phase);
+    context->error = 0;
+    lifetime = bh_field_f32(&projectile->projectile.countdown);
+    phase = bh_field_f32(&projectile->pulse.phase);
     angles.x = stored((double)phase + phase);
     angles.y = stored(sin((double)phase * 1.7) * 1.5);
     angles.z = 0;
@@ -44,19 +44,19 @@ int bh_pulse_visual_draw(BHPulseVisualContext *c, const BHEntity *e)
     offset = stored(-(double)envelope * .5);
     for (i = 0; i < 3; i++)
         ((float *)&position)[i] =
-            stored((double)((const float *)&e->position)[i] + (double)((float *)&direction)[i] * offset);
-    result(c, bh_draw_submit_resource(c->queue, 0, c->model, &position, &angles, 1));
+            stored((double)((const float *)&projectile->position)[i] + (double)((float *)&direction)[i] * offset);
+    result(context, bh_draw_submit_resource(context->queue, 0, context->model, &position, &angles, 1));
     offset = stored((double)envelope * .5);
     angles.x = stored((double)angles.x - (-3.141592653589793));
     angles.y = -angles.y;
     for (i = 0; i < 3; i++)
         ((float *)&position)[i] =
-            stored((double)((const float *)&e->position)[i] + (double)((float *)&direction)[i] * offset);
-    result(c, bh_draw_submit_resource(c->queue, 0, c->model, &position, &angles, 1));
+            stored((double)((const float *)&projectile->position)[i] + (double)((float *)&direction)[i] * offset);
+    result(context, bh_draw_submit_resource(context->queue, 0, context->model, &position, &angles, 1));
     size = stored(.8 - (double)envelope * (-2));
-    result(c, bh_draw_billboard(c->queue, 3, c->image, &e->position, size, size, -lifetime, 0, 1));
+    result(context, bh_draw_billboard(context->queue, 3, context->image, &projectile->position, size, size, -lifetime, 0, 1));
     if (lifetime < 2)
-        result(c, bh_flare_queue(c->queue, &e->position, 20, stored((double)envelope * 25), c->image, 0, 0, 0,
+        result(context, bh_flare_queue(context->queue, &projectile->position, 20, stored((double)envelope * 25), context->image, 0, 0, 0,
                                  stored((double)lifetime + lifetime)));
-    return c->error < 0 ? -1 : !c->error;
+    return context->error < 0 ? -1 : !context->error;
 }

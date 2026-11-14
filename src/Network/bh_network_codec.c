@@ -25,21 +25,21 @@ static void write32(unsigned char *p, unsigned long v)
     for (i = 0; i < 4; ++i)
         p[i] = (unsigned char)(v >> (i * 8));
 }
-static int finite_vector(const BHVec3 *p)
+static int finite_vector(const BHVec3 *vector)
 {
-    return p && _finite(p->x) && _finite(p->y) && _finite(p->z);
+    return vector && _finite(vector->x) && _finite(vector->y) && _finite(vector->z);
 }
-static int space(BHPacketWriter *w, unsigned long count)
+static int space(BHPacketWriter *packet_writer, unsigned long count)
 {
-    if (!w || !w->data || w->finished || w->cursor < 8 || w->cursor > w->capacity)
+    if (!packet_writer || !packet_writer->data || packet_writer->finished || packet_writer->cursor < 8 || packet_writer->cursor > packet_writer->capacity)
     {
-        if (w)
-            w->error = BH_PACKET_ARGUMENT;
+        if (packet_writer)
+            packet_writer->error = BH_PACKET_ARGUMENT;
         return 0;
     }
-    if (w->cursor - 8 > 255 || count > 255 - (w->cursor - 8) || count > w->capacity - w->cursor)
+    if (packet_writer->cursor - 8 > 255 || count > 255 - (packet_writer->cursor - 8) || count > packet_writer->capacity - packet_writer->cursor)
     {
-        w->error = BH_PACKET_CAPACITY;
+        packet_writer->error = BH_PACKET_CAPACITY;
         return 0;
     }
     return 1;
@@ -59,47 +59,47 @@ int bh_packet_begin(BHPacketWriter *w, void *bytes, unsigned long capacity, unsi
     *w = next;
     return 1;
 }
-int bh_packet_append(BHPacketWriter *w, const void *bytes, unsigned long count)
+int bh_packet_append(BHPacketWriter *packet_writer, const void *bytes, unsigned long count)
 {
     if (!bytes && count)
     {
-        if (w)
-            w->error = BH_PACKET_ARGUMENT;
+        if (packet_writer)
+            packet_writer->error = BH_PACKET_ARGUMENT;
         return 0;
     }
-    if (!space(w, count))
+    if (!space(packet_writer, count))
         return 0;
     if (count)
-        memmove(w->data + w->cursor, bytes, count);
-    w->cursor += count;
-    w->error = BH_PACKET_OK;
+        memmove(packet_writer->data + packet_writer->cursor, bytes, count);
+    packet_writer->cursor += count;
+    packet_writer->error = BH_PACKET_OK;
     return 1;
 }
-int bh_packet_finish(BHPacketWriter *w, unsigned long *wire_size)
+int bh_packet_finish(BHPacketWriter *packet_writer, unsigned long *wire_size)
 {
     unsigned long end, aligned, checksum, i;
-    if (!wire_size || !space(w, 0))
+    if (!wire_size || !space(packet_writer, 0))
         return 0;
-    end = w->cursor;
+    end = packet_writer->cursor;
     aligned = (end + 3) & ~3UL;
-    if (aligned > w->capacity)
+    if (aligned > packet_writer->capacity)
     {
-        w->error = BH_PACKET_CAPACITY;
+        packet_writer->error = BH_PACKET_CAPACITY;
         return 0;
     }
-    w->data[1] = (unsigned char)(end - 8);
-    memset(w->data + end, 0, aligned - end);
-    checksum = read32(w->data);
+    packet_writer->data[1] = (unsigned char)(end - 8);
+    memset(packet_writer->data + end, 0, aligned - end);
+    checksum = read32(packet_writer->data);
     for (i = 8; i < aligned; i += 4)
-        checksum ^= read32(w->data + i);
-    write32(w->data + 4, checksum);
-    w->cursor = aligned;
-    w->finished = 1;
+        checksum ^= read32(packet_writer->data + i);
+    write32(packet_writer->data + 4, checksum);
+    packet_writer->cursor = aligned;
+    packet_writer->finished = 1;
     *wire_size = end;
-    w->error = BH_PACKET_OK;
+    packet_writer->error = BH_PACKET_OK;
     return 1;
 }
-int bh_packet_write_position(BHPacketWriter *w, const BHWorldGeometry *world, unsigned short index, const BHVec3 *point)
+int bh_packet_write_position(BHPacketWriter *packet_writer, const BHWorldGeometry *world, unsigned short index, const BHVec3 *point)
 {
     unsigned char data[8];
     unsigned long i;
@@ -110,11 +110,11 @@ int bh_packet_write_position(BHPacketWriter *w, const BHWorldGeometry *world, un
     if (!finite_vector(point) || !finite_vector(&world->minimum) || !finite_vector(&world->maximum) ||
         !bh_math_environment_supported())
     {
-        if (w)
-            w->error = BH_PACKET_NUMERICAL;
+        if (packet_writer)
+            packet_writer->error = BH_PACKET_NUMERICAL;
         return -1;
     }
-    if (!space(w, 8))
+    if (!space(packet_writer, 8))
         return -1;
     write16(data, index);
     for (i = 0; i < 3; ++i)
@@ -128,12 +128,12 @@ int bh_packet_write_position(BHPacketWriter *w, const BHWorldGeometry *world, un
         value = (__int64)(16384.0 - t * (-32768.0));
         write16(data + 2 + i * 2, (unsigned short)value);
     }
-    memcpy(w->data + w->cursor, data, 8);
-    w->cursor += 8;
-    w->error = BH_PACKET_OK;
+    memcpy(packet_writer->data + packet_writer->cursor, data, 8);
+    packet_writer->cursor += 8;
+    packet_writer->error = BH_PACKET_OK;
     return 1;
 }
-int bh_packet_write_vector(BHPacketWriter *w, const BHVec3 *v, float scale)
+int bh_packet_write_vector(BHPacketWriter *packet_writer, const BHVec3 *v, float scale)
 {
     unsigned char data[3];
     unsigned long i, low;
@@ -142,11 +142,11 @@ int bh_packet_write_vector(BHPacketWriter *w, const BHVec3 *v, float scale)
     double divisor;
     if (!finite_vector(v) || !_finite(scale) || !bh_math_environment_supported())
     {
-        if (w)
-            w->error = BH_PACKET_NUMERICAL;
+        if (packet_writer)
+            packet_writer->error = BH_PACKET_NUMERICAL;
         return 0;
     }
-    if (!space(w, 3))
+    if (!space(packet_writer, 3))
         return 0;
     divisor = (double)scale * .0078125;
     for (i = 0; i < 3; ++i)
@@ -160,17 +160,17 @@ int bh_packet_write_vector(BHPacketWriter *w, const BHVec3 *v, float scale)
             value = -128;
         data[i] = (unsigned char)value;
     }
-    memcpy(w->data + w->cursor, data, 3);
-    w->cursor += 3;
-    w->error = BH_PACKET_OK;
+    memcpy(packet_writer->data + packet_writer->cursor, data, 3);
+    packet_writer->cursor += 3;
+    packet_writer->error = BH_PACKET_OK;
     return 1;
 }
-int bh_packet_receive(BHPacketReader *r, void *bytes, unsigned long size, unsigned long capacity, BHPacketStats *stats)
+int bh_packet_receive(BHPacketReader *packet_reader, void *bytes, unsigned long size, unsigned long capacity, BHPacketStats *stats)
 {
     BHPacketReader next;
     unsigned long end, aligned, checksum, i;
     unsigned char *p = (unsigned char *)bytes;
-    if (!r || !p || !stats || size < 8 || size > capacity)
+    if (!packet_reader || !p || !stats || size < 8 || size > capacity)
         return -1;
     end = 8 + p[1];
     aligned = (end + 3) & ~3UL;
@@ -181,7 +181,7 @@ int bh_packet_receive(BHPacketReader *r, void *bytes, unsigned long size, unsign
     next.size = end;
     next.cursor = 8;
     next.stats = stats;
-    *r = next;
+    *packet_reader = next;
     ++stats->accepted;
     memset(p + end, 0, aligned - end);
     checksum = read32(p);
@@ -191,71 +191,71 @@ int bh_packet_receive(BHPacketReader *r, void *bytes, unsigned long size, unsign
         return 1;
     --stats->accepted;
     ++stats->rejected;
-    r->error = BH_PACKET_CHECKSUM;
+    packet_reader->error = BH_PACKET_CHECKSUM;
     return 0;
 }
-static int available(BHPacketReader *r, unsigned long size)
+static int available(BHPacketReader *packet_reader, unsigned long size)
 {
-    if (!r || !r->data || !r->stats || r->cursor > r->size || size > r->size - r->cursor)
+    if (!packet_reader || !packet_reader->data || !packet_reader->stats || packet_reader->cursor > packet_reader->size || size > packet_reader->size - packet_reader->cursor)
     {
-        if (r)
-            r->error = BH_PACKET_TRUNCATED;
+        if (packet_reader)
+            packet_reader->error = BH_PACKET_TRUNCATED;
         return 0;
     }
     return 1;
 }
-static int reject_index(BHPacketReader *r)
+static int reject_index(BHPacketReader *packet_reader)
 {
-    --r->stats->accepted;
-    ++r->stats->rejected;
-    r->error = BH_PACKET_INDEX;
+    --packet_reader->stats->accepted;
+    ++packet_reader->stats->rejected;
+    packet_reader->error = BH_PACKET_INDEX;
     return 0;
 }
-int bh_packet_read_position(BHPacketReader *r, const BHNavigation *navigation, BHWorldGeometry **world, BHVec3 *point)
+int bh_packet_read_position(BHPacketReader *packet_reader, const BHNavigation *navigation, BHWorldGeometry **world, BHVec3 *point)
 {
     BHPackedPositions stream;
     BHPositionResult result;
-    if (!available(r, 0))
+    if (!available(packet_reader, 0))
         return -1;
-    stream.bytes = r->data;
-    stream.size = r->size;
-    stream.cursor = r->cursor;
-    stream.accepted = r->stats->accepted;
-    stream.rejected = r->stats->rejected;
+    stream.bytes = packet_reader->data;
+    stream.size = packet_reader->size;
+    stream.cursor = packet_reader->cursor;
+    stream.accepted = packet_reader->stats->accepted;
+    stream.rejected = packet_reader->stats->rejected;
     result = bh_position_read(&stream, navigation, world, point);
-    r->cursor = stream.cursor;
-    r->stats->accepted = stream.accepted;
-    r->stats->rejected = stream.rejected;
-    r->error = result == BH_POSITION_OK         ? BH_PACKET_OK
+    packet_reader->cursor = stream.cursor;
+    packet_reader->stats->accepted = stream.accepted;
+    packet_reader->stats->rejected = stream.rejected;
+    packet_reader->error = result == BH_POSITION_OK         ? BH_PACKET_OK
                : result == BH_POSITION_REJECTED ? BH_PACKET_INDEX
                                                 : BH_PACKET_ARGUMENT;
     return result;
 }
-int bh_packet_read_actor(BHPacketReader *r, unsigned long local_id, BHEntity *local, BHEntity *const remote[8],
+int bh_packet_read_actor(BHPacketReader *packet_reader, unsigned long local_id, BHEntity *local, BHEntity *const remote[8],
                          BHEntity **actor)
 {
     unsigned short id;
     if (!remote || !actor)
     {
-        if (r)
-            r->error = BH_PACKET_ARGUMENT;
+        if (packet_reader)
+            packet_reader->error = BH_PACKET_ARGUMENT;
         return -1;
     }
-    if (!available(r, 2))
+    if (!available(packet_reader, 2))
         return -1;
-    id = read16(r->data + r->cursor);
-    r->cursor += 2;
+    id = read16(packet_reader->data + packet_reader->cursor);
+    packet_reader->cursor += 2;
     if (id == local_id)
     {
         *actor = local;
-        r->error = BH_PACKET_OK;
+        packet_reader->error = BH_PACKET_OK;
         return 1;
     }
     if (id >= 8)
-        return reject_index(r);
+        return reject_index(packet_reader);
     if (!remote[id])
         return 0;
     *actor = remote[id];
-    r->error = BH_PACKET_OK;
+    packet_reader->error = BH_PACKET_OK;
     return 1;
 }

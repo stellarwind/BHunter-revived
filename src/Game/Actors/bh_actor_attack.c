@@ -25,11 +25,11 @@ static double attack_product(double a, double b)
 {
     return a * b;
 }
-static void scale(BHVec3 *v, double s)
+static void scale(BHVec3 *vector, double s)
 {
-    v->x = rf(v->x * s);
-    v->y = rf(v->y * s);
-    v->z = rf(v->z * s);
+    vector->x = rf(vector->x * s);
+    vector->y = rf(vector->y * s);
+    vector->z = rf(vector->z * s);
 }
 static void curve(BHActorRouteState *state, float t, BHVec3 *out)
 {
@@ -50,7 +50,7 @@ typedef struct Motion
     long event;
     BHVec3 position, velocity, acceleration;
 } Motion;
-static int motion(BHActorAttackContext *ctx, BHEntity *entity, BHEntity *target, Motion *p)
+static int motion(BHActorAttackContext *ctx, BHEntity *entity, BHEntity *target, Motion *current_motion)
 {
     unsigned long gen = entity->generation;
     if (!target || !target->query)
@@ -58,8 +58,8 @@ static int motion(BHActorAttackContext *ctx, BHEntity *entity, BHEntity *target,
         ctx->error = 2;
         return 0;
     }
-    p->event = 16;
-    target->query(target, p);
+    current_motion->event = 16;
+    target->query(target, current_motion);
     if (!live(ctx, entity, gen))
     {
         ctx->error = 3;
@@ -75,14 +75,14 @@ static void particle(BHActorAttackContext *ctx, unsigned long image, const BHVec
     bh_script_particle_create(ctx->effects->effects->particles, image, 3, p, v, a, size, angle, rate, spin, decay,
                               angular_decay, life, alpha);
 }
-static BHEntity *response(BHActorAttackContext *ctx, BHWorldSegmentHit *h)
+static BHEntity *response(BHActorAttackContext *ctx, BHWorldSegmentHit *hit)
 {
     unsigned long i;
     BHHomingProjectileContext *b = ctx->effects->effects;
-    if (h->object.kind == BH_WORLD_HIT_ACTOR)
-        return h->object.object.actor;
+    if (hit->object.kind == BH_WORLD_HIT_ACTOR)
+        return hit->object.object.actor;
     {
-        const BHHomingWorldResponse *binding = bh_homing_world_response(b, h->object.object.geometry);
+        const BHHomingWorldResponse *binding = bh_homing_world_response(b, hit->object.object.geometry);
         if (binding)
         {
             return binding->receiver;
@@ -94,7 +94,7 @@ static BHEntity *response(BHActorAttackContext *ctx, BHWorldSegmentHit *h)
 static void beam(BHActorAttackContext *ctx, BHEntity *entity, BHWorldGeometry *world, const BHVec3 *fire,
                  const BHVec3 *direction, const BHVec3 *travel)
 {
-    BHHomingProjectileContext *b = ctx->effects->effects;
+    BHHomingProjectileContext *effects = ctx->effects->effects;
     BHVec3 velocity, end, ray, point, normal, marker_point;
     BHWorldSegmentHit hit;
     BHWorldHit self;
@@ -116,8 +116,8 @@ static void beam(BHActorAttackContext *ctx, BHEntity *entity, BHWorldGeometry *w
         float amount;
         BHEntity *source;
     } damage;
-    bh_sound_request(b->sound, ctx->ballistic_sound, 1, rf(.9 - (double)rand() * (-.000006103515625)), fire, travel);
-    bh_flare_queue(b->flash->queue, fire, 2, 30, ctx->flash_image, 0, 0, 0, rf((double)rand() * (1.0 / 5200.0)));
+    bh_sound_request(effects->sound, ctx->ballistic_sound, 1, rf(.9 - (double)rand() * (-.000006103515625)), fire, travel);
+    bh_flare_queue(effects->flash->queue, fire, 2, 30, ctx->flash_image, 0, 0, 0, rf((double)rand() * (1.0 / 5200.0)));
     for (i = 0; i < 3; ++i)
         ((float *)&velocity)[i] = rf((double)(rand() - 16384) * (1.0 / 262144.0) - ((float *)direction)[i] * (-.4));
     particle(ctx, ctx->smoke_image, fire, &velocity, &gravity, .1f, 8, .5f, .2f, 1.0 / 16384.0, 1.0 / 512.0, .9f, .95f);
@@ -127,12 +127,12 @@ static void beam(BHActorAttackContext *ctx, BHEntity *entity, BHWorldGeometry *w
     bh_vec3_normalize(&ray);
     for (i = 0; i < 3; ++i)
         ((float *)&end)[i] = rf((3.0 - (double)rand() * (-1.0 / 8192.0)) * ((float *)&ray)[i] + ((float *)fire)[i]);
-    bh_draw_segment(b->particles->queue, 3, ctx->beam_image, fire, &end, .3f, .01f, 1, 0, 0);
+    bh_draw_segment(effects->particles->queue, 3, ctx->beam_image, fire, &end, .3f, .01f, 1, 0, 0);
     for (i = 0; i < 3; ++i)
         ((float *)&end)[i] = rf((double)((float *)fire)[i] - ((float *)&ray)[i] * (-125.0));
     self.kind = BH_WORLD_HIT_ACTOR;
     self.object.actor = entity;
-    result = bh_world_segment_run(b->segment, &self, &world, fire, &end, 3, &hit);
+    result = bh_world_segment_run(effects->segment, &self, &world, fire, &end, 3, &hit);
     if (result < 0)
     {
         ctx->error = 2;
@@ -149,18 +149,18 @@ static void beam(BHActorAttackContext *ctx, BHEntity *entity, BHWorldGeometry *w
         flags = hit.object.kind == BH_WORLD_HIT_GEOMETRY ? (unsigned long)hit.material_flags : 0;
         if (!(flags & 4))
         {
-            bh_sound_request(b->sound, ctx->impact_sound, 1, 2, &point, &zero);
+            bh_sound_request(effects->sound, ctx->impact_sound, 1, 2, &point, &zero);
             particle(ctx, ctx->impact_image, &point, 0, 0, .2f, 5, .5f, 1, 1.0 / 8192.0, 1.0 / 4096.0, .8f, 1);
             particle(ctx, ctx->impact_image, &point, 0, 0, .1f, 8, .4f, 1, 1.0 / 8192.0, 1.0 / 4096.0, .8f, 1);
-            bh_script_particle_create(b->particles, ctx->flash_image, 3, &point, 0, 0, .1f, 0, 12, 0, .8f, 1, .3f, 1);
-            flash = bh_entity_acquire(b->pool);
+            bh_script_particle_create(effects->particles, ctx->flash_image, 3, &point, 0, 0, .1f, 0, 12, 0, .8f, 1, .3f, 1);
+            flash = bh_entity_acquire(effects->pool);
             if (flash)
             {
                 flash->position = point;
-                bh_flash_flare_bind(b->flash, flash, .1f, 30, 1);
+                bh_flash_flare_bind(effects->flash, flash, .1f, 30, 1);
             }
-            bh_contact_spark_create(b->contacts, &point, .75f, 3);
-            bh_contact_spark_create(b->contacts, &point, 1, 2);
+            bh_contact_spark_create(effects->contacts, &point, .75f, 3);
+            bh_contact_spark_create(effects->contacts, &point, 1, 2);
             if (hit.object.kind == BH_WORLD_HIT_GEOMETRY && !(flags & 2))
             {
                 /* 004388c1..00438913 sum X/Y before Z; the decompiler's
@@ -179,7 +179,7 @@ static void beam(BHActorAttackContext *ctx, BHEntity *entity, BHWorldGeometry *w
                     ctx->error = 2;
                     return;
                 }
-                bh_hit_marker_create(b->markers, &marker_point, &normal, .7f, 3, receiver);
+                bh_hit_marker_create(effects->markers, &marker_point, &normal, .7f, 3, receiver);
             }
             for (i = 0; i < 3; ++i)
                 ((float *)&velocity)[i] = rf((double)(rand() - 16384) * (1.0 / 262144.0));
@@ -217,13 +217,13 @@ static void beam(BHActorAttackContext *ctx, BHEntity *entity, BHWorldGeometry *w
             for (i = 0; i < 3; ++i)
                 ((float *)&marker_point)[i] = rf((double)((float *)&point)[i] - ((float *)&normal)[i] * (-.5));
             alpha = rf(.7 - (double)rand() * (-.00000152587890625));
-            contact = bh_contact_impact_create(b->contacts, &marker_point, &normal, 4);
+            contact = bh_contact_impact_create(effects->contacts, &marker_point, &normal, 4);
             if (contact)
             {
-                impact = bh_contact_impact_state(b->contacts, contact);
+                impact = bh_contact_impact_state(effects->contacts, contact);
                 impact->duration = alpha;
                 impact->size = 7;
-                bh_sound_request(b->sound, ctx->liquid_sound, rf(7.0 / 6.0), rf(1.0 / alpha), &marker_point, &zero);
+                bh_sound_request(effects->sound, ctx->liquid_sound, rf(7.0 / 6.0), rf(1.0 / alpha), &marker_point, &zero);
             }
         }
     }
@@ -235,10 +235,10 @@ static void beam(BHActorAttackContext *ctx, BHEntity *entity, BHWorldGeometry *w
         ((float *)&point)[i] = rf((double)spin * ((float *)&ray)[i] + ((float *)fire)[i]);
         ((float *)&end)[i] = rf((double)((float *)&point)[i] - ((float *)&ray)[i] * (-3.0));
     }
-    bh_draw_segment(b->particles->queue, 3, ctx->beam_image, &point, &end, .3f, .01f, .5f, 0, 0);
+    bh_draw_segment(effects->particles->queue, 3, ctx->beam_image, &point, &end, .3f, .01f, .5f, 0, 0);
     for (i = 0; i < 3; ++i)
         ((float *)&end)[i] = rf((double)((float *)&point)[i] - ((float *)&ray)[i] * 3.0);
-    bh_draw_segment(b->particles->queue, 3, ctx->beam_image, &point, &end, .3f, .01f, .5f, 0, 0);
+    bh_draw_segment(effects->particles->queue, 3, ctx->beam_image, &point, &end, .3f, .01f, .5f, 0, 0);
     ++ctx->beams;
 }
 void bh_actor_attack_fire_vectors(BHEntity *entity, float t, BHVec3 *p, BHVec3 *direction, BHVec3 *side, BHVec3 *travel)
@@ -269,7 +269,7 @@ int bh_actor_attack(BHActorAttackContext *ctx, BHEntity *entity)
     BHActorRouteState state;
     Motion m;
     BHVec3 predicted, change, p, q, direction, side, travel, difference;
-    BHHomingProjectileContext *b;
+    BHHomingProjectileContext *effects;
     float t, pursuit, distance;
     short frame, cooldown, secondary, primary;
     unsigned short next;
@@ -280,7 +280,7 @@ int bh_actor_attack(BHActorAttackContext *ctx, BHEntity *entity)
     if (!ctx || !entity || !ctx->pursuit || !ctx->effects || !ctx->effects->effects || !ctx->projectiles ||
         !ctx->area || !bh_math_environment_supported())
         return 0;
-    b = ctx->effects->effects;
+    effects = ctx->effects->effects;
     ctx->error = 0;
     target = (BHEntity *)bh_field_i32(&entity->actor.target);
     bh_actor_route_read(entity, &state);
@@ -388,7 +388,7 @@ int bh_actor_attack(BHActorAttackContext *ctx, BHEntity *entity)
         if (secondary == 0)
         {
             if (target == ctx->pursuit->player)
-                bh_sound_request(b->sound, ctx->orbit_cue, 1, 1, 0, 0);
+                bh_sound_request(effects->sound, ctx->orbit_cue, 1, 1, 0, 0);
             bh_effect_orbit_create(ctx->effects, state.current, entity, &p, &travel, &side, &up, &direction, 8, target);
         }
         else if (secondary == 1)
@@ -398,8 +398,8 @@ int bh_actor_attack(BHActorAttackContext *ctx, BHEntity *entity)
         }
         else if (secondary == 2)
         {
-            bh_sound_request(b->sound, ctx->area_sound, 1, 1, &p, &travel);
-            bh_sound_request(b->sound, ctx->area_sound, 1, .5f, &p, &travel);
+            bh_sound_request(effects->sound, ctx->area_sound, 1, 1, &p, &travel);
+            bh_sound_request(effects->sound, ctx->area_sound, 1, .5f, &p, &travel);
             bh_area_projectile_create(ctx->area, state.current, &p, &direction, entity, .75f);
         }
         return 1;
@@ -415,7 +415,7 @@ int bh_actor_attack(BHActorAttackContext *ctx, BHEntity *entity)
             ((float *)&direction)[i] =
                 rf((double)((float *)&direction)[i] - ((double)rand() - 16384) * (-1.0 / 8192.0));
         bh_projectile_create_ballistic(ctx->projectiles, state.current, entity, &p, &direction, 2);
-        bh_sound_request(b->sound, ctx->ballistic_sound, .75f, 1.5f, &p, &travel);
+        bh_sound_request(effects->sound, ctx->ballistic_sound, .75f, 1.5f, &p, &travel);
     }
     else if (primary == 1)
     {
@@ -426,7 +426,7 @@ int bh_actor_attack(BHActorAttackContext *ctx, BHEntity *entity)
                 ((float *)&direction)[i] =
                     rf((double)((float *)&direction)[i] - ((double)rand() - 16384) * (-1.0 / 8192.0));
             bh_projectile_create_homing(ctx->projectiles, state.current, entity, &p, &direction, 2, target);
-            bh_sound_request(b->sound, ctx->homing_sound, .75f, 2, &p, &travel);
+            bh_sound_request(effects->sound, ctx->homing_sound, .75f, 2, &p, &travel);
         }
     }
     else if (primary == 2)

@@ -3,43 +3,43 @@
 #include "../../Math/bh_round.h"
 #include <string.h>
 #include <float.h>
-static BHMenuTransition *context(BHEntity *e)
+static BHMenuTransition *context(BHEntity *entity)
 {
     BHMenuTransition *c;
-    memcpy(&c, &e->bindings.menu_transition, 4);
+    memcpy(&c, &entity->bindings.menu_transition, 4);
     return c;
 }
-static void put_time(BHEntity *e, double t)
+static void put_time(BHEntity *menu_entity, double t)
 {
-    memcpy((char *)&e->menu.transition_time, &t, 8);
+    memcpy((char *)&menu_entity->menu.transition_time, &t, 8);
 }
-double bh_menu_transition_time(const BHEntity *e)
+double bh_menu_transition_time(const BHEntity *menu_entity)
 {
     double t;
-    memcpy(&t, (char *)&e->menu.transition_time, 8);
+    memcpy(&t, (char *)&menu_entity->menu.transition_time, 8);
     return t;
 }
-static int live(BHMenuTransition *c, BHEntity *e)
+static int live(BHMenuTransition *menu_transition, BHEntity *entity)
 {
     unsigned long g;
-    memcpy(&g, &e->bindings.transition_generation, 4);
-    return bh_entity_is_active(c->pool, e) && e->generation == g;
+    memcpy(&g, &entity->bindings.transition_generation, 4);
+    return bh_entity_is_active(menu_transition->pool, entity) && entity->generation == g;
 }
-int bh_menu_transition_bind(BHMenuTransition *c, BHEntity *e, double t, long attempts)
+int bh_menu_transition_bind(BHMenuTransition *menu_transition, BHEntity *menu_entity, double t, long attempts)
 {
-    BHEntity *p;
+    BHEntity *active_entity;
     unsigned long i = 0;
-    if (!c || !c->pool || !e)
+    if (!menu_transition || !menu_transition->pool || !menu_entity)
         return 0;
-    for (p = c->pool->active; p && i++ < c->pool->capacity; p = p->next)
-        if (p == e)
+    for (active_entity = menu_transition->pool->active; active_entity && i++ < menu_transition->pool->capacity; active_entity = active_entity->next)
+        if (active_entity == menu_entity)
             break;
-    if (!p)
+    if (!active_entity)
         return 0;
-    memcpy(&e->bindings.menu_transition, &c, 4);
-    memcpy(&e->bindings.transition_generation, &e->generation, 4);
-    put_time(e, t);
-    memcpy((char *)&e->menu.attempts, &attempts, 4);
+    memcpy(&menu_entity->bindings.menu_transition, &menu_transition, 4);
+    memcpy(&menu_entity->bindings.transition_generation, &menu_entity->generation, 4);
+    put_time(menu_entity, t);
+    memcpy((char *)&menu_entity->menu.attempts, &attempts, 4);
     return 1;
 }
 static float clamp(double v)
@@ -52,11 +52,11 @@ static float clamp(double v)
         return 1;
     return f;
 }
-static void fade(BHMenuTransition *c, float alpha, unsigned long color)
+static void fade(BHMenuTransition *menu_transition, float alpha, unsigned long color)
 {
-    ++c->fades;
-    if (bh_fade_queue(c->draw, alpha, color) < 0)
-        c->error = 1;
+    ++menu_transition->fades;
+    if (bh_fade_queue(menu_transition->draw, alpha, color) < 0)
+        menu_transition->error = 1;
 }
 void bh_menu_music_fade(BHEntity *e)
 {
@@ -66,15 +66,15 @@ void bh_menu_music_fade(BHEntity *e)
 }
 void bh_menu_fade_expiry(BHEntity *e)
 {
-    BHMenuTransition *c = context(e);
+    BHMenuTransition *menu_transition = context(e);
     double t;
-    if (!c || !live(c, e))
+    if (!menu_transition || !live(menu_transition, e))
         return;
     t = bh_menu_transition_time(e);
     if (_isnan(t) || t < -4)
     {
-        ++c->releases;
-        bh_entity_release(c->pool, e);
+        ++menu_transition->releases;
+        bh_entity_release(menu_transition->pool, e);
         return;
     }
     put_time(e, t - 1.0 / 30.0);
@@ -97,148 +97,148 @@ void bh_menu_quit_fade(BHEntity *e)
     color = (unsigned long)(v * 255);
     fade(c, alpha, color * 0x10101UL);
 }
-static void warning(BHMenuTransition *c)
+static void warning(BHMenuTransition *menu_transition)
 {
-    BHMessageState *m = c->messages;
+    BHMessageState *message_state = menu_transition->messages;
     static const char text[] =
         "4Hey Buddy!\n\nThere's a problem\nwith your CD!\n\nInsert your BHunter CD\nand make sure you\nain't runnin' no other\nCD player programs!\n";
     float timer;
-    if (!m)
+    if (!message_state)
     {
-        c->error = 1;
+        menu_transition->error = 1;
         return;
     }
-    if (m->arena_used > sizeof(m->arena) || sizeof(text) > sizeof(m->arena) - m->arena_used)
+    if (message_state->arena_used > sizeof(message_state->arena) || sizeof(text) > sizeof(message_state->arena) - message_state->arena_used)
         return;
-    memcpy(m->arena + m->arena_used, text, sizeof(text));
-    m->arena_used += sizeof(text);
-    ++c->warnings;
-    if (m->panel_entity && m->panel_step_identity && *m->panel_step_identity == 0x442950)
+    memcpy(message_state->arena + message_state->arena_used, text, sizeof(text));
+    message_state->arena_used += sizeof(text);
+    ++menu_transition->warnings;
+    if (message_state->panel_entity && message_state->panel_step_identity && *message_state->panel_step_identity == 0x442950)
     {
-        memcpy(&timer, &bh_message_panel_fields(m->panel_entity)->timer, 4);
+        memcpy(&timer, &bh_message_panel_fields(message_state->panel_entity)->timer, 4);
         if (timer > .5f)
         {
             timer = .5f;
-            memcpy(&bh_message_panel_fields(m->panel_entity)->timer, &timer, 4);
+            memcpy(&bh_message_panel_fields(message_state->panel_entity)->timer, &timer, 4);
         }
     }
 }
-static long attempts(BHEntity *e)
+static long attempts(BHEntity *menu_entity)
 {
     long n;
-    memcpy(&n, (char *)&e->menu.attempts, 4);
+    memcpy(&n, (char *)&menu_entity->menu.attempts, 4);
     return n;
 }
-static void retry(BHMenuTransition *c, BHEntity *e)
+static void retry(BHMenuTransition *c, BHEntity *menu_entity)
 {
-    unsigned long n = (unsigned long)attempts(e);
+    unsigned long n = (unsigned long)attempts(menu_entity);
     if (!n)
         warning(c);
-    put_time(e, 5);
+    put_time(menu_entity, 5);
     ++n;
-    memcpy((char *)&e->menu.attempts, &n, 4);
+    memcpy((char *)&menu_entity->menu.attempts, &n, 4);
 }
 void bh_menu_music_tick(BHEntity *e)
 {
-    BHMenuTransition *c = context(e);
+    BHMenuTransition *menu_transition = context(e);
     BHCdAudio *a;
     double t, v;
-    if (!c || !live(c, e) || !c->media || !(a = c->media->audio))
+    if (!menu_transition || !live(menu_transition, e) || !menu_transition->media || !(a = menu_transition->media->audio))
         return;
     t = bh_menu_transition_time(e) - 1.0 / 30.0;
     put_time(e, t);
     if (!_isnan(t) && t > 0)
         return;
-    if (!c->cd_ready)
+    if (!menu_transition->cd_ready)
     {
-        c->cd_ready = bh_cd_audio_startup(a);
-        if (!c->cd_ready)
+        menu_transition->cd_ready = bh_cd_audio_startup(a);
+        if (!menu_transition->cd_ready)
         {
 #ifdef BH_SKIP_CD_AUDIO_CHECK
-            c->music = NULL;
-            ++c->releases;
-            bh_entity_release(c->pool, e);
+            menu_transition->music = NULL;
+            ++menu_transition->releases;
+            bh_entity_release(menu_transition->pool, e);
             return;
 #endif
-            retry(c, e);
+            retry(menu_transition, e);
         }
         else
         {
             v = bh_cd_audio_volume(a);
             if (_isnan(v) || v < .2)
-                bh_cd_set_volume(c->media, .2f);
+                bh_cd_set_volume(menu_transition->media, .2f);
             v = bh_wave_audio_volume(a);
             if (_isnan(v) || v < .2)
-                bh_wave_set_volume(c->media, .2f);
+                bh_wave_set_volume(menu_transition->media, .2f);
         }
-        if (!c->cd_ready)
+        if (!menu_transition->cd_ready)
             goto exhausted;
     }
-    if (!c->range_ready)
+    if (!menu_transition->range_ready)
     {
-        bh_cd_stop(c->media);
-        c->range_ready = bh_cd_play_range(c->media, 2, 2, 0x15, 0x32, 1);
-        if (!c->range_ready)
+        bh_cd_stop(menu_transition->media);
+        menu_transition->range_ready = bh_cd_play_range(menu_transition->media, 2, 2, 0x15, 0x32, 1);
+        if (!menu_transition->range_ready)
         {
 #ifdef BH_SKIP_CD_AUDIO_CHECK
-            c->music = NULL;
-            ++c->releases;
-            bh_entity_release(c->pool, e);
+            menu_transition->music = NULL;
+            ++menu_transition->releases;
+            bh_entity_release(menu_transition->pool, e);
             return;
 #endif
-            retry(c, e);
+            retry(menu_transition, e);
         }
         else
         {
-            c->music = NULL;
-            ++c->releases;
-            bh_entity_release(c->pool, e);
+            menu_transition->music = NULL;
+            ++menu_transition->releases;
+            bh_entity_release(menu_transition->pool, e);
             return;
         }
     }
 exhausted:
     if (attempts(e) == 10)
     {
-        warning(c);
-        c->music = NULL;
-        ++c->releases;
-        bh_entity_release(c->pool, e);
+        warning(menu_transition);
+        menu_transition->music = NULL;
+        ++menu_transition->releases;
+        bh_entity_release(menu_transition->pool, e);
     }
 }
-void bh_menu_quit_tick(BHEntity *e)
+void bh_menu_quit_tick(BHEntity *entity)
 {
-    BHMenuTransition *c = context(e);
+    BHMenuTransition *menu_transition = context(entity);
     double old, t, volume;
     float next;
-    if (!c || !live(c, e) || !c->media || !c->media->audio)
+    if (!menu_transition || !live(menu_transition, entity) || !menu_transition->media || !menu_transition->media->audio)
         return;
-    old = bh_menu_transition_time(e);
+    old = bh_menu_transition_time(entity);
     t = old - (-1.0 / 30.0);
-    put_time(e, t);
+    put_time(entity, t);
     /* Finite source contract avoids undefined CRT __ftol overflow/NaN inputs. */
     if (_isnan(old) || old < -214748364.0 || old > 214748364.0)
     {
-        c->error = 1;
+        menu_transition->error = 1;
         return;
     }
     if ((long)(old * 10) != (long)(t * 10))
     {
-        volume = bh_cd_audio_volume(c->media->audio);
+        volume = bh_cd_audio_volume(menu_transition->media->audio);
         if (!_isnan(volume) && volume > 0)
         {
             bh_round_float(&next, volume - .05);
             if (volume - .05 < 0)
-                bh_cd_stop(c->media);
+                bh_cd_stop(menu_transition->media);
             else
-                bh_cd_set_volume(c->media, next);
+                bh_cd_set_volume(menu_transition->media, next);
         }
     }
     if (!_isnan(t) && t > 2.5)
     {
-        if (c->quit)
-            *c->quit = 1;
-        e->step = NULL;
-        bh_cd_set_volume(c->media, c->saved_volume);
+        if (menu_transition->quit)
+            *menu_transition->quit = 1;
+        entity->step = NULL;
+        bh_cd_set_volume(menu_transition->media, menu_transition->saved_volume);
     }
 }
 static void quit_refresh(BHEntity *e, void *unused)
@@ -246,24 +246,24 @@ static void quit_refresh(BHEntity *e, void *unused)
     (void)unused;
     bh_menu_quit_fade(e);
 }
-BHEntity *bh_menu_quit_begin(BHMenuTransition *c)
+BHEntity *bh_menu_quit_begin(BHMenuTransition *menu_transition)
 {
-    BHEntity *e;
-    if (!c || !c->pool || !c->media || !c->media->audio || !c->config || !c->config_path)
+    BHEntity *entity;
+    if (!menu_transition || !menu_transition->pool || !menu_transition->media || !menu_transition->media->audio || !menu_transition->config || !menu_transition->config_path)
         return NULL;
-    memcpy(c->config->settings, &c->hardware_flags, 2);
-    ++c->saves;
-    if (!bh_config_save(c->config, c->config_path))
-        c->error = 1;
-    bh_round_float(&c->saved_volume, bh_cd_audio_volume(c->media->audio));
-    if (c->camera_index)
-        *c->camera_index = 17;
-    e = bh_entity_acquire(c->pool);
-    if (e)
+    memcpy(menu_transition->config->settings, &menu_transition->hardware_flags, 2);
+    ++menu_transition->saves;
+    if (!bh_config_save(menu_transition->config, menu_transition->config_path))
+        menu_transition->error = 1;
+    bh_round_float(&menu_transition->saved_volume, bh_cd_audio_volume(menu_transition->media->audio));
+    if (menu_transition->camera_index)
+        *menu_transition->camera_index = 17;
+    entity = bh_entity_acquire(menu_transition->pool);
+    if (entity)
     {
-        bh_menu_transition_bind(c, e, 0, 0);
-        e->step = bh_menu_quit_tick;
-        e->refresh = quit_refresh;
+        bh_menu_transition_bind(menu_transition, entity, 0, 0);
+        entity->step = bh_menu_quit_tick;
+        entity->refresh = quit_refresh;
     }
-    return e;
+    return entity;
 }
