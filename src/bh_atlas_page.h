@@ -8,7 +8,7 @@ typedef struct BHAtlasPage
 {
     BHAtlasImage *atlas;
     BHTextureImage *image;
-    LPDIRECTDRAWSURFACE surface;
+    BHRenderSurface *surface;
     unsigned long last_color, packed_color;
     long cursor_x, cursor_y, left;
     unsigned long size;

@@ -1,3 +1,4 @@
+#include "bh_renderer.h"
 #include "bh_atlas_image.h"
 #include "bh_pcx_reader.h"
 #include <stddef.h>
@@ -37,7 +38,7 @@ void bh_atlas_context_dispose(BHAtlasContext *c)
         {
             next = p->next;
             if (p->surface)
-                IDirectDrawSurface_Release(p->surface);
+                bh_renderer_surface_release(p->surface);
             c->textures->allocator.release(p, c->textures->allocator.user);
         }
     memset(c, 0, sizeof(*c));
@@ -157,7 +158,7 @@ BHAtlasImage *bh_atlas_image_load(BHAtlasContext *c, const char *name, const DDP
     BHPcxReader reader;
     BHPcxPalette palette;
     DDSURFACEDESC desc, lock;
-    LPDIRECTDRAWSURFACE surface = NULL;
+    BHRenderSurface *surface = NULL;
     unsigned char *indices = NULL, index;
     unsigned long colors[256], i, x, y, bytes, pitch;
     int locked = 0, ok = 1;
@@ -221,7 +222,7 @@ BHAtlasImage *bh_atlas_image_load(BHAtlasContext *c, const char *name, const DDP
     desc.dwHeight = reader.height;
     desc.ddpfPixelFormat = *pixel;
     desc.ddsCaps.dwCaps = 0x840;
-    if (!native(c, IDirectDraw_CreateSurface(q->draw, &desc, &surface, NULL)))
+    if (!native(c, bh_renderer_surface_create(q->draw, &desc, &surface)))
         goto failed;
     image = (BHAtlasImage *)q->allocator.allocate(sizeof(*image), q->allocator.user);
     if (!image)
@@ -236,7 +237,7 @@ BHAtlasImage *bh_atlas_image_load(BHAtlasContext *c, const char *name, const DDP
     image->surface = surface;
     memset(&lock, 0, sizeof(lock));
     lock.dwSize = sizeof(lock);
-    if (!native(c, IDirectDrawSurface_Lock(surface, NULL, &lock, 0, NULL)))
+    if (!native(c, bh_renderer_surface_lock(surface, &lock)))
         goto failed;
     locked = 1;
     if (!lock.lpSurface || lock.lPitch < (long)(reader.width * bytes))
@@ -278,7 +279,7 @@ BHAtlasImage *bh_atlas_image_load(BHAtlasContext *c, const char *name, const DDP
     if (ok)
         ok = rectangles(c, image, bytes == 1 ? (const unsigned char *)lock.lpSurface : indices, reader.width,
                         reader.height, pitch);
-    if (!native(c, IDirectDrawSurface_Unlock(surface, NULL)))
+    if (!native(c, bh_renderer_surface_unlock(surface)))
         ok = 0;
     locked = 0;
     if (!ok)
@@ -295,13 +296,13 @@ BHAtlasImage *bh_atlas_image_load(BHAtlasContext *c, const char *name, const DDP
     return image;
 failed:
     if (locked)
-        IDirectDrawSurface_Unlock(surface, NULL);
+        bh_renderer_surface_unlock(surface);
     if (reader.file)
         bh_pcx_reader_close(&reader);
     if (indices)
         q->allocator.release(indices, q->allocator.user);
     if (surface)
-        IDirectDrawSurface_Release(surface);
+        bh_renderer_surface_release(surface);
     if (image)
         q->allocator.release(image, q->allocator.user);
     return NULL;

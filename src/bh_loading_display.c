@@ -1,14 +1,15 @@
+#include "bh_renderer.h"
 #include "bh_platform_clock.h"
 #include "bh_loading_display.h"
 #include "bh_round.h"
 #include <string.h>
 #include <float.h>
-static void restore(BHLoadingDisplay *c, LPDIRECTDRAWSURFACE surface)
+static void restore(BHLoadingDisplay *c, BHRenderSurface *surface)
 {
-    if (surface && IDirectDrawSurface_IsLost(surface) == DDERR_SURFACELOST)
+    if (surface && bh_renderer_surface_status(surface) == DDERR_SURFACELOST)
     {
         ++c->restores;
-        IDirectDrawSurface_Restore(surface);
+        bh_renderer_surface_restore(surface);
     }
 }
 static int wedge(BHLoadingDisplay *c, const BHLoadingBlitTarget *t, int n, float a, float b)
@@ -96,7 +97,7 @@ int bh_loading_display(BHLoadingDisplay *c, float progress)
     restore(c, c->color);
     memset(&desc, 0, sizeof(desc));
     desc.dwSize = sizeof(desc);
-    c->lock_result = IDirectDrawSurface_Lock(c->color, NULL, &desc, 0, NULL);
+    c->lock_result = bh_renderer_surface_lock(c->color, &desc);
     if (c->lock_result != DD_OK)
     {
         ++c->failures;
@@ -116,7 +117,7 @@ int bh_loading_display(BHLoadingDisplay *c, float progress)
         (unsigned __int64)((unsigned long)desc.lpSurface - row_offset) + span > ((unsigned __int64)1 << 32) ||
         desc.dwWidth < (unsigned long)c->width || desc.dwHeight < (unsigned long)c->height)
     {
-        IDirectDrawSurface_Unlock(c->color, NULL);
+        bh_renderer_surface_unlock(c->color);
         ++c->unlocks;
         ++c->failures;
         return 0;
@@ -206,13 +207,13 @@ int bh_loading_display(BHLoadingDisplay *c, float progress)
             }
         }
     }
-    c->unlock_result = IDirectDrawSurface_Unlock(c->color, NULL);
+    c->unlock_result = bh_renderer_surface_unlock(c->color);
     ++c->unlocks;
     restore(c, c->color);
     if (c->software && c->software_target)
     {
         restore(c, c->software_target);
-        c->copy_result = IDirectDrawSurface_BltFast(c->software_target, 0, 0, c->color, NULL, DDBLTFAST_WAIT);
+        c->copy_result = bh_renderer_surface_copy(c->software_target, 0, 0, c->color, NULL);
     }
     restore(c, c->primary);
     restore(c, c->back);
@@ -224,7 +225,7 @@ int bh_loading_display(BHLoadingDisplay *c, float progress)
     else
     {
         ++c->flips;
-        c->flip_result = IDirectDrawSurface_Flip(c->primary, NULL, DDFLIP_WAIT);
+        c->flip_result = bh_renderer_surface_present(c->primary);
     }
     if (!ok || FAILED(c->flip_result))
     {

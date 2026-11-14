@@ -1,3 +1,4 @@
+#include "bh_renderer.h"
 #include "bh_game_app.h"
 #include "bh_platform.h"
 #include "bh_game_bootstrap.h"
@@ -148,8 +149,8 @@ typedef struct BHGameApp
     BHTextQueue text;
     BHFrameService service;
     BHFrameCallback callback;
-    LPDIRECTDRAW draw;
-    LPDIRECTDRAWSURFACE primary, target;
+    BHRenderer *draw;
+    BHRenderSurface *primary, *target;
     BHDeviceName device_names[8];
     char text_buffer[160];
     BHRenderMode render_mode;
@@ -751,7 +752,7 @@ static int refresh_segment_actors(BHWorldSegmentContext *ctx, void *user)
 }
 static int restore_display(BHGameApp *app)
 {
-    LPDIRECTDRAWSURFACE surfaces[2];
+    BHRenderSurface *surfaces[2];
     HRESULT hr;
     unsigned long i;
 
@@ -760,9 +761,9 @@ static int restore_display(BHGameApp *app)
     for (i = 0; i < 2; ++i)
         if (surfaces[i])
         {
-            hr = IDirectDrawSurface_IsLost(surfaces[i]);
+            hr = bh_renderer_surface_status(surfaces[i]);
             if (hr == DDERR_SURFACELOST)
-                hr = IDirectDrawSurface_Restore(surfaces[i]);
+                hr = bh_renderer_surface_restore(surfaces[i]);
             if (FAILED(hr))
             {
                 return failure(app, 13);
@@ -771,10 +772,10 @@ static int restore_display(BHGameApp *app)
     return 1;
 }
 
-static HRESULT loading_present(LPDIRECTDRAWSURFACE color, void *user)
+static HRESULT loading_present(BHRenderSurface *color, void *user)
 {
     BHGameApp *app = (BHGameApp *)user;
-    return IDirectDrawSurface_Blt(app->primary, 0, color, 0, DDBLT_WAIT, 0);
+    return bh_renderer_surface_blit(app->primary, 0, color, 0, DDBLT_WAIT, 0);
 }
 static int loading_begin(BHGameApp *app)
 {
@@ -868,7 +869,7 @@ static int platform(BHGameApp *app)
         return failure(app, 6);
     app->hardware = 1;
     app->fullscreen = 1; /* Internal flip path; SDL independently owns window mode. */
-    if (DirectDrawCreate(0, &app->draw, 0) != DD_OK)
+    if (bh_renderer_create(&app->draw) != DD_OK)
         return failure(app, 4);
     memset(&surface, 0, sizeof(surface));
     surface.dwSize = sizeof(surface);
@@ -876,17 +877,17 @@ static int platform(BHGameApp *app)
     surface.dwWidth = app->width;
     surface.dwHeight = app->height;
     surface.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
-    if (IDirectDraw_CreateSurface(app->draw, &surface, &app->primary, 0) != DD_OK)
+    if (bh_renderer_surface_create(app->draw, &surface, &app->primary) != DD_OK)
         return failure(app, 4);
     surface.ddsCaps.dwCaps = DDSCAPS_3DDEVICE;
-    if (IDirectDraw_CreateSurface(app->draw, &surface, &app->target, 0) != DD_OK ||
+    if (bh_renderer_surface_create(app->draw, &surface, &app->target) != DD_OK ||
         !bh_render_startup_hardware(&app->render_mode.engine, app->draw, app->target, app->primary, app->width,
                                     app->height, 16))
         return failure(app, 4);
     app->render_mode.screen = app->primary;
     app->render_mode.render = app->target;
-    IDirectDrawSurface_AddRef(app->primary);
-    IDirectDrawSurface_AddRef(app->target);
+    bh_renderer_surface_retain(app->primary);
+    bh_renderer_surface_retain(app->target);
     if (app->hardware && !bh_texture_bind_display(&app->render_mode.engine.textures, &app->render_mode.engine.pixel))
         return failure(app, 4);
     if (!bh_view_config_init(&app->view, app->width, app->height) ||
@@ -2620,12 +2621,12 @@ static int manual_loop(BHGameApp *app)
 #endif
         if (app->fullscreen)
             if (app->target != app->render_mode.render &&
-                IDirectDrawSurface_BltFast(app->render_mode.render, 0, 0, app->target, 0, DDBLTFAST_WAIT) != DD_OK)
+                bh_renderer_surface_copy(app->render_mode.render, 0, 0, app->target, 0) != DD_OK)
             {
                 failure(app, 13);
                 break;
             }
-        if (IDirectDrawSurface_Flip(app->primary, 0, DDFLIP_WAIT) != DD_OK)
+        if (bh_renderer_surface_present(app->primary) != DD_OK)
         {
             failure(app, 13);
             break;
@@ -2718,11 +2719,11 @@ static void cleanup(BHGameApp *app)
     bh_render_material_dispose(&app->material);
     bh_render_mode_dispose(&app->render_mode);
     if (app->target)
-        IDirectDrawSurface_Release(app->target);
+        bh_renderer_surface_release(app->target);
     if (app->primary)
-        IDirectDrawSurface_Release(app->primary);
+        bh_renderer_surface_release(app->primary);
     if (app->draw)
-        IDirectDraw_Release(app->draw);
+        bh_renderer_release(app->draw);
     bh_vfile_shutdown();
     free(app->motion_bindings);
     free(app->world_responses);
@@ -2834,8 +2835,8 @@ static int run_world(const char *directory, const char *settings_path, int profi
     }
     /* Original00479200 calls material/texture allocation after004474c0 has
       loaded all assets. Before that, every class reference count is zero. */
-    bh_render_material_initialize(&app->material, &app->render_mode.engine.textures, app->render_mode.engine.d3d);
-    if (app->material.failures || (app->hardware && !app->material.material))
+    bh_render_material_initialize(&app->material, &app->render_mode.engine.textures, app->render_mode.engine.renderer);
+    if (app->material.failures || (app->hardware && !app->material.initialized))
     {
         failure(app, 4);
         goto done;

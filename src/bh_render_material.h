@@ -1,24 +1,18 @@
 #ifndef BH_RENDER_MATERIAL_H
 #define BH_RENDER_MATERIAL_H
 #include "bh_texture.h"
-/* Explicit source owner for the otherwise leaked local material in0045b1d0.
-   Zero initialize before use. The created material remains alive until dispose;
-   borrowed D3D2 and texture context need only remain live during initialize. */
+/* Source-owned initialization status. Lighting is baked into transformed
+   vertices; the SDL renderer needs the recovered render state, not a material
+   interface or a dummy material allocation. Zero initialize before use. */
 typedef struct BHRenderMaterial
 {
-    LPDIRECT3DMATERIAL2 material;
-    D3DMATERIALHANDLE handle;
+    unsigned long initialized;
     HRESULT last_hresult;
     unsigned long native_calls, failures;
 } BHRenderMaterial;
-/* Complete0045b1d0 over real SDK interfaces. Returns NULL when the original
-   shared error string is empty, otherwise that string. Software mode returns
-   NULL immediately. Preallocation error appends and still initializes native
-   material/state. Only CreateMaterial HRESULT gates the original control flow;
-   later native HRESULTs are recorded separately without changing its return.
-   Source guards return a literal diagnostic for invalid/previously live owner;
-   bounded error append replaces original unbounded strcat. */
-const char *bh_render_material_initialize(BHRenderMaterial *, BHTextureContext *, LPDIRECT3D2);
+/* Preallocate texture slots and install the original render-state values.
+   Returns the shared error string, or NULL on success/software rendering. */
+const char *bh_render_material_initialize(BHRenderMaterial *, BHTextureContext *, BHRenderer *);
 /* Source lifetime adapter, not a recovered original destructor. */
 void bh_render_material_dispose(BHRenderMaterial *);
 #endif

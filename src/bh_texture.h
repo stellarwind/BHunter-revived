@@ -14,8 +14,8 @@ typedef struct BHTextureFormat
 } BHTextureFormat;
 struct BHTextureSlot
 {
-    LPDIRECTDRAWSURFACE surface;
-    LPDIRECTDRAWPALETTE palette;
+    BHRenderSurface *surface;
+    BHRenderPalette *palette;
     D3DTEXTUREHANDLE handle;
     BHTextureImage *image;
     long frame;
@@ -23,12 +23,12 @@ struct BHTextureSlot
     BHTextureSlot *next;
 };
 /* Recovered x86 0x70 image/cache object, with defined zero initial values for
-   otherwise unspecified padding. Native interface pointers remain real. */
+   otherwise unspecified padding. Native resource handles retain the original pointer-sized fields. */
 struct BHTextureImage
 {
     BHTextureSlot *resident;
-    LPDIRECTDRAWSURFACE source;
-    LPDIRECTDRAWPALETTE palette;
+    BHRenderSurface *source;
+    BHRenderPalette *palette;
     BHTextureFormat *format;
     BHTextureImage *next;
     unsigned char *dither;
@@ -56,8 +56,8 @@ typedef enum BHTextureError
 typedef struct BHTextureContext
 {
     BHTextureFormat formats[9];
-    LPDIRECTDRAW draw;
-    LPDIRECT3DDEVICE2 device;
+    BHRenderer *draw;
+    BHRenderDevice *device;
     BHTextureImage *images;
     BHSceneAllocator allocator;
     unsigned long software, slot_caps_override;
@@ -72,13 +72,13 @@ typedef struct BHTextureContext
     unsigned long display_right[3], display_left[3];
     BHTextureTables tables;
 } BHTextureContext;
-/* New explicit lifetime binding, AddRefs real native interfaces. Original nine
+/* Explicit lifetime binding retains native renderer resources. Original nine
    class dimensions/minima are pinned data; format enumeration is explicit. */
-int bh_texture_context_init(BHTextureContext *context, LPDIRECTDRAW draw, LPDIRECT3DDEVICE2 device,
+int bh_texture_context_init(BHTextureContext *context, BHRenderer *draw, BHRenderDevice *device,
                             const BHSceneAllocator *allocator);
 /* Explicit original software branch: owns a draw reference and format/arena
    state without a fabricated native device. */
-int bh_texture_context_init_software(BHTextureContext *context, LPDIRECTDRAW draw, const BHSceneAllocator *allocator);
+int bh_texture_context_init_software(BHTextureContext *context, BHRenderer *draw, const BHSceneAllocator *allocator);
 void bh_texture_context_dispose(BHTextureContext *context);
 HRESULT CALLBACK bh_texture_format_callback(LPDDSURFACEDESC desc, LPVOID format); /* 0044e490 */
 int bh_texture_formats(BHTextureContext *context);                                /* 0044e510 */

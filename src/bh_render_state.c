@@ -1,3 +1,4 @@
+#include "bh_renderer.h"
 #include "bh_render_state.h"
 #include "bh_texture_draw.h"
 #include <string.h>
@@ -26,10 +27,10 @@ int bh_render_depth(BHRenderState *s, unsigned long mode)
     s->depth = mode;
     if (s->textures->software || mode > 2)
         return 1;
-    if (!native(s, IDirect3DDevice2_SetRenderState(s->textures->device, D3DRENDERSTATE_ZWRITEENABLE, mode != 1)))
+    if (!native(s, bh_renderer_set_state(s->textures->device, D3DRENDERSTATE_ZWRITEENABLE, mode != 1)))
         ok = 0;
-    if (!native(s, IDirect3DDevice2_SetRenderState(s->textures->device, D3DRENDERSTATE_ZFUNC,
-                                                   mode == 2 ? D3DCMP_ALWAYS : D3DCMP_GREATEREQUAL)))
+    if (!native(s, bh_renderer_set_state(s->textures->device, D3DRENDERSTATE_ZFUNC,
+                                         mode == 2 ? D3DCMP_ALWAYS : D3DCMP_GREATEREQUAL)))
         ok = 0;
     return ok;
 }
@@ -45,11 +46,11 @@ int bh_render_blend(BHRenderState *s, unsigned long enable, unsigned long source
     s->destination = destination;
     if (s->textures->software)
         return 1;
-    if (!native(s, IDirect3DDevice2_SetRenderState(s->textures->device, D3DRENDERSTATE_ALPHABLENDENABLE, enable)))
+    if (!native(s, bh_renderer_set_state(s->textures->device, D3DRENDERSTATE_ALPHABLENDENABLE, enable)))
         ok = 0;
-    if (!native(s, IDirect3DDevice2_SetRenderState(s->textures->device, D3DRENDERSTATE_SRCBLEND, source)))
+    if (!native(s, bh_renderer_set_state(s->textures->device, D3DRENDERSTATE_SRCBLEND, source)))
         ok = 0;
-    if (!native(s, IDirect3DDevice2_SetRenderState(s->textures->device, D3DRENDERSTATE_DESTBLEND, destination)))
+    if (!native(s, bh_renderer_set_state(s->textures->device, D3DRENDERSTATE_DESTBLEND, destination)))
         ok = 0;
     return ok;
 }
@@ -90,9 +91,7 @@ int bh_render_mode(BHRenderState *s, unsigned long mode)
         for (image = s->textures->images; image; image = image->next)
             if (!bh_texture_draw_flush(s->textures, image, NULL))
                 ok = 0;
-        if (!native(s, IDirect3DDevice2_EndScene(s->textures->device)))
-            ok = 0;
-        if (!native(s, IDirect3DDevice2_BeginScene(s->textures->device)))
+        if (!native(s, bh_renderer_record_draws(s->textures->device)))
             ok = 0;
     }
     s->mode = mode;

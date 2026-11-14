@@ -16,7 +16,7 @@ typedef struct BHFrameDisplay
 {
     BHTextureContext *textures;                     /* original 004edc70 / 004ede80 / device */
     BHAtlasContext *atlas;                          /* optional shared 004e9750 scan step */
-    LPDIRECTDRAWSURFACE auxiliary, color;           /* original 004e9c48 / 004e9c3c */
+    BHRenderSurface *auxiliary, *color;             /* original 004e9c48 / 004e9c3c */
     unsigned char *auxiliary_pixels, *color_pixels; /* original locked pointers */
     unsigned long auxiliary_bytes;                  /* source guard for locked depth clear */
     long auxiliary_pitch, color_pitch;
@@ -28,7 +28,7 @@ typedef struct BHFrameDisplay
 } BHFrameDisplay;
 /* Complete 0045ca10 and 0045cbc0 respectively. Both use the original fixed
    640x480 right/bottom and caller's x87 rounding profile. Native mode flushes
-   each live texture image, EndScene/BeginScene, then depth-fills auxiliary.
+   each live texture image, records GPU draws, then depth-fills auxiliary.
    Software mode color-fills actual color surface; when locked it Unlocks,
    retries Lock at most500 times with Sleep(1), updates live color pointer/pitch
    and atlas scan step, then clears the 16-bit auxiliary pixels. Original native

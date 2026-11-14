@@ -1,3 +1,4 @@
+#include "bh_renderer.h"
 #include "bh_texture.h"
 #include <stddef.h>
 #include <stdlib.h>
@@ -41,7 +42,7 @@ static int owned_format(BHTextureContext *q, BHTextureFormat *f)
             return 1;
     return 0;
 }
-static int context_init(BHTextureContext *q, LPDIRECTDRAW draw, LPDIRECT3DDEVICE2 device,
+static int context_init(BHTextureContext *q, BHRenderer *draw, BHRenderDevice *device,
                         const BHSceneAllocator *allocator, int software)
 {
     static const unsigned long minimum[9] = {16, 8, 1, 8, 4, 1, 4, 2, 1};
@@ -53,9 +54,9 @@ static int context_init(BHTextureContext *q, LPDIRECTDRAW draw, LPDIRECT3DDEVICE
     q->device = device;
     q->search = -1;
     q->software = software;
-    IDirectDraw_AddRef(draw);
+    bh_renderer_retain(draw);
     if (device)
-        IDirect3DDevice2_AddRef(device);
+        bh_renderer_device_retain(device);
     if (allocator)
         q->allocator = *allocator;
     else
@@ -74,12 +75,12 @@ static int context_init(BHTextureContext *q, LPDIRECTDRAW draw, LPDIRECT3DDEVICE
     }
     return 1;
 }
-int bh_texture_context_init(BHTextureContext *q, LPDIRECTDRAW draw, LPDIRECT3DDEVICE2 device,
+int bh_texture_context_init(BHTextureContext *q, BHRenderer *draw, BHRenderDevice *device,
                             const BHSceneAllocator *allocator)
 {
     return context_init(q, draw, device, allocator, 0);
 }
-int bh_texture_context_init_software(BHTextureContext *q, LPDIRECTDRAW draw, const BHSceneAllocator *allocator)
+int bh_texture_context_init_software(BHTextureContext *q, BHRenderer *draw, const BHSceneAllocator *allocator)
 {
     return context_init(q, draw, NULL, allocator, 1);
 }
@@ -97,18 +98,18 @@ void bh_texture_context_dispose(BHTextureContext *q)
             if (s->image)
                 s->image->resident = NULL;
             if (s->palette)
-                IDirectDrawPalette_Release(s->palette);
+                bh_renderer_palette_release(s->palette);
             if (s->surface)
-                IDirectDrawSurface_Release(s->surface);
+                bh_renderer_surface_release(s->surface);
             q->allocator.release(s, q->allocator.user);
         }
     for (image = q->images; image; image = next_image)
     {
         next_image = image->next;
         if (image->palette)
-            IDirectDrawPalette_Release(image->palette);
+            bh_renderer_palette_release(image->palette);
         if (image->source)
-            IDirectDrawSurface_Release(image->source);
+            bh_renderer_surface_release(image->source);
         if (image->dither)
             q->allocator.release(image->dither, q->allocator.user);
         if (image->screen)
@@ -120,9 +121,9 @@ void bh_texture_context_dispose(BHTextureContext *q)
         q->allocator.release(image, q->allocator.user);
     }
     if (q->device)
-        IDirect3DDevice2_Release(q->device);
+        bh_renderer_device_release(q->device);
     if (q->draw)
-        IDirectDraw_Release(q->draw);
+        bh_renderer_release(q->draw);
     memset(q, 0, sizeof(*q));
 }
 HRESULT CALLBACK bh_texture_format_callback(LPDDSURFACEDESC desc, LPVOID context)
@@ -162,7 +163,7 @@ int bh_texture_formats(BHTextureContext *q)
             q->formats[i].pixel.dwFlags = 0x60;
             q->formats[i].pixel.dwRGBBitCount = 8;
         }
-        else if (!native(q, IDirect3DDevice2_EnumTextureFormats(q->device, bh_texture_format_callback, q->formats + i)))
+        else if (!native(q, bh_renderer_texture_formats(q->device, bh_texture_format_callback, q->formats + i)))
             ok = 0;
     }
     return ok;
@@ -194,7 +195,6 @@ int bh_texture_slot_create(BHTextureContext *q, BHTextureFormat *f)
 {
     BHTextureSlot *s;
     DDSURFACEDESC desc;
-    LPDIRECT3DTEXTURE2 texture = NULL;
     PALETTEENTRY entries[256];
     if (!owned_format(q, f) || !q->device || !q->draw)
         return error(q, BH_TEXTURE_ARGUMENT);
@@ -218,30 +218,24 @@ int bh_texture_slot_create(BHTextureContext *q, BHTextureFormat *f)
         desc.dwFlags = 0x11007;
         desc.ddckCKSrcBlt.dwColorSpaceLowValue = desc.ddckCKSrcBlt.dwColorSpaceHighValue = 0;
     }
-    if (!native(q, IDirectDraw_CreateSurface(q->draw, &desc, &s->surface, NULL)))
+    if (!native(q, bh_renderer_surface_create(q->draw, &desc, &s->surface)))
         goto failed;
-    if (!native(q, IDirectDrawSurface_QueryInterface(s->surface, &IID_IDirect3DTexture2, (void **)&texture)))
-        goto failed;
-    native(q, IDirect3DTexture2_GetHandle(texture, q->device, &s->handle));
-    IDirect3DTexture2_Release(texture);
-    texture = NULL;
+    native(q, bh_renderer_surface_texture_handle(s->surface, &s->handle));
     if (!s->handle)
         goto failed;
     if (f->pixel.dwRGBBitCount == 8)
     {
         memset(entries, 0, sizeof(entries));
-        if (native(q, IDirectDraw_CreatePalette(q->draw, 0x44, entries, &s->palette, NULL)))
-            native(q, IDirectDrawSurface_SetPalette(s->surface, s->palette));
+        if (native(q, bh_renderer_palette_create(q->draw, entries, &s->palette)))
+            native(q, bh_renderer_surface_set_palette(s->surface, s->palette));
     }
     s->next = f->slots;
     f->slots = s;
     ++f->count;
     return 1;
 failed:
-    if (texture)
-        IDirect3DTexture2_Release(texture);
     if (s->surface)
-        IDirectDrawSurface_Release(s->surface);
+        bh_renderer_surface_release(s->surface);
     q->allocator.release(s, q->allocator.user);
     return 0;
 }
@@ -295,22 +289,16 @@ int bh_texture_preallocate(BHTextureContext *q)
 static void palette_copy(BHTextureContext *q, BHTextureImage *image, BHTextureSlot *s)
 {
     PALETTEENTRY entries[256];
-    LPDIRECT3DTEXTURE2 texture = NULL;
     if (!image->palette || !s->palette)
         return;
     memset(entries, 0, sizeof(entries));
-    native(q, IDirectDrawPalette_GetEntries(image->palette, 0, 0, 256, entries));
-    native(q, IDirectDrawPalette_SetEntries(s->palette, 0, 0, 256, entries));
-    if (native(q, IDirectDrawSurface_QueryInterface(s->surface, &IID_IDirect3DTexture2, (void **)&texture)))
-    {
-        native(q, IDirect3DTexture2_PaletteChanged(texture, 0, 256));
-        IDirect3DTexture2_Release(texture);
-    }
+    native(q, bh_renderer_palette_get(image->palette, 0, 256, entries));
+    native(q, bh_renderer_palette_set(s->palette, 0, 256, entries));
     ++q->palette_uploads;
 }
 static void pixels_copy(BHTextureContext *q, BHTextureImage *image, BHTextureSlot *s)
 {
-    native(q, IDirectDrawSurface_Blt(s->surface, NULL, image->source, NULL, DDBLT_WAIT, NULL));
+    native(q, bh_renderer_surface_blit(s->surface, NULL, image->source, NULL, DDBLT_WAIT, NULL));
 
     ++q->pixel_uploads;
 }
@@ -351,8 +339,7 @@ D3DTEXTUREHANDLE bh_texture_resident(BHTextureContext *q, BHTextureImage *image)
     s->pixels_dirty = s->palette_dirty = 0;
     if (s->frame == q->frame && s->image)
     {
-        native(q, IDirect3DDevice2_EndScene(q->device));
-        native(q, IDirect3DDevice2_BeginScene(q->device));
+        native(q, bh_renderer_record_draws(q->device));
 
         ++q->flushes;
     }

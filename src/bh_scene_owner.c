@@ -8,7 +8,7 @@
 #include <math.h>
 #include <string.h>
 #ifdef BH_SDL_BACKEND
-#include "bh_sdl_adapter.h"
+#include "bh_platform.h"
 #endif
 
 /* Original .rdata at 00489440: 39 9d 52 a2 46 df 91 3f (pi / 180),

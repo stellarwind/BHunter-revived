@@ -216,14 +216,6 @@ def main():
                 flags.append("-D" + flag[2:])
             elif flag.replace("\\", "/") != "/I{DXSDK}/include":
                 parser.error(f"Unsupported compilation context: {flag}")
-        if re.search(
-            r"IDirect(?:Draw|3D)\w*_\w+\(|DirectDraw(?:Create|EnumerateA)\(",
-            source.read_text(),
-        ):
-            flags += [
-                "-include",
-                str(ROOT / "src/bh_sdl_adapter.h"),
-            ]
         if args.debugging:
             flags.append("-DDEBUGGING")
         if args.skip_cd_check and source.name == "bh_menu_transition.c":

@@ -1,6 +1,5 @@
-// SDL GPU resources and the legacy graphics ABI. The platform owns the window.
-#define CINTERFACE
-#include "../bh_sdl_adapter.h"
+// Native BH renderer resources backed by SDL GPU. The platform owns the window.
+#include "../bh_renderer.h"
 #include "bh_sdl_gpu.h"
 #include "bh_sdl_diagnostics.h"
 #include "../bh_video_layout.h"
@@ -15,31 +14,43 @@
 #include <memory>
 #include <vector>
 
-namespace
-{
-using bh_sdl_diagnostics::set_error;
-
-struct Object
+struct BHRenderObject
 {
     unsigned refs = 1;
-    virtual ~Object() = default;
+    virtual ~BHRenderObject() = default;
 };
-struct Palette : Object
+struct BHRenderPalette : BHRenderObject
 {
     PALETTEENTRY entries[256]{};
 };
-struct Surface : Object
+struct BHRenderSurface : BHRenderObject
 {
     DDSURFACEDESC desc{};
     std::vector<unsigned char> pixels, locked_pixels;
-    Surface *text_overlay = nullptr;
-    Palette *palette = nullptr;
-    Surface *back = nullptr;
+    BHRenderSurface *text_overlay = nullptr;
+    BHRenderPalette *palette = nullptr;
+    BHRenderSurface *back = nullptr;
     SDL_GPUTexture *gpu = nullptr;
     unsigned version = 1, uploaded = 0;
     bool target = false, primary = false, keyed = false;
-    ~Surface();
+    ~BHRenderSurface();
 };
+struct BHRenderer : BHRenderObject
+{
+    SDL_GPUDevice *gpu; // Borrowed; the SDL platform owns GPU shutdown.
+};
+struct BHRenderDevice : BHRenderObject
+{
+    BHRenderSurface *target;
+    BHRenderer *renderer;
+    ~BHRenderDevice();
+};
+
+namespace
+{
+using bh_sdl_diagnostics::set_error;
+using Surface = BHRenderSurface;
+using Palette = BHRenderPalette;
 struct Vertex
 {
     float x, y, z, w, u, v;
@@ -81,28 +92,19 @@ void viewport_geometry(float &x, float &y, float &w, float &h, float &scale)
     x = (target_w - w) * .5f;
     y = (target_h - h) * .5f;
 }
-unsigned addref(void *p)
+unsigned addref(BHRenderObject *p)
 {
-    return p ? ++static_cast<Object *>(p)->refs : 0;
+    return p ? ++p->refs : 0;
 }
-unsigned release(void *p)
+unsigned release(BHRenderObject *p)
 {
     if (!p)
         return 0;
-    auto *o = static_cast<Object *>(p);
+    auto *o = p;
     unsigned n = --o->refs;
     if (!n)
         delete o;
     return n;
-}
-Surface::~Surface()
-{
-    release(text_overlay);
-    surfaces.erase(std::remove(surfaces.begin(), surfaces.end(), this), surfaces.end());
-    if (gpu && device)
-        SDL_ReleaseGPUTexture(device, gpu);
-    release(palette);
-    release(back);
 }
 DDPIXELFORMAT pixel_format(unsigned bits = 16)
 {
@@ -468,7 +470,7 @@ bool draw_surface(Surface *s, bool overlay = false)
     states[D3DRENDERSTATE_ZWRITEENABLE] = 0;
     states[D3DRENDERSTATE_CULLMODE] = D3DCULL_NONE;
     states[D3DRENDERSTATE_FOGENABLE] = 0;
-    HRESULT hr = bh_IDirect3DDevice2_DrawPrimitive(nullptr, D3DPT_TRIANGLEFAN, D3DVT_TLVERTEX, v, 4, 0);
+    HRESULT hr = bh_renderer_draw_fan(nullptr, v, 4);
     states = saved;
     return SUCCEEDED(hr) && record_pending_draws();
 }
@@ -571,6 +573,21 @@ Surface *make_surface(const DDSURFACEDESC &d)
 }
 } // namespace
 
+BHRenderSurface::~BHRenderSurface()
+{
+    release(text_overlay);
+    surfaces.erase(std::remove(surfaces.begin(), surfaces.end(), this), surfaces.end());
+    if (gpu && device)
+        SDL_ReleaseGPUTexture(device, gpu);
+    release(palette);
+    release(back);
+}
+BHRenderDevice::~BHRenderDevice()
+{
+    release(target);
+    release(renderer);
+}
+
 namespace bh_sdl_gpu
 {
 bool open(SDL_Window *output, Display (*display)())
@@ -656,9 +673,9 @@ void close()
 
 extern "C"
 {
-    int bh_gpu_text(void *surface, int x, int y, const char *text, unsigned long rgb)
+    int bh_renderer_surface_text(BHRenderSurface *surface, int x, int y, const char *text, unsigned long rgb)
     {
-        auto *destination = (Surface *)surface;
+        auto *destination = surface;
         if (!destination || !text || !memchr(text, 0, 59))
             return 0;
         if (!bh_sdl_text::prepare())
@@ -713,56 +730,37 @@ extern "C"
     {
         return clear_target(true, true);
     }
-    HRESULT __cdecl bh_gpu_create(GUID *, LPDIRECTDRAW *out, void *)
+    HRESULT __cdecl bh_renderer_create(BHRenderer **out)
     {
-        *out = (LPDIRECTDRAW) new Object;
+        if (!out)
+            return E_INVALIDARG;
+        auto *renderer = new BHRenderer;
+        renderer->gpu = device;
+        *out = renderer;
         return DD_OK;
     }
-    HRESULT __cdecl bh_IDirect3D2_CreateDevice(void *self, const GUID *rclsid, IDirectDrawSurface *surface,
-                                               struct IDirect3DDevice2 **device)
+    HRESULT __cdecl bh_renderer_device_create(BHRenderer *self, BHRenderSurface *surface, BHRenderDevice **device)
     {
-        ((Surface *)surface)->target = true;
-        *device = (IDirect3DDevice2 *)new Object;
+        if (!self || !surface || !device)
+            return E_INVALIDARG;
+        surface->target = true;
+        auto *binding = new BHRenderDevice;
+        binding->target = surface;
+        binding->renderer = self;
+        addref(surface);
+        addref(self);
+        *device = binding;
         return DD_OK;
     }
-    HRESULT __cdecl bh_IDirect3D2_CreateMaterial(void *self, struct IDirect3DMaterial2 **material, void *outer)
-    {
-        *material = (IDirect3DMaterial2 *)new Object;
-        return DD_OK;
-    }
-    HRESULT __cdecl bh_IDirect3D2_CreateViewport(void *self, struct IDirect3DViewport2 **viewport, void *outer)
-    {
-        *viewport = (IDirect3DViewport2 *)new Object;
-        return DD_OK;
-    }
-    ULONG __cdecl bh_IDirect3D2_Release(void *self)
-    {
-        return release(self);
-    }
-    ULONG __cdecl bh_IDirect3DDevice2_AddRef(void *self)
+    ULONG __cdecl bh_renderer_device_retain(BHRenderDevice *self)
     {
         return addref(self);
     }
-    HRESULT __cdecl bh_IDirect3DDevice2_AddViewport(void *self, IDirect3DViewport2 *viewport)
+    HRESULT __cdecl bh_renderer_draw_fan(BHRenderDevice *self, const D3DTLVERTEX *vertices, DWORD vertex_count)
     {
-        return DD_OK;
-    }
-    HRESULT __cdecl bh_IDirect3DDevice2_BeginScene(void *self)
-    {
-        return DD_OK;
-    }
-    HRESULT __cdecl bh_IDirect3DDevice2_DeleteViewport(void *self, IDirect3DViewport2 *viewport)
-    {
-        return DD_OK;
-    }
-    HRESULT __cdecl bh_IDirect3DDevice2_DrawPrimitive(void *self, D3DPRIMITIVETYPE primitive_type,
-                                                      D3DVERTEXTYPE vertex_type, void *vertices, DWORD vertex_count,
-                                                      DWORD flags)
-    {
-        if (vertex_type != D3DVT_TLVERTEX || primitive_type != D3DPT_TRIANGLEFAN || vertex_count < 3 ||
-            vertex_count > 65536)
+        if (!vertices || vertex_count < 3 || vertex_count > 65536)
             return E_INVALIDARG;
-        auto *v = (D3DTLVERTEX *)vertices;
+        auto *v = vertices;
         Batch b{};
         b.first = ::vertices.size();
         b.texture = (Surface *)states[D3DRENDERSTATE_TEXTUREHANDLE];
@@ -785,11 +783,11 @@ extern "C"
         batches.push_back(b);
         return DD_OK;
     }
-    HRESULT __cdecl bh_IDirect3DDevice2_EndScene(void *self)
+    HRESULT __cdecl bh_renderer_record_draws(BHRenderDevice *self)
     {
         return record_pending_draws() ? DD_OK : E_FAIL;
     }
-    HRESULT __cdecl bh_IDirect3DDevice2_EnumTextureFormats(void *self, LPD3DENUMTEXTUREFORMATSCALLBACK cb, void *ctx)
+    HRESULT __cdecl bh_renderer_texture_formats(BHRenderDevice *self, LPD3DENUMTEXTUREFORMATSCALLBACK cb, void *ctx)
     {
         DDSURFACEDESC d{};
         d.dwSize = sizeof(d);
@@ -801,118 +799,68 @@ extern "C"
         }
         return DD_OK;
     }
-    ULONG __cdecl bh_IDirect3DDevice2_Release(void *self)
+    ULONG __cdecl bh_renderer_device_release(BHRenderDevice *self)
     {
         return release(self);
     }
-    HRESULT __cdecl bh_IDirect3DDevice2_SetCurrentViewport(void *self, IDirect3DViewport2 *viewport)
-    {
-        return DD_OK;
-    }
-    HRESULT __cdecl bh_IDirect3DDevice2_SetLightState(void *self, D3DLIGHTSTATETYPE dwLightStateType,
-                                                      DWORD dwLightState)
-    {
-        return DD_OK;
-    }
-    HRESULT __cdecl bh_IDirect3DDevice2_SetRenderState(void *self, D3DRENDERSTATETYPE dwRenderStateType,
-                                                       DWORD dwRenderState)
+    HRESULT __cdecl bh_renderer_set_state(BHRenderDevice *self, D3DRENDERSTATETYPE dwRenderStateType,
+                                          DWORD dwRenderState)
     {
         if ((unsigned)dwRenderStateType >= states.size())
             return E_INVALIDARG;
         states[dwRenderStateType] = dwRenderState;
         return DD_OK;
     }
-    HRESULT __cdecl bh_IDirect3DMaterial2_GetHandle(void *self, struct IDirect3DDevice2 *device,
-                                                    D3DMATERIALHANDLE *handle)
-    {
-        *handle = 1;
-        return DD_OK;
-    }
-    ULONG __cdecl bh_IDirect3DMaterial2_Release(void *self)
+    ULONG __cdecl bh_renderer_release(BHRenderer *self)
     {
         return release(self);
     }
-    HRESULT __cdecl bh_IDirect3DMaterial2_SetMaterial(void *self, D3DMATERIAL *data)
+    ULONG __cdecl bh_renderer_surface_release(BHRenderSurface *self)
     {
-        return DD_OK;
+        return release(self);
     }
-    HRESULT __cdecl bh_IDirect3DTexture2_GetHandle(void *self, struct IDirect3DDevice2 *device,
-                                                   D3DTEXTUREHANDLE *handle)
+    HRESULT __cdecl bh_renderer_surface_texture_handle(BHRenderSurface *self, D3DTEXTUREHANDLE *handle)
     {
         *handle = (DWORD)self;
         return DD_OK;
     }
-    HRESULT __cdecl bh_IDirect3DTexture2_PaletteChanged(void *self, DWORD dwStart, DWORD dwCount)
-    {
-        ++((Surface *)self)->version;
-        return DD_OK;
-    }
-    ULONG __cdecl bh_IDirect3DTexture2_Release(void *self)
-    {
-        return release(self);
-    }
-    HRESULT __cdecl bh_IDirect3DViewport2_Clear(void *self, DWORD count, D3DRECT *rects, DWORD flags)
-    {
-        return clear_target(flags & D3DCLEAR_TARGET, flags & D3DCLEAR_ZBUFFER) ? DD_OK : E_FAIL;
-    }
-    ULONG __cdecl bh_IDirect3DViewport2_Release(void *self)
-    {
-        return release(self);
-    }
-    HRESULT __cdecl bh_IDirect3DViewport2_SetViewport2(void *self, D3DVIEWPORT2 *data)
-    {
-        return DD_OK;
-    }
-    ULONG __cdecl bh_IDirectDraw2_Release(void *self)
-    {
-        return release(self);
-    }
-    HRESULT __cdecl bh_IDirectDraw2_RestoreDisplayMode(void *self)
-    {
-        return DD_OK;
-    }
-    HRESULT __cdecl bh_IDirectDraw2_SetDisplayMode(void *self, DWORD dwWidth, DWORD dwHeight, DWORD dwBPP,
-                                                   DWORD dwRefreshRate, DWORD dwFlags)
-    {
-        return DD_OK;
-    }
-    HRESULT __cdecl bh_IDirectDrawPalette_GetEntries(void *self, DWORD dwFlags, DWORD dwBase, DWORD dwNumEntries,
-                                                     LPPALETTEENTRY lpEntries)
+    HRESULT __cdecl bh_renderer_palette_get(BHRenderPalette *self, DWORD dwBase, DWORD dwNumEntries,
+                                            LPPALETTEENTRY lpEntries)
     {
         if (dwBase + dwNumEntries > 256)
             return E_INVALIDARG;
-        memcpy(lpEntries, ((Palette *)self)->entries + dwBase, dwNumEntries * sizeof(PALETTEENTRY));
+        memcpy(lpEntries, (self)->entries + dwBase, dwNumEntries * sizeof(PALETTEENTRY));
         return DD_OK;
     }
-    ULONG __cdecl bh_IDirectDrawPalette_Release(void *self)
+    ULONG __cdecl bh_renderer_palette_release(BHRenderPalette *self)
     {
         return release(self);
     }
-    HRESULT __cdecl bh_IDirectDrawPalette_SetEntries(void *self, DWORD dwFlags, DWORD dwStartingEntry, DWORD dwCount,
-                                                     LPPALETTEENTRY lpEntries)
+    HRESULT __cdecl bh_renderer_palette_set(BHRenderPalette *self, DWORD dwStartingEntry, DWORD dwCount,
+                                            LPPALETTEENTRY lpEntries)
     {
         if (dwStartingEntry + dwCount > 256)
             return E_INVALIDARG;
         if (!record_pending_draws())
             return E_FAIL;
-        memcpy(((Palette *)self)->entries + dwStartingEntry, lpEntries, dwCount * sizeof(PALETTEENTRY));
+        memcpy((self)->entries + dwStartingEntry, lpEntries, dwCount * sizeof(PALETTEENTRY));
         for (auto *s : surfaces)
             if (s->palette == self)
                 ++s->version;
         return DD_OK;
     }
-    HRESULT __cdecl bh_IDirectDrawSurface_AddAttachedSurface(void *self, LPDIRECTDRAWSURFACE lpDDSAttachedSurface)
+    HRESULT __cdecl bh_renderer_surface_attach_depth(BHRenderSurface *self, BHRenderSurface *lpDDSAttachedSurface)
     {
         return DD_OK;
     }
-    ULONG __cdecl bh_IDirectDrawSurface_AddRef(void *self)
+    ULONG __cdecl bh_renderer_surface_retain(BHRenderSurface *self)
     {
         return addref(self);
     }
-    HRESULT __cdecl bh_IDirectDrawSurface_Blt(void *self, LPRECT lpDestRect, LPDIRECTDRAWSURFACE lpDDSrcSurface,
-                                              LPRECT lpSrcRect, DWORD dwFlags, LPDDBLTFX lpDDBltFx)
+    HRESULT __cdecl bh_renderer_surface_blit(BHRenderSurface *self, LPRECT lpDestRect, BHRenderSurface *lpDDSrcSurface,
+                                             LPRECT lpSrcRect, DWORD dwFlags, LPDDBLTFX lpDDBltFx)
     {
-        auto *dst = (Surface *)self, *src = (Surface *)lpDDSrcSurface;
+        auto *dst = self, *src = lpDDSrcSurface;
         if (dst->primary)
         {
             if (src && !src->target)
@@ -936,7 +884,7 @@ extern "C"
                 states[D3DRENDERSTATE_ALPHABLENDENABLE] = 0;
                 states[D3DRENDERSTATE_ZFUNC] = D3DCMP_ALWAYS;
                 states[D3DRENDERSTATE_ZWRITEENABLE] = 0;
-                bh_IDirect3DDevice2_DrawPrimitive(nullptr, D3DPT_TRIANGLEFAN, D3DVT_TLVERTEX, v, 4, 0);
+                bh_renderer_draw_fan(nullptr, v, 4);
                 states = saved;
             }
             return present() ? DD_OK : E_FAIL;
@@ -997,44 +945,41 @@ extern "C"
         ++dst->version;
         return DD_OK;
     }
-    HRESULT __cdecl bh_IDirectDrawSurface_BltFast(void *self, DWORD dwX, DWORD dwY, LPDIRECTDRAWSURFACE lpDDSrcSurface,
-                                                  LPRECT lpSrcRect, DWORD dwTrans)
+    HRESULT __cdecl bh_renderer_surface_copy(BHRenderSurface *self, DWORD dwX, DWORD dwY,
+                                             BHRenderSurface *lpDDSrcSurface, LPRECT lpSrcRect)
     {
         RECT r = {(LONG)dwX, (LONG)dwY, 0, 0};
-        return bh_IDirectDrawSurface_Blt(self, &r, lpDDSrcSurface, lpSrcRect, 0, nullptr);
+        return bh_renderer_surface_blit(self, &r, lpDDSrcSurface, lpSrcRect, 0, nullptr);
     }
-    HRESULT __cdecl bh_IDirectDrawSurface_DeleteAttachedSurface(void *self, DWORD dwFlags,
-                                                                LPDIRECTDRAWSURFACE lpDDSAttachedSurface)
+    HRESULT __cdecl bh_renderer_surface_detach_depth(BHRenderSurface *self, BHRenderSurface *lpDDSAttachedSurface)
     {
         return DD_OK;
     }
-    HRESULT __cdecl bh_IDirectDrawSurface_Flip(void *self, LPDIRECTDRAWSURFACE lpDDSurfaceTargetOverride, DWORD dwFlags)
+    HRESULT __cdecl bh_renderer_surface_present(BHRenderSurface *self)
     {
         return present() ? DD_OK : E_FAIL;
     }
-    HRESULT __cdecl bh_IDirectDrawSurface_GetAttachedSurface(void *self, LPDDSCAPS lpDDSCaps,
-                                                             LPDIRECTDRAWSURFACE *lplpDDAttachedSurface)
+    HRESULT __cdecl bh_renderer_surface_backbuffer(BHRenderSurface *self, BHRenderSurface **lplpDDAttachedSurface)
     {
-        auto *s = (Surface *)self;
+        auto *s = self;
         if (!s->back)
             return DDERR_NOTFOUND;
         addref(s->back);
-        *lplpDDAttachedSurface = (LPDIRECTDRAWSURFACE)s->back;
+        *lplpDDAttachedSurface = s->back;
         return DD_OK;
     }
-    HRESULT __cdecl bh_IDirectDrawSurface_GetPixelFormat(void *self, LPDDPIXELFORMAT lpDDPixelFormat)
+    HRESULT __cdecl bh_renderer_surface_format(BHRenderSurface *self, LPDDPIXELFORMAT lpDDPixelFormat)
     {
-        *lpDDPixelFormat = ((Surface *)self)->desc.ddpfPixelFormat;
+        *lpDDPixelFormat = (self)->desc.ddpfPixelFormat;
         return DD_OK;
     }
-    HRESULT __cdecl bh_IDirectDrawSurface_IsLost(void *self)
+    HRESULT __cdecl bh_renderer_surface_status(BHRenderSurface *self)
     {
         return DD_OK;
     }
-    HRESULT __cdecl bh_IDirectDrawSurface_Lock(void *self, LPRECT lpDestRect, LPDDSURFACEDESC lpDDSurfaceDesc,
-                                               DWORD dwFlags, void *hEvent)
+    HRESULT __cdecl bh_renderer_surface_lock(BHRenderSurface *self, LPDDSURFACEDESC lpDDSurfaceDesc)
     {
-        auto *s = (Surface *)self;
+        auto *s = self;
         if (s->target)
         {
             auto pixels = readback();
@@ -1062,32 +1007,22 @@ extern "C"
         lpDDSurfaceDesc->lpSurface = s->pixels.data();
         return DD_OK;
     }
-    HRESULT __cdecl bh_IDirectDrawSurface_QueryInterface(void *self, const IID *riid, void **ppvObject)
-    {
-        addref(self);
-        *ppvObject = self;
-        return DD_OK;
-    }
-    ULONG __cdecl bh_IDirectDrawSurface_Release(void *self)
-    {
-        return release(self);
-    }
-    HRESULT __cdecl bh_IDirectDrawSurface_Restore(void *self)
+    HRESULT __cdecl bh_renderer_surface_restore(BHRenderSurface *self)
     {
         return DD_OK;
     }
-    HRESULT __cdecl bh_IDirectDrawSurface_SetPalette(void *self, LPDIRECTDRAWPALETTE lpDDPalette)
+    HRESULT __cdecl bh_renderer_surface_set_palette(BHRenderSurface *self, BHRenderPalette *lpDDPalette)
     {
-        auto *s = (Surface *)self;
+        auto *s = self;
         addref(lpDDPalette);
         release(s->palette);
-        s->palette = (Palette *)lpDDPalette;
+        s->palette = lpDDPalette;
         ++s->version;
         return DD_OK;
     }
-    HRESULT __cdecl bh_IDirectDrawSurface_Unlock(void *self, LPVOID lpSurfaceData)
+    HRESULT __cdecl bh_renderer_surface_unlock(BHRenderSurface *self)
     {
-        auto *s = (Surface *)self;
+        auto *s = self;
         ++s->version;
         if (s->target && s->pixels != s->locked_pixels)
         {
@@ -1097,20 +1032,20 @@ extern "C"
         s->locked_pixels.clear();
         return DD_OK;
     }
-    ULONG __cdecl bh_IDirectDraw_AddRef(void *self)
+    ULONG __cdecl bh_renderer_retain(BHRenderer *self)
     {
         return addref(self);
     }
-    HRESULT __cdecl bh_IDirectDraw_CreatePalette(void *self, DWORD dwFlags, LPPALETTEENTRY lpColorTable,
-                                                 LPDIRECTDRAWPALETTE *lplpDDPalette, void *pUnkOuter)
+    HRESULT __cdecl bh_renderer_palette_create(BHRenderer *self, LPPALETTEENTRY lpColorTable,
+                                               BHRenderPalette **lplpDDPalette)
     {
         auto *p = new Palette;
         memcpy(p->entries, lpColorTable, sizeof(p->entries));
-        *lplpDDPalette = (LPDIRECTDRAWPALETTE)p;
+        *lplpDDPalette = p;
         return DD_OK;
     }
-    HRESULT __cdecl bh_IDirectDraw_CreateSurface(void *self, LPDDSURFACEDESC lpDDSurfaceDesc,
-                                                 LPDIRECTDRAWSURFACE *lplpDDSurface, void *pUnkOuter)
+    HRESULT __cdecl bh_renderer_surface_create(BHRenderer *self, LPDDSURFACEDESC lpDDSurfaceDesc,
+                                               BHRenderSurface **lplpDDSurface)
     {
         auto *s = make_surface(*lpDDSurfaceDesc);
         if (s->primary && (lpDDSurfaceDesc->dwFlags & DDSD_BACKBUFFERCOUNT))
@@ -1120,16 +1055,7 @@ extern "C"
             back.ddsCaps.dwCaps = DDSCAPS_3DDEVICE | DDSCAPS_BACKBUFFER;
             s->back = make_surface(back);
         }
-        *lplpDDSurface = (LPDIRECTDRAWSURFACE)s;
+        *lplpDDSurface = s;
         return DD_OK;
-    }
-    HRESULT __cdecl bh_IDirectDraw_QueryInterface(void *self, const IID *riid, void **ppvObject)
-    {
-        *ppvObject = new Object;
-        return DD_OK;
-    }
-    ULONG __cdecl bh_IDirectDraw_Release(void *self)
-    {
-        return release(self);
     }
 }

@@ -1,3 +1,4 @@
+#include "bh_renderer.h"
 #include "bh_texture_draw.h"
 #include <string.h>
 static int fail(BHTextureContext *q, BHTextureError error)
@@ -86,15 +87,14 @@ int bh_texture_draw_flush(BHTextureContext *q, BHTextureImage *image, unsigned l
     handle = bh_texture_resident(q, image);
     if (q->error != BH_TEXTURE_OK)
         ok = 0;
-    if (!native(q, IDirect3DDevice2_SetRenderState(q->device, D3DRENDERSTATE_TEXTUREHANDLE, handle)))
+    if (!native(q, bh_renderer_set_state(q->device, D3DRENDERSTATE_TEXTUREHANDLE, handle)))
         ok = 0;
     if (runs_drawn)
         *runs_drawn += image->run_count;
     at = 0;
     for (i = 0; i < image->run_count; ++i)
     {
-        if (!native(q, IDirect3DDevice2_DrawPrimitive(q->device, D3DPT_TRIANGLEFAN, D3DVT_TLVERTEX,
-                                                      image->vertices + at, image->runs[i], 0x0c)))
+        if (!native(q, bh_renderer_draw_fan(q->device, image->vertices + at, image->runs[i])))
             ok = 0;
         at += image->runs[i];
     }

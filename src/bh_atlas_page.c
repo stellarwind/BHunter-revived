@@ -1,3 +1,4 @@
+#include "bh_renderer.h"
 #include "bh_atlas_page.h"
 #include <stddef.h>
 #include <string.h>
@@ -9,9 +10,9 @@ static void discard(BHTextureContext *q, BHTextureImage *image)
     if (!image)
         return;
     if (image->palette)
-        IDirectDrawPalette_Release(image->palette);
+        bh_renderer_palette_release(image->palette);
     if (image->source)
-        IDirectDrawSurface_Release(image->source);
+        bh_renderer_surface_release(image->source);
     if (image->runs)
         q->allocator.release(image->runs, q->allocator.user);
     if (image->vertices)
@@ -80,7 +81,7 @@ BHAtlasPage *bh_atlas_page_create(BHAtlasContext *context, const char *name, uns
     desc.dwWidth = desc.dwHeight = size;
     desc.ddsCaps.dwCaps = 0x1800;
     desc.ddpfPixelFormat = image->format->pixel;
-    if (!native(q, IDirectDraw_CreateSurface(q->draw, &desc, &image->source, NULL)))
+    if (!native(q, bh_renderer_surface_create(q->draw, &desc, &image->source)))
         goto failed;
     if (image->format->pixel.dwRGBBitCount < 9)
     {
@@ -91,8 +92,8 @@ BHAtlasPage *bh_atlas_page_create(BHAtlasContext *context, const char *name, uns
             entries[i].peBlue = atlas->palette[i * 3 + 2];
             entries[i].peFlags = 0;
         }
-        if (!native(q, IDirectDraw_CreatePalette(q->draw, 0x44, entries, &image->palette, NULL)) ||
-            !native(q, IDirectDrawSurface_SetPalette(image->source, image->palette)))
+        if (!native(q, bh_renderer_palette_create(q->draw, entries, &image->palette)) ||
+            !native(q, bh_renderer_surface_set_palette(image->source, image->palette)))
             goto failed;
         if (!bh_texture_palette_tables(q, image, (const unsigned char *)entries, 1024))
             goto failed;

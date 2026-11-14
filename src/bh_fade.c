@@ -3,8 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <float.h>
+#include "bh_renderer.h"
 #ifdef BH_SDL_BACKEND
-#include "bh_sdl_adapter.h"
+#include "bh_platform.h"
 #endif
 static int native_call(BHFadeContext *c, HRESULT h)
 {
@@ -103,10 +104,10 @@ int bh_fade_apply(BHFadeContext *c)
             v[1].sy = v[2].sy = c->height + my;
         }
 #endif
-        if (!native_call(c, IDirect3DDevice2_SetRenderState(t->device, D3DRENDERSTATE_TEXTUREHANDLE, 0)))
+        if (!native_call(c, bh_renderer_set_state(t->device, D3DRENDERSTATE_TEXTUREHANDLE, 0)))
             ok = 0;
         ++c->native_draws;
-        if (!native_call(c, IDirect3DDevice2_DrawPrimitive(t->device, D3DPT_TRIANGLEFAN, D3DVT_TLVERTEX, v, 4, 0xc)))
+        if (!native_call(c, bh_renderer_draw_fan(t->device, v, 4)))
             ok = 0;
         if (!bh_render_mode(c->render, 0))
             ok = 0;

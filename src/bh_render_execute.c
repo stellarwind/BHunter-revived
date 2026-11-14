@@ -1,3 +1,4 @@
+#include "bh_renderer.h"
 #include "bh_render_execute.h"
 #include "bh_texture_draw.h"
 #include "bh_round.h"
@@ -99,9 +100,7 @@ static int barrier(BHRenderExecute *e)
         }
         ++e->flushes;
     }
-    if (!native(e, IDirect3DDevice2_EndScene(textures->device)))
-        ok = 0;
-    if (!native(e, IDirect3DDevice2_BeginScene(textures->device)))
+    if (!native(e, bh_renderer_record_draws(textures->device)))
         ok = 0;
     return ok;
 }

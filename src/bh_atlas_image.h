@@ -15,7 +15,7 @@ struct BHAtlasImage
     DDPIXELFORMAT pixel;
     unsigned long rectangle_count;
     BHAtlasRectangle rectangles[512];
-    LPDIRECTDRAWSURFACE surface;
+    BHRenderSurface *surface;
 };
 typedef struct BHAtlasContext
 {

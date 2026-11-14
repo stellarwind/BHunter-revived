@@ -5,7 +5,7 @@
 typedef struct BHLoadingDisplay
 {
     BHLoadingImages *images;
-    LPDIRECTDRAWSURFACE color, software_target, primary, back;
+    BHRenderSurface *color, *software_target, *primary, *back;
     long width, height;
     int software;
     unsigned long alternate;
@@ -15,7 +15,7 @@ typedef struct BHLoadingDisplay
     float normalized;
     HRESULT lock_result, unlock_result, copy_result, flip_result;
     /* Optional windowed presentation adapter. NULL retains original Flip. */
-    HRESULT (*present)(LPDIRECTDRAWSURFACE, void *);
+    HRESULT (*present)(BHRenderSurface *, void *);
     void *present_user;
     unsigned long presentations;
 } BHLoadingDisplay;

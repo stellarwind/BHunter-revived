@@ -1,3 +1,4 @@
+#include "bh_renderer.h"
 #include "bh_platform_clock.h"
 #include "bh_frame_render.h"
 #include <float.h>
@@ -54,9 +55,7 @@ static int flush_and_cycle(BHFrameDisplay *d)
         if (!bh_texture_draw_flush(d->textures, image, NULL))
             ok = 0;
     }
-    if (!native(d, IDirect3DDevice2_EndScene(d->textures->device)))
-        ok = 0;
-    if (!native(d, IDirect3DDevice2_BeginScene(d->textures->device)))
+    if (!native(d, bh_renderer_record_draws(d->textures->device)))
         ok = 0;
     return ok;
 }
@@ -105,7 +104,7 @@ static int clear_depth(BHFrameDisplay *d, int game_frame)
     memset(&fx, 0, sizeof(fx));
     fx.dwSize = sizeof(fx);
     fx.dwFillDepth = 0;
-    if (!native(d, IDirectDrawSurface_Blt(d->auxiliary, &r, NULL, NULL, DDBLT_WAIT | DDBLT_DEPTHFILL, &fx)))
+    if (!native(d, bh_renderer_surface_blit(d->auxiliary, &r, NULL, NULL, DDBLT_WAIT | DDBLT_DEPTHFILL, &fx)))
         ok = 0;
     return ok;
 }
@@ -150,10 +149,10 @@ int bh_frame_clear_color(BHFrameDisplay *d, long red, long green, long blue)
     fx.dwFillColor = color_value(d, red, green, blue);
     if (d->locked)
     {
-        if (!native(d, IDirectDrawSurface_Unlock(d->color, NULL)))
+        if (!native(d, bh_renderer_surface_unlock(d->color)))
             ok = 0;
     }
-    if (!native(d, IDirectDrawSurface_Blt(d->color, &r, NULL, NULL, DDBLT_WAIT | DDBLT_COLORFILL, &fx)))
+    if (!native(d, bh_renderer_surface_blit(d->color, &r, NULL, NULL, DDBLT_WAIT | DDBLT_COLORFILL, &fx)))
         ok = 0;
     if (d->locked)
     {
@@ -161,7 +160,7 @@ int bh_frame_clear_color(BHFrameDisplay *d, long red, long green, long blue)
         {
             memset(&desc, 0, sizeof(desc));
             desc.dwSize = sizeof(desc);
-            hr = IDirectDrawSurface_Lock(d->color, NULL, &desc, 0, NULL);
+            hr = bh_renderer_surface_lock(d->color, &desc);
             ++d->native_calls;
             d->last_hresult = hr;
             if (hr == DD_OK)

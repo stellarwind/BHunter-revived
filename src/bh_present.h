@@ -8,12 +8,12 @@
 typedef struct BHPresentContext
 {
     BHFadeContext *fade;
-    LPDIRECTDRAWSURFACE auxiliary, color, target;
+    BHRenderSurface *auxiliary, *color, *target;
     unsigned long locked; /* original004e9c50; cleared after both Unlock calls */
     unsigned long native_calls, fade_calls, restores, copies, failures;
     HRESULT last_hresult;
 } BHPresentContext;
-/* Positive ordered amount applies fade first. Native ends the existing scene.
+/* Positive ordered amount applies fade first. Native records the pending GPU draws.
    Software unlocks both surfaces, restores only DDERR_SURFACELOST, and copies
    color to optional target via BltFast(0,0,NULL,DDBLTFAST_WAIT). Native HRESULT
    failures are reported while later original operations still execute. */

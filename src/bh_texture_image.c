@@ -1,3 +1,4 @@
+#include "bh_renderer.h"
 #include "bh_texture.h"
 #include "bh_pcx_reader.h"
 #include <string.h>
@@ -96,9 +97,9 @@ static void discard(BHTextureContext *q, BHTextureImage *image)
     if (!image)
         return;
     if (image->palette)
-        IDirectDrawPalette_Release(image->palette);
+        bh_renderer_palette_release(image->palette);
     if (image->source)
-        IDirectDrawSurface_Release(image->source);
+        bh_renderer_surface_release(image->source);
     if (image->runs)
         q->allocator.release(image->runs, q->allocator.user);
     if (image->vertices)
@@ -167,7 +168,7 @@ BHTextureImage *bh_texture_load(BHTextureContext *q, const char *name)
     desc.dwHeight = reader.height;
     desc.ddpfPixelFormat = image->format->pixel;
     desc.ddsCaps.dwCaps = q->software ? 0x840 : 0x1800;
-    if (!native(q, IDirectDraw_CreateSurface(q->draw, &desc, &image->source, NULL)))
+    if (!native(q, bh_renderer_surface_create(q->draw, &desc, &image->source)))
     {
         message(q, "\nALLOCERR:", key, 0);
         goto failed;
@@ -181,8 +182,8 @@ BHTextureImage *bh_texture_load(BHTextureContext *q, const char *name)
             entries[i].peBlue = palette.rgb[i * 3 + 2];
             entries[i].peFlags = 0;
         }
-        if (!native(q, IDirectDraw_CreatePalette(q->draw, 0x44, entries, &image->palette, NULL)) ||
-            !native(q, IDirectDrawSurface_SetPalette(image->source, image->palette)))
+        if (!native(q, bh_renderer_palette_create(q->draw, entries, &image->palette)) ||
+            !native(q, bh_renderer_surface_set_palette(image->source, image->palette)))
             goto failed;
         if (!bh_texture_palette_tables(q, image, (const unsigned char *)entries, 1024))
             goto failed;
@@ -192,7 +193,7 @@ BHTextureImage *bh_texture_load(BHTextureContext *q, const char *name)
             colors[i] = packed(palette.rgb + i * 3, &image->format->pixel);
     memset(&lock, 0, sizeof(lock));
     lock.dwSize = sizeof(lock);
-    if (!native(q, IDirectDrawSurface_Lock(image->source, NULL, &lock, 0, NULL)))
+    if (!native(q, bh_renderer_surface_lock(image->source, &lock)))
         goto failed;
     if (lock.lPitch < (long)(reader.width * bytes))
         ok = fail(q, BH_TEXTURE_TOPOLOGY);
@@ -211,7 +212,7 @@ BHTextureImage *bh_texture_load(BHTextureContext *q, const char *name)
                 for (j = 0; j < bytes; ++j)
                     out[j] = (unsigned char)(colors[index] >> (j * 8));
         }
-    if (!native(q, IDirectDrawSurface_Unlock(image->source, NULL)))
+    if (!native(q, bh_renderer_surface_unlock(image->source)))
         ok = 0;
     if (!ok)
         goto failed;

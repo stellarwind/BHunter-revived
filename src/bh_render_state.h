@@ -19,10 +19,10 @@ int bh_render_depth(BHRenderState *, unsigned long mode);
 /* Complete0045b490: no value normalization, no-op when all three match. */
 int bh_render_blend(BHRenderState *, unsigned long enable, unsigned long source, unsigned long destination);
 /* Complete0045b500: native mode barrier ALWAYS increments residency epoch,
-   flushes every pending image, EndScene/BeginScene, then selects mode0..4.
+   submits every pending image and records GPU draws, then selects mode0..4.
    Unknown mode still performs barrier and publishes mode. Software branch
    only updates original caches/mode: no native calls or queue consumption.
    Native errors are reported separately without rolling caches back or
-   skipping subsequent calls. Caller must have begun a real native scene. */
+   skipping subsequent calls. The renderer owns GPU command recording. */
 int bh_render_mode(BHRenderState *, unsigned long mode);
 #endif

@@ -1,3 +1,4 @@
+#include "bh_renderer.h"
 #include "bh_atlas_text.h"
 #include <string.h>
 
@@ -62,7 +63,7 @@ long bh_atlas_page_text(BHAtlasPage *page, const unsigned char *text)
             destination.top = page->cursor_y;
             destination.right = add(destination.left, width);
             destination.bottom = add(destination.top, height);
-            IDirectDrawSurface_Blt(page->surface, &destination, page->atlas->surface, &source, DDBLT_WAIT, NULL);
+            bh_renderer_surface_blit(page->surface, &destination, page->atlas->surface, &source, DDBLT_WAIT, NULL);
             if (page->line_height < height)
                 page->line_height = height;
             total = add(total, width);

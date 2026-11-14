@@ -1,3 +1,4 @@
+#include "bh_renderer.h"
 #include "bh_render_startup.h"
 #include <string.h>
 #include <stdio.h>
@@ -11,7 +12,7 @@ static void extents(BHRenderStartup *s)
     s->scale_x = s->scale_y = 0;
     s->offset_x = s->offset_y = 0;
 }
-static int format(BHRenderStartup *s, LPDIRECTDRAWSURFACE surface, unsigned long width, unsigned long height,
+static int format(BHRenderStartup *s, BHRenderSurface *surface, unsigned long width, unsigned long height,
                   unsigned long bits, int software)
 {
     if (!s || !surface || !width || !height || width > 0x7fffffffUL || height > 0x7fffffffUL ||
@@ -26,7 +27,7 @@ static int format(BHRenderStartup *s, LPDIRECTDRAWSURFACE surface, unsigned long
     s->pixel.dwSize = sizeof(s->pixel);
     /* The original ignores GetPixelFormat failure; source guards retain the
        error rather than continuing with an unspecified display format. */
-    s->last_hresult = IDirectDrawSurface_GetPixelFormat(surface, &s->pixel);
+    s->last_hresult = bh_renderer_surface_format(surface, &s->pixel);
     return s->last_hresult == DD_OK;
 }
 void bh_render_startup_dispose(BHRenderStartup *s)
@@ -38,25 +39,20 @@ void bh_render_startup_dispose(BHRenderStartup *s)
         return;
     bh_software_tables_dispose(&s->tables);
     bh_texture_context_dispose(&s->textures);
-    if (s->viewport)
-    {
-        IDirect3DViewport2_Release(s->viewport);
-        s->viewport = NULL;
-    }
     if (s->device)
     {
-        IDirect3DDevice2_Release(s->device);
+        bh_renderer_device_release(s->device);
         s->device = NULL;
     }
-    if (s->d3d)
+    if (s->renderer)
     {
-        IDirect3D2_Release(s->d3d);
-        s->d3d = NULL;
+        bh_renderer_release(s->renderer);
+        s->renderer = NULL;
     }
     for (i = 0; i < 2; ++i)
         if (s->depth_attachments[i])
         {
-            hr = IDirectDrawSurface_DeleteAttachedSurface(s->depth_attachments[i], 0, s->depth);
+            hr = bh_renderer_surface_detach_depth(s->depth_attachments[i], s->depth);
             s->last_detach_hresult = hr;
             if (hr != DD_OK && hr != DDERR_SURFACENOTATTACHED)
             {
@@ -64,23 +60,23 @@ void bh_render_startup_dispose(BHRenderStartup *s)
                 retained = 1;
                 continue;
             }
-            IDirectDrawSurface_Release(s->depth_attachments[i]);
+            bh_renderer_surface_release(s->depth_attachments[i]);
             s->depth_attachments[i] = NULL;
             --s->depth_attachment_count;
         }
     if (retained)
         return;
     if (s->depth)
-        IDirectDrawSurface_Release(s->depth);
+        bh_renderer_surface_release(s->depth);
     if (s->palette)
-        IDirectDrawPalette_Release(s->palette);
+        bh_renderer_palette_release(s->palette);
     if (s->render)
-        IDirectDrawSurface_Release(s->render);
+        bh_renderer_surface_release(s->render);
     if (s->screen)
-        IDirectDrawSurface_Release(s->screen);
+        bh_renderer_surface_release(s->screen);
     memset(s, 0, sizeof(*s));
 }
-HRESULT bh_render_startup_attach_depth(BHRenderStartup *s, LPDIRECTDRAWSURFACE target)
+HRESULT bh_render_startup_attach_depth(BHRenderStartup *s, BHRenderSurface *target)
 {
     unsigned long i;
     HRESULT hr;
@@ -91,10 +87,10 @@ HRESULT bh_render_startup_attach_depth(BHRenderStartup *s, LPDIRECTDRAWSURFACE t
     }
     if (i == 2)
         return DDERR_INVALIDPARAMS;
-    hr = IDirectDrawSurface_AddAttachedSurface(target, s->depth);
+    hr = bh_renderer_surface_attach_depth(target, s->depth);
     if (hr == DD_OK)
     {
-        IDirectDrawSurface_AddRef(target);
+        bh_renderer_surface_retain(target);
         s->depth_attachments[i] = target;
         ++s->depth_attachment_count;
     }
@@ -107,13 +103,10 @@ static int failed(BHRenderStartup *s)
     s->last_hresult = hr;
     return 0;
 }
-int bh_render_startup_hardware(BHRenderStartup *s, LPDIRECTDRAW draw, LPDIRECTDRAWSURFACE render,
-                               LPDIRECTDRAWSURFACE screen, unsigned long width, unsigned long height,
-                               unsigned long bits)
+int bh_render_startup_hardware(BHRenderStartup *s, BHRenderer *draw, BHRenderSurface *render, BHRenderSurface *screen,
+                               unsigned long width, unsigned long height, unsigned long bits)
 {
     DDSURFACEDESC depth;
-    D3DVIEWPORT2 viewport;
-    float aspect;
     if (!draw || !format(s, render, width, height, bits, 0))
         return 0;
     if (s->bytes_per_pixel < 2)
@@ -125,46 +118,25 @@ int bh_render_startup_hardware(BHRenderStartup *s, LPDIRECTDRAW draw, LPDIRECTDR
     depth.dwHeight = height;
     depth.dwZBufferBitDepth = 16;
     depth.ddsCaps.dwCaps = 0x24000;
-    s->last_hresult = IDirectDraw_CreateSurface(draw, &depth, &s->depth, NULL);
+    s->last_hresult = bh_renderer_surface_create(draw, &depth, &s->depth);
     if (s->last_hresult != DD_OK)
         return failed(s);
     if (screen)
         bh_render_startup_attach_depth(s, screen);
     bh_render_startup_attach_depth(s, render);
-    if (!s->d3d)
+    if (!s->renderer)
     {
-        s->last_hresult = IDirectDraw_QueryInterface(draw, &IID_IDirect3D2, (void **)&s->d3d);
-        if (s->last_hresult != DD_OK)
-            return failed(s);
+        s->renderer = draw;
+        bh_renderer_retain(draw);
     }
-    s->last_hresult = IDirect3D2_CreateDevice(s->d3d, &IID_IDirect3DHALDevice, render, &s->device);
+    s->last_hresult = bh_renderer_device_create(s->renderer, render, &s->device);
     if (s->last_hresult != DD_OK)
         return failed(s);
-    s->last_hresult = IDirect3D2_CreateViewport(s->d3d, &s->viewport, NULL);
-    if (s->last_hresult != DD_OK)
-        return failed(s);
-    IDirect3DDevice2_AddViewport(s->device, s->viewport);
-    memset(&viewport, 0, sizeof(viewport));
-    viewport.dwSize = sizeof(viewport);
-    viewport.dwWidth = width;
-    viewport.dwHeight = height;
-    aspect = (float)((2.0 * (double)height) / (double)width);
-    viewport.dvClipX = -1;
-    viewport.dvClipY = aspect * 0.5f;
-    viewport.dvClipWidth = 2;
-    viewport.dvClipHeight = aspect;
-    viewport.dvMaxZ = 1;
-    s->last_hresult = IDirect3DViewport2_SetViewport2(s->viewport, &viewport);
-    if (s->last_hresult != DD_OK)
-        return failed(s);
-    s->last_hresult = IDirect3DDevice2_SetCurrentViewport(s->device, s->viewport);
-    if (s->last_hresult != DD_OK)
-        return failed(s);
-    IDirectDrawSurface_AddRef(render);
+    bh_renderer_surface_retain(render);
     s->render = render;
     if (screen)
     {
-        IDirectDrawSurface_AddRef(screen);
+        bh_renderer_surface_retain(screen);
         s->screen = screen;
     }
     extents(s);
@@ -172,8 +144,8 @@ int bh_render_startup_hardware(BHRenderStartup *s, LPDIRECTDRAW draw, LPDIRECTDR
         return failed(s);
     return 1;
 }
-int bh_render_startup_software(BHRenderStartup *s, LPDIRECTDRAW draw, LPDIRECTDRAWSURFACE format_surface,
-                               LPDIRECTDRAWSURFACE render, LPDIRECTDRAWSURFACE screen, unsigned long width,
+int bh_render_startup_software(BHRenderStartup *s, BHRenderer *draw, BHRenderSurface *format_surface,
+                               BHRenderSurface *render, BHRenderSurface *screen, unsigned long width,
                                unsigned long height, unsigned long bits)
 {
     DDSURFACEDESC desc;
@@ -192,7 +164,7 @@ int bh_render_startup_software(BHRenderStartup *s, LPDIRECTDRAW draw, LPDIRECTDR
     desc.dwHeight = height;
     desc.dwZBufferBitDepth = 16;
     desc.ddsCaps.dwCaps = 0x20800;
-    s->last_hresult = IDirectDraw_CreateSurface(draw, &desc, &s->depth, NULL);
+    s->last_hresult = bh_renderer_surface_create(draw, &desc, &s->depth);
     if (s->last_hresult != DD_OK)
         return failed(s);
     if (!render)
@@ -204,19 +176,19 @@ int bh_render_startup_software(BHRenderStartup *s, LPDIRECTDRAW draw, LPDIRECTDR
         desc.dwHeight = height;
         desc.ddsCaps.dwCaps = 0x840;
         desc.ddpfPixelFormat = s->pixel;
-        s->last_hresult = IDirectDraw_CreateSurface(draw, &desc, &s->render, NULL);
+        s->last_hresult = bh_renderer_surface_create(draw, &desc, &s->render);
         if (s->last_hresult != DD_OK)
             return failed(s);
         s->owns_render = 1;
     }
     else
     {
-        IDirectDrawSurface_AddRef(render);
+        bh_renderer_surface_retain(render);
         s->render = render;
     }
     if (screen)
     {
-        IDirectDrawSurface_AddRef(screen);
+        bh_renderer_surface_retain(screen);
         s->screen = screen;
     }
     if (s->bytes_per_pixel == 1 && screen)
@@ -228,9 +200,9 @@ int bh_render_startup_software(BHRenderStartup *s, LPDIRECTDRAW draw, LPDIRECTDR
             palette[i].peGreen = (unsigned char)(((i / 6) % 7) * 255 / 6);
             palette[i].peBlue = (unsigned char)((i % 6) * 255 / 5);
         }
-        s->last_hresult = IDirectDraw_CreatePalette(draw, 0x44, palette, &s->palette, NULL);
+        s->last_hresult = bh_renderer_palette_create(draw, palette, &s->palette);
         if (s->last_hresult == DD_OK)
-            IDirectDrawSurface_SetPalette(screen, s->palette);
+            bh_renderer_surface_set_palette(screen, s->palette);
     }
     if (!bh_texture_context_init_software(&s->textures, draw, NULL) ||
         (s->bytes_per_pixel == 2 && !bh_texture_bind_display(&s->textures, &s->pixel)) ||
@@ -262,24 +234,24 @@ void bh_render_mode_dispose(BHRenderMode *m)
         return;
     bh_render_startup_dispose(&m->engine);
     if (m->render)
-        IDirectDrawSurface_Release(m->render);
+        bh_renderer_surface_release(m->render);
     if (m->screen)
-        IDirectDrawSurface_Release(m->screen);
+        bh_renderer_surface_release(m->screen);
     m->render = m->screen = NULL;
 }
-int bh_render_mode_startup(BHRenderMode *m, LPDIRECTDRAW2 draw2, LPDIRECTDRAW draw, unsigned long width,
-                           unsigned long height, unsigned long bits, int software)
+int bh_render_mode_startup(BHRenderMode *m, BHRenderer *draw, unsigned long width, unsigned long height,
+                           unsigned long bits, int software)
 {
     DDSURFACEDESC desc;
-    DDSCAPS caps;
     DDBLTFX fill;
     const char *reason;
-    if (!m || !draw2 || !draw || m->screen || m->render || m->engine.render)
+    if (!m || !draw || m->screen || m->render || m->engine.render)
         return 0;
-    m->last_hresult = IDirectDraw2_SetDisplayMode(draw2, width, height, bits, 0, 0);
-    if (m->last_hresult != DD_OK)
+    /* SDL owns the physical display; these dimensions describe render surfaces. */
+    if (!width || !height || (bits != 8 && bits != 16 && bits != 32))
     {
-        mode_error(m, "Couldn't setup mode:", width, height, bits);
+        mode_error(m, "Invalid render dimensions:", width, height, bits);
+        m->last_hresult = DDERR_INVALIDPARAMS;
         return 0;
     }
     memset(&desc, 0, sizeof(desc));
@@ -287,24 +259,23 @@ int bh_render_mode_startup(BHRenderMode *m, LPDIRECTDRAW2 draw2, LPDIRECTDRAW dr
     desc.dwFlags = 0x21;
     desc.dwBackBufferCount = 1;
     desc.ddsCaps.dwCaps = software ? 0x4218 : 0x6218;
-    m->last_hresult = IDirectDraw_CreateSurface(draw, &desc, &m->screen, NULL);
+    m->last_hresult = bh_renderer_surface_create(draw, &desc, &m->screen);
     if (m->last_hresult != DD_OK)
     {
         desc.ddsCaps.dwCaps &= ~0x4000UL;
-        m->last_hresult = IDirectDraw_CreateSurface(draw, &desc, &m->screen, NULL);
+        m->last_hresult = bh_renderer_surface_create(draw, &desc, &m->screen);
     }
     reason = "Couldn't create screenbuffer in mode:";
     if (m->last_hresult != DD_OK)
         goto fail;
-    caps.dwCaps = 4;
-    m->last_hresult = IDirectDrawSurface_GetAttachedSurface(m->screen, &caps, &m->render);
+    m->last_hresult = bh_renderer_surface_backbuffer(m->screen, &m->render);
     reason = "Couldn't create renderbuffer in mode:";
     if (m->last_hresult != DD_OK)
         goto fail;
     memset(&fill, 0, sizeof(fill));
     fill.dwSize = sizeof(fill);
-    IDirectDrawSurface_Blt(m->screen, NULL, NULL, NULL, 0x1000400, &fill);
-    IDirectDrawSurface_Blt(m->render, NULL, NULL, NULL, 0x1000400, &fill);
+    bh_renderer_surface_blit(m->screen, NULL, NULL, NULL, 0x1000400, &fill);
+    bh_renderer_surface_blit(m->render, NULL, NULL, NULL, 0x1000400, &fill);
     reason = software ? "Couldn't init 3D Engine in software mode:" : "Couldn't init 3D Engine in hardware mode:";
     if (software ? bh_render_startup_software(&m->engine, draw, NULL, m->render, m->screen, width, height, bits)
                  : bh_render_startup_hardware(&m->engine, draw, m->render, m->screen, width, height, bits))
@@ -313,6 +284,5 @@ int bh_render_mode_startup(BHRenderMode *m, LPDIRECTDRAW2 draw2, LPDIRECTDRAW dr
 fail:
     mode_error(m, reason, width, height, bits);
     bh_render_mode_dispose(m);
-    IDirectDraw2_RestoreDisplayMode(draw2);
     return 0;
 }

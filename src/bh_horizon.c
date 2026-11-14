@@ -1,3 +1,4 @@
+#include "bh_renderer.h"
 #include "bh_horizon.h"
 #include "bh_round.h"
 #include "bh_texture_draw.h"
@@ -23,7 +24,7 @@ static int native(BHHorizonContext *c, HRESULT h)
 }
 static void state(BHHorizonContext *c, D3DRENDERSTATETYPE type, unsigned long value)
 {
-    native(c, IDirect3DDevice2_SetRenderState(c->state->textures->device, type, value));
+    native(c, bh_renderer_set_state(c->state->textures->device, type, value));
 }
 int bh_horizon_init(BHHorizonContext *c, const BHMainCamera *camera, BHAttributeClipContext *clip,
                     BHRenderState *render, BHHorizonColor *colors, BHHorizonEmit emit, void *user)
@@ -200,8 +201,7 @@ int bh_horizon_draw(BHHorizonContext *c, BHTextureImage *image, float texture_sc
         for (im = q->images; im; im = im->next)
             if (!bh_texture_draw_flush(q, im, NULL))
                 error(c, BH_HORIZON_BACKEND);
-        native(c, IDirect3DDevice2_EndScene(q->device));
-        native(c, IDirect3DDevice2_BeginScene(q->device));
+        native(c, bh_renderer_record_draws(q->device));
     }
     if (!bh_render_depth(c->state, old_depth))
         error(c, BH_HORIZON_BACKEND);

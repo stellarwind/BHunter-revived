@@ -92,7 +92,7 @@ def prepare(out, *, gnu=True, compiler=None, symbols=False):
         ROOT / "src/SDL/bh_sdl_gpu.h",
         ROOT / "src/SDL/bh_sdl_diagnostics.h",
         ROOT / "src/SDL/bh_sdl_text.h",
-        ROOT / "src/bh_sdl_adapter.h",
+        ROOT / "src/bh_renderer.h",
         ROOT / "src/bh_render_types.h",
         ROOT / "src/bh_sdl_audio.h",
         ROOT / "src/bh_game_settings.h",

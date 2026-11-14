@@ -1,3 +1,4 @@
+#include "bh_renderer.h"
 #include "bh_present.h"
 static int result(BHPresentContext *c, HRESULT hr)
 {
@@ -33,23 +34,23 @@ int bh_present_end(BHPresentContext *c)
     }
     if (!textures->software)
     {
-        if (!result(c, IDirect3DDevice2_EndScene(textures->device)))
+        if (!result(c, bh_renderer_record_draws(textures->device)))
             ok = 0;
     }
     else
     {
-        if (!result(c, IDirectDrawSurface_Unlock(c->auxiliary, NULL)))
+        if (!result(c, bh_renderer_surface_unlock(c->auxiliary)))
             ok = 0;
-        if (!result(c, IDirectDrawSurface_Unlock(c->color, NULL)))
+        if (!result(c, bh_renderer_surface_unlock(c->color)))
             ok = 0;
         c->locked = 0;
-        hr = IDirectDrawSurface_IsLost(c->color);
+        hr = bh_renderer_surface_status(c->color);
         ++c->native_calls;
         c->last_hresult = hr;
         if (hr == DDERR_SURFACELOST)
         {
             ++c->restores;
-            if (!result(c, IDirectDrawSurface_Restore(c->color)))
+            if (!result(c, bh_renderer_surface_restore(c->color)))
                 ok = 0;
         }
         else if (FAILED(hr))
@@ -59,13 +60,13 @@ int bh_present_end(BHPresentContext *c)
         }
         if (c->target)
         {
-            hr = IDirectDrawSurface_IsLost(c->target);
+            hr = bh_renderer_surface_status(c->target);
             ++c->native_calls;
             c->last_hresult = hr;
             if (hr == DDERR_SURFACELOST)
             {
                 ++c->restores;
-                if (!result(c, IDirectDrawSurface_Restore(c->target)))
+                if (!result(c, bh_renderer_surface_restore(c->target)))
                     ok = 0;
             }
             else if (FAILED(hr))
@@ -74,7 +75,7 @@ int bh_present_end(BHPresentContext *c)
                 ok = 0;
             }
             ++c->copies;
-            if (!result(c, IDirectDrawSurface_BltFast(c->target, 0, 0, c->color, NULL, DDBLTFAST_WAIT)))
+            if (!result(c, bh_renderer_surface_copy(c->target, 0, 0, c->color, NULL)))
                 ok = 0;
         }
     }

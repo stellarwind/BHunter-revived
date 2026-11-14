@@ -1,3 +1,4 @@
+#include "bh_renderer.h"
 #include "bh_atlas_glyph.h"
 #include <string.h>
 static unsigned long packed(unsigned long color, const DDPIXELFORMAT *pixel)
@@ -72,7 +73,7 @@ int bh_atlas_page_clear(BHAtlasContext *context, BHAtlasPage *page, unsigned lon
     }
     memset(&lock, 0, sizeof(lock));
     lock.dwSize = sizeof(lock);
-    hr = IDirectDrawSurface_Lock(page->surface, NULL, &lock, 0, NULL);
+    hr = bh_renderer_surface_lock(page->surface, &lock);
     q->last_hresult = hr;
     ok = hr == DD_OK;
     if (ok)
@@ -91,7 +92,7 @@ int bh_atlas_page_clear(BHAtlasContext *context, BHAtlasPage *page, unsigned lon
                     for (i = 0; i < bytes; ++i)
                         out[i] = (unsigned char)(page->packed_color >> (8 * i));
                 }
-        hr = IDirectDrawSurface_Unlock(page->surface, NULL);
+        hr = bh_renderer_surface_unlock(page->surface);
         q->last_hresult = hr;
         if (hr != DD_OK)
         {

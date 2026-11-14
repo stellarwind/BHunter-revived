@@ -1,3 +1,4 @@
+#include "bh_renderer.h"
 #include "bh_primitive_dispatch.h"
 #include "bh_texture_draw.h"
 #include "bh_round.h"
@@ -90,7 +91,7 @@ int bh_software_polygon(BHPrimitiveDispatch *c, BHTextureImage *image, BHClipVer
     memset(&locked, 0, sizeof(locked));
     locked.dwSize = sizeof(locked);
     ++c->locks;
-    c->last_result = IDirectDrawSurface_Lock(image->source, NULL, &locked, 0, NULL);
+    c->last_result = bh_renderer_surface_lock(image->source, &locked);
     if (c->last_result != DD_OK)
         return fail(c, BH_PRIMITIVE_BACKEND);
     if (!locked.lpSurface || locked.dwWidth != image->format->width || locked.dwHeight < locked.dwWidth ||
@@ -118,7 +119,7 @@ int bh_software_polygon(BHPrimitiveDispatch *c, BHTextureImage *image, BHClipVer
         }
     }
     ++c->unlocks;
-    hr = IDirectDrawSurface_Unlock(image->source, NULL);
+    hr = bh_renderer_surface_unlock(image->source);
     c->last_result = hr;
     if (hr != DD_OK)
     {

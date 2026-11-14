@@ -1,21 +1,13 @@
 #ifndef BH_RENDER_TYPES_H
 #define BH_RENDER_TYPES_H
 
-/* Original 32-bit renderer data and state values. Interface pointers are
-   opaque handles to objects owned by the SDL renderer. */
+/* Original 32-bit renderer data and state values. Resource pointers are
+   opaque native handles to objects owned by the SDL renderer. */
 typedef unsigned char BYTE;
 typedef unsigned long DWORD, ULONG;
 typedef long LONG, HRESULT;
 typedef void *LPVOID;
 #define CALLBACK __cdecl
-
-typedef struct GUID
-{
-    DWORD data1;
-    unsigned short data2, data3;
-    BYTE data4[8];
-} GUID, IID;
-extern const IID IID_IDirect3D2, IID_IDirect3DHALDevice, IID_IDirect3DTexture2;
 
 typedef struct RECT
 {
@@ -27,15 +19,10 @@ typedef struct PALETTEENTRY
     BYTE peRed, peGreen, peBlue, peFlags;
 } PALETTEENTRY, *LPPALETTEENTRY;
 
-typedef struct IDirectDraw *LPDIRECTDRAW;
-typedef struct IDirectDraw2 *LPDIRECTDRAW2;
-typedef struct IDirectDrawSurface *LPDIRECTDRAWSURFACE;
-typedef struct IDirectDrawPalette *LPDIRECTDRAWPALETTE;
-typedef struct IDirect3D2 *LPDIRECT3D2;
-typedef struct IDirect3DDevice2 *LPDIRECT3DDEVICE2;
-typedef struct IDirect3DMaterial2 *LPDIRECT3DMATERIAL2;
-typedef struct IDirect3DTexture2 *LPDIRECT3DTEXTURE2;
-typedef struct IDirect3DViewport2 *LPDIRECT3DVIEWPORT2;
+typedef struct BHRenderer BHRenderer;
+typedef struct BHRenderSurface BHRenderSurface;
+typedef struct BHRenderPalette BHRenderPalette;
+typedef struct BHRenderDevice BHRenderDevice;
 
 typedef struct DDPIXELFORMAT
 {

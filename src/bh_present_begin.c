@@ -1,3 +1,4 @@
+#include "bh_renderer.h"
 #include "bh_present_begin.h"
 #include <string.h>
 static int result(BHPresentBegin *c, HRESULT hr)
@@ -11,20 +12,20 @@ static int result(BHPresentBegin *c, HRESULT hr)
     }
     return 1;
 }
-static int restore(BHPresentBegin *c, LPDIRECTDRAWSURFACE s, int *lost)
+static int restore(BHPresentBegin *c, BHRenderSurface *s, int *lost)
 {
     HRESULT hr;
     *lost = 0;
     if (!s)
         return 1;
-    hr = IDirectDrawSurface_IsLost(s);
+    hr = bh_renderer_surface_status(s);
     ++c->native_calls;
     c->last_hresult = hr;
     if (hr == DDERR_SURFACELOST)
     {
         *lost = 1;
         ++c->restores;
-        return result(c, IDirectDrawSurface_Restore(s));
+        return result(c, bh_renderer_surface_restore(s));
     }
     if (FAILED(hr))
     {
@@ -60,13 +61,13 @@ int bh_present_begin(BHPresentBegin *c)
         memset(&desc, 0, sizeof(desc));
         desc.dwSize = sizeof(desc);
         /* Original Lock flags are zero, not DDLOCK_WAIT. */
-        if (!result(c, IDirectDrawSurface_Lock(p->color, NULL, &desc, 0, NULL)))
+        if (!result(c, bh_renderer_surface_lock(p->color, &desc)))
             return 0;
         fade->pixels = (unsigned char *)desc.lpSurface;
         fade->pitch = desc.lPitch;
-        if (!result(c, IDirectDrawSurface_Lock(p->auxiliary, NULL, &desc, 0, NULL)))
+        if (!result(c, bh_renderer_surface_lock(p->auxiliary, &desc)))
         {
-            result(c, IDirectDrawSurface_Unlock(p->color, NULL));
+            result(c, bh_renderer_surface_unlock(p->color));
             return 0;
         }
         c->auxiliary_pixels = (unsigned char *)desc.lpSurface;
@@ -90,8 +91,6 @@ int bh_present_begin(BHPresentBegin *c)
                     ++c->invalidations;
                 }
             }
-        if (!result(c, IDirect3DDevice2_BeginScene(textures->device)))
-            ok = 0;
     }
     return ok;
 }

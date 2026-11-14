@@ -1,5 +1,5 @@
 #include "bh_gdi_text.h"
-#include "bh_sdl_adapter.h"
+#include "bh_renderer.h"
 #include <string.h>
 unsigned long bh_draw_command_next(const BHDrawCommand *c)
 {
@@ -60,7 +60,7 @@ int bh_gdi_text_execute(BHGdiText *c, const BHDrawCommand *command, unsigned lon
     *next = bh_draw_command_next(command);
     if (c->relock)
     {
-        HRESULT hr = IDirectDrawSurface_Unlock(d->color, NULL);
+        HRESULT hr = bh_renderer_surface_unlock(d->color);
         native(c, hr);
         if (FAILED(hr))
             return 0;
@@ -68,14 +68,14 @@ int bh_gdi_text_execute(BHGdiText *c, const BHDrawCommand *command, unsigned lon
     }
     /* Commands keep the original COLORREF byte order; the portable boundary is RGB. */
     rgb = ((command->words[0] & 255UL) << 16) | (command->words[0] & 0xff00UL) | ((command->words[0] >> 16) & 255UL);
-    ok = bh_gpu_text(d->color, (short)command->resource, (short)(command->resource >> 16), text, rgb);
+    ok = bh_renderer_surface_text(d->color, (short)command->resource, (short)(command->resource >> 16), text, rgb);
     native(c, ok ? DD_OK : E_FAIL);
     if (c->relock)
     {
         HRESULT hr;
         memset(&desc, 0, sizeof(desc));
         desc.dwSize = sizeof(desc);
-        hr = IDirectDrawSurface_Lock(d->color, NULL, &desc, 0, NULL);
+        hr = bh_renderer_surface_lock(d->color, &desc);
         native(c, hr);
         if (SUCCEEDED(hr))
         {
