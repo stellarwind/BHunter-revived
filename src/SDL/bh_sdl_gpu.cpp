@@ -7,6 +7,7 @@
 #include <SDL3/SDL.h>
 #include <algorithm>
 #include <array>
+#include <cstddef>
 #include <cstdio>
 #include <cstring>
 #include "../shaders/bh_gpu_shaders.h"
@@ -339,7 +340,7 @@ unsigned rgba_pixel(const Surface *s, unsigned x, unsigned y)
     }
     return r | (g << 8) | (b << 16) | ((s->keyed && value == 0) ? 0 : 0xff000000u);
 }
-bool upload(Surface *s)
+bool ensure_texture_uploaded(Surface *s)
 {
     if (s->uploaded == s->version && s->gpu)
         return true;
@@ -382,61 +383,69 @@ bool record_pending_draws()
     end_pass();
     if (!ensure_commands() || !ensure_targets())
         return false;
-    unsigned size = vertices.size() * sizeof(Vertex);
-    SDL_GPUTransferBufferCreateInfo tinfo{SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD, size, 0};
+    const unsigned vertex_bytes = vertices.size() * sizeof(Vertex);
+    SDL_GPUTransferBufferCreateInfo staging_info{SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD, vertex_bytes, 0};
     // unique_ptr calls this lambda to release the transfer buffer when the function exits,
     // including on early returns.
     auto release_transfer = [gpu = device](SDL_GPUTransferBuffer *handle) {
         SDL_ReleaseGPUTransferBuffer(gpu, handle);
     };
-    std::unique_ptr<SDL_GPUTransferBuffer, decltype(release_transfer)> transfer(
-        SDL_CreateGPUTransferBuffer(device, &tinfo), release_transfer);
-    if (!transfer)
+    std::unique_ptr<SDL_GPUTransferBuffer, decltype(release_transfer)> staging_buffer(
+        SDL_CreateGPUTransferBuffer(device, &staging_info), release_transfer);
+    if (!staging_buffer)
         return false;
-    SDL_GPUBufferCreateInfo binfo{SDL_GPU_BUFFERUSAGE_VERTEX, size, 0};
+    SDL_GPUBufferCreateInfo vertex_buffer_info{SDL_GPU_BUFFERUSAGE_VERTEX, vertex_bytes, 0};
     // unique_ptr calls this lambda to release the vertex buffer when the function exits,
     // including on early returns.
     auto release_buffer = [gpu = device](SDL_GPUBuffer *handle) { SDL_ReleaseGPUBuffer(gpu, handle); };
-    std::unique_ptr<SDL_GPUBuffer, decltype(release_buffer)> buffer(SDL_CreateGPUBuffer(device, &binfo), release_buffer);
-    if (!buffer)
+    std::unique_ptr<SDL_GPUBuffer, decltype(release_buffer)> vertex_buffer(
+        SDL_CreateGPUBuffer(device, &vertex_buffer_info), release_buffer);
+    if (!vertex_buffer)
         return false;
-    auto *mapped = SDL_MapGPUTransferBuffer(device, transfer.get(), false);
+    auto *mapped = SDL_MapGPUTransferBuffer(device, staging_buffer.get(), false);
     if (!mapped)
         return false;
-    memcpy(mapped, vertices.data(), size);
-    SDL_UnmapGPUTransferBuffer(device, transfer.get());
+    memcpy(mapped, vertices.data(), vertex_bytes);
+    SDL_UnmapGPUTransferBuffer(device, staging_buffer.get());
     auto *copy = SDL_BeginGPUCopyPass(commands);
-    SDL_GPUTransferBufferLocation src{transfer.get(), 0};
-    SDL_GPUBufferRegion dst{buffer.get(), 0, size};
+    SDL_GPUTransferBufferLocation src{staging_buffer.get(), 0};
+    SDL_GPUBufferRegion dst{vertex_buffer.get(), 0, vertex_bytes};
     SDL_UploadToGPUBuffer(copy, &src, &dst, false);
     SDL_EndGPUCopyPass(copy);
     const auto display = query_display();
     const float mx = display.margin_x, my = display.margin_y;
     float canvas[4] = {320 + mx, 240 + my, 0, 0};
     SDL_PushGPUVertexUniformData(commands, 0, canvas, sizeof(canvas));
-    for (auto &b : batches)
+    // Matches the two float4 fields in the shader's Draw constant buffer.
+    struct DrawUniforms
     {
-        Surface *s = b.texture ? b.texture : white;
-        if (!upload(s) || !begin_pass())
+        float controls[4];
+        float fog_color[4];
+    };
+    static_assert(sizeof(DrawUniforms) == 32 && offsetof(DrawUniforms, fog_color) == 16);
+    for (auto &batch : batches)
+    {
+        Surface *s = batch.texture ? batch.texture : white;
+        // A texture upload can end the current render pass.
+        if (!ensure_texture_uploaded(s))
             return false;
-        auto *p = pipeline(b);
+        if (!begin_pass())
+            return false;
+        auto *p = pipeline(batch);
         if (!p)
             return false;
         SDL_BindGPUGraphicsPipeline(pass, p);
-        SDL_GPUBufferBinding binding{buffer.get(), 0};
+        SDL_GPUBufferBinding binding{vertex_buffer.get(), 0};
         SDL_BindGPUVertexBuffers(pass, 0, &binding, 1);
         SDL_GPUTextureSamplerBinding texture{s->gpu, sampler};
         SDL_BindGPUFragmentSamplers(pass, 0, &texture, 1);
-        float uniforms[8] = {(float)b.key,
-                             (float)b.fog,
-                             0,
-                             0,
-                             ((b.fog_color >> 16) & 255) / 255.f,
-                             ((b.fog_color >> 8) & 255) / 255.f,
-                             (b.fog_color & 255) / 255.f,
-                             1};
-        SDL_PushGPUFragmentUniformData(commands, 0, uniforms, sizeof(uniforms));
-        SDL_DrawGPUPrimitives(pass, b.count, 1, b.first, 0);
+        const DrawUniforms uniforms{
+            {(float)batch.key, (float)batch.fog, 0, 0},
+            {((batch.fog_color >> 16) & 255) / 255.f, ((batch.fog_color >> 8) & 255) / 255.f,
+             (batch.fog_color & 255) / 255.f, 1},
+        };
+        SDL_PushGPUFragmentUniformData(commands, 0, &uniforms, sizeof(uniforms));
+        SDL_DrawGPUPrimitives(pass, batch.count, 1, batch.first, 0);
     }
     vertices.clear();
     batches.clear();
@@ -452,7 +461,7 @@ bool clear_target(bool color, bool depth, unsigned value = 0)
 }
 bool draw_surface(Surface *s, bool overlay = false)
 {
-    if (!upload(s))
+    if (!ensure_texture_uploaded(s))
         return false;
     D3DTLVERTEX v[4]{};
     float xy[8] = {0, 0, 640, 0, 640, 480, 0, 480};
@@ -869,7 +878,7 @@ extern "C"
         {
             if (src && !src->target)
             {
-                if (!clear_target(true, true) || !upload(src) || !begin_pass())
+                if (!clear_target(true, true) || !ensure_texture_uploaded(src) || !begin_pass())
                     return E_FAIL;
                 D3DTLVERTEX v[4]{};
                 float xy[8] = {0, 0, 640, 0, 640, 480, 0, 480};
