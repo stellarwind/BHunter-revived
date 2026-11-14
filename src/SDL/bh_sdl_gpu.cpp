@@ -59,9 +59,10 @@ struct Vertex
 };
 struct Batch
 {
-    unsigned first, count;
+    unsigned first_vertex, vertex_count;
     Surface *texture;
-    unsigned blend, src, dst, depth, write, key, fog, fog_color, cull;
+    unsigned blend_enabled, source_blend, destination_blend, depth_compare, depth_write, color_key_enabled, fog_enabled,
+        fog_color, cull_mode;
 };
 SDL_Window *output_window; // Borrowed from the platform until renderer shutdown.
 bh_sdl_gpu::Display (*query_display)();
@@ -260,12 +261,13 @@ SDL_GPUBlendFactor blend_factor(unsigned f)
         return SDL_GPU_BLENDFACTOR_ONE;
     }
 }
-SDL_GPUGraphicsPipeline *pipeline(const Batch &b)
+SDL_GPUGraphicsPipeline *pipeline_for_batch(const Batch &batch)
 {
-    unsigned long long key = b.blend | (b.src << 1) | (b.dst << 5) | (b.depth << 9) | (b.write << 13) | (b.cull << 14);
-    auto found = pipelines.find(key);
-    if (found != pipelines.end())
-        return found->second;
+    unsigned long long pipeline_key = batch.blend_enabled | (batch.source_blend << 1) | (batch.destination_blend << 5) |
+                                      (batch.depth_compare << 9) | (batch.depth_write << 13) | (batch.cull_mode << 14);
+    auto cached = pipelines.find(pipeline_key);
+    if (cached != pipelines.end())
+        return cached->second;
     SDL_GPUVertexBufferDescription buffer{};
     buffer.slot = 0;
     buffer.pitch = sizeof(Vertex);
@@ -276,9 +278,9 @@ SDL_GPUGraphicsPipeline *pipeline(const Batch &b)
                                             {3, 0, SDL_GPU_VERTEXELEMENTFORMAT_UBYTE4_NORM, 28}};
     SDL_GPUColorTargetDescription color{};
     color.format = SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM;
-    color.blend_state.enable_blend = b.blend;
-    color.blend_state.src_color_blendfactor = blend_factor(b.src);
-    color.blend_state.dst_color_blendfactor = blend_factor(b.dst);
+    color.blend_state.enable_blend = batch.blend_enabled;
+    color.blend_state.src_color_blendfactor = blend_factor(batch.source_blend);
+    color.blend_state.dst_color_blendfactor = blend_factor(batch.destination_blend);
     color.blend_state.color_blend_op = SDL_GPU_BLENDOP_ADD;
     color.blend_state.src_alpha_blendfactor = SDL_GPU_BLENDFACTOR_ONE;
     color.blend_state.dst_alpha_blendfactor = SDL_GPU_BLENDFACTOR_ZERO;
@@ -289,40 +291,41 @@ SDL_GPUGraphicsPipeline *pipeline(const Batch &b)
     info.primitive_type = SDL_GPU_PRIMITIVETYPE_TRIANGLELIST;
     info.vertex_input_state = {&buffer, 1, attributes, 4};
     info.rasterizer_state.fill_mode = SDL_GPU_FILLMODE_FILL;
-    info.rasterizer_state.cull_mode = b.cull == D3DCULL_NONE || !b.cull ? SDL_GPU_CULLMODE_NONE : SDL_GPU_CULLMODE_BACK;
+    info.rasterizer_state.cull_mode =
+        batch.cull_mode == D3DCULL_NONE || !batch.cull_mode ? SDL_GPU_CULLMODE_NONE : SDL_GPU_CULLMODE_BACK;
     info.rasterizer_state.front_face =
-        b.cull == D3DCULL_CW ? SDL_GPU_FRONTFACE_COUNTER_CLOCKWISE : SDL_GPU_FRONTFACE_CLOCKWISE;
+        batch.cull_mode == D3DCULL_CW ? SDL_GPU_FRONTFACE_COUNTER_CLOCKWISE : SDL_GPU_FRONTFACE_CLOCKWISE;
     info.rasterizer_state.enable_depth_clip = true;
     info.depth_stencil_state.enable_depth_test = true;
-    info.depth_stencil_state.enable_depth_write = b.write;
+    info.depth_stencil_state.enable_depth_write = batch.depth_write;
     info.depth_stencil_state.compare_op =
-        b.depth == D3DCMP_ALWAYS ? SDL_GPU_COMPAREOP_ALWAYS : SDL_GPU_COMPAREOP_GREATER_OR_EQUAL;
+        batch.depth_compare == D3DCMP_ALWAYS ? SDL_GPU_COMPAREOP_ALWAYS : SDL_GPU_COMPAREOP_GREATER_OR_EQUAL;
     info.target_info.color_target_descriptions = &color;
     info.target_info.num_color_targets = 1;
     info.target_info.has_depth_stencil_target = true;
     info.target_info.depth_stencil_format = SDL_GPU_TEXTUREFORMAT_D32_FLOAT;
-    auto *p = SDL_CreateGPUGraphicsPipeline(device, &info);
-    if (!p)
+    auto *graphics_pipeline = SDL_CreateGPUGraphicsPipeline(device, &info);
+    if (!graphics_pipeline)
         set_error("Create pipeline");
     else
-        pipelines[key] = p;
-    return p;
+        pipelines[pipeline_key] = graphics_pipeline;
+    return graphics_pipeline;
 }
-unsigned rgba_pixel(const Surface *s, unsigned x, unsigned y)
+unsigned rgba_pixel(const Surface *surface, unsigned x, unsigned y)
 {
-    unsigned value = 0, bytes = (s->desc.ddpfPixelFormat.dwRGBBitCount + 7) / 8;
-    memcpy(&value, &s->pixels[y * s->desc.lPitch + x * bytes], bytes);
+    unsigned packed_pixel = 0, bytes_per_pixel = (surface->desc.ddpfPixelFormat.dwRGBBitCount + 7) / 8;
+    memcpy(&packed_pixel, &surface->pixels[y * surface->desc.lPitch + x * bytes_per_pixel], bytes_per_pixel);
     unsigned r, g, b;
-    if (bytes == 1)
+    if (bytes_per_pixel == 1)
     {
-        auto c = s->palette ? s->palette->entries[value] : PALETTEENTRY{};
-        r = c.peRed;
-        g = c.peGreen;
-        b = c.peBlue;
+        auto entry = surface->palette ? surface->palette->entries[packed_pixel] : PALETTEENTRY{};
+        r = entry.peRed;
+        g = entry.peGreen;
+        b = entry.peBlue;
     }
     else
     {
-        auto &p = s->desc.ddpfPixelFormat;
+        auto &format = surface->desc.ddpfPixelFormat;
         auto channel = [&](unsigned mask) {
             if (!mask)
                 return 0u;
@@ -332,48 +335,48 @@ unsigned rgba_pixel(const Surface *s, unsigned x, unsigned y)
                 mask >>= 1;
                 ++shift;
             }
-            return ((value >> shift) & mask) * 255 / mask;
+            return ((packed_pixel >> shift) & mask) * 255 / mask;
         };
-        r = channel(p.dwRBitMask);
-        g = channel(p.dwGBitMask);
-        b = channel(p.dwBBitMask);
+        r = channel(format.dwRBitMask);
+        g = channel(format.dwGBitMask);
+        b = channel(format.dwBBitMask);
     }
-    return r | (g << 8) | (b << 16) | ((s->keyed && value == 0) ? 0 : 0xff000000u);
+    return r | (g << 8) | (b << 16) | ((surface->keyed && packed_pixel == 0) ? 0 : 0xff000000u);
 }
-bool ensure_texture_uploaded(Surface *s)
+bool ensure_texture_uploaded(Surface *surface)
 {
-    if (s->uploaded == s->version && s->gpu)
+    if (surface->uploaded == surface->version && surface->gpu)
         return true;
     end_pass();
     if (!ensure_commands())
         return false;
-    if (!s->gpu)
-        s->gpu = make_texture(s->desc.dwWidth, s->desc.dwHeight, SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
-                              SDL_GPU_TEXTUREUSAGE_SAMPLER);
-    if (!s->gpu)
+    if (!surface->gpu)
+        surface->gpu = make_texture(surface->desc.dwWidth, surface->desc.dwHeight, SDL_GPU_TEXTUREFORMAT_R8G8B8A8_UNORM,
+                                    SDL_GPU_TEXTUREUSAGE_SAMPLER);
+    if (!surface->gpu)
         return false;
-    unsigned size = s->desc.dwWidth * s->desc.dwHeight * 4;
-    SDL_GPUTransferBufferCreateInfo info{SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD, size, 0};
-    auto *t = SDL_CreateGPUTransferBuffer(device, &info);
-    if (!t)
+    unsigned texture_bytes = surface->desc.dwWidth * surface->desc.dwHeight * 4;
+    SDL_GPUTransferBufferCreateInfo info{SDL_GPU_TRANSFERBUFFERUSAGE_UPLOAD, texture_bytes, 0};
+    auto *staging_buffer = SDL_CreateGPUTransferBuffer(device, &info);
+    if (!staging_buffer)
         return false;
-    auto *pixels = (unsigned *)SDL_MapGPUTransferBuffer(device, t, false);
+    auto *pixels = (unsigned *)SDL_MapGPUTransferBuffer(device, staging_buffer, false);
     if (!pixels)
     {
-        SDL_ReleaseGPUTransferBuffer(device, t);
+        SDL_ReleaseGPUTransferBuffer(device, staging_buffer);
         return false;
     }
-    for (unsigned y = 0; y < s->desc.dwHeight; ++y)
-        for (unsigned x = 0; x < s->desc.dwWidth; ++x)
-            pixels[y * s->desc.dwWidth + x] = rgba_pixel(s, x, y);
-    SDL_UnmapGPUTransferBuffer(device, t);
+    for (unsigned y = 0; y < surface->desc.dwHeight; ++y)
+        for (unsigned x = 0; x < surface->desc.dwWidth; ++x)
+            pixels[y * surface->desc.dwWidth + x] = rgba_pixel(surface, x, y);
+    SDL_UnmapGPUTransferBuffer(device, staging_buffer);
     auto *copy = SDL_BeginGPUCopyPass(commands);
-    SDL_GPUTextureTransferInfo source{t, 0, s->desc.dwWidth, s->desc.dwHeight};
-    SDL_GPUTextureRegion dest{s->gpu, 0, 0, 0, 0, 0, s->desc.dwWidth, s->desc.dwHeight, 1};
-    SDL_UploadToGPUTexture(copy, &source, &dest, true);
+    SDL_GPUTextureTransferInfo source{staging_buffer, 0, surface->desc.dwWidth, surface->desc.dwHeight};
+    SDL_GPUTextureRegion destination{surface->gpu, 0, 0, 0, 0, 0, surface->desc.dwWidth, surface->desc.dwHeight, 1};
+    SDL_UploadToGPUTexture(copy, &source, &destination, true);
     SDL_EndGPUCopyPass(copy);
-    SDL_ReleaseGPUTransferBuffer(device, t);
-    s->uploaded = s->version;
+    SDL_ReleaseGPUTransferBuffer(device, staging_buffer);
+    surface->uploaded = surface->version;
     return true;
 }
 bool record_pending_draws()
@@ -425,27 +428,27 @@ bool record_pending_draws()
     static_assert(sizeof(DrawUniforms) == 32 && offsetof(DrawUniforms, fog_color) == 16);
     for (auto &batch : batches)
     {
-        Surface *s = batch.texture ? batch.texture : white;
+        Surface *surface = batch.texture ? batch.texture : white;
         // A texture upload can end the current render pass.
-        if (!ensure_texture_uploaded(s))
+        if (!ensure_texture_uploaded(surface))
             return false;
         if (!begin_pass())
             return false;
-        auto *p = pipeline(batch);
-        if (!p)
+        auto *graphics_pipeline = pipeline_for_batch(batch);
+        if (!graphics_pipeline)
             return false;
-        SDL_BindGPUGraphicsPipeline(pass, p);
+        SDL_BindGPUGraphicsPipeline(pass, graphics_pipeline);
         SDL_GPUBufferBinding binding{vertex_buffer.get(), 0};
         SDL_BindGPUVertexBuffers(pass, 0, &binding, 1);
-        SDL_GPUTextureSamplerBinding texture{s->gpu, sampler};
+        SDL_GPUTextureSamplerBinding texture{surface->gpu, sampler};
         SDL_BindGPUFragmentSamplers(pass, 0, &texture, 1);
         const DrawUniforms uniforms{
-            {(float)batch.key, (float)batch.fog, 0, 0},
+            {(float)batch.color_key_enabled, (float)batch.fog_enabled, 0, 0},
             {((batch.fog_color >> 16) & 255) / 255.f, ((batch.fog_color >> 8) & 255) / 255.f,
              (batch.fog_color & 255) / 255.f, 1},
         };
         SDL_PushGPUFragmentUniformData(commands, 0, &uniforms, sizeof(uniforms));
-        SDL_DrawGPUPrimitives(pass, batch.count, 1, batch.first, 0);
+        SDL_DrawGPUPrimitives(pass, batch.vertex_count, 1, batch.first_vertex, 0);
     }
     vertices.clear();
     batches.clear();
@@ -773,27 +776,27 @@ extern "C"
     {
         if (!vertices || vertex_count < 3 || vertex_count > 65536)
             return E_INVALIDARG;
-        auto *v = vertices;
-        Batch b{};
-        b.first = ::vertices.size();
-        b.texture = (Surface *)states[D3DRENDERSTATE_TEXTUREHANDLE];
-        b.blend = states[D3DRENDERSTATE_ALPHABLENDENABLE];
-        b.src = states[D3DRENDERSTATE_SRCBLEND];
-        b.dst = states[D3DRENDERSTATE_DESTBLEND];
-        b.depth = states[D3DRENDERSTATE_ZFUNC];
-        b.write = states[D3DRENDERSTATE_ZWRITEENABLE];
-        b.key = states[D3DRENDERSTATE_COLORKEYENABLE] && b.texture && b.texture->keyed;
-        b.fog = states[D3DRENDERSTATE_FOGENABLE];
-        b.fog_color = states[D3DRENDERSTATE_FOGCOLOR];
-        b.cull = states[D3DRENDERSTATE_CULLMODE];
-        for (unsigned i = 1; i + 1 < vertex_count; ++i)
-            for (unsigned j : {0u, i, i + 1})
+        Batch batch{};
+        batch.first_vertex = ::vertices.size();
+        batch.texture = (Surface *)states[D3DRENDERSTATE_TEXTUREHANDLE];
+        batch.blend_enabled = states[D3DRENDERSTATE_ALPHABLENDENABLE];
+        batch.source_blend = states[D3DRENDERSTATE_SRCBLEND];
+        batch.destination_blend = states[D3DRENDERSTATE_DESTBLEND];
+        batch.depth_compare = states[D3DRENDERSTATE_ZFUNC];
+        batch.depth_write = states[D3DRENDERSTATE_ZWRITEENABLE];
+        batch.color_key_enabled = states[D3DRENDERSTATE_COLORKEYENABLE] && batch.texture && batch.texture->keyed;
+        batch.fog_enabled = states[D3DRENDERSTATE_FOGENABLE];
+        batch.fog_color = states[D3DRENDERSTATE_FOGCOLOR];
+        batch.cull_mode = states[D3DRENDERSTATE_CULLMODE];
+        for (unsigned fan_index = 1; fan_index + 1 < vertex_count; ++fan_index)
+            for (unsigned vertex_index : {0u, fan_index, fan_index + 1})
             {
-                auto &p = v[j];
-                ::vertices.push_back({p.sx, p.sy, p.sz, p.rhw, p.tu, p.tv, p.color, p.specular});
+                const auto &vertex = vertices[vertex_index];
+                ::vertices.push_back(
+                    {vertex.sx, vertex.sy, vertex.sz, vertex.rhw, vertex.tu, vertex.tv, vertex.color, vertex.specular});
             }
-        b.count = ::vertices.size() - b.first;
-        batches.push_back(b);
+        batch.vertex_count = ::vertices.size() - batch.first_vertex;
+        batches.push_back(batch);
         return DD_OK;
     }
     HRESULT __cdecl bh_renderer_record_draws(BHRenderDevice *self)

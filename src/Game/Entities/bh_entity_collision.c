@@ -12,7 +12,7 @@ int bh_collision_candidate_world(BHCollisionCandidate *out, BHWorldGeometry *wor
     if (!out || !world || !sweep || !sweep->initialized)
         return 0;
     geometry = world->model ? world->model->geometry : NULL;
-    if (sweep->b != geometry)
+    if (sweep->target_geometry != geometry)
         return 0;
     memset(&next, 0, sizeof(next));
     next.object.kind = BH_WORLD_HIT_GEOMETRY;
@@ -111,8 +111,8 @@ int bh_entity_collision_dispatch(BHCollisionCandidate *c, unsigned long count, B
             !finite_matrix(&c[i].local))
             return -1;
         if (i == 0)
-            source = c[i].sweep->a;
-        if (c[i].sweep->a != source)
+            source = c[i].sweep->moving_geometry;
+        if (c[i].sweep->moving_geometry != source)
             return -1;
         if (c[i].object.kind == BH_WORLD_HIT_GEOMETRY)
         {

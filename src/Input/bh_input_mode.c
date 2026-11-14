@@ -1,117 +1,119 @@
 #include "bh_input_mode.h"
 #include <string.h>
-static unsigned long phase(BHEntity *e)
+static unsigned long phase(BHEntity *entity)
 {
-    unsigned long n;
-    memcpy(&n, &e->menu.input_phase, 4);
-    return n;
+    unsigned long phase_value;
+    memcpy(&phase_value, &entity->menu.input_phase, 4);
+    return phase_value;
 }
-static void set_phase(BHEntity *e, unsigned long n)
+static void set_phase(BHEntity *entity, unsigned long phase_value)
 {
-    memcpy(&e->menu.input_phase, &n, 4);
+    memcpy(&entity->menu.input_phase, &phase_value, 4);
 }
-static void prime(BHPlayerInputState *s)
+static void prime(BHPlayerInputState *input_state)
 {
     unsigned long i;
     for (i = 0; i < 255; ++i)
-        bh_player_input_transition(s, i);
+        bh_player_input_transition(input_state, i);
 }
-static int real_commit(BHMenuKeyCommit f)
+static int real_commit(BHMenuKeyCommit commit_callback)
 {
-    return f == bh_menu_keys_motion || f == bh_menu_keys_weapons || f == bh_menu_keys_camera || f == bh_menu_keys_extra;
+    return commit_callback == bh_menu_keys_motion || commit_callback == bh_menu_keys_weapons ||
+           commit_callback == bh_menu_keys_camera || commit_callback == bh_menu_keys_extra;
 }
-static void capture_tick(BHEntity *e)
+static void capture_tick(BHEntity *entity)
 {
-    BHInputKeyCapture *c;
-    memcpy(&c, &e->bindings.key_capture, sizeof(c));
-    if (c && c->entity == e)
-        bh_input_key_capture_step(c);
+    BHInputKeyCapture *capture;
+    memcpy(&capture, &entity->bindings.key_capture, sizeof(capture));
+    if (capture && capture->entity == entity)
+        bh_input_key_capture_step(capture);
 }
-int bh_input_key_capture_begin(BHInputKeyCapture *c)
+int bh_input_key_capture_begin(BHInputKeyCapture *capture)
 {
-    BHEntity *e;
-    if (!c || c->entity || !c->pool || !c->input || !c->snapshot || !c->state || !c->settings ||
-        !c->settings->input_profile || !c->menu || !c->sound || !c->result || !real_commit(c->commit))
+    BHEntity *entity;
+    if (!capture || capture->entity || !capture->pool || !capture->input || !capture->snapshot || !capture->state ||
+        !capture->settings || !capture->settings->input_profile || !capture->menu || !capture->sound ||
+        !capture->result || !real_commit(capture->commit))
         return 0;
-    e = bh_entity_acquire(c->pool);
-    if (!e)
+    entity = bh_entity_acquire(capture->pool);
+    if (!entity)
         return 0;
-    set_phase(e, 0);
-    memcpy(&e->bindings.key_capture, &c, sizeof(c));
-    e->step = capture_tick;
-    c->entity = e;
-    c->error = 0;
-    if (!bh_input_set_enabled(c->input, c->snapshot, 1))
+    set_phase(entity, 0);
+    memcpy(&entity->bindings.key_capture, &capture, sizeof(capture));
+    entity->step = capture_tick;
+    capture->entity = entity;
+    capture->error = 0;
+    if (!bh_input_set_enabled(capture->input, capture->snapshot, 1))
     {
-        bh_entity_release(c->pool, e);
-        c->entity = NULL;
+        bh_entity_release(capture->pool, entity);
+        capture->entity = NULL;
         return 0;
     }
     return 1;
 }
-int bh_input_key_capture_step(BHInputKeyCapture *c)
+int bh_input_key_capture_step(BHInputKeyCapture *capture)
 {
-    unsigned long n, i;
-    BHEntity *e;
+    unsigned long capture_phase, key_code;
+    BHEntity *entity;
     BHMenuKeyCommit commit;
-    if (!c || !c->entity || !real_commit(c->commit))
+    if (!capture || !capture->entity || !real_commit(capture->commit))
         return 0;
-    e = c->entity;
-    c->error = 0;
-    if (!bh_player_input_apply_packet_checked(c->state, c->input->state, sizeof(c->input->state)))
+    entity = capture->entity;
+    capture->error = 0;
+    if (!bh_player_input_apply_packet_checked(capture->state, capture->input->state, sizeof(capture->input->state)))
     {
-        c->error = 1;
+        capture->error = 1;
         return 0;
     }
-    n = phase(e);
-    if (n == 0)
+    capture_phase = phase(entity);
+    if (capture_phase == 0)
     {
-        prime(c->state);
-        set_phase(e, 1);
+        prime(capture->state);
+        set_phase(entity, 1);
         return 1;
     }
-    if (n == 1)
+    if (capture_phase == 1)
     {
-        for (i = 0; i < 255; ++i)
+        for (key_code = 0; key_code < 255; ++key_code)
         {
-            if (i == 0x1b)
+            if (key_code == 0x1b)
                 continue;
-            if (bh_player_input_transition(c->state, i) == 0)
+            if (bh_player_input_transition(capture->state, key_code) == 0)
             {
-                c->result[0] = (unsigned char)i;
-                c->result[1] = 0;
-                ++c->sounds;
-                c->last_voice = bh_sound_request(c->sound, c->sound_resource, .6f, 1, NULL, NULL);
-                if (c->last_voice == BH_SOUND_INVALID)
-                    c->error = 1;
-                set_phase(e, phase(e) + 1);
+                capture->result[0] = (unsigned char)key_code;
+                capture->result[1] = 0;
+                ++capture->sounds;
+                capture->last_voice = bh_sound_request(capture->sound, capture->sound_resource, .6f, 1, NULL, NULL);
+                if (capture->last_voice == BH_SOUND_INVALID)
+                    capture->error = 1;
+                set_phase(entity, phase(entity) + 1);
             }
         }
-        return !c->error;
+        return !capture->error;
     }
-    prime(c->state);
-    if (!bh_input_set_enabled(c->input, c->snapshot, 0))
-        c->error = 1;
-    commit = c->commit;
-    commit(c->settings, c->menu, c->result, c->menu->selection);
-    c->commit = NULL;
-    if (!bh_entity_release(c->pool, e))
-        c->error = 1;
+    prime(capture->state);
+    if (!bh_input_set_enabled(capture->input, capture->snapshot, 0))
+        capture->error = 1;
+    commit = capture->commit;
+    commit(capture->settings, capture->menu, capture->result, capture->menu->selection);
+    capture->commit = NULL;
+    if (!bh_entity_release(capture->pool, entity))
+        capture->error = 1;
     else
-        c->entity = NULL;
-    return !c->error;
+        capture->entity = NULL;
+    return !capture->error;
 }
-int bh_input_key_capture_cancel(BHInputKeyCapture *c)
+int bh_input_key_capture_cancel(BHInputKeyCapture *capture)
 {
     int okay;
-    if (!c || !c->entity || c->pool->dispatch_depth)
+    if (!capture || !capture->entity || capture->pool->dispatch_depth)
         return 0;
-    okay = bh_input_set_enabled(c->input, c->snapshot, 0);
-    if (!bh_entity_release(c->pool, c->entity))
+    okay = bh_input_set_enabled(capture->input, capture->snapshot, 0);
+    if (!bh_entity_release(capture->pool, capture->entity))
         return 0;
-    c->entity = NULL;
-    c->commit = NULL;
+    capture->entity = NULL;
+    capture->commit = NULL;
     if (!okay)
-        c->error = 1;
+        capture->error = 1;
     return okay;
 }

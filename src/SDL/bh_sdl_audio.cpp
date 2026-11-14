@@ -138,36 +138,38 @@ void SDLCALL mix(void *, SDL_AudioStream *stream, int additional, int)
         std::fill(pcm, pcm + frames * 2, 0.0f);
         {
             std::lock_guard<std::mutex> guard(mixer_mutex);
-            for (auto *v : voices)
+            for (auto *voice : voices)
             {
-                if (!v->playing)
+                if (!voice->playing)
                     continue;
-                auto &c = *v->clip;
-                const double step = double(v->frequency) / mix_rate;
-                float gain = v->gain * (v->music ? 1 : effects_gain);
+                auto &clip = *voice->clip;
+                const double step = double(voice->frequency) / mix_rate;
+                float gain = voice->gain * (voice->music ? 1 : effects_gain);
                 for (int i = 0; i < frames; ++i)
                 {
-                    if (v->cursor >= v->end)
+                    if (voice->cursor >= voice->end)
                     {
-                        if (!v->loop)
+                        if (!voice->loop)
                         {
-                            v->playing = false;
+                            voice->playing = false;
                             break;
                         }
-                        v->cursor = v->begin + std::fmod(v->cursor - v->begin, v->end - v->begin);
+                        voice->cursor =
+                            voice->begin + std::fmod(voice->cursor - voice->begin, voice->end - voice->begin);
                     }
-                    size_t a = size_t(v->cursor), b = a + 1;
-                    if (double(b) >= v->end)
-                        b = v->loop ? size_t(v->begin) : a;
-                    float t = float(v->cursor - a);
-                    for (unsigned ch = 0; ch < 2; ++ch)
+                    size_t sample_index = size_t(voice->cursor), next_sample_index = sample_index + 1;
+                    if (double(next_sample_index) >= voice->end)
+                        next_sample_index = voice->loop ? size_t(voice->begin) : sample_index;
+                    float fraction = float(voice->cursor - sample_index);
+                    for (unsigned output_channel = 0; output_channel < 2; ++output_channel)
                     {
-                        unsigned channel = c.channels == 1 ? 0 : ch;
-                        float x = c.sample(a, channel);
-                        float y = c.sample(b, channel);
-                        pcm[i * 2 + ch] += (x + (y - x) * t) * gain * (ch ? v->right : v->left);
+                        unsigned channel = clip.channels == 1 ? 0 : output_channel;
+                        float current_sample = clip.sample(sample_index, channel);
+                        float next_sample = clip.sample(next_sample_index, channel);
+                        pcm[i * 2 + output_channel] += (current_sample + (next_sample - current_sample) * fraction) *
+                                                       gain * (output_channel ? voice->right : voice->left);
                     }
-                    v->cursor += step;
+                    voice->cursor += step;
                 }
             }
         }

@@ -29,16 +29,16 @@ static double reverse_dot(const BHVec3 *a, const BHVec3 *b)
 {
     return ((double)a->z * b->z + (double)a->y * b->y) + (double)a->x * b->x;
 }
-int bh_physics_overlap(BHSweepQuery *q, const BHMat34 *pose, const BHMat34 *world, const BHMat34 *local,
+int bh_physics_overlap(BHSweepQuery *query, const BHMat34 *pose, const BHMat34 *world, const BHMat34 *local,
                        BHCollisionHit *out)
 {
     BHMat34 relative;
-    if (!q || !q->initialized || q->busy || !pose || !world || !local || !out)
+    if (!query || !query->initialized || query->busy || !pose || !world || !local || !out)
         return -1;
-    if (!q->a || !q->b)
+    if (!query->moving_geometry || !query->target_geometry)
         return 0;
     bh_mat34_multiply(local, pose, &relative);
-    return bh_collision_query_run(&q->collision, 0, 0, &relative, world, out);
+    return bh_collision_query_run(&query->collision, 0, 0, &relative, world, out);
 }
 int bh_physics_prepare(BHPhysicsState *physics, float dt, float radius, BHVec3 *movement, BHVec3 *angles,
                        float *broad_margin)

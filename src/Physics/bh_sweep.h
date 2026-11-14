@@ -12,7 +12,7 @@ typedef struct BHSweepHit
 } BHSweepHit;
 typedef struct BHSweepQuery
 {
-    BHGeometry *a, *b;
+    BHGeometry *moving_geometry, *target_geometry;
     BHCollisionQuery collision;
     BHSegmentQuery segment;
     BHBspError error;
@@ -21,7 +21,7 @@ typedef struct BHSweepQuery
 /* Borrow immutable topology and live flags. NULL model pointers retain original
    non-colliding-model paths (including destination-only segment fallback).
    Dispose this workspace before either geometry. Never reinitialize live owners. */
-int bh_sweep_init(BHSweepQuery *query, BHGeometry *a, BHGeometry *b);
+int bh_sweep_init(BHSweepQuery *query, BHGeometry *moving_geometry, BHGeometry *target_geometry);
 int bh_sweep_dispose(BHSweepQuery *query);
 /* 0044da20: translate then rotate local X/Y/Z; endpoint collision followed by
    exactly three bisections and optional origin-segment fallback. b_world/local

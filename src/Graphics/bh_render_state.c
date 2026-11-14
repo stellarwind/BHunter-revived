@@ -2,83 +2,83 @@
 #include "bh_render_state.h"
 #include "Textures/bh_texture_draw.h"
 #include <string.h>
-static int valid(BHRenderState *s)
+static int valid(BHRenderState *state)
 {
-    return s && s->textures && (s->textures->software || s->textures->device);
+    return state && state->textures && (state->textures->software || state->textures->device);
 }
-static int native(BHRenderState *s, HRESULT h)
+static int native(BHRenderState *state, HRESULT status)
 {
-    ++s->native_calls;
-    s->last_hresult = h;
-    if (FAILED(h))
+    ++state->native_calls;
+    state->last_hresult = status;
+    if (FAILED(status))
     {
-        ++s->failures;
+        ++state->failures;
         return 0;
     }
     return 1;
 }
-int bh_render_depth(BHRenderState *s, unsigned long mode)
+int bh_render_depth(BHRenderState *state, unsigned long mode)
 {
     int ok = 1;
-    if (!valid(s))
+    if (!valid(state))
         return 0;
-    if (s->depth == mode)
+    if (state->depth == mode)
         return 1;
-    s->depth = mode;
-    if (s->textures->software || mode > 2)
+    state->depth = mode;
+    if (state->textures->software || mode > 2)
         return 1;
-    if (!native(s, bh_renderer_set_state(s->textures->device, D3DRENDERSTATE_ZWRITEENABLE, mode != 1)))
+    if (!native(state, bh_renderer_set_state(state->textures->device, D3DRENDERSTATE_ZWRITEENABLE, mode != 1)))
         ok = 0;
-    if (!native(s, bh_renderer_set_state(s->textures->device, D3DRENDERSTATE_ZFUNC,
-                                         mode == 2 ? D3DCMP_ALWAYS : D3DCMP_GREATEREQUAL)))
+    if (!native(state, bh_renderer_set_state(state->textures->device, D3DRENDERSTATE_ZFUNC,
+                                             mode == 2 ? D3DCMP_ALWAYS : D3DCMP_GREATEREQUAL)))
         ok = 0;
     return ok;
 }
-int bh_render_blend(BHRenderState *s, unsigned long enable, unsigned long source, unsigned long destination)
+int bh_render_blend(BHRenderState *state, unsigned long enable, unsigned long source, unsigned long destination)
 {
     int ok = 1;
-    if (!valid(s))
+    if (!valid(state))
         return 0;
-    if (s->blend == enable && s->source == source && s->destination == destination)
+    if (state->blend == enable && state->source == source && state->destination == destination)
         return 1;
-    s->blend = enable;
-    s->source = source;
-    s->destination = destination;
-    if (s->textures->software)
+    state->blend = enable;
+    state->source = source;
+    state->destination = destination;
+    if (state->textures->software)
         return 1;
-    if (!native(s, bh_renderer_set_state(s->textures->device, D3DRENDERSTATE_ALPHABLENDENABLE, enable)))
+    if (!native(state, bh_renderer_set_state(state->textures->device, D3DRENDERSTATE_ALPHABLENDENABLE, enable)))
         ok = 0;
-    if (!native(s, bh_renderer_set_state(s->textures->device, D3DRENDERSTATE_SRCBLEND, source)))
+    if (!native(state, bh_renderer_set_state(state->textures->device, D3DRENDERSTATE_SRCBLEND, source)))
         ok = 0;
-    if (!native(s, bh_renderer_set_state(s->textures->device, D3DRENDERSTATE_DESTBLEND, destination)))
+    if (!native(state, bh_renderer_set_state(state->textures->device, D3DRENDERSTATE_DESTBLEND, destination)))
         ok = 0;
     return ok;
 }
-int bh_render_state_init(BHRenderState *s, BHTextureContext *textures)
+int bh_render_state_init(BHRenderState *state, BHTextureContext *textures)
 {
     int ok = 1;
-    if (!s || !textures || (!textures->software && !textures->device))
+    if (!state || !textures || (!textures->software && !textures->device))
         return 0;
-    memset(s, 0, sizeof(*s));
-    s->textures = textures;
-    s->depth = s->blend = s->source = s->destination = 0xffffffffUL;
-    if (!bh_render_depth(s, 0))
+    memset(state, 0, sizeof(*state));
+    state->textures = textures;
+    state->depth = state->blend = state->source = state->destination = 0xffffffffUL;
+    if (!bh_render_depth(state, 0))
         ok = 0;
-    if (!bh_render_blend(s, 0, D3DBLEND_ONE, D3DBLEND_ZERO))
+    if (!bh_render_blend(state, 0, D3DBLEND_ONE, D3DBLEND_ZERO))
         ok = 0;
     return ok;
 }
-int bh_render_mode(BHRenderState *s, unsigned long mode)
+int bh_render_mode(BHRenderState *state, unsigned long mode)
 {
     BHTextureImage *image, *slow, *fast;
     int ok = 1;
-    if (!valid(s))
+    if (!valid(state))
         return 0;
-    if (!s->textures->software)
+    if (!state->textures->software)
     {
         /* Source preflight guards malformed borrowed lists before publishing
            an epoch or flushing any image. Real cache owner supplies nodes. */
-        slow = fast = s->textures->images;
+        slow = fast = state->textures->images;
         while (fast && fast->next)
         {
             slow = slow->next;
@@ -86,39 +86,39 @@ int bh_render_mode(BHRenderState *s, unsigned long mode)
             if (slow == fast)
                 return 0;
         }
-        s->textures->frame = (long)((unsigned long)s->textures->frame + 1);
-        ++s->barriers;
-        for (image = s->textures->images; image; image = image->next)
-            if (!bh_texture_draw_flush(s->textures, image, NULL))
+        state->textures->frame = (long)((unsigned long)state->textures->frame + 1);
+        ++state->barriers;
+        for (image = state->textures->images; image; image = image->next)
+            if (!bh_texture_draw_flush(state->textures, image, NULL))
                 ok = 0;
-        if (!native(s, bh_renderer_record_draws(s->textures->device)))
+        if (!native(state, bh_renderer_record_draws(state->textures->device)))
             ok = 0;
     }
-    s->mode = mode;
+    state->mode = mode;
     if (mode <= 4)
     {
-        if (!bh_render_depth(s, mode ? 1 : 0))
+        if (!bh_render_depth(state, mode ? 1 : 0))
             ok = 0;
         switch (mode)
         {
         case 0:
-            if (!bh_render_blend(s, 0, D3DBLEND_ONE, D3DBLEND_ZERO))
+            if (!bh_render_blend(state, 0, D3DBLEND_ONE, D3DBLEND_ZERO))
                 ok = 0;
             break;
         case 1:
-            if (!bh_render_blend(s, 1, D3DBLEND_ONE, D3DBLEND_INVSRCCOLOR))
+            if (!bh_render_blend(state, 1, D3DBLEND_ONE, D3DBLEND_INVSRCCOLOR))
                 ok = 0;
             break;
         case 2:
-            if (!bh_render_blend(s, 1, D3DBLEND_ZERO, D3DBLEND_INVSRCCOLOR))
+            if (!bh_render_blend(state, 1, D3DBLEND_ZERO, D3DBLEND_INVSRCCOLOR))
                 ok = 0;
             break;
         case 3:
-            if (!bh_render_blend(s, 1, D3DBLEND_ONE, D3DBLEND_ONE))
+            if (!bh_render_blend(state, 1, D3DBLEND_ONE, D3DBLEND_ONE))
                 ok = 0;
             break;
         case 4:
-            if (!bh_render_blend(s, 1, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA))
+            if (!bh_render_blend(state, 1, D3DBLEND_SRCALPHA, D3DBLEND_INVSRCALPHA))
                 ok = 0;
             break;
         }

@@ -7,17 +7,17 @@
 #include <math.h>
 #include <float.h>
 
-static int contains(const BHWorldGeometry *p, const float *lower, const float *upper)
+static int contains(const BHWorldGeometry *room, const float *lower, const float *upper)
 {
-    if (p->owner)
+    if (room->owner)
         return 0;
-    return p->minimum.x <= upper[0] && lower[0] <= p->maximum.x && p->minimum.y <= upper[1] &&
-           lower[1] <= p->maximum.y && p->minimum.z <= upper[2] && lower[2] <= p->maximum.z;
+    return room->minimum.x <= upper[0] && lower[0] <= room->maximum.x && room->minimum.y <= upper[1] &&
+           lower[1] <= room->maximum.y && room->minimum.z <= upper[2] && lower[2] <= room->maximum.z;
 }
 BHWorldGeometry *bh_world_locate(BHWorldGeometry *first, unsigned long count, BHWorldGeometry *hint,
                                  const BHVec3 *point, float margin)
 {
-    BHWorldGeometry *p, *start;
+    BHWorldGeometry *room, *start;
     unsigned long i;
     float lower[3], upper[3];
     if (!first || !count || count > 65535 || !point || !_finite(point->x) || !_finite(point->y) || !_finite(point->z) ||
@@ -42,37 +42,37 @@ BHWorldGeometry *bh_world_locate(BHWorldGeometry *first, unsigned long count, BH
         for (i = 0; i < 6; ++i)
             if (hint->navigation.portals[i].neighbor)
             {
-                p = (BHWorldGeometry *)hint->navigation.portals[i].neighbor;
-                if (contains(p, lower, upper))
-                    return p;
+                room = (BHWorldGeometry *)hint->navigation.portals[i].neighbor;
+                if (contains(room, lower, upper))
+                    return room;
             }
     start = hint ? hint : first;
-    p = start;
-    for (i = 0; p && i < count; ++i)
+    room = start;
+    for (i = 0; room && i < count; ++i)
     {
-        if (contains(p, lower, upper))
-            return p;
-        p = (BHWorldGeometry *)p->navigation.next;
-        if (p == start)
+        if (contains(room, lower, upper))
+            return room;
+        room = (BHWorldGeometry *)room->navigation.next;
+        if (room == start)
             break;
     }
     return NULL;
 }
-int bh_portal_center(const BHPortal *p, BHVec3 *out)
+int bh_portal_center(const BHPortal *portal, BHVec3 *out)
 {
     BHActorPortalImage image;
-    if (!p || !out || p->direction > 6 || p->direction == 3)
+    if (!portal || !out || portal->direction > 6 || portal->direction == 3)
         return 0;
-    memcpy(image.portals, p, sizeof(*p));
+    memcpy(image.portals, portal, sizeof(*portal));
     bh_actor_portal_center_core(&image, 0, (float *)out);
     return 1;
 }
-int bh_portal_normal(const BHPortal *p, BHVec3 *out)
+int bh_portal_normal(const BHPortal *portal, BHVec3 *out)
 {
     BHActorPortalImage image;
-    if (!p || !out || p->direction > 6 || p->direction == 3)
+    if (!portal || !out || portal->direction > 6 || portal->direction == 3)
         return 0;
-    memcpy(image.portals, p, sizeof(*p));
+    memcpy(image.portals, portal, sizeof(*portal));
     bh_actor_portal_normal_core(&image, 0, (float *)out);
     return 1;
 }

@@ -36,19 +36,19 @@ void bh_script_actor_cleanup(BHEntity *entity)
 void bh_script_actor_query(BHEntity *entity, void *packet)
 {
     BHScriptActorContext *ctx = bh_script_actor_context(entity);
-    BHScriptActorQueryPacket *p = (BHScriptActorQueryPacket *)packet;
+    BHScriptActorQueryPacket *event_packet = (BHScriptActorQueryPacket *)packet;
     BHActorRouteState state;
     BHScriptActorPath path;
     BHVec3 offset, previous, current, next;
     BHEntity *target, *watched;
     unsigned short elapsed;
-    short se, sd;
-    double t, v0, v1;
-    float phase, forward;
-    unsigned long i;
+    short signed_elapsed_ticks, signed_duration_ticks;
+    double precise_phase, backward_velocity, forward_velocity;
+    float phase, stored_forward_velocity;
+    unsigned long axis;
     if (!ctx || !ctx->pool || !ctx->route || !ctx->route->live_tick || !packet || !live(ctx->pool, entity))
         return;
-    switch (p->event)
+    switch (event_packet->event)
     {
     case 20:
         entity->step = bh_script_actor_cleanup;
@@ -92,31 +92,34 @@ void bh_script_actor_query(BHEntity *entity, void *packet)
     }
     bh_actor_route_read(entity, &state);
     elapsed = (unsigned short)(bh_actor_route_now(ctx->route) - state.tick);
-    memcpy(&se, &elapsed, 2);
-    memcpy(&sd, &state.duration_ticks, 2);
-    t = (double)se / sd;
-    phase = stored(t);
+    memcpy(&signed_elapsed_ticks, &elapsed, 2);
+    memcpy(&signed_duration_ticks, &state.duration_ticks, 2);
+    precise_phase = (double)signed_elapsed_ticks / signed_duration_ticks;
+    phase = stored(precise_phase);
     memcpy(&offset, (char *)&entity->actor.offset, 12);
-    if (p->event == 3)
+    if (event_packet->event == 3)
     {
-        path(phase, &p->position, state.controls, state.controls + 1, state.controls + 2, state.controls + 3);
-        p->position.x = stored((double)offset.x + p->position.x);
-        p->position.y = stored((double)offset.y + p->position.y);
-        p->position.z = stored((double)offset.z + p->position.z);
-        p->position.y = stored((double)p->position.y - (-2.0));
+        path(phase, &event_packet->position, state.controls, state.controls + 1, state.controls + 2,
+             state.controls + 3);
+        event_packet->position.x = stored((double)offset.x + event_packet->position.x);
+        event_packet->position.y = stored((double)offset.y + event_packet->position.y);
+        event_packet->position.z = stored((double)offset.z + event_packet->position.z);
+        event_packet->position.y = stored((double)event_packet->position.y - (-2.0));
         return;
     }
-    path(stored(t - 1.0 / 30.0), &previous, state.controls, state.controls + 1, state.controls + 2, state.controls + 3);
+    path(stored(precise_phase - 1.0 / 30.0), &previous, state.controls, state.controls + 1, state.controls + 2,
+         state.controls + 3);
     path(phase, &current, state.controls, state.controls + 1, state.controls + 2, state.controls + 3);
     path(stored((double)phase - (-1.0 / 30.0)), &next, state.controls, state.controls + 1, state.controls + 2,
          state.controls + 3);
-    for (i = 0; i < 3; ++i)
+    for (axis = 0; axis < 3; ++axis)
     {
-        v0 = ((double)((float *)&current)[i] - ((float *)&previous)[i]) * 30;
-        v1 = ((double)((float *)&next)[i] - ((float *)&current)[i]) * 30;
-        forward = stored(v1);
-        ((float *)&p->velocity)[i] = forward;
-        ((float *)&p->acceleration)[i] = stored((v0 - (i == 1 ? v1 : forward)) * 30);
-        ((float *)&p->position)[i] = stored((double)((float *)&offset)[i] + ((float *)&current)[i]);
+        backward_velocity = ((double)((float *)&current)[axis] - ((float *)&previous)[axis]) * 30;
+        forward_velocity = ((double)((float *)&next)[axis] - ((float *)&current)[axis]) * 30;
+        stored_forward_velocity = stored(forward_velocity);
+        ((float *)&event_packet->velocity)[axis] = stored_forward_velocity;
+        ((float *)&event_packet->acceleration)[axis] =
+            stored((backward_velocity - (axis == 1 ? forward_velocity : stored_forward_velocity)) * 30);
+        ((float *)&event_packet->position)[axis] = stored((double)((float *)&offset)[axis] + ((float *)&current)[axis]);
     }
 }

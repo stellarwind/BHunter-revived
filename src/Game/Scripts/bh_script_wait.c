@@ -74,16 +74,16 @@ int bh_script_wait_bind(BHScriptTimerContext *ctx, BHEntity *entity, const BHScr
 void bh_script_wait_template(BHEntity *entity, void *packet)
 {
     BHScriptTimerContext *ctx = owned(entity, bh_script_wait_template);
-    BHScriptWaitState *s, *created_state;
+    BHScriptWaitState *wait_state, *created_state;
     BHScriptWaitPacket *event = (BHScriptWaitPacket *)packet;
     const BHScriptTimerActor *variables = NULL;
     BHEntity *created, *next;
     unsigned long i;
     if (!ctx || !event)
         return;
-    s = state(entity);
+    wait_state = state(entity);
     ctx->error = BH_TIMER_OK;
-    if (event->event == 20 && !s->script_loaded)
+    if (event->event == 20 && !wait_state->script_loaded)
     {
         if (!bh_entity_release(ctx->pool, entity))
             ctx->error = BH_TIMER_POOL;
@@ -101,7 +101,7 @@ void bh_script_wait_template(BHEntity *entity, void *packet)
         ctx->error = BH_TIMER_ACTOR;
         return;
     }
-    if (s->variable_remaining >= 0 || s->variable_expected >= 0)
+    if (wait_state->variable_remaining >= 0 || wait_state->variable_expected >= 0)
     {
         for (i = 0; i < ctx->actor_count; ++i)
             if (ctx->actors[i].entity == event->actor)
@@ -109,15 +109,15 @@ void bh_script_wait_template(BHEntity *entity, void *packet)
                 variables = ctx->actors + i;
                 break;
             }
-        if (!variables || s->variable_remaining > 21 || s->variable_expected > 21)
+        if (!variables || wait_state->variable_remaining > 21 || wait_state->variable_expected > 21)
         {
             ctx->error = BH_TIMER_ACTOR;
             return;
         }
-        if (s->variable_remaining >= 0)
-            s->remaining = variables->variables[s->variable_remaining];
-        if (s->variable_expected >= 0)
-            s->expected = variables->variables[s->variable_expected];
+        if (wait_state->variable_remaining >= 0)
+            wait_state->remaining = variables->variables[wait_state->variable_remaining];
+        if (wait_state->variable_expected >= 0)
+            wait_state->expected = variables->variables[wait_state->variable_expected];
     }
     created = bh_entity_acquire(ctx->pool);
     if (!created)
@@ -126,7 +126,7 @@ void bh_script_wait_template(BHEntity *entity, void *packet)
         return;
     }
     created->position = event->actor->position;
-    memcpy(state(created), s, 48);
+    memcpy(state(created), wait_state, 48);
     bind(created, ctx);
     created_state = state(created);
     created_state->script_loaded = ctx->script_loading;
@@ -137,7 +137,7 @@ void bh_script_wait_template(BHEntity *entity, void *packet)
         ctx->error = BH_TIMER_POOL;
         return;
     }
-    next = s->next;
+    next = wait_state->next;
     if (next)
     {
         if (!next->query)
@@ -151,16 +151,16 @@ void bh_script_wait_template(BHEntity *entity, void *packet)
 void bh_script_wait_child(BHEntity *entity, void *packet)
 {
     BHScriptTimerContext *ctx = owned(entity, bh_script_wait_child);
-    BHScriptWaitState *s;
+    BHScriptWaitState *wait_state;
     BHScriptWaitPacket *event = (BHScriptWaitPacket *)packet;
     FiredPacket activation;
     unsigned long generation, word;
     long result;
     if (!ctx || !event)
         return;
-    s = state(entity);
+    wait_state = state(entity);
     ctx->error = BH_TIMER_OK;
-    if (event->event == 20 && !s->script_loaded)
+    if (event->event == 20 && !wait_state->script_loaded)
     {
         if (!bh_entity_release(ctx->pool, entity))
             ctx->error = BH_TIMER_POOL;
@@ -168,25 +168,25 @@ void bh_script_wait_child(BHEntity *entity, void *packet)
     }
     if (event->event == 14)
     {
-        if (event->expected != s->expected)
+        if (event->expected != wait_state->expected)
             return;
         memset(&activation, 0, sizeof(activation));
         activation.event = 8;
-        activation.actor = s->actor;
+        activation.actor = wait_state->actor;
         generation = entity->generation;
-        if (s->fired && s->fired->query)
-            s->fired->query(s->fired, &activation);
+        if (wait_state->fired && wait_state->fired->query)
+            wait_state->fired->query(wait_state->fired, &activation);
         if (!live(ctx, entity, generation) || owner(entity) != ctx || bound_generation(entity) != generation)
         {
             ctx->error = BH_TIMER_MUTATION;
             return;
         }
-        s = state(entity);
-        if (s->remaining)
+        wait_state = state(entity);
+        if (wait_state->remaining)
         {
-            word = (unsigned long)s->remaining - 1UL;
+            word = (unsigned long)wait_state->remaining - 1UL;
             memcpy(&result, &word, 4);
-            s->remaining = result;
+            wait_state->remaining = result;
             if (!result)
             {
                 if (!bh_entity_set_query(ctx->pool, entity, NULL))
@@ -199,6 +199,6 @@ void bh_script_wait_child(BHEntity *entity, void *packet)
         }
         return;
     }
-    if (event->event == 4 || (event->event == 10 && event->actor == s->actor))
+    if (event->event == 4 || (event->event == 10 && event->actor == wait_state->actor))
         entity->step = bh_script_timer_delete_step();
 }
