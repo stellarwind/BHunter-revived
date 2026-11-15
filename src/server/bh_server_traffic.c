@@ -1,13 +1,10 @@
 #include "bh_server_traffic.h"
-#include "../Assets/bh_vfile.h"
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
 enum
 {
-    PLACEMENT_BYTES = 32,
-    OVERRIDE_BYTES = 20,
     ARENA_START = 3333,
     ACTOR_LAUNCH = 10
 };
@@ -16,23 +13,7 @@ struct BHServerLauncher
 {
     unsigned short index, count, tag;
     unsigned char type, bounty, speed;
-    int launcher;
 };
-
-static int read(BHVFile *file, void *bytes, unsigned long size)
-{
-    return bh_vfile_read(bytes, size, 1, file) == 1;
-}
-
-static uint16_t word(const unsigned char *bytes)
-{
-    return (uint16_t)(bytes[0] | (bytes[1] << 8));
-}
-
-static uint32_t dword(const unsigned char *bytes)
-{
-    return word(bytes) | ((uint32_t)word(bytes + 2) << 16);
-}
 
 static void put_word(unsigned char *bytes, uint16_t value)
 {
@@ -40,78 +21,45 @@ static void put_word(unsigned char *bytes, uint16_t value)
     bytes[1] = (unsigned char)(value >> 8);
 }
 
-static int read_launchers(BHServerTraffic *traffic, BHVFile *level)
+int bh_server_traffic_load(BHServerTraffic *traffic, BHServerSession *session, const BHLevelIdentity *identity,
+                           const BHLevelRecords *level)
 {
-    unsigned char record[PLACEMENT_BYTES];
-    long length;
-    uint32_t count, remaining;
-    if (bh_vfile_seek(level, 0, SEEK_END) || (length = bh_vfile_tell(level)) < 4 || bh_vfile_seek(level, 0, SEEK_SET) ||
-        !read(level, record, 4))
-        return 0;
-    count = dword(record);
-    if (!count || count > UINT16_MAX || count > (uint32_t)(length - 4) / PLACEMENT_BYTES)
-        return 0;
-    remaining = (uint32_t)(length - 4) - count * PLACEMENT_BYTES;
-    if (remaining % OVERRIDE_BYTES)
-        return 0;
-    traffic->launchers = calloc(count, sizeof(*traffic->launchers));
-    if (!traffic->launchers)
-        return 0;
-    for (uint32_t i = 0; i < count; ++i)
-    {
-        BHServerLauncher *launcher = traffic->launchers + i;
-        if (!read(level, record, PLACEMENT_BYTES))
-            return 0;
-        record[16] = 0;
-        launcher->launcher =
-            !_stricmp((const char *)record, "LAUNCHER.BSP") || !_stricmp((const char *)record, "LAUNCH2.BSP");
-        launcher->index = (unsigned short)i;
-    }
-    for (; remaining; remaining -= OVERRIDE_BYTES)
-    {
-        uint32_t index;
-        if (!read(level, record, OVERRIDE_BYTES))
-            return 0;
-        index = dword(record);
-        if (index < count && traffic->launchers[index].launcher)
-        {
-            BHServerLauncher *launcher = traffic->launchers + index;
-            int16_t amount = (int16_t)word(record + 6);
-            uint16_t type = word(record + 10);
-            launcher->count = 0;
-            if (word(record + 4) == ARENA_START && amount > 0 && (type == 0 || type == 3))
-            {
-                launcher->count = (unsigned short)amount;
-                launcher->tag = word(record + 8);
-                launcher->type = (unsigned char)type;
-                launcher->bounty = (unsigned char)((int16_t)word(record + 12) / 5);
-                launcher->speed = (unsigned char)word(record + 14);
-            }
-        }
-    }
-    for (uint32_t i = 0; i < count; ++i)
-        if (traffic->launchers[i].count)
-            traffic->launchers[traffic->count++] = traffic->launchers[i];
-    return 1;
-}
-
-int bh_server_traffic_load(BHServerTraffic *traffic, BHServerSession *session, const BHLevelIdentity *identity)
-{
-    BHVFile *file;
-    int result;
     memset(traffic, 0, sizeof(*traffic));
     traffic->session = session;
     traffic->seed = (uint32_t)identity->fingerprint ^ (uint32_t)time(NULL);
     if (!identity->name[0])
         return 1;
-    file = bh_vfile_open_level("level.lev");
-    if (!file)
+    traffic->launchers = calloc(level->placement_count, sizeof(*traffic->launchers));
+    if (!traffic->launchers)
         return 0;
-    result = read_launchers(traffic, file);
-    bh_vfile_close(file);
-    if (!result)
-        bh_server_traffic_close(traffic);
-    return result;
+    for (uint32_t i = 0; i < level->override_count; ++i)
+    {
+        const BHLevelPlacementOverride *entry = level->overrides + i;
+        const int16_t *values = entry->values;
+        const BHLevelPlacement *placement;
+        BHServerLauncher *launcher;
+        if (entry->placement >= level->placement_count)
+            continue;
+        placement = level->placements + entry->placement;
+        if (_strnicmp(placement->model, "LAUNCHER.BSP", sizeof(placement->model)) &&
+            _strnicmp(placement->model, "LAUNCH2.BSP", sizeof(placement->model)))
+            continue;
+        launcher = traffic->launchers + entry->placement;
+        launcher->count = 0;
+        if (values[0] == ARENA_START && values[1] > 0 && (values[3] == 0 || values[3] == 3))
+        {
+            launcher->index = (unsigned short)entry->placement;
+            launcher->count = (unsigned short)values[1];
+            launcher->tag = (unsigned short)values[2];
+            launcher->type = (unsigned char)values[3];
+            launcher->bounty = (unsigned char)(values[4] / 5);
+            launcher->speed = (unsigned char)values[5];
+        }
+    }
+    for (uint32_t i = 0; i < level->placement_count; ++i)
+        if (traffic->launchers[i].count)
+            traffic->launchers[traffic->count++] = traffic->launchers[i];
+    return 1;
 }
 
 void bh_server_traffic_roster(unsigned int slot, void *user)

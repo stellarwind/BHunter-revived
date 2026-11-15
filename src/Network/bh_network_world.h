@@ -1,5 +1,6 @@
 #ifndef BH_NETWORK_WORLD_H
 #define BH_NETWORK_WORLD_H
+#include "../Assets/bh_level_records.h"
 #include <stdint.h>
 
 typedef struct BHNetworkPickup
@@ -21,7 +22,7 @@ typedef struct BHNetworkWorld
 typedef void (*BHNetworkPickupUpdate)(void *, const BHNetworkPickup *, uint32_t now);
 typedef int (*BHNetworkPickupAward)(void *, const BHNetworkPickup *);
 
-int bh_network_world_load(BHNetworkWorld *, int custom_level);
+int bh_network_world_load(BHNetworkWorld *, const BHLevelRecords *);
 void bh_network_world_dispose(BHNetworkWorld *);
 int bh_network_world_record_prop(BHNetworkWorld *, unsigned int placement);
 BHNetworkPickup *bh_network_world_pickup(BHNetworkWorld *, unsigned int placement);

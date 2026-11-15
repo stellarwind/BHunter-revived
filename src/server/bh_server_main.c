@@ -78,6 +78,7 @@ int main(int argc, char **argv)
     BHServerSession session;
     BHServerTraffic traffic;
     BHLevelIdentity level = {0};
+    BHLevelRecords records = {0};
     const char *level_name = NULL, *asset_dir = "GAME_DATA";
     unsigned long port = BH_NETWORK_PORT;
     int result;
@@ -132,9 +133,23 @@ int main(int argc, char **argv)
         }
         strcpy(level.name, level_name);
     }
-    if (!bh_server_traffic_load(&traffic, &session, &level))
+    else
+    {
+        char path[512];
+        int length = snprintf(path, sizeof(path), "%s/Bhunter.bin", asset_dir);
+        if (length > 0 && (size_t)length < sizeof(path))
+            bh_vfile_mount(path);
+    }
+    if (!bh_level_records_load(&records, level_name != NULL) && level_name)
+    {
+        fputs("Could not read level placements from the level package.\n", stderr);
+        bh_vfile_shutdown();
+        return 2;
+    }
+    if (!bh_server_traffic_load(&traffic, &session, &level, &records))
     {
         fputs("Could not read traffic launchers from the level package.\n", stderr);
+        bh_level_records_dispose(&records);
         bh_vfile_shutdown();
         return 2;
     }
@@ -142,17 +157,13 @@ int main(int argc, char **argv)
     {
         fprintf(stderr, "Could not open dedicated session on UDP port %lu.\n", port);
         bh_server_traffic_close(&traffic);
+        bh_level_records_dispose(&records);
         bh_vfile_shutdown();
         return 2;
     }
-    if (!level_name)
-    {
-        char path[512];
-        int length = snprintf(path, sizeof(path), "%s/Bhunter.bin", asset_dir);
-        if (length > 0 && (size_t)length < sizeof(path))
-            bh_vfile_mount(path);
-    }
-    if (!bh_network_world_load(&session.game.world, level_name != NULL) && level_name)
+    result = !records.placement_count || bh_network_world_load(&session.game.world, &records);
+    bh_level_records_dispose(&records);
+    if (!result && level_name)
     {
         fputs("Could not load arena pickup placements.\n", stderr);
         bh_server_session_close(&session);

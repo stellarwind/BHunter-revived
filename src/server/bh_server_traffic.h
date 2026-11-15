@@ -12,7 +12,7 @@ typedef struct BHServerTraffic
     uint32_t seed;
 } BHServerTraffic;
 
-int bh_server_traffic_load(BHServerTraffic *, BHServerSession *, const BHLevelIdentity *);
+int bh_server_traffic_load(BHServerTraffic *, BHServerSession *, const BHLevelIdentity *, const BHLevelRecords *);
 void bh_server_traffic_roster(unsigned int slot, void *);
 void bh_server_traffic_close(BHServerTraffic *);
 

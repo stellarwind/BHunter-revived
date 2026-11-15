@@ -160,10 +160,16 @@ int bh_network_world_binding_bind(BHNetworkWorldBinding *map, BHNetworkGame *gam
                                   FILE *log, int custom_level)
 {
     BHNetworkWorld *world = &game->world;
+    BHLevelRecords records = {0};
+    int loaded;
     if (!game->host)
         return 1;
     bh_network_world_binding_dispose(map);
-    if (!bh_network_world_load(world, custom_level))
+    if (!bh_level_records_load(&records, custom_level))
+        return 0;
+    loaded = bh_network_world_load(world, &records);
+    bh_level_records_dispose(&records);
+    if (!loaded)
         return 0;
     if (world->pickup_count)
     {
