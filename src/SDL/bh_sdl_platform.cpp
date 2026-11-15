@@ -289,7 +289,7 @@ extern "C"
     void __cdecl bh_sdl_pace()
     {
         static Uint64 deadline = 0;
-        const Uint64 interval = 1000000000ULL / 60;
+        const Uint64 interval = SDL_NS_PER_SECOND / bh_game_settings.max_fps;
         Uint64 now = SDL_GetTicksNS();
         if (!deadline || now > deadline + interval * 4)
             deadline = now;

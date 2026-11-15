@@ -10,7 +10,7 @@ struct BHGameSettings
 {
     int window_x, window_y, window_width, window_height;
     bool maximized, borderless;
-    int aspect, render_width, render_height, field_of_view;
+    int aspect, render_width, render_height, field_of_view, max_fps;
     std::string player_name;
     int default_vehicle;
     bool unlock_all_levels;

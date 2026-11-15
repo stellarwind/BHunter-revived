@@ -12,9 +12,10 @@
 namespace
 {
 constexpr int default_fov = 60, min_fov = 35, max_fov = 100;
+constexpr int default_max_fps = 60, min_max_fps = 30, max_max_fps = 240;
 const BHGameSettings defaults = {
-    SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 960, false, false, 0, 0, 0, default_fov, {}, 0, false,
-    1.0f, false};
+    SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 960, false, false, 0, 0, 0, default_fov, default_max_fps,
+    {}, 0, false, 1.0f, false};
 std::string settings_path = BH_GAME_SETTINGS_FILENAME;
 
 void read_setting_int(const char *value, int &setting)
@@ -71,6 +72,8 @@ int read_setting(void *user, const char *section, const char *key, const char *v
             read_setting_int(value, settings.render_height);
         else if (!SDL_strcasecmp(key, "FOV"))
             read_setting_int(value, settings.field_of_view);
+        else if (!SDL_strcasecmp(key, "MaxFPS"))
+            read_setting_int(value, settings.max_fps);
     }
     else if (!SDL_strcasecmp(section, "Multiplayer"))
     {
@@ -109,6 +112,7 @@ extern "C"
         settings = defaults;
         ini_parse(settings_path.c_str(), read_setting, &settings);
         settings.field_of_view = std::clamp(settings.field_of_view, min_fov, max_fov);
+        settings.max_fps = std::clamp(settings.max_fps, min_max_fps, max_max_fps);
         settings.window_width = std::clamp(settings.window_width, 640, 3840);
         settings.window_height = std::clamp(settings.window_height, 480, 2160);
         if (settings.default_vehicle < 0 || settings.default_vehicle >= BH_NETWORK_CARS)
@@ -161,6 +165,8 @@ void bh_game_settings_save()
                 "RenderHeight=%d\n"
                 "; Base horizontal FOV in degrees (4:3). Min %d, max %d, default %d. Restart to apply.\n"
                 "FOV=%d\n"
+                "; Render FPS cap (%d to %d, default %d). Restart to apply.\n"
+                "MaxFPS=%d\n"
                 "\n"
                 "[Window]\n"
                 "X=%d\n"
@@ -184,6 +190,7 @@ void bh_game_settings_save()
                 "InvertY=%s\n",
                 settings.borderless ? "Borderless" : "Windowed", bh_game_aspects[settings.aspect].label,
                 settings.render_width, settings.render_height, min_fov, max_fov, default_fov, settings.field_of_view,
+                min_max_fps, max_max_fps, default_max_fps, settings.max_fps,
                 settings.window_x, settings.window_y, settings.window_width, settings.window_height,
                 settings.maximized ? "true" : "false", settings.player_name.c_str(), settings.default_vehicle,
                 settings.unlock_all_levels ? "true" : "false", sensitivity,
