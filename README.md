@@ -37,7 +37,7 @@ A source restoration of **BHunter**, the 1999 hovercar combat game by **InterAct
 ## Features
 
 - SDL powered window management, hardware rendering, input and audio.
-- 60fps, interpolated from 30.
+- Up to 240fps, interpolated from 30.
 - Up to 4k resolution with 4:3, 16:9, 21:9, and 16:10 aspect ratios.
 - Gamepad support
 
