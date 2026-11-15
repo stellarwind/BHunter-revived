@@ -2,6 +2,7 @@
 #define BH_ACTOR_CONSTRUCT_H
 #include "bh_actor_response.h"
 #include "bh_actor_vehicle_draw.h"
+#define BH_CAPTAIN_MODEL_SCALE 3.0f
 typedef struct BHActorConstructRoom
 {
     BHPickupRoom *room;

@@ -172,7 +172,10 @@ static BHEntity *construct(BHActorConstructContext *ctx, BHWorldGeometry *world,
         bh_field_store_u32(&entity->actor.model_resource, type == 15 ? ctx->special_model : ctx->models[8]);
         bh_field_store_u32(&entity->actor.sound_resource, ctx->sounds[8]);
         if (type == 15)
+        {
+            entity->room_actor_collision_scale = BH_CAPTAIN_MODEL_SCALE;
             bh_field_store_f32(&entity->actor.damage, -10);
+        }
         type = 6;
         entity->actor.kind = 6;
         bh_field_store_u32(&entity->actor.target, (unsigned long)response->player);

@@ -204,6 +204,7 @@ void bh_ballistic_projectile_tick(BHEntity *entity)
                 }
                 if (actor != ignore)
                 {
+                    double hit_scale;
                     if (!actor->query)
                     {
                         ctx->error = 2;
@@ -220,7 +221,8 @@ void bh_ballistic_projectile_tick(BHEntity *entity)
                     bh_round_float(&delta.x, (double)position.position.x - old.x);
                     bh_round_float(&delta.y, (double)position.position.y - old.y);
                     bh_round_float(&delta.z, (double)position.position.z - old.z);
-                    if (length2(&delta) < 9)
+                    hit_scale = bh_room_actor_collision_scale(actor);
+                    if (length2(&delta) < 9 * hit_scale * hit_scale)
                     {
                         bh_sound_stop(ctx->sound, voice);
                         bh_sound_request(ctx->sound, ctx->hit_sound, 1, 1, &old, &zero);

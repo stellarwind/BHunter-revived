@@ -256,7 +256,6 @@ static int bh_world_segment_room_trace(BHWorldSegmentContext *segment_context, c
                        sqrt(distance_squared((double)limit.x - a.x, (double)limit.y - a.y, (double)limit.z - a.z)));
         if (radius > 0)
         {
-            bh_round_float(&rr, (double)radius * radius);
             actor = binding->actors_owner ? *binding->actors_owner : NULL;
             steps = 0;
             packet.event = 3;
@@ -268,6 +267,7 @@ static int bh_world_segment_room_trace(BHWorldSegmentContext *segment_context, c
                     return fail(segment_context, BH_WORLD_SEGMENT_ARGUMENT);
                 if (!excluded(self, NULL, actor))
                 {
+                    double actor_radius = (double)radius * bh_room_actor_collision_scale(actor);
                     if (!actor->query)
                         return fail(segment_context, BH_WORLD_SEGMENT_DEPENDENCY);
                     actor->query(actor, &packet);
@@ -281,6 +281,7 @@ static int bh_world_segment_room_trace(BHWorldSegmentContext *segment_context, c
                         dy = ((double)along * direction->y + a.y) - packet.position.y;
                         dz = ((double)along * direction->z + a.z) - packet.position.z;
                         ds = distance_squared(dx, dy, dz);
+                        bh_round_float(&rr, actor_radius * actor_radius);
                         if (ds < rr)
                         {
                             hit_length = (double)along - sqrt((double)rr - ds);

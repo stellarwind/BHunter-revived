@@ -1,4 +1,5 @@
 #include "bh_game_bootstrap.h"
+#include "Actors/bh_actor_construct.h"
 #include "../Config/bh_game_settings.h"
 #include "../Graphics/Textures/bh_atlas_text.h"
 #include "../Graphics/Textures/bh_atlas_glyph.h"
@@ -440,7 +441,7 @@ static int scale_captain(BHGameBootstrap *game_bootstrap)
         return fail(game_bootstrap, 5);
     instance = draw_resource->data.model.instance;
     cache = instance->cache;
-    if (!bh_model_scale(instance->model, 3, 3, 3, &cache, 1))
+    if (!bh_model_scale(instance->model, BH_CAPTAIN_MODEL_SCALE, BH_CAPTAIN_MODEL_SCALE, BH_CAPTAIN_MODEL_SCALE, &cache, 1))
         return fail(game_bootstrap, 5);
     /* Scaling disposes the cache, so rebuild it from the scaled geometry before drawing. */
     if (!bh_model_draw_cache_init(cache, instance->model, &game_bootstrap->resources->allocator))

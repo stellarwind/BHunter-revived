@@ -378,6 +378,7 @@ static int near_contacts(BHPlayerTick *ctx)
     actor = room->actors;
     while (actor)
     {
+        double hit_scale = bh_room_actor_collision_scale(actor);
         if (++n > ctx->pool->capacity || !actor->query)
             return fail(ctx, 5);
         position.event = 3;
@@ -394,7 +395,7 @@ static int near_contacts(BHPlayerTick *ctx)
             distance = rf((double)distance * .1666666716337204f);
         else if (kind == 9)
             distance = rf((double)distance * .25f);
-        if (distance < 12.25)
+        if (distance < 12.25 * hit_scale * hit_scale)
         {
             ++ctx->near_contacts;
             if (kind == 9 && bh_rail_wagon_state(actor)->leader == actor && distance < 6.0025 &&
@@ -410,7 +411,7 @@ static int near_contacts(BHPlayerTick *ctx)
             contact.event = 2;
             for (i = 0; i < 3; ++i)
                 ((float *)&contact.normal)[i] = rf(((float *)&d)[i] * (double)coefficient);
-            raw = rf(1.0 - sqrt(distance) * (1.0 / 3.5));
+            raw = rf(1.0 - sqrt(distance) * (1.0 / 3.5) / hit_scale);
             level = rf((double)raw + raw);
             strength = rf((double)raw * raw);
             for (i = 0; i < 3; ++i)

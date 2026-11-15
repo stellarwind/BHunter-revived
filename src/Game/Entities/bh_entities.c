@@ -123,6 +123,8 @@ ENTITY_OFFSET(actor.random, 0x1e8);
 static_assert(sizeof(BHActorFields) == 0x108, "actor field view size");
 ENTITY_OFFSET(mass, 0xb4);
 ENTITY_OFFSET(friction, 0xb8);
+ENTITY_OFFSET(room_actor_collision_scale, 0xb8);
+static_assert(sizeof(((BHEntity *)0)->room_actor_collision_scale) == 4, "room actor collision scale size");
 
 static_assert(sizeof(BHRemoteFireSchedule) == 12, "remote firing schedule size");
 static_assert(offsetof(BHRemoteFireSchedule, target) == 8, "remote firing target offset");

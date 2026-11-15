@@ -245,6 +245,7 @@ void bh_homing_projectile_tick(BHEntity *entity)
                 }
                 if (actor != ignore)
                 {
+                    double hit_scale;
                     if (!actor->query)
                     {
                         ctx->error = 2;
@@ -266,7 +267,8 @@ void bh_homing_projectile_tick(BHEntity *entity)
                     bh_round_float(&delta.z, dz);
                     /* The proximity predicate also retains each unrounded
                        delta for multiplication by its stored copy. */
-                    if ((dx * delta.x + dy * delta.y) + dz * delta.z < 9)
+                    hit_scale = bh_room_actor_collision_scale(actor);
+                    if ((dx * delta.x + dy * delta.y) + dz * delta.z < 9 * hit_scale * hit_scale)
                     {
                         bh_sound_request(ctx->sound, ctx->hit_sound, .8f, .75f, &old, &zero);
                         particles(ctx, &old);

@@ -82,6 +82,7 @@ struct BHEntity
     };
     union {
         float scale, friction;
+        float room_actor_collision_scale;
     };
     union {
         unsigned char opaque2a[4];
@@ -126,6 +127,12 @@ struct BHEntity
         BHRemoteFields remote;
     };
 };
+
+static inline float bh_room_actor_collision_scale(const BHEntity *actor)
+{
+    return actor->room_actor_collision_scale > 0 ? actor->room_actor_collision_scale : 1.0f;
+}
+
 typedef struct BHEntityPositionPacket
 {
     long event;
