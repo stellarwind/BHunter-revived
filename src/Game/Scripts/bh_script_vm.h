@@ -14,6 +14,7 @@ typedef struct BHScriptVMActor
     BHWorldGeometry *world;
     unsigned long orientation, resource;
     BHBlockDamageContext damage;
+    int destroyed;
 } BHScriptVMActor;
 typedef struct BHScriptVMWaypoint
 {

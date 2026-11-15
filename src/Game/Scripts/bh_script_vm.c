@@ -473,6 +473,7 @@ static int execute(BHScriptVMContext *ctx, BHEntity *node, BHEntity *target, BHS
         sensor.countdown = rf((double)rand() * (state->opcode == 10 ? (1.0 / 131072.0) : (1.0 / 32768.0)));
         if (state->opcode != 10)
         {
+            script_vm_actor->destroyed = 0;
             if (!script_vm_actor->world)
             {
                 ctx->error = 1;
@@ -514,6 +515,8 @@ static int execute(BHScriptVMContext *ctx, BHEntity *node, BHEntity *target, BHS
         bh_script_actor_construct(ctx->script_actors, &target->position, (unsigned long)args[0]);
         break;
     case 13:
+        if (ctx->pickups && ctx->pickups->suppress_destruction_drops && script_vm_actor->destroyed)
+            break;
         if (!ctx->pickups)
         {
             ctx->error = 1;

@@ -2102,6 +2102,25 @@ static int runtime_owners(BHGameApp *app)
     return 1;
 }
 #undef V
+static void network_prop_destroyed(void *user, BHEntity *actor)
+{
+    BHGameApp *app = user;
+    unsigned long i;
+    unsigned char bytes[16];
+    BHPacketWriter writer;
+    if (app->player_state.mode <= 1) return;
+    for (i = 0; i < app->vm.actor_count; ++i)
+        if (app->vm.actors[i].state->entity == actor)
+        {
+            app->vm.actors[i].destroyed = 1;
+            if (!app->sensors.receiving &&
+                (!bh_packet_begin(&writer, bytes, sizeof(bytes), BH_NETWORK_PROP_DESTROYED, 0) ||
+                 !bh_packet_append(&writer, &i, sizeof(i)) ||
+                 bh_network_packet_send(&app->transport, &writer, 0, 1) < 0))
+                failure(app, 12);
+            return;
+        }
+}
 static int network_bind(BHGameApp *app)
 {
     unsigned long i, count = app->editor_world.count;
@@ -2138,6 +2157,8 @@ static int network_bind(BHGameApp *app)
     app->effect_network.world_count = count;
     app->pulse.world_indices = app->pulse_indices;
     app->pulse.world_count = count;
+    app->sensors.destroyed = network_prop_destroyed;
+    app->sensors.network = app;
     app->network_scores = (BHNetworkScores){
         .scores = &app->scores, .text = &app->score_text, .transport = &app->transport, .local_player = app->player};
     app->remote_messages = (BHRemoteMessages){.packets = &app->remote_packets,
@@ -2149,6 +2170,7 @@ static int network_bind(BHGameApp *app)
                                               .explosions = &app->explosions,
                                               .effects = &app->network_effects,
                                               .launch = &app->actor_launch,
+                                              .sensors = &app->sensors,
                                               .latency = app->network_latency,
                                               .peers = &app->player_state.peers};
     app->remote_packets = (BHRemotePackets){.pool = &app->pool,
@@ -2438,6 +2460,7 @@ static void network_tick(BHGameApp *app)
             app->network_world_index = (unsigned short)bh_navigation_find(&app->network_positions, app->network_world);
     }
     app->actor_launch.mode = app->player_state.mode;
+    app->pickups.suppress_destruction_drops = active;
     app->physics_effects.peer_count = app->effect_network.peers = app->pulse.peers = active ? 2 : 0;
     app->weapon_fire.peers = app->weapon_pulse.peers = active ? 2 : 0;
     app->weapon_fire.sender = app->weapon_pulse.sender = app->physics_effects.sender = tick;

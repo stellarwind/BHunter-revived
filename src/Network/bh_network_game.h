@@ -15,6 +15,7 @@ enum
     BH_LEVEL_NAME_CAPACITY = 49,
     BH_NETWORK_PORT = 27890,
     BH_NETWORK_DEATH_EFFECT = 13,
+    BH_NETWORK_PROP_DESTROYED = 14,
     BH_NETWORK_DEATH_FIRST = 0,
     BH_NETWORK_DEATH_FINAL = 1
 };
@@ -53,7 +54,7 @@ struct BHNetworkGame
     BHLevelIdentity level;
     unsigned long local_player;
     unsigned char local_car, server_pose_propulsion;
-    unsigned long sent[BH_NETWORK_DEATH_EFFECT + 1], received[BH_NETWORK_DEATH_EFFECT + 1], rejected;
+    unsigned long sent[BH_NETWORK_PROP_DESTROYED + 1], received[BH_NETWORK_PROP_DESTROYED + 1], rejected;
     int initialized, hosting, dedicated, disconnected, welcome_timed_out, level_ready;
 };
 

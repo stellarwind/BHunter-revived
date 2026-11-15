@@ -42,6 +42,7 @@ typedef struct BHPickupContext
     BHVec3 sound_velocity;
     void *draw_user; /* borrowed renderer context for +e8 callback bridges */
     BHEntityStep default_draw, special_draw;
+    int suppress_destruction_drops;
 } BHPickupContext;
 
 /* Callback owner and bindings outlive every spawned pickup. The loaded resource

@@ -5,6 +5,7 @@
 #include "../../Network/bh_network_effect_receive.h"
 #include "bh_actor_launch.h"
 #include "../bh_messages.h"
+#include "../Scripts/bh_script_sensor.h"
 typedef struct BHRemoteMessages
 {
     BHRemotePackets *packets;
@@ -16,6 +17,7 @@ typedef struct BHRemoteMessages
     BHScriptExplosionContext *explosions;
     BHNetworkEffectReceive *effects;
     BHActorLaunchContext *launch;
+    BHScriptSensorContext *sensors;
     float *latency;
     unsigned long *peers;
     unsigned char outgoing[64];

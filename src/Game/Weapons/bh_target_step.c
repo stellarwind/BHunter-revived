@@ -184,10 +184,11 @@ void bh_target_step(BHEntity *entity)
             }
             else
             {
-                if (state.loot < 10)
+                if (!ctx->pickups->suppress_destruction_drops && state.loot < 10)
                     bh_pickup_spawn(ctx->pickups, &entity->position, state.loot, 0, amount[state.loot],
                                     amount[state.loot], 0, 40);
-                else if ((state.loot >= 10 && state.loot <= 12) || state.loot == 14)
+                else if (!ctx->pickups->suppress_destruction_drops &&
+                         ((state.loot >= 10 && state.loot <= 12) || state.loot == 14))
                     bh_pickup_spawn(ctx->pickups, &entity->position, state.loot - 10, 1, 1, 1, 0, 40);
                 bh_script_explosion_create(ctx->explosions, &entity->position, 1.2f, 15, .95f,
                                            (unsigned long)body->owner);

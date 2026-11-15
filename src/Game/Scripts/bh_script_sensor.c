@@ -270,12 +270,44 @@ void bh_script_proximity_tick(BHEntity *entity)
     latch = 0;
     memcpy(&entity->sensor.latch, &latch, 4);
 }
+static void fire_damage(BHScriptSensorContext *ctx, BHEntity *entity, const BHScriptSensorState *state)
+{
+    float countdown, latch = 1;
+    if (ctx->destroyed) ctx->destroyed(ctx->network, state->actor);
+    if (!broadcast(ctx, entity, state->actor, state->broadcast_radius, state->expected, 14))
+        return;
+    memcpy(&countdown, &entity->sensor.countdown, 4);
+    bh_round_float(&countdown, (double)countdown + 4);
+    memcpy(&entity->sensor.countdown, &countdown, 4);
+    memcpy(&entity->sensor.latch, &latch, 4);
+    bh_script_sensor_set_damage(state->actor, 0);
+    decrease(ctx, entity, 1);
+}
+int bh_script_damage_receive(BHScriptSensorContext *ctx, unsigned long placement)
+{
+    BHEntity *entity, *actor;
+    BHScriptSensorState state;
+    if (!ctx || !ctx->lifetime || placement >= ctx->lifetime->timers.actor_count)
+        return 0;
+    actor = ctx->lifetime->timers.actors[placement].entity;
+    for (entity = ctx->lifetime->timers.pool->active; entity; entity = entity->next)
+        if (entity->step == bh_script_damage_tick && entity->sensor.actor == actor && !entity->sensor.latch)
+        {
+            bh_script_sensor_read(entity, &state);
+            if (!valid(ctx, entity, &state, 1)) return 0;
+            ctx->receiving = 1;
+            fire_damage(ctx, entity, &state);
+            ctx->receiving = 0;
+            return ctx->error == BH_SENSOR_OK;
+        }
+    return 1; /* Already triggered: do not restart the sequence. */
+}
 void bh_script_damage_tick(BHEntity *entity)
 {
     BHScriptSensorContext *ctx = context(entity);
     BHScriptSensorState state;
     double scaled;
-    float damage, countdown, latch = 0;
+    float damage, latch = 0;
     bh_script_sensor_read(entity, &state);
     if (!valid(ctx, entity, &state, 1))
         return;
@@ -289,13 +321,5 @@ void bh_script_damage_tick(BHEntity *entity)
     bh_script_sensor_set_damage(state.actor, damage);
     if (!greater(scaled, (double)state.threshold))
         return;
-    if (!broadcast(ctx, entity, state.actor, state.broadcast_radius, state.expected, 14))
-        return;
-    memcpy(&countdown, &entity->sensor.countdown, 4);
-    bh_round_float(&countdown, (double)countdown + 4);
-    memcpy(&entity->sensor.countdown, &countdown, 4);
-    latch = 1;
-    memcpy(&entity->sensor.latch, &latch, 4);
-    bh_script_sensor_set_damage(state.actor, 0);
-    decrease(ctx, entity, 1);
+    fire_damage(ctx, entity, &state);
 }

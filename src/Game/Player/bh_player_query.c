@@ -447,6 +447,8 @@ int bh_player_query_dispatch(BHPlayerQueryContext *ctx, BHPlayerQueryPacket *pac
         break;
     case 12:
         value = packet->words[1];
+        if (value < 0 && ctx->mode_count && *ctx->mode_count > 1)
+            break;
         if (value > 0)
         {
             entity->player.cash_flash = 60;

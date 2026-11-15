@@ -611,6 +611,7 @@ static int message(BHRemoteMessages *messages, void *p, unsigned long n, unsigne
     case 6:
     case 7:
     case BH_NETWORK_DEATH_EFFECT:
+    case BH_NETWORK_PROP_DESTROYED:
         break;
     case 11:
         if (!host)
@@ -641,6 +642,15 @@ static int message(BHRemoteMessages *messages, void *p, unsigned long n, unsigne
         return 1;
     case BH_NETWORK_DEATH_EFFECT:
         return death_effect(messages);
+    case BH_NETWORK_PROP_DESTROYED:
+    {
+        unsigned long placement;
+        if (!take(messages, &placement, sizeof(placement)) || !messages->sensors ||
+            messages->packets->reader.cursor != messages->packets->reader.size ||
+            !bh_script_damage_receive(messages->sensors, placement))
+            messages->error = 3;
+        return done(messages);
+    }
     case 11:
     case 12:
         return scores(messages, host);

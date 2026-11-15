@@ -22,6 +22,9 @@ typedef struct BHScriptSensorContext
     BHEntity *const *radar;
     unsigned long radar_count;
     BHEntity *player;
+    void (*destroyed)(void *, BHEntity *actor);
+    void *network;
+    int receiving;
     BHScriptSensorError error;
 } BHScriptSensorContext;
 /* Count-zero field/context adapters. Radar is the caller's bounded equivalent
@@ -35,4 +38,5 @@ float bh_script_sensor_damage(const BHEntity *);
 void bh_script_sensor_set_damage(BHEntity *, float);
 void bh_script_proximity_tick(BHEntity *); /*00443ac0*/
 void bh_script_damage_tick(BHEntity *);    /*00443d40*/
+int bh_script_damage_receive(BHScriptSensorContext *, unsigned long placement);
 #endif
