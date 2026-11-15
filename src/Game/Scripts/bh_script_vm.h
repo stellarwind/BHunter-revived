@@ -38,6 +38,8 @@ typedef struct BHScriptVMContext
     BHScriptActorConstructorContext *script_actors;
     BHTargetConstructContext *targets;
     BHPickupContext *pickups;
+    int (*map_pickup)(void *, unsigned long placement);
+    void *map_pickup_user;
     BHActorLaunchContext *launch;
     BHRailWagonContext *rails;
     BHRadarQueryContext *radar;

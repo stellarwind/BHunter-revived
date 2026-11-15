@@ -20,7 +20,7 @@ STB_VORBIS_SOURCE = ROOT / "third_party/stb/stb_vorbis.c"
 # Indented keys are ordinary assignments in our settings files.
 INI_FLAGS = ["-DINI_ALLOW_MULTILINE=0"]
 LICENCE_SOURCES = (
-    ("BHunter Revived", ROOT / "LICENSE"),
+    ("BHunter Revived", ROOT / "LICENSES/LICENSE"),
     ("SDL3", ROOT / "LICENSES/SDL3.txt"),
     ("ENet", ROOT / "third_party/enet/LICENSE"),
     ("inih", INI_SOURCE.with_name("LICENSE.txt")),

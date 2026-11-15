@@ -119,6 +119,7 @@ int bh_server_session_poll(BHServerSession *session)
 
 int bh_server_session_tick(BHServerSession *session)
 {
+    bh_network_update_world(&session->game);
     if (!(++session->tick & 63))
         send_clock(session, 0, 0);
     return !session->failed;

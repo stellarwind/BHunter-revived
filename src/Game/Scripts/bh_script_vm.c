@@ -517,6 +517,9 @@ static int execute(BHScriptVMContext *ctx, BHEntity *node, BHEntity *target, BHS
     case 13:
         if (ctx->pickups && ctx->pickups->suppress_destruction_drops && script_vm_actor->destroyed)
             break;
+        if (args[1] > 0 && ctx->map_pickup &&
+            ctx->map_pickup(ctx->map_pickup_user, target->placement.placement_index))
+            break;
         if (!ctx->pickups)
         {
             ctx->error = 1;

@@ -145,6 +145,23 @@ int main(int argc, char **argv)
         bh_vfile_shutdown();
         return 2;
     }
+    if (!level_name)
+    {
+        char path[512];
+        int length = snprintf(path, sizeof(path), "%s/Bhunter.bin", asset_dir);
+        if (length > 0 && (size_t)length < sizeof(path))
+            bh_vfile_mount(path);
+    }
+    if (!bh_network_world_load(&session.game.world, level_name != NULL) && level_name)
+    {
+        fputs("Could not load arena pickup placements.\n", stderr);
+        bh_server_session_close(&session);
+        bh_server_traffic_close(&traffic);
+        bh_vfile_shutdown();
+        return 2;
+    }
+    session.game.world_sync = session.game.world_ready = 1;
+    bh_network_update_world(&session.game);
     signal(SIGINT, request_stop);
     signal(SIGTERM, request_stop);
     printf("BHunter dedicated session on UDP port %lu, level %s, %u player slots.\n",

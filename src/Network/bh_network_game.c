@@ -16,9 +16,17 @@ enum
     LEVEL_READY = 5,
     LEVEL_SUPPORTED = 6,
     DEDICATED_SUPPORTED = 7,
+    WORLD_SUPPORTED = 8,
+    WORLD_PROP = 9,
+    WORLD_PICKUP = 10,
+    WORLD_READY = 11,
+    WORLD_TAKE = 12,
+    WORLD_GRANT = 13,
+    WORLD_ACTIVATE = 14,
     HELLO_SIZE = 35,
     POSE_PROPULSION = 1,
     DEDICATED_SERVER = 2,
+    WORLD_STATE = 4,
     LEVEL_CAN_LOAD = 1,
     LEVEL_WAS_OFFERED = 2,
     LEVEL_HASH_SIZE = 8,
@@ -118,6 +126,136 @@ static unsigned char server_id(const BHNetworkGame *game)
     return game->dedicated ? BH_NETWORK_SERVER : 1;
 }
 
+static void write_word(unsigned char *bytes, unsigned int value)
+{
+    bytes[0] = (unsigned char)value;
+    bytes[1] = (unsigned char)(value >> 8);
+}
+
+static unsigned int read_word(const unsigned char *bytes)
+{
+    return bytes[0] | (bytes[1] << 8);
+}
+
+static int send_pickup_state(ENetPeer *peer, const BHNetworkPickup *item, uint32_t now)
+{
+    unsigned char packet[11] = {0, WORLD_PICKUP};
+    uint32_t next = bh_network_world_pickup_next_ms(item, now);
+    write_word(packet + 2, item->placement);
+    write_word(packet + 4, item->generation);
+    packet[6] = (unsigned char)item->available;
+    write_word(packet + 7, next);
+    write_word(packet + 9, next >> 16);
+    return enqueue(peer, CONTROL, packet, sizeof(packet));
+}
+
+static void broadcast_pickup_state(void *user, const BHNetworkPickup *item, uint32_t now)
+{
+    BHNetworkGame *game = user;
+    for (unsigned int i = 0; i < BH_NETWORK_PLAYERS; ++i)
+    {
+        ENetPeer *peer = game->players[i].peer;
+        if (game->players[i].active && peer && peer->state == ENET_PEER_STATE_CONNECTED &&
+            game->world_supported[peer->incomingPeerID] && send_pickup_state(peer, item, now) < 0)
+            enet_peer_disconnect(peer, 0);
+    }
+}
+
+static int send_world_snapshot(const BHNetworkWorld *world, ENetPeer *peer)
+{
+    static const unsigned char ready[] = {0, WORLD_READY};
+    uint32_t now = enet_time_get();
+    for (unsigned int i = 0; i < world->destroyed_count;)
+    {
+        unsigned char packet[BH_NETWORK_PACKET_CAPACITY] = {0, WORLD_PROP};
+        unsigned int size = 2;
+        while (size + 2 <= sizeof(packet) && i < world->destroyed_count)
+        {
+            write_word(packet + size, world->destroyed_props[i++]);
+            size += 2;
+        }
+        if (enqueue(peer, CONTROL, packet, size) < 0)
+            return 0;
+    }
+    for (unsigned int i = 0; i < world->pickup_count; ++i)
+        if (send_pickup_state(peer, world->pickups + i, now) < 0)
+            return 0;
+    return enqueue(peer, CONTROL, ready, sizeof(ready)) == 0;
+}
+
+void bh_network_update_world(BHNetworkGame *game)
+{
+    if (game->hosting && game->world_sync)
+        bh_network_world_tick(&game->world, enet_time_get(), broadcast_pickup_state, game);
+}
+
+static void publish_pickup_activation(BHNetworkGame *game, BHNetworkPickup *item)
+{
+    uint32_t now = enet_time_get();
+    if (bh_network_world_activate_pickup(item, now))
+        broadcast_pickup_state(game, item, now);
+}
+
+typedef struct BHPickupClaim
+{
+    BHNetworkGame *game;
+    ENetPeer *peer;
+} BHPickupClaim;
+
+static int deliver_pickup_grant(void *user, const BHNetworkPickup *item)
+{
+    const BHPickupClaim *claim = user;
+    unsigned char grant[6] = {0, WORLD_GRANT};
+    if (claim->peer)
+    {
+        write_word(grant + 2, item->placement);
+        write_word(grant + 4, item->generation);
+        if (enqueue(claim->peer, CONTROL, grant, sizeof(grant)) < 0)
+        {
+            enet_peer_disconnect(claim->peer, 0);
+            return 0;
+        }
+    }
+    else if (claim->game->pickup_grant)
+        claim->game->pickup_grant(claim->game->pickup_user, item);
+    return 1;
+}
+
+static void handle_pickup_claim(BHNetworkGame *game, ENetPeer *peer, BHNetworkPickup *item, unsigned int generation)
+{
+    BHPickupClaim claim = {game, peer};
+    uint32_t now = enet_time_get();
+    if (bh_network_world_claim_pickup(item, generation, now, deliver_pickup_grant, &claim))
+        broadcast_pickup_state(game, item, now);
+}
+
+void bh_network_pickup_activate(BHNetworkGame *game, BHNetworkPickup *item)
+{
+    unsigned char packet[4] = {0, WORLD_ACTIVATE};
+    if (game->hosting)
+        publish_pickup_activation(game, item);
+    else if (game->world_ready && !item->activated)
+    {
+        write_word(packet + 2, item->placement);
+        if (enqueue(game->server, CONTROL, packet, sizeof(packet)) < 0)
+            game->disconnected = 1;
+    }
+}
+
+void bh_network_pickup_take(BHNetworkGame *game, BHNetworkPickup *item)
+{
+    unsigned char packet[6] = {0, WORLD_TAKE};
+    if (game->hosting)
+        handle_pickup_claim(game, NULL, item, item->generation);
+    else
+    {
+        write_word(packet + 2, item->placement);
+        write_word(packet + 4, item->generation);
+        if (enqueue(game->server, CONTROL, packet, sizeof(packet)) < 0)
+            game->disconnected = 1;
+    }
+}
+
 int bh_network_send(BHNetworkTransport *transport, unsigned long recipient, const void *bytes, unsigned long size,
                     int reliable)
 {
@@ -130,6 +268,9 @@ int bh_network_send(BHNetworkTransport *transport, unsigned long recipient, cons
         return -1;
     type = *(const unsigned char *)bytes;
     if (type < 3 || type > BH_NETWORK_PROP_DESTROYED)
+        return -1;
+    if (game->hosting && type == BH_NETWORK_PROP_DESTROYED && size == 12 &&
+        !bh_network_world_record_prop(&game->world, read_word((const unsigned char *)bytes + 8)))
         return -1;
     wire[0] = game->hosting ? server_id(game) : (unsigned char)game->local_player;
     wire[1] = recipient == BH_NETWORK_SERVER ? server_id(game) : (unsigned char)recipient;
@@ -215,6 +356,7 @@ void bh_network_close(BHNetworkGame *game)
     }
     if (game->initialized)
         enet_deinitialize();
+    bh_network_world_dispose(&game->world);
     memset(game, 0, sizeof(*game));
 }
 
@@ -266,10 +408,87 @@ static void offer_level(BHNetworkGame *game, ENetPeer *peer)
     enet_peer_timeout(peer, 8, 15000, LEVEL_TIMEOUT_MS);
 }
 
+static void receive_world_request(BHNetworkGame *game, ENetPeer *peer, const unsigned char *data, size_t size)
+{
+    unsigned int peer_id = peer->incomingPeerID;
+    if (data[1] == WORLD_SUPPORTED)
+    {
+        if (size == 2)
+            game->world_supported[peer_id] = 1;
+        return;
+    }
+    if (!game->world_sync || !game->world_supported[peer_id] || peer_slot(game, peer) >= BH_NETWORK_PLAYERS)
+        return;
+
+    switch (data[1])
+    {
+    case WORLD_TAKE:
+        if (size == 6)
+        {
+            BHNetworkPickup *item = bh_network_world_pickup(&game->world, read_word(data + 2));
+            handle_pickup_claim(game, peer, item, read_word(data + 4));
+        }
+        break;
+    case WORLD_ACTIVATE:
+        if (size == 4 && game->dedicated)
+            publish_pickup_activation(game, bh_network_world_pickup(&game->world, read_word(data + 2)));
+        break;
+    }
+}
+
+static void receive_world_update(BHNetworkGame *game, const unsigned char *data, size_t size)
+{
+    BHNetworkWorld *world = &game->world;
+    if (!game->local_player || !game->world_sync)
+        return;
+
+    switch (data[1])
+    {
+    case WORLD_PROP:
+        if (game->world_ready || size <= 2 || size % 2)
+            return;
+        for (size_t i = 2; i < size && !game->disconnected; i += 2)
+        {
+            if (!bh_network_world_record_prop(world, read_word(data + i)))
+                game->disconnected = 1;
+        }
+        break;
+    case WORLD_PICKUP:
+        if (size == 11 && data[6] <= 1)
+        {
+            BHNetworkPickup *item = bh_network_world_pickup(world, read_word(data + 2));
+            uint32_t next_ms = read_word(data + 7) | ((uint32_t)read_word(data + 9) << 16);
+            if (item)
+                bh_network_world_apply_pickup(item, (uint16_t)read_word(data + 4), data[6], next_ms);
+        }
+        break;
+    case WORLD_READY:
+        if (size == 2)
+            game->world_ready = 1;
+        break;
+    case WORLD_GRANT:
+        if (size == 6 && game->world_ready && game->pickup_grant)
+        {
+            BHNetworkPickup *item = bh_network_world_pickup(world, read_word(data + 2));
+            if (item && item->available && item->generation == read_word(data + 4))
+                game->pickup_grant(game->pickup_user, item);
+        }
+        break;
+    }
+}
+
 static void control(BHNetworkGame *game, ENetPeer *peer, const unsigned char *data, size_t size, BHNetworkRoster roster,
                     void *user)
 {
     unsigned int slot;
+    if (data[1] >= WORLD_SUPPORTED && data[1] <= WORLD_ACTIVATE)
+    {
+        if (game->hosting)
+            receive_world_request(game, peer, data, size);
+        else
+            receive_world_update(game, data, size);
+        return;
+    }
     if (game->hosting && size == 2 && data[1] == DEDICATED_SUPPORTED)
         game->dedicated_supported[peer->incomingPeerID] = 1;
     else if (game->hosting && size == 2 && data[1] == LEVEL_SUPPORTED &&
@@ -308,8 +527,15 @@ static void control(BHNetworkGame *game, ENetPeer *peer, const unsigned char *da
             return;
         welcome[2] = (unsigned char)(slot + 1);
         welcome[3] = (pose_propulsion ? POSE_PROPULSION : 0) | (game->dedicated ? DEDICATED_SERVER : 0);
+        if (game->world_sync && game->world_supported[peer->incomingPeerID])
+            welcome[3] |= WORLD_STATE;
         if (enqueue(peer, CONTROL, welcome, welcome[3] ? sizeof(welcome) : 3) < 0)
             return;
+        if ((welcome[3] & WORLD_STATE) && !send_world_snapshot(&game->world, peer))
+        {
+            enet_peer_disconnect(peer, 0);
+            return;
+        }
         enet_peer_timeout(peer, 8, 2500, HANDSHAKE_TIMEOUT_MS);
         memset(game->players + slot, 0, sizeof(game->players[slot]));
         memcpy(game->players[slot].name, data + 3, 31);
@@ -346,13 +572,16 @@ static void control(BHNetworkGame *game, ENetPeer *peer, const unsigned char *da
     else if (!game->hosting && (size == 3 || size == 4) && data[2] && data[2] <= BH_NETWORK_PLAYERS)
     {
         unsigned char features = size == 4 ? data[3] : 0;
-        if (data[1] == WELCOME && !game->local_player && !(features & ~(POSE_PROPULSION | DEDICATED_SERVER)) &&
+        if (data[1] == WELCOME && !game->local_player && !(features & ~(POSE_PROPULSION | DEDICATED_SERVER | WORLD_STATE)) &&
             (data[2] > 1 || (features & DEDICATED_SERVER)) &&
             (!game->level.name[0] || game->level_ready))
         {
             game->local_player = data[2];
             game->server_pose_propulsion = (features & POSE_PROPULSION) != 0;
             game->dedicated = (features & DEDICATED_SERVER) != 0;
+            game->world_sync = (features & WORLD_STATE) != 0;
+            game->world_ready = !game->world_sync;
+            game->handshake_deadline[0] = enet_time_get() + HANDSHAKE_TIMEOUT_MS;
             enet_peer_timeout(peer, 8, 2500, HANDSHAKE_TIMEOUT_MS);
         }
         else if (data[1] == LEAVE && size == 3 && (data[2] > 1 || game->dedicated) &&
@@ -465,8 +694,13 @@ static void gameplay(BHNetworkGame *game, const ENetEvent *event, BHNetworkMessa
     if (type == BH_NETWORK_DEATH_EFFECT &&
         (size != 19 || to || event->channelID != CONTROL || bytes[16] > BH_NETWORK_DEATH_FINAL))
         goto reject;
-    if (type == BH_NETWORK_PROP_DESTROYED && (size != 14 || to || event->channelID != CONTROL))
-        goto reject;
+    if (type == BH_NETWORK_PROP_DESTROYED)
+    {
+        if (size != 14 || to || event->channelID != CONTROL || bytes[10] || bytes[11])
+            goto reject;
+        if (game->hosting && !bh_network_world_record_prop(&game->world, read_word(bytes + 8)))
+            goto reject;
+    }
     if (type == 3)
     {
         unsigned int slot, car;
@@ -486,6 +720,9 @@ static void gameplay(BHNetworkGame *game, const ENetEvent *event, BHNetworkMessa
     else if (from <= BH_NETWORK_PLAYERS && !game->players[from - 1].active)
         goto reject;
     if (game->hosting && type == 11 && !new_score_report(game->players + from - 1, bytes))
+        goto reject;
+    if (!game->hosting && game->world_sync && type == BH_NETWORK_PROP_DESTROYED &&
+        !bh_network_world_record_prop(&game->world, read_word(bytes + 8)))
         goto reject;
     if (game->hosting && to != server)
         send_to(game, wire, size, event->channelID);
@@ -512,7 +749,7 @@ static void expire_handshakes(BHNetworkGame *game)
             if (peer_slot(game, peer) == BH_NETWORK_PLAYERS)
                 enet_peer_disconnect_now(peer, 0);
         }
-        else if (!game->local_player)
+        else if (!game->local_player || (game->world_sync && !game->world_ready))
         {
             game->welcome_timed_out = 1;
             game->disconnected = 1;
@@ -535,14 +772,17 @@ void bh_network_receive(BHNetworkGame *game, BHNetworkMessage receive, BHNetwork
             game->handshake_deadline[event.peer->incomingPeerID] = enet_time_get() + HANDSHAKE_TIMEOUT_MS;
             game->level_handshake[event.peer->incomingPeerID] = 0;
             game->dedicated_supported[event.peer->incomingPeerID] = 0;
+            game->world_supported[event.peer->incomingPeerID] = 0;
             if (!game->hosting)
             {
                 static const unsigned char capability[] = {0, LEVEL_SUPPORTED};
                 static const unsigned char dedicated[] = {0, DEDICATED_SUPPORTED};
+                static const unsigned char world[] = {0, WORLD_SUPPORTED};
                 unsigned char hello[HELLO_SIZE];
                 hello_data(game, hello, HELLO);
                 if (enqueue(event.peer, CONTROL, capability, sizeof(capability)) < 0 ||
                     enqueue(event.peer, CONTROL, dedicated, sizeof(dedicated)) < 0 ||
+                    enqueue(event.peer, CONTROL, world, sizeof(world)) < 0 ||
                     enqueue(event.peer, CONTROL, hello, sizeof(hello)) < 0)
                     game->disconnected = 1;
             }

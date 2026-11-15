@@ -32,6 +32,7 @@
 #include "Actors/bh_actor_construct.h"
 #include "Actors/bh_actor_launch.h"
 #include "Scripts/bh_script_actor_construct.h"
+#include "bh_network_world_binding.h"
 #include "../Assets/bh_vfile.h"
 #include "../Math/bh_fp.h"
 #include "../Math/bh_rotation.h"
@@ -299,6 +300,7 @@ typedef struct BHGameApp
     long network_ship, network_scenario;
     unsigned long network_car_models[BH_NETWORK_CARS];
     int network_playing, network_cancel_pressed;
+    BHNetworkWorldBinding world_binding;
     BHHudScores scores;
     BHHudScoreDraw score_draw;
     BHHudScoreText score_text;
@@ -2249,7 +2251,9 @@ static void network_menu_status(BHGameApp *app, unsigned long row, const char *s
 
 static int network_attach(BHGameApp *app, BHMenuRuntime *entry)
 {
-    if (!network_bind(app))
+    if (!network_bind(app) ||
+        !bh_network_world_binding_bind(&app->world_binding, app->network_game, &app->vm, app->reset_nodes,
+                                       &app->player_query, app->network_log, app->level.name[0] != 0))
         return 0;
     app->network_entry = entry;
     app->network_cancel_pressed = 0;
@@ -2364,9 +2368,9 @@ static int network_poll(BHGameApp *app)
     int cancelled = 0;
     if (!game->host && !game->local_player)
         return 1;
-    if (app->network_playing || !game->local_player)
+    if (app->network_playing || !game->local_player || !game->world_ready)
         bh_network_receive(game, network_message, network_roster, app);
-    if (!app->network_playing && !game->local_player)
+    if (!app->network_playing && (!game->local_player || !game->world_ready))
     {
         int escape_down = app->snapshot.current[27] != 0;
         cancelled = app->network_cancel_pressed && !escape_down;
@@ -2394,6 +2398,7 @@ static int network_poll(BHGameApp *app)
         network_trace(app);
         if (!bh_remote_clear(&app->remote_messages))
             return failure(app, 12);
+        bh_network_world_binding_dispose(&app->world_binding);
         bh_network_close(game);
         if (strcmp(app->level.name, app->local_level))
         {
@@ -2426,7 +2431,7 @@ static int network_poll(BHGameApp *app)
         }
         return 1;
     }
-    if (game->local_player && app->player_state.mode == 0)
+    if (game->local_player && (!game->host || game->world_ready) && app->player_state.mode == 0)
     {
         BHMenuRuntime *entry = app->network_entry;
         app->slot = (long)game->local_player - 1;
@@ -2460,7 +2465,9 @@ static void network_tick(BHGameApp *app)
             app->network_world_index = (unsigned short)bh_navigation_find(&app->network_positions, app->network_world);
     }
     app->actor_launch.mode = app->player_state.mode;
-    app->pickups.suppress_destruction_drops = active;
+    app->pickups.suppress_destruction_drops = active && app->network_game->host;
+    if (active)
+        bh_network_world_binding_step(&app->world_binding, app->frame, app->player_state.paused);
     app->physics_effects.peer_count = app->effect_network.peers = app->pulse.peers = active ? 2 : 0;
     app->weapon_fire.peers = app->weapon_pulse.peers = active ? 2 : 0;
     app->weapon_fire.sender = app->weapon_pulse.sender = app->physics_effects.sender = tick;
@@ -2937,6 +2944,7 @@ done:
         bh_sdl_report_error(message);
     }
 
+    bh_network_world_binding_dispose(&app->world_binding);
     if (!app->reload && (game->host || game->local_player))
     {
         if (app->network_entry)

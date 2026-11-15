@@ -1,6 +1,7 @@
 #ifndef BH_NETWORK_GAME_H
 #define BH_NETWORK_GAME_H
 #include "bh_network_transport.h"
+#include "bh_network_world.h"
 #include <stdint.h>
 
 enum
@@ -43,6 +44,8 @@ typedef struct BHNetworkPlayer
     unsigned int score_history_count, next_score_report;
 } BHNetworkPlayer;
 
+typedef void (*BHNetworkPickupGrant)(void *, const BHNetworkPickup *);
+
 struct BHNetworkGame
 {
     struct _ENetHost *host;
@@ -51,7 +54,12 @@ struct BHNetworkGame
     uint32_t handshake_deadline[BH_NETWORK_PLAYERS]; /* Indexed by ENet peer, before roster assignment. */
     unsigned char level_handshake[BH_NETWORK_PLAYERS];
     unsigned char dedicated_supported[BH_NETWORK_PLAYERS]; /* Indexed by ENet peer. */
+    unsigned char world_supported[BH_NETWORK_PLAYERS]; /* Indexed by ENet peer. */
     BHLevelIdentity level;
+    BHNetworkWorld world;
+    BHNetworkPickupGrant pickup_grant;
+    void *pickup_user;
+    int world_sync, world_ready;
     unsigned long local_player;
     unsigned char local_car, server_pose_propulsion;
     unsigned long sent[BH_NETWORK_PROP_DESTROYED + 1], received[BH_NETWORK_PROP_DESTROYED + 1], rejected;
@@ -69,4 +77,7 @@ int bh_network_open_dedicated(BHNetworkGame *, unsigned short port, const BHLeve
 int bh_network_level_ready(BHNetworkGame *, uint64_t fingerprint);
 void bh_network_close(BHNetworkGame *);
 void bh_network_receive(BHNetworkGame *, BHNetworkMessage, BHNetworkRoster, void *);
+void bh_network_update_world(BHNetworkGame *);
+void bh_network_pickup_activate(BHNetworkGame *, BHNetworkPickup *);
+void bh_network_pickup_take(BHNetworkGame *, BHNetworkPickup *);
 #endif

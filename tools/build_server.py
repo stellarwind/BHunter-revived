@@ -45,7 +45,8 @@ def main():
                 cc, "-std=gnu23", "-O2", "-flto", "-fno-strict-aliasing", *architecture,
                 "-I", str(enet / "include"),
                 "src/server/bh_server_main.c", "src/server/bh_server_session.c", "src/server/bh_server_traffic.c",
-                "src/Network/bh_network_game.c", "src/Network/bh_network_codec.c", "src/Assets/bh_vfile.c",
+                "src/Network/bh_network_game.c", "src/Network/bh_network_world.c", "src/Network/bh_network_world_load.c",
+                "src/Network/bh_network_codec.c", "src/Assets/bh_vfile.c",
                 *(str(enet / f"{name}.c") for name in (
                     "callbacks", "compress", "host", "list", "packet", "peer", "protocol", platform,
                 )),

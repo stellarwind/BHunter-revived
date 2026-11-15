@@ -53,6 +53,11 @@ def stage_runtime(out):
                 "Copy your game's Bhunter.bin to one of these locations and rerun "
                 f"the build: {locations}"
             )
+    for source in sorted((ROOT / "levels").glob("*.bhlevel")):
+        target = out / "GAME_DATA" / source.name
+        if not target.is_file() or source.read_bytes() != target.read_bytes():
+            shutil.copy2(source, target)
+        staged["GAME_DATA/" + source.name] = str(source)
     return staged
 
 
