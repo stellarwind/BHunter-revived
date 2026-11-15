@@ -434,11 +434,18 @@ static int font(BHGameBootstrap *game_bootstrap, BHAtlasPage **page, unsigned lo
 static int scale_captain(BHGameBootstrap *game_bootstrap)
 {
     const BHDrawResource *draw_resource = bh_render_resources_lookup(bh_bootstrap_value(game_bootstrap, 0x4d047c), game_bootstrap->resources);
+    BHModelInstanceContext *instance;
     BHModelDrawCache *cache;
     if (!draw_resource || draw_resource->tag != BH_RESOURCE_TAG_MODEL)
         return fail(game_bootstrap, 5);
-    cache = draw_resource->data.model.instance->cache;
-    return bh_model_scale(draw_resource->data.model.instance->model, 3, 3, 3, &cache, 1) ? 1 : fail(game_bootstrap, 5);
+    instance = draw_resource->data.model.instance;
+    cache = instance->cache;
+    if (!bh_model_scale(instance->model, 3, 3, 3, &cache, 1))
+        return fail(game_bootstrap, 5);
+    /* Scaling disposes the cache, so rebuild it from the scaled geometry before drawing. */
+    if (!bh_model_draw_cache_init(cache, instance->model, &game_bootstrap->resources->allocator))
+        return fail(game_bootstrap, 5);
+    return 1;
 }
 static void fade_refresh(BHEntity *e, void *packet)
 {
