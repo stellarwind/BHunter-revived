@@ -9,6 +9,8 @@ import sys
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+from stage_levels import stage_levels
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -55,6 +57,7 @@ def main():
             cwd=ROOT, check=True,
         )
         candidate.replace(executable)
+    stage_levels(out)
     print(f"Built {executable}")
 
 

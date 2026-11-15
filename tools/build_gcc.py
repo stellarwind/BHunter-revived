@@ -21,6 +21,7 @@ from prepare_sdl3 import (
     stage_windows_runtime,
     windows_sdk,
 )
+from stage_levels import stage_levels
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -53,11 +54,7 @@ def stage_runtime(out):
                 "Copy your game's Bhunter.bin to one of these locations and rerun "
                 f"the build: {locations}"
             )
-    for source in sorted((ROOT / "levels").glob("*.bhlevel")):
-        target = out / "GAME_DATA" / source.name
-        if not target.is_file() or source.read_bytes() != target.read_bytes():
-            shutil.copy2(source, target)
-        staged["GAME_DATA/" + source.name] = str(source)
+    staged.update(stage_levels(out))
     return staged
 
 
@@ -141,6 +138,7 @@ def main():
         ROOT / "tools/build_game.py",
         ROOT / "tools/build_gcc.py",
         ROOT / "tools/prepare_sdl3.py",
+        ROOT / "tools/stage_levels.py",
         ROOT / "tools/game_compile_context.json",
     ]
     record["sources"] = {
