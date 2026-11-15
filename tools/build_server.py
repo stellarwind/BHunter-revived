@@ -36,6 +36,7 @@ def main():
     architecture = [] if windows else [
         "-m32", "-march=i686", "-mfpmath=387", "-include", "src/Platform/bh_linux_compat.h",
     ]
+    linux_sources = [] if windows else ["src/Math/bh_random.c"]
     libraries = ["-lwinmm", "-lws2_32"] if windows else []
     out = (ROOT / args.output_dir).resolve()
     out.mkdir(parents=True, exist_ok=True)
@@ -49,6 +50,7 @@ def main():
                 "src/server/bh_server_main.c", "src/server/bh_server_session.c", "src/server/bh_server_traffic.c",
                 "src/Network/bh_network_game.c", "src/Network/bh_network_world.c", "src/Network/bh_network_world_load.c",
                 "src/Network/bh_network_codec.c", "src/Assets/bh_level_records.c", "src/Assets/bh_vfile.c",
+                *linux_sources,
                 *(str(enet / f"{name}.c") for name in (
                     "callbacks", "compress", "host", "list", "packet", "peer", "protocol", platform,
                 )),
