@@ -24,5 +24,6 @@ typedef struct BHLevelRecords
 /* Load the mounted custom level or the stock arena into an empty record set.
    Overrides retain their file order, including repeated placement IDs. */
 int bh_level_records_load(BHLevelRecords *, int custom_level);
+int bh_level_records_allocate(BHLevelRecords *, uint32_t placement_count, uint32_t override_count);
 void bh_level_records_dispose(BHLevelRecords *);
 #endif

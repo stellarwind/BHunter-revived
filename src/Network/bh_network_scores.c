@@ -12,11 +12,6 @@ static int valid(BHNetworkScores *context)
     context->error = 0;
     return 1;
 }
-static void word(unsigned char *destination, unsigned short value)
-{
-    destination[0] = (unsigned char)value;
-    destination[1] = (unsigned char)(value >> 8);
-}
 static int snapshot(BHNetworkScores *context)
 {
     unsigned char payload[16];
@@ -29,7 +24,7 @@ static int snapshot(BHNetworkScores *context)
             score = (unsigned short)context->scores->local_score;
         else if (context->scores->remote[player_index])
             memcpy(&score, &context->scores->remote[player_index]->remote.score, 2);
-        word(payload + player_index * 2, score);
+        bh_packet_write_u16(payload + player_index * 2, score);
     }
     if (!bh_packet_begin(&context->writer, context->packet, sizeof(context->packet), 12, context->frame) ||
         !bh_packet_append(&context->writer, payload, 16))

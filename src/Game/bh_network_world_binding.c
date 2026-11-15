@@ -156,20 +156,15 @@ static void apply_destroyed_props(BHNetworkWorldBinding *map)
 }
 
 int bh_network_world_binding_bind(BHNetworkWorldBinding *map, BHNetworkGame *game, BHScriptVMContext *vm,
-                                  const BHWorldResetNode *placements, BHPlayerQueryContext *player_query,
-                                  FILE *log, int custom_level)
+                                  const BHWorldResetNode *placements, const BHLevelRecords *records,
+                                  BHPlayerQueryContext *player_query, FILE *log)
 {
     BHNetworkWorld *world = &game->world;
-    BHLevelRecords records = {0};
-    int loaded;
     if (!game->host)
         return 1;
     bh_network_world_binding_dispose(map);
-    if (!bh_level_records_load(&records, custom_level))
-        return 0;
-    loaded = bh_network_world_load(world, &records);
-    bh_level_records_dispose(&records);
-    if (!loaded)
+    if (!records->placement_count || records->placement_count > UINT16_MAX ||
+        !bh_network_world_load(world, records))
         return 0;
     if (world->pickup_count)
     {

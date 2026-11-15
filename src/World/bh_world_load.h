@@ -1,5 +1,6 @@
 #ifndef BH_WORLD_LOAD_H
 #define BH_WORLD_LOAD_H
+#include "../Assets/bh_level_records.h"
 #include "../Game/Editor/bh_editor_control.h"
 #include "../Game/Scripts/bh_script_vm.h"
 #include "bh_rail_paths.h"
@@ -9,6 +10,7 @@ typedef struct BHWorldLoad
     BHScriptVMContext *vm;
     BHRailPaths *rails;
     BHScriptTimerActor *states;
+    BHLevelRecords *records; /* Optional caller-owned copy of the loaded placement and override records. */
     unsigned long actor_capacity;
     unsigned long skipped, overrides, timers, immediate;
     int error;

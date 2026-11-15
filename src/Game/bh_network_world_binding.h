@@ -1,5 +1,6 @@
 #ifndef BH_NETWORK_WORLD_BINDING_H
 #define BH_NETWORK_WORLD_BINDING_H
+#include "../Assets/bh_level_records.h"
 #include "Player/bh_player_query.h"
 #include "../World/bh_world_reset.h"
 #include <stdio.h>
@@ -20,7 +21,7 @@ typedef struct BHNetworkWorldBinding
 } BHNetworkWorldBinding;
 
 int bh_network_world_binding_bind(BHNetworkWorldBinding *, BHNetworkGame *, BHScriptVMContext *,
-                                  const BHWorldResetNode *, BHPlayerQueryContext *, FILE *log, int custom_level);
+                                  const BHWorldResetNode *, const BHLevelRecords *, BHPlayerQueryContext *, FILE *log);
 void bh_network_world_binding_step(BHNetworkWorldBinding *, unsigned long frame, int paused);
 void bh_network_world_binding_dispose(BHNetworkWorldBinding *);
 #endif

@@ -6,15 +6,15 @@
 
 static_assert(sizeof(unsigned long) == 4 && sizeof(unsigned short) == 2 && sizeof(__int64) == 8,
               "packet integer widths");
-static unsigned short read16(const unsigned char *p)
+uint16_t bh_packet_read_u16(const unsigned char *p)
 {
-    return (unsigned short)(p[0] | ((unsigned short)p[1] << 8));
+    return (uint16_t)(p[0] | ((uint16_t)p[1] << 8));
 }
 static unsigned long read32(const unsigned char *p)
 {
     return p[0] | ((unsigned long)p[1] << 8) | ((unsigned long)p[2] << 16) | ((unsigned long)p[3] << 24);
 }
-static void write16(unsigned char *p, unsigned short v)
+void bh_packet_write_u16(unsigned char *p, uint16_t v)
 {
     p[0] = (unsigned char)v;
     p[1] = (unsigned char)(v >> 8);
@@ -55,7 +55,7 @@ int bh_packet_begin(BHPacketWriter *w, void *bytes, unsigned long capacity, unsi
     next.cursor = 8;
     memset(bytes, 0, 8);
     next.data[0] = type;
-    write16(next.data + 2, sender);
+    bh_packet_write_u16(next.data + 2, sender);
     *w = next;
     return 1;
 }
@@ -116,7 +116,7 @@ int bh_packet_write_position(BHPacketWriter *packet_writer, const BHWorldGeometr
     }
     if (!space(packet_writer, 8))
         return -1;
-    write16(data, index);
+    bh_packet_write_u16(data, index);
     for (i = 0; i < 3; ++i)
     {
         t = ((double)((const float *)point)[i] - ((const float *)&world->minimum)[i]) /
@@ -126,7 +126,7 @@ int bh_packet_write_position(BHPacketWriter *packet_writer, const BHWorldGeometr
         else if (!(t < 1.5))
             t = (double)1.49f;
         value = (__int64)(16384.0 - t * (-32768.0));
-        write16(data + 2 + i * 2, (unsigned short)value);
+        bh_packet_write_u16(data + 2 + i * 2, (uint16_t)value);
     }
     memcpy(packet_writer->data + packet_writer->cursor, data, 8);
     packet_writer->cursor += 8;
@@ -243,7 +243,7 @@ int bh_packet_read_actor(BHPacketReader *packet_reader, unsigned long local_id, 
     }
     if (!available(packet_reader, 2))
         return -1;
-    id = read16(packet_reader->data + packet_reader->cursor);
+    id = bh_packet_read_u16(packet_reader->data + packet_reader->cursor);
     packet_reader->cursor += 2;
     if (id == local_id)
     {

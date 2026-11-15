@@ -13,17 +13,11 @@ static void send_packet(BHServerSession *session, unsigned char type, const unsi
         session->failed = 1;
 }
 
-static void put_word(unsigned char *bytes, uint16_t value)
-{
-    bytes[0] = (unsigned char)value;
-    bytes[1] = (unsigned char)(value >> 8);
-}
-
 static void send_scores(BHServerSession *session)
 {
     unsigned char payload[BH_NETWORK_PLAYERS * 2];
     for (unsigned int i = 0; i < BH_NETWORK_PLAYERS; ++i)
-        put_word(payload + 2 * i, session->scores[i]);
+        bh_packet_write_u16(payload + 2 * i, session->scores[i]);
     send_packet(session, 12, payload, sizeof(payload), 0, 1);
 }
 
@@ -35,7 +29,7 @@ static void send_clock(BHServerSession *session, unsigned long recipient, int re
     for (unsigned int i = 0; i < BH_NETWORK_PLAYERS; ++i)
     {
         int tick = (int)((int16_t)session->tick + (double)session->latency[i]);
-        put_word(payload + 2 * i, (uint16_t)tick);
+        bh_packet_write_u16(payload + 2 * i, (uint16_t)tick);
         if (session->game.players[i].active)
         {
             sum += session->latency[i];
@@ -82,7 +76,7 @@ static void message(void *packet, unsigned long size, void *user)
     if (bytes[0] == 5)
     {
         unsigned int slot = bytes[8];
-        uint16_t sender = bytes[2] | ((uint16_t)bytes[3] << 8);
+        uint16_t sender = bh_packet_read_u16(bytes + 2);
         int16_t age = (int16_t)(uint16_t)(session->tick - sender);
         session->latency[slot] = (float)(age * .1 + session->latency[slot] * .8);
     }

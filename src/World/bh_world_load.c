@@ -21,7 +21,10 @@ static int read(BHVFile *f, void *p, unsigned long size)
 }
 static int end(BHWorldLoad *world_load, BHVFile *f, int error)
 {
-    bh_vfile_close(f);
+    if (f)
+        bh_vfile_close(f);
+    if (error && world_load->records)
+        bh_level_records_dispose(world_load->records);
     world_load->error = error;
     return error == 0;
 }
@@ -54,10 +57,11 @@ int bh_world_load(BHWorldLoad *world_load, const char *name)
     BHScriptLifetimeState life;
     BHScriptVMState script;
     BHScriptVMActor *actor;
-    long count, length, position, coordinates[4];
-    unsigned long i, j, k, index, id, cursor = 0;
+    int32_t count;
+    long length, position;
+    unsigned long i, j, k, index, cursor = 0;
+    uint32_t override_index = 0;
     char model[17];
-    short vars[8];
     if (!world_load || !name || !world_load->editor || !(editor_world = world_load->editor->world) || !editor_world->pool || !editor_world->library || !editor_world->library->blocks ||
         !editor_world->nodes || editor_world->count || !editor_world->capacity || editor_world->capacity > 65535 || !(vm = world_load->vm) || !vm->lifetime ||
         vm->lifetime->timers.pool != editor_world->pool || !vm->actors || !world_load->states || world_load->actor_capacity < editor_world->capacity ||
@@ -70,26 +74,33 @@ int bh_world_load(BHWorldLoad *world_load, const char *name)
     }
     world_load->error = 0;
     world_load->skipped = world_load->overrides = world_load->timers = world_load->immediate = 0;
+    if (world_load->records)
+        bh_level_records_dispose(world_load->records);
     pool = editor_world->pool;
     file = bh_vfile_open(name, "rb");
-    if (!file)
-    {
-        world_load->error = 2;
-        return 0;
-    }
-    if (bh_vfile_seek(file, 0, SEEK_END) || ((length = bh_vfile_tell(file)) < 4) || bh_vfile_seek(file, 0, SEEK_SET) ||
-        !read(file, &count, 4))
+    if (!file || bh_vfile_seek(file, 0, SEEK_END) || (length = bh_vfile_tell(file)) < (long)sizeof(count) ||
+        bh_vfile_seek(file, 0, SEEK_SET) || !read(file, &count, sizeof(count)))
         return end(world_load, file, 2);
     if (!count)
         return end(world_load, file, 0);
-    if (count < 0 || count > (length - 4) / 32)
+    if (count < 0 || count > (length - (long)sizeof(count)) / (long)sizeof(BHLevelPlacement))
         return end(world_load, file, 3);
+    if (world_load->records)
+    {
+        uint32_t override_bytes = length - sizeof(count) - count * sizeof(BHLevelPlacement);
+        if (!bh_level_records_allocate(world_load->records, count, override_bytes / sizeof(BHLevelPlacementOverride)))
+            return end(world_load, file, 4);
+    }
     first = last = 0;
     for (i = 0; i < (unsigned long)count; ++i)
     {
-        if (!read(file, model, 16) || !read(file, coordinates, 16))
+        BHLevelPlacement placement;
+        if (!read(file, &placement, sizeof(placement)))
             return end(world_load, file, 3);
-        model[16] = 0;
+        if (world_load->records)
+            world_load->records->placements[i] = placement;
+        memcpy(model, placement.model, sizeof(placement.model));
+        model[sizeof(placement.model)] = 0;
         index = editor_world->library->count;
         for (j = 0; j < editor_world->library->count; ++j)
             if (!_stricmp(model, editor_world->library->blocks[j].definition.name))
@@ -117,14 +128,14 @@ int bh_world_load(BHWorldLoad *world_load, const char *name)
         editor_node->entity = entity;
         editor_node->model_index = index;
         editor_node->placement.geometry.model = &block->model;
-        editor_node->placement.geometry.flags = (unsigned long)coordinates[3];
+        editor_node->placement.geometry.flags = (unsigned long)placement.coordinates[3];
         editor_node->placement.geometry.query_flags = block->definition.flags;
         entity->kind = 1;
         for (j = 0; j < 3; ++j)
         {
-            editor_node->placement.coordinates[j] = coordinates[j];
-            ((float *)&entity->position)[j] = rf((double)coordinates[j]);
-            bh_field_store_u32(&entity->placement.coordinates[j], (unsigned long)coordinates[j]);
+            editor_node->placement.coordinates[j] = placement.coordinates[j];
+            ((float *)&entity->position)[j] = rf((double)placement.coordinates[j]);
+            bh_field_store_u32(&entity->placement.coordinates[j], (unsigned long)placement.coordinates[j]);
         }
         editor_node->placement.geometry.position = entity->position;
         bh_field_store_u32(&entity->placement.orientation_flags, editor_node->placement.geometry.flags);
@@ -181,20 +192,22 @@ int bh_world_load(BHWorldLoad *world_load, const char *name)
     position = bh_vfile_tell(file);
     while (position < length)
     {
-        if (length - position < 20 || !read(file, &id, 4) || !read(file, vars, 16))
+        BHLevelPlacementOverride entry;
+        if (length - position < (long)sizeof(entry) || !read(file, &entry, sizeof(entry)))
             return end(world_load, file, 3);
+        if (world_load->records)
+            world_load->records->overrides[override_index++] = entry;
         index = cursor;
         for (k = 0; k < editor_world->count; ++k)
         {
-            memcpy(&j, &editor_world->nodes[index]->entity->placement.placement_index, 4);
-            if (j == id)
+            if (editor_world->nodes[index]->entity->placement.placement_index == entry.placement)
                 break;
             index = (index + 1) % editor_world->count;
         }
         cursor = index;
         if (k < editor_world->count)
         {
-            memcpy(&editor_world->nodes[index]->entity->placement.script_values, vars, 16);
+            memcpy(&editor_world->nodes[index]->entity->placement.script_values, entry.values, sizeof(entry.values));
             ++world_load->overrides;
         }
         position = bh_vfile_tell(file);
@@ -262,16 +275,10 @@ int bh_world_load(BHWorldLoad *world_load, const char *name)
     editor_world->mode = 2;
     for (i = 0; i < editor_world->count; ++i)
         if (!bh_world_geometry_build(&editor_world->nodes[i]->placement.geometry, editor_world->count))
-        {
-            world_load->error = 7;
-            return 0;
-        }
+            return end(world_load, NULL, 7);
     for (i = 0; i < editor_world->count; ++i)
         if (!bh_portals_match(&editor_world->nodes[i]->placement.geometry.navigation, editor_world->count))
-        {
-            world_load->error = 7;
-            return 0;
-        }
+            return end(world_load, NULL, 7);
     sync(editor_world);
     for (i = 0; i < editor_world->count; ++i)
     {

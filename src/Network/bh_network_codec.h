@@ -3,6 +3,12 @@
 #include "../World/bh_world_geometry.h"
 #include "../Game/Entities/bh_entities.h"
 #include "../Math/bh_position.h"
+#include <stdint.h>
+
+/* Raw little-endian fields. The caller supplies two accessible bytes. */
+uint16_t bh_packet_read_u16(const unsigned char *bytes);
+void bh_packet_write_u16(unsigned char *bytes, uint16_t value);
+
 typedef enum BHPacketError
 {
     BH_PACKET_OK,

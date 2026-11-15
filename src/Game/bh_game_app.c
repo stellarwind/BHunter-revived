@@ -222,6 +222,7 @@ typedef struct BHGameApp
     BHEditorControl editor;
     BHEditorNode *nodes[GAME_WORLD_CAPACITY];
     BHWorldLoad world_load;
+    BHLevelRecords level_records;
     BHEditorInput editor_input;
     BHPlayerInputState editor_state;
     BHScriptBrowser browser;
@@ -1313,6 +1314,7 @@ static int source_owners(BHGameApp *app)
     app->world_load.vm = &app->vm;
     app->world_load.rails = &app->rails;
     app->world_load.states = app->timer_actors;
+    app->world_load.records = &app->level_records;
     app->world_load.actor_capacity = GAME_WORLD_CAPACITY;
     app->editor_input.owner = &app->inputs;
     app->editor_input.pool = &app->pool;
@@ -2253,7 +2255,7 @@ static int network_attach(BHGameApp *app, BHMenuRuntime *entry)
 {
     if (!network_bind(app) ||
         !bh_network_world_binding_bind(&app->world_binding, app->network_game, &app->vm, app->reset_nodes,
-                                       &app->player_query, app->network_log, app->level.name[0] != 0))
+                                       &app->level_records, &app->player_query, app->network_log))
         return 0;
     app->network_entry = entry;
     app->network_cancel_pressed = 0;
@@ -2717,6 +2719,7 @@ static void cleanup(BHGameApp *app)
     if (app->player_collision.bsp.allocator.release)
         bh_collision_model_dispose(&app->player_collision);
     bh_world_load_dispose_index(&app->world_load);
+    bh_level_records_dispose(&app->level_records);
     bh_script_blocks_dispose(&app->blocks);
     bh_navigation_dispose(&app->navigation);
     bh_rail_paths_dispose(&app->rails);

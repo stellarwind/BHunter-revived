@@ -15,12 +15,6 @@ struct BHServerLauncher
     unsigned char type, bounty, speed;
 };
 
-static void put_word(unsigned char *bytes, uint16_t value)
-{
-    bytes[0] = (unsigned char)value;
-    bytes[1] = (unsigned char)(value >> 8);
-}
-
 int bh_server_traffic_load(BHServerTraffic *traffic, BHServerSession *session, const BHLevelIdentity *identity,
                            const BHLevelRecords *level)
 {
@@ -76,8 +70,8 @@ void bh_server_traffic_roster(unsigned int slot, void *user)
         const BHServerLauncher *launcher = traffic->launchers + i;
         /* The client resolves the launcher placement to its owning room. */
         unsigned char payload[17] = {0, 0, 0, 128, 0, 128, 0, 128};
-        put_word(payload, launcher->index);
-        put_word(payload + 12, launcher->tag);
+        bh_packet_write_u16(payload, launcher->index);
+        bh_packet_write_u16(payload + 12, launcher->tag);
         payload[14] = launcher->type;
         payload[15] = launcher->bounty;
         payload[16] = launcher->speed;
@@ -86,8 +80,8 @@ void bh_server_traffic_roster(unsigned int slot, void *user)
             unsigned char packet[32];
             BHPacketWriter writer;
             seed = seed * UINT32_C(1664525) + UINT32_C(1013904223);
-            put_word(payload + 8, (uint16_t)seed);
-            put_word(payload + 10, (uint16_t)(seed >> 16));
+            bh_packet_write_u16(payload + 8, (uint16_t)seed);
+            bh_packet_write_u16(payload + 10, (uint16_t)(seed >> 16));
             if (!bh_packet_begin(&writer, packet, sizeof(packet), ACTOR_LAUNCH, session->tick) ||
                 !bh_packet_append(&writer, payload, sizeof(payload)) ||
                 bh_network_packet_send(&transport, &writer, player->id, 1) < 0)
