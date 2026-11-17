@@ -105,7 +105,9 @@ export LD_LIBRARY_PATH="$PWD/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 
 To use a different UDP port, add the same `--port` value to both commands, such as `--port 27900`. The in-game menu uses the default port.
 
-Set `DefaultVehicle` under `[Multiplayer]` in `game-config.ini`. Use `0` for Barletta (the default), `1` for Stinger, or `2` for Viper. Add `--vehicle` with a value to either command to override the INI for that launch.
+Set `DefaultVehicle` under `[Multiplayer]` in `game-config.ini`. Use `0` for Barletta (the default), `1` for Stinger, `2` for Viper, `3` for B-mobile, or `4` for Vanos. Add `--vehicle` with a value to either command to override the INI for that launch.
+
+Vanos is available when you host or join from the command line. Add `--vehicle 4` or set `DefaultVehicle=4`. The van accelerates and turns more slowly than Barletta and has 50% more effective HP against weapons and collisions.
 
 ### Custom levels
 
