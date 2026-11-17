@@ -178,7 +178,7 @@ void bh_game_settings_save()
                 "[Multiplayer]\n"
                 "; Leave blank to use the computer name.\n"
                 "PlayerName=%s\n"
-                "; Use 0 for Barletta, 1 for Stinger, 2 for Viper, or 3 for B-mobile.\n"
+                "; Use 0 for Barletta, 1 for Stinger, 2 for Viper, 3 for B-mobile, or 4 for Vanos.\n"
                 "DefaultVehicle=%d\n"
                 "\n"
                 "[Gameplay]\n"

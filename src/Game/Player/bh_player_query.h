@@ -35,6 +35,7 @@ typedef struct BHPlayerQueryContext
     fields; mirror event2 writes into the source physics component before the
     enclosing step finishes/publishes. Borrowed from the real player owner. */
     BHPhysicsState *contact_physics;
+    int vanos_damage_resistance;
     unsigned long calls, random_calls, broadcasts, sound_requests, packets;
     int error;
 } BHPlayerQueryContext;

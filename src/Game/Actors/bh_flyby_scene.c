@@ -165,6 +165,8 @@ static int reset_player(BHFlybyScene *flyby_scene, unsigned long index)
 }
 static int handoff(BHFlybyScene *flyby_scene, BHEntity *camera)
 {
+    static const BHFlybyForceControl scenario_controls[] = {
+        bh_player_force_control_b, bh_player_force_control_c, bh_player_force_control_d};
     BHEntity *player;
     BHPlayerInputList *list;
     BHPlayerInputState decoded;
@@ -207,7 +209,7 @@ static int handoff(BHFlybyScene *flyby_scene, BHEntity *camera)
         return fail(flyby_scene, BH_FLYBY_SCENE_BINDING);
     player->player.input.words[BH_PLAYER_INPUT_ESCAPE] = 2;
     scenario = *flyby_scene->scenario;
-    if (scenario >= 0 && scenario < 3)
+    if (scenario >= 0 && (unsigned long)scenario < sizeof(scenario_controls) / sizeof(scenario_controls[0]))
     {
         model = flyby_scene->scenario_model_override ? flyby_scene->scenario_model_override : flyby_scene->scenario_resources[scenario];
         if (!reset_player(flyby_scene, (unsigned long)(0x14 + scenario)))
@@ -217,9 +219,8 @@ static int handoff(BHFlybyScene *flyby_scene, BHEntity *camera)
             return fail(flyby_scene, BH_FLYBY_SCENE_BINDING);
         player->player.model_resource = model;
         *flyby_scene->mission_identity = scenario == 0 ? 0x00415530UL : scenario == 1 ? 0x00416120UL : 0x00416eb0UL;
-        *flyby_scene->force_control = scenario == 0   ? bh_player_force_control_b
-                            : scenario == 1 ? bh_player_force_control_c
-                                            : bh_player_force_control_d;
+        *flyby_scene->force_control = flyby_scene->scenario_force_override ? flyby_scene->scenario_force_override
+                                                                          : scenario_controls[scenario];
     }
     count = *flyby_scene->mode_count;
     if (count > 1)

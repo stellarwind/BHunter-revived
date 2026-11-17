@@ -1078,7 +1078,8 @@ int bh_player_tick(BHPlayerTick *ctx)
     if (!ctx->pool || !ctx->body || !ctx->physics || !ctx->force || !ctx->decoded || !ctx->sound)
         return fail(ctx, 1);
     if (state->force != bh_player_force_control_a && state->force != bh_player_force_control_b &&
-        state->force != bh_player_force_control_c && state->force != bh_player_force_control_d)
+        state->force != bh_player_force_control_c && state->force != bh_player_force_control_d &&
+        state->force != bh_player_force_control_vanos)
         return fail(ctx, 1);
     entity->player.frame_phase = (unsigned char)(entity->player.frame_phase + 1);
     if (!network(ctx))

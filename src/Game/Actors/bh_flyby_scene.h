@@ -46,6 +46,7 @@ typedef struct BHFlybyScene
     unsigned long horizon_image, full_image, corner_left_image, corner_right_image;
     unsigned long scenario_resources[3];
     unsigned long scenario_model_override;
+    BHFlybyForceControl scenario_force_override;
     unsigned long attempted, queued, dropped, random_calls;
     BHEntity *bound_entity;
     unsigned long bound_generation;

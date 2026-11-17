@@ -262,7 +262,7 @@ int bh_player_query_dispatch(BHPlayerQueryContext *ctx, BHPlayerQueryPacket *pac
 {
     BHEntity *entity;
     BHVec3 d, a, b, r, normal;
-    double x, y, z, length, factor, impulse, t;
+    double x, y, z, length, factor, impulse, damage, t;
     float f;
     float severity, pitch, level, random_scale;
     long old, value;
@@ -304,10 +304,13 @@ int bh_player_query_dispatch(BHPlayerQueryContext *ctx, BHPlayerQueryPacket *pac
         }
         if (entity->player.shield_time <= 0 && !protected_player(entity))
         {
-            t = (double)packet->floats[1] + entity->player.damage;
+            damage = packet->floats[1];
+            if (ctx->vanos_damage_resistance)
+                damage /= 1.5;
+            t = damage + entity->player.damage;
             entity->player.damage = stored(t);
             *ctx->damage_source = t < 1 ? NULL : (BHEntity *)packet->words[2];
-            t = (double)entity->player.damage - (double)packet->floats[1] * (-4.0f);
+            t = (double)entity->player.damage + damage * 4.0;
             if (entity->player.damage_flash < t)
                 entity->player.damage_flash = stored(t);
             if (entity->player.damage > 1)
@@ -401,9 +404,12 @@ int bh_player_query_dispatch(BHPlayerQueryContext *ctx, BHPlayerQueryPacket *pac
             }
             if (!protected_player(entity) && entity->player.shield_time == 0)
             {
+                damage = (double)severity * .2;
+                if (ctx->vanos_damage_resistance)
+                    damage /= 1.5;
                 if (entity->player.instability < 1.5)
-                    entity->player.damage = stored((double)entity->player.damage - (double)severity * (-.2));
-                t = (double)entity->player.damage - (double)severity * (-.2);
+                    entity->player.damage = stored((double)entity->player.damage + damage);
+                t = (double)entity->player.damage + damage;
                 if (entity->player.damage_flash < t)
                     entity->player.damage_flash = stored(t);
             }

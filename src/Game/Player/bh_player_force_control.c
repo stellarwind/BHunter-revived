@@ -197,7 +197,8 @@ static void visual(BHPlayerForceControl *control, float channels[15], const floa
         entity->player.nozzle_trail[i].to = output;
     }
 }
-int bh_player_force_control_b(BHPlayerForceControl *control, float unused, int skip)
+static int damped_thrust(BHPlayerForceControl *control, int skip, float thrust_gain, double forward_drag,
+                         double steering_gain)
 {
     BHEntity *entity;
     BHPhysicsState *physics;
@@ -206,7 +207,6 @@ int bh_player_force_control_b(BHPlayerForceControl *control, float unused, int s
     float pitch, yaw, thrust, instability, pitch_factor, speed_factor, signed_x, signed_y, pitch_target, roll_target;
     double noise_y;
     unsigned long k;
-    (void)unused;
     if (!validate(control))
         return 0;
     entity = control->body->entity;
@@ -243,7 +243,7 @@ int bh_player_force_control_b(BHPlayerForceControl *control, float unused, int s
         pitch = entity->player.input.axes[0];
         yaw = entity->player.input.axes[1];
         thrust = entity->player.input.axes[2];
-        pitch_factor = stored((double)pitch * 2.75);
+        pitch_factor = stored((double)pitch * steering_gain);
         speed_factor = stored((double)v.z * v.z * .00048828125);
         signed_x = v.x;
         signed_y = v.y;
@@ -254,7 +254,8 @@ int bh_player_force_control_b(BHPlayerForceControl *control, float unused, int s
         }
         force.x = stored((double)stored((double)v.x * -.85) * control->body->mass * 5.0f);
         force.y = stored(((double)stored((double)v.y * -.85) - 1.9639999866485596f) * control->body->mass * 5.0f);
-        force.z = stored(((double)stored((double)v.z * -.4) - (double)thrust * -35.0f) * control->body->mass * 5.0f);
+        force.z = stored(((double)stored((double)v.z * -forward_drag) - (double)thrust * -thrust_gain) *
+                         control->body->mass * 5.0f);
         pitch_target = stored((((double)physics->pose.m[1][0] * pitch_factor + torque.x) - ((double)yaw + yaw)) +
                               (double)pitch * pitch * sqrt((double)v.z * v.z) * .00625);
         pitch_target = stored((double)speed_factor * physics->pose.m[1][2] + pitch_target);
@@ -272,6 +273,16 @@ int bh_player_force_control_b(BHPlayerForceControl *control, float unused, int s
     }
     visual(control, channels, old, 3);
     return 1;
+}
+int bh_player_force_control_b(BHPlayerForceControl *control, float unused, int skip)
+{
+    (void)unused;
+    return damped_thrust(control, skip, 35.0f, .4, 2.75);
+}
+int bh_player_force_control_vanos(BHPlayerForceControl *control, float unused, int skip)
+{
+    (void)unused;
+    return damped_thrust(control, skip, 28.0f, .5, 2.2);
 }
 /* Variants A/C/D share the up-vector stabilizer and drag construction. C/D
    additionally couple three player control scalars into the local targets.

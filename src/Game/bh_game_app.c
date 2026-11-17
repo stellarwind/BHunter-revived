@@ -1135,6 +1135,7 @@ static void resource_bindings(BHGameApp *app)
     B(0x4d1974, network_car_models[1]);
     B(0x4d1978, network_car_models[2]);
     B(0x4cda18, network_car_models[BH_NETWORK_CAR_IABAT]);
+    B(0x4d1950, network_car_models[BH_NETWORK_CAR_VANOS]);
     B(0x4d1a98, background.first_model);
     B(0x4df238, background.second_model);
     B(0x4f0078, background.first_flare);
@@ -2414,6 +2415,8 @@ static int network_poll(BHGameApp *app)
         app->flyby.player_slot = &app->mission;
         app->flyby.scenario = &app->ship;
         app->flyby.scenario_model_override = 0;
+        app->flyby.scenario_force_override = NULL;
+        app->player_query.vanos_damage_resistance = 0;
         if (was_playing && !bh_player_leave_network(&app->player_tick))
             return failure(app, 12);
         if (was_playing)
@@ -2436,15 +2439,15 @@ static int network_poll(BHGameApp *app)
     if (game->local_player && (!game->host || game->world_ready) && app->player_state.mode == 0)
     {
         BHMenuRuntime *entry = app->network_entry;
+        unsigned int car = game->local_car;
+        int vanos = car == BH_NETWORK_CAR_VANOS;
         app->slot = (long)game->local_player - 1;
         app->flyby.player_slot = &app->slot;
-        if (game->host)
-        {
-            int iabat = game->local_car == BH_NETWORK_CAR_IABAT;
-            app->network_scenario = iabat ? 0 : game->local_car;
-            app->flyby.scenario = &app->network_scenario;
-            app->flyby.scenario_model_override = iabat ? app->network_car_models[BH_NETWORK_CAR_IABAT] : 0;
-        }
+        app->network_scenario = car < BH_NETWORK_CAR_IABAT ? car : 0;
+        app->flyby.scenario = &app->network_scenario;
+        app->flyby.scenario_model_override = app->network_car_models[car];
+        app->flyby.scenario_force_override = vanos ? bh_player_force_control_vanos : NULL;
+        app->player_query.vanos_damage_resistance = vanos;
         app->scores.local_index = app->slot;
         app->player_state.mode = game->hosting ? 2 : 3;
         app->network_scores.mode = app->player_state.mode;
@@ -2776,7 +2779,7 @@ static int run_world(const char *directory, const char *settings_path, int profi
                      int *reload)
 {
     BHGameApp *app;
-    int result;
+    int result, default_vehicle;
     int joining = game->host && !game->hosting;
     int selected_vehicle = joining ? game->local_car : vehicle;
     const char *level = joining ? game->level.name : local_level;
@@ -2805,9 +2808,12 @@ static int run_world(const char *directory, const char *settings_path, int profi
 
     if (!platform(app))
         goto done;
+    default_vehicle = bh_game_settings_default_vehicle();
     app->network_ship = selected_vehicle >= 0 && selected_vehicle < BH_NETWORK_CAR_IABAT
                             ? selected_vehicle
-                            : bh_game_settings_default_vehicle();
+                            : default_vehicle;
+    if (app->network_ship == BH_NETWORK_CAR_VANOS)
+        app->network_ship = 0;
     if (!source_owners(app))
         goto done;
     if (!bh_vfile_mount(app->archive))
@@ -2916,7 +2922,7 @@ static int run_world(const char *directory, const char *settings_path, int profi
     }
     else if (first && network_port &&
              !network_start(app, app->menu.root, network_address, network_port,
-                            vehicle < 0 ? app->network_ship : vehicle))
+                            vehicle < 0 ? default_vehicle : vehicle))
     {
         bh_sdl_report_error("Could not open the multiplayer session. Check the IPv4 address and UDP port.");
         app->error = 2;
