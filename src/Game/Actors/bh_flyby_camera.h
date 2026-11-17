@@ -5,6 +5,9 @@
 #include "../../Camera/bh_camera_state.h"
 #include "../Player/bh_player_camera.h"
 #include "../../Graphics/Textures/bh_text_queue.h"
+
+enum { BH_GARAGE_FIRST_WAYPOINT = 14, BH_GARAGE_VANOS_WAYPOINT = 18, BH_GARAGE_VANOS_ROW = 3 };
+
 typedef struct BHFlybyCredits
 {
     long gate;

@@ -68,11 +68,17 @@ static unsigned long degree(const BHWorldGeometry *room)
                 ++count;
     return count;
 }
-static int scene_counts(BHWorldGeometry *first, unsigned long count, unsigned long *total, unsigned long *junctions)
+static int is_junction(unsigned long portals, const BHWorldGeometry *room, const BHWorldGeometry *stop)
+{
+    return portals && (portals != 2 || room == stop);
+}
+static int scene_counts(BHWorldGeometry *first, unsigned long count, const BHWorldGeometry *stop, unsigned long *total,
+                        unsigned long *junctions)
 {
     BHWorldGeometry *room = first;
     unsigned long i, j, portal_count;
     const float *bounds;
+    int found_stop = !stop;
     *total = *junctions = 0;
     if (!room || !count || count > 65535)
         return 0;
@@ -91,12 +97,14 @@ static int scene_counts(BHWorldGeometry *first, unsigned long count, unsigned lo
         if (portal_count)
         {
             ++*total;
-            if (portal_count != 2)
+            if (is_junction(portal_count, room, stop))
                 ++*junctions;
+            if (room == stop)
+                found_stop = 1;
         }
         room = (BHWorldGeometry *)room->navigation.next;
     }
-    return room == first;
+    return room == first && found_stop;
 }
 /* Assembly 00407d9f..00407e98 keeps current centers unrounded, but spills
    previous centers and one operand of each squared delta to binary32. */
@@ -200,7 +208,8 @@ static void relax(BHNavigation *navigation)
                 }
             }
 }
-int bh_navigation_build(BHNavigation *navigation, BHWorldGeometry *first, unsigned long scene_count, BHVFile *cache)
+static int build(BHNavigation *navigation, BHWorldGeometry *first, unsigned long scene_count, BHVFile *cache,
+                 const BHWorldGeometry *stop)
 {
     BHNavigation next;
     BHWorldGeometry *room;
@@ -212,7 +221,7 @@ int bh_navigation_build(BHNavigation *navigation, BHWorldGeometry *first, unsign
         return fail(navigation, BH_NAV_ARGUMENT);
     if (!bh_math_environment_supported())
         return fail(navigation, BH_NAV_NUMERICAL);
-    if (!scene_counts(first, scene_count, &total, &junctions))
+    if (!scene_counts(first, scene_count, stop, &total, &junctions))
         return fail(navigation, BH_NAV_TOPOLOGY);
     if (junctions > 2048)
         return fail(navigation, BH_NAV_LIMIT);
@@ -240,14 +249,14 @@ int bh_navigation_build(BHNavigation *navigation, BHWorldGeometry *first, unsign
     for (i = 0; i < scene_count; ++i)
     {
         portal_count = degree(room);
-        if (portal_count && portal_count != 2)
+        if (is_junction(portal_count, room, stop))
             next.nodes[at++].placement = room;
         room = (BHWorldGeometry *)room->navigation.next;
     }
     room = first;
     for (i = 0; i < scene_count; ++i)
     {
-        if (degree(room) == 2)
+        if (degree(room) == 2 && room != stop)
             next.nodes[at++].placement = room;
         room = (BHWorldGeometry *)room->navigation.next;
     }
@@ -325,4 +334,13 @@ rejected:
         next.allocator.release(stack, next.allocator.user);
     bh_navigation_dispose(&next);
     return fail(navigation, error);
+}
+int bh_navigation_build(BHNavigation *navigation, BHWorldGeometry *first, unsigned long scene_count, BHVFile *cache)
+{
+    return build(navigation, first, scene_count, cache, NULL);
+}
+int bh_navigation_build_with_stop(BHNavigation *navigation, BHWorldGeometry *first, unsigned long scene_count,
+                                  const BHWorldGeometry *stop)
+{
+    return build(navigation, first, scene_count, NULL, stop);
 }

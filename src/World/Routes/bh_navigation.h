@@ -46,5 +46,8 @@ void bh_navigation_dispose(BHNavigation *navigation);
    rollback. The cache is never closed. The original relaxation order and double
    comparison before float stores are preserved; no symmetry/diagonal repair. */
 int bh_navigation_build(BHNavigation *navigation, BHWorldGeometry *first, unsigned long scene_count, BHVFile *cache);
+/* Keep a reachable camera stop in the route table even if it has two portals. */
+int bh_navigation_build_with_stop(BHNavigation *navigation, BHWorldGeometry *first, unsigned long scene_count,
+                                  const BHWorldGeometry *stop);
 long bh_navigation_find(const BHNavigation *navigation, const BHWorldGeometry *placement);
 #endif

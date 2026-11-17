@@ -1,6 +1,7 @@
 #include "bh_flyby_scene.h"
 #include "../../Camera/bh_camera_queue.h"
 #include "../../Graphics/bh_horizon_queue.h"
+#include "../../Graphics/bh_draw_submit.h"
 #include "../Items/bh_pickup_draw.h"
 #include "../../Core/bh_queue_reserve.h"
 #include "../../Math/bh_round.h"
@@ -170,8 +171,10 @@ static int handoff(BHFlybyScene *flyby_scene, BHEntity *camera)
     BHEntity *player;
     BHPlayerInputList *list;
     BHPlayerInputState decoded;
+    BHFlybyForceControl control;
     long scenario, count, slot;
     unsigned long index, model;
+    int solo_vanos;
     struct
     {
         long event, value, message;
@@ -209,9 +212,19 @@ static int handoff(BHFlybyScene *flyby_scene, BHEntity *camera)
         return fail(flyby_scene, BH_FLYBY_SCENE_BINDING);
     player->player.input.words[BH_PLAYER_INPUT_ESCAPE] = 2;
     scenario = *flyby_scene->scenario;
+    count = *flyby_scene->mode_count;
+    solo_vanos = count == 1 && scenario == BH_GARAGE_VANOS_ROW;
+    if (solo_vanos)
+        scenario = 0;
     if (scenario >= 0 && (unsigned long)scenario < sizeof(scenario_controls) / sizeof(scenario_controls[0]))
     {
         model = flyby_scene->scenario_model_override ? flyby_scene->scenario_model_override : flyby_scene->scenario_resources[scenario];
+        control = flyby_scene->scenario_force_override ? flyby_scene->scenario_force_override : scenario_controls[scenario];
+        if (solo_vanos)
+        {
+            model = flyby_scene->vanos_resource;
+            control = bh_player_force_control_vanos;
+        }
         if (!reset_player(flyby_scene, (unsigned long)(0x14 + scenario)))
             return 0;
         player = *flyby_scene->current_player;
@@ -219,10 +232,10 @@ static int handoff(BHFlybyScene *flyby_scene, BHEntity *camera)
             return fail(flyby_scene, BH_FLYBY_SCENE_BINDING);
         player->player.model_resource = model;
         *flyby_scene->mission_identity = scenario == 0 ? 0x00415530UL : scenario == 1 ? 0x00416120UL : 0x00416eb0UL;
-        *flyby_scene->force_control = flyby_scene->scenario_force_override ? flyby_scene->scenario_force_override
-                                                                          : scenario_controls[scenario];
+        *flyby_scene->force_control = control;
+        if (flyby_scene->vanos_damage_resistance)
+            *flyby_scene->vanos_damage_resistance = control == bh_player_force_control_vanos;
     }
-    count = *flyby_scene->mode_count;
     if (count > 1)
     {
         long value = rand();
@@ -328,6 +341,10 @@ int bh_flyby_scene_draw(BHFlybyScene *flyby_scene)
         flyby_scene->error = BH_FLYBY_SCENE_OWNER;
     if (!full)
     {
+        const BHPlayerCameraStart *display = flyby_scene->vanos_display;
+        if (!*flyby_scene->mode_count && display)
+            queue_result(flyby_scene, bh_draw_submit_resource(flyby_scene->queue, 0, flyby_scene->vanos_resource,
+                                                             &display->position, &display->angles, 1));
         queue_result(flyby_scene, bh_queue_mode(flyby_scene->queue, 8, 0));
         left = stored((double)*flyby_scene->display_width * .105);
         side = stored((double)*flyby_scene->display_width * .2);

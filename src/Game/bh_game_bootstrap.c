@@ -9,6 +9,7 @@
 #include "../Graphics/Models/bh_model_images.h"
 #include "../Graphics/Models/bh_model_scale.h"
 #include "../Assets/bh_vfile.h"
+#include "../Network/bh_network_game.h"
 #include <stddef.h>
 #include <string.h>
 #include <stdlib.h>
@@ -177,14 +178,18 @@ static void network_ship_picker(BHMenuActions *menu_actions, long index)
     (void)index;
     if (menu_actions->network_ship)
     {
-        picker->actions->menu->selection = *menu_actions->network_ship;
-        picker->actions->menu->display_selection = (float)*menu_actions->network_ship;
+        long car = *menu_actions->network_ship;
+        long row = car == BH_NETWORK_CAR_IABAT ? 0 : car;
+        if (car == BH_NETWORK_CAR_VANOS)
+            row = BH_GARAGE_VANOS_ROW;
+        picker->actions->menu->selection = row;
+        picker->actions->menu->display_selection = (float)row;
     }
 }
 static void network_ship_select(BHMenuActions *menu_actions, long index)
 {
     if (menu_actions->network_ship)
-        *menu_actions->network_ship = index;
+        *menu_actions->network_ship = index == BH_GARAGE_VANOS_ROW ? BH_NETWORK_CAR_VANOS : index;
 }
 static void save(BHMenuActions *menu_actions, long index)
 {

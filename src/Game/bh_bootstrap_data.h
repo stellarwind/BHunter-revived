@@ -199,13 +199,14 @@ static const BHBootstrapMenuSpec menu_specs[] = {
     {0x004d0484UL, 0x0000000cUL}, {0x004cdb98UL, 0x0000000cUL}, {0x004d4408UL, 0x0000000cUL},
     {0x00496344UL, 0x0000000cUL}, {0x004cdc9cUL, 0xffffffffUL}, {0x004ce450UL, 0xffffffffUL},
     {0x004d1488UL, 0xffffffffUL}, {0x004cdca0UL, 0xffffffffUL}};
-static const long menu_backs[] = {3, 0, 3, 3, 4, 4, 0, 0, 0, 0, 3, 9, 2, 3};
+static const long menu_backs[] = {3, 0, 3, 3, 4, 4, 0, 0, 0, 0, 4, 9, 2, 4};
 static const BHBootstrapRowSpec row_specs[] = {
     {0x00495e40UL, 0x004d1aa4UL, "GAME", 0, 0x004cdc9cUL, 0x0042cae0UL, 0x00000000UL},
     {0x00495e40UL, 0x004d1aa8UL, "NETWORK", 0, 0x004cdca0UL, 0x0042cb10UL, 0x00000000UL},
     {0x004cdca0UL, 0x004d1aa4UL, "BARLETTA", "Slick'n'Easy", 0x004d1488UL, 0x0042caa0UL, 0x00000000UL},
     {0x004cdca0UL, 0x004d1aa8UL, "STINGER", "Steady as we go", 0x004d1488UL, 0x0042caa0UL, 0x00000000UL},
     {0x004cdca0UL, 0x004d1aa8UL, "VIPER", "Rock'n'Roll", 0x004d1488UL, 0x0042caa0UL, 0x00000000UL},
+    {0x004cdca0UL, 0x004d1aa8UL, "VANOS", "Heavy armor", 0x004d1488UL, 0x0042caa0UL, 0x00000000UL},
     {0x004cdca0UL, 0x004d1aacUL, "BACK", 0, 0x00495e40UL, 0x00000000UL, 0x00000000UL},
     {0x004d1488UL, 0x004d1aa4UL, "HOST", "UDP port 27890", 0x004d1488UL, 0x0042f360UL, 0x00000000UL},
     {0x004d1488UL, 0x004d1aa8UL, "JOIN BY IP", "Enter host IPv4", 0x004d1488UL, 0x0042f390UL, 0x0042d920UL},
@@ -288,6 +289,7 @@ static const BHBootstrapRowSpec row_specs[] = {
     {0x004cdc9cUL, 0x004d1aa4UL, "BARLETTA", "Slick'n'Easy", 0x004ce450UL, 0x0042ca30UL, 0x00000000UL},
     {0x004cdc9cUL, 0x004d1aa8UL, "STINGER", "Steady as we go", 0x004ce450UL, 0x0042ca30UL, 0x00000000UL},
     {0x004cdc9cUL, 0x004d1aa8UL, "VIPER", "Rock'n'Roll", 0x004ce450UL, 0x0042ca30UL, 0x00000000UL},
+    {0x004cdc9cUL, 0x004d1aa8UL, "VANOS", "Heavy armor", 0x004ce450UL, 0x0042ca30UL, 0x00000000UL},
     {0x004cdc9cUL, 0x004d1aacUL, "BACK", 0, 0x00495e40UL, 0x00000000UL, 0x00000000UL},
     {0x004ce450UL, 0x004d1aa4UL, "prologue", "The Training", 0x00000000UL, 0x0042ca10UL, 0x00000000UL},
     {0x004ce450UL, 0x004d1aa8UL, "episode 1", "In the Service", 0x00000000UL, 0x0042ca10UL, 0x00000000UL},

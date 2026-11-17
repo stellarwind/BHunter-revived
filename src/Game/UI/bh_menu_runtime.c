@@ -229,8 +229,13 @@ int bh_menu_runtime_step(BHMenuRuntime *runtime)
         menu_settings_menu->selection = runtime->pending_selection;
     }
     runtime->pending_selection = -1;
-    if ((runtime == context->ship_menu || runtime == context->network_ship_menu) && menu_settings_menu->selection < 3)
-        *context->waypoint = menu_settings_menu->selection + 14;
+    if (runtime == context->ship_menu || runtime == context->network_ship_menu)
+    {
+        if (menu_settings_menu->selection < BH_GARAGE_VANOS_ROW)
+            *context->waypoint = BH_GARAGE_FIRST_WAYPOINT + menu_settings_menu->selection;
+        else if (menu_settings_menu->selection == BH_GARAGE_VANOS_ROW && context->flyby && context->flyby->vanos_display)
+            *context->waypoint = BH_GARAGE_VANOS_WAYPOINT;
+    }
     if (!runtime->exiting && !blocked(runtime))
     {
         bh_player_input_apply_packet(&runtime->input_state, runtime->input->state);

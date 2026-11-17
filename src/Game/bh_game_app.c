@@ -229,7 +229,7 @@ typedef struct BHGameApp
     BHEditorNumericContext numeric;
     BHRailPaths rails;
     BHRailWagonContext wagon;
-    BHNavigation navigation;
+    BHNavigation navigation, garage_navigation;
     BHWorldSegmentContext segment;
     BHWorldSegmentRoom *segment_rooms;
     BHWorldSegmentRoom **segment_room_index;
@@ -509,7 +509,8 @@ static void dump_game_state(FILE *log, const BHGameApp *app)
             camera->current.mode, camera->position.x, camera->position.y, camera->position.z, camera->angles.x,
             camera->angles.y, camera->angles.z, app->flyby_state.orbit_time, route->waypoint_index,
             app->camera_route.selected_waypoint, route->phase, route->parameter_rate,
-            bh_navigation_find(&app->navigation, route->current), bh_navigation_find(&app->navigation, route->next));
+            bh_navigation_find(app->camera_route.navigation, route->current),
+            bh_navigation_find(app->camera_route.navigation, route->next));
     for (i = 0; i < N(route->curve); ++i)
         fprintf(log, "  Route control %u (%.9g %.9g %.9g)\n", i, route->curve[i].x, route->curve[i].y,
                 route->curve[i].z);
@@ -1136,6 +1137,7 @@ static void resource_bindings(BHGameApp *app)
     B(0x4d1978, network_car_models[2]);
     B(0x4cda18, network_car_models[BH_NETWORK_CAR_IABAT]);
     B(0x4d1950, network_car_models[BH_NETWORK_CAR_VANOS]);
+    B(0x4d1950, flyby.vanos_resource);
     B(0x4d1a98, background.first_model);
     B(0x4df238, background.second_model);
     B(0x4f0078, background.first_flare);
@@ -1217,7 +1219,8 @@ static int source_owners(BHGameApp *app)
     if (!bh_input_devices_start(&app->devices))
         return failure(app, 6);
     if (!bh_entities_init(&app->pool, 0x2580, 0) || !bh_sound_queue_init(&app->sound, 0, 0, 0) ||
-        !bh_rail_paths_init(&app->rails, 0) || !bh_navigation_init(&app->navigation, 0))
+        !bh_rail_paths_init(&app->rails, 0) || !bh_navigation_init(&app->navigation, 0) ||
+        !bh_navigation_init(&app->garage_navigation, 0))
         return failure(app, 6);
     bh_text_queue_init(&app->text);
     if (!bh_draw_queue_init(&app->queue, 3500, 0) || !bh_frame_buffers_bind(&app->frames, 0) ||
@@ -1507,6 +1510,7 @@ static int source_owners(BHGameApp *app)
     app->flyby.event_value = &app->event_value;
     app->flyby.mission_identity = &app->mission_identity;
     app->flyby.force_control = &app->player_state.force;
+    app->flyby.vanos_damage_resistance = &app->player_query.vanos_damage_resistance;
     app->flyby_camera.route = &app->camera_route;
     app->flyby_camera.camera = &app->camera_state;
     app->flyby_camera.starts = app->starts;
@@ -1664,6 +1668,23 @@ static int world_ready(BHGameApp *app)
     app->pickups.room_count = n;
     app->pickups.first_world = app->segment.first;
     app->pickups.world_count = n;
+    if (!app->bootstrap.custom_level)
+    {
+        BHWorldGeometry *vanos_bay;
+        /* Vanos display and waypoint share the saved Garage Layout.blend pose.
+           Blender (x, y, z) maps to game (x, -z, y). */
+        app->vm_starts[BH_GARAGE_VANOS_WAYPOINT] = (BHScriptVMWaypoint){
+            .position = {-60.217503f, -14.0f, 179.496918f},
+            .angles = {3.14159265f, 0, 0},
+            .speed = 5.0f,
+            .delay = 2.0f};
+        vanos_bay = bh_world_locate(app->segment.first, n, NULL,
+                                   &app->vm_starts[BH_GARAGE_VANOS_WAYPOINT].position, 0);
+        if (!vanos_bay || !bh_navigation_build_with_stop(&app->garage_navigation, app->segment.first, n, vanos_bay))
+            return failure(app, 7);
+        app->camera_route.navigation = &app->garage_navigation;
+        app->flyby.vanos_display = app->starts + BH_GARAGE_VANOS_WAYPOINT;
+    }
     for (i = 0; i < GAME_STARTS; ++i)
     {
         app->starts[i].position = app->vm_starts[i].position;
@@ -2448,7 +2469,6 @@ static int network_poll(BHGameApp *app)
         app->flyby.scenario = &app->network_scenario;
         app->flyby.scenario_model_override = app->network_car_models[car];
         app->flyby.scenario_force_override = vanos ? bh_player_force_control_vanos : NULL;
-        app->player_query.vanos_damage_resistance = vanos;
         app->scores.local_index = app->slot;
         app->player_state.mode = game->hosting ? 2 : 3;
         app->network_scores.mode = app->player_state.mode;
@@ -2724,6 +2744,7 @@ static void cleanup(BHGameApp *app)
     bh_world_load_dispose_index(&app->world_load);
     bh_level_records_dispose(&app->level_records);
     bh_script_blocks_dispose(&app->blocks);
+    bh_navigation_dispose(&app->garage_navigation);
     bh_navigation_dispose(&app->navigation);
     bh_rail_paths_dispose(&app->rails);
     bh_text_queue_init(&app->text);
@@ -2809,11 +2830,7 @@ static int run_world(const char *directory, const char *settings_path, int profi
     if (!platform(app))
         goto done;
     default_vehicle = bh_game_settings_default_vehicle();
-    app->network_ship = selected_vehicle >= 0 && selected_vehicle < BH_NETWORK_CAR_IABAT
-                            ? selected_vehicle
-                            : default_vehicle;
-    if (app->network_ship == BH_NETWORK_CAR_VANOS)
-        app->network_ship = 0;
+    app->network_ship = selected_vehicle >= 0 ? selected_vehicle : default_vehicle;
     if (!source_owners(app))
         goto done;
     if (!bh_vfile_mount(app->archive))

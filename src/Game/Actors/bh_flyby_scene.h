@@ -47,6 +47,9 @@ typedef struct BHFlybyScene
     unsigned long scenario_resources[3];
     unsigned long scenario_model_override;
     BHFlybyForceControl scenario_force_override;
+    unsigned long vanos_resource;
+    const BHPlayerCameraStart *vanos_display;
+    int *vanos_damage_resistance;
     unsigned long attempted, queued, dropped, random_calls;
     BHEntity *bound_entity;
     unsigned long bound_generation;

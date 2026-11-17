@@ -195,7 +195,12 @@ int bh_flyby_camera_step(BHFlybyCameraContext *context, BHFlybyCameraState *flyb
         flyby_camera_state->route.phase = stored(advanced);
         if (advanced > 3)
         {
-            mode = (selected == 14 || selected == 15 || selected == 16) ? 8 : selected == 13 ? 11 : 10;
+            mode = 10;
+            if ((selected >= BH_GARAGE_FIRST_WAYPOINT && selected < BH_GARAGE_FIRST_WAYPOINT + BH_GARAGE_VANOS_ROW) ||
+                selected == BH_GARAGE_VANOS_WAYPOINT)
+                mode = 8;
+            else if (selected == 13)
+                mode = 11;
             if (!bh_camera_state_set_mode(&flyby_camera_state->camera, mode))
                 return failure(context, "enter destination camera mode");
             flyby_camera_state->route.phase = 0;
