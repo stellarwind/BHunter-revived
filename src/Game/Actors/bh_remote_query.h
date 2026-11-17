@@ -37,6 +37,7 @@ typedef struct BHRemoteQuery
     unsigned long wire_size, sends;
     int send_result;
     int error;
+    const unsigned long *live_tick;
 } BHRemoteQuery;
 /* Whole00423e70. Events0/3/16/17/20: actual prediction/packet codec/transport,
    nine target-reference removals and dual-list/remote-slot/pool retirement.

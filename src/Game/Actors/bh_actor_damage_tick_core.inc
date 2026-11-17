@@ -62,7 +62,7 @@ void bh_actor_damage_tick_core(BHEntity *actor, BHActorDamageContext *context)
     angle = damage_query_stored((double)rand() * (1.0 / 512.0));
     bh_script_particle_create(context->particles, context->smoke_resource, 3, &position, &velocity, &acceleration, .5f, angle, 12,
                               angular, .9f, .95f, 2, .3f);
-    if (actor->actor.damage >= 1 && context->mode != 3)
+    if (actor->actor.damage >= 1)
     {
         if (!context->legacy_death_angles)
         {

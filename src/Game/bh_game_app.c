@@ -2204,7 +2204,8 @@ static int network_bind(BHGameApp *app)
                                         .worlds = app->effect_indices,
                                         .world_count = count,
                                         .transport = &app->transport,
-                                        .sound = &app->sound};
+                                        .sound = &app->sound,
+                                        .live_tick = &app->player_state.tick};
     app->remote_render = (BHRemoteRender){.queue = &app->queue,
                                           .sound = &app->sound,
                                           .spark_texture = bh_bootstrap_value(&app->bootstrap, 0x4f0094),
@@ -2617,7 +2618,6 @@ static int manual_loop(BHGameApp *app)
             app->flyby.input_profile = app->profile;
             app->menu_settings.input_profile = app->profile;
             app->player_create.profile = app->profile;
-            app->actor_damage.mode = app->player_state.mode;
             network_tick(app);
             app->eye = app->flyby_state.camera.position;
             app->angles = app->flyby_state.camera.angles;

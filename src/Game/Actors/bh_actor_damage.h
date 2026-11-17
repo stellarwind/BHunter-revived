@@ -14,7 +14,6 @@ typedef struct BHActorDamageContext
     const unsigned long (*loot_rows)[32];
     unsigned long loot_row_count;
     unsigned long smoke_resource, death_sound;
-    long mode;
     /* Original4357d0 passes unwritten stack angles to43d7c0. Source requires
     an explicit caller binding rather than reading uninitialized C storage. */
     const BHVec3 *legacy_death_angles;

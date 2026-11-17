@@ -88,18 +88,19 @@ int bh_remote_query(BHRemoteQuery *query, BHEntity *entity, BHRemoteQueryPacket 
     BHEntity *target;
     BHPacketWriter writer;
     unsigned long i, j, recipient;
-    unsigned short id;
+    unsigned short id, tick;
     unsigned char severity;
     float value;
     if (!query || !entity || !remote_query_packet)
         return fail(query);
     query->error = 0;
+    tick = query->live_tick ? (unsigned short)*query->live_tick : query->tick;
     switch (remote_query_packet->words[0])
     {
     case 0:
         if (!query->transport || !query->remote)
             return fail(query);
-        if (!bh_remote_predict_position(entity, query->tick, &position))
+        if (!bh_remote_predict_position(entity, tick, &position))
             return fail(query);
         world = entity->remote.newest.world;
         if (!world)
@@ -116,7 +117,7 @@ int bh_remote_query(BHRemoteQuery *query, BHEntity *entity, BHRemoteQueryPacket 
             return fail(query);
         if (value > 1.99)
             value = 1.99f;
-        if (!bh_packet_begin(&writer, query->packet, sizeof(query->packet), 7, query->tick) ||
+        if (!bh_packet_begin(&writer, query->packet, sizeof(query->packet), 7, tick) ||
             !bh_packet_write_position(&writer, world, query->worlds[i].index, &position))
             return fail(query);
         if (target == query->local)
@@ -147,7 +148,7 @@ int bh_remote_query(BHRemoteQuery *query, BHEntity *entity, BHRemoteQueryPacket 
         return 1;
     case 3:
     case 16:
-        if (!bh_remote_predict_position(entity, query->tick, &position))
+        if (!bh_remote_predict_position(entity, tick, &position))
             return fail(query);
         memcpy(remote_query_packet->floats + 1, &position, 12);
         if (remote_query_packet->words[0] == 16)
