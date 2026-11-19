@@ -536,11 +536,11 @@ static int ground(BHPlayerTick *ctx)
         result = bh_world_segment_run(ctx->world, &self, &cached, &start, &end, -1, &hit);
         if (result < 0)
             return fail(ctx, 3);
-        if (result)
+        if (result && _finite(hit.fraction))
         {
-            fraction = hit.fraction;
-            if (!_finite(fraction) || fraction < 0 || fraction > 1)
-                return fail(ctx, 4);
+            /* The segment trace projects the normal-offset contact point, which
+               can fall outside the probe. Bound the ground effect strength. */
+            fraction = hit.fraction < 0 ? 0 : (hit.fraction > 1 ? 1 : hit.fraction);
             strength = rf(1.0 - fraction);
             random = rand();
             n = (int)(1 - (1 - (double)fraction) * random * (-1.0 / 8192));
